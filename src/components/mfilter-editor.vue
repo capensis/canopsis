@@ -17,12 +17,12 @@
           v-model="inputValue",
           rows="20",
           :label="$t('m_filter_editor.tabs.advanced_editor')",
-          textarea
+          textarea,
           @input="handleInputChange"
         )
-      v-btn(@click="handleParseClick" :disabled="!isRequestChanged") {{$t('common.parse')}}
+      v-btn(@click="handleParseClick", :disabled="!isRequestChanged") {{$t('common.parse')}}
       p(v-if="parseError !== ''") {{ parseError }}
-    v-tab(:disabled="isRequestChanged" @click='handleResultTabClick') {{$t('m_filter_editor.tabs.results')}}
+    v-tab(:disabled="isRequestChanged", @click='handleResultTabClick') {{$t('m_filter_editor.tabs.results')}}
     v-tab-item
       v-data-table(
           :headers='resultsTableHeaders',

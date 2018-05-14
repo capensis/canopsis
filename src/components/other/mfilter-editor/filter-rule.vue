@@ -1,38 +1,44 @@
 <template lang="pug">
-  v-container(class='filterRule py-0 px-4')
-    v-form
-      v-layout
-        v-flex(xs12)
-          v-select(
-            @input="$emit('update:field', $event)",
-            :items="possibleFields",
-            :value="field"
-            combobox
-          )
-
-        v-flex(xs12)
-          v-select(
-            @change="$emit('update:operator', $event)",
-            :value="operator",
-            :items="operators",
-            item-text="value",
-          )
-
-        v-flex(
-          xs12,
-          v-if=`
-            operator != 'is empty'
-            && operator != 'is not empty'
-            && operator != 'is null'
-            && operator != 'is not null'`
+  v-container(fluid, class='filterRule pa-0')
+    v-layout(justify-end)
+      v-btn(
+          @click="handleDeleteRuleClick",
+          fab,
+          small,
+          dark,
+          color="red"
         )
-          v-text-field(
-            :value="input",
-            @input="$emit('update:input', $event)",
-          )
+          v-icon close
+    v-layout(row, wrap, justify-space-around)
+      v-flex(xs10, md3)
+        v-select(
+          @input="$emit('update:field', $event)",
+          :items="possibleFields",
+          :value="field",
+          combobox
+        )
 
-        v-flex(xs2 class="d-flex")
-          v-icon(@click="handleDeleteRuleClick" color="red") close
+      v-flex(xs10, md3)
+        v-select(
+          @change="$emit('update:operator', $event)",
+          :value="operator",
+          :items="operators",
+          item-text="value"
+        )
+
+      v-flex(
+        xs10,
+        md3,
+        v-if=`
+          operator != 'is empty'
+          && operator != 'is not empty'
+          && operator != 'is null'
+          && operator != 'is not null'`
+      )
+        v-text-field(
+          :value="input",
+          @input="$emit('update:input', $event)",
+        )
 </template>
 
 <script>

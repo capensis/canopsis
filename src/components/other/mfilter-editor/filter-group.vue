@@ -1,38 +1,36 @@
 <template lang="pug">
     v-container(
-      fluid
+      fluid,
       class="filterGroup pa-2"
     )
       v-radio-group(
-        mandatory
-        row
-        hide-details
+        mandatory,
+        row,
+        hide-details,
         :input-value="condition",
         @change="$emit('update:condition', $event)"
       )
-        v-radio(label="AND", value="$and" color="blue darken-4")
-        v-radio(label="OR", value="$or" color="blue darken-4")
+        v-radio(label="AND", value="$and", color="blue darken-4")
+        v-radio(label="OR", value="$or", color="blue darken-4")
 
-      v-layout(wrap class="text-xs-center" justify-space-around)
-        v-flex(xs4 md3)
+      v-layout(wrap, class="text-xs-center", justify-space-around)
+        v-flex(xs5, md3)
           v-btn(
             @click="handleAddRuleClick",
             flat,
             outline,
-            color="blue darken-4",
             block,
             small
           ) {{$t("m_filter_editor.buttons.add_rule")}}
-        v-flex(xs4 md3)
+        v-flex(xs5, md3)
           v-btn(
             @click="handleAddGroupClick",
             flat,
             outline,
-            color="blue darken-4",
             block,
             small
           ) {{$t("m_filter_editor.buttons.add_group")}}
-        v-flex(xs6 md3)
+        v-flex(xs5, md3)
           v-btn(
             v-if="!initialGroup",
             @click="handleDeleteGroupClick",
@@ -62,7 +60,7 @@
         :key="'group-' + index"
       )
         filter-group(
-          class="filterGroup"
+          class="filterGroup",
           @deleteGroup="deleteGroup",
           :index="index",
           :condition.sync="group.condition",
@@ -174,13 +172,12 @@ export default {
 
 <style scoped lang="scss">
   .filterGroup {
-    border: 1px solid gray;
+    border: 1px solid lightgray;
   }
 
   button {
     @media (max-width:'500px') {
       font-size: 0.6em;
     }
-    text-overflow: ellipsis;
   }
 </style>
