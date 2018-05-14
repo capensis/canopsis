@@ -2,7 +2,8 @@
   v-tabs(v-model="activeTab" centered)
     v-tab(:disabled="isSimpleTabDisabled") {{$t('m_filter_editor.tabs.visual_editor')}}
     v-tab-item
-      filter-group(
+      v-container
+        filter-group(
           initialGroup,
           :index = 0,
           :condition.sync="filter[0].condition",
@@ -19,7 +20,7 @@
           textarea
           @input="handleInputChange"
         )
-      v-btn(@click="handleParseClick") {{$t('common.parse')}}
+      v-btn(@click="handleParseClick" :disabled="!isRequestChanged") {{$t('common.parse')}}
       p(v-if="parseError !== ''") {{ parseError }}
     v-tab(:disabled="isRequestChanged" @click='handleResultTabClick') {{$t('m_filter_editor.tabs.results')}}
     v-tab-item

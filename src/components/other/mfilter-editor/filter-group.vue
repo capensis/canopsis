@@ -1,20 +1,47 @@
 <template lang="pug">
     v-container(
       fluid
-      class="filterGroup"
+      class="filterGroup pa-2"
     )
       v-radio-group(
+        mandatory
+        row
+        hide-details
         :input-value="condition",
         @change="$emit('update:condition', $event)"
       )
-        v-radio(label="AND", value="$and")
-        v-radio(label="OR", value="$or")
+        v-radio(label="AND", value="$and" color="blue darken-4")
+        v-radio(label="OR", value="$or" color="blue darken-4")
 
-      v-btn(@click="handleAddRuleClick") {{$t("m_filter_editor.buttons.add_rule")}}
-      v-btn(@click="handleAddGroupClick") {{$t("m_filter_editor.buttons.add_group")}}
-
-      template(v-if="!initialGroup")
-        v-btn(@click="handleDeleteGroupClick") {{$t("m_filter_editor.buttons.delete_group")}}
+      v-layout(wrap class="text-xs-center" justify-space-around)
+        v-flex(xs4 md3)
+          v-btn(
+            @click="handleAddRuleClick",
+            flat,
+            outline,
+            color="blue darken-4",
+            block,
+            small
+          ) {{$t("m_filter_editor.buttons.add_rule")}}
+        v-flex(xs4 md3)
+          v-btn(
+            @click="handleAddGroupClick",
+            flat,
+            outline,
+            color="blue darken-4",
+            block,
+            small
+          ) {{$t("m_filter_editor.buttons.add_group")}}
+        v-flex(xs6 md3)
+          v-btn(
+            v-if="!initialGroup",
+            @click="handleDeleteGroupClick",
+            flat,
+            outline,
+            color="red darken-4",
+            block,
+            small
+          ) {{$t("m_filter_editor.buttons.delete_group")}}
 
       div(
         v-for="(rule, index) in rules",
@@ -145,9 +172,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .filterGroup {
-    background-color: lightgray;
     border: 1px solid gray;
+  }
+
+  button {
+    @media (max-width:'500px') {
+      font-size: 0.6em;
+    }
+    text-overflow: ellipsis;
   }
 </style>
