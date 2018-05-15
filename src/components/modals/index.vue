@@ -10,6 +10,8 @@
       add-snooze-event
     modal(name="add-pbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
       add-pbehavior
+    modal(name="pbehavior-list", :dialogProps="{ maxWidth: 1280, lazy: true }")
+      pbehavior-list
 </template>
 
 <script>
@@ -19,6 +21,7 @@ import AddCancelEvent from './add-cancel-event.vue';
 import AddChangeStateEvent from './add-change-state-event.vue';
 import AddSnoozeEvent from './add-snooze-event.vue';
 import AddPbehavior from './add-pbehavior.vue';
+import PbehaviorList from './pbehavior-list.vue';
 
 export default {
   components: {
@@ -28,6 +31,7 @@ export default {
     AddChangeStateEvent,
     AddSnoozeEvent,
     AddPbehavior,
+    PbehaviorList,
   },
 };
 </script>

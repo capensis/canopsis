@@ -1,5 +1,6 @@
 <template lang="pug">
   v-flex
+    strong {{ item.pbehaviors.length }}
     v-btn(flat, icon, @click.stop="showAddAckEventModal")
       v-icon playlist_add_check
     v-btn(flat, icon)
@@ -14,7 +15,7 @@
       v-icon pause
     v-btn(flat, icon, @click.stop="showAddPbehaviorModal")
       v-icon local_play
-    v-btn(flat, icon, @click.stop="showCancelEventModal")
+    v-btn(flat, icon, @click.stop="showPbehaviorListModal")
       v-icon list
     v-menu(bottom)
       v-btn(flat, icon, slot="activator")
@@ -30,28 +31,21 @@
           v-list-tile-title Something
         v-list-tile
           v-list-tile-title Something
-    ul
-      li(v-for="item in items")
-        div
-          strong {{ item._id }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('entities/alarm');
 const { mapActions: modalMapActions } = createNamespacedHelpers('modal');
 
 export default {
-  mounted() {
-    this.fetchList({ params: { limit: 10 } });
-  },
-  computed: {
-    ...alarmMapGetters(['items']),
+  props: {
+    item: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
-    ...alarmMapActions(['fetchList']),
-
     ...modalMapActions({
       showModal: 'show',
     }),
@@ -70,6 +64,15 @@ export default {
     },
     showAddPbehaviorModal() {
       this.showModal({ name: 'add-pbehavior' });
+    },
+    showPbehaviorListModal() {
+      this.showModal({
+        name: 'pbehavior-list',
+        config: {
+          entityKey: 'alarm',
+          entityId: this.item._id,
+        },
+      });
     },
   },
 };

@@ -1,5 +1,6 @@
 export default {
   common: {
+    actionsLabel: 'Actions',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -60,6 +61,21 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
+    },
+    /**
+     * This object for pbehavior fields from database
+     */
+    pbehaviorList: {
+      name: 'Name',
+      author: 'Author',
+      connector: 'Connector',
+      connector_name: 'Connector name',
+      enabled: 'Is enabled',
+      tstart: 'Begins',
+      tstop: 'Ends',
+      type_: 'Type',
+      reason: 'Reason',
+      rrule: 'Rrule',
     },
   },
   rRule: {

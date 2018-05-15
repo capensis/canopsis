@@ -39,30 +39,48 @@ export default {
         }
 
         if (!state[type] || ids.length === 0) {
-          return null;
+          return [];
         }
 
-        return denormalize(ids, [schemas[type]], state.byId);
+        const result = denormalize(ids, [schemas[type]], state.byId);
+
+        return result.filter(v => !!v);
       };
     },
   },
   mutations: {
     [types.ENTITIES_UPDATE](state, entities) {
-      Object.keys(entities).forEach((key) => {
-        Vue.set(state.byId, key, {
-          ...(state.byId[key] || {}),
-          ...entities[key],
+      Object.keys(entities).forEach((type) => {
+        Vue.set(state.byId, type, {
+          ...(state.byId[type] || {}),
+          ...entities[type],
         });
       });
     },
     [types.ENTITIES_MERGE](state, entities) {
-      Object.keys(entities).forEach((key) => {
-        Vue.set(state.byId, key, merge({}, state.byId[key] || {}, entities[key]));
+      Object.keys(entities).forEach((type) => {
+        Vue.set(state.byId, type, merge({}, state.byId[type] || {}, entities[type]));
       });
     },
     [types.ENTITIES_DELETE](state, entities) {
-      Object.keys(entities).forEach((key) => {
-        Vue.set(state.byId, key, omit(state.byId[key], Object.keys(entities[key])));
+      Object.keys(entities).forEach((type) => {
+        entities[type].forEach((id) => {
+          const entity = state.byId[type][id];
+
+          if (entity && entity._embedded) {
+            const { parentType, parentId, relationType } = entity._embedded;
+
+            if (state.byId[parentType]) {
+              const parentEntity = state.byId[parentType][parentId];
+
+              if (parentEntity) {
+                parentEntity[relationType] = parentEntity[relationType].filter(v => v !== id);
+              }
+            }
+          }
+        });
+
+        Vue.set(state.byId, type, omit(state.byId[type], entities[type]));
       });
     },
   },
