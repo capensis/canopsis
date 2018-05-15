@@ -109,15 +109,21 @@ export default {
     },
     condition: {
       type: String,
-      required: true,
+      default() {
+        return '$and';
+      },
     },
     rules: {
       type: Array,
-      required: true,
+      default() {
+        return [];
+      },
     },
     groups: {
       type: Array,
-      required: true,
+      default() {
+        return [];
+      },
     },
     possibleFields: {
       type: Array,

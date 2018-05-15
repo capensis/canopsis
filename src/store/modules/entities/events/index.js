@@ -18,7 +18,6 @@ export default {
     data: {},
     byId: {},
     allIds: {},
-    meta: {},
     fetchComplete: false,
     fetchError: '',
   },
@@ -27,7 +26,6 @@ export default {
     data: state => state.data,
     byId: state => state.byId,
     allIds: state => state.allIds,
-    meta: state => state.meta,
     fetchComplete: state => state.fetchComplete,
     fetchError: state => state.fetchError,
   },
@@ -36,13 +34,12 @@ export default {
     [types.FETCH_LIST](state) {
       state.byId = {};
       state.allIds = {};
-      state.meta = {};
       state.fetchComplete = false;
     },
-    [types.FETCH_COMPLETED](state, { byId, allIds, meta }) {
+    [types.FETCH_COMPLETED](state, { byId, allIds }) {
       state.byId = byId;
       state.allIds = allIds;
-      state.meta = meta;
+      state.fetchComplete = true;
     },
     [types.FETCH_ERROR](state, error) {
       state.fetchError = error.message;
@@ -53,21 +50,17 @@ export default {
     async fetchList({ commit }, params = {}) {
       commit(types.FETCH_LIST);
       try {
-        const data = await request.get(API_ROUTES.eventsList, { params });
+        const { ...data } = await request.get(API_ROUTES.eventsList, { params });
 
         if (isEmpty(data)) {
           return;
         }
 
         const normalizedData = normalize(data, [eventSchema]);
+
         commit(types.FETCH_COMPLETED, {
           byId: normalizedData.entities.event,
           allIds: normalizedData.result,
-          meta: {
-            first: data.first,
-            last: data.last,
-            total: data.total,
-          },
         });
       } catch (error) {
         commit(types.FETCH_ERROR, error);

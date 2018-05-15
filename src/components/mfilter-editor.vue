@@ -25,16 +25,18 @@
     v-tab(:disabled="isRequestChanged", @click='handleResultTabClick') {{$t('m_filter_editor.tabs.results')}}
     v-tab-item
       v-data-table(
-          :headers='resultsTableHeaders',
-          :items="Object.values(byId)",
-          hide-actions,
-          class="elevation-1"
-        )
-          template(slot="items", slot-scope="props")
-            td {{props.item.connector}}
-            td {{props.item.connector_name}}
-            td {{props.item.component}}
-            td {{props.item.resource}}
+        :headers='resultsTableHeaders',
+        :items="Object.values(byId)",
+        hide-actions,
+        class="elevation-1"
+      )
+        template(slot="items", slot-scope="props")
+          td {{props.item.connector}}
+          td {{props.item.connector_name}}
+          td {{props.item.component}}
+          td {{props.item.resource}}
+      // div(class="text-xs-center my-2")
+        v-pagination(:length="6" v-model="currentPage")
 </template>
 
 
@@ -83,6 +85,7 @@ export default {
         },
       ],
       isRequestChanged: false,
+      currentPage: 1,
     };
   },
 
@@ -115,7 +118,8 @@ export default {
 
     handleResultTabClick() {
       this.newRequest = '';
-      this.fetchList({ start: 0, filter: JSON.stringify(this.request), limit: 10 });
+      this.currentPage = 1;
+      this.fetchList({ limit: 5, filter: JSON.stringify(this.request), start: 0 });
     },
 
     handleInputChange() {

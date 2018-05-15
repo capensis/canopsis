@@ -98,24 +98,23 @@ function parseRuleToFilter(rule) {
 
 export default function parseGroupToFilter(group) {
   const parsedGroup = {
-    condition: '',
+    condition: '$and',
     groups: [],
     rules: [],
   };
 
+  if (isEmpty(Object.values(group)[0])) {
+    return parsedGroup;
+  }
+
   const [condition] = Object.keys(group);
   parsedGroup.condition = condition;
-
-  if (isEmpty(Object.values(group)[0])) {
-    throw new Error('Empty group');
-  }
 
   /**
   * Map over the items of a group.
   * If the item is an array -> It's a group.
   * Else -> It's a rule.
   */
-
   Object.values(group)[0].map((item) => {
     if (Array.isArray(Object.values(item)[0])) {
       parsedGroup.groups.push(parseGroupToFilter(item));
