@@ -5,6 +5,7 @@
           @click="handleDeleteRuleClick",
           fab,
           small,
+          flat,
           dark,
           color="red"
         )
@@ -12,7 +13,11 @@
     v-layout(row, wrap, justify-space-around)
       v-flex(xs10, md3)
         v-select(
-          dense
+          class="my-2",
+          solo-inverted,
+          flat,
+          hide-details,
+          dense,
           @input="$emit('update:field', $event)",
           :items="possibleFields",
           :value="field",
@@ -21,7 +26,11 @@
 
       v-flex(xs10, md3)
         v-select(
-          dense
+          class="my-2",
+          solo-inverted,
+          hide-details,
+          flat,
+          dense,
           @change="$emit('update:operator', $event)",
           :value="operator",
           :items="operators",
@@ -38,9 +47,13 @@
           && operator != 'is not null'`
       )
         v-text-field(
-          single-line
+          class="my-2",
+          solo-inverted,
+          flat,
+          hide-details,
+          single-line,
           :value="input",
-          @input="$emit('update:input', $event)",
+          @input="$emit('update:input', $event)"
         )
 </template>
 
