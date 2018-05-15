@@ -18,13 +18,13 @@ def _auto_import(app, api, exports_funcname='exports_v3', configuration='/opt/ca
             wsmod = importlib.import_module('{}'.format(webservice))
 
             if hasattr(wsmod, exports_funcname):
-                app.logger.info('webservice {}: loading'.format(webservice))
+                app.logger.info('webservice v3 {}: loading'.format(webservice))
                 getattr(wsmod, exports_funcname)(app, api)
-                app.logger.info('webservice {}: loaded'.format(webservice))
+                app.logger.info('webservice v3 {}: loaded'.format(webservice))
             else:
-                app.logger.debug('webservice {}: {} unavailable'.format(webservice, exports_funcname))
+                app.logger.debug('webservice v3 {}: {} unavailable'.format(webservice, exports_funcname))
         else:
-            app.logger.debug('webservice {}: skipped'.format(webservice))
+            app.logger.debug('webservice v3 {}: skipped'.format(webservice))
 
 def _init(app):
     """
