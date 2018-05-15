@@ -1,5 +1,5 @@
 import request from '@/services/request';
-import { API_ROUTES } from '../../../config';
+import { API_ROUTES } from '@/config';
 
 function prepareData(data, eventType) {
   if (Array.isArray(data)) {
