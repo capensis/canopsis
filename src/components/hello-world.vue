@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    h1.hello {{ $t('common.hello') }}
     h2 {{ msg }}
     v-container(fluid)
       v-layout(row, wrap, v-for="item in items", :key="item._id")
