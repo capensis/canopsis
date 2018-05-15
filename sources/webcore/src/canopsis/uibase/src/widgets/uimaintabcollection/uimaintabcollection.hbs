@@ -75,20 +75,21 @@
             {{#each tab in controller.preparedTabs}}
                 <li {{bind-attr class="tab.isActive:active:"}}>
                     {{#if tab.displayable}}
-
                         {{#unless tab.nestedViews.length}}
                             <a {{action "showView" tab.value}} style="cursor:pointer">
                                 {{tab.label}}
                             </a>
                         {{else}}
+                            {{#if tab.hasDisplayableNestedView}}
                             <a class="dropdown-toggle" style="cursor:pointer" data-toggle="dropdown">
                                 {{tab.label}} <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                {{#each nestedView in tab.nestedViews}}                                
+                                {{#each nestedView in tab.nestedViews}}
                                     <li><a {{action "showView" nestedView.value.value tab}}>{{nestedView.value.label}}</a></li>
                                 {{/each}}
                             </ul>
+                            {{/if}}
                         {{/unless}}
                     {{/if}}
                 </li>

@@ -95,45 +95,42 @@ Ember.Application.initializer({
 				computeProperties = get(this, 'computeProperties')
 
                 get(this, 'tabs').forEach(function(item, index) {
+					var insert = true
                     void(index);
-					console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-					console.error("@@@ Item before : ", item)
+
+					set(item, "hasDisplayableNestedView", false)
 
 					if (item.hasOwnProperty("nestedViews") === true) {
-						console.error("@@@ Nested views :", item.nestedViews)
 						for (var i = 0; i < item.nestedViews.length; i++) {
 
 							var viewId = item.nestedViews[i]["value"]["value"] || '';
-							console.error("@@@ viewid : ", viewId)
-							console.error("@@@ Nested view :", item.nestedViews[i])
 							computeProperties(uimaintabcollectionController, item.nestedViews[i], viewId)
 
-							console.error("@@@ Nested view displayable:", item.nestedViews[i].displayable)
-							console.error("@@@ Nested view isActive:", item.nestedViews[i].isActive)
-
 							if(item.nestedViews[i].isActive == true) {
-								console.error("@@@ isACtive flag")
 								set(item, "isActive", true)
 							}
 
 							if(item.nestedViews[i].displayable == true) {
+								set(item, "hasDisplayableNestedView", true)
 								set(item, "displayable", true)
 							}
 						}
+
 						set(item, "nestedViews", item.nestedViews.filterBy("displayable", true))
+
+						if(item.nestedViews.length === 0) {
+							insert = false
+						}
 					}
 					else{
 						var viewId = item.value || '';
 						computeProperties(uimaintabcollectionController, item, viewId)
 					}
 
-					console.error("@@@ Item after : ", item)
-					console.error("@@@ Item displayable : ", item.label, item.displayable)
-					console.error("@@@ Item active : ", item.label, item.isActive)
-                    res.pushObject(item);
+					if (insert === true){
+						res.pushObject(item);
+					}
                 });
-
-				console.error("@@@ res", res)
 
                 return res;
             }.property('tabs', 'currentViewId'),

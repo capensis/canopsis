@@ -43,9 +43,6 @@ Ember.Application.initializer({
                 if (user === 'root') {
                     return true;
                 }
-				console.error("@@@ ViewId", "|" + viewId + "|"  )
-				console.error("@@@ User", user)
-				console.error("@@@ Rights", rights)
                 return viewId && rightsflagsUtils.canRead(get(rights, viewId + '.checksum'));
             },
 
