@@ -1,15 +1,17 @@
 import importlib
 import logging
+import os
 
 from flask import Flask
 from flask_restful import Api
 
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.webcore.apps.flask.helpers import Resource
 
 app = Flask(__name__)
 
-def _auto_import(app, api, exports_funcname='exports_v3', configuration='/opt/canopsis/etc/webserver.conf'):
+def _auto_import(app, api, exports_funcname='exports_v3', configuration=os.path.join(root_path, 'etc/webserver.conf')):
     conf = Configuration.load(configuration, Ini)
     webservices = conf.get('webservices')
 
@@ -39,7 +41,7 @@ def _init(app):
     0: skip webservice
     1: load webservice
     """
-    logfile_handler = logging.FileHandler('/opt/canopsis/var/log/webserver.log')
+    logfile_handler = logging.FileHandler(os.path.join(root_path, 'var/log/webserver.log'))
     app.logger.addHandler(logfile_handler)
     app.logger.setLevel(logging.INFO)
 
