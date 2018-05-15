@@ -50,5 +50,15 @@ export default {
         console.error(err);
       }
     },
+    async fetchItem({ commit }, { id }) {
+      try {
+        const [data] = await request.get(API_ROUTES.alarmList, { params: { filter: { _id: id } } });
+        const normalizedData = normalize(data.alarms, [alarmSchema]);
+
+        commit(`entities/${entitiesTypes.ENTITIES_UPDATE}`, normalizedData.entities, { root: true });
+      } catch (err) {
+        console.error(err);
+      }
+    },
   },
 };

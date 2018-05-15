@@ -78,7 +78,9 @@ export default {
     };
   },
   computed: {
-    ...modalMapGetters(['config']),
+    ...modalMapGetters({
+      modalConfig: 'config',
+    }),
   },
   methods: {
     ...modalMapActions({ hideModal: 'hide' }),
