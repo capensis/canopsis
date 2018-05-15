@@ -1,5 +1,7 @@
 export default {
-  common: {
-    hello: 'Hello',
-  },
+    common: {
+        hello: 'Hello',
+    },
 };
+
+
