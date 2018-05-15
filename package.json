@@ -7,14 +7,14 @@
     "build": "vue-cli-service build",
     "test": "vue-cli-service test",
     "e2e": "vue-cli-service e2e",
-    "lint": "vue-cli-service lint",
-    "precommit": "lint-staged"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "lodash": "^4.17.5",
     "moment": "^2.22.1",
     "normalizr": "^3.2.4",
+    "rrule": "^2.2.9",
     "vee-validate": "^2.0.6",
     "vue": "^2.5.13",
     "vue-i18n": "^7.6.0",
@@ -32,7 +32,6 @@
     "@vue/test-utils": "^1.0.0-beta.10",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.0.4",
-    "husky": "^0.14.3",
     "jest-localstorage-mock": "^2.2.0",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.7.2",
@@ -46,6 +45,9 @@
     "last 2 versions",
     "not ie <= 8"
   ],
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
   "lint-staged": {
     "*.js": [
       "vue-cli-service lint",
