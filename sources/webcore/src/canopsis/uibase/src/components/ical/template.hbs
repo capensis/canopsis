@@ -1,0 +1,90 @@
+<div class="well">
+    <center>
+        <h1>{{title}}</h1>
+    </center>
+    <form class="form-horizontal" role="form">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpFrequency}}
+                    {{tr 'Frequency'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+
+                {{view Ember.Select
+                    class="form-control"
+                    content=frequencyForm
+                    optionValuePath="content.value"
+                    optionLabelPath="content.label"
+                    value=frequencySelection
+                }}
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpRepetitionCount}}
+                    {{tr 'Repetition count'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{input class="form-control" value=repetitionCount}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpRepetitionInterval}}
+                    {{tr 'Repetition interval'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{input class="form-control" value=repetitionInterval}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpStartDate}}
+                    {{tr 'Start date'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{component-datetimepicker content=startDate}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                {{#component-tooltip content=helpStopDate}}
+                    {{tr 'Stop date'}}
+                {{/component-tooltip}}
+            </label>
+            <div class="col-sm-10">
+                {{component-datetimepicker content=stopDate}}
+            </div>
+        </div>
+
+        <center>
+            <button class="btn btn-default" {{action "addRule"}}>{{tr 'Add rule'}}</button>
+        </center>
+
+    </form>
+
+    <hr />
+
+
+    <ul class="list-group">
+        {{#each rule in rules}}
+            <li  class="list-group-item list-group-item-success">
+                <button {{action "removeRule" rule}} class="btn btn-default">
+                    <span class="glyphicon glyphicon-minus"></span>
+                     {{tr 'Remove'}}
+                </button>
+                {{rule.value}}
+            </li>
+        {{/each}}
+    </ul>
+</div>

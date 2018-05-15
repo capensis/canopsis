@@ -1,0 +1,90 @@
+{{#if controller.loaded}}
+    <div class="btn-toolbar canopsis-toolbar" role="toolbar">
+        <div class="pull-left">
+            {{#if controller._partials.selectionToolbarButtons}}
+                {{tr 'Selection'}} :
+            {{/if}}
+            {{partialslot slot=controller._partials.selectionToolbarButtons}}
+        </div>
+        <div class="pull-right btn-group" data-toggle="btn-toggle">
+            {{partialslot slot=controller._partials.actionToolbarButtons}}
+        </div>
+        {{partialslot slot=controller._partials.header}}
+        <div style="clear:both; padding-top:4px"></div>
+        {{partialslot slot=controller._partials.subHeader}}
+    </div>
+    <div class="table-responsive">
+        {{#if controller.standardListDisplay}}
+            <table {{bind-attr id="controller.id"}} {{bind-attr class="controller.css"}} >
+                <thead>
+                    {{#if controller._partials.tableheader}}
+                        {{#each templateName in controller._partials.tableheader}}
+                            {{partial templateName}}
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <th class="checkboxes">
+                                {{component-checkbox checked=controller.isAllSelected class="toggle"}}
+                            </th>
+
+                            {{#each column in controller._partials.columnsLine}}
+                                <th></th>
+                            {{/each}}
+
+                            {{#each attr in controller.shown_columns}}
+                                {{#if attr.options.show}}
+                                    <th {{action "sort" attr}} {{bind-attr class=attr.field}}>
+                                        {{tr attr.display_title}}
+                                        {{{sorticon attr.headerClassName}}}
+                                    </th>
+                                {{/if}}
+                            {{/each}}
+                            {{#if controller._partials.itemactionbuttons}}
+                                <th class="actions">{{tr 'Actions'}}</th>
+                            {{/if}}
+                        </tr>
+                    {{/if}}
+                </thead>
+                <tbody>
+                    {{#each controller.widgetData}}
+                        {{view "listline" templateName=controller.dynamicTemplateName parentController=controller tagName="tr" unfolded=unfolded}}
+                        <!-- TODO: put in its own partial slot -->
+                        {{#if unfolded}}
+                            <tr>
+                                <td {{bind-attr colspan=controller.colspan}}>
+                                    {{partial controller.detailTemplate}}
+                                </td>
+                            </tr>
+                        {{/if}}
+                        <!-- End of TODO -->
+                    {{/each}}
+                </tbody>
+            </table>
+            {{#unless controller.widgetData.content.length}}
+                <div class="noRecordsFound">{{tr 'No matching records found'}}</div>
+            {{/unless}}
+        {{/if}}
+    </div>
+    <div class="btn-toolbar canopsis-toolbar" role="toolbar">
+        {{partialslot slot=controller._partials.footer}}
+        <div class="pull-right">
+            {{partialslot slot=controller._partials.rightFooter}}
+        </div>
+        <div style="clear:both"></div>
+        <div class="pull-left">
+            {{#if controller._partials.selectionToolbarButtons}}
+                {{tr 'For the selection'}} :
+                {{partialslot slot=controller._partials.selectionToolbarButtons}}
+            {{/if}}
+        </div>
+    </div>
+{{else}}
+    {{#if controller.dataError.statusText}}
+        <div class="callout callout-danger">
+            <h4><i class="fa fa-warning"></i>Error</h4>
+            <p>{{tr 'Error while loading data'}} ({{controller.dataError.statusText}})</p>
+        </div>
+    {{else}}
+        <i class="fa fa-refresh fa-spin"></i>
+    {{/if}}
+{{/if}}

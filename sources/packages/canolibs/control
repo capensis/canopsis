@@ -16,11 +16,6 @@ function pre_install(){
 }
 
 function post_install(){
-	echo "   + Update python-logging.conf"
-	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
-
-	check_code $?
-
 	echo "   + Create logdir for engines"
 	mkdir -p $PREFIX/var/log/engines
 	check_code $?
@@ -48,10 +43,6 @@ function pre_update(){
 }
 
 function post_update(){
-	echo "   + Update python-logging.conf"
-	sed -i s:@PREFIX@:$PREFIX:g $PREFIX/etc/python-logging.conf
-	check_code $?
-
 	echo "   + Fix permissions"
 	chown -R $HUSER:$HGROUP $PREFIX/etc
 	check_code $?

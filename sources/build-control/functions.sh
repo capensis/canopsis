@@ -130,33 +130,24 @@ function extract_archive() {
 
     if [ `echo $1 | grep 'tar.bz2$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfj"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tar.gz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfz"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tgz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="tar xfz"
+        EXTCMD="tar xf"
     elif [ `echo $1 | grep 'tar.xz$' | wc -l` -eq 1 ]
     then
-        EXTCMD="xz -d"
+        EXTCMD="tar xf"
     fi
 
     if [ "$EXTCMD" != "" ]
     then
-        if [ "$EXTCMD" != "xz -d" ]
-        then
-            echo " + Extract '$1' ('$EXTCMD') ..."
+        echo " + Extract '$1' ('$EXTCMD') ..."
 
-            $EXTCMD $1
-            check_code $? "Extract archive failure"
-        else
-            echo " + Extract '$1' ('$EXTCMD') ..."
-
-            $EXTCMD $1
-            tar xf $(echo "$1" | sed 's/.xz//')
-            check_code $? "Extract archive failure"
-        fi
+        $EXTCMD $1
+        check_code $? "Extract archive failure"
     else
         echo "Error: Impossible to extract '$1', no command found ..."
         exit 1
@@ -505,11 +496,28 @@ function export_env() {
     export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 }
 
-function easy_install_pylib() {
-    echo "Easy install Python Library: $1 ..."
+function pip_install() {
+    echo "pip install $@"
 
-    $PREFIX/bin/easy_install -Z --prefix=$PREFIX -H None -f $SRC_PATH/externals/python-libs $1 1>> $LOG 2>> $LOG
-    check_code $? "Easy install failed ..."
+    # /etc/os-release can contain a NAME var too
+    OLD_NAME=$NAME
+    # Support CAT buildinstall
+    source /etc/os-release
+    pylibpath="${SRC_PATH}/../docker/wheels/${ID}-${VERSION_ID}/"
+    if [ ! -d ${pylibpath} ]; then
+        pylibpath="${SRC_PATH}/externals/python-libs/"
+    fi
+
+    cat > ~/.pydistutils.cfg << EOF
+[easy_install]
+allow_hosts = ''
+find_links = file://${pylibpath}
+EOF
+    cat ~/.pydistutils.cfg > /opt/canopsis/.pydistutils.cfg
+    chown $HUSER:$HGROUP /opt/canopsis/.pydistutils.cfg
+    . ${PREFIX}/bin/activate && pip install --no-index --find-links=file://${pylibpath} $@
+    check_code $? "Pip install failed ..."
+    export NAME=$OLD_NAME
 }
 
 function build_pkg() {
@@ -519,7 +527,8 @@ function build_pkg() {
 
     cd $SRC_PATH
 
-    export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
+    CPUS=$(get_cpu_cores)
+    export MAKEFLAGS="-j${CPUS}"
 
     NAME="x"
     VERSION="0.1"
@@ -844,4 +853,9 @@ function show_messages() {
 
     cat $MESSAGES
     rm $MESSAGES
+}
+
+function get_cpu_cores() {
+    count=$(grep -iE '^processor.*[0-9]+$' /proc/cpuinfo | wc -l)
+    echo ${count}
 }

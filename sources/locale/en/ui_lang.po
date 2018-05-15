@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
@@ -1179,9 +1179,6 @@ msgstr "bagot consider time"
 msgid "stealthy_time"
 msgstr "stealthy consider time"
 
-msgid "stealthy_show"
-msgstr "stealthy shown duration"
-
 msgid "restore_event"
 msgstr "restore event"
 
@@ -1948,7 +1945,7 @@ msgstr ""
 " {{component}} - {{metric}}"
 
 msgid "Allow users to dynamically change chart type."
-msgstr "llow users to dynamically change chart type."
+msgstr "Allow users to dynamically change chart type."
 
 msgid "Allow to select the categorie chart representation"
 msgstr "Allow to select the categorie chart representation"
@@ -1997,6 +1994,12 @@ msgstr "storages"
 
 msgid "Storages to clean"
 msgstr "Storages to clean"
+
+msgid "write template"
+msgstr "write template"
+
+msgid "Selection"
+msgstr "Selection"
 
 msgid "Notifications"
 msgstr "Notifications"

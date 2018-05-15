@@ -1,0 +1,8 @@
+{{#if controller.rights.actionbutton_eventnavigation.checksum}}
+    <button type="button" class="btn btn-default btn-sm" {{action 'showView' 'view.event'}}>
+        <i class="fa fa-list-alt"></i>
+        {{#unless view.minified}}
+            {{tr 'Event navigation'}}
+        {{/unless}}
+    </button>
+{{/if}}

@@ -1,0 +1,61 @@
+{
+	"type": "object",
+	"metadata": {
+        "icon": "fa fa-bar-chart"
+    },
+	"categories": [{
+		"title": "General",
+		"keys":["name", "type", "enabled"]
+	},{
+		"title": "Depends",
+		"keys": ["depends"]
+	},{
+		"title": "Impact",
+		"keys": ["impact"]
+	}],
+	"properties": {
+		"name":{
+			"type": "string"
+		},
+		"type": {
+			"type": "string"
+		},
+		"enabled": {
+			"type": "boolean"
+		},
+		"depends": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		},
+		"impact": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true
+		},
+		"enable_history": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			},
+			"reorderable": true
+		},
+		"disable_history": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			},
+			"reorderable": true
+		},
+		"infos": {
+			"type": "object"
+		},
+		"measurements": {
+			"type": "object"
+		}
+	}
+}

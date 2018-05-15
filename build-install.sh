@@ -31,6 +31,10 @@ then
     . $SRC_PATH/build-control/functions.sh
 fi
 
+# Export MAKEFLAGS
+
+export MAKEFLAGS="-j$(get_cpu_cores) ${MAKEFLAGS}"
+
 # Check slink
 
 if [ -e $PREFIX/.slinked ]

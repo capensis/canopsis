@@ -1,0 +1,203 @@
+{
+  "_id": "view.history_alarms",
+  "loader_id": "view.history_alarms",
+  "loader_no_update" : true,
+  "crecord_write_time": 1521018481,
+  "enable": true,
+  "description": null,
+  "author": "root",
+  "containerwidget": {
+    "widgetId": "container_6a1204b7-ddb9-23c5-9526-7fb16e66518d",
+    "preference_id": null,
+    "xtype": "widgetcontainer",
+    "title": null,
+    "widgetslotTemplate": "widgetslot-default",
+    "mixins": [
+      {
+        "name": "verticallayout"
+      },
+      {
+        "name": "widgetfullscreen",
+        "EmberClass": {
+          "mixins": [
+            {
+              "properties": {
+                "partials": {
+                  "titlebarsbuttons": [
+                    "titlebarbutton-widgetfullscreen"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "widgetrefresh"
+      }
+    ],
+    "tagName": null,
+    "items": [
+      {
+        "id": "widgetwrapper_ef20486d-c303-1201-461e-792d5c937a10",
+        "widget": {
+          "widgetId": "widget_listalarm_487f1b1e-f141-bd96-1a3d-3a232ee8476a",
+          "preference_id": "02d32851-06cd-136f-d9a7-db7618a0e757",
+          "xtype": "listalarm",
+          "alarms_state_filter": null,
+          "title": "Alarmes résolues",
+          "default_sort_column": {
+            "direction": "DESC",
+            "property": "creation_date"
+          },
+          "mixins": [
+            {
+              "description": "Allow to iterate listed items by pages on widgets",
+              "name": "pagination",
+              "EmberClass": {
+                "mixins": [
+                  {
+                    "properties": {
+                      "totalPages": {
+                        "_dependentKeys": [
+                          "itemsTotal"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "itemsPerPagePropositions": {
+                        "_dependentKeys": [
+                          "itemsPerPagePropositionSelected"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "isFirstPage": {
+                        "_dependentKeys": [
+                          "currentPage",
+                          "paginationFirstItemIndex"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "itemsDivided": {
+                        "_dependentKeys": [
+                          "itemsTotal",
+                          "itemsPerPage"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "itemsTotal": {
+                        "_dependentKeys": [
+                          "widgetDataMetas",
+                          "widgetData"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "itemsPerPage": {
+                        "_dependentKeys": [
+                          "model.itemsPerPage",
+                          "mixinOptions.pagination.defaultItemsPerPage"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "paginationFirstItemIndex": {
+                        "_dependentKeys": [
+                          "widgetData"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "partials": {
+                        "subHeader": [
+                          "itemsperpage"
+                        ],
+                        "actionToolbarButtons": [
+                          "pagination"
+                        ],
+                        "rightFooter": [
+                          "pagination"
+                        ],
+                        "footer": [
+                          "pagination-infos"
+                        ]
+                      },
+                      "hasOnePage": {
+                        "_dependentKeys": [
+                          "totalPages"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "paginationLastItemIndex": {
+                        "_dependentKeys": [
+                          "widgetData",
+                          "itemsTotal"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "currentPage": 1,
+                      "isLastPage": {
+                        "_dependentKeys": [
+                          "currentPage",
+                          "totalPages"
+                        ],
+                        "_readOnly": false,
+                        "_cacheable": true
+                      },
+                      "_actions": {}
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "customfilterlist",
+              "description": "Add a list of filters to manage displayed results"
+            }
+          ],
+          "popup": [],
+          "tagName": null,
+          "id": "widget_listalarm_487f1b1e-f141-bd96-1a3d-3a232ee8476a",
+          "columns": [
+            "connector",
+            "connector_name",
+            "component",
+            "resource",
+            "output",
+            "state",
+            "status",
+            "last_update_date",
+            "extra_details"
+          ],
+          "widget_columns": [
+            {"label": "Connector", "value": "connector"},
+            {"label":"Connector name", "value":"connector_name"},
+            {"label":"Component", "value": "component"},
+            {"label": "Resource", "value":"resource"},
+            {"label": "Output", "value": "output"},
+            {"label": "State", "value":"state"},
+            {"label": "status", "value":"status"},
+            {"label": "Last udpate", "value": "last_update_date"},
+            {"label": "Extra details", "value": "extra_details"}
+          ]
+        },
+        "mixins": [],
+        "xtype": "widgetwrapper",
+        "title": "wrapper"
+      }
+    ],
+    "id": "container_6a1204b7-ddb9-23c5-9526-7fb16e66518d"
+  },
+  "tags": [
+    "default"
+  ],
+  "crecord_creation_time": 0,
+  "crecord_type": "view",
+  "internal": false,
+  "crecord_name": "History_Alarms"
+}

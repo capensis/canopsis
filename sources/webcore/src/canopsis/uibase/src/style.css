@@ -1,0 +1,733 @@
+.scrollableList {
+    max-height: 300px;
+    overflow-x:hidden;
+    overflow-y:auto;
+}
+
+/* Properties for colorGrid editor and dropdownbutton*/
+.btn-secondary{
+    color: #333;
+    background-color: #eee;
+    border-color: #eee;
+}
+
+.rangeName{
+    margin-left: 7px;
+    padding-top: 5px;
+}
+
+.overview{
+    border: 1px solid #fff;
+    display: inline-block;
+    height: 20px;
+    width: 30px;
+    margin: 0 5px 0 5px;
+    float: left;
+}
+
+.rangeBrowser{
+    position: relative;
+    display: block;
+    height: 185px;
+    width: 100%;
+    min-height: 90px;
+    border: 1px solid #ddd;
+    background-color: #eee;
+    overflow: auto;
+}
+
+.rangeColorChoose{
+    display: inline-block;
+    margin-left: 5%;
+    width: 155px;
+    height: 33px;
+}
+
+.range{
+    height: 38px;
+}
+
+.rangeColorBtn{
+    display: inline-block;
+    float: left;
+}
+
+.rangeColorSelect{
+    width: 100%;
+    margin: 0% 1.5% 0% 1.5%;
+    float: left;
+}
+
+.colorBtn{
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.opening{
+    padding-bottom: 10px;
+    display: block;
+}
+
+.opening span{
+    margin-bottom: 10px;
+    display: inline-block;
+    float: left;
+    background-color: #eee;
+}
+
+.activeColor{
+    color: #555;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    border-bottom-color: transparent;
+}
+
+#colorSelectorList{
+    display: block;
+    margin-top: 10px;
+    border-bottom: 1px solid #ddd;
+    width: 400px;
+}
+
+#colorSelectorList li{
+    display: inline-block;
+    float: left;
+    background-color: #fff;
+}
+
+.colorGrid{
+    height: 201px;
+    width: 100%;
+    float: left;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.colorElement{
+    height: 20px;
+    width: 30px;
+    float: left;
+    cursor: pointer;
+}
+
+.unSelectedColorGrid {
+    border: 1px solid #ddd;
+}
+
+.selectedColorGrid {
+    border: 2px solid #444;
+}
+
+div .customcolor{
+    width : 100%;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    float: left;
+    display: inline-block;
+}
+
+.dropdown-content-menu{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 6000;
+    float: left;
+    min-width: 160px;
+    font-size: 14px;
+    overflow: auto;
+    max-height: 400px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+/*Avoids double scroll bar in main page*/
+#applicationdiv > div{
+    overflow-y:hidden;
+}
+
+html {
+    margin-left: 0 !important;
+}
+
+.emphasis{
+    font-weight:bold !important;
+    text-decoration: underline !important;
+}
+
+.noyscroll{
+    overflow: visible !important;
+}
+
+#recordinfopopup{
+    margin-top:5%;
+    position:fixed;
+    z-index: 90;
+}
+
+.hand{
+    cursor:move;
+}
+
+#recordinfopopup .recordinfopopupcontent {
+    text-align:left;
+}
+
+.fleft {
+    float: left;
+}
+
+.fright {
+    float: right;
+}
+
+html{
+    overflow: auto;
+}
+
+.box {
+    overflow: auto;
+}
+
+.jsonUl {
+    padding:0px;
+}
+.jsonLi {
+    list-style-type: none;
+    padding-left:10px;
+}
+
+th {
+    text-align: center;
+}
+
+.main-content {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+ul.nav li.dropdown:hover > ul.dropdown-menu {
+    display: block;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.handle{
+    cursor: move;
+}
+
+.underline:hover{
+    text-decoration: underline;
+}
+
+.color{
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 4px;
+    text-align: center;
+}
+
+.alertBox{
+    position:absolute;
+    z-index:100;
+    width:50%;
+    left:25%;
+    margin-top:30px;
+}
+
+.cell
+{
+    border : 2px solid white;
+}
+
+.global {margin: 0 auto;}
+
+
+.label{
+     text-align: center;
+     position: relative;
+    vertical-align: middle;
+}
+
+.color-green {
+    color: green;
+}
+
+.color-red {
+    color: red;
+}
+
+.help-block{
+    color : #C94141;
+}
+
+.btn-items-green:hover{
+    background-color:rgb(164, 244, 77);
+}
+
+.btn-items-red:hover{
+    background-color:rgb(244, 77, 164);
+}
+
+.btn-items-green{
+    background-color :  rgb(10, 255, 10);
+    border: 2px solid  rgb(137, 255, 137);
+
+    border-radius: 12px;
+    color : white;
+    width : 8%;
+    height : 29px;
+}
+
+.btn-items-red{
+    background-color : rgb(240, 10, 10);
+    border: 2px solid  rgb(255, 137, 137);
+
+    border-radius: 12px;
+    color : white;
+}
+
+.btn-items-green:active{
+    background-color :  rgb(255, 255, 10);
+    border: 0px solid  rgb(137, 255, 137);
+}
+
+.ember-select-results,
+.ember-typeahead-results {
+  background-color: white  !important;
+}
+
+.ember-select {
+    width:100%;
+}
+
+.dataTables_filter {
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+.dataTables_filter select, .dataTables_filter input {
+    height: 34px;
+    width: auto;
+    display: inline-block;
+}
+
+.box {
+    padding:10px;
+}
+
+.btn.unclickable {
+    cursor: default;
+}
+
+.btn.unclickable {
+    cursor: default;
+}
+
+.nav-tabs > li .badge {
+    margin: -2px 0 0 10px;
+    font-size: 18px;
+}
+
+.dropdown-menu .tab-content{
+    max-height: 200px;
+    overflow: auto;
+}
+
+table.dataTable {
+    border-collapse: collapse;
+}
+
+table.dataTable>thead>tr>th {
+    border-bottom: 2px solid #ddd;
+    width: 0px;
+}
+
+.label .glyphicon {
+    top: 2px;
+}
+
+.flotchart {
+    min-height: 150px;
+}
+
+#formwrapper{
+    margin-right: auto;
+    width:300%;
+    margin-left: -100%;
+}
+
+@media (max-width: 768px) {
+    #formwrapper {
+        width: auto;
+        margin-left: 0;
+
+    }
+}
+
+/* .modal {
+    right: auto !important;
+} */
+
+.modal-dialog {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+div.noRecordsFound {
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin-bottom: 6px;
+}
+
+aside.fullscreen {
+    margin-left: 0 !important;
+}
+
+.superscript {
+    margin-bottom:1em;
+    font-size: 50%;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    padding: 10px 0;
+    overflow: hidden;
+    font-size: 90%;
+}
+
+td, th {
+    overflow-x: hidden;
+}
+
+th.checkboxes {
+    width:26px;
+}
+
+table.sortable th {
+    cursor: pointer;
+}
+
+.content {
+    padding: 7px !important;
+}
+
+.table>thead:first-child>tr:first-child>th {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.popover {
+    background: black !important;
+    color:white !important;
+}
+
+.popover.in{
+    opacity:.8;
+    filter:alpha(opacity=80)
+}
+
+.popover.bottom .arrow:after {
+    border-bottom-color: black!important;
+}
+
+.popover.top .arrow:after {
+    border-top-color: black!important;
+}
+
+#loadingInfo {
+    position:absolute;
+    top: 45%;
+    width:100%;
+    text-align:center;
+}
+
+#moduleList {
+    font-size: 9px;
+    position:absolute;
+    top: 65%;
+    width:100%;
+    text-align:center;
+}
+
+#loading {
+    position:absolute;
+    top: 50%;
+    left: 50%
+}
+
+#loading i {
+    position:relative;
+    top:-50%;
+    left:-50%
+}
+
+a {
+    cursor: pointer;
+}
+
+table.dataTable {
+    font-size:90%;
+}
+
+td >.renderer {
+    overflow: hidden;
+    display: inline-block;
+    max-height: 100px;
+}
+
+td.overflowed > .placeddiv {
+    -moz-box-shadow: 0px 0px 5px 0px #656565;
+    -webkit-box-shadow: 0px 0px 5px 0px #656565;
+    -o-box-shadow: 0px 0px 5px 0px #656565;
+    box-shadow: 0px 0px 5px 0px #656565;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=NaN, Strength=5);
+    white-space: normal;
+}
+
+table.dataTable tbody th, table.dataTable tbody td {
+    padding: 3px !important;
+}
+
+.progress-label {
+    float: left;
+    margin-right: 1em;
+}
+
+.PBinline {
+    display:inline-flex;
+    width:400px;
+}
+
+.PB {
+    width:400px;
+}
+
+.subitems {
+    text-align: left;
+    cursor: auto;
+    font-weight: initial;
+}
+
+.time-tooltip {
+    position: absolute;
+    display: none;
+    padding: 3px;
+    font-size: 9px;
+    border-radius: 5px;
+    background-color: #fff;
+    font-family: Verdana, Arial, Helvetica, Tahoma, sans-serif;
+    opacity: 0.9;
+}
+
+.valueLabels {
+    font-size:70%;
+    color:black;
+}
+div.valueLabelLight {
+    opacity:0.5;
+    background-color: white;
+    border:none;
+    position:absolute;
+}
+div.valueLabel {
+    position:absolute;
+    border:none;
+}
+
+table.dataTableConnector {
+    font-size:90%;
+    white-space: nowrap;
+}
+
+.grouped-cell-label, .grouped-cell-label-even {
+    text-align: right;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.grouped-cell-label {
+    background-color: #CCCCCC;
+}
+
+/*.loadtooltip {
+    background-color: #333;
+    -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+
+    position: fixed;
+    padding: 5px;
+    bottom: 25px;
+    right: 25px;
+}*/
+
+.loadtooltip {
+    color: #000;
+    position: fixed;
+    padding: 5px;
+    top: 8px;
+    right: 8px;
+}
+
+.box-header{
+    padding-bottom: 0px !important;
+}
+
+.box-header h3{
+    padding-bottom: 10px;
+}
+
+.box-header .btn-group {
+    margin-right: 2px;
+    margin-left: 2px;
+}
+
+.list table {
+    margin-bottom: 0;
+}
+
+.halfwidth {
+    width: 50%;
+    float:left;
+}
+
+.no-margin {
+    margin:0 !important;
+}
+
+.no-padding {
+    padding:0 !important;
+}
+
+/* for 5 elements per line in hboxes */
+.col-xs-15,
+.col-sm-15,
+.col-md-15,
+.col-lg-15 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.col-xs-15 {
+    width: 20%;
+    float: left;
+}
+@media (min-width: 768px) {
+.col-sm-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 992px) {
+    .col-md-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 1200px) {
+    .col-lg-15 {
+        width: 20%;
+        float: left;
+    }
+}
+
+/* for 5 elements per line in hboxes */
+.col-xs-13,
+.col-sm-13,
+.col-md-13,
+.col-lg-13 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.col-xs-13 {
+    width: 33.33%;
+    float: left;
+}
+@media (min-width: 768px) {
+.col-sm-13 {
+        width: 33.33%;
+        float: left;
+    }
+}
+@media (min-width: 992px) {
+    .col-md-13 {
+        width: 33.33%;
+        float: left;
+    }
+}
+@media (min-width: 1200px) {
+    .col-lg-13 {
+        width: 33.33%;
+        float: left;
+    }
+}
+
+.widget.list th {
+    padding: 4px;
+}
+
+.richtexteditor .editor {
+    overflow: auto;
+}
+.richtexteditor .editor table td{
+    border: 1px solid #ccc;
+    padding:5px;
+}
+
+.dropdownbutton-mask {
+    background: black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    opacity: 0.0;
+    filter:alpha(opacity=0);
+    -moz-opacity:0.0;
+}
+
+.nested-view {
+    margin-bottom: 20px;
+    width: 90%;
+    margin-left: 10%;
+
+}
+
+.add-nested-item {
+    margin-top: 10px;
+}

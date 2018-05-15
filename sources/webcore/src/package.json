@@ -1,0 +1,20 @@
+{
+  "name": "canopsis-frontend",
+  "version": "2.0.0",
+  "description": "Canopsis user interface",
+  "main": "canopsis/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Capensis",
+  "license": "GNU Affero General Public License",
+  "dependencies": {
+    "jsdoc": "^3.3.2",
+    "jsdoc-rst-template": "git://github.com/gwenaelp/jsdoc-rst-template.git"
+  },
+  "scripts": {
+    "rst-doc": "./node_modules/.bin/jsdoc -t ./node_modules/jsdoc-rst-template/template --recurse canopsis -d docs/rst -c .jsdoc.conf.json",
+    "html-doc": "./node_modules/.bin/jsdoc -c .jsdoc.conf.json --recurse canopsis/canopsis-rights -d docs/html",
+    "install-doc" : "rm -Rf ../lib/canopsis/doc/api/frontend && mkdir ../lib/canopsis/doc/api/frontend && cp -R docs/rst/* ../lib/canopsis/doc/api/frontend"
+  }
+}

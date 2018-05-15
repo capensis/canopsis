@@ -1,0 +1,43 @@
+<div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+    Please note that this widget is deprecated. It will be removed at the next Canopsis version.
+    Unstead, you could use <a target='_blank' href='https://git.canopsis.net/canopsis-ui-bricks/brick-timechart'>this one</a>
+</div>
+
+<div class="flotchart-container">
+    <div class="flotchart-plot-container">
+        {{component-flotchart
+            options=controller.chartOptions
+            series=controller.dataSeries
+            human=controller.human_readable
+        }}
+    </div>
+
+    {{#if controller.timenav}}
+        <div class="flotchart-preview-container">
+            <p><strong>Time navigation:</strong></p>
+
+            {{component-flotchart
+                options=controller.timenavOptions
+                series=controller.dataSeries
+                human=controller.human_readable
+            }}
+        </div>
+    {{/if}}
+
+    <div class="flotchart-legend-container">
+    </div>
+
+    <div class="pull-right">
+        {{#if controller.timenav}}
+            <button type="button" class="btn btn-info btn-sm pull-right" {{action "stepForward" target=view}}>
+                <i class="fa fa-step-forward"></i>
+            </button>
+
+            <button type="button" class="btn btn-info btn-sm pull-right" {{action "stepBack" target=view}}>
+                <i class="fa fa-step-backward"></i>
+            </button>
+        {{/if}}
+    </div>
+</div>

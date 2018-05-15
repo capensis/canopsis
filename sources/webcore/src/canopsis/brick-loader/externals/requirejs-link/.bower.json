@@ -1,0 +1,35 @@
+{
+  "name": "requirejs-link",
+  "main": "link.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals"
+  ],
+  "keywords": [
+    "requirejs",
+    "link",
+    "HTMLImport",
+    "css"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/gartz/requirejs-link",
+  "version": "0.1.1",
+  "_release": "0.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.1",
+    "commit": "b2a86cf1a3e710398d9f5b3de39bcc3d3b46d3ae"
+  },
+  "_source": "git://github.com/gartz/requirejs-link.git",
+  "_target": "~0.1.1",
+  "_originalSource": "requirejs-link",
+  "_direct": true
+}

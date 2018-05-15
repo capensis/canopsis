@@ -1,0 +1,41 @@
+{{#if isLoading}}
+    loading
+{{else}}
+    <table class="table table-striped">
+        {{#each right in rightsArray}}
+            {{#if right.checksum}}
+                <tr>
+                    <td>
+                        <span class="label label-default">Role</span>
+                    </td>
+                    <td>
+                        {{right.role}}
+                    </td>
+                    <td>
+                        {{component-right-checksum right=right onChecksumChange="onRightChecksumChange" onChecksumChangeTarget=controller}}
+                    </td>
+                </tr>
+            {{/if}}
+        {{/each}}
+        {{#if rolesWithoutRights.length}}
+          <tr class="active">
+              <td></td>
+              <td>
+                  {{view "select"
+                     content=rolesWithoutRights
+                     optionValuePath="content._id"
+                     optionLabelPath="content._id"
+                     class="fright"
+                     class="inlineInput form-control input-sm"
+                     value=addedRole}}
+              </td>
+              <td>
+                  <button type="button" class="btn btn-success btn-xs" {{action "addNewRight"}}>
+                      <span class="glyphicon glyphicon-plus"></span> Create right
+                  </button>
+              </td>
+          </tr>
+        {{/if}}
+
+    </table>
+{{/if}}

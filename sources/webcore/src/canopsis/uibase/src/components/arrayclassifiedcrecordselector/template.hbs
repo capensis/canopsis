@@ -1,0 +1,5 @@
+{{#if loadingInitialContent}}
+    <i class="fa fa-refresh fa-spin"></i>
+{{else}}
+    {{component-classifieditemselector content=this.classifiedItems target=this multiselect=multiselect selection=selectionUnprepared}}
+{{/if}}

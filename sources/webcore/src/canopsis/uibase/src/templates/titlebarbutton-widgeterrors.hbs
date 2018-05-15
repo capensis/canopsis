@@ -1,0 +1,8 @@
+{{#each error in widget.displayedErrors}}
+    <span class="label label-danger">{{error}}</span>
+{{/each}}
+{{#if widget.displayedErrors}}
+    <button type="button" class="btn btn-danger btn-xs">
+        <i class="fa fa-bug"></i>
+    </button>
+{{/if}}

@@ -1,0 +1,19 @@
+{
+    "recurse": true,
+    "plugins": ["node_modules/canopsis-ui-toolbelt/externals/jsdoc-template/plugins/widget-tag", "plugins/markdown"],
+    "source": {
+        "excludePattern": "externals|node_modules"
+    },
+    "opts": {
+        "destination": "doc/jsdoc",
+        "recurse": true,
+        "template": "./node_modules/canopsis-ui-toolbelt/externals/jsdoc-template"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "default": {
+            "outputSourceFiles": true
+        }
+    }
+}

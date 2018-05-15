@@ -1,0 +1,22 @@
+<div class="">
+    <h1 class="">Welcome to Ember-JSONEditor</h1>
+
+    <h2>Editor</h2>
+
+    {{json-editor json=model mode=controller.mode name=controller.name}}
+
+    <hr/>
+
+    <h2>Options</h2>
+
+    Name: {{input value=controller.name}}
+
+    <br/>
+
+    Mode: {{view Ember.Select content=controller.modes value=controller.mode}}
+
+    <h2>Raw JSON</h2>
+
+    <pre>{{pretty-print model undefined 4}}</pre>
+
+</div>

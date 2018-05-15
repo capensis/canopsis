@@ -1,88 +1,45 @@
+#!/bin/bash
 NAME="canolibs"
-
-PROJECTS[1]='common'
-PROJECTS[2]='old'
-PROJECTS[3]='configuration'
-PROJECTS[4]='timeserie'
-PROJECTS[5]='middleware'
-PROJECTS[6]='task'
-PROJECTS[7]='rpc'
-PROJECTS[8]='mom'
-PROJECTS[9]='storage'
-PROJECTS[10]='mongo'
-PROJECTS[11]='schema'
-PROJECTS[12]='ctxprop'
-PROJECTS[13]='event'
-PROJECTS[14]='kombu'
-PROJECTS[15]='context'
-PROJECTS[16]='context_graph'
-PROJECTS[17]='monitoring'
-PROJECTS[18]='perfdata'
-PROJECTS[19]='tools'
-PROJECTS[20]='watcher'
-PROJECTS[21]='sla'
-PROJECTS[22]='engines'
-PROJECTS[23]='connectors'
-PROJECTS[24]='cli'
-PROJECTS[25]='organisation'
-PROJECTS[26]='check'
-PROJECTS[27]='graph'
-PROJECTS[28]='topology'
-PROJECTS[29]='linklist'
-PROJECTS[30]='vevent'
-PROJECTS[31]='ccalendar'
-PROJECTS[32]='pbehavior'
-PROJECTS[33]='session'
-PROJECTS[34]='webcore'
-PROJECTS[35]='alerts'
-PROJECTS[36]='serie'
-PROJECTS[37]='stats'
-PROJECTS[38]='migration'
-PROJECTS[39]='influxdb'
-PROJECTS[40]='downtime'
 
 function build() {
 	true
 }
 
 function install() {
-    # install all projects
-    for project in "${PROJECTS[@]}"
-    do
-        echo "-- Install project: $project"
-        export CPS_PREFIX="$PREFIX/etc/"
-        cd $SRC_PATH/python/$project
+    echo "-- Install Python Canopsis"
+    export CPS_PREFIX_ETC="$PREFIX/etc/"
+    cd $SRC_PATH/canopsis
 
-        launch_log $NAME 'python setup.py install'
-        check_code $? "Impossible to install $project"
+    rm -rf build canopsis.egg-info dist
 
-        install_pytests "$project"
+    pip_install .
+    check_code $? "Impossible to install canopsis"
 
-        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
-    done
+    rsync -avKSH etc/ ${CPS_PREFIX_ETC}
+
+    install_pytests "canopsis"
+
+    rm -rf build canopsis.egg-info dist
 
     install_init "canopsis"
-
-    # TODO when fabric will be available
-    # launch_log $NAME fab -H localhost -u $HUSER -p canopsis setup
 }
 
 function update() {
     # install all projects
-    for project in "${PROJECTS[@]}"
-    do
-        echo "-- Update project: $project"
-        export CPS_PREFIX="$PREFIX/etc/"
-        cd $SRC_PATH/python/$project
+    echo "-- Update Python Canopsis"
 
-        launch_log $NAME "python setup.py install --no-conf"
-        check_code $? "Impossible to update $project"
+    # absent final slash is important for backup
+    cd $SRC_PATH/canopsis
 
-        install_pytests "$project"
+    rm -rf build canopsis.egg-info dist
 
-        chown $HUSER:$HGROUP -Rf build canopsis.$project.egg-info dist
-        update_conffiles ./etc
-    done
+    pip_install -U .
+    check_code $? "Impossible to update canopsis"
+
+    install_pytests "canopsis"
+
+    rm -rf build canopsis.egg-info dist
+    #update_conffiles ./etc
 
     install_init "canopsis"
 }

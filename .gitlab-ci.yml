@@ -1,0 +1,35 @@
+stages:
+  - test
+
+before_script:
+  - uname -a
+  - docker -v
+  - git --no-pager show
+
+variables:
+  WHEEL_DIR: "/tmp/canopsis-wheelrep"
+  COMPOSE_HTTP_TIMEOUT: "180"
+  SYSBASE: "debian-9"
+
+stage_test:
+  stage: test
+  tags: ["canopsis"]
+  script:
+    - git submodule update --init
+    - ./build-docker.sh ci develop
+    - git submodule update --init
+    - ./build-docker.sh ci develop test-ci
+    - echo CANOPSIS_TAG=${SYSBASE}-ci-test >> .env
+    - docker-compose -f docker-compose.ci.yml -p test${CI_JOB_ID} up -d
+    - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "source ~/.bashrc && /opt/canopsis/bin/ut_runner /opt/canopsis/test"
+    - docker cp test${CI_JOB_ID}_webserver_1:/opt/canopsis/tmp/tests_report/ tests_report
+    - docker-compose -f docker-compose.ci.yml -p test-${CI_JOB_ID} kill
+    - docker-compose -f docker-compose.ci.yml -p test-${CI_JOB_ID} rm -sf
+    - docker volume prune -f
+
+  artifacts:
+    paths:
+      - tests_report
+
+after_script:
+  - docker-compose -f docker-compose.ci.yml -p test-${CI_JOB_ID} down
