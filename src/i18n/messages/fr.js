@@ -1,5 +1,25 @@
 export default {
   common: {
     hello: 'Bonjour',
+    title: 'Titre',
+    save: 'Sauvegarder',
+    label: 'Label',
+    value: 'Valeur',
+  },
+  alarm_list_settings: {
+    alarm_list_settings: 'Paramètres du bac à alarmes',
+    widget_title: 'Titre du widget',
+    column_name: 'Nom de la colonne',
+    default_sort_column: 'Colonne de tri par défaut',
+    column_names: 'Colonnes',
+    periodic_refresh: 'Rafraichissement périodique',
+    default_number_of_elements_per_page: 'Nombre d\'élements par page',
+    elements_per_page: 'Eléments par page',
+    filter_on_open_resolved: 'Filtre sur Ouverte/Résolue',
+    open: 'Ouvertes',
+    resolved: 'Résolues',
+    filters: 'Filtres',
+    select_a_filter: 'Sélectionner un filter',
+    info_popup: 'Popup infos',
   },
 };
