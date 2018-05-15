@@ -4,18 +4,18 @@ import logging
 from flask import Flask
 from flask_restful import Api
 
-from canopsis.common.ini_parser import IniParser
+from canopsis.confng import Configuration, Ini
 from canopsis.webcore.apps.flask.helpers import Resource
 
 app = Flask(__name__)
 
 def _auto_import(app, api, exports_funcname='exports_v3', configuration='/opt/canopsis/etc/webserver.conf'):
-    conf = IniParser(configuration, app.logger)
+    conf = Configuration.load(configuration, Ini)
     webservices = conf.get('webservices')
 
     for webservice, enabled in webservices.items():
         if int(enabled) == 1:
-            wsmod = importlib.import_module('canopsis.webcore.services.{}'.format(webservice))
+            wsmod = importlib.import_module('{}'.format(webservice))
 
             if hasattr(wsmod, exports_funcname):
                 app.logger.info('webservice {}: loading'.format(webservice))
