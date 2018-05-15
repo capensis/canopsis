@@ -14,6 +14,8 @@ ecdsa==0.11
 enum34==1.1.6
 extras==0.0.3
 Fabric==1.9.1
+flask
+flask_restful
 funcsigs==0.4
 functools32==3.2.3-2
 fuzzywuzzy==0.9.0
@@ -54,6 +56,7 @@ python3-saml==1.4.0
 pytz==2014.2
 requests==2.18.4
 RestrictedPython==3.6.0
+routes
 setuptools_cython==0.2.1
 simplejson==2.1.6
 six==1.10.0
