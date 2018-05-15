@@ -8,7 +8,7 @@ export const API_ROUTES = {
   login: '/login',
   alarmList: '/alerts/get-alarms',
   pbehavior: '/api/v2/pbehavior',
-  event: `${API_HOST}/event`,
+  event: '/event',
 };
 
 export const NON_AUTH_API_ROUTES = [

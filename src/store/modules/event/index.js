@@ -1,4 +1,4 @@
-import axios from 'axios';
+import request from '@/services/request';
 import { API_ROUTES } from '../../../config';
 
 function prepareData(data, eventType) {
@@ -35,7 +35,7 @@ export default {
   actions: {
     async cancelAck(context, data) {
       try {
-        await axios.post(API_ROUTES.event, {
+        await request.post(API_ROUTES.event, {
           event: prepareData(data, 'ackremove'),
         });
       } catch (e) {
@@ -44,7 +44,7 @@ export default {
     },
     async ack(context, data) {
       try {
-        await axios.post(API_ROUTES.event, {
+        await request.post(API_ROUTES.event, {
           event: prepareData(data, 'ack'),
         });
       } catch (e) {
@@ -53,7 +53,7 @@ export default {
     },
     async declare(context, data) {
       try {
-        await axios.post(API_ROUTES.event, {
+        await request.post(API_ROUTES.event, {
           event: prepareData(data, 'declareticket'),
         });
       } catch (e) {
@@ -62,7 +62,7 @@ export default {
     },
     async changeState(context, data) {
       try {
-        await axios.post(API_ROUTES.event, {
+        await request.post(API_ROUTES.event, {
           event: prepareData(data, 'changestate'),
         });
       } catch (e) {
@@ -71,7 +71,7 @@ export default {
     },
     async cancelAlarm(context, data) {
       try {
-        await axios.post(API_ROUTES.event, {
+        await request.post(API_ROUTES.event, {
           event: prepareData(data, 'cancel'),
         });
       } catch (e) {
@@ -80,7 +80,7 @@ export default {
     },
     async snooze(context, data) {
       try {
-        axios.post(API_ROUTES.event, {
+        request.post(API_ROUTES.event, {
           event: prepareData({
             ...data,
             state: 3,
