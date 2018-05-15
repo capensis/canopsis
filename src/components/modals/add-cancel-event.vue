@@ -23,12 +23,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 
+const { mapActions } = createNamespacedHelpers('event');
+
 export default {
-  $_veeValidate: {
-    validator: 'new',
-  },
+  name: 'add-cancel-event',
   components: {
     AlarmGeneralTable,
   },
@@ -39,12 +40,27 @@ export default {
       },
     };
   },
+  $_veeValidate: {
+    validator: 'new',
+  },
+
   methods: {
+    ...mapActions([
+      'cancelAck',
+    ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        console.log('SUBMITTED');
+        await this.cancelAck({
+          resource: 'res0',
+          id: '652d34d0-4eda-11e8-841e-0242ac12000a',
+          customAttributes: {
+            output: this.form.output,
+            cancel: 1,
+          },
+        });
+      // todo hide modal action
       }
     },
   },

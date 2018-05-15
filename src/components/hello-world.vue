@@ -25,11 +25,11 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.fetchList({ params: { limit: 10 } });
-  },
   computed: {
     ...alarmMapGetters(['items']),
+  },
+  mounted() {
+    this.fetchList({ params: { limit: 10 } });
   },
   methods: {
     ...alarmMapActions(['fetchList']),

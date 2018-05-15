@@ -37,7 +37,10 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
+
+const { mapActions } = createNamespacedHelpers('event');
 
 export default {
   $_veeValidate: {
@@ -62,10 +65,28 @@ export default {
     },
   },
   methods: {
+    ...mapActions([
+      'ack',
+      'declare',
+    ]),
     async submit() {
       this.showValidationErrors = false;
       this.errors.clear();
-      console.log('ADD_ACK');
+      const requestData = {
+        id: '652d34d0-4eda-11e8-841e-0242ac12000a',
+        resource: 'res0',
+        customAttributes: {},
+      };
+
+      if (this.form.ticket) {
+        requestData.customAttributes.ticket = this.form.ticket;
+      }
+
+      if (this.form.output) {
+        requestData.customAttributes.output = this.form.output;
+      }
+
+      this.ack(requestData);
     },
     async submitWithAdditions() {
       this.showValidationErrors = true;
@@ -76,7 +97,14 @@ export default {
         if (formIsValid) {
           await this.submit();
 
-          // send request to add report
+          await this.declare({
+            id: '652d34d0-4eda-11e8-841e-0242ac12000a',
+            resource: 'res0',
+            customAttributes: {
+              output: 'declare ticket',
+            },
+          });
+        //  todo hide modal action
         }
       });
     },
