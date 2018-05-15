@@ -104,6 +104,7 @@ export default {
               output: 'declare ticket',
             },
           });
+        //  todo hide modal action
         }
       });
     },

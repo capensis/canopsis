@@ -74,6 +74,7 @@ export default {
             duration,
           },
         });
+        //  todo hide modal
       }
     },
   },

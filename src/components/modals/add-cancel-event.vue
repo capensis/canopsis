@@ -52,19 +52,15 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.cancelAck({
-            resource: 'res0',
-            id: '652d34d0-4eda-11e8-841e-0242ac12000a',
-            customAttributes: {
-              output: this.form.output,
-              cancel: 1,
-            },
-          });
-          this.form.output = '';
-        } catch (e) {
-          console.log(e);
-        }
+        await this.cancelAck({
+          resource: 'res0',
+          id: '652d34d0-4eda-11e8-841e-0242ac12000a',
+          customAttributes: {
+            output: this.form.output,
+            cancel: 1,
+          },
+        });
+      // todo hide modal action
       }
     },
   },

@@ -68,6 +68,7 @@ export default {
             output: this.form.output,
           },
         });
+      //  todo hide modal
       }
     },
   },

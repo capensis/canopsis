@@ -34,37 +34,61 @@ export default {
   namespaced: true,
   actions: {
     async cancelAck(context, data) {
-      return axios.post(API_ROUTES.event, {
-        event: prepareData(data, 'ackremove'),
-      });
+      try {
+        await axios.post(API_ROUTES.event, {
+          event: prepareData(data, 'ackremove'),
+        });
+      } catch (e) {
+        console.log(e);
+      }
     },
     async ack(context, data) {
-      return axios.post(API_ROUTES.event, {
-        event: prepareData(data, 'ack'),
-      });
+      try {
+        await axios.post(API_ROUTES.event, {
+          event: prepareData(data, 'ack'),
+        });
+      } catch (e) {
+        console.log(e);
+      }
     },
     async declare(context, data) {
-      return axios.post(API_ROUTES.event, {
-        event: prepareData(data, 'declareticket'),
-      });
+      try {
+        await axios.post(API_ROUTES.event, {
+          event: prepareData(data, 'declareticket'),
+        });
+      } catch (e) {
+        console.log(e);
+      }
     },
     async changeState(context, data) {
-      return axios.post(API_ROUTES.event, {
-        event: prepareData(data, 'changestate'),
-      });
+      try {
+        await axios.post(API_ROUTES.event, {
+          event: prepareData(data, 'changestate'),
+        });
+      } catch (e) {
+        console.log(e);
+      }
     },
     async cancelAlarm(context, data) {
-      return axios.post(API_ROUTES.event, {
-        event: prepareData(data, 'cancel'),
-      });
+      try {
+        await axios.post(API_ROUTES.event, {
+          event: prepareData(data, 'cancel'),
+        });
+      } catch (e) {
+        console.log(e);
+      }
     },
     async snooze(context, data) {
-      return axios.post(API_ROUTES.event, {
-        event: prepareData({
-          ...data,
-          state: 3,
-        }, 'snooze'),
-      });
+      try {
+        axios.post(API_ROUTES.event, {
+          event: prepareData({
+            ...data,
+            state: 3,
+          }, 'snooze'),
+        });
+      } catch (e) {
+        console.log(e);
+      }
     },
   },
 };
