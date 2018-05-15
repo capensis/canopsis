@@ -29,6 +29,10 @@ import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
 const { mapActions } = createNamespacedHelpers('event');
 
 export default {
+  name: 'add-cancel-event',
+  components: {
+    AlarmGeneralTable,
+  },
   data() {
     return {
       form: {
@@ -39,23 +43,19 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    AlarmGeneralTable,
-  },
-  name: 'add-cancel-event',
 
   methods: {
     ...mapActions([
-      'cancelAlarm',
+      'cancelAck',
     ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         try {
-          await this.cancelAlarm({
-            resource: 'res97',
-            id: 'aadf7970-4eda-11e8-841e-0242ac12000a',
+          await this.cancelAck({
+            resource: 'res0',
+            id: '652d34d0-4eda-11e8-841e-0242ac12000a',
             customAttributes: {
               output: this.form.output,
               cancel: 1,

@@ -73,8 +73,8 @@ export default {
       this.showValidationErrors = false;
       this.errors.clear();
       const requestData = {
-        id: 'a5c06ddc-4eda-11e8-841e-0242ac12000a',
-        resource: 'res90',
+        id: '652d34d0-4eda-11e8-841e-0242ac12000a',
+        resource: 'res0',
         customAttributes: {},
       };
 
@@ -98,8 +98,8 @@ export default {
           await this.submit();
 
           await this.declare({
-            id: 'a5c06ddc-4eda-11e8-841e-0242ac12000a',
-            resource: 'res90',
+            id: '652d34d0-4eda-11e8-841e-0242ac12000a',
+            resource: 'res0',
             customAttributes: {
               output: 'declare ticket',
             },
