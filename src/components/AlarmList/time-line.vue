@@ -34,7 +34,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
 import request from '@/services/request';
-import StateFlag from '../BasicComponent/state-flag.vue';
+import StateFlag from '../BasicComponent/alarm-flag.vue';
 import AlarmChips from '../BasicComponent/alarm-chips.vue';
 import TimeItem from '../BasicComponent/time-item.vue';
 
