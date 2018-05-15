@@ -40,7 +40,7 @@ class WebServerPy(Application):
         """
         Must return the final WSGI app object.
         """
-        return self.wsgi_getter()
+        return self.wsgi_getter
 
 
 if __name__ == "__main__":
