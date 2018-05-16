@@ -2,14 +2,14 @@
   v-form(@submit.prevent="submit")
     v-card
       v-card-title
-        span.headline {{ $t('modals.addSnoozeEvent.title') }}
+        span.headline {{ $t('modals.createSnoozeEvent.title') }}
       v-card-text
         v-container
           v-layout(row)
             v-flex(xs8)
               v-text-field(
               type="number",
-              :label="$t('modals.addSnoozeEvent.duration')",
+              :label="$t('modals.createSnoozeEvent.duration')",
               :error-messages="errors.collect('duration')",
               v-model="form.duration",
               v-validate="'required|numeric|min_value:1'",
@@ -26,7 +26,10 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
+
+const { mapActions } = createNamespacedHelpers('event');
 
 export default {
   $_veeValidate: {
@@ -52,6 +55,9 @@ export default {
     };
   },
   methods: {
+    ...mapActions([
+      'snooze',
+    ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -61,7 +67,14 @@ export default {
           this.form.durationType.key,
         ).asSeconds();
 
-        console.log(duration);
+        await this.snooze({
+          id: 'aa24e42a-4eda-11e8-841e-0242ac12000a',
+          resource: 'res96',
+          customAttributes: {
+            duration,
+          },
+        });
+        //  todo hide modal
       }
     },
   },

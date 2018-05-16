@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-switch(v-model="showRRule", :label="$t('modals.addPbehavior.fields.rRuleQuestion')")
+      v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')")
     template(v-if="showRRule")
       v-layout(row)
         v-tabs.r-rule-tabs(v-model="activeTab", centered)
@@ -185,13 +185,13 @@ import DateTimePicker from '@/components/forms/date-time-picker.vue';
 
 export default {
   inject: ['$validator'],
+  components: { DateTimePicker },
   props: {
     tstart: {
       type: Date,
       default: () => new Date(),
     },
   },
-  components: { DateTimePicker },
   data() {
     const rRuleOptions = {
       dtstart: this.tstart,
@@ -244,6 +244,21 @@ export default {
       },
     };
   },
+  watch: {
+    tstart(value) {
+      this.form.rRuleOptions.dtstart = value;
+
+      this.changeRRuleOption();
+    },
+    showRRule(value) {
+      if (!value) {
+        this.errors.remove('rRule');
+        this.$emit('input', null);
+      } else {
+        this.changeRRuleOption();
+      }
+    },
+  },
   methods: {
     changeRRuleAdvancedOption() {
       this.form.rRule = {
@@ -273,21 +288,6 @@ export default {
         }
       } catch (err) {
         console.warn(err);
-      }
-    },
-  },
-  watch: {
-    tstart(value) {
-      this.form.rRuleOptions.dtstart = value;
-
-      this.changeRRuleOption();
-    },
-    showRRule(value) {
-      if (!value) {
-        this.errors.remove('rRule');
-        this.$emit('input', null);
-      } else {
-        this.changeRRuleOption();
       }
     },
   },

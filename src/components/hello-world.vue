@@ -2,13 +2,20 @@
   div
     h2 {{ msg }}
     v-container(fluid)
-      list-actions
-      filters-selector
+      ul
+        li(v-for="item in items")
+          list-actions(:item="item")
+        li
+          filters-selector
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import ListActions from './list-actions.vue';
 import FiltersSelector from './other/filters_list/Index.vue';
+
+const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('entities/alarm');
 
 export default {
   name: 'HelloWorld',
@@ -21,6 +28,15 @@ export default {
       type: String,
       required: true,
     },
+  },
+  computed: {
+    ...alarmMapGetters(['items']),
+  },
+  mounted() {
+    this.fetchList({ params: { limit: 10 } });
+  },
+  methods: {
+    ...alarmMapActions(['fetchList']),
   },
 };
 </script>

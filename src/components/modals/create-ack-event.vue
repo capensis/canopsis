@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline {{ $t('modals.addAckEvent.title') }}
+      span.headline {{ $t('modals.createAckEvent.title') }}
     v-card-text
       v-container
         v-layout(row align-center)
@@ -11,7 +11,7 @@
           v-divider.my-3
         v-layout(row)
           v-text-field(
-          :label="$t('modals.addAckEvent.ticket')",
+          :label="$t('modals.createAckEvent.ticket')",
           :error-messages="errors.collect('ticket')",
           v-model="form.ticket",
           v-validate="rules",
@@ -19,7 +19,7 @@
           )
         v-layout(row)
           v-text-field(
-          :label="$t('modals.addAckEvent.output')",
+          :label="$t('modals.createAckEvent.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
           v-validate="rules",
@@ -27,17 +27,21 @@
           multi-line
           )
         v-layout(row)
-          v-checkbox(:label="$t('modals.addAckEvent.ackResources')", v-model="form.ack_resources")
+          v-checkbox(:label="$t('modals.createAckEvent.ackResources')", v-model="form.ack_resources")
     v-card-actions
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.actions.acknowledge') }}
       v-btn(
-      @click.prevent="submitWithAdditions",
+      @click.prevent="submitWithDeclare",
       color="warning"
       ) {{ $t('common.actions.acknowledgeAndReport') }}
 </template>
 
 <script>
+
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
+import ModalItemMixin from '@/mixins/modal-item';
+import EventEntityMixin from '@/mixins/event-entity';
+import { EVENT_TYPES } from '@/config';
 
 export default {
   $_veeValidate: {
@@ -46,13 +50,14 @@ export default {
   components: {
     AlarmGeneralTable,
   },
+  mixins: [ModalItemMixin, EventEntityMixin],
   data() {
     return {
       showValidationErrors: false,
+      ack_resources: false,
       form: {
         ticket: '',
         output: '',
-        ack_resources: false,
       },
     };
   },
@@ -62,23 +67,34 @@ export default {
     },
   },
   methods: {
+    async createEvents(withDeclare) {
+      const data = [
+        this.prepareData(EVENT_TYPES.ack, this.item, this.form),
+      ];
+
+      if (withDeclare) {
+        data.push(this.prepareData(EVENT_TYPES.declareTicket, this.item, this.form));
+      }
+
+      await this.createEventAction({ data });
+      await this.fetchAlarmListWithPreviousParams();
+
+      this.hideModal();
+    },
+
+    async submitWithDeclare() {
+      const formIsValid = await this.$validator.validateAll();
+
+      if (formIsValid) {
+        await this.createEvents(true);
+      }
+    },
+
     async submit() {
       this.showValidationErrors = false;
       this.errors.clear();
-      console.log('ADD_ACK');
-    },
-    async submitWithAdditions() {
-      this.showValidationErrors = true;
 
-      this.$nextTick(async () => {
-        const formIsValid = await this.$validator.validateAll();
-
-        if (formIsValid) {
-          await this.submit();
-
-          // send request to add report
-        }
-      });
+      await this.createEvents();
     },
   },
 };

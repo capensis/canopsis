@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     v-card
       v-card-title
-        span.headline {{ $t('modals.addCancelEvent.title') }}
+        span.headline {{ $t(title) }}
       v-card-text
         v-container
           v-layout(row)
@@ -12,7 +12,7 @@
             v-divider.my-3
           v-layout(row)
             v-text-field(
-            :label="$t('modals.addCancelEvent.output')",
+            :label="$t('modals.createCancelEvent.output')",
             :error-messages="errors.collect('output')",
             v-model="form.output",
             v-validate="'required'",
@@ -24,6 +24,9 @@
 
 <script>
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
+import EventEntityMixin from '@/mixins/event-entity';
+import ModalMixin from '@/mixins/modal';
+import { EVENT_TYPES } from '@/config';
 
 export default {
   $_veeValidate: {
@@ -32,6 +35,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
+  mixins: [ModalMixin, EventEntityMixin],
   data() {
     return {
       form: {
@@ -39,12 +43,34 @@ export default {
       },
     };
   },
+  computed: {
+    item() {
+      return this.getItem(this.config.itemType, this.config.itemId);
+    },
+
+    title() {
+      return this.config.title || 'modals.createCancelEvent.title';
+    },
+
+    eventType() {
+      return this.config.eventType || EVENT_TYPES.cancel;
+    },
+  },
+
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        console.log('SUBMITTED');
+        const data = { ...this.form };
+
+        if (this.config.eventType === EVENT_TYPES.cancel) {
+          data.cancel = 1;
+        }
+
+        await this.createEvent(this.config.eventType, this.item, data);
+
+        this.hideModal();
       }
     },
   },

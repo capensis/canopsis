@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import VueMoment from 'vue-moment';
 import VeeValidate from 'vee-validate';
 import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
@@ -12,6 +13,7 @@ import store from './store';
 import i18n from './i18n';
 
 Vue.use(Vuetify);
+Vue.use(VueMoment);
 Vue.use(VeeValidate, {
   i18n,
   inject: false,

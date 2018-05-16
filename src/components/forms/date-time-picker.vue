@@ -79,6 +79,15 @@ export default {
       return this.dateTimeObject ? this.dateTimeObject.format(this.format) : this.dateTimeObject;
     },
   },
+  watch: {
+    opened(value) {
+      if (!value) {
+        setTimeout(() => {
+          this.activeTab = 'date';
+        }, 300);
+      }
+    },
+  },
   methods: {
     updateDateTimeObject() {
       if (!this.timeString) {
@@ -106,20 +115,10 @@ export default {
       this.$refs.menu.save();
     },
     validate() {
-      console.log(this.$validator);
       if (this.name && this.rules) {
         this.$nextTick(async () => {
           await this.$validator.validate(this.name);
         });
-      }
-    },
-  },
-  watch: {
-    opened(value) {
-      if (!value) {
-        setTimeout(() => {
-          this.activeTab = 'date';
-        }, 300);
       }
     },
   },

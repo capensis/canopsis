@@ -21,6 +21,7 @@ export default {
     allIds: [],
     meta: {},
     pending: false,
+    requestParams: {},
   },
   getters: {
     allIds: state => state.allIds,
@@ -28,8 +29,9 @@ export default {
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('alarm', state.allIds),
   },
   mutations: {
-    [types.FETCH_LIST](state) {
+    [types.FETCH_LIST](state, { params }) {
       state.pending = true;
+      state.requestParams = params;
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.allIds = allIds;
@@ -38,21 +40,38 @@ export default {
     },
   },
   actions: {
-    async fetchList({ commit }, params = {}) {
-      commit(types.FETCH_LIST);
-
+    async fetch({ commit }, { params }) {
       try {
-        const [data] = await request.get(API_ROUTES.alarmList, params);
+        const [data] = await request.get(API_ROUTES.alarmList, { params });
         const normalizedData = normalize(data.alarms, [alarmSchema]);
 
         commit(`entities/${entitiesTypes.ENTITIES_UPDATE}`, normalizedData.entities, { root: true });
-        commit(types.FETCH_LIST_COMPLETED, {
-          allIds: normalizedData.result,
-          meta: { total: data.total },
-        });
+
+        return { data, normalizedData };
       } catch (err) {
         console.error(err);
       }
+
+      return { data: {}, normalizedData: { result: [], entities: {} } };
+    },
+
+    async fetchList({ commit, dispatch }, { params } = {}) {
+      commit(types.FETCH_LIST, { params });
+
+      const { normalizedData, data } = await dispatch('fetch', { params });
+
+      commit(types.FETCH_LIST_COMPLETED, {
+        allIds: normalizedData.result,
+        meta: { total: data.total },
+      });
+    },
+
+    fetchListWithPreviousParams({ dispatch, state }) {
+      return dispatch('fetchList', { params: state.requestParams });
+    },
+
+    fetchItem({ dispatch }, { id }) {
+      return dispatch('fetch', { params: { filter: { _id: id } } });
     },
   },
 };
