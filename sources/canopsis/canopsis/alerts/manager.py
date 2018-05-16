@@ -36,7 +36,7 @@ from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
     get_last_state, get_last_status, OFF, STEALTHY,
-    is_stealthy, is_keeped_state
+    CANCELED, is_stealthy, is_keeped_state
 )
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
@@ -755,6 +755,11 @@ class Alerts(object):
 
         alarm[self.alerts_storage.VALUE] = new_value
 
+        if status == OFF:
+            self.publish_statcounterinc_event('alarms_resolved', alarm)
+        elif status == CANCELED:
+            self.publish_statcounterinc_event('alarms_canceled', alarm)
+
         return alarm
 
     def make_alarm(self, alarm_id, event):
@@ -1184,7 +1189,7 @@ class Alerts(object):
             connector_name="engine",
             event_type="statcounterinc",
             source_type="component",
-            timestamp=alarm[storage.TIMESTAMP],
+            timestamp=alarm[storage.VALUE][AlarmField.last_update_date.value],
             counter_name=counter_name,
             alarm=alarm,
             entity=entity)
