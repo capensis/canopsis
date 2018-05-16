@@ -1,10 +1,13 @@
 <template>
   <div class="text-xs-center">
     <v-menu offset-y>
-      <v-btn slot="activator" color="primary" dark>{{ selectedFilter ? selectedFilter.title : 'Filters' }}</v-btn>
+      <v-btn slot="activator" color="primary" dark>{{ activeFilter ? activeFilter.title : 'Filters' }}</v-btn>
       <v-list>
-        <v-list-tile v-for="filter in filtersListForButton" :key="filter.title" @click="selectFilter(filter)">
+        <v-list-tile v-for="filter in filters" :key="filter.title" @click="selectFilter(filter)">
           <v-list-tile-title>{{ filter.title }}</v-list-tile-title>
+        </v-list-tile>
+        <v-list-tile>
+          <v-list-tile-title>Add filter</v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-menu>
@@ -28,22 +31,17 @@ export default {
   methods: {
     ...mapActions([
       'loadFilters',
+      'setActiveFilter',
     ]),
     selectFilter(filter) {
-      if (filter.title !== 'Add filter') {
-        this.selectedFilter = filter;
-      }
+      this.setActiveFilter(filter);
     },
   },
   computed: {
     ...mapGetters([
       'filters',
+      'activeFilter',
     ]),
-    filtersListForButton() {
-      return this.filters.concat([{
-        title: 'Add filter',
-      }]);
-    },
   },
 };
 </script>
