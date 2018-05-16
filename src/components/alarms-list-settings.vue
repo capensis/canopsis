@@ -4,7 +4,7 @@
       v-list
         v-list-tile
           v-list-tile-title(class="white--text text-xs-center") {{$t('alarm_list_settings.alarm_list_settings')}}
-      v-icon(@click.stop="closePanel", color="white") close
+      v-icon(@click.stop="closePanel", color="white" class="closeIcon") close
     v-divider
     v-list(expand, class="pt-0")
       v-list-group
@@ -122,5 +122,9 @@ export default {
 <style scoped>
   .activeHeader {
     background-color: blue;
+  }
+
+  .closeIcon:hover {
+    cursor: pointer;
   }
 </style>
