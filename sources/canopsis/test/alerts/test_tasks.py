@@ -44,12 +44,18 @@ class TestTasks(BaseTest):
             AlarmField.canceled.value: None,
             AlarmField.ticket.value: None,
             AlarmField.resolved.value: None,
+            AlarmField.creation_date.value: 0,
+            AlarmField.last_update_date.value: 0,
             AlarmField.steps.value: [],
             AlarmField.tags.value: []
         }
 
     def test_acknowledge(self):
-        event = {'timestamp': 0}
+        event = {
+            'timestamp': 0,
+            'source_type': 'component',
+            'component': 'c',
+        }
 
         task = get_task('alerts.useraction.ack')
         alarm = task(
