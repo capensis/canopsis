@@ -6,7 +6,7 @@
       v-container
         v-layout(row align-center)
           v-flex.text-xs-center
-            alarm-general-table
+            alarm-general-table(:item="item")
         v-layout(row)
           v-divider.my-3
         v-layout(row)
@@ -67,7 +67,7 @@ export default {
     },
   },
   methods: {
-    async createEvents(withDeclare) {
+    async create(withDeclare) {
       const data = [
         this.prepareData(EVENT_TYPES.ack, this.item, this.form),
       ];
@@ -86,7 +86,7 @@ export default {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
-        await this.createEvents(true);
+        await this.create(true);
       }
     },
 
@@ -94,7 +94,7 @@ export default {
       this.showValidationErrors = false;
       this.errors.clear();
 
-      await this.createEvents();
+      await this.create();
     },
   },
 };

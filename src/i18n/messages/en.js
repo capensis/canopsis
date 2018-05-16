@@ -6,6 +6,7 @@ export default {
       acknowledge: 'Acknowledge',
       acknowledgeAndReport: 'Acknowledge and report an incident',
       saveChanges: 'Save changes',
+      reportIncident: 'Report an incident',
     },
     times: {
       second: 'second | seconds',
@@ -56,6 +57,15 @@ export default {
     },
     createAckRemove: {
       title: 'Add event type: ackremove',
+    },
+    createDeclareTicker: {
+      title: 'Add event type: declareticket',
+    },
+    createAssociateTicket: {
+      title: 'Add event type: assocticket',
+      fields: {
+        ticket: 'Number of the ticket',
+      },
     },
   },
   tables: {

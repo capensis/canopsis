@@ -7,6 +7,7 @@ export const DEFAULT_LOCALE = 'fr';
 export const EVENT_TYPES = {
   ack: 'ack',
   ackRemove: 'ackremove',
+  associateTicket: 'assocticket',
   cancel: 'cancel',
   changeState: 'changestate',
   declareTicket: 'declareticket',

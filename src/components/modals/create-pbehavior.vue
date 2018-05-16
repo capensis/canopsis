@@ -48,8 +48,9 @@ import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/other/rrule/rrule-form.vue';
+import ModalItemMixin from '@/mixins/modal-item';
 
-const { mapGetters: modalMapGetters, mapActions: modalMapActions } = createNamespacedHelpers('modal');
+const { mapActions: alarmMapActions } = createNamespacedHelpers('entities/alarm');
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');
 
 export default {
@@ -57,8 +58,10 @@ export default {
     validator: 'new',
   },
   components: { DateTimePicker, RRuleForm },
+  mixins: [ModalItemMixin],
   data() {
-    const now = new Date();
+    const start = new Date();
+    const stop = new Date(start.getTime() + 1000);
     const reasons = ['Problème Habilitation', 'Problème Robot', 'Problème Scénario', 'Autre'];
     const types = ['Pause', 'Maintenance', 'Hors plage horaire de surveillance'];
 
@@ -66,8 +69,8 @@ export default {
       rRuleObject: null,
       form: {
         name: '',
-        tstart: now,
-        tstop: now,
+        tstart: start,
+        tstop: stop,
         type_: types[0],
         reason: reasons[0],
       },
@@ -77,12 +80,8 @@ export default {
       },
     };
   },
-  computed: {
-    ...modalMapGetters(['config']),
-  },
   methods: {
-    ...modalMapActions({ hideModal: 'hide' }),
-
+    ...alarmMapActions({ fetchAlarmListWithPreviousParams: 'fetchListWithPreviousParams' }),
     ...pbehaviorMapActions({ createPbehavior: 'create' }),
 
     changeRRule(value) {
@@ -97,9 +96,7 @@ export default {
 
           author: 'Username of current user',
           filter: {
-            _id: {
-              $in: [this.config.d],
-            },
+            _id: { $in: [this.item.d] },
           },
           tstart: this.form.tstart.getTime(),
           tstop: this.form.tstop.getTime(),
@@ -110,6 +107,7 @@ export default {
         }
 
         await this.createPbehavior(data);
+        await this.fetchAlarmListWithPreviousParams();
 
         this.hideModal();
       }

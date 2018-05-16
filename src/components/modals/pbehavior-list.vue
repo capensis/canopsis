@@ -22,11 +22,12 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
-const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
+import ModalItemMixin from '@/mixins/modal-item';
+
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');
 
 export default {
+  mixins: [ModalItemMixin],
   data() {
     const fields = [
       'name',
@@ -49,13 +50,6 @@ export default {
       fields,
       headers,
     };
-  },
-  computed: {
-    ...modalMapGetters(['config']),
-    ...entitiesMapGetters(['getItem']),
-    item() {
-      return this.getItem(this.config.itemType, this.config.itemId);
-    },
   },
   methods: {
     ...pbehaviorMapActions({
