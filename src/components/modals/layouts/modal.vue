@@ -22,7 +22,6 @@ export default {
   computed: {
     ...mapGetters({
       modalName: 'name',
-      modalConfig: 'config',
       modalAnimationPending: 'animationPending',
     }),
     isActive() {

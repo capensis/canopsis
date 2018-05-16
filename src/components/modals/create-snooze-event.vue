@@ -2,14 +2,14 @@
   v-form(@submit.prevent="submit")
     v-card
       v-card-title
-        span.headline {{ $t('modals.addSnoozeEvent.title') }}
+        span.headline {{ $t('modals.createSnoozeEvent.title') }}
       v-card-text
         v-container
           v-layout(row)
             v-flex(xs8)
               v-text-field(
               type="number",
-              :label="$t('modals.addSnoozeEvent.duration')",
+              :label="$t('modals.createSnoozeEvent.duration')",
               :error-messages="errors.collect('duration')",
               v-model="form.duration",
               v-validate="'required|numeric|min_value:1'",

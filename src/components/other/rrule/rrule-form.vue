@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-switch(v-model="showRRule", :label="$t('modals.addPbehavior.fields.rRuleQuestion')")
+      v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')")
     template(v-if="showRRule")
       v-layout(row)
         v-tabs.r-rule-tabs(v-model="activeTab", centered)

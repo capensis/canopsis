@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     v-card
       v-card-title
-        span.headline {{ $t('modals.addCancelEvent.title') }}
+        span.headline {{ $t(title) }}
       v-card-text
         v-container
           v-layout(row)
@@ -12,7 +12,7 @@
             v-divider.my-3
           v-layout(row)
             v-text-field(
-            :label="$t('modals.addCancelEvent.output')",
+            :label="$t('modals.createCancelEvent.output')",
             :error-messages="errors.collect('output')",
             v-model="form.output",
             v-validate="'required'",
@@ -23,16 +23,19 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
-
-const { mapActions } = createNamespacedHelpers('event');
+import EventEntityMixin from '@/mixins/event-entity';
+import ModalMixin from '@/mixins/modal';
+import { EVENT_TYPES } from '@/config';
 
 export default {
-  name: 'add-cancel-event',
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     AlarmGeneralTable,
   },
+  mixins: [ModalMixin, EventEntityMixin],
   data() {
     return {
       form: {
@@ -40,27 +43,34 @@ export default {
       },
     };
   },
-  $_veeValidate: {
-    validator: 'new',
+  computed: {
+    item() {
+      return this.getItem(this.config.itemType, this.config.itemId);
+    },
+
+    title() {
+      return this.config.title || 'modals.createCancelEvent.title';
+    },
+
+    eventType() {
+      return this.config.eventType || EVENT_TYPES.cancel;
+    },
   },
 
   methods: {
-    ...mapActions([
-      'cancelAck',
-    ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.cancelAck({
-          resource: 'res0',
-          id: '652d34d0-4eda-11e8-841e-0242ac12000a',
-          customAttributes: {
-            output: this.form.output,
-            cancel: 1,
-          },
-        });
-      // todo hide modal action
+        const data = { ...this.form };
+
+        if (this.config.eventType === EVENT_TYPES.cancel) {
+          data.cancel = 1;
+        }
+
+        await this.createEvent(this.config.eventType, this.item, data);
+
+        this.hideModal();
       }
     },
   },

@@ -2,7 +2,7 @@
   div
     v-card
       v-card-title
-        span.headline {{ $t('modals.addPbehavior.title') }}
+        span.headline {{ $t('modals.createPbehavior.title') }}
       v-card-text
         v-data-table(:headers="headers", :items="item.pbehaviors", disable-initial-sort, hide-actions)
           template(slot="headerCell", slot-scope="props")
@@ -51,12 +51,10 @@ export default {
     };
   },
   computed: {
-    ...modalMapGetters({
-      modalConfig: 'config',
-    }),
+    ...modalMapGetters(['config']),
     ...entitiesMapGetters(['getItem']),
     item() {
-      return this.getItem(this.modalConfig.entityKey, this.modalConfig.entityId);
+      return this.getItem(this.config.itemType, this.config.itemId);
     },
   },
   methods: {

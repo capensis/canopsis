@@ -115,7 +115,6 @@ export default {
       this.$refs.menu.save();
     },
     validate() {
-      console.log(this.$validator);
       if (this.name && this.rules) {
         this.$nextTick(async () => {
           await this.$validator.validate(this.name);

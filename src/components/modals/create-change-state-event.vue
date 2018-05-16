@@ -2,17 +2,21 @@
   v-form(@submit.prevent="submit")
     v-card
       v-card-title
-        span.headline {{ $t('modals.addChangeStateEvent.title') }}
+        span.headline {{ $t('modals.createChangeStateEvent.title') }}
       v-card-text
         v-container
           v-layout(row)
-            v-btn-toggle(v-model="form.state")
-              v-btn(color="success", value="info", depressed) {{ $t('modals.addChangeStateEvent.states.info') }}
-              v-btn(color="warning", value="minor", depressed) {{ $t('modals.addChangeStateEvent.states.minor') }}
-              v-btn(color="error", value="critical", depressed) {{ $t('modals.addChangeStateEvent.states.critical') }}
+            v-btn-toggle(v-model="state")
+              v-btn(
+              v-for="button in buttons",
+              :key="button",
+              :value="states[button]",
+              :color="colorsMap[states[button]]",
+              depressed
+              ) {{ $t(`modals.createChangeStateEvent.states.${button}`) }}
           v-layout(row)
             v-text-field(
-            :label="$t('modals.addChangeStateEvent.output')",
+            :label="$t('modals.createChangeStateEvent.output')",
             :error-messages="errors.collect('output')",
             v-model="form.output",
             v-validate="'required'",
@@ -25,37 +29,52 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import ModalItemMixin from '@/mixins/modal-item';
+import EventEntityMixin from '@/mixins/event-entity';
+import { STATES } from '@/config';
+
 const { mapActions } = createNamespacedHelpers('event');
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
+  mixins: [ModalItemMixin, EventEntityMixin],
   data() {
     return {
       form: {
-        state: 'info',
         output: '',
       },
     };
+  },
+  computed: {
+    state: {
+      get() {
+        return this.item.v.state.val;
+      },
+      set(value) {
+        this.item.v.state.val = value;
+      },
+    },
+    buttons() {
+      return Object.keys(STATES);
+    },
+    states() {
+      return STATES;
+    },
+    colorsMap() {
+      return {
+        [STATES.info]: 'info',
+        [STATES.minor]: 'yellow',
+        [STATES.major]: 'orange',
+        [STATES.critical]: 'error',
+      };
+    },
   },
   methods: {
     ...mapActions([
       'changeState',
     ]),
-    getStateId() {
-      switch (this.form.state) {
-        case 'info':
-          return 0;
-        case 'minor':
-          return 1;
-        case 'critical':
-          return 3;
-        default: {
-          throw new Error('Unknown alarm state');
-        }
-      }
-    },
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -63,12 +82,12 @@ export default {
         this.changeState({
           id: 'a7ed1556-4eda-11e8-841e-0242ac12000a',
           resource: 'res93',
-          state: this.getStateId(this.form.state),
+          state: this.form.state,
           customAttributes: {
             output: this.form.output,
           },
         });
-      //  todo hide modal
+        //  todo hide modal
       }
     },
   },

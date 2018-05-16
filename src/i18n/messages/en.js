@@ -18,31 +18,32 @@ export default {
     },
   },
   modals: {
-    addAckEvent: {
+    createAckEvent: {
       title: 'Add event type: ack',
       ticket: 'Ticket number',
       output: 'Note',
       ackResources: 'Ack resources',
       ackResourcesTooltip: 'Do you want to ack linked resources or not?',
     },
-    addSnoozeEvent: {
+    createSnoozeEvent: {
       title: 'Add event type: snooze',
       duration: 'Duration',
     },
-    addCancelEvent: {
+    createCancelEvent: {
       title: 'Add event type: cancel',
       output: 'Note',
     },
-    addChangeStateEvent: {
+    createChangeStateEvent: {
       title: 'Add event type: change state',
       output: 'Note',
       states: {
         info: 'Info',
         minor: 'Minor',
+        major: 'Major',
         critical: 'Critical',
       },
     },
-    addPbehavior: {
+    createPbehavior: {
       title: 'Put a pbehavior on these elements ?',
       fields: {
         name: 'Name',
@@ -52,6 +53,9 @@ export default {
         type: 'Type',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
+    },
+    createAckRemove: {
+      title: 'Add event type: ackremove',
     },
   },
   tables: {

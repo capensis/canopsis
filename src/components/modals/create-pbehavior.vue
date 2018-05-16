@@ -2,11 +2,11 @@
   v-form(@submit.prevent="submit", slot-scope="slotProps")
     v-card
       v-card-title
-        span.headline {{ $t('modals.addPbehavior.title') }}
+        span.headline {{ $t('modals.createPbehavior.title') }}
       v-card-text
         v-layout(row)
           v-text-field(
-          :label="$t('modals.addPbehavior.fields.name')",
+          :label="$t('modals.createPbehavior.fields.name')",
           :error-messages="errors.collect('name')",
           v-model="form.name",
           v-validate="'required'",
@@ -14,14 +14,14 @@
           )
         v-layout(row)
           date-time-picker(
-          :label="$t('modals.addPbehavior.fields.start')",
+          :label="$t('modals.createPbehavior.fields.start')",
           v-model="form.tstart",
           name="tstart",
           rules="required",
           )
         v-layout(row)
           date-time-picker(
-          :label="$t('modals.addPbehavior.fields.stop')",
+          :label="$t('modals.createPbehavior.fields.stop')",
           v-model="form.tstop",
           name="tstop",
           rules="required"
@@ -78,9 +78,7 @@ export default {
     };
   },
   computed: {
-    ...modalMapGetters({
-      modalConfig: 'config',
-    }),
+    ...modalMapGetters(['config']),
   },
   methods: {
     ...modalMapActions({ hideModal: 'hide' }),
