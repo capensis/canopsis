@@ -42,8 +42,15 @@ def acknowledge(manager, alarm, author, message, event):
         'm': message
     }
 
+    first_ack = not alarm[AlarmField.ack.value]
+
     alarm[AlarmField.ack.value] = step
     alarm[AlarmField.steps.value].append(step)
+
+    if first_ack:
+        # Only send the duration for the first ack
+        entity_id = manager.context_manager.get_id(event)
+        manager.publish_statduration_event('ack_time', entity_id, alarm)
 
     return alarm
 

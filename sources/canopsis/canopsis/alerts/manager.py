@@ -765,6 +765,10 @@ class Alerts(object):
                 'alarms_resolved',
                 entity_id,
                 new_value)
+            self.publish_statduration_event(
+                'resolve_time',
+                entity_id,
+                new_value)
         elif status == CANCELED:
             self.publish_statcounterinc_event(
                 'alarms_canceled',
@@ -1202,6 +1206,39 @@ class Alerts(object):
             source_type="component",
             timestamp=alarm[AlarmField.creation_date.value],
             counter_name=counter_name,
+            alarm=alarm,
+            entity=entity)
+
+        self.amqp_pub.canopsis_event(event)
+
+    def publish_statduration_event(self, duration_name, entity_id, alarm):
+        """
+        Publish a statduration event on amqp.
+
+        :param str duration_name: the name of the duration to add
+        :param str entity_id: id of the alarm
+        :param dict alarm: the alarm
+        """
+        storage = self.alerts_storage
+
+        entity = self.context_manager.get_entities_by_id(entity_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
+
+        creation_date = alarm[AlarmField.creation_date.value]
+        update_date = alarm[AlarmField.last_update_date.value]
+        duration = update_date - creation_date
+
+        event = forger(
+            connector="canopsis",
+            connector_name="engine",
+            event_type="statduration",
+            source_type="component",
+            timestamp=update_date,
+            duration_name=duration_name,
+            duration=duration,
             alarm=alarm,
             entity=entity)
 
