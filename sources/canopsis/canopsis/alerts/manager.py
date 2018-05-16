@@ -555,7 +555,10 @@ class Alerts(object):
 
             if is_new_alarm:
                 self.check_alarm_filters()
-                self.publish_statcounterinc_event('alarms_created', alarm)
+                self.publish_statcounterinc_event(
+                    'alarms_created',
+                    entity_id,
+                    alarm[self.alerts_storage.VALUE])
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
@@ -755,10 +758,18 @@ class Alerts(object):
 
         alarm[self.alerts_storage.VALUE] = new_value
 
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+
         if status == OFF:
-            self.publish_statcounterinc_event('alarms_resolved', alarm)
+            self.publish_statcounterinc_event(
+                'alarms_resolved',
+                entity_id,
+                new_value)
         elif status == CANCELED:
-            self.publish_statcounterinc_event('alarms_canceled', alarm)
+            self.publish_statcounterinc_event(
+                'alarms_canceled',
+                entity_id,
+                new_value)
 
         return alarm
 
@@ -1168,17 +1179,17 @@ class Alerts(object):
 
             self.update_current_alarm(docalarm, new_value)
 
-    def publish_statcounterinc_event(self, counter_name, alarm):
+    def publish_statcounterinc_event(self, counter_name, entity_id, alarm):
         """
         Publish a statcounterinc event on amqp.
 
         :param str counter_name: the name of the counter to increment
+        :param str entity_id: id of the alarm
         :param dict alarm: the alarm
         """
         storage = self.alerts_storage
 
-        entity = self.context_manager.get_entities_by_id(
-            alarm[storage.DATA_ID])
+        entity = self.context_manager.get_entities_by_id(entity_id)
         try:
             entity = entity[0]
         except IndexError:
@@ -1189,7 +1200,7 @@ class Alerts(object):
             connector_name="engine",
             event_type="statcounterinc",
             source_type="component",
-            timestamp=alarm[storage.VALUE][AlarmField.last_update_date.value],
+            timestamp=alarm[AlarmField.creation_date.value],
             counter_name=counter_name,
             alarm=alarm,
             entity=entity)
