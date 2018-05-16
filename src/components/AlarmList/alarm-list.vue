@@ -1,12 +1,14 @@
 <template lang="pug">
   div
-    div( v-if="fetchComplete" )
-      basic-list( :items="items" )
-        tr.container( slot="header" )
-            th.box( v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)" ) {{ columnName }}
+    div(v-if="fetchComplete")
+      basic-list(:items="items")
+        tr.container(slot="header")
+            th.box(v-for="columnName in Object.keys(alarmProperty)")
+              span {{ columnName }}
+              alarm-list-sorting(:columnToSort="alarmProperty[columnName]")
             th.box
-        tr.container( slot="row" slot-scope="item" )
-            td.box( v-for="property in Object.values(alarmProperty)" ) {{ getProp(item.props, property) }}
+        tr.container(slot="row" slot-scope="item")
+            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow" slot-scope="item")
@@ -26,6 +28,7 @@ import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
 import AlarmListPagination from './alarm-list-pagination.vue';
+import AlarmListSorting from './alarm-list-sorting.vue';
 
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
@@ -42,7 +45,11 @@ export default {
  */
   name: 'AlarmList',
   components: {
-    AlarmListPagination, ActionsPanel, BasicList, Loader,
+    AlarmListSorting,
+    AlarmListPagination,
+    ActionsPanel,
+    BasicList,
+    Loader,
   },
   props: {
     alarmProperty: {
@@ -55,11 +62,6 @@ export default {
       type: Number,
       default: PAGINATION_LIMIT,
     },
-  },
-  data() {
-    return {
-      columnSorted: 'opened',
-    };
   },
   mounted() {
     this.fetchList(this.fetchingParams);
@@ -76,15 +78,6 @@ export default {
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
-    sortAlarms(columnToSort) {
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          sort_key: this.alarmProperty[columnToSort],
-          sort_dir: 'DESC',
-        },
-      });
-    },
     /**
      * TODO: move this function into mixin or helper
      *
