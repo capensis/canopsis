@@ -180,21 +180,15 @@
 <script>
 import RRule from 'rrule';
 import mapValues from 'lodash/mapValues';
+import pickBy from 'lodash/pickBy';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 
 export default {
   inject: ['$validator'],
   components: { DateTimePicker },
-  props: {
-    tstart: {
-      type: Date,
-      default: () => new Date(),
-    },
-  },
   data() {
     const rRuleOptions = {
-      dtstart: this.tstart,
       freq: RRule.DAILY,
     };
 
@@ -245,11 +239,6 @@ export default {
     };
   },
   watch: {
-    tstart(value) {
-      this.form.rRuleOptions.dtstart = value;
-
-      this.changeRRuleOption();
-    },
     showRRule(value) {
       if (!value) {
         this.errors.remove('rRule');
@@ -275,7 +264,14 @@ export default {
      */
     changeRRuleOption() {
       try {
-        this.rRuleObject = new RRule(this.form.rRuleOptions);
+        this.form.rRule = {
+          ...this.form.rRule,
+          ...this.form.rRuleOptions,
+        };
+
+        const correctOptions = pickBy(this.form.rRule, v => v !== '');
+
+        this.rRuleObject = new RRule(correctOptions);
 
         if (!this.errors.has('rRule') && !this.rRuleObject.isFullyConvertibleToText()) {
           this.errors.add('rRule', this.$t('rRule.errors.main'));

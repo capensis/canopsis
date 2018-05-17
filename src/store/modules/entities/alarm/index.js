@@ -1,18 +1,17 @@
-import { normalize } from 'normalizr';
-
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
-import request from '@/services/request';
 
-import entitiesTypes from '../types';
+import fetchModule from '../fetch';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
 export default {
   namespaced: true,
+  modules: [fetchModule],
   state: {
     allIds: [],
     meta: {},
@@ -34,40 +33,48 @@ export default {
       state.meta = meta;
       state.pending = false;
     },
+    [types.FETCH_LIST_FAILED](state) {
+      state.pending = false;
+    },
   },
   actions: {
-    async fetch({ commit }, { params }) {
+    async fetchList({ commit, dispatch }, { params } = {}) {
       try {
-        const [data] = await request.get(API_ROUTES.alarmList, { params });
-        const normalizedData = normalize(data.alarms, [alarmSchema]);
+        commit(types.FETCH_LIST, { params });
 
-        commit(`entities/${entitiesTypes.ENTITIES_UPDATE}`, normalizedData.entities, { root: true });
+        const { normalizedData, data } = await dispatch('fetch', {
+          route: API_ROUTES.alarmList,
+          schema: [alarmSchema],
+          params,
+          dataPreparer: d => d.alarms,
+        });
 
-        return { data, normalizedData };
+        commit(types.FETCH_LIST_COMPLETED, {
+          allIds: normalizedData.result,
+          meta: { total: data.total },
+        });
       } catch (err) {
         console.error(err);
+
+        commit(types.FETCH_LIST_FAILED);
       }
-
-      return { data: {}, normalizedData: { result: [], entities: {} } };
-    },
-
-    async fetchList({ commit, dispatch }, { params } = {}) {
-      commit(types.FETCH_LIST, { params });
-
-      const { normalizedData, data } = await dispatch('fetch', { params });
-
-      commit(types.FETCH_LIST_COMPLETED, {
-        allIds: normalizedData.result,
-        meta: { total: data.total },
-      });
     },
 
     fetchListWithPreviousParams({ dispatch, state }) {
       return dispatch('fetchList', { params: state.requestParams });
     },
 
-    fetchItem({ dispatch }, { id }) {
-      return dispatch('fetch', { params: { filter: { _id: id } } });
+    async fetchItem({ dispatch }, { id }) {
+      try {
+        await dispatch('fetch', {
+          route: API_ROUTES.alarmList,
+          schema: [alarmSchema],
+          params: { filter: { _id: id } },
+          dataPreparer: d => d.alarms,
+        });
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 };

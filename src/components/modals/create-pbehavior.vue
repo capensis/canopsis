@@ -26,7 +26,7 @@
           name="tstop",
           rules="required"
           )
-        r-rule-form(:tstart="form.tstart", @input="changeRRule")
+        r-rule-form(@input="changeRRule")
         v-layout(row)
           v-select(
           label="Reason",
@@ -39,6 +39,9 @@
           v-model="form.type_",
           :items="selectItems.types"
           )
+        v-layout(row)
+          v-alert(:value="this.serverError", type="error")
+            span {{ this.serverError }}
       v-card-actions
         v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
 </template>
@@ -61,7 +64,7 @@ export default {
   mixins: [ModalItemMixin],
   data() {
     const start = new Date();
-    const stop = new Date(start.getTime() + 1000);
+    const stop = new Date(start.getTime());
     const reasons = ['Problème Habilitation', 'Problème Robot', 'Problème Scénario', 'Autre'];
     const types = ['Pause', 'Maintenance', 'Hors plage horaire de surveillance'];
 
@@ -78,6 +81,7 @@ export default {
         reasons,
         types,
       },
+      serverError: null,
     };
   },
   methods: {
@@ -91,10 +95,12 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
+        this.serverError = null;
+
         const data = {
           ...this.form,
 
-          author: 'Username of current user',
+          author: 'Username of current user', // TODO: add this field after login task finish
           filter: {
             _id: { $in: [this.item.d] },
           },
@@ -106,10 +112,16 @@ export default {
           data.rrule = this.rRuleObject.toString();
         }
 
-        await this.createPbehavior(data);
-        await this.fetchAlarmListWithPreviousParams();
+        try {
+          await this.createPbehavior(data);
+          await this.fetchAlarmListWithPreviousParams();
 
-        this.hideModal();
+          this.hideModal();
+        } catch (err) {
+          if (err.description) {
+            this.serverError = err.description;
+          }
+        }
       }
     },
   },

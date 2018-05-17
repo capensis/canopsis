@@ -31,13 +31,9 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import ModalItemMixin from '@/mixins/modal-item';
 import EventEntityMixin from '@/mixins/event-entity';
 import { STATES, EVENT_TYPES } from '@/config';
-
-const { mapActions } = createNamespacedHelpers('event');
 
 export default {
   $_veeValidate: {
@@ -72,9 +68,6 @@ export default {
     this.form.state = this.item.v.state.val;
   },
   methods: {
-    ...mapActions([
-      'changeState',
-    ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

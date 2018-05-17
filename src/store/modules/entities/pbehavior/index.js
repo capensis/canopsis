@@ -10,7 +10,9 @@ export default {
       try {
         await request.post(API_ROUTES.pbehavior, data);
       } catch (err) {
-        console.warn(err);
+        console.error(err);
+
+        throw err;
       }
     },
     async remove({ commit }, { id }) {

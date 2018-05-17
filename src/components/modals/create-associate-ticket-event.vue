@@ -12,7 +12,7 @@
             v-divider.my-3
           v-layout(row)
             v-text-field(
-            :label="$t('modals.createAssociateTicket.ticket')",
+            :label="$t('modals.createAssociateTicket.fields.ticket')",
             :error-messages="errors.collect('ticket')",
             v-model="form.ticket",
             v-validate="'required'",

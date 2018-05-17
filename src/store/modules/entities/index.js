@@ -11,12 +11,12 @@ import pbehaviorModule from './pbehavior';
 
 export default {
   namespaced: true,
-  state: {
-    byId: {},
-  },
   modules: {
     pbehavior: pbehaviorModule,
     alarm: alarmModule,
+  },
+  state: {
+    byId: {},
   },
   getters: {
     getItem(state) {
@@ -49,6 +49,12 @@ export default {
     },
   },
   mutations: {
+    /**
+     * @param {Object} state - state of the module
+     * @param {Object} entities - Object of entities
+     * @param {Object} entities[] - Object of entity items
+     * @param {Object} entities[][] - Entity item
+     */
     [types.ENTITIES_UPDATE](state, entities) {
       Object.keys(entities).forEach((type) => {
         Vue.set(state.byId, type, {
@@ -57,11 +63,24 @@ export default {
         });
       });
     },
+
+    /**
+     * @param {Object} state - state of the module
+     * @param {Object} entities - Object of entities
+     * @param {Object} entities[] - Object of entity items
+     * @param {Object} entities[][] - Entity item
+     */
     [types.ENTITIES_MERGE](state, entities) {
       Object.keys(entities).forEach((type) => {
         Vue.set(state.byId, type, merge({}, state.byId[type] || {}, entities[type]));
       });
     },
+
+    /**
+     * @param {Object} state - state of the module
+     * @param {Object[]} entities - Object of entities
+     * @param {Array} entities[] - Array of entity ids
+     */
     [types.ENTITIES_DELETE](state, entities) {
       Object.keys(entities).forEach((type) => {
         entities[type].forEach((id) => {
