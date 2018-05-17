@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import omit from 'lodash/omit';
 import merge from 'lodash/merge';
+import get from 'lodash/get';
 import { denormalize } from 'normalizr';
 
 import schemas from '@/store/schemas';
@@ -51,9 +52,7 @@ export default {
   mutations: {
     /**
      * @param {Object} state - state of the module
-     * @param {Object} entities - Object of entities
-     * @param {Object} entities[] - Object of entity items
-     * @param {Object} entities[][] - Entity item
+     * @param {Object.<string, Object>} entities - Object of entities
      */
     [types.ENTITIES_UPDATE](state, entities) {
       Object.keys(entities).forEach((type) => {
@@ -66,9 +65,7 @@ export default {
 
     /**
      * @param {Object} state - state of the module
-     * @param {Object} entities - Object of entities
-     * @param {Object} entities[] - Object of entity items
-     * @param {Object} entities[][] - Entity item
+     * @param {Object.<string, Object>} entities - Object of entities
      */
     [types.ENTITIES_MERGE](state, entities) {
       Object.keys(entities).forEach((type) => {
@@ -78,28 +75,21 @@ export default {
 
     /**
      * @param {Object} state - state of the module
-     * @param {Object[]} entities - Object of entities
-     * @param {Array} entities[] - Array of entity ids
+     * @param {Object.<string, Array.<string>>} entitiesIds - Object of entities ids
      */
-    [types.ENTITIES_DELETE](state, entities) {
-      Object.keys(entities).forEach((type) => {
-        entities[type].forEach((id) => {
+    [types.ENTITIES_DELETE](state, entitiesIds) {
+      Object.keys(entitiesIds).forEach((type) => {
+        entitiesIds[type].forEach((id) => {
           const entity = state.byId[type][id];
+          const { parentType, parentId, relationType } = get(entity, '_embedded', {});
+          const parentEntity = get(state.byId, [parentType, parentId]);
 
-          if (entity && entity._embedded) {
-            const { parentType, parentId, relationType } = entity._embedded;
-
-            if (state.byId[parentType]) {
-              const parentEntity = state.byId[parentType][parentId];
-
-              if (parentEntity) {
-                parentEntity[relationType] = parentEntity[relationType].filter(v => v !== id);
-              }
-            }
+          if (parentEntity) {
+            Vue.set(parentEntity, relationType, parentEntity[relationType].filter(v => v !== id));
           }
         });
 
-        Vue.set(state.byId, type, omit(state.byId[type], entities[type]));
+        Vue.set(state.byId, type, omit(state.byId[type], entitiesIds[type]));
       });
     },
   },
