@@ -9,7 +9,7 @@ def compat_go_crop_states(alarm):
 
     :param dict alarm: dict with alarm data
     :returns: the alarm with modified steps
-    :rtype dict:
+    :rtype: dict
     """
     steps = alarm.get('v', {}).get('steps', [])
     for i, step in enumerate(steps):
