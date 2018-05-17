@@ -8,6 +8,7 @@ import schemas from '@/store/schemas';
 import types from './types';
 import alarmModule from './alarm';
 import pbehaviorModule from './pbehavior';
+import filterModule from './filter';
 
 export default {
   namespaced: true,
@@ -17,6 +18,7 @@ export default {
   modules: {
     pbehavior: pbehaviorModule,
     alarm: alarmModule,
+    filter: filterModule,
   },
   getters: {
     getItem(state) {

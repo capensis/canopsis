@@ -9,6 +9,7 @@ export default {
   methods: {
     ...modalMapActions({
       hideModal: 'hide',
+      showModal: 'show',
     }),
   },
 };

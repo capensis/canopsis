@@ -13,7 +13,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import ListActions from './list-actions.vue';
-import FiltersSelector from './other/filters_list/Index.vue';
+import FiltersSelector from './other/filter/selector.vue';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('entities/alarm');
 

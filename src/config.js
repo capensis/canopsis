@@ -25,6 +25,7 @@ export const API_ROUTES = {
   alarmList: '/alerts/get-alarms',
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
+  userPreferences: '/rest/userpreferences/userpreferences',
 };
 
 export const NON_AUTH_API_ROUTES = [

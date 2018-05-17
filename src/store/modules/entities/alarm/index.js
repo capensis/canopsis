@@ -5,7 +5,6 @@ import { alarmSchema } from '@/store/schemas';
 import request from '@/services/request';
 
 import entitiesTypes from '../types';
-import filtersModule from './filters';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -14,9 +13,6 @@ export const types = {
 
 export default {
   namespaced: true,
-  modules: {
-    filters: filtersModule,
-  },
   state: {
     allIds: [],
     meta: {},
