@@ -19,6 +19,7 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+import os
 try:
     from threading import Lock
 except ImportError:
@@ -27,6 +28,8 @@ except ImportError:
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
+from canopsis.common import root_path
+from canopsis.confng import Configuration, Ini
 from canopsis.engines.core import Engine
 
 SECONDS = 1000000000
@@ -35,15 +38,31 @@ SECONDS = 1000000000
 class engine(Engine):
     etype = "statsng"
 
-    def pre_run(self):
+    CONF_PATH = "etc/statsng/engine.conf"
+    DEFAULT_DATABASE = 'statsng'
+    DEFAULT_MAX_BATCH_SIZE = 5000
+
+    def __init__(self, *args, **kwargs):
+        super(engine, self).__init__(*args, **kwargs)
+
         self.batch_lock = Lock()
         self.batch = []
 
-        self.max_batch_size = 5000
+        cfg = Configuration.load(os.path.join(root_path, self.CONF_PATH), Ini)
+        batch_cfg = cfg.get('BATCH', {})
+        influxdb_cfg = cfg.get('DATABASE', {})
 
-        self.influx_client = InfluxDBClient('192.168.0.62', 8086, 'root', 'root', 'statsng-test')
+        self.max_batch_size = int(
+            batch_cfg.get('max_batch_size', self.DEFAULT_MAX_BATCH_SIZE))
+
+        # Set the default database name (use InfluxDBClient's default for the
+        # other values)
+        if 'database' not in influxdb_cfg:
+            influxdb_cfg['database'] = self.DEFAULT_DATABASE
+
+        self.influx_client = InfluxDBClient(**influxdb_cfg)
         try:
-            self.influx_client.create_database('statsng-test')
+            self.influx_client.create_database(influxdb_cfg['database'])
         except InfluxDBClientError:
             pass
 
