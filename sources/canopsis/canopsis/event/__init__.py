@@ -204,9 +204,8 @@ def forger(
         dump[Event.ENTITY] = entity
 
     if resource:
-        if source_type == 'component':
-            dump['source_type'] = 'resource'
-        dump['resource'] = resource
+        dump[Event.SOURCE_TYPE] = Event.RESOURCE
+        dump[Event.RESOURCE] = resource
 
     if author is not None:
         dump["author"] = author
@@ -254,16 +253,16 @@ def get_routingkey(event):
     """
     Build the routing key from an event.
 
-    If the key 'resource' is present, 'source_type' is forced to
+    If the key 'resource' is present and != '', 'source_type' is forced to
     'resource', otherwise 'component'.
 
     This function mutates the 'source_type' field if necessary.
 
     :raise KeyError: on missing required info
     """
-    event[Event.SOURCE_TYPE] = 'component'
-    if Event.RESOURCE in event:
-        event[Event.SOURCE_TYPE] = 'resource'
+    event[Event.SOURCE_TYPE] = Event.COMPONENT
+    if event.get(Event.RESOURCE, ''):
+        event[Event.SOURCE_TYPE] = Event.RESOURCE
 
     rk = u"{}.{}.{}.{}.{}".format(
         event[Event.CONNECTOR],
@@ -273,21 +272,21 @@ def get_routingkey(event):
         event[Event.COMPONENT]
     )
 
-    if event.get(Event.RESOURCE, None):
+    if event.get(Event.RESOURCE, ''):
         rk = u"{}.{}".format(rk, event[Event.RESOURCE])
 
     return rk
 
 
 def is_component_problem(event):
-    if event.get('resource', False) and event['state'] != 0:
+    if event.get(Event.RESOURCE, '') and event['state'] != 0:
         storage = get_storage(
             namespace='entities',
             account=Account(user='root', group='root')).get_backend()
 
         component = storage.find_one({
             'type': 'component',
-            'name': event['component']
+            'name': event[Event.COMPONENT]
         })
 
         if component and 'state' in component and component['state'] != 0:
@@ -304,7 +303,7 @@ def is_host_acknowledged(event):
 
         ack = storage.find_one({
             'type': 'ack',
-            'component': event['component'],
+            'component': event[Event.COMPONENT],
             'resource': None
         })
 

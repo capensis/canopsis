@@ -369,7 +369,7 @@ def exports(ws):
                     'last_update_date', None
                 )
                 enriched_entity['component'] = tmp_alarm['component']
-                if 'resource' in tmp_alarm.keys():
+                if tmp_alarm.get('resource', ''):
                     enriched_entity['resource'] = tmp_alarm['resource']
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
@@ -504,7 +504,7 @@ def exports(ws):
                 next_run = (current_alarm.get(AlarmField.alarmfilter.value, {})
                             .get(AlarmFilterField.next_run.value, None))
                 enriched_entity['automatic_action_timer'] = next_run
-                if 'resource' in current_alarm:
+                if current_alarm.get('resource', ''):
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entities.append(enriched_entity)

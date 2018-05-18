@@ -207,14 +207,14 @@ class EngineLauncher(object):
 if __name__ == '__main__':
 
     def usage():
-        usage = "Usage: engine-launcher -e <engine type> -n <name> -w <process num> [-l <loglevel>]"
+        usage = "Usage: engine-launcher -e <engine type> -n <name> -w <process id> [-l <loglevel>]"
         stderr.write('{}\n'.format(usage))
 
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-e', '--type', dest='etype', help='engine type', required=True)
     parser.add_argument('-n', '--name', help='engine name', required=True)
-    parser.add_argument('-w', '--procnum', help='run X process', required=True)
+    parser.add_argument('-w', '--procnum', help='process id', required=True)
     parser.add_argument('-l', '--loglevel', default='INFO')
 
     args = parser.parse_args()

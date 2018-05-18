@@ -29,6 +29,7 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.alerts.utils import compat_go_crop_states
 import json
 
 
@@ -157,6 +158,8 @@ def exports(ws):
                         alarm['infos'].update(data)
                     else:
                         alarm['infos'] = data
+
+            alarm = compat_go_crop_states(alarm)
 
             list_alarm.append(alarm)
 
