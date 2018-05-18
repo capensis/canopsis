@@ -1,5 +1,8 @@
 <template lang="pug">
-  v-pagination(v-model="currentPage", :length="totalPages")
+  div.container
+    span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
+         |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
+    v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
@@ -45,3 +48,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .container{
+   flex-direction: column;
+  }
+  span {
+    padding-left: 1%;
+  }
+</style>
