@@ -1,8 +1,6 @@
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
 
-import fetchModule from '../fetch';
-
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
@@ -11,7 +9,6 @@ export const types = {
 
 export default {
   namespaced: true,
-  modules: [fetchModule],
   state: {
     allIds: [],
     meta: {},
@@ -42,12 +39,12 @@ export default {
       try {
         commit(types.FETCH_LIST, { params });
 
-        const { normalizedData, data } = await dispatch('fetch', {
+        const { normalizedData, data } = await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params,
           dataPreparer: d => d.alarms,
-        });
+        }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
@@ -66,12 +63,12 @@ export default {
 
     async fetchItem({ dispatch }, { id }) {
       try {
-        await dispatch('fetch', {
+        await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params: { filter: { _id: id } },
           dataPreparer: d => d.alarms,
-        });
+        }, { root: true });
       } catch (err) {
         console.error(err);
       }

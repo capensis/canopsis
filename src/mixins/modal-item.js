@@ -12,9 +12,5 @@ export default {
     item() {
       return this.getItem(this.config.itemType, this.config.itemId);
     },
-
-    items() {
-      return this.getList(this.config.itemType, this.config.itemsIds);
-    },
   },
 };

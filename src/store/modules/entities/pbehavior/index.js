@@ -1,7 +1,7 @@
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 
-import entitiesTypes from '../types';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export default {
   namespaced: true,
@@ -20,7 +20,7 @@ export default {
         await request.delete(`${API_ROUTES.pbehavior}/${id}`);
 
         commit(
-          `entities/${entitiesTypes.ENTITIES_DELETE}`,
+          entitiesTypes.ENTITIES_DELETE,
           { pbehavior: [id] },
           { root: true },
         );

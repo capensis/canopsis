@@ -12,7 +12,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import ListActions from './list-actions.vue';
 
-const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('entities/alarm');
+const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 
 export default {
   name: 'HelloWorld',
