@@ -19,12 +19,37 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
+from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBClientError
 
 from canopsis.engines.core import Engine
+
+SECONDS = 1000000000
 
 
 class engine(Engine):
     etype = "statsng"
+
+    def pre_run(self):
+        self.batch_lock = Lock()
+        self.batch = []
+
+        self.max_batch_size = 5000
+
+        self.influx_client = InfluxDBClient('192.168.0.62', 8086, 'root', 'root', 'statsng-test')
+        try:
+            self.influx_client.create_database('statsng-test')
+        except InfluxDBClientError:
+            pass
+
+    def beat(self):
+        with self.batch_lock:
+            self.flush()
 
     def work(self, event, *args, **kargs):
         """
@@ -33,4 +58,57 @@ class engine(Engine):
         :param dict event: event to process.
         """
 
-        self.logger.info('received event!')
+        if event['event_type'] == 'statcounterinc':
+            self.handle_statcounterinc_event(event)
+        elif event['event_type'] == 'statduration':
+            self.handle_statduration_event(event)
+
+    def handle_statcounterinc_event(self, event):
+        self.logger.info('received statcounterinc event')
+
+        alarm = event['alarm']
+
+        self.add_point({
+            'measurement': 'statcounters',
+            'time': event['timestamp'] * SECONDS,
+            'tags': {
+                'connector': alarm['connector'],
+                'connector_name': alarm['connector_name'],
+                'component': alarm['component'],
+                'resource': alarm['resource']
+            },
+            'fields': {
+                event['counter_name']: 1
+            }
+        })
+
+    def handle_statduration_event(self, event):
+        self.logger.info('received statduration event')
+
+        alarm = event['alarm']
+
+        self.add_point({
+            'measurement': 'statdurations',
+            'time': event['timestamp'] * SECONDS,
+            'tags': {
+                'connector': alarm['connector'],
+                'connector_name': alarm['connector_name'],
+                'component': alarm['component'],
+                'resource': alarm['resource']
+            },
+            'fields': {
+                event['duration_name']: event['duration']
+            }
+        })
+
+    def add_point(self, point):
+        with self.batch_lock:
+            self.batch.append(point)
+
+            if len(self.batch) >= self.max_batch_size:
+                self.flush()
+
+    def flush(self):
+        if self.batch:
+            self.influx_client.write_points(self.batch)
+            self.batch = []
