@@ -1,26 +1,30 @@
 import { schema } from 'normalizr';
 
-export const pbehaviorSchema = new schema.Entity('pbehavior', {}, {
+export const types = {
+  ALARM: 'alarm',
+  PBEHAVIOR: 'pbehavior',
+};
+
+export const pbehaviorSchema = new schema.Entity(types.PBEHAVIOR, {}, {
   idAttribute: '_id',
   processStrategy: (entity, parent, key) =>
     ({
       ...entity,
       _embedded: {
+        parentType: types.ALARM,
         parentId: parent._id,
-        parentType: parent._embedded.type,
         relationType: key,
       },
     }),
 });
 
-export const alarmSchema = new schema.Entity('alarm', {
+export const alarmSchema = new schema.Entity(types.ALARM, {
   pbehaviors: [pbehaviorSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: entity => ({ ...entity, _embedded: { type: 'alarm' } }),
 });
 
 export default {
-  alarm: alarmSchema,
-  pbehavior: pbehaviorSchema,
+  [types.ALARM]: alarmSchema,
+  [types.PBEHAVIOR]: pbehaviorSchema,
 };

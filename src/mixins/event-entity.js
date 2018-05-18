@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { EVENT_TYPES } from '@/config';
 
 const { mapActions: eventMapActions } = createNamespacedHelpers('event');
-const { mapActions: alarmMapActions } = createNamespacedHelpers('entities/alarm');
+const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
   methods: {

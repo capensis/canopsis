@@ -15,7 +15,7 @@ import { createNamespacedHelpers } from 'vuex';
 import ListActions from './list-actions.vue';
 import FiltersSelector from './other/filter/selector.vue';
 
-const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('entities/alarm');
+const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 
 export default {
   name: 'HelloWorld',

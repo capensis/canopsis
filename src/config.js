@@ -1,12 +1,11 @@
 export const API_HOST = process.env.VUE_APP_API_HOST;
 
-export const AUTH_TOKEN_KEY = 'access-token';
-
 export const DEFAULT_LOCALE = 'fr';
 
 export const EVENT_TYPES = {
   ack: 'ack',
   ackRemove: 'ackremove',
+  associateTicket: 'assocticket',
   cancel: 'cancel',
   changeState: 'changestate',
   declareTicket: 'declareticket',
@@ -27,7 +26,3 @@ export const API_ROUTES = {
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
 };
-
-export const NON_AUTH_API_ROUTES = [
-  API_ROUTES.login,
-];

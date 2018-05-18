@@ -1,12 +1,12 @@
 <template lang="pug">
   v-flex
     strong {{ item.pbehaviors.length }}
-    div(v-if="item.v.ack")
+    div(v-show="item.v.ack")
       v-btn(flat, icon, @click.stop="showAckRemoveModal")
         v-icon block
-      v-btn(flat, icon)
+      v-btn(flat, icon, @click.stop="showActionModal('create-declare-ticket-event')")
         v-icon local_play
-      v-btn(flat, icon)
+      v-btn(flat, icon, @click.stop="showActionModal('create-associate-ticket-event')")
         v-icon pin_drop
       v-btn(flat, icon, @click.stop="showActionModal('create-cancel-event')")
         v-icon delete
@@ -16,7 +16,7 @@
         v-icon alarm
       v-btn(flat, icon, @click.stop="showActionModal('pbehavior-list')")
         v-icon list
-    div(v-else)
+    div(v-show="!item.v.ack")
       v-btn(flat, icon, @click.stop="showActionModal('create-ack-event')")
         v-icon playlist_add_check
       v-btn(flat, icon, @click.stop="createAckEvent")

@@ -26,15 +26,17 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
 
-const { mapActions } = createNamespacedHelpers('event');
+import ModalItemMixin from '@/mixins/modal-item';
+import EventEntityMixin from '@/mixins/event-entity';
+import { EVENT_TYPES } from '@/config';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
+  mixins: [ModalItemMixin, EventEntityMixin],
   data() {
     const availableTypes = [
       { key: 'seconds', text: 'common.times.second' },
@@ -55,9 +57,6 @@ export default {
     };
   },
   methods: {
-    ...mapActions([
-      'snooze',
-    ]),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -67,14 +66,9 @@ export default {
           this.form.durationType.key,
         ).asSeconds();
 
-        await this.snooze({
-          id: 'aa24e42a-4eda-11e8-841e-0242ac12000a',
-          resource: 'res96',
-          customAttributes: {
-            duration,
-          },
-        });
-        //  todo hide modal
+        await this.createEvent(EVENT_TYPES.snooze, this.item, { duration });
+
+        this.hideModal();
       }
     },
   },
