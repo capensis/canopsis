@@ -261,7 +261,7 @@ def get_routingkey(event):
     :raise KeyError: on missing required info
     """
     event[Event.SOURCE_TYPE] = Event.COMPONENT
-    if event.get(Event.RESOURCE, '') != '':
+    if event.get(Event.RESOURCE, ''):
         event[Event.SOURCE_TYPE] = Event.RESOURCE
 
     rk = u"{}.{}.{}.{}.{}".format(
@@ -272,14 +272,14 @@ def get_routingkey(event):
         event[Event.COMPONENT]
     )
 
-    if event.get(Event.RESOURCE, '') != '':
+    if event.get(Event.RESOURCE, ''):
         rk = u"{}.{}".format(rk, event[Event.RESOURCE])
 
     return rk
 
 
 def is_component_problem(event):
-    if event.get(Event.RESOURCE, '') != '' and event['state'] != 0:
+    if event.get(Event.RESOURCE, '') and event['state'] != 0:
         storage = get_storage(
             namespace='entities',
             account=Account(user='root', group='root')).get_backend()
