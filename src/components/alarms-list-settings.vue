@@ -3,23 +3,23 @@
     v-toolbar(color="blue darken-4")
       v-list
         v-list-tile
-          v-list-tile-title(class="white--text text-xs-center") {{$t('alarm_list_settings.alarm_list_settings')}}
+          v-list-tile-title(class="white--text text-xs-center") {{$t('alarmListSettings.alarmListSettings')}}
       v-icon(@click.stop="closePanel", color="white" class="closeIcon") close
     v-divider
     v-list(expand, class="pt-0")
       v-list-group
         v-list-tile(slot="activator", active-class="activeHeader") {{$t('common.title')}}
         v-container
-          v-text-field(:placeholder="$t('alarm_list_settings.widget_title')")
+          v-text-field(:placeholder="$t('alarmListSettings.widgetTitle')")
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{$t('alarm_list_settings.default_sort_column')}}
+        v-list-tile(slot="activator") {{$t('alarmListSettings.defaultSortColumn')}}
         v-container
-          v-text-field(:placeholder="$t('alarm_list_settings.column_name')")
+          v-text-field(:placeholder="$t('alarmListSettings.columnName')")
           v-select(:items="sortChoices", value="ASC")
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{$t('alarm_list_settings.column_names')}}
+        v-list-tile(slot="activator") {{$t('alarmListSettings.columnNames')}}
         v-container
           v-card
             v-layout(justify-space-between class="pt-2")
@@ -40,7 +40,7 @@
           v-divider
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{$t('alarm_list_settings.periodic_refresh')}}
+        v-list-tile(slot="activator") {{$t('alarmListSettings.periodicRefresh')}}
         v-container
           v-layout
             v-flex
@@ -57,35 +57,35 @@
                 :disabled="!isPeriodicRefreshEnable")
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{$t('alarm_list_settings.default_number_of_elements_per_page')}}
+        v-list-tile(slot="activator") {{$t('alarmListSettings.defaultNumberOfElementsPerPage')}}
         v-container
           v-text-field(
-            :placeholder="$t('alarm_list_settings.elements_per_page')",
+            :placeholder="$t('alarmListSettings.elementsPerPage')",
             type="number"
           )
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{$t('alarm_list_settings.filter_on_open_resolved')}}
+        v-list-tile(slot="activator") {{$t('alarmListSettings.filterOnOpenResolved')}}
         v-container
           v-layout
             v-checkbox(
-              :label="$t('alarm_list_settings.open')",
+              :label="$t('alarmListSettings.open')",
               v-model="openCheckbox",
               hide-details
             )
             v-checkbox(
-              :label="$t('alarm_list_settings.resolved')",
+              :label="$t('alarmListSettings.resolved')",
               v-model="resolveCheckbox",
               hide-details
             )
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{$t('alarm_list_settings.filters')}}
+        v-list-tile(slot="activator") {{$t('alarmListSettings.filters')}}
         v-container
-          v-select(:label="$t('alarm_list_settings.select_a_filter')")
+          v-select(:label="$t('alarmListSettings.selectAFilter')")
       v-divider
       v-list-group(disabled)
-        v-list-tile(slot="activator") {{$t('alarm_list_settings.info_popup')}}
+        v-list-tile(slot="activator") {{$t('alarmListSettings.infoPopup')}}
       v-divider
     v-btn(
       color="green darken-4 white--text",
@@ -98,10 +98,10 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('AlarmsListSettings');
+const { mapGetters, mapActions } = createNamespacedHelpers('alarmsListSettings');
 
 export default {
-  name: 'AlarmsListSettings',
+  name: 'alarmsListSettings',
   data() {
     return {
       sortChoices: ['ASC', 'DESC'],
