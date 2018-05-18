@@ -60,25 +60,25 @@ export default {
       newRequest: '',
       resultsTableHeaders: [
         {
-          text: 'Connector',
+          text: this.$t('mFilterEditor.resultsTableHeaders.connector'),
           align: 'left',
           sortable: false,
           value: 'connector',
         },
         {
-          text: 'Connector Name',
+          text: this.$t('mFilterEditor.resultsTableHeaders.connectorName'),
           align: 'left',
           sortable: false,
           value: 'connector_name',
         },
         {
-          text: 'Component',
+          text: this.$t('mFilterEditor.resultsTableHeaders.component'),
           align: 'left',
           sortable: false,
           value: 'component',
         },
         {
-          text: 'Resource',
+          text: this.$t('mFilterEditor.resultsTableHeaders.resource'),
           align: 'left',
           sortable: false,
           value: 'resource',
@@ -101,8 +101,8 @@ export default {
       get() {
         return JSON.stringify(this.request, undefined, 4);
       },
-      set(newVal) {
-        this.newRequest = newVal;
+      set(value) {
+        this.newRequest = value;
       },
     },
     isSimpleTabDisabled() {

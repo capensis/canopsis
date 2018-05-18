@@ -17,5 +17,11 @@ export default {
       addGroup: 'Ajouter un groupe',
       deleteGroup: 'Supprimer le groupe',
     },
+    resultsTableHeaders: {
+      connector: 'Connecteur',
+      connectorName: 'Nom du connecteur',
+      component: 'Composant',
+      resource: 'Ressource',
+    },
   },
 };

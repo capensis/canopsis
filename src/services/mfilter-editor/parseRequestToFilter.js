@@ -66,7 +66,7 @@ function ruleOperatorAndInput(rule) {
         /**
          * Throw an error if the operator was not found.
          */
-        throw new Error('Opérateur non pris en charge');
+        throw new Error('Operator not found');
       }
     }
   }
@@ -103,7 +103,9 @@ export default function parseGroupToFilter(group) {
     rules: [],
   };
 
-  if (isEmpty(Object.values(group)[0])) {
+  const groupContent = Object.values(group)[0];
+
+  if (isEmpty(groupContent)) {
     return parsedGroup;
   }
 
@@ -115,7 +117,7 @@ export default function parseGroupToFilter(group) {
   * If the item is an array -> It's a group.
   * Else -> It's a rule.
   */
-  Object.values(group)[0].map((item) => {
+  groupContent.map((item) => {
     if (Array.isArray(Object.values(item)[0])) {
       parsedGroup.groups.push(parseGroupToFilter(item));
     } else {
