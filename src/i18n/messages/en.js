@@ -6,18 +6,17 @@ export default {
     edit: 'Edit',
     parse: 'Parse',
   },
-  m_filter_editor: {
+  mFilterEditor: {
     tabs: {
-      visual_editor: 'Visual Editor',
-      advanced_editor: 'Advanced Editor',
+      visualEditor: 'Visual Editor',
+      advancedEditor: 'Advanced Editor',
       results: 'Results',
     },
     buttons: {
-      add_rule: 'Add a rule',
-      add_group: 'Add a group',
-      delete_group: 'Delete group',
+      addRule: 'Add a rule',
+      addGroup: 'Add a group',
+      deleteGroup: 'Delete group',
     },
   },
 };
-
 

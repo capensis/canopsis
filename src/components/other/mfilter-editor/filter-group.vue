@@ -21,7 +21,7 @@
             outline,
             block,
             small
-          ) {{$t("m_filter_editor.buttons.add_rule")}}
+          ) {{$t("mFilterEditor.buttons.addRule")}}
         v-flex(xs5, md3)
           v-btn(
             @click="handleAddGroupClick",
@@ -29,7 +29,7 @@
             outline,
             block,
             small
-          ) {{$t("m_filter_editor.buttons.add_group")}}
+          ) {{$t("mFilterEditor.buttons.addGroup")}}
         v-flex(xs5, md3)
           v-btn(
             v-if="!initialGroup",
@@ -39,7 +39,7 @@
             color="red darken-4",
             block,
             small
-          ) {{$t("m_filter_editor.buttons.delete_group")}}
+          ) {{$t("mFilterEditor.buttons.deleteGroup")}}
 
       div(
         v-for="(rule, index) in rules",

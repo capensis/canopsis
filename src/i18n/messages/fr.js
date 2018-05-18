@@ -6,16 +6,16 @@ export default {
     edit: 'Editer',
     parse: 'Compiler',
   },
-  m_filter_editor: {
+  mFilterEditor: {
     tabs: {
-      visual_editor: 'Editeur visuel',
-      advanced_editor: 'Editeur avancé',
+      visualEditor: 'Editeur visuel',
+      advancedEditor: 'Editeur avancé',
       results: 'Résultats',
     },
     buttons: {
-      add_rule: 'Ajouter une règle',
-      add_group: 'Ajouter un groupe',
-      delete_group: 'Supprimer le groupe',
+      addRule: 'Ajouter une règle',
+      addGroup: 'Ajouter un groupe',
+      deleteGroup: 'Supprimer le groupe',
     },
   },
 };

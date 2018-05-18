@@ -1,6 +1,6 @@
 <template lang="pug">
   v-tabs(v-model="activeTab" slider-color="blue darken-4" centered)
-    v-tab(:disabled="isSimpleTabDisabled") {{$t('m_filter_editor.tabs.visual_editor')}}
+    v-tab(:disabled="isSimpleTabDisabled") {{$t('mFilterEditor.tabs.visualEditor')}}
     v-tab-item
       v-container
         filter-group(
@@ -11,18 +11,18 @@
           :rules="filter[0].rules",
           :groups="filter[0].groups",
         )
-    v-tab {{$t('m_filter_editor.tabs.advanced_editor')}}
+    v-tab {{$t('mFilterEditor.tabs.advancedEditor')}}
     v-tab-item
       v-text-field(
           v-model="inputValue",
           rows="20",
-          :label="$t('m_filter_editor.tabs.advanced_editor')",
+          :label="$t('mFilterEditor.tabs.advancedEditor')",
           textarea,
           @input="handleInputChange"
         )
       v-btn(@click="handleParseClick", :disabled="!isRequestChanged") {{$t('common.parse')}}
       p(v-if="parseError !== ''") {{ parseError }}
-    v-tab(:disabled="isRequestChanged", @click='handleResultTabClick') {{$t('m_filter_editor.tabs.results')}}
+    v-tab(:disabled="isRequestChanged", @click='handleResultTabClick') {{$t('mFilterEditor.tabs.results')}}
     v-tab-item
       v-data-table(
         :headers='resultsTableHeaders',
