@@ -146,7 +146,7 @@ class CheckRunner(object):
             'perf_data_array': perfdata.perf_data_array
         }
 
-        if 'resource' in self.context:
+        if self.context.get('resource', ''):
             event['resource'] = self.context['resource']
 
         return event
