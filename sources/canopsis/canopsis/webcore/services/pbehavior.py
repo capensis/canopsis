@@ -357,12 +357,9 @@ def exports(ws):
         for key in elements.keys():
             if key not in VALID_PBEHAVIOR_PARAMS:
                 invalid_keys.append(key)
-
+                elements.pop(key)
         if len(invalid_keys) != 0:
-            return gen_json_error(
-                {'description': 'Invalid keys: {}'.format(invalid_keys)},
-                HTTP_ERROR
-            )
+            ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
 
         try:
             return rhpb.create(**elements)
@@ -371,7 +368,7 @@ def exports(ws):
                 {'description': 'The fields name, filter, author, tstart, tstop are required.'},
                 HTTP_ERROR
             )
-        except ValueError as exc :
+        except ValueError as exc:
             return gen_json_error(
                 {'description': '{}'.format(exc.message)},
                 HTTP_ERROR

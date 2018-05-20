@@ -123,7 +123,7 @@ Ember.Application.initializer({
                         time = [date, month, year].join(' ') + ' ' + [hour, min, sec].join(':') ;
                         break;
                     case 'r':
-                        time = [date, addZero(a.getMonth()), year].join('/') + ' <br>' + [hour, min, sec].join(':') ;
+                        time = [date, addZero(a.getMonth()+1), year].join('/') + ' <br>' + [hour, min, sec].join(':') ;
                         break;
 
                     case 'timeOnly':

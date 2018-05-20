@@ -62,7 +62,7 @@ class MigrationTool(object):
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
 
-    def fill(self, init=None, yes=False):
+    def fill(self, init=None, yes=False, reinit_auth=False):
         tools = []
 
         for module in self.modules:
@@ -95,6 +95,22 @@ class MigrationTool(object):
                 init = True
             else:
                 print("Database already intialized. Updating...")
+                init = False
+
+        if init is None and reinit_auth is False:
+            data = {
+                "_id" : "initialized",
+                "at" : str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+            }
+            print("The canopsis initialization flag did not exist in the "
+                  "database. So canopsinit will (re?)initialized the "
+                  "database. Meaning, it may delete some important data  "
+                  "from canopsis database. If you still want to initialize "
+                  "the database, call the same command with the "
+                  "`--authorize-reinit` flag. Or if you do not want to "
+                  "initialize the database, add the document `{0}` in the {1} "
+                  "collections.".format(data, self.FLAG_COLLECTION))
+            exit(1)
 
         for tool in tools:
             if init:

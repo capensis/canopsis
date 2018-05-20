@@ -369,7 +369,7 @@ def exports(ws):
                     'last_update_date', None
                 )
                 enriched_entity['component'] = tmp_alarm['component']
-                if 'resource' in tmp_alarm.keys():
+                if tmp_alarm.get('resource', ''):
                     enriched_entity['resource'] = tmp_alarm['resource']
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
@@ -433,6 +433,8 @@ def exports(ws):
             }
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
+        query["enabled"] = True
+
         raw_entities = context_manager.get_entities(query=query)
         entity_ids = [entity['_id'] for entity in raw_entities]
         enriched_entities = []
@@ -484,10 +486,9 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            # enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
-            # FIXME: canopsis/canopsis#650 UTF-8 error
+            enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
             if current_alarm is not None:
-                enriched_entity['ticket'] = current_alarm['ticket']
+                enriched_entity['ticket'] = current_alarm.get('ticket')
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']
                 enriched_entity['snooze'] = current_alarm.get('snooze')
@@ -503,7 +504,7 @@ def exports(ws):
                 next_run = (current_alarm.get(AlarmField.alarmfilter.value, {})
                             .get(AlarmFilterField.next_run.value, None))
                 enriched_entity['automatic_action_timer'] = next_run
-                if 'resource' in current_alarm:
+                if current_alarm.get('resource', ''):
                     enriched_entity['resource'] = current_alarm['resource']
 
             enriched_entities.append(enriched_entity)

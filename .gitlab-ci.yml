@@ -13,18 +13,18 @@ variables:
 
 stage_test:
   stage: test
-  tags: ["canopsis,docker"]
+  tags: ["canopsis"]
   script:
     - git submodule update --init
     - ./build-docker.sh ci develop
     - git submodule update --init
     - ./build-docker.sh ci develop test-ci
     - echo CANOPSIS_TAG=${SYSBASE}-ci-test >> .env
-    - docker-compose -p test${CI_JOB_ID} up -d
+    - docker-compose -f docker-compose.ci.yml -p test${CI_JOB_ID} up -d
     - docker exec -t test${CI_JOB_ID}_webserver_1 /bin/bash -c "source ~/.bashrc && /opt/canopsis/bin/ut_runner /opt/canopsis/test"
     - docker cp test${CI_JOB_ID}_webserver_1:/opt/canopsis/tmp/tests_report/ tests_report
-    - docker-compose -p test-${CI_JOB_ID} kill
-    - docker-compose -p test-${CI_JOB_ID} rm -sf
+    - docker-compose -f docker-compose.ci.yml -p test-${CI_JOB_ID} kill
+    - docker-compose -f docker-compose.ci.yml -p test-${CI_JOB_ID} rm -sf
     - docker volume prune -f
 
   artifacts:
@@ -32,4 +32,4 @@ stage_test:
       - tests_report
 
 after_script:
-  - docker-compose -p test-${CI_JOB_ID} down
+  - docker-compose -f docker-compose.ci.yml -p test-${CI_JOB_ID} down

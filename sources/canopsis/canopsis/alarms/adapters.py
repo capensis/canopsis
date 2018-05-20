@@ -28,6 +28,7 @@ from __future__ import unicode_literals
 from time import time
 from .models import AlarmIdentity, AlarmStep, Alarm
 
+from canopsis.common.collection import MongoCollection
 
 class AlarmAdapter(object):
 
@@ -37,8 +38,13 @@ class AlarmAdapter(object):
 
     COLLECTION = 'periodical_alarm'
 
-    def __init__(self, mongo_client):
+    def __init__(self, mongo_client, mongo_store=None):
+        """
+        :param pymongo.MongoClient mongo_client: raw mongo client
+        :param canopsis.common.mongo_store.MongoStore mongo_store: optional MongoStore that handle HA
+        """
         self.mongo_client = mongo_client
+        self.mongo_store = mongo_store
 
     def find_unresolved_snoozed_alarms(self):
         """
@@ -96,6 +102,33 @@ class AlarmAdapter(object):
 
         for alarm in col_adapter.find(query):
             yield make_alarm_from_mongo(alarm)
+
+    def get_current_alarm(self, eid, connector_name=None):
+        """
+        Returns exactly one alarm or None.
+
+        This function uses the mongo_store attribute.
+
+        :param str eid: entity ID
+        :param str connector_name: add filter on connector_name if not None
+        :returns: alarm document or None if no alarm found
+        """
+
+        collection = MongoCollection(
+            self.mongo_store.get_collection(self.COLLECTION)
+        )
+        filter_ = {
+            "d": eid,
+            "$or": [
+                {"v.resolved": None},
+                {"v.resolved": {"$exists": False}},
+            ],
+        }
+
+        if connector_name is not None:
+            filter_['v.connector_name'] = connector_name
+
+        return collection.find_one(filter_)
 
     def update(self, alarm):
         """

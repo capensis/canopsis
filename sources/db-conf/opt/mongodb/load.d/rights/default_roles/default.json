@@ -163,6 +163,18 @@
         "listalarm_snoozeAlarm": {
             "checksum": 1,
             "desc": ""
+        },
+        "listalarm_listPbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 7,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 7,
+            "desc": ""
         }
     }
 },{
@@ -193,6 +205,18 @@
         },
         "listalarm_fastAck": {
             "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_listPbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 7,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 7,
             "desc": ""
         }
     }
@@ -228,6 +252,14 @@
         },
         "list_filters": {
             "checksum": 15,
+            "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 1,
             "desc": ""
         }
     }
@@ -265,14 +297,6 @@
             "checksum": 15,
             "desc": ""
         },
-        "menu_aclconfig": {
-            "checksum": 15,
-            "desc": ""
-        },
-        "menu_authsystems": {
-            "checksum": 15,
-            "desc": ""
-        },
         "listalarm_cancelAck": {
             "checksum": 1,
             "desc": ""
@@ -280,10 +304,30 @@
         "listalarm_changeState": {
             "checksum": 1,
             "desc": ""
+        },
+        "listalarm_listPbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_current_alarms": {
+            "checksum": 7,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 7,
+            "desc": ""
         }
     }
 },{
     "_id": "Visualisation",
     "rights": {
+        "view_current_alarms": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "view_history_alarms": {
+            "checksum": 1,
+            "desc": ""
+        }
     }
 }]

@@ -2,6 +2,112 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
 
+## Unreleased
+
+
+### Experimental features
+
+- [Go]: New engine interface
+- [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+
+
+## Canopsis 2.6.5 - Maintenance release -  Due date : 2018-05-18
+
+- [Go]: Porting steps cropping from python
+- [Go]: Huge refactoring on error handling
+- [Go]: Events with a timestamp as a float are now correctly parsed
+- [Python]: step cropping compatibility update
+- [Python]: bugfix where a source_type component is treated as a resource
+- [UI]: fix context info presentation in the context explorer
+- [UI]: bugfix on hide resource
+- [UI]: fix navbar rights
+- [Service Weather]: fix possibility to ack twice, change invalidate to cancel on thumb down button
+- [Alarms list]: creation date is now presented in full format, even if its the present day
+
+
+## Canopsis 2.6.4 - Maintenance release -  Due date : 2018-05-03
+
+- [Setup] A version of the amqp2engines.conf file is provided for the High performance engines
+- [Go]: fix error code when an engine crashes
+- [Go]: pbehavior events are now correctly parsed by Che and passed to the pbehavior engine
+- [Go]: generation of an unique id on every alarm
+- [Go]: fix a crash when impacts and depends are not initialized in an entity object
+- [Go]: Removed some useless logs from the Context
+- [Event filter]: fixed an issue that blocked snooze events
+- [Heartbeat]: fix heartbeat never closed on special conditions
+- [Stat]: perfomance update on the engine
+- [Stat]: fix handling special character in requests
+- [UI]: fix presentation of pbehavior (in service-weather), ellipsis and snooze
+- [UI]: fix permissions on the "List pbehaviors" action
+- [CAT]: fix a crash with datametrie engine
+- [Alarms list]: the  'pbehavior' icon is now displayed only when a pbeheavior is active on the entity, not when it is configured
+- [Alarms list]: add the snooze End date on the Snooze tooltip
+- [Alarms list]: several fixes on the ACK and report ticket action
+- [Alarms list]: Pbehaviors can now be filtered.
+- [Alarms list]: fix an issue where a pbehavior id could become null with periodic refresh enabled
+- [Service weather]: Resources are now greyed out when a Component has a pbehavior
+- [Context Graph]: Fixed an issue that prevented the expansion of an item of the Context Graph explorer
+
+
+## Canopsis 2.6.3 - Maintenance release -  Due date : 2018-04-26
+
+- [Engines] : Added UNACK, Uncancel, keep state actions to the High performance engines
+- [Engines] : Added a default author in all alarms steps in the High performance engines
+- [Go]: gracefull initialization of docker env and fix amqp2engines.conf on docker
+- [Go]: Context and alarm creation performance improvements
+- [Go]: code refactoring, fix alarm duplication and preloading
+- [UI]: update rights on default view
+- Multiple fixes on Pbheavior and Event_filter
+
+
+## Canopsis 2.6.2 - Maintenance release -  Due date : 2018-04-23
+
+### Fixes
+
+- [Alarms list] Fixed a date formatting issue in the alarms list that made the `last_update_date` column appear with a 1 month delay
+- [Service weather] reworked the Ticket action to fix a display issue caused by the new "save on exit" workflow
+- [Alarms list] Mass actions now correctly get their rights/permissions (inherited from the rights applied on the actions on the single alarm)
+- [setup] Canopsinit now requires a flag `--authorize-reinit` to perform any destructive modification to the database as an extra security
+- [APIs] the "enabled" flag on all entities is now active
+- [Engines] removed alarms caching in the Che engine to avoid  alarms duplication
+- [Rights management] : fixed a rights issue with the massive actions on a limited account
+- [Service weather] : fixed the components display to put long names on 2 lines instead of truncating it
+
+
+## Canopsis 2.6.1 - Due date: 2018-04-20
+**Not released due to regression**
+
+
+## Canopsis 2.6.0 - Due date: 2018-04-18
+
+This release introduced the new High performance engines and allowed the renaming on the Alarms list columns.
+
+### Functional changes
+
+- [Alarms list] : columns can now be renamed by the user
+- [Alarms list] : pbehaviors can now be filtered
+- [Alarms list] : added rights management to some new actions that were missing it
+- [Alarms list] : Added "duration" and "current_state_duration" columns that display the total duration of the alarm and the duration of the current state of the alarm (respectively)
+- [Alarms list] : the date is now displayed even if the the alarm was created today
+- [pbehaviors] : the form has been simplified to give a behavior closer to a Calendar event
+- [setup] : replaced the `schema2db` and `canopsis-filldb` commands with the new Canopsinit command (**Warning: see UPGRADING_2.6.md document**)
+- [CAT] : The Datametrie connector can now filter some alarms based on their criticity
+- [CAT] : The datametrie connector can now use the local date
+
+### Experimental features
+
+- [Engines] : New High Performance engines for heavily loaded environments (**experimental**)
+- [Engines] : reimplemented the last_event_date feature on the High performance engines
+- [engines] : The engine "stats" (High performance version) can now log the actions and their autors for audit purposes
+
+### Bug fixes
+
+- [Alarms list] : fixed an issue where rights were not saved properly in the admin
+- [Alarms list] : fixed an issue that prevented pbehaviors to be saved properly on the High performance engines
+- [Alarms list] : fixed an issue that could record a ticket number with the `0` value with the High performance engines
+- [Engines] fixed an issue where the cancel Action did not close the alarm with the High performance engines
+
+
 ## Canopsis 2.5.12 (Sprint 03.16) - Due date : 2018-03-16
 
 ### Functional changes
@@ -22,8 +128,8 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [HA Tools] Fixed an issue of the High Performance engines when the RabbitMQ connection was lost
 - [HA Tools] Reduced the downtime of the Canopsis UI when the MongoDB primary instance changes
 - [CAT] Fixed an SAMLv2 installation issue on CentOS 7/RHEL 7
-- [CAT] FIxed an race condition where SNMP rules could be missing when a trap was received while the engine's rules update function was running
-
+- [CAT] Fixed an race condition where SNMP rules could be missing when a trap was received while the engine's rules update function was running
+- [CAT] Fixed an issue where an SNMP trap with a routing key > 255 chars could crash the SNMP engine and block the whole AMQP queue
 
 ## Canopsis 2.5.6 (sprint 02.2) - Due date : 2018-02-02
 

@@ -29,6 +29,8 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.alerts.utils import compat_go_crop_states
+import json
 
 
 def exports(ws):
@@ -56,7 +58,8 @@ def exports(ws):
             'limit',
             'with_steps',
             'natural_search',
-            'active_columns'
+            'active_columns',
+            'hide_resources'
         ]
     )
     def get_alarms(
@@ -73,7 +76,8 @@ def exports(ws):
             limit=50,
             with_steps=False,
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            hide_resources=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -101,6 +105,8 @@ def exports(ws):
         :param list active_columns: list of active columns on the brick
         listalarm .
 
+        :param bool hide_resources: hide_resources if component has an alarm
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
@@ -121,7 +127,8 @@ def exports(ws):
             limit=limit,
             with_steps=with_steps,
             natural_search=natural_search,
-            active_columns=active_columns
+            active_columns=active_columns,
+            hide_resources=hide_resources
         )
         alarms_ids = []
         for alarm in alarms['alarms']:
@@ -136,7 +143,8 @@ def exports(ws):
         list_alarm = []
         for alarm in alarms['alarms']:
             now = int(time())
-            alarm["v"]['duration'] = now - alarm.get('v').get('creation_date')
+            alarm["v"]['duration'] = now - alarm.get('v', {}).get('creation_date', now)
+            alarm["v"]['current_state_duration'] = now - alarm.get('v', {}).get('state', {}).get('t', now)
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
@@ -150,6 +158,8 @@ def exports(ws):
                         alarm['infos'].update(data)
                     else:
                         alarm['infos'] = data
+
+            alarm = compat_go_crop_states(alarm)
 
             list_alarm.append(alarm)
 
@@ -313,3 +323,13 @@ def exports(ws):
         ws.logger.info('Delete alarm-filter : {}'.format(entity_id))
 
         return gen_json(am.alarm_filters.delete_filter(entity_id))
+
+    @ws.application.delete(
+        '/api/v2/alerts/<mfilter>'
+    )
+    def delete_filter(mfilter):
+        """
+        :param str mfilter: mongo filter
+        :rtype: dict
+        """
+        return gen_json(ar.alarm_storage._backend.remove(json.loads(mfilter)))
