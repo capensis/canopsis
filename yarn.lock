@@ -980,7 +980,7 @@ array-equal@^1.0.0:
 
 array-filter@~0.0.0:
   version "0.0.1"
-  resolved "https://registry.yarnpkg.com/array-filter/-/array-filter-0.0.1.tgz#7da8cf2e26628ed732803581fd21f67cacd2eeec"
+  resolved "https://registry.yarnpkg.com/array-userpreferences/-/array-userpreferences-0.0.1.tgz#7da8cf2e26628ed732803581fd21f67cacd2eeec"
 
 array-find-index@^1.0.1:
   version "1.0.2"
@@ -2348,7 +2348,7 @@ cssnano@^3.10.0, cssnano@^3.4.0:
     postcss-discard-empty "^2.0.1"
     postcss-discard-overridden "^0.1.1"
     postcss-discard-unused "^2.2.1"
-    postcss-filter-plugins "^2.0.0"
+    postcss-userpreferences-plugins "^2.0.0"
     postcss-merge-idents "^2.1.5"
     postcss-merge-longhand "^2.0.1"
     postcss-merge-rules "^2.0.3"
@@ -6616,7 +6616,7 @@ postcss-discard-unused@^2.2.1:
 
 postcss-filter-plugins@^2.0.0:
   version "2.0.2"
-  resolved "https://registry.yarnpkg.com/postcss-filter-plugins/-/postcss-filter-plugins-2.0.2.tgz#6d85862534d735ac420e4a85806e1f5d4286d84c"
+  resolved "https://registry.yarnpkg.com/postcss-userpreferences-plugins/-/postcss-userpreferences-plugins-2.0.2.tgz#6d85862534d735ac420e4a85806e1f5d4286d84c"
   dependencies:
     postcss "^5.0.4"
     uniqid "^4.0.0"
@@ -7800,7 +7800,7 @@ shell-quote@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.6.1.tgz#f4781949cce402697127430ea3b3c5476f481767"
   dependencies:
-    array-filter "~0.0.0"
+    array-userpreferences "~0.0.0"
     array-map "~0.0.0"
     array-reduce "~0.0.0"
     jsonify "~0.0.0"

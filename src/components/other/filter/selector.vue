@@ -17,7 +17,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('entities/filter');
+const { mapActions, mapGetters } = createNamespacedHelpers('userpreferences');
 
 export default {
   data() {
@@ -37,8 +37,8 @@ export default {
         limit: 1,
         filter: {
           crecord_name: 'root',
-          widget_id: 'widget_listalarm_f88cc478-2555-a818-b0bb-01888bbd4228',
-          _id: 'widget_listalarm_f88cc478-2555-a818-b0bb-01888bbd4228_root',
+          widget_id: 'widget_listalarm_1a6df694-e985-66b7-82c7-6c3012915a88',
+          _id: 'widget_listalarm_1a6df694-e985-66b7-82c7-6c3012915a88_root',
         },
       },
     });
@@ -53,13 +53,13 @@ export default {
         selectedFilter: filter,
         data: {
           crecord_name: 'root',
-          widget_id: 'widget_listalarm_f88cc478-2555-a818-b0bb-01888bbd4228',
+          widget_id: 'widget_listalarm_1a6df694-e985-66b7-82c7-6c3012915a88',
           widgetXtype: 'listalarm',
           title: 'Alarmes en cours',
-          id: '7196c9fa-9df2-c1d0-9833-94163b2105d8_root',
-          _id: 'widget_listalarm_f88cc478-2555-a818-b0bb-01888bbd4228_root',
-          crecord_type: 'userpreferences',
-        }
+          id: 'bc2a19a5-8d79-ea2f-8172-e340017fbe9f_root',
+          _id: 'widget_listalarm_1a6df694-e985-66b7-82c7-6c3012915a88_root',
+          crecord_type: 'userpreference',
+        },
       });
     },
   },

@@ -1,64 +1,70 @@
-import request from '@/services/request';
 import { API_ROUTES } from '@/config';
+import { userPreferencesSchema } from '@/store/schemas';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
   SET_ACTIVE_FILTER: 'SET_ACTIVE_FILTER',
 };
 
 export default {
   namespaced: true,
   state: {
-    filters: [],
     activeFilter: null,
     pending: false,
+    allIds: [],
   },
   getters: {
-    filters: state => state.filters,
+    filters: (state, getters, rootState, rootGetters) => {
+      const userPreferences = rootGetters['entities/getList']('userpreferences', state.allIds);
+      let filters = [];
+
+      userPreferences.forEach((userPreferenceObject) => {
+        filters = filters.concat(userPreferenceObject.widget_preferences.user_filters);
+      });
+
+      return filters;
+    },
     activeFilter: state => state.activeFilter,
   },
   mutations: {
     [types.SET_ACTIVE_FILTER]: (state, filter) => state.activeFilter = filter,
     [types.FETCH_LIST]: state => state.pending = true,
-    [types.FETCH_LIST_COMPLETED]: (state, filters) => {
-      state.filters = filters;
+    [types.FETCH_LIST_COMPLETED]: (state, { allIds }) => {
+      state.allIds = allIds;
+      state.pending = false;
+    },
+    [types.FETCH_LIST_FAILED]: (state) => {
       state.pending = false;
     },
   },
   actions: {
-    async fetchList({ commit }, { params }) {
+    async fetchList({ commit, dispatch }, { params }) {
       try {
         commit(types.FETCH_LIST);
-        const response = await request.get(API_ROUTES.userPreferences, {
-          params: {
-            limit: params.limit,
-            filter: {
-              crecord_name: params.filter.crecord_name,
-              widget_id: params.filter.widget_id,
-              _id: params.filter._id,
-            },
-          },
+
+        const { normalizedData } = await dispatch('entities/fetch', {
+          route: API_ROUTES.userPreferences,
+          schema: [userPreferencesSchema],
+          params,
+          dataPreparer: d => d,
+        }, { root: true });
+
+        commit(types.FETCH_LIST_COMPLETED, {
+          allIds: normalizedData.result,
         });
-
-        const data = response.shift();
-        let filters = [];
-
-        if (data) {
-          filters = data.widget_preferences.user_filters;
-        }
-
-        commit(types.FETCH_LIST_COMPLETED, filters);
       } catch (e) {
-        commit(types.FETCH_LIST_COMPLETED, []);
+        commit(types.FETCH_LIST_FAILED);
         console.log(e);
       }
     },
-    async setActiveFilter({ commit, state }, { data, selectedFilter }) {
+    async setActiveFilter({ commit, state, getters }, { data, selectedFilter }) {
       try {
         await request.post(API_ROUTES.userPreferences, {
           widget_preferences: {
-            user_filters: state.filters.map(filter => ({
+            user_filters: getters.filters.map(filter => ({
               filter: filter.filter,
               title: filter.title,
             })),
@@ -80,6 +86,6 @@ export default {
       } catch (e) {
         console.log(e);
       }
-    },
+    }
   },
 };
