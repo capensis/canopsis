@@ -3,7 +3,7 @@ import { schema } from 'normalizr';
 export const types = {
   ALARM: 'alarm',
   PBEHAVIOR: 'pbehavior',
-  USER_PREFERENCE: 'user_preference',
+  USER_PREFERENCE: 'userPreference',
 };
 
 export const pbehaviorSchema = new schema.Entity(types.PBEHAVIOR, {}, {
