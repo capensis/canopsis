@@ -6,7 +6,7 @@
         li(v-for="item in items")
           list-actions(:item="item")
         li
-          filters-selector
+          filter-selector
 </template>
 
 <script>
@@ -21,7 +21,7 @@ export default {
   name: 'HelloWorld',
   components: {
     ListActions,
-    FiltersSelector: FilterSelector,
+    FilterSelector,
   },
   props: {
     msg: {
