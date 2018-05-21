@@ -1,5 +1,5 @@
 import { API_ROUTES } from '@/config';
-import { userPreferencesSchema } from '@/store/schemas';
+import { userPreferenceSchema } from '@/store/schemas';
 import request from '@/services/request';
 
 export const types = {
@@ -18,7 +18,7 @@ export default {
   },
   getters: {
     filters: (state, getters, rootState, rootGetters) => {
-      const userPreferences = rootGetters['entities/getList']('userpreferences', state.allIds);
+      const userPreferences = rootGetters['entities/getList']('user-preference', state.allIds);
       let filters = [];
 
       userPreferences.forEach((userPreferenceObject) => {
@@ -47,7 +47,7 @@ export default {
 
         const { normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.userPreferences,
-          schema: [userPreferencesSchema],
+          schema: [userPreferenceSchema],
           params,
           dataPreparer: d => d,
         }, { root: true });

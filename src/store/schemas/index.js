@@ -3,8 +3,7 @@ import { schema } from 'normalizr';
 export const types = {
   ALARM: 'alarm',
   PBEHAVIOR: 'pbehavior',
-  FILTER: 'filter',
-  USER_PREFERENCES: 'userpreferences',
+  USER_PREFERENCE: 'user_preference',
 };
 
 export const pbehaviorSchema = new schema.Entity(types.PBEHAVIOR, {}, {
@@ -26,12 +25,12 @@ export const alarmSchema = new schema.Entity(types.ALARM, {
   idAttribute: '_id',
 });
 
-export const userPreferencesSchema = new schema.Entity(types.USER_PREFERENCES, {}, {
+export const userPreferenceSchema = new schema.Entity(types.USER_PREFERENCE, {}, {
   idAttribute: '_id',
 });
 
 export default {
   [types.ALARM]: alarmSchema,
   [types.PBEHAVIOR]: pbehaviorSchema,
-  [types.USER_PREFERENCES]: userPreferencesSchema,
+  [types.USER_PREFERENCE]: userPreferenceSchema,
 };

@@ -17,7 +17,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('userpreferences');
+const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');
 
 export default {
   data() {
@@ -65,7 +65,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

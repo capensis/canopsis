@@ -1,9 +1,9 @@
 import alarmModule from './alarm';
 import pbehaviorModule from './pbehavior';
-import userPreferencesModule from './userpreferences';
+import userPreferenceModule from './user-preference';
 
 export default {
   alarm: alarmModule,
   pbehavior: pbehaviorModule,
-  userpreferences: userPreferencesModule,
+  userPreference: userPreferenceModule,
 };
