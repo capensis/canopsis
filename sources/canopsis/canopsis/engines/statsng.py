@@ -40,7 +40,7 @@ class engine(Engine):
 
     CONF_PATH = "etc/statsng/engine.conf"
     DEFAULT_DATABASE = 'statsng'
-    DEFAULT_MAX_BATCH_SIZE = 5000
+    DEFAULT_MAX_BATCH_SIZE = 100
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
