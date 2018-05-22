@@ -1,15 +1,15 @@
 <template lang="pug">
   div
-    div( v-if="fetchComplete" )
-      basic-list( :items="items" )
-        tr.container( slot="header" )
-            th.box( v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)" ) {{ columnName }}
+    div(v-if="fetchComplete")
+      basic-list(:items="items")
+        tr.container(slot="header")
+            th.box(v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)") {{ columnName }}
             th.box
-        tr.container( slot="row" slot-scope="item" )
-            td.box( v-for="property in Object.values(alarmProperty)" ) {{ getProp(item.props, property) }}
+        tr.container(slot="row", slot-scope="item")
+            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
-        tr.container(slot="expandedRow" slot-scope="item")
+        tr.container(slot="expandedRow", slot-scope="item")
             td.box {{ item.props.infos }}
       alarm-list-pagination(:meta="meta", :limit="limit", v-if="fetchComplete")
     loader(v-else)

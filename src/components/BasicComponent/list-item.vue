@@ -1,10 +1,10 @@
 <template lang="pug">
-  div(id="content" @click.prevent="onClick")
-    transition(name="expand" mode="out-in")
-      v-card(v-if="!isExpanded" key="reduced" )
-        slot(name="reduced"  :props="item")
-      v-card(v-else key="expanded" :style="expandedStyle" :raised="true" )
-        slot(name="expanded" :props="item" )
+  div(id="content", @click.prevent="onClick")
+    transition(name="expand", mode="out-in")
+      v-card(v-if="!isExpanded", key="reduced")
+        slot(name="reduced", :props="item")
+      v-card(v-else, key="expanded", :style="expandedStyle", :raised="true")
+        slot(name="expanded", :props="item")
 </template>
 
 <script>
