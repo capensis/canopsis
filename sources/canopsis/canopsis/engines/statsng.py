@@ -30,6 +30,7 @@ from influxdb.exceptions import InfluxDBClientError
 
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
+from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
 
 SECONDS = 1000000000
@@ -51,6 +52,7 @@ class engine(Engine):
         cfg = Configuration.load(os.path.join(root_path, self.CONF_PATH), Ini)
         batch_cfg = cfg.get('BATCH', {})
         influxdb_cfg = cfg.get('DATABASE', {})
+        tags_cfg = cfg.get('TAGS', {})
 
         self.max_batch_size = int(
             batch_cfg.get('max_batch_size', self.DEFAULT_MAX_BATCH_SIZE))
@@ -65,6 +67,8 @@ class engine(Engine):
             self.influx_client.create_database(influxdb_cfg['database'])
         except InfluxDBClientError:
             pass
+
+        self.tags = cfg_to_array(tags_cfg.get('tags', ''))
 
     def beat(self):
         with self.batch_lock:
@@ -82,20 +86,36 @@ class engine(Engine):
         elif event['event_type'] == 'statduration':
             self.handle_statduration_event(event)
 
+    def get_tags(self, event):
+        """
+        Returns the tags corresponding to an event, to be used in
+        `InfluxDBClient.write_points`.
+
+        :param dict event:
+        :rtype dict:
+        """
+        alarm = event['alarm']
+
+        tags = {
+            'connector': alarm['connector'],
+            'connector_name': alarm['connector_name'],
+            'component': alarm['component'],
+            'resource': alarm['resource']
+        }
+
+        infos = event.get('entity', {}).get('infos', {})
+        for tag in self.tags:
+            tags[tag] = infos.get(tag, {}).get('value', '')
+
+        return tags
+
     def handle_statcounterinc_event(self, event):
         self.logger.info('received statcounterinc event')
-
-        alarm = event['alarm']
 
         self.add_point({
             'measurement': 'statcounters',
             'time': event['timestamp'] * SECONDS,
-            'tags': {
-                'connector': alarm['connector'],
-                'connector_name': alarm['connector_name'],
-                'component': alarm['component'],
-                'resource': alarm['resource']
-            },
+            'tags': self.get_tags(event),
             'fields': {
                 event['counter_name']: 1
             }
@@ -109,12 +129,7 @@ class engine(Engine):
         self.add_point({
             'measurement': 'statdurations',
             'time': event['timestamp'] * SECONDS,
-            'tags': {
-                'connector': alarm['connector'],
-                'connector_name': alarm['connector_name'],
-                'component': alarm['component'],
-                'resource': alarm['resource']
-            },
+            'tags': self.get_tags(event),
             'fields': {
                 event['duration_name']: event['duration']
             }
