@@ -28,7 +28,7 @@ import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
 import AlarmListPagination from './alarm-list-pagination.vue';
-import AlarmListSorting from './alarm-list-sorting.vue';
+import AlarmListSorting from '../BasicComponent/list-sorting.vue';
 
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
