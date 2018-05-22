@@ -20,8 +20,10 @@
           textarea,
           @input="handleInputChange"
         )
+      v-layout(justify-center)
+        v-flex(xs10 md-6)
+          v-alert(:value="parseError !== ''", type="error") {{ parseError }}
       v-btn(@click="handleParseClick", :disabled="!isRequestChanged") {{$t('common.parse')}}
-      p(v-if="parseError !== ''") {{ parseError }}
     v-tab(:disabled="isRequestChanged", @click='handleResultTabClick') {{$t('mFilterEditor.tabs.results')}}
     v-tab-item
       v-data-table(
@@ -136,6 +138,7 @@ export default {
         this.isRequestChanged = false;
         return this.updateFilter(JSON.parse(this.newRequest));
       } catch (e) {
+        this.onParseError('Invalid JSON');
         return this.isRequestChanged = true;
       }
     },
