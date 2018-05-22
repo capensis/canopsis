@@ -41,6 +41,7 @@ class AlarmService(object):
 
     def __init__(self,
                  alarms_adapter,
+                 event_publisher,
                  watcher_manager,
                  bagot_time=DEFAULT_FLAPPING_INTERVAL,
                  cancel_autosolve_delay=DEFAULT_CANCEL_AUTOSOLVE_DELAY,
@@ -51,6 +52,7 @@ class AlarmService(object):
         Alarm service constructor.
 
         :param AlarmAdapter alarms_adapter: Alarms DB adapter
+        :param AlarmEventPublisher event_publisher: Event publisher
         :param WatcherManager watcher_manager: ref to a WatcherManager object
         :param int bagot_time: period to consider status oscilations
         :param int cancel_autosolve_delay: delay before validating a cancel
@@ -59,6 +61,7 @@ class AlarmService(object):
         :param Logger logger: a logger instance
         """
         self.alarms_adapter = alarms_adapter
+        self.event_publisher = event_publisher
         self.watcher_manager = watcher_manager
         self.bagot_time = bagot_time
         self.cancel_delay = cancel_autosolve_delay
@@ -108,6 +111,13 @@ class AlarmService(object):
                 self._log(logging.DEBUG,
                           'alarm : {} has been unsnoozed'.format(alarm._id))
                 self.update_alarm(alarm)
+
+                alarm_dict = alarm.to_dict()
+                self.event_publisher.publish_statcounterinc_event(
+                    'alarms_resolved', alarm_dict['_id'], alarm_dict['v'])
+                self.event_publisher.publish_statduration_event(
+                    'resolve_time', alarm_dict['_id'], alarm_dict['v'])
+
                 alarms.remove(alarm)
 
         return alarms
@@ -132,6 +142,12 @@ class AlarmService(object):
             if resolved or resolved_cancel or resolved_stealthy or resolved_flapping:
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
+
+                alarm_dict = alarm.to_dict()
+                self.event_publisher.publish_statcounterinc_event(
+                    'alarms_resolved', alarm_dict['_id'], alarm_dict['v'])
+                self.event_publisher.publish_statduration_event(
+                    'resolve_time', alarm_dict['_id'], alarm_dict['v'])
 
         self._log(
             logging.DEBUG,

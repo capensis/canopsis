@@ -32,6 +32,7 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
+from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
@@ -45,15 +46,12 @@ from canopsis.common.utils import ensure_iterable, gen_id
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.event import forger, get_routingkey
+from canopsis.event import get_routingkey
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.watcher.manager import Watcher
-from canopsis.common.amqp import AmqpPublisher
-from canopsis.common.amqp import get_default_connection as \
-    get_default_amqp_conn
 
 # Extra fields from the event that should be stored in the alarm
 DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
@@ -108,7 +106,7 @@ class Alerts(object):
             filter_storage,
             context_graph,
             watcher,
-            amqp_pub=None
+            event_publisher
     ):
         self.config = config
         self.logger = logger
@@ -118,9 +116,7 @@ class Alerts(object):
         self.context_manager = context_graph
         self.watcher_manager = watcher
 
-        self.amqp_pub = amqp_pub
-        if amqp_pub is None:
-            self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        self.event_publisher = event_publisher
 
         alerts_ = self.config.get(self.ALERTS_CAT, {})
         self.extra_fields = cfg_to_array(alerts_.get('extra_fields',
@@ -165,8 +161,11 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
+        event_publisher = AlarmEventPublisher(context_manager)
+
         return (config, logger, alerts_storage, config_data,
-                filter_storage, context_manager, watcher_manager)
+                filter_storage, context_manager, watcher_manager,
+                event_publisher)
 
     @property
     def cancel_autosolve_delay(self):
@@ -555,7 +554,7 @@ class Alerts(object):
 
             if is_new_alarm:
                 self.check_alarm_filters()
-                self.publish_statcounterinc_event(
+                self.event_publisher.publish_statcounterinc_event(
                     'alarms_created',
                     entity_id,
                     alarm[self.alerts_storage.VALUE])
@@ -760,17 +759,8 @@ class Alerts(object):
 
         entity_id = alarm[self.alerts_storage.DATA_ID]
 
-        if status == OFF:
-            self.publish_statcounterinc_event(
-                'alarms_resolved',
-                entity_id,
-                new_value)
-            self.publish_statduration_event(
-                'resolve_time',
-                entity_id,
-                new_value)
-        elif status == CANCELED:
-            self.publish_statcounterinc_event(
+        if status == CANCELED:
+            self.event_publisher.publish_statcounterinc_event(
                 'alarms_canceled',
                 entity_id,
                 new_value)
@@ -1182,64 +1172,3 @@ class Alerts(object):
             new_value[AlarmField.alarmfilter.value] = alarmfilter
 
             self.update_current_alarm(docalarm, new_value)
-
-    def publish_statcounterinc_event(self, counter_name, entity_id, alarm):
-        """
-        Publish a statcounterinc event on amqp.
-
-        :param str counter_name: the name of the counter to increment
-        :param str entity_id: id of the alarm
-        :param dict alarm: the alarm
-        """
-        storage = self.alerts_storage
-
-        entity = self.context_manager.get_entities_by_id(entity_id)
-        try:
-            entity = entity[0]
-        except IndexError:
-            entity = {}
-
-        event = forger(
-            connector="canopsis",
-            connector_name="engine",
-            event_type="statcounterinc",
-            source_type="component",
-            timestamp=alarm[AlarmField.creation_date.value],
-            counter_name=counter_name,
-            alarm=alarm,
-            entity=entity)
-
-        self.amqp_pub.canopsis_event(event)
-
-    def publish_statduration_event(self, duration_name, entity_id, alarm):
-        """
-        Publish a statduration event on amqp.
-
-        :param str duration_name: the name of the duration to add
-        :param str entity_id: id of the alarm
-        :param dict alarm: the alarm
-        """
-        storage = self.alerts_storage
-
-        entity = self.context_manager.get_entities_by_id(entity_id)
-        try:
-            entity = entity[0]
-        except IndexError:
-            entity = {}
-
-        creation_date = alarm[AlarmField.creation_date.value]
-        update_date = alarm[AlarmField.last_update_date.value]
-        duration = update_date - creation_date
-
-        event = forger(
-            connector="canopsis",
-            connector_name="engine",
-            event_type="statduration",
-            source_type="component",
-            timestamp=update_date,
-            duration_name=duration_name,
-            duration=duration,
-            alarm=alarm,
-            entity=entity)
-
-        self.amqp_pub.canopsis_event(event)

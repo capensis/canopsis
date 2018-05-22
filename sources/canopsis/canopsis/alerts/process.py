@@ -21,6 +21,7 @@
 from __future__ import unicode_literals
 
 from canopsis.alarms.adapters import AlarmAdapter
+from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alarms.services import AlarmService
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
@@ -72,6 +73,7 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
 
     alarms_service = AlarmService(
         alarms_adapter=AlarmAdapter(mongo_client),
+        event_publisher=AlarmEventPublisher(),
         watcher_manager=Watcher(),
         bagot_time=alertsmgr.flapping_interval,
         cancel_autosolve_delay=alertsmgr.cancel_autosolve_delay,

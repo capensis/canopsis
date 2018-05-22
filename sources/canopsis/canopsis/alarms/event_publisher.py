@@ -1,0 +1,107 @@
+#!/usr/binenv python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2017 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+"""
+Event publisher for alarms.
+"""
+
+from __future__ import unicode_literals
+
+from canopsis.alerts.enums import AlarmField
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
+from canopsis.context_graph.manager import ContextGraph
+from canopsis.event import forger
+from canopsis.logger import Logger
+
+
+class AlarmEventPublisher(object):
+    """
+    Event publisher for alarms.
+    """
+    def __init__(self, context_manager=None, amqp_pub=None):
+        self.context_manager = context_manager
+        if context_manager is None:
+            logger = Logger.get('alarms', 'var/log/alarms.log')
+            self.context_manager = ContextGraph(logger)
+
+        self.amqp_pub = amqp_pub
+        if amqp_pub is None:
+            self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
+
+    def publish_statcounterinc_event(self, counter_name, entity_id, alarm):
+        """
+        Publish a statcounterinc event on amqp.
+
+        :param str counter_name: the name of the counter to increment
+        :param str entity_id: id of the alarm
+        :param dict alarm: the alarm
+        """
+        entity = self.context_manager.get_entities_by_id(entity_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
+
+        event = forger(
+            connector="canopsis",
+            connector_name="engine",
+            event_type="statcounterinc",
+            source_type="component",
+            timestamp=alarm[AlarmField.creation_date.value],
+            counter_name=counter_name,
+            alarm=alarm,
+            entity=entity)
+
+        self.amqp_pub.canopsis_event(event)
+
+    def publish_statduration_event(self, duration_name, entity_id, alarm):
+        """
+        Publish a statduration event on amqp.
+
+        :param str duration_name: the name of the duration to add
+        :param str entity_id: id of the alarm
+        :param dict alarm: the alarm
+        """
+        entity = self.context_manager.get_entities_by_id(entity_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
+
+        creation_date = alarm[AlarmField.creation_date.value]
+        update_date = alarm[AlarmField.last_update_date.value]
+        duration = update_date - creation_date
+
+        event = forger(
+            connector="canopsis",
+            connector_name="engine",
+            event_type="statduration",
+            source_type="component",
+            timestamp=update_date,
+            duration_name=duration_name,
+            duration=duration,
+            alarm=alarm,
+            entity=entity)
+
+        self.amqp_pub.canopsis_event(event)
+
