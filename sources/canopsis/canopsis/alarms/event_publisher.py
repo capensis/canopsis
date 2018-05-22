@@ -32,6 +32,7 @@ from canopsis.common.amqp import get_default_connection as \
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.logger import Logger
+from canopsis.statsng.enums import StatEvents
 
 
 class AlarmEventPublisher(object):
@@ -65,7 +66,7 @@ class AlarmEventPublisher(object):
         event = forger(
             connector="canopsis",
             connector_name="engine",
-            event_type="statcounterinc",
+            event_type=StatEvents.statcounterinc,
             source_type="component",
             timestamp=alarm[AlarmField.creation_date.value],
             counter_name=counter_name,
@@ -95,7 +96,7 @@ class AlarmEventPublisher(object):
         event = forger(
             connector="canopsis",
             connector_name="engine",
-            event_type="statduration",
+            event_type=StatEvents.statcounterinc,
             source_type="component",
             timestamp=update_date,
             duration_name=duration_name,

@@ -32,6 +32,7 @@ from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
+from canopsis.statsng.enums import StatEvents
 
 SECONDS = 1000000000
 
@@ -81,9 +82,9 @@ class engine(Engine):
         :param dict event: event to process.
         """
 
-        if event['event_type'] == 'statcounterinc':
+        if event['event_type'] == StatEvents.statcounterinc:
             self.handle_statcounterinc_event(event)
-        elif event['event_type'] == 'statduration':
+        elif event['event_type'] == StatEvents.statduration:
             self.handle_statduration_event(event)
 
     def get_tags(self, event):
