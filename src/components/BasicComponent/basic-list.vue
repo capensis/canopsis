@@ -12,7 +12,7 @@
 
 <script>
 import StickyFill from 'stickyfilljs';
-import ListItem from './list-item.vue';
+import ListItem from '@/components/BasicComponent/list-item.vue';
 
 export default {
   name: 'BasicList',
