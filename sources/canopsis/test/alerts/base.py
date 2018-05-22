@@ -25,10 +25,10 @@ import logging
 import time
 from unittest import TestCase
 
+from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
-from canopsis.auth.mock.camqp import CamqpMock
 from canopsis.check import Check
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.utils import merge_two_dicts
@@ -78,13 +78,16 @@ class BaseTest(TestCase):
         self.config_data = EtherealData(collection=self.config_storage._backend,
                                         filter_=filter_)
 
+        event_publisher = AlarmEventPublisher(self.cg_manager)
+
         self.manager = Alerts(config=conf,
                               logger=self.logger,
                               alerts_storage=self.alerts_storage,
                               config_data=self.config_data,
                               filter_storage=self.filter_storage,
                               context_graph=self.cg_manager,
-                              watcher=self.watcher_manager)
+                              watcher=self.watcher_manager,
+                              event_publisher=event_publisher)
 
     def tearDown(self):
         """Teardown"""
