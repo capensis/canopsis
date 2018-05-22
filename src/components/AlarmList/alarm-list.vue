@@ -30,16 +30,15 @@ import AlarmListPagination from './alarm-list-pagination.vue';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
 
-export default {
 /**
- * The Alarm List Component
- *         Props :
- *          - alarmProperty ( Object ) : Object that describe the columns names and the alarms attributes corresponding
+ * Alarm-list component.
+ *
+ * @module components/alarm-list
+ * @param {object} alarmProperty - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
- *            Default : {}
- *          - itemsPerPage ( Integer ) : Number of Alarm to display per page
- *            Default : 5
+ * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
  */
+export default {
   name: 'AlarmList',
   components: {
     AlarmListPagination, ActionsPanel, BasicList, Loader,
