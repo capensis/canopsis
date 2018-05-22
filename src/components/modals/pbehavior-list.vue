@@ -22,7 +22,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalItemMixin from '@/mixins/modal-item';
+import ModalItemMixin from '@/mixins/modal/modal-inner-item';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');
 

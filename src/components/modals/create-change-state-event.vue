@@ -31,15 +31,15 @@
 </template>
 
 <script>
-import ModalItemMixin from '@/mixins/modal-item';
-import EventEntityMixin from '@/mixins/event-entity';
+import ModalItemMixin from '@/mixins/modal/modal-inner-item';
+import EventActionsMixin from '@/mixins/event-actions';
 import { STATES, EVENT_TYPES } from '@/config';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [ModalItemMixin, EventEntityMixin],
+  mixins: [ModalItemMixin, EventActionsMixin],
   data() {
     return {
       form: {

@@ -30,16 +30,12 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-import EventEntityMixin from '@/mixins/event-entity';
+import ModalMixin from '@/mixins/modal/modal';
+import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_TYPES } from '@/config';
 
-const { mapActions: alarmMapActions } = createNamespacedHelpers('entities/alarm');
-const { mapActions: modalMapActions } = createNamespacedHelpers('modal');
-
 export default {
-  mixins: [EventEntityMixin],
+  mixins: [ModalMixin, EventActionsMixin],
   props: {
     item: {
       type: Object,
@@ -55,12 +51,6 @@ export default {
     },
   },
   methods: {
-    ...alarmMapActions(['fetchItem']),
-
-    ...modalMapActions({
-      showModal: 'show',
-    }),
-
     async createAckEvent() {
       await this.createEvent(EVENT_TYPES.ack, this.item);
     },

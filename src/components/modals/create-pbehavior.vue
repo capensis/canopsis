@@ -51,7 +51,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/other/rrule/rrule-form.vue';
-import ModalItemMixin from '@/mixins/modal-item';
+import ModalItemMixin from '@/mixins/modal/modal-inner-item';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('entities/alarm');
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');

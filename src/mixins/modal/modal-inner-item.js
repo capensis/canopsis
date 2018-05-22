@@ -1,11 +1,11 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalMixin from './modal';
+import ModalInnerMixin from './modal-inner';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 export default {
-  mixins: [ModalMixin],
+  mixins: [ModalInnerMixin],
   computed: {
     ...entitiesMapGetters(['getItem', 'getList']),
 
