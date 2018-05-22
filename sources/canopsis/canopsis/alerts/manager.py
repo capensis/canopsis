@@ -515,8 +515,9 @@ class Alerts(object):
         if event_type in [Check.EVENT_TYPE, 'watcher']:
 
             alarm = self.get_current_alarm(entity_id)
+            is_new_alarm = alarm is None
 
-            if alarm is None:
+            if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
@@ -543,6 +544,9 @@ class Alerts(object):
             value = self.check_hard_limit(value)
 
             self.update_current_alarm(alarm, value)
+
+            if is_new_alarm:
+                self.check_alarm_filters()
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
@@ -955,7 +959,7 @@ class Alerts(object):
     def resolve_snoozes(self, alarms=None):
         """
         Loop over all snoozed alarms, and restore them if needed.
-        :param alarms: a list of existing alarms (hack to bypass the self.getAlarms that is deprecated)
+        :param list alarms: existing alarms (hack to bypass the self.getAlarms that is deprecated)
         :deprecated: see canopsis.alarms
         """
 

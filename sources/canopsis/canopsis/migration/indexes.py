@@ -102,7 +102,7 @@ class IndexesModule(MigrationModule):
             namespace='object'
         )
 
-    def init(self):
+    def init(self, yes=False):
         for collection in IndexesModule.INDEXES:
             self.logger.info(u'Indexing collection: {0}'.format(collection))
             col = self.storage.get_backend(collection)
@@ -111,11 +111,15 @@ class IndexesModule(MigrationModule):
             for index in IndexesModule.INDEXES[collection]:
                 col.ensure_index(index)
 
-    def update(self):
-        answer = self.ask(
-            'Add/Update indexes (update may take time)?',
-            default=False
-        )
+    def update(self, yes=False):
+        if not yes:
+            answer = self.ask(
+                'Add/Update indexes (update may take time)?',
+                default=False
+            )
+        else:
+            print("Yes given, no confirmation asked.")
+            answer = True
 
         if answer:
             self.init()

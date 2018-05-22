@@ -351,5 +351,105 @@
         "crecord_name" : "models_tasklinklist",
         "crecord_type" : "action",
         "desc": "Rights on task: Linklist"
+    },
+    {
+        "_id" : "listalarm_ack",
+        "loader_id" : "listalarm_ack",
+        "crecord_name" : "listalarm_ack",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: ack"
+    },
+    {
+        "_id" : "listalarm_fastAck",
+        "loader_id" : "listalarm_fastAck",
+        "crecord_name" : "listalarm_fastAck",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: fast ack"
+    },
+    {
+        "_id" : "listalarm_cancelAck",
+        "loader_id" : "listalarm_cancelAck",
+        "crecord_name" : "listalarm_cancelAck",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: cancel ack"
+    },
+    {
+        "_id" : "listalarm_declareanIncident",
+        "loader_id" : "listalarm_declareanIncident",
+        "crecord_name" : "listalarm_declareanIncident",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: declare an incident"
+    },
+    {
+        "_id" : "listalarm_assignTicketNumber",
+        "loader_id" : "listalarm_assignTicketNumber",
+        "crecord_name" : "listalarm_assignTicketNumber",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: assign ticket number"
+    },
+    {
+        "_id" : "listalarm_pbehavior",
+        "loader_id" : "listalarm_pbehavior",
+        "crecord_name" : "listalarm_pbehavior",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: pbehavior"
+    },
+    {
+        "_id" : "listalarm_removeAlarm",
+        "loader_id" : "listalarm_removeAlarm",
+        "crecord_name" : "listalarm_removeAlarm",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: remove alarm"
+    },
+    {
+        "_id" : "listalarm_changeState",
+        "loader_id" : "listalarm_changeState",
+        "crecord_name" : "listalarm_changeState",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: change state"
+    },
+    {
+        "_id" : "listalarm_changeCriticity",
+        "loader_id" : "listalarm_changeCriticity",
+        "crecord_name" : "listalarm_changeCriticity",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: change criticity"
+    },
+    {
+        "_id" : "listalarm_restoreAlarm",
+        "loader_id" : "listalarm_restoreAlarm",
+        "crecord_name" : "listalarm_restoreAlarm",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: restore alarm"
+    },
+    {
+        "_id" : "listalarm_snoozeAlarm",
+        "loader_id" : "listalarm_snoozeAlarm",
+        "crecord_name" : "listalarm_snoozeAlarm",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: snooze alarm"
+    },
+    {
+        "_id" : "listalarm_listPbehavior",
+        "loader_id" : "listalarm_listPbehavior",
+        "crecord_name" : "listalarm_listPbehavior",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: list pbehavior"
+    },
+    {
+        "_id" : "view_current_alarms",
+        "loader_id" : "view_current_alarms",
+        "crecord_type" : "action",
+        "type" : "RW",
+        "crecord_name" : "view_current_alarms",
+        "desc" : "Rights on view: current alarms"
+    },
+    {
+        "_id" : "view_history_alarms",
+        "loader_id" : "view_history_alarms",
+        "crecord_type" : "action",
+        "type" : "RW",
+        "crecord_name" : "view_history_alarms",
+        "desc" : "Rights on view: history alarms"
     }
 ]

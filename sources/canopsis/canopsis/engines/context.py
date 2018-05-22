@@ -108,7 +108,7 @@ class engine(Engine):
         component = event.get('component')
         resource = event.get('resource')
         # quick fix when an event has an empty resource
-        if 'resource' in event and not resource:
+        if not event.get('resource', ''):
             del event['resource']
 
         # get a copy of event
@@ -157,9 +157,9 @@ class engine(Engine):
 
         context, name = self.context.get_entity_context_and_name(entity)
 
-        if 'resource' in context and not context['resource']:
+        if not context.get('resource', ''):
             del context['resource']
-        if 'resource' in entity and not entity['resource']:
+        if not entity.get('resource', ''):
             del entity['resource']
 
         # put the status entity in the context

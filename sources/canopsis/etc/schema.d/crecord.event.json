@@ -11,7 +11,7 @@
 		"keys":["event_type", "status.val", "state.val", "ack.isAck"]
 	},{
 		"title": "Event filter",
-		"keys":["state", "state_type"]
+		"keys":["state", "state_type", "status"]
 	}],
 	"showEditButton": true,
 	"properties": {

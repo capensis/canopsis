@@ -29,6 +29,7 @@ from json import dumps
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.task.core import register_task
+from canopsis.models.pbehavior import PBehavior as PBehaviorModel
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.watcher.manager import Watcher
 
@@ -37,6 +38,7 @@ PBEHAVIOR_CREATE = 'create'
 PBEHAVIOR_DELETE = 'delete'
 ERROR_MSG = 'Failed to perform the action {} for the event: {}'
 
+DOWNTIME_ID = 'downtime_id'
 COMPONENT = 'component'
 RESOURCE = 'resource'
 SELECTOR = 'selector'
@@ -67,6 +69,22 @@ def get_entity_id(event):
     return ContextGraph.get_id(event)
 
 
+def pb_id(event):
+    """
+    Build a pbehavior ID from event if applicable.
+
+    :returns: (None, None) if not applicable, (id, source) if applicable
+    """
+    did = event.get(DOWNTIME_ID)
+    connector = event.get(CONNECTOR)
+    connector_name = event.get(CONNECTOR_NAME)
+
+    if did is not None and connector is not None and connector_name is not None:
+        return 'pb_downtime_{}-{}_{}'.format(connector, connector_name, did), 'nagioslike'
+
+    return None, None
+
+
 @register_task
 def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
     """
@@ -95,7 +113,8 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
 
         try:
             filter_ = {'_id': entity_id}
-            if event.get('action') == PBEHAVIOR_CREATE:
+            pbehavior_id, pb_source = pb_id(event)
+            if event.get('action') == PBEHAVIOR_CREATE and pbehavior_id is None and pb_source is None:
                 result = pbm.create(
                     pb_name, filter_, pb_author,
                     pb_start, pb_end,
@@ -109,6 +128,17 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
 
                 else:
                     watcher_manager.compute_watchers()
+
+            elif event.get('action') == PBEHAVIOR_CREATE and pbehavior_id is not None and pb_source is not None:
+                pbehavior = PBehaviorModel(
+                    pbehavior_id, pb_name, filter_, pb_start, pb_end, pb_rrule, pb_author,
+                    connector=pb_connector,
+                    connector_name=pb_connector_name,
+                    source=pb_source
+                )
+                success, result = pbm.upsert(pbehavior)
+                if not success:
+                    logger.critical('pbehavior upsert: {}'.format(result))
 
             elif event.get('action') == PBEHAVIOR_DELETE:
                 result = pbm.delete(_filter={

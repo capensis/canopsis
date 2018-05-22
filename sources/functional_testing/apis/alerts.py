@@ -22,6 +22,7 @@
 from __future__ import unicode_literals
 
 import json
+import time
 
 from test_base import BaseApiTest, Method, HTTP
 
@@ -29,9 +30,11 @@ from test_base import BaseApiTest, Method, HTTP
 class TestAlertsAPI(BaseApiTest):
 
     def setUp(self):
+
         self._authenticate()  # default setup
 
-        self.base_filter = '{}/{}'.format(self.URL_BASE, 'api/v2/alerts/filters')
+        self.base_filter = '{}/{}'.format(self.URL_BASE,
+                                          'api/v2/alerts/filters')
 
     def test_alert_filters(self):
         alarm_id = 'fake_alarm_id'
@@ -105,3 +108,82 @@ class TestAlertsAPI(BaseApiTest):
         data = r.json()
         self.assertTrue(isinstance(data, dict))
         self.assertTrue('ok' in data)
+
+    def test_hide_resources(self):
+        delete_all_alarms = self._send(
+            url=self.URL_BASE + '/api/v2/alerts/{}',
+            method=Method.delete
+        )
+        events = [
+            {
+                "event_type": "check",
+                "connector": "connector",
+                "connector_name": "connector_name",
+                "component": "component",
+                "source_type": "component",
+                "state": 2
+            },
+            {
+                "event_type": "check",
+                "connector": "connector",
+                "connector_name": "connector_name",
+                "component": "component",
+                "resource": "resource1",
+                "source_type": "resource",
+                "state": 2
+            },
+            {
+                "event_type": "check",
+                "connector": "connector",
+                "connector_name": "connector_name",
+                "component": "component",
+                "resource": "resource2",
+                "source_type": "resource",
+                "state": 2
+            },
+            {
+                "event_type": "check",
+                "connector": "connector",
+                "connector_name": "connector_name",
+                "component": "component",
+                "resource": "resource3",
+                "source_type": "resource",
+                "state": 2
+            }
+        ]
+        r = self._send(
+            url=self.URL_BASE + '/api/v2/event',
+            data=json.dumps(events),
+            method=Method.post
+        )
+        time.sleep(0.2)
+        alarms = self._send(
+            url=self.URL_BASE + '/alerts/get-alarms?hide_resources=false',
+            method=Method.get
+        )
+        self.assertEqual(alarms.json().get('data')[0].get('total'), 4)
+        alarms = self._send(
+            url=self.URL_BASE + '/alerts/get-alarms?hide_resources=true',
+            method=Method.get
+        )
+        self.assertEqual(alarms.json().get('data')[0].get('total'), 1)
+        self.assertEqual(alarms.json().get('data')[0].get('alarms')[0].get('d'), 'component')
+        event_component_minor = {
+                "event_type": "check",
+                "connector": "connector",
+                "connector_name": "connector_name",
+                "component": "component",
+                "source_type": "component",
+                "state": 1
+            }
+        r = self._send(
+            url=self.URL_BASE + '/api/v2/event',
+            data=json.dumps(event_component_minor),
+            method=Method.post
+        )
+        time.sleep(0.2)
+        alarms = self._send(
+            url=self.URL_BASE + '/alerts/get-alarms?hide_resources=true',
+            method=Method.get
+        )
+        self.assertEqual(alarms.json().get('data')[0].get('total'), 4)

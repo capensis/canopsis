@@ -31,7 +31,7 @@ class PerfdataModule(MigrationModule):
         self.logger = Logger.get('migrationmodule', MigrationModule.LOG_PATH)
         self.manager = PerfData(*PerfData.provide_default_basics())
 
-    def init(self):
+    def init(self, yes=False):
         pass
 
     def update_mongo2influxdb(self):
@@ -53,7 +53,7 @@ class PerfdataModule(MigrationModule):
 
                 mongostorage.remove_elements(ids=document['_id'])
 
-    def update(self):
+    def update(self, yes=False):
         # FIXME
         if self.get_version('perfdata') < 1 and False:
             self.logger.info(u'Migrating to version 1')

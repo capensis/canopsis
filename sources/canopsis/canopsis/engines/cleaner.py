@@ -75,7 +75,7 @@ class engine(Engine):
 
         event['rk'] = ensure_unicode(rk)
 
-        if "resource" in event:
+        if event.get("resource", ''):
             if not isinstance(event['resource'], basestring):
                 event['resource'] = ''
             else:

@@ -310,7 +310,7 @@ def exports(ws):
         for record in records:
             if record['crecord_type'] == 'event':
                 eid = ''
-                if 'resource' in record.keys():
+                if record.get('resource', ''):
                     eid = '/{0}/{1}/{2}/{3}/{4}'.format(
                         record['source_type'],
                         record['connector'],

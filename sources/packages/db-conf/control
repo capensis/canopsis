@@ -250,7 +250,7 @@ function post_install() {
 
     echo "--- Initialize databases"
     launch_cmd 1 schema2db
-    launch_cmd 1 canopsis-filldb --init
+    launch_cmd 1 canopsis-filldb 
 
     launch_cmd 1 service mongodb stop
     launch_cmd 1 service influxdb stop
