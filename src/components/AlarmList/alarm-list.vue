@@ -10,7 +10,7 @@
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow" slot-scope="item")
-            time-line(:idAlarm="item.props.d")
+            time-line(:alarmId="item.props.d")
       alarm-list-pagination(:meta="meta", :limit="limit", v-if="fetchComplete")
     loader(v-else)
 </template>

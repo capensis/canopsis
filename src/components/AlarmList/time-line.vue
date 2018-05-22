@@ -47,7 +47,7 @@ export default {
     this.fetchAlarm();
   },
   props: {
-    idAlarm: {
+    alarmId: {
       type: String,
     },
   },
@@ -74,7 +74,7 @@ export default {
       try {
         const [data] = await request.get(API_ROUTES.alarmList, {
           params: {
-            filter: { d: this.idAlarm },
+            filter: { d: this.alarmId },
             opened: 'true',
             resolved: 'true',
             sort_key: 't',
