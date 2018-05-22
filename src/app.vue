@@ -8,10 +8,6 @@
       )
       top-bar
       v-content
-        //
-          v-btn(
-          @click='handleClick'
-          )
         router-view
 </template>
 
@@ -40,9 +36,6 @@ export default {
     }),
   },
   methods: {
-    handleClick() {
-      // console.log(this.$store);
-    },
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
     },
