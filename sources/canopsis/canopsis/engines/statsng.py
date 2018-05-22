@@ -111,6 +111,11 @@ class engine(Engine):
         return tags
 
     def handle_statcounterinc_event(self, event):
+        """
+        Process a statcounterinc event.
+
+        :param dict event:
+        """
         self.logger.info('received statcounterinc event')
 
         self.add_point({
@@ -123,6 +128,11 @@ class engine(Engine):
         })
 
     def handle_statduration_event(self, event):
+        """
+        Process a statduration event.
+
+        :param dict event:
+        """
         self.logger.info('received statduration event')
 
         alarm = event['alarm']
@@ -137,6 +147,11 @@ class engine(Engine):
         })
 
     def add_point(self, point):
+        """
+        Add a point to a batch that will be sent later to influxdb.
+
+        :param dict point: an influxdb point
+        """
         with self.batch_lock:
             self.batch.append(point)
 
@@ -144,6 +159,11 @@ class engine(Engine):
                 self.flush()
 
     def flush(self):
+        """
+        Send the batch to influxdb.
+
+        `self.batch_lock` should be acquired before calling the `flush` method.
+        """
         if self.batch:
             self.influx_client.write_points(self.batch)
             self.batch = []
