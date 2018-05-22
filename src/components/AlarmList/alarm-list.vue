@@ -18,9 +18,9 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import getProp from 'lodash/get';
-import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
+import getQuery from '@/helpers/pagination';
 
 import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
@@ -73,6 +73,7 @@ export default {
   },
   methods: {
     getProp,
+    getQuery,
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
@@ -84,19 +85,6 @@ export default {
           sort_dir: 'DESC',
         },
       });
-    },
-    /**
-     * TODO: move this function into mixin or helper
-     *
-     * @returns {*}
-     */
-    getQuery() {
-      const query = omit(this.$route.query, ['page']);
-
-      query.limit = this.limit;
-      query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
-
-      return query;
     },
     fetchList() {
       this.fetchListAction({
