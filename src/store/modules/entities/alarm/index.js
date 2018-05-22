@@ -38,7 +38,6 @@ export default {
       state.meta = meta;
       state.fetchComplete = true;
     },
-
   },
   actions: {
     async fetchList({ commit }, params = {}) {
