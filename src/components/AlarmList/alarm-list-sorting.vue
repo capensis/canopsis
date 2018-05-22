@@ -10,7 +10,7 @@ transition(name="fade" mode="out-in")
 export default {
   name: 'alarm-list-sorting',
   props: {
-    columnToSort: {
+    column: {
       type: String,
       required: true,
     },
@@ -25,7 +25,7 @@ export default {
           query: {
             ...this.$route.query,
             sort_dir: sortDir,
-            sort_key: this.columnToSort,
+            sort_key: this.column,
           },
         });
       },

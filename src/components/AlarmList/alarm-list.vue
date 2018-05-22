@@ -5,7 +5,7 @@
         tr.container(slot="header")
             th.box(v-for="columnName in Object.keys(alarmProperty)")
               span {{ columnName }}
-              alarm-list-sorting(:columnToSort="alarmProperty[columnName]")
+              alarm-list-sorting(column="alarmProperty[columnName]")
             th.box
         tr.container(slot="row" slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
