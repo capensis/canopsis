@@ -22,7 +22,7 @@
               td State decreases :
               td {{ step.val.statedec }}
             tr(v-for="(value, state) in step.val" v-if="state.startsWith('state:')")
-              td State {{ getStateAlarmConvention(parseInt(state.replace('state:',''),10))('text') }} :
+              td State {{ stateName(state) }} :
               td {{ value }}
 </template>
 
@@ -61,6 +61,9 @@ export default {
     ...mapGetters(['getStateAlarmConvention']),
     steps() {
       return Object.values(this.dataAlarms.entities.alarm)[0].v.steps;
+    },
+    stateName(state) {
+      return this.getStateAlarmConvention(parseInt(state.replace('state:', ''), 10))('text');
     },
   },
   methods: {
