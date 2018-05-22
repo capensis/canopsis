@@ -14,8 +14,8 @@ ecdsa==0.11
 enum34==1.1.6
 extras==0.0.3
 Fabric==1.9.1
-flask
-flask_restful
+Flask==1.0.2
+Flask_RESTful==0.3.6
 funcsigs==0.4
 functools32==3.2.3-2
 fuzzywuzzy==0.9.0
