@@ -24,7 +24,9 @@ export default {
      */
     onClick() {
       const selection = window.getSelection();
-      if (selection.toString().length === 0) { this.isExpanded = !this.isExpanded; }
+      if (selection.toString().length === 0) {
+        this.isExpanded = !this.isExpanded;
+      }
     },
   },
   props: ['item'],
