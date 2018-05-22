@@ -170,6 +170,12 @@ Pour que le provisionning soit complet (reinit), il faut supprimer le volume mon
 docker volume rm go-revolution_mongodbdata
 ```
 
+Pour ne construire qu’un seul projet :
+
+```bash
+make -C cmd/<project> -f ../../Makefile.cmd docker_image
+```
+
 ### RabbitMQ
 
 Pour une installation complètement cloisonnée, retirer tous les bindings des queues suivantes :
