@@ -15,7 +15,7 @@ export default {
     byId: {},
     allIds: [],
     meta: {},
-    pending: true,
+    pending: false,
     fetchingParams: {},
   },
   getters: {

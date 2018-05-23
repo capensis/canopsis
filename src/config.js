@@ -5,6 +5,8 @@ export const MOBILE_BREAKPOINT = parseInt(process.env.VUE_APP_MOBILE_BREAKPOINT,
 console.log(process.env);
 export const TABLET_BREAKPOINT = parseInt(process.env.VUE_APP_TABLET_BREAKPOINT, 10);
 export const LAPTOP_BREAKPOINT = process.env.VUE_APP_LAPTOP_BREAKPOINT;
+export const ALARM_LIST_LOADER_WIDTH = parseInt(process.env.VUE_APP_ALARM_LIST_LOADER_WIDTH, 10);
+export const ALARM_LIST_LOADER_HEIGHT = parseInt(process.env.VUE_APP_ALARM_LIST_LOADER_HEIGHT, 10);
 
 export const AUTH_TOKEN_KEY = 'access-token';
 
