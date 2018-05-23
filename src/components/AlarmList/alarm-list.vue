@@ -1,9 +1,9 @@
 <template lang="pug">
   div
-    div(v-if="fetchComplete")
+    div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-            th.box(v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)") {{ columnName }}
+            th.box(v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
             th.box
         tr.container(slot="row", slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
@@ -11,7 +11,7 @@
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
             td.box {{ item.props.infos }}
-      alarm-list-pagination(:meta="meta", :limit="limit", v-if="fetchComplete")
+      alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
 
@@ -55,11 +55,6 @@ export default {
       default: PAGINATION_LIMIT,
     },
   },
-  data() {
-    return {
-      columnSorted: 'opened',
-    };
-  },
   mounted() {
     this.fetchList(this.fetchingParams);
   },
@@ -67,7 +62,7 @@ export default {
     ...mapGetters([
       'items',
       'meta',
-      'fetchComplete',
+      'pending',
     ]),
   },
   methods: {
@@ -76,15 +71,6 @@ export default {
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
-    sortAlarms(columnToSort) {
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          sort_key: this.alarmProperty[columnToSort],
-          sort_dir: 'DESC',
-        },
-      });
-    },
     fetchList() {
       this.fetchListAction({
         params: this.getQuery(),

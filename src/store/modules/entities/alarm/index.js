@@ -15,7 +15,7 @@ export default {
     byId: {},
     allIds: [],
     meta: {},
-    fetchComplete: false,
+    pending: true,
     fetchingParams: {},
   },
   getters: {
@@ -30,13 +30,13 @@ export default {
       state.byId = {};
       state.allIds = [];
       state.meta = {};
-      state.fetchComplete = false;
+      state.pending = true;
     },
     [types.FETCH_LIST_COMPLETED](state, { byId, allIds, meta }) {
       state.byId = byId;
       state.allIds = allIds;
       state.meta = meta;
-      state.fetchComplete = true;
+      state.pending = false;
     },
   },
   actions: {
