@@ -6,7 +6,9 @@ export const alarmSchema = new schema.Entity('alarm', {
   pbehaviors: [pbehaviorSchema],
 }, { idAttribute: '_id' });
 
+
 export default {
   alarm: alarmSchema,
   pbehavior: pbehaviorSchema,
+
 };
