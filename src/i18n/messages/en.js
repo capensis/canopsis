@@ -5,5 +5,10 @@ export default {
     login: 'Login',
     username: 'Username',
     password: 'Password',
+    home: 'Home',
+    entries: 'entries',
+    showing: 'showing',
+    to: 'to',
+    of: 'of',
   },
 };
