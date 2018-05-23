@@ -10,9 +10,7 @@ import AlarmList from '@/components/AlarmList/alarm-list.vue';
 
 export default {
   name: 'Alarm',
-  mounted() {
-    console.log(this.$mq);
-  },
+
   components: { AlarmList },
   data() {
     return {

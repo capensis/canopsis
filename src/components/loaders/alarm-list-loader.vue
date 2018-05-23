@@ -1,7 +1,7 @@
 <template lang="pug">
     vue-content-loading(:width="width", :height="height")
       template(v-for="i in elementsCount")
-        rect(:y="(i - 1) * listItemLoaderHeight", width="100%", rx="1", ry="1", height="listItemLoaderHeight")
+        rect(:y="(i - 1) * listItemLoaderHeight", width="100%", rx="1", ry="1", :height="listItemLoaderHeight")
 </template>
 
 <script>

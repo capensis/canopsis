@@ -3,6 +3,7 @@ import { normalize } from 'normalizr';
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
 import request from '@/services/request';
+import entitiesTypes from '@/store/modules/entities/types';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -40,7 +41,9 @@ export default {
     },
   },
   actions: {
-    async fetchList({ commit }, params = {}) {
+    /* async fetchList({ commit }, params = {}) {
+      commit(`entities/${entitiesTypes.ENTITIES_UPDATE}`, normalizedData.entities, { root: true });
+
       commit(types.FETCH_LIST);
 
       try {
@@ -59,6 +62,28 @@ export default {
       } catch (err) {
         console.error(err);
       }
+    }, */
+    async fetchList({ commit }, params = {}) {
+      commit(types.FETCH_LIST);
+
+      try {
+        const [data] = await request.get(API_ROUTES.alarmList, params);
+        const normalizedData = normalize(data.alarms, [alarmSchema]);
+
+        commit(`entities/${entitiesTypes.ENTITIES_UPDATE}`, normalizedData.entities, { root: true });
+        commit(types.FETCH_LIST_COMPLETED, {
+          byId: normalizedData.entities.alarm,
+          allIds: normalizedData.result,
+          meta: {
+            first: data.first,
+            last: data.last,
+            total: data.total,
+          },
+        });
+      } catch (err) {
+        console.error(err);
+      }
     },
+
   },
 };
