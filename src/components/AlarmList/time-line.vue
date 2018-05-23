@@ -35,9 +35,9 @@ import pickBy from 'lodash/pickBy';
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
 import request from '@/services/request';
-import StateFlag from '../BasicComponent/alarm-flag.vue';
-import AlarmChips from '../BasicComponent/alarm-chips.vue';
-import TimeItem from '../BasicComponent/time-item.vue';
+import StateFlag from '@/components/BasicComponent/alarm-flag.vue';
+import AlarmChips from '@/components/BasicComponent/alarm-chips.vue';
+import TimeItem from '@/components/BasicComponent/time-item.vue';
 
 const { mapGetters } = createNamespacedHelpers('entities/alarmConvention');
 
