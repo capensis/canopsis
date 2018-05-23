@@ -3,7 +3,7 @@
     transition(name="expand", mode="out-in")
       v-card(v-if="!isExpanded", key="reduced")
         slot(name="reduced", :props="item")
-      v-card(v-else, key="expanded", :style="expandedStyle", :raised="true")
+      v-card.expanded(v-else, key="expanded", :raised="true")
         slot(name="expanded", :props="item")
 </template>
 
@@ -13,9 +13,6 @@ export default {
   data() {
     return {
       isExpanded: false,
-      expandedStyle: {
-        margin: '15px',
-      },
     };
   },
   methods: {
@@ -36,5 +33,8 @@ export default {
 <style scoped>
   .expand-enter-active, .expand-leave-active {
     transition: opacity .01s ease;
+  }
+  .expanded {
+    margin: 15px;
   }
 </style>
