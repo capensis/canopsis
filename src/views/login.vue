@@ -1,11 +1,12 @@
 <template lang="pug">
   v-container(
     class="blue darken-4",
+    fill-height,
     fluid,
     d-flex,
     align-center
   )
-    v-layout(justify-center, row)
+    v-layout(justify-center, align-center, row)
       v-flex(xs11, md6, lg5)
         v-card
           v-layout(row, wrap)

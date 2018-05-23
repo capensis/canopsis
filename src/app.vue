@@ -1,11 +1,17 @@
 <template lang="pug">
   v-app#app
-    login
+    v-layout(v-resize='onResize')
+      template(v-if="$route.name !== 'login'")
+        side-bar(:windowSize='windowSize')
+        top-bar
+      v-content
+        router-view
 </template>
 
 
 <script>
-import Login from '@/views/login.vue';
+import TopBar from '@/components/layout/top-bar.vue';
+import SideBar from '@/components/layout/side-bar.vue';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapState } = createNamespacedHelpers('app');
@@ -13,7 +19,8 @@ const { mapState } = createNamespacedHelpers('app');
 export default {
   name: 'App',
   components: {
-    Login,
+    TopBar,
+    SideBar,
   },
   data() {
     return {
