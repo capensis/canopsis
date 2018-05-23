@@ -5,6 +5,8 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
+
 const { mapGetters } = createNamespacedHelpers('entities/alarmConvention');
 
 export default {
@@ -27,19 +29,19 @@ export default {
     ...mapGetters(['getStateAlarmConvention', 'getStatusAlarmConvention']),
     color() {
       if (this.isStatus) {
-        return this.getStatusAlarmConvention(this.val)('color');
-      } else if (this.isCroppedState){
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].color;
+      } else if (this.isCroppedState) {
         return 'black';
       }
-      return this.getStateAlarmConvention(this.val)('color');
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].color;
     },
     icon() {
       if (this.isStatus) {
-        return this.getStatusAlarmConvention(this.val)('icon');
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].icon;
       } else if (this.isCroppedState) {
         return 'vertical_align_center';
       }
-      return this.getStateAlarmConvention(this.val)('icon');
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].icon;
     },
   },
 };

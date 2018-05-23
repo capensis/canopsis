@@ -3,9 +3,7 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapGetters } = createNamespacedHelpers('entities/alarmConvention');
+import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
 
 export default {
   name: 'state-chips',
@@ -20,18 +18,17 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['getStateAlarmConvention', 'getStatusAlarmConvention']),
     color() {
       if (this.isStatus) {
-        return this.getStatusAlarmConvention(this.val)('color');
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].color;
       }
-      return this.getStateAlarmConvention(this.val)('color');
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].color;
     },
     text() {
       if (this.isStatus) {
-        return this.getStatusAlarmConvention(this.val)('text');
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].text;
       }
-      return this.getStateAlarmConvention(this.val)('text');
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].text;
     },
   },
 };
