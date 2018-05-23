@@ -21,7 +21,7 @@
             tr
               td State decreases :
               td {{ step.val.statedec }}
-            tr(v-for="(value, state) in step.val" v-if="state.startsWith('state:')")
+            tr(v-for="(value, state) in stateSteps(step.val)")
               td State {{ stateName(state) }} :
               td {{ value }}
 </template>
@@ -30,6 +30,7 @@
 import { normalize } from 'normalizr';
 import { createNamespacedHelpers } from 'vuex';
 
+import pickBy from 'lodash/pickBy';
 
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
@@ -64,6 +65,9 @@ export default {
     },
     stateName(state) {
       return this.getStateAlarmConvention(parseInt(state.replace('state:', ''), 10))('text');
+    },
+    stateSteps(steps) {
+      return pickBy(steps, (value, key) => key.startsWith('state:'));
     },
   },
   methods: {
