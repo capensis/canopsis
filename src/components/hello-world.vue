@@ -1,5 +1,9 @@
 <template lang="pug">
   div
+    v-btn(@click="addPopup({ popup: { text: 'Error', type: 'error' } })") Error
+    v-btn(@click="addPopup({ popup: { text: 'Warning', type: 'warning' } })") Warning
+    v-btn(@click="addPopup({ popup: { text: 'Info', type: 'info' } })") Info
+    v-btn(@click="addPopup({ popup: { text: 'Success', type: 'success' } })") Success
     h1.hello {{ $t('common.hello') }}
     h2 {{ msg }}
     v-container(fluid)
@@ -16,6 +20,10 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapActions: popupMapActions } = createNamespacedHelpers('popup');
+
 export default {
   name: 'HelloWorld',
   props: {
@@ -34,6 +42,11 @@ export default {
       currentLocaleIndex: locales.find(({ key }) => key === this.$i18n.locale),
       locales,
     };
+  },
+  methods: {
+    ...popupMapActions({
+      addPopup: 'add',
+    }),
   },
   watch: {
     currentLocaleIndex() {
