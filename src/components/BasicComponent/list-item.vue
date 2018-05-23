@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(id="content", @click="onClick")
+  div(id="content", @click="clickOnListItem")
     transition(name="expand", mode="out-in")
       v-card(v-if="!isExpanded", key="reduced")
         slot(name="reduced", :props="item")
@@ -19,7 +19,7 @@ export default {
     /**
      * A Function to prevent the expansion of a row when you highlight/select something in it
      */
-    onClick() {
+    clickOnListItem() {
       const selection = window.getSelection();
       if (selection.toString().length === 0) {
         this.isExpanded = !this.isExpanded;
