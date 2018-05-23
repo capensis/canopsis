@@ -17,7 +17,11 @@ import ListItem from '@/components/BasicComponent/list-item.vue';
 export default {
   name: 'BasicList',
   components: { ListItem },
-  props: ['items'],
+  props: {
+    items: {
+      type: Array,
+    },
+  },
   data() {
     return {
       reducedStyle: {
