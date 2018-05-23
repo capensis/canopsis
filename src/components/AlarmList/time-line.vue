@@ -50,6 +50,7 @@ export default {
   props: {
     alarmId: {
       type: String,
+      required: true,
     },
   },
   data() {
