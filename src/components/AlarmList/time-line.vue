@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      dataAlarms: undefined,
+      dataAlarms: null,
       fetchComplete: false,
     };
   },
