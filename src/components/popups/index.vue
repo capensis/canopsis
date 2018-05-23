@@ -1,7 +1,6 @@
 <template lang="pug">
   div.popups(v-if="popups.length")
-    popup(v-bind="popups[0]", :key="popups[0].id")
-    popup(v-if="popups[1]", v-bind="popups[1]", :key="popups[1].id")
+    popup(v-for="popup in popups", v-bind="popup", :key="popup.id")
 </template>
 
 <script>

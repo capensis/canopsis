@@ -1,9 +1,9 @@
 <template lang="pug">
   div
-    v-btn(@click="addPopup({ popup: { text: 'Error', type: 'error' } })") Error
-    v-btn(@click="addPopup({ popup: { text: 'Warning', type: 'warning' } })") Warning
-    v-btn(@click="addPopup({ popup: { text: 'Info', type: 'info' } })") Info
-    v-btn(@click="addPopup({ popup: { text: 'Success', type: 'success' } })") Success
+    v-btn(color="error", @click="addErrorPopup({ text: '<h1>ERROR</h1>', autoClose: false })") Error
+    v-btn(color="warning", @click="addWarningPopup({ text: 'Warning' })") Warning
+    v-btn(color="info", @click="addInfoPopup({ text: 'Info', autoClose: 10000 })") Info
+    v-btn(color="success", @click="addSuccessPopup({ text: 'Success' })") Success
     h1.hello {{ $t('common.hello') }}
     h2 {{ msg }}
     v-container(fluid)
@@ -20,12 +20,11 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions: popupMapActions } = createNamespacedHelpers('popup');
+import PopupMixin from '@/mixins/popup';
 
 export default {
   name: 'HelloWorld',
+  mixins: [PopupMixin],
   props: {
     msg: {
       type: String,
@@ -42,11 +41,6 @@ export default {
       currentLocaleIndex: locales.find(({ key }) => key === this.$i18n.locale),
       locales,
     };
-  },
-  methods: {
-    ...popupMapActions({
-      addPopup: 'add',
-    }),
   },
   watch: {
     currentLocaleIndex() {

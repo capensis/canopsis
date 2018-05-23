@@ -1,11 +1,13 @@
 <template lang="pug">
   div
-    v-alert(v-model="isVisible", :type="type", dismissible)
-      div {{ text }}
+    v-alert(v-model="isVisible", :type="type", transition="fade-transition", dismissible)
+      div(v-html="text")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
+import { POPUP_AUTO_CLOSE_DELAY, VUETIFY_ANIMATION_DELAY } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('popup');
 
@@ -23,10 +25,15 @@ export default {
       type: String,
       default: '',
     },
+    autoClose: {
+      type: [Number, Boolean],
+      default: POPUP_AUTO_CLOSE_DELAY,
+    },
   },
   data() {
     return {
-      visible: true,
+      timeouts: [],
+      visible: false,
     };
   },
   computed: {
@@ -38,13 +45,28 @@ export default {
         this.visible = value;
 
         if (!value) {
-          this.remove({ id: this.id });
+          this.removeWithTimeout();
         }
       },
     },
   },
+  mounted() {
+    this.visible = true;
+
+    if (this.autoClose) {
+      this.timeouts.push(setTimeout(() => this.isVisible = false, this.autoClose));
+    }
+  },
+  beforeDestroy() {
+    if (this.timeouts.length) {
+      this.timeouts.forEach(timeout => clearTimeout(timeout));
+    }
+  },
   methods: {
     ...mapActions(['remove']),
+    removeWithTimeout() {
+      this.timeouts.push(setTimeout(() => this.remove({ id: this.id }), VUETIFY_ANIMATION_DELAY));
+    },
   },
 };
 </script>
