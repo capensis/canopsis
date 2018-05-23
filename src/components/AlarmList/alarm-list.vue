@@ -5,7 +5,7 @@
         tr.container(slot="header")
             th.box(v-for="columnName in Object.keys(alarmProperty)")
               span {{ columnName }}
-              alarm-list-sorting(column="alarmProperty[columnName]")
+              list-sorting(:column="alarmProperty[columnName]")
             th.box
         tr.container(slot="row" slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
@@ -28,7 +28,7 @@ import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
 import AlarmListPagination from './alarm-list-pagination.vue';
-import AlarmListSorting from '../BasicComponent/list-sorting.vue';
+import ListSorting from '../BasicComponent/list-sorting.vue';
 
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
@@ -45,7 +45,7 @@ export default {
  */
   name: 'AlarmList',
   components: {
-    AlarmListSorting,
+    ListSorting,
     AlarmListPagination,
     ActionsPanel,
     BasicList,
