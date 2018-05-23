@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(id="content", @click.prevent="onClick")
+  div(id="content", @click="onClick")
     transition(name="expand", mode="out-in")
       v-card(v-if="!isExpanded", key="reduced")
         slot(name="reduced", :props="item")
