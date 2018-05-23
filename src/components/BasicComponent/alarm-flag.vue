@@ -3,11 +3,7 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
-
-const { mapGetters } = createNamespacedHelpers('entities/alarmConvention');
 
 export default {
   name: 'state-flag',
@@ -26,7 +22,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['getStateAlarmConvention', 'getStatusAlarmConvention']),
     color() {
       if (this.isStatus) {
         return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].color;
