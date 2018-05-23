@@ -63,11 +63,16 @@ class AlarmEventPublisher(object):
         except IndexError:
             entity = {}
 
+        component = alarm.get('component', None)
+        resource = alarm.get('resource', None)
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
             event_type=StatEvents.statcounterinc,
-            source_type="component",
+            source_type="resource" if resource else "component",
+            component=component,
+            resource=resource,
             timestamp=alarm[AlarmField.creation_date.value],
             counter_name=counter_name,
             alarm=alarm,
@@ -93,11 +98,16 @@ class AlarmEventPublisher(object):
         update_date = alarm[AlarmField.last_update_date.value]
         duration = update_date - creation_date
 
+        component = alarm.get('component', None)
+        resource = alarm.get('resource', None)
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
             event_type=StatEvents.statcounterinc,
-            source_type="component",
+            source_type="resource" if resource else "component",
+            component=component,
+            resource=resource,
             timestamp=update_date,
             duration_name=duration_name,
             duration=duration,
