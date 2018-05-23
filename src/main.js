@@ -10,13 +10,15 @@ import router from './router';
 import store from './store';
 import i18n from './i18n';
 
+import { MOBILE_BREAKPOINT, TABLET_BREAKPOINT, LAPTOP_BREAKPOINT } from './config';
+
 Vue.use(Vuetify);
 Vue.use(VeeValidate);
 Vue.use(VueMq, {
   breakpoints: {
-    mobile: 450,
-    tablet: 900,
-    laptop: Infinity,
+    mobile: MOBILE_BREAKPOINT,
+    tablet: TABLET_BREAKPOINT,
+    laptop: LAPTOP_BREAKPOINT,
   },
 });
 
