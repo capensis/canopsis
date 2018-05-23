@@ -1,3 +1,5 @@
+import { MOBILE_BREAKPOINT, TABLET_BREAKPOINT, LAPTOP_BREAKPOINT } from '@/config';
+
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
@@ -10,7 +12,6 @@ import router from './router';
 import store from './store';
 import i18n from './i18n';
 
-import { MOBILE_BREAKPOINT, TABLET_BREAKPOINT, LAPTOP_BREAKPOINT } from './config';
 
 Vue.use(Vuetify);
 Vue.use(VeeValidate);

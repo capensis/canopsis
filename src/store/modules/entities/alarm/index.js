@@ -23,7 +23,7 @@ export default {
     allIds: state => state.allIds,
     items: state => state.allIds.map(id => state.byId[id]),
     meta: state => state.meta,
-    fetchComplete: state => state.fetchComplete,
+    pending: state => state.pending,
   },
   mutations: {
     [types.FETCH_LIST](state) {
