@@ -104,7 +104,7 @@ class AlarmEventPublisher(object):
         event = forger(
             connector="canopsis",
             connector_name="engine",
-            event_type=StatEvents.statcounterinc,
+            event_type=StatEvents.statduration,
             source_type="resource" if resource else "component",
             component=component,
             resource=resource,
