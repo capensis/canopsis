@@ -34,3 +34,20 @@ class StatEvents(object):
     """
     statcounterinc = 'statcounterinc'
     statduration = 'statduration'
+
+
+class StatCounters(object):
+    """
+    The StatCounters enumeration defines the names of the counters.
+    """
+    alarms_created = 'alarms_created'
+    alarms_canceled = 'alarms_canceled'
+    alarms_resolved = 'alarms_resolved'
+
+
+class StatDurations(object):
+    """
+    The StatDurations enumeration defines the names of the durations.
+    """
+    ack_time = 'ack_time'
+    resolve_time = 'resolve_time'

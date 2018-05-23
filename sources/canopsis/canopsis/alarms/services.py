@@ -27,6 +27,8 @@ from __future__ import unicode_literals
 
 import logging
 
+from canopsis.statsng.enums import StatCounters, StatDurations
+
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
@@ -111,14 +113,18 @@ class AlarmService(object):
                 self._log(logging.DEBUG,
                           'alarm : {} has been unsnoozed'.format(alarm._id))
                 self.update_alarm(alarm)
-
-                alarm_dict = alarm.to_dict()
-                self.event_publisher.publish_statcounterinc_event(
-                    'alarms_resolved', alarm_dict['_id'], alarm_dict['v'])
-                self.event_publisher.publish_statduration_event(
-                    'resolve_time', alarm_dict['_id'], alarm_dict['v'])
-
                 alarms.remove(alarm)
+
+                if alarm.status.value is AlarmStatus.OFF:
+                    alarm_dict = alarm.to_dict()
+                    self.event_publisher.publish_statcounterinc_event(
+                        StatCounters.alarms_resolved,
+                        alarm_dict['_id'],
+                        alarm_dict['v'])
+                    self.event_publisher.publish_statduration_event(
+                        StatDurations.resolve_time,
+                        alarm_dict['_id'],
+                        alarm_dict['v'])
 
         return alarms
 
@@ -145,9 +151,13 @@ class AlarmService(object):
 
                 alarm_dict = alarm.to_dict()
                 self.event_publisher.publish_statcounterinc_event(
-                    'alarms_resolved', alarm_dict['_id'], alarm_dict['v'])
+                    StatCounters.alarms_resolved,
+                    alarm_dict['_id'],
+                    alarm_dict['v'])
                 self.event_publisher.publish_statduration_event(
-                    'resolve_time', alarm_dict['_id'], alarm_dict['v'])
+                    StatDurations.resolve_time,
+                    alarm_dict['_id'],
+                    alarm_dict['v'])
 
         self._log(
             logging.DEBUG,

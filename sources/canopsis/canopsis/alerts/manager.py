@@ -51,6 +51,7 @@ from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.statsng.enums import StatCounters
 from canopsis.watcher.manager import Watcher
 
 # Extra fields from the event that should be stored in the alarm
@@ -555,7 +556,7 @@ class Alerts(object):
             if is_new_alarm:
                 self.check_alarm_filters()
                 self.event_publisher.publish_statcounterinc_event(
-                    'alarms_created',
+                    StatCounters.alarms_created,
                     entity_id,
                     alarm[self.alerts_storage.VALUE])
 
@@ -761,7 +762,7 @@ class Alerts(object):
 
         if status == CANCELED:
             self.event_publisher.publish_statcounterinc_event(
-                'alarms_canceled',
+                StatCounters.alarms_canceled,
                 entity_id,
                 new_value)
 

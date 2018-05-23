@@ -23,7 +23,7 @@ from time import time
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import (
     compute_status, OFF, CANCELED, get_previous_step, is_keeped_state)
-
+from canopsis.statsng.enums import StatDurations
 from canopsis.task.core import register_task
 
 SNOOZE_DEFAULT_DURATION = 300
@@ -51,7 +51,7 @@ def acknowledge(manager, alarm, author, message, event):
         # Only send the duration for the first ack
         entity_id = manager.context_manager.get_id(event)
         manager.event_publisher.publish_statduration_event(
-            'ack_time', entity_id, alarm)
+            StatDurations.ack_time, entity_id, alarm)
 
     return alarm
 
