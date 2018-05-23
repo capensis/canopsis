@@ -26,6 +26,7 @@ from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
 from canopsis.entitylink.manager import Entitylink
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
+from canopsis.statsng.enums import StatDurations
 
 from base import BaseTest
 import unittest
@@ -72,6 +73,10 @@ class TestTasks(BaseTest):
         self.assertEqual(alarm[AlarmField.ack.value]['m'], 'test message')
         self.assertTrue(alarm[AlarmField.ack.value] is get_previous_step(alarm, 'ack'))
 
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_called_once_with(
+            StatDurations.ack_time, 'c', alarm)
+
     def test_unacknowledge(self):
         event = {'timestamp': 0}
 
@@ -90,6 +95,37 @@ class TestTasks(BaseTest):
         self.assertEqual(unack['t'], 0)
         self.assertEqual(unack['a'], 'testauthor')
         self.assertEqual(unack['m'], 'test message')
+
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_not_called()
+
+    def test_acknowledge_twice(self):
+        event = {
+            'timestamp': 0,
+            'source_type': 'component',
+            'component': 'c',
+        }
+
+        ack_task = get_task('alerts.useraction.ack')
+        ackremove_task = get_task('alerts.useraction.ackremove')
+        alarm = ack_task(
+            self.manager,
+            self.alarm,
+            'testauthor',
+            'test message',
+            event
+        )
+        ack_task(
+            self.manager,
+            alarm,
+            'testauthor',
+            'test message',
+            event
+        )
+
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_called_once_with(
+            StatDurations.ack_time, 'c', alarm)
 
     def test_cancel(self):
         event = {'timestamp': 0}
