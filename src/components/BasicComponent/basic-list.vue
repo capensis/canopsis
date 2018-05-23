@@ -1,10 +1,10 @@
 <template lang="pug">
     ul
-      li.header.sticky(ref="header", :style="headerStyle")
+      li.header.sticky(ref="header")
         slot(name="header")
       li(v-for="item in items", :item="item")
         list-item
-          div(slot="reduced", :style="reducedStyle")
+          .reduced(slot="reduced")
             slot(name="row", :props="item")
           div(slot="expanded")
             slot(name="expandedRow", :props="item")
@@ -22,18 +22,6 @@ export default {
       type: Array,
     },
   },
-  data() {
-    return {
-      reducedStyle: {
-        overflow: 'auto',
-      },
-      headerStyle: {
-        marginBottom: '5px',
-        backgroundColor: 'rgb(251,247,247)  ',
-        zIndex: '1',
-      },
-    };
-  },
   mounted() {
     StickyFill.addOne(this.$refs.header);
   },
@@ -44,9 +32,6 @@ export default {
 </script>
 
 <style scoped>
-  * {
-    box-sizing:border-box;
-  }
   ul {
    position: relative;
    list-style-type: none;
@@ -56,5 +41,13 @@ export default {
     position: sticky;
     top: 48px;
     z-index: 2;
+  }
+  .header {
+    margin-bottom: 5px;
+    background-color: rgb(251,247,247);
+    z-index: 1;
+  }
+  .reduced {
+    overflow: auto;
   }
 </style>
