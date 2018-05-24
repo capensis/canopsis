@@ -1,5 +1,5 @@
 <template lang="pug">
-  ul.timeline(v-if="fetchComplete")
+  ul.timeline(v-if="!pending")
     li.timeline-item(v-for="step in steps")
       time-item.time(:time="step.t")
       div(v-if="step._t !== 'statecounter'")
@@ -27,25 +27,36 @@
 </template>
 
 <script>
-import { normalize } from 'normalizr';
 import { createNamespacedHelpers } from 'vuex';
 
 import pickBy from 'lodash/pickBy';
 
-import { API_ROUTES } from '@/config';
-import { alarmSchema } from '@/store/schemas';
-import request from '@/services/request';
 import StateFlag from '@/components/BasicComponent/alarm-flag.vue';
 import AlarmChips from '@/components/BasicComponent/alarm-chips.vue';
 import TimeItem from '@/components/BasicComponent/time-item.vue';
 
-const { mapGetters } = createNamespacedHelpers('entities/alarmConvention');
+import { STATES_CHIPS_AND_FLAGS_STYLE } from '@/config';
+
+const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
 
 export default {
   name: 'time-line',
   components: { TimeItem, AlarmChips, StateFlag },
   mounted() {
-    this.fetchAlarm();
+    this.fetchItem({
+      params: {
+        filter: { d: this.alarmId },
+        opened: 'true',
+        resolved: 'true',
+        sort_key: 't',
+        sort_dir: 'DESC',
+        limit: '1',
+        with_steps: 'true',
+      },
+    }).then(() => {
+      this.alarm = this.item;
+      this.pending = false;
+    });
   },
   props: {
     alarmId: {
@@ -55,44 +66,29 @@ export default {
   },
   data() {
     return {
-      dataAlarms: null,
-      fetchComplete: false,
+      alarm: null,
+      pending: true,
     };
   },
   computed: {
-    ...mapGetters(['getStateAlarmConvention']),
+    ...mapGetters(['item']),
     steps() {
-      return Object.values(this.dataAlarms.entities.alarm)[0].v.steps;
+      return this.alarm.v.steps;
     },
     stateName(state) {
-      return this.getStateAlarmConvention(parseInt(state.replace('state:', ''), 10))('text');
+      const stateValue = parseInt(state.replace('state:', ''), 10);
+      return STATES_CHIPS_AND_FLAGS_STYLE[stateValue].text;
     },
     stateSteps(steps) {
       return pickBy(steps, (value, key) => key.startsWith('state:'));
     },
   },
   methods: {
+    ...mapActions([
+      'fetchItem',
+    ]),
     isStatus(stepTitle) {
       return stepTitle.startsWith('status');
-    },
-    async fetchAlarm() {
-      try {
-        const [data] = await request.get(API_ROUTES.alarmList, {
-          params: {
-            filter: { d: this.alarmId },
-            opened: 'true',
-            resolved: 'true',
-            sort_key: 't',
-            sort_dir: 'DESC',
-            limit: '1',
-            with_steps: 'true',
-          },
-        });
-        this.dataAlarms = normalize(data.alarms, [alarmSchema]);
-        this.fetchComplete = true;
-      } catch (err) {
-        console.error(err);
-      }
     },
   },
 };

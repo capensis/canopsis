@@ -7,6 +7,8 @@ import request from '@/services/request';
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_ITEM: 'FETCH_ITEM',
+  FETCH_ITEM_COMPLETED: 'FETCH_ITEM_COMPLETED',
 };
 
 export default {
@@ -16,7 +18,8 @@ export default {
     allIds: [],
     meta: {},
     fetchComplete: false,
-    fetchingParams: {},
+    itemPending: false,
+    item: {},
   },
   getters: {
     byId: state => state.byId,
@@ -24,6 +27,8 @@ export default {
     items: state => state.allIds.map(id => state.byId[id]),
     meta: state => state.meta,
     fetchComplete: state => state.fetchComplete,
+    itemPending: state => state.itemPending,
+    item: state => state.item,
   },
   mutations: {
     [types.FETCH_LIST](state) {
@@ -38,8 +43,29 @@ export default {
       state.meta = meta;
       state.fetchComplete = true;
     },
+    [types.FETCH_ITEM](state) {
+      state.item = {};
+      state.itemPending = true;
+    },
+    [types.FETCH_ITEM_COMPLETED](state, { item }) {
+      state.item = item;
+      state.itemPending = false;
+    },
   },
   actions: {
+    async fetchItem({ commit }, params = {}) {
+      commit(types.FETCH_ITEM);
+      try {
+        const [data] = await request.get(API_ROUTES.alarmList, params);
+        const normalizedData = normalize(data.alarms, [alarmSchema]);
+        const itemId = normalizedData.result[0];
+        commit(types.FETCH_ITEM_COMPLETED, {
+          item: normalizedData.entities.alarm[itemId],
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async fetchList({ commit }, params = {}) {
       commit(types.FETCH_LIST);
 
