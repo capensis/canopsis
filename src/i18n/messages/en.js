@@ -81,6 +81,8 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
+      output: 'Sortie',
+      lastUpdateDate: 'Last update date',
     },
     /**
      * This object for pbehavior fields from database

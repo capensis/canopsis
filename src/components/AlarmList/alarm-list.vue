@@ -3,10 +3,10 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-            th.box(v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
+            th.box(v-for="columnName in alarmProperty") {{ columnName.text }}
             th.box
         tr.container(slot="row", slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+            td.box(v-for="property in alarmProperty") {{ getProp(item.props, property.value) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
@@ -44,9 +44,9 @@ export default {
   },
   props: {
     alarmProperty: {
-      type: Object,
+      type: Array,
       default() {
-        return {};
+        return [];
       },
     },
     limit: {
