@@ -38,7 +38,7 @@ class engine(Engine):
     etype = "statsng"
 
     CONF_PATH = "etc/statsng/engine.conf"
-    DEFAULT_DATABASE = 'statsng'
+    CONF_SECTION = 'ENGINE'
     DEFAULT_MAX_BATCH_SIZE = 100
 
     def __init__(self, *args, **kwargs):
@@ -47,16 +47,16 @@ class engine(Engine):
         self.batch_lock = Lock()
         self.batch = []
 
-        cfg = Configuration.load(os.path.join(root_path, self.CONF_PATH), Ini)
-        batch_cfg = cfg.get('BATCH', {})
-        tags_cfg = cfg.get('TAGS', {})
+        cfg = Configuration.load(
+            os.path.join(root_path, self.CONF_PATH), Ini
+        ).get(self.CONF_SECTION, {})
 
         self.max_batch_size = int(
-            batch_cfg.get('max_batch_size', self.DEFAULT_MAX_BATCH_SIZE))
+            cfg.get('max_batch_size', self.DEFAULT_MAX_BATCH_SIZE))
 
         self.influxdb_client = get_influxdb_client()
 
-        self.tags = cfg_to_array(tags_cfg.get('tags', ''))
+        self.tags = cfg_to_array(cfg.get('tags', ''))
 
     def beat(self):
         with self.batch_lock:
