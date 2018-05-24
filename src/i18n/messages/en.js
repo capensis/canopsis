@@ -83,6 +83,10 @@ export default {
       resource: 'Resource',
       output: 'Sortie',
       lastUpdateDate: 'Last update date',
+      creationDate: 'Creation date',
+      duration: 'Duration',
+      state: 'State',
+      status: 'Status',
     },
     /**
      * This object for pbehavior fields from database

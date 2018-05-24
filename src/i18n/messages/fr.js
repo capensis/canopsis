@@ -16,6 +16,10 @@ export default {
       resource: 'Ressource',
       output: 'Sortie',
       lastUpdateDate: 'Date de dernière mise à jour',
+      creationDate: 'Date de création',
+      duration: 'Durée',
+      state: 'Etat',
+      status: 'Status',
     },
   },
 };

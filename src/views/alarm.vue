@@ -17,7 +17,7 @@ export default {
       alarmProperty: [
         {
           text: this.$t('tables.alarmGeneral.connector'),
-          value: 'v.connector',
+          value: 'v.connector_name',
         },
         {
           text: this.$t('tables.alarmGeneral.component'),
