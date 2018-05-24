@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-switch(v-model="showRRule", :label="$t('modals.addPbehavior.fields.rRuleQuestion')")
+      v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')")
     template(v-if="showRRule")
       v-layout(row)
         v-tabs.r-rule-tabs(v-model="activeTab", centered)
@@ -180,21 +180,21 @@
 <script>
 import RRule from 'rrule';
 import mapValues from 'lodash/mapValues';
+import pickBy from 'lodash/pickBy';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 
+/**
+ * RRule form component
+ *
+ * @event rrule#input
+ * @type {Object|null} - RRule object
+ */
 export default {
   inject: ['$validator'],
-  props: {
-    tstart: {
-      type: Date,
-      default: () => new Date(),
-    },
-  },
   components: { DateTimePicker },
   data() {
     const rRuleOptions = {
-      dtstart: this.tstart,
       freq: RRule.DAILY,
     };
 
@@ -244,6 +244,16 @@ export default {
       },
     };
   },
+  watch: {
+    showRRule(value) {
+      if (!value) {
+        this.errors.remove('rRule');
+        this.$emit('input', null);
+      } else {
+        this.changeRRuleOption();
+      }
+    },
+  },
   methods: {
     changeRRuleAdvancedOption() {
       this.form.rRule = {
@@ -260,7 +270,14 @@ export default {
      */
     changeRRuleOption() {
       try {
-        this.rRuleObject = new RRule(this.form.rRuleOptions);
+        this.form.rRule = {
+          ...this.form.rRule,
+          ...this.form.rRuleOptions,
+        };
+
+        const correctOptions = pickBy(this.form.rRule, v => v !== '');
+
+        this.rRuleObject = new RRule(correctOptions);
 
         if (!this.errors.has('rRule') && !this.rRuleObject.isFullyConvertibleToText()) {
           this.errors.add('rRule', this.$t('rRule.errors.main'));
@@ -273,21 +290,6 @@ export default {
         }
       } catch (err) {
         console.warn(err);
-      }
-    },
-  },
-  watch: {
-    tstart(value) {
-      this.form.rRuleOptions.dtstart = value;
-
-      this.changeRRuleOption();
-    },
-    showRRule(value) {
-      if (!value) {
-        this.errors.remove('rRule');
-        this.$emit('input', null);
-      } else {
-        this.changeRRuleOption();
       }
     },
   },

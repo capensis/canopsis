@@ -27,8 +27,7 @@ import BasicList from '@/components/BasicComponent/basic-list.vue';
 import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
 
-
-const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
+const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
 /**
  * Alarm-list component.
@@ -55,15 +54,20 @@ export default {
       default: PAGINATION_LIMIT,
     },
   },
-  mounted() {
-    this.fetchList(this.fetchingParams);
-  },
   computed: {
     ...mapGetters([
       'items',
       'meta',
       'pending',
     ]),
+  },
+  watch: {
+    $route() {
+      this.fetchList();
+    },
+  },
+  mounted() {
+    this.fetchList(this.fetchingParams);
   },
   methods: {
     getProp,
@@ -75,11 +79,6 @@ export default {
       this.fetchListAction({
         params: this.getQuery(),
       });
-    },
-  },
-  watch: {
-    $route() {
-      this.fetchList();
     },
   },
 };

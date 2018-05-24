@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     alarm-list(
-    :alarmProperty=" $mq | mq({mobile: alarmPropertyOnMobile,tablet: alarmPropertyOnTablet,laptop: alarmProperty})",
+    :alarmProperty="$mq | mq({mobile: alarmPropertyOnMobile,tablet: alarmPropertyOnTablet,laptop: alarmProperty})",
     )
 </template>
 

@@ -2,11 +2,11 @@
   v-form(@submit.prevent="submit", slot-scope="slotProps")
     v-card
       v-card-title
-        span.headline {{ $t('modals.addPbehavior.title') }}
+        span.headline {{ $t('modals.createPbehavior.title') }}
       v-card-text
         v-layout(row)
           v-text-field(
-          :label="$t('modals.addPbehavior.fields.name')",
+          :label="$t('modals.createPbehavior.fields.name')",
           :error-messages="errors.collect('name')",
           v-model="form.name",
           v-validate="'required'",
@@ -14,19 +14,19 @@
           )
         v-layout(row)
           date-time-picker(
-          :label="$t('modals.addPbehavior.fields.start')",
+          :label="$t('modals.createPbehavior.fields.start')",
           v-model="form.tstart",
           name="tstart",
           rules="required",
           )
         v-layout(row)
           date-time-picker(
-          :label="$t('modals.addPbehavior.fields.stop')",
+          :label="$t('modals.createPbehavior.fields.stop')",
           v-model="form.tstop",
           name="tstop",
           rules="required"
           )
-        r-rule-form(:tstart="form.tstart", @input="changeRRule")
+        r-rule-form(@input="changeRRule")
         v-layout(row)
           v-select(
           label="Reason",
@@ -39,6 +39,9 @@
           v-model="form.type_",
           :items="selectItems.types"
           )
+        v-layout(row)
+          v-alert(:value="this.serverError", type="error")
+            span {{ this.serverError }}
       v-card-actions
         v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
 </template>
@@ -48,17 +51,20 @@ import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/other/rrule/rrule-form.vue';
+import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 
-const { mapGetters: modalMapGetters, mapActions: modalMapActions } = createNamespacedHelpers('modal');
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');
+const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
   components: { DateTimePicker, RRuleForm },
+  mixins: [ModalInnerItemMixin],
   data() {
-    const now = new Date();
+    const start = new Date();
+    const stop = new Date(start.getTime());
     const reasons = ['Problème Habilitation', 'Problème Robot', 'Problème Scénario', 'Autre'];
     const types = ['Pause', 'Maintenance', 'Hors plage horaire de surveillance'];
 
@@ -66,8 +72,8 @@ export default {
       rRuleObject: null,
       form: {
         name: '',
-        tstart: now,
-        tstop: now,
+        tstart: start,
+        tstop: stop,
         type_: types[0],
         reason: reasons[0],
       },
@@ -75,14 +81,11 @@ export default {
         reasons,
         types,
       },
+      serverError: null,
     };
   },
-  computed: {
-    ...modalMapGetters(['config']),
-  },
   methods: {
-    ...modalMapActions({ hideModal: 'hide' }),
-
+    ...alarmMapActions({ fetchAlarmListWithPreviousParams: 'fetchListWithPreviousParams' }),
     ...pbehaviorMapActions({ createPbehavior: 'create' }),
 
     changeRRule(value) {
@@ -92,14 +95,14 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
+        this.serverError = null;
+
         const data = {
           ...this.form,
 
-          author: 'Username of current user',
+          author: 'Username of current user', // TODO: add this field after login task finish
           filter: {
-            _id: {
-              $in: [this.config.d],
-            },
+            _id: { $in: [this.item.d] },
           },
           tstart: this.form.tstart.getTime(),
           tstop: this.form.tstop.getTime(),
@@ -109,9 +112,16 @@ export default {
           data.rrule = this.rRuleObject.toString();
         }
 
-        await this.createPbehavior(data);
+        try {
+          await this.createPbehavior(data);
+          await this.fetchAlarmListWithPreviousParams();
 
-        this.hideModal();
+          this.hideModal();
+        } catch (err) {
+          if (err.description) {
+            this.serverError = err.description;
+          }
+        }
       }
     },
   },

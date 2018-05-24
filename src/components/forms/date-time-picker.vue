@@ -50,6 +50,19 @@
 <script>
 import moment from 'moment';
 
+/**
+ * Date time picker component
+ *
+ * @prop {Boolean} [clearable] - if it is true then input field will be have cross button with clear event on click
+ * @prop {Date} [value] - v-model
+ * @prop {string} [label] - label of the input field
+ * @prop {string} [name] - name property in the validation object
+ * @prop {string} [rules] - validation rules in vee-validate format
+ * @prop {string} [format='DD/MM/YYYY HH:mm'] - date format for display
+ *
+ * @event value#input
+ * @type Date - new date value
+ */
 export default {
   inject: ['$validator'],
   props: {
@@ -79,6 +92,15 @@ export default {
       return this.dateTimeObject ? this.dateTimeObject.format(this.format) : this.dateTimeObject;
     },
   },
+  watch: {
+    opened(value) {
+      if (!value) {
+        setTimeout(() => {
+          this.activeTab = 'date';
+        }, 300);
+      }
+    },
+  },
   methods: {
     updateDateTimeObject() {
       if (!this.timeString) {
@@ -106,20 +128,10 @@ export default {
       this.$refs.menu.save();
     },
     validate() {
-      console.log(this.$validator);
       if (this.name && this.rules) {
         this.$nextTick(async () => {
           await this.$validator.validate(this.name);
         });
-      }
-    },
-  },
-  watch: {
-    opened(value) {
-      if (!value) {
-        setTimeout(() => {
-          this.activeTab = 'date';
-        }, 300);
       }
     },
   },
