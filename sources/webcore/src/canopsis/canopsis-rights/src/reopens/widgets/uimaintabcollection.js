@@ -43,7 +43,6 @@ Ember.Application.initializer({
                 if (user === 'root') {
                     return true;
                 }
-
                 return viewId && rightsflagsUtils.canRead(get(rights, viewId + '.checksum'));
             },
 
@@ -92,7 +91,7 @@ Ember.Application.initializer({
                 return false;
             }.property()
         });
-        
+
         application.register('widget:uimaintabcollection', UimaintabcollectionWidget);
 
     }

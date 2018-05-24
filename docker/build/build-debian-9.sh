@@ -21,6 +21,8 @@ apt-get -y --no-install-recommends install \
     python-pkg-resources \
     python-virtualenv \
     python-wheel \
-    virtualenv
+    virtualenv \
+    net-tools \
+    procps
 
 apt-get clean
