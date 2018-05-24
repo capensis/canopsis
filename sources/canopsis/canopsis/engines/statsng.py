@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # --------------------------------
 # Copyright (c) 2018 "Capensis" [http://www.capensis.com]
 #
@@ -25,14 +24,12 @@ try:
 except ImportError:
     from dummy_threading import Lock
 
-from influxdb import InfluxDBClient
-from influxdb.exceptions import InfluxDBClientError
-
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
 from canopsis.statsng.enums import StatEvents
+from canopsis.statsng.influx import get_influxdb_client
 
 SECONDS = 1000000000
 
@@ -52,22 +49,12 @@ class engine(Engine):
 
         cfg = Configuration.load(os.path.join(root_path, self.CONF_PATH), Ini)
         batch_cfg = cfg.get('BATCH', {})
-        influxdb_cfg = cfg.get('DATABASE', {})
         tags_cfg = cfg.get('TAGS', {})
 
         self.max_batch_size = int(
             batch_cfg.get('max_batch_size', self.DEFAULT_MAX_BATCH_SIZE))
 
-        # Set the default database name (use InfluxDBClient's default for the
-        # other values)
-        if 'database' not in influxdb_cfg:
-            influxdb_cfg['database'] = self.DEFAULT_DATABASE
-
-        self.influx_client = InfluxDBClient(**influxdb_cfg)
-        try:
-            self.influx_client.create_database(influxdb_cfg['database'])
-        except InfluxDBClientError:
-            pass
+        self.influxdb_client = get_influxdb_client()
 
         self.tags = cfg_to_array(tags_cfg.get('tags', ''))
 
@@ -165,5 +152,5 @@ class engine(Engine):
         `self.batch_lock` should be acquired before calling the `flush` method.
         """
         if self.batch:
-            self.influx_client.write_points(self.batch)
+            self.influxdb_client.write_points(self.batch)
             self.batch = []
