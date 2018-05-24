@@ -31,7 +31,7 @@ from canopsis.common.collection import MongoCollection
 from json import loads
 
 import copy
-
+import time
 
 class engine(Engine):
     etype = 'event_filter'
@@ -251,6 +251,7 @@ class engine(Engine):
                 exchange='amq.direct'
             )
             # publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
+            time.sleep(1)
         return True
 
     def a_snooze(self, event, action, name):
