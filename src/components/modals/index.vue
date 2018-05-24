@@ -29,6 +29,9 @@ import CreateSnoozeEvent from './create-snooze-event.vue';
 import CreatePbehavior from './create-pbehavior.vue';
 import PbehaviorList from './pbehavior-list.vue';
 
+/**
+ * Wrapper for all modal windows
+ */
 export default {
   components: {
     Modal,

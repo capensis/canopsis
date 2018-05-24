@@ -16,6 +16,12 @@
 </template>
 
 <script>
+
+/**
+ * General table component for alarm entity
+ *
+ * @prop {Object} item - alarm item
+ */
 export default {
   props: {
     item: {

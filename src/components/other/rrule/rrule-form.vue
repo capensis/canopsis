@@ -184,6 +184,12 @@ import pickBy from 'lodash/pickBy';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 
+/**
+ * RRule form component
+ *
+ * @event rrule#input
+ * @type {Object|null} - RRule object
+ */
 export default {
   inject: ['$validator'],
   components: { DateTimePicker },

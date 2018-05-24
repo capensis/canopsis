@@ -5,6 +5,9 @@ import { EVENT_TYPES } from '@/config';
 const { mapActions: eventMapActions } = createNamespacedHelpers('event');
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
+/**
+ * @mixin
+ */
 export default {
   methods: {
     ...eventMapActions({
@@ -15,20 +18,29 @@ export default {
       fetchAlarmListWithPreviousParams: 'fetchListWithPreviousParams',
     }),
 
+    /**
+     * Function calls dataPreparation and createEvent action and reload list of the entities
+     *
+     * @param {string} type - type of the event
+     * @param {Object} item - item of the entity
+     * @param {Object} data - data for the event
+     * @returns {Promise.<*>}
+     */
     async createEvent(type, item, data) {
       await this.createEventAction({ data: this.prepareData(type, item, data) });
 
       return this.fetchAlarmListWithPreviousParams(); // TODO: check items type for correct request
     },
 
+    /**
+     * Function for data preparation
+     *
+     * @param {string} type - type of the event
+     * @param {Object} item - item of the entity
+     * @param {Object} data - data for the event
+     * @returns {Object[]}
+     */
     prepareData(type, item, data = {}) {
-      /* if (Array.isArray(data)) {
-        return data.reduce(
-          (acc, dataPortion) => acc.concat(this.prepareData(eventType, dataPortion)),
-          [],
-        );
-      } */
-
       const preparedData = {
         author: 'root',
         id: item.id,

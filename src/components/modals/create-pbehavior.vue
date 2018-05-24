@@ -51,17 +51,17 @@ import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/other/rrule/rrule-form.vue';
-import ModalItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 
-const { mapActions: alarmMapActions } = createNamespacedHelpers('entities/alarm');
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');
+const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
   components: { DateTimePicker, RRuleForm },
-  mixins: [ModalItemMixin],
+  mixins: [ModalInnerItemMixin],
   data() {
     const start = new Date();
     const stop = new Date(start.getTime());

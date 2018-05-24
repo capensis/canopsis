@@ -28,7 +28,7 @@
 <script>
 import moment from 'moment';
 
-import ModalItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_TYPES } from '@/config';
 
@@ -36,7 +36,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [ModalItemMixin, EventActionsMixin],
+  mixins: [ModalInnerItemMixin, EventActionsMixin],
   data() {
     const availableTypes = [
       { key: 'seconds', text: 'common.times.second' },

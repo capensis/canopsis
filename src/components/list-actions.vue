@@ -34,6 +34,9 @@ import ModalMixin from '@/mixins/modal/modal';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_TYPES } from '@/config';
 
+/**
+ * @prop {Object} item - item of the entity
+ */
 export default {
   mixins: [ModalMixin, EventActionsMixin],
   props: {

@@ -50,6 +50,19 @@
 <script>
 import moment from 'moment';
 
+/**
+ * Date time picker component
+ *
+ * @prop {Boolean} [clearable] - if it is true then input field will be have cross button with clear event on click
+ * @prop {Date} [value] - v-model
+ * @prop {string} [label] - label of the input field
+ * @prop {string} [name] - name property in the validation object
+ * @prop {string} [rules] - validation rules in vee-validate format
+ * @prop {string} [format='DD/MM/YYYY HH:mm'] - date format for display
+ *
+ * @event value#input
+ * @type Date - new date value
+ */
 export default {
   inject: ['$validator'],
   props: {

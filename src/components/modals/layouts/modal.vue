@@ -1,5 +1,6 @@
 <template lang="pug">
   v-dialog(v-model="isOpened", v-bind="dialogProps")
+    // @slot use this slot default
     slot(v-if="isActive")
 </template>
 
@@ -8,6 +9,12 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('modal');
 
+/**
+ * Wrapper for each modal window
+ *
+ * @prop {string} name - Name of the modal
+ * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
+ */
 export default {
   props: {
     name: {

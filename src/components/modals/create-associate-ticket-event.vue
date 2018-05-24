@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import AlarmGeneralTable from '@/components/tables/alarm-general.vue';
+import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
+import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import ModalItemMixin from '@/mixins/modal/modal-inner-item';
 import { EVENT_TYPES } from '@/config';
 
 export default {
@@ -35,7 +35,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalItemMixin, EventActionsMixin],
+  mixins: [ModalInnerItemMixin, EventActionsMixin],
   data() {
     return {
       form: {

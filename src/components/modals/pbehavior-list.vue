@@ -15,19 +15,19 @@
               ) {{ props.item[key] | moment("DD/MM/YYYY HH:mm:ss") }}
               span(v-else) {{ props.item[key] }}
             td
-              v-btn.mx-0(@click="remove(props.item._id)", icon)
+              v-btn.mx-0(@click="removePbehavior({ id: props.item._id })", icon)
                 v-icon delete
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('entities/pbehavior');
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
-  mixins: [ModalItemMixin],
+  mixins: [ModalInnerItemMixin],
   data() {
     const fields = [
       'name',
@@ -55,10 +55,6 @@ export default {
     ...pbehaviorMapActions({
       removePbehavior: 'remove',
     }),
-
-    async remove(id) {
-      await this.removePbehavior({ id });
-    },
   },
 };
 </script>
