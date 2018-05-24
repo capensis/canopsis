@@ -1,29 +1,32 @@
 <template lang="pug">
   ul.timeline(v-if="!pending")
-    li.timeline-item(v-for="step in steps")
-      time-item.time(:time="step.t")
-      div(v-if="step._t !== 'statecounter'")
-        state-flag.flag(:val="step.val" :isStatus="isStatus(step._t)")
-        .header
-          alarm-chips.chips(:val="step.val" :isStatus="isStatus(step._t)")
-          p {{ step._t }}
-        .content
-          p {{ step.m }}
-      div(v-else)
-        state-flag.flag(isCroppedState)
-        .header
-          p Cropped State (since last change of status)
-        .content
-          table
-            tr
-              td State increased :
-              td {{ step.val.stateinc }}
-            tr
-              td State decreases :
-              td {{ step.val.statedec }}
-            tr(v-for="(value, state) in stateSteps(step.val)")
-              td State {{ stateName(state) }} :
-              td {{ value }}
+    li(v-for="step in steps")
+      .timeline-item(v-if="isNewDate(step.t)")
+        .date {{ $d(step.t, 'short') }}
+      .timeline-item
+          .time {{ $d(step.t, 'time') }}
+          div(v-if="step._t !== 'statecounter'")
+            state-flag.flag(:val="step.val" :isStatus="isStatus(step._t)")
+            .header
+              alarm-chips.chips(:val="step.val" :isStatus="isStatus(step._t)")
+              p {{ step._t }}
+            .content
+              p {{ step.m }}
+          div(v-else)
+            state-flag.flag(isCroppedState)
+            .header
+              p Cropped State (since last change of status)
+            .content
+              table
+                tr
+                  td State increased :
+                  td {{ step.val.stateinc }}
+                tr
+                  td State decreases :
+                  td {{ step.val.statedec }}
+                tr(v-for="(value, state) in stateSteps(step.val)")
+                  td State {{ stateName(state) }} :
+                  td {{ value }}
 </template>
 
 <script>
@@ -33,7 +36,6 @@ import pickBy from 'lodash/pickBy';
 
 import StateFlag from '@/components/BasicComponent/alarm-flag.vue';
 import AlarmChips from '@/components/BasicComponent/alarm-chips.vue';
-import TimeItem from '@/components/BasicComponent/time-item.vue';
 
 import { STATES_CHIPS_AND_FLAGS_STYLE } from '@/config';
 
@@ -41,7 +43,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
 
 export default {
   name: 'time-line',
-  components: { TimeItem, AlarmChips, StateFlag },
+  components: { AlarmChips, StateFlag },
   mounted() {
     this.fetchItem({
       params: {
@@ -62,6 +64,7 @@ export default {
     alarmId: {
       type: String,
       required: true,
+      lastDate: null,
     },
   },
   data() {
@@ -87,6 +90,13 @@ export default {
     ...mapActions([
       'fetchItem',
     ]),
+    isNewDate(timestamp) {
+      if (timestamp !== this.lastDate) {
+        this.lastDate = timestamp;
+        return true;
+      }
+      return false;
+    },
     isStatus(stepTitle) {
       return stepTitle.startsWith('status');
     },
@@ -95,48 +105,54 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  $border_line: #DDDDE0;
   ul {
     list-style: none;
+    color: #858585;
+  }
+
+  li:last-child  {
+    .timeline-item {
+      border-image: linear-gradient(
+          to bottom,
+          $border-line 60%,
+          white) 1 100%;
+    }
   }
   .timeline {
     margin: 0 auto;
     width: 90%
   }
 
-  $border_line: #DDDDE0;
-
   .timeline-item {
-    padding: 3em 2em 2em;
+    padding: 3em 2em 0em;
     position: relative;
     border-left: 2px solid $border_line;
 
     .time{
       position: absolute;
-      color: #686868;
       left: 2em;
       top: 9px;
       display: block;
       font-size: 11px;
     }
-
-    &:last-child  {
-     border-image: linear-gradient(
-     to bottom,
-     $border-line 60%,
-     white) 1 100%;
-    }
-
   }
 
-  .flag {
+  .flag, .date {
      top: 0;
      position: absolute;
-     left: -19px;
      background: white;
    }
 
+  .flag {
+    left: -19px;
+  }
+
+  .date {
+    left: -11px;
+  }
+
   .content {
-    color: #858585;
     padding-left: 20px;
     padding-top: 20px;
     overflow-wrap: break-word;
@@ -151,10 +167,11 @@ export default {
 
     .chips{
       font-size: 15px;
+      height: 25px;
     }
 
     p{
-      font-size: 20px;
+      font-size: 17px;
     }
 
   }
