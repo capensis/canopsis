@@ -251,6 +251,7 @@ class engine(Engine):
                 exchange='amq.direct'
             )
             # publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
+            time.sleep(1)
         return True
 
     def a_snooze(self, event, action, name):
