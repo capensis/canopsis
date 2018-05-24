@@ -21,7 +21,7 @@
 from __future__ import unicode_literals
 
 """
-The `canopsis.statsng.enums` module contains enumerations related to the
+The canopsis.statsng.enums module contains enumerations related to the
 statsng engine.
 """
 
@@ -29,11 +29,20 @@ statsng engine.
 # Inheriting from Enum would prevent the members from being JSON serializable
 class StatEvents(object):
     """
-    The `StatEvents` enumeration defines the types of events handled by the
+    The StatEvents enumeration defines the types of events handled by the
     statsng engine.
     """
     statcounterinc = 'statcounterinc'
     statduration = 'statduration'
+
+
+class StatMeasurements(object):
+    """
+    The StatMeasurements enumeration defines the names of the influxdb
+    measurements.
+    """
+    counters = 'statcounters'
+    durations = 'statdurations'
 
 
 class StatCounters(object):

@@ -28,7 +28,7 @@ from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
-from canopsis.statsng.enums import StatEvents
+from canopsis.statsng.enums import StatEvents, StatMeasurements
 from canopsis.statsng.influx import get_influxdb_client
 
 SECONDS = 1000000000
@@ -106,7 +106,7 @@ class engine(Engine):
         self.logger.info('received statcounterinc event')
 
         self.add_point({
-            'measurement': 'statcounters',
+            'measurement': StatMeasurements.counters,
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
@@ -125,7 +125,7 @@ class engine(Engine):
         alarm = event['alarm']
 
         self.add_point({
-            'measurement': 'statdurations',
+            'measurement': StatMeasurements.durations,
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
