@@ -115,4 +115,3 @@ class AlarmEventPublisher(object):
             entity=entity)
 
         self.amqp_pub.canopsis_event(event)
-

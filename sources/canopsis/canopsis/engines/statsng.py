@@ -19,10 +19,6 @@
 
 from __future__ import unicode_literals
 import os
-try:
-    from threading import Lock
-except ImportError:
-    from dummy_threading import Lock
 
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini

@@ -28,6 +28,7 @@ from __future__ import unicode_literals
 import logging
 
 from canopsis.statsng.enums import StatCounters, StatDurations
+from canopsis.alarms.models import AlarmStatus
 
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
 DEFAULT_FLAPPING_INTERVAL = 0

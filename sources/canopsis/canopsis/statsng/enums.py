@@ -18,12 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from __future__ import unicode_literals
-
 """
 The canopsis.statsng.enums module contains enumerations related to the
 statsng engine.
 """
+
+from __future__ import unicode_literals
 
 
 # Inheriting from Enum would prevent the members from being JSON serializable
