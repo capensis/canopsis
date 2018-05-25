@@ -372,6 +372,10 @@ Ember.Application.initializer({
 								technicalName = columnMap[humanName.toLowerCase()] || ""
 							}
 
+							if (technicalName.startsWith("infos")) {
+								technicalName = "entity." + technicalName
+							}
+
 
 							if (technicalName !== "") {
 								updatedCondition = conditions[itCond].replace(humanName, technicalName)
