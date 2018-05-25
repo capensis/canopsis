@@ -85,6 +85,9 @@ def get_influxdb_client(conf_path=INFLUXDB_CONF_PATH,
 
     if InfluxDBOptions.database in cfg:
         influxdb_client_args['database'] = cfg[InfluxDBOptions.database]
+    else:
+        raise RuntimeError(
+            "The {} option is required.".format(InfluxDBOptions.database))
 
     if InfluxDBOptions.ssl in cfg:
         influxdb_client_args['ssl'] = cfg_to_bool(cfg[InfluxDBOptions.ssl])
@@ -107,12 +110,9 @@ def get_influxdb_client(conf_path=INFLUXDB_CONF_PATH,
         influxdb_client_args['udp_port'] = int(cfg[InfluxDBOptions.udp_port])
 
     client = InfluxDBClient(**influxdb_client_args)
-
-    database = influxdb_client_args.get('database', '')
-    if database:
-        try:
-            client.create_database(database)
-        except InfluxDBClientError:
-            pass
+    try:
+        client.create_database(influxdb_client_args['database'])
+    except InfluxDBClientError:
+        pass
 
     return client
