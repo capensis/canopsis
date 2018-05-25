@@ -3,7 +3,7 @@
     v-model="isOpen",
     absolute,
     app,
-    :clipped="windowSize.x < 1264 ? false : true"
+    :clipped="$mq === 'mobile' || $mq === 'tablet' ? false : true"
   )
       v-card(flat)
       v-expansion-panel(
@@ -48,12 +48,6 @@ export default {
   name: 'SideBar',
   components: {
     VueContentLoading,
-  },
-  props: {
-    windowSize: {
-      type: Object,
-      required: true,
-    },
   },
   computed: {
     ...mapGetters(['isSideBarOpen']),
