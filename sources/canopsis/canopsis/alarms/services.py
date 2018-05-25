@@ -28,7 +28,6 @@ from __future__ import unicode_literals
 import logging
 
 from canopsis.statsng.enums import StatCounters, StatDurations
-from canopsis.alarms.models import AlarmStatus
 
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
 DEFAULT_FLAPPING_INTERVAL = 0
@@ -115,17 +114,6 @@ class AlarmService(object):
                           'alarm : {} has been unsnoozed'.format(alarm._id))
                 self.update_alarm(alarm)
                 alarms.remove(alarm)
-
-                if alarm.status.value is AlarmStatus.OFF:
-                    alarm_dict = alarm.to_dict()
-                    self.event_publisher.publish_statcounterinc_event(
-                        StatCounters.alarms_resolved,
-                        alarm_dict['_id'],
-                        alarm_dict['v'])
-                    self.event_publisher.publish_statduration_event(
-                        StatDurations.resolve_time,
-                        alarm_dict['_id'],
-                        alarm_dict['v'])
 
         return alarms
 
