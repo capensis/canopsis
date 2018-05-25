@@ -700,15 +700,15 @@ class AlertsReader(object):
                     "foreignField": "_id",
                     "as": "entity"
                 }
-            },
-            {
-                "$match": {"entity.enabled": True}
-            },
-            {
+            }, {
                 "$unwind": {
                     "path": "$entity",
                     "preserveNullAndEmptyArrays": True,
                 }
+            }, {
+                "$match": {"$or": [
+                    {"entity.enabled": True}, {"entity": {"$exists": False}}
+                ]}
             }, {
                 "$match": final_filter
             }, {
@@ -721,8 +721,8 @@ class AlertsReader(object):
         self.add_pbh_filter(pipeline, filter_)
 
         pipeline.append({
-                "$skip": skip
-            })
+            "$skip": skip
+        })
 
         if limit is not None:
             pipeline.append({"$limit": limit})
