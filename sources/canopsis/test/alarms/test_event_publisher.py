@@ -26,7 +26,8 @@ from mock import Mock
 
 from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField
-from canopsis.statsng.enums import StatEvents
+from canopsis.event import Event
+from canopsis.statsng.enums import StatEvents, StatEventFields
 
 
 class AlarmEventPublisherTest(TestCase):
@@ -45,8 +46,8 @@ class AlarmEventPublisherTest(TestCase):
         self.assertEqual(self.amqp_pub.canopsis_event.call_count, 1)
 
         event = self.amqp_pub.canopsis_event.call_args[0][0]
-        self.assertEqual(event['event_type'], StatEvents.statcounterinc)
-        self.assertEqual(event['counter_name'], 'counter_name')
+        self.assertEqual(event[Event.EVENT_TYPE], StatEvents.statcounterinc)
+        self.assertEqual(event[StatEventFields.counter_name], 'counter_name')
         self.assertEqual(event['timestamp'], 1)
 
     def test_publish_statduration_event(self):
@@ -60,10 +61,10 @@ class AlarmEventPublisherTest(TestCase):
         self.assertEqual(self.amqp_pub.canopsis_event.call_count, 1)
 
         event = self.amqp_pub.canopsis_event.call_args[0][0]
-        self.assertEqual(event['event_type'], StatEvents.statduration)
-        self.assertEqual(event['duration_name'], 'duration_name')
+        self.assertEqual(event[Event.EVENT_TYPE], StatEvents.statduration)
+        self.assertEqual(event[StatEventFields.duration_name], 'duration_name')
         self.assertEqual(event['timestamp'], 3)
-        self.assertEqual(event['duration'], 2)
+        self.assertEqual(event[StatEventFields.duration], 2)
 
 
 if __name__ == '__main__':

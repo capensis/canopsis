@@ -20,11 +20,15 @@
 from __future__ import unicode_literals
 import os
 
+from canopsis.alerts.enums import AlarmField
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
-from canopsis.statsng.enums import StatEvents, StatMeasurements
+from canopsis.event import Event
+from canopsis.models.entity import Entity
+from canopsis.statsng.enums import StatEvents, StatEventFields, \
+    StatMeasurements
 from canopsis.statsng.influx import get_influxdb_client
 
 SECONDS = 1000000000
@@ -54,9 +58,9 @@ class engine(Engine):
         :param dict event: event to process.
         """
 
-        if event['event_type'] == StatEvents.statcounterinc:
+        if event[Event.EVENT_TYPE] == StatEvents.statcounterinc:
             self.handle_statcounterinc_event(event)
-        elif event['event_type'] == StatEvents.statduration:
+        elif event[Event.EVENT_TYPE] == StatEvents.statduration:
             self.handle_statduration_event(event)
 
     def get_tags(self, event):
@@ -67,16 +71,16 @@ class engine(Engine):
         :param dict event:
         :rtype dict:
         """
-        alarm = event['alarm']
+        alarm = event[StatEventFields.alarm]
 
         tags = {
-            'connector': alarm['connector'],
-            'connector_name': alarm['connector_name'],
-            'component': alarm['component'],
-            'resource': alarm['resource']
+            'connector': alarm[Event.CONNECTOR],
+            'connector_name': alarm[Event.CONNECTOR_NAME],
+            'component': alarm[Event.COMPONENT],
+            'resource': alarm[Event.RESOURCE]
         }
 
-        infos = event.get('entity', {}).get('infos', {})
+        infos = event.get(StatEventFields.entity, {}).get(Entity.INFOS, {})
         for tag in self.tags:
             tags[tag] = infos.get(tag, {}).get('value', '')
 
@@ -95,7 +99,7 @@ class engine(Engine):
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
-                event['counter_name']: 1
+                event[StatEventFields.counter_name]: 1
             }
         }])
 
@@ -112,6 +116,7 @@ class engine(Engine):
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
-                event['duration_name']: event['duration']
+                event[StatEventFields.duration_name]: \
+                    event[StatEventFields.duration]
             }
         }])

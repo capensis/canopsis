@@ -29,7 +29,7 @@ from canopsis.alerts.enums import AlarmField
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
-from canopsis.event import forger
+from canopsis.event import Event, forger
 from canopsis.logger import Logger
 from canopsis.statsng.enums import StatEvents
 
@@ -49,14 +49,14 @@ class AlarmEventPublisher(object):
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
-        component = alarm.get('component', None)
-        resource = alarm.get('resource', None)
+        component = alarm.get(Event.COMPONENT)
+        resource = alarm.get(Event.RESOURCE)
 
         event = forger(
             connector="canopsis",
             connector_name="engine",
             event_type=StatEvents.statcounterinc,
-            source_type="resource" if resource else "component",
+            source_type=Event.RESOURCE if resource else Event.COMPONENT,
             component=component,
             resource=resource,
             timestamp=alarm[AlarmField.creation_date.value],
@@ -78,14 +78,14 @@ class AlarmEventPublisher(object):
         update_date = alarm[AlarmField.last_update_date.value]
         duration = update_date - creation_date
 
-        component = alarm.get('component', None)
-        resource = alarm.get('resource', None)
+        component = alarm.get(Event.COMPONENT)
+        resource = alarm.get(Event.RESOURCE)
 
         event = forger(
             connector="canopsis",
             connector_name="engine",
             event_type=StatEvents.statduration,
-            source_type="resource" if resource else "component",
+            source_type=Event.RESOURCE if resource else Event.Component,
             component=component,
             resource=resource,
             timestamp=update_date,

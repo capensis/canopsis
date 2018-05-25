@@ -36,6 +36,18 @@ class StatEvents(object):
     statduration = 'statduration'
 
 
+class StatEventFields(object):
+    """
+    The StatEventFields enumeration defines the names of the field of a stat*
+    events.
+    """
+    alarm = 'alarm'
+    entity = 'entity'
+    counter_name = 'counter_name'
+    duration_name = 'duration_name'
+    duration = 'duration'
+
+
 class StatMeasurements(object):
     """
     The StatMeasurements enumeration defines the names of the influxdb
