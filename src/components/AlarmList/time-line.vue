@@ -9,7 +9,7 @@
             state-flag.flag(:val="step.val" :isStatus="isStatus(step._t)")
             .header
               alarm-chips.chips(:val="step.val" :isStatus="isStatus(step._t)")
-              p {{ step._t }}
+              p {{ formatStepTitle(step._t, step.a) }}
             .content
               p {{ step.m }}
           div(v-else)
@@ -33,6 +33,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import pickBy from 'lodash/pickBy';
+import capitalize from 'lodash/capitalize';
 
 import StateFlag from '@/components/BasicComponent/alarm-flag.vue';
 import AlarmChips from '@/components/BasicComponent/alarm-chips.vue';
@@ -59,6 +60,10 @@ export default {
       this.alarm = this.item;
       this.pending = false;
     });
+  },
+  updated() {
+    // Useful for example the user change the translation
+    this.lastDate = null;
   },
   props: {
     alarmId: {
@@ -90,6 +95,18 @@ export default {
     ...mapActions([
       'fetchItem',
     ]),
+    formatStepTitle(stepTitle, stepAuthor) {
+      let formattedStepTitle = '';
+      formattedStepTitle = stepTitle.replace(/(status)|(state)/g, '$& ');
+      formattedStepTitle = formattedStepTitle.replace(/(inc)|(dec)/g, '$&reased ');
+      formattedStepTitle += 'by ';
+      if (stepAuthor === 'canopsis.engine') {
+        formattedStepTitle += 'system';
+      } else {
+        formattedStepTitle += stepAuthor;
+      }
+      return capitalize(formattedStepTitle);
+    },
     isNewDate(timestamp) {
       if (timestamp !== this.lastDate) {
         this.lastDate = timestamp;
