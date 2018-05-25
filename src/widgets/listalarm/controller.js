@@ -493,7 +493,9 @@ Ember.Application.initializer({
                     newAlarm['isExpanded'] = false;
                     newAlarm['id'] = alarm._id;
                     newAlarm['entity_id'] = alarm.d;
-                    newAlarm.set('state.canceled', alarm.v.canceled);
+                    if (newAlarm.get('state') !== undefined){
+                        newAlarm.set('state.canceled', alarm.v.canceled);
+                    }
                     newAlarm['changed'] = new Date().getTime();
                     newAlarm.links = alarm.links;
 

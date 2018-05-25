@@ -32,8 +32,11 @@
 			nbChar = 0
 
         var html = '';
-		var output = ""
-		if (txt.length > nbChar) {
+		var output = "";
+        if (txt === undefined) {
+            txt = ""
+        }
+        if (txt.length > nbChar) {
 			output = txt.substring(0, nbChar)
 			output = output + "…"
 		} else {

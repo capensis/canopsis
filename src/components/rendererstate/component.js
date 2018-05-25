@@ -21,7 +21,7 @@ Ember.Application.initializer({
                 0: {color: 'bg-green', name: 'Info'},
                 1: {color: 'bg-yellow', name: 'Minor'},
                 2: {color: 'bg-orange', name: 'Major'},
-                3: {color: 'bg-red', name: 'Critical'}            
+                3: {color: 'bg-red', name: 'Critical'}
             },
 
             /**
@@ -35,14 +35,22 @@ Ember.Application.initializer({
              * @property spanClass
              */
             spanClass: function() {
-                return [this.get('list')[this.get('value.val')]['color'], 'badge'].join(' ')
+                value = this.get('list')[this.get('value.val')];
+                if (value !== undefined && 'color' in value) {
+                    return [value['color'], 'badge'].join(' ');
+                }
+                return '';
             }.property('value.val'),
 
             /**
              * @property caption
              */
             caption: function() {
-                return __(this.get('list')[this.get('value.val')]['name'])
+                value = this.get('list')[this.get('value.val')];
+                if (value !== undefined && 'name' in value) {
+                    return __(value['name']);
+                }
+                return '';
             }.property('value.val'),
 
             /**
