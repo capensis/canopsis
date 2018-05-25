@@ -34,14 +34,6 @@ export default {
     [types.FETCH_LIST_FAILED](state) {
       state.pending = false;
     },
-    [types.FETCH_ITEM](state) {
-      state.item = {};
-      state.itemPending = true;
-    },
-    [types.FETCH_ITEM_COMPLETED](state, { item }) {
-      state.item = item;
-      state.itemPending = false;
-    },
   },
   actions: {
     async fetchList({ commit, dispatch }, { params } = {}) {

@@ -28,7 +28,6 @@ import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
 import TimeLine from '@/components/AlarmList/time-line.vue';
 
-
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
 /**
