@@ -85,7 +85,7 @@ class AlarmEventPublisher(object):
             connector="canopsis",
             connector_name="engine",
             event_type=StatEvents.statduration,
-            source_type=Event.RESOURCE if resource else Event.Component,
+            source_type=Event.RESOURCE if resource else Event.COMPONENT,
             component=component,
             resource=resource,
             timestamp=update_date,
