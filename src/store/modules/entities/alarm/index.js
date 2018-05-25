@@ -10,16 +10,14 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    byId: {},
     allIds: [],
     meta: {},
     pending: false,
     fetchingParams: {},
   },
   getters: {
-    byId: state => state.byId,
     allIds: state => state.allIds,
-    items: state => state.allIds.map(id => state.byId[id]),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('alarm', state.allIds),
     meta: state => state.meta,
     pending: state => state.pending,
   },
@@ -28,8 +26,7 @@ export default {
       state.pending = true;
       state.fetchingParams = params;
     },
-    [types.FETCH_LIST_COMPLETED](state, { byId, allIds, meta }) {
-      state.byId = byId;
+    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.allIds = allIds;
       state.meta = meta;
       state.pending = false;
@@ -51,7 +48,6 @@ export default {
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
-          byId: normalizedData.entities.alarm,
           allIds: normalizedData.result,
           meta: {
             first: data.first,
