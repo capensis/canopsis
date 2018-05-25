@@ -25,9 +25,9 @@ statsng engine.
 
 from __future__ import unicode_literals
 
+from canopsis.common.enumerations import FastEnum
 
-# Inheriting from Enum would prevent the members from being JSON serializable
-class StatEvents(object):
+class StatEvents(FastEnum):
     """
     The StatEvents enumeration defines the types of events handled by the
     statsng engine.
@@ -36,7 +36,7 @@ class StatEvents(object):
     statduration = 'statduration'
 
 
-class StatEventFields(object):
+class StatEventFields(FastEnum):
     """
     The StatEventFields enumeration defines the names of the field of a stat*
     events.
@@ -48,7 +48,7 @@ class StatEventFields(object):
     duration = 'duration'
 
 
-class StatMeasurements(object):
+class StatMeasurements(FastEnum):
     """
     The StatMeasurements enumeration defines the names of the influxdb
     measurements.
@@ -57,7 +57,7 @@ class StatMeasurements(object):
     durations = 'statdurations'
 
 
-class StatCounters(object):
+class StatCounters(FastEnum):
     """
     The StatCounters enumeration defines the names of the counters.
     """
@@ -66,7 +66,7 @@ class StatCounters(object):
     alarms_resolved = 'alarms_resolved'
 
 
-class StatDurations(object):
+class StatDurations(FastEnum):
     """
     The StatDurations enumeration defines the names of the durations.
     """
