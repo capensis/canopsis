@@ -33,7 +33,7 @@ class AlarmEventPublisherTest(TestCase):
 
     def setUp(self):
         self.amqp_pub = Mock()
-        self.event_publisher = AlarmEventPublisher(amqp_pub=self.amqp_pub)
+        self.event_publisher = AlarmEventPublisher(self.amqp_pub)
 
     def test_publish_statcounterinc_event(self):
         alarm = {

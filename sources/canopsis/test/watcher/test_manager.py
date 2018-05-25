@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from json import loads
 from time import sleep
 from unittest import main, TestCase
+from mock import Mock
 
 from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.manager import Alerts
@@ -210,7 +211,7 @@ class ComputeState(BaseTest):
         config_data = EtherealData(collection=config_storage._backend,
                                    filter_=filter_)
 
-        event_publisher = AlarmEventPublisher()
+        event_publisher = Mock(spec=AlarmEventPublisher)
 
         self.alert_manager = Alerts(config=conf,
                                     logger=logger,

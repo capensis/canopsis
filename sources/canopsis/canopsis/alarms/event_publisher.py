@@ -38,10 +38,8 @@ class AlarmEventPublisher(object):
     """
     Event publisher for alarms.
     """
-    def __init__(self, amqp_pub=None):
+    def __init__(self, amqp_pub):
         self.amqp_pub = amqp_pub
-        if amqp_pub is None:
-            self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
 
     def publish_statcounterinc_event(self, counter_name, entity, alarm):
         """

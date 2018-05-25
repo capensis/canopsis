@@ -40,6 +40,9 @@ from canopsis.alerts.status import (
     CANCELED, is_stealthy, is_keeped_state
 )
 from canopsis.check import Check
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import ensure_iterable, gen_id
@@ -162,7 +165,8 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
-        event_publisher = AlarmEventPublisher()
+        amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        event_publisher = AlarmEventPublisher(amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
                 filter_storage, context_manager, watcher_manager,
