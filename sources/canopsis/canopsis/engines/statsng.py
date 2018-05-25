@@ -39,28 +39,17 @@ class engine(Engine):
 
     CONF_PATH = "etc/statsng/engine.conf"
     CONF_SECTION = 'ENGINE'
-    DEFAULT_MAX_BATCH_SIZE = 100
 
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
-
-        self.batch_lock = Lock()
-        self.batch = []
 
         cfg = Configuration.load(
             os.path.join(root_path, self.CONF_PATH), Ini
         ).get(self.CONF_SECTION, {})
 
-        self.max_batch_size = int(
-            cfg.get('max_batch_size', self.DEFAULT_MAX_BATCH_SIZE))
-
         self.influxdb_client = get_influxdb_client()
 
         self.tags = cfg_to_array(cfg.get('tags', ''))
-
-    def beat(self):
-        with self.batch_lock:
-            self.flush()
 
     def work(self, event, *args, **kargs):
         """
@@ -105,14 +94,14 @@ class engine(Engine):
         """
         self.logger.info('received statcounterinc event')
 
-        self.add_point({
+        self.influxdb_client.write_points([{
             'measurement': StatMeasurements.counters,
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
                 event['counter_name']: 1
             }
-        })
+        }])
 
     def handle_statduration_event(self, event):
         """
@@ -122,35 +111,11 @@ class engine(Engine):
         """
         self.logger.info('received statduration event')
 
-        alarm = event['alarm']
-
-        self.add_point({
+        self.influxdb_client.write_points([{
             'measurement': StatMeasurements.durations,
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
                 event['duration_name']: event['duration']
             }
-        })
-
-    def add_point(self, point):
-        """
-        Add a point to a batch that will be sent later to influxdb.
-
-        :param dict point: an influxdb point
-        """
-        with self.batch_lock:
-            self.batch.append(point)
-
-            if len(self.batch) >= self.max_batch_size:
-                self.flush()
-
-    def flush(self):
-        """
-        Send the batch to influxdb.
-
-        `self.batch_lock` should be acquired before calling the `flush` method.
-        """
-        if self.batch:
-            self.influxdb_client.write_points(self.batch)
-            self.batch = []
+        }])
