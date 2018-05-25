@@ -33,4 +33,5 @@ export const API_ROUTES = {
   alarmList: '/alerts/get-alarms',
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
+  eventsList: '/rest/events',
 };

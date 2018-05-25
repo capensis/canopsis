@@ -1,6 +1,10 @@
 export default {
   common: {
     hello: 'Hello',
+    add: 'Add',
+    delete: 'Delete',
+    edit: 'Edit',
+    parse: 'Parse',
     home: 'Home',
     entries: 'entries',
     showing: 'showing',
@@ -145,6 +149,24 @@ export default {
         label: 'By second',
         tooltip: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
       },
+    },
+  },
+  mFilterEditor: {
+    tabs: {
+      visualEditor: 'Visual Editor',
+      advancedEditor: 'Advanced Editor',
+      results: 'Results',
+    },
+    buttons: {
+      addRule: 'Add a rule',
+      addGroup: 'Add a group',
+      deleteGroup: 'Delete group',
+    },
+    resultsTableHeaders: {
+      connector: 'Connector',
+      connectorName: 'Connector name',
+      component: 'Component',
+      resource: 'Resource',
     },
   },
 };

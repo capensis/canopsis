@@ -5,6 +5,7 @@ import appModule from './modules/app';
 import i18nModule from './modules/i18n';
 import modalModule from './modules/modal';
 import eventModule from './modules/event';
+import mFilterEditorModule from './modules/mfilter-editor';
 import entitiesModules from './modules/entities';
 
 import entitiesPlugin from './plugins/entities';
@@ -17,6 +18,8 @@ export default new Vuex.Store({
     i18n: i18nModule,
     modal: modalModule,
     event: eventModule,
+    mFilterEditor: mFilterEditorModule,
+
     ...entitiesModules,
   },
   plugins: [entitiesPlugin],

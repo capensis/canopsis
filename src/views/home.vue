@@ -1,12 +1,14 @@
 <template lang="pug">
-  .home
-    img(src="../assets/logo.png")
+  MFilterEditor
 </template>
 
 <script>
+import MFilterEditor from '@/components/mfilter-editor.vue';
+
 export default {
   name: 'home',
   components: {
+    MFilterEditor,
   },
 };
 </script>
