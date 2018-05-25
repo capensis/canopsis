@@ -1,0 +1,60 @@
+<template lang="pug">
+  div
+    v-card
+      v-card-title
+        span.headline {{ $t('modals.createPbehavior.title') }}
+      v-card-text
+        v-data-table(:headers="headers", :items="item.pbehaviors", disable-initial-sort, hide-actions)
+          template(slot="headerCell", slot-scope="props")
+            span {{ $t(props.header.text) }}
+          template(slot="items", slot-scope="props")
+            td(v-for="key in fields")
+              span(
+              v-if="key === 'tstart' || key === 'tstop'",
+              key="key"
+              ) {{ props.item[key] | moment("DD/MM/YYYY HH:mm:ss") }}
+              span(v-else) {{ props.item[key] }}
+            td
+              v-btn.mx-0(@click="removePbehavior({ id: props.item._id })", icon)
+                v-icon delete
+</template>
+
+<script>
+import { createNamespacedHelpers } from 'vuex';
+
+import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
+
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
+
+export default {
+  mixins: [ModalInnerItemMixin],
+  data() {
+    const fields = [
+      'name',
+      'author',
+      'connector',
+      'connector_name',
+      'enabled',
+      'tstart',
+      'tstop',
+      'type_',
+      'reason',
+      'rrule',
+    ];
+
+    const headers = fields.map(v => ({ sortable: false, text: `tables.pbehaviorList.${v}` }));
+
+    headers.push({ sortable: false, text: 'common.actionsLabel' });
+
+    return {
+      fields,
+      headers,
+    };
+  },
+  methods: {
+    ...pbehaviorMapActions({
+      removePbehavior: 'remove',
+    }),
+  },
+};
+</script>

@@ -1,44 +1,44 @@
 <template lang="pug">
   div
-    div( v-if="fetchComplete" )
-      basic-list( :items="items" )
-        tr.container( slot="header" )
-            th.box( v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)" ) {{ columnName }}
+    div(v-if="!pending")
+      basic-list(:items="items")
+        tr.container(slot="header")
+            th.box(v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
             th.box
-        tr.container( slot="row" slot-scope="item" )
-            td.box( v-for="property in Object.values(alarmProperty)" ) {{ getProp(item.props, property) }}
+        tr.container(slot="row", slot-scope="item")
+            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
-        tr.container(slot="expandedRow" slot-scope="item")
+        tr.container(slot="expandedRow", slot-scope="item")
             time-line(:alarmId="item.props.d")
-      alarm-list-pagination(:meta="meta", :limit="limit", v-if="fetchComplete")
+      alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import getProp from 'lodash/get';
-import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
+import getQuery from '@/helpers/pagination';
 
-import BasicList from '../BasicComponent/basic-list.vue';
-import ActionsPanel from '../BasicComponent/actions-panel.vue';
-import Loader from '../loaders/alarm-list-loader.vue';
-import AlarmListPagination from './alarm-list-pagination.vue';
-import TimeLine from './time-line.vue';
+import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
+import BasicList from '@/components/BasicComponent/basic-list.vue';
+import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
+import Loader from '@/components/loaders/alarm-list-loader.vue';
+import TimeLine from '@/components/AlarmList/time-line.vue';
 
 
-const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
+const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
 /**
-* Alarm-list component.
-*
-* @module components/alarm-list
-* @param {object} alarmProperty - Object that describe the columns names and the alarms attributes corresponding
-*            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
-* @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
-*/
+ * Alarm-list component.
+ *
+ * @module components/alarm-list
+ * @param {object} alarmProperty - Object that describe the columns names and the alarms attributes corresponding
+ *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
+ * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
+ */
 export default {
   name: 'AlarmList',
   components: {
@@ -60,57 +60,31 @@ export default {
       default: PAGINATION_LIMIT,
     },
   },
-  data() {
-    return {
-      columnSorted: 'opened',
-    };
-  },
-  mounted() {
-    this.fetchList();
-  },
   computed: {
     ...mapGetters([
       'items',
       'meta',
-      'fetchComplete',
+      'pending',
     ]),
-  },
-  methods: {
-    getProp,
-    ...mapActions({
-      fetchListAction: 'fetchList',
-    }),
-    sortAlarms(columnToSort) {
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          sort_key: this.alarmProperty[columnToSort],
-          sort_dir: 'DESC',
-        },
-      });
-    },
-    /**
-     * TODO: move this function into mixin or helper
-     *
-     * @returns {*}
-     */
-    getQuery() {
-      const query = omit(this.$route.query, ['page']);
-
-      query.limit = this.limit;
-      query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
-
-      return query;
-    },
-    fetchList() {
-      this.fetchListAction({
-        params: this.getQuery(),
-      });
-    },
   },
   watch: {
     $route() {
       this.fetchList();
+    },
+  },
+  mounted() {
+    this.fetchList(this.fetchingParams);
+  },
+  methods: {
+    getProp,
+    getQuery,
+    ...mapActions({
+      fetchListAction: 'fetchList',
+    }),
+    fetchList() {
+      this.fetchListAction({
+        params: this.getQuery(),
+      });
     },
   },
 };

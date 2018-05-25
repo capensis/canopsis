@@ -1,47 +1,38 @@
-import { normalize } from 'normalizr';
-
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
-import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
-  FETCH_ITEM: 'FETCH_ITEM',
-  FETCH_ITEM_COMPLETED: 'FETCH_ITEM_COMPLETED',
+  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
 export default {
   namespaced: true,
   state: {
-    byId: {},
     allIds: [],
     meta: {},
-    fetchComplete: false,
-    itemPending: false,
-    item: {},
+    pending: false,
+    fetchingParams: {},
   },
   getters: {
-    byId: state => state.byId,
     allIds: state => state.allIds,
-    items: state => state.allIds.map(id => state.byId[id]),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('alarm', state.allIds),
     meta: state => state.meta,
-    fetchComplete: state => state.fetchComplete,
-    itemPending: state => state.itemPending,
-    item: state => state.item,
+    pending: state => state.pending,
   },
   mutations: {
-    [types.FETCH_LIST](state) {
-      state.byId = {};
-      state.allIds = [];
-      state.meta = {};
-      state.fetchComplete = false;
+    [types.FETCH_LIST](state, { params }) {
+      state.pending = true;
+      state.fetchingParams = params;
     },
-    [types.FETCH_LIST_COMPLETED](state, { byId, allIds, meta }) {
-      state.byId = byId;
+    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.allIds = allIds;
       state.meta = meta;
-      state.fetchComplete = true;
+      state.pending = false;
+    },
+    [types.FETCH_LIST_FAILED](state) {
+      state.pending = false;
     },
     [types.FETCH_ITEM](state) {
       state.item = {};
@@ -53,28 +44,18 @@ export default {
     },
   },
   actions: {
-    async fetchItem({ commit }, params = {}) {
-      commit(types.FETCH_ITEM);
+    async fetchList({ commit, dispatch }, { params } = {}) {
       try {
-        const [data] = await request.get(API_ROUTES.alarmList, params);
-        const normalizedData = normalize(data.alarms, [alarmSchema]);
-        const itemId = normalizedData.result[0];
-        commit(types.FETCH_ITEM_COMPLETED, {
-          item: normalizedData.entities.alarm[itemId],
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async fetchList({ commit }, params = {}) {
-      commit(types.FETCH_LIST);
+        commit(types.FETCH_LIST, { params });
 
-      try {
-        const [data] = await request.get(API_ROUTES.alarmList, params);
-        const normalizedData = normalize(data.alarms, [alarmSchema]);
+        const { normalizedData, data } = await dispatch('entities/fetch', {
+          route: API_ROUTES.alarmList,
+          schema: [alarmSchema],
+          params,
+          dataPreparer: d => d.alarms,
+        }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
-          byId: normalizedData.entities.alarm,
           allIds: normalizedData.result,
           meta: {
             first: data.first,
@@ -84,7 +65,27 @@ export default {
         });
       } catch (err) {
         console.error(err);
+
+        commit(types.FETCH_LIST_FAILED);
       }
     },
+
+    fetchListWithPreviousParams({ dispatch, state }) {
+      return dispatch('fetchList', { params: state.fetchingParams });
+    },
+
+    async fetchItem({ dispatch }, { id }) {
+      try {
+        await dispatch('entities/fetch', {
+          route: API_ROUTES.alarmList,
+          schema: [alarmSchema],
+          params: { filter: { _id: id } },
+          dataPreparer: d => d.alarms,
+        }, { root: true });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+
   },
 };

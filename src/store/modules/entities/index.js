@@ -1,8 +1,9 @@
 import alarmModule from './alarm';
+import eventsModule from './events';
+import pbehaviorModule from './pbehavior';
 
 export default {
-  namespaced: true,
-  modules: {
-    alarm: alarmModule,
-  },
+  alarm: alarmModule,
+  pbehavior: pbehaviorModule,
+  events: eventsModule,
 };

@@ -40,31 +40,11 @@ import AlarmChips from '@/components/BasicComponent/alarm-chips.vue';
 
 import { STATES_CHIPS_AND_FLAGS_STYLE } from '@/config';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
+const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   name: 'time-line',
   components: { AlarmChips, StateFlag },
-  mounted() {
-    this.fetchItem({
-      params: {
-        filter: { d: this.alarmId },
-        opened: 'true',
-        resolved: 'true',
-        sort_key: 't',
-        sort_dir: 'DESC',
-        limit: '1',
-        with_steps: 'true',
-      },
-    }).then(() => {
-      this.alarm = this.item;
-      this.pending = false;
-    });
-  },
-  updated() {
-    // Useful for example the user change the translation
-    this.lastDate = null;
-  },
   props: {
     alarmId: {
       type: String,
@@ -90,6 +70,26 @@ export default {
     stateSteps(steps) {
       return pickBy(steps, (value, key) => key.startsWith('state:'));
     },
+  },
+  mounted() {
+    this.fetchItem({
+      params: {
+        filter: { d: this.alarmId },
+        opened: 'true',
+        resolved: 'true',
+        sort_key: 't',
+        sort_dir: 'DESC',
+        limit: '1',
+        with_steps: 'true',
+      },
+    }).then(() => {
+      this.alarm = this.item;
+      this.pending = false;
+    });
+  },
+  updated() {
+    // Useful for example the user change the translation
+    this.lastDate = null;
   },
   methods: {
     ...mapActions([
