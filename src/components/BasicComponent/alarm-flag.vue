@@ -6,9 +6,9 @@
 import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
 
 export default {
-  name: 'state-flag',
+  name: 'alarm-flag',
   props: {
-    val: {
+    value: {
       type: Number,
       default: 0,
     },
@@ -24,24 +24,20 @@ export default {
   computed: {
     color() {
       if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].color;
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].color;
       } else if (this.isCroppedState) {
         return 'black';
       }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].color;
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].color;
     },
     icon() {
       if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].icon;
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].icon;
       } else if (this.isCroppedState) {
         return 'vertical_align_center';
       }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].icon;
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].icon;
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

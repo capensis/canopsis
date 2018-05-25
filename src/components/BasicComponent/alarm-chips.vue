@@ -6,9 +6,9 @@
 import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
 
 export default {
-  name: 'state-chips',
+  name: 'alarm-chips',
   props: {
-    val: {
+    value: {
       type: Number,
       default: 0,
     },
@@ -20,20 +20,16 @@ export default {
   computed: {
     color() {
       if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].color;
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].color;
       }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].color;
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].color;
     },
     text() {
       if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.val].text;
+        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].text;
       }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.val].text;
+      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].text;
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>
