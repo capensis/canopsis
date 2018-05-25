@@ -1,10 +1,12 @@
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
+import merge from 'lodash/merge';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+  UPDATE_ITEM_IN_LIST: 'UPDATE_ITEM_IN_LIST',
 };
 
 export default {
@@ -66,14 +68,17 @@ export default {
       return dispatch('fetchList', { params: state.fetchingParams });
     },
 
-    async fetchItem({ dispatch }, { id }) {
+    async fetchItem({ dispatch }, { id, params }) {
       try {
-        await dispatch('entities/fetch', {
+        const paramsWithItemId = merge(params, { filter: { d: id } });
+        const { normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
-          params: { filter: { _id: id } },
+          params: paramsWithItemId,
           dataPreparer: d => d.alarms,
         }, { root: true });
+        // TODO : remove
+        console.log(normalizedData);
       } catch (err) {
         console.error(err);
       }

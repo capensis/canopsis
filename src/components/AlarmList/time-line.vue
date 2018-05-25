@@ -73,8 +73,8 @@ export default {
   },
   mounted() {
     this.fetchItem({
+      id: this.alarmId,
       params: {
-        filter: { d: this.alarmId },
         opened: 'true',
         resolved: 'true',
         sort_key: 't',
@@ -82,9 +82,6 @@ export default {
         limit: '1',
         with_steps: 'true',
       },
-    }).then(() => {
-      this.alarm = this.item;
-      this.pending = false;
     });
   },
   updated() {
