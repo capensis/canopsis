@@ -103,16 +103,17 @@ def exports(ws):
             }
 
             records = ws.db.find(
-                {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
+                {'crecord_name': {'$in': ['casconfig', 'ldapconfig', 'saml2']}},
                 namespace='object'
             )
 
             ws.logger.info(u'found {} cservices'.format(len(records)))
 
+            context = {}
+
             for cservice in records:
                 cservice = cservice.dump()
                 cname = cservice['crecord_name']
-                cservices[cname] = cservice
 
                 ws.logger.info(u'found cservices type {}'.format(cname))
 
@@ -124,13 +125,18 @@ def exports(ws):
                         cservice['service'],
                     ))
 
+                context[cname] = cservice
+
+            if len(context.keys()) > 0:
+                context["auth_ext"] = True
+
             # Compile template
             login_page = os.path.join(ws.root_directory, 'login', 'index.html')
             with open(login_page) as src:
                 tmplsrc = src.read()
 
             tmpl = Template(tmplsrc)
-            return tmpl(cservices)
+            return tmpl(context)
 
         else:
             redirect('/{0}/static/canopsis/index.html'.format(lang))
