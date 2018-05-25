@@ -29,22 +29,25 @@
       v-data-table(
         :headers='resultsTableHeaders',
         :items="Object.values(byId)",
-        hide-actions,
         class="elevation-1"
+        :total-items="meta.total",
+        pagination.sync="pagination"
+        hide-actions
       )
         template(slot="items", slot-scope="props")
           td {{props.item.connector}}
           td {{props.item.connector_name}}
           td {{props.item.component}}
           td {{props.item.resource}}
-      // div(class="text-xs-center my-2")
-        v-pagination(:length="6" v-model="currentPage")
+      div(class="text-xs-center pt-2")
+        v-pagination(@input="handleChangePage", v-model="pagination.page", :length="paginationLength")
 </template>
 
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import FilterGroup from '@/components/other/mfilter-editor/filter-group.vue';
+import { FILTER_EDITOR_PAGINATION_LIMIT } from '@/config';
 
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
 const { mapActions: eventsActions, mapGetters: eventsGetters } = createNamespacedHelpers('events');
@@ -58,6 +61,8 @@ export default {
 
   data() {
     return {
+      paginationLength: 0,
+      pagination: {},
       activeTab: 0,
       newRequest: '',
       resultsTableHeaders: [
@@ -87,7 +92,6 @@ export default {
         },
       ],
       isRequestChanged: false,
-      currentPage: 1,
     };
   },
 
@@ -107,11 +111,19 @@ export default {
         this.newRequest = value;
       },
     },
+
     isSimpleTabDisabled() {
       if (this.isRequestChanged || this.parseError !== '') {
         return true;
       }
       return false;
+    },
+  },
+  watch: {
+    meta(val) {
+      if (val.total) {
+        this.paginationLength = Math.ceil(val.total / FILTER_EDITOR_PAGINATION_LIMIT);
+      }
     },
   },
   methods: {
@@ -120,8 +132,7 @@ export default {
 
     handleResultTabClick() {
       this.newRequest = '';
-      this.currentPage = 1;
-      this.fetchList({ limit: 5, filter: JSON.stringify(this.request), start: 0 });
+      this.fetchList({ limit: FILTER_EDITOR_PAGINATION_LIMIT, filter: JSON.stringify(this.request), start: 0 });
     },
 
     handleInputChange() {
@@ -141,6 +152,11 @@ export default {
         this.onParseError('Invalid JSON');
         return this.isRequestChanged = true;
       }
+    },
+
+    handleChangePage(e) {
+      const start = (e - 1) * FILTER_EDITOR_PAGINATION_LIMIT;
+      this.fetchList({ limit: FILTER_EDITOR_PAGINATION_LIMIT, filter: JSON.stringify(this.request), start });
     },
   },
 };

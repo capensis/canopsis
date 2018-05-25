@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MFilterEditor from '@/components/mfilter-editor.vue';
+import MFilterEditor from '@/components/other/mfilter-editor/mfilter-editor.vue';
 
 export default {
   name: 'home',
