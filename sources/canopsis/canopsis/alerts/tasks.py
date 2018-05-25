@@ -42,7 +42,7 @@ def acknowledge(manager, alarm, author, message, event):
         'm': message
     }
 
-    first_ack = not alarm[AlarmField.ack.value]
+    first_ack = not alarm.get(AlarmField.ack.value)
 
     alarm[AlarmField.ack.value] = step
     alarm[AlarmField.steps.value].append(step)

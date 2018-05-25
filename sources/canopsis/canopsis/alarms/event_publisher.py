@@ -33,12 +33,15 @@ from canopsis.event import Event, forger
 from canopsis.logger import Logger
 from canopsis.statsng.enums import StatEvents
 
+LOG_PATH = 'var/log/alarms.log'
+
 
 class AlarmEventPublisher(object):
     """
     Event publisher for alarms.
     """
     def __init__(self, amqp_pub):
+        self.logger = Logger.get('alarms', LOG_PATH)
         self.amqp_pub = amqp_pub
 
     def publish_statcounterinc_event(self, counter_name, entity, alarm):
@@ -49,6 +52,13 @@ class AlarmEventPublisher(object):
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
+        creation_date = alarm.get(AlarmField.creation_date.value)
+
+        if not creation_date:
+            self.logger.warning(
+                "The alarm does not have a creation date. Ignoring it.")
+            return
+
         component = alarm.get(Event.COMPONENT)
         resource = alarm.get(Event.RESOURCE)
 
@@ -59,7 +69,7 @@ class AlarmEventPublisher(object):
             source_type=Event.RESOURCE if resource else Event.COMPONENT,
             component=component,
             resource=resource,
-            timestamp=alarm[AlarmField.creation_date.value],
+            timestamp=creation_date,
             counter_name=counter_name,
             alarm=alarm,
             entity=entity)
@@ -74,8 +84,18 @@ class AlarmEventPublisher(object):
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
-        creation_date = alarm[AlarmField.creation_date.value]
-        update_date = alarm[AlarmField.last_update_date.value]
+        creation_date = alarm.get(AlarmField.creation_date.value)
+        update_date = alarm.get(AlarmField.last_update_date.value)
+
+        if not creation_date:
+            self.logger.warning(
+                "The alarm does not have a creation date. Ignoring it.")
+            return
+        if not update_date:
+            self.logger.warning(
+                "The alarm does not have a last update date. Ignoring it.")
+            return
+
         duration = update_date - creation_date
 
         component = alarm.get(Event.COMPONENT)
