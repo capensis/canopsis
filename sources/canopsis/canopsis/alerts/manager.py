@@ -162,7 +162,7 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
-        event_publisher = AlarmEventPublisher(context_manager)
+        event_publisher = AlarmEventPublisher()
 
         return (config, logger, alerts_storage, config_data,
                 filter_storage, context_manager, watcher_manager,
@@ -555,9 +555,15 @@ class Alerts(object):
 
             if is_new_alarm:
                 self.check_alarm_filters()
+
+                entity = self.context_manager.get_entities_by_id(entity_id)
+                try:
+                    entity = entity[0]
+                except IndexError:
+                    entity = {}
                 self.event_publisher.publish_statcounterinc_event(
                     StatCounters.alarms_created,
-                    entity_id,
+                    entity,
                     alarm[self.alerts_storage.VALUE])
 
         else:
@@ -761,10 +767,13 @@ class Alerts(object):
         entity_id = alarm[self.alerts_storage.DATA_ID]
 
         if status == CANCELED:
+            entity = self.context_manager.get_entities_by_id(entity_id)
+            try:
+                entity = entity[0]
+            except IndexError:
+                entity = {}
             self.event_publisher.publish_statcounterinc_event(
-                StatCounters.alarms_canceled,
-                entity_id,
-                new_value)
+                StatCounters.alarms_canceled, entity, new_value)
 
         return alarm
 

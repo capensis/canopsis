@@ -29,7 +29,6 @@ from canopsis.alerts.enums import AlarmField
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
-from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.logger import Logger
 from canopsis.statsng.enums import StatEvents
@@ -39,30 +38,19 @@ class AlarmEventPublisher(object):
     """
     Event publisher for alarms.
     """
-    def __init__(self, context_manager=None, amqp_pub=None):
-        self.context_manager = context_manager
-        if context_manager is None:
-            logger = Logger.get('alarms', 'var/log/alarms.log')
-            self.context_manager = ContextGraph(logger)
-
+    def __init__(self, amqp_pub=None):
         self.amqp_pub = amqp_pub
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
 
-    def publish_statcounterinc_event(self, counter_name, entity_id, alarm):
+    def publish_statcounterinc_event(self, counter_name, entity, alarm):
         """
         Publish a statcounterinc event on amqp.
 
         :param str counter_name: the name of the counter to increment
-        :param str entity_id: id of the alarm
+        :param dict entity: the entity
         :param dict alarm: the alarm
         """
-        entity = self.context_manager.get_entities_by_id(entity_id)
-        try:
-            entity = entity[0]
-        except IndexError:
-            entity = {}
-
         component = alarm.get('component', None)
         resource = alarm.get('resource', None)
 
@@ -80,20 +68,14 @@ class AlarmEventPublisher(object):
 
         self.amqp_pub.canopsis_event(event)
 
-    def publish_statduration_event(self, duration_name, entity_id, alarm):
+    def publish_statduration_event(self, duration_name, entity, alarm):
         """
         Publish a statduration event on amqp.
 
         :param str duration_name: the name of the duration to add
-        :param str entity_id: id of the alarm
+        :param dict entity: the entity
         :param dict alarm: the alarm
         """
-        entity = self.context_manager.get_entities_by_id(entity_id)
-        try:
-            entity = entity[0]
-        except IndexError:
-            entity = {}
-
         creation_date = alarm[AlarmField.creation_date.value]
         update_date = alarm[AlarmField.last_update_date.value]
         duration = update_date - creation_date

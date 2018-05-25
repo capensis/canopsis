@@ -73,6 +73,7 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
 
     alarms_service = AlarmService(
         alarms_adapter=AlarmAdapter(mongo_client),
+        context_manager=alertsmgr.context_manager,
         event_publisher=AlarmEventPublisher(),
         watcher_manager=Watcher(),
         bagot_time=alertsmgr.flapping_interval,

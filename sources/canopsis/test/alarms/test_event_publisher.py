@@ -40,7 +40,7 @@ class AlarmEventPublisherTest(TestCase):
             AlarmField.creation_date.value: 1
         }
         self.event_publisher.publish_statcounterinc_event(
-            'counter_name', 'c', alarm)
+            'counter_name', {}, alarm)
 
         self.assertEqual(self.amqp_pub.canopsis_event.call_count, 1)
 
@@ -55,7 +55,7 @@ class AlarmEventPublisherTest(TestCase):
             AlarmField.last_update_date.value: 3
         }
         self.event_publisher.publish_statduration_event(
-            'duration_name', 'c', alarm)
+            'duration_name', {}, alarm)
 
         self.assertEqual(self.amqp_pub.canopsis_event.call_count, 1)
 
@@ -64,7 +64,6 @@ class AlarmEventPublisherTest(TestCase):
         self.assertEqual(event['duration_name'], 'duration_name')
         self.assertEqual(event['timestamp'], 3)
         self.assertEqual(event['duration'], 2)
-
 
 
 if __name__ == '__main__':

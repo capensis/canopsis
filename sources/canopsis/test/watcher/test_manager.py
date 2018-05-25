@@ -210,7 +210,7 @@ class ComputeState(BaseTest):
         config_data = EtherealData(collection=config_storage._backend,
                                    filter_=filter_)
 
-        event_publisher = AlarmEventPublisher(self.context_graph_manager)
+        event_publisher = AlarmEventPublisher()
 
         self.alert_manager = Alerts(config=conf,
                                     logger=logger,

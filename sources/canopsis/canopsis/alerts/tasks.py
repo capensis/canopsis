@@ -50,8 +50,13 @@ def acknowledge(manager, alarm, author, message, event):
     if first_ack:
         # Only send the duration for the first ack
         entity_id = manager.context_manager.get_id(event)
+        entity = manager.context_manager.get_entities_by_id(entity_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
         manager.event_publisher.publish_statduration_event(
-            StatDurations.ack_time, entity_id, alarm)
+            StatDurations.ack_time, entity, alarm)
 
     return alarm
 
