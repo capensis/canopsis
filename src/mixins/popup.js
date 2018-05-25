@@ -10,24 +10,16 @@ export default {
     }),
 
     addSuccessPopup(popup) {
-      this.addPopup({
-        popup: { type: 'success', ...popup },
-      });
+      this.addPopup({ type: 'success', ...popup });
     },
     addInfoPopup(popup) {
-      this.addPopup({
-        popup: { type: 'info', ...popup },
-      });
+      this.addPopup({ type: 'info', ...popup });
     },
     addWarningPopup(popup) {
-      this.addPopup({
-        popup: { type: 'warning', ...popup },
-      });
+      this.addPopup({ type: 'warning', ...popup });
     },
     addErrorPopup(popup) {
-      this.addPopup({
-        popup: { type: 'error', ...popup },
-      });
+      this.addPopup({ type: 'error', ...popup });
     },
   },
 };

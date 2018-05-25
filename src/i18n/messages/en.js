@@ -147,5 +147,8 @@ export default {
       },
     },
   },
+  errors: {
+    default: 'Something went wrong...',
+  },
 };
 

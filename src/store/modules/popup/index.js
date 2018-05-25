@@ -22,8 +22,14 @@ export default {
     },
   },
   actions: {
-    add({ commit }, { popup }) {
-      commit(types.ADD, { popup: { id: uid(), ...popup } });
+    add({ commit }, {
+      id = uid(), type, text, autoClose,
+    }) {
+      commit(types.ADD, {
+        popup: {
+          id, type, text, autoClose,
+        },
+      });
     },
     remove({ commit }, { id }) {
       commit(types.REMOVE, { id });
