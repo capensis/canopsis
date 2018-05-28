@@ -1,33 +1,48 @@
 <template lang="pug">
   div
-    modal(name="add-ack-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      add-ack-event
-    modal(name="add-cancel-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      add-cancel-event
-    modal(name="add-change-state-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      add-change-state-event
-    modal(name="add-snooze-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      add-snooze-event
-    modal(name="add-pbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
-      add-pbehavior
+    modal(name="create-ack-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      create-ack-event
+    modal(name="create-associate-ticket-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      create-associate-ticket-event
+    modal(name="create-cancel-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      create-cancel-event
+    modal(name="create-change-state-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      create-change-state-event
+    modal(name="create-declare-ticket-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      create-declare-ticket-event
+    modal(name="create-snooze-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+      create-snooze-event
+    modal(name="create-pbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
+      create-pbehavior
+    modal(name="pbehavior-list", :dialogProps="{ maxWidth: 1280, lazy: true }")
+      pbehavior-list
 </template>
 
 <script>
 import Modal from './layouts/modal.vue';
-import AddAckEvent from './add-ack-event.vue';
-import AddCancelEvent from './add-cancel-event.vue';
-import AddChangeStateEvent from './add-change-state-event.vue';
-import AddSnoozeEvent from './add-snooze-event.vue';
-import AddPbehavior from './add-pbehavior.vue';
+import CreateAckEvent from './create-ack-event.vue';
+import CreateAssociateTicketEvent from './create-associate-ticket-event.vue';
+import CreateCancelEvent from './create-cancel-event.vue';
+import CreateChangeStateEvent from './create-change-state-event.vue';
+import CreateDeclareTicketEvent from './create-declare-ticket-event.vue';
+import CreateSnoozeEvent from './create-snooze-event.vue';
+import CreatePbehavior from './create-pbehavior.vue';
+import PbehaviorList from './pbehavior-list.vue';
 
+/**
+ * Wrapper for all modal windows
+ */
 export default {
   components: {
     Modal,
-    AddAckEvent,
-    AddCancelEvent,
-    AddChangeStateEvent,
-    AddSnoozeEvent,
-    AddPbehavior,
+    CreateAckEvent,
+    CreateAssociateTicketEvent,
+    CreateCancelEvent,
+    CreateChangeStateEvent,
+    CreateDeclareTicketEvent,
+    CreateSnoozeEvent,
+    CreatePbehavior,
+    PbehaviorList,
   },
 };
 </script>
