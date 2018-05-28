@@ -247,11 +247,19 @@ def _check(mfilter, event):
                                 return False
 
                 elif '$in' in mfilter[key]:
-                    if event_value not in mfilter[key]['$in']:
+                    ev = event_value
+                    if ev is None:
+                        ev = ''
+
+                    if ev not in mfilter[key]['$in']:
                         return False
 
                 elif '$nin' in mfilter[key]:
-                    if event_value in mfilter[key]['$nin']:
+                    ev = event_value
+                    if ev is None:
+                        ev = ''
+
+                    if ev in mfilter[key]['$nin']:
                         return False
 
                 else:
