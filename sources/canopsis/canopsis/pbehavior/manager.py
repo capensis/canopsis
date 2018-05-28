@@ -559,12 +559,15 @@ class PBehaviorManager(object):
             # returns a list of dates that are between the given tstart/tstop,
             # and using dtstart fr
             dt_list = list(
-                rrulestr(rrule, dtstart=dttstart).between(
+                rrulestr(rrule, dtstart=dtts).between(
                     dttstart, dttstop, inc=True
                 )
             )
 
-            if dt_list and dt_list[0] >= dtts and dtts <= dt_list[-1]:
+            if len(dt_list) == 1 and dtts >= dt_list[0]:
+                return True
+
+            elif len(dt_list) > 1 and dt_list[0] >= dtts and dtts <= dt_list[-1]:
                 return True
 
         else:
