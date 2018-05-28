@@ -18,10 +18,16 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+import os
 
+from canopsis.common import root_path
 from canopsis.common.influx import SECONDS, get_influxdb_client
+from canopsis.confng import Configuration, Ini
+from canopsis.confng.helpers import cfg_to_array
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.engines.core import Engine
 from canopsis.event import Event
+from canopsis.models.entity import Entity
 from canopsis.monitoring.parser import PerfDataParser
 
 MEASUREMENT = 'perfdata'
@@ -30,10 +36,19 @@ MEASUREMENT = 'perfdata'
 class engine(Engine):
     etype = "perfdatang"
 
+    CONF_PATH = "etc/perfdatang/engine.conf"
+    CONF_SECTION = 'ENGINE'
+
     def __init__(self, *args, **kwargs):
         super(engine, self).__init__(*args, **kwargs)
 
+        self.context_manager = ContextGraph(self.logger)
         self.influxdb_client = get_influxdb_client()
+
+        cfg = Configuration.load(
+            os.path.join(root_path, self.CONF_PATH), Ini
+        ).get(self.CONF_SECTION, {})
+        self.tags = cfg_to_array(cfg.get('tags', ''))
 
     def work(self, event, *args, **kwargs):
         """
@@ -68,13 +83,7 @@ class engine(Engine):
 
         self.logger.debug(u'perf_data_array: {0}'.format(perf_data_array))
 
-        tags = {
-            'connector': event[Event.CONNECTOR],
-            'connector_name': event[Event.CONNECTOR_NAME],
-            'component': event[Event.COMPONENT],
-            'resource': event[Event.RESOURCE]
-        }
-
+        # Write perfdata to influx
         fields = {}
         for data in perf_data_array:
             metric = data.get('metric')
@@ -86,6 +95,33 @@ class engine(Engine):
         self.influxdb_client.write_points([{
             'measurement': MEASUREMENT,
             'time': event['timestamp'] * SECONDS,
-            'tags': tags,
+            'tags': self.get_tags(event),
             'fields': fields,
         }])
+
+    def get_tags(self, event):
+        """
+        Returns the tags corresponding to an event, to be used in
+        `InfluxDBClient.write_points`.
+
+        :param dict event:
+        :rtype dict:
+        """
+        tags = {
+            'connector': event[Event.CONNECTOR],
+            'connector_name': event[Event.CONNECTOR_NAME],
+            'component': event[Event.COMPONENT],
+            'resource': event[Event.RESOURCE]
+        }
+
+        entity = self.context_manager.get_entities_by_id(event['_id'])
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
+
+        infos = entity.get(Entity.INFOS, {})
+        for tag in self.tags:
+            tags[tag] = infos.get(tag, {}).get('value', '')
+
+        return tags
