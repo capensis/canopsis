@@ -20,6 +20,7 @@ export default {
   getters: {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('alarm', state.allIds),
+    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem']('alarm', id),
     meta: state => state.meta,
     pending: state => state.pending,
   },
@@ -71,14 +72,12 @@ export default {
     async fetchItem({ dispatch }, { id, params }) {
       try {
         const paramsWithItemId = merge(params, { filter: { d: id } });
-        const { normalizedData } = await dispatch('entities/fetch', {
+        await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params: paramsWithItemId,
           dataPreparer: d => d.alarms,
         }, { root: true });
-        // TODO : remove
-        console.log(normalizedData);
       } catch (err) {
         console.error(err);
       }
