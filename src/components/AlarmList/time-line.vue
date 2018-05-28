@@ -47,14 +47,13 @@ export default {
   components: { AlarmChips, StateFlag },
   props: {
     alarmId: {
-      type: String,
+      type: Object,
       required: true,
       lastDate: null,
     },
   },
   data() {
     return {
-      alarm: null,
       pending: true,
     };
   },
