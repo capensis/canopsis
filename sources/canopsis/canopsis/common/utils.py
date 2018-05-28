@@ -644,7 +644,6 @@ def get_sub_key_raise(dico, key):
     """
     coid = dico
     for k in key.split('.'):
-        print('{}: {}'.format(key, k))
         if not isinstance(coid, dict):
             # access an empty dict to raise a standard KeyError exception.
             # return here is only to please pylint.
