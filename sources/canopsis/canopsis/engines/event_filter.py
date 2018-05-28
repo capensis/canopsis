@@ -363,7 +363,6 @@ class engine(Engine):
             self.logger.debug(u'filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
             if filterItem['mfilter'] and check(filterItem['mfilter'], event):
-
                 self.logger.debug(
                     u'Event: {}, filter matches'.format(event.get('rk', event))
                 )

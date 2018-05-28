@@ -25,6 +25,7 @@
 from re import I, search
 from operator import lt, le, gt, ge, ne, eq
 
+from canopsis.common.utils import get_sub_key_raise as get_sub_key
 
 def field_check(mfilter, event, key):
     cond = {'$lt': lt,
@@ -46,19 +47,19 @@ def field_check(mfilter, event, key):
                     return False
 
         elif op in ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte']:
-            if not cond[op](event[key], mfilter[key][op]):
+            if not cond[op](get_sub_key(event, key), mfilter[key][op]):
                 return False
 
         elif op == '$regex':
             if not regex_match(
-                event[key], mfilter[key]["$regex"],
-                mfilter[key].get("$options", None)
-            ):
+                    get_sub_key(event, key), mfilter[key]["$regex"],
+                    mfilter[key].get("$options", None)
+                ):
                 return False
 
         elif op == '$notregex':
             if regex_match(
-                event[key], mfilter[key]["$notregex"],
+                get_sub_key(event, key), mfilter[key]["$notregex"],
                 mfilter[key].get("$options", None)
             ):
                 return False
@@ -70,11 +71,11 @@ def field_check(mfilter, event, key):
             pass
 
         elif op == '$in':
-            if event[key] not in mfilter[key][op]:
+            if get_sub_key(event, key) not in mfilter[key][op]:
                 return False
 
         elif op == '$nin':
-            if event[key] in mfilter[key][op]:
+            if get_sub_key(event, key) in mfilter[key][op]:
                 return False
 
         elif op == '$not':
@@ -86,25 +87,25 @@ def field_check(mfilter, event, key):
                     return False
 
             elif regex_match(
-                event[key], mfilter[key]["$not"],
+                get_sub_key(event, key), mfilter[key]["$not"],
                 mfilter[key].get("$options", None)
             ):
                 return False
 
         elif op == '$all':
-            items = event[key]
+            items = get_sub_key(event, key)
 
-            # If event[key] isn't a list, treat it as if it was
+            # If get_sub_key(event, key) isn't a list, treat it as if it was
             if not isinstance(items, list):
                 items = [items]
 
-            # Check if all items from mfilter[key]['$all'] are in event[key]
+            # Check if all items from mfilter[key]['$all'] are in get_sub_key(event, key)
             for item in mfilter[key][op]:
                 if item not in items:
                     return False
 
         else:
-            if event[key] != mfilter[key]:
+            if get_sub_key(event, key) != mfilter[key]:
                 return False
 
     return True
@@ -160,30 +161,36 @@ def check(mfilter, event):
                     return False
 
         # For each other case, just test the equality
-        elif key in event:
+        else:
+            event_value = None
+            try:
+                event_value = get_sub_key(event, key)
+            except KeyError:
+                pass
+
             if isinstance(mfilter[key], dict):
                 if (
                     (
-                        isinstance(event[key], dict)
-                        or isinstance(event[key], list)
+                        isinstance(event_value, dict)
+                        or isinstance(event_value, list)
                     )
                     and '$in' in mfilter[key]
                 ):
                     if (
-                        isinstance(event[key], list)
-                        and len(event[key])
-                        and isinstance(event[key][0], dict)
+                        isinstance(event_value, list)
+                        and event_value
+                        and isinstance(event_value[0], dict)
                     ):
                         l = len([
                             x
-                            for x in event[key]
+                            for x in event_value
                             if any(
                                 y in x['name']
                                 for y in mfilter[key]['$in']
                             )
                         ])
 
-                        # For each elem of event[key],
+                        # For each elem of get_sub_key(event, key),
                         # check if it's in mfilter[key]['$in']
                         if not l:
                             return False
@@ -191,7 +198,7 @@ def check(mfilter, event):
                     else:
                         l = len([
                             x
-                            for x in event[key]
+                            for x in event_value
                             if any(
                                 y in x
                                 for y in mfilter[key]['$in']
@@ -203,25 +210,25 @@ def check(mfilter, event):
 
                 elif (
                     (
-                        isinstance(event[key], dict)
-                        or isinstance(event[key], list)
+                        isinstance(event_value, dict)
+                        or isinstance(event_value, list)
                     )
                     and '$nin' in mfilter[key]
                 ):
                     if (
-                        isinstance(event[key], list)
-                        and isinstance(event[key][0], dict)
+                        isinstance(event_value, list)
+                        and isinstance(event_value[0], dict)
                     ):
                         l = len([
                             x
-                            for x in event[key]
+                            for x in event_value
                             if any(
                                 y in x['name']
                                 for y in mfilter[key]['$in']
                             )
                         ])
 
-                        #For each elem of event[key],
+                        #For each elem of get_sub_key(event, key),
                         # check if it's in mfilter[key]['$nin']
                         if l:
                             return False
@@ -229,7 +236,7 @@ def check(mfilter, event):
                         else:
                             l = len([
                                 x
-                                for x in event[key]
+                                for x in event_value
                                 if any(
                                     y in x
                                     for y in mfilter[key]['$in']
@@ -240,25 +247,22 @@ def check(mfilter, event):
                                 return False
 
                 elif '$in' in mfilter[key]:
-                    if event[key] not in mfilter[key]['$in']:
+                    if event_value not in mfilter[key]['$in']:
                         return False
 
                 elif '$nin' in mfilter[key]:
-                    if event[key] in mfilter[key]['$nin']:
+                    if event_value in mfilter[key]['$nin']:
                         return False
 
                 else:
                     if field_check(mfilter, event, key):
                         continue
-                    elif event[key] != mfilter[key]:
+                    elif event_value != mfilter[key]:
                         return False
 
             else:
-                if event[key] != mfilter[key]:
+                if event_value != mfilter[key]:
                     return False
-
-        else:
-            return False
 
     # If we arrive here, everything matched
     return True
