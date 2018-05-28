@@ -23,11 +23,11 @@ import getProp from 'lodash/get';
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
-import BasicList from '../basic-component/basic-list.vue';
-import ActionsPanel from '../basic-component/actions-panel.vue';
-import Loader from '../loaders/alarm-list-loader.vue';
-import AlarmListPagination from './alarm-list-pagination.vue';
-import AlarmListSearching from './alarm-list-searching.vue';
+import BasicList from '@/components/basic-component/basic-list.vue';
+import ActionsPanel from '@/components/basic-component/actions-panel.vue';
+import Loader from '@/components/loaders/alarm-list-loader.vue';
+import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
+import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
