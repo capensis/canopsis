@@ -1,6 +1,7 @@
 <template lang="pug">
   div.container
-    span Showing  {{ meta.first }} to {{ meta.last }} of {{ meta.total }} entries
+    span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
+         |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
     v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 

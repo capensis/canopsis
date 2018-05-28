@@ -1,51 +1,52 @@
 <template lang="pug">
   div
-    div(v-if="fetchComplete")
+    alarm-list-searching
+    div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-            th.box(v-for="columnName in Object.keys(alarmProperty)")
-              span {{ columnName }}
-              list-sorting(:column="alarmProperty[columnName]")
+          th.box(v-for="columnName in Object.keys(alarmProperty)")
+            span {{ columnName }}
+            list-sorting(:column="alarmProperty[columnName]")
             th.box
         tr.container(slot="row" slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
-        tr.container(slot="expandedRow" slot-scope="item")
+        tr.container(slot="expandedRow", slot-scope="item")
             td.box {{ item.props.infos }}
-      alarm-list-pagination(:meta="meta", :limit="limit", v-if="fetchComplete")
+      alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import getProp from 'lodash/get';
-import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
+import getQuery from '@/helpers/pagination';
 
 import BasicList from '../BasicComponent/basic-list.vue';
 import ActionsPanel from '../BasicComponent/actions-panel.vue';
 import Loader from '../loaders/alarm-list-loader.vue';
 import AlarmListPagination from './alarm-list-pagination.vue';
 import ListSorting from '../BasicComponent/list-sorting.vue';
+import AlarmListSearching from './alarm-list-searching.vue';
 
+const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
-const { mapGetters, mapActions } = createNamespacedHelpers('entities/alarm');
-
-export default {
 /**
- * The Alarm List Component
- *         Props :
- *          - alarmProperty ( Object ) : Object that describe the columns names and the alarms attributes corresponding
+ * Alarm-list component.
+ *
+ * @module components/alarm-list
+ * @param {object} alarmProperty - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
- *            Default : {}
- *          - itemsPerPage ( Integer ) : Number of Alarm to display per page
- *            Default : 5
+ * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
  */
+export default {
   name: 'AlarmList',
   components: {
     ListSorting,
+    AlarmListSearching,
     AlarmListPagination,
     ActionsPanel,
     BasicList,
@@ -63,43 +64,31 @@ export default {
       default: PAGINATION_LIMIT,
     },
   },
-  mounted() {
-    this.fetchList(this.fetchingParams);
-  },
   computed: {
     ...mapGetters([
       'items',
       'meta',
-      'fetchComplete',
+      'pending',
     ]),
-  },
-  methods: {
-    getProp,
-    ...mapActions({
-      fetchListAction: 'fetchList',
-    }),
-    /**
-     * TODO: move this function into mixin or helper
-     *
-     * @returns {*}
-     */
-    getQuery() {
-      const query = omit(this.$route.query, ['page']);
-
-      query.limit = this.limit;
-      query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
-
-      return query;
-    },
-    fetchList() {
-      this.fetchListAction({
-        params: this.getQuery(),
-      });
-    },
   },
   watch: {
     $route() {
       this.fetchList();
+    },
+  },
+  mounted() {
+    this.fetchList(this.fetchingParams);
+  },
+  methods: {
+    getProp,
+    getQuery,
+    ...mapActions({
+      fetchListAction: 'fetchList',
+    }),
+    fetchList() {
+      this.fetchListAction({
+        params: this.getQuery(),
+      });
     },
   },
 };

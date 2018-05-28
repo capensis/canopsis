@@ -1,59 +1,25 @@
 <template lang="pug">
     v-toolbar(
-      dense
-      fixed
-      clipped-left
-      app
-      color='blue darken-4'
+      dense,
+      fixed,
+      clipped-left,
+      app,
+      color="blue darken-4",
     )
-      v-toolbar-side-icon(
-          class='white--text'
-          @click.stop="handleClick"
-        )
-      v-spacer
-      v-select(
-        class='languageSelect'
-        solo
-        :items="locales"
-        label="Select language"
-        v-model="currentLocaleIndex"
-        single-line
-        dense
-      )
+      v-toolbar-side-icon(class="white--text", @click="toggleSideBar")
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapActions } = createNamespacedHelpers('app');
+
 export default {
   name: 'TopBar',
-  data() {
-    const locales = [
-      { key: 'fr', text: 'Français' },
-      { key: 'en', text: 'English' },
-    ];
-
-    return {
-      currentLocaleIndex: locales.find(({ key }) => key === this.$i18n.locale),
-      locales,
-    };
-  },
   methods: {
-    handleClick() {
-      this.$store.dispatch('app/toggleSideBar');
-    },
-  },
-  watch: {
-    currentLocaleIndex() {
-      if (this.currentLocaleIndex) {
-        this.$store.dispatch('i18n/setLocale', this.currentLocaleIndex.key);
-      }
-    },
+    ...mapActions([
+      'toggleSideBar',
+    ]),
   },
 };
 </script>
-
-<style scoped>
-  .languageSelect {
-    max-width: 9em;
-  }
-</style>
-

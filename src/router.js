@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Home from './views/home.vue';
-import About from './views/about.vue';
-import Context from './views/alarm.vue';
+import Alarm from '@/views/alarm.vue';
+import Home from '@/views/home.vue';
+import About from '@/views/about.vue';
 
 Vue.use(Router);
 
@@ -21,9 +21,9 @@ export default new Router({
       component: About,
     },
     {
-      path: '/context',
-      name: 'context',
-      component: Context,
+      path: '/alarm',
+      name: 'alarm',
+      component: Alarm,
     },
   ],
 });

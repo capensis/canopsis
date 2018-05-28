@@ -7,6 +7,9 @@ export default {
   state: {
     isSideBarOpen: false,
   },
+  getters: {
+    isSideBarOpen: state => state.isSideBarOpen,
+  },
   mutations: {
     [types.TOGGLE](state) {
       state.isSideBarOpen = !state.isSideBarOpen;
