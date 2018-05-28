@@ -8,6 +8,9 @@
             slot(name="row", :props="item")
           div(slot="expanded")
             slot(name="expandedRow", :props="item")
+      li(v-if="!items.length")
+        div.container
+          strong {{ $t('common.noResults') }}
 </template>
 
 <script>

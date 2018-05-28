@@ -7,6 +7,7 @@ export default {
     to: 'to',
     of: 'of',
     actionsLabel: 'Actions',
+    noResults: 'No results',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
