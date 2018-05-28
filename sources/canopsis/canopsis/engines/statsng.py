@@ -22,7 +22,7 @@ import os
 
 from canopsis.alerts.enums import AlarmField
 from canopsis.common import root_path
-from canopsis.common.influx import get_influxdb_client
+from canopsis.common.influx import SECONDS, get_influxdb_client
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
@@ -30,8 +30,6 @@ from canopsis.event import Event
 from canopsis.models.entity import Entity
 from canopsis.statsng.enums import StatEvents, StatEventFields, \
     StatMeasurements
-
-SECONDS = 1000000000
 
 
 class engine(Engine):

@@ -19,9 +19,12 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import get_influxdb_client
+from canopsis.common.influx import SECONDS, get_influxdb_client
 from canopsis.engines.core import Engine
+from canopsis.event import Event
 from canopsis.monitoring.parser import PerfDataParser
+
+MEASUREMENT = 'perfdata'
 
 
 class engine(Engine):
@@ -64,3 +67,25 @@ class engine(Engine):
                 )
 
         self.logger.debug(u'perf_data_array: {0}'.format(perf_data_array))
+
+        tags = {
+            'connector': event[Event.CONNECTOR],
+            'connector_name': event[Event.CONNECTOR_NAME],
+            'component': event[Event.COMPONENT],
+            'resource': event[Event.RESOURCE]
+        }
+
+        fields = {}
+        for data in perf_data_array:
+            metric = data.get('metric')
+            value = data.get('value')
+
+            if value is not None and metric:
+                fields[metric] = value
+
+        self.influxdb_client.write_points([{
+            'measurement': MEASUREMENT,
+            'time': event['timestamp'] * SECONDS,
+            'tags': tags,
+            'fields': fields,
+        }])
