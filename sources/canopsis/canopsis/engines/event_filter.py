@@ -270,7 +270,7 @@ class engine(Engine):
             return False
 
         # A check OK cannot trigger an auto-snooze
-        if event['state'] == 0:
+        if event.get('state') == 0:
             return False
 
         # Alerts manager caching
