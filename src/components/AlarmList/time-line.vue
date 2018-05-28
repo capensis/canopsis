@@ -71,7 +71,6 @@ export default {
     steps() {
       const alarm = this.item(this.alarmProps._id);
       if (alarm && alarm.v.steps) {
-        console.log(alarm.v.steps);
         return alarm.v.steps;
       }
       return [];
