@@ -89,9 +89,16 @@ class engine(Engine):
         for data in perf_data_array:
             metric = data.get('metric')
             value = data.get('value')
+            warn = data.get('warn')
+            crit = data.get('crit')
 
             if value is not None and metric:
                 fields[metric] = value
+
+                if warn is not None:
+                    fields["{}_warn".format(metric)] = warn
+                if crit is not None:
+                    fields["{}_crit".format(metric)] = crit
 
         self.influxdb_client.write_points([{
             'measurement': MEASUREMENT,
