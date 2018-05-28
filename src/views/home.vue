@@ -1,14 +1,14 @@
 <template lang="pug">
-  MFilterEditor
+  alarms-list-settings
 </template>
 
 <script>
-import MFilterEditor from '@/components/mfilter-editor.vue';
+import AlarmsListSettings from '@/components/alarms-list-settings.vue';
 
 export default {
   name: 'home',
   components: {
-    MFilterEditor,
+    AlarmsListSettings,
   },
 };
 </script>
