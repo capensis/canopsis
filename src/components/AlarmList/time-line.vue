@@ -46,7 +46,7 @@ export default {
   name: 'time-line',
   components: { AlarmChips, StateFlag },
   props: {
-    alarmId: {
+    alarmProps: {
       type: Object,
       required: true,
       lastDate: null,
@@ -72,7 +72,7 @@ export default {
   },
   mounted() {
     this.fetchItem({
-      id: this.alarmId,
+      id: this.alarmProps.d,
       params: {
         opened: 'true',
         resolved: 'true',
