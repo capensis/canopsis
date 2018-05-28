@@ -1,11 +1,12 @@
 <template lang="pug">
   div
+    alarm-list-searching
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-            th.box(v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
+            th.box(v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)") {{ columnName }}
             th.box
-        tr.container(slot="row", slot-scope="item")
+        tr.container(slot="row" slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
@@ -22,10 +23,11 @@ import getProp from 'lodash/get';
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
-import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
-import BasicList from '@/components/BasicComponent/basic-list.vue';
-import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
-import Loader from '@/components/loaders/alarm-list-loader.vue';
+import BasicList from '../BasicComponent/basic-list.vue';
+import ActionsPanel from '../BasicComponent/actions-panel.vue';
+import Loader from '../loaders/alarm-list-loader.vue';
+import AlarmListPagination from './alarm-list-pagination.vue';
+import AlarmListSearching from './alarm-list-searching.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
@@ -40,7 +42,11 @@ const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 export default {
   name: 'AlarmList',
   components: {
-    AlarmListPagination, ActionsPanel, BasicList, Loader,
+    AlarmListSearching,
+    AlarmListPagination,
+    ActionsPanel,
+    BasicList,
+    Loader,
   },
   props: {
     alarmProperty: {
