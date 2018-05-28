@@ -111,7 +111,7 @@ def field_check(mfilter, event, key):
     return True
 
 
-def check(mfilter, event):
+def _check(mfilter, event):
     # For each key of filter
     for key in mfilter:
         if key == '$and':
@@ -266,6 +266,13 @@ def check(mfilter, event):
 
     # If we arrive here, everything matched
     return True
+
+
+def check(mfilter, event):
+    try:
+        return _check(mfilter, event)
+    except KeyError:
+        return False
 
 
 def regex_computeoptions(options):
