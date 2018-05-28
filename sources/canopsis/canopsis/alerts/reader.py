@@ -657,7 +657,8 @@ class AlertsReader(object):
                 limit,
                 search,
                 natural_search,
-                active_columns
+                active_columns,
+                with_steps
             )
 
         if sort_key == 'v.duration':
@@ -767,7 +768,8 @@ class AlertsReader(object):
             limit=None,
             search='',
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            with_steps=False
     ):
         """
         Return filtered, sorted and paginated alarms with resources sorted.
@@ -791,6 +793,8 @@ class AlertsReader(object):
 
         :param list active_columns: the list of alarms columns on which to
         apply the natural search filter.
+        :param bool with_steps: True if you want alarm steps in your alarm.
+
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
@@ -841,6 +845,9 @@ class AlertsReader(object):
                 }
             }
         ]
+
+        if not with_steps:
+            pipeline.insert(0, {"$project": {"v.steps": False}})
 
         self.add_pbh_filter(pipeline, filter_)
 
