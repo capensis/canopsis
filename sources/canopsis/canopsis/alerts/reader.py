@@ -718,6 +718,9 @@ class AlertsReader(object):
             }
         ]
 
+        if not with_steps:
+            pipeline.insert(0, {"$project": {"v.steps": False}})
+
         self.add_pbh_filter(pipeline, filter_)
 
         pipeline.append({
@@ -742,10 +745,6 @@ class AlertsReader(object):
 
         first = 0 if limited_total == 0 else skip + 1
         last = 0 if limited_total == 0 else skip + limited_total
-
-        if not with_steps:
-            for alarm in alarms:
-                alarm['v'].pop(AlarmField.steps.value)
 
         res = {
             'alarms': alarms,
