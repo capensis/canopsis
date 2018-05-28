@@ -19,11 +19,18 @@
 
 from __future__ import unicode_literals
 
+from canopsis.common.influx import get_influxdb_client
 from canopsis.engines.core import Engine
+from canopsis.monitoring.parser import PerfDataParser
 
 
 class engine(Engine):
     etype = "perfdatang"
+
+    def __init__(self, *args, **kwargs):
+        super(engine, self).__init__(*args, **kwargs)
+
+        self.influxdb_client = get_influxdb_client()
 
     def work(self, event, *args, **kwargs):
         """
@@ -31,4 +38,29 @@ class engine(Engine):
 
         :param dict event: event to process.
         """
-        return
+        # If the event does not have a resource, no perfdata can be created.
+        if "resource" not in event:
+            return
+
+        # Get perfdata
+        perf_data = event.get('perf_data')
+        perf_data_array = event.get('perf_data_array', [])
+
+        if perf_data_array is None:
+            perf_data_array = []
+
+        # Parse perfdata
+        if perf_data:
+            self.logger.debug(u' + perf_data: {0}'.format(perf_data))
+
+            try:
+                parser = PerfDataParser(perf_data)
+                perf_data_array += parser.perf_data_array
+            except Exception as err:
+                self.logger.error(
+                    "Impossible to parse perfdata from: {0} ({1})".format(
+                        event, err
+                    )
+                )
+
+        self.logger.debug(u'perf_data_array: {0}'.format(perf_data_array))
