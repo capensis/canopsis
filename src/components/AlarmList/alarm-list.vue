@@ -1,11 +1,12 @@
 <template lang="pug">
   div
+    alarm-list-searching
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-            th.box(v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
+            th.box(v-for="columnName in Object.keys(alarmProperty)", @click="sortAlarms(columnName)") {{ columnName }}
             th.box
-        tr.container(slot="row", slot-scope="item")
+        tr.container(slot="row" slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
@@ -23,6 +24,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
 import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
+import AlarmListSearching from '@/components/AlarmList/alarm-list-searching.vue';
 import BasicList from '@/components/BasicComponent/basic-list.vue';
 import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
@@ -42,6 +44,7 @@ export default {
   name: 'AlarmList',
   components: {
     TimeLine,
+    AlarmListSearching,
     AlarmListPagination,
     ActionsPanel,
     BasicList,
