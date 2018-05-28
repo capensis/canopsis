@@ -56,16 +56,17 @@ class engine(Engine):
 
         :param dict event: event to process.
         """
-        # If the event does not have a resource, no perfdata can be created.
-        if "resource" not in event:
-            return
-
         # Get perfdata
         perf_data = event.get('perf_data')
         perf_data_array = event.get('perf_data_array', [])
 
         if perf_data_array is None:
             perf_data_array = []
+
+        # If the event does not have a resource, no perfdata can be created.
+        # Ignore events without perf_data.
+        if "resource" not in event or (not perf_data and not perf_data_array):
+            return
 
         # Parse perfdata
         if perf_data:
