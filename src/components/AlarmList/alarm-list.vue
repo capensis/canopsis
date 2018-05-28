@@ -11,7 +11,7 @@
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
-            td.box {{ item.props.infos }}
+            time-line(:alarmProps="item.props")
       alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
@@ -23,11 +23,12 @@ import getProp from 'lodash/get';
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
-import BasicList from '../BasicComponent/basic-list.vue';
-import ActionsPanel from '../BasicComponent/actions-panel.vue';
-import Loader from '../loaders/alarm-list-loader.vue';
-import AlarmListPagination from './alarm-list-pagination.vue';
-import AlarmListSearching from './alarm-list-searching.vue';
+import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
+import AlarmListSearching from '@/components/AlarmList/alarm-list-searching.vue';
+import BasicList from '@/components/BasicComponent/basic-list.vue';
+import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
+import Loader from '@/components/loaders/alarm-list-loader.vue';
+import TimeLine from '@/components/AlarmList/time-line.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
@@ -42,6 +43,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 export default {
   name: 'AlarmList',
   components: {
+    TimeLine,
     AlarmListSearching,
     AlarmListPagination,
     ActionsPanel,
