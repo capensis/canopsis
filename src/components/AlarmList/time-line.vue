@@ -1,5 +1,5 @@
 <template lang="pug">
-  ul.timeline(v-if="!pending")
+  ul.timeline
     li(v-for="step in steps")
       .timeline-item(v-if="isNewDate(step.t)")
         .date {{ $d(step.t, 'short') }}
@@ -9,7 +9,7 @@
             state-flag.flag(:val="step.val" :isStatus="isStatus(step._t)")
             .header
               alarm-chips.chips(:val="step.val" :isStatus="isStatus(step._t)")
-              p {{ formatStepTitle(step._t, step.a) }}
+              p {{ step._t | stepTitle(step.a) }}
             .content
               p {{ step.m }}
           div(v-else)
@@ -45,6 +45,20 @@ const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 export default {
   name: 'time-line',
   components: { AlarmChips, StateFlag },
+  filters: {
+    stepTitle(stepTitle, stepAuthor) {
+      let formattedStepTitle = '';
+      formattedStepTitle = stepTitle.replace(/(status)|(state)/g, '$& ');
+      formattedStepTitle = formattedStepTitle.replace(/(inc)|(dec)/g, '$&reased ');
+      formattedStepTitle += 'by ';
+      if (stepAuthor === 'canopsis.engine') {
+        formattedStepTitle += 'system';
+      } else {
+        formattedStepTitle += stepAuthor;
+      }
+      return capitalize(formattedStepTitle);
+    },
+  },
   props: {
     alarmProps: {
       type: Object,
@@ -52,15 +66,15 @@ export default {
       lastDate: null,
     },
   },
-  data() {
-    return {
-      pending: true,
-    };
-  },
   computed: {
     ...mapGetters(['item']),
     steps() {
-      return this.alarm.v.steps;
+      const alarm = this.item(this.alarmProps._id);
+      if (alarm && alarm.v.steps) {
+        console.log(alarm.v.steps);
+        return alarm.v.steps;
+      }
+      return [];
     },
     stateName(state) {
       const stateValue = parseInt(state.replace('state:', ''), 10);
@@ -91,18 +105,6 @@ export default {
     ...mapActions([
       'fetchItem',
     ]),
-    formatStepTitle(stepTitle, stepAuthor) {
-      let formattedStepTitle = '';
-      formattedStepTitle = stepTitle.replace(/(status)|(state)/g, '$& ');
-      formattedStepTitle = formattedStepTitle.replace(/(inc)|(dec)/g, '$&reased ');
-      formattedStepTitle += 'by ';
-      if (stepAuthor === 'canopsis.engine') {
-        formattedStepTitle += 'system';
-      } else {
-        formattedStepTitle += stepAuthor;
-      }
-      return capitalize(formattedStepTitle);
-    },
     isNewDate(timestamp) {
       if (timestamp !== this.lastDate) {
         this.lastDate = timestamp;
