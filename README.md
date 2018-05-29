@@ -18,11 +18,12 @@ canopsis | canopsis.alerts | fanout | durable    | no          | no
 
 - Ajouter les bindings :  bindings :
 
-Exchange        | Queue       | Routing key
---------------- | ----------- | -----------
-canopsis.events | che         | #
-canopsis.alerts | axe         | #
-canopsis.events | Engine_stat | #
+Exchange        | Queue            | Routing key
+--------------- | ---------------- | -----------
+canopsis.alerts | Engine_axe       | #
+canopsis.events | Engine_che       | #
+canopsis.events | Engine_heartbeat | #
+canopsis.events | Engine_stat      | #
 
 ### MongoDB
 
