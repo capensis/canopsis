@@ -159,22 +159,22 @@ Pour pouvoir utiliser docker compose, il faut préalablement construire l'image 
 ```bash
 source .env
 
-# engines go latest
-make docker_build
+# archive de tous les binaires construits dans Docker
+make docker_release
 
 # ou avec tag custom
-make docker_build TAG=develop
-
-# tag latest
-make engines_build
-
-# ou avec tag custom
-make engines_build TAG=develop
+make docker_release TAG=develop
 ```
 
 Pour que le provisionning soit complet (reinit), il faut supprimer le volume mongo et perdre toutes les données:
 ```bash
 docker volume rm go-revolution_mongodbdata
+```
+
+Pour ne construire qu’un seul projet :
+
+```bash
+make -C cmd/<project> -f ../../Makefile.cmd docker_image
 ```
 
 ### RabbitMQ
@@ -281,7 +281,7 @@ import "git.canopsis.net/canopsis/go-revolution/canopsis"
 ## Builder les images
 
 ```bash
-make build_docker TAG+[TAG]
+make docker_images TAG+[TAG]
 ```
 
 ## Monter un environnement de développement sous docker
