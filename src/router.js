@@ -4,11 +4,11 @@ import Router from 'vue-router';
 import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
+import Filter from '@/views/filter.vue';
+import RRule from '@/views/rrules.vue';
+import Actions from '@/views/actions.vue';
 
 // EXAMPLES
-import MFilterEditor from '@/components/mfilter-editor.vue';
-import FilterSelector from '@/components/other/filter/selector.vue';
-import RRuleForm from '@/components/other/rrule/rrule-form.vue';
 
 Vue.use(Router);
 
@@ -31,19 +31,20 @@ export default new Router({
       component: Alarm,
     },
     {
-      path: '/filter-editor',
-      name: 'filter-editor',
-      component: MFilterEditor,
+      path: '/filter',
+      name: 'filter',
+      component: Filter,
     },
     {
-      path: '/filter-selector',
-      name: 'filter-selector',
-      component: FilterSelector,
+      path: '/rrule',
+      name: 'rrule',
+      component: RRule,
     },
     {
-      path: '/rrule-form',
-      name: 'rruleForm',
-      component: RRuleForm,
+      path: '/actions',
+      name: 'action',
+      component: Actions,
     },
+
   ],
 });
