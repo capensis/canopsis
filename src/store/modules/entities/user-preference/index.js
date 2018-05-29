@@ -18,7 +18,7 @@ export default {
   },
   getters: {
     filters: (state, getters, rootState, rootGetters) => {
-      const userPreferences = rootGetters['entities/getList']('user-preference', state.allIds);
+      const userPreferences = rootGetters['entities/getList']('userPreference', state.allIds);
       let filters = [];
 
       userPreferences.forEach((userPreferenceObject) => {
