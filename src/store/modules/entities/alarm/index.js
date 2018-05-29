@@ -47,7 +47,7 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params,
-          dataPreparer: d => d.alarms,
+          dataPreparer: d => d[0].alarms,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
