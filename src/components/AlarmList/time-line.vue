@@ -37,6 +37,7 @@ import capitalize from 'lodash/capitalize';
 
 import StateFlag from '@/components/BasicComponent/alarm-flag.vue';
 import AlarmChips from '@/components/BasicComponent/alarm-chips.vue';
+import { numericSortObject } from '@/helpers/sorting';
 
 import { STATES_CHIPS_AND_FLAGS_STYLE } from '@/config';
 
@@ -71,7 +72,9 @@ export default {
     steps() {
       const alarm = this.item(this.alarmProps._id);
       if (alarm && alarm.v.steps) {
-        return alarm.v.steps;
+        const steps = [...alarm.v.steps];
+        numericSortObject(steps, 't');
+        return steps;
       }
       return [];
     },
