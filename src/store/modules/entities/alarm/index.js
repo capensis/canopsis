@@ -76,7 +76,7 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params: paramsWithItemId,
-          dataPreparer: d => d.alarms,
+          dataPreparer: d => d[0].alarms,
         }, { root: true });
       } catch (err) {
         console.error(err);
