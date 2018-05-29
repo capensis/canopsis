@@ -12,9 +12,10 @@
         focusable,
       )
         v-expansion-panel-content
-          div(slot="header") View Group 1
+          div(slot="header") Examples
           v-card
-            v-card-text View 1
+            v-card-text
+              router-link(to="alarms") Alarms List
           v-card
             v-card-text View 2
       v-divider

@@ -21,8 +21,8 @@ export default new Router({
       component: About,
     },
     {
-      path: '/alarm',
-      name: 'alarm',
+      path: '/alarms',
+      name: 'alarms',
       component: Alarm,
     },
   ],
