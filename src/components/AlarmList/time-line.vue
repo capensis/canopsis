@@ -64,6 +64,8 @@ export default {
     alarmProps: {
       type: Object,
       required: true,
+      // This data represent the last step timestamp encountered
+      // Its used for group step under the same date
       lastDate: null,
     },
   },
@@ -98,9 +100,10 @@ export default {
         with_steps: 'true',
       },
     });
+    this.lastDate = null;
   },
   updated() {
-    // Useful for example the user change the translation
+    // Useful like for example when the user change the translation
     this.lastDate = null;
   },
   methods: {
