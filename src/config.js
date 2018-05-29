@@ -34,6 +34,7 @@ export const API_ROUTES = {
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
   eventsList: '/rest/events',
+  userPreferences: '/rest/userpreferences/userpreferences',
 };
 
 export const NON_AUTH_API_ROUTES = [
