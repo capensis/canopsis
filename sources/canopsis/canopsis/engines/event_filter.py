@@ -266,11 +266,11 @@ class engine(Engine):
         :rtype: boolean
         """
         # Only check events can trigger an auto-snooze
-        if event['event_type'] != 'check':
+        if event.get('event_type') != 'check':
             return False
 
         # A check OK cannot trigger an auto-snooze
-        if event['state'] == 0:
+        if event.get('state') == 0:
             return False
 
         # Alerts manager caching
@@ -363,7 +363,6 @@ class engine(Engine):
             self.logger.debug(u'filter is {}'.format(filterItem['mfilter']))
             # Try filter rules on current event
             if filterItem['mfilter'] and check(filterItem['mfilter'], event):
-
                 self.logger.debug(
                     u'Event: {}, filter matches'.format(event.get('rk', event))
                 )
