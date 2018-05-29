@@ -1,3 +1,4 @@
+---
 version: '2'
 volumes:
   mongodbdata:
@@ -65,7 +66,6 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-    #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
   event_filter:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
     env_file:
@@ -236,11 +236,10 @@ services:
     ports:
       - 28082:8082
     volumes:
-        - importctxdata:/opt/canopsis/tmp
-        - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
+      - importctxdata:/opt/canopsis/tmp
+      - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
     links:
       - mongodb
       - rabbitmq
       - influxdb
     restart: unless-stopped
-    #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
