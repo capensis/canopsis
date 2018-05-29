@@ -372,10 +372,9 @@ Ember.Application.initializer({
 								technicalName = columnMap[humanName.toLowerCase()] || ""
 							}
 
-							if (technicalName.startsWith("infos")) {
-								technicalName = "entity." + technicalName
+							if (!found && technicalName === "") {
+								technicalName = "entity." + humanName
 							}
-
 
 							if (technicalName !== "") {
 								updatedCondition = conditions[itCond].replace(humanName, technicalName)
@@ -406,13 +405,15 @@ Ember.Application.initializer({
 					options.search = options.search.trim()
 				}
 
+				options['natural_search'] = true;
+				controller.set('isNaturalSearch', true);
 				if(options.search !== undefined && options.search.startsWith("- ")){
 					options.search = options.search.substring(2)
 					options.search = this.get("replaceColumnsName")(options.search, this.get("fields"), this.get('humanReadableColumnNames'))
+					options['natural_search'] = false;
+					controller.set('isNaturalSearch', false);
 				}
 
-                options['natural_search'] = true;
-                controller.set('isNaturalSearch', false);
                 var columns = get(this, 'model.columns');
                 var prefixed_columns = [];
                 for (idx = 0; idx < columns.length; idx++) {
