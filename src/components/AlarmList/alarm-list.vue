@@ -11,7 +11,7 @@
         tr.container(slot="row" slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
-              actions-panel.actions
+              actions-panel.actions(:alarm="item")
         tr.container(slot="expandedRow", slot-scope="item")
             time-line(:alarmProps="item.props")
       alarm-list-pagination(:meta="meta", :limit="limit")

@@ -87,6 +87,10 @@
       v-list-group(disabled)
         v-list-tile(slot="activator") {{$t('alarmListSettings.infoPopup')}}
       v-divider
+      v-list-group
+        v-list-tile(slot="activator") More infos popup
+        v-container
+          v-text-field(textarea)
     v-btn(
       color="green darken-4 white--text",
       depressed,
