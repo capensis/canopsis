@@ -49,6 +49,7 @@ export default {
           params,
           dataPreparer: d => d[0].alarms,
         }, { root: true });
+
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
@@ -75,7 +76,7 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params: paramsWithItemId,
-          dataPreparer: d => d[0].alarms,
+          dataPreparer: d => d.alarms,
         }, { root: true });
       } catch (err) {
         console.error(err);

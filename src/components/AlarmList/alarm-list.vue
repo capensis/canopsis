@@ -23,7 +23,7 @@ import { createNamespacedHelpers } from 'vuex';
 import getProp from 'lodash/get';
 
 import { PAGINATION_LIMIT } from '@/config';
-import getQuery from '@/helpers/pagination';
+import { getQueryAlarm } from '@/helpers/pagination';
 
 import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
 import AlarmListSearching from '@/components/AlarmList/alarm-list-searching.vue';
@@ -79,11 +79,11 @@ export default {
     },
   },
   mounted() {
-    this.fetchList(this.fetchingParams);
+    this.fetchList();
   },
   methods: {
     getProp,
-    getQuery,
+    getQuery: getQueryAlarm,
     ...mapActions({
       fetchListAction: 'fetchList',
     }),

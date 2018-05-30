@@ -15,7 +15,8 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import { PAGINATION_LIMIT } from '@/config';
-import getQuery from '@/helpers/pagination';
+import { getQueryContext } from '@/helpers/pagination';
+
 import BasicList from '@/components/BasicComponent/basic-list.vue';
 import getProp from 'lodash/get';
 
@@ -51,14 +52,14 @@ export default {
     this.fetchList();
   },
   methods: {
-    getQuery,
+    getQuery: getQueryContext,
     getProp,
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
     fetchList() {
       this.fetchListAction({
-        params: { sort: 'ASC' },
+        params: this.getQuery(),
       });
     },
   },
