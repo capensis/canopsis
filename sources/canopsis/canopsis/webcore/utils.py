@@ -54,8 +54,15 @@ def __gen_json(result, status, allowed_keys=None):
     json_body = {}
 
     response.content_type = CONTENT_TYPE_JSON
-    response.set_header("Cache-Control", "public, no-cache")
-    
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, PUT, UPDATE',
+        'Cache-Control': 'public, no-cache'
+    }
+
+    for hname in headers:
+        response.set_header(hname, headers[hname])
+
     if isinstance(status, int):
         response.status = status
 
