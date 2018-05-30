@@ -5,7 +5,7 @@ import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
 import Filter from '@/views/filter.vue';
-import RRule from '@/views/rrules.vue';
+import Rrule from '@/components/other/rrule/rrule-form.vue';
 import Actions from '@/views/actions.vue';
 
 // EXAMPLES
@@ -38,7 +38,7 @@ export default new Router({
     {
       path: '/rrule',
       name: 'rrule',
-      component: RRule,
+      component: Rrule,
     },
     {
       path: '/actions',
