@@ -121,6 +121,13 @@ export default {
       reason: 'Reason',
       rrule: 'Rrule',
     },
+    alarmStatus: {
+      off: 'Off',
+      ongoing: 'Ongoing',
+      flapping: 'Flapping',
+      stealthy: 'Stealthy',
+      canceled: 'Canceled',
+    },
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',

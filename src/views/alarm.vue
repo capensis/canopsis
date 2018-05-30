@@ -20,6 +20,7 @@ export default {
         Resource: 'v.resource',
         Output: 'v.initial_output',
         State: 'v.state.val',
+        Status: 'v.status.val',
         'Last Update Date': 'v.last_update_date',
       },
       alarmPropertyOnMobile: {

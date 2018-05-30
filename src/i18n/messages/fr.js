@@ -49,4 +49,13 @@ export default {
       resource: 'Ressource',
     },
   },
+  tables: {
+    alarmStatus: {
+      off: 'Fermée',
+      ongoing: 'En cours',
+      flapping: 'Bagot',
+      stealthy: 'Furtive',
+      canceled: 'Annulée',
+    },
+  },
 };

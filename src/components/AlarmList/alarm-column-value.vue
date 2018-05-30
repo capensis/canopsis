@@ -3,8 +3,13 @@
     <template v-if="attributeType === 'textable'">
       {{ getProp(alarm, pathToProperty) }}
     </template>
+
     <template v-if="attributeType === 'state'">
       <state :stateId="getProp(alarm, pathToProperty)"></state>
+    </template>
+
+    <template v-if="attributeType === 'status'">
+      <status :statusId="getProp(alarm, pathToProperty)"></status>
     </template>
   </span>
 </template>
@@ -12,10 +17,12 @@
 <script>
 import getProp from 'lodash/get';
 import State from '@/components/AlarmList/alarm-state-column-value.vue';
+import Status from '@/components/AlarmList/alarm-status-column-value.vue';
 
 export default {
   components: {
     State,
+    Status,
   },
   props: {
     alarm: {
@@ -30,6 +37,8 @@ export default {
   computed: {
     attributeType() {
       if (this.pathToProperty === 'v.state.val') return 'state';
+
+      if (this.pathToProperty === 'v.status.val') return 'status';
 
       return 'textable';
     },
