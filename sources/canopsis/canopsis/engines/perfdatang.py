@@ -93,7 +93,7 @@ class engine(Engine):
             crit = data.get('crit')
 
             if value is not None and metric:
-                fields[metric] = value
+                fields["{}_value".format(metric)] = value
 
                 if warn is not None:
                     fields["{}_warn".format(metric)] = warn
