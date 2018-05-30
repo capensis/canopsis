@@ -164,6 +164,15 @@ Se mettre à la racine du dépôt CAT puis :
 
 Les paquets sont alors disponibles dans le dossier `packages`.
 
+### RC release (centos)
+
+Pour builder un package release candidat pour centos, il n'est pas possible d'utiliser le tiret dans le numéro de version.
+Pour contourner le problème, il est possible de surcharger les valeurs de `CPS_PKG_TAG` et `CPS_PKG_REL` comme suit :
+
+```bash
+CPS_PKG_TAG=2.x.x CPS_PKG_REL=rc1 ./build-packages.sh ${tag}
+```
+
 ## Erreurs connues
 
 ### Failed to create image
