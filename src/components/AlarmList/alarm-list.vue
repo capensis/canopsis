@@ -9,7 +9,8 @@
             list-sorting(:column="alarmProperty[columnName]")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+            td.box(v-for="property in Object.values(alarmProperty)")
+              alarm-column-value(:alarm="item.props", :pathToProperty="property")
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
@@ -32,6 +33,7 @@ import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
 import TimeLine from '@/components/AlarmList/time-line.vue';
 import ListSorting from '@/components/BasicComponent/list-sorting.vue';
+import AlarmColumnValue from '@/components/AlarmList/alarm-column-value.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
@@ -53,6 +55,7 @@ export default {
     ActionsPanel,
     BasicList,
     Loader,
+    AlarmColumnValue,
   },
   props: {
     alarmProperty: {
