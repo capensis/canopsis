@@ -1,12 +1,10 @@
 import { API_ROUTES } from '@/config';
-import { alarmSchema } from '@/store/schemas';
-import merge from 'lodash/merge';
+import { contextSchema } from '@/store/schemas';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
-  UPDATE_ITEM_IN_LIST: 'UPDATE_ITEM_IN_LIST',
 };
 
 export default {
@@ -19,8 +17,8 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('alarm', state.allIds),
-    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem']('alarm', id),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIds),
+    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem']('context', id),
     meta: state => state.meta,
     pending: state => state.pending,
   },
@@ -44,42 +42,27 @@ export default {
         commit(types.FETCH_LIST, { params });
 
         const { normalizedData, data } = await dispatch('entities/fetch', {
-          route: API_ROUTES.alarmList,
-          schema: [alarmSchema],
+          route: API_ROUTES.context,
+          schema: [contextSchema],
           params,
-          dataPreparer: d => d[0].alarms,
+          dataPreparer: d => d,
+          isPost: true,
         }, { root: true });
+
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
-            first: data.first,
-            last: data.last,
             total: data.total,
           },
         });
       } catch (err) {
         console.error(err);
-
         commit(types.FETCH_LIST_FAILED);
       }
     },
 
     fetchListWithPreviousParams({ dispatch, state }) {
       return dispatch('fetchList', { params: state.fetchingParams });
-    },
-
-    async fetchItem({ dispatch }, { id, params }) {
-      try {
-        const paramsWithItemId = merge(params, { filter: { d: id } });
-        await dispatch('entities/fetch', {
-          route: API_ROUTES.alarmList,
-          schema: [alarmSchema],
-          params: paramsWithItemId,
-          dataPreparer: d => d[0].alarms,
-        }, { root: true });
-      } catch (err) {
-        console.error(err);
-      }
     },
 
   },

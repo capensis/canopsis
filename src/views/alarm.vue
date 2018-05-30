@@ -10,7 +10,6 @@ import AlarmList from '@/components/AlarmList/alarm-list.vue';
 
 export default {
   name: 'Alarm',
-
   components: { AlarmList },
   data() {
     return {
@@ -35,6 +34,3 @@ export default {
 
 };
 </script>
-
-<style scoped>
-</style>

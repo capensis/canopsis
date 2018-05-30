@@ -31,6 +31,7 @@ export const STATES = {
 export const API_ROUTES = {
   login: '/login',
   alarmList: '/alerts/get-alarms',
+  context: '/context',
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
   eventsList: '/rest/events',
