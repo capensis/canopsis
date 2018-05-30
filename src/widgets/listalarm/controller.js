@@ -372,8 +372,12 @@ Ember.Application.initializer({
 								technicalName = columnMap[humanName.toLowerCase()] || ""
 							}
 
-							if (!found && technicalName === "") {
+							if(technicalName === "" && humanName.startsWith("infos.")){
 								technicalName = "entity." + humanName
+							}
+
+							if(technicalName.startsWith("infos.")){
+								technicalName = "entity." + technicalName
 							}
 
 							if (technicalName !== "") {
