@@ -1,7 +1,6 @@
 <template lang="pug">
-  div
-    v-alert(v-model="isVisible", :type="type", transition="fade-transition", dismissible)
-      div(v-html="text")
+  v-alert(v-model="isVisible", :type="type", transition="fade-transition", dismissible)
+    div(v-html="text")
 </template>
 
 <script>
