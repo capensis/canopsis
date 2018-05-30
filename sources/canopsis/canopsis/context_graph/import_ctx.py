@@ -311,10 +311,11 @@ class ContextGraphImport(ContextGraph):
         if logger is not None:
             self.logger = logger
 
-        # Entitées dont on demande l'update
+        # Entities asked for update
         self.entities_to_update = {}
-        # Entitées à updater
+        # Entities to update
         self.update = {}
+
         self.delete = []
 
     @classmethod
@@ -523,7 +524,7 @@ class ContextGraphImport(ContextGraph):
         # TODO handle the creation of the name if needed and if the id
         # match the id scheme used in canopsis
         if ci[self.K_ID] in self.entities_to_update:
-            desc = ("The ci of id {} match an existing entity. Updating"
+            desc = ("The ci of id {} match an existing entity. Updating it."
                     .format(ci["_id"]))
             self.logger.warning(desc)
             ci = merge_two_dicts(self.entities_to_update[ci[self.K_ID]], ci)
