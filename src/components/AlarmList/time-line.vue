@@ -6,9 +6,9 @@
       .timeline-item
           .time {{ $d(step.t, 'time') }}
           div(v-if="step._t !== 'statecounter'")
-            state-flag.flag(:val="step.val" :isStatus="isStatus(step._t)")
+            state-flag.flag(:value="step.val" :isStatus="isStatus(step._t)")
             .header
-              alarm-chips.chips(:val="step.val" :isStatus="isStatus(step._t)")
+              alarm-chips.chips(:value="step.val" :isStatus="isStatus(step._t)")
               p {{ step._t | stepTitle(step.a) }}
             .content
               p {{ step.m }}
@@ -75,7 +75,7 @@ export default {
       const alarm = this.item(this.alarmProps._id);
       if (alarm && alarm.v.steps) {
         const steps = [...alarm.v.steps];
-        numericSortObject(steps, 't');
+        numericSortObject(steps, 't', 'desc');
         return steps;
       }
       return [];
