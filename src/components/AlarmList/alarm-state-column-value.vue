@@ -1,10 +1,7 @@
-<template>
-  <div>
-    <span :class="[`bg-${color}`, 'badge']">{{ text }}</span>
-    <v-icon :color="color">
-      account_circle
-    </v-icon>
-  </div>
+<template lang="pug">
+  div
+    span(:class="[`bg-${color}`, 'badge']") {{ text }}
+    v-icon(:color="color") account_circle
 </template>
 
 <script>

@@ -1,17 +1,10 @@
-<template>
-  <span>
-    <template v-if="attributeType === 'textable'">
-      {{ getProp(alarm, pathToProperty) }}
-    </template>
-
-    <template v-if="attributeType === 'state'">
-      <state :stateId="getProp(alarm, pathToProperty)"></state>
-    </template>
-
-    <template v-if="attributeType === 'status'">
-      <status :statusId="getProp(alarm, pathToProperty)"></status>
-    </template>
-  </span>
+<template lang="pug">
+  span
+   template(v-if="attributeType === 'textable'") {{ getProp(alarm, pathToProperty) }}
+   template(v-if="attributeType === 'state'")
+    state(:stateId="getProp(alarm, pathToProperty)")
+   template(v-if="attributeType === 'status'")
+    status(:statusId="getProp(alarm, pathToProperty)")
 </template>
 
 <script>
