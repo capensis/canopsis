@@ -21,6 +21,7 @@ export default {
     filters: 'Filters',
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
+    moreInfosModal: '"More Infos" Popup',
     add: 'Add',
     delete: 'Delete',
     edit: 'Edit',
@@ -188,6 +189,10 @@ export default {
       component: 'Component',
       resource: 'Resource',
     },
+  },
+  moreInfosModal: {
+    moreInfos: 'More infos',
+    defineATemplate: 'To define a template for this window, go to the alarms list settings',
   },
 };
 

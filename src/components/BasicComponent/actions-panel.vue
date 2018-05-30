@@ -11,7 +11,7 @@
         v-icon more_vert
       v-list(class="pa-3")
         v-list-tile
-        v-list-tile-title(@click="handleMoreInfosClick") More infos
+        v-list-tile-title(@click="handleMoreInfosClick") {{ $t('moreInfosModal.moreInfos') }}
 </template>
 
 <script>

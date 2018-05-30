@@ -1,7 +1,11 @@
 <template lang="pug">
   v-card
     v-card-text
-      div(v-html="output")
+      div(v-if="!template")
+        v-layout(justify-center)
+          v-icon(color="info") infos
+          p(class="ma-0") {{ $t('moreInfosModal.defineATemplate') }}
+      div(v-else, v-html="output")
 </template>
 
 <script>
@@ -12,10 +16,10 @@ const { mapGetters } = createNamespacedHelpers('modal');
 
 export default {
   name: 'more-infos',
-  data() {
-    return {
-      template: '<h1>{{entity.type}}</h1><p>{{alarm.v.connector}}</p>',
-    };
+  props: {
+    template: {
+      type: String,
+    },
   },
   computed: {
 

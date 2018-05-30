@@ -21,6 +21,7 @@ export default {
     filters: 'Filtres',
     selectAFilter: 'Sélectionner un filter',
     infoPopup: 'Popup infos',
+    moreInfosModal: 'Fenêtre "Plus d\'infos"',
     home: 'Accueil',
     entries: 'entrées',
     showing: 'Montre',
@@ -48,5 +49,9 @@ export default {
       component: 'Composant',
       resource: 'Ressource',
     },
+  },
+  moreInfosModal: {
+    moreInfos: 'Plus d\'infos',
+    defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
   },
 };
