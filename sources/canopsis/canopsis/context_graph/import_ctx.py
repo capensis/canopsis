@@ -3,17 +3,19 @@
 
 from __future__ import unicode_literals
 
-import threading
-import Queue
-import time
-import jsonschema
 import ijson
+import jsonschema
+import Queue
+import threading
+import time
 
+from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
-from canopsis.confng import Configuration, Ini
+from canopsis.common.utils import merge_two_dicts
 
 # FIXME : move the check of the element in the superficial check method
+
 
 def execution_time(exec_time):
     """Return from exec_time a human readable string that represent the
@@ -21,7 +23,7 @@ def execution_time(exec_time):
     :param exec_time: the execution time
     :type exec_time: a float"""
 
-    exec_time = int(exec_time) # we do not care of everything under the second
+    exec_time = int(exec_time)  # we do not care of everything under the second
 
     hours = exec_time / 3600
     minutes = (exec_time - 3600 * hours) / 60
@@ -30,6 +32,7 @@ def execution_time(exec_time):
     return "{0}:{1}:{2}".format(str(hours).zfill(2),
                                 str(minutes).zfill(2),
                                 str(seconds).zfill(2))
+
 
 class ExceptionThread(threading.Thread):
     """Wrapper to support handling exception"""
@@ -43,6 +46,7 @@ class ExceptionThread(threading.Thread):
             super(ExceptionThread, self).run()
         except Exception as err:
             self.except_queue.put_nowait(err)
+
 
 class ImportKey:
     """Usefull values for the import."""
@@ -71,6 +75,7 @@ class ImportKey:
     EVT_JOBID = "jobid"
 
     JOB_ID = "importctx_{0}"
+
 
 class Manager():
     """The manager use to interact with the default_importgraph collecion."""
@@ -223,8 +228,8 @@ class ContextGraphImport(ContextGraph):
     """The manager in charge of an import of a context.
     """
 
-    # TODO add a feature to restore the context if an error occured during while
-    # is pushed into the database
+    # TODO add a feature to restore the context if an error occured during
+    # while is pushed into the database
 
     K_LINKS = "links"
     K_FROM = "from"
@@ -250,7 +255,6 @@ class ContextGraphImport(ContextGraph):
     A_UPDATE = "update"
     A_DISABLE = "disable"
     A_ENABLE = "enable"
-
 
     __A_PATTERN = "^delete$|^create$|^update$|^disable$|^enable$"
     __T_PATTERN = "^resource$|^component$|^connector$|^watcher$"
@@ -296,7 +300,6 @@ class ContextGraphImport(ContextGraph):
                        "pattern": __A_PATTERN},
             K_PROPERTIES: {"type": "object"}}}
 
-
     def __init__(self, logger=None, *args, **kwargs):
         """__init__
 
@@ -308,7 +311,9 @@ class ContextGraphImport(ContextGraph):
         if logger is not None:
             self.logger = logger
 
+        # Entitées dont on demande l'update
         self.entities_to_update = {}
+        # Entitées à updater
         self.update = {}
         self.delete = []
 
@@ -370,7 +375,7 @@ class ContextGraphImport(ContextGraph):
 
         def __get_entities_to_update_cis(file_):
             """Parse the file_ to extract every CI"""
-            fd = open(file_, 'r');
+            fd = open(file_, 'r')
             for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
                 self.check_element(ci, self.K_CIS)
                 ids_cis.add(ci[self.K_ID])
@@ -442,7 +447,7 @@ class ContextGraphImport(ContextGraph):
         try:
             entity = self.entities_to_update[id_]
         except KeyError:
-            desc = "No entity found for the following id : {0}".format(id_)
+            desc = "No entity found for the following id : {}".format(id_)
             raise ValueError(desc)
 
         # Update the depends/impact link
@@ -507,7 +512,6 @@ class ContextGraphImport(ContextGraph):
 
         self.update[ci[self.K_ID]] = entity
 
-
     def __a_create_entity(self, ci):
         """Create an entity with a ci and store it into self.update
 
@@ -519,33 +523,37 @@ class ContextGraphImport(ContextGraph):
         # TODO handle the creation of the name if needed and if the id
         # match the id scheme used in canopsis
         if ci[self.K_ID] in self.entities_to_update:
-            desc = "The ci of id {0} match an existing entity.".format(
-                ci["_id"])
-            raise ValueError(desc)
+            desc = ("The ci of id {} match an existing entity. Updating"
+                    .format(ci["_id"]))
+            self.logger.warning(desc)
+            ci = merge_two_dicts(self.entities_to_update[ci[self.K_ID]], ci)
 
         # set default value for required fields
-        if not ci.has_key(self.K_NAME):
+        if self.K_NAME not in ci:
             ci[self.K_NAME] = ci[self.K_ID]
-        if not ci.has_key(self.K_DEPENDS):
+
+        if self.K_DEPENDS not in ci:
             ci[self.K_DEPENDS] = set()
         else:
             ci[self.K_DEPENDS] = set(ci[self.K_DEPENDS])
-        if not ci.has_key(self.K_IMPACT):
+
+        if self.K_IMPACT not in ci:
             ci[self.K_IMPACT] = set()
         else:
             ci[self.K_IMPACT] = set(ci[self.K_IMPACT])
-        if not ci.has_key(self.K_MEASUREMENTS):
-            ci[self.K_MEASUREMENTS] = []
-        if not ci.has_key(self.K_INFOS):
-            ci[self.K_INFOS] = {}
 
+        if self.K_MEASUREMENTS not in ci:
+            ci[self.K_MEASUREMENTS] = []
+
+        if self.K_INFOS not in ci:
+            ci[self.K_INFOS] = {}
 
         for key in [self.K_ACTION, self.K_PROPERTIES]:
             try:
                 del ci[key]
             except KeyError:
-                msg = "No key {0} in ci of id {1}."
-                self.logger.debug(msg.format(key, ci[self.K_ID]))
+                self.logger.debug("No key {0} in ci of id {1}."
+                                  .format(key, ci[self.K_ID]))
 
         entity = {}
         for key in ci:
@@ -740,7 +748,7 @@ class ContextGraphImport(ContextGraph):
         start = time.time()
         self.__superficial_check(fd)
         end = time.time()
-        self.logger.debug("Import {0} : superficial"\
+        self.logger.debug("Import {0} : superficial"
                           " check {1}.".format(uuid,
                                                execution_time(end - start)))
 
@@ -748,7 +756,7 @@ class ContextGraphImport(ContextGraph):
         self.entities_to_update = self.__get_entities_to_update(file_)
         end = time.time()
 
-        self.logger.debug("Import {0} : get_entities_to"\
+        self.logger.debug("Import {0} : get_entities_to"
                           "_update {1}.".format(uuid,
                                                 execution_time(end - start)))
 
@@ -812,14 +820,14 @@ class ContextGraphImport(ContextGraph):
         start = time.time()
         self._put_entities(self.update.values())
         end = time.time()
-        self.logger.debug("Import {0} : push updated"\
+        self.logger.debug("Import {0} : push updated"
                           " entities {1}.".format(uuid,
                                                   execution_time(end - start)))
 
         start = time.time()
         self._delete_entities(self.delete)
         end = time.time()
-        self.logger.debug("Import {0} : delete entities"\
+        self.logger.debug("Import {0} : delete entities"
                           " {1}.".format(uuid, execution_time(end - start)))
 
         self.clean_attributes()
