@@ -14,6 +14,7 @@ export default {
       return this.$t(`tables.alarmStatus.${this.stringId}`);
     },
     stringId() {
+      // todo use config as for states
       switch (this.statusId) {
         case 0:
           return 'off';

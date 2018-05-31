@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { STATES } from '@/config';
+
 export default {
   props: {
     stateId: {
@@ -14,13 +16,13 @@ export default {
   computed: {
     color() {
       switch (this.stateId) {
-        case 0:
+        case STATES.info:
           return 'green';
-        case 1:
+        case STATES.minor:
           return 'yellow';
-        case 2:
+        case STATES.major:
           return 'orange';
-        case 3:
+        case STATES.critical:
           return 'red';
         default:
           return 'purple';
@@ -28,13 +30,13 @@ export default {
     },
     text() {
       switch (this.stateId) {
-        case 0:
+        case STATES.info:
           return 'Info';
-        case 1:
+        case STATES.minor:
           return 'Minor';
-        case 2:
+        case STATES.major:
           return 'Major';
-        case 3:
+        case STATES.critical:
           return 'Critical';
         default:
           return 'Unknown';

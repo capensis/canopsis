@@ -1,10 +1,10 @@
 <template lang="pug">
   span
-   template(v-if="attributeType === 'textable'") {{ getProp(alarm, pathToProperty) }}
-   template(v-if="attributeType === 'state'")
-    state(:stateId="getProp(alarm, pathToProperty)")
-   template(v-if="attributeType === 'status'")
-    status(:statusId="getProp(alarm, pathToProperty)")
+    template(v-if="attributeType === 'textable'") {{ getProp(alarm, pathToProperty) }}
+    template(v-if="attributeType === 'state'")
+      state(:stateId="getProp(alarm, pathToProperty)")
+    template(v-if="attributeType === 'status'")
+      status(:statusId="getProp(alarm, pathToProperty)")
 </template>
 
 <script>
@@ -29,9 +29,13 @@ export default {
   },
   computed: {
     attributeType() {
-      if (this.pathToProperty === 'v.state.val') return 'state';
+      if (this.pathToProperty === 'v.state.val') {
+        return 'state';
+      }
 
-      if (this.pathToProperty === 'v.status.val') return 'status';
+      if (this.pathToProperty === 'v.status.val') {
+        return 'status';
+      }
 
       return 'textable';
     },
