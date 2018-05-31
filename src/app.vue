@@ -1,8 +1,8 @@
 <template lang="pug">
   v-app#app
-    v-layout(v-resize='onResize')
+    v-layout
       template(v-if="$route.name !== 'login'")
-        side-bar(:windowSize='windowSize')
+        side-bar
         top-bar
       v-content
         router-view
@@ -25,23 +25,10 @@ export default {
     SideBar,
     Modals,
   },
-  data() {
-    return {
-      windowSize: {
-        x: 0,
-        y: 0,
-      },
-    };
-  },
   computed: {
     ...mapState({
       isSideBarOpen: state => state.app.isSideBarOpen,
     }),
-  },
-  methods: {
-    onResize() {
-      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
-    },
   },
 };
 </script>
