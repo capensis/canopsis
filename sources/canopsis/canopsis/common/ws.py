@@ -43,6 +43,13 @@ from bottle import response as BottleResponse
 from canopsis.common.utils import ensure_iterable, isiterable
 
 
+class WebServiceError(Exception):
+    """
+    WebService return a catchable error.
+    """
+    pass
+
+
 def adapt_canopsis_data_to_ember(data):
     """
     Transform canopsis data to ember data (in changing ``id`` to ``cid``).
@@ -77,7 +84,7 @@ def adapt_canopsis_data_to_ember(data):
                 adapt_canopsis_data_to_ember(item)
 
 
-def response(data, adapt=True):
+def response(data, adapt=True, success=True):
     """Construct a REST response from input data.
 
     :param data: data to convert into a REST response.
@@ -99,7 +106,7 @@ def response(data, adapt=True):
     result = {
         'total': total,
         'data': result_data,
-        'success': True
+        'success': success
     }
 
     headers = {
@@ -246,6 +253,14 @@ class route(object):
 
             except HTTPResponse as err:
                 raise err
+
+            except WebServiceError as err:
+                # Unsuccessfull request with 200 status
+                result = self.response(
+                    str(err),
+                    adapt=self.adapt,
+                    success=False
+                )
 
             except Exception as exc:
                 # if an error occured, get a failure message
