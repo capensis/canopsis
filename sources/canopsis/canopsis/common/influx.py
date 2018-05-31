@@ -112,9 +112,6 @@ def get_influxdb_client(conf_path=INFLUXDB_CONF_PATH,
         influxdb_client_args['udp_port'] = int(cfg[InfluxDBOptions.udp_port])
 
     client = InfluxDBClient(**influxdb_client_args)
-    try:
-        client.create_database(influxdb_client_args['database'])
-    except InfluxDBClientError:
-        pass
+    client.create_database(influxdb_client_args['database'])
 
     return client
