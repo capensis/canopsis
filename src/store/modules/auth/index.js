@@ -24,8 +24,6 @@ export default {
     user: state => state.user,
   },
   mutations: {
-    [types.LOGIN]() {
-    },
     [types.LOGIN_COMPLETED](state) {
       state.isLoggedIn = true;
     },
@@ -42,7 +40,6 @@ export default {
   },
   actions: {
     async login({ commit, dispatch }, credentials) {
-      commit(types.LOGIN);
       try {
         await request.post(API_ROUTES.auth, credentials);
         commit(types.LOGIN_COMPLETED);
