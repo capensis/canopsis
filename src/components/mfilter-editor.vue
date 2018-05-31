@@ -47,7 +47,7 @@ import { createNamespacedHelpers } from 'vuex';
 import FilterGroup from '@/components/other/mfilter-editor/filter-group.vue';
 
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
-const { mapActions: alarmsEntityMapActions, mapGetters: alarmsEntityMapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNamespacedHelpers('alarm');
 
 export default {
   name: 'mfilter-editor',
@@ -93,7 +93,7 @@ export default {
 
   computed: {
     ...mFilterGetters(['request', 'filter', 'possibleFields', 'parseError']),
-    ...alarmsEntityMapGetters(['allIds', 'meta', 'items']),
+    ...alarmsMapGetters(['allIds', 'meta', 'items']),
 
     /**
      * @description Value of the input field of the advanced editor.
@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     ...mFilterActions(['deleteParseError', 'updateFilter', 'onParseError']),
-    ...alarmsEntityMapActions(['fetchList']),
+    ...alarmsMapActions(['fetchList']),
 
     handleResultTabClick() {
       this.newRequest = '';
