@@ -29,6 +29,8 @@ export const STATES = {
 };
 
 export const API_ROUTES = {
+  auth: '/auth',
+  currentUser: '/account/me',
   login: '/login',
   alarmList: '/alerts/get-alarms',
   pbehavior: '/api/v2/pbehavior',
@@ -38,7 +40,7 @@ export const API_ROUTES = {
 };
 
 export const NON_AUTH_API_ROUTES = [
-  API_ROUTES.login,
+  API_ROUTES.auth,
 ];
 
 export const STATES_CHIPS_AND_FLAGS_STYLE = {
