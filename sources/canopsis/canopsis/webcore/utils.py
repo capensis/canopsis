@@ -25,6 +25,7 @@ Python webcore utility library.
 from __future__ import unicode_literals
 
 from bottle import response
+from canopsis.confng import Configuration, Ini
 import json
 
 HTTP_OK = 200
@@ -37,6 +38,9 @@ CONTENT_TYPE_JSON = "application/json"
 ERR_ALLOWED_KEYS = ["name", "description"]
 
 MSG_ELT_NOT_DICT = "The element inside a JSON should be a dict"
+
+CONF_PATH = "etc/webserver.conf"
+CONFIG = Configuration.load(CONF_PATH, Ini)
 
 
 def __gen_json(result, status, allowed_keys=None):
@@ -55,8 +59,11 @@ def __gen_json(result, status, allowed_keys=None):
 
     response.content_type = CONTENT_TYPE_JSON
     headers = {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': '{}'.format(
+            CONFIG.get('origin', {}).get('origin','')
+        ),
         'Access-Control-Allow-Methods': 'POST, GET, PUT, UPDATE',
+        'Access-Control-Allow-Credentials': 'true',
         'Cache-Control': 'public, no-cache'
     }
 
