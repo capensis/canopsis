@@ -2,15 +2,15 @@
   span
     template(v-if="attributeType === 'textable'") {{ getProp(alarm, pathToProperty) }}
     template(v-if="attributeType === 'state'")
-      state(:stateId="getProp(alarm, pathToProperty)")
+      state(:stateId="getProp(alarm, pathToProperty)", :showIcon="getProp(alarm, 'v.state._t') === 'changestate'")
     template(v-if="attributeType === 'status'")
       status(:statusId="getProp(alarm, pathToProperty)")
 </template>
 
 <script>
 import getProp from 'lodash/get';
-import State from '@/components/AlarmList/alarm-state-column-value.vue';
-import Status from '@/components/AlarmList/alarm-status-column-value.vue';
+import State from '@/components/alarm-list/alarm-state-column-value.vue';
+import Status from '@/components/alarm-list/alarm-status-column-value.vue';
 
 export default {
   components: {

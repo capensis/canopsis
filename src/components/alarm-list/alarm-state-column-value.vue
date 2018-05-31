@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     span(:class="[`bg-${color}`, 'badge']") {{ text }}
-    v-icon(:color="color") account_circle
+    v-icon(:color="color", v-if="showIcon") account_circle
 </template>
 
 <script>
@@ -11,6 +11,10 @@ export default {
   props: {
     stateId: {
       required: true,
+    },
+    showIcon: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
