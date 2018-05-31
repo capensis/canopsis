@@ -5,6 +5,11 @@ import Login from '@/views/login.vue';
 import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
+import Filter from '@/views/filter.vue';
+import Rrule from '@/components/other/rrule/rrule-form.vue';
+import Actions from '@/views/actions.vue';
+
+// EXAMPLES
 
 Vue.use(Router);
 
@@ -27,9 +32,25 @@ export default new Router({
       component: About,
     },
     {
-      path: '/alarm',
-      name: 'alarm',
+      path: '/alarms',
+      name: 'alarms',
       component: Alarm,
     },
+    {
+      path: '/filter',
+      name: 'filter',
+      component: Filter,
+    },
+    {
+      path: '/rrule',
+      name: 'rrule',
+      component: Rrule,
+    },
+    {
+      path: '/actions',
+      name: 'action',
+      component: Actions,
+    },
+
   ],
 });
