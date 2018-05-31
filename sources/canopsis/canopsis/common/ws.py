@@ -30,7 +30,6 @@ import json
 import logging
 import traceback
 
-
 from functools import wraps
 from gzip import GzipFile
 from inspect import getargspec
@@ -45,7 +44,7 @@ from canopsis.common.utils import ensure_iterable, isiterable
 
 class WebServiceError(Exception):
     """
-    WebService return a catchable error.
+    When WebService return a catchable error (HTTP 200 with success to False).
     """
     pass
 
@@ -89,6 +88,8 @@ def response(data, adapt=True, success=True):
 
     :param data: data to convert into a REST response.
     :param bool adapt: adapt Canopsis data to Ember (default: True)
+    :param bool success: is the response a success (default: True)
+    :rtype: dict
     """
 
     # calculate result_data and total related to data type
