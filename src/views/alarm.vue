@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import AlarmList from '@/components/AlarmList/alarm-list.vue';
+import AlarmList from '@/components/alarm-list/alarm-list.vue';
 
 export default {
   name: 'Alarm',

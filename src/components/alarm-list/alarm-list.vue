@@ -26,11 +26,13 @@ import getProp from 'lodash/get';
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
-import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
-import AlarmListSearching from '@/components/AlarmList/alarm-list-searching.vue';
-import BasicList from '@/components/BasicComponent/basic-list.vue';
-import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
+import BasicList from '@/components/basic-component/basic-list.vue';
+import ActionsPanel from '@/components/basic-component/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
+import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
+import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
+import TimeLine from '@/components/alarm-list/time-line.vue';
+import ListSorting from '@/components/basic-component/list-sorting.vue';
 import TimeLine from '@/components/AlarmList/time-line.vue';
 import ListSorting from '@/components/BasicComponent/list-sorting.vue';
 import AlarmColumnValue from '@/components/AlarmList/alarm-column-value.vue';
