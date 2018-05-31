@@ -33,8 +33,6 @@ import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.v
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
-import TimeLine from '@/components/AlarmList/time-line.vue';
-import ListSorting from '@/components/BasicComponent/list-sorting.vue';
 import AlarmColumnValue from '@/components/AlarmList/alarm-column-value.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
