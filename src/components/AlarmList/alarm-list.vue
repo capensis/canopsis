@@ -4,12 +4,12 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          th.box(v-for="columnName in Object.keys(alarmProperty)")
-            span {{ columnName }}
-            list-sorting(:column="alarmProperty[columnName]")
+          th.box(v-for="column in alarmProperty")
+            span {{ column.text }}
+            list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property.value) }}
+            td.box(v-for="property in alarmProperty") {{ getProp(item.props, property.value) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
