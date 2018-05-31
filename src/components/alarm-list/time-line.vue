@@ -6,14 +6,14 @@
       .timeline-item
           .time {{ $d(step.t, 'time') }}
           div(v-if="step._t !== 'statecounter'")
-            state-flag.flag(:value="step.val" :isStatus="isStatus(step._t)")
+            alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
             .header
-              alarm-chips.chips(:value="step.val" :isStatus="isStatus(step._t)")
+              alarm-chips.chips(:value="step.val", :isStatus="isStatus(step._t)")
               p {{ step._t | stepTitle(step.a) }}
             .content
               p {{ step.m }}
           div(v-else)
-            state-flag.flag(isCroppedState)
+            alarm-flag.flag(isCroppedState)
             .header
               p Cropped State (since last change of status)
             .content
@@ -35,7 +35,7 @@ import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
 
-import StateFlag from '@/components/basic-component/alarm-flag.vue';
+import AlarmFlag from '@/components/basic-component/alarm-flag.vue';
 import AlarmChips from '@/components/basic-component/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
 
@@ -45,7 +45,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   name: 'time-line',
-  components: { AlarmChips, StateFlag },
+  components: { AlarmChips, AlarmFlag },
   filters: {
     stepTitle(stepTitle, stepAuthor) {
       let formattedStepTitle = '';
@@ -116,7 +116,6 @@ export default {
           (date.getDay() !== this.lastDate.getDay()
           && date.getMonth() !== this.lastDate.getMonth()
           && date.getFullYear() !== this.lastDate.getFullYear())) {
-        console.log(this.lastDate);
         this.lastDate = date;
         return true;
       }
