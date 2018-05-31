@@ -28,8 +28,7 @@ from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
 from canopsis.event import Event
 from canopsis.models.entity import Entity
-from canopsis.statsng.enums import StatEvents, StatEventFields, \
-    StatMeasurements
+from canopsis.statsng.enums import StatEvents, StatEventFields
 
 SECONDS = 1000000000
 
@@ -95,11 +94,11 @@ class engine(Engine):
         self.logger.info('received statcounterinc event')
 
         self.influxdb_client.write_points([{
-            'measurement': StatMeasurements.counters,
+            'measurement': event[StatEventFields.counter_name],
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
-                event[StatEventFields.counter_name]: 1
+                'value': 1
             }
         }])
 
@@ -112,11 +111,10 @@ class engine(Engine):
         self.logger.info('received statduration event')
 
         self.influxdb_client.write_points([{
-            'measurement': StatMeasurements.durations,
+            'measurement': event[StatEventFields.duration_name],
             'time': event['timestamp'] * SECONDS,
             'tags': self.get_tags(event),
             'fields': {
-                event[StatEventFields.duration_name]: \
-                    event[StatEventFields.duration]
+                'value': event[StatEventFields.duration]
             }
         }])
