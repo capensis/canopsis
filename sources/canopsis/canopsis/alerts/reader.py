@@ -957,7 +957,7 @@ def remove_resources_alarms(alarms):
     for i in alarms:
         val = i.get('v').get('state').get('val')
         states_list.append(val)
-        if i.get('entity').get('type') == 'component':
+        if i.get('entity', {}).get('type') == 'component':
             state_comp = val
             alarm_comp = i
 
@@ -966,6 +966,7 @@ def remove_resources_alarms(alarms):
 
     ret_val = [alarm_comp]
     for alarm in alarms:
-        if alarm.get('v').get('state').get('val') > state_comp:
+        if alarm.get('v', {}).get('state', {}).get('val') > state_comp:
             ret_val.append(alarm)
+
     return ret_val
