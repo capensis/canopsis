@@ -1,6 +1,18 @@
 export default {
   common: {
     hello: 'Hello',
+    submit: 'Submit',
+    login: 'Login',
+    username: 'Username',
+    password: 'Password',
+    title: 'Title',
+    save: 'Save',
+    label: 'Label',
+    value: 'Value',
+    add: 'Add',
+    delete: 'Delete',
+    edit: 'Edit',
+    parse: 'Parse',
     home: 'Home',
     entries: 'entries',
     showing: 'showing',
@@ -23,6 +35,22 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+  },
+  alarmListSettings: {
+    alarmListSettings: 'Alarm list settings',
+    widgetTitle: 'Widget title',
+    columnName: 'Column name',
+    defaultSortColumn: 'Default Sort Column',
+    columnNames: 'Column names',
+    periodicRefresh: 'Periodic refresh',
+    defaultNumberOfElementsPerPage: 'Default number of elements/page',
+    elementsPerPage: 'Elements per page',
+    filterOnOpenResolved: 'Filter on Open/Resolved',
+    open: 'Open',
+    resolved: 'Resolved',
+    filters: 'Filters',
+    selectAFilter: 'Select a filter',
+    infoPopup: 'Info popup',
   },
   modals: {
     createAckEvent: {
@@ -147,5 +175,22 @@ export default {
       },
     },
   },
+  mFilterEditor: {
+    tabs: {
+      visualEditor: 'Visual Editor',
+      advancedEditor: 'Advanced Editor',
+      results: 'Results',
+    },
+    buttons: {
+      addRule: 'Add a rule',
+      addGroup: 'Add a group',
+      deleteGroup: 'Delete group',
+    },
+    resultsTableHeaders: {
+      connector: 'Connector',
+      connectorName: 'Connector name',
+      component: 'Component',
+      resource: 'Resource',
+    },
+  },
 };
-

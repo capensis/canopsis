@@ -1,16 +1,23 @@
 <template lang="pug">
   div
+    v-layout(justify-space-between)
+      v-flex(xs5)
+        alarm-list-searching
+      v-btn(icon, @click="openSettingsPanel")
+        v-icon settings
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-            th.box(v-for="columnName in Object.keys(alarmProperty)") {{ columnName }}
+          th.box(v-for="columnName in Object.keys(alarmProperty)")
+            span {{ columnName }}
+            list-sorting(:column="alarmProperty[columnName]")
             th.box
-        tr.container(slot="row", slot-scope="item")
+        tr.container(slot="row" slot-scope="item")
             td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
-            td.box {{ item.props.infos }}
+            time-line(:alarmProps="item.props")
       alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
@@ -22,12 +29,16 @@ import getProp from 'lodash/get';
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
-import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
-import BasicList from '@/components/BasicComponent/basic-list.vue';
-import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
+import BasicList from '@/components/basic-component/basic-list.vue';
+import ActionsPanel from '@/components/basic-component/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
+import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
+import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
+import TimeLine from '@/components/alarm-list/time-line.vue';
+import ListSorting from '@/components/basic-component/list-sorting.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
 /**
  * Alarm-list component.
@@ -40,7 +51,13 @@ const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 export default {
   name: 'AlarmList',
   components: {
-    AlarmListPagination, ActionsPanel, BasicList, Loader,
+    ListSorting,
+    TimeLine,
+    AlarmListSearching,
+    AlarmListPagination,
+    ActionsPanel,
+    BasicList,
+    Loader,
   },
   props: {
     alarmProperty: {
@@ -74,6 +91,9 @@ export default {
     getQuery,
     ...mapActions({
       fetchListAction: 'fetchList',
+    }),
+    ...settingsMapActions({
+      openSettingsPanel: 'openPanel',
     }),
     fetchList() {
       this.fetchListAction({
