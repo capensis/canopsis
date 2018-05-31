@@ -31,6 +31,8 @@ from canopsis.confng.helpers import cfg_to_bool
 INFLUXDB_CONF_PATH = 'etc/influx/storage.conf'
 INFLUXDB_CONF_SECTION = 'DATABASE'
 
+SECONDS = 1000000000
+
 
 class InfluxDBOptions(object):
     """
