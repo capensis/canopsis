@@ -41,7 +41,7 @@ class AlarmEventPublisherTest(TestCase):
             AlarmField.creation_date.value: 1
         }
         self.event_publisher.publish_statcounterinc_event(
-            'counter_name', {}, alarm)
+            1, 'counter_name', {}, alarm)
 
         self.assertEqual(self.amqp_pub.canopsis_event.call_count, 1)
 

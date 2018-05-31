@@ -566,6 +566,7 @@ class Alerts(object):
                 except IndexError:
                     entity = {}
                 self.event_publisher.publish_statcounterinc_event(
+                    alarm[self.alerts_storage.VALUE][AlarmField.creation_date.value],
                     StatCounters.alarms_created,
                     entity,
                     alarm[self.alerts_storage.VALUE])
@@ -777,7 +778,10 @@ class Alerts(object):
             except IndexError:
                 entity = {}
             self.event_publisher.publish_statcounterinc_event(
-                StatCounters.alarms_canceled, entity, new_value)
+                new_value[AlarmField.last_update_date.value],
+                StatCounters.alarms_canceled,
+                entity,
+                new_value)
 
         return alarm
 

@@ -44,21 +44,19 @@ class AlarmEventPublisher(object):
         self.logger = Logger.get('alarms', LOG_PATH)
         self.amqp_pub = amqp_pub
 
-    def publish_statcounterinc_event(self, counter_name, entity, alarm):
+    def publish_statcounterinc_event(self,
+                                     timestamp,
+                                     counter_name,
+                                     entity,
+                                     alarm):
         """
         Publish a statcounterinc event on amqp.
 
+        :param int timestamp: the time at which the event occurs
         :param str counter_name: the name of the counter to increment
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
-        creation_date = alarm.get(AlarmField.creation_date.value)
-
-        if not creation_date:
-            self.logger.warning(
-                "The alarm does not have a creation date. Ignoring it.")
-            return
-
         component = alarm.get(Event.COMPONENT)
         resource = alarm.get(Event.RESOURCE)
 
@@ -69,7 +67,7 @@ class AlarmEventPublisher(object):
             source_type=Event.RESOURCE if resource else Event.COMPONENT,
             component=component,
             resource=resource,
-            timestamp=creation_date,
+            timestamp=timestamp,
             counter_name=counter_name,
             alarm=alarm,
             entity=entity)
