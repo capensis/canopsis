@@ -111,8 +111,13 @@ export default {
       'fetchItem',
     ]),
     isNewDate(timestamp) {
-      if (timestamp !== this.lastDate) {
-        this.lastDate = timestamp;
+      const date = new Date(timestamp);
+      if (!this.lastDate ||
+          (date.getDay() !== this.lastDate.getDay()
+          && date.getMonth() !== this.lastDate.getMonth()
+          && date.getFullYear() !== this.lastDate.getFullYear())) {
+        console.log(this.lastDate);
+        this.lastDate = date;
         return true;
       }
       return false;
