@@ -14,7 +14,7 @@
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
             time-line(:alarmProps="item.props")
-      alarm-list-pagination(:meta="meta", :limit="limit")
+      pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
 
@@ -22,18 +22,16 @@
 import { createNamespacedHelpers } from 'vuex';
 import getProp from 'lodash/get';
 
-import { PAGINATION_LIMIT } from '@/config';
-import getQuery from '@/helpers/pagination';
-
 import BasicList from '@/components/basic-component/basic-list.vue';
 import ActionsPanel from '@/components/basic-component/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
-import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
+import PaginationMixin from '@/mixins/pagination';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
+
 
 /**
  * Alarm-list component.
@@ -49,21 +47,15 @@ export default {
     ListSorting,
     TimeLine,
     AlarmListSearching,
-    AlarmListPagination,
     ActionsPanel,
     BasicList,
     Loader,
   },
+  mixins: [PaginationMixin],
   props: {
     alarmProperty: {
       type: Object,
-      default() {
-        return {};
-      },
-    },
-    limit: {
-      type: Number,
-      default: PAGINATION_LIMIT,
+      default: () => ({}),
     },
   },
   computed: {
@@ -73,25 +65,11 @@ export default {
       'pending',
     ]),
   },
-  watch: {
-    $route() {
-      this.fetchList();
-    },
-  },
-  mounted() {
-    this.fetchList(this.fetchingParams);
-  },
   methods: {
     getProp,
-    getQuery,
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
-    fetchList() {
-      this.fetchListAction({
-        params: this.getQuery(),
-      });
-    },
   },
 };
 </script>
