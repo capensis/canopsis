@@ -30,8 +30,6 @@ from canopsis.event import Event
 from canopsis.models.entity import Entity
 from canopsis.monitoring.parser import PerfDataParser
 
-MEASUREMENT = 'perfdata'
-
 
 class engine(Engine):
     etype = "perfdatang"
@@ -85,7 +83,10 @@ class engine(Engine):
         self.logger.debug(u'perf_data_array: {0}'.format(perf_data_array))
 
         # Write perfdata to influx
-        fields = {}
+        timestamp = event['timestamp'] * SECONDS
+        tags = self.get_tags(event)
+
+        points = []
         for data in perf_data_array:
             metric = data.get('metric')
             value = data.get('value')
@@ -93,19 +94,23 @@ class engine(Engine):
             crit = data.get('crit')
 
             if value is not None and metric:
-                fields["{}_value".format(metric)] = value
+                point = {
+                    'measurement': metric,
+                    'time': timestamp,
+                    'tags': tags,
+                    'fields': {
+                        'value': value
+                    }
+                }
 
                 if warn is not None:
-                    fields["{}_warn".format(metric)] = warn
+                    point['fields']['warn'] = warn
                 if crit is not None:
-                    fields["{}_crit".format(metric)] = crit
+                    point['fields']['crit'] = crit
 
-        self.influxdb_client.write_points([{
-            'measurement': MEASUREMENT,
-            'time': event['timestamp'] * SECONDS,
-            'tags': self.get_tags(event),
-            'fields': fields,
-        }])
+                points.append(point)
+
+        self.influxdb_client.write_points(points)
 
     def get_tags(self, event):
         """
