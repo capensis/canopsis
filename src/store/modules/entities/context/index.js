@@ -60,9 +60,5 @@ export default {
       }
     },
 
-    fetchListWithPreviousParams({ dispatch, state }) {
-      return dispatch('fetchList', { params: state.fetchingParams });
-    },
-
   },
 };
