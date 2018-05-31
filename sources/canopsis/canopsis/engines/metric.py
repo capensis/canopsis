@@ -32,9 +32,9 @@ from canopsis.monitoring.parser import PerfDataParser
 
 
 class engine(Engine):
-    etype = "perfdatang"
+    etype = "metric"
 
-    CONF_PATH = "etc/perfdatang/engine.conf"
+    CONF_PATH = "etc/metric/engine.conf"
     CONF_SECTION = 'ENGINE'
 
     def __init__(self, *args, **kwargs):
