@@ -18,7 +18,6 @@ export default {
   getters: {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIds),
-    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem']('context', id),
     meta: state => state.meta,
     pending: state => state.pending,
   },
