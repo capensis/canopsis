@@ -2,7 +2,6 @@ import { schema } from 'normalizr';
 
 export const types = {
   ALARM: 'alarm',
-  EVENT: 'event',
   PBEHAVIOR: 'pbehavior',
   USER_PREFERENCE: 'userPreference',
 };
@@ -26,8 +25,6 @@ export const alarmSchema = new schema.Entity(types.ALARM, {
   idAttribute: '_id',
 });
 
-export const eventSchema = new schema.Entity(types.EVENT, {}, { idAttribute: '_id' });
-
 export const userPreferenceSchema = new schema.Entity(types.USER_PREFERENCE, {}, {
   idAttribute: '_id',
 });
@@ -35,6 +32,5 @@ export const userPreferenceSchema = new schema.Entity(types.USER_PREFERENCE, {},
 export default {
   [types.ALARM]: alarmSchema,
   [types.PBEHAVIOR]: pbehaviorSchema,
-  [types.EVENT]: eventSchema,
   [types.USER_PREFERENCE]: userPreferenceSchema,
 };
