@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+import Login from '@/views/login.vue';
 import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
@@ -19,6 +20,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
     },
     {
       path: '/about',
