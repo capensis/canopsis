@@ -75,7 +75,7 @@ class TestTasks(BaseTest):
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
         self.event_publisher.publish_statduration_event.assert_called_once_with(
-            StatDurations.ack_time, {}, alarm)
+            0, StatDurations.ack_time, {}, alarm)
 
     def test_unacknowledge(self):
         event = {'timestamp': 0}
@@ -125,7 +125,7 @@ class TestTasks(BaseTest):
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
         self.event_publisher.publish_statduration_event.assert_called_once_with(
-            StatDurations.ack_time, {}, alarm)
+            0, StatDurations.ack_time, {}, alarm)
 
     def test_cancel(self):
         event = {'timestamp': 0}

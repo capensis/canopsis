@@ -56,7 +56,7 @@ def acknowledge(manager, alarm, author, message, event):
         except IndexError:
             entity = {}
         manager.event_publisher.publish_statduration_event(
-            StatDurations.ack_time, entity, alarm)
+            event['timestamp'], StatDurations.ack_time, entity, alarm)
 
     return alarm
 

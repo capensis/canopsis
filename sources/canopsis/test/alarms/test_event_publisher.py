@@ -51,12 +51,13 @@ class AlarmEventPublisherTest(TestCase):
         self.assertEqual(event['timestamp'], 1)
 
     def test_publish_statduration_event(self):
+        timestamp = 3
         alarm = {
             AlarmField.creation_date.value: 1,
-            AlarmField.last_update_date.value: 3
+            AlarmField.last_update_date.value: timestamp
         }
         self.event_publisher.publish_statduration_event(
-            'duration_name', {}, alarm)
+            timestamp, 'duration_name', {}, alarm)
 
         self.assertEqual(self.amqp_pub.canopsis_event.call_count, 1)
 

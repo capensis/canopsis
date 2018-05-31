@@ -76,27 +76,27 @@ class AlarmEventPublisher(object):
 
         self.amqp_pub.canopsis_event(event)
 
-    def publish_statduration_event(self, duration_name, entity, alarm):
+    def publish_statduration_event(self,
+                                   timestamp,
+                                   duration_name,
+                                   entity,
+                                   alarm):
         """
         Publish a statduration event on amqp.
 
+        :param int timestamp: the time at which the event occurs
         :param str duration_name: the name of the duration to add
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
         creation_date = alarm.get(AlarmField.creation_date.value)
-        update_date = alarm.get(AlarmField.last_update_date.value)
 
         if not creation_date:
             self.logger.warning(
                 "The alarm does not have a creation date. Ignoring it.")
             return
-        if not update_date:
-            self.logger.warning(
-                "The alarm does not have a last update date. Ignoring it.")
-            return
 
-        duration = update_date - creation_date
+        duration = timestamp - creation_date
 
         component = alarm.get(Event.COMPONENT)
         resource = alarm.get(Event.RESOURCE)
@@ -108,7 +108,7 @@ class AlarmEventPublisher(object):
             source_type=Event.RESOURCE if resource else Event.COMPONENT,
             component=component,
             resource=resource,
-            timestamp=update_date,
+            timestamp=timestamp,
             duration_name=duration_name,
             duration=duration,
             alarm=alarm,
