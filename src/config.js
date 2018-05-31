@@ -11,15 +11,85 @@ export const AUTH_TOKEN_KEY = 'access-token';
 
 export const DEFAULT_LOCALE = 'fr';
 
+export const EVENT_TYPES = {
+  ack: 'ack',
+  ackRemove: 'ackremove',
+  associateTicket: 'assocticket',
+  cancel: 'cancel',
+  changeState: 'changestate',
+  declareTicket: 'declareticket',
+  snooze: 'snooze',
+};
+
+export const STATES = {
+  info: 0,
+  minor: 1,
+  major: 2,
+  critical: 3,
+};
+
 export const API_ROUTES = {
   auth: '/auth',
   currentUser: '/account/me',
   login: '/login',
   alarmList: '/alerts/get-alarms',
   pbehavior: '/api/v2/pbehavior',
-
+  event: '/event',
+  eventsList: '/rest/events',
+  userPreferences: '/rest/userpreferences/userpreferences',
 };
 
 export const NON_AUTH_API_ROUTES = [
   API_ROUTES.auth,
 ];
+
+export const STATES_CHIPS_AND_FLAGS_STYLE = {
+  0: {
+    color: 'green',
+    text: 'ok',
+    icon: 'assistant_photo',
+  },
+  1: {
+    color: 'yellow darken-1',
+    text: 'minor',
+    icon: 'assistant_photo',
+  },
+  2: {
+    color: 'orange',
+    text: 'major',
+    icon: 'assistant_photo',
+  },
+  3: {
+    color: 'red',
+    text: 'critical',
+    icon: 'assistant_photo',
+  },
+};
+
+export const STATUS_CHIPS_AND_FLAGS_STYLE = {
+  0: {
+    color: 'black',
+    text: 'off',
+    icon: 'keyboard_arrow_up',
+  },
+  1: {
+    color: 'grey',
+    text: 'ongoing',
+    icon: 'keyboard_arrow_up',
+  },
+  2: {
+    color: 'yellow darken-1',
+    text: 'stealthy',
+    icon: 'keyboard_arrow_up',
+  },
+  3: {
+    color: 'orange',
+    text: 'flapping',
+    icon: 'keyboard_arrow_up',
+  },
+  4: {
+    color: 'red',
+    text: 'cancelled',
+    icon: 'keyboard_arrow_up',
+  },
+};
