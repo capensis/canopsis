@@ -81,7 +81,7 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
-      output: 'Sortie',
+      output: 'Output',
       lastUpdateDate: 'Last update date',
       creationDate: 'Creation date',
       duration: 'Duration',
