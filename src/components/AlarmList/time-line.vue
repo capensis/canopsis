@@ -6,9 +6,9 @@
       .timeline-item
           .time {{ $d(step.t, 'time') }}
           div(v-if="step._t !== 'statecounter'")
-            alarm-flag.flag(:value="step.val" :isStatus="isStatus(step._t)")
+            alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
             .header
-              alarm-chips.chips(:value="step.val" :isStatus="isStatus(step._t)")
+              alarm-chips.chips(:value="step.val", :isStatus="isStatus(step._t)")
               p {{ step._t | stepTitle(step.a) }}
             .content
               p {{ step.m }}
