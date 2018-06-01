@@ -199,7 +199,7 @@ Certains engines supportent des options au lancement :
 $ ./engine-che -h
 Usage of ./engine-che:
   -createContext
-        enable context graph creation. disabled by default. WARNING: disable the old context-graph engine when using this.
+        enable context graph creation. enabled by default. WARNING: disable the old context-graph engine when using this. (default true)
   -d    debug
   -enrichContext
         enable context graph enrichment from event. disabled by default. WARNING: disable the old context-graph engine when using this.
@@ -207,6 +207,8 @@ Usage of ./engine-che:
         Coma separated list of fields that shall not be part of context enrichment.
   -enrichInclude string
         Coma separated list of the only fields that will be part of context enrichment. If present, -enrichExclude is ignored.
+  -printEventOnError
+        Print event on processing error
   -processEvent
         enable event processing. enabled by default. (default true)
   -publishQueue string
