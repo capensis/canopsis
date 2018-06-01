@@ -18,9 +18,11 @@
 import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
+  name: MODALS.createDeclareTicketEvent,
+
   $_veeValidate: {
     validator: 'new',
   },
@@ -30,7 +32,7 @@ export default {
   mixins: [ModalInnerItemMixin, EventActionsMixin],
   methods: {
     async submit() {
-      await this.createEvent(EVENT_TYPES.declareTicket, this.item, {
+      await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.item, {
         output: 'declare ticket',
       });
 

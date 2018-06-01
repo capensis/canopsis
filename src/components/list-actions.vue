@@ -32,7 +32,7 @@
 <script>
 import ModalMixin from '@/mixins/modal/modal';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
 /**
  * Actions list component
@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     async createAckEvent() {
-      await this.createEvent(EVENT_TYPES.ack, this.item);
+      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
     },
 
     showActionModal(name) {
@@ -73,7 +73,7 @@ export default {
         config: {
           ...this.modalConfig,
           title: 'modals.createAckRemove.title',
-          eventType: EVENT_TYPES.ackRemove,
+          eventType: EVENT_ENTITY_TYPES.ackRemove,
         },
       });
     },
