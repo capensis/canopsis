@@ -13,7 +13,7 @@
             list-sorting(:column="alarmProperty[columnName]")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+            td.box(v-for="property in Object.values(alarmProperty)") {{ getAlarmProps(item.props, property) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
@@ -95,6 +95,16 @@ export default {
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
+    isDateProperty(propertyName) {
+      return propertyName.match(/(creation_date|last_update_date)/);
+    },
+    getAlarmProps(itemProp, propertyName) {
+      const propertyValue = getProp(itemProp, propertyName);
+      if (this.isDateProperty(propertyName)) {
+        return this.$d(propertyValue, 'time');
+      }
+      return propertyValue;
+    },
     fetchList() {
       this.fetchListAction({
         params: this.getQuery(),
