@@ -3,7 +3,7 @@
     v-model="isOpen",
     absolute,
     app,
-    :clipped="windowSize.x < 1264 ? false : true"
+    :clipped="$mq === 'mobile' || $mq === 'tablet' ? false : true"
   )
       v-card(flat)
       v-expansion-panel(
@@ -12,9 +12,19 @@
         focusable,
       )
         v-expansion-panel-content
-          div(slot="header") View Group 1
+          div(slot="header") Examples
           v-card
-            v-card-text View 1
+            v-card-text
+              router-link(to="alarms") Alarms List
+          v-card
+            v-card-text
+              router-link(to="filter-editor") Filter Editor
+          v-card
+            v-card-text
+              router-link(to="filter-selector") Filter Selector
+          v-card
+            v-card-text
+              router-link(to="rrule-form") Rrule Form
           v-card
             v-card-text View 2
       v-divider
@@ -48,12 +58,6 @@ export default {
   name: 'SideBar',
   components: {
     VueContentLoading,
-  },
-  props: {
-    windowSize: {
-      type: Object,
-      required: true,
-    },
   },
   computed: {
     ...mapGetters(['isSideBarOpen']),

@@ -1,21 +1,26 @@
 <template lang="pug">
   div
-    alarm-list-searching
-    basic-list(:items="items")
-      tr.container(slot="header")
-        th.box(v-for="columnName in Object.keys(alarmProperty)")
-          span {{ columnName }}
-          list-sorting(:column="alarmProperty[columnName]")
-        th.box
-      tr.container(slot="row" slot-scope="item")
-        td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
-        td.box
-          actions-panel.actions
-      tr.container(slot="expandedRow", slot-scope="item")
-        time-line(:alarmProps="item.props")
-    loader(:pending="pending")
-      alarm-list-loader
-    alarm-list-pagination(:meta="meta", :limit="limit")
+    v-layout(justify-space-between)
+      v-flex(xs5)
+        alarm-list-searching
+      v-btn(icon, @click="openSettingsPanel")
+        v-icon settings
+    div
+      basic-list(:items="items")
+        tr.container(slot="header")
+          th.box(v-for="columnName in Object.keys(alarmProperty)")
+            span {{ columnName }}
+            list-sorting(:column="alarmProperty[columnName]")
+            th.box
+        tr.container(slot="row" slot-scope="item")
+            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+            td.box
+              actions-panel.actions
+        tr.container(slot="expandedRow", slot-scope="item")
+            time-line(:alarmProps="item.props")
+      loader(:pending="pending")
+        alarm-list-loader
+      alarm-list-pagination(:meta="meta", :limit="limit")
 </template>
 
 <script>
@@ -35,6 +40,7 @@ import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
 /**
  * Alarm-list component.
@@ -88,6 +94,9 @@ export default {
     getQuery,
     ...mapActions({
       fetchListAction: 'fetchList',
+    }),
+    ...settingsMapActions({
+      openSettingsPanel: 'openPanel',
     }),
     fetchList() {
       this.fetchListAction({

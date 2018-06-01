@@ -6,14 +6,14 @@
       .timeline-item
           .time {{ $d(step.t, 'time') }}
           div(v-if="step._t !== 'statecounter'")
-            state-flag.flag(:val="step.val" :isStatus="isStatus(step._t)")
+            alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
             .header
-              alarm-chips.chips(:val="step.val" :isStatus="isStatus(step._t)")
+              alarm-chips.chips(:value="step.val", :isStatus="isStatus(step._t)")
               p {{ step._t | stepTitle(step.a) }}
             .content
               p {{ step.m }}
           div(v-else)
-            state-flag.flag(isCroppedState)
+            alarm-flag.flag(isCroppedState)
             .header
               p Cropped State (since last change of status)
             .content
@@ -35,8 +35,9 @@ import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
 
-import StateFlag from '@/components/basic-component/alarm-flag.vue';
+import AlarmFlag from '@/components/basic-component/alarm-flag.vue';
 import AlarmChips from '@/components/basic-component/alarm-chips.vue';
+import { numericSortObject } from '@/helpers/sorting';
 
 import { STATES_CHIPS_AND_FLAGS_STYLE } from '@/config';
 
@@ -44,7 +45,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   name: 'time-line',
-  components: { AlarmChips, StateFlag },
+  components: { AlarmChips, AlarmFlag },
   filters: {
     stepTitle(stepTitle, stepAuthor) {
       let formattedStepTitle = '';
@@ -63,6 +64,8 @@ export default {
     alarmProps: {
       type: Object,
       required: true,
+      // This data represent the last step timestamp encountered
+      // Its used for group step under the same date
       lastDate: null,
     },
   },
@@ -71,7 +74,9 @@ export default {
     steps() {
       const alarm = this.item(this.alarmProps._id);
       if (alarm && alarm.v.steps) {
-        return alarm.v.steps;
+        const steps = [...alarm.v.steps];
+        numericSortObject(steps, 't', 'desc');
+        return steps;
       }
       return [];
     },
@@ -95,9 +100,10 @@ export default {
         with_steps: 'true',
       },
     });
+    this.lastDate = null;
   },
   updated() {
-    // Useful for example the user change the translation
+    // Useful like for example when the user change the translation
     this.lastDate = null;
   },
   methods: {
@@ -105,8 +111,12 @@ export default {
       'fetchItem',
     ]),
     isNewDate(timestamp) {
-      if (timestamp !== this.lastDate) {
-        this.lastDate = timestamp;
+      const date = new Date(timestamp);
+      if (!this.lastDate ||
+          (date.getDay() !== this.lastDate.getDay()
+          && date.getMonth() !== this.lastDate.getMonth()
+          && date.getFullYear() !== this.lastDate.getFullYear())) {
+        this.lastDate = date;
         return true;
       }
       return false;

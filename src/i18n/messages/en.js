@@ -1,6 +1,10 @@
 export default {
   common: {
     hello: 'Hello',
+    submit: 'Submit',
+    login: 'Login',
+    username: 'Username',
+    password: 'Password',
     title: 'Title',
     save: 'Save',
     label: 'Label',
@@ -15,6 +19,7 @@ export default {
     to: 'to',
     of: 'of',
     actionsLabel: 'Actions',
+    noResults: 'No results',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -171,6 +176,9 @@ export default {
       },
     },
   },
+  errors: {
+    default: 'Something went wrong...',
+  },
   mFilterEditor: {
     tabs: {
       visualEditor: 'Visual Editor',
@@ -190,4 +198,3 @@ export default {
     },
   },
 };
-
