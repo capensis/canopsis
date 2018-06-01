@@ -1,6 +1,10 @@
 <template lang="pug">
   div
-    alarm-list-searching
+    v-layout(justify-space-between)
+      v-flex(xs5)
+        alarm-list-searching
+      v-btn(icon, @click="openSettingsPanel")
+        v-icon settings
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
@@ -24,15 +28,16 @@ import { createNamespacedHelpers } from 'vuex';
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
-import AlarmListPagination from '@/components/AlarmList/alarm-list-pagination.vue';
-import AlarmListSearching from '@/components/AlarmList/alarm-list-searching.vue';
-import BasicList from '@/components/BasicComponent/basic-list.vue';
-import ActionsPanel from '@/components/BasicComponent/actions-panel.vue';
+import BasicList from '@/components/basic-component/basic-list.vue';
+import ActionsPanel from '@/components/basic-component/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
-import TimeLine from '@/components/AlarmList/time-line.vue';
-import ListSorting from '@/components/BasicComponent/list-sorting.vue';
+import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
+import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
+import TimeLine from '@/components/alarm-list/time-line.vue';
+import ListSorting from '@/components/basic-component/list-sorting.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
 /**
  * Alarm-list component.
@@ -84,6 +89,9 @@ export default {
     getQuery,
     ...mapActions({
       fetchListAction: 'fetchList',
+    }),
+    ...settingsMapActions({
+      openSettingsPanel: 'openPanel',
     }),
     fetchList() {
       this.fetchListAction({
