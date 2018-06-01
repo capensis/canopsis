@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     alarm-list(
-    :alarmProperty="$mq | mq({mobile: alarmPropertyOnMobile,tablet: alarmPropertyOnTablet,laptop: alarmProperty})",
+    :alarmProperties="$mq | mq(alarmProperties)",
     )
 </template>
 
@@ -9,32 +9,28 @@
 import AlarmList from '@/components/alarm-list/alarm-list.vue';
 
 export default {
-  name: 'Alarm',
-
   components: { AlarmList },
   data() {
     return {
-      alarmProperty: {
-        Connector: 'v.connector',
-        Component: 'v.component',
-        Resource: 'v.resource',
-        Output: 'v.initial_output',
-        'Last Update Date': 'v.last_update_date',
-      },
-      alarmPropertyOnMobile: {
-        Connector: 'v.connector',
-        Component: 'v.component',
-      },
-      alarmPropertyOnTablet: {
-        Connector: 'v.connector',
-        Component: 'v.component',
-        Resource: 'v.resource',
+      alarmProperties: {
+        laptop: {
+          Connector: 'v.connector',
+          Component: 'v.component',
+          Resource: 'v.resource',
+          Output: 'v.initial_output',
+          'Last Update Date': 'v.last_update_date',
+        },
+        tablet: {
+          Connector: 'v.connector',
+          Component: 'v.component',
+          Resource: 'v.resource',
+        },
+        mobile: {
+          Connector: 'v.connector',
+          Component: 'v.component',
+        },
       },
     };
   },
-
 };
 </script>
-
-<style scoped>
-</style>

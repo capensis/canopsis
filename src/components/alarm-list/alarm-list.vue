@@ -4,12 +4,12 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          th.box(v-for="columnName in Object.keys(alarmProperty)")
+          th.box(v-for="columnName in Object.keys(alarmProperties)")
             span {{ columnName }}
-            list-sorting(:column="alarmProperty[columnName]")
+            list-sorting(:column="alarmProperties[columnName]")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+            td.box(v-for="property in Object.values(alarmProperties)") {{ getProp(item.props, property) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
@@ -32,17 +32,15 @@ import PaginationMixin from '@/mixins/pagination';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 
-
 /**
  * Alarm-list component.
  *
  * @module components/alarm-list
- * @param {object} alarmProperty - Object that describe the columns names and the alarms attributes corresponding
+ * @param {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
  * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
  */
 export default {
-  name: 'AlarmList',
   components: {
     ListSorting,
     TimeLine,
@@ -53,7 +51,7 @@ export default {
   },
   mixins: [PaginationMixin],
   props: {
-    alarmProperty: {
+    alarmProperties: {
       type: Object,
       default: () => ({}),
     },
