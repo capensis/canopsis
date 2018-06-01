@@ -121,6 +121,15 @@ cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make
 ```
 
+Lors du développement, il peut être utile de *builder* les binaires rapidement et des les récupérer dans un dossier partagé avec une autre machine par exemple :
+
+```
+make init
+
+# réutiliser cette commande par la suite
+make build BUILD_OUTPUT_DIR=/vmshare/gobin SKIP_DEPENDENCIES=true
+```
+
 ### Paramétrage des moteurs
 
 ```bash
