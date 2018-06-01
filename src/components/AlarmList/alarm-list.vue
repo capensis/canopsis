@@ -9,7 +9,7 @@
             list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in alarmProperty") {{ getProp(item.props, property.value) }}
+            td.box(v-for="property in alarmProperty") {{ item.props | get(property.value) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
@@ -20,7 +20,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import getProp from 'lodash/get';
 
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
@@ -82,7 +81,6 @@ export default {
     this.fetchList(this.fetchingParams);
   },
   methods: {
-    getProp,
     getQuery,
     ...mapActions({
       fetchListAction: 'fetchList',
