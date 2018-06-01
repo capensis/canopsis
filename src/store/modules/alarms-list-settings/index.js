@@ -9,7 +9,7 @@ export default {
   namespaced: true,
 
   state: {
-    isPanelOpen: true,
+    isPanelOpen: false,
     settings: {},
   },
 
@@ -35,6 +35,9 @@ export default {
   actions: {
     closePanel(context) {
       context.commit(types.CLOSE_SETTINGS_PANEL);
+    },
+    openPanel(context) {
+      context.commit(types.OPEN_SETTINGS_PANEL);
     },
     async fetchSettings(context) {
       context.commit(types.FETCH_SETTINGS);

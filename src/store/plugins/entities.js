@@ -102,7 +102,7 @@ const entitiesModule = {
         mutationType = internalTypes.ENTITIES_UPDATE,
       },
     ) {
-      const [data] = await request.get(route, { params });
+      const data = await request.get(route, { params });
       const normalizedData = normalize(dataPreparer(data), schema);
 
       commit(mutationType, normalizedData.entities);
