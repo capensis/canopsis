@@ -60,6 +60,17 @@ class AlarmEventPublisher(object):
         component = alarm.get(Event.COMPONENT)
         resource = alarm.get(Event.RESOURCE)
 
+        # AmqpPublisher.canopsis needs the component and resource of the event
+        # to be unicode strings.
+        try:
+            component = component.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+        try:
+            resource = resource.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
@@ -98,6 +109,17 @@ class AlarmEventPublisher(object):
 
         component = alarm.get(Event.COMPONENT)
         resource = alarm.get(Event.RESOURCE)
+
+        # AmqpPublisher.canopsis needs the component and resource of the event
+        # to be unicode strings.
+        try:
+            component = component.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+        try:
+            resource = resource.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
 
         event = forger(
             connector="canopsis",
