@@ -37,8 +37,6 @@
           td {{props.item.v.connector_name}}
           td {{props.item.v.component}}
           td {{props.item.v.resource}}
-      // div(class="text-xs-center my-2")
-        v-pagination(:length="6" v-model="currentPage")
 </template>
 
 
@@ -93,7 +91,7 @@ export default {
 
   computed: {
     ...mFilterGetters(['request', 'filter', 'possibleFields', 'parseError']),
-    ...alarmsMapGetters(['allIds', 'meta', 'items']),
+    ...alarmsMapGetters(['items']),
 
     /**
      * @description Value of the input field of the advanced editor.
