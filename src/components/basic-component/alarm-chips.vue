@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
+import formatStateAndStatus from '@/services/state-and-status-formatting';
 
 export default {
   name: 'alarm-chips',
@@ -19,17 +19,14 @@ export default {
   },
   computed: {
     color() {
-      if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].color;
-      }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].color;
+      return this.formatStateAndStatus(this.value, this.isStatus).color;
     },
     text() {
-      if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].text;
-      }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].text;
+      return this.formatStateAndStatus(this.value, this.isStatus).text;
     },
+  },
+  methods: {
+    formatStateAndStatus,
   },
 };
 </script>
