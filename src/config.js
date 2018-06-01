@@ -1,5 +1,8 @@
 export const API_HOST = process.env.VUE_APP_API_HOST;
 
+export const POPUP_AUTO_CLOSE_DELAY = parseInt(process.env.VUE_APP_POPUP_AUTO_CLOSE_DELAY, 10);
+
+export const VUETIFY_ANIMATION_DELAY = 300;
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 export const MOBILE_BREAKPOINT = parseInt(process.env.VUE_APP_MOBILE_BREAKPOINT, 10);
 export const TABLET_BREAKPOINT = parseInt(process.env.VUE_APP_TABLET_BREAKPOINT, 10);
@@ -20,6 +23,8 @@ export const EVENT_TYPES = {
 };
 
 export const API_ROUTES = {
+  auth: '/auth',
+  currentUser: '/account/me',
   login: '/login',
   alarmList: '/alerts/get-alarms',
   pbehavior: '/api/v2/pbehavior',
@@ -111,4 +116,3 @@ export const MODALS = {
   createPbehavior: 'create-pbehavior',
   pbehaviorList: 'pbehavior-list',
 };
-
