@@ -18,7 +18,9 @@
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
             time-line(:alarmProps="item.props")
-      alarm-list-pagination(:meta="meta", :limit="limit")
+      .bottomToolbox
+        alarm-list-pagination(:meta="meta", :limit="limit")
+        page-iterator
     loader(v-else)
 </template>
 
@@ -26,7 +28,6 @@
 import { createNamespacedHelpers } from 'vuex';
 import getProp from 'lodash/get';
 
-import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
@@ -36,6 +37,7 @@ import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.v
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
+import PageIterator from '../basic-component/pageIterator.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
@@ -51,6 +53,7 @@ const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSe
 export default {
   name: 'AlarmList',
   components: {
+    PageIterator,
     ListSorting,
     TimeLine,
     AlarmListSearching,
@@ -66,10 +69,6 @@ export default {
         return {};
       },
     },
-    limit: {
-      type: Number,
-      default: PAGINATION_LIMIT,
-    },
   },
   computed: {
     ...mapGetters([
@@ -77,6 +76,9 @@ export default {
       'meta',
       'pending',
     ]),
+    limit() {
+      return parseInt(this.$route.query.limit, 10);
+    },
   },
   watch: {
     $route() {
@@ -84,7 +86,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchList(this.fetchingParams);
+    this.fetchList();
   },
   methods: {
     getProp,
@@ -118,5 +120,9 @@ export default {
   .box{
     width: 10%;
     flex: 1;
+  }
+  .bottomToolbox {
+    display: flex;
+    flex-flow: row wrap;
   }
 </style>

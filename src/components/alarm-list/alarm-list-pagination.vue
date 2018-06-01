@@ -1,8 +1,8 @@
 <template lang="pug">
   div.container
+    v-pagination(v-model="currentPage", :length="totalPages")
     span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
          |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
-    v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
