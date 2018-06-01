@@ -1,17 +1,22 @@
 <template lang="pug">
   div
+    alarms-list-settings
     alarm-list(
     :alarmProperty="$mq | mq({mobile: alarmPropertyOnMobile,tablet: alarmPropertyOnTablet,laptop: alarmProperty})",
     )
 </template>
 
 <script>
-import AlarmList from '@/components/AlarmList/alarm-list.vue';
+import AlarmList from '@/components/alarm-list/alarm-list.vue';
+import AlarmsListSettings from '@/components/alarms-list-settings.vue';
 
 export default {
   name: 'Alarm',
 
-  components: { AlarmList },
+  components: {
+    AlarmList,
+    AlarmsListSettings,
+  },
   data() {
     return {
       alarmProperty: {
@@ -35,6 +40,3 @@ export default {
 
 };
 </script>
-
-<style scoped>
-</style>

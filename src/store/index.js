@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import appModule from './modules/app';
 import i18nModule from './modules/i18n';
+import AuthModule from './modules/auth';
 import alarmsListSettingsModule from './modules/alarms-list-settings';
 import modalModule from './modules/modal';
 import popupModule from './modules/popup';
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     modal: modalModule,
     popup: popupModule,
     event: eventModule,
+    auth: AuthModule,
     mFilterEditor: mFilterEditorModule,
 
     ...entitiesModules,

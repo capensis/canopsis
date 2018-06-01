@@ -1,26 +1,14 @@
 export default {
   common: {
     hello: 'Hello',
+    submit: 'Submit',
+    login: 'Login',
+    username: 'Username',
+    password: 'Password',
     title: 'Title',
     save: 'Save',
     label: 'Label',
     value: 'Value',
-  },
-  alarmListSettings: {
-    alarmListSettings: 'Alarm list settings',
-    widgetTitle: 'Widget title',
-    columnName: 'Column name',
-    defaultSortColumn: 'Default Sort Column',
-    columnNames: 'Column names',
-    periodicRefresh: 'Periodic refresh',
-    defaultNumberOfElementsPerPage: 'Default number of elements/page',
-    elementsPerPage: 'Elements per page',
-    filterOnOpenResolved: 'Filter on Open/Resolved',
-    open: 'Open',
-    resolved: 'Resolved',
-    filters: 'Filters',
-    selectAFilter: 'Select a filter',
-    infoPopup: 'Info popup',
     add: 'Add',
     delete: 'Delete',
     edit: 'Edit',
@@ -48,6 +36,22 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+  },
+  alarmListSettings: {
+    alarmListSettings: 'Alarm list settings',
+    widgetTitle: 'Widget title',
+    columnName: 'Column name',
+    defaultSortColumn: 'Default Sort Column',
+    columnNames: 'Column names',
+    periodicRefresh: 'Periodic refresh',
+    defaultNumberOfElementsPerPage: 'Default number of elements/page',
+    elementsPerPage: 'Elements per page',
+    filterOnOpenResolved: 'Filter on Open/Resolved',
+    open: 'Open',
+    resolved: 'Resolved',
+    filters: 'Filters',
+    selectAFilter: 'Select a filter',
+    infoPopup: 'Info popup',
   },
   modals: {
     createAckEvent: {
@@ -194,4 +198,3 @@ export default {
     },
   },
 };
-

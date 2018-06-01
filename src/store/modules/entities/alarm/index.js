@@ -48,15 +48,15 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params,
-          dataPreparer: d => d.alarms,
+          dataPreparer: d => d[0].alarms,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
-            first: data.first,
-            last: data.last,
-            total: data.total,
+            first: data[0].first,
+            last: data[0].last,
+            total: data[0].total,
           },
         });
       } catch (err) {
@@ -77,7 +77,7 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params: paramsWithItemId,
-          dataPreparer: d => d.alarms,
+          dataPreparer: d => d[0].alarms,
         }, { root: true });
       } catch (err) {
         console.error(err);
