@@ -1,21 +1,21 @@
 <template lang="pug">
   div
     alarm-list-searching
-    div(v-if="!pending")
-      basic-list(:items="items")
-        tr.container(slot="header")
-          th.box(v-for="columnName in Object.keys(alarmProperty)")
-            span {{ columnName }}
-            list-sorting(:column="alarmProperty[columnName]")
-            th.box
-        tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
-            td.box
-              actions-panel.actions
-        tr.container(slot="expandedRow", slot-scope="item")
-            time-line(:alarmProps="item.props")
-      alarm-list-pagination(:meta="meta", :limit="limit")
-    loader(v-else)
+    basic-list(:items="items" v-if="pending")
+      tr.container(slot="header")
+        th.box(v-for="columnName in Object.keys(alarmProperty)")
+          span {{ columnName }}
+          list-sorting(:column="alarmProperty[columnName]")
+        th.box
+      tr.container(slot="row" slot-scope="item")
+        td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+        td.box
+          actions-panel.actions
+      tr.container(slot="expandedRow", slot-scope="item")
+        time-line(:alarmProps="item.props")
+    loader(:pending="pending")
+      alarm-list-loader
+    alarm-list-pagination(:meta="meta", :limit="limit")
 </template>
 
 <script>
