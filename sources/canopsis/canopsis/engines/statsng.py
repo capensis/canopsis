@@ -22,7 +22,7 @@ import os
 
 from canopsis.alerts.enums import AlarmField
 from canopsis.common import root_path
-from canopsis.common.influx import SECONDS, get_influxdb_client
+from canopsis.common.influx import SECONDS, get_influxdb_client, encode_tags
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.engines.core import Engine
@@ -91,10 +91,13 @@ class engine(Engine):
         """
         self.logger.info('received statcounterinc event')
 
+        # The measurement's name and the tags need to be encoded in utf-8
+        # because of a bug in influxdb-python<=2.12.0.
+        measurement = event[StatEventFields.counter_name].encode('utf-8')
         self.influxdb_client.write_points([{
-            'measurement': event[StatEventFields.counter_name],
+            'measurement': measurement,
             'time': event['timestamp'] * SECONDS,
-            'tags': self.get_tags(event),
+            'tags': encode_tags(self.get_tags(event)),
             'fields': {
                 'value': 1
             }
@@ -108,10 +111,13 @@ class engine(Engine):
         """
         self.logger.info('received statduration event')
 
+        # The measurement's name and the tags need to be encoded in utf-8
+        # because of a bug in influxdb-python<=2.12.0.
+        measurement = event[StatEventFields.counter_name].encode('utf-8')
         self.influxdb_client.write_points([{
-            'measurement': event[StatEventFields.duration_name],
+            'measurement': measurement,
             'time': event['timestamp'] * SECONDS,
-            'tags': self.get_tags(event),
+            'tags': encode(self.get_tags(event)),
             'fields': {
                 'value': event[StatEventFields.duration]
             }
