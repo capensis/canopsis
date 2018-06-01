@@ -12,7 +12,6 @@
 <script>
 import take from 'lodash/take';
 import sum from 'lodash/sum';
-import { ALARM_LIST_LOADER_HEIGHT, ALARM_LIST_LOADER_WIDTH } from '@/config';
 import VueContentLoading from 'vue-content-loading';
 
 export default {
@@ -21,16 +20,16 @@ export default {
   },
   data() {
     return {
-      rectHeight: 5,
+      rectHeight: 4,
       margin: 5,
       inBetweenSpace: 4,
       rectWidths: [40, 45, 25, 55, 20, 20, 20],
-      circleR: 3,
+      circleR: 2.5,
       lines: 9,
       rectPerLines: 7,
       circlePerLines: 3,
-      height: ALARM_LIST_LOADER_HEIGHT,
-      width: ALARM_LIST_LOADER_WIDTH,
+      height: 100,
+      width: 300,
     };
   },
   methods: {

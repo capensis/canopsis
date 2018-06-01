@@ -1,5 +1,5 @@
 <template lang="pug">
-  transition
+  transition(name="fade")
     div(v-show="pending")
       slot
 </template>

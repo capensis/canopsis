@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     alarm-list-searching
-    basic-list(:items="items" v-if="pending")
+    basic-list(:items="items")
       tr.container(slot="header")
         th.box(v-for="columnName in Object.keys(alarmProperty)")
           span {{ columnName }}
@@ -27,7 +27,8 @@ import getQuery from '@/helpers/pagination';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
 import ActionsPanel from '@/components/basic-component/actions-panel.vue';
-import Loader from '@/components/loaders/alarm-list-loader.vue';
+import AlarmListLoader from '@/components/loaders/alarm-list-loader.vue';
+import Loader from '@/components/loaders/loader.vue';
 import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
@@ -53,6 +54,7 @@ export default {
     ActionsPanel,
     BasicList,
     Loader,
+    AlarmListLoader,
   },
   props: {
     alarmProperty: {
