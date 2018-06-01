@@ -17,7 +17,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { PAGINATION_LIMIT } from '@/config';
 import { getQueryContext } from '@/helpers/pagination';
 
-import BasicList from '@/components/BasicComponent/basic-list.vue';
+import BasicList from '@/components/basic-component/basic-list.vue';
 import getProp from 'lodash/get';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
