@@ -1,5 +1,6 @@
 import { API_ROUTES } from '@/config';
 import { alarmSchema } from '@/store/schemas';
+import i18n from '@/i18n';
 import merge from 'lodash/merge';
 
 export const types = {
@@ -59,7 +60,7 @@ export default {
           },
         });
       } catch (err) {
-        console.error(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED);
       }
