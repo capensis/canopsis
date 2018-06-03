@@ -1,6 +1,11 @@
 <template lang="pug">
   div
-    modal(v-for="modal in modals", :key="modal.name", :name="modal.name", :dialogProps="modal.dialogProps")
+    modal(
+    v-for="modal in modals",
+    :key="modal.name",
+    :name="modal.name",
+    :dialogProps="modal.dialogProps || defaultDialogProps"
+    )
       component(:is="modal.name")
 </template>
 
@@ -33,19 +38,18 @@ export default {
     PbehaviorList,
   },
   data() {
-    const dialogProps = { maxWidth: 700, lazy: true };
-
     return {
       modals: [
-        { name: MODALS.createAckEvent, dialogProps },
-        { name: MODALS.createAssociateTicketEvent, dialogProps },
-        { name: MODALS.createCancelEvent, dialogProps },
-        { name: MODALS.createChangeStateEvent, dialogProps },
-        { name: MODALS.createDeclareTicketEvent, dialogProps },
-        { name: MODALS.createSnoozeEvent, dialogProps },
-        { name: MODALS.createPbehavior, dialogProps },
+        { name: MODALS.createAckEvent },
+        { name: MODALS.createAssociateTicketEvent },
+        { name: MODALS.createCancelEvent },
+        { name: MODALS.createChangeStateEvent },
+        { name: MODALS.createDeclareTicketEvent },
+        { name: MODALS.createSnoozeEvent },
+        { name: MODALS.createPbehavior },
         { name: MODALS.pbehaviorList, dialogProps: { maxWidth: 1280, lazy: true } },
       ],
+      defaultDialogProps: { maxWidth: 700, lazy: true },
     };
   },
 };

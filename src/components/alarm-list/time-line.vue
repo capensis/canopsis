@@ -31,15 +31,13 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
 
 import AlarmFlag from '@/components/basic-component/alarm-flag.vue';
 import AlarmChips from '@/components/basic-component/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
-
-import { STATES_CHIPS_AND_FLAGS_STYLE } from '@/config';
+import { ENTITY_STATES_STYLES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
@@ -82,7 +80,7 @@ export default {
     },
     stateName(state) {
       const stateValue = parseInt(state.replace('state:', ''), 10);
-      return STATES_CHIPS_AND_FLAGS_STYLE[stateValue].text;
+      return ENTITY_STATES_STYLES[stateValue].text;
     },
     stateSteps(steps) {
       return pickBy(steps, (value, key) => key.startsWith('state:'));

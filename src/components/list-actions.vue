@@ -32,7 +32,7 @@
 <script>
 import ModalMixin from '@/mixins/modal/modal';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES, ENTITIES_TYPES } from '@/constants';
 
 /**
  * Actions list component
@@ -50,7 +50,7 @@ export default {
   computed: {
     modalConfig() {
       return {
-        itemType: 'alarm',
+        itemType: ENTITIES_TYPES.alarm,
         itemId: this.item._id,
       };
     },

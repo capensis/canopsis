@@ -47,7 +47,7 @@ export default {
     return {
       form: {
         output: '',
-        state: ENTITY_STATES.info,
+        state: ENTITY_STATES.ok,
       },
     };
   },
@@ -60,7 +60,7 @@ export default {
     },
     colorsMap() {
       return {
-        [ENTITY_STATES.info]: 'info',
+        [ENTITY_STATES.ok]: 'info',
         [ENTITY_STATES.minor]: 'yellow',
         [ENTITY_STATES.major]: 'orange',
         [ENTITY_STATES.critical]: 'error',

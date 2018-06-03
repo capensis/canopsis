@@ -73,7 +73,7 @@ export default {
       title: 'Add event type: change state',
       output: 'Note',
       states: {
-        info: 'Info',
+        ok: 'Info',
         minor: 'Minor',
         major: 'Major',
         critical: 'Critical',

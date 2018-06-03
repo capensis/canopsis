@@ -27,14 +27,22 @@ export const EVENT_ENTITY_TYPES = {
 };
 
 export const ENTITY_STATES = {
-  info: 0,
+  ok: 0,
   minor: 1,
   major: 2,
   critical: 3,
 };
 
+export const ENTITY_STATUSES = {
+  off: 0,
+  ongoing: 1,
+  stealthy: 2,
+  flapping: 3,
+  cancelled: 4,
+};
+
 export const ENTITY_STATES_STYLES = {
-  [ENTITY_STATES.info]: {
+  [ENTITY_STATES.ok]: {
     color: 'green',
     text: 'ok',
     icon: 'assistant_photo',
@@ -57,27 +65,27 @@ export const ENTITY_STATES_STYLES = {
 };
 
 export const ENTITY_STATUS_STYLES = {
-  0: {
+  [ENTITY_STATUSES.off]: {
     color: 'black',
     text: 'off',
     icon: 'keyboard_arrow_up',
   },
-  1: {
+  [ENTITY_STATUSES.ongoing]: {
     color: 'grey',
     text: 'ongoing',
     icon: 'keyboard_arrow_up',
   },
-  2: {
+  [ENTITY_STATUSES.stealthy]: {
     color: 'yellow darken-1',
     text: 'stealthy',
     icon: 'keyboard_arrow_up',
   },
-  3: {
+  [ENTITY_STATUSES.flapping]: {
     color: 'orange',
     text: 'flapping',
     icon: 'keyboard_arrow_up',
   },
-  4: {
+  [ENTITY_STATUSES.cancelled]: {
     color: 'red',
     text: 'cancelled',
     icon: 'keyboard_arrow_up',
