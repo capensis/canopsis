@@ -1,8 +1,7 @@
 <template lang="pug">
   div
-    v-layout
-      mass-actions
     v-layout(justify-space-between)
+      mass-actions
       v-flex(xs5)
         alarm-list-searching
       v-btn(icon, @click="openSettingsPanel")
@@ -10,18 +9,23 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
+          th.box.checkbox
           th.box(v-for="columnName in Object.keys(alarmProperty)")
             span {{ columnName }}
             list-sorting(:column="alarmProperty[columnName]")
-            th.box
+            th.box.actions
         tr.container(slot="row" slot-scope="item")
+          v-checkbox.checkbox(
+          @click.stop,
+          v-model="idSelectedItems", :value="item.props._id", hide-details class="pa-0")
           td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
-          td.box
-            actions-panel.actions
+          td.box.actions
+            actions-panel
         tr.container(slot="expandedRow", slot-scope="item")
           time-line(:alarmProps="item.props")
       alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
+    p {{ checkbox }}
 </template>
 
 <script>
@@ -75,6 +79,12 @@ export default {
       default: PAGINATION_LIMIT,
     },
   },
+  data() {
+    return {
+      // alarm's ids selected by the checkbox
+      idSelectedItems: [],
+    };
+  },
   computed: {
     ...mapGetters([
       'items',
@@ -122,5 +132,11 @@ export default {
   .box{
     width: 10%;
     flex: 1;
+  }
+  .checkbox {
+    flex: 0.2;
+  }
+  .actions {
+    flex: 0.6;
   }
 </style>
