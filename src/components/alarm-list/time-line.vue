@@ -130,6 +130,7 @@ export default {
 
 <style lang="scss" scoped>
   $border_line: #DDDDE0;
+  $background: #FAFAFA;
   ul {
     list-style: none;
     color: #858585;
@@ -140,7 +141,7 @@ export default {
       border-image: linear-gradient(
           to bottom,
           $border-line 60%,
-          white) 1 100%;
+          $background) 1 100%;
     }
   }
   .timeline {
@@ -165,7 +166,7 @@ export default {
   .flag, .date {
      top: 0;
      position: absolute;
-     background: white;
+     background: $background;
    }
 
   .flag {
