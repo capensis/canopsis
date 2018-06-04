@@ -32,25 +32,27 @@ export default {
       width: 300,
     };
   },
-  methods: {
-    x(columnNumber) {
-      if (columnNumber === 1) {
-        return this.margin;
-      }
-      return sum(take(this.rectWidths, columnNumber - 1))
-              + ((columnNumber - 1) * this.inBetweenSpace)
-              + this.margin;
+  computed: {
+    x() {
+      return (columnNumber) => {
+        if (columnNumber === 1) {
+          return this.margin;
+        }
+        return sum(take(this.rectWidths, columnNumber - 1))
+        + ((columnNumber - 1) * this.inBetweenSpace)
+        + this.margin;
+      };
     },
-    cX(columnNumber) {
-      return this.x(this.rectPerLines) + this.rectWidths[this.rectPerLines - 1]
+    cX() {
+      return columnNumber => this.x(this.rectPerLines) + this.rectWidths[this.rectPerLines - 1]
               + (this.inBetweenSpace * columnNumber)
               + ((this.circleR * 2) * columnNumber);
     },
-    y(lineNumber) {
-      return lineNumber * (this.rectHeight + this.margin);
+    y() {
+      return lineNumber => lineNumber * (this.rectHeight + this.margin);
     },
-    cY(lineNumber) {
-      return this.y(lineNumber) + (this.circleR - 0.5);
+    cY() {
+      return lineNumber => this.y(lineNumber) + (this.circleR - 0.5);
     },
   },
 };
