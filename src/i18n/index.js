@@ -15,6 +15,7 @@ Vue.use(VueI18n);
 
 export default new VueI18n({
   locale: localStorageDataSource.getItem('locale') || DEFAULT_LOCALE,
+  fallbackLocale: DEFAULT_LOCALE,
   messages: {
     en: enTranslations,
     fr: frTranslations,
