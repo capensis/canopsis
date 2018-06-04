@@ -1,6 +1,10 @@
 <template lang="pug">
   div
-    alarm-list-searching
+    v-layout(justify-space-between)
+      v-flex(xs5)
+        alarm-list-searching
+      v-btn(icon, @click="openSettingsPanel")
+        v-icon settings
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
@@ -30,7 +34,8 @@ import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
 import PaginationMixin from '@/mixins/pagination';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
 /**
  * Alarm-list component.
@@ -57,7 +62,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters([
+    ...alarmMapGetters([
       'items',
       'meta',
       'pending',
@@ -65,8 +70,12 @@ export default {
   },
   methods: {
     getProp,
-    ...mapActions({
+    ...alarmMapActions({
       fetchListAction: 'fetchList',
+    }),
+
+    ...settingsMapActions({
+      openSettingsPanel: 'openPanel',
     }),
   },
 };

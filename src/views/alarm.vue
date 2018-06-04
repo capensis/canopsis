@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    alarms-list-settings
     alarm-list(
     :alarmProperties="$mq | mq(alarmProperties)",
     )
@@ -7,9 +8,13 @@
 
 <script>
 import AlarmList from '@/components/alarm-list/alarm-list.vue';
+import AlarmsListSettings from '@/components/alarms-list-settings.vue';
 
 export default {
-  components: { AlarmList },
+  components: {
+    AlarmList,
+    AlarmsListSettings,
+  },
   data() {
     return {
       alarmProperties: {
