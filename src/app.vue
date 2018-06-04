@@ -7,6 +7,7 @@
       v-content
         router-view
     modals
+    popups
 </template>
 
 
@@ -15,6 +16,7 @@ import TopBar from '@/components/layout/top-bar.vue';
 import SideBar from '@/components/layout/side-bar.vue';
 import { createNamespacedHelpers } from 'vuex';
 import Modals from '@/components/modals/index.vue';
+import Popups from '@/components/popups/index.vue';
 
 const { mapState } = createNamespacedHelpers('app');
 
@@ -24,6 +26,7 @@ export default {
     TopBar,
     SideBar,
     Modals,
+    Popups,
   },
   computed: {
     ...mapState({

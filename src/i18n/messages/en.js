@@ -19,6 +19,7 @@ export default {
     to: 'to',
     of: 'of',
     actionsLabel: 'Actions',
+    noResults: 'No results',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -180,6 +181,9 @@ export default {
         tooltip: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
       },
     },
+  },
+  errors: {
+    default: 'Something went wrong...',
   },
   mFilterEditor: {
     tabs: {

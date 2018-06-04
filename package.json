@@ -16,6 +16,7 @@
     "normalizr": "^3.2.4",
     "pug-plain-loader": "^1.0.0",
     "rrule": "^2.2.9",
+    "uid": "^0.0.2",
     "stickyfilljs": "^2.0.3",
     "vee-validate": "^2.0.6",
     "vue": "^2.5.13",
