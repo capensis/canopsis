@@ -49,6 +49,4 @@ export default {
   .expanded {
     margin: 15px;
   }
-  div {
-  }
 </style>
