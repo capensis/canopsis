@@ -17,34 +17,40 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      colors: {
+        [STATES.info]: 'green',
+        [STATES.minor]: 'yellow',
+        [STATES.major]: 'orange',
+        [STATES.critical]: 'red',
+      },
+      titles: {
+        [STATES.info]: 'Info',
+        [STATES.minor]: 'Minor',
+        [STATES.major]: 'Major',
+        [STATES.critical]: 'Critical',
+      },
+    };
+  },
   computed: {
     color() {
-      switch (this.stateId) {
-        case STATES.info:
-          return 'green';
-        case STATES.minor:
-          return 'yellow';
-        case STATES.major:
-          return 'orange';
-        case STATES.critical:
-          return 'red';
-        default:
-          return 'purple';
+      const color = this.colors[this.stateId];
+
+      if (color) {
+        return color;
       }
+
+      return 'purple';
     },
     text() {
-      switch (this.stateId) {
-        case STATES.info:
-          return 'Info';
-        case STATES.minor:
-          return 'Minor';
-        case STATES.major:
-          return 'Major';
-        case STATES.critical:
-          return 'Critical';
-        default:
-          return 'Unknown';
+      const title = this.titles[this.stateId];
+
+      if (title) {
+        return title;
       }
+
+      return 'Unknown';
     },
   },
 };
