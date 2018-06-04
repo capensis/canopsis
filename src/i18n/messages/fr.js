@@ -65,7 +65,7 @@ export default {
       creationDate: 'Date de création',
       duration: 'Durée',
       state: 'Etat',
-      status: 'Status',
+      status: 'Statut',
     },
   },
 };
