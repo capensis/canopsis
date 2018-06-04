@@ -37,10 +37,12 @@ import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.v
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
-import PageIterator from '../basic-component/pageIterator.vue';
+import PageIterator from '@/components/basic-component/pageIterator.vue';
+import { PAGINATION_LIMIT } from '@/config';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
+
 
 /**
  * Alarm-list component.
@@ -77,7 +79,7 @@ export default {
       'pending',
     ]),
     limit() {
-      return parseInt(this.$route.query.limit, 10);
+      return parseInt(this.$route.query.limit, 10) || PAGINATION_LIMIT;
     },
   },
   watch: {

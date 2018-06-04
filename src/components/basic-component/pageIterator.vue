@@ -25,6 +25,7 @@ export default {
           query: {
             ...this.$route.query,
             limit,
+            page: 1,
           },
         });
       },
@@ -37,5 +38,4 @@ export default {
   .select {
     max-width: 65px;
   }
-
 </style>
