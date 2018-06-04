@@ -8,12 +8,12 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          th.box(v-for="columnName in Object.keys(alarmProperty)")
-            span {{ columnName }}
-            list-sorting(:column="alarmProperty[columnName]")
+          th.box(v-for="column in alarmProperty")
+            span {{ column.text }}
+            list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+            td.box(v-for="property in alarmProperty") {{ item.props | get(property.value) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
@@ -24,7 +24,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import getProp from 'lodash/get';
 
 import { PAGINATION_LIMIT } from '@/config';
 import getQuery from '@/helpers/pagination';
@@ -61,9 +60,9 @@ export default {
   },
   props: {
     alarmProperty: {
-      type: Object,
+      type: Array,
       default() {
-        return {};
+        return [];
       },
     },
     limit: {
@@ -87,7 +86,6 @@ export default {
     this.fetchList(this.fetchingParams);
   },
   methods: {
-    getProp,
     getQuery,
     ...mapActions({
       fetchListAction: 'fetchList',
