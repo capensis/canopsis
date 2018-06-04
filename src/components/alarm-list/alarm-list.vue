@@ -1,5 +1,7 @@
 <template lang="pug">
   div
+    v-layout
+      mass-actions
     v-layout(justify-space-between)
       v-flex(xs5)
         alarm-list-searching
@@ -13,11 +15,11 @@
             list-sorting(:column="alarmProperty[columnName]")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
-            td.box
-              actions-panel.actions
+          td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
+          td.box
+            actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
-            time-line(:alarmProps="item.props")
+          time-line(:alarmProps="item.props")
       alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
@@ -32,6 +34,7 @@ import getQuery from '@/helpers/pagination';
 import BasicList from '@/components/basic-component/basic-list.vue';
 import ActionsPanel from '@/components/basic-component/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
+import MassActions from '@/components/alarm-list/mass-actions.vue';
 import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
@@ -53,6 +56,7 @@ export default {
   components: {
     ListSorting,
     TimeLine,
+    MassActions,
     AlarmListSearching,
     AlarmListPagination,
     ActionsPanel,
