@@ -25,7 +25,6 @@
             time-line(:alarmProps="item.props")
       pagination(:meta="meta", :limit="limit")
     loader(v-else)
-    p {{ selected }} FD
 </template>
 
 <script>
