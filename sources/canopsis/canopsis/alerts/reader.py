@@ -897,8 +897,6 @@ class AlertsReader(object):
         }
         return ret_val
 
-    #def sorted_alarms_list(self, sort_key, alarm_list):
-
     def count_alarms_by_period(
             self,
             start,
