@@ -125,7 +125,8 @@ def encode_tags(tags):
     encoded_tags = {}
     for key, value in tags.items():
         key = key.encode('utf-8')
-        value = value.encode('utf-8')
+        if value:
+            value = value.encode('utf-8')
         encoded_tags[key] = value
 
     return encoded_tags
