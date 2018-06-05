@@ -662,7 +662,8 @@ class AlertsReader(object):
                 limit,
                 search,
                 natural_search,
-                active_columns
+                active_columns,
+                with_steps
             )
 
         if lookups is None:
@@ -700,15 +701,15 @@ class AlertsReader(object):
                     "foreignField": "_id",
                     "as": "entity"
                 }
-            },
-            {
-                "$match": {"entity.enabled": True}
-            },
-            {
+            }, {
                 "$unwind": {
                     "path": "$entity",
                     "preserveNullAndEmptyArrays": True,
                 }
+            }, {
+                "$match": {"$or": [
+                    {"entity.enabled": True}, {"entity": {"$exists": False}}
+                ]}
             }, {
                 "$match": final_filter
             }, {
@@ -718,11 +719,14 @@ class AlertsReader(object):
             }
         ]
 
+        if not with_steps:
+            pipeline.insert(0, {"$project": {"v.steps": False}})
+
         self.add_pbh_filter(pipeline, filter_)
 
         pipeline.append({
-                "$skip": skip
-            })
+            "$skip": skip
+        })
 
         if limit is not None:
             pipeline.append({"$limit": limit})
@@ -742,10 +746,6 @@ class AlertsReader(object):
 
         first = 0 if limited_total == 0 else skip + 1
         last = 0 if limited_total == 0 else skip + limited_total
-
-        if not with_steps:
-            for alarm in alarms:
-                alarm['v'].pop(AlarmField.steps.value)
 
         res = {
             'alarms': alarms,
@@ -768,7 +768,8 @@ class AlertsReader(object):
             limit=None,
             search='',
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            with_steps=False
     ):
         """
         Return filtered, sorted and paginated alarms with resources sorted.
@@ -792,6 +793,8 @@ class AlertsReader(object):
 
         :param list active_columns: the list of alarms columns on which to
         apply the natural search filter.
+        :param bool with_steps: True if you want alarm steps in your alarm.
+
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
@@ -842,6 +845,9 @@ class AlertsReader(object):
                 }
             }
         ]
+
+        if not with_steps:
+            pipeline.insert(0, {"$project": {"v.steps": False}})
 
         self.add_pbh_filter(pipeline, filter_)
 
@@ -957,7 +963,7 @@ def remove_resources_alarms(alarms):
     for i in alarms:
         val = i.get('v').get('state').get('val')
         states_list.append(val)
-        if i.get('entity').get('type') == 'component':
+        if i.get('entity', {}).get('type') == 'component':
             state_comp = val
             alarm_comp = i
 
@@ -966,6 +972,7 @@ def remove_resources_alarms(alarms):
 
     ret_val = [alarm_comp]
     for alarm in alarms:
-        if alarm.get('v').get('state').get('val') > state_comp:
+        if alarm.get('v', {}).get('state', {}).get('val') > state_comp:
             ret_val.append(alarm)
+
     return ret_val
