@@ -9,7 +9,7 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          th.box.checkbox
+          v-checkbox.checkbox.box( @click.stop, v-model="idSelectedItems", :value="allIds(items)")
           th.box(v-for="columnName in Object.keys(alarmProperty)")
             span {{ columnName }}
             list-sorting(:column="alarmProperty[columnName]")
@@ -25,7 +25,7 @@
           time-line(:alarmProps="item.props")
       alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
-    p {{ checkbox }}
+    p {{ idSelectedItems }}
 </template>
 
 <script>
@@ -103,6 +103,13 @@ export default {
   methods: {
     getProp,
     getQuery,
+    allIds(items) {
+      const a = [];
+      items.forEach((item) => {
+        a.push(item._id);
+      });
+      return a;
+    },
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
