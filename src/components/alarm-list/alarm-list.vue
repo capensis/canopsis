@@ -85,9 +85,12 @@ export default {
   methods: {
     selectAll(items) {
       this.selected = [];
-      items.forEach((item) => {
-        this.selected.push(item._id);
-      });
+      if (!this.allSelected) {
+        items.forEach((item) => {
+          this.selected.push(item._id);
+        });
+      }
+      this.allSelected = !this.allSelected;
     },
     select() {
       this.allSelected = false;
