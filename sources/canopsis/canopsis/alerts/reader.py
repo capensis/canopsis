@@ -35,6 +35,7 @@ from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
 from canopsis.common import root_path
+from canopsis.common.utils import get_sub_key
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.entitylink.manager import Entitylink
@@ -878,17 +879,19 @@ class AlertsReader(object):
             last = len(filtred_alarms)
 
         rev = (sort_dir == 'DESC')
-        filtered_alarm = sorted(filtered_alarm, key=sort_key, reverse=rev)
+        sorted_alarms = sorted(filtred_alarms, key=lambda k: get_sub_key(k, sort_key),reverse=rev)
 
         len_after_truncate = len(filtred_alarms)
         ret_val = {
-            'alarms': filtred_alarms,
+            'alarms': sorted_alarms,
             'total': len_before_truncate,
             'truncated': len_after_truncate < len_before_truncate,
             'first': skip,
             'last': last
         }
         return ret_val
+
+    #def sorted_alarms_list(self, sort_key, alarm_list):
 
     def count_alarms_by_period(
             self,
