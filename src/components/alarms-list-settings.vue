@@ -1,5 +1,12 @@
 <template lang="pug">
-  v-navigation-drawer(:value="isPanelOpen", disable-resize-watcher, stateless, touchless, right, app)
+  v-navigation-drawer(
+    :value="isPanelOpen",
+    clipped,
+    right,
+    stateless,
+    app,
+    :temporary="$mq === 'mobile' || $mq === 'tablet' ? true : false"
+  )
     v-toolbar(color="blue darken-4")
       v-list
         v-list-tile

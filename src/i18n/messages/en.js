@@ -1,6 +1,10 @@
 export default {
   common: {
     hello: 'Hello',
+    submit: 'Submit',
+    login: 'Login',
+    username: 'Username',
+    password: 'Password',
     title: 'Title',
     save: 'Save',
     label: 'Label',
@@ -15,6 +19,7 @@ export default {
     to: 'to',
     of: 'of',
     actionsLabel: 'Actions',
+    noResults: 'No results',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -106,6 +111,12 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
+      output: 'Output',
+      lastUpdateDate: 'Last update date',
+      creationDate: 'Creation date',
+      duration: 'Duration',
+      state: 'State',
+      status: 'Status',
     },
     /**
      * This object for pbehavior fields from database
@@ -172,6 +183,9 @@ export default {
       },
     },
   },
+  errors: {
+    default: 'Something went wrong...',
+  },
   mFilterEditor: {
     tabs: {
       visualEditor: 'Visual Editor',
@@ -195,4 +209,3 @@ export default {
     defineATemplate: 'To define a template for this window, go to the alarms list settings',
   },
 };
-
