@@ -113,11 +113,11 @@ class engine(Engine):
 
         # The measurement's name and the tags need to be encoded in utf-8
         # because of a bug in influxdb-python<=2.12.0.
-        measurement = event[StatEventFields.counter_name].encode('utf-8')
+        measurement = event[StatEventFields.duration_name].encode('utf-8')
         self.influxdb_client.write_points([{
             'measurement': measurement,
             'time': event['timestamp'] * SECONDS,
-            'tags': encode(self.get_tags(event)),
+            'tags': encode_tags(self.get_tags(event)),
             'fields': {
                 'value': event[StatEventFields.duration]
             }
