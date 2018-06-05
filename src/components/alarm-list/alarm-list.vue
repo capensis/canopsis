@@ -70,7 +70,7 @@ export default {
   },
   data() {
     return {
-      // alarm's ids selected by the checkbox
+      // alarm's ids selected by the checkboxes
       selected: [],
       allSelected: false,
     };
