@@ -1,6 +1,16 @@
 <template lang="pug">
   div
-    v-layout(justify-space-between)
+    v-layout(justify-end, align-center)
+      v-chip(
+        v-if="liveReportingFilter"
+        @input="removeLiveReportingFilter",
+        close,
+        label,
+        color="blue darken-4 white--text"
+      ) {{ liveReportingFilter.text }}
+      v-btn(@click="handleLiveReportingClick", icon, small)
+        v-icon(:color="liveReportingFilter ? 'blue' : 'black'") schedule
+    v-layout
       v-flex(xs5)
         alarm-list-searching
       v-btn(icon, @click="openSettingsPanel")
@@ -37,7 +47,9 @@ import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: alarmsListMapActions, mapGetters: alarmsListMapGetters } = createNamespacedHelpers('alarmsList');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
+const { mapActions: modalsMapActions } = createNamespacedHelpers('modal');
 
 /**
  * Alarm-list component.
@@ -76,6 +88,7 @@ export default {
       'meta',
       'pending',
     ]),
+    ...alarmsListMapGetters(['liveReportingFilter']),
   },
   watch: {
     $route() {
@@ -87,16 +100,29 @@ export default {
   },
   methods: {
     getQuery,
+
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
+
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
+
+    ...modalsMapActions({
+      showModal: 'show',
+    }),
+
+    ...alarmsListMapActions(['removeLiveReportingFilter']),
+
     fetchList() {
       this.fetchListAction({
         params: this.getQuery(),
       });
+    },
+
+    handleLiveReportingClick() {
+      this.showModal({ name: 'edit-live-reporting' });
     },
   },
 };

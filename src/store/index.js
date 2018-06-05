@@ -8,6 +8,7 @@ import alarmsListSettingsModule from './modules/alarms-list-settings';
 import modalModule from './modules/modal';
 import popupModule from './modules/popup';
 import eventModule from './modules/event';
+import alarmsListModule from './modules/alarms-list';
 import mFilterEditorModule from './modules/mfilter-editor';
 import entitiesModules from './modules/entities';
 
@@ -23,6 +24,7 @@ export default new Vuex.Store({
     modal: modalModule,
     popup: popupModule,
     event: eventModule,
+    alarmsList: alarmsListModule,
     auth: AuthModule,
     mFilterEditor: mFilterEditorModule,
 

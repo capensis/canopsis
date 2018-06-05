@@ -16,6 +16,8 @@
       create-pbehavior
     modal(name="pbehavior-list", :dialogProps="{ maxWidth: 1280, lazy: true }")
       pbehavior-list
+    modal(name="edit-live-reporting", :dialogProps="{ maxWidth: 700, lazy: true }")
+      edit-live-reporting
 </template>
 
 <script>
@@ -28,6 +30,7 @@ import CreateDeclareTicketEvent from './create-declare-ticket-event.vue';
 import CreateSnoozeEvent from './create-snooze-event.vue';
 import CreatePbehavior from './create-pbehavior.vue';
 import PbehaviorList from './pbehavior-list.vue';
+import EditLiveReporting from './edit-live-reporting.vue';
 
 /**
  * Wrapper for all modal windows
@@ -43,6 +46,7 @@ export default {
     CreateSnoozeEvent,
     CreatePbehavior,
     PbehaviorList,
+    EditLiveReporting,
   },
 };
 </script>
