@@ -9,15 +9,15 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          v-checkbox.checkbox.box( @click.stop, v-model="idSelectedItems", :value="allIds(items)")
+          v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
           th.box(v-for="columnName in Object.keys(alarmProperty)")
             span {{ columnName }}
             list-sorting(:column="alarmProperty[columnName]")
             th.box.actions
         tr.container(slot="row" slot-scope="item")
           v-checkbox.checkbox(
-          @click.stop,
-          v-model="idSelectedItems", :value="item.props._id", hide-details class="pa-0")
+          @click.stop="select",
+          v-model="selected", :value="item.props._id", hide-details)
           td.box(v-for="property in Object.values(alarmProperty)") {{ getProp(item.props, property) }}
           td.box.actions
             actions-panel
@@ -25,7 +25,7 @@
           time-line(:alarmProps="item.props")
       alarm-list-pagination(:meta="meta", :limit="limit")
     loader(v-else)
-    p {{ idSelectedItems }}
+    p {{ selected }} FD
 </template>
 
 <script>
@@ -82,7 +82,8 @@ export default {
   data() {
     return {
       // alarm's ids selected by the checkbox
-      idSelectedItems: [],
+      selected: [],
+      allSelected: false,
     };
   },
   computed: {
@@ -103,12 +104,14 @@ export default {
   methods: {
     getProp,
     getQuery,
-    allIds(items) {
-      const a = [];
+    selectAll(items) {
+      this.selected = [];
       items.forEach((item) => {
-        a.push(item._id);
+        this.selected.push(item._id);
       });
-      return a;
+    },
+    select() {
+      this.allSelected = false;
     },
     ...mapActions({
       fetchListAction: 'fetchList',
