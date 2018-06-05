@@ -3,7 +3,7 @@
     v-layout(justify-end, align-center)
       v-chip(
         v-if="liveReportingFilter"
-        @input="removeLiveReportingFilter",
+        @input="handleRemoveLiveReportingFilter",
         close,
         label,
         color="blue darken-4 white--text"
@@ -123,6 +123,11 @@ export default {
 
     handleLiveReportingClick() {
       this.showModal({ name: 'edit-live-reporting' });
+    },
+
+    handleRemoveLiveReportingFilter() {
+      this.removeLiveReportingFilter();
+      this.fetchList();
     },
   },
 };

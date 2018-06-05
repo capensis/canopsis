@@ -18,9 +18,9 @@
           )
       v-layout(wrap, v-if="isCustomRangeEnabled")
         v-flex(xs12)
-          date-time-picker(v-model="tstart.toDate()", clearable, label="tstart")
+          date-time-picker(v-model="tstart", clearable, label="tstart")
         v-flex(xs12)
-          date-time-picker(v-model="tend.toDate()", clearable, label="tend")
+          date-time-picker(v-model="tend", clearable, label="tend")
       v-btn(@click="handleSubmit", color="green darken-4 white--text", small) Apply
 </template>
 
@@ -71,13 +71,13 @@ export default {
           value: 'custom',
         },
       ],
-      tstart: moment(),
-      tend: moment(),
+      tstart: new Date(),
+      tend: new Date(),
     };
   },
   computed: {
     isCustomRangeEnabled() {
-      return this.selectedInterval === 'custom';
+      return this.selectedInterval.value === 'custom';
     },
   },
   methods: {
@@ -91,38 +91,38 @@ export default {
 
     handleIntervalClick(interval) {
       if (interval.value === 'today') {
-        this.tstart = moment().startOf('day');
-        this.tend = moment();
+        this.tstart = moment().startOf('day').toDate();
+        this.tend = moment().toDate();
       }
 
       if (interval.value === 'yesterday') {
-        this.tstart = moment().subtract(1, 'day').startOf('day');
-        this.tend = moment().subtract(1, 'day').endOf('day');
+        this.tstart = moment().subtract(1, 'day').startOf('day').toDate();
+        this.tend = moment().subtract(1, 'day').endOf('day').toDate();
       }
 
       if (interval.value === 'last7Days') {
-        this.tstart = moment().subtract(7, 'day');
-        this.tend = moment();
+        this.tstart = moment().subtract(7, 'day').toDate();
+        this.tend = moment().toDate();
       }
 
       if (interval.value === 'last30Days') {
-        this.tstart = moment().subtract(30, 'day');
-        this.tend = moment();
+        this.tstart = moment().subtract(30, 'day').toDate();
+        this.tend = moment().toDate();
       }
 
       if (interval.value === 'thisMonth') {
-        this.tstart = moment().startOf('month');
-        this.tend = moment();
+        this.tstart = moment().startOf('month').toDate();
+        this.tend = moment().toDate();
       }
 
       if (interval.value === 'lastMonth') {
-        this.tstart = moment().subtract(1, 'month').startOf('month');
-        this.tend = moment().startOf('month');
+        this.tstart = moment().subtract(1, 'month').startOf('month').toDate();
+        this.tend = moment().startOf('month').toDate();
       }
     },
     handleSubmit() {
       this.addLiveReportingFilter(this.selectedInterval);
-      this.fetchAlarmList({ params: { tstart: this.tstart.unix(), tstop: this.tend.unix() } });
+      this.fetchAlarmList({ params: { tstart: this.tstart.getTime() / 1000, tstop: this.tend.getTime() / 1000 } });
       this.hideModal();
     },
   },
