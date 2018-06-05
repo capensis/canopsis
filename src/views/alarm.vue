@@ -18,22 +18,52 @@ export default {
   data() {
     return {
       alarmProperties: {
-        laptop: {
-          Connector: 'v.connector',
-          Component: 'v.component',
-          Resource: 'v.resource',
-          Output: 'v.initial_output',
-          'Last Update Date': 'v.last_update_date',
-        },
-        tablet: {
-          Connector: 'v.connector',
-          Component: 'v.component',
-          Resource: 'v.resource',
-        },
-        mobile: {
-          Connector: 'v.connector',
-          Component: 'v.component',
-        },
+        laptop: [
+          {
+            text: this.$t('tables.alarmGeneral.connector'),
+            value: 'v.connector_name',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.component'),
+            value: 'v.component',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.resource'),
+            value: 'v.resource',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.output'),
+            value: 'v.initial_output',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.lastUpdateDate'),
+            value: 'v.last_update_date',
+          },
+        ],
+        tablet: [
+          {
+            text: this.$t('tables.alarmGeneral.connector'),
+            value: 'v.connector',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.component'),
+            value: 'v.component',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.resource'),
+            value: 'v.resource',
+          },
+        ],
+        mobile: [
+          {
+            text: this.$t('tables.alarmGeneral.connector'),
+            value: 'v.connector',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.component'),
+            value: 'v.component',
+          },
+        ],
       },
     };
   },

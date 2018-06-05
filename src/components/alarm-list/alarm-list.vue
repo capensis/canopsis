@@ -8,12 +8,12 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          th.box(v-for="columnName in Object.keys(alarmProperties)")
-            span {{ columnName }}
-            list-sorting(:column="alarmProperties[columnName]")
+          th.box(v-for="column in alarmProperties")
+            span {{ column.text }}
+            list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperties)") {{ getProp(item.props, property) }}
+            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value) }}
             td.box
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
@@ -24,7 +24,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import getProp from 'lodash/get';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
 import ActionsPanel from '@/components/basic-component/actions-panel.vue';
@@ -57,8 +56,8 @@ export default {
   mixins: [PaginationMixin],
   props: {
     alarmProperties: {
-      type: Object,
-      default: () => ({}),
+      type: Array,
+      default: () => ([]),
     },
   },
   computed: {
@@ -69,7 +68,6 @@ export default {
     ]),
   },
   methods: {
-    getProp,
     ...alarmMapActions({
       fetchListAction: 'fetchList',
     }),
