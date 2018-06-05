@@ -884,8 +884,14 @@ class AlertsReader(object):
             filtred_alarms = filtred_alarms[skip:]
             last = len(filtred_alarms)
 
-        rev = (sort_dir == 'DESC')
-        sorted_alarms = sorted(filtred_alarms, key=lambda k: get_sub_key(k, sort_key),reverse=rev)
+
+
+        rev = (sort_dir == -1)
+        sorted_alarms = sorted(
+            filtred_alarms,
+            key=lambda k: get_sub_key(k, sort_key),
+            reverse=rev
+        )
 
         len_after_truncate = len(filtred_alarms)
         ret_val = {
