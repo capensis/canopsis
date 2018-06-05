@@ -7,11 +7,10 @@ Manage mongodb connections.
 
 from __future__ import unicode_literals
 
-import time
 import hashlib
+import time
 
 from canopsis.confng import Configuration, Ini
-
 from pymongo import MongoClient, ReadPreference
 from pymongo.errors import AutoReconnect
 
@@ -32,6 +31,10 @@ class MongoStore(object):
 
     @staticmethod
     def get_default(from_singleton=True):
+        """
+        :returns: a defautl connection to Mongo using etc/common/mongo_store.conf
+        :rtype: MongoStore
+        """
         global singletons_cache
 
         cfg = Configuration.load(MongoStore.CONF_PATH, Ini)
@@ -115,13 +118,15 @@ class MongoStore(object):
         You must wrap it with MongoCollection if you want automatic AutoReconnect handling.
 
         :param name: the name of the collection
-        :rtype: Collection
+        :rtype: pymongo.collection.Collection
         """
         return MongoStore.hr(getattr, self.client, name)
 
     def get_database(self, name):
         """
         Returns a raw pymongo Database object.
+
+        :rtype: pymongo.database.Database
         """
         return MongoStore.hr(getattr, self.conn, name)
 
@@ -134,9 +139,15 @@ class MongoStore(object):
 
     @property
     def authenticated(self):
+        """
+        :rtype: bool
+        """
         return self._authenticated
 
     def alive(self):
+        """
+        :rtype: bool
+        """
         return self.conn.alive() and self.conn is not None
 
     def close(self):
