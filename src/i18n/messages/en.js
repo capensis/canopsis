@@ -110,6 +110,12 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
+      output: 'Output',
+      lastUpdateDate: 'Last update date',
+      creationDate: 'Creation date',
+      duration: 'Duration',
+      state: 'State',
+      status: 'Status',
     },
     /**
      * This object for pbehavior fields from database
