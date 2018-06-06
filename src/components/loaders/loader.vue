@@ -1,6 +1,6 @@
 <template lang="pug">
   transition(name="fade")
-    div(v-show="pending")
+    div.loader(v-show="pending")
       slot
 </template>
 
@@ -17,9 +17,15 @@ export default {
 
 <style scoped>
   .fade-enter-active, .fade-leave-active {
-    transition: opacity ;
+    transition: opacity .001ms;
   }
   .fade-enter, .fade-leave-to {
     opacity: 0;
+  }
+  .loader{
+    position: absolute;
+    width: 100%;
+    top: 15%;
+    z-index: 999;
   }
 </style>

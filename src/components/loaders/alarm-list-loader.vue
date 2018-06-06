@@ -1,11 +1,11 @@
 <template lang="pug">
   loader(:pending="pending")
     vue-content-loading(:width="width", :height="height")
-     template(v-for="i in lines")
+      template(v-for="i in lines")
         template(v-for="j in rectPerLines")
           rect(
-                :x="x(j)", :y="y(i)",
-                :width="rectWidths[j-1]", rx="1", ry="1", :height="rectHeight")
+            :x="x(j)", :y="y(i)",
+            :width="rectWidths[j-1]", rx="1", ry="1", :height="rectHeight")
         template(v-for="j in circlePerLines")
           circle(:r="circleR", :cy="cY(i)", :cx="cX(j)")
 </template>

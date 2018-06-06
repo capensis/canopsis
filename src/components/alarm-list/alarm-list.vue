@@ -6,6 +6,7 @@
       v-btn(icon, @click="openSettingsPanel")
         v-icon settings
     div
+      loader
       basic-list(:items="items")
         tr.container(slot="header")
           th.box(v-for="column in alarmProperties")
