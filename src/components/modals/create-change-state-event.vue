@@ -20,7 +20,7 @@
               ) {{ $t(`modals.createChangeStateEvent.states.${button}`) }}
           v-layout(row)
             v-text-field(
-            :label="$t('modals.createChangeStateEvent.output')",
+            :label="$t('modals.createChangeStateEvent.fields.output')",
             :error-messages="errors.collect('output')",
             v-model="form.output",
             v-validate="'required'",

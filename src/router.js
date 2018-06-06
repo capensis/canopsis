@@ -7,7 +7,6 @@ import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
 import Filter from '@/views/filter.vue';
 import Rrule from '@/components/other/rrule/rrule-form.vue';
-import Actions from '@/views/actions.vue';
 
 // EXAMPLES
 
@@ -46,11 +45,5 @@ export default new Router({
       name: 'rrule',
       component: Rrule,
     },
-    {
-      path: '/actions',
-      name: 'action',
-      component: Actions,
-    },
-
   ],
 });
