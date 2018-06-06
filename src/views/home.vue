@@ -1,18 +1,16 @@
 <template lang="pug">
-  div
-    alarms-list-settings
-    m-filter-editor
+  div#brand Canopsis Next
 </template>
 
-<script>
-import AlarmsListSettings from '@/components/alarms-list-settings.vue';
-import MFilterEditor from '@/components/mfilter-editor.vue';
-
-export default {
-  name: 'home',
-  components: {
-    AlarmsListSettings,
-    MFilterEditor,
-  },
-};
-</script>
+<style lang="scss" scoped>
+  #brand {
+    text-align: center;
+    position: relative;
+    top: 25%;
+    max-width: 50%;
+    max-height: 5em;
+    margin: auto;
+    font-weight: bold;
+    font-size: 2em;
+  }
+</style>
