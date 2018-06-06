@@ -117,7 +117,7 @@ export default {
     createAckRemove: {
       title: 'Add event type: ackremove',
     },
-    createDeclareTicker: {
+    createDeclareTicket: {
       title: 'Add event type: declareticket',
     },
     createAssociateTicket: {

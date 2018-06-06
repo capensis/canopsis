@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { ENTITY_STATES_STYLES, ENTITY_STATUS_STYLES } from '@/constants';
+import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES } from '@/constants';
 
 export default {
   name: 'alarm-flag',
@@ -28,7 +28,7 @@ export default {
       } else if (this.isCroppedState) {
         return 'black';
       }
-      return ENTITY_STATES_STYLES[this.value].color;
+      return ENTITIES_STATES_STYLES[this.value].color;
     },
     icon() {
       if (this.isStatus) {
@@ -36,7 +36,7 @@ export default {
       } else if (this.isCroppedState) {
         return 'vertical_align_center';
       }
-      return ENTITY_STATES_STYLES[this.value].icon;
+      return ENTITIES_STATES_STYLES[this.value].icon;
     },
   },
 };

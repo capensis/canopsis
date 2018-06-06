@@ -33,7 +33,7 @@
 <script>
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, ENTITY_STATES, MODALS } from '@/constants';
+import { EVENT_ENTITY_TYPES, ENTITIES_STATES, MODALS } from '@/constants';
 
 
 export default {
@@ -47,23 +47,23 @@ export default {
     return {
       form: {
         output: '',
-        state: ENTITY_STATES.ok,
+        state: ENTITIES_STATES.ok,
       },
     };
   },
   computed: {
     buttons() {
-      return Object.keys(ENTITY_STATES);
+      return Object.keys(ENTITIES_STATES);
     },
     states() {
-      return ENTITY_STATES;
+      return ENTITIES_STATES;
     },
     colorsMap() {
       return {
-        [ENTITY_STATES.ok]: 'info',
-        [ENTITY_STATES.minor]: 'yellow',
-        [ENTITY_STATES.major]: 'orange',
-        [ENTITY_STATES.critical]: 'error',
+        [ENTITIES_STATES.ok]: 'info',
+        [ENTITIES_STATES.minor]: 'yellow',
+        [ENTITIES_STATES.major]: 'orange',
+        [ENTITIES_STATES.critical]: 'error',
       };
     },
   },

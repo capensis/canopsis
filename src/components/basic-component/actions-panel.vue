@@ -38,7 +38,7 @@
 <script>
 import ModalMixin from '@/mixins/modal/modal';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITY_STATUSES, MODALS } from '@/constants';
+import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
@@ -117,7 +117,7 @@ export default {
     actions() {
       const { actionsMap } = this;
 
-      if ([ENTITY_STATUSES.ongoing, ENTITY_STATUSES.flapping].includes(this.item.v.status.val)) {
+      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
             main: [actionsMap.declareTicket, actionsMap.associateTicket, actionsMap.cancel],
@@ -135,7 +135,7 @@ export default {
           main: [actionsMap.ack, actionsMap.fastAck],
           dropDown: [],
         };
-      } else if (this.item.v.status.val === ENTITY_STATUSES.cancelled) {
+      } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
         return { // TODO: add restore alarm action
           main: [actionsMap.pbehaviorList],
           dropDown: [],

@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     v-card
       v-card-title
-        span.headline {{ $t('modal.createDeclareTicket.title') }}
+        span.headline {{ $t('modals.createDeclareTicket.title') }}
       v-card-text
         v-container
           v-layout(row)

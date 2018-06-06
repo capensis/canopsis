@@ -37,7 +37,7 @@ import capitalize from 'lodash/capitalize';
 import AlarmFlag from '@/components/basic-component/alarm-flag.vue';
 import AlarmChips from '@/components/basic-component/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
-import { ENTITY_STATES_STYLES } from '@/constants';
+import { ENTITIES_STATES_STYLES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
@@ -80,7 +80,7 @@ export default {
     },
     stateName(state) {
       const stateValue = parseInt(state.replace('state:', ''), 10);
-      return ENTITY_STATES_STYLES[stateValue].text;
+      return ENTITIES_STATES_STYLES[stateValue].text;
     },
     stateSteps(steps) {
       return pickBy(steps, (value, key) => key.startsWith('state:'));

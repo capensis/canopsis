@@ -26,14 +26,14 @@ export const EVENT_ENTITY_TYPES = {
   snooze: 'snooze',
 };
 
-export const ENTITY_STATES = {
+export const ENTITIES_STATES = {
   ok: 0,
   minor: 1,
   major: 2,
   critical: 3,
 };
 
-export const ENTITY_STATUSES = {
+export const ENTITIES_STATUSES = {
   off: 0,
   ongoing: 1,
   stealthy: 2,
@@ -41,23 +41,23 @@ export const ENTITY_STATUSES = {
   cancelled: 4,
 };
 
-export const ENTITY_STATES_STYLES = {
-  [ENTITY_STATES.ok]: {
+export const ENTITIES_STATES_STYLES = {
+  [ENTITIES_STATES.ok]: {
     color: 'green',
     text: 'ok',
     icon: 'assistant_photo',
   },
-  [ENTITY_STATES.minor]: {
+  [ENTITIES_STATES.minor]: {
     color: 'yellow darken-1',
     text: 'minor',
     icon: 'assistant_photo',
   },
-  [ENTITY_STATES.major]: {
+  [ENTITIES_STATES.major]: {
     color: 'orange',
     text: 'major',
     icon: 'assistant_photo',
   },
-  [ENTITY_STATES.critical]: {
+  [ENTITIES_STATES.critical]: {
     color: 'red',
     text: 'critical',
     icon: 'assistant_photo',
@@ -65,27 +65,27 @@ export const ENTITY_STATES_STYLES = {
 };
 
 export const ENTITY_STATUS_STYLES = {
-  [ENTITY_STATUSES.off]: {
+  [ENTITIES_STATUSES.off]: {
     color: 'black',
     text: 'off',
     icon: 'keyboard_arrow_up',
   },
-  [ENTITY_STATUSES.ongoing]: {
+  [ENTITIES_STATUSES.ongoing]: {
     color: 'grey',
     text: 'ongoing',
     icon: 'keyboard_arrow_up',
   },
-  [ENTITY_STATUSES.stealthy]: {
+  [ENTITIES_STATUSES.stealthy]: {
     color: 'yellow darken-1',
     text: 'stealthy',
     icon: 'keyboard_arrow_up',
   },
-  [ENTITY_STATUSES.flapping]: {
+  [ENTITIES_STATUSES.flapping]: {
     color: 'orange',
     text: 'flapping',
     icon: 'keyboard_arrow_up',
   },
-  [ENTITY_STATUSES.cancelled]: {
+  [ENTITIES_STATUSES.cancelled]: {
     color: 'red',
     text: 'cancelled',
     icon: 'keyboard_arrow_up',

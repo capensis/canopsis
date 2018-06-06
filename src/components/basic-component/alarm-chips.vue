@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { ENTITY_STATES_STYLES, ENTITY_STATUS_STYLES } from '@/constants';
+import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES } from '@/constants';
 
 export default {
   name: 'alarm-chips',
@@ -22,13 +22,13 @@ export default {
       if (this.isStatus) {
         return ENTITY_STATUS_STYLES[this.value].color;
       }
-      return ENTITY_STATES_STYLES[this.value].color;
+      return ENTITIES_STATES_STYLES[this.value].color;
     },
     text() {
       if (this.isStatus) {
         return ENTITY_STATUS_STYLES[this.value].text;
       }
-      return ENTITY_STATES_STYLES[this.value].text;
+      return ENTITIES_STATES_STYLES[this.value].text;
     },
   },
 };
