@@ -12,10 +12,10 @@ import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/co
 export default function formatStateAndStatus(value, isStatus, isCroppedState) {
   if (isStatus && STATUS_CHIPS_AND_FLAGS_STYLE[value]) {
     if (isCroppedState) {
-      return ({
+      return {
         ...STATUS_CHIPS_AND_FLAGS_STYLE[value],
         icon: 'vertical_align_center',
-      });
+      };
     }
 
     return STATUS_CHIPS_AND_FLAGS_STYLE[value];
@@ -25,9 +25,9 @@ export default function formatStateAndStatus(value, isStatus, isCroppedState) {
     return STATES_CHIPS_AND_FLAGS_STYLE[value];
   }
 
-  return ({
+  return {
     color: 'black',
     text: 'Invalid val',
     icon: 'clear',
-  });
+  };
 }

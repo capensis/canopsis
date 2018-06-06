@@ -3,13 +3,13 @@
 </template>
 
 <script>
-import formatStateAndStatus from '@/services/state-and-status-formatting';
+import formatStateAndStatus from '@/helpers/state-and-status-formatting';
 
 export default {
   name: 'alarm-chips',
   props: {
     value: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     isStatus: {
@@ -19,14 +19,11 @@ export default {
   },
   computed: {
     color() {
-      return this.formatStateAndStatus(this.value, this.isStatus).color;
+      return formatStateAndStatus(this.value, this.isStatus).color;
     },
     text() {
-      return this.formatStateAndStatus(this.value, this.isStatus).text;
+      return formatStateAndStatus(this.value, this.isStatus).text;
     },
-  },
-  methods: {
-    formatStateAndStatus,
   },
 };
 </script>

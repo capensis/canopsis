@@ -3,13 +3,13 @@
 </template>
 
 <script>
-import formatStateAndStatus from '@/services/state-and-status-formatting';
+import formatStateAndStatus from '@/helpers/state-and-status-formatting';
 
 export default {
   name: 'alarm-flag',
   props: {
     value: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     isStatus: {
@@ -23,14 +23,11 @@ export default {
   },
   computed: {
     color() {
-      return this.formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).color;
+      return formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).color;
     },
     icon() {
-      return this.formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).icon;
+      return formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).icon;
     },
-  },
-  methods: {
-    formatStateAndStatus,
   },
 };
 </script>
