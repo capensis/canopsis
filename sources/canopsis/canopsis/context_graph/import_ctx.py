@@ -9,10 +9,10 @@ import Queue
 import threading
 import time
 
+from canopsis.common.utils import dict_merge
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
-from canopsis.common.utils import merge_two_dicts
 
 # FIXME : move the check of the element in the superficial check method
 
@@ -171,7 +171,7 @@ class Manager():
         """
 
         if self.is_present(uuid):
-            raise ValueError("An import status with the same uuid ({0}) "\
+            raise ValueError("An import status with the same uuid ({}) "
                              "already exist.".format(uuid))
 
         new_status = {ImportKey.F_ID: uuid,
@@ -525,7 +525,7 @@ class ContextGraphImport(ContextGraph):
             desc = ("The ci of id {} match an existing entity. Updating it."
                     .format(ci["_id"]))
             self.logger.warning(desc)
-            ci = merge_two_dicts(self.entities_to_update[ci[self.K_ID]], ci)
+            dict_merge(ci, self.entities_to_update[ci[self.K_ID]])
 
         # set default value for required fields
         if self.K_NAME not in ci:
