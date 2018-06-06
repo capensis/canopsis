@@ -24,7 +24,9 @@ from datetime import datetime
 import logging
 import time
 from unittest import TestCase
+from mock import Mock
 
+from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
@@ -77,13 +79,16 @@ class BaseTest(TestCase):
         self.config_data = EtherealData(collection=self.config_storage._backend,
                                         filter_=filter_)
 
+        self.event_publisher = Mock(spec=AlarmEventPublisher)
+
         self.manager = Alerts(config=conf,
                               logger=self.logger,
                               alerts_storage=self.alerts_storage,
                               config_data=self.config_data,
                               filter_storage=self.filter_storage,
                               context_graph=self.cg_manager,
-                              watcher=self.watcher_manager)
+                              watcher=self.watcher_manager,
+                              event_publisher=self.event_publisher)
 
     def tearDown(self):
         """Teardown"""

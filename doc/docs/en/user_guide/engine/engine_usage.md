@@ -53,3 +53,4 @@ task_mail |        YES         | NO           | NO    | Task handler to send mai
 task_linklist |    YES         | NO           | NO    | Task handler to list context URL
 task_dataclean |   YES         | NO           | NO    | Task handler to remove old data
 amqp2tty |         YES         | NO           | NO    | Print events to console
+statsng |          YES         | NO           | YES   | Store statistics
