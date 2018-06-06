@@ -36,6 +36,12 @@ export default {
     infoPopup: 'Popup infos',
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
   },
+  modals: {
+    moreInfos: {
+      moreInfos: 'Plus d\'infos',
+      defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    },
+  },
   mFilterEditor: {
     tabs: {
       visualEditor: 'Editeur visuel',
@@ -53,10 +59,6 @@ export default {
       component: 'Composant',
       resource: 'Ressource',
     },
-  },
-  moreInfosModal: {
-    moreInfos: 'Plus d\'infos',
-    defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
   },
   tables: {
     alarmGeneral: {

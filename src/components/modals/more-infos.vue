@@ -4,7 +4,7 @@
       div(v-if="!template")
         v-layout(justify-center)
           v-icon(color="info") infos
-          p(class="ma-0") {{ $t('moreInfosModal.defineATemplate') }}
+          p(class="ma-0") {{ $t('modals.moreInfos.defineATemplate') }}
       div(v-else, v-html="output")
 </template>
 

@@ -103,6 +103,10 @@ export default {
         ticket: 'Number of the ticket',
       },
     },
+    moreInfos: {
+      moreInfos: 'More infos',
+      defineATemplate: 'To define a template for this window, go to the alarms list settings',
+    },
   },
   tables: {
     alarmGeneral: {
@@ -203,9 +207,5 @@ export default {
       component: 'Component',
       resource: 'Resource',
     },
-  },
-  moreInfosModal: {
-    moreInfos: 'More infos',
-    defineATemplate: 'To define a template for this window, go to the alarms list settings',
   },
 };
