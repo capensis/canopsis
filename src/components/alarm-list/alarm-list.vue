@@ -101,7 +101,7 @@ export default {
     getAlarmProps(itemProp, propertyName) {
       const propertyValue = getProp(itemProp, propertyName);
       if (this.isDateProperty(propertyName)) {
-        return this.$d(propertyValue, 'time');
+        return this.$d(new Date(propertyValue * 1000), 'long');
       }
       return propertyValue;
     },
