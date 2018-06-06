@@ -1,7 +1,7 @@
 <template lang="pug">
   loader(:pending="pending")
     vue-content-loading(:width="width", :height="height")
-      template(v-for="i in lines")
+     template(v-for="i in lines")
         template(v-for="j in rectPerLines")
           rect(
                 :x="x(j)", :y="y(i)",
@@ -14,10 +14,12 @@
 import take from 'lodash/take';
 import sum from 'lodash/sum';
 import VueContentLoading from 'vue-content-loading';
+import Loader from '@/components/loaders/loader.vue';
 
 export default {
   components: {
     VueContentLoading,
+    Loader,
   },
   props: {
     pending: {

@@ -37,6 +37,20 @@ export default {
       year: 'year | years',
     },
   },
+  alarmList: {
+    actions: {
+      ack: 'ack',
+      fastAck: 'Fast ack',
+      ackRemove: 'Cancel ack',
+      pbehavior: 'Periodical behavior',
+      snooze: 'Snooze alarm',
+      pbehaviorList: 'List periodic behaviors',
+      declareTicket: 'Declare ticket',
+      associateTicket: 'Associate ticket',
+      cancel: 'Cancel alarm',
+      changeState: 'Change criticity',
+    },
+  },
   alarmListSettings: {
     alarmListSettings: 'Alarm list settings',
     widgetTitle: 'Widget title',
@@ -56,27 +70,37 @@ export default {
   modals: {
     createAckEvent: {
       title: 'Add event type: ack',
-      ticket: 'Ticket number',
-      output: 'Note',
-      ackResources: 'Ack resources',
-      ackResourcesTooltip: 'Do you want to ack linked resources or not?',
+      tooltips: {
+        ackResources: 'Do you want to ack linked resources or not?',
+      },
+      fields: {
+        ticket: 'Ticket number',
+        output: 'Note',
+        ackResources: 'Ack resources',
+      },
     },
     createSnoozeEvent: {
       title: 'Add event type: snooze',
-      duration: 'Duration',
+      fields: {
+        duration: 'Duration',
+      },
     },
     createCancelEvent: {
       title: 'Add event type: cancel',
-      output: 'Note',
+      fields: {
+        output: 'Note',
+      },
     },
     createChangeStateEvent: {
       title: 'Add event type: change state',
-      output: 'Note',
       states: {
         info: 'Info',
         minor: 'Minor',
         major: 'Major',
         critical: 'Critical',
+      },
+      fields: {
+        output: 'Note',
       },
     },
     createPbehavior: {
@@ -110,6 +134,12 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
+      output: 'Output',
+      lastUpdateDate: 'Last update date',
+      creationDate: 'Creation date',
+      duration: 'Duration',
+      state: 'State',
+      status: 'Status',
     },
     /**
      * This object for pbehavior fields from database

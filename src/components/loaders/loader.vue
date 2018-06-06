@@ -17,7 +17,7 @@ export default {
 
 <style scoped>
   .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
+    transition: opacity ;
   }
   .fade-enter, .fade-leave-to {
     opacity: 0;
