@@ -1,26 +1,28 @@
 <template lang="pug">
   div
-    modal(name="create-ack-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+    modal(:name="createAckEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
       create-ack-event
-    modal(name="create-associate-ticket-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+    modal(:name="createAssociateTicketEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
       create-associate-ticket-event
-    modal(name="create-cancel-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+    modal(:name="createCancelEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
       create-cancel-event
-    modal(name="create-change-state-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+    modal(:name="createChangeStateEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
       create-change-state-event
-    modal(name="create-declare-ticket-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+    modal(:name="createDeclareTicketEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
       create-declare-ticket-event
-    modal(name="create-snooze-event", :dialogProps="{ maxWidth: 700, lazy: true }")
+    modal(:name="createSnoozeEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
       create-snooze-event
-    modal(name="create-pbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
+    modal(:name="createPbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
       create-pbehavior
-    modal(name="pbehavior-list", :dialogProps="{ maxWidth: 1280, lazy: true }")
+    modal(:name="pbehaviorList", :dialogProps="{ maxWidth: 1280, lazy: true }")
       pbehavior-list
     modal(name="more-infos", :dialogProps="{ maxWidth: 1280, lazy: true }")
       more-infos
 </template>
 
 <script>
+import { MODALS } from '@/config';
+
 import Modal from './layouts/modal.vue';
 import CreateAckEvent from './create-ack-event.vue';
 import CreateAssociateTicketEvent from './create-associate-ticket-event.vue';
@@ -47,6 +49,11 @@ export default {
     CreatePbehavior,
     PbehaviorList,
     MoreInfos,
+  },
+  data() {
+    return {
+      ...MODALS,
+    };
   },
 };
 </script>
