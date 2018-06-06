@@ -9,7 +9,7 @@
             v-flex(xs8)
               v-text-field(
               type="number",
-              :label="$t('modals.createSnoozeEvent.duration')",
+              :label="$t('modals.createSnoozeEvent.fields.duration')",
               :error-messages="errors.collect('duration')",
               v-model="form.duration",
               v-validate="'required|numeric|min_value:1'",

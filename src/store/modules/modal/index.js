@@ -1,4 +1,6 @@
-const types = {
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
+export const types = {
   SHOW: 'SHOW',
   HIDE: 'HIDE',
   HIDE_COMPLETED: 'HIDE_COMPLETED',
@@ -45,7 +47,7 @@ export default {
         if (state.animationPending) {
           commit(types.HIDE_COMPLETED);
         }
-      }, 300);
+      }, VUETIFY_ANIMATION_DELAY);
     },
   },
 };

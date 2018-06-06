@@ -10,12 +10,14 @@ import VueMq from 'vue-mq';
 
 import 'vuetify/dist/vuetify.min.css';
 
-import App from './app.vue';
-import router from './router';
-import store from './store';
-import i18n from './i18n';
+import App from '@/app.vue';
+import router from '@/router';
+import store from '@/store';
+import i18n from '@/i18n';
 
+import filters from '@/filters';
 
+Vue.use(filters);
 Vue.use(Vuetify);
 Vue.use(VueMoment);
 

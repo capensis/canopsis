@@ -1,23 +1,20 @@
 <template lang="pug">
-  div.container
+  div.container(v-if="meta.total")
     span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
-         |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
+      |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
     v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
 export default {
-  name: 'alarm-list-pagination',
   props: {
     meta: {
       type: Object,
-      default() {
-        return {
-          total: 0,
-          first: 0,
-          last: 0,
-        };
-      },
+      default: () => ({
+        total: 0,
+        first: 0,
+        last: 0,
+      }),
     },
     limit: {
       type: Number,
@@ -51,7 +48,7 @@ export default {
 
 <style scoped>
   .container{
-   flex-direction: column;
+    flex-direction: column;
   }
   span {
     padding-left: 1%;
