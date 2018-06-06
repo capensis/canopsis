@@ -17,7 +17,7 @@ export default {
   props: {
     type: {
       validator: value => ['top', 'bottom'].indexOf(value) !== -1,
-      default: () => 'bottom',
+      default: 'bottom',
     },
     meta: {
       type: Object,
