@@ -17,7 +17,7 @@
             td.box
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
-            time-line(:alarmProps="item.props")
+          time-line(:alarmProps="item.props")
       pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
@@ -93,7 +93,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   th {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -104,8 +104,9 @@ export default {
   .container {
     display: flex;
   }
+
   .box{
-    width: 10%;
     flex: 1;
+    padding: 1px;
   }
 </style>
