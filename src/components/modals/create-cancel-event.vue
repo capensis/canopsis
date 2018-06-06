@@ -12,7 +12,7 @@
             v-divider.my-3
           v-layout(row)
             v-text-field(
-            :label="$t('modals.createCancelEvent.output')",
+            :label="$t('modals.createCancelEvent.fields.output')",
             :error-messages="errors.collect('output')",
             v-model="form.output",
             v-validate="'required'",
