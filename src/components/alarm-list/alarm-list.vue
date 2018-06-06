@@ -8,99 +8,78 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          th.box(v-for="columnName in Object.keys(alarmProperty)")
-            span {{ columnName }}
-            list-sorting(:column="alarmProperty[columnName]")
+          th.box(v-for="column in alarmProperties")
+            span {{ column.text }}
+            list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in Object.values(alarmProperty)") {{ getAlarmProps(item.props, property) }}
+            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value, getAlarmFilter) }}
             td.box
-              actions-panel.actions
+              actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
-            time-line(:alarmProps="item.props")
-      alarm-list-pagination(:meta="meta", :limit="limit")
+          time-line(:alarmProps="item.props")
+      pagination(:meta="meta", :limit="limit")
     loader(v-else)
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import getProp from 'lodash/get';
-
-import { PAGINATION_LIMIT } from '@/config';
-import getQuery from '@/helpers/pagination';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
 import ActionsPanel from '@/components/basic-component/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
-import AlarmListPagination from '@/components/alarm-list/alarm-list-pagination.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
+import PaginationMixin from '@/mixins/pagination';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('alarm');
+const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
 /**
  * Alarm-list component.
  *
  * @module components/alarm-list
- * @param {object} alarmProperty - Object that describe the columns names and the alarms attributes corresponding
+ * @param {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
  * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
  */
 export default {
-  name: 'AlarmList',
   components: {
     ListSorting,
     TimeLine,
     AlarmListSearching,
-    AlarmListPagination,
     ActionsPanel,
     BasicList,
     Loader,
   },
+  mixins: [PaginationMixin],
   props: {
-    alarmProperty: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    limit: {
-      type: Number,
-      default: PAGINATION_LIMIT,
+    alarmProperties: {
+      type: Array,
+      default: () => ([]),
     },
   },
   computed: {
-    ...mapGetters([
+    ...alarmMapGetters([
       'items',
       'meta',
       'pending',
     ]),
   },
-  watch: {
-    $route() {
-      this.fetchList();
-    },
-  },
-  mounted() {
-    this.fetchList(this.fetchingParams);
-  },
   methods: {
-    getProp,
-    getQuery,
-    ...mapActions({
+    ...alarmMapActions({
       fetchListAction: 'fetchList',
     }),
+
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
     isDateProperty(propertyName) {
       return propertyName.match(/(creation_date|last_update_date)/);
     },
-    getAlarmProps(itemProp, propertyName) {
-      const propertyValue = getProp(itemProp, propertyName);
-      if (this.isDateProperty(propertyName)) {
+    getAlarmFilter(property, propertyValue) {
+      if (this.isDateProperty(property)) {
         return this.$d(new Date(propertyValue * 1000), 'long');
       }
       return propertyValue;
@@ -114,7 +93,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   th {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -125,8 +104,9 @@ export default {
   .container {
     display: flex;
   }
+
   .box{
-    width: 10%;
     flex: 1;
+    padding: 1px;
   }
 </style>
