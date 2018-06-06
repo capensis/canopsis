@@ -28,10 +28,11 @@ from unittest import main
 
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilter
-from canopsis.alerts.status import OFF, STEALTHY, is_keeped_state
+from canopsis.alerts.status import OFF, STEALTHY, CANCELED, is_keeped_state
 from canopsis.alerts.tasks import snooze
 from canopsis.check import Check
 from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.statsng.enums import StatCounters
 
 from base import BaseTest
 
@@ -416,6 +417,51 @@ class TestManager(BaseTest):
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 1)
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_status)
 
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_not_called()
+
+    def test_change_of_status_canceled(self):
+        alarm_id = '/fake/alarm/id'
+
+        event = {
+            'timestamp': 0,
+            'connector': 'ut-connector',
+            'connector_name': 'ut-connector0',
+            'output': 'UT message',
+        }
+
+        alarm = self.manager.make_alarm(
+            alarm_id,
+            {
+                'connector': 'ut-connector',
+                'connector_name': 'ut-connector0',
+                'component': 'c',
+                'timestamp': 0
+            }
+        )
+
+        alarm = self.manager.change_of_status(alarm, 0, CANCELED, event)
+
+        expected_status = {
+            'a': 'ut-connector.ut-connector0',
+            '_t': 'statusinc',
+            'm': 'UT message',
+            't': 0,
+            'val': CANCELED,
+        }
+
+        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 1)
+        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_status)
+
+        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_canceled,
+            {},
+            alarm['value'])
+        self.event_publisher.publish_statduration_event.assert_not_called()
+
     def test_archive_state_nochange(self):
         alarm_id = 'ut-comp'
 
@@ -445,6 +491,13 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
+        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.reset_mock()
+
         event1 = {
             'source_type': 'component',
             'connector': 'test',
@@ -462,6 +515,9 @@ class TestManager(BaseTest):
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_archive_state_changed(self):
         alarm_id = 'ut-comp'
@@ -492,6 +548,13 @@ class TestManager(BaseTest):
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+
+        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Testing state increase
         event1 = {
@@ -576,6 +639,9 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.state.value]['val'], 0)
         self.assertFalse(is_keeped_state(alarm['value']))
 
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_not_called()
+
     def test_archive_status_nochange(self):
         alarm_id = 'ut-comp'
 
@@ -605,6 +671,13 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
+        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.reset_mock()
+
         # Force status to stealthy
         event1 = {
             'source_type': 'component',
@@ -623,6 +696,9 @@ class TestManager(BaseTest):
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
         self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_archive_status_changed(self):
         alarm_id = 'ut-comp'
@@ -654,6 +730,13 @@ class TestManager(BaseTest):
         self.assertDictEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
 
+        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.reset_mock()
+
         # Force status to stealthy
         event1 = {
             'source_type': 'component',
@@ -680,6 +763,9 @@ class TestManager(BaseTest):
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 4)
         self.assertDictEqual(alarm['value'][AlarmField.steps.value][3], expected_status)
         self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
+
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_crop_flapping_steps(self):
         # Creating alarm /component/test/test0/ut-comp1

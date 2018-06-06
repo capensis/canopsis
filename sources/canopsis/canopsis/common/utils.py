@@ -631,3 +631,24 @@ def get_sub_key(dico, key, default=None):
             return default
 
     return coid
+
+def get_sub_key_raise(dico, key):
+    """
+    Find a sub key (from a string) into a dict. If the given key or sub key is
+    not found, raises KeyError like a regular dict[key] access.
+
+    :param dict dico: a dict to search in
+    :param str key: a string describying the key to lookup
+    :param object default: default value returned
+    :returns: the corresponding value in dico
+    """
+    coid = dico
+    for k in key.split('.'):
+        if not isinstance(coid, dict):
+            # access an empty dict to raise a standard KeyError exception.
+            # return here is only to please pylint.
+            return {}[key]
+
+        coid = coid[k]
+
+    return coid

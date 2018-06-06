@@ -201,7 +201,7 @@ Environment="CPS_DEFAULT_CFG=/opt/canopsis/etc/default_configuration.toml"
 ExecStart=/usr/bin/env /opt/canopsis/bin/%i
 PIDFile=/var/run/canopsis-engine-go-%i.pid
 RestartSec=1
-Restart=on-failure
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

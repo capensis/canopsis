@@ -9,7 +9,9 @@ from datetime import datetime, timedelta
 from json import loads
 from time import sleep
 from unittest import main, TestCase
+from mock import Mock
 
+from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.manager import Alerts
 from canopsis.common import root_path
 from canopsis.common.ethereal_data import EtherealData
@@ -209,13 +211,16 @@ class ComputeState(BaseTest):
         config_data = EtherealData(collection=config_storage._backend,
                                    filter_=filter_)
 
+        event_publisher = Mock(spec=AlarmEventPublisher)
+
         self.alert_manager = Alerts(config=conf,
                                     logger=logger,
                                     alerts_storage=self.alerts_storage,
                                     config_data=config_data,
                                     filter_storage=filter_storage,
                                     context_graph=self.context_graph_manager,
-                                    watcher=self.manager)
+                                    watcher=self.manager,
+                                    event_publisher=event_publisher)
 
         # Creating entity
         self.type_ = 'resource'
