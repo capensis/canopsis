@@ -6,5 +6,6 @@
   * [events](v2/events.md)
   * [pbehavior](v2/pbehavior.md)
   * [weather](v2/weather.md)
+  * [statistiques](v2/stats.md)
   * [import d'un référentiels externe](v1/import_context.md)
   * [métriques du contexte](v1/perfdata.md)
