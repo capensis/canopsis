@@ -18,8 +18,7 @@
               actions-panel.actions
         tr.container(slot="expandedRow", slot-scope="item")
             time-line(:alarmProps="item.props")
-      loader(:pending="pending")
-        alarm-list-loader
+      alarm-list-loader(:pending="pending")
       alarm-list-pagination(:meta="meta", :limit="limit")
 </template>
 
