@@ -20,14 +20,14 @@
         v-flex(xs12)
           date-time-picker(v-model="tstart", clearable, label="tstart")
         v-flex(xs12)
-          date-time-picker(v-model="tend", clearable, label="tend")
+          date-time-picker(v-model="tstop", clearable, label="tstop")
       v-btn(@click="handleSubmit", color="green darken-4 white--text", small) Apply
 </template>
 
 <script>
-import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
+import dateIntervals from '@/helpers/date-intervals';
 
 const { mapActions: modalMapActions } = createNamespacedHelpers('modal');
 const { mapActions: alarmsMapActions } = createNamespacedHelpers('alarm');
@@ -72,7 +72,7 @@ export default {
         },
       ],
       tstart: new Date(),
-      tend: new Date(),
+      tstop: new Date(),
     };
   },
   computed: {
@@ -91,38 +91,44 @@ export default {
 
     handleIntervalClick(interval) {
       if (interval.value === 'today') {
-        this.tstart = moment().startOf('day').toDate();
-        this.tend = moment().toDate();
+        const { tstart, tstop } = dateIntervals.today();
+        this.tstart = tstart;
+        this.tstop = tstop;
       }
 
       if (interval.value === 'yesterday') {
-        this.tstart = moment().subtract(1, 'day').startOf('day').toDate();
-        this.tend = moment().subtract(1, 'day').endOf('day').toDate();
+        const { tstart, tstop } = dateIntervals.yesterday();
+        this.tstart = tstart;
+        this.tstop = tstop;
       }
 
       if (interval.value === 'last7Days') {
-        this.tstart = moment().subtract(7, 'day').toDate();
-        this.tend = moment().toDate();
+        const { tstart, tstop } = dateIntervals.last7Days();
+        this.tstart = tstart;
+        this.tstop = tstop;
       }
 
       if (interval.value === 'last30Days') {
-        this.tstart = moment().subtract(30, 'day').toDate();
-        this.tend = moment().toDate();
+        const { tstart, tstop } = dateIntervals.last30Days();
+        this.tstart = tstart;
+        this.tstop = tstop;
       }
 
       if (interval.value === 'thisMonth') {
-        this.tstart = moment().startOf('month').toDate();
-        this.tend = moment().toDate();
+        const { tstart, tstop } = dateIntervals.thisMonth();
+        this.tstart = tstart;
+        this.tstop = tstop;
       }
 
       if (interval.value === 'lastMonth') {
-        this.tstart = moment().subtract(1, 'month').startOf('month').toDate();
-        this.tend = moment().startOf('month').toDate();
+        const { tstart, tstop } = dateIntervals.lastMonth();
+        this.tstart = tstart;
+        this.tstop = tstop;
       }
     },
     handleSubmit() {
       this.addLiveReportingFilter(this.selectedInterval);
-      this.fetchAlarmList({ params: { tstart: this.tstart.getTime() / 1000, tstop: this.tend.getTime() / 1000 } });
+      this.fetchAlarmList({ params: { tstart: this.tstart.getTime() / 1000, tstop: this.tstop.getTime() / 1000 } });
       this.hideModal();
     },
   },
