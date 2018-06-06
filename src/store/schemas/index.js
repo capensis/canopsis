@@ -21,8 +21,6 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   idAttribute: '_id',
 });
 
-export const eventSchema = new schema.Entity(ENTITIES_TYPES.event, {}, { idAttribute: '_id' });
-
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
 });
@@ -30,6 +28,5 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
-  [ENTITIES_TYPES.event]: eventSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
 };
