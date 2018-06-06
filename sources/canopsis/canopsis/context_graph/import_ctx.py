@@ -15,13 +15,14 @@ from canopsis.confng import Configuration, Ini
 
 # FIXME : move the check of the element in the superficial check method
 
+
 def execution_time(exec_time):
     """Return from exec_time a human readable string that represent the
     execution time in a human readable format.
     :param exec_time: the execution time
     :type exec_time: a float"""
 
-    exec_time = int(exec_time) # we do not care of everything under the second
+    exec_time = int(exec_time)  # we do not care of everything under the second
 
     hours = exec_time / 3600
     minutes = (exec_time - 3600 * hours) / 60
@@ -30,6 +31,7 @@ def execution_time(exec_time):
     return "{0}:{1}:{2}".format(str(hours).zfill(2),
                                 str(minutes).zfill(2),
                                 str(seconds).zfill(2))
+
 
 class ExceptionThread(threading.Thread):
     """Wrapper to support handling exception"""
@@ -43,6 +45,7 @@ class ExceptionThread(threading.Thread):
             super(ExceptionThread, self).run()
         except Exception as err:
             self.except_queue.put_nowait(err)
+
 
 class ImportKey:
     """Usefull values for the import."""
@@ -71,6 +74,7 @@ class ImportKey:
     EVT_JOBID = "jobid"
 
     JOB_ID = "importctx_{0}"
+
 
 class Manager():
     """The manager use to interact with the default_importgraph collecion."""
@@ -124,12 +128,10 @@ class Manager():
     def is_present(self, uuid):
         """Return true if the given import uuid exist in database.
         :param uuid: the given import uuid
-        :return type: boolean
-        :return True if the uuid exist in database. False otherwise
+        :rtype: boolean
+        :returns: True if the uuid exist in database. False otherwise
         """
-
-        imports = list(self.storage.get_elements(
-            query={ImportKey.F_ID: uuid}))
+        imports = list(self.storage.get_elements(query={ImportKey.F_ID: uuid}))
 
         return True if len(imports) == 1 else False
 
@@ -149,13 +151,13 @@ class Manager():
                              ImportKey.F_STATS]
 
         if not self.is_present(uuid):
-            raise ValueError("No import with the given uuid"\
+            raise ValueError("No import with the given uuid"
                              " ({0}).".format(uuid))
 
         new_status = {ImportKey.F_ID: uuid}
 
         for field in authorized_fields:
-            if infos.has_key(field):
+            if field in infos:
                 new_status[field] = infos[field]
 
         self.storage.put_element(new_status)
@@ -223,8 +225,8 @@ class ContextGraphImport(ContextGraph):
     """The manager in charge of an import of a context.
     """
 
-    # TODO add a feature to restore the context if an error occured during while
-    # is pushed into the database
+    # TODO add a feature to restore the context if an error occured during
+    # while is pushed into the database
 
     K_LINKS = "links"
     K_FROM = "from"
@@ -250,7 +252,6 @@ class ContextGraphImport(ContextGraph):
     A_UPDATE = "update"
     A_DISABLE = "disable"
     A_ENABLE = "enable"
-
 
     __A_PATTERN = "^delete$|^create$|^update$|^disable$|^enable$"
     __T_PATTERN = "^resource$|^component$|^connector$|^watcher$"
@@ -295,7 +296,6 @@ class ContextGraphImport(ContextGraph):
             K_ACTION: {"type": "string",
                        "pattern": __A_PATTERN},
             K_PROPERTIES: {"type": "object"}}}
-
 
     def __init__(self, logger=None, *args, **kwargs):
         """__init__
@@ -370,7 +370,7 @@ class ContextGraphImport(ContextGraph):
 
         def __get_entities_to_update_cis(file_):
             """Parse the file_ to extract every CI"""
-            fd = open(file_, 'r');
+            fd = open(file_, 'r')
             for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
                 self.check_element(ci, self.K_CIS)
                 ids_cis.add(ci[self.K_ID])
@@ -456,7 +456,7 @@ class ContextGraphImport(ContextGraph):
             try:
                 self.update[ent_id][self.K_IMPACT].remove(id_)
             except ValueError:
-                raise ValueError("Try to remove {0} from impacts field of"\
+                raise ValueError("Try to remove {0} from impacts field of"
                                  "entity {1}.".format(id_, ent_id))
 
         # Update the impact/depends link
@@ -470,7 +470,7 @@ class ContextGraphImport(ContextGraph):
             try:
                 self.update[ent_id][self.K_DEPENDS].remove(id_)
             except ValueError:
-                raise ValueError("Try to remove {0} from impacts field of"\
+                raise ValueError("Try to remove {0} from impacts field of"
                                  "entity {1}.".format(id_, ent_id))
 
         if id_ in self.update:
@@ -507,7 +507,6 @@ class ContextGraphImport(ContextGraph):
 
         self.update[ci[self.K_ID]] = entity
 
-
     def __a_create_entity(self, ci):
         """Create an entity with a ci and store it into self.update
 
@@ -538,7 +537,6 @@ class ContextGraphImport(ContextGraph):
             ci[self.K_MEASUREMENTS] = []
         if not ci.has_key(self.K_INFOS):
             ci[self.K_INFOS] = {}
-
 
         for key in [self.K_ACTION, self.K_PROPERTIES]:
             try:
@@ -627,7 +625,7 @@ class ContextGraphImport(ContextGraph):
         """Delete a link between two entity and store the modify entities
         into self.udpate.
 
-        :param link: the link that identify a link (see the JSON specification).
+        :param link: the link that identify a link (see the JSON specification)
         """
 
         for id_ in link[self.K_FROM]:
@@ -635,8 +633,8 @@ class ContextGraphImport(ContextGraph):
                 self.update[id_] = self.entities_to_update[id_]
 
         if link[self.K_TO] not in self.update:
-            self.update[link[self.K_TO]] = self.entities_to_update\
-                                           [link[self.K_TO]]
+            to_ = link[self.K_TO]
+            self.update[to_] = self.entities_to_update[to_]
 
         for id_ in link[self.K_FROM]:
             self.update[id_][self.K_IMPACT].remove(link[self.K_TO])
@@ -649,12 +647,12 @@ class ContextGraphImport(ContextGraph):
         """Create a link between two entity and store the modify entities
         into self.udpate.
 
-        :param link: the link that identify a link (see the JSON specification).
+        :param link: the link that identify a link (see the JSON specification)
         """
 
         if link[self.K_TO] not in self.update:
-            self.update[link[self.K_TO]] = self.entities_to_update\
-                                           [link[self.K_TO]]
+            to_ = link[self.K_TO]
+            self.update[to_] = self.entities_to_update[to_]
 
         for ci_id in link[self.K_FROM]:
             if ci_id not in self.update:
@@ -673,7 +671,6 @@ class ContextGraphImport(ContextGraph):
     def __superficial_check(cls, fd):
         """Check if the cis and links field are a list. If not, raise a
         jsonschema.ValidationError. It move the cursor of the fd to back 0."""
-
 
         # cis and links store if a field cis and links are found in the import
         # *_start store if a the beginning of a json array are found in the cis
@@ -740,7 +737,7 @@ class ContextGraphImport(ContextGraph):
         start = time.time()
         self.__superficial_check(fd)
         end = time.time()
-        self.logger.debug("Import {0} : superficial"\
+        self.logger.debug("Import {0} : superficial"
                           " check {1}.".format(uuid,
                                                execution_time(end - start)))
 
@@ -748,7 +745,7 @@ class ContextGraphImport(ContextGraph):
         self.entities_to_update = self.__get_entities_to_update(file_)
         end = time.time()
 
-        self.logger.debug("Import {0} : get_entities_to"\
+        self.logger.debug("Import {0} : get_entities_to"
                           "_update {1}.".format(uuid,
                                                 execution_time(end - start)))
 
@@ -793,7 +790,7 @@ class ContextGraphImport(ContextGraph):
                 raise ValueError("The action {0} is not recognized".format(
                     link[self.K_ACTION]))
         end = time.time()
-        self.logger.debug("Import {0} : update links"\
+        self.logger.debug("Import {0} : update links"
                           " {1}.".format(uuid, execution_time(end - start)))
 
         for id_ in self.update:
@@ -812,14 +809,14 @@ class ContextGraphImport(ContextGraph):
         start = time.time()
         self._put_entities(self.update.values())
         end = time.time()
-        self.logger.debug("Import {0} : push updated"\
+        self.logger.debug("Import {0} : push updated"
                           " entities {1}.".format(uuid,
                                                   execution_time(end - start)))
 
         start = time.time()
         self._delete_entities(self.delete)
         end = time.time()
-        self.logger.debug("Import {0} : delete entities"\
+        self.logger.debug("Import {0} : delete entities"
                           " {1}.".format(uuid, execution_time(end - start)))
 
         self.clean_attributes()
