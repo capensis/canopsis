@@ -29,7 +29,6 @@ export const API_ROUTES = {
   alarmList: '/alerts/get-alarms',
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
-  eventsList: '/rest/events',
   userPreferences: '/rest/userpreferences/userpreferences',
 };
 
@@ -102,7 +101,6 @@ export const STATUS_CHIPS_AND_FLAGS_STYLE = {
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
   pbehavior: 'pbehavior',
-  event: 'event',
   userPreference: 'userPreference',
 };
 
