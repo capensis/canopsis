@@ -73,8 +73,6 @@ class StatRequestFields(FastEnum):
     tstart = "tstart"
     tstop = "tstop"
     group_by = "group_by"
-    limit = "limit"
-    offset = "offset"
     filter = "filter"
     stats = "stats"
 

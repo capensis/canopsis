@@ -20,10 +20,6 @@ Ces routes acceptent un objet JSON contenant les paramètres suivants :
    doivent être calculées (timestamp).
  - `group_by` (optionnel) : la liste de tags par lesquels les résultats doivent
    être regroupés.
- - `limit` (optionnel) : si `group_by` est défini, le nombre maximal de groupes
-   à retourner.
- - `offset` (optionnel) : si `group_by` est défini, l'indice du premier groupe
-   à retourner.
  - `filter` (optionnel) : une liste de *groupes d'entités*. Une entité est
    prise en compte dans le calcul des statistiques si elle fait partie d'un des
    groupes d'entités.
@@ -55,15 +51,12 @@ un). Un filtre de tag peut être :
 
 #### Réponse
 
-En cas de succès, la réponse est un objet JSON avec les champs suivants :
+En cas de succès, la réponse est un tableau JSON contenant des objets avec
+chacun :
 
- - `total` : le nombre total de groupes (vaut 1 si `group_by` n'est pas
-   défini).
- - `data` : un tableau contenant les résultats de la requête. Chaque élément du
-   tableau est un objet contenant :
-    - un champ `tags` : un tableau contenant les valeurs des tags défini en
-      `group_by` (un tableau vide si `group_by` n'est pas défini)
-    - des champs contenant les valeurs des statistiques calculées.
+ - un champ `tags` : un objet contenant les valeurs des tags défini en
+   `group_by` (un objet vide si `group_by` n'est pas défini)
+ - des champs contenant les valeurs des statistiques calculées.
 
 
 ## Statistiques
@@ -107,15 +100,12 @@ Requête :
 
 Réponse :
 ```json
-{
-    "total": 1,
-    "data": [
-        {
-            "tags": [],
-            "alarms_created": 13
-        }
-    ]
-}
+[
+    {
+        "tags": {},
+        "alarms_created": 13
+    }
+]
 ```
 
 ### Calcul du nombre d'alarmes résolues par ressources d'un composant
@@ -140,21 +130,18 @@ Requête :
 
 Réponse :
 ```json
-{
-    "total": 3,
-    "data": [
-        {
-            "tags": ["resource1"],
-            "alarms_resolved": 4
-        },
-        {
-            "tags": ["resource2"],
-            "alarms_resolved": 3
-        },
-        {
-            "tags": ["resource3"],
-            "alarms_resolved": 1
-        },
-    ]
-}
+[
+    {
+        "tags": {"resource": "resource1"},
+        "alarms_resolved": 4
+    },
+    {
+        "tags": {"resource": "resource2"},
+        "alarms_resolved": 3
+    },
+    {
+        "tags": {"resource": "resource3"},
+        "alarms_resolved": 1
+    }
+]
 ```

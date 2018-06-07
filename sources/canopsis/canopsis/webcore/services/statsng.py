@@ -33,8 +33,6 @@ def compute_stats(logger, request_body):
     tstart = request_body.pop(StatRequestFields.tstart, None)
     tstop = request_body.pop(StatRequestFields.tstop, None)
     group_by = request_body.pop(StatRequestFields.group_by, [])
-    limit = request_body.pop(StatRequestFields.limit, None)
-    offset = request_body.pop(StatRequestFields.offset, None)
     entity_filter = request_body.pop(StatRequestFields.filter, None)
 
     try:
