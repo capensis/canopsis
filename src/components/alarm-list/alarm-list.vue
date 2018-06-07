@@ -46,7 +46,6 @@ import PaginationMixin from '@/mixins/pagination';
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
-
 /**
  * Alarm-list component.
  *
@@ -121,7 +120,6 @@ export default {
   .container {
     display: flex;
   }
-
   .box{
     flex: 1;
     padding: 1px;
@@ -129,11 +127,11 @@ export default {
   .bottomToolbox {
     display: flex;
     flex-flow: row wrap;
-    .checkbox {
-      flex: 0.2;
-    }
-    .actions {
-      flex: 0.6;
-    }
+  }
+  .checkbox {
+    flex: 0.2;
+  }
+  .actions {
+    flex: 0.6;
   }
 </style>
