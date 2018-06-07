@@ -17,15 +17,16 @@
             list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            v-checkbox.checkbox(
-              @click.stop="select",
-              v-model="selected", :value="item.props._id", hide-details)
-            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value) }}
+            v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
+            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value, property.filter) }}
             td.box
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
           time-line(:alarmProps="item.props")
-      pagination(:meta="meta", :limit="limit")
+      .bottomToolbox
+        pagination(:meta="meta", :limit="limit")
+        page-iterator
+    loader(v-else)
 </template>
 
 <script>
@@ -38,6 +39,7 @@ import MassActions from '@/components/alarm-list/mass-actions.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
+import PageIterator from '@/components/basic-component/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
@@ -53,6 +55,7 @@ const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSe
  */
 export default {
   components: {
+    PageIterator,
     ListSorting,
     TimeLine,
     MassActions,
@@ -101,6 +104,11 @@ export default {
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
+    fetchList() {
+      this.fetchListAction({
+        params: this.getQuery(),
+      });
+    },
   },
 };
 </script>
@@ -116,10 +124,13 @@ export default {
   .container {
     display: flex;
   }
-
   .box{
     flex: 1;
     padding: 1px;
+  }
+  .bottomToolbox {
+    display: flex;
+    flex-flow: row wrap;
   }
   .checkbox {
     flex: 0.2;
