@@ -1,6 +1,5 @@
 export default {
   common: {
-    hello: 'Hello',
     submit: 'Submit',
     login: 'Login',
     username: 'Username',
@@ -37,6 +36,20 @@ export default {
       year: 'year | years',
     },
   },
+  alarmList: {
+    actions: {
+      ack: 'ack',
+      fastAck: 'Fast ack',
+      ackRemove: 'Cancel ack',
+      pbehavior: 'Periodical behavior',
+      snooze: 'Snooze alarm',
+      pbehaviorList: 'List periodic behaviors',
+      declareTicket: 'Declare ticket',
+      associateTicket: 'Associate ticket',
+      cancel: 'Cancel alarm',
+      changeState: 'Change criticity',
+    },
+  },
   alarmListSettings: {
     alarmListSettings: 'Alarm list settings',
     widgetTitle: 'Widget title',
@@ -56,27 +69,37 @@ export default {
   modals: {
     createAckEvent: {
       title: 'Add event type: ack',
-      ticket: 'Ticket number',
-      output: 'Note',
-      ackResources: 'Ack resources',
-      ackResourcesTooltip: 'Do you want to ack linked resources or not?',
+      tooltips: {
+        ackResources: 'Do you want to ack linked resources or not?',
+      },
+      fields: {
+        ticket: 'Ticket number',
+        output: 'Note',
+        ackResources: 'Ack resources',
+      },
     },
     createSnoozeEvent: {
       title: 'Add event type: snooze',
-      duration: 'Duration',
+      fields: {
+        duration: 'Duration',
+      },
     },
     createCancelEvent: {
       title: 'Add event type: cancel',
-      output: 'Note',
+      fields: {
+        output: 'Note',
+      },
     },
     createChangeStateEvent: {
       title: 'Add event type: change state',
-      output: 'Note',
       states: {
-        info: 'Info',
+        ok: 'Info',
         minor: 'Minor',
         major: 'Major',
         critical: 'Critical',
+      },
+      fields: {
+        output: 'Note',
       },
     },
     createPbehavior: {
@@ -93,7 +116,7 @@ export default {
     createAckRemove: {
       title: 'Add event type: ackremove',
     },
-    createDeclareTicker: {
+    createDeclareTicket: {
       title: 'Add event type: declareticket',
     },
     createAssociateTicket: {
@@ -133,11 +156,17 @@ export default {
       rrule: 'Rrule',
     },
     alarmStatus: {
-      off: 'Off',
-      ongoing: 'Ongoing',
-      flapping: 'Flapping',
-      stealthy: 'Stealthy',
-      canceled: 'Canceled',
+      0: 'Off',
+      1: 'Ongoing',
+      2: 'Flapping',
+      3: 'Stealthy',
+      4: 'Canceled',
+    },
+    alarmStates: {
+      0: 'Info',
+      1: 'Minor',
+      2: 'Major',
+      3: 'Critical',
     },
   },
   rRule: {
@@ -149,7 +178,7 @@ export default {
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes to not causing trouble to Canopsis.',
+      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',
