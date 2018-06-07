@@ -20,7 +20,9 @@
 
 from __future__ import unicode_literals
 
+from canopsis.common.influx import quote_ident, quote_literal, get_influxdb_client
 from canopsis.statsng.enums import StatRequestFields
+from canopsis.statsng.queries import AggregationStatQuery
 
 
 class StatsAPIError(Exception):
@@ -35,7 +37,18 @@ class StatsAPIError(Exception):
         self.message = message
 
 
+class UnknownStatNameError(StatsAPIError):
+    """
+    A UnknownStatNameError is an Exception that can be raised by a StatsAPI
+    object when requesting an unknown statistic.
+    """
+    pass
+
+
 class StatRequest(object):
+    """
+    A StatRequest is an object containing a request to the statistics API.
+    """
     def __init__(self):
         self.stats = None
         self.tstart = None
@@ -66,12 +79,58 @@ class StatRequest(object):
 
         return request
 
+
+class StatsAPIResults(object):
+    """
+    A StatsAPIResults object stores the results of request to the statistics
+    API.
+
+    :param List[str] group_by: the list of tags used in the GROUP BY statement
+    """
+    def __init__(self, group_by):
+        self.group_by = group_by
+        self.data = {}
+
+    def add_stats(self, tags, stats):
+        """
+        Add statistics to the results.
+
+        :param Dict[str, str] tags: the tags of the statistics
+        :param Dict[str, Any] stats: the values of the statistics
+        """
+        data_key = tuple(
+            tags[tag] for tag in self.group_by
+        )
+
+        if data_key not in self.data:
+            self.data[data_key] = {
+                "tags": tags
+            }
+
+        self.data[data_key].update(stats)
+
+    def as_list(self):
+        """
+        Return the results as a list of dictionnaries.
+
+        :rtype: List[Dict[str, Any]]
+        """
+        return list(self.data.values())
+
+
 class StatsAPI(object):
     """
     A StatsAPI object handles the computation of statistics.
     """
     def __init__(self, logger):
         self.logger = logger
+        self.influxdb_client = get_influxdb_client()
+
+        self.stat_queries = {
+            'alarms_canceled': AggregationStatQuery('alarms_canceled', 'sum'),
+            'alarms_created': AggregationStatQuery('alarms_created', 'sum'),
+            'alarms_resolved': AggregationStatQuery('alarms_resolved', 'sum'),
+        }
 
     def handle_request(self, request):
         """
@@ -81,4 +140,37 @@ class StatsAPI(object):
         :rtype dict:
         :raises: StatsAPIError
         """
-        return {}
+        results = StatsAPIResults(request.group_by)
+
+        # TODO: Generate WHERE statement
+
+        # Generate GROUP BY statement
+        group_by_statement = ''
+        if request.group_by:
+            group_by_statement = 'GROUP BY {}'.format(
+                ', '.join(quote_ident(tag) for tag in request.group_by)
+            )
+
+        for stat in request.stats:
+            try:
+                stat_query = self.stat_queries[stat]
+            except KeyError:
+                raise UnknownStatNameError('Unknown stat: {0}'.format(stat))
+
+            # Generate SELECT statement
+            select_statement = stat_query.get_select_statement()
+
+            # Generate the query
+            query = " ".join((
+                select_statement,
+                group_by_statement))
+
+            # Run the query
+            self.logger.debug("Running the query: {0}".format(query))
+            result_set = self.influxdb_client.query(query)
+
+            # Add the stats to results
+            for (_, tags), rows in result_set.items():
+                results.add_stats(tags, stat_query.get_results(rows))
+
+        return results.as_list()

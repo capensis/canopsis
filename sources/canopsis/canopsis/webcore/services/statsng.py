@@ -22,9 +22,11 @@ from __future__ import unicode_literals
 
 from bottle import request
 
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
+    HTTP_NOT_FOUND
 from canopsis.statsng.enums import StatRequestFields
-from canopsis.statsng.api import StatsAPIError, StatRequest, StatsAPI
+from canopsis.statsng.api import StatsAPIError, UnknownStatNameError, \
+    StatRequest, StatsAPI
 
 
 def parse_request():
@@ -72,8 +74,6 @@ def exports(ws):
         try:
             stat_request = parse_request()
 
-            # TODO: send 404 for unknown stat_name
-
             if stat_request.stats is not None:
                 raise StatsAPIError(
                     'Unexpected fields: {0}'.format(StatRequestFields.stats))
@@ -81,6 +81,10 @@ def exports(ws):
             stat_request.stats = [stat_name]
 
             return gen_json(api.handle_request(stat_request))
+        except UnknownStatNameError as error:
+            ws.logger.exception(error.message)
+            return gen_json_error({'description': error.message},
+                                  HTTP_NOT_FOUND)
         except StatsAPIError as error:
             ws.logger.exception(error.message)
             return gen_json_error({'description': error.message}, HTTP_ERROR)
