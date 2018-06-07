@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      rectHeight: 4,
+      rectHeight: 5,
       margin: 5,
       inBetweenSpace: 4,
       rectWidths: [40, 45, 25, 55, 20, 20, 20],

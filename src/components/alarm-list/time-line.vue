@@ -31,15 +31,13 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
 
 import AlarmFlag from '@/components/basic-component/alarm-flag.vue';
 import AlarmChips from '@/components/basic-component/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
-
-import { STATES_CHIPS_AND_FLAGS_STYLE } from '@/config';
+import { ENTITIES_STATES_STYLES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
@@ -82,7 +80,7 @@ export default {
     },
     stateName(state) {
       const stateValue = parseInt(state.replace('state:', ''), 10);
-      return STATES_CHIPS_AND_FLAGS_STYLE[stateValue].text;
+      return ENTITIES_STATES_STYLES[stateValue].text;
     },
     stateSteps(steps) {
       return pickBy(steps, (value, key) => key.startsWith('state:'));
@@ -130,6 +128,7 @@ export default {
 
 <style lang="scss" scoped>
   $border_line: #DDDDE0;
+  $background: #FAFAFA;
   ul {
     list-style: none;
     color: #858585;
@@ -140,7 +139,7 @@ export default {
       border-image: linear-gradient(
           to bottom,
           $border-line 60%,
-          white) 1 100%;
+          $background) 1 100%;
     }
   }
   .timeline {
@@ -165,7 +164,7 @@ export default {
   .flag, .date {
      top: 0;
      position: absolute;
-     background: white;
+     background: $background;
    }
 
   .flag {

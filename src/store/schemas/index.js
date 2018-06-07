@@ -1,6 +1,6 @@
 import { schema } from 'normalizr';
 
-import { ENTITIES_TYPES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',

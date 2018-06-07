@@ -25,7 +25,7 @@ export default {
   .loader{
     position: absolute;
     width: 100%;
-    top: 15%;
+    top: 25%;
     z-index: 999;
   }
 </style>
