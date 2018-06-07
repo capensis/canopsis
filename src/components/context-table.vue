@@ -3,11 +3,11 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          th.box(v-for="columnProperty in contextProperty")
+          th.box(v-for="columnProperty in contextProperties")
             span {{ columnProperty.text }}
             th.box
         tr.container(slot="row" slot-scope="item")
-          td.box(v-for="columnProperty in contextProperty") {{ getProp(item.props, columnProperty.value) }}
+          td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
           td.box
         tr.container(slot="expandedRow", slot-scope="item")
 </template>
@@ -25,7 +25,7 @@ export default {
   name: 'context-table',
   components: { BasicList },
   props: {
-    contextProperty: {
+    contextProperties: {
       type: Array,
       default() {
         return [];

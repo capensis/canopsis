@@ -1,8 +1,6 @@
 <template lang="pug">
   context-table(
-    :contextProperty="$mq| mq("
-                      +"{mobile: contextPropertyOnMobile,tablet: contextPropertyOnTablet,laptop: contextProperty}"
-                      + ")",
+  :contextProperties="$mq| mq(contextProperties)",
   )
 </template>
 
@@ -14,28 +12,30 @@ export default {
   components: { ContextTable },
   data() {
     return {
-      contextProperty: [
-        {
-          text: 'name',
-          value: 'name',
-        },
-        {
-          text: 'type',
-          value: 'type',
-        },
-      ],
-      contextPropertyOnMobile: [
-        {
-          text: 'name',
-          value: 'name',
-        },
-      ],
-      contextPropertyOnTablet: [
-        {
-          text: 'name',
-          value: 'name',
-        },
-      ],
+      contextProperties: {
+        laptop: [
+          {
+            text: 'name',
+            value: 'name',
+          },
+          {
+            text: 'type',
+            value: 'type',
+          },
+        ],
+        mobile: [
+          {
+            text: 'name',
+            value: 'name',
+          },
+        ],
+        tablet: [
+          {
+            text: 'name',
+            value: 'name',
+          },
+        ],
+      },
     };
   },
 };
