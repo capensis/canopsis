@@ -193,7 +193,8 @@ class UtilsTest(TestCase):
                 'quote': 'Hooray!'
             },
             'Farnsworth': {
-                'quote': 'Good news everyone!'
+                'quote': 'Good news everyone!',
+                'quote2': 'Sweet zombie...'
             }
         }
         merge = {
