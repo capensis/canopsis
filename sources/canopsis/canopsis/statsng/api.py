@@ -20,7 +20,8 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import quote_ident, quote_literal, get_influxdb_client
+from canopsis.common.influx import SECONDS, quote_ident, quote_literal, \
+    get_influxdb_client
 from canopsis.statsng.enums import StatRequestFields
 from canopsis.statsng.queries import AggregationStatQuery
 
@@ -132,6 +133,28 @@ class StatsAPI(object):
             'alarms_resolved': AggregationStatQuery('alarms_resolved', 'sum'),
         }
 
+    def _generate_where_statement(self, request):
+        """
+        Generate a WHERE statement from a request.
+
+        :param StatRequest request:
+        """
+        conditions = []
+
+        if request.tstart:
+            conditions.append('time >= {}'.format(request.tstart * SECONDS))
+        if request.tstop:
+            conditions.append('time < {}'.format(request.tstop * SECONDS))
+
+        # TODO: Handle request.filter
+
+        if conditions:
+            return 'WHERE {}'.format(
+                ' AND '.join(conditions)
+            )
+        else:
+            return ''
+
     def handle_request(self, request):
         """
         Handle a request to the statistics API.
@@ -142,7 +165,8 @@ class StatsAPI(object):
         """
         results = StatsAPIResults(request.group_by)
 
-        # TODO: Generate WHERE statement
+        # Generate WHERE statement
+        where_statement = self._generate_where_statement(request)
 
         # Generate GROUP BY statement
         group_by_statement = ''
@@ -163,6 +187,7 @@ class StatsAPI(object):
             # Generate the query
             query = " ".join((
                 select_statement,
+                where_statement,
                 group_by_statement))
 
             # Run the query
