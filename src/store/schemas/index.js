@@ -1,44 +1,34 @@
 import { schema } from 'normalizr';
+import { ENTITIES_TYPES } from '@/constants';
 
-export const types = {
-  ALARM: 'alarm',
-  CONTEXT: 'context',
-  EVENT: 'event',
-  PBEHAVIOR: 'pbehavior',
-  USER_PREFERENCE: 'userPreference',
-};
-
-export const pbehaviorSchema = new schema.Entity(types.PBEHAVIOR, {}, {
+export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
   processStrategy: (entity, parent, key) =>
     ({
       ...entity,
       _embedded: {
-        parentType: types.ALARM,
+        parentType: ENTITIES_TYPES.alarm,
         parentId: parent._id,
         relationType: key,
       },
     }),
 });
 
-export const alarmSchema = new schema.Entity(types.ALARM, {
+export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   pbehaviors: [pbehaviorSchema],
 }, {
   idAttribute: '_id',
 });
 
-export const contextSchema = new schema.Entity(types.CONTEXT, {}, { idAttribute: '_id' });
+export const contextSchema = new schema.Entity(ENTITIES_TYPES.context, {}, { idAttribute: '_id' });
 
-export const eventSchema = new schema.Entity(types.EVENT, {}, { idAttribute: '_id' });
-
-export const userPreferenceSchema = new schema.Entity(types.USER_PREFERENCE, {}, {
+export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
 });
 
 export default {
-  [types.ALARM]: alarmSchema,
-  [types.CONTEXT]: contextSchema,
-  [types.PBEHAVIOR]: pbehaviorSchema,
-  [types.EVENT]: eventSchema,
-  [types.USER_PREFERENCE]: userPreferenceSchema,
+  [ENTITIES_TYPES.alarm]: alarmSchema,
+  [ENTITIES_TYPES.context]: contextSchema,
+  [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
+  [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
 };

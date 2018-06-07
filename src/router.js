@@ -8,7 +8,6 @@ import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
 import Rrule from '@/components/other/rrule/rrule-form.vue';
-import Actions from '@/views/actions.vue';
 
 Vue.use(Router);
 
@@ -49,11 +48,6 @@ export default new Router({
       path: '/rrule',
       name: 'rrule',
       component: Rrule,
-    },
-    {
-      path: '/actions',
-      name: 'action',
-      component: Actions,
     },
   ],
 });

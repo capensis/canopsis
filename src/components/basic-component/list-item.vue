@@ -1,9 +1,9 @@
 <template lang="pug">
   div(id="content", @click="clickOnListItem")
+    v-card(key="reduced", :color="color")
+      slot(name="reduced", :props="item")
     transition(name="expand", mode="out-in")
-      v-card(v-if="!isExpanded", key="reduced")
-        slot(name="reduced", :props="item")
-      v-card.expanded(v-else, key="expanded", :raised="true")
+      v-card.expanded(v-if="isExpanded", key="expanded", :raised="true", :color="color")
         slot(name="expanded", :props="item")
 </template>
 
@@ -19,6 +19,14 @@ export default {
     return {
       isExpanded: false,
     };
+  },
+  computed: {
+    color() {
+      if (this.isExpanded) {
+        return 'grey lighten-5';
+      }
+      return 'white';
+    },
   },
   methods: {
     /**

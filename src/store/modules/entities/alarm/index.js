@@ -1,12 +1,14 @@
-import { API_ROUTES } from '@/config';
-import { alarmSchema } from '@/store/schemas';
 import merge from 'lodash/merge';
+
+import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
+import { alarmSchema } from '@/store/schemas';
+import i18n from '@/i18n';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
-  UPDATE_ITEM_IN_LIST: 'UPDATE_ITEM_IN_LIST',
 };
 
 export default {
@@ -19,8 +21,10 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('alarm', state.allIds),
-    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem']('alarm', id),
+    items: (state, getters, rootState, rootGetters) =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, state.allIds),
+    item: (state, getters, rootState, rootGetters) => id =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.alarm, id),
     meta: state => state.meta,
     pending: state => state.pending,
   },
@@ -59,7 +63,7 @@ export default {
           },
         });
       } catch (err) {
-        console.error(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED);
       }
@@ -72,6 +76,7 @@ export default {
     async fetchItem({ dispatch }, { id, params }) {
       try {
         const paramsWithItemId = merge(params, { filter: { d: id } });
+
         await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],

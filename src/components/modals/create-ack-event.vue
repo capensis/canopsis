@@ -11,7 +11,7 @@
           v-divider.my-3
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createAckEvent.ticket')",
+          :label="$t('modals.createAckEvent.fields.ticket')",
           :error-messages="errors.collect('ticket')",
           v-model="form.ticket",
           v-validate="rules",
@@ -19,7 +19,7 @@
           )
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createAckEvent.output')",
+          :label="$t('modals.createAckEvent.fields.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
           v-validate="rules",
@@ -27,7 +27,14 @@
           multi-line
           )
         v-layout(row)
-          v-checkbox(:label="$t('modals.createAckEvent.ackResources')", v-model="form.ack_resources")
+          v-tooltip(top)
+            v-checkbox(
+            slot="activator",
+            v-model="ack_resources",
+            :label="$t('modals.createAckEvent.fields.ackResources')"
+            )
+              span(slot-name="label") {{  }}
+            span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
     v-card-actions
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.actions.acknowledge') }}
       v-btn(
@@ -41,9 +48,10 @@
 import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
+  name: MODALS.createAckEvent,
   $_veeValidate: {
     validator: 'new',
   },
@@ -69,11 +77,11 @@ export default {
   methods: {
     async create(withDeclare) {
       const data = [
-        this.prepareData(EVENT_TYPES.ack, this.item, this.form),
+        this.prepareData(EVENT_ENTITY_TYPES.ack, this.item, this.form),
       ];
 
       if (withDeclare) {
-        data.push(this.prepareData(EVENT_TYPES.declareTicket, this.item, this.form));
+        data.push(this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.item, this.form));
       }
 
       await this.createEventAction({ data });
@@ -99,3 +107,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .tooltip {
+    flex: 1 1 auto;
+  }
+</style>

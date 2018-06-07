@@ -1,24 +1,17 @@
 <template lang="pug">
   div
-    modal(name="create-ack-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-ack-event
-    modal(name="create-associate-ticket-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-associate-ticket-event
-    modal(name="create-cancel-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-cancel-event
-    modal(name="create-change-state-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-change-state-event
-    modal(name="create-declare-ticket-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-declare-ticket-event
-    modal(name="create-snooze-event", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-snooze-event
-    modal(name="create-pbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-pbehavior
-    modal(name="pbehavior-list", :dialogProps="{ maxWidth: 1280, lazy: true }")
-      pbehavior-list
+    modal(
+    v-for="modal in modals",
+    :key="modal.name",
+    :name="modal.name",
+    :dialogProps="modal.dialogProps || defaultDialogProps"
+    )
+      component(:is="modal.name")
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import Modal from './layouts/modal.vue';
 import CreateAckEvent from './create-ack-event.vue';
 import CreateAssociateTicketEvent from './create-associate-ticket-event.vue';
@@ -43,6 +36,21 @@ export default {
     CreateSnoozeEvent,
     CreatePbehavior,
     PbehaviorList,
+  },
+  data() {
+    return {
+      modals: [
+        { name: MODALS.createAckEvent },
+        { name: MODALS.createAssociateTicketEvent },
+        { name: MODALS.createCancelEvent },
+        { name: MODALS.createChangeStateEvent },
+        { name: MODALS.createDeclareTicketEvent },
+        { name: MODALS.createSnoozeEvent },
+        { name: MODALS.createPbehavior },
+        { name: MODALS.pbehaviorList, dialogProps: { maxWidth: 1280, lazy: true } },
+      ],
+      defaultDialogProps: { maxWidth: 700, lazy: true },
+    };
   },
 };
 </script>

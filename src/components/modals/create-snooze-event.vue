@@ -9,7 +9,7 @@
             v-flex(xs8)
               v-text-field(
               type="number",
-              :label="$t('modals.createSnoozeEvent.duration')",
+              :label="$t('modals.createSnoozeEvent.fields.duration')",
               :error-messages="errors.collect('duration')",
               v-model="form.duration",
               v-validate="'required|numeric|min_value:1'",
@@ -30,9 +30,11 @@ import moment from 'moment';
 
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
+  name: MODALS.createSnoozeEvent,
+
   $_veeValidate: {
     validator: 'new',
   },
@@ -66,7 +68,7 @@ export default {
           this.form.durationType.key,
         ).asSeconds();
 
-        await this.createEvent(EVENT_TYPES.snooze, this.item, { duration });
+        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.item, { duration });
 
         this.hideModal();
       }
