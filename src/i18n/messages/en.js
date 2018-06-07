@@ -1,6 +1,5 @@
 export default {
   common: {
-    hello: 'Hello',
     submit: 'Submit',
     login: 'Login',
     username: 'Username',
@@ -166,7 +165,7 @@ export default {
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes to not causing trouble to Canopsis.',
+      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',
