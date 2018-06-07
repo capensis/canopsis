@@ -16,10 +16,8 @@
             list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            v-checkbox.checkbox(
-              @click.stop="select",
-              v-model="selected", :value="item.props._id", hide-details)
-            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value) }}
+            v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
+            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value, property.filter) }}
             td.box
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
@@ -101,6 +99,11 @@ export default {
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
+    fetchList() {
+      this.fetchListAction({
+        params: this.getQuery(),
+      });
+    },
   },
 };
 </script>
