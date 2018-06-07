@@ -753,9 +753,7 @@ class AlertsReader(object):
             tmp_res = []
             hidden_resources_cache = {}
             while len(results['alarms']) < limit: # and not tmp_res after first loop
-                print('new loop')
                 while len(results['alarms']) < limit:
-                    print('new internal loop')
                     tmp_res = glissendo(skip, limit)
 
                     # no results, all good
