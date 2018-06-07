@@ -63,3 +63,27 @@ class StatDurations(FastEnum):
     """
     ack_time = 'ack_time'
     resolve_time = 'resolve_time'
+
+
+class StatRequestFields(FastEnum):
+    """
+    The StatRequestFields enumeration defines the names of the fields of a
+    request to the stats API.
+    """
+    tstart = "tstart"
+    tstop = "tstop"
+    group_by = "group_by"
+    limit = "limit"
+    offset = "offset"
+    filter = "filter"
+    stats = "stats"
+
+
+class StatResponseFields(FastEnum):
+    """
+    The StatResponseFields enumeration defines the names of the fields of a
+    response by the stats API.
+    """
+    total = "total"
+    data = "data"
+    tags = "tags"
