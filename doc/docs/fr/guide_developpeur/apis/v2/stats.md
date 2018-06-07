@@ -76,6 +76,14 @@ période.
 La statistique `alarms_canceled` vaut le nombre d'alarmes annulées pendant une
 période.
 
+### Temps d'acquittement moyen
+
+La statistique `mean_ack_time` vaut le temps d'acquittement moyen.
+
+### Temps de résolution moyen
+
+La statistique `mean_resolve_time` vaut le temps de résolution moyen.
+
 
 ## Exemples
 

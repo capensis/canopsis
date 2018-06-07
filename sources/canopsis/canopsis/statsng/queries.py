@@ -50,19 +50,16 @@ class StatQuery(object):
 class AggregationStatQuery(StatQuery):
     """
     An AggregationStatQuery is a StatQuery that aggregates the `value` field in
-    a measurement, and returns it as a dictionnary:
-    ```
-    {
-        "<measurement>": value
-    }
-    ```
+    a measurement, and returns it as a dictionnary.
 
     :param str measurement: the name of the measurement
     :param str aggregation: the aggregation function
+    :param str name: the name of the statistic
     """
-    def __init__(self, measurement, aggregation):
+    def __init__(self, measurement, aggregation, name=None):
         self.measurement = measurement
         self.aggregation = aggregation
+        self.name = name or measurement
 
     def get_select_statement(self):
         return """
@@ -80,5 +77,5 @@ class AggregationStatQuery(StatQuery):
             return {}
 
         return {
-            self.measurement: row['value']
+            self.name: row['value']
         }

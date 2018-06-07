@@ -131,6 +131,10 @@ class StatsAPI(object):
             'alarms_canceled': AggregationStatQuery('alarms_canceled', 'sum'),
             'alarms_created': AggregationStatQuery('alarms_created', 'sum'),
             'alarms_resolved': AggregationStatQuery('alarms_resolved', 'sum'),
+            'mean_ack_time': AggregationStatQuery(
+                'ack_time', 'mean', 'mean_ack_time'),
+            'mean_resolve_time': AggregationStatQuery(
+                'resolve_time', 'mean', 'mean_resolve_time'),
         }
 
     def _generate_where_statement(self, request):
