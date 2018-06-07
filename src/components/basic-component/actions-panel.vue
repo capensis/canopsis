@@ -104,6 +104,11 @@ export default {
           title: 'alarmList.actions.changeState',
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
+        moreInfos: {
+          icon: 'notes',
+          title: 'alarmList.moreInfos',
+          method: this.showActionModal(MODALS.moreInfos),
+        },
       },
     };
   },
@@ -120,13 +125,14 @@ export default {
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
-            main: [actionsMap.declareTicket, actionsMap.associateTicket, actionsMap.cancel],
+            main: [actionsMap.declareTicket, actionsMap.associateTicket, actionsMap.cancel, actionsMap.moreInfos],
             dropDown: [
               actionsMap.ackRemove,
               actionsMap.snooze,
               actionsMap.changeState,
               actionsMap.pbehavior,
               actionsMap.pbehaviorList,
+              actionsMap.moreInfos,
             ],
           };
         }
