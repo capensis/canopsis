@@ -20,5 +20,14 @@ export default {
     item() {
       return this.getItem(this.config.itemType, this.config.itemId);
     },
+
+    /**
+     * Function returns items by entity type and entity ids
+     *
+     * @returns {Array}
+     */
+    items() {
+      return this.getList(this.config.itemsType, this.config.itemsIds);
+    },
   },
 };

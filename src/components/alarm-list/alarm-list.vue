@@ -9,15 +9,13 @@
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header")
-          v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
+          v-checkbox.checkbox.box(v-model="allSelected", hide-details)
           th.box(v-for="column in alarmProperties")
             span {{ column.text }}
             list-sorting(:column="column.value")
             th.box
         tr.container(slot="row" slot-scope="item")
-            v-checkbox.checkbox(
-              @click.stop="select",
-              v-model="selected", :value="item.props._id", hide-details)
+            v-checkbox.checkbox(v-model="selected", :value="item.props._id", @click.stop, hide-details)
             td.box(v-for="property in alarmProperties") {{ item.props | get(property.value) }}
             td.box
               actions-panel.actions(:item="item.props")
@@ -71,7 +69,6 @@ export default {
     return {
       // alarm's ids selected by the checkboxes
       selected: [],
-      allSelected: false,
     };
   },
   computed: {
@@ -80,20 +77,16 @@ export default {
       'meta',
       'pending',
     ]),
+    allSelected: {
+      get() {
+        return this.selected.length === this.items.length;
+      },
+      set(value) {
+        this.selected = value ? this.items.map(v => v._id) : [];
+      },
+    },
   },
   methods: {
-    selectAll(items) {
-      this.selected = [];
-      if (!this.allSelected) {
-        items.forEach((item) => {
-          this.selected.push(item._id);
-        });
-      }
-      this.allSelected = !this.allSelected;
-    },
-    select() {
-      this.allSelected = false;
-    },
     ...alarmMapActions({
       fetchListAction: 'fetchList',
     }),

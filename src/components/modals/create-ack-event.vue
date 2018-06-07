@@ -75,12 +75,10 @@ export default {
   },
   methods: {
     async create(withDeclare) {
-      const data = [
-        this.prepareData(EVENT_TYPES.ack, this.item, this.form),
-      ];
+      let data = this.prepareData(EVENT_TYPES.ack, this.item, this.form);
 
       if (withDeclare) {
-        data.push(this.prepareData(EVENT_TYPES.declareTicket, this.item, this.form));
+        data = data.concat(this.prepareData(EVENT_TYPES.declareTicket, this.item, this.form));
       }
 
       await this.createEventAction({ data });
