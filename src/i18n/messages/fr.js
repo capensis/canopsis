@@ -1,3 +1,5 @@
+import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+
 export default {
   common: {
     submit: 'Soumettre',
@@ -141,17 +143,17 @@ export default {
       status: 'Status',
     },
     alarmStatus: {
-      0: 'Fermée',
-      1: 'En cours',
-      2: 'Bagot',
-      3: 'Furtive',
-      4: 'Annulée',
+      [ENTITIES_STATUSES.off]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
     },
     alarmStates: {
-      0: 'Info',
-      1: 'Minor',
-      2: 'Major',
-      3: 'Critical',
+      [ENTITIES_STATES.ok]: 'Info',
+      [ENTITIES_STATES.minor]: 'Minor',
+      [ENTITIES_STATES.major]: 'Major',
+      [ENTITIES_STATES.critical]: 'Critical',
     },
     /**
      * This object for pbehavior fields from database

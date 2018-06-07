@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { STATES } from '@/config';
+import { ENTITIES_STATES } from '@/constants';
 
 export default {
   props: {
@@ -20,16 +20,10 @@ export default {
   data() {
     return {
       colors: {
-        [STATES.info]: 'green',
-        [STATES.minor]: 'yellow',
-        [STATES.major]: 'orange',
-        [STATES.critical]: 'red',
-      },
-      titles: {
-        [STATES.info]: 'Info',
-        [STATES.minor]: 'Minor',
-        [STATES.major]: 'Major',
-        [STATES.critical]: 'Critical',
+        [ENTITIES_STATES.ok]: 'green',
+        [ENTITIES_STATES.minor]: 'yellow',
+        [ENTITIES_STATES.major]: 'orange',
+        [ENTITIES_STATES.critical]: 'red',
       },
     };
   },
@@ -44,7 +38,7 @@ export default {
       return 'purple';
     },
     text() {
-      const title = this.titles[this.stateId];
+      const title = this.$t(`tables.alarmStates.${this.stateId}`);
 
       if (title) {
         return title;
