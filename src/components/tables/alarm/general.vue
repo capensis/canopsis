@@ -3,7 +3,7 @@
     v-subheader {{ $t('tables.alarmGeneral.title') }}
     v-data-table(
     :headers="headers",
-    :items="[item]",
+    :items="items",
     hide-actions
     )
       template(slot="headerCell", slot-scope="props")
@@ -24,8 +24,8 @@
  */
 export default {
   props: {
-    item: {
-      type: Object,
+    items: {
+      type: Array,
       required: true,
     },
   },

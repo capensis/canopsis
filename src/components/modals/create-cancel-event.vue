@@ -7,7 +7,7 @@
         v-container
           v-layout(row)
             v-flex.text-xs-center
-              alarm-general-table(:item="item")
+              alarm-general-table(:items="items")
           v-layout(row)
             v-divider.my-3
           v-layout(row)
@@ -24,7 +24,7 @@
 
 <script>
 import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
-import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
@@ -37,7 +37,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalInnerItemMixin, EventActionsMixin],
+  mixins: [ModalInnerItemsMixin, EventActionsMixin],
   data() {
     return {
       form: {
@@ -65,7 +65,7 @@ export default {
           data.cancel = 1;
         }
 
-        await this.createEvent(this.eventType, this.item, data);
+        await this.createEvent(this.eventType, this.items, data);
 
         this.hideModal();
       }

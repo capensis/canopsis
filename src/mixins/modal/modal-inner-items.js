@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+import first from 'lodash/first';
 
 import ModalInnerMixin from './modal-inner';
 
@@ -10,15 +11,15 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 export default {
   mixins: [ModalInnerMixin],
   computed: {
-    ...entitiesMapGetters(['getItem', 'getList']),
+    ...entitiesMapGetters(['getList']),
 
     /**
-     * Function returns item by entity type and entity id
+     * Function returns first item from items array
      *
-     * @returns {Object}
+     * @returns {Object|{}}
      */
-    item() {
-      return this.getItem(this.config.itemType, this.config.itemId);
+    firstItem() {
+      return first(this.items) || {};
     },
 
     /**

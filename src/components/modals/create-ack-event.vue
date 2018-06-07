@@ -6,7 +6,7 @@
       v-container
         v-layout(row align-center)
           v-flex.text-xs-center
-            alarm-general-table(:item="item")
+            alarm-general-table(:items="items")
         v-layout(row)
           v-divider.my-3
         v-layout(row)
@@ -46,7 +46,7 @@
 <script>
 
 import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
-import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
@@ -58,7 +58,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalInnerItemMixin, EventActionsMixin],
+  mixins: [ModalInnerItemsMixin, EventActionsMixin],
   data() {
     return {
       showValidationErrors: false,
@@ -76,10 +76,10 @@ export default {
   },
   methods: {
     async create(withDeclare) {
-      let data = this.prepareData(EVENT_ENTITY_TYPES.ack, this.item, this.form);
+      let data = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
 
       if (withDeclare) {
-        data = data.concat(this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.item, this.form));
+        data = data.concat(this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form));
       }
 
       await this.createEventAction({ data });

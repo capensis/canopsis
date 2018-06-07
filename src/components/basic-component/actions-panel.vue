@@ -110,8 +110,8 @@ export default {
   computed: {
     modalConfig() {
       return {
-        itemType: ENTITIES_TYPES.alarm,
-        itemId: this.item._id,
+        itemsType: ENTITIES_TYPES.alarm,
+        itemsIds: [this.item._id],
       };
     },
     actions() {
