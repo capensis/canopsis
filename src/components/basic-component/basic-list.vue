@@ -42,11 +42,10 @@ export default {
   .sticky {
     position: -webkit-sticky;
     position: sticky;
-    top: 48px;
+    top: 38px;
     z-index: 2;
   }
   .header {
-    margin-bottom: 5px;
     background-color: rgb(251,247,247);
     z-index: 1;
   }

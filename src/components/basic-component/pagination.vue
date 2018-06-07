@@ -1,8 +1,6 @@
 <template lang="pug">
   div.container(v-if="meta.total")
-    span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
-      |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
-    ul.pagination(v-if="type === 'top'")
+    ul.pagination(v-if="type === 'top'", class="mx-auto")
       li
         button.pagination__navigation(:disabled="currentPage <= 1", @click="previous")
           v-icon chevron_left

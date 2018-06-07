@@ -1,15 +1,19 @@
 <template lang="pug">
   div
     v-layout(justify-space-between)
-      mass-actions
-      v-flex(xs5)
+      v-flex
         alarm-list-searching
-      v-btn(icon, @click="openSettingsPanel")
-        v-icon settings
+    v-layout(justify-space-between, align-center)
+      v-flex(xs4, class="ml-4")
+        mass-actions
+      v-flex(xs5)
+        pagination(:meta="meta", :limit="limit", type="top")
+      v-flex(xs3)
+        v-btn(icon, @click="openSettingsPanel")
+          v-icon settings
     div(v-if="!pending")
-      pagination(:meta="meta", :limit="limit", type="top")
       basic-list(:items="items")
-        tr.container(slot="header")
+        tr.container(slot="header", class="pa-0")
           v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
           th.box(v-for="column in alarmProperties")
             span {{ column.text }}
@@ -121,7 +125,9 @@ export default {
     overflow-wrap: break-word;
   }
   .container {
+    padding: 0;
     display: flex;
+    align-items: center;
   }
   .box{
     flex: 1;
