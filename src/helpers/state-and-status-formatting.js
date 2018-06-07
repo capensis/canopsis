@@ -1,4 +1,4 @@
-import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
+import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES } from '@/constants';
 
 /**
  * Format state and status on list-alarm with color, text and icon.
@@ -10,19 +10,18 @@ import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/co
  * @returns {Object}
  */
 export default function formatStateAndStatus(value, isStatus, isCroppedState) {
-  if (isStatus && STATUS_CHIPS_AND_FLAGS_STYLE[value]) {
+  if (isStatus && ENTITY_STATUS_STYLES[value]) {
     if (isCroppedState) {
       return {
-        ...STATUS_CHIPS_AND_FLAGS_STYLE[value],
+        ...ENTITY_STATUS_STYLES[value],
         icon: 'vertical_align_center',
       };
     }
-
-    return STATUS_CHIPS_AND_FLAGS_STYLE[value];
+    return ENTITY_STATUS_STYLES[value];
   }
 
-  if (!isStatus && STATES_CHIPS_AND_FLAGS_STYLE[value]) {
-    return STATES_CHIPS_AND_FLAGS_STYLE[value];
+  if (!isStatus && ENTITIES_STATES_STYLES[value]) {
+    return ENTITIES_STATES_STYLES[value];
   }
 
   return {
