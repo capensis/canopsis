@@ -7,6 +7,7 @@
       v-btn(icon, @click="openSettingsPanel")
         v-icon settings
     div(v-if="!pending")
+      pagination(:meta="meta", :limit="limit", type="top")
       basic-list(:items="items")
         tr.container(slot="header")
           v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
