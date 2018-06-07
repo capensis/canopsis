@@ -519,7 +519,8 @@ class PBehaviorManager(object):
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
 
-    def check_active_pbehavior(self, timestamp, pbehavior):
+    @staticmethod
+    def check_active_pbehavior(timestamp, pbehavior):
         """
         For a given pbehavior (as dict) check that the given timestamp is active
         using either:
@@ -542,10 +543,8 @@ class PBehaviorManager(object):
         tstop = pbehavior[PBehavior.TSTOP]
 
         if not isinstance(tstart, (int, float)):
-            self.logger.error('Cannot parse tstart value: {}'.format(pbehavior))
             return False
         if not isinstance(tstop, (int, float)):
-            self.logger.error('Cannot parse tstop value: {}'.format(pbehavior))
             return False
 
         tz = pytz.UTC
