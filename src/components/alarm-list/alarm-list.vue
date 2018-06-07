@@ -103,11 +103,6 @@ export default {
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
-    fetchList() {
-      this.fetchListAction({
-        params: this.getQuery(),
-      });
-    },
   },
 };
 </script>
