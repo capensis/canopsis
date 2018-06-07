@@ -24,80 +24,63 @@ from bottle import request
 
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.statsng.enums import StatRequestFields
+from canopsis.statsng.api import StatsAPIError, StatRequest, StatsAPI
 
 
-def compute_stats(logger, request_body):
+def parse_request():
     """
-    Compute the response to a request to the stats API.
-    """
-    tstart = request_body.pop(StatRequestFields.tstart, None)
-    tstop = request_body.pop(StatRequestFields.tstop, None)
-    group_by = request_body.pop(StatRequestFields.group_by, [])
-    entity_filter = request_body.pop(StatRequestFields.filter, None)
+    Parse the body of a request.
 
+    :rtype: StatRequest
+    :raises: StatsAPIError
+    """
     try:
-        stats = request_body.pop(StatRequestFields.stats)
-    except KeyError:
-        message = 'missing field: {0}'.format(StatRequestFields.stats)
-        logger.exception(message)
-        return gen_json_error({'description': message}, HTTP_ERROR)
+        request_body = request.json
+    except ValueError as verror:
+        raise StatsAPIError('Malformed JSON: {0}'.format(verror))
 
-    if request_body:
-        message = 'unexpected fields: {0}'.format(
-            ', '.join(request_body.keys()))
-        logger.error(message)
-        return gen_json_error({'description': message}, HTTP_ERROR)
+    if request_body is None:
+        raise StatsAPIError('Empty request')
 
-    return gen_json({})
+    return StatRequest.from_request_body(request_body)
 
 
 def exports(ws):
+
+    api = StatsAPI(ws.logger)
 
     @ws.application.post(
         '/api/v2/stats'
     )
     def stats():
         try:
-            request_body = request.json
-        except ValueError as verror:
-            ws.logger.exception('malformed JSON: {0}'.format(verror))
-            return gen_json_error(
-                {'description': 'malformed JSON: {0}'.format(verror)},
-                HTTP_ERROR)
+            stat_request = parse_request()
 
-        if request_body is None:
-            ws.logger.exception('empty request')
-            return gen_json_error(
-                {'description': 'empty request'},
-                HTTP_ERROR)
+            if not stat_request.stats:
+                raise StatsAPIError(
+                    "The stats field is required and should not be empty.")
 
-        return compute_stats(ws.logger, request_body)
+            return gen_json(api.handle_request(stat_request))
+        except StatsAPIError as error:
+            ws.logger.exception(error.message)
+            return gen_json_error({'description': error.message}, HTTP_ERROR)
 
     @ws.application.post(
         '/api/v2/stats/<stat_name>'
     )
     def stat(stat_name):
         try:
-            request_body = request.json
-        except ValueError as verror:
-            ws.logger.exception('malformed JSON: {0}'.format(verror))
-            return gen_json_error(
-                {'description': 'malformed JSON: {0}'.format(verror)},
-                HTTP_ERROR)
+            stat_request = parse_request()
 
-        if request_body is None:
-            ws.logger.exception('empty request')
-            return gen_json_error(
-                {'description': 'empty request'},
-                HTTP_ERROR)
+            # TODO: send 404 for unknown stat_name
 
-        # TODO: send 404 for unknown stat_name
+            if stat_request.stats is not None:
+                raise StatsAPIError(
+                    'Unexpected fields: {0}'.format(StatRequestFields.stats))
 
-        if StatRequestFields.stats in request_body:
-            message = 'unexpected fields: {0}'.format(StatRequestFields.stats)
-            ws.logger.exception(message)
-            return gen_json_error({'description': message}, HTTP_ERROR)
+            stat_request.stats = [stat_name]
 
-        request_body[StatRequestFields.stats] = [stat_name]
-
-        return compute_stats(ws.logger, request_body)
+            return gen_json(api.handle_request(stat_request))
+        except StatsAPIError as error:
+            ws.logger.exception(error.message)
+            return gen_json_error({'description': error.message}, HTTP_ERROR)
