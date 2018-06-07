@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
 const { mapActions: eventMapActions } = createNamespacedHelpers('event');
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
@@ -60,7 +60,7 @@ export default {
         ref_rk: `${item.v.resource}/${item.v.component}`,
       };
 
-      if (type !== EVENT_TYPES.snooze) {
+      if (type !== EVENT_ENTITY_TYPES.snooze) {
         preparedData.state_type = item.v.status.val;
       }
 

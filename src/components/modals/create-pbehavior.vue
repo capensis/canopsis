@@ -52,11 +52,14 @@ import { createNamespacedHelpers } from 'vuex';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/other/rrule/rrule-form.vue';
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
+import { MODALS } from '@/constants';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
+  name: MODALS.createPbehavior,
+
   $_veeValidate: {
     validator: 'new',
   },

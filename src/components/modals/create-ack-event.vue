@@ -48,9 +48,10 @@
 import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
+  name: MODALS.createAckEvent,
   $_veeValidate: {
     validator: 'new',
   },
@@ -75,10 +76,10 @@ export default {
   },
   methods: {
     async create(withDeclare) {
-      let data = this.prepareData(EVENT_TYPES.ack, this.item, this.form);
+      let data = this.prepareData(EVENT_ENTITY_TYPES.ack, this.item, this.form);
 
       if (withDeclare) {
-        data = data.concat(this.prepareData(EVENT_TYPES.declareTicket, this.item, this.form));
+        data = data.concat(this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.item, this.form));
       }
 
       await this.createEventAction({ data });
