@@ -82,7 +82,7 @@ class StatRequest(object):
 
 class StatsAPIResults(object):
     """
-    A StatsAPIResults object stores the results of request to the statistics
+    A StatsAPIResults object stores the results of a request to the statistics
     API.
 
     :param List[str] group_by: the list of tags used in the GROUP BY statement
