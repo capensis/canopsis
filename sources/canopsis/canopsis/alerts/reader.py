@@ -648,24 +648,6 @@ class AlertsReader(object):
             sort_key = 'v.creation_date'
         elif sort_key == 'v.current_state_duration':
             sort_key = 'v.state.t'
-        if hide_resources:
-            if resolved:
-                self.logger.error(
-                    'you only can hide pbehaviors on current alarms')
-            return self.hide_resources(
-                tstart,
-                tstop,
-                filter_,
-                sort_key,
-                sort_dir,
-                skip,
-                limit,
-                search,
-                natural_search,
-                active_columns,
-                with_steps
-            )
-
         if lookups is None:
             lookups = []
 
@@ -682,8 +664,6 @@ class AlertsReader(object):
 
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
-
-        result = None
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         final_filter = self._get_final_filter(
@@ -693,215 +673,144 @@ class AlertsReader(object):
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
-        pipeline = [
-            {
-                "$lookup": {
-                    "from": "default_entities",
-                    "localField": "d",
-                    "foreignField": "_id",
-                    "as": "entity"
+        if limit is None or limit > 100:
+            limit = 100
+
+        def glissendo(skip, limit):
+            pipeline = [
+                {
+                    "$lookup": {
+                        "from": "default_entities",
+                        "localField": "d",
+                        "foreignField": "_id",
+                        "as": "entity"
+                    }
+                }, {
+                    "$unwind": {
+                        "path": "$entity",
+                        "preserveNullAndEmptyArrays": True,
+                    }
+                }, {
+                    "$match": {"$or": [
+                        {"entity.enabled": True}, {"entity": {"$exists": False}}
+                    ]}
+                }, {
+                    "$match": final_filter
+                }, {
+                    "$sort": {
+                        sort_key: sort_dir
+                    }
                 }
-            }, {
-                "$unwind": {
-                    "path": "$entity",
-                    "preserveNullAndEmptyArrays": True,
-                }
-            }, {
-                "$match": {"$or": [
-                    {"entity.enabled": True}, {"entity": {"$exists": False}}
-                ]}
-            }, {
-                "$match": final_filter
-            }, {
-                "$sort": {
-                    sort_key: sort_dir
-                }
+            ]
+
+            if not with_steps:
+                pipeline.insert(0, {"$project": {"v.steps": False}})
+
+            self.add_pbh_filter(pipeline, filter_)
+
+            pipeline.append({
+                "$skip": skip
+            })
+
+            if limit is not None:
+                pipeline.append({"$limit": limit})
+
+            result = self.alarm_storage._backend.aggregate(
+                pipeline, cursor={}, allowDiskUse=True
+            )
+
+            alarms = list(result)
+            limited_total = len(alarms)  # Manual count is much faster than mongo's
+
+            count_query = self.alarm_storage._backend.find(final_filter)
+            total, truncated = self._get_fast_count(
+                count_query,
+                tstart, tstop, opened, resolved,
+                final_filter, search
+            )
+
+            first = 0 if limited_total == 0 else skip + 1
+            last = 0 if limited_total == 0 else skip + limited_total
+
+            res = {
+                'alarms': alarms,
+                'total': total,
+                'truncated': truncated,
+                'first': first,
+                'last': last
             }
-        ]
 
-        if not with_steps:
-            pipeline.insert(0, {"$project": {"v.steps": False}})
+            return res
 
-        self.add_pbh_filter(pipeline, filter_)
-
-        pipeline.append({
-            "$skip": skip
-        })
-
-        if limit is not None:
-            pipeline.append({"$limit": limit})
-
-        result = self.alarm_storage._backend.aggregate(pipeline, cursor={},
-                                                       **{"allowDiskUse": True})
-
-        alarms = list(result)
-        limited_total = len(alarms)  # Manual count is much faster than mongo's
-
-        count_query = self.alarm_storage._backend.find(final_filter)
-        total, truncated = self._get_fast_count(
-            count_query,
-            tstart, tstop, opened, resolved,
-            final_filter, search
-        )
-
-        first = 0 if limited_total == 0 else skip + 1
-        last = 0 if limited_total == 0 else skip + limited_total
-
-        res = {
-            'alarms': alarms,
-            'total': total,
-            'truncated': truncated,
-            'first': first,
-            'last': last
-        }
-
-        return res
-
-    def hide_resources(
-            self,
-            tstart=None,
-            tstop=None,
-            filter_={},
-            sort_key='opened',
-            sort_dir='DESC',
-            skip=0,
-            limit=None,
-            search='',
-            natural_search=False,
-            active_columns=None,
-            with_steps=False
-    ):
-        """
-        Return filtered, sorted and paginated alarms with resources sorted.
-
-        :param tstart: Beginning timestamp of requested period
-        :param tstop: End timestamp of requested period
-        :type tstart: int or None
-        :type tstop: int or None
-
-        :param dict filter_: Mongo filter
-        :param str search: Search expression in custom DSL
-
-        :param str sort_key: Name of the column to sort. If the value ends with
-            a dot '.', sort_key is replaced with 'v.last_update_date'.
-        :param str sort_dir: Either "ASC" or "DESC"
-
-        :param int skip: Number of alarms to skip (pagination)
-        :param int limit: Maximum number of alarms to return
-
-        :param bool natural_search: True if you want to use a natural search
-
-        :param list active_columns: the list of alarms columns on which to
-        apply the natural search filter.
-        :param bool with_steps: True if you want alarm steps in your alarm.
-
-
-        :returns: List of sorted alarms + pagination informations
-        :rtype: dict
-        """
-        if filter_ is None:
-            filter_ = {}
-
-        if active_columns is None:
-            active_columns = self.DEFAULT_ACTIVE_COLUMNS
-
-        time_filter = self._get_time_filter(
-            opened=True,
-            resolved=False,
-            tstart=tstart,
-            tstop=tstop
-        )
-
-        if time_filter is None:
-            return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
-
-        final_filter = self._get_final_filter(
-            filter_,
-            time_filter,
-            search,
-            active_columns
-        )
-
-        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
-
-        pipeline = [
-            {
-                "$lookup": {
-                    "from": "default_entities",
-                    "localField": "d",
-                    "foreignField": "_id",
-                    "as": "entity"
-                }
-            }, {
-                "$unwind": {
-                    "path": "$entity",
-                    "preserveNullAndEmptyArrays": True,
-                }
-            }, {
-                "$match": final_filter
-            }, {
-                "$sort": {
-                    sort_key: sort_dir
-                }
+        def work_on_it(skip, limit):
+            results = {
+                'alarms': [],
+                'total': 0,
+                'truncated': False,
+                'first': 0,
+                'last': 0
             }
-        ]
+            tmp_res = []
+            hidden_resources_cache = {}
+            while len(results['alarms']) < limit: # and not tmp_res after first loop
+                print('new loop')
+                while len(results['alarms']) < limit:
+                    print('new internal loop')
+                    tmp_res = glissendo(skip, limit)
 
-        if not with_steps:
-            pipeline.insert(0, {"$project": {"v.steps": False}})
+                    # no results, all good
+                    if not tmp_res['alarms']:
+                        break
 
-        self.add_pbh_filter(pipeline, filter_)
+                    results['total'] += tmp_res['total']
+                    results['truncated'] |= tmp_res['truncated']
+                    results['alarms'].extend(tmp_res['alarms'])
 
-        alarms = self.alarm_storage._backend.aggregate(pipeline,
-                                                       **{"allowDiskUse": True}).get('result')
-        alarms = self._lookup(alarms, ['pbehaviors'])
+                    # avoid one extra useless query
+                    if len(tmp_res['alarms']) < limit:
+                        break
 
-        alarm_dict = {}
+                    skip += limit
+
+                # filter useless data
+                if not hide_resources:
+                    break
+                else:
+                    results['alarms'] = self._hide_resources(
+                        results['alarms'], hidden_resources_cache
+                    )
+
+                # no new results
+                if not tmp_res['alarms']:
+                    break
+
+            return results
+
+        return work_on_it(skip, limit)
+
+    @staticmethod
+    def _hide_resources(alarms, components_state):
+        resources = {}
+        filtered_alarms = []
         for alarm in alarms:
-            component = alarm.get('v').get('component')
-            if component not in alarm_dict:
-                alarm_dict[component] = [alarm]
-            else:
-                alarm_dict[component].append(alarm)
+            component = alarm.get('component')
+            resource = alarm.get('resource')
 
-        filtred_alarms = []
-        for component in alarm_dict:
-            entity_type = []
-            for alarm_comp in alarm_dict[component]:
-                entity_type.append(alarm_comp.get(
-                    'entity', {}).get('type', ''))
+            alarm_state = int(alarm['v']['state']['val'])
 
-            if 'component' in entity_type:
-                filtred_alarms = filtred_alarms + \
-                    remove_resources_alarms(alarm_dict[component])
-            else:
-                filtred_alarms = filtred_alarms + alarm_dict[component]
+            if not resource and component:
+                components_state[component] = alarm_state
+                filtered_alarms.append(alarm)
 
-        len_before_truncate = len(filtred_alarms)
-        if limit is not None:
-            last = limit + skip
-            filtred_alarms = filtred_alarms[skip:last]
-        else:
-            filtred_alarms = filtred_alarms[skip:]
-            last = len(filtred_alarms)
+        for alarm in alarms:
+            resource = alarm.get('resource')
+            component = alarm.get('component')
+            if resource and component:
+                state = int(alarm['v']['state']['val'])
+                if state > components_state[component]:
+                    filtered_alarms.append(alarm)
 
-
-
-        rev = (sort_dir == -1)
-        sorted_alarms = sorted(
-            filtred_alarms,
-            key=lambda k: get_sub_key(k, sort_key),
-            reverse=rev
-        )
-
-        len_after_truncate = len(filtred_alarms)
-        ret_val = {
-            'alarms': sorted_alarms,
-            'total': len_before_truncate,
-            'truncated': len_after_truncate < len_before_truncate,
-            'first': skip,
-            'last': last
-        }
-        return ret_val
+        return alarms
 
     def count_alarms_by_period(
             self,
