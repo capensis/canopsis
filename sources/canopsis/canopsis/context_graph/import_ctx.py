@@ -3,15 +3,16 @@
 
 from __future__ import unicode_literals
 
-import threading
-import Queue
-import time
-import jsonschema
 import ijson
+import jsonschema
+import Queue
+import threading
+import time
 
+from canopsis.common.utils import dict_merge
+from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
-from canopsis.confng import Configuration, Ini
 
 # FIXME : move the check of the element in the superficial check method
 
@@ -170,7 +171,7 @@ class Manager():
         """
 
         if self.is_present(uuid):
-            raise ValueError("An import status with the same uuid ({0}) "\
+            raise ValueError("An import status with the same uuid ({}) "
                              "already exist.".format(uuid))
 
         new_status = {ImportKey.F_ID: uuid,
@@ -308,8 +309,11 @@ class ContextGraphImport(ContextGraph):
         if logger is not None:
             self.logger = logger
 
+        # Entities asked for update
         self.entities_to_update = {}
+        # Entities to update
         self.update = {}
+
         self.delete = []
 
     @classmethod
@@ -442,7 +446,7 @@ class ContextGraphImport(ContextGraph):
         try:
             entity = self.entities_to_update[id_]
         except KeyError:
-            desc = "No entity found for the following id : {0}".format(id_)
+            desc = "No entity found for the following id : {}".format(id_)
             raise ValueError(desc)
 
         # Update the depends/impact link
@@ -518,32 +522,37 @@ class ContextGraphImport(ContextGraph):
         # TODO handle the creation of the name if needed and if the id
         # match the id scheme used in canopsis
         if ci[self.K_ID] in self.entities_to_update:
-            desc = "The ci of id {0} match an existing entity.".format(
-                ci["_id"])
-            raise ValueError(desc)
+            desc = ("The ci of id {} match an existing entity. Updating it."
+                    .format(ci["_id"]))
+            self.logger.warning(desc)
+            dict_merge(ci, self.entities_to_update[ci[self.K_ID]])
 
         # set default value for required fields
-        if not ci.has_key(self.K_NAME):
+        if self.K_NAME not in ci:
             ci[self.K_NAME] = ci[self.K_ID]
-        if not ci.has_key(self.K_DEPENDS):
+
+        if self.K_DEPENDS not in ci:
             ci[self.K_DEPENDS] = set()
         else:
             ci[self.K_DEPENDS] = set(ci[self.K_DEPENDS])
-        if not ci.has_key(self.K_IMPACT):
+
+        if self.K_IMPACT not in ci:
             ci[self.K_IMPACT] = set()
         else:
             ci[self.K_IMPACT] = set(ci[self.K_IMPACT])
-        if not ci.has_key(self.K_MEASUREMENTS):
+
+        if self.K_MEASUREMENTS not in ci:
             ci[self.K_MEASUREMENTS] = []
-        if not ci.has_key(self.K_INFOS):
+
+        if self.K_INFOS not in ci:
             ci[self.K_INFOS] = {}
 
         for key in [self.K_ACTION, self.K_PROPERTIES]:
             try:
                 del ci[key]
             except KeyError:
-                msg = "No key {0} in ci of id {1}."
-                self.logger.debug(msg.format(key, ci[self.K_ID]))
+                self.logger.debug("No key {0} in ci of id {1}."
+                                  .format(key, ci[self.K_ID]))
 
         entity = {}
         for key in ci:
