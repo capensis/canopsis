@@ -14,7 +14,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { PAGINATION_LIMIT } from '@/config';
 import { getQueryContext } from '@/helpers/pagination';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
@@ -30,10 +29,6 @@ export default {
       default() {
         return [];
       },
-    },
-    limit: {
-      type: Number,
-      default: PAGINATION_LIMIT,
     },
   },
   computed: {
