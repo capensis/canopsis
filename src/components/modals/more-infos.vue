@@ -11,11 +11,12 @@
 <script>
 import HandleBars from 'handlebars';
 import { createNamespacedHelpers } from 'vuex';
+import { MODALS } from '@/constants';
 
 const { mapGetters } = createNamespacedHelpers('modal');
 
 export default {
-  name: 'more-infos',
+  name: MODALS.moreInfos,
   props: {
     template: {
       type: String,

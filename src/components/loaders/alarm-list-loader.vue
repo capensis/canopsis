@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import { ALARM_LIST_LOADER_HEIGHT, ALARM_LIST_LOADER_WIDTH } from '@/config';
 import VueContentLoading from 'vue-content-loading';
 
 export default {
@@ -22,8 +21,8 @@ export default {
   data() {
     return {
       listItemLoaderHeight: 15,
-      height: ALARM_LIST_LOADER_HEIGHT,
-      width: ALARM_LIST_LOADER_WIDTH,
+      height: 100,
+      width: 300,
     };
   },
 };

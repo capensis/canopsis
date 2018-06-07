@@ -95,7 +95,7 @@ export default {
     createChangeStateEvent: {
       title: 'Add event type: change state',
       states: {
-        info: 'Info',
+        ok: 'Info',
         minor: 'Minor',
         major: 'Major',
         critical: 'Critical',
@@ -118,7 +118,7 @@ export default {
     createAckRemove: {
       title: 'Add event type: ackremove',
     },
-    createDeclareTicker: {
+    createDeclareTicket: {
       title: 'Add event type: declareticket',
     },
     createAssociateTicket: {

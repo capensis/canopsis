@@ -28,17 +28,15 @@
     v-tab-item
       v-data-table(
         :headers='resultsTableHeaders',
-        :items="Object.values(byId)",
+        :items="items",
         hide-actions,
         class="elevation-1"
       )
         template(slot="items", slot-scope="props")
-          td {{props.item.connector}}
-          td {{props.item.connector_name}}
-          td {{props.item.component}}
-          td {{props.item.resource}}
-      // div(class="text-xs-center my-2")
-        v-pagination(:length="6" v-model="currentPage")
+          td {{props.item.v.connector}}
+          td {{props.item.v.connector_name}}
+          td {{props.item.v.component}}
+          td {{props.item.v.resource}}
 </template>
 
 
@@ -47,7 +45,7 @@ import { createNamespacedHelpers } from 'vuex';
 import FilterGroup from '@/components/other/mfilter-editor/filter-group.vue';
 
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
-const { mapActions: eventsActions, mapGetters: eventsGetters } = createNamespacedHelpers('events');
+const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNamespacedHelpers('alarm');
 
 export default {
   name: 'mfilter-editor',
@@ -93,7 +91,7 @@ export default {
 
   computed: {
     ...mFilterGetters(['request', 'filter', 'possibleFields', 'parseError']),
-    ...eventsGetters(['byId', 'allIds', 'meta', 'fetchComplete', 'fetchError']),
+    ...alarmsMapGetters(['items']),
 
     /**
      * @description Value of the input field of the advanced editor.
@@ -116,12 +114,12 @@ export default {
   },
   methods: {
     ...mFilterActions(['deleteParseError', 'updateFilter', 'onParseError']),
-    ...eventsActions(['fetchList']),
+    ...alarmsMapActions(['fetchList']),
 
     handleResultTabClick() {
       this.newRequest = '';
       this.currentPage = 1;
-      this.fetchList({ limit: 5, filter: JSON.stringify(this.request), start: 0 });
+      this.fetchList({ params: { limit: 5, filter: JSON.stringify(this.request), skip: 0 } });
     },
 
     handleInputChange() {

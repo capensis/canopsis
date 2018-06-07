@@ -1,27 +1,16 @@
 <template lang="pug">
   div
-    modal(:name="createAckEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-ack-event
-    modal(:name="createAssociateTicketEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-associate-ticket-event
-    modal(:name="createCancelEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-cancel-event
-    modal(:name="createChangeStateEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-change-state-event
-    modal(:name="createDeclareTicketEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-declare-ticket-event
-    modal(:name="createSnoozeEvent", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-snooze-event
-    modal(:name="createPbehavior", :dialogProps="{ maxWidth: 700, lazy: true }")
-      create-pbehavior
-    modal(:name="pbehaviorList", :dialogProps="{ maxWidth: 1280, lazy: true }")
-      pbehavior-list
-    modal(name="more-infos", :dialogProps="{ maxWidth: 1280, lazy: true }")
-      more-infos
+    modal(
+    v-for="modal in modals",
+    :key="modal.name",
+    :name="modal.name",
+    :dialogProps="modal.dialogProps || defaultDialogProps"
+    )
+      component(:is="modal.name")
 </template>
 
 <script>
-import { MODALS } from '@/config';
+import { MODALS } from '@/constants';
 
 import Modal from './layouts/modal.vue';
 import CreateAckEvent from './create-ack-event.vue';
@@ -52,7 +41,18 @@ export default {
   },
   data() {
     return {
-      ...MODALS,
+      modals: [
+        { name: MODALS.createAckEvent },
+        { name: MODALS.createAssociateTicketEvent },
+        { name: MODALS.createCancelEvent },
+        { name: MODALS.createChangeStateEvent },
+        { name: MODALS.createDeclareTicketEvent },
+        { name: MODALS.createSnoozeEvent },
+        { name: MODALS.createPbehavior },
+        { name: MODALS.pbehaviorList, dialogProps: { maxWidth: 1280, lazy: true } },
+        { name: MODALS.moreInfos },
+      ],
+      defaultDialogProps: { maxWidth: 700, lazy: true },
     };
   },
 };
