@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { STATES_CHIPS_AND_FLAGS_STYLE, STATUS_CHIPS_AND_FLAGS_STYLE } from '@/config';
+import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES } from '@/constants';
 
 export default {
   name: 'alarm-flag',
@@ -24,19 +24,19 @@ export default {
   computed: {
     color() {
       if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].color;
+        return ENTITY_STATUS_STYLES[this.value].color;
       } else if (this.isCroppedState) {
         return 'black';
       }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].color;
+      return ENTITIES_STATES_STYLES[this.value].color;
     },
     icon() {
       if (this.isStatus) {
-        return STATUS_CHIPS_AND_FLAGS_STYLE[this.value].icon;
+        return ENTITY_STATUS_STYLES[this.value].icon;
       } else if (this.isCroppedState) {
         return 'vertical_align_center';
       }
-      return STATES_CHIPS_AND_FLAGS_STYLE[this.value].icon;
+      return ENTITIES_STATES_STYLES[this.value].icon;
     },
   },
 };

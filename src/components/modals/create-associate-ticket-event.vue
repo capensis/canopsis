@@ -26,9 +26,11 @@
 import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
+  name: MODALS.createAssociateTicketEvent,
+
   $_veeValidate: {
     validator: 'new',
   },
@@ -49,7 +51,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(EVENT_TYPES.associateTicket, this.item, this.form);
+        await this.createEvent(EVENT_ENTITY_TYPES.associateTicket, this.item, this.form);
 
         this.hideModal();
       }

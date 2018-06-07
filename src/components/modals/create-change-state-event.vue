@@ -33,9 +33,12 @@
 <script>
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { STATES, EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES, ENTITIES_STATES, MODALS } from '@/constants';
+
 
 export default {
+  name: MODALS.createChangeStateEvent,
+
   $_veeValidate: {
     validator: 'new',
   },
@@ -44,23 +47,23 @@ export default {
     return {
       form: {
         output: '',
-        state: STATES.info,
+        state: ENTITIES_STATES.ok,
       },
     };
   },
   computed: {
     buttons() {
-      return Object.keys(STATES);
+      return Object.keys(ENTITIES_STATES);
     },
     states() {
-      return STATES;
+      return ENTITIES_STATES;
     },
     colorsMap() {
       return {
-        [STATES.info]: 'info',
-        [STATES.minor]: 'yellow',
-        [STATES.major]: 'orange',
-        [STATES.critical]: 'error',
+        [ENTITIES_STATES.ok]: 'info',
+        [ENTITIES_STATES.minor]: 'yellow',
+        [ENTITIES_STATES.major]: 'orange',
+        [ENTITIES_STATES.critical]: 'error',
       };
     },
   },
@@ -72,7 +75,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(EVENT_TYPES.changeState, this.item, this.form);
+        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.item, this.form);
 
         this.hideModal();
       }
