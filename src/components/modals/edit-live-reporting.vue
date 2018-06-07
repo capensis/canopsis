@@ -28,13 +28,14 @@
 import { createNamespacedHelpers } from 'vuex';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import dateIntervals from '@/helpers/date-intervals';
+import { MODALS } from '@/constants';
 
 const { mapActions: modalMapActions } = createNamespacedHelpers('modal');
 const { mapActions: alarmsMapActions } = createNamespacedHelpers('alarm');
 const { mapActions: alarmsListMapActions } = createNamespacedHelpers('alarmsList');
 
 export default {
-  name: 'edit-live-reporting',
+  name: MODALS.editLiveReporting,
   components: {
     DateTimePicker,
   },
