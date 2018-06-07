@@ -17,7 +17,7 @@
             th.box
         tr.container(slot="row" slot-scope="item")
             v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
-            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value, getAlarmFilter) }}
+            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value, property.filter) }}
             td.box
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
@@ -99,15 +99,6 @@ export default {
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
-    isDateProperty(propertyName) {
-      return propertyName.match(/(creation_date|last_update_date)/);
-    },
-    getAlarmFilter(property, propertyValue) {
-      if (this.isDateProperty(property)) {
-        return this.$d(new Date(propertyValue * 1000), 'long');
-      }
-      return propertyValue;
-    },
     fetchList() {
       this.fetchListAction({
         params: this.getQuery(),
