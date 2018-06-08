@@ -778,13 +778,11 @@ class AlertsReader(object):
 
                     skip += limit
 
-                # filter useless data
-                if not hide_resources:
-                    break
-                else:
-                    results['alarms'] = self._hide_resources(
-                        results['alarms'], hidden_resources_cache
-                    )
+                    # filter useless data
+                    if hide_resources:
+                        tmp_res['alarms'] = self._hide_resources(
+                            tmp_res['alarms'], hidden_resources_cache
+                        )
 
                 # no new results
                 if not tmp_res['alarms']:
