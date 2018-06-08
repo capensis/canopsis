@@ -6,6 +6,7 @@
 <script>
 import widgetMixin from '@/mixins/widget';
 import popupComponentMixin from '@/mixins/popup';
+import Handlebars from 'handlebars';
 
 export default {
   mixins: [
@@ -15,6 +16,10 @@ export default {
   props: {
     columnName: {
       type: String,
+      required: true,
+    },
+    alarm: {
+      type: Object,
       required: true,
     },
   },
@@ -34,11 +39,17 @@ export default {
 
       return data;
     },
+    textContent() {
+      const template = Handlebars.compile(this.popupData.template);
+      const context = { alarm: this.alarm.v };
+
+      return template(context);
+    },
   },
   methods: {
     showPopup() {
       this.addInfoPopup({
-        text: this.popupData.template,
+        text: this.textContent,
         autoClose: false,
       });
     },

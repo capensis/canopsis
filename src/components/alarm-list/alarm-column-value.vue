@@ -5,7 +5,7 @@
       state(:stateId="getProp(alarm, pathToProperty)", :showIcon="getProp(alarm, 'v.state._t') === 'changestate'")
     template(v-if="attributeType === 'status'")
       status(:statusId="getProp(alarm, pathToProperty)")
-    info-popup-modal-button(:columnName="columnName")
+    info-popup-modal-button(:columnName="columnName", :alarm="alarm")
 </template>
 
 <script>
