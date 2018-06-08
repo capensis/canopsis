@@ -13,6 +13,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Canopsis 2.6.6 - Maintenance release -  Due date : 2018-06-08
 
+- [Connector]: email2canopsis now with python3
 - [Docker]: add some usefull tools in debian-9 docker image
 - [EventFilter]: now can filter on subkeys
 - [Go]: fix crash when a non-check event arrive on an empty alarm
