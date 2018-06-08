@@ -119,11 +119,7 @@ export default {
 
     ...alarmsListMapActions(['removeLiveReportingFilter']),
 
-    handleLiveReportingClick() {
-      this.showModal({ name: 'edit-live-reporting' });
-    },
-
-    handleRemoveLiveReportingFilter() {
+    removeLiveReportingFilter() {
       this.removeLiveReportingFilter();
       this.fetchList();
     },
