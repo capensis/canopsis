@@ -28,21 +28,59 @@ class StatQuery(object):
     A StatQuery is an object that is used by the statistics API to compute
     statistics from the influxdb database.
     """
-    def get_select_statement(self):
-        """
-        Generate a SELECT statement (`SELECT ... FROM ...`).
+    def __init__(self, logger, influxdb_client):
+        self.logger = logger
+        self.influxdb_client = influxdb_client
 
-        This statement will be followed by a WHERE statement in the query.
+    def _run_query(self, select_statement, where='', group_by=''):
         """
-        raise NotImplementedError()
+        Runs an influxdb query.
 
-    def get_results(self, rows):
+        Runs the following query:
+        ```
+        {select_statement}
+        WHERE {where}
+        GROUP BY {group_by}
+        ```
+
+        :param str select_statement:
+        :param str where:
+        :param str group_by:
+        :rtype ResultSet:
         """
-        Given the rows of an influxdb queries, return the corresponding
-        statistic(s) in a dictionnary.
+        # Generate WHERE statement
+        where_statement = ''
+        if where:
+            where_statement = 'WHERE {}'.format(where)
 
-        :params generator rows: a generator of dictionnaries
-        :rtype: dict
+        # Generate GROUP BY statement
+        group_by_statement = ''
+        if group_by:
+            group_by_statement = 'GROUP BY {}'.format(group_by)
+
+        # Generate the query
+        query = ' '.join((
+            select_statement,
+            where_statement,
+            group_by_statement))
+
+        # Run the query
+        self.logger.debug("Running the query: {0}".format(query))
+        return self.influxdb_client.query(query)
+
+    def run(self, where, group_by):
+        """
+        Run the StatsQuery
+
+        This is an iterator yielding tuples `(tags, stats)` where `tags` is a
+        dictionary containing the values of the tags of `group_by` and `stats`
+        is a dictionary containing the values of the statistics for this group.
+
+        :param str where: a condition to be used in a WHERE statement, used to
+        set the time interval and to filter the entities
+        :param str group_by: a list of comma separated tags to be used in a
+        GROUP BY statement
+        :rtype: Iterator[Tuple[Dict[str, str], Dict[str, Any]]]
         """
         raise NotImplementedError()
 
@@ -56,26 +94,37 @@ class AggregationStatQuery(StatQuery):
     :param str aggregation: the aggregation function
     :param str name: the name of the statistic
     """
-    def __init__(self, measurement, aggregation, name=None):
+    def __init__(self,
+                 logger,
+                 influxdb_client,
+                 measurement,
+                 aggregation,
+                 name=None):
+        super(AggregationStatQuery, self).__init__(logger, influxdb_client)
         self.measurement = measurement
         self.aggregation = aggregation
         self.name = name or measurement
 
-    def get_select_statement(self):
-        return """
+    def run(self, where, group_by):
+        # Run the query
+        select_statement = """
             SELECT {aggregation}(value) AS value
             FROM {measurement}
         """.format(
             aggregation=self.aggregation,
             measurement=quote_ident(self.measurement))
 
-    def get_results(self, rows):
-        # Get first and only row
-        try:
-            row = next(rows)
-        except StopIteration:
-            return {}
+        result_set = self._run_query(select_statement, where, group_by)
 
-        return {
-            self.name: row['value']
-        }
+        # Yield the results
+        for (_, tags), rows in result_set.items():
+            # Get first and only row
+            try:
+                row = next(rows)
+            except StopIteration:
+                continue
+
+            results = {
+                self.name: row['value']
+            }
+            yield tags, results

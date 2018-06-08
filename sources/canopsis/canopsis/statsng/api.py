@@ -125,16 +125,20 @@ class StatsAPI(object):
     """
     def __init__(self, logger):
         self.logger = logger
-        self.influxdb_client = get_influxdb_client()
+        influxdb_client = get_influxdb_client()
 
         self.stat_queries = {
-            'alarms_canceled': AggregationStatQuery('alarms_canceled', 'sum'),
-            'alarms_created': AggregationStatQuery('alarms_created', 'sum'),
-            'alarms_resolved': AggregationStatQuery('alarms_resolved', 'sum'),
+            'alarms_canceled': AggregationStatQuery(
+                logger, influxdb_client, 'alarms_canceled', 'sum'),
+            'alarms_created': AggregationStatQuery(
+                logger, influxdb_client, 'alarms_created', 'sum'),
+            'alarms_resolved': AggregationStatQuery(
+                logger, influxdb_client, 'alarms_resolved', 'sum'),
             'mean_ack_time': AggregationStatQuery(
-                'ack_time', 'mean', 'mean_ack_time'),
+                logger, influxdb_client, 'ack_time', 'mean', 'mean_ack_time'),
             'mean_resolve_time': AggregationStatQuery(
-                'resolve_time', 'mean', 'mean_resolve_time'),
+                logger, influxdb_client, 'resolve_time', 'mean',
+                'mean_resolve_time'),
         }
 
     def _generate_where_statement(self, request):
@@ -152,12 +156,7 @@ class StatsAPI(object):
 
         # TODO: Handle request.filter
 
-        if conditions:
-            return 'WHERE {}'.format(
-                ' AND '.join(conditions)
-            )
-        else:
-            return ''
+        return ' AND '.join(conditions)
 
     def handle_request(self, request):
         """
@@ -170,14 +169,10 @@ class StatsAPI(object):
         results = StatsAPIResults(request.group_by)
 
         # Generate WHERE statement
-        where_statement = self._generate_where_statement(request)
+        where = self._generate_where_statement(request)
 
         # Generate GROUP BY statement
-        group_by_statement = ''
-        if request.group_by:
-            group_by_statement = 'GROUP BY {}'.format(
-                ', '.join(quote_ident(tag) for tag in request.group_by)
-            )
+        group_by = ', '.join(quote_ident(tag) for tag in request.group_by)
 
         for stat in request.stats:
             try:
@@ -185,21 +180,8 @@ class StatsAPI(object):
             except KeyError:
                 raise UnknownStatNameError('Unknown stat: {0}'.format(stat))
 
-            # Generate SELECT statement
-            select_statement = stat_query.get_select_statement()
-
-            # Generate the query
-            query = " ".join((
-                select_statement,
-                where_statement,
-                group_by_statement))
-
-            # Run the query
-            self.logger.debug("Running the query: {0}".format(query))
-            result_set = self.influxdb_client.query(query)
-
             # Add the stats to results
-            for (_, tags), rows in result_set.items():
-                results.add_stats(tags, stat_query.get_results(rows))
+            for tags, stats in stat_query.run(where, group_by):
+                results.add_stats(tags, stats)
 
         return results.as_list()
