@@ -21,7 +21,7 @@
 from __future__ import unicode_literals
 
 from canopsis.common.influx import SECONDS, quote_ident, quote_literal, \
-    get_influxdb_client
+    quote_regex, get_influxdb_client
 from canopsis.statsng.enums import StatRequestFields
 from canopsis.statsng.errors import StatsAPIError, UnknownStatNameError
 from canopsis.statsng.queries import AggregationStatQuery, SLAStatQuery
@@ -36,7 +36,7 @@ class StatRequest(object):
         self.tstart = None
         self.tstop = None
         self.group_by = []
-        self.entity_filter = None
+        self.entity_filter = []
         self.parameters = {}
 
     @staticmethod
@@ -55,7 +55,7 @@ class StatRequest(object):
         request.tstart = body.pop(StatRequestFields.tstart, None)
         request.tstop = body.pop(StatRequestFields.tstop, None)
         request.group_by = body.pop(StatRequestFields.group_by, [])
-        request.entity_filter = body.pop(StatRequestFields.filter, None)
+        request.entity_filter = body.pop(StatRequestFields.filter, [])
 
         request.parameters = body
 
@@ -101,12 +101,47 @@ class StatsAPIResults(object):
         return list(self.data.values())
 
 
+class EntityFilterParser(object):
+    def parse_tag_filter(self, tag_name, tag_filter):
+        if isinstance(tag_filter, dict) and \
+           StatRequestFields.matches in tag_filter:
+            regex = tag_filter[StatRequestFields.matches]
+            return "{} =~ {}".format(quote_ident(tag_name),
+                                     quote_regex(regex))
+
+        elif isinstance(tag_filter, list):
+            return "({})".format(" OR ".join(
+                "{} = {}".format(quote_ident(tag_name),
+                                 quote_literal(tag_value))
+                for tag_value in tag_filter
+            ))
+
+        elif isinstance(tag_filter, basestring):
+            return "{} = {}".format(quote_ident(tag_name),
+                                    quote_literal(tag_filter))
+
+        raise StatsAPIError('Invalid tag filter : {}'.format(tag_filter))
+
+    def parse_entity_group(self, entity_group):
+        return " AND ".join(
+            self.parse_tag_filter(tag_name, tag_filter)
+            for tag_name, tag_filter in entity_group.items()
+        )
+
+    def parse(self, entity_filter):
+        return " OR ".join(
+            "({})".format(self.parse_entity_group(entity_group))
+            for entity_group in entity_filter
+        )
+
+
 class StatsAPI(object):
     """
     A StatsAPI object handles the computation of statistics.
     """
     def __init__(self, logger):
         self.logger = logger
+        self.entity_filter_parser = EntityFilterParser()
         influxdb_client = get_influxdb_client()
 
         self.stat_queries = {
@@ -139,7 +174,9 @@ class StatsAPI(object):
         if request.tstop:
             conditions.append('time < {}'.format(request.tstop * SECONDS))
 
-        # TODO: Handle request.filter
+        if request.entity_filter:
+            conditions.append(
+                self.entity_filter_parser.parse(request.entity_filter))
 
         return ' AND '.join(conditions)
 

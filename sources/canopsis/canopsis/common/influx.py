@@ -149,3 +149,11 @@ def quote_literal(value):
     """
     return "'{}'".format(value.replace("\\", "\\\\")
                               .replace("'", "\\'"))
+
+
+def quote_regex(value):
+    """
+    Quote provided regex.
+    """
+    return "/{}/".format(value.replace("\\", "\\\\")
+                              .replace("/", "\\/"))

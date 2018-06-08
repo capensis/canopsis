@@ -75,6 +75,7 @@ class StatRequestFields(FastEnum):
     group_by = "group_by"
     filter = "filter"
     stats = "stats"
+    matches = "matches"
 
 
 class StatResponseFields(FastEnum):
