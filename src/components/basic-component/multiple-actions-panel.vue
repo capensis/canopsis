@@ -20,11 +20,15 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import ModalMixin from '@/mixins/modal/modal';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
+
+const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { ActionsPanelItem },
@@ -59,6 +63,12 @@ export default {
     };
   },
   computed: {
+    ...entitiesMapGetters(['getList']),
+
+    items() {
+      return this.getList(ENTITIES_TYPES.alarm, this.itemsIds);
+    },
+
     modalConfig() {
       return {
         itemsType: ENTITIES_TYPES.alarm,
@@ -68,7 +78,7 @@ export default {
   },
   methods: {
     async createAckEvent() {
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
+      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
     },
     showActionModal(name) {
       return () => this.showModal({
