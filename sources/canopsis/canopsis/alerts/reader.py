@@ -673,8 +673,17 @@ class AlertsReader(object):
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
-        if limit is None or limit > 100:
-            limit = 100
+
+        if limit is None or limit > 50:
+            limit = 50
+
+        # truncate results if more than required
+        api_limit = limit
+
+        # get a little bit more results so we may avoid querying the database
+        # more than once.
+        if hide_resources:
+            limit = limit * 2
 
         def glissendo(skip, limit):
             pipeline = [
@@ -782,9 +791,25 @@ class AlertsReader(object):
                 if not tmp_res['alarms']:
                     break
 
+            if hide_resources:
+                results['alarms'] = self._sort_hide_resources(
+                    results['alarms'], sort_key, sort_dir
+                )
+
+            if len(results['alarms']) > api_limit:
+                results['alarms'] = results['alarms'][0:api_limit]
+
             return results
 
         return work_on_it(skip, limit)
+
+    @staticmethod
+    def _sort_hide_resources(alarms, sort_key, sort_dir):
+        return sorted(
+            alarms,
+            key=lambda k: get_sub_key(k, sort_key),
+            reverse=(sort_dir == -1)
+        )
 
     @staticmethod
     def _hide_resources(alarms, components_state):
