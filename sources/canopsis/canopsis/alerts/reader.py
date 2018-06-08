@@ -330,7 +330,6 @@ class AlertsReader(object):
         elif isinstance(filter_, list):
             self._filter_list(filter_)
 
-
     def parse_filter(self, filter_):
         """Set self.has_active_pbh true if the filter contain a active_pb key
         set to true or false if it set to false. If the key is not present or
@@ -564,8 +563,9 @@ class AlertsReader(object):
                         "$filter": {
                             "input": "$pbehaviors",
                             "as": "pbh",
-                            "cond": [{"$gte": ["$pbehaviors.tstop", tnow]},
-                                     {"$lte": ["$pbehaviors.tstart", tnow]}
+                            "cond": [
+                                {"$gte": ["$pbehaviors.tstop", tnow]},
+                                {"$lte": ["$pbehaviors.tstart", tnow]}
                             ]
                         }
                     },
@@ -671,7 +671,6 @@ class AlertsReader(object):
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
-
         if limit is None or limit > 50:
             limit = 50
 
@@ -699,7 +698,8 @@ class AlertsReader(object):
                     }
                 }, {
                     "$match": {"$or": [
-                        {"entity.enabled": True}, {"entity": {"$exists": False}}
+                        {"entity.enabled": True}, {
+                            "entity": {"$exists": False}}
                     ]}
                 }, {
                     "$match": final_filter
@@ -727,7 +727,8 @@ class AlertsReader(object):
             )
 
             alarms = list(result)
-            limited_total = len(alarms)  # Manual count is much faster than mongo's
+            # Manual count is much faster than mongo's
+            limited_total = len(alarms)
 
             count_query = self.alarm_storage._backend.find(final_filter)
             total, truncated = self._get_fast_count(
@@ -759,7 +760,7 @@ class AlertsReader(object):
             }
             tmp_res = []
             hidden_resources_cache = {}
-            while len(results['alarms']) < limit: # and not tmp_res after first loop
+            while len(results['alarms']) < limit:  # and not tmp_res after first loop
                 while len(results['alarms']) < limit:
                     tmp_res = glissendo(skip, limit)
 
