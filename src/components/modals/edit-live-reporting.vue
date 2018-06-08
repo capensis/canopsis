@@ -2,12 +2,12 @@
   v-card
     v-card-title(primary-title, class="blue darken-4 white--text")
       v-layout(justify-space-between, align-center)
-        h2 Edit live reporting
+        h2 {{ $t('modals.liveReporting.editLiveReporting') }}
         v-btn(@click="hideModal", icon, small)
           v-icon(color="white") close
     v-divider
     v-card-text
-      h3 Interval de date
+      h3 {{ $t('modals.liveReporting.dateInterval') }}
       v-layout(wrap)
         v-radio-group(@change="handleIntervalClick", v-model="selectedInterval")
           v-radio(
@@ -21,7 +21,7 @@
           date-time-picker(v-model="tstart", clearable, label="tstart")
         v-flex(xs12)
           date-time-picker(v-model="tstop", clearable, label="tstop")
-      v-btn(@click="handleSubmit", color="green darken-4 white--text", small) Apply
+      v-btn(@click="handleSubmit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
 </template>
 
 <script>
@@ -45,31 +45,31 @@ export default {
       selectedInterval: '',
       dateIntervals: [
         {
-          text: 'Today',
+          text: this.$t('modals.liveReporting.today'),
           value: 'today',
         },
         {
-          text: 'Yesterday',
+          text: this.$t('modals.liveReporting.yesterday'),
           value: 'yesterday',
         },
         {
-          text: 'Last 7 days',
+          text: this.$t('modals.liveReporting.last7Days'),
           value: 'last7Days',
         },
         {
-          text: 'Last 30 days',
+          text: this.$t('modals.liveReporting.last30Days'),
           value: 'last30Days',
         },
         {
-          text: 'This month',
+          text: this.$t('modals.liveReporting.thisMonth'),
           value: 'thisMonth',
         },
         {
-          text: 'Last month',
+          text: this.$t('modals.liveReporting.lastMonth'),
           value: 'lastMonth',
         },
         {
-          text: 'Custom range',
+          text: this.$t('modals.liveReporting.custom'),
           value: 'custom',
         },
       ],

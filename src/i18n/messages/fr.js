@@ -15,6 +15,7 @@ export default {
     home: 'Accueil',
     entries: 'entrées',
     showing: 'afficher',
+    apply: 'Appliquer',
     to: 'à',
     of: 'de',
     actionsLabel: 'Actions',
@@ -124,6 +125,17 @@ export default {
       fields: {
         ticket: 'Numéro du ticket',
       },
+    },
+    liveReporting: {
+      editLiveReporting: 'Suivi personnalisé',
+      dateInterval: 'Interval de dates',
+      today: 'Aujourd\'hui',
+      yesterday: 'Hier',
+      last7Days: '7 derniers jours',
+      last30Days: '30 derniers jours',
+      thisMonth: 'Ce mois',
+      lastMonth: 'Mois dernier',
+      custom: 'Personnalisé',
     },
   },
   tables: {
