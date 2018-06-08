@@ -72,6 +72,6 @@ export default {
 
 <style scoped>
   .toolbar {
-    background-color: rgb(251,247,247);
+    background-color: white;
   }
 </style>

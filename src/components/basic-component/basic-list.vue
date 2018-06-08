@@ -42,15 +42,14 @@ export default {
   .sticky {
     position: -webkit-sticky;
     position: sticky;
-    top: 38px;
+    top: 48px;
     z-index: 2;
   }
   .header {
-    background-color: rgb(251,247,247);
     z-index: 1;
     font-size: 0.9em;
     line-height: 1em;
-    padding: 1.5em 0 0 0;
+    background-color: white;
   }
   .reduced {
     overflow: auto;
