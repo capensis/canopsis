@@ -585,6 +585,8 @@ def dict_merge(dct, merge_dct):
     ``dct``.
     => https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
 
+    NB: merge_dict always win
+
     :param dict dct: dict onto which the merge is executed
     :param dict merge_dct: dct merged into dct
     :return: None
