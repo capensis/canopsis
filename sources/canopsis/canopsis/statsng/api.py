@@ -37,6 +37,7 @@ class StatRequest(object):
         self.tstop = None
         self.group_by = []
         self.entity_filter = None
+        self.parameters = {}
 
     @staticmethod
     def from_request_body(body):
@@ -49,15 +50,14 @@ class StatRequest(object):
         """
         request = StatRequest()
 
+        body = body.copy()
         request.stats = body.pop(StatRequestFields.stats, None)
         request.tstart = body.pop(StatRequestFields.tstart, None)
         request.tstop = body.pop(StatRequestFields.tstop, None)
         request.group_by = body.pop(StatRequestFields.group_by, [])
         request.entity_filter = body.pop(StatRequestFields.filter, None)
 
-        if body:
-            raise StatsAPIError('Unexpected fields: {0}'.format(
-                ', '.join(body.keys())))
+        request.parameters = body
 
         return request
 
@@ -162,7 +162,8 @@ class StatsAPI(object):
                 raise UnknownStatNameError('Unknown stat: {0}'.format(stat_name))
 
             # Add the stats to results
-            for tags, stats in stat_query.run(where, group_by):
+            for tags, stats in stat_query.run(where, group_by,
+                                              request.parameters):
                 results.add_stat(tags, stat_name, stats)
 
         return results.as_list()

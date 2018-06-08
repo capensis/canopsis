@@ -68,7 +68,7 @@ class StatQuery(object):
         self.logger.debug("Running the query: {0}".format(query))
         return self.influxdb_client.query(query)
 
-    def run(self, where, group_by):
+    def run(self, where, group_by, parameters):
         """
         Run the StatsQuery
 
@@ -80,6 +80,8 @@ class StatQuery(object):
         set the time interval and to filter the entities
         :param str group_by: a list of comma separated tags to be used in a
         GROUP BY statement
+        :param Dict[str, Any] parameters: a dictionary containing additional
+        parameters
         :rtype: Iterator[Tuple[Dict[str, str], Dict[str, Any]]]
         """
         raise NotImplementedError()
@@ -99,7 +101,7 @@ class AggregationStatQuery(StatQuery):
         self.measurement = measurement
         self.aggregation = aggregation
 
-    def run(self, where, group_by):
+    def run(self, where, group_by, parameters):
         # Run the query
         select_statement = """
             SELECT {aggregation}(value) AS value
