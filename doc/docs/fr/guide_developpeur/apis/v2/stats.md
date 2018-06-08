@@ -97,6 +97,9 @@ La statistique `ack_time_sla` est un objet JSON avec les champs suivants :
  - `below_rate`: le pourcentage d'alarmes dont le temps d'acquittement est
    inférieur au SLA
 
+Le SLA doit être indiqué en secondes dans la requête dans un champs
+`ack_time_sla`.
+
 ### Taux de résolution inférieur ou supérieur au SLA
 
 La statistique `resolve_time_sla` est un objet JSON avec les champs suivants :
@@ -110,6 +113,8 @@ La statistique `resolve_time_sla` est un objet JSON avec les champs suivants :
  - `below_rate`: le pourcentage d'alarmes dont le temps de résolution est
    inférieur au SLA
 
+Le SLA doit être indiqué en secondes dans la requête dans un champs
+`resolve_time_sla`.
 
 ## Exemples
 
@@ -179,3 +184,40 @@ Réponse :
     }
 ]
 ```
+
+### Calcul du taux d'acquittement inférieur ou supérieur au SLA
+
+`/api/v2/stats/ack_time_sla/`
+
+Requête :
+```json
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component"
+        }
+    ],
+    "ack_time_sla": 600
+}
+```
+
+Réponse :
+```json
+[
+    {
+        "tags": {},
+        "ack_time_sla": {
+            "above": 3
+            "below": 9,
+            "above_rate": 0.25,
+            "below_rate": 0.75,
+        }
+    }
+]
+```
+
+
