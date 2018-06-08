@@ -22,11 +22,11 @@ from __future__ import unicode_literals
 
 from bottle import request
 
+from canopsis.statsng.api import StatRequest, StatsAPI
+from canopsis.statsng.enums import StatRequestFields
+from canopsis.statsng.errors import StatsAPIError, UnknownStatNameError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
     HTTP_NOT_FOUND
-from canopsis.statsng.enums import StatRequestFields
-from canopsis.statsng.api import StatsAPIError, UnknownStatNameError, \
-    StatRequest, StatsAPI
 
 
 def parse_request():

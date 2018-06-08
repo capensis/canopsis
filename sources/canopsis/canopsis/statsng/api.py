@@ -23,27 +23,8 @@ from __future__ import unicode_literals
 from canopsis.common.influx import SECONDS, quote_ident, quote_literal, \
     get_influxdb_client
 from canopsis.statsng.enums import StatRequestFields
+from canopsis.statsng.errors import StatsAPIError, UnknownStatNameError
 from canopsis.statsng.queries import AggregationStatQuery
-
-
-class StatsAPIError(Exception):
-    """
-    A StatsAPIError is an Exception that can be raised by a StatsAPI object.
-
-    It should be handled in `webcore/services/statsng.py`, and returned as a
-    JSON object in the response.
-    """
-    def __init__(self, message):
-        super(StatsAPIError, self).__init__(message)
-        self.message = message
-
-
-class UnknownStatNameError(StatsAPIError):
-    """
-    A UnknownStatNameError is an Exception that can be raised by a StatsAPI
-    object when requesting an unknown statistic.
-    """
-    pass
 
 
 class StatRequest(object):
