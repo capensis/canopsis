@@ -58,7 +58,6 @@ export default {
           type: 'ackRemove',
           method: this.showAckRemoveModal,
         },
-        // TODO: add restore
       ],
     };
   },
@@ -77,15 +76,17 @@ export default {
     },
   },
   methods: {
-    async createAckEvent() {
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
+    createAckEvent() {
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
     },
+
     showActionModal(name) {
       return () => this.showModal({
         name,
         config: this.modalConfig,
       });
     },
+
     showAckRemoveModal() {
       this.showModal({
         name: MODALS.createCancelEvent,

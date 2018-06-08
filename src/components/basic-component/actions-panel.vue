@@ -139,8 +139,8 @@ export default {
     },
   },
   methods: {
-    async createAckEvent() {
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
+    createAckEvent() {
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
     },
 
     showActionModal(name) {
