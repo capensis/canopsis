@@ -94,16 +94,10 @@ class AggregationStatQuery(StatQuery):
     :param str aggregation: the aggregation function
     :param str name: the name of the statistic
     """
-    def __init__(self,
-                 logger,
-                 influxdb_client,
-                 measurement,
-                 aggregation,
-                 name=None):
+    def __init__(self, logger, influxdb_client, measurement, aggregation):
         super(AggregationStatQuery, self).__init__(logger, influxdb_client)
         self.measurement = measurement
         self.aggregation = aggregation
-        self.name = name or measurement
 
     def run(self, where, group_by):
         # Run the query
@@ -124,7 +118,4 @@ class AggregationStatQuery(StatQuery):
             except StopIteration:
                 continue
 
-            results = {
-                self.name: row['value']
-            }
-            yield tags, results
+            yield tags, row['value']

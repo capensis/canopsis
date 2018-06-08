@@ -92,12 +92,13 @@ class StatsAPIResults(object):
         self.group_by = group_by
         self.data = {}
 
-    def add_stats(self, tags, stats):
+    def add_stat(self, tags, stat_name, stat_value):
         """
         Add statistics to the results.
 
         :param Dict[str, str] tags: the tags of the statistics
-        :param Dict[str, Any] stats: the values of the statistics
+        :param str stat_name: the name of the statistic
+        :param Any stat_value: the value of the statistic
         """
         data_key = tuple(
             tags[tag] for tag in self.group_by
@@ -108,7 +109,7 @@ class StatsAPIResults(object):
                 "tags": tags
             }
 
-        self.data[data_key].update(stats)
+        self.data[data_key][stat_name] = stat_value
 
     def as_list(self):
         """
@@ -135,10 +136,9 @@ class StatsAPI(object):
             'alarms_resolved': AggregationStatQuery(
                 logger, influxdb_client, 'alarms_resolved', 'sum'),
             'mean_ack_time': AggregationStatQuery(
-                logger, influxdb_client, 'ack_time', 'mean', 'mean_ack_time'),
+                logger, influxdb_client, 'ack_time', 'mean'),
             'mean_resolve_time': AggregationStatQuery(
-                logger, influxdb_client, 'resolve_time', 'mean',
-                'mean_resolve_time'),
+                logger, influxdb_client, 'resolve_time', 'mean'),
         }
 
     def _generate_where_statement(self, request):
@@ -174,14 +174,14 @@ class StatsAPI(object):
         # Generate GROUP BY statement
         group_by = ', '.join(quote_ident(tag) for tag in request.group_by)
 
-        for stat in request.stats:
+        for stat_name in request.stats:
             try:
-                stat_query = self.stat_queries[stat]
+                stat_query = self.stat_queries[stat_name]
             except KeyError:
-                raise UnknownStatNameError('Unknown stat: {0}'.format(stat))
+                raise UnknownStatNameError('Unknown stat: {0}'.format(stat_name))
 
             # Add the stats to results
             for tags, stats in stat_query.run(where, group_by):
-                results.add_stats(tags, stats)
+                results.add_stat(tags, stat_name, stats)
 
         return results.as_list()
