@@ -49,8 +49,8 @@ export default {
     background-color: rgb(251,247,247);
     z-index: 1;
     font-size: 0.9em;
-    line-height: 0.7em;
-    padding: 0.7em 0 0 0;
+    line-height: 1em;
+    padding: 1.5em 0 0 0;
   }
   .reduced {
     overflow: auto;
