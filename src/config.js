@@ -19,6 +19,7 @@ export const API_ROUTES = {
   currentUser: '/account/me',
   login: '/login',
   alarmList: '/alerts/get-alarms',
+  context: '/context',
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
