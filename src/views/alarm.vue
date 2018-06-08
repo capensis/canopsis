@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(v-if="showContent")
     alarms-list-settings
     alarm-list(
     :alarmProperties="$mq | mq(alarmProperties)",
@@ -9,12 +9,16 @@
 <script>
 import AlarmList from '@/components/alarm-list/alarm-list.vue';
 import AlarmsListSettings from '@/components/alarms-list-settings.vue';
+import viewMixin from '@/mixins/view';
 
 export default {
   components: {
     AlarmList,
     AlarmsListSettings,
   },
+  mixins: [
+    viewMixin,
+  ],
   data() {
     return {
       alarmProperties: {
@@ -66,7 +70,14 @@ export default {
           },
         ],
       },
+      showContent: false,
     };
+  },
+  created() {
+    this.loadView('view.current_alarms')
+      .then(() => {
+        this.showContent = true;
+      });
   },
 };
 </script>

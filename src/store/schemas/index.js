@@ -26,9 +26,20 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
   idAttribute: '_id',
 });
 
+const widgetWrapper = new schema.Entity(ENTITIES_TYPES.widgetWrapper);
+
+const widgetWrapperList = new schema.Array(widgetWrapper);
+
+export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
+  containerwidget: {
+    items: widgetWrapperList,
+  },
+});
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.context]: contextSchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
+  [ENTITIES_TYPES.view]: viewSchema,
 };
