@@ -682,7 +682,7 @@ class AlertsReader(object):
         if hide_resources:
             limit = limit * 2
 
-        def glissendo(skip, limit):
+        def offset_aggregate(skip, limit):
             pipeline = [
                 {
                     "$lookup": {
@@ -750,7 +750,7 @@ class AlertsReader(object):
 
             return res
 
-        def work_on_it(skip, limit):
+        def loop_aggregate(skip, limit):
             results = {
                 'alarms': [],
                 'total': 0,
@@ -762,7 +762,7 @@ class AlertsReader(object):
             hidden_resources_cache = {}
             while len(results['alarms']) < limit:  # and not tmp_res after first loop
                 while len(results['alarms']) < limit:
-                    tmp_res = glissendo(skip, limit)
+                    tmp_res = offset_aggregate(skip, limit)
 
                     # no results, all good
                     if not tmp_res['alarms']:
@@ -800,7 +800,7 @@ class AlertsReader(object):
 
             return results
 
-        return work_on_it(skip, limit)
+        return loop_aggregate(skip, limit)
 
     @staticmethod
     def _sort_hide_resources(alarms, sort_key, sort_dir):
