@@ -4,60 +4,17 @@
       v-list-tile(@click.stop="method")
         v-list-tile-title
           v-icon.pr-3(left, small) {{ action.icon }}
-          span.body-1 {{ $t(action.title) }}
+          span.body-1 {{ action.title }}
     template(v-else)
-      v-btn.mx-1(flat, icon, @click.stop="method", :title="$t(action.title)")
+      v-btn.mx-1(flat, icon, @click.stop="method", :title="action.title")
         v-icon {{ action.icon }}
 </template>
 
 <script>
-const ACTIONS_MAP = {
-  ack: {
-    icon: 'playlist_add_check',
-    title: 'alarmList.actions.ack',
-  },
-  fastAck: {
-    icon: 'check',
-    title: 'alarmList.actions.fastAck',
-  },
-  ackRemove: {
-    icon: 'block',
-    title: 'alarmList.actions.ackRemove',
-  },
-  pbehavior: {
-    icon: 'pause',
-    title: 'alarmList.actions.pbehavior',
-  },
-  snooze: {
-    icon: 'alarm',
-    title: 'alarmList.actions.snooze',
-  },
-  pbehaviorList: {
-    icon: 'list',
-    title: 'alarmList.actions.pbehaviorList',
-  },
-  declareTicket: {
-    icon: 'local_play',
-    title: 'alarmList.actions.declareTicket',
-  },
-  associateTicket: {
-    icon: 'pin_drop',
-    title: 'alarmList.actions.associateTicket',
-  },
-  cancel: {
-    icon: 'delete',
-    title: 'alarmList.actions.cancel',
-  },
-  changeState: {
-    icon: 'report_problem',
-    title: 'alarmList.actions.changeState',
-  },
-};
-
 export default {
   props: {
     type: {
-      validation: value => [Object.keys(ACTIONS_MAP)].includes(value),
+      type: String,
       required: true,
     },
     method: {
@@ -69,9 +26,55 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      actionsMap: {
+        ack: {
+          icon: 'playlist_add_check',
+          title: this.$t('alarmList.actions.ack'),
+        },
+        fastAck: {
+          icon: 'check',
+          title: this.$t('alarmList.actions.fastAck'),
+        },
+        ackRemove: {
+          icon: 'block',
+          title: this.$t('alarmList.actions.ackRemove'),
+        },
+        pbehavior: {
+          icon: 'pause',
+          title: this.$t('alarmList.actions.pbehavior'),
+        },
+        snooze: {
+          icon: 'alarm',
+          title: this.$t('alarmList.actions.snooze'),
+        },
+        pbehaviorList: {
+          icon: 'list',
+          title: this.$t('alarmList.actions.pbehaviorList'),
+        },
+        declareTicket: {
+          icon: 'local_play',
+          title: this.$t('alarmList.actions.declareTicket'),
+        },
+        associateTicket: {
+          icon: 'pin_drop',
+          title: this.$t('alarmList.actions.associateTicket'),
+        },
+        cancel: {
+          icon: 'delete',
+          title: this.$t('alarmList.actions.cancel'),
+        },
+        changeState: {
+          icon: 'report_problem',
+          title: this.$t('alarmList.actions.changeState'),
+        },
+      },
+    };
+  },
   computed: {
     action() {
-      return ACTIONS_MAP[this.type];
+      return this.actionsMap[this.type] || {};
     },
   },
 };
