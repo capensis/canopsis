@@ -27,11 +27,9 @@ TODO: replace the storage class parameter with a collection (=> rewriting count(
 from __future__ import unicode_literals
 
 import re
-
 from os.path import join
 from time import time
 
-from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
 from canopsis.common import root_path
@@ -813,7 +811,6 @@ class AlertsReader(object):
 
     @staticmethod
     def _hide_resources(alarms, components_state):
-        resources = {}
         filtered_alarms = []
         for alarm in alarms:
             component = alarm.get('component')
@@ -839,9 +836,9 @@ class AlertsReader(object):
             self,
             start,
             stop,
-            subperiod={'day': 1},
+            subperiod=None,
             limit=100,
-            query={},
+            query=None,
     ):
         """
         Count alarms that have been opened during (stop - start) period.
@@ -852,7 +849,7 @@ class AlertsReader(object):
         :param stop: End timestamp of period
         :type stop: int
 
-        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods
+        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods.
         :type subperiod: dict
 
         :param limit: Counts cannot exceed this value
@@ -865,6 +862,12 @@ class AlertsReader(object):
                  related count
         :rtype: list
         """
+
+        if subperiod is None:
+            subperiod = {'day': 1}
+
+        if query is None:
+            query = {}
 
         intervals = Interval.get_intervals_by_period(start, stop, subperiod)
 
