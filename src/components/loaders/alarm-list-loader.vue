@@ -1,38 +1,29 @@
 <template lang="pug">
-  loader(:pending="pending")
-    vue-content-loading(:width="width", :height="height")
-      template(v-for="i in lines")
-        template(v-for="j in rectPerLines")
-          rect(
-            :x="x(j)", :y="y(i)",
-            :width="rectWidths[j-1]", rx="1", ry="1", :height="rectHeight")
-        template(v-for="j in circlePerLines")
-          circle(:r="circleR", :cy="cY(i)", :cx="cX(j)")
+  vue-content-loading(:width="width", :height="height")
+    template(v-for="i in lines")
+      template(v-for="j in rectPerLines")
+        rect(
+          :x="x(j)", :y="y(i)",
+          :width="rectWidths[j-1]", rx="1", ry="1", :height="rectHeight")
+      template(v-for="j in circlePerLines")
+        circle(:r="circleR", :cy="cY(i)", :cx="cX(j)")
 </template>
 
 <script>
 import take from 'lodash/take';
 import sum from 'lodash/sum';
 import VueContentLoading from 'vue-content-loading';
-import Loader from '@/components/loaders/loader.vue';
 
 export default {
   components: {
     VueContentLoading,
-    Loader,
-  },
-  props: {
-    pending: {
-      type: Boolean,
-      required: true,
-    },
   },
   data() {
     return {
       rectHeight: 6,
       margin: 5,
-      begining: 20,
-      inBetweenSpace: 5,
+      begining: 10,
+      inBetweenSpace: 6,
       rectWidths: [20, 30, 35, 25, 20, 20, 20, 20],
       circleR: 2.5,
       lines: 9,
@@ -59,7 +50,7 @@ export default {
               + ((this.circleR * 2) * columnNumber);
     },
     y() {
-      return lineNumber => lineNumber * (this.rectHeight + this.margin);
+      return lineNumber => (lineNumber * (this.rectHeight + this.margin)) - this.margin;
     },
     cY() {
       return lineNumber => this.y(lineNumber) + (this.circleR - 0.5);
@@ -67,13 +58,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .loader{
-    position: absolute;
-    width: 100%;
-    top: 23%;
-    z-index: 1;
-    background-color: white;
-  }
-</style>

@@ -6,27 +6,27 @@
         alarm-list-searching
       v-btn(icon, @click="openSettingsPanel")
         v-icon settings
-    alarm-list-loader(:pending="pending")
-    div(v-if="!pending")
+    .topToolbox
       pagination(:meta="meta", :limit="limit", type="top")
-      basic-list(:items="items")
-        tr.container(slot="header")
-          v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
-          th.box(v-for="column in alarmProperties")
-            span {{ column.text }}
-            list-sorting(:column="column.value")
-            th.box
-        tr.container(slot="row" slot-scope="item")
-            v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
-            td.box(v-for="property in alarmProperties")
-              alarm-column-value(:alarm="item.props", :pathToProperty="property.value")
-            td.box
-              actions-panel.actions(:item="item.props")
-        tr.container(slot="expandedRow", slot-scope="item")
-          time-line(:alarmProps="item.props")
-      .bottomToolbox
-        pagination(:meta="meta", :limit="limit")
-        page-iterator
+    basic-list(:items="items", :pending="pending")
+      alarm-list-loader(slot="loader")
+      tr.container(slot="header")
+        v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
+        th.box(v-for="column in alarmProperties")
+          span {{ column.text }}
+          list-sorting(:column="column.value")
+          th.box
+      tr.container(slot="row" slot-scope="item")
+          v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
+          td.box(v-for="property in alarmProperties")
+            alarm-column-value(:alarm="item.props", :pathToProperty="property.value")
+          td.box
+            actions-panel.actions(:item="item.props")
+      tr.container(slot="expandedRow", slot-scope="item")
+        time-line(:alarmProps="item.props")
+    .bottomToolbox
+      pagination(:meta="meta", :limit="limit")
+      page-iterator
 </template>
 
 <script>
@@ -128,6 +128,9 @@ export default {
   .bottomToolbox {
     display: flex;
     flex-flow: row wrap;
+  }
+  .topToolbox{
+    min-height: 90px;
   }
   .checkbox {
     flex: 0.2;

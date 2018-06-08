@@ -1,5 +1,7 @@
 <template lang="pug">
-    ul
+  transition(name="fade", mode="out-in")
+    slot(name="loader", v-if="pending")
+    ul(v-else)
       li.header.sticky(ref="header")
         slot(name="header")
       li(v-for="item in items", :item="item")
@@ -24,12 +26,22 @@ export default {
     items: {
       type: Array,
     },
+    pending: {
+      type: Boolean,
+      default: false,
+    },
   },
   mounted() {
-    StickyFill.addOne(this.$refs.header);
+    const { header } = this.$refs;
+    if (header) {
+      StickyFill.addOne(header);
+    }
   },
   beforeDestroy() {
-    StickyFill.removeOne(this.$refs.header);
+    const { header } = this.$refs;
+    if (header) {
+      StickyFill.removeOne(header);
+    }
   },
 };
 </script>
@@ -52,5 +64,11 @@ export default {
   }
   .reduced {
     overflow: auto;
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 </style>
