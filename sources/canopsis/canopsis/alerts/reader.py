@@ -831,7 +831,7 @@ class AlertsReader(object):
                 if state > components_state[component]:
                     filtered_alarms.append(alarm)
 
-        return alarms
+        return filtered_alarms
 
     def count_alarms_by_period(
             self,
