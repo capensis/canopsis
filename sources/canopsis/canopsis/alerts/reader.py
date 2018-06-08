@@ -810,25 +810,10 @@ class AlertsReader(object):
 
     @staticmethod
     def _hide_resources(alarms, components_state):
-        filtered_alarms = []
-        for alarm in alarms:
-            component = alarm.get('component')
-            resource = alarm.get('resource')
-
-            alarm_state = int(alarm['v']['state']['val'])
-
-            if not resource and component:
-                components_state[component] = alarm_state
-                filtered_alarms.append(alarm)
-
-        for alarm in alarms:
-            resource = alarm.get('resource')
-            component = alarm.get('component')
-            if resource and component:
-                state = int(alarm['v']['state']['val'])
-                if state > components_state[component]:
-                    filtered_alarms.append(alarm)
-
+        """
+        FIXIT: not implemented
+        """
+        filtered_alarms = alarms
         return filtered_alarms
 
     def count_alarms_by_period(
