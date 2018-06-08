@@ -28,9 +28,9 @@
 import { createNamespacedHelpers } from 'vuex';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import dateIntervals from '@/helpers/date-intervals';
+import ModalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
-const { mapActions: modalMapActions } = createNamespacedHelpers('modal');
 const { mapActions: alarmsMapActions } = createNamespacedHelpers('alarm');
 const { mapActions: alarmsListMapActions } = createNamespacedHelpers('alarmsList');
 
@@ -39,6 +39,7 @@ export default {
   components: {
     DateTimePicker,
   },
+  mixins: [ModalMixin],
   data() {
     return {
       selectedInterval: '',
@@ -82,49 +83,18 @@ export default {
     },
   },
   methods: {
-    ...modalMapActions({
-      hideModal: 'hide',
-    }),
     ...alarmsMapActions({
       fetchAlarmList: 'fetchList',
     }),
     ...alarmsListMapActions(['addLiveReportingFilter']),
 
     handleIntervalClick(interval) {
-      if (interval.value === 'today') {
-        const { tstart, tstop } = dateIntervals.today();
+      try {
+        const { tstart, tstop } = dateIntervals[interval.value]();
         this.tstart = tstart;
         this.tstop = tstop;
-      }
-
-      if (interval.value === 'yesterday') {
-        const { tstart, tstop } = dateIntervals.yesterday();
-        this.tstart = tstart;
-        this.tstop = tstop;
-      }
-
-      if (interval.value === 'last7Days') {
-        const { tstart, tstop } = dateIntervals.last7Days();
-        this.tstart = tstart;
-        this.tstop = tstop;
-      }
-
-      if (interval.value === 'last30Days') {
-        const { tstart, tstop } = dateIntervals.last30Days();
-        this.tstart = tstart;
-        this.tstop = tstop;
-      }
-
-      if (interval.value === 'thisMonth') {
-        const { tstart, tstop } = dateIntervals.thisMonth();
-        this.tstart = tstart;
-        this.tstop = tstop;
-      }
-
-      if (interval.value === 'lastMonth') {
-        const { tstart, tstop } = dateIntervals.lastMonth();
-        this.tstart = tstart;
-        this.tstop = tstop;
+      } catch (err) {
+        console.error(err);
       }
     },
     handleSubmit() {

@@ -9,7 +9,7 @@
         label,
         color="blue darken-4 white--text"
       ) {{ liveReportingFilter.text }}
-      v-btn(@click="handleLiveReportingClick", icon, small)
+      v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
         v-icon(:color="liveReportingFilter ? 'blue' : 'black'") schedule
     v-layout
       v-flex(xs5)
@@ -50,11 +50,11 @@ import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
 import PageIterator from '@/components/basic-component/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
+import ModalMixin from '@/mixins/modal/modal';
 
 const { mapActions: alarmsListMapActions, mapGetters: alarmsListMapGetters } = createNamespacedHelpers('alarmsList');
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
-const { mapActions: modalsMapActions } = createNamespacedHelpers('modal');
 
 /**
  * Alarm-list component.
@@ -75,7 +75,7 @@ export default {
     BasicList,
     Loader,
   },
-  mixins: [PaginationMixin],
+  mixins: [PaginationMixin, ModalMixin],
   props: {
     alarmProperties: {
       type: Array,
@@ -115,9 +115,6 @@ export default {
     }),
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
-    }),
-    ...modalsMapActions({
-      showModal: 'show',
     }),
 
     ...alarmsListMapActions(['removeLiveReportingFilter']),
