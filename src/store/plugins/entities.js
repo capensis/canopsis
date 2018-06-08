@@ -99,10 +99,16 @@ const entitiesModule = {
         schema,
         params,
         dataPreparer,
+        isPost,
         mutationType = internalTypes.ENTITIES_UPDATE,
       },
     ) {
-      const data = await request.get(route, { params });
+      let data;
+      if (isPost) {
+        data = await request.post(route, params);
+      } else {
+        data = await request.get(route, { params });
+      }
       const normalizedData = normalize(dataPreparer(data), schema);
 
       commit(mutationType, normalizedData.entities);

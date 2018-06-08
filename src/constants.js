@@ -1,5 +1,6 @@
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
+  context: 'context',
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
