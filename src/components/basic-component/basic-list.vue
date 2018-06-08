@@ -34,7 +34,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   ul {
    position: relative;
    list-style-type: none;
@@ -48,8 +48,15 @@ export default {
   .header {
     background-color: rgb(251,247,247);
     z-index: 1;
+    font-size: 0.9em;
+    line-height: 0.7em;
+    padding: 0.7em 0 0 0;
   }
   .reduced {
     overflow: auto;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 </style>

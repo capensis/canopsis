@@ -8,9 +8,8 @@
         mass-actions
       v-flex(xs5)
         pagination(:meta="meta", :limit="limit", type="top")
-      v-flex(xs3)
-        v-btn(icon, @click="openSettingsPanel")
-          v-icon settings
+      v-btn(icon, @click="openSettingsPanel")
+        v-icon settings
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container(slot="header", class="pa-0")
@@ -26,9 +25,10 @@
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
           time-line(:alarmProps="item.props")
-      .bottomToolbox
+      v-layout
         pagination(:meta="meta", :limit="limit")
-        page-iterator
+        v-flex
+          page-iterator
     loader(v-else)
 </template>
 
@@ -138,9 +138,7 @@ export default {
     flex-flow: row wrap;
   }
   .checkbox {
-    flex: 0.2;
-  }
-  .actions {
-    flex: 0.6;
+    flex: 0.5;
+    padding: 0 0.5em;
   }
 </style>

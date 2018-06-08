@@ -4,6 +4,9 @@
       li
         button.pagination__navigation(:disabled="currentPage <= 1", @click="previous")
           v-icon chevron_left
+      span {{ currentPage }}
+      span /
+      span {{ totalPages }}
       li
         button.pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
           v-icon chevron_right
