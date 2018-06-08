@@ -106,7 +106,7 @@ export default {
         },
         moreInfos: {
           icon: 'notes',
-          title: 'alarmList.moreInfos',
+          title: 'alarmList.actions.moreInfos',
           method: this.showActionModal(MODALS.moreInfos),
         },
       },

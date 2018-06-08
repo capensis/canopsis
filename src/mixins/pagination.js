@@ -7,10 +7,9 @@ export default {
   components: {
     Pagination,
   },
-  props: {
-    limit: {
-      type: Number,
-      default: PAGINATION_LIMIT,
+  computed: {
+    limit() {
+      return parseInt(this.$route.query.limit, 10) || PAGINATION_LIMIT;
     },
   },
   watch: {

@@ -1,6 +1,7 @@
+import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+
 export default {
   common: {
-    hello: 'Hello',
     submit: 'Submit',
     login: 'Login',
     username: 'Username',
@@ -49,6 +50,7 @@ export default {
       associateTicket: 'Associate ticket',
       cancel: 'Cancel alarm',
       changeState: 'Change criticity',
+      moreInfos: 'More infos',
     },
   },
   alarmListSettings: {
@@ -161,6 +163,19 @@ export default {
       reason: 'Reason',
       rrule: 'Rrule',
     },
+    alarmStatus: {
+      [ENTITIES_STATUSES.off]: 'Off',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+    },
+    alarmStates: {
+      [ENTITIES_STATES.ok]: 'Info',
+      [ENTITIES_STATES.minor]: 'Minor',
+      [ENTITIES_STATES.major]: 'Major',
+      [ENTITIES_STATES.critical]: 'Critical',
+    },
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
@@ -171,7 +186,7 @@ export default {
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes to not causing trouble to Canopsis.',
+      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',

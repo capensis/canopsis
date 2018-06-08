@@ -36,8 +36,17 @@ export default {
             value: 'v.initial_output',
           },
           {
+            text: this.$t('tables.alarmGeneral.state'),
+            value: 'v.state.val',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.status'),
+            value: 'v.status.val',
+          },
+          {
             text: this.$t('tables.alarmGeneral.lastUpdateDate'),
             value: 'v.last_update_date',
+            filter: value => this.$d(new Date(value * 1000), 'short'),
           },
         ],
         tablet: [

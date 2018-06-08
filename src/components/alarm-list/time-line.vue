@@ -73,8 +73,7 @@ export default {
       const alarm = this.item(this.alarmProps._id);
       if (alarm && alarm.v.steps) {
         const steps = [...alarm.v.steps];
-        numericSortObject(steps, 't', 'desc');
-        return steps;
+        return numericSortObject(steps, 't', 'desc');
       }
       return [];
     },
