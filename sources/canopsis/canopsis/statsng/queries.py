@@ -21,6 +21,7 @@
 from __future__ import unicode_literals
 
 from canopsis.common.influx import quote_ident, quote_literal
+from canopsis.statsng.errors import StatsAPIError
 
 
 class StatQuery(object):
@@ -121,3 +122,73 @@ class AggregationStatQuery(StatQuery):
                 continue
 
             yield tags, row['value']
+
+
+class SLAStatQuery(StatQuery):
+    """
+    An SLAStatQuery is a StatQuery that given an SLA value, returns a
+    dictionary containing :
+     - the number of values above and below the SLA
+     - the percentage of values above and below the SLA
+
+    :param str measurement: the name of the measurement
+    :param str name: the name of the statistic
+    """
+    def __init__(self,
+                 logger,
+                 influxdb_client,
+                 measurement,
+                 sla_field):
+        super(SLAStatQuery, self).__init__(logger, influxdb_client)
+        self.measurement = measurement
+        self.sla_field = sla_field
+
+    def run(self, where, group_by, parameters):
+        try:
+            sla = parameters[self.sla_field]
+        except KeyError:
+            raise StatsAPIError('Missing field: {0}'.format(self.sla_field))
+
+        below_where = 'value <= {}'.format(sla)
+        if where:
+            below_where = '({}) AND {}'.format(where, below_where)
+
+        # Run the query
+        select_statement = """
+            SELECT count(value) AS value
+            FROM {measurement}
+        """.format(measurement=quote_ident(self.measurement))
+
+        total_result_set = self._run_query(select_statement, where, group_by)
+        below_result_set = self._run_query(select_statement, below_where, group_by)
+
+        # Yield the results
+        for (measurement, tags), total_rows in total_result_set.items():
+            below_rows = below_result_set.get_points(measurement, tags)
+
+            # Get first and only row
+            try:
+                total = next(total_rows)['value']
+            except StopIteration:
+                continue
+
+            try:
+                below = next(below_rows)['value']
+            except StopIteration:
+                below = 0
+
+            above = total - below
+
+            below_rate = -1
+            above_rate = -1
+            if total > 0:
+                below_rate = below / float(total)
+                above_rate = above / float(total)
+
+            results = {
+                'below': below,
+                'above': above,
+                'below_rate': below_rate,
+                'above_rate': above_rate,
+            }
+            yield tags, results

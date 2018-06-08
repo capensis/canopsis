@@ -120,6 +120,10 @@ class StatsAPI(object):
                 logger, influxdb_client, 'ack_time', 'mean'),
             'mean_resolve_time': AggregationStatQuery(
                 logger, influxdb_client, 'resolve_time', 'mean'),
+            'ack_time_sla': SLAStatQuery(
+                logger, influxdb_client, 'ack_time', 'ack_time_sla'),
+            'resolve_time_sla': SLAStatQuery(
+                logger, influxdb_client, 'resolve_time', 'resolve_time_sla'),
         }
 
     def _generate_where_statement(self, request):

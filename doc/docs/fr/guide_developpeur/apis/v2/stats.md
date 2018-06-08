@@ -84,6 +84,32 @@ La statistique `mean_ack_time` vaut le temps d'acquittement moyen.
 
 La statistique `mean_resolve_time` vaut le temps de résolution moyen.
 
+### Taux d'acquittement inférieur ou supérieur au SLA
+
+La statistique `ack_time_sla` est un objet JSON avec les champs suivants :
+
+ - `above`: le nombre d'alarmes dont le temps d'acquittement est supérieur au
+   SLA
+ - `below`: le nombre d'alarmes dont le temps d'acquittement est inférieur au
+   SLA
+ - `above_rate`: le pourcentage d'alarmes dont le temps d'acquittement est
+   supérieur au SLA
+ - `below_rate`: le pourcentage d'alarmes dont le temps d'acquittement est
+   inférieur au SLA
+
+### Taux de résolution inférieur ou supérieur au SLA
+
+La statistique `resolve_time_sla` est un objet JSON avec les champs suivants :
+
+ - `above`: le nombre d'alarmes dont le temps de résolution est supérieur au
+   SLA
+ - `below`: le nombre d'alarmes dont le temps de résolution est inférieur au
+   SLA
+ - `above_rate`: le pourcentage d'alarmes dont le temps de résolution est
+   supérieur au SLA
+ - `below_rate`: le pourcentage d'alarmes dont le temps de résolution est
+   inférieur au SLA
+
 
 ## Exemples
 
