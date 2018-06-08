@@ -17,15 +17,9 @@ export default {
 
 <style scoped>
   .fade-enter-active, .fade-leave-active {
-    transition: opacity .001ms;
+    transition: opacity .3s;
   }
   .fade-enter, .fade-leave-to {
     opacity: 0;
-  }
-  .loader{
-    position: absolute;
-    width: 100%;
-    top: 25%;
-    z-index: 999;
   }
 </style>

@@ -27,7 +27,6 @@
       .bottomToolbox
         pagination(:meta="meta", :limit="limit")
         page-iterator
-    loader(v-else)
 </template>
 
 <script>

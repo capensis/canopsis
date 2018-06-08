@@ -29,13 +29,14 @@ export default {
   },
   data() {
     return {
-      rectHeight: 5,
+      rectHeight: 6,
       margin: 5,
-      inBetweenSpace: 4,
-      rectWidths: [40, 45, 25, 55, 20, 20, 20],
+      begining: 20,
+      inBetweenSpace: 5,
+      rectWidths: [20, 30, 35, 25, 20, 20, 20, 20],
       circleR: 2.5,
       lines: 9,
-      rectPerLines: 7,
+      rectPerLines: 8,
       circlePerLines: 3,
       height: 100,
       width: 300,
@@ -45,11 +46,11 @@ export default {
     x() {
       return (columnNumber) => {
         if (columnNumber === 1) {
-          return this.margin;
+          return this.begining;
         }
         return sum(take(this.rectWidths, columnNumber - 1))
         + ((columnNumber - 1) * this.inBetweenSpace)
-        + this.margin;
+        + this.begining;
       };
     },
     cX() {
@@ -66,3 +67,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .loader{
+    position: absolute;
+    width: 100%;
+    top: 23%;
+    z-index: 1;
+    background-color: white;
+  }
+</style>
