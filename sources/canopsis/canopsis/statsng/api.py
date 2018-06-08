@@ -24,7 +24,7 @@ from canopsis.common.influx import SECONDS, quote_ident, quote_literal, \
     get_influxdb_client
 from canopsis.statsng.enums import StatRequestFields
 from canopsis.statsng.errors import StatsAPIError, UnknownStatNameError
-from canopsis.statsng.queries import AggregationStatQuery
+from canopsis.statsng.queries import AggregationStatQuery, SLAStatQuery
 
 
 class StatRequest(object):
