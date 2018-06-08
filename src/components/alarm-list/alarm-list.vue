@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(justify-space-between)
-      mass-actions
+      multiple-actions-panel(v-show="selected.length", :itemsIds="selected")
       v-flex(xs5)
         alarm-list-searching
       v-btn(icon, @click="openSettingsPanel")
@@ -31,8 +31,8 @@ import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
 import ActionsPanel from '@/components/basic-component/actions-panel.vue';
+import MultipleActionsPanel from '@/components/basic-component/multiple-actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
-import MassActions from '@/components/alarm-list/mass-actions.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
@@ -53,7 +53,7 @@ export default {
   components: {
     ListSorting,
     TimeLine,
-    MassActions,
+    MultipleActionsPanel,
     AlarmListSearching,
     ActionsPanel,
     BasicList,

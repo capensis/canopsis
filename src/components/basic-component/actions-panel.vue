@@ -55,53 +55,43 @@ export default {
     return {
       actionsMap: {
         ack: {
-          icon: 'playlist_add_check',
-          title: 'alarmList.actions.ack',
+          type: 'ack',
           method: this.showActionModal(MODALS.createAckEvent),
         },
         fastAck: {
-          icon: 'check',
-          title: 'alarmList.actions.fastAck',
+          type: 'fastAck',
           method: this.createAckEvent,
         },
         ackRemove: {
-          icon: 'block',
-          title: 'alarmList.actions.ackRemove',
+          type: 'ackRemove',
           method: this.showAckRemoveModal,
         },
         pbehavior: {
-          icon: 'pause',
-          title: 'alarmList.actions.pbehavior',
+          type: 'pbehavior',
           method: this.showActionModal(MODALS.createPbehavior),
         },
         snooze: {
-          icon: 'alarm',
-          title: 'alarmList.actions.snooze',
+          type: 'snooze',
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
         pbehaviorList: {
-          icon: 'list',
-          title: 'alarmList.actions.pbehaviorList',
+          type: 'pbehaviorList',
           method: this.showActionModal(MODALS.pbehaviorList),
         },
         declareTicket: {
-          icon: 'local_play',
-          title: 'alarmList.actions.declareTicket',
+          type: 'declareTicket',
           method: this.showActionModal(MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
-          icon: 'pin_drop',
-          title: 'alarmList.actions.associateTicket',
+          type: 'associateTicket',
           method: this.showActionModal(MODALS.createAssociateTicketEvent),
         },
         cancel: {
-          icon: 'delete',
-          title: 'alarmList.actions.cancel',
+          type: 'cancel',
           method: this.showActionModal(MODALS.createCancelEvent),
         },
         changeState: {
-          icon: 'report_problem',
-          title: 'alarmList.actions.changeState',
+          type: 'changeState',
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
       },
