@@ -52,7 +52,7 @@ export default {
     async save() {
       const widgetWrapper = this.getWidget({ widgetXType: 'listalarm' });
 
-      await this.saveWidget(widgetWrapper);
+      await this.saveWidget({ widgetWrapper });
     },
   },
 };

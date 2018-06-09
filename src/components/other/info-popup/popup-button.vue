@@ -1,5 +1,5 @@
 <template lang="pug">
-  span(v-if="hasPopupForColumn", @click.stop="showPopup", class="info-popup-button")
+  span.info-popup-button(v-if="hasPopupForColumn", @click.stop="showPopup")
     v-icon info
 </template>
 

@@ -4,13 +4,14 @@ const { mapGetters, mapActions } = createNamespacedHelpers('view');
 
 export default {
   methods: {
-    ...mapActions([
-      'loadView',
-    ]),
+    ...mapActions({
+      fetchView: 'fetchItem',
+    }),
   },
   computed: {
-    ...mapGetters([
-      'loadedView',
-    ]),
+    ...mapGetters({
+      getView: 'getItem',
+      viewPending: 'pending',
+    }),
   },
 };

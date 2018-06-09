@@ -1,8 +1,11 @@
-import axios from 'axios';
 import { viewSchema } from '@/store/schemas';
+import { API_ROUTES } from '@/config';
+import request from '@/services/request';
 import widgetModule, { types as widgetMutations } from './widget';
 
 export const types = {
+  FETCH_ITEM: 'FETCH_ITEM',
+  FETCH_ITEM_COMPLETED: 'FETCH_ITEM_COMPLETED',
   SET_LOADED_VIEW: 'SET_LOADED_VIEW',
 };
 
@@ -13,29 +16,31 @@ export default {
   },
   state: {
     loadedView: null,
+    pending: false,
   },
   mutations: {
-    [types.SET_LOADED_VIEW]: (state, view) => {
-      state.loadedView = view;
+    [types.FETCH_ITEM]: (state) => {
+      state.pending = true;
     },
-    [types.SET_WIDGETS]: (state, widgets) => {
-      state.loadedView.containerwidget.items = widgets;
+    [types.FETCH_ITEM_COMPLETED]: (state, view) => {
+      state.loadedView = view;
+      state.pending = false;
+    },
+    [types.SET_LOADED_VIEW]: (state, view) => {
+      state.view = view;
     },
   },
   actions: {
-    async loadView({ commit, dispatch }, viewId) {
+    async fetchItem({ commit, dispatch }, { id }) {
       try {
-        await axios.get('http://localhost:28082/account/me');
-        await axios.get('http://localhost:28082/rest/default_rights/role/admin');
-        await axios.get('http://localhost:28082/sessionstart?username=root');
-
+        commit(types.FETCH_ITEM);
         const result = await dispatch('entities/fetch', {
-          route: `http://localhost:28082/rest/object/view/${viewId}`,
+          route: `${API_ROUTES.view}/${id}`,
           schema: viewSchema,
           dataPreparer: d => d[0],
         }, { root: true });
 
-        commit(types.SET_LOADED_VIEW, result.data[0]);
+        commit(types.FETCH_ITEM_COMPLETED, result.data[0]);
         commit(
           `view/widget/${widgetMutations.SET_WIDGETS}`,
           result.normalizedData.entities.widgetWrapper,
@@ -45,13 +50,13 @@ export default {
         console.error(e);
       }
     },
-    async save({ commit, rootGetters, getters }) {
-      const view = getters.loadedView;
+    async saveItem({ commit, rootGetters, getters }) {
+      const view = getters.getItem;
 
-      view.containerwidget.items = rootGetters['view/widget/getWidgets'](true);
+      view.containerwidget.items = rootGetters['view/widget/getItems'](true);
 
       try {
-        await axios.put(`http://localhost:28082/rest/object/view/${view.id}`, view);
+        await request.put(`${API_ROUTES.view}/${view.id}`, view);
 
         commit(types.SET_LOADED_VIEW, view);
       } catch (e) {
@@ -60,6 +65,7 @@ export default {
     },
   },
   getters: {
-    loadedView: state => state.loadedView,
+    getItem: state => state.loadedView,
+    pending: state => state.pending,
   },
 };

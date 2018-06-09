@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(v-if="showContent")
+  div(v-if="show")
     alarms-list-settings
     alarm-list(
     :alarmProperties="$mq | mq(alarmProperties)",
@@ -78,14 +78,12 @@ export default {
           },
         ],
       },
-      showContent: false,
+      show: false,
     };
   },
-  created() {
-    this.loadView('view.current_alarms')
-      .then(() => {
-        this.showContent = true;
-      });
+  async mounted() {
+    await this.fetchView({ id: 'view.current_alarms' });
+    this.show = true;
   },
 };
 </script>

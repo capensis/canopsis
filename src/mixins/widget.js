@@ -8,13 +8,13 @@ export default {
     viewMixin,
   ],
   computed: {
-    ...mapGetters([
-      'getWidget',
-    ]),
+    ...mapGetters({
+      getWidget: 'getItem',
+    }),
   },
   methods: {
     ...mapActions({
-      saveWidget: 'save',
+      saveWidget: 'saveItem',
     }),
   },
 };
