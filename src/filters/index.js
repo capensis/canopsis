@@ -1,4 +1,4 @@
-import get from '@/filters/getProp';
+import get from './getProp';
 
 export default {
   install(Vue) {

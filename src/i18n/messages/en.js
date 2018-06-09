@@ -1,3 +1,5 @@
+import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+
 export default {
   common: {
     submit: 'Submit',
@@ -154,6 +156,19 @@ export default {
       type_: 'Type',
       reason: 'Reason',
       rrule: 'Rrule',
+    },
+    alarmStatus: {
+      [ENTITIES_STATUSES.off]: 'Off',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+    },
+    alarmStates: {
+      [ENTITIES_STATES.ok]: 'Info',
+      [ENTITIES_STATES.minor]: 'Minor',
+      [ENTITIES_STATES.major]: 'Major',
+      [ENTITIES_STATES.critical]: 'Critical',
     },
   },
   rRule: {
