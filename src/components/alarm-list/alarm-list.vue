@@ -30,8 +30,8 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
-import ActionsPanel from '@/components/basic-component/actions-panel.vue';
-import MassActionsPanel from '@/components/basic-component/mass-actions-panel.vue';
+import ActionsPanel from '@/components/basic-component/actions-panel/actions-panel.vue';
+import MassActionsPanel from '@/components/basic-component/actions-panel/mass-actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
