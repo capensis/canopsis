@@ -76,13 +76,20 @@ export default {
   },
   methods: {
     async create(withDeclare) {
-      let data = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
+      const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
+
+      await this.createEventAction({
+        data: ackEventData,
+      });
 
       if (withDeclare) {
-        data = data.concat(this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form));
+        const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
+
+        await this.createEventAction({
+          data: declareTicketEventData,
+        });
       }
 
-      await this.createEventAction({ data });
       await this.fetchAlarmListWithPreviousParams();
 
       this.hideModal();

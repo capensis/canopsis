@@ -6,8 +6,10 @@
           v-icon.pr-3(left, small) {{ action.icon }}
           span.body-1 {{ action.title }}
     template(v-else)
-      v-btn.mx-1(flat, icon, @click.stop="method", :title="action.title")
-        v-icon {{ action.icon }}
+      v-tooltip(bottom)
+        v-btn.mx-1(slot="activator", flat, icon, @click.stop="method")
+          v-icon {{ action.icon }}
+        span {{ action.title }}
 </template>
 
 <script>

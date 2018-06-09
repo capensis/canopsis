@@ -36,15 +36,14 @@
 </template>
 
 <script>
-import ModalMixin from '@/mixins/modal/modal';
-import EventActionsMixin from '@/mixins/event-actions';
+import ActionsPanelMixin from '@/mixins/actions-panel';
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
 export default {
   components: { ActionsPanelItem },
-  mixins: [ModalMixin, EventActionsMixin],
+  mixins: [ActionsPanelMixin],
   props: {
     item: {
       type: Object,
@@ -126,7 +125,7 @@ export default {
           dropDown: [],
         };
       } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
-        return { // TODO: add restore alarm action
+        return {
           main: [actionsMap.pbehaviorList],
           dropDown: [],
         };
@@ -142,27 +141,6 @@ export default {
     createAckEvent() {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
     },
-
-    showActionModal(name) {
-      return () => this.showModal({
-        name,
-        config: this.modalConfig,
-      });
-    },
-
-    showAckRemoveModal() {
-      this.showModal({
-        name: MODALS.createCancelEvent,
-        config: {
-          ...this.modalConfig,
-          title: 'modals.createAckRemove.title',
-          eventType: EVENT_ENTITY_TYPES.ackRemove,
-        },
-      });
-    },
   },
 };
 </script>
-
-<style scoped>
-</style>

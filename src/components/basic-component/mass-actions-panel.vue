@@ -22,8 +22,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalMixin from '@/mixins/modal/modal';
-import EventActionsMixin from '@/mixins/event-actions';
+import ActionsPanelMixin from '@/mixins/actions-panel';
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
@@ -32,7 +31,7 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { ActionsPanelItem },
-  mixins: [ModalMixin, EventActionsMixin],
+  mixins: [ActionsPanelMixin],
   props: {
     itemsIds: {
       type: Array,
@@ -78,24 +77,6 @@ export default {
   methods: {
     createAckEvent() {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
-    },
-
-    showActionModal(name) {
-      return () => this.showModal({
-        name,
-        config: this.modalConfig,
-      });
-    },
-
-    showAckRemoveModal() {
-      this.showModal({
-        name: MODALS.createCancelEvent,
-        config: {
-          ...this.modalConfig,
-          title: 'modals.createAckRemove.title',
-          eventType: EVENT_ENTITY_TYPES.ackRemove,
-        },
-      });
     },
   },
 };
