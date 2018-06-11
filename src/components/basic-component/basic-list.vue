@@ -48,7 +48,7 @@ export default {
   .header {
     z-index: 1;
     font-size: 0.9em;
-    line-height: 1em;
+    line-height: 2em;
     background-color: white;
   }
   .reduced {

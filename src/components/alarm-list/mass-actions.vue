@@ -10,7 +10,7 @@
         div Select an action
     v-layout(v-else, align-center, wrap)
       div Selection :
-      v-tooltip(v-for="action in actionsMap", bottom)
+      v-tooltip(v-for="action in actionsMap", :key="action.name", bottom)
         v-btn(slot="activator", small, icon)
           v-icon {{ action.icon }}
         span {{ action.text }}

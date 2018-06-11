@@ -4,13 +4,15 @@
       v-layout(justify-space-between, align-center)
         v-flex(xs4, class="ml-4")
           mass-actions
-        v-flex(xs5)
-          pagination(:meta="meta", :limit="limit", type="top")
         v-btn(icon, @click="openSettingsPanel")
           v-icon settings
-      v-layout(justify-space-between)
+      v-layout(wrap, justify-space-between, align-center, class="my-2")
         v-flex(xs12 md5)
           alarm-list-searching
+        v-flex(xs4)
+          pagination(:meta="meta", :limit="limit", type="top")
+        v-flex(xs2)
+          page-iterator
     div(v-if="!pending")
       basic-list(:items="items")
         tr.container.header(slot="header", class="pa-0")
@@ -27,10 +29,9 @@
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
           time-line(:alarmProps="item.props")
-      v-layout
+      v-layout(wrap)
+        v-flex(xs12, md7)
         pagination(:meta="meta", :limit="limit")
-        v-flex
-          page-iterator
     loader(v-else)
 </template>
 

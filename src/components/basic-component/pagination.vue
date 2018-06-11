@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.container(v-if="meta.total")
+  div.container(v-if="meta.total", class="my-2")
     ul.pagination(v-if="type === 'top'", class="mx-auto")
       li
         button.pagination__navigation(:disabled="currentPage <= 1", @click="previous")
