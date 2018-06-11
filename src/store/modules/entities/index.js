@@ -1,9 +1,11 @@
 import alarmModule from './alarm';
-import eventsModule from './events';
+import contextModule from './context';
 import pbehaviorModule from './pbehavior';
+import userPreferenceModule from './user-preference';
 
 export default {
   alarm: alarmModule,
+  context: contextModule,
   pbehavior: pbehaviorModule,
-  events: eventsModule,
+  userPreference: userPreferenceModule,
 };

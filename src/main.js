@@ -1,4 +1,4 @@
-import { MOBILE_BREAKPOINT, TABLET_BREAKPOINT, LAPTOP_BREAKPOINT } from '@/config';
+import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
 import Vue from 'vue';
 import Vuetify from 'vuetify';
@@ -10,21 +10,19 @@ import VueMq from 'vue-mq';
 
 import 'vuetify/dist/vuetify.min.css';
 
-import App from './app.vue';
-import router from './router';
-import store from './store';
-import i18n from './i18n';
+import App from '@/app.vue';
+import router from '@/router';
+import store from '@/store';
+import i18n from '@/i18n';
 
+import filters from '@/filters';
 
+Vue.use(filters);
 Vue.use(Vuetify);
 Vue.use(VueMoment);
 
 Vue.use(VueMq, {
-  breakpoints: {
-    mobile: MOBILE_BREAKPOINT,
-    tablet: TABLET_BREAKPOINT,
-    laptop: LAPTOP_BREAKPOINT,
-  },
+  breakpoints: MEDIA_QUERIES_BREAKPOINTS,
 });
 
 Vue.use(VeeValidate, {

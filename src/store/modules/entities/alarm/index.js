@@ -1,5 +1,9 @@
+import merge from 'lodash/merge';
+
 import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
 import { alarmSchema } from '@/store/schemas';
+import i18n from '@/i18n';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -17,7 +21,10 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('alarm', state.allIds),
+    items: (state, getters, rootState, rootGetters) =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, state.allIds),
+    item: (state, getters, rootState, rootGetters) => id =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.alarm, id),
     meta: state => state.meta,
     pending: state => state.pending,
   },
@@ -44,19 +51,19 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params,
-          dataPreparer: d => d.alarms,
+          dataPreparer: d => d[0].alarms,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
-            first: data.first,
-            last: data.last,
-            total: data.total,
+            first: data[0].first,
+            last: data[0].last,
+            total: data[0].total,
           },
         });
       } catch (err) {
-        console.error(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED);
       }
@@ -66,13 +73,15 @@ export default {
       return dispatch('fetchList', { params: state.fetchingParams });
     },
 
-    async fetchItem({ dispatch }, { id }) {
+    async fetchItem({ dispatch }, { id, params }) {
       try {
+        const paramsWithItemId = merge(params, { filter: { d: id } });
+
         await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
-          params: { filter: { _id: id } },
-          dataPreparer: d => d.alarms,
+          params: paramsWithItemId,
+          dataPreparer: d => d[0].alarms,
         }, { root: true });
       } catch (err) {
         console.error(err);

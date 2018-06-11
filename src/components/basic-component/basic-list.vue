@@ -8,11 +8,14 @@
             slot(name="row", :props="item")
           div(slot="expanded")
             slot(name="expandedRow", :props="item")
+      li(v-if="!items.length")
+        div.container
+          strong {{ $t('common.noResults') }}
 </template>
 
 <script>
 import StickyFill from 'stickyfilljs';
-import ListItem from '@/components/BasicComponent/list-item.vue';
+import ListItem from '@/components/basic-component/list-item.vue';
 
 export default {
   name: 'BasicList',

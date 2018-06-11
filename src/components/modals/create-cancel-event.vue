@@ -12,7 +12,7 @@
             v-divider.my-3
           v-layout(row)
             v-text-field(
-            :label="$t('modals.createCancelEvent.output')",
+            :label="$t('modals.createCancelEvent.fields.output')",
             :error-messages="errors.collect('output')",
             v-model="form.output",
             v-validate="'required'",
@@ -26,9 +26,11 @@
 import AlarmGeneralTable from '@/components/tables/alarm/general.vue';
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import EventActionsMixin from '@/mixins/event-actions';
-import { EVENT_TYPES } from '@/config';
+import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
+  name: MODALS.createCancelEvent,
+
   $_veeValidate: {
     validator: 'new',
   },
@@ -49,7 +51,7 @@ export default {
     },
 
     eventType() {
-      return this.config.eventType || EVENT_TYPES.cancel;
+      return this.config.eventType || EVENT_ENTITY_TYPES.cancel;
     },
   },
   methods: {
@@ -59,7 +61,7 @@ export default {
       if (isFormValid) {
         const data = { ...this.form };
 
-        if (this.eventType === EVENT_TYPES.cancel) {
+        if (this.eventType === EVENT_ENTITY_TYPES.cancel) {
           data.cancel = 1;
         }
 

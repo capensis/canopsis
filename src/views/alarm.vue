@@ -1,40 +1,80 @@
 <template lang="pug">
   div
+    alarms-list-settings
     alarm-list(
-    :alarmProperty="$mq | mq({mobile: alarmPropertyOnMobile,tablet: alarmPropertyOnTablet,laptop: alarmProperty})",
+    :alarmProperties="$mq | mq(alarmProperties)",
     )
 </template>
 
 <script>
-import AlarmList from '@/components/AlarmList/alarm-list.vue';
+import AlarmList from '@/components/alarm-list/alarm-list.vue';
+import AlarmsListSettings from '@/components/alarms-list-settings.vue';
 
 export default {
-  name: 'Alarm',
-
-  components: { AlarmList },
+  components: {
+    AlarmList,
+    AlarmsListSettings,
+  },
   data() {
     return {
-      alarmProperty: {
-        Connector: 'v.connector',
-        Component: 'v.component',
-        Resource: 'v.resource',
-        Output: 'v.initial_output',
-        'Last Update Date': 'v.last_update_date',
-      },
-      alarmPropertyOnMobile: {
-        Connector: 'v.connector',
-        Component: 'v.component',
-      },
-      alarmPropertyOnTablet: {
-        Connector: 'v.connector',
-        Component: 'v.component',
-        Resource: 'v.resource',
+      alarmProperties: {
+        laptop: [
+          {
+            text: this.$t('tables.alarmGeneral.connector'),
+            value: 'v.connector_name',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.component'),
+            value: 'v.component',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.resource'),
+            value: 'v.resource',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.output'),
+            value: 'v.initial_output',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.state'),
+            value: 'v.state.val',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.status'),
+            value: 'v.status.val',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.lastUpdateDate'),
+            value: 'v.last_update_date',
+            filter: value => this.$d(new Date(value * 1000), 'short'),
+          },
+        ],
+        tablet: [
+          {
+            text: this.$t('tables.alarmGeneral.connector'),
+            value: 'v.connector',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.component'),
+            value: 'v.component',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.resource'),
+            value: 'v.resource',
+          },
+        ],
+        mobile: [
+          {
+            text: this.$t('tables.alarmGeneral.connector'),
+            value: 'v.connector',
+          },
+          {
+            text: this.$t('tables.alarmGeneral.component'),
+            value: 'v.component',
+          },
+        ],
       },
     };
   },
-
 };
 </script>
-
-<style scoped>
-</style>

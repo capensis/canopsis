@@ -1,6 +1,15 @@
+import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+
 export default {
   common: {
-    hello: 'Hello',
+    submit: 'Submit',
+    login: 'Login',
+    username: 'Username',
+    password: 'Password',
+    title: 'Title',
+    save: 'Save',
+    label: 'Label',
+    value: 'Value',
     add: 'Add',
     delete: 'Delete',
     edit: 'Edit',
@@ -11,6 +20,7 @@ export default {
     to: 'to',
     of: 'of',
     actionsLabel: 'Actions',
+    noResults: 'No results',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -28,30 +38,70 @@ export default {
       year: 'year | years',
     },
   },
+  alarmList: {
+    actions: {
+      ack: 'ack',
+      fastAck: 'Fast ack',
+      ackRemove: 'Cancel ack',
+      pbehavior: 'Periodical behavior',
+      snooze: 'Snooze alarm',
+      pbehaviorList: 'List periodic behaviors',
+      declareTicket: 'Declare ticket',
+      associateTicket: 'Associate ticket',
+      cancel: 'Cancel alarm',
+      changeState: 'Change criticity',
+    },
+  },
+  alarmListSettings: {
+    alarmListSettings: 'Alarm list settings',
+    widgetTitle: 'Widget title',
+    columnName: 'Column name',
+    defaultSortColumn: 'Default Sort Column',
+    columnNames: 'Column names',
+    periodicRefresh: 'Periodic refresh',
+    defaultNumberOfElementsPerPage: 'Default number of elements/page',
+    elementsPerPage: 'Elements per page',
+    filterOnOpenResolved: 'Filter on Open/Resolved',
+    open: 'Open',
+    resolved: 'Resolved',
+    filters: 'Filters',
+    selectAFilter: 'Select a filter',
+    infoPopup: 'Info popup',
+  },
   modals: {
     createAckEvent: {
       title: 'Add event type: ack',
-      ticket: 'Ticket number',
-      output: 'Note',
-      ackResources: 'Ack resources',
-      ackResourcesTooltip: 'Do you want to ack linked resources or not?',
+      tooltips: {
+        ackResources: 'Do you want to ack linked resources or not?',
+      },
+      fields: {
+        ticket: 'Ticket number',
+        output: 'Note',
+        ackResources: 'Ack resources',
+      },
     },
     createSnoozeEvent: {
       title: 'Add event type: snooze',
-      duration: 'Duration',
+      fields: {
+        duration: 'Duration',
+      },
     },
     createCancelEvent: {
       title: 'Add event type: cancel',
-      output: 'Note',
+      fields: {
+        output: 'Note',
+      },
     },
     createChangeStateEvent: {
       title: 'Add event type: change state',
-      output: 'Note',
       states: {
-        info: 'Info',
+        ok: 'Info',
         minor: 'Minor',
         major: 'Major',
         critical: 'Critical',
+      },
+      fields: {
+        output: 'Note',
       },
     },
     createPbehavior: {
@@ -68,7 +118,7 @@ export default {
     createAckRemove: {
       title: 'Add event type: ackremove',
     },
-    createDeclareTicker: {
+    createDeclareTicket: {
       title: 'Add event type: declareticket',
     },
     createAssociateTicket: {
@@ -85,6 +135,12 @@ export default {
       connector: 'Connector',
       component: 'Component',
       resource: 'Resource',
+      output: 'Output',
+      lastUpdateDate: 'Last update date',
+      creationDate: 'Creation date',
+      duration: 'Duration',
+      state: 'State',
+      status: 'Status',
     },
     /**
      * This object for pbehavior fields from database
@@ -101,6 +157,19 @@ export default {
       reason: 'Reason',
       rrule: 'Rrule',
     },
+    alarmStatus: {
+      [ENTITIES_STATUSES.off]: 'Off',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+    },
+    alarmStates: {
+      [ENTITIES_STATES.ok]: 'Info',
+      [ENTITIES_STATES.minor]: 'Minor',
+      [ENTITIES_STATES.major]: 'Major',
+      [ENTITIES_STATES.critical]: 'Critical',
+    },
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
@@ -111,7 +180,7 @@ export default {
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes to not causing trouble to Canopsis.',
+      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',
@@ -151,6 +220,9 @@ export default {
       },
     },
   },
+  errors: {
+    default: 'Something went wrong...',
+  },
   mFilterEditor: {
     tabs: {
       visualEditor: 'Visual Editor',
@@ -170,4 +242,3 @@ export default {
     },
   },
 };
-
