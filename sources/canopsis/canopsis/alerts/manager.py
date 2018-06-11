@@ -611,7 +611,7 @@ class Alerts(object):
         value = alarm.get(self.alerts_storage.VALUE)
 
         if self.is_hard_limit_reached(value):
-            # Only cancel is allowed when hard limit has been reached
+            # Only cancel and ack are allowed when hard limit has been reached
             if event['event_type'] != 'cancel' or event['event_type'] != 'ack':
                 self.logger.debug('Hard limit reached. Cancelling')
 
