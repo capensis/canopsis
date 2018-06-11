@@ -125,7 +125,7 @@ export default {
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
-            main: [actionsMap.declareTicket, actionsMap.associateTicket, actionsMap.cancel, actionsMap.moreInfos],
+            main: [actionsMap.declareTicket, actionsMap.associateTicket, actionsMap.cancel],
             dropDown: [
               actionsMap.ackRemove,
               actionsMap.snooze,
