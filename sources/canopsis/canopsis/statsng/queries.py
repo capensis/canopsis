@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import quote_ident, quote_literal
+from canopsis.common.influx import quote_ident
 from canopsis.statsng.errors import StatsAPIError
 
 
@@ -163,7 +163,9 @@ class SLAStatQuery(StatQuery):
         """.format(measurement=quote_ident(self.measurement))
 
         total_result_set = self._run_query(select_statement, where, group_by)
-        below_result_set = self._run_query(select_statement, below_where, group_by)
+        below_result_set = self._run_query(select_statement,
+                                           below_where,
+                                           group_by)
 
         # Yield the results
         for (measurement, tags), total_rows in total_result_set.items():

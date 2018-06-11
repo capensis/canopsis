@@ -246,7 +246,8 @@ class StatsAPI(object):
             try:
                 stat_query = self.stat_queries[stat_name]
             except KeyError:
-                raise UnknownStatNameError('Unknown stat: {0}'.format(stat_name))
+                raise UnknownStatNameError(
+                    'Unknown stat: {0}'.format(stat_name))
 
             # Add the stats to results
             for tags, stats in stat_query.run(where, group_by,
