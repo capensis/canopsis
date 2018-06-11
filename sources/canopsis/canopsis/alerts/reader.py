@@ -682,7 +682,7 @@ class AlertsReader(object):
         if hide_resources:
             limit = limit * 2
 
-        def offset_aggregate(skip, limit):
+        def search_aggregate(skip, limit):
             pipeline = [
                 {
                     "$lookup": {
@@ -750,6 +750,25 @@ class AlertsReader(object):
 
             return res
 
+        def offset_aggregate(results, skip, limit, hrc):
+            tmp_res = search_aggregate(skip, limit)
+
+            # no results, all good
+            if tmp_res['alarms']:
+                results['total'] += tmp_res['total']
+                results['truncated'] |= tmp_res['truncated']
+                results['alarms'].extend(tmp_res['alarms'])
+
+                skip += limit
+
+                # filter useless data
+                if hide_resources:
+                    tmp_res['alarms'] = self._hide_resources(
+                        tmp_res['alarms'], hrc
+                    )
+
+            return results, skip
+
         def loop_aggregate(skip, limit):
             results = {
                 'alarms': [],
@@ -758,35 +777,20 @@ class AlertsReader(object):
                 'first': 0,
                 'last': 0
             }
-            tmp_res = []
             hidden_resources_cache = {}
-            while len(results['alarms']) < limit:  # and not tmp_res after first loop
-                while len(results['alarms']) < limit:
-                    tmp_res = offset_aggregate(skip, limit)
+            old_alarms_count = len(results['alarms'])
+            while len(results['alarms']) < limit:
+                results, skip = offset_aggregate(
+                    results,
+                    skip,
+                    limit,
+                    hidden_resources_cache
+                )
 
-                    # no results, all good
-                    if not tmp_res['alarms']:
-                        break
-
-                    results['total'] += tmp_res['total']
-                    results['truncated'] |= tmp_res['truncated']
-                    results['alarms'].extend(tmp_res['alarms'])
-
-                    # avoid one extra useless query
-                    if len(tmp_res['alarms']) < limit:
-                        break
-
-                    skip += limit
-
-                    # filter useless data
-                    if hide_resources:
-                        tmp_res['alarms'] = self._hide_resources(
-                            tmp_res['alarms'], hidden_resources_cache
-                        )
-
-                # no new results
-                if not tmp_res['alarms']:
+                if len(results['alarms']) != old_alarms_count:
                     break
+
+                old_alarms_count = len(results['alarms'])
 
             if hide_resources:
                 results['alarms'] = self._sort_hide_resources(
