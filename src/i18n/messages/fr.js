@@ -16,9 +16,9 @@ export default {
     parse: 'Compiler',
     home: 'Accueil',
     entries: 'entrées',
-    showing: 'afficher',
+    showing: 'Affiche',
     to: 'à',
-    of: 'de',
+    of: 'sur',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
     actions: {

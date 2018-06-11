@@ -37,12 +37,14 @@
           td {{props.item.v.connector_name}}
           td {{props.item.v.component}}
           td {{props.item.v.resource}}
+      pagination(:limit="limit", :meta="meta")
 </template>
 
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import FilterGroup from '@/components/other/mfilter-editor/filter-group.vue';
+import PaginationMixin from '@/mixins/pagination';
 
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
 const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNamespacedHelpers('alarm');
@@ -53,7 +55,7 @@ export default {
   components: {
     FilterGroup,
   },
-
+  mixins: [PaginationMixin],
   data() {
     return {
       paginationLength: 0,
@@ -91,7 +93,7 @@ export default {
 
   computed: {
     ...mFilterGetters(['request', 'filter', 'possibleFields', 'parseError']),
-    ...alarmsMapGetters(['items']),
+    ...alarmsMapGetters(['items', 'meta']),
 
     /**
      * @description Value of the input field of the advanced editor.
@@ -115,11 +117,17 @@ export default {
   },
   methods: {
     ...mFilterActions(['deleteParseError', 'updateFilter', 'onParseError']),
-    ...alarmsMapActions(['fetchList']),
+    ...alarmsMapActions({ fetchListAction: 'fetchList' }),
 
     handleResultTabClick() {
       this.newRequest = '';
-      this.fetchList({ params: { limit: 5, filter: JSON.stringify(this.request), skip: 0 } });
+      this.$router.push({
+        query: {
+          limit: 5,
+          filter: JSON.stringify(this.request),
+          skip: 0,
+        },
+      });
     },
 
     handleInputChange() {
