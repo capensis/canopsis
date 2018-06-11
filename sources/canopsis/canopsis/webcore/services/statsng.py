@@ -74,7 +74,7 @@ def exports(ws):
         try:
             stat_request = parse_request()
 
-            if stat_request.stats is not None:
+            if stat_request.stats:
                 raise StatsAPIError(
                     'Unexpected fields: {0}'.format(StatRequestFields.stats))
 
