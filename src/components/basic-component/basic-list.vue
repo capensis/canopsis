@@ -1,18 +1,19 @@
 <template lang="pug">
-  transition(name="fade", mode="out-in")
-    slot(name="loader", v-if="pending")
-    ul(v-else)
+    ul
       li.header.sticky(ref="header")
         slot(name="header")
-      li(v-for="item in items", :item="item")
-        list-item
-          .reduced(slot="reduced")
-            slot(name="row", :props="item")
-          div(slot="expanded")
-            slot(name="expandedRow", :props="item")
-      li(v-if="!items.length")
-        div.container
-          strong {{ $t('common.noResults') }}
+      transition(name="fade", mode="out-in")
+        slot(name="loader", v-if="pending")
+        div(v-else)
+          li(v-for="item in items", :item="item")
+            list-item
+              .reduced(slot="reduced")
+                slot(name="row", :props="item")
+              div(slot="expanded")
+                slot(name="expandedRow", :props="item")
+          li(v-if="!items.length")
+            div.container
+              strong {{ $t('common.noResults') }}
 </template>
 
 <script>
