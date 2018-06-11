@@ -4,7 +4,7 @@
       mass-actions
       v-chip(
         v-if="liveReportingFilter"
-        @input="handleRemoveLiveReportingFilter",
+        @input="removeHistoryFilter",
         close,
         label,
         color="blue darken-4 white--text"
@@ -119,9 +119,14 @@ export default {
 
     ...alarmsListMapActions(['removeLiveReportingFilter']),
 
-    removeLiveReportingFilter() {
+    removeHistoryFilter() {
       this.removeLiveReportingFilter();
-      this.fetchList();
+
+      this.$router.push({
+        query: {
+          ...this.$route.$query,
+        },
+      });
     },
   },
 };

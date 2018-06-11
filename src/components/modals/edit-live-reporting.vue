@@ -99,7 +99,15 @@ export default {
     },
     handleSubmit() {
       this.addLiveReportingFilter(this.selectedInterval);
-      this.fetchAlarmList({ params: { tstart: this.tstart.getTime() / 1000, tstop: this.tstop.getTime() / 1000 } });
+
+      this.$router.push({
+        query: {
+          ...this.$route.query,
+          tstart: this.tstart.getTime() / 1000,
+          tstop: this.tstop.getTime() / 1000,
+        },
+      });
+
       this.hideModal();
     },
   },
