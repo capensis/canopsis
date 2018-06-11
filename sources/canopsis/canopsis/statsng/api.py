@@ -50,12 +50,33 @@ class StatRequest(object):
         """
         request = StatRequest()
 
-        body = body.copy()
-        request.stats = body.pop(StatRequestFields.stats, None)
-        request.tstart = body.pop(StatRequestFields.tstart, None)
-        request.tstop = body.pop(StatRequestFields.tstop, None)
-        request.group_by = body.pop(StatRequestFields.group_by, [])
-        request.entity_filter = body.pop(StatRequestFields.filter, [])
+        try:
+            body = body.copy()
+            request.stats = body.pop(StatRequestFields.stats, [])
+            request.tstart = body.pop(StatRequestFields.tstart, None)
+            request.tstop = body.pop(StatRequestFields.tstop, None)
+            request.group_by = body.pop(StatRequestFields.group_by, [])
+            request.entity_filter = body.pop(StatRequestFields.filter, [])
+        except AttributeError:
+            raise StatsAPIError("The request's body should be a JSON object")
+
+        if not isinstance(request.stats, list):
+            raise StatsAPIError("The stats field should be a JSON array")
+        if not isinstance(request.group_by, list):
+            raise StatsAPIError("The group_by field should be a JSON array")
+        if not isinstance(request.entity_filter, list):
+            raise StatsAPIError("The filter field should be a JSON array")
+
+        if request.tstart is not None:
+            try:
+                request.tstart = float(request.tstart)
+            except (TypeError, ValueError):
+                raise StatsAPIError("The tstart field should be a number")
+        if request.tstop is not None:
+            try:
+                request.tstop = float(request.tstop)
+            except (TypeError, ValueError):
+                raise StatsAPIError("The tstop field should be a number")
 
         request.parameters = body
 
@@ -169,10 +190,12 @@ class StatsAPI(object):
         """
         conditions = []
 
-        if request.tstart:
-            conditions.append('time >= {}'.format(request.tstart * SECONDS))
-        if request.tstop:
-            conditions.append('time < {}'.format(request.tstop * SECONDS))
+        if request.tstart is not None:
+            conditions.append(
+                'time >= {:.0f}'.format(request.tstart * SECONDS))
+        if request.tstop is not None:
+            conditions.append(
+                'time < {:.0f}'.format(request.tstop * SECONDS))
 
         if request.entity_filter:
             conditions.append(

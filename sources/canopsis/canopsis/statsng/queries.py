@@ -66,7 +66,7 @@ class StatQuery(object):
             group_by_statement))
 
         # Run the query
-        self.logger.debug("Running the query: {0}".format(query))
+        self.logger.info("Running the query: {0}".format(query))
         return self.influxdb_client.query(query)
 
     def run(self, where, group_by, parameters):
@@ -145,9 +145,12 @@ class SLAStatQuery(StatQuery):
 
     def run(self, where, group_by, parameters):
         try:
-            sla = parameters[self.sla_field]
+            sla = float(parameters[self.sla_field])
         except KeyError:
             raise StatsAPIError('Missing field: {0}'.format(self.sla_field))
+        except (TypeError, ValueError):
+            raise StatsAPIError(
+                'The {0} field should be a number'.format(self.sla_field))
 
         below_where = 'value <= {}'.format(sla)
         if where:
