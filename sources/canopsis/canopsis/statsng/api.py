@@ -123,7 +123,18 @@ class StatsAPIResults(object):
 
 
 class EntityFilterParser(object):
+    """
+    The EntityFilterParser class converts entity filters into influxdb
+    conditions.
+    """
     def parse_tag_filter(self, tag_name, tag_filter):
+        """
+        Convert a tag filter `tag_name: tag_filter` into an influxdb condition.
+
+        :param str tag_name:
+        :param Union[Dict[str, str], List[str], str] tag_name:
+        :rtype: str
+        """
         if isinstance(tag_filter, dict) and \
            StatRequestFields.matches in tag_filter:
             regex = tag_filter[StatRequestFields.matches]
@@ -144,12 +155,24 @@ class EntityFilterParser(object):
         raise StatsAPIError('Invalid tag filter : {}'.format(tag_filter))
 
     def parse_entity_group(self, entity_group):
+        """
+        Convert an entity group into an influxdb condition.
+
+        :param Dict[str, Any] entity_group:
+        :rtype: str
+        """
         return " AND ".join(
             self.parse_tag_filter(tag_name, tag_filter)
             for tag_name, tag_filter in entity_group.items()
         )
 
     def parse(self, entity_filter):
+        """
+        Convert an entity filter into an influxdb condition.
+
+        :param List[Dict[str, Any]] entity_filter:
+        :rtype: str
+        """
         return " OR ".join(
             "({})".format(self.parse_entity_group(entity_group))
             for entity_group in entity_filter
@@ -158,7 +181,7 @@ class EntityFilterParser(object):
 
 class StatsAPI(object):
     """
-    A StatsAPI object handles the computation of statistics.
+    The StatsAPI class handles the requests to the statistics API.
     """
     def __init__(self, logger):
         self.logger = logger
