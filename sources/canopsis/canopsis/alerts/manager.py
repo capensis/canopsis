@@ -612,7 +612,7 @@ class Alerts(object):
 
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
-            if event['event_type'] != 'cancel':
+            if event['event_type'] != 'cancel' or event['event_type'] != 'ack':
                 self.logger.debug('Hard limit reached. Cancelling')
 
                 return
