@@ -3,7 +3,7 @@
     v-layout(justify-space-between)
       mass-actions
       v-flex(xs5)
-        alarm-list-searching
+        searching
       v-btn(icon, @click="openSettingsPanel")
         v-icon settings
     div(v-if="!pending")
@@ -36,7 +36,7 @@ import BasicList from '@/components/basic-component/basic-list.vue';
 import ActionsPanel from '@/components/basic-component/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
 import MassActions from '@/components/alarm-list/mass-actions.vue';
-import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
+import Searching from '@/components/basic-component/list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
 import ListSorting from '@/components/basic-component/list-sorting.vue';
 import PageIterator from '@/components/basic-component/records-per-page.vue';
@@ -60,7 +60,7 @@ export default {
     ListSorting,
     TimeLine,
     MassActions,
-    AlarmListSearching,
+    Searching,
     ActionsPanel,
     BasicList,
     Loader,
