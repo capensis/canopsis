@@ -834,7 +834,7 @@ class AlertsReader(object):
                 alarm['v'].get('component'),
             )
 
-            if not rconn.exists(drop_id):
+            if rconn.get(drop_id) == 2:
                 filtered_alarms.append(alarm)
 
         return filtered_alarms
