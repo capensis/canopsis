@@ -130,3 +130,30 @@ def encode_tags(tags):
         encoded_tags[key] = value
 
     return encoded_tags
+
+
+# The two following functions are defined in the influx.line_protocol module of
+# influxdb-python>=4.0.0
+def quote_ident(value):
+    """
+    Quote provided identifier.
+    """
+    return "\"{}\"".format(value.replace("\\", "\\\\")
+                                .replace("\"", "\\\"")
+                                .replace("\n", "\\n"))
+
+
+def quote_literal(value):
+    """
+    Quote provided literal.
+    """
+    return "'{}'".format(value.replace("\\", "\\\\")
+                              .replace("'", "\\'"))
+
+
+def quote_regex(value):
+    """
+    Quote provided regex.
+    """
+    return "/{}/".format(value.replace("\\", "\\\\")
+                              .replace("/", "\\/"))
