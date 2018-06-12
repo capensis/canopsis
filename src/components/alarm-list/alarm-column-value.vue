@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import State from '@/components/alarm-list/alarm-state-column-value.vue';
-import Status from '@/components/alarm-list/alarm-status-column-value.vue';
+import State from '@/components/alarm-list/state-column-value.vue';
+import Status from '@/components/alarm-list/status-column-value.vue';
 
 export default {
   components: {

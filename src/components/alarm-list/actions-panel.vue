@@ -40,7 +40,7 @@ import ModalMixin from '@/mixins/modal/modal';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
 
-import ActionsPanelItem from './actions-panel-item.vue';
+import ActionsPanelItem from '@/components/alarm-list/actions-panel-item.vue';
 
 export default {
   components: { ActionsPanelItem },

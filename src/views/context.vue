@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ContextTable from '@/components/context-table.vue';
+import ContextTable from '@/components/tables/context-table/context-table.vue';
 
 export default {
   name: 'context',

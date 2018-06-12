@@ -25,21 +25,21 @@
           time-line(:alarmProps="item.props")
       .bottomToolbox
         pagination(:meta="meta", :limit="limit")
-        page-iterator
+        records-per-page
     loader(v-else)
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import BasicList from '@/components/basic-component/basic-list.vue';
-import ActionsPanel from '@/components/basic-component/actions-panel.vue';
+import BasicList from '@/components/tables/basic-list.vue';
+import ActionsPanel from '@/components/alarm-list/actions-panel.vue';
 import Loader from '@/components/loaders/alarm-list-loader.vue';
 import MassActions from '@/components/alarm-list/mass-actions.vue';
 import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
 import TimeLine from '@/components/alarm-list/time-line.vue';
-import ListSorting from '@/components/basic-component/list-sorting.vue';
-import PageIterator from '@/components/basic-component/records-per-page.vue';
+import ListSorting from '@/components/tables/list-sorting.vue';
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
 import AlarmColumnValue from '@/components/alarm-list/alarm-column-value.vue';
 
@@ -56,7 +56,7 @@ const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSe
  */
 export default {
   components: {
-    PageIterator,
+    RecordsPerPage,
     ListSorting,
     TimeLine,
     MassActions,
