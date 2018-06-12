@@ -33,8 +33,6 @@ from json import loads
 import copy
 import time
 
-DEFAULT_ENV='python'
-TASKS_CONF_PATH='etc/tasks/tasks.conf'
 
 class engine(Engine):
     etype = 'event_filter'
