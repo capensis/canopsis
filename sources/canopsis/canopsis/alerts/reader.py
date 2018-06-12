@@ -25,8 +25,6 @@ TODO: replace the storage class parameter with a collection (=> rewriting count(
 """
 
 from __future__ import unicode_literals
-import redis
-rconn = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 import re
 from os.path import join
@@ -45,6 +43,10 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
+
+import redis
+
+rconn = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 DEFAULT_EXPIRATION = 1800
 DEFAULT_OPENED_TRUNC = True
