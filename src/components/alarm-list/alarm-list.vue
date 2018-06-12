@@ -86,6 +86,12 @@ export default {
       'meta',
       'pending',
     ]),
+    queries() {
+      const queries = {};
+      queries.limit = this.limit;
+      queries.skip = ((this.$route.query.page - 1) * this.limit) || 0;
+      return queries;
+    },
   },
   methods: {
     selectAll(items) {

@@ -1,4 +1,5 @@
 import omit from 'lodash/omit';
+import merge from 'lodash/merge';
 
 import { PAGINATION_LIMIT } from '@/config';
 import Pagination from '@/components/basic-component/pagination.vue';
@@ -23,10 +24,9 @@ export default {
   methods: {
     getQuery() {
       const query = omit(this.$route.query, ['page']);
-
-      query.limit = this.limit;
-      query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
-
+      if (this.queries) {
+        merge(query, this.queries);
+      }
       return query;
     },
     fetchList() {

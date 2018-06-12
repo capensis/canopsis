@@ -1,28 +1,29 @@
 <template lang="pug">
-  div
-    div(v-if="!pending")
-      basic-list(:items="items")
-        tr.container(slot="header")
-          th.box(v-for="columnProperty in contextProperties")
-            span {{ columnProperty.text }}
-            th.box
-        tr.container(slot="row" slot-scope="item")
-          td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
-          td.box
-        tr.container(slot="expandedRow", slot-scope="item")
+  div(v-if="!pending")
+    basic-list(:items="items")
+      tr.container(slot="header")
+        th.box(v-for="columnProperty in contextProperties")
+          span {{ columnProperty.text }}
+          th.box
+      tr.container(slot="row" slot-scope="item")
+        td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
+        td.box
+      tr.container(slot="expandedRow", slot-scope="item")
+    pagination(:meta="meta", :limit="limit")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { getQueryContext } from '@/helpers/pagination';
 
 import BasicList from '@/components/basic-component/basic-list.vue';
-import getProp from 'lodash/get';
+import PaginationMixin from '@/mixins/pagination';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
+
 export default {
   name: 'context-table',
   components: { BasicList },
+  mixins: [PaginationMixin],
   props: {
     contextProperties: {
       type: Array,
@@ -37,26 +38,17 @@ export default {
       'meta',
       'pending',
     ]),
-  },
-  watch: {
-    $route() {
-      this.fetchList();
+    queries() {
+      const queries = {};
+      queries.limit = this.limit;
+      queries.start = ((this.$route.query.page - 1) * this.limit) || 0;
+      return queries;
     },
   },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
-    getQuery: getQueryContext,
-    getProp,
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
-    fetchList() {
-      this.fetchListAction({
-        params: this.getQuery(),
-      });
-    },
   },
 };
 </script>

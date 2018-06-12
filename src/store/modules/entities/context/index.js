@@ -44,7 +44,8 @@ export default {
           route: API_ROUTES.context,
           schema: [contextSchema],
           params,
-          dataPreparer: d => d,
+          // TO DO : TO CHANGE
+          dataPreparer: d => d.data,
           isPost: true,
         }, { root: true });
 
