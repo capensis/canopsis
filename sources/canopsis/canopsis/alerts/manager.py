@@ -612,7 +612,7 @@ class Alerts(object):
 
         if self.is_hard_limit_reached(value):
             # Only cancel is allowed when hard limit has been reached
-            if event['event_type'] != 'cancel' or event['event_type'] != 'ack':
+            if event['event_type'] != 'cancel' and event['event_type'] != 'ack':
                 self.logger.debug('Hard limit reached. Cancelling')
 
                 return
@@ -636,7 +636,8 @@ class Alerts(object):
         if isinstance(new_value, tuple):
             new_value, status = new_value
 
-        new_value = self.check_hard_limit(new_value)
+        if event['event_type'] != 'cancel' and event['event_type'] != 'ack':
+            new_value = self.check_hard_limit(new_value)
 
         self.update_current_alarm(alarm, new_value)
 
