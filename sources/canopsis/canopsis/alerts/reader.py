@@ -834,7 +834,17 @@ class AlertsReader(object):
                 alarm['v'].get('component'),
             )
 
-            if rconn.get(drop_id) == 2:
+            drop_value = rconn.get(drop_id)
+            to_drop = False
+            try:
+                #to_drop = int(str(drop_value)) == 2
+                to_drop = drop_value is not None
+            except TypeError:
+                pass
+            except ValueError:
+                pass
+
+            if not to_drop:
                 filtered_alarms.append(alarm)
 
         return filtered_alarms
