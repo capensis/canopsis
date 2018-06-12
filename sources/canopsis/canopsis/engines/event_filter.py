@@ -28,10 +28,16 @@ from canopsis.old.mfilter import check
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
+from canopsis.common import root_path
+from canopsis.confng import Configuration, Ini
+import os
 from json import loads
 
 import copy
 import time
+
+DEFAULT_ENV='python'
+TASKS_CONF_PATH='etc/tasks/tasks.conf'
 
 class engine(Engine):
     etype = 'event_filter'
@@ -44,6 +50,8 @@ class engine(Engine):
         self.name = kargs['name']
         self.drop_event_count = 0
         self.pass_event_count = 0
+        self.conf = Configuration.load(os.path.join(root_path, TASKS_CONF_PATH),Ini).get('TASKS')
+        self.env = conf.get('env',DEFAULT_ENV)
         self.__load_rules()
 
     def pre_run(self):
@@ -299,7 +307,15 @@ class engine(Engine):
             if event.get('resource', ''):
                 snooze['resource'] = event['resource']
 
-            publish(event=snooze, publisher=self.amqp)
+            if self.env == 'go':
+                publish(
+                    event=snooze,
+                    publisher=self.amqp,
+                    rk='Engine_axe',
+                    exchange='amqp.direct'
+                )
+            else:
+                publish(event=snooze, publisher=self.amqp)
 
             return True
 
