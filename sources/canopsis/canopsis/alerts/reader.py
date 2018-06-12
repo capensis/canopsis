@@ -25,6 +25,8 @@ TODO: replace the storage class parameter with a collection (=> rewriting count(
 """
 
 from __future__ import unicode_literals
+import redis
+rconn = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 import re
 from os.path import join
@@ -681,6 +683,7 @@ class AlertsReader(object):
         # more than once.
         if hide_resources:
             limit = limit * 2
+            hide_resources &= rconn.exists('featureflag:hide_resources')
 
         def search_aggregate(skip, limit):
             pipeline = [
@@ -755,9 +758,7 @@ class AlertsReader(object):
 
             # no results, all good
             if tmp_res['alarms']:
-                results['total'] += tmp_res['total']
                 results['truncated'] |= tmp_res['truncated']
-                results['alarms'].extend(tmp_res['alarms'])
 
                 skip += limit
 
@@ -766,6 +767,9 @@ class AlertsReader(object):
                     tmp_res['alarms'] = self._hide_resources(
                         tmp_res['alarms'], hrc
                     )
+
+                results['total'] += len(tmp_res['alarms'])
+                results['alarms'].extend(tmp_res['alarms'])
 
             return results, skip
 
@@ -817,7 +821,22 @@ class AlertsReader(object):
         """
         FIXIT: not implemented
         """
-        filtered_alarms = alarms
+        filtered_alarms = []
+        for alarm in alarms:
+            if alarm['v'].get('resource', '') == '':
+                filtered_alarms.append(alarm)
+                continue
+
+            drop_id = 'alarm_hideresources_resource:{}/{}/{}/{}:drop'.format(
+                alarm['v'].get('connector'),
+                alarm['v'].get('connector_name'),
+                alarm['v'].get('resource'),
+                alarm['v'].get('component'),
+            )
+
+            if not rconn.exists(drop_id):
+                filtered_alarms.append(alarm)
+
         return filtered_alarms
 
     def count_alarms_by_period(
