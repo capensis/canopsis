@@ -5,7 +5,7 @@
   right,
   stateless,
   app,
-  :temporary="$mq === 'mobile' || $mq === 'tablet' ? true : false"
+  :temporary="$mq === 'mobile' || $mq === 'tablet'"
   )
     v-toolbar(color="blue darken-4")
       v-list
