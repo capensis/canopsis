@@ -33,6 +33,7 @@ from time import time
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
 from canopsis.common import root_path
+from canopsis.common.redis_store import RedisStore
 from canopsis.common.utils import get_sub_key
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
@@ -44,9 +45,7 @@ from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
 
-import redis
-
-rconn = redis.StrictRedis(host='localhost', port=6379, db=0)
+rconn = RedisStore.get_default()
 
 DEFAULT_EXPIRATION = 1800
 DEFAULT_OPENED_TRUNC = True
@@ -755,7 +754,13 @@ class AlertsReader(object):
 
             return res
 
-        def offset_aggregate(results, skip, limit, hrc):
+        def offset_aggregate(results, skip, limit, filters):
+            """
+            :param dict results:
+            :param int skip:
+            :param int limit:
+            :param list filters: list of functions to apply on alarms
+            """
             tmp_res = search_aggregate(skip, limit)
 
             # no results, all good
@@ -765,17 +770,23 @@ class AlertsReader(object):
                 skip += limit
 
                 # filter useless data
-                if hide_resources:
-                    tmp_res['alarms'] = self._hide_resources(
-                        tmp_res['alarms'], hrc
-                    )
+                for filter_ in filters:
+                    tmp_res['alarms'] = filter_(tmp_res['alarms'])
 
                 results['total'] += len(tmp_res['alarms'])
                 results['alarms'].extend(tmp_res['alarms'])
 
             return results, skip
 
-        def loop_aggregate(skip, limit):
+        def loop_aggregate(skip, limit, filters, post_sort):
+            """
+            :param int skip:
+            :param int limit:
+            :param list filters: list of functions to apply on alarms. Called
+                only in offset_aggregate
+            :param bool post_sort: post filtering sort with sort_key
+                and sort_dir on alarms.
+            """
             results = {
                 'alarms': [],
                 'total': 0,
@@ -783,14 +794,13 @@ class AlertsReader(object):
                 'first': 0,
                 'last': 0
             }
-            hidden_resources_cache = {}
             old_alarms_count = len(results['alarms'])
             while len(results['alarms']) < limit:
                 results, skip = offset_aggregate(
                     results,
                     skip,
                     limit,
-                    hidden_resources_cache
+                    filters,
                 )
 
                 if len(results['alarms']) != old_alarms_count:
@@ -798,8 +808,8 @@ class AlertsReader(object):
 
                 old_alarms_count = len(results['alarms'])
 
-            if hide_resources:
-                results['alarms'] = self._sort_hide_resources(
+            if post_sort:
+                results['alarms'] = self._aggregate_post_sort(
                     results['alarms'], sort_key, sort_dir
                 )
 
@@ -808,10 +818,16 @@ class AlertsReader(object):
 
             return results
 
-        return loop_aggregate(skip, limit)
+        filters = []
+        post_sort = False
+        if hide_resources:
+            post_sort = True
+            filters.append(self._hide_resources)
+
+        return loop_aggregate(skip, limit, filters, post_sort=post_sort)
 
     @staticmethod
-    def _sort_hide_resources(alarms, sort_key, sort_dir):
+    def _aggregate_post_sort(alarms, sort_key, sort_dir):
         return sorted(
             alarms,
             key=lambda k: get_sub_key(k, sort_key),
@@ -819,7 +835,7 @@ class AlertsReader(object):
         )
 
     @staticmethod
-    def _hide_resources(alarms, components_state):
+    def _hide_resources(alarms):
         """
         FIXIT: not implemented
         """
