@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(v-if="show")
+  div
     alarms-list-settings
     alarm-list(
     :alarmProperties="$mq | mq(alarmProperties)",
@@ -78,15 +78,7 @@ export default {
           },
         ],
       },
-      show: false,
     };
-  },
-  watch: {
-    viewPending() {
-      if (!this.viewPending) {
-        this.show = true;
-      }
-    },
   },
   mounted() {
     this.fetchView({ id: 'view.current_alarms' });

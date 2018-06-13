@@ -34,10 +34,12 @@ export default {
       return this.getWidget({ widgetXType: 'listalarm' });
     },
   },
-  created() {
-    if (this.widget) {
-      this.popups = this.widget.widget.popup;
-    }
+  watch: {
+    widget() {
+      if (this.widget) {
+        this.popups = this.widget.widget.popup;
+      }
+    },
   },
   methods: {
     deleteItem(index) {
