@@ -34,8 +34,8 @@ import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
 
-import AlarmFlag from '@/components/alarm-list/alarm-flag.vue';
-import AlarmChips from '@/components/alarm-list/alarm-chips.vue';
+import AlarmFlag from '@/components/other/alarm-list/timeline/alarm-flag.vue';
+import AlarmChips from '@/components/other/alarm-list/timeline/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
 import { ENTITIES_STATES_STYLES } from '@/constants';
 
