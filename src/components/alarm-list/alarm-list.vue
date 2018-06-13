@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    div(class="white")
+    div.white
       v-layout(justify-space-between, align-center)
         v-flex(xs4, class="ml-4")
           mass-actions
