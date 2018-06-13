@@ -5,16 +5,19 @@
     template(v-if="attributeType === 'status'")
       status(:statusId="alarm | get(pathToProperty, filter)")
     template(v-if="attributeType === 'textable'") {{ alarm | get(pathToProperty, filter) }}
+    info-popup-button(:columnName="columnName", :alarm="alarm")
 </template>
 
 <script>
 import State from '@/components/other/alarm-list/columns-formatting/state-column-value.vue';
 import Status from '@/components/other/alarm-list/columns-formatting/status-column-value.vue';
+import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
 
 export default {
   components: {
     State,
     Status,
+    InfoPopupButton,
   },
   props: {
     alarm: {
@@ -41,6 +44,9 @@ export default {
     },
     showIcon() {
       return this.$options.filters.get(this.alarm, 'v.state._t') === 'changestate';
+    },
+    columnName() {
+      return this.pathToProperty.split('.')[1];
     },
   },
   methods: {
