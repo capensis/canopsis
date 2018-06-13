@@ -176,8 +176,8 @@ class Env2Cfg(object):
             redis.add_section('DATABASE')
 
         redis.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        redis.set('DATABASE', 'port', '4444' if pu.port is None else str(pu.port))
-        redis.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
+        redis.set('DATABASE', 'port', '6379' if pu.port is None else str(pu.port))
+        redis.set('DATABASE', 'dbnum', '0' if pu.path is '' else pu.path[1:])
         if pu.password:
             redis.set('DATABASE', 'pwd', pu.password)
 
