@@ -104,6 +104,11 @@ export default {
           title: 'alarmList.actions.changeState',
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
+        moreInfos: {
+          icon: 'notes',
+          title: 'alarmList.actions.moreInfos',
+          method: this.showActionModal(MODALS.moreInfos),
+        },
       },
     };
   },
@@ -127,6 +132,7 @@ export default {
               actionsMap.changeState,
               actionsMap.pbehavior,
               actionsMap.pbehaviorList,
+              actionsMap.moreInfos,
             ],
           };
         }
