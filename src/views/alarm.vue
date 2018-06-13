@@ -9,12 +9,16 @@
 <script>
 import AlarmList from '@/components/alarm-list/alarm-list.vue';
 import AlarmsListSettings from '@/components/alarms-list-settings.vue';
+import viewMixin from '@/mixins/view';
 
 export default {
   components: {
     AlarmList,
     AlarmsListSettings,
   },
+  mixins: [
+    viewMixin,
+  ],
   data() {
     return {
       alarmProperties: {
@@ -75,6 +79,9 @@ export default {
         ],
       },
     };
+  },
+  mounted() {
+    this.fetchView({ id: 'view.current_alarms' });
   },
 };
 </script>
