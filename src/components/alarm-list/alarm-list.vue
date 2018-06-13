@@ -1,6 +1,5 @@
 <template lang="pug" xmlns:>
   div
-    p {{ selected }}
     v-layout(justify-space-between)
       mass-actions
       v-flex(xs5)
