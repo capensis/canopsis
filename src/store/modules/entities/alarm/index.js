@@ -56,9 +56,9 @@ export default {
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
-            first: data.data[0].alarms.first,
-            last: data.data[0].alarms.last,
-            total: data.data[0].alarms.total,
+            first: data.data[0].first,
+            last: data.data[0].last,
+            total: data.data[0].total,
           },
         });
       } catch (err) {
