@@ -1,5 +1,6 @@
-<template lang="pug">
+<template lang="pug" xmlns:>
   div
+    p {{ selected }}
     v-layout(justify-space-between)
       mass-actions
       v-flex(xs5)
@@ -8,7 +9,7 @@
         v-icon settings
     div(v-if="!pending")
       pagination(:meta="meta", :limit="limit", type="top")
-      basic-list(:items="items")
+      basic-list(:items="items", @update:selected="selected = $event")
         tr.container(slot="header")
           th.box(v-for="column in alarmProperties")
             span {{ column.text }}
@@ -70,6 +71,11 @@ export default {
       type: Array,
       default: () => ([]),
     },
+  },
+  data() {
+    return {
+      selected: [],
+    };
   },
   computed: {
     ...alarmMapGetters([

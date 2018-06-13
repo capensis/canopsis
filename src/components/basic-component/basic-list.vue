@@ -8,7 +8,8 @@
       li(v-for="item in items", :item="item")
         list-item(:item="item")
           v-checkbox.checkbox(v-if="checkbox",
-          v-model="selected", :value="item._id", @click.stop, hide-details, slot="checkbox")
+          v-model="selected", @change="$emit('update:selected',$event)",
+          :value="item._id", @click.stop, hide-details, slot="checkbox")
           .reduced(slot="reduced")
             slot(name="row", :props="item")
           div(slot="expanded")
@@ -48,6 +49,7 @@ export default {
       },
       set(value) {
         this.selected = value ? this.items.map(v => v._id) : [];
+        this.$emit('update:selected', this.selected);
       },
     },
   },
