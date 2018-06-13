@@ -27,7 +27,8 @@
             th.box
         tr.container(slot="row" slot-scope="item")
             v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
-            td.box(v-for="property in alarmProperties") {{ item.props | get(property.value, property.filter) }}
+            td.box(v-for="property in alarmProperties")
+              alarm-column-value(:alarm="item.props", :pathToProperty="property.value")
             td.box
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
@@ -51,6 +52,7 @@ import ListSorting from '@/components/basic-component/list-sorting.vue';
 import PageIterator from '@/components/basic-component/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
 import ModalMixin from '@/mixins/modal/modal';
+import AlarmColumnValue from '@/components/alarm-list/alarm-column-value.vue';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
@@ -73,6 +75,7 @@ export default {
     ActionsPanel,
     BasicList,
     Loader,
+    AlarmColumnValue,
   },
   mixins: [PaginationMixin, ModalMixin],
   props: {
