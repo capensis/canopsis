@@ -803,7 +803,7 @@ class AlertsReader(object):
                     filters,
                 )
 
-                if len(results['alarms']) != old_alarms_count:
+                if len(results['alarms']) == old_alarms_count:
                     break
 
                 old_alarms_count = len(results['alarms'])
