@@ -137,6 +137,10 @@ def encode_tags(tags):
 def quote_ident(value):
     """
     Quote provided identifier.
+
+    :param str value: An influxdb identifier (e.g. a tag, field or measurement
+    name).
+    :rtype: str
     """
     return "\"{}\"".format(value.replace("\\", "\\\\")
                                 .replace("\"", "\\\"")
@@ -146,6 +150,9 @@ def quote_ident(value):
 def quote_literal(value):
     """
     Quote provided literal.
+
+    :param str value: An influxdb literal (e.g. a tag value or a field value).
+    :rtype: str
     """
     return "'{}'".format(value.replace("\\", "\\\\")
                               .replace("'", "\\'"))
@@ -154,6 +161,9 @@ def quote_literal(value):
 def quote_regex(value):
     """
     Quote provided regex.
+
+    :param str value: An influxdb regex.
+    :rtype: str
     """
     return "/{}/".format(value.replace("\\", "\\\\")
                               .replace("/", "\\/"))
