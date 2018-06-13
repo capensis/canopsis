@@ -15,6 +15,7 @@ export const MODALS = {
   createSnoozeEvent: 'create-snooze-event',
   createPbehavior: 'create-pbehavior',
   pbehaviorList: 'pbehavior-list',
+  moreInfos: 'more-infos',
 };
 
 export const EVENT_ENTITY_TYPES = {
