@@ -10,13 +10,11 @@
       pagination(:meta="meta", :limit="limit", type="top")
       basic-list(:items="items")
         tr.container(slot="header")
-          v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
           th.box(v-for="column in alarmProperties")
             span {{ column.text }}
             list-sorting(:column="column.value")
-            th.box
+          th.box
         tr.container(slot="row" slot-scope="item")
-            v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
             td.box(v-for="property in alarmProperties")
               alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
             td.box
@@ -73,13 +71,6 @@ export default {
       default: () => ([]),
     },
   },
-  data() {
-    return {
-      // alarm's ids selected by the checkboxes
-      selected: [],
-      allSelected: false,
-    };
-  },
   computed: {
     ...alarmMapGetters([
       'items',
@@ -88,18 +79,6 @@ export default {
     ]),
   },
   methods: {
-    selectAll(items) {
-      this.selected = [];
-      if (!this.allSelected) {
-        items.forEach((item) => {
-          this.selected.push(item._id);
-        });
-      }
-      this.allSelected = !this.allSelected;
-    },
-    select() {
-      this.allSelected = false;
-    },
     ...alarmMapActions({
       fetchListAction: 'fetchList',
     }),

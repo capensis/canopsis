@@ -1,9 +1,14 @@
 <template lang="pug">
     ul
       li.header.sticky(ref="header")
-        slot(name="header")
+        v-checkbox.checkbox(v-if="checkbox",
+        v-model="allSelected", hide-details, )
+        .headerText
+          slot(name="header")
       li(v-for="item in items", :item="item")
-        list-item
+        list-item(:item="item")
+          v-checkbox.checkbox(v-if="checkbox",
+          v-model="selected", :value="item._id", @click.stop, hide-details, slot="checkbox")
           .reduced(slot="reduced")
             slot(name="row", :props="item")
           div(slot="expanded")
@@ -23,6 +28,27 @@ export default {
   props: {
     items: {
       type: Array,
+      required: true,
+    },
+    checkbox: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  data() {
+    return {
+      // alarm's ids selected by the checkboxes
+      selected: [],
+    };
+  },
+  computed: {
+    allSelected: {
+      get() {
+        return this.selected.length === this.items.length;
+      },
+      set(value) {
+        this.selected = value ? this.items.map(v => v._id) : [];
+      },
     },
   },
   mounted() {
@@ -52,5 +78,13 @@ export default {
   }
   .reduced {
     overflow: auto;
+    margin-left: 1%;
+  }
+  .headerText {
+    margin-left: 1%;
+  }
+  .checkbox {
+    position: absolute;
+    top: 25%;
   }
 </style>
