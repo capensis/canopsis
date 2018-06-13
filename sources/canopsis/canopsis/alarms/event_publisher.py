@@ -24,15 +24,23 @@ Event publisher for alarms.
 """
 
 from __future__ import unicode_literals
+import os.path
 
 from canopsis.alerts.enums import AlarmField
+from canopsis.common import root_path
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
+from canopsis.confng import Configuration, Ini
+from canopsis.confng.helpers import cfg_to_bool
+from canopsis.confng.simpleconf import ConfigurationUnreachable
 from canopsis.event import Event, forger
 from canopsis.logger import Logger
 from canopsis.statsng.enums import StatEvents
 
+CONF_PATH = 'etc/statsng/engine.conf'
+CONF_SECTION = 'ENGINE'
+SEND_EVENTS_CONF_KEY = 'send_events'
 LOG_PATH = 'var/log/alarms.log'
 
 
@@ -43,6 +51,20 @@ class AlarmEventPublisher(object):
     def __init__(self, amqp_pub):
         self.logger = Logger.get('alarms', LOG_PATH)
         self.amqp_pub = amqp_pub
+
+        # Only send events if the configuration file exists and sets
+        # send_events to True.
+        try:
+            cfg = Configuration.load(
+                os.path.join(root_path, CONF_PATH), Ini
+            ).get(CONF_SECTION, {})
+
+            self.send_events = cfg_to_bool(cfg[SEND_EVENTS_CONF_KEY])
+        except (ConfigurationUnreachable, KeyError):
+            self.send_events = False
+
+        if not self.send_events:
+            self.logger.warning('The statistics events are disabled.')
 
     def publish_statcounterinc_event(self,
                                      timestamp,
@@ -57,6 +79,9 @@ class AlarmEventPublisher(object):
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
+        if not self.send_events:
+            return
+
         component = alarm.get(Event.COMPONENT)
         resource = alarm.get(Event.RESOURCE)
 
@@ -98,6 +123,9 @@ class AlarmEventPublisher(object):
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
+        if not self.send_events:
+            return
+
         creation_date = alarm.get(AlarmField.creation_date.value)
 
         if not creation_date:
