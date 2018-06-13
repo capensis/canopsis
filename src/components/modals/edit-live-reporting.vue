@@ -86,8 +86,6 @@ export default {
     ...alarmsMapActions({
       fetchAlarmList: 'fetchList',
     }),
-    ...alarmsListMapActions(['addLiveReportingFilter']),
-
     handleIntervalClick(interval) {
       try {
         const { tstart, tstop } = dateIntervals[interval.value]();
@@ -98,11 +96,10 @@ export default {
       }
     },
     handleSubmit() {
-      this.addLiveReportingFilter(this.selectedInterval);
-
       this.$router.push({
         query: {
           ...this.$route.query,
+          interval: this.selectedInterval.text,
           tstart: this.tstart.getTime() / 1000,
           tstop: this.tstop.getTime() / 1000,
         },

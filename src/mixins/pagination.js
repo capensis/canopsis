@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     getQuery() {
-      const query = omit(this.$route.query, ['page']);
+      const query = omit(this.$route.query, ['page', 'interval']);
 
       query.limit = this.limit;
       query.skip = ((this.$route.query.page - 1) * this.limit) || 0;

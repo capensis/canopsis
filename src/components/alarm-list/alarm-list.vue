@@ -3,14 +3,14 @@
     v-layout(justify-end, align-center)
       mass-actions
       v-chip(
-        v-if="liveReportingFilter"
+        v-if="$route.query.interval"
         @input="removeHistoryFilter",
         close,
         label,
         color="blue darken-4 white--text"
-      ) {{ liveReportingFilter.text }}
+      ) {{ $route.query.interval }}
       v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
-        v-icon(:color="liveReportingFilter ? 'blue' : 'black'") schedule
+        v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
     v-layout
       v-flex(xs5)
         alarm-list-searching
@@ -52,7 +52,6 @@ import PageIterator from '@/components/basic-component/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
 import ModalMixin from '@/mixins/modal/modal';
 
-const { mapActions: alarmsListMapActions, mapGetters: alarmsListMapGetters } = createNamespacedHelpers('alarmsList');
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
@@ -95,7 +94,6 @@ export default {
       'meta',
       'pending',
     ]),
-    ...alarmsListMapGetters(['liveReportingFilter']),
   },
   methods: {
     selectAll(items) {
@@ -117,11 +115,7 @@ export default {
       openSettingsPanel: 'openPanel',
     }),
 
-    ...alarmsListMapActions(['removeLiveReportingFilter']),
-
     removeHistoryFilter() {
-      this.removeLiveReportingFilter();
-
       this.$router.push({
         query: {
           ...this.$route.$query,
