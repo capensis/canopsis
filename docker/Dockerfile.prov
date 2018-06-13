@@ -2,6 +2,9 @@ ARG TAG
 ARG SYSBASE
 
 FROM canopsis/canopsis-core:${SYSBASE}-${TAG}
+ADD docker/files/entrypoint-prov-sync.sh /
 ADD docker/files/entrypoint-prov.sh /
+
+VOLUME /provisioning
 
 ENTRYPOINT /entrypoint-prov.sh
