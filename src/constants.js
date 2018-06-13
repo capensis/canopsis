@@ -4,6 +4,8 @@ export const ENTITIES_TYPES = {
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
+  view: 'view',
+  widgetWrapper: 'widgetWrapper',
 };
 
 export const MODALS = {
@@ -16,6 +18,7 @@ export const MODALS = {
   createPbehavior: 'create-pbehavior',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
+  moreInfos: 'more-infos',
 };
 
 export const EVENT_ENTITY_TYPES = {

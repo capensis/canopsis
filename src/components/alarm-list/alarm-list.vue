@@ -28,7 +28,7 @@
         tr.container(slot="row" slot-scope="item")
             v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
             td.box(v-for="property in alarmProperties")
-              alarm-column-value(:alarm="item.props", :pathToProperty="property.value")
+              alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
             td.box
               actions-panel.actions(:item="item.props")
         tr.container(slot="expandedRow", slot-scope="item")
