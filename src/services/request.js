@@ -13,10 +13,6 @@ function successResponseHandler(response) {
   if (response.data.errors && response.data.errors.length) {
     return Promise.reject(response.data.errors);
   }
-  /* else if (response.data.data) {
-    return response.data.data;
-  }
-  */
   return response.data;
 }
 
