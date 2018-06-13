@@ -3,7 +3,7 @@
     template(v-if="attributeType === 'state'")
       state(:stateId="alarm | get(pathToProperty, filter)", :showIcon="showIcon")
     template(v-if="attributeType === 'status'")
-      status(:statusId="getProp(alarm, pathToProperty)")
+      status(:statusId="alarm | get(pathToProperty, filter)")
     template(v-if="attributeType === 'textable'") {{ alarm | get(pathToProperty, filter) }}
     info-popup-button(:columnName="columnName", :alarm="alarm")
 </template>
