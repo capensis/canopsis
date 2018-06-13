@@ -208,6 +208,38 @@ send only perfdata :
 
 See bellow for more informations about those fields.
 
+
+Event Statistics Counter Increment Structure
+--------------------------------------------
+
+After defining the basic event structure, add the following fields :
+
+```javascript
+{
+    'event_type': 'statcounterinc',
+
+    'counter_name':         // The name of the counter to increment
+    'alarm':                // The new alarm
+    'entity':               // The entity which sent the event
+}
+```
+
+Event Statistics Duration Structure
+-----------------------------------
+
+After defining the basic event structure, add the following fields :
+
+```javascript
+{
+    'event_type': 'statduration',
+
+    'duration_name':        // The name of the duration
+    'duration':             // The value of the duration (in seconds)
+    'alarm':                // The new alarm
+    'entity':               // The entity which sent the event
+}
+```
+
 ### Metrology
 
 To send perfdata to Canopsis, you just need to specify one of the
@@ -358,6 +390,10 @@ List of event types
   selector        Sent by the selector engine
 
   sla             Sent by the sla engine
+
+  statcounterinc  Used to increment a counter in the statistics engine
+
+  statduration    Used to add a duration in the statistics engine
 
   topology        Sent by the topology engine
 

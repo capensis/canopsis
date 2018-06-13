@@ -31,6 +31,8 @@ from six import string_types
 from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
+import pytz
+
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.common.utils import singleton_per_scope
@@ -517,6 +519,63 @@ class PBehaviorManager(object):
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
 
+    @staticmethod
+    def check_active_pbehavior(timestamp, pbehavior):
+        """
+        For a given pbehavior (as dict) check that the given timestamp is active
+        using either:
+
+        the rrule, if any, from the pbehavior + tstart and tstop to define
+        start and stop times.
+
+        tstart and tstop alone if no rrule is available.
+
+        All dates and times are computed using UTC timezone, so check that your
+        timestamp was exported using UTC.
+
+        :param int timestamp: timestamp to check
+        :param dict pbehavior: the pbehavior
+        :rtype bool:
+        :returns: pbehavior is currently active or not
+        """
+        fromts = datetime.utcfromtimestamp
+        tstart = pbehavior[PBehavior.TSTART]
+        tstop = pbehavior[PBehavior.TSTOP]
+
+        if not isinstance(tstart, (int, float)):
+            return False
+        if not isinstance(tstop, (int, float)):
+            return False
+
+        tz = pytz.UTC
+        dtts = fromts(timestamp).replace(tzinfo=tz)
+        dttstart = fromts(tstart).replace(tzinfo=tz)
+        dttstop = fromts(tstop).replace(tzinfo=tz)
+
+        dt_list = [dttstart, dttstop]
+        rrule = pbehavior['rrule']
+        if rrule:
+            # returns a list of dates that are between the given tstart/tstop,
+            # and using dtstart fr
+            dt_list = list(
+                rrulestr(rrule, dtstart=dtts).between(
+                    dttstart, dttstop, inc=True
+                )
+            )
+
+            if len(dt_list) == 1 and dtts >= dt_list[0]:
+                return True
+
+            elif len(dt_list) > 1 and dt_list[0] >= dtts and dtts <= dt_list[-1]:
+                return True
+
+        else:
+            if dtts >= dttstart and dtts <= dttstop:
+                return True
+            return False
+
+        return False
+
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
 
@@ -610,40 +669,41 @@ class PBehaviorManager(object):
 
     def get_all_active_pbehaviors(self):
         """
-        Return all pbehaviors currently active, using start and stop time.
+        Return all pbehaviors currently active using
+        self.check_active_pbehavior
         """
         now = int(time())
-        query = {
-            '$and': [
-                {'tstop': {'$gte': now}},
-                {'tstart': {'$lte': now}}
-            ]
-        }
+        query = {}
 
-        ret_val = list(self.pb_storage.get_elements(
-            query=query
-        ))
+        ret_val = list(self.pb_storage.get_elements(query=query))
 
-        return ret_val
+        results = []
 
-    def get_active_pbehaviors_from_type(self, types=[]):
+        for pb in ret_val:
+            if self.check_active_pbehavior(now, pb):
+                results.append(pb)
+
+        return results
+
+    def get_active_pbehaviors_from_type(self, types=None):
         """
-        Return pbehaviors currently active, with a specific type.
+        Return pbehaviors currently active, with a specific type,
+        using self.check_active_pbehavior
         """
+        if types is None:
+            types = []
         now = int(time())
-        query = {
-            '$and': [
-                {'tstop': {'$gte': now}},
-                {'tstart': {'$lte': now}},
-                {PBehavior.TYPE: {'$in': types}}
-            ]
-        }
+        query = {PBehavior.TYPE: {'$in': types}}
 
-        ret_val = list(self.pb_storage.get_elements(
-            query=query
-        ))
+        ret_val = list(self.pb_storage.get_elements(query=query))
 
-        return ret_val
+        results = []
+
+        for pb in ret_val:
+            if self.check_active_pbehavior(now, pb):
+                results.append(pb)
+
+        return results
 
     def get_varying_pbehavior_list(self):
         """

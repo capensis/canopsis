@@ -35,6 +35,7 @@ from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
 from canopsis.common import root_path
+from canopsis.common.utils import get_sub_key
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.entitylink.manager import Entitylink
@@ -643,6 +644,10 @@ class AlertsReader(object):
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+        if sort_key == 'v.duration':
+            sort_key = 'v.creation_date'
+        elif sort_key == 'v.current_state_duration':
+            sort_key = 'v.state.t'
         if hide_resources:
             if resolved:
                 self.logger.error(
@@ -657,13 +662,9 @@ class AlertsReader(object):
                 limit,
                 search,
                 natural_search,
-                active_columns
+                active_columns,
+                with_steps
             )
-
-        if sort_key == 'v.duration':
-            sort_key = 'v.creation_date'
-        elif sort_key == 'v.current_state_duration':
-            sort_key = 'v.state.t'
 
         if lookups is None:
             lookups = []
@@ -718,6 +719,9 @@ class AlertsReader(object):
             }
         ]
 
+        if not with_steps:
+            pipeline.insert(0, {"$project": {"v.steps": False}})
+
         self.add_pbh_filter(pipeline, filter_)
 
         pipeline.append({
@@ -743,10 +747,6 @@ class AlertsReader(object):
         first = 0 if limited_total == 0 else skip + 1
         last = 0 if limited_total == 0 else skip + limited_total
 
-        if not with_steps:
-            for alarm in alarms:
-                alarm['v'].pop(AlarmField.steps.value)
-
         res = {
             'alarms': alarms,
             'total': total,
@@ -768,7 +768,8 @@ class AlertsReader(object):
             limit=None,
             search='',
             natural_search=False,
-            active_columns=None
+            active_columns=None,
+            with_steps=False
     ):
         """
         Return filtered, sorted and paginated alarms with resources sorted.
@@ -792,6 +793,8 @@ class AlertsReader(object):
 
         :param list active_columns: the list of alarms columns on which to
         apply the natural search filter.
+        :param bool with_steps: True if you want alarm steps in your alarm.
+
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
@@ -843,6 +846,9 @@ class AlertsReader(object):
             }
         ]
 
+        if not with_steps:
+            pipeline.insert(0, {"$project": {"v.steps": False}})
+
         self.add_pbh_filter(pipeline, filter_)
 
         alarms = self.alarm_storage._backend.aggregate(pipeline,
@@ -877,9 +883,19 @@ class AlertsReader(object):
         else:
             filtred_alarms = filtred_alarms[skip:]
             last = len(filtred_alarms)
+
+
+
+        rev = (sort_dir == -1)
+        sorted_alarms = sorted(
+            filtred_alarms,
+            key=lambda k: get_sub_key(k, sort_key),
+            reverse=rev
+        )
+
         len_after_truncate = len(filtred_alarms)
         ret_val = {
-            'alarms': filtred_alarms,
+            'alarms': sorted_alarms,
             'total': len_before_truncate,
             'truncated': len_after_truncate < len_before_truncate,
             'first': skip,
@@ -951,7 +967,7 @@ def remove_resources_alarms(alarms):
     for i in alarms:
         val = i.get('v').get('state').get('val')
         states_list.append(val)
-        if i.get('entity').get('type') == 'component':
+        if i.get('entity', {}).get('type') == 'component':
             state_comp = val
             alarm_comp = i
 
@@ -960,6 +976,7 @@ def remove_resources_alarms(alarms):
 
     ret_val = [alarm_comp]
     for alarm in alarms:
-        if alarm.get('v').get('state').get('val') > state_comp:
+        if alarm.get('v', {}).get('state', {}).get('val') > state_comp:
             ret_val.append(alarm)
+
     return ret_val

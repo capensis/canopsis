@@ -27,6 +27,8 @@ from __future__ import unicode_literals
 
 import logging
 
+from canopsis.statsng.enums import StatCounters, StatDurations
+
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
@@ -41,6 +43,8 @@ class AlarmService(object):
 
     def __init__(self,
                  alarms_adapter,
+                 context_manager,
+                 event_publisher,
                  watcher_manager,
                  bagot_time=DEFAULT_FLAPPING_INTERVAL,
                  cancel_autosolve_delay=DEFAULT_CANCEL_AUTOSOLVE_DELAY,
@@ -51,6 +55,8 @@ class AlarmService(object):
         Alarm service constructor.
 
         :param AlarmAdapter alarms_adapter: Alarms DB adapter
+        :param ContextGraph context_manager: Context graph
+        :param AlarmEventPublisher event_publisher: Event publisher
         :param WatcherManager watcher_manager: ref to a WatcherManager object
         :param int bagot_time: period to consider status oscilations
         :param int cancel_autosolve_delay: delay before validating a cancel
@@ -59,6 +65,8 @@ class AlarmService(object):
         :param Logger logger: a logger instance
         """
         self.alarms_adapter = alarms_adapter
+        self.context_manager = context_manager
+        self.event_publisher = event_publisher
         self.watcher_manager = watcher_manager
         self.bagot_time = bagot_time
         self.cancel_delay = cancel_autosolve_delay
@@ -132,6 +140,23 @@ class AlarmService(object):
             if resolved or resolved_cancel or resolved_stealthy or resolved_flapping:
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
+
+                entity = self.context_manager.get_entities_by_id(alarm._id)
+                try:
+                    entity = entity[0]
+                except IndexError:
+                    entity = {}
+                alarm_dict = alarm.to_dict()
+                self.event_publisher.publish_statcounterinc_event(
+                    alarm.last_update_date,
+                    StatCounters.alarms_resolved,
+                    entity,
+                    alarm_dict['v'])
+                self.event_publisher.publish_statduration_event(
+                    alarm.last_update_date,
+                    StatDurations.resolve_time,
+                    entity,
+                    alarm_dict['v'])
 
         self._log(
             logging.DEBUG,
