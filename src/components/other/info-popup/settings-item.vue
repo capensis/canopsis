@@ -29,15 +29,15 @@ export default {
       popups: [],
     };
   },
+  computed: {
+    widget() {
+      return this.getWidget({ widgetXType: 'listalarm' });
+    },
+  },
   created() {
-    const widgetWrapper = this.getWidget({ widgetXType: 'listalarm' });
-
-    if (!widgetWrapper) {
-      console.error('There isn\'t listalarm widget');
-      return;
+    if (this.widget) {
+      this.popups = this.widget.widget.popup;
     }
-
-    this.popups = widgetWrapper.widget.popup;
   },
   methods: {
     deleteItem(index) {
@@ -50,9 +50,7 @@ export default {
       });
     },
     async save() {
-      const widgetWrapper = this.getWidget({ widgetXType: 'listalarm' });
-
-      await this.saveWidget({ widgetWrapper });
+      await this.saveWidget({ widgetWrapper: this.widget });
     },
   },
 };
