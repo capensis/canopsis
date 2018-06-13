@@ -566,6 +566,7 @@ class Alerts(object):
                 except IndexError:
                     entity = {}
                 self.event_publisher.publish_statcounterinc_event(
+                    alarm[self.alerts_storage.VALUE][AlarmField.creation_date.value],
                     StatCounters.alarms_created,
                     entity,
                     alarm[self.alerts_storage.VALUE])
@@ -610,8 +611,8 @@ class Alerts(object):
         value = alarm.get(self.alerts_storage.VALUE)
 
         if self.is_hard_limit_reached(value):
-            # Only cancel is allowed when hard limit has been reached
-            if event['event_type'] != 'cancel':
+            # Only cancel and ack are allowed when hard limit has been reached
+            if event['event_type'] != 'cancel' and event['event_type'] != 'ack':
                 self.logger.debug('Hard limit reached. Cancelling')
 
                 return
@@ -635,7 +636,8 @@ class Alerts(object):
         if isinstance(new_value, tuple):
             new_value, status = new_value
 
-        new_value = self.check_hard_limit(new_value)
+        if event['event_type'] != 'cancel' and event['event_type'] != 'ack':
+            new_value = self.check_hard_limit(new_value)
 
         self.update_current_alarm(alarm, new_value)
 
@@ -777,7 +779,10 @@ class Alerts(object):
             except IndexError:
                 entity = {}
             self.event_publisher.publish_statcounterinc_event(
-                StatCounters.alarms_canceled, entity, new_value)
+                new_value[AlarmField.last_update_date.value],
+                StatCounters.alarms_canceled,
+                entity,
+                new_value)
 
         return alarm
 

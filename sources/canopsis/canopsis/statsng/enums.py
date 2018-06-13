@@ -48,15 +48,6 @@ class StatEventFields(FastEnum):
     duration = 'duration'
 
 
-class StatMeasurements(FastEnum):
-    """
-    The StatMeasurements enumeration defines the names of the influxdb
-    measurements.
-    """
-    counters = 'statcounters'
-    durations = 'statdurations'
-
-
 class StatCounters(FastEnum):
     """
     The StatCounters enumeration defines the names of the counters.

@@ -456,7 +456,10 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
-            StatCounters.alarms_canceled, {}, alarm['value'])
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_canceled,
+            {},
+            alarm['value'])
         self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_archive_state_nochange(self):
@@ -489,7 +492,10 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
-            StatCounters.alarms_created, {}, alarm['value'])
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         event1 = {
@@ -544,7 +550,10 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
-            StatCounters.alarms_created, {}, alarm['value'])
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Testing state increase
@@ -663,7 +672,10 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
-            StatCounters.alarms_created, {}, alarm['value'])
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Force status to stealthy
@@ -719,7 +731,10 @@ class TestManager(BaseTest):
         self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
-            StatCounters.alarms_created, {}, alarm['value'])
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_created,
+            {},
+            alarm['value'])
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Force status to stealthy

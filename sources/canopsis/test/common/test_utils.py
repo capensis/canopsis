@@ -26,7 +26,7 @@ from unittest import TestCase
 
 from canopsis.common.utils import (
     lookup, path, isiterable, isunicode, ensure_unicode, ensure_iterable,
-    forceUTF8, get_sub_key
+    forceUTF8, get_sub_key, dict_merge
 )
 
 from sys import version as PYVER
@@ -186,6 +186,41 @@ class UtilsTest(TestCase):
 
         value = get_sub_key(dico, 'virgule.virgule', default='#')
         self.assertEqual(value, '#')
+
+    def test_dict_merge(self):
+        dico = {
+            'Dr. Zoidberg': {
+                'quote': 'Hooray!'
+            },
+            'Farnsworth': {
+                'quote': 'Good news everyone!',
+                'quote2': 'Sweet zombie...'
+            }
+        }
+        merge = {
+            'Farnsworth': {
+                'quote2': 'Sweet zombie Jesus!'
+            },
+            'Leela': {
+                'quote': 'So long, jerkwads!'
+            }
+        }
+        response = {
+            'Dr. Zoidberg': {
+                'quote': 'Hooray!'
+            },
+            'Farnsworth': {
+                'quote': 'Good news everyone!',
+                'quote2': 'Sweet zombie Jesus!'
+            },
+            'Leela': {
+                'quote': 'So long, jerkwads!'
+            }
+        }
+
+        dict_merge(dico, merge)
+        self.assertDictEqual(dico, response)
+
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

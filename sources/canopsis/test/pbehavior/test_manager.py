@@ -20,17 +20,21 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-import unittest
-import xmlrunner
 
-from canopsis.common import root_path
+import unittest
+import time
+import datetime
 from calendar import timegm
 from copy import deepcopy
 from datetime import datetime, timedelta
 from json import dumps
 from uuid import uuid4
 
+import xmlrunner
+from canopsis.common import root_path
+from canopsis.models.pbehavior import PBehavior as PBModel
 from canopsis.pbehavior.manager import PBehavior
+
 from test_base import BaseTest
 
 
@@ -381,6 +385,87 @@ class TestManager(BaseTest):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0][PBehavior.TYPE], 'maintenance')
 
+    def test_check_active_pbehavior(self):
+        now = int(time.mktime(datetime.utcnow().timetuple()))
+        hour = 3600
+
+        # tstart < now < tstop
+        pb_w_rrule = PBModel(
+            'w_rrule',
+            'w_rrule',
+            {},
+            now - hour,
+            now + hour,
+            'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
+            'test'
+        ).to_dict()
+
+        self.assertTrue(self.pbm.check_active_pbehavior(now, pb_w_rrule))
+
+        # tstart is one hour ahead from now
+        pb_w_rrule = PBModel(
+            'w_rrule',
+            'w_rrule',
+            {},
+            now + hour * 1,
+            now + hour * 2,
+            'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
+            'test'
+        ).to_dict()
+
+        self.assertFalse(self.pbm.check_active_pbehavior(now, pb_w_rrule))
+
+        # tstart is two hour behind from now, tstop one hour
+        pb_w_rrule = PBModel(
+            'w_rrule',
+            'w_rrule',
+            {},
+            now - hour * 2,
+            now - hour * 1,
+            'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
+            'test'
+        ).to_dict()
+
+        self.assertFalse(self.pbm.check_active_pbehavior(now, pb_w_rrule))
+
+        # no rrule, tstart and tstop in the past
+        pb_n_rrule = PBModel(
+            'w_rrule',
+            'w_rrule',
+            {},
+            now - hour * 2,
+            now - hour * 1,
+            '',
+            'test'
+        ).to_dict()
+
+        self.assertFalse(self.pbm.check_active_pbehavior(now, pb_n_rrule))
+
+        # no rrule, now between tstart and tstop
+        pb_n_rrule = PBModel(
+            'w_rrule',
+            'w_rrule',
+            {},
+            now - hour * 1,
+            now + hour * 1,
+            '',
+            'test'
+        ).to_dict()
+
+        self.assertTrue(self.pbm.check_active_pbehavior(now, pb_n_rrule))
+
+        # no rrule, tstart and tstop in the future
+        pb_n_rrule = PBModel(
+            'w_rrule',
+            'w_rrule',
+            {},
+            now + hour * 1,
+            now + hour * 2,
+            '',
+            'test'
+        ).to_dict()
+
+        self.assertFalse(self.pbm.check_active_pbehavior(now, pb_n_rrule))
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

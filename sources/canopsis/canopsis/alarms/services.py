@@ -148,9 +148,15 @@ class AlarmService(object):
                     entity = {}
                 alarm_dict = alarm.to_dict()
                 self.event_publisher.publish_statcounterinc_event(
-                    StatCounters.alarms_resolved, entity, alarm_dict['v'])
+                    alarm.last_update_date,
+                    StatCounters.alarms_resolved,
+                    entity,
+                    alarm_dict['v'])
                 self.event_publisher.publish_statduration_event(
-                    StatDurations.resolve_time, entity, alarm_dict['v'])
+                    alarm.last_update_date,
+                    StatDurations.resolve_time,
+                    entity,
+                    alarm_dict['v'])
 
         self._log(
             logging.DEBUG,

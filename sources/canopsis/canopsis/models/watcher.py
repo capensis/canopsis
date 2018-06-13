@@ -4,6 +4,7 @@ import json
 
 from six import string_types
 
+
 def type_check(name, value, type_):
     if not isinstance(value, type_):
         raise TypeError('not a {}: {}'.format(
@@ -13,6 +14,7 @@ def type_check(name, value, type_):
     return value
 
 WORSTSTATE = 'worststate'
+
 
 class WatcherModel(object):
     """
