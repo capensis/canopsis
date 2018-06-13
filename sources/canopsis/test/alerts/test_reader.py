@@ -20,30 +20,35 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-from unittest import main
-from time import sleep
-import time
 
+import time
+import unittest
+from time import sleep
+
+import xmlrunner
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.context_graph.manager import ContextGraph
-import unittest
-from canopsis.common import root_path
-import xmlrunner
+
 from base import BaseTest
+
 
 class LoggerMock():
     def debug(self, *args, **kwargs):
         pass
+
     def info(self, *args, **kwargs):
         pass
+
     def warning(self, *args, **kwargs):
         pass
+
     def critical(self, *args, **kwargs):
         pass
 
@@ -662,7 +667,6 @@ class TestReader(BaseTest):
         alarms = self.reader.get(opened=True)
         print(alarms)
         self.assertEqual(len(alarms["alarms"]), 0)
-
 
 
 if __name__ == '__main__':

@@ -686,6 +686,13 @@ class AlertsReader(object):
             limit = limit * 2
             hide_resources &= rconn.exists('featureflag:hide_resources')
 
+        count_query = self.alarm_storage._backend.find(final_filter)
+        total, truncated = self._get_fast_count(
+            count_query,
+            tstart, tstop, opened, resolved,
+            final_filter, search
+        )
+
         def search_aggregate(skip, limit):
             pipeline = [
                 {
@@ -733,13 +740,6 @@ class AlertsReader(object):
             alarms = list(result)
             # Manual count is much faster than mongo's
             limited_total = len(alarms)
-
-            count_query = self.alarm_storage._backend.find(final_filter)
-            total, truncated = self._get_fast_count(
-                count_query,
-                tstart, tstop, opened, resolved,
-                final_filter, search
-            )
 
             first = 0 if limited_total == 0 else skip + 1
             last = 0 if limited_total == 0 else skip + limited_total
