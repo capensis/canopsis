@@ -81,9 +81,15 @@ export default {
       show: false,
     };
   },
-  async mounted() {
-    await this.fetchView({ id: 'view.current_alarms' });
-    this.show = true;
+  watch: {
+    viewPending() {
+      if (!this.viewPending) {
+        this.show = true;
+      }
+    },
+  },
+  mounted() {
+    this.fetchView({ id: 'view.current_alarms' });
   },
 };
 </script>
