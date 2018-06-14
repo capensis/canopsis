@@ -96,7 +96,11 @@ class Watcher:
         entity['mfilter'] = body['mfilter']
         entity['state'] = 0
 
-        self.context_graph.create_entity(entity)
+        try:
+            self.context_graph.create_entity(entity)
+        except ValueError:
+            self.context_graph.update_entity(entity)
+
         self.compute_state(watcher_id)
 
         return True  # TODO: return really something

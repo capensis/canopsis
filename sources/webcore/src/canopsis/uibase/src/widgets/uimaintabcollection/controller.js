@@ -68,6 +68,22 @@ Ember.Application.initializer({
                 return true;
             },
 
+            computeProperties: function (uimaintabcollectionController, item, viewId){
+                if(item.value === get(uimaintabcollectionController, 'currentViewId')) {
+                    set(item, 'isActive', true);
+                } else {
+                    set(item, 'isActive', false);
+                }
+
+                viewId = viewId.replace('.', '_');
+                if (uimaintabcollectionController.isViewDisplayable(viewId)) {
+                    set(item, 'displayable', true);
+                } else {
+                    set(item, 'displayable', false);
+                }
+                return item
+            },
+
             /**
              * @property preparedTabs
              */
@@ -76,25 +92,44 @@ Ember.Application.initializer({
 
                 var res = Ember.A();
 
+				computeProperties = get(this, 'computeProperties')
+
                 get(this, 'tabs').forEach(function(item, index) {
+					var insert = true
                     void(index);
 
-                    if(item.value === get(uimaintabcollectionController, 'currentViewId')) {
-                        set(item, 'isActive', true);
-                    } else {
-                        set(item, 'isActive', false);
-                    }
+					set(item, "hasDisplayableNestedView", false)
 
-                    var viewId = item.value || '';
+					if (item.hasOwnProperty("nestedViews") === true) {
+						for (var i = 0; i < item.nestedViews.length; i++) {
 
-                    viewId = viewId.replace('.', '_');
-                    if (uimaintabcollectionController.isViewDisplayable(viewId)) {
-                        set(item, 'displayable', true);
-                    } else {
-                        set(item, 'displayable', false);
-                    }
+							var viewId = item.nestedViews[i]["value"]["value"] || '';
+							computeProperties(uimaintabcollectionController, item.nestedViews[i], viewId)
 
-                    res.pushObject(item);
+							if(item.nestedViews[i].isActive == true) {
+								set(item, "isActive", true)
+							}
+
+							if(item.nestedViews[i].displayable == true) {
+								set(item, "hasDisplayableNestedView", true)
+								set(item, "displayable", true)
+							}
+						}
+
+						set(item, "nestedViews", item.nestedViews.filterBy("displayable", true))
+
+						if(item.nestedViews.length === 0) {
+							insert = false
+						}
+					}
+					else{
+						var viewId = item.value || '';
+						computeProperties(uimaintabcollectionController, item, viewId)
+					}
+
+					if (insert === true){
+						res.pushObject(item);
+					}
                 });
 
                 return res;

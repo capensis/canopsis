@@ -19,17 +19,19 @@
 # ---------------------------------
 from __future__ import unicode_literals
 
+import json
 from bottle import request
+from pymongo.errors import OperationFailure
 from time import time
 
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import id_filter
-from canopsis.common.ws import route
+from canopsis.common.ws import route, WebServiceError
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
-import json
+from canopsis.alerts.utils import compat_go_crop_states
 
 
 def exports(ws):
@@ -112,23 +114,28 @@ def exports(ws):
         if isinstance(search, int):
             search = str(search)
 
-        alarms = ar.get(
-            tstart=tstart,
-            tstop=tstop,
-            opened=opened,
-            resolved=resolved,
-            lookups=lookups,
-            filter_=filter,
-            search=search.strip(),
-            sort_key=sort_key,
-            sort_dir=sort_dir,
-            skip=skip,
-            limit=limit,
-            with_steps=with_steps,
-            natural_search=natural_search,
-            active_columns=active_columns,
-            hide_resources=hide_resources
-        )
+        try:
+            alarms = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=opened,
+                resolved=resolved,
+                lookups=lookups,
+                filter_=filter,
+                search=search.strip(),
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=limit,
+                with_steps=with_steps,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources
+            )
+        except OperationFailure as of_err:
+            message = 'Operation failure on get-alarms: {}'.format(of_err)
+            raise WebServiceError(message)
+
         alarms_ids = []
         for alarm in alarms['alarms']:
             tmp_id = alarm.get('d')
@@ -143,7 +150,8 @@ def exports(ws):
         for alarm in alarms['alarms']:
             now = int(time())
             alarm["v"]['duration'] = now - alarm.get('v', {}).get('creation_date', now)
-            alarm["v"]['current_state_duration'] = now - alarm.get('v', {}).get('state', {}).get('t', now)
+            state_time = alarm.get('v', {}).get('state', {}).get('t', now)
+            alarm["v"]['current_state_duration'] = now - state_time
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
@@ -157,6 +165,8 @@ def exports(ws):
                         alarm['infos'].update(data)
                     else:
                         alarm['infos'] = data
+
+            alarm = compat_go_crop_states(alarm)
 
             list_alarm.append(alarm)
 
@@ -255,7 +265,8 @@ def exports(ws):
         """
         filters = am.alarm_filters.get_filter(entity_id)
         if filters is None:
-            return gen_json_error({'description': 'nothing to return'}, HTTP_ERROR)
+            return gen_json_error({'description': 'nothing to return'},
+                                  HTTP_ERROR)
 
         return gen_json([l.serialize() for l in filters])
 

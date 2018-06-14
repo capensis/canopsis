@@ -495,7 +495,7 @@ class KnownValues(unittest.TestCase):
             'component': 'cpt',
             'resource': 'r',
             'event_type': 'check',
-            'author': 'event_filter',
+            'author': 'event_filter'
         }
 
         with patch(

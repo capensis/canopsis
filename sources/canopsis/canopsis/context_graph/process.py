@@ -459,7 +459,7 @@ def gen_ids(event):
         'conn_id': '{0}/{1}'.format(event['connector'],
                                     event['connector_name'])
     }
-    if 'resource' in event.keys():
+    if event.get('resource', ''):
         ret_val['re_id'] = '{0}/{1}'.format(event['resource'],
                                             event['component'])
     return ret_val
@@ -470,7 +470,7 @@ def get_event_id(ids, event):
     with the given event.
     """
     # ascertain the type of the entity related to the event
-    if "resource" in event:
+    if event.get("resource", ''):
         return ids["re_id"]
 
     if "component" in event:

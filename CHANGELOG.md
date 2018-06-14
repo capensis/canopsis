@@ -10,6 +10,44 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Go]: New engine interface
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+
+## Canopsis 2.6.6 - Maintenance release -  Due date : 2018-06-08
+
+- [Connector]: email2canopsis now with python3
+- [Docker]: add some usefull tools in debian-9 docker image
+- [EventFilter]: now can filter on subkeys
+- [Go]: fix crash when a non-check event arrive on an empty alarm
+- [Go]: add printEventOnError flag on engines
+- [Go]: update dependency, and notablly migrating from mgo to globalsign/mgo
+- [Go]: fix event-entity not always correctly associated
+- [Go]: fix PBehavior event message never acked in Che
+- [Go]: fix inaccurate messages in Che
+- [Python]: API can now produce correct HttpError on catched exception (instead of 200)
+- [Python]: limit /get-alarms response size by removing steps
+- [Python]: upsert mode on import context route
+- [Python]: alarms without a corresponding entity are not shadowed anymore
+- [Python]: fix active pbehavior search
+- [Python]: two new events (statcounterinc and statduration) for statistics purpose
+- [Python]: remove ticket engine from amqp2engines.conf
+- [UI]: fix BNF research on entity properties
+- [UI]: fix sort on current_state_duration
+- [Service Weather]: add new rights for actions in service weather
+
+
+## Canopsis 2.6.5 - Maintenance release -  Due date : 2018-05-18
+
+- [Go]: Porting steps cropping from python
+- [Go]: Huge refactoring on error handling
+- [Go]: Events with a timestamp as a float are now correctly parsed
+- [Python]: step cropping compatibility update
+- [Python]: bugfix where a source_type component is treated as a resource
+- [UI]: fix context info presentation in the context explorer
+- [UI]: bugfix on hide resource
+- [UI]: fix navbar rights
+- [Service Weather]: fix possibility to ack twice, change invalidate to cancel on thumb down button
+- [Alarms list]: creation date is now presented in full format, even if its the present day
+
+
 ## Canopsis 2.6.4 - Maintenance release -  Due date : 2018-05-03
 
 - [Setup] A version of the amqp2engines.conf file is provided for the High performance engines
@@ -32,6 +70,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Alarms list]: fix an issue where a pbehavior id could become null with periodic refresh enabled
 - [Service weather]: Resources are now greyed out when a Component has a pbehavior
 - [Context Graph]: Fixed an issue that prevented the expansion of an item of the Context Graph explorer
+
 
 ## Canopsis 2.6.3 - Maintenance release -  Due date : 2018-04-26
 

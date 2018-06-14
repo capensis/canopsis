@@ -175,6 +175,26 @@
         "view_history_alarms": {
             "checksum": 7,
             "desc": ""
+        },
+        "serviceweather_ack":{
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_confirm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_invalidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_declareticket": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_pause" : {
+            "checksum": 1,
+            "desc": ""
         }
     }
 },{
@@ -217,6 +237,18 @@
         },
         "view_history_alarms": {
             "checksum": 7,
+            "desc": ""
+        },
+        "serviceweather_ack":{
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_confirm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_invalidate": {
+            "checksum": 1,
             "desc": ""
         }
     }
@@ -315,6 +347,26 @@
         },
         "view_history_alarms": {
             "checksum": 7,
+            "desc": ""
+        },
+        "serviceweather_ack":{
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_confirm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_invalidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_declareticket": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_pause" : {
+            "checksum": 1,
             "desc": ""
         }
     }

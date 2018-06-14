@@ -32,13 +32,17 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
+from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
     get_last_state, get_last_status, OFF, STEALTHY,
-    is_stealthy, is_keeped_state
+    CANCELED, is_stealthy, is_keeped_state
 )
 from canopsis.check import Check
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import ensure_iterable, gen_id
@@ -50,6 +54,7 @@ from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
+from canopsis.statsng.enums import StatCounters
 from canopsis.watcher.manager import Watcher
 
 # Extra fields from the event that should be stored in the alarm
@@ -104,7 +109,8 @@ class Alerts(object):
             config_data,
             filter_storage,
             context_graph,
-            watcher
+            watcher,
+            event_publisher
     ):
         self.config = config
         self.logger = logger
@@ -113,6 +119,8 @@ class Alerts(object):
         self.filter_storage = filter_storage
         self.context_manager = context_graph
         self.watcher_manager = watcher
+
+        self.event_publisher = event_publisher
 
         alerts_ = self.config.get(self.ALERTS_CAT, {})
         self.extra_fields = cfg_to_array(alerts_.get('extra_fields',
@@ -157,8 +165,12 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
+        amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        event_publisher = AlarmEventPublisher(amqp_pub)
+
         return (config, logger, alerts_storage, config_data,
-                filter_storage, context_manager, watcher_manager)
+                filter_storage, context_manager, watcher_manager,
+                event_publisher)
 
     @property
     def cancel_autosolve_delay(self):
@@ -548,6 +560,17 @@ class Alerts(object):
             if is_new_alarm:
                 self.check_alarm_filters()
 
+                entity = self.context_manager.get_entities_by_id(entity_id)
+                try:
+                    entity = entity[0]
+                except IndexError:
+                    entity = {}
+                self.event_publisher.publish_statcounterinc_event(
+                    alarm[self.alerts_storage.VALUE][AlarmField.creation_date.value],
+                    StatCounters.alarms_created,
+                    entity,
+                    alarm[self.alerts_storage.VALUE])
+
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
                               event=event,
@@ -588,8 +611,8 @@ class Alerts(object):
         value = alarm.get(self.alerts_storage.VALUE)
 
         if self.is_hard_limit_reached(value):
-            # Only cancel is allowed when hard limit has been reached
-            if event['event_type'] != 'cancel':
+            # Only cancel and ack are allowed when hard limit has been reached
+            if event['event_type'] != 'cancel' and event['event_type'] != 'ack':
                 self.logger.debug('Hard limit reached. Cancelling')
 
                 return
@@ -613,7 +636,8 @@ class Alerts(object):
         if isinstance(new_value, tuple):
             new_value, status = new_value
 
-        new_value = self.check_hard_limit(new_value)
+        if event['event_type'] != 'cancel' and event['event_type'] != 'ack':
+            new_value = self.check_hard_limit(new_value)
 
         self.update_current_alarm(alarm, new_value)
 
@@ -745,6 +769,20 @@ class Alerts(object):
         new_value[AlarmField.last_update_date.value] = int(time())
 
         alarm[self.alerts_storage.VALUE] = new_value
+
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+
+        if status == CANCELED:
+            entity = self.context_manager.get_entities_by_id(entity_id)
+            try:
+                entity = entity[0]
+            except IndexError:
+                entity = {}
+            self.event_publisher.publish_statcounterinc_event(
+                new_value[AlarmField.last_update_date.value],
+                StatCounters.alarms_canceled,
+                entity,
+                new_value)
 
         return alarm
 

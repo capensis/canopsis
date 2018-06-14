@@ -61,7 +61,7 @@ class BaseTest(unittest.TestCase):
                             ContextGraphImport.K_INFOS: {},
                             ContextGraphImport.K_ACTION:
                             ContextGraphImport.A_CREATE,
-                            ContextGraphImport.K_PROPERTIES:{}}
+                            ContextGraphImport.K_PROPERTIES: {}}
 
         self.template_link = {ContextGraphImport.K_FROM: None,
                               ContextGraphImport.K_TO: None,
@@ -287,11 +287,10 @@ class ACreateEntity(BaseTest):
         ci = self.template_ci.copy()
         ci[ContextGraphImport.K_ID] = "ent1"
 
-        desc = "The ci of id {0} match an existing entity.".format(
-            ci[ContextGraphImport.K_ID])
-
-        with self.assertRaisesRegexp(ValueError, desc):
+        try:
             self.ctx_import._ContextGraphImport__a_create_entity(ci)
+        except ValueError:
+            self.fail("_a_create_entity() raised ValueError unexpectedly!")
 
     def test_nonexistent_entity(self):
         ci = self.template_ci.copy()
@@ -646,7 +645,8 @@ class ADeleteEntity(BaseTest):
         self.assertListEqual(self.ctx_import.delete, delete_expected)
 
     def test_delete_entities_and_related_entities(self):
-        """Remove an entity and later delete an entity with a links to the first
+        """
+        Remove an entity and later delete an entity with a links to the first
         entity."""
         deleted_id = "deleted_ent"
         id_ = "id1"
@@ -1388,7 +1388,7 @@ class ImportChecker(BaseTest):
         self.store_import(data, self.uuid)
         try:
             self.ctx_import.import_context(self.uuid)
-        except  Exception as e:
+        except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
 
     def test_OK_both(self):
@@ -1419,6 +1419,7 @@ class ImportChecker(BaseTest):
             self.ctx_import.import_context(self.uuid)
         except Exception as e:
             self.fail(self._desc_fail.format(repr(e)))
+
 
 class ReportManager(unittest.TestCase):
 
