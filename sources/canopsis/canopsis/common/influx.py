@@ -38,9 +38,13 @@ class InfluxDBOptions(object):
     """
     The InfluxDBOptions enumeration contains the names of the options that can
     be defined in the influxdb configuration file.
+
+    The names of the options are set to be compatible with the
+    canopsis.influxdb module, in order to be able to use the same configuration
+    file.
     """
     host = 'host'
-    port = 'port'
+    port = 'tcp_port'
     username = 'user'
     password = 'pwd'
     database = 'db'
@@ -49,7 +53,7 @@ class InfluxDBOptions(object):
     timeout = 'timeout'
     retries = 'retries'
     use_udp = 'use_udp'
-    udp_port = 'udp_port'
+    udp_port = 'port'
 
 
 def get_influxdb_client(conf_path=INFLUXDB_CONF_PATH,
