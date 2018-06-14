@@ -60,7 +60,13 @@ class AlarmEventPublisher(object):
             ).get(CONF_SECTION, {})
 
             self.send_events = cfg_to_bool(cfg[SEND_EVENTS_CONF_KEY])
-        except (ConfigurationUnreachable, KeyError):
+        except ConfigurationUnreachable:
+            self.logger.warning(
+                'The statsng configuration file does not exist.')
+            self.send_events = False
+        except KeyError:
+            self.logger.warning(
+                'The send_event configuration option is not defined.')
             self.send_events = False
 
         if not self.send_events:
