@@ -385,84 +385,6 @@ class AlertsReader(object):
 
         return alarms
 
-    def clean_fast_count_cache(self):
-        """
-        Clean expired entries related to fast count cache.
-        """
-
-        now = int(time())
-
-        to_clean = []
-
-        for key, value in self.count_cache.items():
-            if now >= value['expiration']:
-                to_clean.append(key)
-
-        for key in to_clean:
-            self.count_cache.pop(key)
-
-    def _get_fast_count(self, query, tstart, tstop, opened, resolved, filter_,
-                        search):
-        """
-        Select the best way to count a query documents (try to avoid as much
-        as possible mongo's .count()), and return a count as fast as possible.
-        Returned value can be accurate, approximated or truncated.
-
-        :param Cursor query: PyMongo Cursor of query that has to be counted
-
-        :param tstart: Timestamp
-        :type tstart: int or None
-        :param tstop: Timestamp
-        :type tstop: int or None
-
-        :param bool opened: If True, query is about opened alarms
-        :param bool resolved: If True, query is about resolved alarms
-
-        :param dict filter_: Potential mongo filter of query
-        :param str search: Potential search expression of query
-
-        :return: Tuple with count and a boolean telling if count was truncated
-        :rtype: tuple (int, bool)
-        """
-
-        if resolved:
-            cache_key = '{}-{}-{}-{}-{}-{}'.format(
-                tstart, tstop, opened, resolved, filter_, search)
-
-            now = int(time())
-
-            truncate = self.resolved_truncate
-            limit = self.resolved_limit
-
-            count_cache = self.count_cache.get(cache_key, None)
-            if count_cache is not None:
-                if not now >= count_cache['expiration']:
-                    count = count_cache['value']
-                    return count, truncate and count == limit
-
-            # No cache entry found (or no up-to-date entry)
-            if truncate:
-                count = query.limit(limit).count(True)
-            else:
-                count = query.count(True)
-
-            self.count_cache[cache_key] = {
-                'value': count,
-                'expiration': now + self.expiration
-            }
-
-            return count, truncate and count == limit
-
-        # Opened alarms only
-        else:
-            if self.opened_truncate:
-                limit = self.opened_limit
-                count = query.limit(limit).count(True)
-
-                return count, count == limit
-
-            return query.count(True), False
-
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns
     ):
@@ -686,12 +608,7 @@ class AlertsReader(object):
             limit = limit * 2
             hide_resources &= rconn.exists('featureflag:hide_resources')
 
-        count_query = self.alarm_storage._backend.find(final_filter)
-        total, truncated = self._get_fast_count(
-            count_query,
-            tstart, tstop, opened, resolved,
-            final_filter, search
-        )
+        total = self.alarm_storage._backend.find(final_filter).count()
 
         def search_aggregate(skip, limit):
             pipeline = [
@@ -734,22 +651,16 @@ class AlertsReader(object):
                 pipeline.append({"$limit": limit})
 
             result = self.alarm_storage._backend.aggregate(
-                pipeline, cursor={}, allowDiskUse=True
+                pipeline, allowDiskUse=True, cursor={}
             )
 
             alarms = list(result)
             # Manual count is much faster than mongo's
-            limited_total = len(alarms)
-
-            first = 0 if limited_total == 0 else skip + 1
-            last = 0 if limited_total == 0 else skip + limited_total
+            truncated = len(alarms)
 
             res = {
                 'alarms': alarms,
-                'total': total,
                 'truncated': truncated,
-                'first': first,
-                'last': last
             }
 
             return res
@@ -762,6 +673,7 @@ class AlertsReader(object):
             :param list filters: list of functions to apply on alarms
             """
             tmp_res = search_aggregate(skip, limit)
+            pre_filter_len = len(tmp_res['alarms'])
 
             # no results, all good
             if tmp_res['alarms']:
@@ -773,10 +685,11 @@ class AlertsReader(object):
                 for filter_ in filters:
                     tmp_res['alarms'] = filter_(tmp_res['alarms'])
 
-                results['total'] += len(tmp_res['alarms'])
                 results['alarms'].extend(tmp_res['alarms'])
 
-            return results, skip
+            truncated_by = pre_filter_len - len(tmp_res['alarms'])
+
+            return results, skip, truncated_by
 
         def loop_aggregate(skip, limit, filters, post_sort):
             """
@@ -789,33 +702,50 @@ class AlertsReader(object):
             """
             results = {
                 'alarms': [],
-                'total': 0,
+                'total': total,
                 'truncated': False,
                 'first': 0,
                 'last': 0
             }
-            old_alarms_count = len(results['alarms'])
-            while len(results['alarms']) < limit:
-                results, skip = offset_aggregate(
+            while len(results['alarms']) < api_limit:
+                results, skip, truncated_by = offset_aggregate(
                     results,
                     skip,
                     limit,
                     filters,
                 )
 
-                if len(results['alarms']) == old_alarms_count:
+                len_alarms = len(results['alarms'])
+
+                """
+                print('loop: len: {} | limit: {} | api_limit: {}'.format(
+                    len_alarms,
+                    limit,
+                    api_limit,
+                ))
+                """
+
+                # premature break in case we do not have any filter that could
+                # modify the real count.
+                if not filters:
+                    # print('no filters, no need to search more')
                     break
 
-                old_alarms_count = len(results['alarms'])
+                # filters did not filtered any thing: we don't need to loop
+                # again, even if we don't have enough results.
+                elif filters and truncated_by == 0:
+                    # print('some filters, not results filtered')
+                    break
 
             if post_sort:
                 results['alarms'] = self._aggregate_post_sort(
                     results['alarms'], sort_key, sort_dir
                 )
 
-            if len(results['alarms']) > api_limit:
+            if len_alarms > api_limit:
                 results['alarms'] = results['alarms'][0:api_limit]
 
+            # print('end')
             return results
 
         filters = []
@@ -824,6 +754,7 @@ class AlertsReader(object):
             post_sort = True
             filters.append(self._hide_resources)
 
+        # print('start')
         return loop_aggregate(skip, limit, filters, post_sort=post_sort)
 
     @staticmethod
