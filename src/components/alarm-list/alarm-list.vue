@@ -1,4 +1,4 @@
-<template lang="pug" xmlns:>
+<template lang="pug">
   div
     div.white
       v-layout(justify-space-between, align-center)
