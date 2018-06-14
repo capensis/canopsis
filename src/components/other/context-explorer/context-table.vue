@@ -15,7 +15,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import BasicList from '@/components/basic-component/basic-list.vue';
+import BasicList from '@/components/tables/basic-list.vue';
 import PaginationMixin from '@/mixins/pagination';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
