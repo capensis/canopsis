@@ -18,7 +18,6 @@ stage_test:
   script:
     - git submodule update --init
     - ./build-docker.sh ci develop
-    - git submodule update --init
     - ./build-docker.sh ci develop test-ci
     - echo CANOPSIS_TAG=${SYSBASE}-ci-test >> .env
     - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} up -d
