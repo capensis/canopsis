@@ -2,19 +2,19 @@
   div
     div(v-show="$mq === 'laptop'")
       actions-panel-item(
-      v-for="(action, index) in actions.main",
-      v-bind="action",
-      :key="`main-${index}`"
+        v-for="(action, index) in actions.main",
+        v-bind="action",
+        :key="`main-${index}`"
       )
       v-menu(v-show="actions.dropDown && actions.dropDown.length", bottom, left, @click.native.stop)
         v-btn(icon, slot="activator")
           v-icon more_vert
         v-list
           actions-panel-item(
-          v-for="(action, index) in actions.dropDown",
-          v-bind="action",
-          isDropDown,
-          :key="`drop-down-${index}`"
+            v-for="(action, index) in actions.dropDown",
+            v-bind="action",
+            isDropDown,
+            :key="`drop-down-${index}`"
           )
     div(v-show="$mq === 'mobile' || $mq === 'tablet'")
       v-menu(bottom, left, @click.native.stop)
@@ -22,16 +22,16 @@
           v-icon more_vert
         v-list
           actions-panel-item(
-          v-for="(action, index) in actions.main",
-          v-bind="action",
-          isDropDown,
-          :key="`mobile-main-${index}`"
+            v-for="(action, index) in actions.main",
+            v-bind="action",
+            isDropDown,
+            :key="`mobile-main-${index}`"
           )
           actions-panel-item(
-          v-for="(action, index) in actions.dropDown",
-          v-bind="action",
-          isDropDown,
-          :key="`mobile-drop-down-${index}`"
+            v-for="(action, index) in actions.dropDown",
+            v-bind="action",
+            isDropDown,
+            :key="`mobile-drop-down-${index}`"
           )
 </template>
 
@@ -40,7 +40,7 @@ import ModalMixin from '@/mixins/modal/modal';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
 
-import ActionsPanelItem from './actions-panel-item.vue';
+import ActionsPanelItem from '@/components/other/alarm-list/actions/actions-panel-item.vue';
 
 export default {
   components: { ActionsPanelItem },
@@ -104,6 +104,11 @@ export default {
           title: 'alarmList.actions.changeState',
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
+        moreInfos: {
+          icon: 'notes',
+          title: 'alarmList.actions.moreInfos',
+          method: this.showActionModal(MODALS.moreInfos),
+        },
       },
     };
   },
@@ -127,6 +132,7 @@ export default {
               actionsMap.changeState,
               actionsMap.pbehavior,
               actionsMap.pbehaviorList,
+              actionsMap.moreInfos,
             ],
           };
         }
