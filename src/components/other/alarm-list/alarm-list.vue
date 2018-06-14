@@ -1,11 +1,5 @@
 <template lang="pug">
   div
-    v-layout(justify-space-between)
-      mass-actions
-      v-flex(xs5)
-        searching
-      v-btn(icon, @click="openSettingsPanel")
-        v-icon settings
     div.white
       v-layout(justify-space-between, align-center)
         v-flex.ml-4(xs4)
@@ -14,11 +8,11 @@
           v-icon settings
       v-layout.my-2(wrap, justify-space-between, align-center)
         v-flex(xs12 md5)
-          alarm-list-searching
+          searching
         v-flex(xs4)
           pagination(:meta="meta", :limit="limit", type="top")
         v-flex(xs2)
-          page-iterator
+          records-per-page
     div(v-if="!pending")
       basic-list(:items="items", @update:selected="selected = $event")
         tr.container.header.pa-0(slot="header")
@@ -54,7 +48,7 @@ import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
 // LOADER
 import Loader from '@/components/other/alarm-list/loader/alarm-list-loader.vue';
 // SEARCHING
-import AlarmListSearching from '@/components/other/alarm-list/searching/alarm-list-searching.vue';
+import Searching from '@/components/other/alarm-list/searching/alarm-list-searching.vue';
 // PAGINATION
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
