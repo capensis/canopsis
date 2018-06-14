@@ -1,11 +1,11 @@
 <template lang="pug">
   v-navigation-drawer(
-    :value="isPanelOpen",
-    clipped,
-    right,
-    stateless,
-    app,
-    :temporary="$mq === 'mobile' || $mq === 'tablet' ? true : false"
+  :value="isPanelOpen",
+  clipped,
+  right,
+  stateless,
+  app,
+  :temporary="$mq === 'mobile' || $mq === 'tablet'"
   )
     v-toolbar(color="blue darken-4")
       v-list
@@ -52,9 +52,9 @@
           v-layout
             v-flex
               v-switch(
-                v-model="isPeriodicRefreshEnable",
-                color="green darken-3",
-                hide-details,
+              v-model="isPeriodicRefreshEnable",
+              color="green darken-3",
+              hide-details,
               )
             v-flex
               v-text-field.pt-0(
@@ -66,8 +66,8 @@
         v-list-tile(slot="activator") {{$t('alarmListSettings.defaultNumberOfElementsPerPage')}}
         v-container
           v-text-field(
-            :placeholder="$t('alarmListSettings.elementsPerPage')",
-            type="number"
+          :placeholder="$t('alarmListSettings.elementsPerPage')",
+          type="number"
           )
       v-divider
       v-list-group
@@ -75,14 +75,14 @@
         v-container
           v-layout
             v-checkbox(
-              :label="$t('alarmListSettings.open')",
-              v-model="openCheckbox",
-              hide-details
+            :label="$t('alarmListSettings.open')",
+            v-model="openCheckbox",
+            hide-details
             )
             v-checkbox(
-              :label="$t('alarmListSettings.resolved')",
-              v-model="resolveCheckbox",
-              hide-details
+            :label="$t('alarmListSettings.resolved')",
+            v-model="resolveCheckbox",
+            hide-details
             )
       v-divider
       v-list-group
@@ -90,24 +90,33 @@
         v-container
           v-select(:label="$t('alarmListSettings.selectAFilter')")
       v-divider
-      v-list-group(disabled)
+      v-list-group
         v-list-tile(slot="activator") {{$t('alarmListSettings.infoPopup')}}
+        info-popup-settings-item
       v-divider
+      v-list-group
+        v-list-tile(slot="activator") {{$t('alarmListSettings.moreInfosModal')}}
+        v-container
+          v-text-field(class="pa-0", textarea, hide-details)
     v-btn(
-      color="green darken-4 white--text",
-      depressed,
-      fixed,
-      right
+    color="green darken-4 white--text",
+    depressed,
+    fixed,
+    right
     ) {{$t('common.save')}}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import InfoPopupSettingsItem from '@/components/other/info-popup/settings-item.vue';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarmsListSettings');
 
 export default {
   name: 'alarmsListSettings',
+  components: {
+    InfoPopupSettingsItem,
+  },
   data() {
     return {
       sortChoices: ['ASC', 'DESC'],
