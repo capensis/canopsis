@@ -7,7 +7,7 @@ import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
-import Rrule from '@/components/other/rrule/rrule-form.vue';
+import Rrule from '@/components/forms/rrule.vue';
 
 Vue.use(Router);
 

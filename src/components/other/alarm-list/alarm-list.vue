@@ -11,17 +11,15 @@
     v-flex(xs4)
       pagination(:meta="meta", :limit="limit", type="top")
     v-flex(xs2)
-      page-iterator
-  basic-list(:items="items", :pending="pending")
-    alarm-list-loader(slot="loader")
+      records-per-page
+  basic-list(:items="items", :pending="pending", @update:selected="selected = $event")
+    loader(slot="loader")
     tr.container.header.pa-0(slot="header")
-      v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
       th.box(v-for="column in alarmProperties")
         span {{ column.text }}
         list-sorting(:column="column.value", class="blue--text")
         th.box
     tr.container(slot="row" slot-scope="item")
-        v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
         td.box(v-for="property in alarmProperties")
           alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
         td.box
@@ -31,23 +29,31 @@
   v-layout(wrap)
     v-flex(xs12, md7)
     pagination(:meta="meta", :limit="limit")
-    page-iterator
+    records-per-page
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import BasicList from '@/components/basic-component/basic-list.vue';
-import ActionsPanel from '@/components/basic-component/actions-panel.vue';
-import AlarmListLoader from '@/components/loaders/alarm-list-loader.vue';
-import MassActions from '@/components/alarm-list/mass-actions.vue';
-import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
-import TimeLine from '@/components/alarm-list/time-line.vue';
-import ListSorting from '@/components/basic-component/list-sorting.vue';
-import PageIterator from '@/components/basic-component/records-per-page.vue';
+// TABLE
+import BasicList from '@/components/tables/basic-list.vue';
+import ListSorting from '@/components/tables/list-sorting.vue';
+// ACTIONS
+import ActionsPanel from '@/components/other/alarm-list/actions/actions-panel.vue';
+import MassActions from '@/components/other/alarm-list/actions/mass-actions.vue';
+// TIMELINE
+import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
+// LOADER
+import Loader from '@/components/other/alarm-list/loader/alarm-list-loader.vue';
+// SEARCHING
+import AlarmListSearching from '@/components/other/alarm-list/searching/alarm-list-searching.vue';
+// PAGINATION
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
-import AlarmColumnValue from '@/components/alarm-list/alarm-column-value.vue';
-import FilterSelector from '@/components/other/filter/selector.vue';
+// COLUMNS FORMATTING
+import AlarmColumnValue from '@/components/other/alarm-list/columns-formatting/alarm-column-value.vue';
+// FILTER SELECTOR
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
@@ -62,14 +68,14 @@ const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSe
  */
 export default {
   components: {
-    PageIterator,
+    RecordsPerPage,
     ListSorting,
     TimeLine,
     MassActions,
     AlarmListSearching,
     ActionsPanel,
     BasicList,
-    AlarmListLoader,
+    Loader,
     AlarmColumnValue,
     FilterSelector,
   },
@@ -82,9 +88,7 @@ export default {
   },
   data() {
     return {
-      // alarm's ids selected by the checkboxes
       selected: [],
-      allSelected: false,
     };
   },
   computed: {
@@ -95,18 +99,6 @@ export default {
     ]),
   },
   methods: {
-    selectAll(items) {
-      this.selected = [];
-      if (!this.allSelected) {
-        items.forEach((item) => {
-          this.selected.push(item._id);
-        });
-      }
-      this.allSelected = !this.allSelected;
-    },
-    select() {
-      this.allSelected = false;
-    },
     ...alarmMapActions({
       fetchListAction: 'fetchList',
     }),

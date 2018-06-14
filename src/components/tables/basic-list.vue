@@ -1,12 +1,18 @@
 <template lang="pug">
     ul
       li.header.sticky(ref="header")
-        slot(name="header")
+        v-checkbox.checkbox(v-if="checkbox",
+        v-model="allSelected", hide-details, )
+        .headerText
+          slot(name="header")
       transition(name="fade", mode="out-in")
         slot(name="loader", v-if="pending")
         div(v-else)
           li(v-for="item in items", :item="item")
-            list-item
+            list-item(:item="item")
+              v-checkbox.checkbox(v-if="checkbox",
+              v-model="selected", @change="$emit('update:selected',$event)",
+              :value="item._id", @click.stop, hide-details, slot="checkbox")
               .reduced(slot="reduced")
                 slot(name="row", :props="item")
               div(slot="expanded")
@@ -18,7 +24,7 @@
 
 <script>
 import StickyFill from 'stickyfilljs';
-import ListItem from '@/components/basic-component/list-item.vue';
+import ListItem from '@/components/tables/list-item.vue';
 
 export default {
   name: 'BasicList',
@@ -26,11 +32,34 @@ export default {
   props: {
     items: {
       type: Array,
+      required: true,
+    },
+    checkbox: {
+      type: Boolean,
+      default: true,
     },
     pending: {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      // alarm's ids selected by the checkboxes
+      selected: [],
+    };
+  },
+  computed: {
+    allSelected: {
+      get() {
+        return this.selected.length === this.items.length;
+      },
+      set(value) {
+        this.selected = value ? this.items.map(v => v._id) : [];
+        this.$emit('update:selected', this.selected);
+      },
+    },
+
   },
   mounted() {
     const { header } = this.$refs;
@@ -66,7 +95,7 @@ export default {
   }
   .reduced {
     overflow: auto;
-
+    margin-left: 1%;
     &:hover {
       cursor: pointer;
     }
@@ -76,5 +105,12 @@ export default {
   }
   .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
+  }
+  .headerText {
+    margin-left: 1%;
+  }
+.checkbox {
+  position: absolute;
+  top: 25%;
   }
 </style>
