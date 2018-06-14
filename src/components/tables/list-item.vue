@@ -1,6 +1,7 @@
 <template lang="pug">
   div(id="content", @click="clickOnListItem")
     v-card(key="reduced", :color="color")
+      slot(name="checkbox")
       slot(name="reduced", :props="item")
     transition(name="expand", mode="out-in")
       v-card.expanded(v-if="isExpanded", key="expanded", :raised="true", :color="color")

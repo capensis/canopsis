@@ -26,11 +26,10 @@
       v-btn(@click="handleParseClick", :disabled="!isRequestChanged") {{$t('common.parse')}}
     v-tab(:disabled="isRequestChanged", @click='handleResultTabClick') {{$t('mFilterEditor.tabs.results')}}
     v-tab-item
-      v-data-table(
+      v-data-table.elevation-1(
         :headers='resultsTableHeaders',
         :items="items",
         hide-actions,
-        class="elevation-1"
       )
         template(slot="items", slot-scope="props")
           td {{props.item.v.connector}}

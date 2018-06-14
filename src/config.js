@@ -23,4 +23,5 @@ export const API_ROUTES = {
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
+  view: '/rest/object/view',
 };

@@ -1,15 +1,19 @@
 <template lang="pug">
-    div.container.text-xs-center(v-if="meta.total")
+  div.container.text-xs-center(v-if="meta.total")
+    ul.pagination(v-if="type === 'top'")
+      li
+        button.pagination__navigation(:disabled="currentPage <= 1", @click="previous")
+          v-icon chevron_left
+      span {{ currentPage }}
+      span /
+      span {{ totalPages }}
+      li
+        button.pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
+          v-icon chevron_right
+    div(v-else)
       span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
-        |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
-      ul.pagination(v-if="type === 'top'")
-        li
-          button.pagination__navigation(:disabled="currentPage <= 1", @click="previous")
-            v-icon chevron_left
-        li
-          button.pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
-            v-icon chevron_right
-      v-pagination(v-else, v-model="currentPage", :length="totalPages")
+      | {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
+      v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>

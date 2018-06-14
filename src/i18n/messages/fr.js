@@ -50,6 +50,7 @@ export default {
       associateTicket: 'Associer ticket',
       cancel: 'Annuler alarme',
       changeState: 'Changer criticité',
+      moreInfos: 'Plus d\'infos',
     },
   },
   alarmListSettings: {
@@ -67,8 +68,13 @@ export default {
     filters: 'Filtres',
     selectAFilter: 'Sélectionner un filtre',
     infoPopup: 'Info popup',
+    moreInfosModal: 'Fenêtre "Plus d\'infos"',
   },
   modals: {
+    moreInfos: {
+      moreInfos: 'Plus d\'infos',
+      defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    },
     createAckEvent: {
       title: 'Ajouter un événement: ack',
       tooltips: {
