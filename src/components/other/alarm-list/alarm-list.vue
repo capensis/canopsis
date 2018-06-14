@@ -4,6 +4,7 @@
       v-layout(justify-space-between, align-center)
         v-flex.ml-4(xs4)
           mass-actions
+        v-flex(xs2)
           v-chip(
             v-if="$route.query.interval",
             @input="removeHistoryFilter",
@@ -11,7 +12,6 @@
             label,
             color="blue darken-4 white--text"
           ) {{ $route.query.interval }}
-        v-flex
           v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
             v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
           v-btn(icon, @click="openSettingsPanel")
@@ -21,8 +21,6 @@
           alarm-list-searching
         v-flex(xs4)
           pagination(:meta="meta", :limit="limit", type="top")
-        v-flex(xs2)
-          page-iterator
     div(v-if="!pending")
       basic-list(:items="items", @update:selected="selected = $event")
         tr.container.header.pa-0(slot="header")
@@ -62,14 +60,12 @@ import AlarmListSearching from '@/components/other/alarm-list/searching/alarm-li
 // PAGINATION
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
-
-import ModalMixin from '@/mixins/modal/modal';
-
 // COLUMNS FORMATTING
 import AlarmColumnValue from '@/components/other/alarm-list/columns-formatting/alarm-column-value.vue';
 // FILTER SELECTOR
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
-
+// MODAL
+import ModalMixin from '@/mixins/modal/modal';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
