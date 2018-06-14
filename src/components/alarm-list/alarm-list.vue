@@ -3,7 +3,7 @@
     v-layout(justify-end, align-center)
       mass-actions
       v-chip(
-        v-if="$route.query.interval"
+        v-if="$route.query.interval",
         @input="removeHistoryFilter",
         close,
         label,

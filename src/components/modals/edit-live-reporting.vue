@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    v-card-title(primary-title, class="blue darken-4 white--text")
+    v-card-title.blue.darken-4.white--text(primary-title)
       v-layout(justify-space-between, align-center)
         h2 {{ $t('modals.liveReporting.editLiveReporting') }}
         v-btn(@click="hideModal", icon, small)
@@ -9,7 +9,7 @@
     v-card-text
       h3 {{ $t('modals.liveReporting.dateInterval') }}
       v-layout(wrap)
-        v-radio-group(@change="handleIntervalClick", v-model="selectedInterval")
+        v-radio-group(v-model="selectedInterval")
           v-radio(
             v-for="interval in dateIntervals",
             :label="interval.text",
@@ -25,14 +25,9 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
-import dateIntervals from '@/helpers/date-intervals';
 import ModalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
-
-const { mapActions: alarmsMapActions } = createNamespacedHelpers('alarm');
-const { mapActions: alarmsListMapActions } = createNamespacedHelpers('alarmsList');
 
 export default {
   name: MODALS.editLiveReporting,
@@ -83,28 +78,24 @@ export default {
     },
   },
   methods: {
-    ...alarmsMapActions({
-      fetchAlarmList: 'fetchList',
-    }),
-    handleIntervalClick(interval) {
-      try {
-        const { tstart, tstop } = dateIntervals[interval.value]();
-        this.tstart = tstart;
-        this.tstop = tstop;
-      } catch (err) {
-        console.error(err);
-      }
-    },
     handleSubmit() {
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          interval: this.selectedInterval.text,
-          tstart: this.tstart.getTime() / 1000,
-          tstop: this.tstop.getTime() / 1000,
-        },
-      });
-
+      if (this.isCustomRangeEnabled) {
+        this.$router.push({
+          query: {
+            ...this.$route.query,
+            interval: this.selectedInterval.value,
+            tstart: this.tstart.getTime() / 1000,
+            tstop: this.tstop.getTime() / 1000,
+          },
+        });
+      } else {
+        this.$router.push({
+          query: {
+            ...this.$route.query,
+            interval: this.selectedInterval.value,
+          },
+        });
+      }
       this.hideModal();
     },
   },
