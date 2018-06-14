@@ -374,54 +374,6 @@ class TestReader(BaseTest):
         }
         self.assertEqual(res_filter, filter_)
 
-    def test_clean_fast_count_cache(self):
-        class MockQuery(object):
-            def __init__(self, count):
-                self.c = count
-
-            def count(self, *args):
-                return self.c
-
-            def limit(self, _):
-                return self
-
-        self.reader.expiration = 1
-
-        query = MockQuery(count=11)
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=1, tstop=1,
-            opened=True, resolved=True,
-            filter_=1, search=1
-        )
-
-        self.assertEqual(count, 11)
-        self.assertEqual(truncated, False)
-
-        query = MockQuery(count=12)
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=1, tstop=1,
-            opened=True, resolved=True,
-            filter_=1, search=1
-        )
-
-        self.assertEqual(count, 11)
-        self.assertEqual(truncated, False)
-
-        sleep(1)
-        self.reader.clean_fast_count_cache()
-
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=1, tstop=1,
-            opened=True, resolved=True,
-            filter_=1, search=1
-        )
-
-        self.assertEqual(count, 12)
-        self.assertEqual(truncated, False)
-
     def test_count_alarms_by_period(self):
         day = 24 * 3600
 
