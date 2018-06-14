@@ -62,7 +62,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   ul {
    position: relative;
    list-style-type: none;
@@ -74,19 +74,23 @@ export default {
     z-index: 2;
   }
   .header {
-    margin-bottom: 5px;
-    background-color: rgb(251,247,247);
     z-index: 1;
+    font-size: 0.9em;
+    line-height: 2em;
+    background-color: white;
   }
   .reduced {
     overflow: auto;
     margin-left: 1%;
+    &:hover {
+      cursor: pointer;
+    }
   }
   .headerText {
     margin-left: 1%;
   }
-  .checkbox {
-    position: absolute;
-    top: 25%;
+.checkbox {
+  position: absolute;
+  top: 25%;
   }
 </style>

@@ -18,15 +18,13 @@
               router-link(to="alarms") Alarms List
           v-card
             v-card-text
-              router-link(to="filter-editor") Filter Editor
+              router-link(to="filter") Filters
           v-card
             v-card-text
-              router-link(to="filter-selector") Filter Selector
+              router-link(to="login") Login
           v-card
             v-card-text
-              router-link(to="rrule-form") Rrule Form
-          v-card
-            v-card-text View 2
+              router-link(to="rrule") Rrule
       v-divider
       v-expansion-panel(class="panel", expand, focusable)
         v-expansion-panel-content
@@ -36,8 +34,7 @@
           v-card
             v-card-text View 2
       v-divider
-      v-btn(
-        class="addBtn",
+      v-btn.addBtn(
         fab,
         dark,
         fixed,
