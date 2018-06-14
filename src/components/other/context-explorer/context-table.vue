@@ -18,7 +18,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { getQueryContext } from '@/helpers/pagination';
 
 import BasicList from '@/components/tables/basic-list.vue';
-import Searching from '@/components/other/alarm-list/searching/context-searching.vue';
+import Searching from '@/components/other/context-explorer/searching/context-searching.vue';
+
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 export default {
