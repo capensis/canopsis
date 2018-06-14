@@ -20,8 +20,8 @@ export default {
   },
   data() {
     return {
-      rectHeight: 6,
-      margin: 5,
+      rectHeight: 4,
+      margin: 4,
       begining: 10,
       inBetweenSpace: 6,
       rectWidths: [20, 30, 35, 25, 20, 20, 20, 20],
