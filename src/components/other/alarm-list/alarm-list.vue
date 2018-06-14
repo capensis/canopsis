@@ -61,7 +61,7 @@ import PaginationMixin from '@/mixins/pagination';
 // COLUMNS FORMATTING
 import AlarmColumnValue from '@/components/other/alarm-list/columns-formatting/alarm-column-value.vue';
 // FILTER SELECTOR
-import FilterSelector from '@/components/other/filter/selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
