@@ -1,5 +1,5 @@
 <template lang="pug">
-    div.container(v-if="meta.total", class="text-xs-center")
+    div.container.text-xs-center(v-if="meta.total")
       span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
         |  {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
       ul.pagination(v-if="type === 'top'")
