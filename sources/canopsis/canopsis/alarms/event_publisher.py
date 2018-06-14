@@ -62,7 +62,8 @@ class AlarmEventPublisher(object):
             self.send_events = cfg_to_bool(cfg[SEND_EVENTS_CONF_KEY])
         except ConfigurationUnreachable:
             self.logger.warning(
-                'The statsng configuration file does not exist.')
+                'The statsng configuration file does not exist.',
+                exc_info=True)
             self.send_events = False
         except KeyError:
             self.logger.warning(
