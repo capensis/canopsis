@@ -36,6 +36,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import intersectionWith from 'lodash/intersectionWith';
 
 // TABLE
 import BasicList from '@/components/tables/basic-list.vue';
@@ -106,6 +107,15 @@ export default {
       set(value) {
         this.selected = value ? this.items.map(v => v._id) : [];
       },
+    },
+  },
+  watch: {
+    items(items) {
+      this.selected = intersectionWith(
+        this.selected,
+        items,
+        (selectedItemId, item) => selectedItemId === item._id,
+      );
     },
   },
   methods: {
