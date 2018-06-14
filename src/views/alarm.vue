@@ -48,6 +48,10 @@ export default {
             value: 'v.last_update_date',
             filter: value => this.$d(new Date(value * 1000), 'short'),
           },
+          {
+            text: 'Extra details',
+            value: 'something',
+          },
         ],
         tablet: [
           {

@@ -5,6 +5,12 @@
       state(:stateId="getProp(alarm, pathToProperty)", :showIcon="getProp(alarm, 'v.state._t') === 'changestate'")
     template(v-if="attributeType === 'status'")
       status(:statusId="getProp(alarm, pathToProperty)")
+    template(v-if="attributeType === 'something'")
+      v-tooltip(top)
+        v-chip(slot="activator", color="purple")
+          v-icon(color="white") check
+        span Something
+
 </template>
 
 <script>
@@ -35,6 +41,10 @@ export default {
 
       if (this.pathToProperty === 'v.status.val') {
         return 'status';
+      }
+
+      if (this.pathToProperty === 'something') {
+        return 'something';
       }
 
       return 'textable';

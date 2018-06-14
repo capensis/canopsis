@@ -14,7 +14,7 @@
           th.box(v-for="column in alarmProperties")
             span {{ column.text }}
             list-sorting(:column="column.value")
-            th.box
+          th.box
         tr.container(slot="row" slot-scope="item")
             v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
             td.box(v-for="property in alarmProperties")
