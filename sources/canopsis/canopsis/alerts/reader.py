@@ -727,6 +727,8 @@ class AlertsReader(object):
 
                 # premature break in case we do not have any filter that could
                 # modify the real count.
+                # this condition cannot be embedded in while <cond> because the
+                # loop needs to be ran at least one time.
                 if not filters:
                     # print('no filters, no need to search more')
                     break
