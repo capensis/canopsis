@@ -25,7 +25,12 @@ from bottle import redirect, response, HTTPError
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
 from canopsis.webcore.services import rights as rights_module
+from canopsis.webcore.utils import gen_json, gen_json_error
 from canopsis.auth.check import check
+
+# The USER_FIELDS list contains the names of the keys of the user dictionary
+# that are returned in JSON when the authentication is successful.
+USER_FIELDS = ['authkey', 'contact', 'crecord_name', 'mail', 'role']
 
 
 def autoLogin(key):
@@ -52,12 +57,13 @@ def exports(ws):
         wsgi_params={'skip': ws.skip_login},
         payload=[
             'username', 'password',
-            'shadow', 'crypted'
+            'shadow', 'crypted', 'json_response'
         ],
         response=lambda data, adapt: data
     )
     def auth_route(
-        username=None, password=None, shadow=False, crypted=False
+        username=None, password=None, shadow=False, crypted=False,
+        json_response=False
     ):
         if not username or not password:
             redirect('/?logerror=1')
@@ -75,6 +81,11 @@ def exports(ws):
 
         # No such user, or it's an external one
         if not user or user.get('external', False):
+            if json_response:
+                return gen_json_error({
+                    'description': 'Wrong login or password'
+                }, 403)
+
             # Try to redirect authentication to the external backend
             if mode == 'plain':
                 response.status = 307
@@ -90,22 +101,38 @@ def exports(ws):
                     quote_plus(password))
 
             else:
-                # return HTTPError(403, 'Plain authentication required')
                 redirect('/?logerror=3')
 
         # Local authentication: check if account is activated
         if not user.get('enable', False):
-            # return HTTPError(403, 'This account is not enabled')
-            redirect('/?logerror=2')
+            if json_response:
+                return gen_json_error({
+                    'description': 'Account disabled'
+                }, 403)
+            else:
+                redirect('/?logerror=2')
 
         user = check(mode=mode, user=user, password=password)
 
         if not user:
-            redirect('/?logerror=1')
-            # return HTTPError(403, 'Forbidden')
+            if json_response:
+                return gen_json_error({
+                    'description': 'Wrong login or password'
+                }, 403)
+            else:
+                redirect('/?logerror=1')
 
         session.create(user)
-        redirect('/')
+        if json_response:
+            response_body = {}
+            for field in USER_FIELDS:
+                try:
+                    response_body[field] = user[field]
+                except KeyError:
+                    pass
+            return gen_json(response_body)
+        else:
+            redirect('/')
 
     @route(ws.application.post,
            name='auth/internal',
