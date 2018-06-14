@@ -219,10 +219,24 @@ After defining the basic event structure, add the following fields :
     'event_type': 'statcounterinc',
 
     'counter_name':         // The name of the counter to increment
-    'alarm':                // The new alarm
+    'alarm':                // The alarm
     'entity':               // The entity which sent the event
 }
 ```
+
+The `alarm` field should contain the value of the alarm as a JSON object, for
+example:
+
+```javascript
+{
+    'resource': '...',
+    'component': '...',
+    'creation_date': // ...
+    // ...
+}
+```
+
+The `entity` field should contain the entity as a JSON object.
 
 Event Statistics Duration Structure
 -----------------------------------
@@ -235,10 +249,24 @@ After defining the basic event structure, add the following fields :
 
     'duration_name':        // The name of the duration
     'duration':             // The value of the duration (in seconds)
-    'alarm':                // The new alarm
+    'alarm':                // The alarm
     'entity':               // The entity which sent the event
 }
 ```
+
+The `alarm` field should contain the value of the alarm as a JSON object, for
+example:
+
+```javascript
+{
+    'resource': '...',
+    'component': '...',
+    'creation_date': // ...
+    // ...
+}
+```
+
+The `entity` field should contain the entity as a JSON object.
 
 ### Metrology
 
