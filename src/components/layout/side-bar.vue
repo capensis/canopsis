@@ -34,8 +34,7 @@
           v-card
             v-card-text View 2
       v-divider
-      v-btn(
-        class="addBtn",
+      v-btn.addBtn(
         fab,
         dark,
         fixed,

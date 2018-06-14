@@ -10,10 +10,10 @@
     v-toolbar(color="blue darken-4")
       v-list
         v-list-tile
-          v-list-tile-title(class="white--text text-xs-center") {{$t('alarmListSettings.alarmListSettings')}}
-      v-icon(@click.stop="closePanel", color="white" class="closeIcon") close
+          v-list-tile-title.white--text.text-xs-center {{$t('alarmListSettings.alarmListSettings')}}
+      v-icon.closeIcon(@click.stop="closePanel", color="white") close
     v-divider
-    v-list(expand, class="pt-0")
+    v-list.pt-0(expand)
       v-list-group
         v-list-tile(slot="activator", active-class="activeHeader") {{$t('common.title')}}
         v-container
@@ -29,15 +29,15 @@
         v-list-tile(slot="activator") {{$t('alarmListSettings.columnNames')}}
         v-container
           v-card
-            v-layout(justify-space-between class="pt-2")
+            v-layout.pt-2(justify-space-between)
               v-flex(xs3)
-                v-layout(justify-space-between class="text-xs-center pl-2")
+                v-layout.text-xs-center.pl-2(justify-space-between)
                   v-flex(xs1)
                     v-icon arrow_upward
                   v-flex(xs5)
                     v-icon arrow_downward
-              v-flex(xs3 class="d-flex")
-                div(class="text-xs-right pr-2")
+              v-flex.d-flex(xs3)
+                div.text-xs-right.pr-2
                   v-icon(color="red") close
             v-layout(justify-center wrap)
               v-flex(xs11)
@@ -57,8 +57,7 @@
                 hide-details,
               )
             v-flex
-              v-text-field(
-                class='pt-0',
+              v-text-field.pt-0(
                 hide-details,
                 type="number",
                 :disabled="!isPeriodicRefreshEnable")

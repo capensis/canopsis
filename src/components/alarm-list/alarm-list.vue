@@ -2,11 +2,11 @@
   div
     div.white
       v-layout(justify-space-between, align-center)
-        v-flex(xs4, class="ml-4")
+        v-flex.ml-4(xs4)
           mass-actions
         v-btn(icon, @click="openSettingsPanel")
           v-icon settings
-      v-layout(wrap, justify-space-between, align-center, class="my-2")
+      v-layout.my-2(wrap, justify-space-between, align-center)
         v-flex(xs12 md5)
           alarm-list-searching
         v-flex(xs4)
@@ -15,7 +15,7 @@
           page-iterator
     div(v-if="!pending")
       basic-list(:items="items")
-        tr.container.header(slot="header", class="pa-0")
+        tr.container.header.pa-0(slot="header")
           v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
           th.box(v-for="column in alarmProperties")
             span {{ column.text }}

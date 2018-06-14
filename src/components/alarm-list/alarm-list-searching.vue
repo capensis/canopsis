@@ -1,12 +1,12 @@
 <template lang="pug">
   v-toolbar.toolbar(dense, flat)
     v-text-field(
-    label="Search"
-    v-model="searchingText"
-    hide-details
-    single-line
-    @keyup.enter="submit"
-    @keyup.delete="clear"
+      label="Search"
+      v-model="searchingText"
+      hide-details
+      single-line
+      @keyup.enter="submit"
+      @keyup.delete="clear"
     )
     v-btn(icon @click="submit")
       v-icon search
