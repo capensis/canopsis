@@ -25,7 +25,7 @@ from bottle import redirect, response, HTTPError
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
 from canopsis.webcore.services import rights as rights_module
-from canopsis.webcore.utils import gen_json, gen_json_error
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_FORBIDDEN
 from canopsis.auth.check import check
 
 # The USER_FIELDS list contains the names of the keys of the user dictionary
@@ -37,10 +37,10 @@ def autoLogin(key):
     user = check(mode='authkey', password=key)
 
     if not user:
-        return HTTPError(403, 'Forbidden')
+        return HTTPError(HTTP_FORBIDDEN, 'Forbidden')
 
     if not user.get('enable', False):
-        return HTTPError(403, 'Account is disabled')
+        return HTTPError(HTTP_FORBIDDEN, 'Account is disabled')
 
     session_module.create(user)
 
@@ -84,7 +84,7 @@ def exports(ws):
             if json_response:
                 return gen_json_error({
                     'description': 'Wrong login or password'
-                }, 403)
+                }, HTTP_FORBIDDEN)
 
             # Try to redirect authentication to the external backend
             if mode == 'plain':
@@ -108,7 +108,7 @@ def exports(ws):
             if json_response:
                 return gen_json_error({
                     'description': 'Account disabled'
-                }, 403)
+                }, HTTP_FORBIDDEN)
             else:
                 redirect('/?logerror=2')
 
@@ -118,7 +118,7 @@ def exports(ws):
             if json_response:
                 return gen_json_error({
                     'description': 'Wrong login or password'
-                }, 403)
+                }, HTTP_FORBIDDEN)
             else:
                 redirect('/?logerror=1')
 
