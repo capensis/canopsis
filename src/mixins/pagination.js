@@ -1,7 +1,7 @@
 import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
-import Pagination from '@/components/basic-component/pagination.vue';
+import Pagination from '@/components/tables/pagination.vue';
 
 export default {
   components: {

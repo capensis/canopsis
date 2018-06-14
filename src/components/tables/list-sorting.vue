@@ -1,8 +1,8 @@
 <template lang="pug">
 transition(name="fade" mode="out-in")
-  v-btn(v-if="sortingDirection === 'DESC'", flat, icon, @click.prevent="sortingDirection = 'ASC'")
+  v-btn(v-if="sortingDirection === 'DESC'", small, flat, icon, @click.prevent="sortingDirection = 'ASC'")
     v-icon arrow_drop_down
-  v-btn(v-if="sortingDirection === 'ASC'", flat, icon, @click.prevent="sortingDirection = 'DESC'")
+  v-btn(v-if="sortingDirection === 'ASC'", small, flat, icon, @click.prevent="sortingDirection = 'DESC'")
     v-icon arrow_drop_up
 </template>
 

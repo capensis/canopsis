@@ -50,6 +50,7 @@ export default {
       associateTicket: 'Associate ticket',
       cancel: 'Cancel alarm',
       changeState: 'Change criticity',
+      moreInfos: 'More infos',
     },
   },
   alarmListSettings: {
@@ -67,6 +68,7 @@ export default {
     filters: 'Filters',
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
+    moreInfosModal: '"More Infos" Popup',
   },
   modals: {
     createAckEvent: {
@@ -126,6 +128,10 @@ export default {
       fields: {
         ticket: 'Number of the ticket',
       },
+    },
+    moreInfos: {
+      moreInfos: 'More infos',
+      defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
   },
   tables: {
