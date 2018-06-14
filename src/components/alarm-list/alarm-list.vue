@@ -1,32 +1,37 @@
 <template lang="pug">
-  div
-    v-layout(justify-space-between)
+.white
+  v-layout(justify-space-between, align-center)
+    v-flex.ml-4(xs4)
       mass-actions
-      v-flex(xs5)
-        alarm-list-searching
-      v-btn(icon, @click="openSettingsPanel")
-        v-icon settings
-    .topToolbox
+    v-btn(icon, @click="openSettingsPanel")
+      v-icon settings
+  v-layout.my-2(wrap, justify-space-between, align-center)
+    v-flex(xs12 md5)
+      alarm-list-searching
+    v-flex(xs4)
       pagination(:meta="meta", :limit="limit", type="top")
-    basic-list(:items="items", :pending="pending")
-      alarm-list-loader(slot="loader")
-      tr.container(slot="header")
-        v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
-        th.box(v-for="column in alarmProperties")
-          span {{ column.text }}
-          list-sorting(:column="column.value")
-          th.box
-      tr.container(slot="row" slot-scope="item")
-          v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
-          td.box(v-for="property in alarmProperties")
-            alarm-column-value(:alarm="item.props", :pathToProperty="property.value")
-          td.box
-            actions-panel.actions(:item="item.props")
-      tr.container(slot="expandedRow", slot-scope="item")
-        time-line(:alarmProps="item.props")
-    .bottomToolbox
-      pagination(:meta="meta", :limit="limit")
+    v-flex(xs2)
       page-iterator
+  basic-list(:items="items", :pending="pending")
+    alarm-list-loader(slot="loader")
+    tr.container.header.pa-0(slot="header")
+      v-checkbox.checkbox.box( @click.stop="selectAll(items)", v-model="allSelected", hide-details)
+      th.box(v-for="column in alarmProperties")
+        span {{ column.text }}
+        list-sorting(:column="column.value", class="blue--text")
+        th.box
+    tr.container(slot="row" slot-scope="item")
+        v-checkbox.checkbox(@click.stop="select", v-model="selected", :value="item.props._id", hide-details)
+        td.box(v-for="property in alarmProperties")
+          alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
+        td.box
+          actions-panel.actions(:item="item.props")
+    tr.container(slot="expandedRow", slot-scope="item")
+      time-line(:alarmProps="item.props")
+  v-layout(wrap)
+    v-flex(xs12, md7)
+    pagination(:meta="meta", :limit="limit")
+    page-iterator
 </template>
 
 <script>
@@ -42,6 +47,7 @@ import ListSorting from '@/components/basic-component/list-sorting.vue';
 import PageIterator from '@/components/basic-component/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
 import AlarmColumnValue from '@/components/alarm-list/alarm-column-value.vue';
+import FilterSelector from '@/components/other/filter/selector.vue';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
@@ -65,6 +71,7 @@ export default {
     BasicList,
     AlarmListLoader,
     AlarmColumnValue,
+    FilterSelector,
   },
   mixins: [PaginationMixin],
   props: {
@@ -111,31 +118,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
   th {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   td {
     overflow-wrap: break-word;
   }
+
   .container {
+    padding: 0;
     display: flex;
+    align-items: center;
   }
+
+  .header {
+    border: 1px solid gray;
+  }
+
   .box{
     flex: 1;
     padding: 1px;
-  }
-  .bottomToolbox {
-    display: flex;
-    flex-flow: row wrap;
-  }
-  .topToolbox{
-    min-height: 90px;
-  }
-  .checkbox {
-    flex: 0.2;
-  }
-  .actions {
-    flex: 0.6;
   }
 </style>
