@@ -39,7 +39,7 @@ Ember.Application.initializer({
                 if (value !== undefined && 'color' in value) {
                     return [value['color'], 'badge'].join(' ');
                 }
-                return '';
+                return ['bg-grey', 'badge'].join(' ');
             }.property('value.val'),
 
             /**
@@ -50,7 +50,7 @@ Ember.Application.initializer({
                 if (value !== undefined && 'name' in value) {
                     return __(value['name']);
                 }
-                return '';
+                return 'unknown';
             }.property('value.val'),
 
             /**
