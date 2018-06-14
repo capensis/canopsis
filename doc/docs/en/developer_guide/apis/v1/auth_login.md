@@ -18,7 +18,9 @@ Parameters:
 }
 ```
 
-#### Response
+#### Response example
+
+If `json_response` is True, the response has the following structure:
 
 ```javascript
 {
