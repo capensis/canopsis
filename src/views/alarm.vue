@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import AlarmList from '@/components/alarm-list/alarm-list.vue';
+import AlarmList from '@/components/other/alarm-list/alarm-list.vue';
 import AlarmsListSettings from '@/components/alarms-list-settings.vue';
 import viewMixin from '@/mixins/view';
 
@@ -50,7 +50,7 @@ export default {
           {
             text: this.$t('tables.alarmGeneral.lastUpdateDate'),
             value: 'v.last_update_date',
-            filter: value => this.$d(new Date(value * 1000), 'short'),
+            filter: value => this.$d(new Date(value * 1000), 'long'),
           },
         ],
         tablet: [

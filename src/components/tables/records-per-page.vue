@@ -1,9 +1,11 @@
 <template lang="pug">
   v-select.select(
-  :items="items",
-  v-model="itemPerPage",
-  single-line,
-  dense
+    :items="items",
+    v-model="itemPerPage",
+    single-line,
+    dense,
+    hide-details,
+    class="pa-0"
   )
 </template>
 
