@@ -30,22 +30,31 @@
       v-layout(wrap)
         v-flex(xs12, md7)
         pagination(:meta="meta", :limit="limit")
+        records-per-page
     loader(v-else)
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import BasicList from '@/components/basic-component/basic-list.vue';
-import ActionsPanel from '@/components/basic-component/actions-panel.vue';
-import Loader from '@/components/loaders/alarm-list-loader.vue';
-import MassActions from '@/components/alarm-list/mass-actions.vue';
-import AlarmListSearching from '@/components/alarm-list/alarm-list-searching.vue';
-import TimeLine from '@/components/alarm-list/time-line.vue';
-import ListSorting from '@/components/basic-component/list-sorting.vue';
-import PageIterator from '@/components/basic-component/records-per-page.vue';
+// TABLE
+import BasicList from '@/components/tables/basic-list.vue';
+import ListSorting from '@/components/tables/list-sorting.vue';
+// ACTIONS
+import ActionsPanel from '@/components/other/alarm-list/actions/actions-panel.vue';
+import MassActions from '@/components/other/alarm-list/actions/mass-actions.vue';
+// TIMELINE
+import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
+// LOADER
+import Loader from '@/components/other/alarm-list/loader/alarm-list-loader.vue';
+// SEARCHING
+import AlarmListSearching from '@/components/other/alarm-list/searching/alarm-list-searching.vue';
+// PAGINATION
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
-import AlarmColumnValue from '@/components/alarm-list/alarm-column-value.vue';
+// COLUMNS FORMATTING
+import AlarmColumnValue from '@/components/other/alarm-list/columns-formatting/alarm-column-value.vue';
+// FILTER SELECTOR
 import FilterSelector from '@/components/other/filter/selector.vue';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
@@ -61,7 +70,7 @@ const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSe
  */
 export default {
   components: {
-    PageIterator,
+    RecordsPerPage,
     ListSorting,
     TimeLine,
     MassActions,

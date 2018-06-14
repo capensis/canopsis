@@ -16,7 +16,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { getQueryContext } from '@/helpers/pagination';
 
-import BasicList from '@/components/basic-component/basic-list.vue';
+import BasicList from '@/components/tables/basic-list.vue';
 import getProp from 'lodash/get';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');

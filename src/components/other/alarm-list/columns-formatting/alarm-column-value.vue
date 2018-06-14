@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import State from '@/components/alarm-list/alarm-state-column-value.vue';
-import Status from '@/components/alarm-list/alarm-status-column-value.vue';
+import State from '@/components/other/alarm-list/columns-formatting/state-column-value.vue';
+import Status from '@/components/other/alarm-list/columns-formatting/status-column-value.vue';
 import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
 
 export default {
