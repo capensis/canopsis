@@ -48,7 +48,7 @@ export default {
   .header {
     margin-bottom: 5px;
     background-color: rgb(251,247,247);
-    z-index: 1;
+    z-index: 2;
   }
   .reduced {
     overflow: auto;
