@@ -33,6 +33,7 @@ from time import time
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
 from canopsis.common import root_path
+from canopsis.common.collection import MongoCollection
 from canopsis.common.redis_store import RedisStore
 from canopsis.common.utils import get_sub_key
 from canopsis.confng import Configuration, Ini
@@ -83,6 +84,7 @@ class AlertsReader(object):
         self.logger = logger
         self.config = config
         self.alarm_storage = storage
+        self.alarm_collection = MongoCollection(self.alarm_storage._backend)
         self.pbehavior_manager = pbehavior_manager
         self.entitylink_manager = entitylink_manager
         self.pbh_filter = None
@@ -608,7 +610,7 @@ class AlertsReader(object):
             limit = limit * 2
             hide_resources &= rconn.exists('featureflag:hide_resources')
 
-        total = self.alarm_storage._backend.find(final_filter).count()
+        total = self.alarm_collection.find(final_filter).count()
 
         def search_aggregate(skip, limit):
             pipeline = [
@@ -650,7 +652,7 @@ class AlertsReader(object):
             if limit is not None:
                 pipeline.append({"$limit": limit})
 
-            result = self.alarm_storage._backend.aggregate(
+            result = self.alarm_collection.aggregate(
                 pipeline, allowDiskUse=True, cursor={}
             )
 
