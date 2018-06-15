@@ -13,7 +13,6 @@
 import { PAGINATION_LIMIT } from '@/config';
 
 export default {
-  name: 'pageIterator',
   data: () => ({
     items: [5, 10, 20, 50],
   }),

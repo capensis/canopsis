@@ -12,7 +12,7 @@
         v-flex(xs4)
           pagination(:meta="meta", :limit="limit", type="top")
         v-flex(xs2)
-          page-iterator
+          records-per-page
     div(v-if="!pending")
       basic-list(:items="items", @update:selected="selected = $event")
         tr.container.header.pa-0(slot="header")
