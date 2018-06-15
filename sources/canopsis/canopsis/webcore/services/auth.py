@@ -81,11 +81,6 @@ def exports(ws):
 
         # No such user, or it's an external one
         if not user or user.get('external', False):
-            if json_response:
-                return gen_json_error({
-                    'description': 'Wrong login or password'
-                }, HTTP_FORBIDDEN)
-
             # Try to redirect authentication to the external backend
             if mode == 'plain':
                 response.status = 307
@@ -96,12 +91,18 @@ def exports(ws):
                     location = '/auth/external'
                 response.set_header('Location', location)
 
-                return 'username={0}&password={1}'.format(
+                return 'username={0}&password={1}{2}'.format(
                     quote_plus(username),
-                    quote_plus(password))
+                    quote_plus(password),
+                    '&json_response=True' if json_response else '')
 
             else:
-                redirect('/?logerror=3')
+                if json_response:
+                    return gen_json_error({
+                        'description': 'Plain authentication required'
+                    }, HTTP_FORBIDDEN)
+                else:
+                    redirect('/?logerror=3')
 
         # Local authentication: check if account is activated
         if not user.get('enable', False):
@@ -136,17 +137,41 @@ def exports(ws):
 
     @route(ws.application.post,
            name='auth/internal',
-           wsgi_params={'skip': ws.skip_login})
-    def auth_internal(**kwargs):
+           wsgi_params={'skip': ws.skip_login},
+           response=lambda data, adapt: data)
+    def auth_internal(json_response=False, **kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
-        redirect('/?logerror=1')
+        if json_response:
+            return gen_json_error({
+                'description': 'Wrong login or password'
+            }, HTTP_FORBIDDEN)
+        else:
+            redirect('/?logerror=1')
 
     @route(ws.application.post, name='auth/external')
     def auth_external(**kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
-        redirect('/?logerror=1')
+        if json_response:
+            s = self.session.get()
+
+            if s.get('auth_on', False):
+                user = self.session.get_user()
+
+                response_body = {}
+                for field in USER_FIELDS:
+                    try:
+                        response_body[field] = user[field]
+                    except KeyError:
+                        pass
+                return gen_json(response_body)
+            else:
+                return gen_json_error({
+                    'description': 'Wrong login or password'
+                }, HTTP_FORBIDDEN)
+        else:
+            redirect('/?logerror=1')
 
     @ws.application.get('/logged_in')
     def logged_in():
