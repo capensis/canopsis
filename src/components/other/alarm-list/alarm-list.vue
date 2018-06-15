@@ -109,14 +109,6 @@ export default {
       'meta',
       'pending',
     ]),
-    allSelected: {
-      get() {
-        return this.selected.length === this.items.length;
-      },
-      set(value) {
-        this.selected = value ? this.items.map(v => v._id) : [];
-      },
-    },
   },
   watch: {
     items(items) {
