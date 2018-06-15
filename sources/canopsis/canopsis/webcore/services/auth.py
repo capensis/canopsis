@@ -149,8 +149,10 @@ def exports(ws):
         else:
             redirect('/?logerror=1')
 
-    @route(ws.application.post, name='auth/external')
-    def auth_external(json_response=None, **kwargs):
+    @route(ws.application.post,
+           name='auth/external',
+           response=lambda data, adapt: data)
+    def auth_external(json_response=False, **kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
         if json_response:
