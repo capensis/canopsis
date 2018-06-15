@@ -41,3 +41,7 @@
 .actions-wrapper i {
   width: 15px;
 }
+
+span.bg-unkown {
+  background-color: #a640ef;
+}
