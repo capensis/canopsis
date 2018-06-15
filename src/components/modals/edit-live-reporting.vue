@@ -18,10 +18,10 @@
           )
       v-layout(wrap, v-if="isCustomRangeEnabled")
         v-flex(xs12)
-          date-time-picker(v-model="tstart", clearable, label="tstart")
+          date-time-picker(v-model="tstart", clearable, label="tstart", name="tstart", v-validate="'required'")
         v-flex(xs12)
-          date-time-picker(v-model="tstop", clearable, label="tstop")
-      v-btn(@click="handleSubmit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
+          date-time-picker(v-model="tstop", clearable, label="tstop", name="tstop", v-validate="'required|after:tstart'")
+      v-btn(@click="submit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
 </template>
 
 <script>
@@ -31,6 +31,9 @@ import { MODALS } from '@/constants';
 
 export default {
   name: MODALS.editLiveReporting,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     DateTimePicker,
   },
@@ -78,25 +81,29 @@ export default {
     },
   },
   methods: {
-    handleSubmit() {
-      if (this.isCustomRangeEnabled) {
-        this.$router.push({
-          query: {
-            ...this.$route.query,
-            interval: this.selectedInterval.value,
-            tstart: this.tstart.getTime() / 1000,
-            tstop: this.tstop.getTime() / 1000,
-          },
-        });
-      } else {
-        this.$router.push({
-          query: {
-            ...this.$route.query,
-            interval: this.selectedInterval.value,
-          },
-        });
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        if (this.isCustomRangeEnabled) {
+          this.$router.push({
+            query: {
+              ...this.$route.query,
+              interval: this.selectedInterval.value,
+              tstart: this.tstart.getTime() / 1000,
+              tstop: this.tstop.getTime() / 1000,
+            },
+          });
+        } else {
+          this.$router.push({
+            query: {
+              ...this.$route.query,
+              interval: this.selectedInterval.value,
+            },
+          });
+        }
+        this.hideModal();
       }
-      this.hideModal();
     },
   },
 };
