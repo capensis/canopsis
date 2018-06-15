@@ -54,7 +54,6 @@ import RRuleForm from '@/components/other/rrule/rrule-form.vue';
 import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
 import { MODALS } from '@/constants';
 
-const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
@@ -88,7 +87,6 @@ export default {
     };
   },
   methods: {
-    ...alarmMapActions({ fetchAlarmListWithPreviousParams: 'fetchListWithPreviousParams' }),
     ...pbehaviorMapActions({ createPbehavior: 'create' }),
 
     changeRRule(value) {
@@ -116,8 +114,7 @@ export default {
         }
 
         try {
-          await this.createPbehavior(data);
-          await this.fetchAlarmListWithPreviousParams();
+          await this.createPbehavior({ data, parent: this.item });
 
           this.hideModal();
         } catch (err) {

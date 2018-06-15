@@ -12,7 +12,7 @@
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config"] }],
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-return-assign": "off",
-    "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded"] }],
+    "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t"] }],
     "vue/order-in-components": ["error", {
       "order": [
         "el",

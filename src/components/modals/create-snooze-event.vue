@@ -66,7 +66,7 @@ export default {
         const duration = moment.duration(
           parseInt(this.form.duration, 10),
           this.form.durationType.key,
-        ).asSeconds();
+        ).asMilliseconds();
 
         await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.item, { duration });
 

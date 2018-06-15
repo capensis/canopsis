@@ -2,6 +2,10 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    by: 'By',
+    date: 'Date',
+    comment: 'Comment',
+    end: 'End',
     submit: 'Submit',
     login: 'Login',
     username: 'Username',
@@ -40,16 +44,28 @@ export default {
   },
   alarmList: {
     actions: {
-      ack: 'ack',
-      fastAck: 'Fast ack',
-      ackRemove: 'Cancel ack',
-      pbehavior: 'Periodical behavior',
-      snooze: 'Snooze alarm',
-      pbehaviorList: 'List periodic behaviors',
-      declareTicket: 'Declare ticket',
-      associateTicket: 'Associate ticket',
-      cancel: 'Cancel alarm',
-      changeState: 'Change criticity',
+      titles: {
+        ack: 'Ack',
+        fastAck: 'Fast ack',
+        ackRemove: 'Cancel ack',
+        pbehavior: 'Periodical behavior',
+        snooze: 'Snooze alarm',
+        pbehaviorList: 'List periodic behaviors',
+        declareTicket: 'Declare ticket',
+        associateTicket: 'Associate ticket',
+        cancel: 'Cancel alarm',
+        changeState: 'Change criticity',
+      },
+      iconsTitles: {
+        ack: 'Ack',
+        declareTicket: 'Declared ticket',
+        canceled: 'Canceled',
+        snooze: 'Snooze',
+        pbehaviors: 'Periodic behaviors',
+      },
+      iconsFields: {
+        ticketNumber: 'Ticket number',
+      },
     },
   },
   alarmListSettings: {

@@ -56,52 +56,52 @@ export default {
       actionsMap: {
         ack: {
           icon: 'playlist_add_check',
-          title: 'alarmList.actions.ack',
+          title: 'alarmList.actions.titles.ack',
           method: this.showActionModal(MODALS.createAckEvent),
         },
         fastAck: {
           icon: 'check',
-          title: 'alarmList.actions.fastAck',
+          title: 'alarmList.actions.titles.fastAck',
           method: this.createAckEvent,
         },
         ackRemove: {
           icon: 'block',
-          title: 'alarmList.actions.ackRemove',
+          title: 'alarmList.actions.titles.ackRemove',
           method: this.showAckRemoveModal,
         },
         pbehavior: {
           icon: 'pause',
-          title: 'alarmList.actions.pbehavior',
+          title: 'alarmList.actions.titles.pbehavior',
           method: this.showActionModal(MODALS.createPbehavior),
         },
         snooze: {
           icon: 'alarm',
-          title: 'alarmList.actions.snooze',
+          title: 'alarmList.actions.titles.snooze',
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
         pbehaviorList: {
           icon: 'list',
-          title: 'alarmList.actions.pbehaviorList',
+          title: 'alarmList.actions.titles.pbehaviorList',
           method: this.showActionModal(MODALS.pbehaviorList),
         },
         declareTicket: {
           icon: 'local_play',
-          title: 'alarmList.actions.declareTicket',
+          title: 'alarmList.actions.titles.declareTicket',
           method: this.showActionModal(MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
           icon: 'pin_drop',
-          title: 'alarmList.actions.associateTicket',
+          title: 'alarmList.actions.titles.associateTicket',
           method: this.showActionModal(MODALS.createAssociateTicketEvent),
         },
         cancel: {
           icon: 'delete',
-          title: 'alarmList.actions.cancel',
+          title: 'alarmList.actions.titles.cancel',
           method: this.showActionModal(MODALS.createCancelEvent),
         },
         changeState: {
           icon: 'report_problem',
-          title: 'alarmList.actions.changeState',
+          title: 'alarmList.actions.titles.changeState',
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
       },

@@ -50,7 +50,7 @@ export default {
           },
           {
             text: 'Extra details',
-            value: 'something',
+            value: 'icons',
           },
         ],
         tablet: [

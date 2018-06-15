@@ -12,7 +12,7 @@
               span(
               v-if="key === 'tstart' || key === 'tstop'",
               key="key"
-              ) {{ props.item[key] | moment("DD/MM/YYYY HH:mm:ss") }}
+              ) {{ $d(props.item[key], 'long') }}
               span(v-else) {{ props.item[key] }}
             td
               v-btn.mx-0(@click="removePbehavior({ id: props.item._id })", icon)
