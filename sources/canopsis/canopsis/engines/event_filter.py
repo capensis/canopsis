@@ -265,6 +265,8 @@ class engine(Engine):
         :returns: True if a snooze has been sent, False otherwise
         :rtype: boolean
         """
+        if event.get('event_type') == 'snooze':
+            return False
         # Only check events can trigger an auto-snooze
         if event.get('event_type') != 'check':
             return False
@@ -299,7 +301,12 @@ class engine(Engine):
             if event.get('resource', ''):
                 snooze['resource'] = event['resource']
 
-            publish(event=snooze, publisher=self.amqp)
+            publish(
+                event=snooze,
+                publisher=self.amqp,
+                rk='Engine_event_filter',
+                exchange='amq.direct'
+            )
 
             return True
 
