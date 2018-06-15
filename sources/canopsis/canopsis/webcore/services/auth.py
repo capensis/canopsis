@@ -149,7 +149,7 @@ def exports(ws):
 
         session.create(user)
         if json_response:
-            return json_auth_sucess(user)
+            return json_auth_success(user)
         else:
             redirect('/')
 
@@ -180,7 +180,7 @@ def exports(ws):
 
             if s.get('auth_on', False):
                 user = session_module.get_user()
-                return json_auth_sucess(user)
+                return json_auth_success(user)
             else:
                 return gen_json_error({
                     'description': 'Wrong login or password'
