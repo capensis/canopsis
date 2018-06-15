@@ -72,6 +72,9 @@ export default {
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
   },
   modals: {
+    createEntity: {
+      title: 'Créer une entitée',
+    },
     moreInfos: {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',

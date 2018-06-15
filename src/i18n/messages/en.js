@@ -72,6 +72,9 @@ export default {
     moreInfosModal: '"More Infos" Popup',
   },
   modals: {
+    createEntity: {
+      title: 'Create an entity',
+    },
     createAckEvent: {
       title: 'Add event type: ack',
       tooltips: {

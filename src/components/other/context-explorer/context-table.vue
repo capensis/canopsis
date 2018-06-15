@@ -18,7 +18,7 @@ import { getQueryContext } from '@/helpers/pagination';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import getProp from 'lodash/get';
-import CreateEntity from '@/components/other/context-explorer/actions/createEntity.vue';
+import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 export default {
