@@ -11,7 +11,7 @@
             close,
             label,
             color="blue darken-4 white--text"
-          ) {{ $route.query.interval }}
+          ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
           v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
             v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
           v-btn(icon, @click="openSettingsPanel")
@@ -44,6 +44,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import { omit } from 'lodash';
 
 // TABLE
 import BasicList from '@/components/tables/basic-list.vue';
@@ -119,11 +120,8 @@ export default {
     }),
 
     removeHistoryFilter() {
-      this.$router.push({
-        query: {
-          ...this.$route.$query,
-        },
-      });
+      const query = omit(this.$route.query, ['interval']);
+      this.$router.push({ query });
     },
   },
 };
