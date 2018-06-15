@@ -40,7 +40,6 @@
 import omit from 'lodash/omit';
 
 export default {
-  name: 'alarm-list-searching',
   data() {
     return {
       searchingText: '',
@@ -53,7 +52,6 @@ export default {
         query: {
           ...query,
         },
-
       });
     },
     submit() {

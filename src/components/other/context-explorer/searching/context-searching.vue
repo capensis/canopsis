@@ -18,7 +18,6 @@
 import omit from 'lodash/omit';
 
 export default {
-  name: 'alarm-list-searching',
   filters: {
     formatedSearching(text) {
       return `{"$and":[{},{"$or":[{"name":{"$regex":"${text}","$options":"i"}},
