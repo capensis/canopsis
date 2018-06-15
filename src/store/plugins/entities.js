@@ -110,7 +110,6 @@ const entitiesModule = {
         data = await request.get(route, { params });
       }
       const normalizedData = normalize(dataPreparer(data), schema);
-
       commit(mutationType, normalizedData.entities);
 
       return { data, normalizedData };

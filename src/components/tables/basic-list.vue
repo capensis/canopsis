@@ -5,18 +5,21 @@
         v-model="allSelected", hide-details, )
         .headerText
           slot(name="header")
-      li(v-for="item in items", :item="item")
-        list-item(:item="item")
-          v-checkbox.checkbox(v-if="checkbox",
-          v-model="selected", @change="$emit('update:selected',$event)",
-          :value="item._id", @click.stop, hide-details, slot="checkbox")
-          .reduced(slot="reduced")
-            slot(name="row", :props="item")
-          div(slot="expanded")
-            slot(name="expandedRow", :props="item")
-      li(v-if="!items.length")
-        div.container
-          strong {{ $t('common.noResults') }}
+      transition(name="fade", mode="out-in")
+        slot(name="loader", v-if="pending")
+        div(v-else)
+          li(v-for="item in items", :item="item")
+            list-item(:item="item")
+              v-checkbox.checkbox(v-if="checkbox",
+              v-model="selected", @change="$emit('update:selected',$event)",
+              :value="item._id", @click.stop, hide-details, slot="checkbox")
+              .reduced(slot="reduced")
+                slot(name="row", :props="item")
+              div(slot="expanded")
+                slot(name="expandedRow", :props="item")
+          li(v-if="!items.length")
+            div.container
+              strong {{ $t('common.noResults') }}
 </template>
 
 <script>
@@ -35,6 +38,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    pending: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -52,12 +59,19 @@ export default {
         this.$emit('update:selected', this.selected);
       },
     },
+
   },
   mounted() {
-    StickyFill.addOne(this.$refs.header);
+    const { header } = this.$refs;
+    if (header) {
+      StickyFill.addOne(header);
+    }
   },
   beforeDestroy() {
-    StickyFill.removeOne(this.$refs.header);
+    const { header } = this.$refs;
+    if (header) {
+      StickyFill.removeOne(header);
+    }
   },
 };
 </script>
@@ -85,6 +99,12 @@ export default {
     &:hover {
       cursor: pointer;
     }
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
   .headerText {
     margin-left: 1%;

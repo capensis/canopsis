@@ -17,6 +17,7 @@ export default {
     home: 'Home',
     entries: 'entries',
     showing: 'showing',
+    apply: 'Apply',
     to: 'to',
     of: 'of',
     actionsLabel: 'Actions',
@@ -128,6 +129,17 @@ export default {
       fields: {
         ticket: 'Number of the ticket',
       },
+    },
+    liveReporting: {
+      editLiveReporting: 'Live reporting',
+      dateInterval: 'Date interval',
+      today: 'Today',
+      yesterday: 'Yesterday',
+      last7Days: 'Last 7 days',
+      last30Days: 'Last 30 days',
+      thisMonth: 'This month',
+      lastMonth: 'Last month',
+      custom: 'Custom',
     },
     moreInfos: {
       moreInfos: 'More infos',
