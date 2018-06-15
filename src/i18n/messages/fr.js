@@ -16,9 +16,10 @@ export default {
     parse: 'Compiler',
     home: 'Accueil',
     entries: 'entrées',
-    showing: 'afficher',
+    showing: 'Affiche',
+    apply: 'Appliquer',
     to: 'à',
-    of: 'de',
+    of: 'sur',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
     actions: {
@@ -132,6 +133,17 @@ export default {
       fields: {
         ticket: 'Numéro du ticket',
       },
+    },
+    liveReporting: {
+      editLiveReporting: 'Suivi personnalisé',
+      dateInterval: 'Interval de dates',
+      today: 'Aujourd\'hui',
+      yesterday: 'Hier',
+      last7Days: '7 derniers jours',
+      last30Days: '30 derniers jours',
+      thisMonth: 'Ce mois',
+      lastMonth: 'Mois dernier',
+      custom: 'Personnalisé',
     },
   },
   tables: {
