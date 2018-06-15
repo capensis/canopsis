@@ -1,45 +1,43 @@
 <template lang="pug">
-  div
-    div.white
-      v-layout(justify-space-between, align-center)
-        v-flex.ml-4(xs4)
-          mass-actions
-        v-flex(xs2)
-          v-chip(
-            v-if="$route.query.interval",
-            @input="removeHistoryFilter",
-            close,
-            label,
-            color="blue darken-4 white--text"
-          ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
-          v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
-            v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
-          v-btn(icon, @click="openSettingsPanel")
-            v-icon settings
-      v-layout.my-2(wrap, justify-space-between, align-center)
-        v-flex(xs12 md5)
-          alarm-list-searching
-        v-flex(xs4)
-          pagination(:meta="meta", :limit="limit", type="top")
-    div(v-if="!pending")
-      basic-list(:items="items", @update:selected="selected = $event")
-        tr.container.header.pa-0(slot="header")
-          th.box(v-for="column in alarmProperties")
-            span {{ column.text }}
-            list-sorting(:column="column.value", class="blue--text")
-          th.box
-        tr.container(slot="row" slot-scope="item")
-            td.box(v-for="property in alarmProperties")
-              alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
-            td.box
-              actions-panel.actions(:item="item.props")
-        tr.container(slot="expandedRow", slot-scope="item")
-          time-line(:alarmProps="item.props")
-      v-layout(wrap)
-        v-flex(xs12, md7)
-        pagination(:meta="meta", :limit="limit")
-        records-per-page
-    loader(v-else)
+.white
+  v-layout(justify-space-between, align-center)
+    v-flex.ml-4(xs4)
+      mass-actions
+    v-flex(xs2)
+      v-chip(
+        v-if="$route.query.interval",
+        @input="removeHistoryFilter",
+        close,
+        label,
+        color="blue darken-4 white--text"
+      ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
+      v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
+        v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
+      v-btn(icon, @click="openSettingsPanel")
+        v-icon settings
+  v-layout.my-2(wrap, justify-space-between, align-center)
+    v-flex(xs12 md5)
+      alarm-list-searching
+    v-flex(xs4)
+      pagination(:meta="meta", :limit="limit", type="top")
+  basic-list(:items="items", :pending="pending", @update:selected="selected = $event")
+    loader(slot="loader")
+    tr.container.header.pa-0(slot="header")
+      th.box(v-for="column in alarmProperties")
+        span {{ column.text }}
+        list-sorting(:column="column.value", class="blue--text")
+      th.box
+    tr.container(slot="row" slot-scope="item")
+        td.box(v-for="property in alarmProperties")
+          alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
+        td.box
+          actions-panel.actions(:item="item.props")
+    tr.container(slot="expandedRow", slot-scope="item")
+      time-line(:alarmProps="item.props")
+  v-layout(wrap)
+    v-flex(xs12, md7)
+    pagination(:meta="meta", :limit="limit")
+    records-per-page
 </template>
 
 <script>
@@ -151,15 +149,5 @@ export default {
   .box{
     flex: 1;
     padding: 1px;
-  }
-
-  .bottomToolbox {
-    display: flex;
-    flex-flow: row wrap;
-  }
-
-  .checkbox {
-    flex: 0.5;
-    padding: 0 0.5em;
   }
 </style>

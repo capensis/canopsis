@@ -20,7 +20,11 @@
         v-flex(xs12)
           date-time-picker(v-model="tstart", clearable, label="tstart", name="tstart", v-validate="'required'")
         v-flex(xs12)
-          date-time-picker(v-model="tstop", clearable, label="tstop", name="tstop", v-validate="'required|after:tstart'")
+          date-time-picker(
+            v-model="tstop",
+            clearable, label="tstop",
+            name="tstop",
+            v-validate="'required|after:tstart'")
       v-btn(@click="submit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
 </template>
 
