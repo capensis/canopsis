@@ -1,15 +1,15 @@
 <template lang="pug">
   div
-    div(v-if="!pending")
-      basic-list(:items="items")
-        tr.container(slot="header")
-          th.box(v-for="columnProperty in contextProperties")
-            span {{ columnProperty.text }}
-            th.box
-        tr.container(slot="row" slot-scope="item")
-          td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
-          td.box
-        tr.container(slot="expandedRow", slot-scope="item")
+   basic-list(:items="items")
+    tr.container(slot="header")
+      th.box(v-for="columnProperty in contextProperties")
+        span {{ columnProperty.text }}
+        th.box
+    tr.container(slot="row" slot-scope="item")
+      td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
+      td.box
+    tr.container(slot="expandedRow", slot-scope="item")
+   create-entity.fab
 </template>
 
 <script>
@@ -18,11 +18,12 @@ import { getQueryContext } from '@/helpers/pagination';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import getProp from 'lodash/get';
+import CreateEntity from '@/components/other/context-explorer/actions/createEntity.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 export default {
   name: 'context-table',
-  components: { BasicList },
+  components: { CreateEntity, BasicList },
   props: {
     contextProperties: {
       type: Array,
@@ -75,5 +76,10 @@ export default {
   .box{
     width: 10%;
     flex: 1;
+  }
+  .fab {
+    position: fixed;
+    bottom: 0;
+    right: 0;
   }
 </style>
