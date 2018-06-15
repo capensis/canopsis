@@ -111,10 +111,14 @@ def exports(ws):
                     location = '/auth/external'
                 response.set_header('Location', location)
 
-                return 'username={0}&password={1}{2}'.format(
+                response_body = 'username={0}&password={1}'.format(
                     quote_plus(username),
-                    quote_plus(password),
-                    '&json_response=True' if json_response else '')
+                    quote_plus(password))
+
+                if json_response:
+                    response_body += '&json_response=True'
+
+                return response_body
 
             else:
                 if json_response:
@@ -170,6 +174,8 @@ def exports(ws):
         # When we arrive here, the Bottle plugins in charge of authentication
         # have initialized the session, we just need to redirect to the index.
         if json_response:
+            # Check if a session was initialized by one of the external
+            # authentication backends.
             s = session_module.get()
 
             if s.get('auth_on', False):
