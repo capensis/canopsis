@@ -17,6 +17,7 @@ export const MODALS = {
   createSnoozeEvent: 'create-snooze-event',
   createPbehavior: 'create-pbehavior',
   pbehaviorList: 'pbehavior-list',
+  editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
 };
 

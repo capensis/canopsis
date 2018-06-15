@@ -3,22 +3,30 @@
   v-layout(justify-space-between, align-center)
     v-flex.ml-4(xs4)
       mass-actions
-    v-btn(icon, @click="openSettingsPanel")
-      v-icon settings
+    v-flex(xs2)
+      v-chip(
+        v-if="$route.query.interval",
+        @input="removeHistoryFilter",
+        close,
+        label,
+        color="blue darken-4 white--text"
+      ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
+      v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
+        v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
+      v-btn(icon, @click="openSettingsPanel")
+        v-icon settings
   v-layout.my-2(wrap, justify-space-between, align-center)
     v-flex(xs12 md5)
       alarm-list-searching
     v-flex(xs4)
       pagination(:meta="meta", :limit="limit", type="top")
-    v-flex(xs2)
-      records-per-page
   basic-list(:items="items", :pending="pending", @update:selected="selected = $event")
     loader(slot="loader")
     tr.container.header.pa-0(slot="header")
       th.box(v-for="column in alarmProperties")
         span {{ column.text }}
         list-sorting(:column="column.value", class="blue--text")
-        th.box
+      th.box
     tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in alarmProperties")
           alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
@@ -34,6 +42,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import { omit } from 'lodash';
 
 // TABLE
 import BasicList from '@/components/tables/basic-list.vue';
@@ -54,6 +63,8 @@ import PaginationMixin from '@/mixins/pagination';
 import AlarmColumnValue from '@/components/other/alarm-list/columns-formatting/alarm-column-value.vue';
 // FILTER SELECTOR
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
+// MODAL
+import ModalMixin from '@/mixins/modal/modal';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
@@ -79,7 +90,7 @@ export default {
     AlarmColumnValue,
     FilterSelector,
   },
-  mixins: [PaginationMixin],
+  mixins: [PaginationMixin, ModalMixin],
   props: {
     alarmProperties: {
       type: Array,
@@ -105,6 +116,11 @@ export default {
     ...settingsMapActions({
       openSettingsPanel: 'openPanel',
     }),
+
+    removeHistoryFilter() {
+      const query = omit(this.$route.query, ['interval']);
+      this.$router.push({ query });
+    },
   },
 };
 </script>
