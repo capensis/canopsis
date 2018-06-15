@@ -47,6 +47,26 @@ def autoLogin(key):
     return user
 
 
+def json_auth_success(user):
+    """
+    Return a JSON object containing informations about a user.
+
+    This is used as the response to a successful authentication request.
+
+    :param Dict[str, Any] user: The user who was suceesfully authenticated.
+    :rtype: str
+    """
+    response_body = {}
+
+    for field in USER_FIELDS:
+        try:
+            response_body[field] = user[field]
+        except KeyError:
+            pass
+
+    return gen_json(response_body)
+
+
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
@@ -125,13 +145,7 @@ def exports(ws):
 
         session.create(user)
         if json_response:
-            response_body = {}
-            for field in USER_FIELDS:
-                try:
-                    response_body[field] = user[field]
-                except KeyError:
-                    pass
-            return gen_json(response_body)
+            return json_auth_sucess(user)
         else:
             redirect('/')
 
@@ -160,14 +174,7 @@ def exports(ws):
 
             if s.get('auth_on', False):
                 user = session_module.get_user()
-
-                response_body = {}
-                for field in USER_FIELDS:
-                    try:
-                        response_body[field] = user[field]
-                    except KeyError:
-                        pass
-                return gen_json(response_body)
+                return json_auth_sucess(user)
             else:
                 return gen_json_error({
                     'description': 'Wrong login or password'
