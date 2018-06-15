@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(v-if="!pending")
+  div
     basic-list(:items="items")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
@@ -17,6 +17,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import PaginationMixin from '@/mixins/pagination';
+import omit from 'lodash/omit';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 
@@ -38,17 +39,18 @@ export default {
       'meta',
       'pending',
     ]),
-    queries() {
-      const queries = {};
-      queries.limit = this.limit;
-      queries.start = ((this.$route.query.page - 1) * this.limit) || 0;
-      return queries;
-    },
   },
   methods: {
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
+    getQuery() {
+      const query = omit(this.$route.query, ['page']);
+
+      query.limit = this.limit;
+      query.start = ((this.$route.query.page - 1) * this.limit) || 0;
+      return query;
+    },
   },
 };
 </script>
