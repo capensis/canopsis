@@ -23,5 +23,9 @@ export default {
       fab: false,
     };
   },
+  methods: {
+
+
+  },
 };
 </script>
