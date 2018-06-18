@@ -33,7 +33,8 @@
                       v-list-tile
                         v-list-tile-content {{ item }}
       v-flex.my-2(xs12)
-        v-data-table(:items="pbehaviorsList", :headers="pbehaviorsTableHeaders")
+        h3.text-xs-center.my-2 Pbehaviors
+        v-data-table(v-if="pbehaviorsList.length > 0", :items="pbehaviorsList", :headers="pbehaviorsTableHeaders")
           template(slot="items" slot-scope="props")
             td {{ props.item.name }}
             td {{ props.item.author }}
@@ -45,6 +46,7 @@
             td {{ props.item.type }}
             td {{ props.item.reason }}
             td {{ props.item.rrule }}
+        div.red.darken-2.white--text.py-3.text-xs-center(v-else) No pbehaviors
 </template>
 
 <script>
