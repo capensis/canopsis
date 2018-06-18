@@ -58,7 +58,7 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
-        view_id = adapter.save(request_body)
+        view_id = adapter.create(request_body)
         return gen_json({'id': view_id})
 
 
