@@ -159,12 +159,15 @@ def exports(ws):
            response=lambda data, adapt: data)
     def auth_internal(json_response=False, **kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
-        # have initialized the session, we just need to redirect to the index.
+        # should have initialized the session.
         if json_response:
             return gen_json_error({
                 'description': 'Wrong login or password'
             }, HTTP_FORBIDDEN)
         else:
+            # Redirect to /?logerror=1. If the session was initialized, the
+            # user will be redirected to the index of canopsis. If not, an
+            # error message will be shown.
             redirect('/?logerror=1')
 
     @route(ws.application.post,
@@ -172,9 +175,9 @@ def exports(ws):
            response=lambda data, adapt: data)
     def auth_external(json_response=False, **kwargs):
         # When we arrive here, the Bottle plugins in charge of authentication
-        # have initialized the session, we just need to redirect to the index.
+        # should have initialized the session.
         if json_response:
-            # Check if a session was initialized by one of the external
+            # Check if a session was indeed initialized by one of the external
             # authentication backends.
             s = session_module.get()
 
@@ -186,6 +189,9 @@ def exports(ws):
                     'description': 'Wrong login or password'
                 }, HTTP_FORBIDDEN)
         else:
+            # Redirect to /?logerror=1. If the session was initialized, the
+            # user will be redirected to the index of canopsis. If not, an
+            # error message will be shown.
             redirect('/?logerror=1')
 
     @ws.application.get('/logged_in')
