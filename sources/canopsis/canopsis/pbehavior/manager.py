@@ -32,6 +32,7 @@ from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
 import pytz
+import dateutil.utils
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
@@ -558,16 +559,17 @@ class PBehaviorManager(object):
             # returns a list of dates that are between the given tstart/tstop,
             # and using dtstart fr
             dt_list = list(
-                rrulestr(rrule, dtstart=dtts).between(
-                    dttstart, dttstop, inc=True
+                rrulestr(rrule, dtstart=dttstart).xafter(
+                    dttstart, count=3, inc=True
                 )
             )
 
-            if len(dt_list) == 1 and dtts >= dt_list[0]:
-                return True
+            for dt in dt_list:
+                delta = dttstop - dttstart
+                if dtts >= dt and dtts <= dt + delta:
+                    return True
 
-            elif len(dt_list) > 1 and dt_list[0] >= dtts and dtts <= dt_list[-1]:
-                return True
+            return False
 
         else:
             if dtts >= dttstart and dtts <= dttstop:
