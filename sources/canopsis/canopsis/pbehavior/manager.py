@@ -556,14 +556,17 @@ class PBehaviorManager(object):
         dt_list = [dttstart, dttstop]
         rrule = pbehavior['rrule']
         if rrule:
-            # returns a list of dates that are between the given tstart/tstop,
-            # and using dtstart fr
+            # compute the minimal date from which to start generating
+            # dates from the rrule.
+            # a complementary date (missing_date) is computed and added
+            # at index 0 of the generated dt_list to ensure we manage
+            # dates at boundaries.
             dt_tstart_date = dtts.date()
-            dt_tstart_time = dttstart.time()
+            dt_tstart_time = dttstart.time().replace(tzinfo=tz)
+            dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
+
             dt_list = list(
-                rrulestr(rrule, dtstart=datetime.combine(
-                    dt_tstart_date, dt_tstart_time.replace(tzinfo=tz)
-                )).xafter(
+                rrulestr(rrule, dtstart=dt_dtstart).xafter(
                     dttstart, count=3, inc=True
                 )
             )
