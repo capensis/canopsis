@@ -39,6 +39,10 @@ export default {
       year: 'year | years',
     },
   },
+  entities: {
+    watcher: 'watcher',
+    entities: 'entities',
+  },
   alarmList: {
     actions: {
       ack: 'ack',

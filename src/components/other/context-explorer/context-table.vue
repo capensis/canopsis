@@ -22,7 +22,6 @@ import CreateEntity from '@/components/other/context-explorer/actions/context-fa
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 export default {
-  name: 'context-table',
   components: { CreateEntity, BasicList },
   props: {
     contextProperties: {

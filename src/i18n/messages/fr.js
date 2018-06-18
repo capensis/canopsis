@@ -2,6 +2,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    watcher: 'observateur',
     submit: 'Soumettre',
     login: 'Connexion',
     username: 'Nom d\'utilisateur',
@@ -38,6 +39,10 @@ export default {
       month: 'mois | mois',
       year: 'année | années',
     },
+  },
+  entities: {
+    watcher: 'observateurs',
+    entities: 'entités',
   },
   alarmList: {
     actions: {
