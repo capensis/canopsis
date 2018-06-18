@@ -15,23 +15,19 @@
           v-flex(xs2)
             div Last active date :
           v-flex(xs3)
-            div(@click.stop="isImpactExpanded = true")
-              v-expansion-panel(:value="isImpactExpanded")
-                v-expansion-panel-content
-                  div(slot="header") Impact
-                  v-list(dense)
-                    template(v-for="item in item.props.impact")
-                      v-list-tile
-                        v-list-tile-content {{ item }}
+            v-menu(:value="isImpactExpanded", bottom, offset-y, fixed)
+              v-btn(@click.stop="isImpactExpanded = !isImpactExpanded", slot="activator") Impact
+              v-list(dense)
+                template(v-for="item in item.props.impact")
+                  v-list-tile
+                    v-list-tile-content {{ item }}
           v-flex(xs3)
-            div(@click.stop="isDependsExpanded = true")
-              v-expansion-panel(:value="isDependsExpanded")
-                v-expansion-panel-content
-                  div(slot="header") Depends
-                  v-list(dense)
-                    template(v-for="item in item.props.depends")
-                      v-list-tile
-                        v-list-tile-content {{ item }}
+            v-menu(:value="isDependsExpanded", bottom, offset-y, fixed)
+              v-btn(@click.stop="isDependsExpanded = !isDependsExpanded", slot="activator") Depends
+              v-list(dense)
+                template(v-for="item in item.props.depends")
+                  v-list-tile
+                    v-list-tile-content {{ item }}
       v-flex.my-2(xs12)
         h3.text-xs-center.my-2 Pbehaviors
         v-data-table(v-if="pbehaviorsList.length > 0", :items="pbehaviorsList", :headers="pbehaviorsTableHeaders")
@@ -47,6 +43,8 @@
             td {{ props.item.reason }}
             td {{ props.item.rrule }}
         div.red.darken-2.white--text.py-3.text-xs-center(v-else) No pbehaviors
+      v-flex.my-2(xs12)
+        h3.text-xs-center Infos
 </template>
 
 <script>
