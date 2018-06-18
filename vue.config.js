@@ -7,4 +7,15 @@ module.exports = {
 
     return config;
   },
+  devServer: {
+    proxy: {
+      '/api': {
+        target: process.env.VUE_APP_API_HOST,
+        changeOrigin: true,
+        pathRewrite: { '^/api': '' },
+        secure: false,
+        cookieDomainRewrite: '',
+      },
+    },
+  },
 };
