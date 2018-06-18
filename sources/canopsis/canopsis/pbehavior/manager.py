@@ -32,7 +32,6 @@ from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
 import pytz
-import dateutil.utils
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
