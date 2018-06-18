@@ -52,7 +52,6 @@ export default {
     async fetchById({ commit }, { id }) {
       try {
         const data = await request.get(`${API_ROUTES.pbehaviorById}/${id}`);
-        console.log(data);
         commit(types.FETCH_BY_ID_COMPLETED, data);
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
