@@ -565,12 +565,18 @@ class PBehaviorManager(object):
             dt_tstart_time = dttstart.time().replace(tzinfo=tz)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
 
+            # dt_list at 0 and 1 indexes can be equal, so we generate
+            # three dates to ensure [1] - [2] will give a non-zero timedelta
+            # object.
             dt_list = list(
                 rrulestr(rrule, dtstart=dt_dtstart).xafter(
                     dttstart, count=3, inc=True
                 )
             )
 
+            # compute the "missing date": a date before the first one
+            # just in case that first date isn't taking in account
+            # a pbehavior that just begun.
             missing_date = dt_list[0] - (dt_list[-1] - dt_list[-2])
             dt_list.insert(0, missing_date)
 
