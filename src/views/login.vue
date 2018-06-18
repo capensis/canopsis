@@ -1,6 +1,5 @@
 <template lang="pug">
-  v-container(
-    class="blue darken-4",
+  v-container.blue.darken-4(
     fill-height,
     fluid,
     d-flex,
@@ -11,7 +10,7 @@
         v-card
           v-layout(row, wrap)
             v-flex(xs12)
-              v-toolbar(class="green darken-2 white--text")
+              v-toolbar.green.darken-2.white--text
                 v-toolbar-title {{ $t('common.login') }}
             v-flex(xs12, py-2)
               v-form

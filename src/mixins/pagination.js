@@ -1,7 +1,9 @@
 import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
-import Pagination from '@/components/basic-component/pagination.vue';
+
+import dateIntervals from '@/helpers/date-intervals';
+import Pagination from '@/components/tables/pagination.vue';
 
 export default {
   components: {
@@ -22,8 +24,17 @@ export default {
   },
   methods: {
     getQuery() {
-      const query = omit(this.$route.query, ['page']);
+      const query = omit(this.$route.query, ['page', 'interval']);
 
+      if (this.$route.query.interval && this.$route.query.interval !== 'custom') {
+        try {
+          const { tstart, tstop } = dateIntervals[this.$route.query.interval]();
+          query.tstart = tstart;
+          query.tstop = tstop;
+        } catch (err) {
+          console.warn(err);
+        }
+      }
       query.limit = this.limit;
       query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
 

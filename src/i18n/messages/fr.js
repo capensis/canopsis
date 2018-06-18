@@ -16,9 +16,10 @@ export default {
     parse: 'Compiler',
     home: 'Accueil',
     entries: 'entrées',
-    showing: 'afficher',
+    showing: 'Affiche',
+    apply: 'Appliquer',
     to: 'à',
-    of: 'de',
+    of: 'sur',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
     actions: {
@@ -50,6 +51,7 @@ export default {
       associateTicket: 'Associer ticket',
       cancel: 'Annuler alarme',
       changeState: 'Changer criticité',
+      moreInfos: 'Plus d\'infos',
     },
   },
   alarmListSettings: {
@@ -67,8 +69,13 @@ export default {
     filters: 'Filtres',
     selectAFilter: 'Sélectionner un filtre',
     infoPopup: 'Info popup',
+    moreInfosModal: 'Fenêtre "Plus d\'infos"',
   },
   modals: {
+    moreInfos: {
+      moreInfos: 'Plus d\'infos',
+      defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    },
     createAckEvent: {
       title: 'Ajouter un événement: ack',
       tooltips: {
@@ -126,6 +133,17 @@ export default {
       fields: {
         ticket: 'Numéro du ticket',
       },
+    },
+    liveReporting: {
+      editLiveReporting: 'Suivi personnalisé',
+      dateInterval: 'Interval de dates',
+      today: 'Aujourd\'hui',
+      yesterday: 'Hier',
+      last7Days: '7 derniers jours',
+      last30Days: '30 derniers jours',
+      thisMonth: 'Ce mois',
+      lastMonth: 'Mois dernier',
+      custom: 'Personnalisé',
     },
   },
   tables: {

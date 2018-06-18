@@ -1,7 +1,6 @@
 <template lang="pug">
-    v-container(
+    v-container.filterGroup.pa-2(
       fluid,
-      class="filterGroup pa-2"
     )
       v-radio-group(
         mandatory,
@@ -13,7 +12,7 @@
         v-radio(label="AND", value="$and", color="blue darken-4")
         v-radio(label="OR", value="$or", color="blue darken-4")
 
-      v-layout(wrap, class="text-xs-center", justify-space-around)
+      v-layout.text-xs-center(wrap, justify-space-around)
         v-flex(xs5, md3)
           v-btn(
             @click="handleAddRuleClick",
@@ -59,8 +58,7 @@
         v-for="(group, index) in groups",
         :key="'group-' + index"
       )
-        filter-group(
-          class="filterGroup",
+        filter-group.filterGroup(
           @deleteGroup="deleteGroup",
           :index="index",
           :condition.sync="group.condition",

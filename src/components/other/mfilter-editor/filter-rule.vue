@@ -12,8 +12,7 @@
           v-icon close
     v-layout(row, wrap, justify-space-around)
       v-flex(xs10, md3)
-        v-select(
-          class="my-2",
+        v-select.my-2(
           solo-inverted,
           flat,
           hide-details,
@@ -25,8 +24,7 @@
         )
 
       v-flex(xs10, md3)
-        v-select(
-          class="my-2",
+        v-select.my-2(
           solo-inverted,
           hide-details,
           flat,
@@ -46,8 +44,7 @@
           && operator != 'is null'
           && operator != 'is not null'`
       )
-        v-text-field(
-          class="my-2",
+        v-text-field.my-2(
           solo-inverted,
           flat,
           hide-details,

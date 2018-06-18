@@ -36,7 +36,10 @@ function errorResponseHandler(responseWithError) {
   return Promise.reject(responseWithError);
 }
 
-const request = axios.create({ baseURL: API_HOST, withCredentials: true });
+const request = axios.create({
+  baseURL: process.env.NODE_ENV === 'development' ? '/api' : API_HOST,
+  withCredentials: true,
+});
 
 request.interceptors.response.use(successResponseHandler, errorResponseHandler);
 

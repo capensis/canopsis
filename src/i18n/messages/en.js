@@ -21,6 +21,7 @@ export default {
     home: 'Home',
     entries: 'entries',
     showing: 'showing',
+    apply: 'Apply',
     to: 'to',
     of: 'of',
     actionsLabel: 'Actions',
@@ -55,6 +56,7 @@ export default {
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
         changeState: 'Change criticity',
+        moreInfos: 'More infos',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -83,6 +85,7 @@ export default {
     filters: 'Filters',
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
+    moreInfosModal: '"More Infos" Popup',
   },
   modals: {
     createAckEvent: {
@@ -142,6 +145,21 @@ export default {
       fields: {
         ticket: 'Number of the ticket',
       },
+    },
+    liveReporting: {
+      editLiveReporting: 'Live reporting',
+      dateInterval: 'Date interval',
+      today: 'Today',
+      yesterday: 'Yesterday',
+      last7Days: 'Last 7 days',
+      last30Days: 'Last 30 days',
+      thisMonth: 'This month',
+      lastMonth: 'Last month',
+      custom: 'Custom',
+    },
+    moreInfos: {
+      moreInfos: 'More infos',
+      defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
   },
   tables: {

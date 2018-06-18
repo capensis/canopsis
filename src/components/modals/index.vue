@@ -21,6 +21,8 @@ import CreateDeclareTicketEvent from './create-declare-ticket-event.vue';
 import CreateSnoozeEvent from './create-snooze-event.vue';
 import CreatePbehavior from './create-pbehavior.vue';
 import PbehaviorList from './pbehavior-list.vue';
+import EditLiveReporting from './edit-live-reporting.vue';
+import MoreInfos from './more-infos.vue';
 
 /**
  * Wrapper for all modal windows
@@ -36,6 +38,8 @@ export default {
     CreateSnoozeEvent,
     CreatePbehavior,
     PbehaviorList,
+    EditLiveReporting,
+    MoreInfos,
   },
   data() {
     return {
@@ -48,6 +52,8 @@ export default {
         { name: MODALS.createSnoozeEvent },
         { name: MODALS.createPbehavior },
         { name: MODALS.pbehaviorList, dialogProps: { maxWidth: 1280, lazy: true } },
+        { name: MODALS.editLiveReporting },
+        { name: MODALS.moreInfos },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
