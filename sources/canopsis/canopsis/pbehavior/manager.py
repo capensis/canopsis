@@ -564,7 +564,7 @@ class PBehaviorManager(object):
             dt_tstart_time = dttstart.time().replace(tzinfo=tz)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
 
-            # dt_list at 0 and 1 indexes can be equal, so we generate
+            # dates in dt_list at 0 and 1 indexes can be equal, so we generate
             # three dates to ensure [1] - [2] will give a non-zero timedelta
             # object.
             dt_list = list(
