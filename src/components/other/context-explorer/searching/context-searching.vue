@@ -41,13 +41,8 @@ export default {
     },
     submit() {
       const filter = this.$options.filters.formatedSearching(this.searchingText);
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          _filter: filter,
-        },
-
-      });
+      const { query } = this.$route;
+      this.$router.push({ query, _filter: filter });
     },
   },
 };

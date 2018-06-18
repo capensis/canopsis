@@ -38,13 +38,8 @@ export default {
     },
     submit() {
       const search = this.searchingText;
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          search,
-        },
-
-      });
+      const { query } = this.$route;
+      this.$router.push({ query, search });
     },
   },
 };
