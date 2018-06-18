@@ -23,7 +23,6 @@ import ContextSearch from '@/components/other/context-explorer/searching/context
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 export default {
-  name: 'context-table',
   components: { BasicList, ContextSearch },
   props: {
     contextProperties: {

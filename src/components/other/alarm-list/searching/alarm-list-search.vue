@@ -15,7 +15,7 @@
     v-tooltip(bottom)
       v-btn(icon slot="activator")
         v-icon help_outline
-      div(v-html="$t('search.advancedSearch')")
+      div(v-html="$t('search.advancedSearch')",)
 </template>
 
 <script>
