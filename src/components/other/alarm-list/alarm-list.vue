@@ -17,7 +17,7 @@
         v-icon settings
   v-layout.my-2(wrap, justify-space-between, align-center)
     v-flex(xs12 md5)
-      alarm-list-searching
+      alarm-list-search
     v-flex(xs4)
       pagination(:meta="meta", :limit="limit", type="top")
   basic-list(:items="items", :pending="pending", @update:selected="selected = $event")
@@ -55,7 +55,7 @@ import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
 // LOADER
 import Loader from '@/components/other/alarm-list/loader/alarm-list-loader.vue';
 // SEARCHING
-import AlarmListSearching from '@/components/other/alarm-list/searching/alarm-list-search.vue';
+import AlarmListSearch from '@/components/other/alarm-list/searching/alarm-list-search.vue';
 // PAGINATION
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
@@ -79,7 +79,7 @@ const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSe
  */
 export default {
   components: {
-    AlarmListSearching,
+    AlarmListSearch,
     RecordsPerPage,
     ListSorting,
     TimeLine,

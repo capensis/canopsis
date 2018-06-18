@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     div(v-if="!pending")
-      searching
+      context-search
       basic-list(:items="items")
         tr.container(slot="header")
           th.box(v-for="columnProperty in contextProperties")
@@ -18,13 +18,13 @@ import { createNamespacedHelpers } from 'vuex';
 import { getQueryContext } from '@/helpers/pagination';
 
 import BasicList from '@/components/tables/basic-list.vue';
-import Searching from '@/components/other/context-explorer/searching/context-searching.vue';
+import ContextSearch from '@/components/other/context-explorer/searching/context-search.vue';
 
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 export default {
   name: 'context-table',
-  components: { BasicList, Searching },
+  components: { BasicList, ContextSearch },
   props: {
     contextProperties: {
       type: Array,
