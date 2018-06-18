@@ -564,8 +564,8 @@ class PBehaviorManager(object):
                 )
             )
 
+            delta = dttstop - dttstart
             for dt in dt_list:
-                delta = dttstop - dttstart
                 if dtts >= dt and dtts <= dt + delta:
                     return True
 
