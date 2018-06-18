@@ -558,11 +558,18 @@ class PBehaviorManager(object):
         if rrule:
             # returns a list of dates that are between the given tstart/tstop,
             # and using dtstart fr
+            dt_tstart_date = dtts.date()
+            dt_tstart_time = dttstart.time()
             dt_list = list(
-                rrulestr(rrule, dtstart=dttstart).xafter(
+                rrulestr(rrule, dtstart=datetime.combine(
+                    dt_tstart_date, dt_tstart_time.replace(tzinfo=tz)
+                )).xafter(
                     dttstart, count=3, inc=True
                 )
             )
+
+            missing_date = dt_list[0] - (dt_list[-1] - dt_list[-2])
+            dt_list.insert(0, missing_date)
 
             delta = dttstop - dttstart
             for dt in dt_list:
