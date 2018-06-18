@@ -3,8 +3,29 @@ import { API_ROUTES } from '@/config';
 
 import { types as entitiesTypes } from '@/store/plugins/entities';
 
+const types = {
+  FETCH_BY_ID_COMPLETED: 'FETCH_BY_ID_COMPLETED',
+  FETCH_BY_ID_FAILED: 'FETCH_BY_ID_FAILED',
+};
+
 export default {
   namespaced: true,
+  state: {
+    pbehaviorsList: [],
+    error: '',
+  },
+  getters: {
+    pbehaviorsList: state => state.pbehaviorsList,
+    error: state => state.error,
+  },
+  mutations: {
+    [types.FETCH_BY_ID_COMPLETED](state, payload) {
+      state.pbehaviorsList = payload;
+    },
+    [types.FETCH_BY_ID_FAILED](state, err) {
+      state.error = err;
+    },
+  },
   actions: {
     async create(context, data) {
       try {
@@ -25,6 +46,16 @@ export default {
           { root: true },
         );
       } catch (err) {
+        console.warn(err);
+      }
+    },
+    async fetchById({ commit }, { id }) {
+      try {
+        const data = await request.get(`${API_ROUTES.pbehaviorById}/${id}`);
+        console.log(data);
+        commit(types.FETCH_BY_ID_COMPLETED, data);
+      } catch (err) {
+        commit(types.FETCH_BY_ID_FAILED, err);
         console.warn(err);
       }
     },

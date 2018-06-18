@@ -21,6 +21,7 @@ export const API_ROUTES = {
   alarmList: '/alerts/get-alarms',
   context: '/context',
   pbehavior: '/api/v2/pbehavior',
+  pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',
