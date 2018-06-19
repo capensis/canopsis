@@ -29,6 +29,9 @@ from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.views.enums import ViewField, GroupField
 
+VIEWS_COLLECTION = 'views'
+GROUPS_COLLECTION = 'viewgroups'
+
 
 class DuplicateIDError(Exception):
     """
@@ -42,11 +45,9 @@ class ViewAdapter(object):
     Adapter for the view collection.
     """
 
-    COLLECTION = 'views'
-
     def __init__(self):
-        self.collection = MongoCollection(
-            MongoStore.get_default().get_collection(self.COLLECTION))
+        self.view_collection = MongoCollection(
+            MongoStore.get_default().get_collection(VIEWS_COLLECTION))
 
     def get_by_id(self, view_id):
         """
@@ -54,7 +55,7 @@ class ViewAdapter(object):
 
         :param str view_id: the id of the view.
         """
-        return self.collection.find_one({
+        return self.view_collection.find_one({
             ViewField.id: view_id
         })
 
@@ -65,7 +66,7 @@ class ViewAdapter(object):
         :param Dict[str, Any] view:
         :rtype: str
         """
-        return self.collection.insert(view)
+        return self.view_collection.insert(view)
 
     def update(self, view_id, view):
         """
@@ -74,7 +75,7 @@ class ViewAdapter(object):
         :param str view_id: the id of the view.
         :param Dict[str, Any] view:
         """
-        self.collection.update({
+        self.view_collection.update({
             ViewField.id: view_id
         }, view, upsert=False)
 
@@ -84,7 +85,7 @@ class ViewAdapter(object):
 
         :param str view_id: the id of the view.
         """
-        self.collection.remove({
+        self.view_collection.remove({
             ViewField.id: view_id
         })
 
@@ -94,7 +95,7 @@ class ViewAdapter(object):
 
         :rtype: List[Dict[str, Any]]
         """
-        return list(self.collection.find({}))
+        return list(self.view_collection.find({}))
 
     def list_group(self, group_id):
         """
@@ -103,7 +104,7 @@ class ViewAdapter(object):
         :param str group_id:
         :rtype: List[Dict[str, Any]]
         """
-        return list(self.collection.find({
+        return list(self.view_collection.find({
             "group_id": group_id
         }))
 
@@ -113,11 +114,9 @@ class GroupAdapter(object):
     Adapter for the group collection.
     """
 
-    COLLECTION = 'views_groups'
-
     def __init__(self):
-        self.collection = MongoCollection(
-            MongoStore.get_default().get_collection(self.COLLECTION))
+        self.group_collection = MongoCollection(
+            MongoStore.get_default().get_collection(GROUPS_COLLECTION))
 
     def get_by_id(self, group_id):
         """
@@ -125,7 +124,7 @@ class GroupAdapter(object):
 
         :param str group_id: the id of the group.
         """
-        return self.collection.find_one({
+        return self.group_collection.find_one({
             GroupField.id: group_id
         })
 
@@ -141,7 +140,7 @@ class GroupAdapter(object):
             raise DuplicateIDError()
 
         group.update({'_id': group_id})
-        self.collection.insert(group)
+        self.group_collection.insert(group)
 
     def update(self, group_id, group):
         """
@@ -150,7 +149,7 @@ class GroupAdapter(object):
         :param str group_id:
         :param Dict group:
         """
-        self.collection.update({
+        self.group_collection.update({
             GroupField.id: group_id
         }, group, upsert=False)
 
@@ -160,7 +159,7 @@ class GroupAdapter(object):
 
         :param str group_id:
         """
-        self.collection.remove({
+        self.group_collection.remove({
             GroupField.id: group_id
         })
 
@@ -170,4 +169,4 @@ class GroupAdapter(object):
 
         :rtype: List[Dict[str, Any]]
         """
-        return list(self.collection.find({}))
+        return list(self.group_collection.find({}))
