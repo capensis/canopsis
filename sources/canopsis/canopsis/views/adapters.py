@@ -40,6 +40,13 @@ class DuplicateIDError(Exception):
     """
 
 
+class NonEmptyGroupError(Exception):
+    """
+    A NonEmptyGroupError is an Exception that is raised when trying to remove a
+    non-empty group.
+    """
+
+
 class InvalidViewError(Exception):
     """
     An InvalidViewError is an exception that is raised when a view is invalid.
@@ -172,6 +179,17 @@ class GroupAdapter(object):
             ViewField.group_id: group_id
         }))
 
+    def is_empty(self, group_id):
+        """
+        Return True if a group is empty.
+
+        :param str group_id:
+        :rtype: bool
+        """
+        return self.view_collection.find({
+            ViewField.group_id: group_id
+        }).limit(1).count() == 0
+
     def create(self, group_id, group):
         """
         Create a new group.
@@ -207,6 +225,9 @@ class GroupAdapter(object):
 
         :param str group_id:
         """
+        if not self.is_empty(group_id):
+            raise NonEmptyGroupError()
+
         self.group_collection.remove({
             GroupField.id: group_id
         })

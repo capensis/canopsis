@@ -25,7 +25,7 @@ from bottle import request
 
 from canopsis.views.enums import ViewField, GroupField
 from canopsis.views.adapters import ViewAdapter, GroupAdapter, \
-    DuplicateIDError, InvalidViewError, InvalidGroupError
+    DuplicateIDError, InvalidViewError, InvalidGroupError, NonEmptyGroupError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
     HTTP_NOT_FOUND
 
@@ -178,7 +178,12 @@ def exports(ws):
                 'description': 'No group with id: {0}'.format(group_id)
             }, HTTP_NOT_FOUND)
 
-        group_adapter.remove_with_id(group_id)
+        try:
+            group_adapter.remove_with_id(group_id)
+        except NonEmptyGroupError:
+            return gen_json_error({
+                'description': 'The group is not empty'
+            }, HTTP_ERROR)
 
         return gen_json({})
 
