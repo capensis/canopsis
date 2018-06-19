@@ -139,9 +139,6 @@ def exports(ws):
                 'description': 'No group with id: {0}'.format(group_id)
             }, HTTP_NOT_FOUND)
 
-        views = view_adapter.list_group(group_id)
-        group['views'] = views
-
         return gen_json(group)
 
 

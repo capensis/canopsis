@@ -53,7 +53,6 @@ class ViewAdapter(object):
     """
     Adapter for the view collection.
     """
-
     def __init__(self):
         self.view_collection = MongoCollection(
             MongoStore.get_default().get_collection(VIEWS_COLLECTION))
@@ -111,17 +110,6 @@ class ViewAdapter(object):
         """
         return list(self.view_collection.find({}))
 
-    def list_group(self, group_id):
-        """
-        Returns the list from a group.
-
-        :param str group_id:
-        :rtype: List[Dict[str, Any]]
-        """
-        return list(self.view_collection.find({
-            "group_id": group_id
-        }))
-
     def validate(self, view):
         """
         Check that the view is valid, return InvalidViewError if it is not.
@@ -143,10 +131,11 @@ class GroupAdapter(object):
     """
     Adapter for the group collection.
     """
-
     def __init__(self):
         self.group_collection = MongoCollection(
             MongoStore.get_default().get_collection(GROUPS_COLLECTION))
+        self.view_collection = MongoCollection(
+            MongoStore.get_default().get_collection(VIEWS_COLLECTION))
 
     def get_by_id(self, group_id):
         """
@@ -154,9 +143,24 @@ class GroupAdapter(object):
 
         :param str group_id: the id of the group.
         """
-        return self.group_collection.find_one({
+        group = self.group_collection.find_one({
             GroupField.id: group_id
         })
+
+        group[GroupField.views] = self.get_views(group_id)
+
+        return group
+
+    def get_views(self, group_id):
+        """
+        Returns the list of views of a group.
+
+        :param str group_id:
+        :rtype: List[Dict[str, Any]]
+        """
+        return list(self.view_collection.find({
+            ViewField.group_id: group_id
+        }))
 
     def create(self, group_id, group):
         """
@@ -169,7 +173,7 @@ class GroupAdapter(object):
         if self.get_by_id(group_id):
             raise DuplicateIDError()
 
-        group.update({'_id': group_id})
+        group[GroupField.id] = group_id
         self.group_collection.insert(group)
 
     def update(self, group_id, group):
