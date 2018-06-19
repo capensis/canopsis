@@ -36,7 +36,7 @@ def exports(ws):
     @ws.application.get(
         '/api/v2/views/<view_id>'
     )
-    def get(view_id):
+    def get_view(view_id):
         view = adapter.get_by_id(view_id)
 
         if view:
@@ -50,7 +50,7 @@ def exports(ws):
     @ws.application.post(
         '/api/v2/views'
     )
-    def post():
+    def create_view():
         try:
             request_body = request.json
         except ValueError as verror:
@@ -65,7 +65,7 @@ def exports(ws):
     @ws.application.delete(
         '/api/v2/views/<view_id>'
     )
-    def delete(view_id):
+    def remove_view(view_id):
         # TODO: should there be an error if the view does not exist?
         adapter.remove_with_id(view_id)
         return gen_json({})
@@ -74,7 +74,7 @@ def exports(ws):
     @ws.application.put(
         '/api/v2/views/<view_id>'
     )
-    def put(view_id):
+    def update_view(view_id):
         try:
             request_body = request.json
         except ValueError as verror:
