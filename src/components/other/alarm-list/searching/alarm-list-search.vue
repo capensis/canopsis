@@ -20,6 +20,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import assign from 'lodash/assign';
 
 export default {
   data() {
@@ -30,16 +31,13 @@ export default {
   methods: {
     clear() {
       const query = omit(this.$route.query, ['search']);
-      this.$router.push({
-        query: {
-          ...query,
-        },
-      });
+      this.$router.push({ query });
     },
     submit() {
       const search = this.searchingText;
-      const { query } = this.$route;
-      this.$router.push({ query, search });
+      let { query } = this.$route;
+      query = assign(query, { search });
+      this.$router.push({ query });
     },
   },
 };

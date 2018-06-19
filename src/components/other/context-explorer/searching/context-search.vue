@@ -16,6 +16,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import merge from 'lodash/merge';
 
 export default {
   filters: {
@@ -32,17 +33,13 @@ export default {
   methods: {
     clear() {
       const query = omit(this.$route.query, ['_filter']);
-      this.$router.push({
-        query: {
-          ...query,
-        },
-
-      });
+      this.$router.push({ query });
     },
     submit() {
       const filter = this.$options.filters.formatedSearching(this.searchingText);
-      const { query } = this.$route;
-      this.$router.push({ query, _filter: filter });
+      let { query } = this.$route;
+      query = merge(query, { _filter: filter });
+      this.$router.push({ query });
     },
   },
 };
