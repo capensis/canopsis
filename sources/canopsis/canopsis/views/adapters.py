@@ -49,6 +49,15 @@ class InvalidViewError(Exception):
         self.message = message
 
 
+class InvalidGroupError(Exception):
+    """
+    An InvalidGroupError is an exception that is raised when a view is invalid.
+    """
+    def __init__(self, message):
+        super(InvalidGroupError, self).__init__(message)
+        self.message = message
+
+
 class ViewAdapter(object):
     """
     Adapter for the view collection.
@@ -147,7 +156,8 @@ class GroupAdapter(object):
             GroupField.id: group_id
         })
 
-        group[GroupField.views] = self.get_views(group_id)
+        if group:
+            group[GroupField.views] = self.get_views(group_id)
 
         return group
 
@@ -170,10 +180,12 @@ class GroupAdapter(object):
         :param Dict group:
         :rtype: str
         """
-        if self.get_by_id(group_id):
+        if self.exists(group_id):
             raise DuplicateIDError()
 
         group[GroupField.id] = group_id
+        self.validate(group_id, group)
+
         self.group_collection.insert(group)
 
     def update(self, group_id, group):
@@ -183,6 +195,8 @@ class GroupAdapter(object):
         :param str group_id:
         :param Dict group:
         """
+        self.validate(group_id, group)
+
         self.group_collection.update({
             GroupField.id: group_id
         }, group, upsert=False)
@@ -204,3 +218,34 @@ class GroupAdapter(object):
         :rtype: List[Dict[str, Any]]
         """
         return list(self.group_collection.find({}))
+
+    def validate(self, group_id, group):
+        """
+        Check that the gorup is valid, return InvalidGroupError if it is not.
+
+        :param Dict[str, Any] view:
+        """
+        if GroupField.name not in group:
+            raise InvalidGroupError('The group should have a name field.')
+
+        group_name = group[GroupField.name]
+        same_name_group = self.group_collection.find_one({
+            GroupField.id: {'$ne': group_id},
+            GroupField.name: group_name
+        })
+        if same_name_group:
+            raise InvalidGroupError(
+                'There is already a group with the name: {0}'.format(
+                    group_name))
+
+    def exists(self, group_id):
+        """
+        Return True if a group exists.
+
+        :param str group_id:
+        :rtype: bool
+        """
+        group = self.group_collection.find_one({
+            GroupField.id: group_id
+        })
+        return group is not None

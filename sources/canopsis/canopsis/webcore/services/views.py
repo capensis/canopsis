@@ -25,7 +25,7 @@ from bottle import request
 
 from canopsis.views.enums import ViewField, GroupField
 from canopsis.views.adapters import ViewAdapter, GroupAdapter, \
-    DuplicateIDError, InvalidViewError
+    DuplicateIDError, InvalidViewError, InvalidGroupError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
     HTTP_NOT_FOUND
 
@@ -161,6 +161,10 @@ def exports(ws):
                     'There is already a group with the id: {0}'.format(
                         group_id)
             }, HTTP_ERROR)
+        except InvalidGroupError as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
 
         return gen_json({})
 
@@ -169,7 +173,7 @@ def exports(ws):
         '/api/v2/views/groups/<group_id>'
     )
     def remove_group(group_id):
-        if not group_adapter.get_by_id(group_id):
+        if not group_adapter.exists(group_id):
             return gen_json_error({
                 'description': 'No group with id: {0}'.format(group_id)
             }, HTTP_NOT_FOUND)
@@ -183,7 +187,7 @@ def exports(ws):
         '/api/v2/views/groups/<group_id>'
     )
     def update_group(group_id):
-        if not group_adapter.get_by_id(group_id):
+        if not group_adapter.exists(group_id):
             return gen_json_error({
                 'description': 'No group with id: {0}'.format(group_id)
             }, HTTP_NOT_FOUND)
@@ -195,6 +199,11 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
-        group_adapter.update(group_id, request_body)
+        try:
+            group_adapter.update(group_id, request_body)
+        except InvalidGroupError as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
 
         return gen_json({})

@@ -42,3 +42,4 @@ class GroupField(FastEnum):
     """
     id = '_id'
     views = 'views'
+    name = 'name'
