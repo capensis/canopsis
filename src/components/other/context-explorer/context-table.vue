@@ -8,6 +8,7 @@
       tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
         td.box
+          actions-panel(:item="item")
       tr.container(slot="expandedRow", slot-scope="item")
     pagination(:meta="meta", :limit="limit")
 </template>
@@ -17,13 +18,14 @@ import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import PaginationMixin from '@/mixins/pagination';
+import ActionsPanel from '@/components/other/context-explorer/actions/actions-panel.vue';
 import omit from 'lodash/omit';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 
 export default {
   name: 'context-table',
-  components: { BasicList },
+  components: { BasicList, ActionsPanel },
   mixins: [PaginationMixin],
   props: {
     contextProperties: {
