@@ -52,7 +52,7 @@ export default {
   computed: {
     allSelected: {
       get() {
-        return this.selected.length === this.items.length;
+        return this.selected.length === this.items.length && this.items.length !== 0;
       },
       set(value) {
         this.selected = value ? this.items.map(v => v._id) : [];

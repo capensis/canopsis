@@ -6,19 +6,21 @@ import { types as entitiesTypes } from '@/store/plugins/entities';
 export default {
   namespaced: true,
   actions: {
-    async create({ commit }, { data, parent }) {
+    async create({ commit }, { data, parents }) {
       try {
         const id = await request.post(API_ROUTES.pbehavior, data);
-        const pbehavior = { ...data, enabled: true, _id: id };
+        const pbehaviorEntities = { [id]: { ...data, enabled: true, _id: id } };
+        const alarmEntities = parents.reduce((acc, parent) => {
+          const parentPbehaviors = parent.pbehaviors.map(v => v._id);
+
+          acc[parent._id] = { pbehaviors: [...parentPbehaviors, id] };
+
+          return acc;
+        }, {});
+
         commit(entitiesTypes.ENTITIES_MERGE, {
-          pbehavior: {
-            [id]: pbehavior,
-          },
-          alarm: {
-            [parent._id]: {
-              pbehaviors: [id],
-            },
-          },
+          pbehavior: pbehaviorEntities,
+          alarm: alarmEntities,
         }, { root: true });
       } catch (err) {
         console.error(err);

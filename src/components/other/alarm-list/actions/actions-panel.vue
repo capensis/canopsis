@@ -2,19 +2,19 @@
   div
     div(v-show="$mq === 'laptop'")
       actions-panel-item(
-        v-for="(action, index) in actions.main",
-        v-bind="action",
-        :key="`main-${index}`"
+      v-for="(action, index) in actions.main",
+      v-bind="action",
+      :key="`main-${index}`"
       )
       v-menu(v-show="actions.dropDown && actions.dropDown.length", bottom, left, @click.native.stop)
         v-btn(icon, slot="activator")
           v-icon more_vert
         v-list
           actions-panel-item(
-            v-for="(action, index) in actions.dropDown",
-            v-bind="action",
-            isDropDown,
-            :key="`drop-down-${index}`"
+          v-for="(action, index) in actions.dropDown",
+          v-bind="action",
+          isDropDown,
+          :key="`drop-down-${index}`"
           )
     div(v-show="$mq === 'mobile' || $mq === 'tablet'")
       v-menu(bottom, left, @click.native.stop)
@@ -22,29 +22,28 @@
           v-icon more_vert
         v-list
           actions-panel-item(
-            v-for="(action, index) in actions.main",
-            v-bind="action",
-            isDropDown,
-            :key="`mobile-main-${index}`"
+          v-for="(action, index) in actions.main",
+          v-bind="action",
+          isDropDown,
+          :key="`mobile-main-${index}`"
           )
           actions-panel-item(
-            v-for="(action, index) in actions.dropDown",
-            v-bind="action",
-            isDropDown,
-            :key="`mobile-drop-down-${index}`"
+          v-for="(action, index) in actions.dropDown",
+          v-bind="action",
+          isDropDown,
+          :key="`mobile-drop-down-${index}`"
           )
 </template>
 
 <script>
-import ModalMixin from '@/mixins/modal/modal';
-import EventActionsMixin from '@/mixins/event-actions';
+import ActionsPanelMixin from '@/mixins/actions-panel';
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
 
-import ActionsPanelItem from '@/components/other/alarm-list/actions/actions-panel-item.vue';
+import ActionsPanelItem from './actions-panel-item.vue';
 
 export default {
   components: { ActionsPanelItem },
-  mixins: [ModalMixin, EventActionsMixin],
+  mixins: [ActionsPanelMixin],
   props: {
     item: {
       type: Object,
@@ -55,59 +54,44 @@ export default {
     return {
       actionsMap: {
         ack: {
-          icon: 'playlist_add_check',
-          title: 'alarmList.actions.titles.ack',
+          type: 'ack',
           method: this.showActionModal(MODALS.createAckEvent),
         },
         fastAck: {
-          icon: 'check',
-          title: 'alarmList.actions.titles.fastAck',
+          type: 'fastAck',
           method: this.createAckEvent,
         },
         ackRemove: {
-          icon: 'block',
-          title: 'alarmList.actions.titles.ackRemove',
+          type: 'ackRemove',
           method: this.showAckRemoveModal,
         },
         pbehavior: {
-          icon: 'pause',
-          title: 'alarmList.actions.titles.pbehavior',
+          type: 'pbehavior',
           method: this.showActionModal(MODALS.createPbehavior),
         },
         snooze: {
-          icon: 'alarm',
-          title: 'alarmList.actions.titles.snooze',
+          type: 'snooze',
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
         pbehaviorList: {
-          icon: 'list',
-          title: 'alarmList.actions.titles.pbehaviorList',
+          type: 'pbehaviorList',
           method: this.showActionModal(MODALS.pbehaviorList),
         },
         declareTicket: {
-          icon: 'local_play',
-          title: 'alarmList.actions.titles.declareTicket',
+          type: 'declareTicket',
           method: this.showActionModal(MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
-          icon: 'pin_drop',
-          title: 'alarmList.actions.titles.associateTicket',
+          type: 'associateTicket',
           method: this.showActionModal(MODALS.createAssociateTicketEvent),
         },
         cancel: {
-          icon: 'delete',
-          title: 'alarmList.actions.titles.cancel',
+          type: 'cancel',
           method: this.showActionModal(MODALS.createCancelEvent),
         },
         changeState: {
-          icon: 'report_problem',
-          title: 'alarmList.actions.titles.changeState',
+          type: 'changeState',
           method: this.showActionModal(MODALS.createChangeStateEvent),
-        },
-        moreInfos: {
-          icon: 'notes',
-          title: 'alarmList.actions.moreInfos',
-          method: this.showActionModal(MODALS.moreInfos),
         },
       },
     };
@@ -115,8 +99,8 @@ export default {
   computed: {
     modalConfig() {
       return {
-        itemType: ENTITIES_TYPES.alarm,
-        itemId: this.item._id,
+        itemsType: ENTITIES_TYPES.alarm,
+        itemsIds: [this.item._id],
       };
     },
     actions() {
@@ -132,7 +116,6 @@ export default {
               actionsMap.changeState,
               actionsMap.pbehavior,
               actionsMap.pbehaviorList,
-              actionsMap.moreInfos,
             ],
           };
         }
@@ -142,7 +125,7 @@ export default {
           dropDown: [],
         };
       } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
-        return { // TODO: add restore alarm action
+        return {
           main: [actionsMap.pbehaviorList],
           dropDown: [],
         };
@@ -155,30 +138,9 @@ export default {
     },
   },
   methods: {
-    async createAckEvent() {
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
-    },
-
-    showActionModal(name) {
-      return () => this.showModal({
-        name,
-        config: this.modalConfig,
-      });
-    },
-
-    showAckRemoveModal() {
-      this.showModal({
-        name: MODALS.createCancelEvent,
-        config: {
-          ...this.modalConfig,
-          title: 'modals.createAckRemove.title',
-          eventType: EVENT_ENTITY_TYPES.ackRemove,
-        },
-      });
+    createAckEvent() {
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
     },
   },
 };
 </script>
-
-<style scoped>
-</style>

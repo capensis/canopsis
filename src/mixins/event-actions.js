@@ -36,11 +36,15 @@ export default {
      * Function for data preparation
      *
      * @param {string} type - type of the event
-     * @param {Object} item - item of the entity
+     * @param {Object|Array} item - item of the entity | Array of items of entity
      * @param {Object} data - data for the event
      * @returns {Object[]}
      */
     prepareData(type, item, data = {}) {
+      if (Array.isArray(item)) {
+        return item.reduce((acc, value) => acc.concat(this.prepareData(type, value, data)), []);
+      }
+
       const preparedData = {
         author: 'root',
         id: item.id,

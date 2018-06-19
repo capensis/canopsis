@@ -9,7 +9,7 @@
   ],
   "rules": {
     "max-len": ["error", { "code": 120, "ignoreStrings": true }],
-    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config"] }],
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config", "acc"] }],
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-return-assign": "off",
     "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t"] }],

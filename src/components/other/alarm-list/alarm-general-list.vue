@@ -3,11 +3,9 @@
     v-subheader {{ $t('tables.alarmGeneral.title') }}
     v-data-table(
     :headers="headers",
-    :items="[item]",
+    :items="items",
     hide-actions
     )
-      template(slot="headerCell", slot-scope="props")
-        span {{ $t(props.header.text) }}
       template(slot="items", slot-scope="props")
         td.text-xs-left {{ props.item.v.state.a }}
         td.text-xs-left {{ props.item.v.connector }}
@@ -24,8 +22,8 @@
  */
 export default {
   props: {
-    item: {
-      type: Object,
+    items: {
+      type: Array,
       required: true,
     },
   },
@@ -33,19 +31,19 @@ export default {
     return {
       headers: [
         {
-          text: 'tables.alarmGeneral.author',
+          text: this.$t('tables.alarmGeneral.author'),
           sortable: false,
         },
         {
-          text: 'tables.alarmGeneral.connector',
+          text: this.$t('tables.alarmGeneral.connector'),
           sortable: false,
         },
         {
-          text: 'tables.alarmGeneral.component',
+          text: this.$t('tables.alarmGeneral.component'),
           sortable: false,
         },
         {
-          text: 'tables.alarmGeneral.resource',
+          text: this.$t('tables.alarmGeneral.resource'),
           sortable: false,
         },
       ],
