@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import EventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, ENTITIES_STATES, MODALS } from '@/constants';
 
@@ -42,7 +42,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [ModalInnerItemMixin, EventActionsMixin],
+  mixins: [ModalInnerItemsMixin, EventActionsMixin],
   data() {
     return {
       form: {
@@ -68,14 +68,14 @@ export default {
     },
   },
   mounted() {
-    this.form.state = this.item.v.state.val;
+    this.form.state = this.firstItem.v.state.val;
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.item, this.form);
+        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
 
         this.hideModal();
       }

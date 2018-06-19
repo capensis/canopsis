@@ -45,7 +45,7 @@ export default {
   },
   alarmList: {
     actions: {
-      ack: 'ack',
+      ack: 'Ack',
       fastAck: 'Fast ack',
       ackRemove: 'Cancel ack',
       pbehavior: 'Periodical behavior',

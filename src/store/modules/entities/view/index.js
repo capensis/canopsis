@@ -37,7 +37,7 @@ export default {
         const result = await dispatch('entities/fetch', {
           route: `${API_ROUTES.view}/${id}`,
           schema: viewSchema,
-          dataPreparer: d => d[0],
+          dataPreparer: d => d.data[0],
         }, { root: true });
 
         commit(types.FETCH_ITEM_COMPLETED, result.data[0]);

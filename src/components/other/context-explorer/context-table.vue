@@ -1,28 +1,31 @@
 <template lang="pug">
   div
-   basic-list.list(:items="items")
-    tr.container(slot="header")
-      th.box(v-for="columnProperty in contextProperties")
-        span {{ columnProperty.text }}
-        th.box
-    tr.container(slot="row" slot-scope="item")
-      td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
-      td.box
-    tr.container(slot="expandedRow", slot-scope="item")
-   create-entity.fab
+    basic-list.list(:items="items")
+      tr.container(slot="header")
+        th.box(v-for="columnProperty in contextProperties")
+          span {{ columnProperty.text }}
+          th.box
+      tr.container(slot="row" slot-scope="item")
+        td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
+        td.box
+      tr.container(slot="expandedRow", slot-scope="item")
+    pagination(:meta="meta", :limit="limit")
+    create-entity.fab
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { getQueryContext } from '@/helpers/pagination';
 
 import BasicList from '@/components/tables/basic-list.vue';
-import getProp from 'lodash/get';
 import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
+import PaginationMixin from '@/mixins/pagination';
+import omit from 'lodash/omit';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
+
 export default {
   components: { CreateEntity, BasicList },
+  mixins: [PaginationMixin],
   props: {
     contextProperties: {
       type: Array,
@@ -38,24 +41,16 @@ export default {
       'pending',
     ]),
   },
-  watch: {
-    $route() {
-      this.fetchList();
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
-    getQuery: getQueryContext,
-    getProp,
     ...mapActions({
       fetchListAction: 'fetchList',
     }),
-    fetchList() {
-      this.fetchListAction({
-        params: this.getQuery(),
-      });
+    getQuery() {
+      const query = omit(this.$route.query, ['page']);
+
+      query.limit = this.limit;
+      query.start = ((this.$route.query.page - 1) * this.limit) || 0;
+      return query;
     },
   },
 };
