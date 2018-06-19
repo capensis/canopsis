@@ -37,7 +37,6 @@ export default {
       const { query } = this.$route;
       query.search = search;
       this.$router.replace({ query });
-      console.log(query);
     },
   },
 };
