@@ -54,7 +54,7 @@ export default {
             filter: value => this.$d(new Date(value * 1000), 'long'),
           },
           {
-            text: 'Extra details',
+            text: this.$t('tables.alarmGeneral.extraDetails'),
             value: 'icons',
           },
         ],

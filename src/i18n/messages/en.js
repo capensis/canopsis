@@ -175,6 +175,7 @@ export default {
       duration: 'Duration',
       state: 'State',
       status: 'Status',
+      extraDetails: 'Extra details',
     },
     /**
      * This object for pbehavior fields from database
