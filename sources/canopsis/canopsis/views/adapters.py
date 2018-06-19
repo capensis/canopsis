@@ -27,7 +27,14 @@ from __future__ import unicode_literals
 
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
-from canopsis.views.enums import ViewField
+from canopsis.views.enums import ViewField, GroupField
+
+
+class DuplicateIDError(Exception):
+    """
+    A DuplicateIDError is an Exception that is raised when trying to create an
+    group with an ID that already exists.
+    """
 
 
 class ViewAdapter(object):
@@ -79,4 +86,61 @@ class ViewAdapter(object):
         """
         self.collection.remove({
             ViewField.id: view_id
+        })
+
+
+class GroupAdapter(object):
+    """
+    Adapter for the group collection.
+    """
+
+    COLLECTION = 'views_groups'
+
+    def __init__(self):
+        self.collection = MongoCollection(
+            MongoStore.get_default().get_collection(self.COLLECTION))
+
+    def get_by_id(self, group_id):
+        """
+        Get a group given its id.
+
+        :param str group_id: the id of the group.
+        """
+        return self.collection.find_one({
+            GroupField.id: group_id
+        })
+
+    def create(self, group_id, group):
+        """
+        Create a new group.
+
+        :param str group_id:
+        :param Dict group:
+        :rtype: str
+        """
+        if self.get_by_id(group_id):
+            raise DuplicateIDError()
+
+        group.update({'_id': group_id})
+        self.collection.insert(group)
+
+    def update(self, group_id, group):
+        """
+        Update a group given its id.
+
+        :param str group_id:
+        :param Dict group:
+        """
+        self.collection.update({
+            GroupField.id: group_id
+        }, group, upsert=False)
+
+    def remove_with_id(self, group_id):
+        """
+        Remove a group given its id.
+
+        :param str group_id:
+        """
+        self.collection.remove({
+            GroupField.id: group_id
         })

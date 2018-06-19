@@ -23,21 +23,23 @@ from __future__ import unicode_literals
 
 from bottle import request
 
-from canopsis.views.enums import ViewField
-from canopsis.views.adapter import ViewAdapter
+from canopsis.views.enums import ViewField, GroupField
+from canopsis.views.adapters import ViewAdapter, GroupAdapter, \
+    DuplicateIDError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
     HTTP_NOT_FOUND
 
 
 def exports(ws):
 
-    adapter = ViewAdapter()
+    view_adapter = ViewAdapter()
+    group_adapter = GroupAdapter()
 
     @ws.application.get(
         '/api/v2/views/<view_id>'
     )
     def get_view(view_id):
-        view = adapter.get_by_id(view_id)
+        view = view_adapter.get_by_id(view_id)
 
         if view:
             return gen_json(view)
@@ -58,7 +60,7 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
-        view_id = adapter.create(request_body)
+        view_id = view_adapter.create(request_body)
         return gen_json({'id': view_id})
 
 
@@ -67,7 +69,7 @@ def exports(ws):
     )
     def remove_view(view_id):
         # TODO: should there be an error if the view does not exist?
-        adapter.remove_with_id(view_id)
+        view_adapter.remove_with_id(view_id)
         return gen_json({})
 
 
@@ -83,5 +85,67 @@ def exports(ws):
             }, HTTP_ERROR)
 
         # TODO: should there be an error if the view does not exist?
-        adapter.update(view_id, request_body)
+        view_adapter.update(view_id, request_body)
+        return gen_json({})
+
+
+    @ws.application.get(
+        '/api/v2/views/groups/<group_id>'
+    )
+    def get_group(group_id):
+        group = group_adapter.get_by_id(group_id)
+
+        if group:
+            return gen_json(group)
+        else:
+            return gen_json_error({
+                'description': 'No group with id: {0}'.format(group_id)
+            }, HTTP_NOT_FOUND)
+
+
+    @ws.application.post(
+        '/api/v2/views/groups/<group_id>'
+    )
+    def create_group(group_id):
+        try:
+            request_body = request.json
+        except ValueError as verror:
+            return gen_json_error({
+                'description': 'Malformed JSON: {0}'.format(verror)
+            }, HTTP_ERROR)
+
+        try:
+            group_adapter.create(group_id, request_body)
+        except DuplicateIDError:
+            return gen_json_error({
+                'description':
+                    'There is already a group with the id: {0}'.format(
+                        group_id)
+            }, HTTP_ERROR)
+
+        return gen_json({})
+
+
+    @ws.application.delete(
+        '/api/v2/views/groups/<group_id>'
+    )
+    def remove_group(group_id):
+        # TODO: should there be an error if the group does not exist?
+        group_adapter.remove_with_id(group_id)
+        return gen_json({})
+
+
+    @ws.application.put(
+        '/api/v2/views/groups/<group_id>'
+    )
+    def update_group(group_id):
+        try:
+            request_body = request.json
+        except ValueError as verror:
+            return gen_json_error({
+                'description': 'Malformed JSON: {0}'.format(verror)
+            }, HTTP_ERROR)
+
+        # TODO: should there be an error if the group does not exist?
+        group_adapter.update(group_id, request_body)
         return gen_json({})

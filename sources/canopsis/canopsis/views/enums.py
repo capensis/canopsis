@@ -33,3 +33,10 @@ class ViewField(FastEnum):
     The ViewField enumeration defines the names of the fields of a view.
     """
     id = "_id"
+
+
+class GroupField(FastEnum):
+    """
+    The GroupField enumeration defines the names of the fields of a group.
+    """
+    id = "_id"
