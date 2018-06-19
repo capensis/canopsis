@@ -25,7 +25,7 @@ from bottle import request
 
 from canopsis.views.enums import ViewField, GroupField
 from canopsis.views.adapters import ViewAdapter, GroupAdapter, \
-    DuplicateIDError
+    DuplicateIDError, InvalidViewError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
     HTTP_NOT_FOUND
 
@@ -69,7 +69,13 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
-        view_id = view_adapter.create(request_body)
+        try:
+            view_id = view_adapter.create(request_body)
+        except InvalidViewError as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
+
         return gen_json({'id': view_id})
 
 
@@ -103,7 +109,12 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
-        view_adapter.update(view_id, request_body)
+        try:
+            view_adapter.update(view_id, request_body)
+        except InvalidViewError as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
 
         return gen_json({})
 

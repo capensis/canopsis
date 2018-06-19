@@ -40,6 +40,15 @@ class DuplicateIDError(Exception):
     """
 
 
+class InvalidViewError(Exception):
+    """
+    An InvalidViewError is an exception that is raised when a view is invalid.
+    """
+    def __init__(self, message):
+        super(InvalidViewError, self).__init__(message)
+        self.message = message
+
+
 class ViewAdapter(object):
     """
     Adapter for the view collection.
@@ -48,6 +57,8 @@ class ViewAdapter(object):
     def __init__(self):
         self.view_collection = MongoCollection(
             MongoStore.get_default().get_collection(VIEWS_COLLECTION))
+        self.group_collection = MongoCollection(
+            MongoStore.get_default().get_collection(GROUPS_COLLECTION))
 
     def get_by_id(self, view_id):
         """
@@ -66,6 +77,7 @@ class ViewAdapter(object):
         :param Dict[str, Any] view:
         :rtype: str
         """
+        self.validate(view)
         return self.view_collection.insert(view)
 
     def update(self, view_id, view):
@@ -75,6 +87,8 @@ class ViewAdapter(object):
         :param str view_id: the id of the view.
         :param Dict[str, Any] view:
         """
+        self.validate(view)
+
         self.view_collection.update({
             ViewField.id: view_id
         }, view, upsert=False)
@@ -107,6 +121,22 @@ class ViewAdapter(object):
         return list(self.view_collection.find({
             "group_id": group_id
         }))
+
+    def validate(self, view):
+        """
+        Check that the view is valid, return InvalidViewError if it is not.
+
+        :param Dict[str, Any] view:
+        """
+        if ViewField.group_id not in view:
+            raise InvalidViewError('The view should have a group_id field.')
+
+        group_id = view[ViewField.group_id]
+        group = self.group_collection.find_one({
+            GroupField.id: group_id
+        })
+        if not group:
+            raise InvalidViewError('No group with id: {0}'.format(group_id))
 
 
 class GroupAdapter(object):
