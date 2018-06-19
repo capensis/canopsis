@@ -182,8 +182,6 @@ export default {
     pbehaviorList: {
       name: 'Name',
       author: 'Author',
-      connector: 'Connector',
-      connector_name: 'Connector name',
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
