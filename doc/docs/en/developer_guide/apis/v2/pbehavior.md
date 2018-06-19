@@ -1,13 +1,13 @@
 # API PBehaviors
 
 
-Pbehaviors are recuring calendar events that temporarily stop the monitoring of an entity during a given time (for maintenance for example). 
+Pbehaviors are recuring calendar events that temporarily stop the monitoring of an entity during a given time (for maintenance for example).
 
 
 **Note about the`tstart`et `tstop` attributes of a pbehavior**
 
 
-Pbehaviors are similar to calendar events, with optional recurrence. The tstart and tstop parameters are use ton define the start and end date of the first event occurrence. When the event repreats, these attributes are used to define each instance's duration, based on the first instance start and stop time.
+Pbehaviors are similar to calendar events, with optional recurrence. The tstart and tstop parameters are use to define the start and end date of the first event occurrence. When the event repreats, these attributes are used to define each instance's duration, based on the first instance start and stop time.
 
 For example, the behavior below will start à 11AM and finish 1 hour later every morning starting from 2018/06/18:
 
@@ -21,8 +21,7 @@ For example, the behavior below will start à 11AM and finish 1 hour later every
 }
 ```
 
-**When the event is recurring, the date of the last occurrence will be stored in  the `UNTIL` attribute of the `rrule`**
-
+**When the event is recurring, the date of the last occurrence will be stored in the `UNTIL` attribute of the `rrule`**
 
 
 ## Creating a pbehavior
@@ -55,16 +54,16 @@ The body's attributes are the following:
 | connector      | string  | No       | Identifier of the entity connector       |
 | name           | string  | No       | Display name of the pbehavior            |
 | author         | string  | No       | Author name                              |
-| enabled        | boolean | No       | should the pbehavior trigger or not      |
-| reason         | string  | yes      | administrative reason (optionnal)        |
+| enabled        | boolean | No       | Should the pbehavior trigger or not      |
+| reason         | string  | yes      | Administrative reason (optionnal)        |
 | comments       | array   | yes      | Comments (option)                        |
 | filter         | string  | No       | Entities filter (json)                   |
-| type_          | string  | No       |  pbehavior type                          |
+| type_          | string  | No       | Pbehavior type                           |
 | connector_name | string  | No       | Display name of the entity connector     |
-| rrule          | string  | yes      | rrule (recurrence)                       |
+| rrule          | string  | yes      | Rrule (recurrence)                       |
 | tstart         | integer | No       | Timestamp of the start date              |
 | tstop          | integer | No       | Timestamp  end date                      |
-| _id            | string  | No       | pbheavior identifier                     |
+| _id            | string  | No       | Pbheavior identifier                     |
 | eids           | array   | No       | array of _ids for the impacted entities. |
 
 
@@ -74,11 +73,11 @@ Response: uid of the inserted element
 "b72e841a-d9d1-11e7-9a70-022abfd0f78f"
 ```
 
-## Fetching  pbehaviors for an entity
+## Fetching pbehaviors for an entity
 
-this route lists existing pbeahviors  sufor an entity, identified by its eid (Entity ID)
+this route lists existing pbeahviors sufor an entity, identified by its eid (Entity ID)
 
-#### URL 
+#### URL
 
 `GET /api/v2/pbehavior_byeid/<entityid>`
 
@@ -113,24 +112,24 @@ this route lists existing pbeahviors  sufor an entity, identified by its eid (En
 ]
 ```
 
-Response attributes are the following: 
+Response attributes are the following:
 
 | Name           | type    | nullable | Description                              |
 |----------------|---------|----------|------------------------------------------|
 | connector      | string  | No       | Identifier of the entity connector       |
 | name           | string  | No       | Display name of the pbehavior            |
 | author         | string  | No       | Author name                              |
-| enabled        | boolean | No       | should the pbehavior trigger or not      |
-| reason         | string  | yes      | administrative reason (optionnal)        |
+| enabled        | boolean | No       | Should the pbehavior trigger or not      |
+| reason         | string  | yes      | Administrative reason (optionnal)        |
 | comments       | array   | yes      | Comments (option)                        |
 | filter         | string  | No       | Entities filter (json)                   |
-| type_          | string  | No       |  pbehavior type                          |
+| type_          | string  | No       | Pbehavior type                           |
 | connector_name | string  | No       | Display name of the entity connector     |
-| rrule          | string  | yes      | rrule (recurrence)                       |
+| rrule          | string  | yes      | Rrule (recurrence)                       |
 | tstart         | integer | No       | Timestamp of the start date              |
 | tstop          | integer | No       | Timestamp  end date                      |
-| _id            | string  | No       | pbheavior identifier                     |
-| eids           | array   | No       | array of _ids for the impacted entities. |
+| _id            | string  | No       | Pbheavior identifier                     |
+| eids           | array   | No       | Array of _ids for the impacted entities. |
 | isActive       | boolean | No       | is the pbehavior currently active        |
 
 
@@ -162,11 +161,9 @@ Response: a status object
 There is currently no method to update a pbehavior in place. It is necessary to remove and recreate a pbehavior to update its content.
 
 
-## Forcing  pbheaviors computation
+## Forcing pbheaviors computation
 
-This route forces a new computation for all pbehaviors. 
-
-This route can be called once every 10 minutes.
+This route forces a new computation for all pbehaviors.
 
 #### Url
 

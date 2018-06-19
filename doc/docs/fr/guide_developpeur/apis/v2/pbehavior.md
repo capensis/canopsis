@@ -1,13 +1,13 @@
 # API PBehaviors
 
-Les pbehaviors sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes par exemple). 
+Les pbehaviors sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes par exemple).
 
 
 **Note sur les attributs `tstart`et `tstop` d'un pbehavior**
 
-un pbehavior peut être vu comme un élément de calendrier, avec une récurrence optionnelle. Les  paramètres tstart et tstop sont utilisés pour définir la date et l'heure de début et de fin de l'évènement. En cas de récurrence, ils sont utilisés pour que chaque nouvelle instance de l'évènement démarre et se termine à la même heure que la première instance. 
+un pbehavior peut être vu comme un élément de calendrier, avec une récurrence optionnelle. Les paramètres tstart et tstop sont utilisés pour définir la date et l'heure de début et de fin de l'évènement. En cas de récurrence, ils sont utilisés pour que chaque nouvelle instance de l'évènement démarre et se termine à la même heure que la première instance.
 
-Par exemple, le pbehavior suivant durera 1 heure de 11H à midi tous les lundi à partir du 18/06/18. : 
+Par exemple, le pbehavior suivant durera 1 heure de 11H à midi tous les lundi à partir du 18/06/18 :
 
 ```json
 {
@@ -45,13 +45,13 @@ json body:
 }
 ```
 
-Les attributs possibles de l'objet sont les suivants : 
+Les attributs possibles de l'objet sont les suivants :
 
 
 | Nom            | type    | nullable | Description                                                                           |
 |----------------|---------|----------|---------------------------------------------------------------------------------------|
 | connector      | string  | Non      | identifiant du connecteur de l'entité                                                 |
-| name           | string  | Non      | nom d'affichage du pbehavior                                                          |
+| name           | string  | Non      | Nom d'affichage du pbehavior                                                          |
 | author         | string  | Non      | Nom de l'auteur du pbehavior                                                          |
 | enabled        | boolean | Non      | Le pbehavior est il autorisé à se déclencher ou non                                   |
 | reason         | string  | Oui      | Motif (optionnel)                                                                     |
@@ -59,15 +59,15 @@ Les attributs possibles de l'objet sont les suivants :
 | filter         | string  | Non      | Filtre d'entités (json)                                                               |
 | type_          | string  | Non      | Type de pbehavior                                                                     |
 | connector_name | string  | Non      | Nom d'affichage du connecteur de l'entité                                             |
-| rrule          | string  | Oui      | rrule (récurrence)                                                                    |
+| rrule          | string  | Oui      | Rrule (récurrence)                                                                    |
 | tstart         | integer | Non      | Timestamp de la date de début                                                         |
 | tstop          | integer | Non      | Timestamp de la date de fin (en cas de récurrence, seule l'heure est prise en compte) |
-| _id            | string  | Non      | identifiant du pbehavior                                                              |
-| eids           | array   | Non      | tableau d'identifiants des entités concernées.                                        |
+| _id            | string  | Non      | Identifiant du pbehavior                                                              |
+| eids           | array   | Non      | Tableau d'identifiants des entités concernées.                                        |
 
 Réponse: l'uid de l'élément inséré
 
-```{json}
+```json
 "b72e841a-d9d1-11e7-9a70-022abfd0f78f"
 ```
 
@@ -75,7 +75,7 @@ Réponse: l'uid de l'élément inséré
 
 Cette route permet de lister les pbeahviors présents sur une entité, définie par son eid (Entity ID)
 
-#### URL 
+#### URL
 `GET /api/v2/pbehavior_byeid/<entityid>`
 
 #### Paramètres
@@ -108,12 +108,12 @@ Cette route permet de lister les pbeahviors présents sur une entité, définie 
 ]
 ```
 
-Les attributs de la réponse sont les suivants: 
+Les attributs de la réponse sont les suivants:
 
 | Nom            | type    | nullable | Description                                                                           |
 |----------------|---------|----------|---------------------------------------------------------------------------------------|
-| connector      | string  | Non      | identifiant du connecteur de l'entité                                                 |
-| name           | string  | Non      | nom d'affichage du pbehavior                                                          |
+| connector      | string  | Non      | Identifiant du connecteur de l'entité                                                 |
+| name           | string  | Non      | Nom d'affichage du pbehavior                                                          |
 | author         | string  | Non      | Nom de l'auteur du pbehavior                                                          |
 | enabled        | boolean | Non      | Le pbehavior est il autorisé à se déclencher ou non                                   |
 | reason         | string  | Oui      | Motif (optionnel)                                                                     |
@@ -121,12 +121,12 @@ Les attributs de la réponse sont les suivants:
 | filter         | string  | Non      | Filtre d'entités (json)                                                               |
 | type_          | string  | Non      | Type de pbehavior                                                                     |
 | connector_name | string  | Non      | Nom d'affichage du connecteur de l'entité                                             |
-| rrule          | string  | Oui      | rrule (récurrence)                                                                    |
+| rrule          | string  | Oui      | Rrule (récurrence)                                                                    |
 | tstart         | integer | Non      | Timestamp de la date de début                                                         |
 | tstop          | integer | Non      | Timestamp de la date de fin (en cas de récurrence, seule l'heure est prise en compte) |
-| _id            | string  | Non      | identifiant du pbehavior                                                              |
-| isActive       | boolean | Non      | le pbehavior est-il dans sa période d'activité                                        |
-| eids           | array   | Non      | tableau d'identifiants des entités concernées.                                        |
+| _id            | string  | Non      | Identifiant du pbehavior                                                              |
+| isActive       | boolean | Non      | Le pbehavior est-il dans sa période d'activité                                        |
+| eids           | array   | Non      | Tableau d'identifiants des entités concernées.                                        |
 
 
 
@@ -159,8 +159,6 @@ Il n'existe pas à ce jour de méthode de mise à jour d'un pbheavior. Il est do
 ## Forcer le recacul des pbheaviors
 
 Cette route permet de forcer le recalcul de tous les pbehaviors.
-
-La route n'est appelable qu'une fois toutes les 10 secondes.
 
 #### Url
 
