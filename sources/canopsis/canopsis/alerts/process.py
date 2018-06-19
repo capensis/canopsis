@@ -89,7 +89,6 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     alarms_service.process_resolution_on_all_alarms()
 
     alertsmgr.check_alarm_filters()
-    alertsreader_manager.clean_fast_count_cache()
 
     # Recompute watcher states
     alertsmgr.watcher_manager.compute_watchers()

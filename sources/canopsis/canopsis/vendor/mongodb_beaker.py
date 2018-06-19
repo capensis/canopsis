@@ -496,6 +496,6 @@ def _parse_uri(uri, default_port=27017):
 def _depickle(value):
     try:
         return pickle.loads(value.encode('utf-8'))
-    except Exception, e:
+    except Exception as e:
         log.exception("Failed to unpickle value.", e)
         return None

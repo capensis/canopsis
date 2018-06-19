@@ -27,14 +27,14 @@ TODO: replace the storage class parameter with a collection (=> rewriting count(
 from __future__ import unicode_literals
 
 import re
-
 from os.path import join
 from time import time
 
-from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.search.interpreter import interpret
 from canopsis.common import root_path
+from canopsis.common.collection import MongoCollection
+from canopsis.common.redis_store import RedisStore
 from canopsis.common.utils import get_sub_key
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
@@ -45,6 +45,8 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
+
+rconn = RedisStore.get_default()
 
 DEFAULT_EXPIRATION = 1800
 DEFAULT_OPENED_TRUNC = True
@@ -82,6 +84,7 @@ class AlertsReader(object):
         self.logger = logger
         self.config = config
         self.alarm_storage = storage
+        self.alarm_collection = MongoCollection(self.alarm_storage._backend)
         self.pbehavior_manager = pbehavior_manager
         self.entitylink_manager = entitylink_manager
         self.pbh_filter = None
@@ -332,7 +335,6 @@ class AlertsReader(object):
         elif isinstance(filter_, list):
             self._filter_list(filter_)
 
-
     def parse_filter(self, filter_):
         """Set self.has_active_pbh true if the filter contain a active_pb key
         set to true or false if it set to false. If the key is not present or
@@ -384,84 +386,6 @@ class AlertsReader(object):
                 alarm = task(self, alarm)
 
         return alarms
-
-    def clean_fast_count_cache(self):
-        """
-        Clean expired entries related to fast count cache.
-        """
-
-        now = int(time())
-
-        to_clean = []
-
-        for key, value in self.count_cache.items():
-            if now >= value['expiration']:
-                to_clean.append(key)
-
-        for key in to_clean:
-            self.count_cache.pop(key)
-
-    def _get_fast_count(self, query, tstart, tstop, opened, resolved, filter_,
-                        search):
-        """
-        Select the best way to count a query documents (try to avoid as much
-        as possible mongo's .count()), and return a count as fast as possible.
-        Returned value can be accurate, approximated or truncated.
-
-        :param Cursor query: PyMongo Cursor of query that has to be counted
-
-        :param tstart: Timestamp
-        :type tstart: int or None
-        :param tstop: Timestamp
-        :type tstop: int or None
-
-        :param bool opened: If True, query is about opened alarms
-        :param bool resolved: If True, query is about resolved alarms
-
-        :param dict filter_: Potential mongo filter of query
-        :param str search: Potential search expression of query
-
-        :return: Tuple with count and a boolean telling if count was truncated
-        :rtype: tuple (int, bool)
-        """
-
-        if resolved:
-            cache_key = '{}-{}-{}-{}-{}-{}'.format(
-                tstart, tstop, opened, resolved, filter_, search)
-
-            now = int(time())
-
-            truncate = self.resolved_truncate
-            limit = self.resolved_limit
-
-            count_cache = self.count_cache.get(cache_key, None)
-            if count_cache is not None:
-                if not now >= count_cache['expiration']:
-                    count = count_cache['value']
-                    return count, truncate and count == limit
-
-            # No cache entry found (or no up-to-date entry)
-            if truncate:
-                count = query.limit(limit).count(True)
-            else:
-                count = query.count(True)
-
-            self.count_cache[cache_key] = {
-                'value': count,
-                'expiration': now + self.expiration
-            }
-
-            return count, truncate and count == limit
-
-        # Opened alarms only
-        else:
-            if self.opened_truncate:
-                limit = self.opened_limit
-                count = query.limit(limit).count(True)
-
-                return count, count == limit
-
-            return query.count(True), False
 
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns
@@ -566,8 +490,9 @@ class AlertsReader(object):
                         "$filter": {
                             "input": "$pbehaviors",
                             "as": "pbh",
-                            "cond": [{"$gte": ["$pbehaviors.tstop", tnow]},
-                                     {"$lte": ["$pbehaviors.tstart", tnow]}
+                            "cond": [
+                                {"$gte": ["$pbehaviors.tstop", tnow]},
+                                {"$lte": ["$pbehaviors.tstart", tnow]}
                             ]
                         }
                     },
@@ -648,24 +573,6 @@ class AlertsReader(object):
             sort_key = 'v.creation_date'
         elif sort_key == 'v.current_state_duration':
             sort_key = 'v.state.t'
-        if hide_resources:
-            if resolved:
-                self.logger.error(
-                    'you only can hide pbehaviors on current alarms')
-            return self.hide_resources(
-                tstart,
-                tstop,
-                filter_,
-                sort_key,
-                sort_dir,
-                skip,
-                limit,
-                search,
-                natural_search,
-                active_columns,
-                with_steps
-            )
-
         if lookups is None:
             lookups = []
 
@@ -682,8 +589,6 @@ class AlertsReader(object):
 
         if time_filter is None:
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
-
-        result = None
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         final_filter = self._get_final_filter(
@@ -693,223 +598,217 @@ class AlertsReader(object):
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
-        pipeline = [
-            {
-                "$lookup": {
-                    "from": "default_entities",
-                    "localField": "d",
-                    "foreignField": "_id",
-                    "as": "entity"
+        if limit is None or limit > 50:
+            limit = 50
+
+        # truncate results if more than required
+        api_limit = limit
+
+        # get a little bit more results so we may avoid querying the database
+        # more than once.
+        if hide_resources:
+            limit = limit * 2
+            hide_resources &= rconn.exists('featureflag:hide_resources')
+
+        total = self.alarm_collection.find(final_filter).count()
+
+        def search_aggregate(skip, limit):
+            pipeline = [
+                {
+                    "$lookup": {
+                        "from": "default_entities",
+                        "localField": "d",
+                        "foreignField": "_id",
+                        "as": "entity"
+                    }
+                }, {
+                    "$unwind": {
+                        "path": "$entity",
+                        "preserveNullAndEmptyArrays": True,
+                    }
+                }, {
+                    "$match": {"$or": [
+                        {"entity.enabled": True}, {
+                            "entity": {"$exists": False}}
+                    ]}
+                }, {
+                    "$match": final_filter
+                }, {
+                    "$sort": {
+                        sort_key: sort_dir
+                    }
                 }
-            }, {
-                "$unwind": {
-                    "path": "$entity",
-                    "preserveNullAndEmptyArrays": True,
-                }
-            }, {
-                "$match": {"$or": [
-                    {"entity.enabled": True}, {"entity": {"$exists": False}}
-                ]}
-            }, {
-                "$match": final_filter
-            }, {
-                "$sort": {
-                    sort_key: sort_dir
-                }
+            ]
+
+            if not with_steps:
+                pipeline.insert(0, {"$project": {"v.steps": False}})
+
+            self.add_pbh_filter(pipeline, filter_)
+
+            pipeline.append({
+                "$skip": skip
+            })
+
+            if limit is not None:
+                pipeline.append({"$limit": limit})
+
+            result = self.alarm_collection.aggregate(
+                pipeline, allowDiskUse=True, cursor={}
+            )
+
+            alarms = list(result)
+            # Manual count is much faster than mongo's
+            truncated = len(alarms)
+
+            res = {
+                'alarms': alarms,
+                'truncated': truncated,
             }
-        ]
 
-        if not with_steps:
-            pipeline.insert(0, {"$project": {"v.steps": False}})
+            return res
 
-        self.add_pbh_filter(pipeline, filter_)
+        def offset_aggregate(results, skip, limit, filters):
+            """
+            :param dict results:
+            :param int skip:
+            :param int limit:
+            :param list filters: list of functions to apply on alarms
+            """
+            tmp_res = search_aggregate(skip, limit)
+            pre_filter_len = len(tmp_res['alarms'])
 
-        pipeline.append({
-            "$skip": skip
-        })
+            # no results, all good
+            if tmp_res['alarms']:
+                results['truncated'] |= tmp_res['truncated']
 
-        if limit is not None:
-            pipeline.append({"$limit": limit})
+                skip += limit
 
-        result = self.alarm_storage._backend.aggregate(pipeline, cursor={},
-                                                       **{"allowDiskUse": True})
+                # filter useless data
+                for filter_ in filters:
+                    tmp_res['alarms'] = filter_(tmp_res['alarms'])
 
-        alarms = list(result)
-        limited_total = len(alarms)  # Manual count is much faster than mongo's
+                results['alarms'].extend(tmp_res['alarms'])
 
-        count_query = self.alarm_storage._backend.find(final_filter)
-        total, truncated = self._get_fast_count(
-            count_query,
-            tstart, tstop, opened, resolved,
-            final_filter, search
-        )
+            truncated_by = pre_filter_len - len(tmp_res['alarms'])
 
-        first = 0 if limited_total == 0 else skip + 1
-        last = 0 if limited_total == 0 else skip + limited_total
+            return results, skip, truncated_by
 
-        res = {
-            'alarms': alarms,
-            'total': total,
-            'truncated': truncated,
-            'first': first,
-            'last': last
-        }
-
-        return res
-
-    def hide_resources(
-            self,
-            tstart=None,
-            tstop=None,
-            filter_={},
-            sort_key='opened',
-            sort_dir='DESC',
-            skip=0,
-            limit=None,
-            search='',
-            natural_search=False,
-            active_columns=None,
-            with_steps=False
-    ):
-        """
-        Return filtered, sorted and paginated alarms with resources sorted.
-
-        :param tstart: Beginning timestamp of requested period
-        :param tstop: End timestamp of requested period
-        :type tstart: int or None
-        :type tstop: int or None
-
-        :param dict filter_: Mongo filter
-        :param str search: Search expression in custom DSL
-
-        :param str sort_key: Name of the column to sort. If the value ends with
-            a dot '.', sort_key is replaced with 'v.last_update_date'.
-        :param str sort_dir: Either "ASC" or "DESC"
-
-        :param int skip: Number of alarms to skip (pagination)
-        :param int limit: Maximum number of alarms to return
-
-        :param bool natural_search: True if you want to use a natural search
-
-        :param list active_columns: the list of alarms columns on which to
-        apply the natural search filter.
-        :param bool with_steps: True if you want alarm steps in your alarm.
-
-
-        :returns: List of sorted alarms + pagination informations
-        :rtype: dict
-        """
-        if filter_ is None:
-            filter_ = {}
-
-        if active_columns is None:
-            active_columns = self.DEFAULT_ACTIVE_COLUMNS
-
-        time_filter = self._get_time_filter(
-            opened=True,
-            resolved=False,
-            tstart=tstart,
-            tstop=tstop
-        )
-
-        if time_filter is None:
-            return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
-
-        final_filter = self._get_final_filter(
-            filter_,
-            time_filter,
-            search,
-            active_columns
-        )
-
-        sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
-
-        pipeline = [
-            {
-                "$lookup": {
-                    "from": "default_entities",
-                    "localField": "d",
-                    "foreignField": "_id",
-                    "as": "entity"
-                }
-            }, {
-                "$unwind": {
-                    "path": "$entity",
-                    "preserveNullAndEmptyArrays": True,
-                }
-            }, {
-                "$match": final_filter
-            }, {
-                "$sort": {
-                    sort_key: sort_dir
-                }
+        def loop_aggregate(skip, limit, filters, post_sort):
+            """
+            :param int skip:
+            :param int limit:
+            :param list filters: list of functions to apply on alarms. Called
+                only in offset_aggregate
+            :param bool post_sort: post filtering sort with sort_key
+                and sort_dir on alarms.
+            """
+            results = {
+                'alarms': [],
+                'total': total,
+                'truncated': False,
+                'first': 0,
+                'last': 0
             }
-        ]
+            while len(results['alarms']) < api_limit:
+                results, skip, truncated_by = offset_aggregate(
+                    results,
+                    skip,
+                    limit,
+                    filters,
+                )
 
-        if not with_steps:
-            pipeline.insert(0, {"$project": {"v.steps": False}})
+                len_alarms = len(results['alarms'])
 
-        self.add_pbh_filter(pipeline, filter_)
+                """
+                print('loop: len: {} | limit: {} | api_limit: {}'.format(
+                    len_alarms,
+                    limit,
+                    api_limit,
+                ))
+                """
 
-        alarms = self.alarm_storage._backend.aggregate(pipeline,
-                                                       **{"allowDiskUse": True}).get('result')
-        alarms = self._lookup(alarms, ['pbehaviors'])
+                # premature break in case we do not have any filter that could
+                # modify the real count.
+                # this condition cannot be embedded in while <cond> because the
+                # loop needs to be ran at least one time.
+                if not filters:
+                    # print('no filters, no need to search more')
+                    break
 
-        alarm_dict = {}
-        for alarm in alarms:
-            component = alarm.get('v').get('component')
-            if component not in alarm_dict:
-                alarm_dict[component] = [alarm]
-            else:
-                alarm_dict[component].append(alarm)
+                # filters did not filtered any thing: we don't need to loop
+                # again, even if we don't have enough results.
+                elif filters and truncated_by == 0:
+                    # print('some filters, not results filtered')
+                    break
 
-        filtred_alarms = []
-        for component in alarm_dict:
-            entity_type = []
-            for alarm_comp in alarm_dict[component]:
-                entity_type.append(alarm_comp.get(
-                    'entity', {}).get('type', ''))
+            if post_sort:
+                results['alarms'] = self._aggregate_post_sort(
+                    results['alarms'], sort_key, sort_dir
+                )
 
-            if 'component' in entity_type:
-                filtred_alarms = filtred_alarms + \
-                    remove_resources_alarms(alarm_dict[component])
-            else:
-                filtred_alarms = filtred_alarms + alarm_dict[component]
+            if len_alarms > api_limit:
+                results['alarms'] = results['alarms'][0:api_limit]
 
-        len_before_truncate = len(filtred_alarms)
-        if limit is not None:
-            last = limit + skip
-            filtred_alarms = filtred_alarms[skip:last]
-        else:
-            filtred_alarms = filtred_alarms[skip:]
-            last = len(filtred_alarms)
+            # print('end')
+            return results
 
+        filters = []
+        post_sort = False
+        if hide_resources:
+            post_sort = True
+            filters.append(self._hide_resources)
 
+        # print('start')
+        return loop_aggregate(skip, limit, filters, post_sort=post_sort)
 
-        rev = (sort_dir == -1)
-        sorted_alarms = sorted(
-            filtred_alarms,
+    @staticmethod
+    def _aggregate_post_sort(alarms, sort_key, sort_dir):
+        return sorted(
+            alarms,
             key=lambda k: get_sub_key(k, sort_key),
-            reverse=rev
+            reverse=(sort_dir == -1)
         )
 
-        len_after_truncate = len(filtred_alarms)
-        ret_val = {
-            'alarms': sorted_alarms,
-            'total': len_before_truncate,
-            'truncated': len_after_truncate < len_before_truncate,
-            'first': skip,
-            'last': last
-        }
-        return ret_val
+    @staticmethod
+    def _hide_resources(alarms):
+        """
+        FIXIT: not implemented
+        """
+        filtered_alarms = []
+        for alarm in alarms:
+            if alarm['v'].get('resource', '') == '':
+                filtered_alarms.append(alarm)
+                continue
+
+            drop_id = 'alarm_hideresources_resource:{}/{}/{}/{}:drop'.format(
+                alarm['v'].get('connector'),
+                alarm['v'].get('connector_name'),
+                alarm['v'].get('resource'),
+                alarm['v'].get('component'),
+            )
+
+            drop_value = rconn.get(drop_id)
+            to_drop = False
+            try:
+                #to_drop = int(str(drop_value)) == 2
+                to_drop = drop_value is not None
+            except TypeError:
+                pass
+            except ValueError:
+                pass
+
+            if not to_drop:
+                filtered_alarms.append(alarm)
+
+        return filtered_alarms
 
     def count_alarms_by_period(
             self,
             start,
             stop,
-            subperiod={'day': 1},
+            subperiod=None,
             limit=100,
-            query={},
+            query=None,
     ):
         """
         Count alarms that have been opened during (stop - start) period.
@@ -920,7 +819,7 @@ class AlertsReader(object):
         :param stop: End timestamp of period
         :type stop: int
 
-        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods
+        :param subperiod: Cut (stop - start) in ``subperiod`` subperiods.
         :type subperiod: dict
 
         :param limit: Counts cannot exceed this value
@@ -933,6 +832,12 @@ class AlertsReader(object):
                  related count
         :rtype: list
         """
+
+        if subperiod is None:
+            subperiod = {'day': 1}
+
+        if query is None:
+            query = {}
 
         intervals = Interval.get_intervals_by_period(start, stop, subperiod)
 
