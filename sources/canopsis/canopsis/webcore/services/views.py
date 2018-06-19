@@ -68,8 +68,13 @@ def exports(ws):
         '/api/v2/views/<view_id>'
     )
     def remove_view(view_id):
-        # TODO: should there be an error if the view does not exist?
+        if not view_adapter.get_by_id(view_id):
+            return gen_json_error({
+                'description': 'No view with id: {0}'.format(view_id)
+            }, HTTP_NOT_FOUND)
+
         view_adapter.remove_with_id(view_id)
+
         return gen_json({})
 
 
@@ -77,6 +82,11 @@ def exports(ws):
         '/api/v2/views/<view_id>'
     )
     def update_view(view_id):
+        if not view_adapter.get_by_id(view_id):
+            return gen_json_error({
+                'description': 'No view with id: {0}'.format(view_id)
+            }, HTTP_NOT_FOUND)
+
         try:
             request_body = request.json
         except ValueError as verror:
@@ -84,8 +94,8 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
-        # TODO: should there be an error if the view does not exist?
         view_adapter.update(view_id, request_body)
+
         return gen_json({})
 
 
@@ -130,8 +140,13 @@ def exports(ws):
         '/api/v2/views/groups/<group_id>'
     )
     def remove_group(group_id):
-        # TODO: should there be an error if the group does not exist?
+        if not group_adapter.get_by_id(group_id):
+            return gen_json_error({
+                'description': 'No group with id: {0}'.format(group_id)
+            }, HTTP_NOT_FOUND)
+
         group_adapter.remove_with_id(group_id)
+
         return gen_json({})
 
 
@@ -139,6 +154,11 @@ def exports(ws):
         '/api/v2/views/groups/<group_id>'
     )
     def update_group(group_id):
+        if not group_adapter.get_by_id(group_id):
+            return gen_json_error({
+                'description': 'No group with id: {0}'.format(group_id)
+            }, HTTP_NOT_FOUND)
+
         try:
             request_body = request.json
         except ValueError as verror:
@@ -146,6 +166,6 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
-        # TODO: should there be an error if the group does not exist?
         group_adapter.update(group_id, request_body)
+
         return gen_json({})
