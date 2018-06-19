@@ -88,6 +88,25 @@ class ViewAdapter(object):
             ViewField.id: view_id
         })
 
+    def list(self):
+        """
+        Return a list of views.
+
+        :rtype: List[Dict[str, Any]]
+        """
+        return list(self.collection.find({}))
+
+    def list_group(self, group_id):
+        """
+        Returns the list from a group.
+
+        :param str group_id:
+        :rtype: List[Dict[str, Any]]
+        """
+        return list(self.collection.find({
+            "group_id": group_id
+        }))
+
 
 class GroupAdapter(object):
     """
@@ -144,3 +163,11 @@ class GroupAdapter(object):
         self.collection.remove({
             GroupField.id: group_id
         })
+
+    def list(self):
+        """
+        Return a list of groups.
+
+        :rtype: List[Dict[str, Any]]
+        """
+        return list(self.collection.find({}))

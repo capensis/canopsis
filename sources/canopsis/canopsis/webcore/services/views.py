@@ -36,6 +36,15 @@ def exports(ws):
     group_adapter = GroupAdapter()
 
     @ws.application.get(
+        '/api/v2/views'
+    )
+    def list_views():
+        views = view_adapter.list()
+
+        return gen_json(views)
+
+
+    @ws.application.get(
         '/api/v2/views/<view_id>'
     )
     def get_view(view_id):
@@ -100,17 +109,29 @@ def exports(ws):
 
 
     @ws.application.get(
+        '/api/v2/views/groups'
+    )
+    def list_groups():
+        groups = group_adapter.list()
+
+        return gen_json(groups)
+
+
+    @ws.application.get(
         '/api/v2/views/groups/<group_id>'
     )
     def get_group(group_id):
         group = group_adapter.get_by_id(group_id)
 
-        if group:
-            return gen_json(group)
-        else:
+        if not group:
             return gen_json_error({
                 'description': 'No group with id: {0}'.format(group_id)
             }, HTTP_NOT_FOUND)
+
+        views = view_adapter.list_group(group_id)
+        group['views'] = views
+
+        return gen_json(group)
 
 
     @ws.application.post(
