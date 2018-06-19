@@ -33,13 +33,6 @@ VIEWS_COLLECTION = 'views'
 GROUPS_COLLECTION = 'viewgroups'
 
 
-class DuplicateIDError(Exception):
-    """
-    A DuplicateIDError is an Exception that is raised when trying to create an
-    group with an ID that already exists.
-    """
-
-
 class NonEmptyGroupError(Exception):
     """
     A NonEmptyGroupError is an Exception that is raised when trying to remove a
@@ -197,9 +190,11 @@ class GroupAdapter(object):
         :param str group_id:
         :param Dict group:
         :rtype: str
+        :raises: InvalidGroupError
         """
         if self.exists(group_id):
-            raise DuplicateIDError()
+            raise InvalidGroupError(
+                'There is already a group with the id: {0}'.format(group_id))
 
         group[GroupField.id] = group_id
         self.validate(group_id, group)
@@ -212,6 +207,7 @@ class GroupAdapter(object):
 
         :param str group_id:
         :param Dict group:
+        :raises: InvalidGroupError
         """
         self.validate(group_id, group)
 
@@ -224,6 +220,7 @@ class GroupAdapter(object):
         Remove a group given its id.
 
         :param str group_id:
+        :raises: NonEmptyGroupError
         """
         if not self.is_empty(group_id):
             raise NonEmptyGroupError()
@@ -245,6 +242,7 @@ class GroupAdapter(object):
         Check that the gorup is valid, return InvalidGroupError if it is not.
 
         :param Dict[str, Any] view:
+        :raises: InvalidGroupError
         """
         if GroupField.name not in group:
             raise InvalidGroupError('The group should have a name field.')

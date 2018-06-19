@@ -25,7 +25,7 @@ from bottle import request
 
 from canopsis.views.enums import ViewField, GroupField
 from canopsis.views.adapters import ViewAdapter, GroupAdapter, \
-    DuplicateIDError, InvalidViewError, InvalidGroupError, NonEmptyGroupError
+    InvalidViewError, InvalidGroupError, NonEmptyGroupError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
     HTTP_NOT_FOUND
 
@@ -155,12 +155,6 @@ def exports(ws):
 
         try:
             group_adapter.create(group_id, request_body)
-        except DuplicateIDError:
-            return gen_json_error({
-                'description':
-                    'There is already a group with the id: {0}'.format(
-                        group_id)
-            }, HTTP_ERROR)
         except InvalidGroupError as e:
             return gen_json_error({
                 'description': e.message
