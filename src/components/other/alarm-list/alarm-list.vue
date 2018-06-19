@@ -2,7 +2,7 @@
 .white
   v-layout(justify-space-between, align-center)
     v-flex.ml-4(xs4)
-      mass-actions
+      mass-actions-panel(v-show="selected.length", :itemsIds="selected")
     v-flex(xs2)
       v-chip(
         v-if="$route.query.interval",
@@ -42,14 +42,15 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { omit } from 'lodash';
+import intersectionWith from 'lodash/intersectionWith';
+import omit from 'lodash/omit';
 
 // TABLE
 import BasicList from '@/components/tables/basic-list.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
 // ACTIONS
 import ActionsPanel from '@/components/other/alarm-list/actions/actions-panel.vue';
-import MassActions from '@/components/other/alarm-list/actions/mass-actions.vue';
+import MassActionsPanel from '@/components/other/alarm-list/actions/mass-actions-panel.vue';
 // TIMELINE
 import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
 // LOADER
@@ -82,7 +83,7 @@ export default {
     RecordsPerPage,
     ListSorting,
     TimeLine,
-    MassActions,
+    MassActionsPanel,
     AlarmListSearching,
     ActionsPanel,
     BasicList,
@@ -108,6 +109,15 @@ export default {
       'meta',
       'pending',
     ]),
+  },
+  watch: {
+    items(items) {
+      this.selected = intersectionWith(
+        this.selected,
+        items,
+        (selectedItemId, item) => selectedItemId === item._id,
+      );
+    },
   },
   methods: {
     ...alarmMapActions({

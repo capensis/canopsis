@@ -4,7 +4,7 @@
       v-card-title
         span.headline {{ $t('modals.createPbehavior.title') }}
       v-card-text
-        v-data-table(:headers="headers", :items="item.pbehaviors", disable-initial-sort, hide-actions)
+        v-data-table(:headers="headers", :items="firstItem.pbehaviors", disable-initial-sort, hide-actions)
           template(slot="headerCell", slot-scope="props")
             span {{ $t(props.header.text) }}
           template(slot="items", slot-scope="props")
@@ -22,7 +22,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
@@ -30,7 +30,7 @@ const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior')
 export default {
   name: MODALS.pbehaviorList,
 
-  mixins: [ModalInnerItemMixin],
+  mixins: [ModalInnerItemsMixin],
   data() {
     const fields = [
       'name',
