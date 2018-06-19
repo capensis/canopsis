@@ -1,7 +1,7 @@
 import { API_ROUTES } from '@/config';
 import { contextSchema } from '@/store/schemas';
 import request from '@/services/request';
-import { entitiesTypes } from '@/constants';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
