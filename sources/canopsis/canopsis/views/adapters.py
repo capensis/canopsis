@@ -95,6 +95,10 @@ class ViewAdapter(object):
         :param str view_id: the id of the view.
         :param Dict[str, Any] view:
         """
+        if view.get(ViewField.id, view_id) != view_id:
+            raise InvalidViewError(
+                'The {0} field should not be modified'.format(ViewField.id))
+
         self.validate(view)
 
         self.view_collection.update({
@@ -244,6 +248,10 @@ class GroupAdapter(object):
         :param Dict[str, Any] view:
         :raises: InvalidGroupError
         """
+        if group.get(GroupField.id, group_id) != group_id:
+            raise InvalidGroupError(
+                'The {0} field should not be modified'.format(GroupField.id))
+
         if GroupField.name not in group:
             raise InvalidGroupError('The group should have a name field.')
 
