@@ -35,11 +35,11 @@ class ViewAdapter(object):
     Adapter for the view collection.
     """
 
-    VIEWS_COLLECTION = 'views'
+    COLLECTION = 'views'
 
     def __init__(self):
-        self.views_collection = MongoCollection(
-            MongoStore.get_default().get_collection(self.VIEWS_COLLECTION))
+        self.collection = MongoCollection(
+            MongoStore.get_default().get_collection(self.COLLECTION))
 
     def get_by_id(self, view_id):
         """
@@ -47,7 +47,7 @@ class ViewAdapter(object):
 
         :param str view_id: the id of the view.
         """
-        return self.views_collection.find_one({
+        return self.collection.find_one({
             ViewField.id: view_id
         })
 
@@ -55,23 +55,28 @@ class ViewAdapter(object):
         """
         Create a new view and return its id.
 
-        :param Dict view:
+        :param Dict[str, Any] view:
         :rtype: str
         """
-        return self.views_collection.insert(view)
+        return self.collection.insert(view)
 
     def update(self, view_id, view):
         """
-        Update a view given its id
+        Update a view given its id.
+
+        :param str view_id: the id of the view.
+        :param Dict[str, Any] view:
         """
-        self.views_collection.update({
+        self.collection.update({
             ViewField.id: view_id
         }, view, upsert=False)
 
     def remove_with_id(self, view_id):
         """
         Remove a view given its id.
+
+        :param str view_id: the id of the view.
         """
-        self.views_collection.remove({
+        self.collection.remove({
             ViewField.id: view_id
         })
