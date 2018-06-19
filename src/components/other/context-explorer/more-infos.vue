@@ -30,30 +30,19 @@
                     v-list-tile-content {{ item }}
       v-flex.my-2(xs12)
         h3.text-xs-center.my-2 Pbehaviors
-        v-data-table(v-if="pbehaviorsList.length > 0", :items="pbehaviorsList", :headers="pbehaviorsTableHeaders")
-          template(slot="items" slot-scope="props")
-            td {{ props.item.name }}
-            td {{ props.item.author }}
-            td {{ props.item.connector }}
-            td {{ props.item.connector_name }}
-            td {{ props.item.enabled }}
-            td {{ props.item.tstart }}
-            td {{ props.item.tstop }}
-            td {{ props.item.type }}
-            td {{ props.item.reason }}
-            td {{ props.item.rrule }}
-        div.red.darken-2.white--text.py-3.text-xs-center(v-else) No pbehaviors
+        pbehaviors-list(:itemId="item.props._id")
       v-flex.my-2(xs12)
         h3.text-xs-center Infos
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapGetters } = createNamespacedHelpers('pbehavior');
+import PbehaviorsList from '@/components/other/context-explorer/pbehaviors-list.vue';
 
 export default {
   name: 'context-more-infos',
+  components: {
+    PbehaviorsList,
+  },
   props: {
     item: {
       type: Object,
@@ -64,7 +53,6 @@ export default {
     return {
       isImpactExpanded: false,
       isDependsExpanded: false,
-      pbehaviors: [],
       pbehaviorsTableHeaders: [
         {
           text: 'Name',
@@ -109,16 +97,7 @@ export default {
       ],
     };
   },
-  computed: {
-    ...pbehaviorMapGetters(['error', 'pbehaviorsList']),
-  },
-  mounted() {
-    this.fetchPbehaviorsList({ id: this.item.props._id });
-  },
   methods: {
-    ...pbehaviorMapAction({
-      fetchPbehaviorsList: 'fetchById',
-    }),
     click() {
       console.log(this.item);
     },

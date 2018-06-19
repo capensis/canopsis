@@ -13,17 +13,21 @@ export default {
   state: {
     pbehaviorsList: [],
     error: '',
+    pending: true,
   },
   getters: {
     pbehaviorsList: state => state.pbehaviorsList,
     error: state => state.error,
+    pending: state => state.pending,
   },
   mutations: {
     [types.FETCH_BY_ID_COMPLETED](state, payload) {
       state.pbehaviorsList = payload;
+      state.pending = false;
     },
     [types.FETCH_BY_ID_FAILED](state, err) {
       state.error = err;
+      state.pending = false;
     },
   },
   actions: {
