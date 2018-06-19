@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    basic-list.list(:items="items")
+    basic-list(:items="items")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
           span {{ columnProperty.text }}
@@ -75,8 +75,5 @@ export default {
     position: fixed;
     bottom: 0;
     right: 0;
-  }
-  .list{
-    margin-bottom: 2%;
   }
 </style>
