@@ -11,6 +11,7 @@
         td.box
       tr.container(slot="expandedRow", slot-scope="item")
     pagination(:meta="meta", :limit="limit")
+    create-entity.fab
 </template>
 
 <script>
@@ -18,14 +19,14 @@ import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context-explorer/searching/context-search.vue';
-
+import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
 import PaginationMixin from '@/mixins/pagination';
 import omit from 'lodash/omit';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 
 export default {
-  components: { BasicList, ContextSearch },
+  components: { BasicList, ContextSearch, CreateEntity },
   mixins: [PaginationMixin],
   props: {
     contextProperties: {
@@ -71,5 +72,10 @@ export default {
   .box{
     width: 10%;
     flex: 1;
+  }
+  .fab {
+    position: fixed;
+    bottom: 0;
+    right: 0;
   }
 </style>

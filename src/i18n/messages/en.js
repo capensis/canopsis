@@ -2,11 +2,14 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    name: 'Name',
+    description: 'Description',
     by: 'By',
     date: 'Date',
     comment: 'Comment',
     end: 'End',
     submit: 'Submit',
+    enabled: 'Enabled',
     login: 'Login',
     username: 'Username',
     password: 'Password',
@@ -58,6 +61,10 @@ export default {
     '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
     '</dl>',
   },
+  entities: {
+    watcher: 'watcher',
+    entities: 'entities',
+  },
   alarmList: {
     actions: {
       titles: {
@@ -103,6 +110,18 @@ export default {
     moreInfosModal: '"More Infos" Popup',
   },
   modals: {
+    createEntity: {
+      title: 'Create an entity',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Manage Infos',
+        types: {
+          connector: 'connector',
+          component: 'component',
+          resource: 'resource',
+        },
+      },
+    },
     createAckEvent: {
       title: 'Add event type: ack',
       tooltips: {
