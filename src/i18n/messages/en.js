@@ -4,6 +4,10 @@ export default {
   common: {
     name: 'Name',
     description: 'Description',
+    by: 'By',
+    date: 'Date',
+    comment: 'Comment',
+    end: 'End',
     submit: 'Submit',
     enabled: 'Enabled',
     login: 'Login',
@@ -48,17 +52,29 @@ export default {
   },
   alarmList: {
     actions: {
-      ack: 'Ack',
-      fastAck: 'Fast ack',
-      ackRemove: 'Cancel ack',
-      pbehavior: 'Periodical behavior',
-      snooze: 'Snooze alarm',
-      pbehaviorList: 'List periodic behaviors',
-      declareTicket: 'Declare ticket',
-      associateTicket: 'Associate ticket',
-      cancel: 'Cancel alarm',
-      changeState: 'Change criticity',
-      moreInfos: 'More infos',
+      titles: {
+        ack: 'Ack',
+        fastAck: 'Fast ack',
+        ackRemove: 'Cancel ack',
+        pbehavior: 'Periodical behavior',
+        snooze: 'Snooze alarm',
+        pbehaviorList: 'List periodic behaviors',
+        declareTicket: 'Declare ticket',
+        associateTicket: 'Associate ticket',
+        cancel: 'Cancel alarm',
+        changeState: 'Change criticity',
+        moreInfos: 'More infos',
+      },
+      iconsTitles: {
+        ack: 'Ack',
+        declareTicket: 'Declared ticket',
+        canceled: 'Canceled',
+        snooze: 'Snooze',
+        pbehaviors: 'Periodic behaviors',
+      },
+      iconsFields: {
+        ticketNumber: 'Ticket number',
+      },
     },
   },
   alarmListSettings: {
@@ -178,6 +194,7 @@ export default {
       duration: 'Duration',
       state: 'State',
       status: 'Status',
+      extraDetails: 'Extra details',
     },
     /**
      * This object for pbehavior fields from database
@@ -185,8 +202,6 @@ export default {
     pbehaviorList: {
       name: 'Name',
       author: 'Author',
-      connector: 'Connector',
-      connector_name: 'Connector name',
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
