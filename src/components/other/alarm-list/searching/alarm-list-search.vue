@@ -34,9 +34,12 @@ export default {
     },
     submit() {
       const search = this.searchingText;
-      const { query } = this.$route;
-      query.search = search;
-      this.$router.replace({ query });
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          search,
+        },
+      });
     },
   },
 };
