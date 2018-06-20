@@ -188,6 +188,13 @@ export default {
       reason: 'Raison',
       rrule: 'Rrule',
     },
+    contextEntities: {
+      columns: {
+        name: 'Nom',
+        type: 'Type',
+        _id: 'Id',
+      },
+    },
   },
   rRule: {
     advancedHint: 'Séparer les nombres par une virgule',

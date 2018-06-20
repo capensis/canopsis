@@ -5,38 +5,49 @@
 </template>
 
 <script>
+import ContextEntityMixin from '@/mixins/context';
 import ContextTable from '@/components/other/context-explorer/context-table.vue';
 
 export default {
   name: 'context',
   components: { ContextTable },
+  mixins: [
+    ContextEntityMixin,
+  ],
   data() {
     return {
       contextProperties: {
         laptop: [
           {
-            text: 'name',
-            value: 'name',
+            text: this.$t('tables.contextEntities.columns._id'),
+            value: '_id',
           },
           {
-            text: 'type',
+            text: this.$t('tables.contextEntities.columns.type'),
             value: 'type',
+          },
+          {
+            text: this.$t('tables.contextEntities.columns.name'),
+            value: 'name',
           },
         ],
         mobile: [
           {
-            text: 'name',
+            text: this.$t('tables.contextEntities.columns.name'),
             value: 'name',
           },
         ],
         tablet: [
           {
-            text: 'name',
+            text: this.$t('tables.contextEntities.columns.name'),
             value: 'name',
           },
         ],
       },
     };
+  },
+  mounted() {
+    this.fetchContextEntities();
   },
 };
 </script>
