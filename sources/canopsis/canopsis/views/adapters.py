@@ -72,7 +72,8 @@ class ViewAdapter(object):
     """
     Adapter for the view collection.
     """
-    def __init__(self):
+    def __init__(self, logger):
+        self.logger = logger
         self.view_collection = MongoCollection(
             MongoStore.get_default().get_collection(VIEWS_COLLECTION))
         self.group_collection = MongoCollection(
@@ -220,7 +221,8 @@ class GroupAdapter(object):
     """
     Adapter for the group collection.
     """
-    def __init__(self):
+    def __init__(self, logger):
+        self.logger = logger
         self.group_collection = MongoCollection(
             MongoStore.get_default().get_collection(GROUPS_COLLECTION))
         self.view_collection = MongoCollection(

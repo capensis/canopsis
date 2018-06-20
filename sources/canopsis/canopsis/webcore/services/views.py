@@ -33,8 +33,8 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
 
 def exports(ws):
 
-    view_adapter = ViewAdapter()
-    group_adapter = GroupAdapter()
+    view_adapter = ViewAdapter(ws.logger)
+    group_adapter = GroupAdapter(ws.logger)
 
     @ws.application.get(
         '/api/v2/views'
