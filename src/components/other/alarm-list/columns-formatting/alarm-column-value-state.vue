@@ -5,16 +5,19 @@
 </template>
 
 <script>
-import { ENTITIES_STATES } from '@/constants';
+import getProp from 'lodash/get';
+
+import { ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 
 export default {
   props: {
-    stateId: {
+    alarm: {
+      type: Object,
       required: true,
     },
-    showIcon: {
-      type: Boolean,
-      default: false,
+    propertyKey: {
+      type: String,
+      default: 'v.state.val',
     },
   },
   data() {
@@ -28,23 +31,17 @@ export default {
     };
   },
   computed: {
+    stateId() {
+      return getProp(this.alarm, this.propertyKey);
+    },
+    showIcon() {
+      return getProp(this.alarm, 'v.state._t') === EVENT_ENTITY_TYPES.changeState;
+    },
     color() {
-      const color = this.colors[this.stateId];
-
-      if (color) {
-        return color;
-      }
-
-      return 'purple';
+      return this.colors[this.stateId] || 'purple';
     },
     text() {
-      const title = this.$t(`tables.alarmStates.${this.stateId}`);
-
-      if (title) {
-        return title;
-      }
-
-      return 'Unknown';
+      return this.$t(`tables.alarmStates.${this.stateId}`) || 'Unknown';
     },
   },
 };

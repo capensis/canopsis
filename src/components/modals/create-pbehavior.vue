@@ -51,10 +51,9 @@ import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
-import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
+import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import { MODALS } from '@/constants';
 
-const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
@@ -64,7 +63,7 @@ export default {
     validator: 'new',
   },
   components: { DateTimePicker, RRuleForm },
-  mixins: [ModalInnerItemMixin],
+  mixins: [ModalInnerItemsMixin],
   data() {
     const start = new Date();
     const stop = new Date(start.getTime());
@@ -88,7 +87,6 @@ export default {
     };
   },
   methods: {
-    ...alarmMapActions({ fetchAlarmListWithPreviousParams: 'fetchListWithPreviousParams' }),
     ...pbehaviorMapActions({ createPbehavior: 'create' }),
 
     changeRRule(value) {
@@ -105,7 +103,7 @@ export default {
 
           author: 'Username of current user', // TODO: add this field after login task finish
           filter: {
-            _id: { $in: [this.item.d] },
+            _id: { $in: this.items.map(v => v.d) },
           },
           tstart: this.form.tstart.getTime(),
           tstop: this.form.tstop.getTime(),
@@ -116,8 +114,7 @@ export default {
         }
 
         try {
-          await this.createPbehavior(data);
-          await this.fetchAlarmListWithPreviousParams();
+          await this.createPbehavior({ data, parents: this.items });
 
           this.hideModal();
         } catch (err) {
