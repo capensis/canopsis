@@ -8,7 +8,6 @@ import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
 import Rrule from '@/components/forms/rrule.vue';
-import Test from '@/components/modals/create-entity.vue';
 
 Vue.use(Router);
 
@@ -44,11 +43,6 @@ export default new Router({
       path: '/filter',
       name: 'filter',
       component: Filter,
-    },
-    {
-      path: '/text',
-      name: 'text',
-      component: Test,
     },
     {
       path: '/rrule',

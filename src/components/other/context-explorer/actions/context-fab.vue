@@ -11,21 +11,32 @@ v-speed-dial(
       v-icon watch
     span {{ $t(`entities.watcher`)}}
   v-tooltip(left)
-    v-btn(slot="activator", fab, dark, small, color='red')
+    v-btn(slot="activator", fab, dark, small, color='red', @click.prevent="showCreateEntityModal")
       v-icon perm_identity
     span {{ $t(`entities.entities`)}}
 </template>
 
 <script>
+import ModalMixin from '@/mixins/modal/modal';
+import { MODALS } from '@/constants';
+
 export default {
+  mixins: [ModalMixin],
   data() {
     return {
       fab: false,
     };
   },
   methods: {
-
-
+    showCreateEntityModal() {
+      this.showModal({
+        name: MODALS.createEntity,
+        config: {
+          ...this.modalConfig,
+          title: 'modals.createEntity.title',
+        },
+      });
+    },
   },
 };
 </script>
