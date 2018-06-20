@@ -1,5 +1,5 @@
 <template lang="pug">
-v-data-table(v-if="!pending", :items="items")
+v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
   template(slot="items" slot-scope="props")
     td {{ props.item.name }}
     td {{ props.item.author }}
@@ -30,18 +30,64 @@ export default {
   data() {
     return {
       items: [],
+      pbehaviorsTableHeaders: [
+        {
+          text: 'Name',
+          sortable: false,
+        },
+        {
+          text: 'Author',
+          sortable: false,
+        },
+        {
+          text: 'Connector',
+          sortable: false,
+        },
+        {
+          text: 'Connector name',
+          sortable: false,
+        },
+        {
+          text: 'Is Enabled',
+          sortable: false,
+        },
+        {
+          text: 'Begins',
+          sortable: false,
+        },
+        {
+          text: 'Ends',
+          sortable: false,
+        },
+        {
+          text: 'Type',
+          sortable: false,
+        },
+        {
+          text: 'Reason',
+          sortable: false,
+        },
+        {
+          text: 'Rrule',
+          sortable: false,
+        },
+      ],
     };
   },
   computed: {
-    ...pbehaviorMapgetters(['pbehaviorsList', 'pending']),
+    ...pbehaviorMapgetters(['pbehaviorsList']),
   },
   mounted() {
-    this.items = this.fetchPbehaviorsList({ id: this.itemId });
+    this.fetchItems();
   },
   methods: {
     ...pbehaviorMapAction({
       fetchPbehaviorsList: 'fetchById',
     }),
+    async fetchItems() {
+      await this.fetchPbehaviorsList({ id: this.itemId });
+      this.items = [...this.pbehaviorsList];
+    },
   },
 };
 </script>

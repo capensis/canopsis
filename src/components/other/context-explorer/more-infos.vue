@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container.pa-0(fluid)
     v-layout(wrap)
-      //v-flex(xs12)
+      v-flex(xs12)
         v-btn(@click.stop="click") Test
       v-flex.my-2(xs12)
         v-layout(justify-space-around, wrap)
@@ -53,48 +53,6 @@ export default {
     return {
       isImpactExpanded: false,
       isDependsExpanded: false,
-      pbehaviorsTableHeaders: [
-        {
-          text: 'Name',
-          sortable: false,
-        },
-        {
-          text: 'Author',
-          sortable: false,
-        },
-        {
-          text: 'Connector',
-          sortable: false,
-        },
-        {
-          text: 'Connector name',
-          sortable: false,
-        },
-        {
-          text: 'Is Enabled',
-          sortable: false,
-        },
-        {
-          text: 'Begins',
-          sortable: false,
-        },
-        {
-          text: 'Ends',
-          sortable: false,
-        },
-        {
-          text: 'Type',
-          sortable: false,
-        },
-        {
-          text: 'Reason',
-          sortable: false,
-        },
-        {
-          text: 'Rrule',
-          sortable: false,
-        },
-      ],
     };
   },
   methods: {
