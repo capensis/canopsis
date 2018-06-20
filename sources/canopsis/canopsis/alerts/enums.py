@@ -51,6 +51,7 @@ class AlarmField(DefaultEnum):
     initial_output = 'initial_output'
     display_name = 'display_name'
     last_event_date = 'last_event_date'
+    done = 'done'
 
 
 class States(DefaultEnum):

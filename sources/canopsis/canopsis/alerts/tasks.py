@@ -177,6 +177,25 @@ def declare_ticket(manager, alarm, author, message, event):
     return alarm
 
 
+@register_task('alerts.useraction.done')
+def done(manager, alarm, author, message, event):
+    """
+    Called when a user associates a ticket to an alarm.
+    """
+
+    step = {
+        '_t': 'assocticket',
+        't': event['timestamp'],
+        'a': author,
+        'm': event.get('message'),
+    }
+
+    alarm[AlarmField.done.value] = step
+    alarm[AlarmField.steps.value].append(step)
+
+    return alarm
+
+
 @register_task('alerts.useraction.assocticket')
 def associate_ticket(manager, alarm, author, message, event):
     """
