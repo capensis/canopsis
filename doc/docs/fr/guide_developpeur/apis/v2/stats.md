@@ -6,7 +6,7 @@
 
 Cette API définit deux routes :
 
- - `POST /api/v2/stats/<nom de la statistique>` : pour calculer la statistiques
+ - `POST /api/v2/stats/<nom de la statistique>` : pour calculer la statistique
    `<nom de la statistique>`.
  - `POST /api/v2/stats`: pour calculer la valeur de plusieurs statistiques.
 
