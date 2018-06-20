@@ -10,6 +10,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import { omit } from 'lodash';
 import ModalInnerMixin from '@/mixins/modal/modal-inner';
 
 const { mapActions: contextMapActions } = createNamespacedHelpers('context');
@@ -23,9 +24,10 @@ export default {
     }),
     click(choice) {
       if (choice) {
-        if (this.config.action === 'removeEntity') {
-          this.removeEntity({ ids: `"${this.config.item.props._id}"` });
-        }
+        let args = { ...this.config.args };
+        args = omit(args, ['action']);
+
+        this[this.config.action]({ ...args });
       }
 
       this.hideModal();
