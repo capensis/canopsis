@@ -27,7 +27,7 @@ from __future__ import unicode_literals
 
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
-from canopsis.views.enums import ViewField, GroupField
+from canopsis.views.enums import ViewField, GroupField, ViewResponseField
 
 VIEWS_COLLECTION = 'views'
 GROUPS_COLLECTION = 'viewgroups'
@@ -123,7 +123,7 @@ class ViewAdapter(object):
 
     def list(self, name=None, title=None):
         """
-        Return a list of views, optionnally filtered by name or title.
+        Return a list of views, optionally filtered by name or title.
 
         :param str name:
         :param str title:
@@ -141,7 +141,39 @@ class ViewAdapter(object):
         if title is not None:
             view_filter[ViewField.title] = title
 
-        return list(self.view_collection.find(view_filter))
+        views = self.view_collection.find(view_filter)
+        groups = self.group_collection.find({})
+
+        response_groups = {}
+
+        for group in groups:
+            group_id = group[GroupField.id]
+
+            del group[GroupField.id]
+            group[GroupField.views] = []
+
+            response_groups[group_id] = group
+
+        for view in views:
+            try:
+                group_id = view[ViewField.group_id]
+            except KeyError:
+                # This should never happen as long as the collections are only
+                # modified using the API
+                self.logger.exception(
+                    'The view {0} is missing the group_id field.'.format(
+                        view[ViewField.id]))
+
+            try:
+                response_groups[group_id][GroupField.views].append(view)
+            except KeyError:
+                # This should never happen as long as the collections are only
+                # modified using the API
+                self.logger.exception('No group with id: {0}'.format(group_id))
+
+        return {
+            ViewResponseField.groups: response_groups
+        }
 
     def validate(self, view_id, view):
         """
@@ -214,7 +246,7 @@ class GroupAdapter(object):
 
     def get_views(self, group_id, name=None, title=None):
         """
-        Returns the list of views of a group, optionnally filtered by name or
+        Returns the list of views of a group, optionally filtered by name or
         title.
 
         :param str group_id:
@@ -297,7 +329,7 @@ class GroupAdapter(object):
 
     def list(self, name=None):
         """
-        Return a list of groups, optionnally filtered by name.
+        Return a list of groups, optionally filtered by name.
 
         :param str name:
         :rtype: List[Dict[str, Any]]

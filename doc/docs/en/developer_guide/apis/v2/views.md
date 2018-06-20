@@ -10,7 +10,21 @@ GET /api/v2/views?name=...
 GET /api/v2/views?title=...
 ```
 
-Return a list of all the views, optionally filtered by name or title.
+Return all the views, optionally filtered by name or title.
+
+```
+{
+    "groups": {
+        "group1": {
+            "name": "...",
+            "views": [
+                // ...
+            ]
+        },
+        // ...
+    }
+}
+```
 
 ### Create a view
 
@@ -87,6 +101,7 @@ Return the list of the views of a group, optionally filtered by name or title.
 
 ```
 {
+    "_id": "...",
     "name": "...",
     "views": [
         ...

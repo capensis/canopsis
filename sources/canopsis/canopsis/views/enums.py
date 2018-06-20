@@ -45,3 +45,11 @@ class GroupField(FastEnum):
     id = '_id'
     views = 'views'
     name = 'name'
+
+
+class ViewResponseField(FastEnum):
+    """
+    The ViewResponseField enumeration defines the names of the fields of a
+    reponse to the views API.
+    """
+    groups = 'groups'

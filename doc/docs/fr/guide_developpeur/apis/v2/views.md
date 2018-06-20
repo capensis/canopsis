@@ -10,8 +10,21 @@ GET /api/v2/views?name=...
 GET /api/v2/views?title=...
 ```
 
-Renvoie une liste de toutes les vues, optionnellement filtrées par nom ou par
-titre.
+Renvoie toutes les vues, optionnellement filtrées par nom ou par titre.
+
+```
+{
+    "groups": {
+        "group1": {
+            "name": "...",
+            "views": [
+                // ...
+            ]
+        },
+        // ...
+    }
+}
+```
 
 ### Créer une vue
 
@@ -89,6 +102,7 @@ titre.
 
 ```
 {
+    "_id": "...",
     "name": "...",
     "views": [
         ...
