@@ -1,19 +1,22 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
-import os
-import sys
 
 from canopsis.confng.vendor import SimpleConf
 
 
 class ConfigurationUnreachable(Exception):
+    """
+    Raise/catch this exception when configuration cannot be fetched
+    for any reason.
+    """
     pass
 
 
 class Configuration(SimpleConf):
+    """
+    Lightweigh configuration loader.
+    """
 
     @staticmethod
     def load(path, driver_cls, *args, **kwargs):
@@ -25,13 +28,12 @@ class Configuration(SimpleConf):
         :raises ConfigurationUnreachable: cannot open configuration
         :rtype: dict
         """
-        conf_file = None
         conf = {}
 
         try:
             driver = driver_cls(path, *args, **kwargs)
             conf = SimpleConf.export(driver)
-        except IOError, ex:
+        except IOError as ex:
             raise ConfigurationUnreachable(str(ex))
 
         return conf

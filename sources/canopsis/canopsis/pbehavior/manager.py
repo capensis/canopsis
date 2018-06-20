@@ -555,19 +555,36 @@ class PBehaviorManager(object):
         dt_list = [dttstart, dttstop]
         rrule = pbehavior['rrule']
         if rrule:
-            # returns a list of dates that are between the given tstart/tstop,
-            # and using dtstart fr
+            # compute the minimal date from which to start generating
+            # dates from the rrule.
+            # a complementary date (missing_date) is computed and added
+            # at index 0 of the generated dt_list to ensure we manage
+            # dates at boundaries.
+            dt_tstart_date = dtts.date()
+            dt_tstart_time = dttstart.time().replace(tzinfo=tz)
+            dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
+
+            # dates in dt_list at 0 and 1 indexes can be equal, so we generate
+            # three dates to ensure [1] - [2] will give a non-zero timedelta
+            # object.
             dt_list = list(
-                rrulestr(rrule, dtstart=dtts).between(
-                    dttstart, dttstop, inc=True
+                rrulestr(rrule, dtstart=dt_dtstart).xafter(
+                    dttstart, count=3, inc=True
                 )
             )
 
-            if len(dt_list) == 1 and dtts >= dt_list[0]:
-                return True
+            # compute the "missing date": a date before the first one
+            # just in case that first date isn't taking in account
+            # a pbehavior that just begun.
+            missing_date = dt_list[0] - (dt_list[-1] - dt_list[-2])
+            dt_list.insert(0, missing_date)
 
-            elif len(dt_list) > 1 and dt_list[0] >= dtts and dtts <= dt_list[-1]:
-                return True
+            delta = dttstop - dttstart
+            for dt in dt_list:
+                if dtts >= dt and dtts <= dt + delta:
+                    return True
+
+            return False
 
         else:
             if dtts >= dttstart and dtts <= dttstop:
