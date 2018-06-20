@@ -10,6 +10,15 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Go]: New engine interface
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 2.6.8 - Maintenance release - Due date : 2018-06-20
+
+- [Service weather]: fixed an issue where the popup overlay could stay when the popup was closed, freezing the view
+- [CAT]: ported the email2canopsis connector to python3 and fixed an issue with pattern matching caused by the new python version.
+- [pbehaviors]: refactored the pbheaviors internal API to unify processing and avoid inconsistencies
+
+## Canopsis 2.6.7 - Maintenance release - not released
+
+This release was replaced by the 2.6.8 version  to integrate an urgent fix on the pbehaviors. 
 
 ## Canopsis 2.6.6 - Maintenance release -  Due date : 2018-06-08
 
