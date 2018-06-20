@@ -25,7 +25,8 @@ from bottle import request
 
 from canopsis.views.enums import ViewField, GroupField
 from canopsis.views.adapters import ViewAdapter, GroupAdapter, \
-    InvalidViewError, InvalidGroupError, NonEmptyGroupError
+    InvalidViewError, InvalidGroupError, NonEmptyGroupError, \
+    InvalidFilterError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
     HTTP_NOT_FOUND
 
@@ -39,9 +40,15 @@ def exports(ws):
         '/api/v2/views'
     )
     def list_views():
-        views = view_adapter.list()
+        name = request.query.getunicode(ViewField.name)
+        title = request.query.getunicode(ViewField.title)
 
-        return gen_json(views)
+        try:
+            return gen_json(view_adapter.list(name, title))
+        except InvalidFilterError as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
 
 
     @ws.application.get(
@@ -123,16 +130,23 @@ def exports(ws):
         '/api/v2/views/groups'
     )
     def list_groups():
-        groups = group_adapter.list()
-
-        return gen_json(groups)
+        name = request.query.getunicode(GroupField.name)
+        return gen_json(group_adapter.list(name))
 
 
     @ws.application.get(
         '/api/v2/views/groups/<group_id>'
     )
     def get_group(group_id):
-        group = group_adapter.get_by_id(group_id)
+        name = request.query.getunicode(ViewField.name)
+        title = request.query.getunicode(ViewField.title)
+
+        try:
+            group = group_adapter.get_by_id(group_id, name, title)
+        except InvalidFilterError as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
 
         if not group:
             return gen_json_error({

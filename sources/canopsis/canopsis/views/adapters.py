@@ -58,6 +58,16 @@ class InvalidGroupError(Exception):
         self.message = message
 
 
+class InvalidFilterError(Exception):
+    """
+    An InvalidFilterError is an exception that is raised when a filter is
+    invalid.
+    """
+    def __init__(self, message):
+        super(InvalidFilterError, self).__init__(message)
+        self.message = message
+
+
 class ViewAdapter(object):
     """
     Adapter for the view collection.
@@ -111,13 +121,27 @@ class ViewAdapter(object):
             ViewField.id: view_id
         })
 
-    def list(self):
+    def list(self, name=None, title=None):
         """
-        Return a list of views.
+        Return a list of views, optionnally filtered by name or title.
 
+        :param str name:
+        :param str title:
         :rtype: List[Dict[str, Any]]
+        :raises: InvalidFilterError
         """
-        return list(self.view_collection.find({}))
+        view_filter = {}
+
+        if name is not None and title is not None:
+            raise InvalidFilterError(
+                'Cannot filter both by name and by title.')
+
+        if name is not None:
+            view_filter[ViewField.name] = name
+        if title is not None:
+            view_filter[ViewField.title] = title
+
+        return list(self.view_collection.find(view_filter))
 
     def validate(self, view_id, view):
         """
@@ -170,31 +194,49 @@ class GroupAdapter(object):
         self.view_collection = MongoCollection(
             MongoStore.get_default().get_collection(VIEWS_COLLECTION))
 
-    def get_by_id(self, group_id):
+    def get_by_id(self, group_id, name=None, title=None):
         """
         Get a group given its id.
 
         :param str group_id: the id of the group.
+        :param str name:
+        :param str title:
+        :rtype: Dict[str, Any]
         """
         group = self.group_collection.find_one({
             GroupField.id: group_id
         })
 
         if group:
-            group[GroupField.views] = self.get_views(group_id)
+            group[GroupField.views] = self.get_views(group_id, name, title)
 
         return group
 
-    def get_views(self, group_id):
+    def get_views(self, group_id, name=None, title=None):
         """
-        Returns the list of views of a group.
+        Returns the list of views of a group, optionnally filtered by name or
+        title.
 
         :param str group_id:
+        :param str name:
+        :param str title:
         :rtype: List[Dict[str, Any]]
+        :raises: InvalidFilterError
         """
-        return list(self.view_collection.find({
+        view_filter = {
             ViewField.group_id: group_id
-        }))
+        }
+
+        if name is not None and title is not None:
+            raise InvalidFilterError(
+                'Cannot filter both by name and by title.')
+
+        if name is not None:
+            view_filter[ViewField.name] = name
+        if title is not None:
+            view_filter[ViewField.title] = title
+
+        return list(self.view_collection.find(view_filter))
 
     def is_empty(self, group_id):
         """
@@ -253,13 +295,19 @@ class GroupAdapter(object):
             GroupField.id: group_id
         })
 
-    def list(self):
+    def list(self, name=None):
         """
-        Return a list of groups.
+        Return a list of groups, optionnally filtered by name.
 
+        :param str name:
         :rtype: List[Dict[str, Any]]
         """
-        return list(self.group_collection.find({}))
+        group_filter = {}
+
+        if name is not None:
+            group_filter[GroupField.name] = name
+
+        return list(self.group_collection.find(group_filter))
 
     def validate(self, group_id, group):
         """
