@@ -56,8 +56,12 @@ export default {
       return query;
     },
     deleteEntity(item) {
-      this.showModal({ name: 'confirmation', config: { action: 'removeEntity', args: { ids: `"${item.props._id}"` } } });
-      // this.remove({ ids: `"${item.props._id}"` });
+      this.showModal({
+        name: 'confirmation',
+        config: {
+          action: () => this.remove({ id: item.props._id }),
+        },
+      });
     },
   },
 };
