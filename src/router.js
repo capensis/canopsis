@@ -8,6 +8,8 @@ import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
 import Rrule from '@/components/forms/rrule.vue';
+import addImpacts from '@/components/other/context-explorer/actions/createEntities/addImpacts.vue';
+
 
 Vue.use(Router);
 
@@ -18,6 +20,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: addImpacts,
     },
     {
       path: '/login',
