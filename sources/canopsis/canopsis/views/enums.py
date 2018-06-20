@@ -34,6 +34,8 @@ class ViewField(FastEnum):
     """
     id = '_id'
     group_id = 'group_id'
+    name = 'name'
+    title = 'title'
 
 
 class GroupField(FastEnum):

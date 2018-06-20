@@ -85,7 +85,7 @@ class ViewAdapter(object):
         :param Dict[str, Any] view:
         :rtype: str
         """
-        self.validate(view)
+        self.validate(None, view)
         return self.view_collection.insert(view)
 
     def update(self, view_id, view):
@@ -95,11 +95,7 @@ class ViewAdapter(object):
         :param str view_id: the id of the view.
         :param Dict[str, Any] view:
         """
-        if view.get(ViewField.id, view_id) != view_id:
-            raise InvalidViewError(
-                'The {0} field should not be modified'.format(ViewField.id))
-
-        self.validate(view)
+        self.validate(view_id, view)
 
         self.view_collection.update({
             ViewField.id: view_id
@@ -123,12 +119,18 @@ class ViewAdapter(object):
         """
         return list(self.view_collection.find({}))
 
-    def validate(self, view):
+    def validate(self, view_id, view):
         """
         Check that the view is valid, return InvalidViewError if it is not.
 
         :param Dict[str, Any] view:
         """
+        # Validate id field
+        if view.get(ViewField.id, view_id) != view_id:
+            raise InvalidViewError(
+                'The {0} field should not be modified'.format(ViewField.id))
+
+        # Validate group_id field
         if ViewField.group_id not in view:
             raise InvalidViewError('The view should have a group_id field.')
 
@@ -138,6 +140,24 @@ class ViewAdapter(object):
         })
         if not group:
             raise InvalidViewError('No group with id: {0}'.format(group_id))
+
+        # Validate name field
+        if ViewField.name not in view:
+            raise InvalidViewError('The view should have a name field.')
+
+        view_name = view[ViewField.name]
+        same_name_view = self.view_collection.find_one({
+            ViewField.id: {'$ne': view_id},
+            ViewField.name: view_name
+        })
+        if same_name_view:
+            raise InvalidViewError(
+                'There is already a view with the name: {0}'.format(
+                    view_name))
+
+        # Validate title field
+        if ViewField.title not in view:
+            raise InvalidViewError('The view should have a title field.')
 
 
 class GroupAdapter(object):
