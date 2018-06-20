@@ -99,7 +99,7 @@ The statistic `resolve_time_sla` is a JSON object with the following fields:
  - `below_rate`: the percentage of alarms whose resolve time is below the SLA.
 
 
-## Exemples
+## Examples
 
 ### Number of alarms created by a component
 
