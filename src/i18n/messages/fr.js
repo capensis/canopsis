@@ -3,7 +3,10 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 export default {
   common: {
     watcher: 'observateur',
+    name: 'Nom',
+    description: 'Description',
     submit: 'Soumettre',
+    enabled: 'Activé',
     login: 'Connexion',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
@@ -79,6 +82,15 @@ export default {
   modals: {
     createEntity: {
       title: 'Créer une entitée',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Gérer Infos',
+        types: {
+          connector: 'connecteur',
+          component: 'composant',
+          resource: 'ressource',
+        },
+      },
     },
     moreInfos: {
       moreInfos: 'Plus d\'infos',

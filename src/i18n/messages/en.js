@@ -2,7 +2,10 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    name: 'Name',
+    description: 'Description',
     submit: 'Submit',
+    enabled: 'Enabled',
     login: 'Login',
     username: 'Username',
     password: 'Password',
@@ -78,6 +81,15 @@ export default {
   modals: {
     createEntity: {
       title: 'Create an entity',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Manage Infos',
+        types: {
+          connector: 'connector',
+          component: 'component',
+          resource: 'resource',
+        },
+      },
     },
     createAckEvent: {
       title: 'Add event type: ack',
