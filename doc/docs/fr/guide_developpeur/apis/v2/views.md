@@ -1,6 +1,8 @@
 # API Vues
 
-## Lister les vues
+## Vues
+
+### Lister les vues
 
 ```
 GET /api/v2/views
@@ -11,7 +13,7 @@ GET /api/v2/views?title=...
 Renvoie une liste de toutes les vues, optionnellement filtrées par nom ou par
 titre.
 
-## Créer une vue
+### Créer une vue
 
 ```
 POST /api/v2/views
@@ -26,13 +28,13 @@ POST /api/v2/views
 
 Crée une vue et renvoie son id (qui est généré automatiquement).
 
-## Récupérer une vue
+### Récupérer une vue
 
 ```
 GET /api/v2/views/<view_id>
 ```
 
-## Modifier une vue
+### Modifier une vue
 
 ```
 PUT /api/v2/views/<view_id>
@@ -45,16 +47,16 @@ PUT /api/v2/views/<view_id>
 }
 ```
 
-## Supprimer une vue
+### Supprimer une vue
 
 ```
 DELETE /api/v2/views/<view_id>
 ```
 
 
-# Groupes
+## Groupes
 
-## Lister les groupes
+### Lister les groupes
 
 ```
 GET /api/v2/views/groups
@@ -63,7 +65,7 @@ GET /api/v2/views/groups?name=...
 
 Renvoie la liste des groupes, optionnellement filtrées par nom.
 
-## Créer un groupe
+### Créer un groupe
 
 ```
 POST /api/v2/views/groups/<group_id>
@@ -74,7 +76,7 @@ POST /api/v2/views/groups/<group_id>
 
 Renvoie une erreur si l'id (qui est donné par l'utilisateur) existe déjà.
 
-## Lister les vues d'un groupe
+### Lister les vues d'un groupe
 
 ```
 GET /api/v2/views/groups/<group_id>
@@ -94,7 +96,7 @@ titre.
 }
 ```
 
-## Modifier un groupe
+### Modifier un groupe
 
 ```
 PUT /api/v2/views/groups/<group_id>
@@ -103,7 +105,7 @@ PUT /api/v2/views/groups/<group_id>
 }
 ```
 
-## Supprimer un groupe
+### Supprimer un groupe
 
 ```
 DELETE /api/v2/views/groups/<group_id>
