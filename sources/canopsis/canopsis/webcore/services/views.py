@@ -83,7 +83,9 @@ def exports(ws):
                 'description': e.message
             }, HTTP_ERROR)
 
-        return gen_json({'id': view_id})
+        return gen_json({
+            ViewField.id: view_id
+        })
 
 
     @ws.application.delete(
