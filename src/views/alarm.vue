@@ -1,26 +1,42 @@
 <template lang="pug">
   div
-    alarms-list-settings
+    settings(
+    v-model="isSettingsOpen",
+    :title="$t('settings.titles.alarmListSettings')",
+    :fields="settingsProperties"
+    )
     alarm-list(
     :alarmProperties="$mq | mq(alarmProperties)",
+    @openSettings="openSettings"
     )
 </template>
 
 <script>
 import AlarmList from '@/components/other/alarm-list/alarm-list.vue';
-import AlarmsListSettings from '@/components/alarms-list-settings.vue';
 import viewMixin from '@/mixins/view';
+import settingsMixin from '@/mixins/settings';
 
 export default {
   components: {
     AlarmList,
-    AlarmsListSettings,
   },
   mixins: [
     viewMixin,
+    settingsMixin,
   ],
   data() {
     return {
+      settingsProperties: [
+        'title',
+        'default-column-sort',
+        'columns',
+        'periodic-refresh',
+        'default-elements-per-page',
+        'opened-resolved-filter',
+        'filters',
+        'info-popup',
+        'more-info',
+      ],
       alarmProperties: {
         laptop: [
           {

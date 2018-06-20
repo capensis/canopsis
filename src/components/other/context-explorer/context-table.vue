@@ -1,5 +1,7 @@
 <template lang="pug">
   div
+    div
+      v-btn(@click.prevent="openSettings") Settings
     basic-list(:items="items")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
@@ -33,6 +35,11 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      isSidebarOpened: false,
+    };
+  },
   computed: {
     ...mapGetters([
       'items',
@@ -50,6 +57,9 @@ export default {
       query.limit = this.limit;
       query.start = ((this.$route.query.page - 1) * this.limit) || 0;
       return query;
+    },
+    openSettings() {
+      this.$emit('openSettings');
     },
   },
 };

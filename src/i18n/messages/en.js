@@ -54,8 +54,11 @@ export default {
       moreInfos: 'More infos',
     },
   },
-  alarmListSettings: {
-    alarmListSettings: 'Alarm list settings',
+  settings: {
+    titles: {
+      alarmListSettings: 'Alarm list settings',
+      contextTableSettings: 'Context table settings',
+    },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default Sort Column',
