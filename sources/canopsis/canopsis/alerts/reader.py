@@ -719,26 +719,16 @@ class AlertsReader(object):
 
                 len_alarms = len(results['alarms'])
 
-                """
-                print('loop: len: {} | limit: {} | api_limit: {}'.format(
-                    len_alarms,
-                    limit,
-                    api_limit,
-                ))
-                """
-
                 # premature break in case we do not have any filter that could
                 # modify the real count.
                 # this condition cannot be embedded in while <cond> because the
                 # loop needs to be ran at least one time.
                 if not filters:
-                    # print('no filters, no need to search more')
                     break
 
                 # filters did not filtered any thing: we don't need to loop
                 # again, even if we don't have enough results.
                 elif filters and truncated_by == 0:
-                    # print('some filters, not results filtered')
                     break
 
             if post_sort:
@@ -749,7 +739,6 @@ class AlertsReader(object):
             if len_alarms > api_limit:
                 results['alarms'] = results['alarms'][0:api_limit]
 
-            # print('end')
             return results
 
         filters = []
@@ -758,7 +747,6 @@ class AlertsReader(object):
             post_sort = True
             filters.append(self._hide_resources)
 
-        # print('start')
         return loop_aggregate(skip, limit, filters, post_sort=post_sort)
 
     @staticmethod
@@ -772,7 +760,9 @@ class AlertsReader(object):
     @staticmethod
     def _hide_resources(alarms):
         """
-        FIXIT: not implemented
+        Reads alarm_hideresources_resource:<connector>/<connector_name>/<resource>/<component>:drop
+        key from redis. if such key exists then the alarm is removed
+        from the result set.
         """
         filtered_alarms = []
         for alarm in alarms:
@@ -790,11 +780,8 @@ class AlertsReader(object):
             drop_value = rconn.get(drop_id)
             to_drop = False
             try:
-                #to_drop = int(str(drop_value)) == 2
                 to_drop = drop_value is not None
-            except TypeError:
-                pass
-            except ValueError:
+            except (TypeError, ValueError):
                 pass
 
             if not to_drop:
