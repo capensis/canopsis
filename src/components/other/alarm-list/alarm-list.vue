@@ -29,7 +29,7 @@
       th.box
     tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in alarmProperties")
-          alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
+          alarm-column-value(:alarm="item.props", :property="property")
         td.box
           actions-panel.actions(:item="item.props")
     tr.container(slot="expandedRow", slot-scope="item")
@@ -136,7 +136,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
   th {
     overflow: hidden;
     text-overflow: ellipsis;

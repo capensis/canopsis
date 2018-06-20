@@ -46,11 +46,16 @@ export default {
           {
             text: this.$t('tables.alarmGeneral.status'),
             value: 'v.status.val',
+            filter: value => this.$t(`tables.alarmStatus.${value}`),
           },
           {
             text: this.$t('tables.alarmGeneral.lastUpdateDate'),
             value: 'v.last_update_date',
             filter: value => this.$d(new Date(value * 1000), 'long'),
+          },
+          {
+            text: this.$t('tables.alarmGeneral.extraDetails'),
+            value: 'icons',
           },
         ],
         tablet: [

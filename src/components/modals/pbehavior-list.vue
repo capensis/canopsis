@@ -12,7 +12,7 @@
               span(
               v-if="key === 'tstart' || key === 'tstop'",
               key="key"
-              ) {{ props.item[key] | moment("DD/MM/YYYY HH:mm:ss") }}
+              ) {{ $d(props.item[key], 'long') }}
               span(v-else) {{ props.item[key] }}
             td
               v-btn.mx-0(@click="removePbehavior({ id: props.item._id })", icon)
@@ -35,8 +35,6 @@ export default {
     const fields = [
       'name',
       'author',
-      'connector',
-      'connector_name',
       'enabled',
       'tstart',
       'tstop',
@@ -45,7 +43,7 @@ export default {
       'rrule',
     ];
 
-    const headers = fields.map(v => ({ sortable: false, text: `tables.pbehaviorList.${v}` }));
+    const headers = fields.map(v => ({ sortable: false, text: this.$t(`tables.pbehaviorList.${v}`) }));
 
     headers.push({ sortable: false, text: 'common.actionsLabel' });
 
