@@ -36,10 +36,8 @@ un). Un filtre de tag peut être :
  - une liste de chaînes, auquel cas la valeur du tag doit faire partie de cette
    liste;
  - un objet de la forme `{"matches": "<regex>"}`, où `<regex>` est une
-   `expression régulière`_, auquel cas la valeur du tag doit être reconnue par
-   cette expression régulière.
-
-.. _expression régulière: https://golang.org/pkg/regexp/syntax/
+   [expression régulière](https://golang.org/pkg/regexp/syntax/), auquel cas la
+   valeur du tag doit être reconnue par cette expression régulière.
 
 ```javascript
 [ // Calcule les statistiques pour les entités appartenant à au moins un des groupes suivants.
