@@ -9,14 +9,25 @@
 </template>
 
 <script>
-import ModalMixin from '@/mixins/modal/modal';
+import { createNamespacedHelpers } from 'vuex';
+import ModalInnerMixin from '@/mixins/modal/modal-inner';
+
+const { mapActions: contextMapActions } = createNamespacedHelpers('context');
 
 export default {
   name: 'confirmation',
-  mixins: [ModalMixin],
+  mixins: [ModalInnerMixin],
   methods: {
+    ...contextMapActions({
+      removeEntity: 'remove',
+    }),
     click(choice) {
-      this.$emit('confirmation', choice);
+      if (choice) {
+        if (this.config.action === 'removeEntity') {
+          this.removeEntity({ ids: `"${this.config.item.props._id}"` });
+        }
+      }
+
       this.hideModal();
     },
   },

@@ -19,6 +19,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import PaginationMixin from '@/mixins/pagination';
+import ModalMixin from '@/mixins/modal/modal';
 import omit from 'lodash/omit';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
@@ -26,7 +27,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('context');
 export default {
   name: 'context-table',
   components: { BasicList },
-  mixins: [PaginationMixin],
+  mixins: [PaginationMixin, ModalMixin],
   props: {
     contextProperties: {
       type: Array,
@@ -55,7 +56,8 @@ export default {
       return query;
     },
     deleteEntity(item) {
-      this.remove({ ids: `"${item.props._id}"` });
+      this.showModal({ name: 'confirmation', config: { action: 'removeEntity', item } });
+      // this.remove({ ids: `"${item.props._id}"` });
     },
   },
 };
