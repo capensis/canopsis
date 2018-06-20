@@ -164,6 +164,7 @@ class ViewAdapter(object):
                 self.logger.exception(
                     'The view {0} is missing the group_id field.'.format(
                         view[ViewField.id]))
+                continue
 
             try:
                 response_groups[group_id][GroupField.views].append(view)
