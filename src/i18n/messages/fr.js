@@ -2,7 +2,11 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    watcher: 'observateur',
+    name: 'Nom',
+    description: 'Description',
     submit: 'Soumettre',
+    enabled: 'Activé',
     login: 'Connexion',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
@@ -39,6 +43,10 @@ export default {
       year: 'année | années',
     },
   },
+  entities: {
+    watcher: 'observateurs',
+    entities: 'entités',
+  },
   alarmList: {
     actions: {
       ack: 'ack',
@@ -72,6 +80,18 @@ export default {
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
   },
   modals: {
+    createEntity: {
+      title: 'Créer une entitée',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Gérer Infos',
+        types: {
+          connector: 'connecteur',
+          component: 'composant',
+          resource: 'ressource',
+        },
+      },
+    },
     moreInfos: {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
@@ -193,6 +213,13 @@ export default {
       type_: 'Type',
       reason: 'Raison',
       rrule: 'Rrule',
+    },
+    contextEntities: {
+      columns: {
+        name: 'Nom',
+        type: 'Type',
+        _id: 'Id',
+      },
     },
   },
   rRule: {

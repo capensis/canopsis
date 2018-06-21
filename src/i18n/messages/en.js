@@ -2,11 +2,14 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    name: 'Name',
+    description: 'Description',
     by: 'By',
     date: 'Date',
     comment: 'Comment',
     end: 'End',
     submit: 'Submit',
+    enabled: 'Enabled',
     login: 'Login',
     username: 'Username',
     password: 'Password',
@@ -42,6 +45,10 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+  },
+  entities: {
+    watcher: 'watcher',
+    entities: 'entities',
   },
   alarmList: {
     actions: {
@@ -88,6 +95,18 @@ export default {
     moreInfosModal: '"More Infos" Popup',
   },
   modals: {
+    createEntity: {
+      title: 'Create an entity',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Manage Infos',
+        types: {
+          connector: 'connector',
+          component: 'component',
+          resource: 'resource',
+        },
+      },
+    },
     createAckEvent: {
       title: 'Add event type: ack',
       tooltips: {
@@ -208,6 +227,13 @@ export default {
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    contextEntities: {
+      columns: {
+        name: 'Name',
+        type: 'Type',
+        _id: 'Id',
+      },
     },
   },
   rRule: {
