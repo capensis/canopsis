@@ -15,6 +15,10 @@ export default {
     item: {
       type: Object,
     },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -31,12 +35,14 @@ export default {
   },
   methods: {
     /**
-     * A Function to prevent the expansion of a row when you highlight/select something in it
-     */
+       * A Function to prevent the expansion of a row when you highlight/select something in it
+       */
     clickOnListItem() {
       const selection = window.getSelection();
       if (selection.toString().length === 0) {
-        this.isExpanded = !this.isExpanded;
+        if (this.expanded) {
+          this.isExpanded = !this.isExpanded;
+        }
       }
     },
   },
@@ -47,6 +53,7 @@ export default {
   .expand-enter-active, .expand-leave-active {
     transition: opacity .01s ease;
   }
+
   .expanded {
     margin: 15px;
   }

@@ -2,7 +2,7 @@
   ul.timeline
     li(v-for="step in steps")
       .timeline-item(v-if="isNewDate(step.t)")
-        .date {{ $d(step.t, 'short') }}
+        .date {{ step.t }}
       .timeline-item
           .time {{ $d(step.t, 'time') }}
           div(v-if="step._t !== 'statecounter'")

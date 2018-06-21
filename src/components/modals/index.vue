@@ -24,6 +24,7 @@ import PbehaviorList from './pbehavior-list.vue';
 import EditLiveReporting from './edit-live-reporting.vue';
 import MoreInfos from './more-infos.vue';
 import Confirmation from './confirmation.vue';
+import CreateEntity from './create-entity.vue';
 
 /**
  * Wrapper for all modal windows
@@ -42,6 +43,7 @@ export default {
     EditLiveReporting,
     MoreInfos,
     Confirmation,
+    CreateEntity,
   },
   data() {
     return {
@@ -57,6 +59,7 @@ export default {
         { name: MODALS.editLiveReporting },
         { name: MODALS.moreInfos },
         { name: MODALS.confirmation },
+        { name: MODALS.createEntity },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

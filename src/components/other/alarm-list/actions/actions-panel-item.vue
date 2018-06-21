@@ -33,43 +33,43 @@ export default {
       actionsMap: {
         ack: {
           icon: 'playlist_add_check',
-          title: this.$t('alarmList.actions.ack'),
+          title: this.$t('alarmList.actions.titles.ack'),
         },
         fastAck: {
           icon: 'check',
-          title: this.$t('alarmList.actions.fastAck'),
+          title: this.$t('alarmList.actions.titles.fastAck'),
         },
         ackRemove: {
           icon: 'block',
-          title: this.$t('alarmList.actions.ackRemove'),
+          title: this.$t('alarmList.actions.titles.ackRemove'),
         },
         pbehavior: {
           icon: 'pause',
-          title: this.$t('alarmList.actions.pbehavior'),
+          title: this.$t('alarmList.actions.titles.pbehavior'),
         },
         snooze: {
           icon: 'alarm',
-          title: this.$t('alarmList.actions.snooze'),
+          title: this.$t('alarmList.actions.titles.snooze'),
         },
         pbehaviorList: {
           icon: 'list',
-          title: this.$t('alarmList.actions.pbehaviorList'),
+          title: this.$t('alarmList.actions.titles.pbehaviorList'),
         },
         declareTicket: {
           icon: 'local_play',
-          title: this.$t('alarmList.actions.declareTicket'),
+          title: this.$t('alarmList.actions.titles.declareTicket'),
         },
         associateTicket: {
           icon: 'pin_drop',
-          title: this.$t('alarmList.actions.associateTicket'),
+          title: this.$t('alarmList.actions.titles.associateTicket'),
         },
         cancel: {
           icon: 'delete',
-          title: this.$t('alarmList.actions.cancel'),
+          title: this.$t('alarmList.actions.titles.cancel'),
         },
         changeState: {
           icon: 'report_problem',
-          title: this.$t('alarmList.actions.changeState'),
+          title: this.$t('alarmList.actions.titles.changeState'),
         },
       },
     };

@@ -2,7 +2,14 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    name: 'Name',
+    description: 'Description',
+    by: 'By',
+    date: 'Date',
+    comment: 'Comment',
+    end: 'End',
     submit: 'Submit',
+    enabled: 'Enabled',
     login: 'Login',
     username: 'Username',
     password: 'Password',
@@ -39,19 +46,50 @@ export default {
       year: 'year | years',
     },
   },
+  search: {
+    advancedSearch: '<span>Help on the advanced research :</span>\n' +
+    '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+    '<p>The "-" before the research is required</p>\n' +
+    '<p>Operators :\n' +
+    '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+    '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+    '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
+    '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+    '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+    '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
+    '</dl>',
+  },
+  entities: {
+    watcher: 'watcher',
+    entities: 'entities',
+  },
   alarmList: {
     actions: {
-      ack: 'Ack',
-      fastAck: 'Fast ack',
-      ackRemove: 'Cancel ack',
-      pbehavior: 'Periodical behavior',
-      snooze: 'Snooze alarm',
-      pbehaviorList: 'List periodic behaviors',
-      declareTicket: 'Declare ticket',
-      associateTicket: 'Associate ticket',
-      cancel: 'Cancel alarm',
-      changeState: 'Change criticity',
-      moreInfos: 'More infos',
+      titles: {
+        ack: 'Ack',
+        fastAck: 'Fast ack',
+        ackRemove: 'Cancel ack',
+        pbehavior: 'Periodical behavior',
+        snooze: 'Snooze alarm',
+        pbehaviorList: 'List periodic behaviors',
+        declareTicket: 'Declare ticket',
+        associateTicket: 'Associate ticket',
+        cancel: 'Cancel alarm',
+        changeState: 'Change criticity',
+        moreInfos: 'More infos',
+      },
+      iconsTitles: {
+        ack: 'Ack',
+        declareTicket: 'Declared ticket',
+        canceled: 'Canceled',
+        snooze: 'Snooze',
+        pbehaviors: 'Periodic behaviors',
+      },
+      iconsFields: {
+        ticketNumber: 'Ticket number',
+      },
     },
   },
   alarmListSettings: {
@@ -72,6 +110,18 @@ export default {
     moreInfosModal: '"More Infos" Popup',
   },
   modals: {
+    createEntity: {
+      title: 'Create an entity',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Manage Infos',
+        types: {
+          connector: 'connector',
+          component: 'component',
+          resource: 'resource',
+        },
+      },
+    },
     createAckEvent: {
       title: 'Add event type: ack',
       tooltips: {
@@ -159,6 +209,7 @@ export default {
       duration: 'Duration',
       state: 'State',
       status: 'Status',
+      extraDetails: 'Extra details',
     },
     /**
      * This object for pbehavior fields from database
@@ -166,8 +217,6 @@ export default {
     pbehaviorList: {
       name: 'Name',
       author: 'Author',
-      connector: 'Connector',
-      connector_name: 'Connector name',
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
@@ -187,6 +236,13 @@ export default {
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    contextEntities: {
+      columns: {
+        name: 'Name',
+        type: 'Type',
+        _id: 'Id',
+      },
     },
   },
   rRule: {

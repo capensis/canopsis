@@ -2,7 +2,11 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    watcher: 'observateur',
+    name: 'Nom',
+    description: 'Description',
     submit: 'Soumettre',
+    enabled: 'Activé',
     login: 'Connexion',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
@@ -39,6 +43,25 @@ export default {
       year: 'année | années',
     },
   },
+  search: {
+    advancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
+    '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
+    '<p>Le "-" avant la recherche est obligatoire</p>\n' +
+    '<p>Opérateurs:\n' +
+    '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
+    '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+    '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+    '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
+    '</dl>',
+  },
+  entities: {
+    watcher: 'observateurs',
+    entities: 'entités',
+  },
   alarmList: {
     actions: {
       ack: 'ack',
@@ -72,6 +95,18 @@ export default {
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
   },
   modals: {
+    createEntity: {
+      title: 'Créer une entitée',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Gérer Infos',
+        types: {
+          connector: 'connecteur',
+          component: 'composant',
+          resource: 'ressource',
+        },
+      },
+    },
     moreInfos: {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
@@ -187,6 +222,13 @@ export default {
       type_: 'Type',
       reason: 'Raison',
       rrule: 'Rrule',
+    },
+    contextEntities: {
+      columns: {
+        name: 'Nom',
+        type: 'Type',
+        _id: 'Id',
+      },
     },
   },
   rRule: {

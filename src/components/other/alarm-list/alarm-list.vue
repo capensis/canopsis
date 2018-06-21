@@ -17,10 +17,10 @@
         v-icon settings
   v-layout.my-2(wrap, justify-space-between, align-center)
     v-flex(xs12 md5)
-      alarm-list-searching
+      alarm-list-search
     v-flex(xs4)
       pagination(:meta="meta", :limit="limit", type="top")
-  basic-list(:items="items", :pending="pending", @update:selected="selected = $event")
+  basic-list(:items="items", :pending="pending", @update:selected="selected = $event", expanded)
     loader(slot="loader")
     tr.container.header.pa-0(slot="header")
       th.box(v-for="column in alarmProperties")
@@ -29,7 +29,7 @@
       th.box
     tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in alarmProperties")
-          alarm-column-value(:alarm="item.props", :pathToProperty="property.value", :filter="property.filter")
+          alarm-column-value(:alarm="item.props", :property="property")
         td.box
           actions-panel.actions(:item="item.props")
     tr.container(slot="expandedRow", slot-scope="item")
@@ -56,7 +56,7 @@ import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
 // LOADER
 import Loader from '@/components/other/alarm-list/loader/alarm-list-loader.vue';
 // SEARCHING
-import AlarmListSearching from '@/components/other/alarm-list/searching/alarm-list-searching.vue';
+import AlarmListSearch from '@/components/other/alarm-list/search/alarm-list-search.vue';
 // PAGINATION
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';
@@ -80,11 +80,11 @@ const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSe
  */
 export default {
   components: {
+    AlarmListSearch,
     RecordsPerPage,
     ListSorting,
     TimeLine,
     MassActionsPanel,
-    AlarmListSearching,
     ActionsPanel,
     BasicList,
     Loader,
@@ -136,7 +136,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
   th {
     overflow: hidden;
     text-overflow: ellipsis;

@@ -1,22 +1,24 @@
 <template lang="pug">
-  span
-    template(v-if="attributeType === 'state'")
-      state(:stateId="alarm | get(pathToProperty, filter)", :showIcon="showIcon")
-    template(v-if="attributeType === 'status'")
-      status(:statusId="alarm | get(pathToProperty, filter)")
-    template(v-if="attributeType === 'textable'") {{ alarm | get(pathToProperty, filter) }}
-    info-popup-button(:columnName="columnName", :alarm="alarm")
+  div
+    div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
+    span(v-else) {{ alarm | get(property.value, property.filter) }}
+    info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm")
 </template>
 
 <script>
-import State from '@/components/other/alarm-list/columns-formatting/state-column-value.vue';
-import Status from '@/components/other/alarm-list/columns-formatting/status-column-value.vue';
+import State from '@/components/other/alarm-list/columns-formatting/alarm-column-value-state.vue';
+import ExtraDetails from '@/components/other/alarm-list/columns-formatting/alarm-column-value-extra-details.vue';
 import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
+
+const PROPERTIES_COMPONENTS_MAP = {
+  'v.state.val': 'state',
+  extra_details: 'extra-details',
+};
 
 export default {
   components: {
     State,
-    Status,
+    ExtraDetails,
     InfoPopupButton,
   },
   props: {
@@ -24,32 +26,18 @@ export default {
       type: Object,
       required: true,
     },
-    pathToProperty: {
-      type: String,
+    property: {
+      type: Object,
       required: true,
-    },
-    filter: {
-      type: Function,
     },
   },
   computed: {
-    attributeType() {
-      if (this.pathToProperty === 'v.state.val') {
-        return 'state';
-      }
-      if (this.pathToProperty === 'v.status.val') {
-        return 'status';
-      }
-      return 'textable';
-    },
-    showIcon() {
-      return this.$options.filters.get(this.alarm, 'v.state._t') === 'changestate';
+    component() {
+      return PROPERTIES_COMPONENTS_MAP[this.property.value];
     },
     columnName() {
-      return this.pathToProperty.split('.')[1];
+      return this.property.value.split('.')[1];
     },
-  },
-  methods: {
   },
 };
 </script>
