@@ -437,6 +437,13 @@
         "desc": "Rights on listalarm: list pbehavior"
     },
     {
+        "_id" : "listalarm_done",
+        "loader_id" : "listalarm_done",
+        "crecord_name" : "listalarm_done",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: done"
+    },
+    {
         "_id" : "view_current_alarms",
         "loader_id" : "view_current_alarms",
         "crecord_type" : "action",

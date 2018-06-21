@@ -168,6 +168,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_done": {
+            "checksum": 1,
+            "desc": ""
+        },
         "view_current_alarms": {
             "checksum": 7,
             "desc": ""
@@ -338,6 +342,10 @@
             "desc": ""
         },
         "listalarm_listPbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_done": {
             "checksum": 1,
             "desc": ""
         },

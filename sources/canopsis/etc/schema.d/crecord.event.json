@@ -24,6 +24,7 @@
 				"v.connector_name",
 				"v.component",
 				"v.resource",
+				"v.done.t",
 				"v.ack.t",
 				"v.snooze.t",
 				"v.ticket.t",
@@ -39,7 +40,6 @@
 			"type": "object",
 			"role": "alarm",
 			"properties": {
-				
 				"connector": {
 					"type": "string",
 					"role": "Connector"
@@ -87,6 +87,17 @@
 							"role": "eventtimestamp",
 							"canDisplayAgo" : true,
 							"title": "Date Ticket"
+						}
+					}
+				},
+				"done": {
+					"type": "object",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date Done"
 						}
 					}
 				},
@@ -251,6 +262,10 @@
 			}
 		},
 		"cancel": {
+			"type": "object",
+			"role": "object"
+		},
+		"done": {
 			"type": "object",
 			"role": "object"
 		},
