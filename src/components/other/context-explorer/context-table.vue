@@ -11,11 +11,13 @@
         td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
         td.box
     pagination(:meta="contextEntitiesMeta", :limit="limit")
+    create-entity.fab
 </template>
 
 <script>
 import BasicList from '@/components/tables/basic-list.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
+import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
 import PaginationMixin from '@/mixins/pagination';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import omit from 'lodash/omit';
@@ -27,6 +29,7 @@ export default {
     BasicList,
     RecordsPerPage,
     ListSorting,
+    CreateEntity,
   },
   mixins: [
     PaginationMixin,
@@ -82,5 +85,11 @@ export default {
   .box {
     width: 10%;
     flex: 1;
+  }
+
+  .fab {
+    position: fixed;
+    bottom: 0;
+    right: 0;
   }
 </style>

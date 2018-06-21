@@ -27,7 +27,7 @@ import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
-const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities')
+const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { ActionsPanelItem },
