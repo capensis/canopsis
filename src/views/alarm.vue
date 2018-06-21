@@ -25,17 +25,6 @@ export default {
   ],
   data() {
     return {
-      settingsProperties: [
-        'title',
-        'default-column-sort',
-        'columns',
-        'periodic-refresh',
-        'default-elements-per-page',
-        'opened-resolved-filter',
-        'filters',
-        'info-popup',
-        'more-info',
-      ],
       alarmProperties: {
         laptop: [
           {
