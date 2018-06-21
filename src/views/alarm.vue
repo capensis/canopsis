@@ -55,7 +55,7 @@ export default {
           },
           {
             text: this.$t('tables.alarmGeneral.extraDetails'),
-            value: 'icons',
+            value: 'extra_details',
           },
         ],
         tablet: [
