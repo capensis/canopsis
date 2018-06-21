@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
-    v-card-title
-      span.headline {{ $t(config.title) }}
+    v-card-title.blue.darken-4.white--text.text-xs-center
+      h2 {{ $t(config.title) }}
     v-card-text
       v-container
         v-layout(row)
@@ -10,28 +10,28 @@
             :error-messages="errors.collect('name')",
             v-model="form.name",
             v-validate="'required'",
-            data-vv-name="name"
+            data-vv-name="name",
           )
-        v-layout(row)
+        v-layout.mt-2(row)
           v-text-field(
             :label="$t('common.description')",
             :error-messages="errors.collect('description')",
             v-model="form.description",
             v-validate="'required'",
             data-vv-name="description",
-            multi-line
+            multi-line,
           )
-        v-layout(row)
+        v-layout.mt-2(row, align-center)
           v-switch(:label="$t('common.enabled')", v-model="form.enabled")
-          v-select(
-            :items="types"
-            v-model="form.type"
-            label="Type"
-            single-line
+          v-select.pa-0(
+            :items="types",
+            v-model="form.type",
+            label="Type",
+            single-line,
           )
     v-card-actions
-      v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
-      v-btn(@click.prevent="manageInfos", color="primary") {{ $t('modals.createEntity.fields.manageInfos') }}
+      v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
+      v-btn(@click.prevent="manageInfos", color="blue darken-4 white--text") {{ $t('modals.createEntity.fields.manageInfos') }}
 </template>
 
 <script>
@@ -86,7 +86,7 @@ export default {
     async submit() {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
-        await this.create(true);
+        await this.create();
       }
     },
 
