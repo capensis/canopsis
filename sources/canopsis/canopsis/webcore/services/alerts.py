@@ -370,9 +370,10 @@ def exports(ws):
             component=dico.get('component'),
             output=dico.get('comment')
         )
-        if dico.get('source_type', None) is not None:
+        if dico.get('source_type', None) == 'resource':
             event['resource'] = dico['resource']
             event['source_type'] = 'resource'
+        ws.logger.debug('Received done action: {}'.format(event))
 
         entity_id = am.context_manager.get_id(event)
         retour = am.execute_task(
