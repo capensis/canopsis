@@ -73,6 +73,15 @@ export default {
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
     moreInfosModal: '"More Infos" Popup',
+    contextTypeOfEntities: {
+      title: 'Context type of entities',
+      fields: {
+        component: 'Component',
+        connector: 'Connector',
+        resource: 'Resource',
+        watcher: 'Watcher',
+      },
+    },
   },
   modals: {
     createAckEvent: {

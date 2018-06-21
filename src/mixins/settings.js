@@ -1,7 +1,7 @@
-import Settings from '@/components/other/settings/settings.vue';
+import SettingsWrapper from '@/components/other/settings/settings-wrapper.vue';
 
 export default {
-  components: { Settings },
+  components: { SettingsWrapper },
   data() {
     return {
       isSettingsOpen: false,

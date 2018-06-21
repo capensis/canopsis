@@ -1,26 +1,30 @@
 <template lang="pug">
-  v-navigation-drawer(
-  :temporary="$mq === 'mobile' || $mq === 'tablet'",
-  :value="value",
-  stateless,
-  clipped,
-  right,
-  app
-  )
-    v-toolbar(color="blue darken-4")
-      v-list
-        v-list-tile
-          v-list-tile-title.white--text.text-xs-center {{ title }}
-      v-icon.closeIcon(@click.stop="close", color="white") close
-    v-divider
+  div
     v-list.pt-0(expand)
-      template(v-for="(field, index) in fields")
-        div(:is="`field-${field}`", :key="`settings-field-${index}`")
-        v-divider
-    v-btn(color="green darken-4 white--text", depressed, fixed, right) {{$t('common.save')}}
+      field-title(v-model="settings.title")
+      v-divider
+      field-default-column-sort(v-model="settings.default_sort_column")
+      v-divider
+      field-columns
+      v-divider
+      field-periodic-refresh
+      v-divider
+      field-default-elements-per-page
+      v-divider
+      field-opened-resolved-filter
+      v-divider
+      field-filters
+      v-divider
+      field-info-popup
+      v-divider
+      field-more-info
+      v-divider
+    v-btn(@click="submit", color="green darken-4 white--text", depressed, fixed, right) {{ $t('common.save') }}
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+
 import FieldTitle from '@/components/other/settings/fields/title.vue';
 import FieldDefaultColumnSort from '@/components/other/settings/fields/default-column-sort.vue';
 import FieldColumns from '@/components/other/settings/fields/columns.vue';
@@ -30,7 +34,18 @@ import FieldOpenedResolvedFilter from '@/components/other/settings/fields/opened
 import FieldFilters from '@/components/other/settings/fields/filters.vue';
 import FieldInfoPopup from '@/components/other/settings/fields/info-popup.vue';
 import FieldMoreInfo from '@/components/other/settings/fields/more-info.vue';
-import FieldContextEntitiesTypesFilter from '@/components/other/settings/fields/context-entities-types-filter.vue';
+
+const storeSample = {
+  default_sort_column: {
+    direction: 'DESC',
+    property: 'creation_date',
+  },
+  title: null,
+  selected_types: [
+    'connector',
+    'watcher',
+  ],
+};
 
 export default {
   components: {
@@ -43,27 +58,15 @@ export default {
     FieldFilters,
     FieldInfoPopup,
     FieldMoreInfo,
-    FieldContextEntitiesTypesFilter,
   },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-    title: {
-      type: String,
-      default: '',
-    },
-    fields: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
+  data() {
+    return {
+      settings: cloneDeep(storeSample),
+    };
   },
   methods: {
-    close() {
-      this.$emit('input', false);
+    submit() {
+      console.warn(this.settings);
     },
   },
 };

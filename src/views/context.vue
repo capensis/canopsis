@@ -1,9 +1,7 @@
 <template lang="pug">
   div
-    context-settings(
-    v-model="isSettingsOpen",
-    :title="$t('settings.titles.contextTableSettings')",
-    )
+    settings-wrapper(v-model="isSettingsOpen", :title="$t('settings.titles.contextTableSettings')")
+      context-settings-fields
     context-table(
     :contextProperties="$mq| mq(contextProperties)",
     @openSettings="openSettings"
@@ -12,12 +10,14 @@
 
 <script>
 import ContextTable from '@/components/other/context-explorer/context-table.vue';
-import ContextSettings from '@/components/other/settings/context-settings.vue';
+import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
 import settingsMixin from '@/mixins/settings';
 
 export default {
-  name: 'context',
-  components: { ContextTable, ContextSettings },
+  components: {
+    ContextTable,
+    ContextSettingsFields,
+  },
   mixins: [settingsMixin],
   data() {
     return {

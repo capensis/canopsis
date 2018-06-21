@@ -1,7 +1,8 @@
 <template lang="pug">
   div
     div
-      v-btn(@click.prevent="openSettings") Settings
+      v-btn(icon, @click.prevent="openSettings")
+        v-icon settings
     basic-list(:items="items")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
