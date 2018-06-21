@@ -1,10 +1,12 @@
 import { API_ROUTES } from '@/config';
 import { contextSchema } from '@/store/schemas';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+  EDIT_FAILED: 'EDIT_FAILED',
 };
 
 export default {
@@ -14,12 +16,14 @@ export default {
     meta: {},
     pending: false,
     fetchingParams: {},
+    error: '',
   },
   getters: {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIds),
     meta: state => state.meta,
     pending: state => state.pending,
+    error: state => state.error,
   },
   mutations: {
     [types.FETCH_LIST](state, { params }) {
@@ -33,6 +37,9 @@ export default {
     },
     [types.FETCH_LIST_FAILED](state) {
       state.pending = false;
+    },
+    [types.EDIT_FAILED](state, err) {
+      state.error = err;
     },
   },
   actions: {
@@ -60,5 +67,12 @@ export default {
       }
     },
 
+    async edit({ commit }, { data }) {
+      try {
+        await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
+      } catch (err) {
+        commit(types.EDIT_FAILED, err);
+      }
+    },
   },
 };

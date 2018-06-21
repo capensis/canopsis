@@ -35,8 +35,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import ModalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
+
+const { mapActions: entitiesMapActions } = createNamespacedHelpers('context');
 
 export default {
   name: MODALS.createEntity,
@@ -74,10 +77,9 @@ export default {
     }
   },
   methods: {
-    async create() {
-      // TO DO
-      // Entity creation
-    },
+    ...entitiesMapActions({
+      editEntity: 'edit',
+    }),
     async manageInfos() {
       // TO DO
       // manage infos
@@ -86,7 +88,8 @@ export default {
     async submit() {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
-        await this.create();
+        this.editEntity({ data: this.form });
+        this.hide();
       }
     },
 
