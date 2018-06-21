@@ -15,5 +15,6 @@
   "Cropped states (since last change of status)": "Etats croisés (depuis le dernier changement de statut)",
   "Hard limit reached !": "Limite physique atteinte !",
   "by ": "par ",
-  "system": "système"
+  "system": "système",
+  "Mark as done by ": "Marqué comme fait par "
 }

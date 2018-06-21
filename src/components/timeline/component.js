@@ -49,6 +49,7 @@ Ember.Application.initializer({
                 'changestate': __('State changed'),
                 'snooze': __('Snoozed by '),
                 'statecounter': __('Cropped states (since last change of status)'),
+                'done': __('Mark as done by '),
                 'hardlimit': __('Hard limit reached !')
             },
 
@@ -60,7 +61,8 @@ Ember.Application.initializer({
                 'cancel',
                 'comment',
                 'uncancel',
-                'snooze'
+                'snooze',
+                'done'
             ],
 
             stateArray: [
@@ -100,6 +102,7 @@ Ember.Application.initializer({
                 'changestate': {'icon': 'fa-flag', 'color': undefined},
                 'snooze': {'icon': 'fa-clock-o', 'color': 'bg-fuchsia'},
                 'statecounter': {'icon': 'fa-scissors', 'color': 'bg-black'},
+                'done': {'icon': 'fa-check-square', 'color': 'bg-olive'},
                 'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'}
             },
 
