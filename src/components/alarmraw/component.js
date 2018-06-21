@@ -15,11 +15,11 @@ Ember.Application.initializer({
 
             /**
              * @method init
-             */   
+             */
             init: function() {
                 this._super();
                 set(this, 'alarm', get(this, 'alarm'));
-                set(this, 'fields', get(this, 'fields'));                
+                set(this, 'fields', get(this, 'fields'));
             },
 
             /**

@@ -22,7 +22,13 @@ Ember.Application.initializer({
                     class: 'fa fa-pause',
                     mixin_name: 'bulk_pbehavior',
                     caption: 'Apply PBehavior',
-					rightName: "listalarm_pbehavior"
+                    rightName: "listalarm_pbehavior"
+                },
+                {
+                    class: 'fa fa-check-square',
+                    mixin_name: 'done',
+                    caption: 'Done',
+					rightName: "listalarm_done"
                 },
                 {
                     class: 'glyphicon glyphicon-ok',

@@ -19,10 +19,10 @@
                         {{#if field.isSortable}}
                             <th {{action 'click' field}}>{{field.humanName}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
                         {{else}}
-                            <th {{action 'click' field}}>{{field.humanName}}</th>                    
+                            <th {{action 'click' field}}>{{field.humanName}}</th>
                         {{/if}}
                     {{/each}}
-                    <th>actions</th>        
+                    <th>actions</th>
                 </tr>
             </thead>
             <tbody>

@@ -103,10 +103,10 @@
                         {{#if field.isSortable}}
                             <th {{action 'click' field}}>{{field.humanName}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
                         {{else}}
-                            <th {{action 'click' field}}>{{field.humanName}}</th>                    
+                            <th {{action 'click' field}}>{{field.humanName}}</th>
                         {{/if}}
                     {{/each}}
-                    <th>actions</th>        
+                    <th>actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -300,6 +300,18 @@
   </div>
 {{/ if}}
 
+
+{{# if hasDone }}
+  <div>
+    {{#component-tooltip content=donetooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-olive">
+        <i class="fa fa-check-square"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
 {{# if hasActivePBehavior }}
   <div>
     {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
@@ -309,8 +321,6 @@
     {{/component-tooltip}}
   </div>
 {{/ if}}
-  
-  
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererlinks"><ul>
 {{#each category in categories}}

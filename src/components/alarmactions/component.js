@@ -81,6 +81,12 @@ Ember.Application.initializer({
                     mixin_name: 'snooze'
                 },
                 {
+                    class: 'fa fa-check-square',
+                    internal_states: ['acked', 'cancelled'],
+                    name: 'donealarm',
+                    mixin_name: 'done'
+                },
+                {
                     class: 'fa fa-list',
                     internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
                     name: 'listpbehavior',
@@ -145,6 +151,9 @@ Ember.Application.initializer({
                         break;
                     case "assignticketnumber":
                         name = func(actions, rights, actions[i]["name"], "listalarm_assignTicketNumber")
+                        break;
+                    case "done":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_done")
                         break;
                     case "pbehavior":
                         name = func(actions, rights, actions[i]["name"], "listalarm_pbehavior")
@@ -310,6 +319,35 @@ Ember.Application.initializer({
                                 }
                             });
 
+                        });
+                        return
+
+                    } else if (action.name === 'done'){
+                        payload = {
+                            'connector': alarm['connector'],
+                            'connector_name': alarm['connector_name'],
+                            'component': alarm['component'],
+                            'resource': alarm['resource'],
+                            'source_type': alarm['source_type'],
+                            'author': window.username,
+                            'comment': 'xxxxxxxxxx', // TODO
+                        }
+
+                        //$.post(url)
+                        return $.ajax({
+                            type: 'POST',
+                            url: '/api/v2/alerts/done',
+                            data: JSON.stringify(payload),
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            success: function () {
+                                console.log('done action is sent');
+                            },
+                            statusCode: {
+                                500: function () {
+                                    console.error("Failed to send done action");
+                                }
+                            }
                         });
                         return
                     }
