@@ -9,7 +9,7 @@
       slot(name="loader", v-if="pending")
       div(v-else)
         li(v-for="item in items", :item="item")
-          list-item(:item="item", :expanded="expanded")
+          list-item(:item="item", :expand="expand")
             v-checkbox.checkbox(v-if="checkbox",
             v-model="selected", @change="$emit('update:selected',$event)",
             :value="item._id", @click.stop, hide-details, slot="checkbox")
@@ -42,7 +42,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    expanded: {
+    expand: {
       type: Boolean,
       default: false,
     },

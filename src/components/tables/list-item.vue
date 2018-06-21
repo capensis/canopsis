@@ -15,7 +15,7 @@ export default {
     item: {
       type: Object,
     },
-    expanded: {
+    expand: {
       type: Boolean,
       default: false,
     },
@@ -40,7 +40,7 @@ export default {
     clickOnListItem() {
       const selection = window.getSelection();
       if (selection.toString().length === 0) {
-        if (this.expanded) {
+        if (this.expand) {
           this.isExpanded = !this.isExpanded;
         }
       }
