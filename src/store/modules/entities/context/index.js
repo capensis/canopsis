@@ -1,6 +1,7 @@
 import { API_ROUTES } from '@/config';
 import { contextSchema } from '@/store/schemas';
 import request from '@/services/request';
+import i18n from '@/i18n';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -66,11 +67,15 @@ export default {
         commit(types.FETCH_LIST_FAILED);
       }
     },
-
-    async edit({ commit }, { data }) {
+    async create({ commit }) {
+      console.warn('create');
+    },
+    async edit({ commit, dispatch }, { data }) {
       try {
         await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
+        await dispatch('popup/add', { type: 'success', text: 'Entity successfully edited' }, { root: true });
       } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
         commit(types.EDIT_FAILED, err);
       }
     },

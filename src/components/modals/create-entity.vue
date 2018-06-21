@@ -78,18 +78,19 @@ export default {
   },
   methods: {
     ...entitiesMapActions({
+      createEntity: 'create',
       editEntity: 'edit',
     }),
-    async manageInfos() {
-      // TO DO
-      // manage infos
-    },
-
     async submit() {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
-        this.editEntity({ data: this.form });
-        this.hide();
+        // If there's an item, means we're editing. If there's not, we're creating an entity
+        if (this.config.item) {
+          this.editEntity({ data: this.form });
+        } else {
+          this.createEntity();
+        }
+        this.hideModal();
       }
     },
 
