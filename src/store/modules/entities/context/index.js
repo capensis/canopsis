@@ -63,16 +63,17 @@ export default {
     },
     async remove({ commit }, { id } = {}) {
       try {
-        await request.delete(API_ROUTES.context, { params: { id } });
+        await request.delete(API_ROUTES.context, { params: { ids: id } });
 
         commit(
           entitiesTypes.ENTITIES_DELETE,
-          { context: [id.ids] },
+          { context: [id] },
           { root: true },
         );
       } catch (err) {
         console.warn(err);
       }
+
     },
   },
 };

@@ -21,6 +21,7 @@ import BasicList from '@/components/tables/basic-list.vue';
 import PaginationMixin from '@/mixins/pagination';
 import ModalMixin from '@/mixins/modal/modal';
 import omit from 'lodash/omit';
+import { MODALS } from '@/constants';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 
@@ -57,7 +58,7 @@ export default {
     },
     deleteEntity(item) {
       this.showModal({
-        name: 'confirmation',
+        name: MODALS.confirmation,
         config: {
           action: () => this.remove({ id: item.props._id }),
         },
