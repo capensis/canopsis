@@ -7,6 +7,7 @@
 <script>
 import ContextEntityMixin from '@/mixins/context';
 import ContextTable from '@/components/other/context-explorer/context-table.vue';
+import { PAGINATION_LIMIT } from '@/config';
 
 export default {
   name: 'context',
@@ -47,7 +48,11 @@ export default {
     };
   },
   mounted() {
-    this.fetchContextEntities();
+    this.fetchContextEntities({
+      params: {
+        limit: PAGINATION_LIMIT,
+      },
+    });
   },
 };
 </script>

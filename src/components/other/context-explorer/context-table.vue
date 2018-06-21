@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     records-per-page
-    basic-list(:items="contextEntities", :needExpand="false")
+    basic-list(:items="contextEntities")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
           span {{ columnProperty.text }}
@@ -24,7 +24,6 @@ import omit from 'lodash/omit';
 import ContextEntityMixin from '@/mixins/context';
 
 export default {
-  name: 'context-table',
   components: {
     BasicList,
     RecordsPerPage,
@@ -45,19 +44,18 @@ export default {
   },
   methods: {
     getQuery() {
-      const query = omit(this.$route.query, ['page']);
-      const data = {};
-      data.limit = this.limit;
-      data.start = ((this.$route.query.page - 1) * this.limit) || 0;
+      const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
+      query.limit = this.limit;
+      query.start = ((this.$route.query.page - 1) * this.limit) || 0;
 
-      if (query.sort_key) {
-        data.sort = [{
-          property: query.sort_key,
-          direction: query.sort_dir ? query.sort_dir : 'ASC',
+      if (this.$route.query.sort_key) {
+        query.sort = [{
+          property: this.$route.query.page.sort_key,
+          direction: this.$route.query.page.sort_dir ? this.$route.query.page.sort_dir : 'ASC',
         }];
       }
 
-      return data;
+      return query;
     },
     fetchList() {
       this.fetchContextEntities({
