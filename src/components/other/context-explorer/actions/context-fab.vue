@@ -32,7 +32,6 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
-          ...this.modalConfig,
           title: 'modals.createEntity.title',
         },
       });

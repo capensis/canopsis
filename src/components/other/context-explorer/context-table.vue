@@ -8,6 +8,8 @@
       tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
         td.box
+          v-btn(@click.stop="edit(item)", icon, small)
+            v-icon edit
       tr.container(slot="expandedRow", slot-scope="item")
     pagination(:meta="meta", :limit="limit")
     create-entity.fab
@@ -19,13 +21,15 @@ import { createNamespacedHelpers } from 'vuex';
 import BasicList from '@/components/tables/basic-list.vue';
 import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
 import PaginationMixin from '@/mixins/pagination';
+import ModalMixin from '@/mixins/modal/modal';
 import omit from 'lodash/omit';
+import { MODALS } from '@/constants';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 
 export default {
   components: { CreateEntity, BasicList },
-  mixins: [PaginationMixin],
+  mixins: [PaginationMixin, ModalMixin],
   props: {
     contextProperties: {
       type: Array,
@@ -51,6 +55,9 @@ export default {
       query.limit = this.limit;
       query.start = ((this.$route.query.page - 1) * this.limit) || 0;
       return query;
+    },
+    edit(item) {
+      this.showModal({ name: MODALS.createEntity, config: { item } });
     },
   },
 };

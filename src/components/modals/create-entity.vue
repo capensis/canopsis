@@ -7,7 +7,7 @@
         v-layout(row)
           v-text-field(
           :label="$t('common.name')",
-          :error-messages="errors.collect('ticket')",
+          :error-messages="errors.collect('name')",
           v-model="form.name",
           v-validate="'required'",
           data-vv-name="name"
@@ -15,7 +15,7 @@
         v-layout(row)
           v-text-field(
           :label="$t('common.description')",
-          :error-messages="errors.collect('output')",
+          :error-messages="errors.collect('description')",
           v-model="form.description",
           v-validate="'required'",
           data-vv-name="description",
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-
+import ModalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
 export default {
@@ -43,19 +43,24 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  mixins: [ModalInnerMixin],
   data() {
     return {
-      showValidationErrors: true,
       enabled: true,
-      types: [this.$t('modals.createEntity.fields.types.connector'),
+      types: [
+        this.$t('modals.createEntity.fields.types.connector'),
         this.$t('modals.createEntity.fields.types.component'),
-        this.$t('modals.createEntity.fields.types.resource')],
+        this.$t('modals.createEntity.fields.types.resource'),
+      ],
       form: {
         name: '',
         description: '',
         type: '',
       },
     };
+  },
+  mounted() {
+    console.log(this.config);
   },
   methods: {
     async create() {
