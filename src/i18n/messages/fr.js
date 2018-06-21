@@ -81,7 +81,8 @@ export default {
   },
   modals: {
     createEntity: {
-      title: 'Créer une entitée',
+      createTitle: 'Créer une entitée',
+      editTitle: 'Editer une entitée',
       fields: {
         type: 'Types',
         manageInfos: 'Gérer Infos',

@@ -57,7 +57,7 @@ export default {
       return query;
     },
     edit(item) {
-      this.showModal({ name: MODALS.createEntity, config: { item } });
+      this.showModal({ name: MODALS.createEntity, config: { item, title: 'modals.createEntity.editTitle' } });
     },
   },
 };

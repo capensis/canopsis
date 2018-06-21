@@ -1,33 +1,33 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline {{ $t('modals.createEntity.title') }}
+      span.headline {{ $t(config.title) }}
     v-card-text
       v-container
         v-layout(row)
           v-text-field(
-          :label="$t('common.name')",
-          :error-messages="errors.collect('name')",
-          v-model="form.name",
-          v-validate="'required'",
-          data-vv-name="name"
+            :label="$t('common.name')",
+            :error-messages="errors.collect('name')",
+            v-model="form.name",
+            v-validate="'required'",
+            data-vv-name="name"
           )
         v-layout(row)
           v-text-field(
-          :label="$t('common.description')",
-          :error-messages="errors.collect('description')",
-          v-model="form.description",
-          v-validate="'required'",
-          data-vv-name="description",
-          multi-line
+            :label="$t('common.description')",
+            :error-messages="errors.collect('description')",
+            v-model="form.description",
+            v-validate="'required'",
+            data-vv-name="description",
+            multi-line
           )
         v-layout(row)
-          v-switch(:label="$t('common.enabled')", v-model="enabled")
+          v-switch(:label="$t('common.enabled')", v-model="form.enabled")
           v-select(
-          :items="types"
-          v-model="form.type"
-          label="Type"
-          single-line
+            :items="types"
+            v-model="form.type"
+            label="Type"
+            single-line
           )
     v-card-actions
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
@@ -46,21 +46,32 @@ export default {
   mixins: [ModalInnerMixin],
   data() {
     return {
-      enabled: true,
       types: [
-        this.$t('modals.createEntity.fields.types.connector'),
-        this.$t('modals.createEntity.fields.types.component'),
-        this.$t('modals.createEntity.fields.types.resource'),
+        {
+          text: this.$t('modals.createEntity.fields.types.connector'),
+          value: 'connector',
+        },
+        {
+          text: this.$t('modals.createEntity.fields.types.component'),
+          value: 'component',
+        },
+        {
+          text: this.$t('modals.createEntity.fields.types.resource'),
+          value: 'resource',
+        },
       ],
       form: {
         name: '',
         description: '',
         type: '',
+        enabled: true,
       },
     };
   },
   mounted() {
-    console.log(this.config);
+    if (this.config.item) {
+      this.form = { ...this.config.item.props };
+    }
   },
   methods: {
     async create() {
