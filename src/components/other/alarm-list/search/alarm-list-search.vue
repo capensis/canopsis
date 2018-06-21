@@ -19,27 +19,19 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
+import SearchMixin from '@/mixins/search';
 
 export default {
+  mixins: [SearchMixin],
   data() {
     return {
       searchingText: '',
+      requestParam: 'search',
     };
   },
-  methods: {
-    clear() {
-      const query = omit(this.$route.query, ['search']);
-      this.$router.push({ query });
-    },
-    submit() {
-      const search = this.searchingText;
-      this.$router.replace({
-        query: {
-          ...this.$route.query,
-          search,
-        },
-      });
+  computed: {
+    requestData() {
+      return this.searchingText;
     },
   },
 };

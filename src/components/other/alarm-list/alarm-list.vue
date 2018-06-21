@@ -56,7 +56,7 @@ import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
 // LOADER
 import Loader from '@/components/other/alarm-list/loader/alarm-list-loader.vue';
 // SEARCHING
-import AlarmListSearch from '@/components/other/alarm-list/searching/alarm-list-search.vue';
+import AlarmListSearch from '@/components/other/alarm-list/search/alarm-list-search.vue';
 // PAGINATION
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import PaginationMixin from '@/mixins/pagination';

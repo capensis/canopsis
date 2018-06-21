@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
+import SearchMixin from '@/mixins/search';
 
 export default {
   filters: {
@@ -24,24 +24,16 @@ export default {
       {"type":{"$regex":"${text}","$options":"i"}}]},{}]}`;
     },
   },
+  mixins: [SearchMixin],
   data() {
     return {
       searchingText: '',
+      requestParam: '_filter',
     };
   },
-  methods: {
-    clear() {
-      const query = omit(this.$route.query, ['_filter']);
-      this.$router.push({ query });
-    },
-    submit() {
-      const filter = this.$options.filters.formatedSearching(this.searchingText);
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          _filter: filter,
-        },
-      });
+  computed: {
+    requestData() {
+      return this.$options.filters.formatedSearching(this.searchingText);
     },
   },
 };

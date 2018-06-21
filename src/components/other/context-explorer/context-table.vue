@@ -18,7 +18,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
-import ContextSearch from '@/components/other/context-explorer/searching/context-search.vue';
+import ContextSearch from '@/components/other/context-explorer/search/context-search.vue';
 import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
 import PaginationMixin from '@/mixins/pagination';
 import omit from 'lodash/omit';
