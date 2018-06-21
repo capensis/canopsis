@@ -237,6 +237,13 @@ export default {
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
     },
+    contextEntities: {
+      columns: {
+        name: 'Name',
+        type: 'Type',
+        _id: 'Id',
+      },
+    },
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
