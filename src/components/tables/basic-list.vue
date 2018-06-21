@@ -109,8 +109,9 @@ export default {
   .headerText {
     margin-left: 1%;
   }
-.checkbox {
-  position: absolute;
-  top: 25%;
+  .checkbox {
+    position: absolute;
+    top: 25%;
+    width: 30px;
   }
 </style>
