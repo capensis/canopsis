@@ -5,7 +5,7 @@
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
           span {{ columnProperty.text }}
-          list-sorting(:column="columnProperty.value", class="blue--text")
+          list-sorting.blue--text(:column="columnProperty.value")
         th.box
       tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
@@ -50,8 +50,8 @@ export default {
 
       if (this.$route.query.sort_key) {
         query.sort = [{
-          property: this.$route.query.page.sort_key,
-          direction: this.$route.query.page.sort_dir ? this.$route.query.page.sort_dir : 'ASC',
+          property: this.$route.query.sort_key,
+          direction: this.$route.query.sort_dir ? this.$route.query.sort_dir : 'ASC',
         }];
       }
 

@@ -20,7 +20,7 @@
       alarm-list-searching
     v-flex(xs4)
       pagination(:meta="meta", :limit="limit", type="top")
-  basic-list(:items="items", :pending="pending", @update:selected="selected = $event", expand)
+  basic-list(:items="items", :pending="pending", @update:selected="selected = $event", expanded)
     loader(slot="loader")
     tr.container.header.pa-0(slot="header")
       th.box(v-for="column in alarmProperties")
