@@ -184,10 +184,10 @@ def done(manager, alarm, author, message, event):
     """
 
     step = {
-        '_t': 'assocticket',
+        '_t': AlarmField.done.value,
         't': event['timestamp'],
         'a': author,
-        'm': event.get('message'),
+        'm': message,
     }
 
     alarm[AlarmField.done.value] = step
