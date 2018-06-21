@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    context-search
     records-per-page
     basic-list(:items="contextEntities")
       tr.container(slot="header")
@@ -16,6 +17,7 @@
 
 <script>
 import BasicList from '@/components/tables/basic-list.vue';
+import ContextSearch from '@/components/other/context-explorer/search/context-search.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
 import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
 import PaginationMixin from '@/mixins/pagination';
@@ -26,6 +28,7 @@ import ContextEntityMixin from '@/mixins/context';
 export default {
   components: {
     BasicList,
+    ContextSearch,
     RecordsPerPage,
     ListSorting,
     CreateEntity,
