@@ -17,10 +17,10 @@ json body:
 {
   "author": "root",
   "comment": "",
-  "component": "scenario",
-  "connector": "Engine",
-  "connector_name": "JENKINS",
-  "resource": "xxxx",
+  "component": "gtk",
+  "connector": "the",
+  "connector_name": "knack",
+  "resource": "my_sharona",
   "source_type": "resource"
 }
 ```
@@ -28,9 +28,9 @@ json body:
 Réponse, the modified alarm:
 ```json
 {
-  "connector": "Engine",
-  "connector_name": "JENKINS",
-  "component": "scenario",
+  "connector": "the",
+  "connector_name": "knack",
+  "component": "gtk",
   ...
 }
 ```
