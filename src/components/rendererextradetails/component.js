@@ -128,8 +128,6 @@ Ember.Application.initializer({
              * @property hasDone
              */
             hasDone: function() {
-                console.error(this.get('value'))
-                console.error(this.get('value.done'))
                 return this.get('value.done') != null;
             }.property('value.done'),
 

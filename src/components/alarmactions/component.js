@@ -272,7 +272,7 @@ Ember.Application.initializer({
                  */
                 sendAction: function (action) {
                     var me = this;
-					var alarm = Object.assign({}, me.get('alarm'));
+                    var alarm = Object.assign({}, me.get('alarm'));
                     if (action.name === 'pbehavior'){
 
                         var obj = Ember.Object.create({ 'crecord_type': 'pbehaviorform' });
@@ -322,33 +322,41 @@ Ember.Application.initializer({
                         });
                         return
 
-                    } else if (action.name === 'done'){
-                        payload = {
-                            'connector': alarm['connector'],
-                            'connector_name': alarm['connector_name'],
-                            'component': alarm['component'],
-                            'resource': alarm['resource'],
-                            'source_type': alarm['source_type'],
-                            'author': window.username,
-                            'comment': 'xxxxxxxxxx', // TODO
-                        }
-
-                        //$.post(url)
-                        return $.ajax({
-                            type: 'POST',
-                            url: '/api/v2/alerts/done',
-                            data: JSON.stringify(payload),
-                            contentType: 'application/json',
-                            dataType: 'json',
-                            success: function () {
-                                console.log('done action is sent');
-                            },
-                            statusCode: {
-                                500: function () {
-                                    console.error("Failed to send done action");
-                                }
-                            }
+                    } else if (action.name === 'donealarm'){
+                       /* var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
+                        var confirmform = formsUtils.showNew('modelform', obj, {
+                            title: 'Mark the alarm as done ?'
                         });
+                        confirmform.submit.then(function (form) {
+                        */
+                            payload = {
+                                'connector': alarm['connector'],
+                                'connector_name': alarm['connector_name'],
+                                'component': alarm['component'],
+                                'resource': alarm['resource'],
+                                'source_type': alarm['source_type'],
+                                'author': window.username,
+                                //'comment': form.get('formContext.comment'),
+                                'comment': 'xwcwxcwxcw', // TODO
+                            }
+
+                            //$.post(url)
+                            return $.ajax({
+                                type: 'POST',
+                                url: '/api/v2/alerts/done',
+                                data: JSON.stringify(payload),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function () {
+                                    console.log('done action is sent');
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        console.error("Failed to send done action");
+                                    }
+                                }
+                            });
+                        //});
                         return
                     }
 

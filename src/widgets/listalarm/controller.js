@@ -186,6 +186,10 @@ Ember.Application.initializer({
                     value: 'v.ticket'
                 },
                 {
+                    name: 'done',
+                    value: 'v.done'
+                },
+                {
                     name: 'ack',
                     value: 'v.ack'
                 },
