@@ -20,4 +20,4 @@
 
 - [Services initialization](services_init.md)
 
-- [Statistics  configuration](statsng.md)
+- [Statistics configuration](statsng.md)
