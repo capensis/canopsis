@@ -157,15 +157,15 @@ class ContextGraph(object):
 
         id_ = ""
 
-        connector = unidecode(event["connector"])
-        connector_name = unidecode(event["connector_name"])
-        component = unidecode(event["component"])
+        connector = unidecode(event.get("connector", ''))
+        connector_name = unidecode(event.get("connector_name", ''))
+        component = unidecode(event.get("component", ''))
 
         if source_type == cls.COMPONENT:
             id_ = component
 
         elif source_type == cls.RESOURCE:
-            resource = unidecode(event["resource"])
+            resource = unidecode(event.get("resource", ''))
             id_ = "{}/{}".format(resource, component)
 
         elif source_type == cls.CONNECTOR:
