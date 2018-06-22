@@ -2,7 +2,7 @@ export const API_HOST = process.env.VUE_APP_API_HOST;
 
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 
-export const DEFAULT_LOCALE = 'fr';
+export const DEFAULT_LOCALE = 'en';
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 

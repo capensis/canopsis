@@ -2,21 +2,24 @@
   div
     div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
     span(v-else) {{ alarm | get(property.value, property.filter) }}
+    info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm")
 </template>
 
 <script>
 import State from '@/components/other/alarm-list/columns-formatting/alarm-column-value-state.vue';
-import Icons from '@/components/other/alarm-list/columns-formatting/alarm-column-value-icons.vue';
+import ExtraDetails from '@/components/other/alarm-list/columns-formatting/alarm-column-value-extra-details.vue';
+import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
 
 const PROPERTIES_COMPONENTS_MAP = {
   'v.state.val': 'state',
-  icons: 'icons',
+  extra_details: 'extra-details',
 };
 
 export default {
   components: {
     State,
-    Icons,
+    ExtraDetails,
+    InfoPopupButton,
   },
   props: {
     alarm: {
@@ -31,6 +34,9 @@ export default {
   computed: {
     component() {
       return PROPERTIES_COMPONENTS_MAP[this.property.value];
+    },
+    columnName() {
+      return this.property.value.split('.')[1];
     },
   },
 };
