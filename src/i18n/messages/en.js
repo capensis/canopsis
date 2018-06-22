@@ -309,6 +309,9 @@ export default {
   errors: {
     default: 'Something went wrong...',
   },
+  success: {
+    default: 'Done !',
+  },
   mFilterEditor: {
     tabs: {
       visualEditor: 'Visual Editor',
