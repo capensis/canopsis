@@ -1,9 +1,11 @@
+// LIBS
 import omit from 'lodash/omit';
-
-import { PAGINATION_LIMIT } from '@/config';
-
-import dateIntervals from '@/helpers/date-intervals';
+// COMPONENTS
 import Pagination from '@/components/tables/pagination.vue';
+// HELPERS
+import dateIntervals from '@/helpers/date-intervals';
+// OTHERS
+import { PAGINATION_LIMIT } from '@/config';
 
 export default {
   components: {

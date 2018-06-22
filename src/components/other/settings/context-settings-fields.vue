@@ -11,8 +11,9 @@
 </template>
 
 <script>
+// LIBS
 import cloneDeep from 'lodash/cloneDeep';
-
+// COMPONENTS
 import FieldTitle from '@/components/other/settings/fields/title.vue';
 import FieldDefaultColumnSort from '@/components/other/settings/fields/default-column-sort.vue';
 import FieldContextEntitiesTypesFilter from '@/components/other/settings/fields/context-entities-types-filter.vue';

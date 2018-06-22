@@ -1,3 +1,4 @@
+// LIBS
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view');

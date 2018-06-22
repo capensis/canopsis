@@ -10,6 +10,7 @@
 </template>
 
 <script>
+// OTHERS
 import { PAGINATION_LIMIT } from '@/config';
 
 export default {

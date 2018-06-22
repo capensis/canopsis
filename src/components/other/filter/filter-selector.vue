@@ -10,6 +10,7 @@
 </template>
 
 <script>
+// LIBS
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');

@@ -10,20 +10,21 @@
 </template>
 
 <script>
+// COMPONENTS
+import Modal from '@/components/modals/layouts/modal.vue';
+import CreateAckEvent from '@/components/modals/create-ack-event.vue';
+import CreateAssociateTicketEvent from '@/components/modals/create-associate-ticket-event.vue';
+import CreateCancelEvent from '@/components/modals/create-cancel-event.vue';
+import CreateChangeStateEvent from '@/components/modals/create-change-state-event.vue';
+import CreateDeclareTicketEvent from '@/components/modals/create-declare-ticket-event.vue';
+import CreateSnoozeEvent from '@/components/modals/create-snooze-event.vue';
+import CreatePbehavior from '@/components/modals/create-pbehavior.vue';
+import PbehaviorList from '@/components/modals/pbehavior-list.vue';
+import EditLiveReporting from '@/components/modals/edit-live-reporting.vue';
+import MoreInfos from '@/components/modals/more-infos.vue';
+import CreateEntity from '@/components/modals/create-entity.vue';
+// OTHERS
 import { MODALS } from '@/constants';
-
-import Modal from './layouts/modal.vue';
-import CreateAckEvent from './create-ack-event.vue';
-import CreateAssociateTicketEvent from './create-associate-ticket-event.vue';
-import CreateCancelEvent from './create-cancel-event.vue';
-import CreateChangeStateEvent from './create-change-state-event.vue';
-import CreateDeclareTicketEvent from './create-declare-ticket-event.vue';
-import CreateSnoozeEvent from './create-snooze-event.vue';
-import CreatePbehavior from './create-pbehavior.vue';
-import PbehaviorList from './pbehavior-list.vue';
-import EditLiveReporting from './edit-live-reporting.vue';
-import MoreInfos from './more-infos.vue';
-import CreateEntity from './create-entity.vue';
 
 /**
  * Wrapper for all modal windows

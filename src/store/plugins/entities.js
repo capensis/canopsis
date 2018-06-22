@@ -1,10 +1,12 @@
+// LIBS
 import Vue from 'vue';
 import omit from 'lodash/omit';
 import merge from 'lodash/merge';
 import get from 'lodash/get';
 import { normalize, denormalize } from 'normalizr';
-
+// SERVICES
 import request from '@/services/request';
+// OTHERS
 import schemas from '@/store/schemas';
 
 const entitiesModuleName = 'entities';

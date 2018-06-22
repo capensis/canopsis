@@ -26,10 +26,12 @@
 </template>
 
 <script>
+// LIB
 import moment from 'moment';
-
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import EventActionsMixin from '@/mixins/event-actions';
+// MIXINS
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import eventActionsMixin from '@/mixins/event-actions';
+// OTHERS
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
@@ -38,7 +40,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [ModalInnerItemsMixin, EventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsMixin],
   data() {
     const availableTypes = [
       { key: 'seconds', text: 'common.times.second' },

@@ -70,6 +70,7 @@
 </template>
 
 <script>
+// COMPONENTS
 import FilterRule from './filter-rule.vue';
 
 export default {

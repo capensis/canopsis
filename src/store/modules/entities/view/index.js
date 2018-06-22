@@ -1,7 +1,9 @@
+// SERVICES
+import request from '@/services/request';
+// OTHERS
 import { viewSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
-import request from '@/services/request';
-import widgetModule, { types as widgetMutations } from './widget';
+import widgetModule, { types as widgetMutations } from '@/store/modules/entities/view/widget';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',

@@ -1,8 +1,10 @@
+// LIBS
 import qs from 'qs';
-
-import request from '@/services/request';
-import { API_ROUTES } from '@/config';
 import i18n from '@/i18n';
+// SERVICES
+import request from '@/services/request';
+// OTHERS
+import { API_ROUTES } from '@/config';
 
 export default {
   namespaced: true,

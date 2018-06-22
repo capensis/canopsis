@@ -22,7 +22,6 @@
           :value="field",
           combobox
         )
-
       v-flex(xs10, md3)
         v-select.my-2(
           solo-inverted,
@@ -34,7 +33,6 @@
           :items="operators",
           item-text="value"
         )
-
       v-flex(
         xs10,
         md3,
@@ -56,7 +54,6 @@
 
 <script>
 export default {
-  name: 'filter-rule',
   props: {
     index: {
       type: Number,

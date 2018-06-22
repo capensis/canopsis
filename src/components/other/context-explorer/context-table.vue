@@ -22,14 +22,15 @@
 </template>
 
 <script>
+// LIBS
 import omit from 'lodash/omit';
-
+// COMPONENTS
 import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context-explorer/search/context-search.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
 import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-
+// MIXINS
 import paginationMixin from '@/mixins/pagination';
 import contextEntityMixin from '@/mixins/context';
 

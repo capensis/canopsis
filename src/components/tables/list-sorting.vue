@@ -8,7 +8,6 @@ transition(name="fade" mode="out-in")
 
 <script>
 export default {
-  name: 'alarm-list-sorting',
   props: {
     column: {
       type: String,

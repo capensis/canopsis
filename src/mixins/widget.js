@@ -1,5 +1,7 @@
+// LIBS
 import { createNamespacedHelpers } from 'vuex';
-import viewMixin from './view';
+// MIXINS
+import viewMixin from '@/mixins/view';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view/widget');
 

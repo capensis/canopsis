@@ -1,5 +1,7 @@
-import { API_ROUTES } from '@/config';
+// SERVICES
 import request from '@/services/request';
+// OTHERS
+import { API_ROUTES } from '@/config';
 
 const types = {
   LOGIN: 'LOGIN',

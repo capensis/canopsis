@@ -1,7 +1,8 @@
+// LIBS
 import Vue from 'vue';
-
-import localStorageDataSource from '@/services/local-storage-data-source';
 import i18n from '@/i18n';
+// SERVICES
+import localStorageDataSource from '@/services/local-storage-data-source';
 
 export default {
   namespaced: true,

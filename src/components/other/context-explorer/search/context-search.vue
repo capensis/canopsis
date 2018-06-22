@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import SearchMixin from '@/mixins/search';
+// MIXINS
+import searchMixin from '@/mixins/search';
 
 export default {
   filters: {
@@ -24,7 +25,7 @@ export default {
       {"type":{"$regex":"${text}","$options":"i"}}]},{}]}`;
     },
   },
-  mixins: [SearchMixin],
+  mixins: [searchMixin],
   data() {
     return {
       searchingText: '',

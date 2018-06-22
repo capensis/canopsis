@@ -20,18 +20,20 @@
 </template>
 
 <script>
+// LIB
 import { createNamespacedHelpers } from 'vuex';
-
-import ActionsPanelMixin from '@/mixins/actions-panel';
+// COMPONENTS
+import ActionsPanelItem from '@/components/other/alarm-list/actions/actions-panel-item.vue';
+// MIXINS
+import actionsPanelMixin from '@/mixins/actions-panel';
+// OTHERS
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, MODALS } from '@/constants';
-
-import ActionsPanelItem from './actions-panel-item.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { ActionsPanelItem },
-  mixins: [ActionsPanelMixin],
+  mixins: [actionsPanelMixin],
   props: {
     itemsIds: {
       type: Array,

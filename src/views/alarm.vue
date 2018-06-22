@@ -9,8 +9,10 @@
 </template>
 
 <script>
+// COMPONENTS
 import AlarmList from '@/components/other/alarm-list/alarm-list.vue';
 import AlarmSettingsFields from '@/components/other/settings/alarm-settings-fields.vue';
+// MIXINS
 import viewMixin from '@/mixins/view';
 import settingsMixin from '@/mixins/settings';
 

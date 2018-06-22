@@ -17,11 +17,13 @@ v-speed-dial(
 </template>
 
 <script>
-import ModalMixin from '@/mixins/modal/modal';
+// MIXINS
+import modalMixin from '@/mixins/modal/modal';
+// OTHERS
 import { MODALS } from '@/constants';
 
 export default {
-  mixins: [ModalMixin],
+  mixins: [modalMixin],
   data() {
     return {
       fab: false,

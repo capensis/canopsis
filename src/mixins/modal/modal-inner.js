@@ -1,6 +1,7 @@
+// LIBS
 import { createNamespacedHelpers } from 'vuex';
-
-import ModalMixin from './modal';
+// MIXINS
+import modalMixin from '@/mixins/modal/modal';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -8,7 +9,7 @@ const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
  * @mixin
  */
 export default {
-  mixins: [ModalMixin],
+  mixins: [modalMixin],
   computed: {
     ...modalMapGetters(['config']),
   },

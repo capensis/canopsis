@@ -15,9 +15,12 @@
 </template>
 
 <script>
+// COMPONENTS
 import AlarmGeneralTable from '@/components/other/alarm-list/alarm-general-list.vue';
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import EventActionsMixin from '@/mixins/event-actions';
+// MIXINS
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import eventActionsMixin from '@/mixins/event-actions';
+// OTHERS
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
@@ -29,7 +32,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalInnerItemsMixin, EventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsMixin],
   methods: {
     async submit() {
       await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.items, {

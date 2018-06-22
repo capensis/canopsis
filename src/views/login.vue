@@ -40,6 +40,7 @@
 </template>
 
 <script>
+// LIBS
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('auth');

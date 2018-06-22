@@ -1,3 +1,4 @@
+// LIBS
 import isEmpty from 'lodash/isEmpty';
 
 function parseFilterRuleToRequest(rule) {

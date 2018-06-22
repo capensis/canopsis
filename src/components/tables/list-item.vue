@@ -10,7 +10,6 @@
 
 <script>
 export default {
-  name: 'BrickList',
   props: {
     item: {
       type: Object,

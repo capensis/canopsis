@@ -47,11 +47,14 @@
 </template>
 
 <script>
+// LIB
 import { createNamespacedHelpers } from 'vuex';
-
+// COMPONENTS
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+// MIXINS
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+// OTHERS
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
@@ -63,7 +66,7 @@ export default {
     validator: 'new',
   },
   components: { DateTimePicker, RRuleForm },
-  mixins: [ModalInnerItemsMixin],
+  mixins: [modalInnerItemsMixin],
   data() {
     const start = new Date();
     const stop = new Date(start.getTime());

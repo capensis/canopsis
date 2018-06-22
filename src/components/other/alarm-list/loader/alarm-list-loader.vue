@@ -10,6 +10,7 @@
 </template>
 
 <script>
+// LIBS
 import take from 'lodash/take';
 import sum from 'lodash/sum';
 import VueContentLoading from 'vue-content-loading';

@@ -15,7 +15,6 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions } = createNamespacedHelpers('app');
 
 export default {
-  name: 'TopBar',
   methods: {
     ...mapActions([
       'toggleSideBar',

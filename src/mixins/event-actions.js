@@ -1,5 +1,6 @@
+// LIBS
 import { createNamespacedHelpers } from 'vuex';
-
+// OTHERS
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
 const { mapActions: eventMapActions } = createNamespacedHelpers('event');

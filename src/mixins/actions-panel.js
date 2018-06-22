@@ -1,10 +1,11 @@
+// MIXINS
+import modalMixin from '@/mixins/modal/modal';
+import eventActionsMixin from '@/mixins/event-actions';
+// OTHERS
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
-import ModalMixin from './modal/modal';
-import EventActionsMixin from './event-actions';
-
 export default {
-  mixins: [ModalMixin, EventActionsMixin],
+  mixins: [modalMixin, eventActionsMixin],
   methods: {
     showActionModal(name) {
       return () => this.showModal({

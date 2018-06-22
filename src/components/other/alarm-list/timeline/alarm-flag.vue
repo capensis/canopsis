@@ -3,10 +3,10 @@
 </template>
 
 <script>
+// HELPERS
 import formatStateAndStatus from '@/helpers/state-and-status-formatting';
 
 export default {
-  name: 'alarm-flag',
   props: {
     value: {
       type: [Number, String],

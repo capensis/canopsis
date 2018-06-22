@@ -18,6 +18,7 @@
 </template>
 
 <script>
+// MIXINS
 import alarmInfoPopupMixin from '@/mixins/widget';
 
 export default {

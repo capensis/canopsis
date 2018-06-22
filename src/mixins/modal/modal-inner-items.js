@@ -1,7 +1,8 @@
+// LIBS
 import { createNamespacedHelpers } from 'vuex';
 import first from 'lodash/first';
-
-import ModalInnerMixin from './modal-inner';
+// MIXINS
+import modalInnerMixin from '@/mixins/modal/modal-inner';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -9,7 +10,7 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  * @mixin
  */
 export default {
-  mixins: [ModalInnerMixin],
+  mixins: [modalInnerMixin],
   computed: {
     ...entitiesMapGetters(['getList']),
 

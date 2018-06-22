@@ -36,14 +36,16 @@
 </template>
 
 <script>
-import ActionsPanelMixin from '@/mixins/actions-panel';
+// COMPONENTS
+import ActionsPanelItem from '@/components/other/alarm-list/actions/actions-panel-item.vue';
+// MIXINS
+import actionsPanelMixin from '@/mixins/actions-panel';
+// OTHERS
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
-
-import ActionsPanelItem from './actions-panel-item.vue';
 
 export default {
   components: { ActionsPanelItem },
-  mixins: [ActionsPanelMixin],
+  mixins: [actionsPanelMixin],
   props: {
     item: {
       type: Object,

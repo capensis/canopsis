@@ -6,6 +6,7 @@
 </template>
 
 <script>
+// COMPONENTS
 import InfoPopupSettingsItem from '@/components/other/info-popup/settings-item.vue';
 
 export default {

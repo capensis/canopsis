@@ -1,6 +1,7 @@
+// SERVICES
 import request from '@/services/request';
+// OTHERS
 import { API_ROUTES } from '@/config';
-
 import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export default {
