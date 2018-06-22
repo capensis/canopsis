@@ -155,16 +155,16 @@ class ContextGraph(object):
             source_type = event['type']
             source_field = 'type'
 
-        connector = normalize_utf8(event["connector"])
-        connector_name = normalize_utf8(event["connector_name"])
-        component = normalize_utf8(event["component"])
+        connector = normalize_utf8(event.get('connector'))
+        connector_name = normalize_utf8(event.get('connector_name'))
+        component = normalize_utf8(event.get('component'))
         id_ = ""
 
         if source_type == cls.COMPONENT:
             id_ = component
 
         elif source_type == cls.RESOURCE:
-            resource = normalize_utf8(event["resource"])
+            resource = normalize_utf8(event.get('resource'))
             id_ = "{}/{}".format(resource, component)
 
         elif source_type == cls.CONNECTOR:
