@@ -55,9 +55,7 @@ class TestTasks(BaseTest):
         event = {
             'timestamp': 0,
             'source_type': 'component',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'cm',
+            'component': 'c',
         }
 
         task = get_task('alerts.useraction.ack')
@@ -105,9 +103,7 @@ class TestTasks(BaseTest):
         event = {
             'timestamp': 0,
             'source_type': 'component',
-            'connector': 'c',
-            'connector_name': 'cn',
-            'component': 'cm',
+            'component': 'c',
         }
 
         ack_task = get_task('alerts.useraction.ack')
