@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import copy
 import jsonschema
 import time
+from unidecode import unidecode
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
@@ -156,35 +157,19 @@ class ContextGraph(object):
 
         id_ = ""
 
+        connector = unidecode(event["connector"])
+        connector_name = unidecode(event["connector_name"])
+        component = unidecode(event["component"])
+        resource = unidecode(event["resource"])
+
         if source_type == cls.COMPONENT:
-            try:
-                id_ = event["component"].encode('utf-8')
-            except UnicodeError:
-                id_ = event['component'].decode('utf-8')
+            id_ = component
 
         elif source_type == cls.RESOURCE:
-            try:
-                id_ = "{0}/{1}".format(
-                    event["resource"].encode('utf-8'),
-                    event["component"].encode('utf-8')
-                )
-            except UnicodeError:
-                id_ = "{0}/{1}".format(
-                    event["resource"].decode('utf-8'),
-                    event["component"].decode('utf-8')
-                )
+            id_ = "{}/{}".format(resource, component)
 
         elif source_type == cls.CONNECTOR:
-            try:
-                id_ = "{0}/{1}".format(
-                    event["connector"].encode('utf-8'),
-                    event["connector_name"].encode('utf-8')
-                )
-            except UnicodeError:
-                id_ = "{0}/{1}".format(
-                    event["connector"].decode('utf-8'),
-                    event["connector_name"].decode('utf-8')
-                )
+            id_ = "{}/{}".format(connector, connector_name)
 
         else:
             error_desc = (
