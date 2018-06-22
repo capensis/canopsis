@@ -1,34 +1,50 @@
 <template lang="pug">
   div
-    div
-      v-btn(icon, @click.prevent="openSettings")
-        v-icon settings
-    basic-list(:items="items")
+    v-layout(justify-space-between, align-center)
+      v-flex.ml-4(xs4)
+        div mass actions
+      v-flex(xs2)
+        v-btn(icon, @click.prevent="$emit('openSettings')")
+          v-icon settings
+    context-search
+    records-per-page
+    basic-list(:items="contextEntities")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
           span {{ columnProperty.text }}
-          th.box
+          list-sorting.blue--text(:column="columnProperty.value")
+        th.box
       tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
         td.box
-      tr.container(slot="expandedRow", slot-scope="item")
-    pagination(:meta="meta", :limit="limit")
+    pagination(:meta="contextEntitiesMeta", :limit="limit")
     create-entity.fab
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-import BasicList from '@/components/tables/basic-list.vue';
-import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
-import PaginationMixin from '@/mixins/pagination';
 import omit from 'lodash/omit';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('context');
+import BasicList from '@/components/tables/basic-list.vue';
+import ContextSearch from '@/components/other/context-explorer/search/context-search.vue';
+import ListSorting from '@/components/tables/list-sorting.vue';
+import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
+
+import paginationMixin from '@/mixins/pagination';
+import contextEntityMixin from '@/mixins/context';
 
 export default {
-  components: { CreateEntity, BasicList },
-  mixins: [PaginationMixin],
+  components: {
+    BasicList,
+    ContextSearch,
+    RecordsPerPage,
+    ListSorting,
+    CreateEntity,
+  },
+  mixins: [
+    paginationMixin,
+    contextEntityMixin,
+  ],
   props: {
     contextProperties: {
       type: Array,
@@ -37,31 +53,25 @@ export default {
       },
     },
   },
-  data() {
-    return {
-      isSidebarOpened: false,
-    };
-  },
-  computed: {
-    ...mapGetters([
-      'items',
-      'meta',
-      'pending',
-    ]),
-  },
   methods: {
-    ...mapActions({
-      fetchListAction: 'fetchList',
-    }),
     getQuery() {
-      const query = omit(this.$route.query, ['page']);
-
+      const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
       query.limit = this.limit;
       query.start = ((this.$route.query.page - 1) * this.limit) || 0;
+
+      if (this.$route.query.sort_key) {
+        query.sort = [{
+          property: this.$route.query.sort_key,
+          direction: this.$route.query.sort_dir ? this.$route.query.sort_dir : 'ASC',
+        }];
+      }
+
       return query;
     },
-    openSettings() {
-      this.$emit('openSettings');
+    fetchList() {
+      this.fetchContextEntities({
+        params: this.getQuery(),
+      });
     },
   },
 };
@@ -72,16 +82,20 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   td {
     overflow-wrap: break-word;
   }
+
   .container {
     display: flex;
   }
-  .box{
+
+  .box {
     width: 10%;
     flex: 1;
   }
+
   .fab {
     position: fixed;
     bottom: 0;

@@ -11,14 +11,16 @@
 <script>
 import ContextTable from '@/components/other/context-explorer/context-table.vue';
 import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
+import contextEntityMixin from '@/mixins/context';
 import settingsMixin from '@/mixins/settings';
+import { PAGINATION_LIMIT } from '@/config';
 
 export default {
   components: {
     ContextTable,
     ContextSettingsFields,
   },
-  mixins: [settingsMixin],
+  mixins: [contextEntityMixin, settingsMixin],
   data() {
     return {
       settingsFields: [
@@ -30,28 +32,39 @@ export default {
       contextProperties: {
         laptop: [
           {
-            text: 'name',
-            value: 'name',
+            text: this.$t('tables.contextEntities.columns._id'),
+            value: '_id',
           },
           {
-            text: 'type',
+            text: this.$t('tables.contextEntities.columns.type'),
             value: 'type',
+          },
+          {
+            text: this.$t('tables.contextEntities.columns.name'),
+            value: 'name',
           },
         ],
         mobile: [
           {
-            text: 'name',
+            text: this.$t('tables.contextEntities.columns.name'),
             value: 'name',
           },
         ],
         tablet: [
           {
-            text: 'name',
+            text: this.$t('tables.contextEntities.columns.name'),
             value: 'name',
           },
         ],
       },
     };
+  },
+  mounted() {
+    this.fetchContextEntities({
+      params: {
+        limit: PAGINATION_LIMIT,
+      },
+    });
   },
 };
 </script>
