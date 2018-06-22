@@ -2,10 +2,10 @@
   v-card
     v-layout(wrap, justify-space-around)
       v-flex.text-xs-center.py-2.blue.darken-4.white--text(xs12)
-        h3 Are you sure ?
+        h3 {{ $t('common.confirmation') }}
       v-flex.text-xs-center.my-2(xs12)
-        v-btn.green(small, @click="submit") Yes
-        v-btn.red(small, @click="hideModal") No
+        v-btn.green(small, @click="submit") {{ $t('common.yes') }}
+        v-btn.red(small, @click="hideModal") {{ $t('common.no') }}
 </template>
 
 <script>

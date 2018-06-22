@@ -4,6 +4,9 @@ export default {
   common: {
     name: 'Name',
     description: 'Description',
+    yes: 'Yes',
+    no: 'No',
+    confirmation: 'Are you sure ?',
     by: 'By',
     date: 'Date',
     comment: 'Comment',
