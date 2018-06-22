@@ -24,7 +24,7 @@
 
 <script>
 // COMPONENTS
-import AlarmGeneralTable from '@/components/other/alarm-list/alarm-general-list.vue';
+import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
 // MIXINS
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import eventActionsMixin from '@/mixins/event-actions';

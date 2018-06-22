@@ -37,7 +37,7 @@
 
 <script>
 // COMPONENTS
-import ActionsPanelItem from '@/components/other/alarm-list/actions/actions-panel-item.vue';
+import ActionsPanelItem from '@/components/other/alarm/actions/actions-panel-item.vue';
 // MIXINS
 import actionsPanelMixin from '@/mixins/actions-panel';
 // OTHERS

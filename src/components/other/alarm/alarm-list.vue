@@ -48,13 +48,13 @@ import omit from 'lodash/omit';
 // COMPONENTS
 import BasicList from '@/components/tables/basic-list.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
-import ActionsPanel from '@/components/other/alarm-list/actions/actions-panel.vue';
-import MassActionsPanel from '@/components/other/alarm-list/actions/mass-actions-panel.vue';
-import TimeLine from '@/components/other/alarm-list/timeline/time-line.vue';
-import Loader from '@/components/other/alarm-list/loader/alarm-list-loader.vue';
-import AlarmListSearch from '@/components/other/alarm-list/search/alarm-list-search.vue';
+import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
+import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
+import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
+import Loader from '@/components/other/alarm/loader/alarm-list-loader.vue';
+import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import AlarmColumnValue from '@/components/other/alarm-list/columns-formatting/alarm-column-value.vue';
+import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 // MIXINS
 import modalMixin from '@/mixins/modal/modal';
