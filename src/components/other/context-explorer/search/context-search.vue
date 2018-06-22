@@ -19,7 +19,7 @@ import SearchMixin from '@/mixins/search';
 
 export default {
   filters: {
-    formatedSearching(text) {
+    formatSearching(text) {
       return `{"$and":[{},{"$or":[{"name":{"$regex":"${text}","$options":"i"}},
       {"type":{"$regex":"${text}","$options":"i"}}]},{}]}`;
     },
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     requestData() {
-      return this.$options.filters.formatedSearching(this.searchingText);
+      return this.$options.filters.formatSearching(this.searchingText);
     },
   },
 };

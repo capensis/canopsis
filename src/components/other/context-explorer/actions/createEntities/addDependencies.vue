@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    entities-select(label="Impacts", @update:entities="updateImpact($event)")
+    entities-select(label="Dependencies", @update:entities="updateDependencies($event)")
 </template>
 
 <script>
@@ -10,12 +10,12 @@ export default {
   components: { EntitiesSelect },
   data() {
     return {
-      impacts: [],
+      dependencies: [],
     };
   },
   methods: {
-    updateImpact(entities) {
-      this.impacts = entities.map(entity => entity._id);
+    updateDependencies(entities) {
+      this.dependencies = entities.map(entity => entity._id);
     },
   },
 };
