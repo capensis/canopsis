@@ -25,7 +25,23 @@ These routes take a JSON object with the following fields:
 
 An *entity group* is a JSON object containing `"<tag name>" : <tag filter>`
 couples. An entity is part of this group if each of its tags validates the
-corresponding filter. A tag filter can be :
+corresponding filter.
+
+The tag name can be used to filter according to :
+
+ - The entity's identity, with the names `entity.connector`,
+   `entity.connector_name`, `entity.component`, `entity.resource`.
+ - One of the entity's informations, with the names
+   `entity.infos.<information_id>`. Only the information ids specified in the
+   [statsng engine configuration](../../../admin_guide/statsng.md#entity-tags)
+   can be used in filters.
+ - The alarm's state, with the name `alarm.state`.
+ - Whether or not a pbehavior type is active, with the names
+   `pbehavior.<pbehavior_type>`. Only the pbehavior types specified in the
+   [statsng engine configuration](../../../admin_guide/statsng.md#pbehavior-tags)
+   can be used in filters.
+
+The tag filter can be :
 
  - a string, a tag validates this filter if its value is equal to this string.
  - a list of strings, a tag validates this filter if its value is in this list.
@@ -49,7 +65,7 @@ corresponding filter. A tag filter can be :
 The response is a JSON array containing objects with :
 
  - a `tags` field, whose value is an object containing the values of the tags
-   defined in `group_by` (or an empty object if `group_by` is not defined).
+   specified in `group_by` (or an empty object if `group_by` is not defined).
  - one field for each statistic that was requested.
 
 
@@ -209,7 +225,42 @@ Response:
 ]
 ```
 
-### Mutliple statistics in one request
+
+### Number of critical alarms created by a component not during a maintenance
+
+`/api/v2/stats/alarms_created`
+
+Requête:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity.connector": "connector",
+            "entity.connector_name": "connector_name",
+            "entity.component": "component",
+            "alarm.state": 3,
+            "pbehavior.Maintenance": false
+        }
+    ]
+}
+```
+
+Réponse:
+
+```javascript
+[
+    {
+        "tags": {},
+        "alarms_created": 13
+    }
+]
+```
+
+
+### Multiple statistics in one request
 
 `/api/v2/stats`
 

@@ -29,7 +29,24 @@ Ces routes acceptent un objet JSON contenant les paramètres suivants :
 Un *groupe d'entités* est un objet JSON contenant des couples
 `"<nom de tag>" : <filtre de tag>`. Une entité fait partie d'un groupe
 d'entités si chacun de ses tags valide le filtre correspondant (s'il y en a
-un). Un filtre de tag peut être :
+un).
+
+Le nom de tag peut être utilisé pour filtrer selon :
+
+ - L'identité de l'entité, avec les tags `entity.connector`,
+   `entity.connector_name`, `entity.component` et `entity.resource`.
+ - Les informations de l'entité, avec les tags `entity.infos.<information_id>`.
+   Seules les informations spécifiées dans la [configuration du moteur
+   statsng](../../../guide_administrateur/statsng.md#entity-tags) peuvent être
+   utilisées.
+ - L'état de l'alarme, avec le tag `alarm.state`.
+ - Les types de pbehaviors actifs ou non, avec les tags
+   `pbehavior.<pbehavior_type>`.  Seuls les types de pbehavior spécifiées dans
+   la [configuration du moteur
+   statsng](../../../guide_administrateur/statsng.md#pbehavior-tags) peuvent
+   être utilisées.
+
+Le filtre de tag peut être :
 
  - une chaîne de caractères, auquel cas la valeur du tag doit être égale à
    cette chaîne;
@@ -132,9 +149,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
+            "entity.connector": "connector",
+            "entity.connector_name": "connector_name",
+            "entity.component": "component"
         }
     ]
 }
@@ -163,9 +180,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
+            "entity.connector": "connector",
+            "entity.connector_name": "connector_name",
+            "entity.component": "component"
         }
     ],
     "group_by": ["resource"]
@@ -203,9 +220,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
+            "entity.connector": "connector",
+            "entity.connector_name": "connector_name",
+            "entity.component": "component"
         }
     ],
     "ack_time_sla": 600
@@ -228,6 +245,39 @@ Réponse:
 ]
 ```
 
+### Calcul du nombre d'alarmes critiques créées par un composant en dehors des plages de maintenance
+
+`/api/v2/stats/alarms_created`
+
+Requête:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity.connector": "connector",
+            "entity.connector_name": "connector_name",
+            "entity.component": "component",
+            "alarm.state": 3,
+            "pbehavior.Maintenance": false
+        }
+    ]
+}
+```
+
+Réponse:
+
+```javascript
+[
+    {
+        "tags": {},
+        "alarms_created": 13
+    }
+]
+```
+
 ### Calcul de plusieurs statistiques
 
 `/api/v2/stats`
@@ -241,9 +291,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
+            "entity.connector": "connector",
+            "entity.connector_name": "connector_name",
+            "entity.component": "component"
         }
     ]
 }
