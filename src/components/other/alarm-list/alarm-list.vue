@@ -13,7 +13,7 @@
       ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
       v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
         v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
-      v-btn(icon, @click="openSettingsPanel")
+      v-btn(icon, @click="$emit('openSettings')")
         v-icon settings
   v-layout.my-2(wrap, justify-space-between, align-center)
     v-flex(xs12 md5)
@@ -68,7 +68,6 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import ModalMixin from '@/mixins/modal/modal';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
-const { mapActions: settingsMapActions } = createNamespacedHelpers('alarmsListSettings');
 
 /**
  * Alarm-list component.
@@ -122,9 +121,6 @@ export default {
   methods: {
     ...alarmMapActions({
       fetchListAction: 'fetchList',
-    }),
-    ...settingsMapActions({
-      openSettingsPanel: 'openPanel',
     }),
 
     removeHistoryFilter() {

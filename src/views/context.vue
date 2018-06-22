@@ -1,22 +1,34 @@
 <template lang="pug">
-  context-table(
-  :contextProperties="$mq| mq(contextProperties)",
-  )
+  div
+    settings-wrapper(v-model="isSettingsOpen", :title="$t('settings.titles.contextTableSettings')")
+      context-settings-fields
+    context-table(
+    :contextProperties="$mq| mq(contextProperties)",
+    @openSettings="openSettings"
+    )
 </template>
 
 <script>
-import ContextEntityMixin from '@/mixins/context';
 import ContextTable from '@/components/other/context-explorer/context-table.vue';
+import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
+import contextEntityMixin from '@/mixins/context';
+import settingsMixin from '@/mixins/settings';
 import { PAGINATION_LIMIT } from '@/config';
 
 export default {
-  name: 'context',
-  components: { ContextTable },
-  mixins: [
-    ContextEntityMixin,
-  ],
+  components: {
+    ContextTable,
+    ContextSettingsFields,
+  },
+  mixins: [contextEntityMixin, settingsMixin],
   data() {
     return {
+      settingsFields: [
+        'title',
+        'default-column-sort',
+        'column-names',
+        'context-entities-types-filter',
+      ],
       contextProperties: {
         laptop: [
           {

@@ -92,8 +92,11 @@ export default {
       },
     },
   },
-  alarmListSettings: {
-    alarmListSettings: 'Alarm list settings',
+  settings: {
+    titles: {
+      alarmListSettings: 'Alarm list settings',
+      contextTableSettings: 'Context table settings',
+    },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default Sort Column',
@@ -108,6 +111,15 @@ export default {
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
     moreInfosModal: '"More Infos" Popup',
+    contextTypeOfEntities: {
+      title: 'Context type of entities',
+      fields: {
+        component: 'Component',
+        connector: 'Connector',
+        resource: 'Resource',
+        watcher: 'Watcher',
+      },
+    },
   },
   modals: {
     createEntity: {
