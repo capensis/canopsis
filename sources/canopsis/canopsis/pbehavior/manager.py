@@ -573,14 +573,22 @@ class PBehaviorManager(object):
                 )
             )
 
-            # compute the "missing date": a date before the first one
-            # just in case that first date isn't taking in account
-            # a pbehavior that just begun.
-            missing_date = dt_list[0] - (dt_list[-1] - dt_list[-2])
-            dt_list.insert(0, missing_date)
+
+            # compute the "missing dates": dates before the rrule started to
+            # generate dates so we can check for a pbehavior in the past.
+            while True:
+                multiply = 1
+                missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
+                dt_list.insert(0, missing_date)
+
+                if missing_date < dtts:
+                    break
+
+                multiply += 1
 
             delta = dttstop - dttstart
-            for dt in dt_list:
+
+            for dt in sorted(dt_list):
                 if dtts >= dt and dtts <= dt + delta:
                     return True
 
