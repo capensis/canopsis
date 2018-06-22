@@ -35,8 +35,47 @@
                 <div class="header">
                     <img src="/static/canopsis/media/canopsis.png" alt="Canopsis" />
                 </div>
-                {{#if casconfig}}
-                    <div class="panel-group" id="loginboxes">
+
+                <div class="panel-group" id="loginboxes">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#loginboxes" href="#normalbox">
+                                    Local authentication
+                                </a>
+                            </h4>
+                        </div>
+
+                        <div class="panel-collapse collapse in bg" id="normalbox">
+                            <div class="panel-body">
+                                <form id="cpslogin" action="/auth" method="post">
+                                    <div class="body bg-gray">
+                                        {{#if logmessage}}
+                                            <div class="alert alert-warning" role="alert">{{logmessage}}</div>
+                                        {{/if}}
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                            <input name="username" type="text" class="form-control" placeholder="Login" autofocus />
+                                        </div>
+
+                                        <br />
+
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                                            <input name="password" type="password" class="form-control" placeholder="Password" />
+                                        </div>
+
+                                        <br />
+
+                                        <div class="footer bg-gray">
+                                            <button type="submit" class="btn bg-olive btn-block">Sign in</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    {{#if casconfig}}
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
@@ -54,51 +93,10 @@
                                 </div>
                             </div>
                         </div>
+                    {{/if}}
 
-                        <div class="panel">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#loginboxes" href="#normalbox">
-                                        Local authentication
-                                    </a>
-                                </h4>
-                            </div>
+                </div>
 
-                            <div class="panel-collapse collapse bg-gray" id="normalbox">
-                                <div class="panel-body">
-                {{/if}}
-
-                <form id="cpslogin" action="/auth" method="post">
-                    <div class="body bg-gray">
-                        {{#if logmessage}}
-                            <div class="alert alert-warning" role="alert">{{logmessage}}</div>
-                        {{/if}}
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input name="username" type="text" class="form-control" placeholder="Login" autofocus />
-                        </div>
-
-                        <br />
-
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                            <input name="password" type="password" class="form-control" placeholder="Password" />
-                        </div>
-
-                        <br />
-
-                        <div class="footer bg-gray">
-                            <button type="submit" class="btn bg-olive btn-block">Sign in</button>
-                        </div>
-                    </div>
-                </form>
-
-                {{#if casconfig}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {{/if}}
                 {{#if login_footer}}
                     <div class="footer bg-gray">
                         {{{login_footer}}}
