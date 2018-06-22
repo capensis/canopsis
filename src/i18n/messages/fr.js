@@ -283,6 +283,9 @@ export default {
   errors: {
     default: 'Une erreur s\'est produite...',
   },
+  success: {
+    default: 'Action effectuée avec succès',
+  },
   mFilterEditor: {
     tabs: {
       visualEditor: 'Éditeur visuel',
