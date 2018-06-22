@@ -8,6 +8,7 @@ import time
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
+from canopsis.common.utils import normalize_utf8
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
@@ -154,37 +155,20 @@ class ContextGraph(object):
             source_type = event['type']
             source_field = 'type'
 
+        connector = normalize_utf8(event["connector"])
+        connector_name = normalize_utf8(event["connector_name"])
+        component = normalize_utf8(event["component"])
         id_ = ""
 
         if source_type == cls.COMPONENT:
-            try:
-                id_ = event["component"].encode('utf-8')
-            except UnicodeError:
-                id_ = event['component'].decode('utf-8')
+            id_ = component
 
         elif source_type == cls.RESOURCE:
-            try:
-                id_ = "{0}/{1}".format(
-                    event["resource"].encode('utf-8'),
-                    event["component"].encode('utf-8')
-                )
-            except UnicodeError:
-                id_ = "{0}/{1}".format(
-                    event["resource"].decode('utf-8'),
-                    event["component"].decode('utf-8')
-                )
+            resource = normalize_utf8(event["resource"])
+            id_ = "{}/{}".format(resource, component)
 
         elif source_type == cls.CONNECTOR:
-            try:
-                id_ = "{0}/{1}".format(
-                    event["connector"].encode('utf-8'),
-                    event["connector_name"].encode('utf-8')
-                )
-            except UnicodeError:
-                id_ = "{0}/{1}".format(
-                    event["connector"].decode('utf-8'),
-                    event["connector_name"].decode('utf-8')
-                )
+            id_ = "{}/{}".format(connector, connector_name)
 
         else:
             error_desc = (
