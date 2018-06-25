@@ -16,8 +16,9 @@ export default {
   mixins: [ModalInnerMixin],
   methods: {
     async submit() {
-      await this.config.action();
-
+      if (this.config.action) {
+        await this.config.action();
+      }
       this.hideModal();
     },
   },
