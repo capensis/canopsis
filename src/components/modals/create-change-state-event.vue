@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import EventActionsMixin from '@/mixins/event-actions';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, ENTITIES_STATES, MODALS } from '@/constants';
 
 
@@ -42,7 +42,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [ModalInnerItemsMixin, EventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsMixin],
   data() {
     return {
       form: {

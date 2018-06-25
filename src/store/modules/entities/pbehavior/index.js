@@ -4,7 +4,6 @@ import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import schemas from '@/store/schemas';
-
 import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export default {

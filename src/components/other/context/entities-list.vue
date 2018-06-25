@@ -26,17 +26,18 @@
 
 <script>
 import omit from 'lodash/omit';
+import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
-import ContextSearch from '@/components/other/context-explorer/search/context-search.vue';
+import ContextSearch from '@/components/other/context/search/context-search.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
-import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
+import CreateEntity from '@/components/other/context/actions/context-fab.vue';
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
 import { MODALS } from '@/constants';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import { createNamespacedHelpers } from 'vuex';
+
 
 const { mapActions } = createNamespacedHelpers('context');
 

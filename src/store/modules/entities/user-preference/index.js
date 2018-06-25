@@ -1,6 +1,6 @@
+import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { userPreferenceSchema } from '@/store/schemas';
-import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',

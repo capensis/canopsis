@@ -11,6 +11,7 @@
 <script>
 import HandleBars from 'handlebars';
 import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS } from '@/constants';
 
 const { mapGetters } = createNamespacedHelpers('modal');

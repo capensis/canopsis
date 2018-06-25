@@ -1,8 +1,8 @@
 import qs from 'qs';
 
+import i18n from '@/i18n';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
-import i18n from '@/i18n';
 
 export default {
   namespaced: true,

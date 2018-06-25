@@ -1,6 +1,6 @@
+import request from '@/services/request';
 import { viewSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
-import request from '@/services/request';
 import widgetModule, { types as widgetMutations } from './widget';
 
 export const types = {

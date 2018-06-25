@@ -20,7 +20,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
@@ -28,7 +28,7 @@ const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior')
 export default {
   name: MODALS.pbehaviorList,
 
-  mixins: [ModalInnerItemsMixin],
+  mixins: [modalInnerItemsMixin],
   data() {
     const fields = [
       'name',
