@@ -55,7 +55,9 @@ class TestTasks(BaseTest):
         event = {
             'timestamp': 0,
             'source_type': 'component',
-            'component': 'c',
+            'connector': 'c',
+            'connector_name': 'cn',
+            'component': 'cm',
         }
 
         task = get_task('alerts.useraction.ack')
@@ -103,11 +105,13 @@ class TestTasks(BaseTest):
         event = {
             'timestamp': 0,
             'source_type': 'component',
-            'component': 'c',
+            'connector': 'c',
+            'connector_name': 'cn',
+            'component': 'cm',
         }
 
         ack_task = get_task('alerts.useraction.ack')
-        ackremove_task = get_task('alerts.useraction.ackremove')
+        #ackremove_task = get_task('alerts.useraction.ackremove')
         alarm = ack_task(
             self.manager,
             self.alarm,

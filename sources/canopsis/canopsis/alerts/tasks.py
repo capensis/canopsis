@@ -180,7 +180,7 @@ def declare_ticket(manager, alarm, author, message, event):
 @register_task('alerts.useraction.done')
 def done(manager, alarm, author, message, event):
     """
-    Called when a user associates a ticket to an alarm.
+    Called when a user mark an alarm as done.
     """
 
     step = {
