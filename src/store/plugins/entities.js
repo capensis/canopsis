@@ -17,8 +17,8 @@ const internalTypes = {
 
 // TODO: move and finish it
 const prepareDataForDelete = (schema, data, filter = () => {}) => {
-  let entitiesToMerge = {};
-  let entitiesToDelete = {
+  const entitiesToMerge = {};
+  const entitiesToDelete = {
     [schema.key]: {
       [data._id]: {},
     },
@@ -38,15 +38,8 @@ const prepareDataForDelete = (schema, data, filter = () => {}) => {
             v => v.id !== entity._id || (v.id === entity._id && v.type !== childrenSchema.key),
           );
 
-          entitiesToMerge = {
-            ...entitiesToMerge,
-            ...result.entitiesToMerge,
-          };
-
-          entitiesToDelete = {
-            ...entitiesToDelete,
-            ...result.entitiesToDelete,
-          };
+          Object.assign(entitiesToMerge, result.entitiesToMerge);
+          Object.assign(entitiesToDelete, result.entitiesToDelete);
         } else {
           if (!entitiesToMerge[childrenSchema.key]) {
             entitiesToMerge[childrenSchema.key] = {};
