@@ -17,12 +17,16 @@
       tr.container(slot="row" slot-scope="item")
         td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
         td.box
+          v-btn(@click.stop="deleteEntity(item)", icon, small)
+            v-icon delete
+      tr.container(slot="expandedRow", slot-scope="item")
     pagination(:meta="contextEntitiesMeta", :limit="limit")
     create-entity.fab
 </template>
 
 <script>
 import omit from 'lodash/omit';
+import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -30,9 +34,15 @@ import ListSorting from '@/components/tables/list-sorting.vue';
 import CreateEntity from '@/components/other/context/actions/context-fab.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import paginationMixin from '@/mixins/pagination';
+import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
+import { MODALS } from '@/constants';
+
+
+const { mapActions } = createNamespacedHelpers('context');
 
 export default {
+  name: 'context-table',
   components: {
     BasicList,
     ContextSearch,
@@ -43,6 +53,7 @@ export default {
   mixins: [
     paginationMixin,
     contextEntityMixin,
+    modalMixin,
   ],
   props: {
     contextProperties: {
@@ -53,6 +64,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      fetchListAction: 'fetchList',
+      remove: 'remove',
+    }),
     getQuery() {
       const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
       query.limit = this.limit;
@@ -66,6 +81,14 @@ export default {
       }
 
       return query;
+    },
+    deleteEntity(item) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.remove({ id: item.props._id }),
+        },
+      });
     },
     fetchList() {
       this.fetchContextEntities({
