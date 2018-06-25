@@ -413,6 +413,29 @@ Ember.Application.initializer({
                         }));
                     }
                 },
+                done: {
+                    extract: function(record, crecord, formRecord) {
+                        // record.id = this.getRoutingKey(record);
+                        if (formRecord === undefined) {
+                            record.output = '';
+                        } else {
+                            record.output = get(formRecord, 'output');
+                            //record.done = get(formRecord, 'done');
+                        }
+                    },
+                    filter: function(record) {
+                        return (get(record, 'done.isDone'));
+                    },
+                    handle: function(crecords) {
+                        var record = this.getDisplayRecord('done', crecords[0]);
+                        this.getEventForm('done', record, crecords);
+                    },
+                    transform: function(crecord, record) {
+                        console.log('transform method for done', crecord, record);
+                        //crecord.set('done', record.done);
+                        crecord.set('done_date', datesUtils.getNow());
+                    }
+                },
                 pbehavior: {
                     extract: function(record, crecord, formRecord) {
                         if (!isNone(formRecord)) {
@@ -475,6 +498,11 @@ Ember.Application.initializer({
                         console.log('transform method for declare ticket', crecord, record);
                         crecord.set('ticket_declared_author', record.author);
                         crecord.set('ticket_declared_date', datesUtils.getNow());
+                        if(!isNone(record.done)) {
+                            crecord.set('done', record.done);
+                            crecord.set('done_date', datesUtils.getNow());
+                        }
+                        //crecord.set('done_remove', undefined);
                     }
                 },
                 assocticket: {
