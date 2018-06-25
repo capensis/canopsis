@@ -201,6 +201,9 @@ Ember.Application.initializer({
                 if (this.get('isAcked')) {
                     return 'acked';
                 }
+                if (this.get('isDone')) {
+                    return 'done';
+                }
                 return 'unacked';
             }.property('alarm.state.val', 'isCanceled', 'isAcked'),
 
@@ -217,6 +220,13 @@ Ember.Application.initializer({
             isCanceled: function () {
                 return this.get('alarm.canceled') != undefined;
             }.property('alarm.canceled'),
+
+            /**
+             * @property isDone
+             */
+            isDone: function () {
+                return this.get('alarm.done') != undefined;
+            }.property('alarm.done'),
 
             /**
              * @property isSnoozed
@@ -323,17 +333,19 @@ Ember.Application.initializer({
                         return
 
                     } else if (action.name === 'donealarm'){
-                       /* var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
+                       /*
+                        var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
                         var confirmform = formsUtils.showNew('modelform', obj, {
                             title: 'Mark the alarm as done ?'
                         });
                         confirmform.submit.then(function (form) {
                         */
-                        var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
+                        /*var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
                         var confirmform = formsUtils.showNew('modelform', obj, {
                             title: 'Done Form'
                         });
                         return
+                        */
                     }
 
                     this.sendAction('action', action, alarm);
