@@ -55,6 +55,7 @@ export default {
           params,
           dataPreparer: d => d.data[0].alarms,
         }, { root: true });
+
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
