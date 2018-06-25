@@ -83,6 +83,7 @@ Ember.Application.initializer({
                     return ['<center>',
                         '<b>' + __('Alarm done') + '</b><br/>',
                         this.dateFormat(this.get('value.done.t')) +' <br/> ',
+                        __('Message') +' : ' + this.get('value.done.m') +' <br/> ',
                         __('By') +' : ' + this.get('value.done.a') +' <br/><br/> ',
                         '</center>'].join('');
                 } else {
