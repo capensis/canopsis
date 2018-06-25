@@ -1,4 +1,3 @@
-// LIBS
 import uid from 'uid';
 
 export const types = {

@@ -5,9 +5,8 @@
 </template>
 
 <script>
-// LIBS
 import getProp from 'lodash/get';
-// OTHERS
+
 import { ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 
 export default {

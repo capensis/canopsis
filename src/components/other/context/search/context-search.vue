@@ -15,7 +15,6 @@
 </template>
 
 <script>
-// MIXINS
 import searchMixin from '@/mixins/search';
 
 export default {

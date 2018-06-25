@@ -6,7 +6,6 @@
 </template>
 
 <script>
-// COMPONENTS
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
 import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';

@@ -47,7 +47,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-
 import VueContentLoading from 'vue-content-loading';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('app');

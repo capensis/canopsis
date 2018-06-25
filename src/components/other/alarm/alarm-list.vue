@@ -41,11 +41,10 @@
 </template>
 
 <script>
-// LIBS
 import { createNamespacedHelpers } from 'vuex';
 import intersectionWith from 'lodash/intersectionWith';
 import omit from 'lodash/omit';
-// COMPONENTS
+
 import BasicList from '@/components/tables/basic-list.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
@@ -56,7 +55,6 @@ import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.v
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
-// MIXINS
 import modalMixin from '@/mixins/modal/modal';
 import paginationMixin from '@/mixins/pagination';
 

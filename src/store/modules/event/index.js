@@ -1,9 +1,7 @@
-// LIBS
 import qs from 'qs';
+
 import i18n from '@/i18n';
-// SERVICES
 import request from '@/services/request';
-// OTHERS
 import { API_ROUTES } from '@/config';
 
 export default {

@@ -9,13 +9,10 @@
 </template>
 
 <script>
-// COMPONENTS
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
-// MIXINS
 import contextEntityMixin from '@/mixins/context';
 import settingsMixin from '@/mixins/settings';
-// OTHERS
 import { PAGINATION_LIMIT } from '@/config';
 
 export default {

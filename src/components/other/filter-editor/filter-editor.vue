@@ -41,11 +41,9 @@
 
 
 <script>
-// LIBS
 import { createNamespacedHelpers } from 'vuex';
-// COMPONENTS
+
 import FilterGroup from '@/components/other/filter-editor/filter-group.vue';
-// MIXINS
 import paginationMixin from '@/mixins/pagination';
 
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');

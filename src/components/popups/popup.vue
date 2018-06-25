@@ -4,9 +4,8 @@
 </template>
 
 <script>
-// LIBS
 import { createNamespacedHelpers } from 'vuex';
-// OTHERS
+
 import { POPUP_AUTO_CLOSE_DELAY, VUETIFY_ANIMATION_DELAY } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('popup');

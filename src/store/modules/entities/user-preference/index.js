@@ -1,6 +1,4 @@
-// SERVICES
 import request from '@/services/request';
-// OTHERS
 import { API_ROUTES } from '@/config';
 import { userPreferenceSchema } from '@/store/schemas';
 

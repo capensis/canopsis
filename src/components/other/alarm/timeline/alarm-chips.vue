@@ -3,7 +3,6 @@
 </template>
 
 <script>
-// HELPERS
 import formatStateAndStatus from '@/helpers/state-and-status-formatting';
 
 export default {

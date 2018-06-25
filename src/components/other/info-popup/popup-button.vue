@@ -4,10 +4,9 @@
 </template>
 
 <script>
-// LIBS
 import Handlebars from 'handlebars';
 import getProp from 'lodash/get';
-// MIXINS
+
 import widgetMixin from '@/mixins/widget';
 import popupComponentMixin from '@/mixins/popup';
 

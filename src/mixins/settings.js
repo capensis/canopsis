@@ -1,4 +1,3 @@
-// COMPONENTS
 import SettingsWrapper from '@/components/other/settings/settings-wrapper.vue';
 
 export default {

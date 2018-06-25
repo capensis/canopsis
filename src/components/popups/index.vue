@@ -4,10 +4,9 @@
 </template>
 
 <script>
-// LIBS
 import { createNamespacedHelpers } from 'vuex';
-// COMPONENTS
-import Popup from '@/components/popups/popup.vue';
+
+import Popup from './popup.vue';
 
 const { mapGetters } = createNamespacedHelpers('popup');
 

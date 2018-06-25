@@ -1,5 +1,3 @@
-import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
-
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VueMoment from 'vue-moment';
@@ -10,11 +8,11 @@ import VueMq from 'vue-mq';
 
 import 'vuetify/dist/vuetify.min.css';
 
+import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 import App from '@/app.vue';
 import router from '@/router';
 import store from '@/store';
 import i18n from '@/i18n';
-
 import filters from '@/filters';
 
 Vue.use(filters);

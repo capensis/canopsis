@@ -1,4 +1,3 @@
-// SERVICES
 import parseFilterToRequest from '@/services/mfilter-editor/parseFilterToRequest';
 import parseGroupToFilter from '@/services/mfilter-editor/parseRequestToFilter';
 

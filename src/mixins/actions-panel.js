@@ -1,7 +1,5 @@
-// MIXINS
 import modalMixin from '@/mixins/modal/modal';
 import eventActionsMixin from '@/mixins/event-actions';
-// OTHERS
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {

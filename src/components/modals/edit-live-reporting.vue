@@ -29,9 +29,7 @@
 </template>
 
 <script>
-// COMPONENTS
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
-// MIXINS
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 

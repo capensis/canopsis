@@ -1,4 +1,3 @@
-// LIBS
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('popup');

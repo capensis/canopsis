@@ -20,11 +20,9 @@
 </template>
 
 <script>
-// LIBS
 import { createNamespacedHelpers } from 'vuex';
-// MIXINS
+
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-// OTHERS
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');

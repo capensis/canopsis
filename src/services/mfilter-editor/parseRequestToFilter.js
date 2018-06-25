@@ -1,4 +1,3 @@
-// LIBS
 import isEmpty from 'lodash/isEmpty';
 
 /**

@@ -47,14 +47,11 @@
 </template>
 
 <script>
-// LIB
 import { createNamespacedHelpers } from 'vuex';
-// COMPONENTS
+
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
-// MIXINS
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-// OTHERS
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');

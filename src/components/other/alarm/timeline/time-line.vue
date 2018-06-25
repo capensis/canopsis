@@ -30,16 +30,13 @@
 </template>
 
 <script>
-// LIBS
 import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
-// COMPONENTS
+
 import AlarmFlag from '@/components/other/alarm/timeline/alarm-flag.vue';
 import AlarmChips from '@/components/other/alarm/timeline/alarm-chips.vue';
-// HELPERS
 import { numericSortObject } from '@/helpers/sorting';
-// OTHERS
 import { ENTITIES_STATES_STYLES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');

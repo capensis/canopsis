@@ -9,10 +9,9 @@
 </template>
 
 <script>
-// LIBS
 import HandleBars from 'handlebars';
 import { createNamespacedHelpers } from 'vuex';
-// OTHERS
+
 import { MODALS } from '@/constants';
 
 const { mapGetters } = createNamespacedHelpers('modal');

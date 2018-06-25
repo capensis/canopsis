@@ -1,7 +1,6 @@
-// LIBS
 import merge from 'lodash/merge';
+
 import i18n from '@/i18n';
-// OTHERS
 import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
