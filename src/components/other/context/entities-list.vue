@@ -42,6 +42,7 @@ import { MODALS } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('context');
 
+
 export default {
   components: {
     BasicList,
