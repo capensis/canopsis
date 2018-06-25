@@ -23,6 +23,7 @@ import CreatePbehavior from './create-pbehavior.vue';
 import PbehaviorList from './pbehavior-list.vue';
 import EditLiveReporting from './edit-live-reporting.vue';
 import MoreInfos from './more-infos.vue';
+import Confirmation from './confirmation.vue';
 import CreateEntity from './create-entity.vue';
 
 /**
@@ -41,6 +42,7 @@ export default {
     PbehaviorList,
     EditLiveReporting,
     MoreInfos,
+    Confirmation,
     CreateEntity,
   },
   data() {
@@ -56,6 +58,7 @@ export default {
         { name: MODALS.pbehaviorList, dialogProps: { maxWidth: 1280, lazy: true } },
         { name: MODALS.editLiveReporting },
         { name: MODALS.moreInfos },
+        { name: MODALS.confirmation },
         { name: MODALS.createEntity },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },

@@ -20,6 +20,7 @@ export const MODALS = {
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
+  confirmation: 'confirmation',
 };
 
 export const EVENT_ENTITY_TYPES = {
