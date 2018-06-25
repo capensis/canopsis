@@ -1,5 +1,11 @@
 <template lang="pug">
   div
+    v-layout(justify-space-between, align-center)
+      v-flex.ml-4(xs4)
+        div mass actions
+      v-flex(xs2)
+        v-btn(icon, @click.prevent="$emit('openSettings')")
+          v-icon settings
     context-search
     records-per-page
     basic-list(:items="contextEntities")
@@ -19,16 +25,17 @@
 </template>
 
 <script>
+import omit from 'lodash/omit';
+
 import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context-explorer/search/context-search.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
 import CreateEntity from '@/components/other/context-explorer/actions/context-fab.vue';
-import PaginationMixin from '@/mixins/pagination';
-import ModalMixin from '@/mixins/modal/modal';
-import omit from 'lodash/omit';
+import paginationMixin from '@/mixins/pagination';
+import modalMixin from '@/mixins/modal/modal';
+import contextEntityMixin from '@/mixins/context';
 import { MODALS } from '@/constants';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import ContextEntityMixin from '@/mixins/context';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('context');
@@ -42,7 +49,11 @@ export default {
     ListSorting,
     CreateEntity,
   },
-  mixins: [PaginationMixin, ModalMixin, ContextEntityMixin],
+  mixins: [
+    paginationMixin,
+    contextEntityMixin,
+    modalMixin,
+  ],
   props: {
     contextProperties: {
       type: Array,

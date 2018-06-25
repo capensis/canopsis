@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-container(v-for="(popup, index) in popups" :key="`info-popup-${index}`")
+    v-container(v-for="(popup, index) in popups", :key="`info-popup-${index}`")
       v-card
         v-container
           v-layout(class="text-md-center")

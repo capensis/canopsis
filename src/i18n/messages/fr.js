@@ -81,7 +81,9 @@ export default {
     },
   },
   alarmListSettings: {
-    alarmListSettings: 'Paramètres du bac à alarmes',
+    titles: {
+      alarmListSettings: 'Paramètres du bac à alarmes',
+    },
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
@@ -285,6 +287,9 @@ export default {
   },
   errors: {
     default: 'Une erreur s\'est produite...',
+  },
+  success: {
+    default: 'Action effectuée avec succès',
   },
   mFilterEditor: {
     tabs: {
