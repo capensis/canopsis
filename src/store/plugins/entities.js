@@ -113,6 +113,9 @@ const entitiesModule = {
       return { data, normalizedData };
     },
 
+    /**
+     * Remove entity by id and type from store
+     */
     removeFromStore({ commit, getters, state }, { id, type }) {
       const data = getters.getItem(type, id);
       const parents = get(data, '_embedded.parents', []);

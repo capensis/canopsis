@@ -2,6 +2,13 @@ import get from 'lodash/get';
 
 import schemas from '@/store/schemas';
 
+/**
+ * Helper for entities preparation for delete
+ *
+ * @param type
+ * @param data
+ * @returns {{entitiesToMerge: {}, entitiesToDelete: {}}}
+ */
 export function prepareEntitiesToDelete({ type, data }) {
   const schema = schemas[type];
   const id = data[schema.idAttribute];

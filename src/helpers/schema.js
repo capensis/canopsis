@@ -1,3 +1,10 @@
+/**
+ * If entity has parent we should use this processStrategy
+ *
+ * @param entity
+ * @param parent
+ * @param key
+ */
 export const childProcessStrategy = (entity, parent, key) => ({
   ...entity,
   _embedded: {
@@ -5,6 +12,12 @@ export const childProcessStrategy = (entity, parent, key) => ({
   },
 });
 
+/**
+ * If entity has parent we should use this mergeStrategy
+ *
+ * @param entityA
+ * @param entityB
+ */
 export const childMergeStrategy = (entityA, entityB) => ({
   ...entityA,
   ...entityB,
