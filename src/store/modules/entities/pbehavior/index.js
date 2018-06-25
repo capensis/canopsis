@@ -28,15 +28,21 @@ export default {
         throw err;
       }
     },
-    async remove({ commit }, { id }) {
+    /**
+     * TODO: finish it
+     */
+    async remove({ dispatch }, { id }) {
       try {
-        await request.delete(`${API_ROUTES.pbehavior}/${id}`);
+        await dispatch('entities/remove', { id, type: 'pbehavior' }, { root: true });
+        // await request.delete(`${API_ROUTES.pbehavior}/${id}`);
 
-        commit(
+        // console.log(`${parentId}`id);
+
+        /*        commit(
           entitiesTypes.ENTITIES_DELETE,
           { pbehavior: [id] },
           { root: true },
-        );
+        ); */
       } catch (err) {
         console.warn(err);
       }

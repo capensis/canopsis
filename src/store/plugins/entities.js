@@ -15,6 +15,63 @@ const internalTypes = {
   ENTITIES_DELETE: 'ENTITIES_DELETE',
 };
 
+// TODO: move and finish it
+const prepareDataForDelete = (schema, data, filter = () => {}) => {
+  let entitiesToMerge = {};
+  let entitiesToDelete = {
+    [schema.key]: {
+      [data._id]: {},
+    },
+  };
+
+  Object.keys(schema.schema).forEach((key) => {
+    if (Array.isArray(schema.schema[key])) {
+      const childrenSchema = schema.schema[key][0];
+
+      data[key].forEach((entity) => {
+        const parents = get(entity, '_embedded.parents', []);
+
+        if (parents.length <= 1) {
+          const result = prepareDataForDelete(
+            childrenSchema,
+            entity,
+            v => v.id !== entity._id || (v.id === entity._id && v.type !== childrenSchema.key),
+          );
+
+          entitiesToMerge = {
+            ...entitiesToMerge,
+            ...result.entitiesToMerge,
+          };
+
+          entitiesToDelete = {
+            ...entitiesToDelete,
+            ...result.entitiesToDelete,
+          };
+        } else {
+          if (!entitiesToMerge[childrenSchema.key]) {
+            entitiesToMerge[childrenSchema.key] = {};
+          }
+
+          entitiesToMerge[childrenSchema.key][entity[childrenSchema.idAttribute]] = {
+            ...entity,
+            _embedded: {
+              ...entity._embedded,
+              parents: parents.filter(filter),
+            },
+          };
+        }
+      });
+    } else {
+      // TODO: finish this method
+    }
+  });
+
+  return {
+    entitiesToMerge,
+    entitiesToDelete,
+  };
+};
+
 const entitiesModule = {
   namespaced: true,
   getters: {
@@ -73,21 +130,11 @@ const entitiesModule = {
 
     /**
      * @param {Object} state - state of the module
-     * @param {Object.<string, Array.<string>>} entitiesIds - Object of entities ids
+     * @param {Object.<string, Object>} entities - Object of entities
      */
-    [internalTypes.ENTITIES_DELETE](state, entitiesIds) {
-      Object.keys(entitiesIds).forEach((type) => {
-        entitiesIds[type].forEach((id) => {
-          const entity = state[type][id];
-          const { parentType, parentId, relationType } = get(entity, '_embedded', {});
-          const parentEntity = get(state, [parentType, parentId]);
-
-          if (parentEntity) {
-            Vue.set(parentEntity, relationType, parentEntity[relationType].filter(v => v !== id));
-          }
-        });
-
-        Vue.set(state, type, omit(state[type], entitiesIds[type]));
+    [internalTypes.ENTITIES_DELETE](state, entities) {
+      Object.keys(entities).forEach((key) => {
+        Vue.set(state, key, omit(state[key], Object.keys(entities[key])));
       });
     },
   },
@@ -113,6 +160,32 @@ const entitiesModule = {
       commit(mutationType, normalizedData.entities);
 
       return { data, normalizedData };
+    },
+    remove({ commit, getters, state }, { id, type }) {
+      const schema = schemas[type];
+      const item = getters.getItem(type, id);
+      const parents = get(item, '_embedded.parents', []);
+
+      const {
+        entitiesToMerge,
+        entitiesToDelete,
+      } = prepareDataForDelete(schema, item, v => v.id !== id || (v.id === id && v.type !== type));
+
+      parents.forEach((parent) => {
+        const parentEntity = state[parent.type][parent.id];
+
+        if (!entitiesToMerge[parent.type]) {
+          entitiesToMerge[parent.type] = {};
+        }
+
+        entitiesToMerge[parent.type][parent.id] = {
+          ...parentEntity,
+          [parent.key]: parentEntity[parent.key].filter(v => v !== id),
+        };
+      });
+
+      commit(internalTypes.ENTITIES_UPDATE, entitiesToMerge);
+      commit(internalTypes.ENTITIES_DELETE, entitiesToDelete);
     },
   },
 };
