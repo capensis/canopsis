@@ -1,12 +1,11 @@
 <template lang="pug">
-  v-chip(:color="color" text-color="white") {{ this.text }}
+  v-icon(large :color="color") {{ icon }}
 </template>
 
 <script>
 import formatStateAndStatus from '@/helpers/state-and-status-formatting';
 
 export default {
-  name: 'alarm-chips',
   props: {
     value: {
       type: [Number, String],
@@ -16,13 +15,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    isCroppedState: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     color() {
-      return formatStateAndStatus(this.value, this.isStatus).color;
+      return formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).color;
     },
-    text() {
-      return formatStateAndStatus(this.value, this.isStatus).text;
+    icon() {
+      return formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).icon;
     },
   },
 };

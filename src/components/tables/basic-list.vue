@@ -24,10 +24,10 @@
 
 <script>
 import StickyFill from 'stickyfilljs';
+
 import ListItem from '@/components/tables/list-item.vue';
 
 export default {
-  name: 'BasicList',
   components: { ListItem },
   props: {
     items: {

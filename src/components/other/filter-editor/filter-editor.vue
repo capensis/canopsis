@@ -42,8 +42,9 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import FilterGroup from '@/components/other/mfilter-editor/filter-group.vue';
-import PaginationMixin from '@/mixins/pagination';
+
+import FilterGroup from '@/components/other/filter-editor/filter-group.vue';
+import paginationMixin from '@/mixins/pagination';
 
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
 const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNamespacedHelpers('alarm');
@@ -54,7 +55,7 @@ export default {
   components: {
     FilterGroup,
   },
-  mixins: [PaginationMixin],
+  mixins: [paginationMixin],
   data() {
     return {
       paginationLength: 0,
