@@ -55,8 +55,18 @@ def acknowledge(manager, alarm, author, message, event):
             entity = entity[0]
         except IndexError:
             entity = {}
-        manager.event_publisher.publish_statduration_event(
-            event['timestamp'], StatDurations.ack_time, entity, alarm)
+
+        try:
+            ack_time = event['timestamp'] - alarm[AlarmField.creation_date.value]
+        except KeyError:
+            manager.logger.exception("The alarm does not have a creation date.")
+        else:
+            manager.event_publisher.publish_statduration_event(
+                event['timestamp'],
+                StatDurations.ack_time,
+                ack_time,
+                entity,
+                alarm)
 
     return alarm
 
