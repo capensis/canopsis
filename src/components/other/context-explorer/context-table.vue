@@ -8,7 +8,8 @@
           v-icon settings
     context-search
     records-per-page
-    basic-list(:items="contextEntities")
+    basic-list(:items="contextEntities", :pending="pending")
+      loader(slot="loader")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
           span {{ columnProperty.text }}
@@ -36,6 +37,7 @@ import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
 import { MODALS } from '@/constants';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import Loader from '@/components/other/context-explorer/loader/context-loader.vue';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('context');
@@ -48,6 +50,7 @@ export default {
     RecordsPerPage,
     ListSorting,
     CreateEntity,
+    Loader,
   },
   mixins: [
     paginationMixin,
