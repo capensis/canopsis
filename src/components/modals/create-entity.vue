@@ -29,6 +29,8 @@
           label="Type"
           single-line
           )
+    entities-select(label="Impacts", @update:entities="updateImpact($event)")
+    entities-select(label="Dependencies", @update:entities="updateDependencies($event)")
     v-card-actions
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
       v-btn(@click.prevent="manageInfos", color="primary") {{ $t('modals.createEntity.fields.manageInfos') }}
@@ -37,23 +39,29 @@
 <script>
 
 import { MODALS } from '@/constants';
+import EntitiesSelect from '@/components/other/context-explorer/actions/createEntities/entities-select.vue';
 
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {
     validator: 'new',
   },
+  components: { EntitiesSelect },
   data() {
     return {
       showValidationErrors: true,
       enabled: true,
-      types: [this.$t('modals.createEntity.fields.types.connector'),
+      types: [
+        this.$t('modals.createEntity.fields.types.connector'),
         this.$t('modals.createEntity.fields.types.component'),
-        this.$t('modals.createEntity.fields.types.resource')],
+        this.$t('modals.createEntity.fields.types.resource'),
+      ],
       form: {
         name: '',
         description: '',
         type: '',
+        impacts: [],
+        dependencies: [],
       },
     };
   },
@@ -66,7 +74,12 @@ export default {
       // TO DO
       // manage infos
     },
-
+    updateImpact(entities) {
+      this.form.impacts = entities.map(entity => entity._id);
+    },
+    updateDependencies(entities) {
+      this.form.dependencies = entities.map(entity => entity._id);
+    },
     async submit() {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
@@ -81,5 +94,8 @@ export default {
 <style scoped>
   .tooltip {
     flex: 1 1 auto;
+  }
+  .impact {
+    background-color: grey;
   }
 </style>

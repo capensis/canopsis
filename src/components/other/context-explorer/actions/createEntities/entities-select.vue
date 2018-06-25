@@ -1,11 +1,11 @@
 <template lang="pug">
   div
     .addContainer
-        span {{ label }}:&ensp;
-        .entities
+        .label {{ label }}:&ensp;
+        .entities.scrollbar
           span(v-for="entity in entities") {{ entity._id }},&emsp;
         v-btn(icon @click="showList=!showList")
-          v-icon add
+          v-icon {{ showListIcon }}
         v-btn(icon @click="clear")
           v-icon clear
     context-list(
@@ -34,6 +34,9 @@ export default {
     };
   },
   computed: {
+    showListIcon() {
+      return this.showList ? 'remove' : 'add';
+    },
   },
   methods: {
     updateEntities(entities) {
@@ -52,10 +55,33 @@ export default {
   .addContainer {
     display :flex;
     align-items: center;
+    align-content: flex-start;
   }
   .entities{
     width: 50%;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: auto;
+  }
+  .label{
+    width: 16%;
+  }
+  .scrollbar::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+  }
+
+  .scrollbar::-webkit-scrollbar
+  {
+    height: 3px;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb
+  {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: darkgray;
+    height: 0;
   }
 </style>
