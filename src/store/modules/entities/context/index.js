@@ -1,5 +1,7 @@
 import { API_ROUTES } from '@/config';
 import { contextSchema } from '@/store/schemas';
+import request from '@/services/request';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -59,6 +61,19 @@ export default {
         commit(types.FETCH_LIST_FAILED);
       }
     },
+    async remove({ commit }, { id } = {}) {
+      try {
+        await request.delete(API_ROUTES.context, { params: { ids: id } });
 
+        commit(
+          entitiesTypes.ENTITIES_DELETE,
+          { context: [id] },
+          { root: true },
+        );
+      } catch (err) {
+        console.warn(err);
+      }
+
+    },
   },
 };
