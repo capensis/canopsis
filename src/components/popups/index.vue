@@ -24,6 +24,5 @@ export default {
     z-index: 2;
     right: 2rem;
     top: 75px;
-    width: 350px;
   }
 </style>
