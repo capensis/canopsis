@@ -329,34 +329,10 @@ Ember.Application.initializer({
                         });
                         confirmform.submit.then(function (form) {
                         */
-                            payload = {
-                                'connector': alarm['connector'],
-                                'connector_name': alarm['connector_name'],
-                                'component': alarm['component'],
-                                'resource': alarm['resource'],
-                                'source_type': alarm['source_type'],
-                                'author': window.username,
-                                //'comment': form.get('formContext.comment'),
-                                'comment': 'xwcwxcwxcw', // TODO
-                            }
-
-                            //$.post(url)
-                            return $.ajax({
-                                type: 'POST',
-                                url: '/api/v2/alerts/done',
-                                data: JSON.stringify(payload),
-                                contentType: 'application/json',
-                                dataType: 'json',
-                                success: function () {
-                                    console.log('done action is sent');
-                                },
-                                statusCode: {
-                                    500: function () {
-                                        console.error("Failed to send done action");
-                                    }
-                                }
-                            });
-                        //});
+                        var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
+                        var confirmform = formsUtils.showNew('modelform', obj, {
+                            title: 'Done Form'
+                        });
                         return
                     }
 
