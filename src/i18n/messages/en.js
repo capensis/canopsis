@@ -2,8 +2,12 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    watcher: 'Watcher',
     name: 'Name',
     description: 'Description',
+    submit: 'Submit',
+    enabled: 'Enabled',
+    login: 'Login',
     yes: 'Yes',
     no: 'No',
     confirmation: 'Are you sure ?',
@@ -11,9 +15,6 @@ export default {
     date: 'Date',
     comment: 'Comment',
     end: 'End',
-    submit: 'Submit',
-    enabled: 'Enabled',
-    login: 'Login',
     username: 'Username',
     password: 'Password',
     title: 'Title',
@@ -85,7 +86,7 @@ export default {
       },
       iconsTitles: {
         ack: 'Ack',
-        declareTicket: 'Declared ticket',
+        declareTicket: 'Declare ticket',
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
@@ -115,7 +116,7 @@ export default {
     infoPopup: 'Info popup',
     moreInfosModal: '"More Infos" Popup',
     contextTypeOfEntities: {
-      title: 'Context type of entities',
+      title: 'Type of entities',
       fields: {
         component: 'Component',
         connector: 'Connector',
@@ -138,9 +139,9 @@ export default {
       },
     },
     createAckEvent: {
-      title: 'Add event type: ack',
+      title: 'Add event: Ack',
       tooltips: {
-        ackResources: 'Do you want to ack linked resources or not?',
+        ackResources: 'Do you want to ack linked resources ?',
       },
       fields: {
         ticket: 'Ticket number',
@@ -149,19 +150,19 @@ export default {
       },
     },
     createSnoozeEvent: {
-      title: 'Add event type: snooze',
+      title: 'Add event: Snooze',
       fields: {
         duration: 'Duration',
       },
     },
     createCancelEvent: {
-      title: 'Add event type: cancel',
+      title: 'Add event: Cancel',
       fields: {
         output: 'Note',
       },
     },
     createChangeStateEvent: {
-      title: 'Add event type: change state',
+      title: 'Add event: Change state',
       states: {
         ok: 'Info',
         minor: 'Minor',
@@ -184,13 +185,13 @@ export default {
       },
     },
     createAckRemove: {
-      title: 'Add event type: ackremove',
+      title: 'Add event: Remove ack',
     },
     createDeclareTicket: {
-      title: 'Add event type: declareticket',
+      title: 'Add event: Declare ticket',
     },
     createAssociateTicket: {
-      title: 'Add event type: assocticket',
+      title: 'Add event: Associate ticket number',
       fields: {
         ticket: 'Number of the ticket',
       },
@@ -232,6 +233,8 @@ export default {
     pbehaviorList: {
       name: 'Name',
       author: 'Author',
+      connector: 'Connector',
+      connector_name: 'Connector name',
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',

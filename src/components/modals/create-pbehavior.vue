@@ -114,7 +114,7 @@ export default {
         }
 
         try {
-          await this.createPbehavior({ data, parents: this.items });
+          await this.createPbehavior({ data, parents: this.items, parentsType: this.config.itemsType });
 
           this.hideModal();
         } catch (err) {

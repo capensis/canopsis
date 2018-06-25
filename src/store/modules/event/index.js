@@ -7,7 +7,7 @@ import { API_ROUTES } from '@/config';
 export default {
   namespaced: true,
   actions: {
-    async create({ dispatch, context }, { data }) {
+    async create({ dispatch }, { data }) {
       try {
         await request.post(API_ROUTES.event, qs.stringify({ event: JSON.stringify(data) }), {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
