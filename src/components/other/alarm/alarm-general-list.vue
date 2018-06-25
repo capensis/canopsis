@@ -14,7 +14,6 @@
 </template>
 
 <script>
-
 /**
  * General table component for alarm entity
  *

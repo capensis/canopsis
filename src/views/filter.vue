@@ -1,15 +1,14 @@
 <template lang="pug">
   div
-    mfilter-editor
+    filter-editor
     filter-selector
 </template>
 
 <script>
-import MfilterEditor from '@/components/other/mfilter-editor/mfilter-editor.vue';
+import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 export default {
-  name: 'filter-editor',
-  components: { MfilterEditor, FilterSelector },
+  components: { FilterEditor, FilterSelector },
 };
 </script>

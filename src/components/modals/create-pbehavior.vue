@@ -51,7 +51,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
@@ -63,7 +63,7 @@ export default {
     validator: 'new',
   },
   components: { DateTimePicker, RRuleForm },
-  mixins: [ModalInnerItemsMixin],
+  mixins: [modalInnerItemsMixin],
   data() {
     const start = new Date();
     const stop = new Date(start.getTime());
@@ -114,7 +114,7 @@ export default {
         }
 
         try {
-          await this.createPbehavior({ data, parents: this.items });
+          await this.createPbehavior({ data, parents: this.items, parentsType: this.config.itemsType });
 
           this.hideModal();
         } catch (err) {

@@ -1,9 +1,9 @@
 import merge from 'lodash/merge';
 
+import i18n from '@/i18n';
+import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
-import { alarmSchema } from '@/store/schemas';
-import i18n from '@/i18n';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -55,6 +55,7 @@ export default {
           params,
           dataPreparer: d => d.data[0].alarms,
         }, { root: true });
+
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {

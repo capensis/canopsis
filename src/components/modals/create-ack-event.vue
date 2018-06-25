@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import AlarmGeneralTable from '@/components/other/alarm-list/alarm-general-list.vue';
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import EventActionsMixin from '@/mixins/event-actions';
+import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
@@ -57,7 +57,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalInnerItemsMixin, EventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsMixin],
   data() {
     return {
       showValidationErrors: false,

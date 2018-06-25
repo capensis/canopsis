@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import SearchMixin from '@/mixins/search';
+import searchMixin from '@/mixins/search';
 
 export default {
-  mixins: [SearchMixin],
+  mixins: [searchMixin],
   data() {
     return {
       searchingText: '',

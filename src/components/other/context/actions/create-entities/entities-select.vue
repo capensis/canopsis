@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import ContextList from '@/components/other/context-explorer/context-general-list.vue';
+import ContextList from '@/components/other/context/context-general-list.vue';
 import union from 'lodash/union';
 
 
