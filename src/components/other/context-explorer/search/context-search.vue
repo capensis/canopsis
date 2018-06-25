@@ -18,12 +18,6 @@
 import SearchMixin from '@/mixins/search';
 
 export default {
-  filters: {
-    formatSearching(text) {
-      return `{"$and":[{},{"$or":[{"name":{"$regex":"${text}","$options":"i"}},
-      {"type":{"$regex":"${text}","$options":"i"}}]},{}]}`;
-    },
-  },
   mixins: [SearchMixin],
   data() {
     return {
@@ -33,7 +27,7 @@ export default {
   },
   computed: {
     requestData() {
-      return this.$options.filters.formatSearching(this.searchingText);
+      return this.$options.filters.formatContextSearch(this.searchingText);
     },
   },
 };

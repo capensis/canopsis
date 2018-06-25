@@ -37,14 +37,8 @@ div
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('context');
+const { mapGetters, mapActions } = createNamespacedHelpers('contextList');
 export default {
-  filters: {
-    formatSearching(text) {
-      return `{"$and":[{},{"$or":[{"name":{"$regex":"${text}","$options":"i"}},
-      {"type":{"$regex":"${text}","$options":"i"}}]},{}]}`;
-    },
-  },
   data() {
     return {
       searchingText: '',
@@ -74,7 +68,7 @@ export default {
     submit() {
       this.fetchContextEntities({
         params: {
-          _filter: this.$options.filters.formatSearching(this.searchingText),
+          _filter: this.$options.filters.formatContextSearch(this.searchingText),
         },
       });
     },
