@@ -44,7 +44,7 @@
 // LIBS
 import { createNamespacedHelpers } from 'vuex';
 // COMPONENTS
-import FilterGroup from '@/components/other/mfilter-editor/filter-group.vue';
+import FilterGroup from '@/components/other/filter-editor/filter-group.vue';
 // MIXINS
 import paginationMixin from '@/mixins/pagination';
 
