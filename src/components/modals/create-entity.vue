@@ -39,7 +39,7 @@
 <script>
 
 import { MODALS } from '@/constants';
-import EntitiesSelect from '@/components/other/context-explorer/actions/createEntities/entities-select.vue';
+import EntitiesSelect from '@/components/other/context-explorer/actions/create-entities/entities-select.vue';
 
 export default {
   name: MODALS.createEntity,
