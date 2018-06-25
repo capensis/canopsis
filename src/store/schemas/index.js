@@ -1,27 +1,12 @@
 import { schema } from 'normalizr';
+
 import { ENTITIES_TYPES } from '@/constants';
-
-// TODO: move it
-const processStrategy = (entity, parent, key) => ({
-  ...entity,
-  _embedded: {
-    parents: [{ type: parent._embedded.type, id: parent._id, key }],
-  },
-});
-
-// TODO: move it
-const mergeStrategy = (entityA, entityB) => ({
-  ...entityA,
-  ...entityB,
-  _embedded: {
-    parents: [...entityA._embedded.parents, ...entityB._embedded.parents],
-  },
-});
+import { childProcessStrategy, childMergeStrategy } from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
-  processStrategy,
-  mergeStrategy,
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
 });
 
 export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
