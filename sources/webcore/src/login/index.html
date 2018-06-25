@@ -37,6 +37,7 @@
                 </div>
 
                 <div class="panel-group" id="loginboxes">
+
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
@@ -74,6 +75,26 @@
                                 </form>
                             </div>
                         </div>
+
+                    {{#if saml2config}}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#loginboxes" href="#casbox">
+                                        SAML2
+                                    </a>
+                                </h4>
+                            </div>
+
+                            <div class="panel-collapse collapse in bg-gray" id="casbox">
+                                <div class="panel-body">
+                                    <a class="btn bg-olive btn-block" href="{{ saml2config.url}}">
+                                        Go to WebSSO (SAML2)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {{/if}}
 
                     {{#if casconfig}}
                         <div class="panel panel-default">
