@@ -196,7 +196,8 @@
             "checksum": 1,
             "desc": ""
         }
-    }
+    },
+	"defaultview": "view_current_alarms"
 },{
     "_id": "Supervision",
     "rights": {
@@ -374,12 +375,13 @@
     "_id": "Visualisation",
     "rights": {
         "view_current_alarms": {
-            "checksum": 1,
+            "checksum": 5,
             "desc": ""
         },
         "view_history_alarms": {
-            "checksum": 1,
+            "checksum": 5,
             "desc": ""
         }
-    }
+    },
+	"defaultview": "view.current_alarms"
 }]
