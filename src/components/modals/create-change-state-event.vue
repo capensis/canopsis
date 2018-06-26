@@ -35,7 +35,9 @@ import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, ENTITIES_STATES, MODALS } from '@/constants';
 
-
+/**
+ * Modal to create a 'change-state' event
+ */
 export default {
   name: MODALS.createChangeStateEvent,
 

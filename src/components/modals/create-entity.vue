@@ -37,6 +37,9 @@
 <script>
 import { MODALS } from '@/constants';
 
+/**
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {

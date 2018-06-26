@@ -33,6 +33,9 @@ import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
+/**
+ * Modal to add a time filter on alarm-list
+ */
 export default {
   name: MODALS.editLiveReporting,
   $_veeValidate: {

@@ -60,12 +60,15 @@ import paginationMixin from '@/mixins/pagination';
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 
 /**
- * Alarm-list component.
+ * Alarm-list component
  *
- * @module components/alarm-list
- * @param {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
+ * @module alarm
+ *
+ * @prop {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
- * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
+ * @prop {integer} [itemsPerPage=5] - Number of Alarm to display per page
+ *
+ * @event openSettings#click
  */
 export default {
   components: {
