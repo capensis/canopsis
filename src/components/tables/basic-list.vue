@@ -1,8 +1,11 @@
 <template lang="pug">
   ul
     li.header.sticky(ref="header")
-      v-checkbox.checkbox(v-if="checkbox",
-      v-model="allSelected", hide-details, )
+      v-checkbox.checkbox(
+      v-if="checkbox",
+      v-model="allSelected",
+      hide-details
+      )
       .headerText
         slot(name="header")
     transition(name="fade", mode="out-in")
@@ -10,9 +13,15 @@
       div(v-else)
         li(v-for="item in items", :item="item")
           list-item(:item="item", :expanded="expanded")
-            v-checkbox.checkbox(v-if="checkbox",
-            v-model="selected", @change="$emit('update:selected',$event)",
-            :value="item._id", @click.stop, hide-details, slot="checkbox")
+            v-checkbox.checkbox(
+            v-if="checkbox",
+            slot="checkbox",
+            :input-value="selected",
+            :value="item._id",
+            @change="$emit('update:selected',$event)",
+            @click.stop,
+            hide-details
+            )
             .reduced(slot="reduced")
               slot(name="row", :props="item")
             div(slot="expanded")
@@ -23,6 +32,7 @@
 </template>
 
 <script>
+import intersectionWith from 'lodash/intersectionWith';
 import StickyFill from 'stickyfilljs';
 
 import ListItem from '@/components/tables/list-item.vue';
@@ -46,12 +56,10 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      // alarm's ids selected by the checkboxes
-      selected: [],
-    };
+    selected: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     allSelected: {
@@ -59,11 +67,20 @@ export default {
         return this.selected.length === this.items.length && this.items.length !== 0;
       },
       set(value) {
-        this.selected = value ? this.items.map(v => v._id) : [];
-        this.$emit('update:selected', this.selected);
+        this.$emit('update:selected', value ? this.items.map(v => v._id) : []);
       },
     },
+  },
+  watch: {
+    items(items) {
+      const selected = intersectionWith(
+        this.selected,
+        items,
+        (selectedItemId, item) => selectedItemId === item._id,
+      );
 
+      this.$emit('update:selected', selected);
+    },
   },
   mounted() {
     const { header } = this.$refs;
