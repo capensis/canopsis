@@ -52,9 +52,10 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
+from canopsis.models.entity import Entity
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
-from canopsis.statsng.enums import StatCounters
+from canopsis.statsng.enums import StatCounters, StatDurations
 from canopsis.watcher.manager import Watcher
 
 # Extra fields from the event that should be stored in the alarm
@@ -734,8 +735,26 @@ class Alerts(object):
 
         # Executing task
         value = alarm.get(self.alerts_storage.VALUE)
-        new_value, status = task(self, value, state, event)
+        new_value, status = task(self, value.copy(), state, event)
         new_value[AlarmField.last_update_date.value] = int(time())
+
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+        entity = self.context_manager.get_entities_by_id(entity_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
+        if entity.get(Entity.TYPE) == 'watcher':
+            time_spent_in_state = (
+                new_value[AlarmField.last_update_date.value] -
+                value[AlarmField.last_update_date.value]
+            )
+            self.event_publisher.publish_statduration_event(
+                value[AlarmField.last_update_date.value],
+                StatDurations.time_spent_in_state,
+                time_spent_in_state,
+                entity,
+                value)
 
         alarm[storage_value] = new_value
 
