@@ -124,6 +124,15 @@ def exports(ws):
                         cservice['service'],
                     ))
 
+            if "canopsis_cat.auth.saml2" in cservices["webserver"] and \
+               cservices["webserver"]["canopsis_cat.auth.saml2"] == 1:
+
+                result = ws.db.find({'_id': "canopsis"},
+                                    namespace='default_saml2'
+                )
+
+                cservices["saml2config"] = {"url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
+
             # Compile template
             login_page = os.path.join(ws.root_directory, 'login', 'index.html')
             with open(login_page) as src:
