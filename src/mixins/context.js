@@ -12,6 +12,7 @@ export default {
   methods: {
     ...mapActions({
       fetchContextEntities: 'fetchList',
+      updateContextEntity: 'update',
     }),
   },
 };

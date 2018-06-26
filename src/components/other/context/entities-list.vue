@@ -19,6 +19,7 @@
         td.box
           v-btn(@click.stop="deleteEntity(item)", icon, small)
             v-icon delete
+          add-info-object(:entity="item")
       tr.container(slot="expandedRow", slot-scope="item")
     pagination(:meta="contextEntitiesMeta", :limit="limit")
     create-entity.fab
@@ -36,6 +37,7 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
+import AddInfoObject from '@/components/other/context/actions/add-info-object.vue';
 import { MODALS } from '@/constants';
 
 
@@ -44,6 +46,7 @@ const { mapActions } = createNamespacedHelpers('context');
 export default {
   name: 'context-table',
   components: {
+    AddInfoObject,
     BasicList,
     ContextSearch,
     RecordsPerPage,

@@ -73,5 +73,15 @@ export default {
         console.warn(err);
       }
     },
+    async update(context, { entity }) {
+      try {
+        await request.put(API_ROUTES.context, {
+          _type: 'crudcontext',
+          entity,
+        });
+      } catch (err) {
+        console.warn(err);
+      }
+    },
   },
 };

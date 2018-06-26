@@ -25,10 +25,11 @@ import EditLiveReporting from './edit-live-reporting.vue';
 import MoreInfos from './more-infos.vue';
 import Confirmation from './confirmation.vue';
 import CreateEntity from './create-entity.vue';
+import InfoObject from './info-object.vue';
 
 /**
- * Wrapper for all modal windows
- */
+   * Wrapper for all modal windows
+   */
 export default {
   components: {
     Modal,
@@ -44,6 +45,7 @@ export default {
     MoreInfos,
     Confirmation,
     CreateEntity,
+    InfoObject,
   },
   data() {
     return {
@@ -60,6 +62,7 @@ export default {
         { name: MODALS.moreInfos },
         { name: MODALS.confirmation },
         { name: MODALS.createEntity },
+        { name: MODALS.infoObject },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
