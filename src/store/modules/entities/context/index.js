@@ -1,5 +1,7 @@
-import { API_ROUTES } from '@/config';
 import { contextSchema } from '@/store/schemas';
+import request from '@/services/request';
+import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -44,7 +46,7 @@ export default {
           route: API_ROUTES.context,
           schema: [contextSchema],
           params,
-          dataPreparer: d => d,
+          dataPreparer: d => d.data,
           isPost: true,
         }, { root: true });
 
@@ -59,6 +61,17 @@ export default {
         commit(types.FETCH_LIST_FAILED);
       }
     },
+    async remove({ dispatch }, { id } = {}) {
+      try {
+        await request.delete(API_ROUTES.context, { params: { ids: id } });
 
+        await dispatch('entities/removeFromStore', {
+          id,
+          type: ENTITIES_TYPES.context,
+        }, { root: true });
+      } catch (err) {
+        console.warn(err);
+      }
+    },
   },
 };

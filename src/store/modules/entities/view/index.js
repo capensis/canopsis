@@ -1,6 +1,6 @@
+import request from '@/services/request';
 import { viewSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
-import request from '@/services/request';
 import widgetModule, { types as widgetMutations } from './widget';
 
 export const types = {
@@ -37,7 +37,7 @@ export default {
         const result = await dispatch('entities/fetch', {
           route: `${API_ROUTES.view}/${id}`,
           schema: viewSchema,
-          dataPreparer: d => d[0],
+          dataPreparer: d => d.data[0],
         }, { root: true });
 
         commit(types.FETCH_ITEM_COMPLETED, result.data[0]);

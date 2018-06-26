@@ -6,7 +6,7 @@
       v-container
         v-layout(row align-center)
           v-flex.text-xs-center
-            alarm-general-table(:item="item")
+            alarm-general-table(:items="items")
         v-layout(row)
           v-divider.my-3
         v-layout(row)
@@ -44,10 +44,9 @@
 </template>
 
 <script>
-
-import AlarmGeneralTable from '@/components/other/alarm-list/alarm-general-list.vue';
-import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
-import EventActionsMixin from '@/mixins/event-actions';
+import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
@@ -58,7 +57,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalInnerItemMixin, EventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsMixin],
   data() {
     return {
       showValidationErrors: false,
@@ -76,15 +75,20 @@ export default {
   },
   methods: {
     async create(withDeclare) {
-      const data = [
-        this.prepareData(EVENT_ENTITY_TYPES.ack, this.item, this.form),
-      ];
+      const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
+
+      await this.createEventAction({
+        data: ackEventData,
+      });
 
       if (withDeclare) {
-        data.push(this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.item, this.form));
+        const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
+
+        await this.createEventAction({
+          data: declareTicketEventData,
+        });
       }
 
-      await this.createEventAction({ data });
       await this.fetchAlarmListWithPreviousParams();
 
       this.hideModal();

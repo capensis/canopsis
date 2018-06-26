@@ -2,8 +2,19 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    watcher: 'Observateur',
+    name: 'Nom',
+    description: 'Description',
+    yes: 'Oui',
+    no: 'Non',
+    confirmation: 'Etes-vous sûr(e) ?',
     submit: 'Soumettre',
+    enabled: 'Activé',
     login: 'Connexion',
+    by: 'Par',
+    date: 'Date',
+    comment: 'Commentaire',
+    end: 'Fin',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     title: 'Titre',
@@ -39,23 +50,57 @@ export default {
       year: 'année | années',
     },
   },
+  search: {
+    advancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
+    '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
+    '<p>Le "-" avant la recherche est obligatoire</p>\n' +
+    '<p>Opérateurs:\n' +
+    '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
+    '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+    '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+    '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
+    '</dl>',
+  },
+  entities: {
+    watcher: 'observateurs',
+    entities: 'entités',
+  },
   alarmList: {
     actions: {
-      ack: 'ack',
-      fastAck: 'Ack rapide',
-      ackRemove: 'Annuler ack',
-      pbehavior: 'Comportement périodique',
-      snooze: 'Snooze',
-      pbehaviorList: 'Lister comportements pédioriques',
-      declareTicket: 'Signaler ticket',
-      associateTicket: 'Associer ticket',
-      cancel: 'Annuler alarme',
-      changeState: 'Changer criticité',
-      moreInfos: 'Plus d\'infos',
+      titles: {
+        ack: 'Ack',
+        fastAck: 'Ack rapide',
+        ackRemove: 'Annuler ack',
+        pbehavior: 'Comportement périodique',
+        snooze: 'Snooze',
+        pbehaviorList: 'Lister comportements pédioriques',
+        declareTicket: 'Déclarer un incident',
+        associateTicket: 'Associer ticket',
+        cancel: 'Annuler alarme',
+        changeState: 'Changer criticité',
+        moreInfos: 'Plus d\'infos',
+      },
+      iconsTitles: {
+        ack: 'Ack',
+        declareTicket: 'Déclarer un incident',
+        canceled: 'Annulée',
+        snooze: 'Snooze',
+        pbehaviors: 'Comportement périodique',
+      },
+      iconsFields: {
+        ticketNumber: 'Numéro de ticket',
+      },
     },
   },
-  alarmListSettings: {
-    alarmListSettings: 'Paramètres du bac à alarmes',
+  settings: {
+    titles: {
+      alarmListSettings: 'Paramètres du bac à alarmes',
+      contextTableSettings: 'Paramètres de l\'explorateur de contexte',
+    },
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
@@ -70,14 +115,31 @@ export default {
     selectAFilter: 'Sélectionner un filtre',
     infoPopup: 'Info popup',
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
+    contextTypeOfEntities: {
+      title: 'Type d\'entitées',
+      fields: {
+        component: 'Composant',
+        connector: 'Connecteur',
+        resource: 'Ressource',
+        watcher: 'Observateur',
+      },
+    },
   },
   modals: {
-    moreInfos: {
-      moreInfos: 'Plus d\'infos',
-      defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    createEntity: {
+      title: 'Créer une entitée',
+      fields: {
+        type: 'Types',
+        manageInfos: 'Gérer Infos',
+        types: {
+          connector: 'connecteur',
+          component: 'composant',
+          resource: 'ressource',
+        },
+      },
     },
     createAckEvent: {
-      title: 'Ajouter un événement: ack',
+      title: 'Ajouter un événement: Ack',
       tooltips: {
         ackResources: 'Voulez-vous acquitter les ressources liées ?',
       },
@@ -88,7 +150,7 @@ export default {
       },
     },
     createSnoozeEvent: {
-      title: 'Ajouter un événement: snooze',
+      title: 'Ajouter un événement: Snooze',
       fields: {
         duration: 'Durée',
       },
@@ -100,7 +162,7 @@ export default {
       },
     },
     createChangeStateEvent: {
-      title: 'Ajouter un événement: Changer état',
+      title: 'Ajouter un événement: Changer l\'état',
       states: {
         ok: 'Info',
         minor: 'Mineur',
@@ -123,13 +185,13 @@ export default {
       },
     },
     createAckRemove: {
-      title: 'Ajouter un événement: ackremove',
+      title: 'Ajouter un événement: Annuler Ack',
     },
     createDeclareTicket: {
-      title: 'Ajouter un événement: declareticket',
+      title: 'Ajouter un événement: Déclarer un incident',
     },
     createAssociateTicket: {
-      title: 'Ajouter un événement: associateticket',
+      title: 'Ajouter un événement: Associer un numéro de ticket',
       fields: {
         ticket: 'Numéro du ticket',
       },
@@ -145,6 +207,10 @@ export default {
       lastMonth: 'Mois dernier',
       custom: 'Personnalisé',
     },
+    moreInfos: {
+      moreInfos: 'Plus d\'infos',
+      defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    },
   },
   tables: {
     alarmGeneral: {
@@ -159,19 +225,7 @@ export default {
       duration: 'Durée',
       state: 'État',
       status: 'Status',
-    },
-    alarmStatus: {
-      [ENTITIES_STATUSES.off]: 'Fermée',
-      [ENTITIES_STATUSES.ongoing]: 'En cours',
-      [ENTITIES_STATUSES.flapping]: 'Bagot',
-      [ENTITIES_STATUSES.stealthy]: 'Furtive',
-      [ENTITIES_STATUSES.cancelled]: 'Annulée',
-    },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Minor',
-      [ENTITIES_STATES.major]: 'Major',
-      [ENTITIES_STATES.critical]: 'Critical',
+      extraDetails: 'Détails supplémentaires',
     },
     /**
      * This object for pbehavior fields from database
@@ -187,6 +241,26 @@ export default {
       type_: 'Type',
       reason: 'Raison',
       rrule: 'Rrule',
+    },
+    alarmStatus: {
+      [ENTITIES_STATUSES.off]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
+    },
+    alarmStates: {
+      [ENTITIES_STATES.ok]: 'Info',
+      [ENTITIES_STATES.minor]: 'Minor',
+      [ENTITIES_STATES.major]: 'Major',
+      [ENTITIES_STATES.critical]: 'Critical',
+    },
+    contextEntities: {
+      columns: {
+        name: 'Nom',
+        type: 'Type',
+        _id: 'Id',
+      },
     },
   },
   rRule: {
@@ -240,6 +314,9 @@ export default {
   },
   errors: {
     default: 'Une erreur s\'est produite...',
+  },
+  success: {
+    default: 'Action effectuée avec succès',
   },
   mFilterEditor: {
     tabs: {

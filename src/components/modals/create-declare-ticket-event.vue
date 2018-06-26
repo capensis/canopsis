@@ -7,7 +7,7 @@
         v-container
           v-layout(row)
             v-flex.text-xs-center
-              alarm-general-table(:item="item")
+              alarm-general-table(:items="items")
           v-layout(row)
             v-divider.my-3
       v-card-actions
@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import AlarmGeneralTable from '@/components/other/alarm-list/alarm-general-list.vue';
-import ModalInnerItemMixin from '@/mixins/modal/modal-inner-item';
-import EventActionsMixin from '@/mixins/event-actions';
+import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
 export default {
@@ -29,10 +29,10 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalInnerItemMixin, EventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsMixin],
   methods: {
     async submit() {
-      await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.item, {
+      await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.items, {
         output: 'declare ticket',
       });
 

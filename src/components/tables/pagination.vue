@@ -54,7 +54,6 @@ export default {
       if (this.meta.total) {
         return Math.ceil(this.meta.total / this.limit);
       }
-
       return 0;
     },
   },

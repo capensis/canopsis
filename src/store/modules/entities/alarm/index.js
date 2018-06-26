@@ -1,9 +1,9 @@
 import merge from 'lodash/merge';
 
+import i18n from '@/i18n';
+import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
-import { alarmSchema } from '@/store/schemas';
-import i18n from '@/i18n';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -43,23 +43,25 @@ export default {
     },
   },
   actions: {
-    async fetchList({ commit, dispatch }, { params } = {}) {
+    async fetchList({ commit, dispatch }, { params, withoutPending } = {}) {
       try {
-        commit(types.FETCH_LIST, { params });
+        if (!withoutPending) {
+          commit(types.FETCH_LIST, { params });
+        }
 
         const { normalizedData, data } = await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params,
-          dataPreparer: d => d[0].alarms,
+          dataPreparer: d => d.data[0].alarms,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
-            first: data[0].first,
-            last: data[0].last,
-            total: data[0].total,
+            first: data.data[0].first,
+            last: data.data[0].last,
+            total: data.data[0].total,
           },
         });
       } catch (err) {
@@ -70,7 +72,7 @@ export default {
     },
 
     fetchListWithPreviousParams({ dispatch, state }) {
-      return dispatch('fetchList', { params: state.fetchingParams });
+      return dispatch('fetchList', { params: state.fetchingParams, withoutPending: true });
     },
 
     async fetchItem({ dispatch }, { id, params }) {
@@ -81,7 +83,7 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params: paramsWithItemId,
-          dataPreparer: d => d[0].alarms,
+          dataPreparer: d => d.data[0].alarms,
         }, { root: true });
       } catch (err) {
         console.error(err);

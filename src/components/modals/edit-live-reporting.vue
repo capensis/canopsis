@@ -30,7 +30,7 @@
 
 <script>
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
-import ModalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
 export default {
@@ -41,7 +41,7 @@ export default {
   components: {
     DateTimePicker,
   },
-  mixins: [ModalMixin],
+  mixins: [modalMixin],
   data() {
     return {
       selectedInterval: '',
