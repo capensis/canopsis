@@ -496,6 +496,7 @@
   "server": "serveur",
   "Ack removed": "Ack annulé",
   "Report an incident": "Déclarer un incident",
+  "Report an incident and done": "Déclarer un incident et marquer comme fait",
   "aaa_owner": "Propriétaire",
   "Warning": "Attention",
   "ui_language": "langage de l'interface utilisateur",
