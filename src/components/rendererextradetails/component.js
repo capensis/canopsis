@@ -76,6 +76,22 @@ Ember.Application.initializer({
             }.property('value.ticket.a', 'hasTicket'),
 
             /**
+             * @property donetooltip
+             */
+            donetooltip: function() {
+                if (this.get('hasDone')) {
+                    return ['<center>',
+                        '<b>' + __('Alarm done') + '</b><br/>',
+                        this.dateFormat(this.get('value.done.t')) +' <br/> ',
+                        __('Message') +' : ' + this.get('value.done.m') +' <br/> ',
+                        __('By') +' : ' + this.get('value.done.a') +' <br/><br/> ',
+                        '</center>'].join('');
+                } else {
+                    return '';
+                }
+            }.property('value.done.a', 'hasDone'),
+
+            /**
              * @property pbehaviortooltip
              */
             pbehaviortooltip: function() {
@@ -108,6 +124,13 @@ Ember.Application.initializer({
             hasTicket: function() {
                 return this.get('value.ticket') != null;
             }.property('value.ticket'),
+
+            /**
+             * @property hasDone
+             */
+            hasDone: function() {
+                return this.get('value.done') != null;
+            }.property('value.done'),
 
             /**
              * @property hasAck

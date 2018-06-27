@@ -14,6 +14,7 @@
   "changecriticity": "Changer la criticité",
   "restorealarm": "Restaurer une alarme",
   "snoozealarm": "Reporter l'alarme",
+  "donealarm": "Marquer comme Fait",
   "Since": "Depuis",
   "To": "Jusque",
   "Snooze": "Reporté",
@@ -21,5 +22,6 @@
   "Periodic behavior": "Comportement périodique",
   "List periodic behaviors": "Lister les comportements périodiques",
   "Apply PBehavior": "Appliquer un comportement périodique",
-  "No reccurence": "Pas de récurrence"
+  "No reccurence": "Pas de récurrence",
+  "Done": "Fait"
 }

@@ -81,6 +81,12 @@ Ember.Application.initializer({
                     mixin_name: 'snooze'
                 },
                 {
+                    class: 'fa fa-check-square',
+                    internal_states: ['acked', 'cancelled'],
+                    name: 'donealarm',
+                    mixin_name: 'done'
+                },
+                {
                     class: 'fa fa-list',
                     internal_states: ['immutable' ,'unacked', 'acked', 'cancelled'],
                     name: 'listpbehavior',
@@ -146,6 +152,9 @@ Ember.Application.initializer({
                     case "assignticketnumber":
                         name = func(actions, rights, actions[i]["name"], "listalarm_assignTicketNumber")
                         break;
+                    case "done":
+                        name = func(actions, rights, actions[i]["name"], "listalarm_done")
+                        break;
                     case "pbehavior":
                         name = func(actions, rights, actions[i]["name"], "listalarm_pbehavior")
                         break;
@@ -192,6 +201,9 @@ Ember.Application.initializer({
                 if (this.get('isAcked')) {
                     return 'acked';
                 }
+                if (this.get('isDone')) {
+                    return 'done';
+                }
                 return 'unacked';
             }.property('alarm.state.val', 'isCanceled', 'isAcked'),
 
@@ -208,6 +220,13 @@ Ember.Application.initializer({
             isCanceled: function () {
                 return this.get('alarm.canceled') != undefined;
             }.property('alarm.canceled'),
+
+            /**
+             * @property isDone
+             */
+            isDone: function () {
+                return this.get('alarm.done') != undefined;
+            }.property('alarm.done'),
 
             /**
              * @property isSnoozed
@@ -263,7 +282,7 @@ Ember.Application.initializer({
                  */
                 sendAction: function (action) {
                     var me = this;
-					var alarm = Object.assign({}, me.get('alarm'));
+                    var alarm = Object.assign({}, me.get('alarm'));
                     if (action.name === 'pbehavior'){
 
                         var obj = Ember.Object.create({ 'crecord_type': 'pbehaviorform' });

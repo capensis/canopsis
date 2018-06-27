@@ -30,6 +30,18 @@
   </div>
 {{/ if}}
 
+
+{{# if hasDone }}
+  <div>
+    {{#component-tooltip content=donetooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-olive">
+        <i class="fa fa-check-square"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
 {{# if hasActivePBehavior }}
   <div>
     {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
@@ -39,5 +51,3 @@
     {{/component-tooltip}}
   </div>
 {{/ if}}
-  
-  

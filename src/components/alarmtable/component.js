@@ -64,7 +64,7 @@ Ember.Application.initializer({
                  */
                 tdClick: function (alarm, field) {
                     // if cell is clickable
-                    if (Ember.columnTemplates.findBy('columnName', field.humanName)) {       
+                    if (Ember.columnTemplates.findBy('columnName', field.humanName)) {
                         this.set('clickedAlarm', alarm);
                         this.set('clickedField', field);
                         this.set('updater', (new Date()).getTime());
@@ -78,7 +78,7 @@ Ember.Application.initializer({
                     this.sendAction('saction', action, alarm);
                 }
             }
-            
+
         });
 
         application.register('component:component-alarmtable', component);

@@ -14,11 +14,13 @@
   "changecriticity": "Change criticity",
   "restorealarm": "Restore alarm",
   "snoozealarm": "Snooze alarm",
+  "donealarm": "Mark as Done",
   "Since": "Since",
   "Snooze": "Snooze",
   "Ticket declared": "Ticket declared",
   "Periodic behavior": "Periodic behavior",
   "List periodic behaviors": "List periodic behaviors",
   "Apply PBehavior": "Apply PBehavior",
-  "No reccurence": "No reccurence"
+  "No reccurence": "No reccurence",
+  "Done": "Done"
 }
