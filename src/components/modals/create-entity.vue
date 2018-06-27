@@ -29,8 +29,8 @@
           label="Type"
           single-line
           )
-    entities-select(label="Impacts", @update:entities="updateImpact($event)")
-    entities-select(label="Dependencies", @update:entities="updateDependencies($event)")
+    entities-select(label="Impacts", :entities.sync=entities)
+    entities-select(label="Dependencies", :entities.sync=entities)
     v-card-actions
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
       v-btn(@click.prevent="manageInfos", color="primary") {{ $t('modals.createEntity.fields.manageInfos') }}

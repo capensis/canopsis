@@ -5,7 +5,7 @@
         .entities.scrollbar
           span(v-for="entity in entities") {{ entity._id }},&emsp;
         v-btn(icon @click="showList=!showList")
-          v-icon {{ showListIcon }}
+          v-icon {{ listIcon }}
         v-btn(icon @click="clear")
           v-icon clear
     context-general-list(
@@ -34,7 +34,7 @@ export default {
     };
   },
   computed: {
-    showListIcon() {
+    listIcon() {
       return this.showList ? 'remove' : 'add';
     },
   },
