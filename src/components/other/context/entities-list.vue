@@ -20,6 +20,8 @@
         td.box
           v-btn(@click.stop="deleteEntity(item)", icon, small)
             v-icon delete
+          v-btn(@click.stop="showContextInfosModal(item)", icon, small)
+            v-icon playlist_add
       tr.container(slot="expandedRow", slot-scope="item")
     pagination(:meta="contextEntitiesMeta", :limit="limit")
     create-entity.fab
@@ -102,6 +104,15 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(id => this.remove({ id }))),
+        },
+      });
+    },
+    showContextInfosModal(item) {
+      this.showModal({
+        name: MODALS.contextInfos,
+        config: {
+          title: 'modals.contextInfos.title',
+          item,
         },
       });
     },
