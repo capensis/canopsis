@@ -387,4 +387,13 @@
         }
     },
 	"defaultview": "view.current_alarms"
+},{
+    "_id": "Norights",
+    "rights": {
+        "view_norights": {
+            "checksum": 5,
+            "desc": ""
+        }
+    },
+    "defaultview": "view.norights"
 }]

@@ -486,5 +486,13 @@
         "crecord_name" : "serviceweather_pause",
         "crecord_type" : "action",
         "desc": "Rights on service weather: pause"
+    },
+    {
+        "_id" : "view_norights",
+        "loader_id" : "view_norights",
+        "crecord_name": "view_norights",
+        "crecord_type" : "action",
+        "desc": "Rights on view: no rights",
+        "type": "RW"
     }
 ]
