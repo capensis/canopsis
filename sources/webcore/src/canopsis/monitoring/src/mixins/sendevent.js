@@ -505,7 +505,6 @@ Ember.Application.initializer({
                     }
 
                 },
-
                 assocticket: {
                     extract: function(record, crecord, formRecord) {
                         record.ref_rk = get(crecord, 'id');

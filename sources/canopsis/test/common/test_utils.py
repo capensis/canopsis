@@ -26,7 +26,7 @@ from unittest import TestCase
 
 from canopsis.common.utils import (
     lookup, path, isiterable, isunicode, ensure_unicode, ensure_iterable,
-    forceUTF8, get_sub_key, dict_merge
+    forceUTF8, get_sub_key, dict_merge, normalize_utf8
 )
 
 from sys import version as PYVER
@@ -220,6 +220,12 @@ class UtilsTest(TestCase):
 
         dict_merge(dico, merge)
         self.assertDictEqual(dico, response)
+
+    def test_normalize_utf8(self):
+        word = u'Les lumi\xe8res'
+        resp = normalize_utf8(word)
+        self.assertTrue(isinstance(word, unicode))
+        self.assertEqual(word, resp)
 
 
 if __name__ == '__main__':
