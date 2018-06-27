@@ -37,7 +37,7 @@ div
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('contextList');
+const { mapGetters, mapActions } = createNamespacedHelpers('context');
 export default {
   data() {
     return {
@@ -57,13 +57,13 @@ export default {
   },
   computed: {
     ...mapGetters({
-      contextEntities: 'items',
+      contextEntities: 'itemsGeneralList',
+      pending: 'pendingGeneralList',
     }),
-    ...mapGetters(['pending']),
   },
   methods: {
     ...mapActions({
-      fetchContextEntities: 'fetchList',
+      fetchContextEntities: 'fetchGeneralList',
     }),
     submit() {
       this.fetchContextEntities({

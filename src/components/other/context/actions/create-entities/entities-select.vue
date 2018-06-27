@@ -8,19 +8,19 @@
           v-icon {{ showListIcon }}
         v-btn(icon @click="clear")
           v-icon clear
-    context-list(
+    context-general-list(
       v-show="showList",
       @update:selectedIds="updateEntities($event)",
     )
 </template>
 
 <script>
-import ContextList from '@/components/other/context/context-general-list.vue';
+import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 import union from 'lodash/union';
 
 
 export default {
-  components: { ContextList },
+  components: { ContextGeneralList },
   props: {
     label: {
       type: String,
