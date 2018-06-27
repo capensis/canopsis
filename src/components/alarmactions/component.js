@@ -331,21 +331,6 @@ Ember.Application.initializer({
 
                         });
                         return
-
-                    } else if (action.name === 'donealarm'){
-                       /*
-                        var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
-                        var confirmform = formsUtils.showNew('modelform', obj, {
-                            title: 'Mark the alarm as done ?'
-                        });
-                        confirmform.submit.then(function (form) {
-                        */
-                        /*var obj = Ember.Object.create({ 'crecord_type': 'doneform' });
-                        var confirmform = formsUtils.showNew('modelform', obj, {
-                            title: 'Done Form'
-                        });
-                        return
-                        */
                     }
 
                     this.sendAction('action', action, alarm);
