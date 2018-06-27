@@ -5,7 +5,7 @@
     "type": "object",
     "categories": [{
         "title": "General",
-        "keys":["author", "connector", "component", "resource", "separator", "comment"]
+        "keys":["author", "connector", "component", "resource", "separator", "output"]
     }],
     "properties": {
         "connector": {
@@ -54,7 +54,7 @@
             "required": true,
             "readOnly": true
         },
-        "comment": {
+        "output": {
             "type": "string",
             "required": false,
             "title": "Commentaire",
