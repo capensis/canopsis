@@ -576,8 +576,8 @@ class PBehaviorManager(object):
 
             # compute the "missing dates": dates before the rrule started to
             # generate dates so we can check for a pbehavior in the past.
+            multiply = 1
             while True:
-                multiply = 1
                 missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
                 dt_list.insert(0, missing_date)
 
