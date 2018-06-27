@@ -124,10 +124,6 @@ def exports(ws):
                         cservice['service'],
                     ))
 
-            with open("/tmp/plop.log", "a") as fd:
-                import pprint
-                fd.write("Webmodule keys {}\n".format(ws.webmodules.keys()))
-                fd.write("Webmodule {}\n".format("canopsis_cat.auth.saml2" in ws.webmodules))
             if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
                 result = ws.db.find({'_id': "canopsis"},
                                     namespace='default_saml2'
