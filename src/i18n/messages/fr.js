@@ -50,6 +50,14 @@ export default {
       year: 'année | années',
     },
   },
+  context: {
+    impacts: 'Impacts',
+    dependencies: 'Dépendances',
+    moreInfos: {
+      type: 'Type',
+      lastActiveDate: 'Dernière Date Active',
+    },
+  },
   search: {
     advancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
     '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +

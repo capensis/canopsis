@@ -50,6 +50,14 @@ export default {
       year: 'year | years',
     },
   },
+  context: {
+    impacts: 'Impacts',
+    dependencies: 'Dependencies',
+    moreInfos: {
+      type: 'Type',
+      lastActiveDate: 'Last Active Date',
+    },
+  },
   search: {
     advancedSearch: '<span>Help on the advanced research :</span>\n' +
     '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
