@@ -16,7 +16,7 @@ pbehavior_tags = Maintenance,Pause
 ## Envoi d'événements
 
 Les événements statistiques ne sont envoyés que si la valeur de l'option
-`send_events` est `True`. Le moteur statsng ne va pas calculer de statistique
+`send_events` est `True`. Le moteur statsng ne va pas calculer de statistiques
 si `send_event` vaut `False`.
 
 ## Entity Tags
@@ -27,6 +27,6 @@ de les utiliser dans les filtres de l'[API stats](../guide_developpeur/apis/v2/s
 
 ## PBehavior Tags
 
-L'option `pbehavior_tags` est une liste de types de pbehaviors. Ces types de
+L'option `pbehavior_tags` est une liste de types de pbehavior. Ces types de
 pbehaviors vont être enregistrés avec les statistiques, permettant de les
 utiliser dans les filtres de l'[API stats](../guide_developpeur/apis/v2/stats.md).
