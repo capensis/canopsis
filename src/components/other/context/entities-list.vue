@@ -2,13 +2,14 @@
   div
     v-layout(justify-space-between, align-center)
       v-flex.ml-4(xs4)
-        div mass actions
+        v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
+          v-icon delete
       v-flex(xs2)
         v-btn(icon, @click.prevent="$emit('openSettings')")
           v-icon settings
     context-search
     records-per-page
-    basic-list(:items="contextEntities")
+    basic-list(:items="contextEntities", :selected.sync="selected")
       tr.container(slot="header")
         th.box(v-for="columnProperty in contextProperties")
           span {{ columnProperty.text }}
@@ -32,19 +33,19 @@ import { createNamespacedHelpers } from 'vuex';
 import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
-import CreateEntity from '@/components/other/context/actions/context-fab.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
+
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
 import AddInfoObject from '@/components/other/context/actions/add-info-object.vue';
 import { MODALS } from '@/constants';
 
+import CreateEntity from './actions/context-fab.vue';
 
 const { mapActions } = createNamespacedHelpers('context');
 
 export default {
-  name: 'context-table',
   components: {
     AddInfoObject,
     BasicList,
@@ -65,6 +66,11 @@ export default {
         return [];
       },
     },
+  },
+  data() {
+    return {
+      selected: [],
+    };
   },
   methods: {
     ...mapActions({
@@ -90,6 +96,14 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => this.remove({ id: item.props._id }),
+        },
+      });
+    },
+    deleteEntities() {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => Promise.all(this.selected.map(id => this.remove({ id }))),
         },
       });
     },
