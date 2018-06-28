@@ -213,6 +213,12 @@ export default {
     },
   },
   tables: {
+    contextList: {
+      title: 'Context List',
+      name: 'Name',
+      id: 'Id',
+      noDataText: 'Make a research',
+    },
     alarmGeneral: {
       title: 'General',
       author: 'Author',
