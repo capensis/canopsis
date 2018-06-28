@@ -80,7 +80,7 @@ export default {
           entity,
         });
       } catch (err) {
-        console.warn(err);
+        console.error(err);
       }
     },
   },

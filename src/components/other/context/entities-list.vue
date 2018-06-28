@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
 import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
@@ -36,8 +35,8 @@ import CreateEntity from '@/components/other/context/actions/context-fab.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
-import contextEntityMixin from '@/mixins/context';
-import AddInfoObject from '@/components/other/context/actions/add-info-object.vue';
+import contextEntityMixin from '@/mixins/context/list';
+import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
 import { MODALS } from '@/constants';
 
 
@@ -71,31 +70,12 @@ export default {
       fetchListAction: 'fetchList',
       remove: 'remove',
     }),
-    getQuery() {
-      const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
-      query.limit = this.limit;
-      query.start = ((this.$route.query.page - 1) * this.limit) || 0;
-
-      if (this.$route.query.sort_key) {
-        query.sort = [{
-          property: this.$route.query.sort_key,
-          direction: this.$route.query.sort_dir ? this.$route.query.sort_dir : 'ASC',
-        }];
-      }
-
-      return query;
-    },
     deleteEntity(item) {
       this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => this.remove({ id: item.props._id }),
         },
-      });
-    },
-    fetchList() {
-      this.fetchContextEntities({
-        params: this.getQuery(),
       });
     },
   },

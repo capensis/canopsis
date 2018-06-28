@@ -15,6 +15,10 @@ export default {
       type: Object,
       required: true,
     },
+    objectInfo: {
+      type: Object,
+      required: false,
+    },
   },
   methods: {
     showForm() {
@@ -22,6 +26,7 @@ export default {
         name: MODALS.infoObject,
         config: {
           entity: this.entity,
+          infoObject: this.infoObject,
         },
       });
     },
