@@ -13,7 +13,6 @@ import EntitiesList from '@/components/other/context/entities-list.vue';
 import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
 import contextEntityMixin from '@/mixins/context';
 import settingsMixin from '@/mixins/settings';
-import { PAGINATION_LIMIT } from '@/config';
 
 export default {
   components: {
@@ -58,13 +57,6 @@ export default {
         ],
       },
     };
-  },
-  mounted() {
-    this.fetchContextEntities({
-      params: {
-        limit: PAGINATION_LIMIT,
-      },
-    });
   },
 };
 </script>
