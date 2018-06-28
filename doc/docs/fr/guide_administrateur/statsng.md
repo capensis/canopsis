@@ -24,9 +24,3 @@ si `send_event` vaut `False`.
 L'option `entity_tags` est une liste d'ids d'informations d'entités séparés par
 des virgules. Ces ids vont être enregistrés avec les statistiques, permettant
 de les utiliser dans les filtres de l'[API stats](../guide_developpeur/apis/v2/stats.md).
-
-## PBehavior Tags
-
-L'option `pbehavior_tags` est une liste de types de pbehavior. Ces types de
-pbehaviors vont être enregistrés avec les statistiques, permettant de les
-utiliser dans les filtres de l'[API stats](../guide_developpeur/apis/v2/stats.md).

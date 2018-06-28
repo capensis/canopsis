@@ -26,9 +26,3 @@ The statistic events are only sent if the `send_events` option is set to
 The `entity_tags` option is a comma separated list of entity information ids.
 These ids will be saved with the statistics, allowing them to be used in
 filters in the [stats API](../developer_guide/apis/v2/stats.md).
-
-### PBehavior Tags
-
-The `pbehavior_tags` option is a comma separated list of pbehavior types. These
-pbehavior types will be saved with the statistics, allowing them to be used in
-filters in the [stats API](../developer_guide/apis/v2/stats.md).

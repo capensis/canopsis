@@ -36,10 +36,6 @@ The tag name can be used to filter according to :
    [statsng engine configuration](../../../admin_guide/statsng.md#entity-tags)
    can be used in filters.
  - The alarm's state, with the name `alarm.state`.
- - Whether or not a pbehavior type is active, with the names
-   `pbehavior.<pbehavior_type>`. Only the pbehavior types specified in the
-   [statsng engine configuration](../../../admin_guide/statsng.md#pbehavior-tags)
-   can be used in filters.
 
 The tag filter can be :
 
@@ -226,7 +222,7 @@ Response:
 ```
 
 
-### Number of critical alarms created by a component not during a maintenance
+### Number of critical alarms created by a component
 
 `/api/v2/stats/alarms_created`
 
@@ -241,8 +237,7 @@ Requête:
             "entity.connector": "connector",
             "entity.connector_name": "connector_name",
             "entity.component": "component",
-            "alarm.state": 3,
-            "pbehavior.Maintenance": false
+            "alarm.state": 3
         }
     ]
 }

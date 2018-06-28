@@ -40,11 +40,6 @@ Le nom de tag peut être utilisé pour filtrer selon :
    statsng](../../../guide_administrateur/statsng.md#entity-tags) peuvent être
    utilisées.
  - L'état de l'alarme, avec le tag `alarm.state`.
- - Les types de pbehaviors actifs ou non, avec les tags
-   `pbehavior.<pbehavior_type>`.  Seuls les types de pbehavior spécifiées dans
-   la [configuration du moteur
-   statsng](../../../guide_administrateur/statsng.md#pbehavior-tags) peuvent
-   être utilisées.
 
 Le filtre de tag peut être :
 
@@ -245,7 +240,7 @@ Réponse:
 ]
 ```
 
-### Calcul du nombre d'alarmes critiques créées par un composant en dehors des plages de maintenance
+### Calcul du nombre d'alarmes critiques créées par un composant
 
 `/api/v2/stats/alarms_created`
 
@@ -261,7 +256,6 @@ Requête:
             "entity.connector_name": "connector_name",
             "entity.component": "component",
             "alarm.state": 3,
-            "pbehavior.Maintenance": false
         }
     ]
 }
