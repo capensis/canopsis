@@ -63,4 +63,3 @@ class StatDurations(FastEnum):
     """
     ack_time = 'ack_time'
     resolve_time = 'resolve_time'
-    time_spent_in_state = 'time_spent_in_state'
