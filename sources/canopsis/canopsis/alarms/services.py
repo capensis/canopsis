@@ -141,7 +141,8 @@ class AlarmService(object):
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
 
-                entity = self.context_manager.get_entities_by_id(alarm._id)
+                entity_id = alarm.identity.get_data_id()
+                entity = self.context_manager.get_entities_by_id(entity_id)
                 try:
                     entity = entity[0]
                 except IndexError:
