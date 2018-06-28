@@ -221,6 +221,12 @@ export default {
     },
   },
   tables: {
+    contextList: {
+      title: 'Liste Context',
+      name: 'Nom',
+      id: 'Id',
+      noDataText: 'Faites une recherche',
+    },
     alarmGeneral: {
       title: 'Generale',
       author: 'Auteur',
