@@ -6,6 +6,7 @@ Manager for watcher.
 
 from __future__ import unicode_literals
 import json
+from time import time
 
 from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
@@ -16,6 +17,7 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
+from canopsis.models.watcher import WatcherModel
 
 LOG_PATH = 'var/log/watcher.log'
 
@@ -95,6 +97,7 @@ class Watcher:
         # adding the fields specific to the Watcher entities
         entity['mfilter'] = body['mfilter']
         entity['state'] = 0
+        entity[WatcherModel.LAST_STATE_CHANGE] = int(time())
 
         try:
             self.context_graph.create_entity(entity)
@@ -234,6 +237,7 @@ class Watcher:
         # Updating watcher state
         if computed_state != watcher_entity.get('state', None):
             watcher_entity['state'] = computed_state
+            watcher_entity[WatcherModel.LAST_STATE_CHANGE] = int(time())
             self.context_graph.update_entity(watcher_entity)
 
         self.publish_event(
