@@ -14,6 +14,9 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');
 
+/**
+ * Component to select filter
+ */
 export default {
   data() {
     return {

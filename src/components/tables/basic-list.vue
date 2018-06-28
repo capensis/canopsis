@@ -37,6 +37,17 @@ import StickyFill from 'stickyfilljs';
 
 import ListItem from '@/components/tables/list-item.vue';
 
+/**
+* Wrapper for lists (alarm list, entities list, ...)
+*
+* @prop {Array} [items] - Items to show on the list
+* @prop {Boolean} [checkbox] - Boolean to determine if we need checkboxes on the table
+* @prop {Boolean} [pending] - Boolean to know if loading is over
+* @prop {Boolean} [expanded] - Boolean to know if rows are expanded or not
+* @prop {Array} [selected] - Array of selected items (checkboxes)
+*
+* @event selected#update
+*/
 export default {
   components: { ListItem },
   props: {

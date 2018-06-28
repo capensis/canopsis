@@ -17,6 +17,11 @@
 <script>
 import searchMixin from '@/mixins/search';
 
+/**
+ * Search component for the entities list
+ *
+ * @module context
+ */
 export default {
   filters: {
     formatedSearching(text) {

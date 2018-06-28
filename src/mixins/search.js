@@ -1,5 +1,8 @@
 import omit from 'lodash/omit';
 
+/**
+ * @mixin
+ */
 export default {
   methods: {
     clear() {

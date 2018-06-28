@@ -2,6 +2,9 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('popup');
 
+/**
+ * @mixin
+ */
 export default {
   methods: {
     ...mapActions({

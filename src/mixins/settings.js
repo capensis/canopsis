@@ -1,5 +1,8 @@
 import SettingsWrapper from '@/components/other/settings/settings-wrapper.vue';
 
+/**
+ * @mixin
+ */
 export default {
   components: { SettingsWrapper },
   data() {

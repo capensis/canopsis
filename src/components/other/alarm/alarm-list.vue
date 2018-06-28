@@ -56,8 +56,7 @@ import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import modalMixin from '@/mixins/modal/modal';
 import paginationMixin from '@/mixins/pagination';
-
-const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
+import alarmsMixin from '@/mixins/alarms';
 
 /**
  * Alarm-list component
@@ -83,7 +82,7 @@ export default {
     AlarmColumnValue,
     FilterSelector,
   },
-  mixins: [paginationMixin, modalMixin],
+  mixins: [alarmsMixin, paginationMixin, modalMixin],
   props: {
     alarmProperties: {
       type: Array,
@@ -95,18 +94,7 @@ export default {
       selected: [],
     };
   },
-  computed: {
-    ...alarmMapGetters([
-      'items',
-      'meta',
-      'pending',
-    ]),
-  },
   methods: {
-    ...alarmMapActions({
-      fetchListAction: 'fetchList',
-    }),
-
     removeHistoryFilter() {
       const query = omit(this.$route.query, ['interval']);
       this.$router.push({ query });

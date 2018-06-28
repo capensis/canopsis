@@ -13,6 +13,14 @@
 </template>
 
 <script>
+
+/**
+* Component to select entities type to filter on entities-list
+*
+* @prop {Array} [value] - Array of selected entities types values to filter on
+*
+* @event value#input
+*/
 export default {
   props: {
     value: {

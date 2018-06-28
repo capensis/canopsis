@@ -2,6 +2,9 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view');
 
+/**
+ * @mixin
+ */
 export default {
   methods: {
     ...mapActions({

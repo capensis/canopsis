@@ -4,6 +4,9 @@ import Pagination from '@/components/tables/pagination.vue';
 import dateIntervals from '@/helpers/date-intervals';
 import { PAGINATION_LIMIT } from '@/config';
 
+/**
+ * @mixin
+ */
 export default {
   components: {
     Pagination,

@@ -4,6 +4,9 @@ import viewMixin from './view';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view/widget');
 
+/**
+ * @mixin
+ */
 export default {
   mixins: [
     viewMixin,
