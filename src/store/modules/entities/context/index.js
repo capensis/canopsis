@@ -7,6 +7,9 @@ export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+  FETCH_GENERAL_LIST: 'FETCH_GENERAL_LIST',
+  FETCH_GENERAL_LIST_COMPLETED: 'FETCH_GENERAL_LIST_COMPLETED',
+  FETCH_GENERAL_LIST_FAILED: 'FETCH_GENERAL_LIST_FAILED',
 };
 
 export default {
@@ -16,12 +19,17 @@ export default {
     meta: {},
     pending: false,
     fetchingParams: {},
+    allIdsGeneralList: [],
+    pendingGeneralList: false,
   },
   getters: {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIds),
-    meta: state => state.meta,
     pending: state => state.pending,
+    meta: state => state.meta,
+    allIdsGeneralList: state => state.allIds,
+    itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIdsGeneralList),
+    pendingGeneralList: state => state.pendingGeneralList,
   },
   mutations: {
     [types.FETCH_LIST](state, { params }) {
@@ -36,19 +44,34 @@ export default {
     [types.FETCH_LIST_FAILED](state) {
       state.pending = false;
     },
+    [types.FETCH_GENERAL_LIST](state, { params }) {
+      state.pendingGeneralList = true;
+      state.fetchingParamsGeneralList = params;
+    },
+    [types.FETCH_GENERAL_LIST_COMPLETED](state, { allIds }) {
+      state.allIdsGeneralList = allIds;
+      state.pendingGeneralList = false;
+    },
+    [types.FETCH_GENERAL_LIST_FAILED](state) {
+      state.pendingGeneralList = false;
+    },
   },
   actions: {
+    fetch({ dispatch }, { params } = {}) {
+      return dispatch('entities/fetch', {
+        route: API_ROUTES.context,
+        schema: [contextSchema],
+        params,
+        dataPreparer: d => d.data,
+        isPost: true,
+      }, { root: true });
+    },
+
     async fetchList({ commit, dispatch }, { params } = {}) {
       try {
         commit(types.FETCH_LIST, { params });
 
-        const { normalizedData, data } = await dispatch('entities/fetch', {
-          route: API_ROUTES.context,
-          schema: [contextSchema],
-          params,
-          dataPreparer: d => d.data,
-          isPost: true,
-        }, { root: true });
+        const { normalizedData, data } = await dispatch('fetch', { params });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
@@ -61,6 +84,22 @@ export default {
         commit(types.FETCH_LIST_FAILED);
       }
     },
+
+    async fetchGeneralList({ commit, dispatch }, { params } = {}) {
+      try {
+        commit(types.FETCH_GENERAL_LIST, { params });
+
+        const { normalizedData } = await dispatch('fetch', { params });
+
+        commit(types.FETCH_GENERAL_LIST_COMPLETED, {
+          allIds: normalizedData.result,
+        });
+      } catch (err) {
+        console.error(err);
+        commit(types.FETCH_GENERAL_LIST_FAILED);
+      }
+    },
+
     async remove({ dispatch }, { id } = {}) {
       try {
         await request.delete(API_ROUTES.context, { params: { ids: id } });
