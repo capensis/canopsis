@@ -1,37 +1,43 @@
 <template lang="pug">
-  v-navigation-drawer(
+  v-navigation-drawer.grey.darken-4(
     v-model="isOpen",
     absolute,
     app,
-    :clipped="$mq === 'mobile' || $mq === 'tablet' ? false : true"
+    :clipped="$mq === 'mobile' || $mq === 'tablet' ? false : true",
+    :width="width"
   )
       v-card(flat)
       v-expansion-panel(
         class="panel",
         expand,
         focusable,
+        dark
       )
-        v-expansion-panel-content
+        v-expansion-panel-content.grey.darken-4.white--text
           div(slot="header") Examples
-          v-card
+          v-card.grey.darken-3.white--text
             v-card-text
               router-link(to="alarms") Alarms List
-          v-card
+          v-card.grey.darken-3.white--text
             v-card-text
               router-link(to="filter") Filters
-          v-card
+          v-card.grey.darken-3.white--text
             v-card-text
               router-link(to="login") Login
-          v-card
+          v-card.grey.darken-3.white--text
             v-card-text
               router-link(to="rrule") Rrule
-      v-divider
-      v-expansion-panel(class="panel", expand, focusable)
-        v-expansion-panel-content
+      v-expansion-panel(
+        class="panel",
+        expand,
+        focusable,
+        dark
+      )
+        v-expansion-panel-content.grey.darken-4.white--text
           div(slot="header") View Group 2
-          v-card
+          v-card.grey.darken-3.white--text
             v-card-text View 1
-          v-card
+          v-card.grey.darken-3.white--text
             v-card-text View 2
       v-divider
       v-btn.addBtn(
@@ -49,11 +55,18 @@
 import { createNamespacedHelpers } from 'vuex';
 import VueContentLoading from 'vue-content-loading';
 
+import { SIDE_BAR_WIDTH } from '@/config';
+
 const { mapGetters, mapActions } = createNamespacedHelpers('app');
 
 export default {
   components: {
     VueContentLoading,
+  },
+  data() {
+    return {
+      width: SIDE_BAR_WIDTH,
+    };
   },
   computed: {
     ...mapGetters(['isSideBarOpen']),

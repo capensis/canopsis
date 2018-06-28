@@ -1,20 +1,30 @@
 <template lang="pug">
-    v-toolbar(
-      dense,
-      fixed,
-      clipped-left,
-      app,
-      color="blue darken-4",
-    )
-      v-toolbar-side-icon.white--text(@click="toggleSideBar")
+  v-toolbar.white(
+    dense,
+    fixed,
+    clipped-left,
+    app,
+  )
+    div.brand.ma-0.green.darken-4
+      img(:src="canopsisLogo")
+    v-toolbar-side-icon(@click="toggleSideBar")
+    v-spacer
+    div Nom d'utilisateur
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import canopsisLogo from "@/assets/canopsis.png";
+
 const { mapActions } = createNamespacedHelpers('app');
 
 export default {
+  data() {
+    return {
+      canopsisLogo,
+    };
+  },
   methods: {
     ...mapActions([
       'toggleSideBar',
@@ -22,3 +32,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .brand {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    width: 250px;
+    height: 100%;
+
+    img {
+      margin: auto;
+    }
+  }
+</style>
