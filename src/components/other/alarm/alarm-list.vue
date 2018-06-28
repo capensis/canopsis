@@ -20,7 +20,7 @@
       alarm-list-search
     v-flex(xs4)
       pagination(:meta="meta", :limit="limit", type="top")
-  basic-list(:items="items", :pending="pending", @update:selected="selected = $event", expanded)
+  basic-list(:items="items", :pending="pending", :selected.sync="selected", expanded)
     loader(slot="loader")
     tr.container.header.pa-0(slot="header")
       th.box(v-for="column in alarmProperties")
@@ -42,7 +42,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import intersectionWith from 'lodash/intersectionWith';
 import omit from 'lodash/omit';
 
 import BasicList from '@/components/tables/basic-list.vue';
@@ -99,15 +98,6 @@ export default {
       'meta',
       'pending',
     ]),
-  },
-  watch: {
-    items(items) {
-      this.selected = intersectionWith(
-        this.selected,
-        items,
-        (selectedItemId, item) => selectedItemId === item._id,
-      );
-    },
   },
   methods: {
     ...alarmMapActions({
