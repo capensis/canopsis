@@ -29,13 +29,13 @@ corresponding filter.
 
 The tag name can be used to filter according to :
 
- - The entity's identity, with the names `entity.connector`,
-   `entity.connector_name`, `entity.component`, `entity.resource`.
+ - The entity's identity, with the names `entity_id` and `entity_type`.
  - One of the entity's informations, with the names
-   `entity.infos.<information_id>`. Only the information ids specified in the
+   `entity_infos.<information_id>`. Only the information ids specified in the
    [statsng engine configuration](../../../admin_guide/statsng.md#entity-tags)
    can be used in filters.
- - The alarm's state, with the name `alarm.state`.
+ - The alarm, with the names `connector`, `connector_name`, `component`,
+   `resource` and `alarm_state`.
 
 The tag filter can be :
 
@@ -234,10 +234,10 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "entity.connector": "connector",
-            "entity.connector_name": "connector_name",
-            "entity.component": "component",
-            "alarm.state": 3
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component",
+            "alarm_state": 3
         }
     ]
 }

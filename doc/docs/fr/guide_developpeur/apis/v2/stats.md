@@ -33,13 +33,13 @@ un).
 
 Le nom de tag peut être utilisé pour filtrer selon :
 
- - L'identité de l'entité, avec les tags `entity.connector`,
-   `entity.connector_name`, `entity.component` et `entity.resource`.
- - Les informations de l'entité, avec les tags `entity.infos.<information_id>`.
+ - L'identité de l'entité, avec les tags `entity_id` and `entity_type`.
+ - Les informations de l'entité, avec les tags `entity_infos.<information_id>`.
    Seules les informations spécifiées dans la [configuration du moteur
    statsng](../../../guide_administrateur/statsng.md#entity-tags) peuvent être
    utilisées.
- - L'état de l'alarme, avec le tag `alarm.state`.
+ - L'alarme, avec les tags `connector`, `connector_name`, `component`,
+   `resource` and `alarm_state`.
 
 Le filtre de tag peut être :
 
@@ -144,9 +144,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "entity.connector": "connector",
-            "entity.connector_name": "connector_name",
-            "entity.component": "component"
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component"
         }
     ]
 }
@@ -175,9 +175,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "entity.connector": "connector",
-            "entity.connector_name": "connector_name",
-            "entity.component": "component"
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component"
         }
     ],
     "group_by": ["resource"]
@@ -215,9 +215,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "entity.connector": "connector",
-            "entity.connector_name": "connector_name",
-            "entity.component": "component"
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component"
         }
     ],
     "ack_time_sla": 600
@@ -252,10 +252,10 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "entity.connector": "connector",
-            "entity.connector_name": "connector_name",
-            "entity.component": "component",
-            "alarm.state": 3,
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component",
+            "alarm_state": 3,
         }
     ]
 }
@@ -285,9 +285,9 @@ Requête:
     "tstop": 1528293000,
     "filter": [
         {
-            "entity.connector": "connector",
-            "entity.connector_name": "connector_name",
-            "entity.component": "component"
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component"
         }
     ]
 }
