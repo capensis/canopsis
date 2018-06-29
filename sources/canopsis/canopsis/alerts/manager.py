@@ -32,7 +32,6 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
-from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
@@ -55,6 +54,7 @@ from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.statsng.enums import StatCounters
+from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
 
 # Extra fields from the event that should be stored in the alarm
@@ -166,7 +166,7 @@ class Alerts(object):
         watcher_manager = Watcher()
 
         amqp_pub = AmqpPublisher(get_default_amqp_conn())
-        event_publisher = AlarmEventPublisher(amqp_pub)
+        event_publisher = StatEventPublisher(amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
                 filter_storage, context_manager, watcher_manager,

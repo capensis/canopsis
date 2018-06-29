@@ -20,7 +20,7 @@
 # ---------------------------------
 
 """
-Event publisher for alarms.
+Event publisher for the statsng engine.
 """
 
 from __future__ import unicode_literals
@@ -37,15 +37,15 @@ from canopsis.statsng.enums import StatEvents
 CONF_PATH = 'etc/statsng/engine.conf'
 CONF_SECTION = 'ENGINE'
 SEND_EVENTS_CONF_KEY = 'send_events'
-LOG_PATH = 'var/log/alarms.log'
+LOG_PATH = 'var/log/statsng.log'
 
 
-class AlarmEventPublisher(object):
+class StatEventPublisher(object):
     """
-    Event publisher for alarms.
+    Event publisher for the statsng engine.
     """
     def __init__(self, amqp_pub):
-        self.logger = Logger.get('alarms', LOG_PATH)
+        self.logger = Logger.get('statsng', LOG_PATH)
         self.amqp_pub = amqp_pub
 
         # Only send events if the configuration file exists and sets
