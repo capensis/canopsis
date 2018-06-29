@@ -268,6 +268,24 @@ example:
 
 The `entity` field should contain the entity as a JSON object.
 
+Event Statistics State Interval Structure
+-----------------------------------
+
+After defining the basic event structure, add the following fields :
+
+```javascript
+{
+    'event_type': 'statstateinterval',
+
+    'state_name':           // The name of the state
+    'state_duration':       // The time spent in this state (in seconds)
+    'state_value':          // The value of the state
+    'entity':               // The entity which sent the event
+}
+```
+
+The `entity` field should contain the entity as a JSON object.
+
 ### Metrology
 
 To send perfdata to Canopsis, you just need to specify one of the
@@ -399,46 +417,48 @@ Add the following fields to your event :
 List of event types
 -------------------
 
-  --------------- -----------------------------------------------------------
-  calendar        Used to send ICS events to Canopsis
+  -----------------  ----------------------------------------------------------
+  calendar           Used to send ICS events to Canopsis
 
-  check           Used to send the result of a check (from Nagios, Icinga,
-                  Shinken, \...)
+  check              Used to send the result of a check (from Nagios, Icinga,
+                     Shinken, \...)
 
-  comment         Used to send a comment
+  comment            Used to send a comment
 
-  consolidation   Sent by the consolidation engine
+  consolidation      Sent by the consolidation engine
 
-  eue             Used to send Cucumber informations
+  eue                Used to send Cucumber informations
 
-  log             Used to log informations
+  log                Used to log informations
 
-  perf            Used to send perfdata only
+  perf               Used to send perfdata only
 
-  selector        Sent by the selector engine
+  selector           Sent by the selector engine
 
-  sla             Sent by the sla engine
+  sla                Sent by the sla engine
 
-  statcounterinc  Used to increment a counter in the statistics engine
+  statcounterinc     Used to increment a counter in the statistics engine
 
-  statduration    Used to add a duration in the statistics engine
+  statduration       Used to add a duration in the statistics engine
 
-  topology        Sent by the topology engine
+  statstateinterval  Used to add a state interval in the statistics engine
 
-  trap            Used to send SNMP traps
+  topology           Sent by the topology engine
 
-  user            Used by user to send informations
+  trap               Used to send SNMP traps
 
-  ack             Used to acknowledge an alert
+  user               Used by user to send informations
 
-  downtime        Used to schedule a downtime
+  ack                Used to acknowledge an alert
 
-  cancel          Used to cancel an event and put it\'s status in cancel
-                  state. removes also referer event\'s ack if any.
+  downtime           Used to schedule a downtime
 
-  uncancel        Used to uncancel an event. previous status is restored and
-                  ack too if any.
+  cancel             Used to cancel an event and put it\'s status in cancel
+                     state. removes also referer event\'s ack if any.
 
-  ackremove       Used to remove an ack from an event. (ack field removed and
-                  ack collection updated)
-  --------------- -----------------------------------------------------------
+  uncancel           Used to uncancel an event. previous status is restored and
+                     ack too if any.
+
+  ackremove          Used to remove an ack from an event. (ack field removed
+                     and ack collection updated)
+  -----------------  ----------------------------------------------------------
