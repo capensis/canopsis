@@ -50,7 +50,6 @@ def exports(ws):
                 'description': e.message
             }, HTTP_ERROR)
 
-
     @ws.application.get(
         '/api/v2/views/<view_id>'
     )
@@ -63,7 +62,6 @@ def exports(ws):
             return gen_json_error({
                 'description': 'No view with id: {0}'.format(view_id)
             }, HTTP_NOT_FOUND)
-
 
     @ws.application.post(
         '/api/v2/views'
@@ -87,7 +85,6 @@ def exports(ws):
             ViewField.id: view_id
         })
 
-
     @ws.application.delete(
         '/api/v2/views/<view_id>'
     )
@@ -100,7 +97,6 @@ def exports(ws):
         view_adapter.remove_with_id(view_id)
 
         return gen_json({})
-
 
     @ws.application.put(
         '/api/v2/views/<view_id>'
@@ -127,14 +123,12 @@ def exports(ws):
 
         return gen_json({})
 
-
     @ws.application.get(
         '/api/v2/views/groups'
     )
     def list_groups():
         name = request.query.getunicode(GroupField.name)
         return gen_json(group_adapter.list(name))
-
 
     @ws.application.get(
         '/api/v2/views/groups/<group_id>'
@@ -157,7 +151,6 @@ def exports(ws):
 
         return gen_json(group)
 
-
     @ws.application.post(
         '/api/v2/views/groups/<group_id>'
     )
@@ -178,7 +171,6 @@ def exports(ws):
 
         return gen_json({})
 
-
     @ws.application.delete(
         '/api/v2/views/groups/<group_id>'
     )
@@ -196,7 +188,6 @@ def exports(ws):
             }, HTTP_ERROR)
 
         return gen_json({})
-
 
     @ws.application.put(
         '/api/v2/views/groups/<group_id>'
