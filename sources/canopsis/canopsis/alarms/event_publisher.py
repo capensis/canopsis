@@ -26,11 +26,7 @@ Event publisher for alarms.
 from __future__ import unicode_literals
 import os.path
 
-from canopsis.alerts.enums import AlarmField
 from canopsis.common import root_path
-from canopsis.common.amqp import AmqpPublisher
-from canopsis.common.amqp import get_default_connection as \
-    get_default_amqp_conn
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.confng.simpleconf import ConfigurationUnreachable
@@ -159,6 +155,56 @@ class AlarmEventPublisher(object):
             timestamp=timestamp,
             duration_name=duration_name,
             duration=duration_value,
+            alarm=alarm,
+            entity=entity)
+
+        self.amqp_pub.canopsis_event(event)
+
+    def publish_statstateinterval_event(self,
+                                        timestamp,
+                                        state_name,
+                                        state_duration,
+                                        state_value,
+                                        entity,
+                                        alarm):
+        """
+        Publish a statstateinterval event on amqp.
+
+        :param int timestamp: the time at which the event occurs
+        :param str state_name: the name of the state
+        :param str state_duration: the time spent in this state
+        :param str state_value: the value of the state
+        :param dict entity: the entity
+        :param dict alarm: the alarm
+        """
+        if not self.send_events:
+            return
+
+        component = alarm.get(Event.COMPONENT)
+        resource = alarm.get(Event.RESOURCE)
+
+        # AmqpPublisher.canopsis needs the component and resource of the event
+        # to be unicode strings.
+        try:
+            component = component.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+        try:
+            resource = resource.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+
+        event = forger(
+            connector="canopsis",
+            connector_name="engine",
+            event_type=StatEvents.statstateinterval,
+            source_type=Event.RESOURCE if resource else Event.COMPONENT,
+            component=component,
+            resource=resource,
+            timestamp=timestamp,
+            state_name=state_name,
+            state_duration=state_duration,
+            state_value=state_value,
             alarm=alarm,
             entity=entity)
 

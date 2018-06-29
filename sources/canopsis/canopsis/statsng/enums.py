@@ -34,6 +34,7 @@ class StatEvents(FastEnum):
     """
     statcounterinc = 'statcounterinc'
     statduration = 'statduration'
+    statstateinterval = 'statstateinterval'
 
 
 class StatEventFields(FastEnum):
@@ -46,6 +47,9 @@ class StatEventFields(FastEnum):
     counter_name = 'counter_name'
     duration_name = 'duration_name'
     duration = 'duration'
+    state_name = 'state_name'
+    state_duration = 'state_duration'
+    state_value = 'state_value'
 
 
 class StatCounters(FastEnum):
@@ -63,3 +67,10 @@ class StatDurations(FastEnum):
     """
     ack_time = 'ack_time'
     resolve_time = 'resolve_time'
+
+
+class StatStateIntervals(FastEnum):
+    """
+    The StatStateIntervals enumeration defines the names of the states.
+    """
+    time_in_state = 'time_in_state'
