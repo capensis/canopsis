@@ -31,6 +31,7 @@ class WatcherModel(object):
     STATE_WHEN_ALL_ACK = 'state_when_all_ack'
     STATE_ALGORITHM = 'state_algorithm'
     LAST_STATE_CHANGE = 'last_state_change'
+    STATE = 'state'
 
     def __init__(
         self, id_, entity_filter, display_name,

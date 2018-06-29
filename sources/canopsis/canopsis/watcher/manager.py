@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import json
 from time import time
 
+from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
@@ -18,6 +19,7 @@ from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
 from canopsis.models.watcher import WatcherModel
+from canopsis.statsng.enums import StatStateIntervals
 
 LOG_PATH = 'var/log/watcher.log'
 
@@ -45,6 +47,8 @@ class Watcher:
         self.amqp_pub = amqp_pub
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
+
+        self.event_publisher = AlarmEventPublisher(self.amqp_pub)
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.
@@ -234,11 +238,25 @@ class Watcher:
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
             nb_ok, nb_minor, nb_major, nb_crit)
 
-        # Updating watcher state
         if computed_state != watcher_entity.get('state', None):
+            now = int(time())
+            last_state_change = watcher_entity.get(
+                WatcherModel.LAST_STATE_CHANGE)
+            last_state = watcher_entity.get(WatcherModel.STATE)
+
+            # Update watcher state
             watcher_entity['state'] = computed_state
-            watcher_entity[WatcherModel.LAST_STATE_CHANGE] = int(time())
+            watcher_entity[WatcherModel.LAST_STATE_CHANGE] = now
             self.context_graph.update_entity(watcher_entity)
+
+            # Send statistic event
+            if last_state_change is not None and last_state is not None:
+                self.event_publisher.publish_statstateinterval_event(
+                    last_state_change,
+                    StatStateIntervals.watcher_state,
+                    now - last_state_change,
+                    last_state,
+                    watcher_entity)
 
         self.publish_event(
             display_name,

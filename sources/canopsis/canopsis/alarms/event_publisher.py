@@ -36,6 +36,7 @@ from canopsis.confng.helpers import cfg_to_bool
 from canopsis.confng.simpleconf import ConfigurationUnreachable
 from canopsis.event import Event, forger
 from canopsis.logger import Logger
+from canopsis.models.entity import Entity
 from canopsis.statsng.enums import StatEvents
 
 CONF_PATH = 'etc/statsng/engine.conf'
@@ -160,6 +161,47 @@ class AlarmEventPublisher(object):
             duration_name=duration_name,
             duration=duration_value,
             alarm=alarm,
+            entity=entity)
+
+        self.amqp_pub.canopsis_event(event)
+
+    def publish_statstateinterval_event(self,
+                                        timestamp,
+                                        state_name,
+                                        state_duration,
+                                        state_value,
+                                        entity):
+        """
+        Publish a statstateinterval event on amqp.
+
+        :param int timestamp: the time at which the event occurs
+        :param str state_name: the name of the state
+        :param str state_duration: the time spent in this state
+        :param str state_value: the value of the state
+        :param dict entity: the entity
+        """
+        if not self.send_events:
+            return
+
+        component = entity.get(Entity._ID)
+
+        # AmqpPublisher.canopsis needs the component of the event to be unicode
+        # strings.
+        try:
+            component = component.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+
+        event = forger(
+            connector="canopsis",
+            connector_name="engine",
+            event_type=StatEvents.statstateinterval,
+            source_type=Event.COMPONENT,
+            component=component,
+            timestamp=timestamp,
+            state_name=state_name,
+            state_duration=state_duration,
+            state_value=state_value,
             entity=entity)
 
         self.amqp_pub.canopsis_event(event)
