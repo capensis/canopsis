@@ -85,4 +85,4 @@ depuis le dossier où le fichier dump.gz a été conservé, effectuer la command
 
 ```bash
 $  mongorestore -u cpsmongo -p canopsis -d canopsis --drop --gzip --archive=dump.gz
-
+```
