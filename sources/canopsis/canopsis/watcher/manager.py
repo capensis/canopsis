@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 import json
 from time import time
 
-from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
@@ -20,6 +19,7 @@ from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
 from canopsis.models.watcher import WatcherModel
 from canopsis.statsng.enums import StatStateIntervals
+from canopsis.statsng.event_publisher import StatEventPublisher
 
 LOG_PATH = 'var/log/watcher.log'
 
@@ -48,7 +48,7 @@ class Watcher:
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
 
-        self.event_publisher = AlarmEventPublisher(self.amqp_pub)
+        self.event_publisher = StatEventPublisher(self.amqp_pub)
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.

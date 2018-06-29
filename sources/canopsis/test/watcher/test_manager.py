@@ -11,7 +11,6 @@ from time import sleep
 from unittest import main, TestCase
 from mock import Mock
 
-from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.manager import Alerts
 from canopsis.common import root_path
 from canopsis.common.ethereal_data import EtherealData
@@ -21,6 +20,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger.logger import Logger, OutputNull
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
 import xmlrunner
 
@@ -211,7 +211,7 @@ class ComputeState(BaseTest):
         config_data = EtherealData(collection=config_storage._backend,
                                    filter_=filter_)
 
-        event_publisher = Mock(spec=AlarmEventPublisher)
+        event_publisher = Mock(spec=StatEventPublisher)
 
         self.alert_manager = Alerts(config=conf,
                                     logger=logger,

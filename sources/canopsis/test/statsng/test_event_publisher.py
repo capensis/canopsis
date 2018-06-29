@@ -24,17 +24,17 @@ from __future__ import unicode_literals
 from unittest import TestCase, main
 from mock import Mock
 
-from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField
 from canopsis.event import Event
 from canopsis.statsng.enums import StatEvents, StatEventFields
+from canopsis.statsng.event_publisher import StatEventPublisher
 
 
-class AlarmEventPublisherTest(TestCase):
+class StatEventPublisherTest(TestCase):
 
     def setUp(self):
         self.amqp_pub = Mock()
-        self.event_publisher = AlarmEventPublisher(self.amqp_pub)
+        self.event_publisher = StatEventPublisher(self.amqp_pub)
 
     def test_no_events(self):
         self.event_publisher.send_events = False

@@ -26,7 +26,6 @@ import time
 from unittest import TestCase
 from mock import Mock
 
-from canopsis.alarms.event_publisher import AlarmEventPublisher
 from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
@@ -36,6 +35,7 @@ from canopsis.common.utils import merge_two_dicts
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
+from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
 
 
@@ -79,7 +79,7 @@ class BaseTest(TestCase):
         self.config_data = EtherealData(collection=self.config_storage._backend,
                                         filter_=filter_)
 
-        self.event_publisher = Mock(spec=AlarmEventPublisher)
+        self.event_publisher = Mock(spec=StatEventPublisher)
 
         self.manager = Alerts(config=conf,
                               logger=self.logger,
