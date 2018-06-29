@@ -9,6 +9,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Go]: New engine interface
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+- [Python]: new metric engine
 
 ## Canopsis 2.7.0 - Due date : 2018-06-28
 
@@ -17,7 +18,6 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [CAT]: fix priviledge escalation and introduction of a default right group
 - [Go]: large service/adapter refacto
 - [Go]: fix timeout on mongo requests
-- [Python]: new metric engine
 - [Service weather]: fixed an issue where periodical refresh process never refresh anymore
 - [Service weather]: add permission on action
 - [UI]: a new 'done' action is avalaible, which simply mark an alarm as done
