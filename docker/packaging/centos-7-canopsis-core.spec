@@ -53,7 +53,6 @@ fi
 /opt/canopsis/share
 /opt/canopsis/tmp
 /opt/canopsis/var
-/opt/canopsis/.smirc
 /opt/canopsis/.vimrc
 
 %defattr(0755, canopsis, canopsis, 0755)
