@@ -1,28 +1,46 @@
 <template lang="pug">
-  div
-    v-layout(justify-space-between, align-center)
+  v-container
+    v-layout.white(justify-space-between, align-center)
+      v-flex(xs12, md4)
+        context-search
       v-flex.ml-4(xs4)
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
       v-flex(xs2)
         v-btn(icon, @click.prevent="$emit('openSettings')")
           v-icon settings
-    context-search
-    records-per-page
-    basic-list(:items="contextEntities", :selected.sync="selected", :pending="pending")
-      loader(slot="loader")
-      tr.container(slot="header")
-        th.box(v-for="columnProperty in contextProperties")
-          span {{ columnProperty.text }}
-          list-sorting.blue--text(:column="columnProperty.value")
-        th.box
-      tr.container(slot="row" slot-scope="item")
-        td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
-        td.box
-          v-btn(@click.stop="deleteEntity(item)", icon, small)
+    loader(v-if="pending")
+    v-data-table(
+      v-else,
+      v-model="selected",
+      :items="contextEntities",
+      :headers="contextProperties",
+      item-key="_id",
+      :total-items="meta.total",
+      :pagination.sync="pagination",
+      select-all,
+      hide-actions,
+    )
+      template(slot="headerCell", slot-scope="props")
+          span(
+          ) {{ props.header.text }}
+      template(slot="items", slot-scope="props")
+        td
+          v-checkbox(primary, hide-details, v-model="props.selected")
+        td(
+          v-for="prop in contextProperties",
+          @click="props.expanded = !props.expanded"
+        ) {{ props.item | get(prop.value) }}
+        td
+          v-btn(@click.stop="deleteEntity(props.item)", icon, small)
             v-icon delete
-      tr.container(slot="expandedRow", slot-scope="item")
-    pagination(:meta="contextEntitiesMeta", :limit="limit")
+      template(slot="expand", slot-scope="props")
+        time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+    v-layout.white(align-center)
+      v-flex(xs10)
+        pagination(:meta="meta", :limit="limit")
+      v-flex(xs2)
+        records-per-page
     create-entity.fab
 </template>
 
@@ -30,7 +48,6 @@
 import omit from 'lodash/omit';
 import { createNamespacedHelpers } from 'vuex';
 
-import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -44,12 +61,11 @@ import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
 
-const { mapActions } = createNamespacedHelpers('context');
+const { mapActions, mapGetters } = createNamespacedHelpers('context');
 
 
 export default {
   components: {
-    BasicList,
     ContextSearch,
     RecordsPerPage,
     ListSorting,
@@ -72,7 +88,25 @@ export default {
   data() {
     return {
       selected: [],
+      pagination: {},
     };
+  },
+  computed: {
+    ...mapGetters(['items', 'meta', 'pending']),
+  },
+  watch: {
+    pagination: {
+      handler(e) {
+        this.$router.push({
+          query: {
+            ...this.$route.query,
+            page: e.page,
+            sort_key: e.sortBy,
+            sort_dir: e.descending ? 'DESC' : 'ASC',
+          },
+        });
+      },
+    },
   },
   methods: {
     ...mapActions({
@@ -97,7 +131,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.remove({ id: item.props._id }),
+          action: () => this.remove({ id: item._id }),
         },
       });
     },
@@ -105,7 +139,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => Promise.all(this.selected.map(id => this.remove({ id }))),
+          action: () => Promise.all(this.selected.map(item => this.remove({ id: item._id }))),
         },
       });
     },
@@ -119,25 +153,7 @@ export default {
 </script>
 
 <style scoped>
-  th {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  td {
-    overflow-wrap: break-word;
-  }
-
-  .container {
-    display: flex;
-  }
-
-  .box {
-    width: 10%;
-    flex: 1;
-  }
-
-  .fab {
+.fab {
     position: fixed;
     bottom: 0;
     right: 0;

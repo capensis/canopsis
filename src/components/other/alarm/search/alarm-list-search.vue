@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-toolbar(dense, flat)
+  v-toolbar.white(dense, flat)
     v-text-field(
       label="Search",
       v-model="searchingText",

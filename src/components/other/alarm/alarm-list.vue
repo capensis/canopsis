@@ -1,9 +1,13 @@
 <template lang="pug">
   v-container
-    v-layout(justify-space-between, align-center)
-      v-flex.ml-4(xs4)
-        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
+    v-layout.white(wrap, justify-space-between, align-center)
+      v-flex(xs12 md3)
+        alarm-list-search
       v-flex(xs2)
+        pagination(:meta="meta", :limit="limit", type="top")
+      v-flex.ml-4(xs3)
+        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
+      v-flex(xs3)
         v-chip(
           v-if="$route.query.interval",
           @input="removeHistoryFilter",
@@ -15,13 +19,10 @@
           v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="$emit('openSettings')")
           v-icon settings
-    v-layout.my-2(wrap, justify-space-between, align-center)
-      v-flex(xs12 md5)
-        alarm-list-search
-      v-flex(xs4)
-        pagination(:meta="meta", :limit="limit", type="top")
+    loader(v-if="pending")
     v-data-table(
-      v-model="selected"
+      v-else,
+      v-model="selected",
       :items="items",
       :headers="alarmProperties",
       item-key="_id",
@@ -45,17 +46,18 @@
           actions-panel(:item="props.item")
       template(slot="expand", slot-scope="props")
         time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
-    v-layout(wrap)
-      v-flex(xs12, md7)
-      pagination(:meta="meta", :limit="limit")
-      //records-per-page
+    v-layout.white(align-center)
+      v-flex(xs10)
+        pagination(:meta="meta", :limit="limit")
+      v-spacer
+      v-flex(xs2)
+        records-per-page
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
 
-import ListSorting from '@/components/tables/list-sorting.vue';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
@@ -81,7 +83,6 @@ export default {
   components: {
     AlarmListSearch,
     RecordsPerPage,
-    ListSorting,
     TimeLine,
     MassActionsPanel,
     ActionsPanel,
@@ -117,6 +118,7 @@ export default {
       handler(e) {
         this.$router.push({
           query: {
+            ...this.$route.query,
             page: e.page || '1',
             sort_key: e.sortBy || '',
             sort_dir: e.descending ? 'DESC' : 'ASC',

@@ -20,6 +20,9 @@
               router-link(to="alarms") Alarms List
           v-card.grey.darken-3.white--text
             v-card-text
+              router-link(to="context") Context
+          v-card.grey.darken-3.white--text
+            v-card-text
               router-link(to="filter") Filters
           v-card.grey.darken-3.white--text
             v-card-text
