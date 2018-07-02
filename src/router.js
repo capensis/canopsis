@@ -9,6 +9,7 @@ import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
 import Rrule from '@/components/forms/rrule.vue';
 
+
 Vue.use(Router);
 
 export default new Router({
