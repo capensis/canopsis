@@ -30,6 +30,10 @@ COPY sources/canopsis/requirements.txt /sources/canopsis/requirements.txt
 COPY docker/build/pip-deps.sh /
 RUN /bin/bash /pip-deps.sh
 
+#### Ansible
+COPY docker/build/pip-ansible.sh /
+RUN /bin/bash /pip-ansible.sh
+
 #### Canopsis only
 COPY sources/canopsis /sources/canopsis
 COPY docker/build/pip-canopsis.sh /

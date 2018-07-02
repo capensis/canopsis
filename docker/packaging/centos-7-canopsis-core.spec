@@ -46,6 +46,8 @@ if [ ! "$?" = "0" ]; then
 fi
 
 %files
+/opt/canopsis/venv-ansible
+
 %defattr(0644, canopsis, canopsis, 0755)
 /opt/canopsis/deploy-ansible
 /opt/canopsis/include

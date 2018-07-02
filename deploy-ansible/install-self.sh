@@ -10,7 +10,7 @@ cd ${workdir}
 
 user_home=$(su - canopsis -c 'echo -n ${HOME}')
 
-source ${user_home}/bin/activate
+source ${user_home}/venv-ansible/bin/activate
 
 ansible-playbook playbook/canopsis-standalone.yml \
     -e "canopsis_init_db=true" \
