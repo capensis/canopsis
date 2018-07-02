@@ -106,10 +106,10 @@ La statistique `ack_time_sla` est un objet JSON avec les champs suivants :
    SLA
  - `below`: le nombre d'alarmes dont le temps d'acquittement est inférieur au
    SLA
- - `above_rate`: le pourcentage d'alarmes dont le temps d'acquittement est
-   supérieur au SLA
- - `below_rate`: le pourcentage d'alarmes dont le temps d'acquittement est
-   inférieur au SLA
+ - `above_rate`: la proportion d'alarmes dont le temps d'acquittement est
+   supérieur au SLA (entre 0 et 1)
+ - `below_rate`: la proportion d'alarmes dont le temps d'acquittement est
+   inférieur au SLA (entre 0 et 1)
 
 Le SLA doit être indiqué en secondes dans la requête dans un champs
 `ack_time_sla`.
@@ -122,13 +122,49 @@ La statistique `resolve_time_sla` est un objet JSON avec les champs suivants :
    SLA
  - `below`: le nombre d'alarmes dont le temps de résolution est inférieur au
    SLA
- - `above_rate`: le pourcentage d'alarmes dont le temps de résolution est
-   supérieur au SLA
- - `below_rate`: le pourcentage d'alarmes dont le temps de résolution est
-   inférieur au SLA
+ - `above_rate`: la proportion d'alarmes dont le temps de résolution est
+   supérieur au SLA (entre 0 et 1)
+ - `below_rate`: la proportion d'alarmes dont le temps de résolution est
+   inférieur au SLA (entre 0 et 1)
 
 Le SLA doit être indiqué en secondes dans la requête dans un champs
 `resolve_time_sla`.
+
+### Temps passé dans chaque état
+
+La statistique `time_in_state` est un objet JSON avec :
+
+ - un champ par état (0-3), contenant le temps passé par le watcher dans cet
+   état en secondes
+ - un champ `total`, contenant le temps total
+
+Les périodes pendant lesquels un pbehavior est actif sont exclues des valeurs
+ci-dessus. Le temps total peut donc être inférieur à la durée de la période
+`tstop - tstart`.
+
+### Disponibilité
+
+La statistique `availability` est un objet JSON avec les champs suivants :
+
+ - `available_time` : le temps pendant lequel le watcher était dans un état
+   disponible en secondes
+ - `unavailable_time` : le temps pendant lequel le watcher était dans un état
+   indisponible en secondes
+ - `available_rate` : la proportion du temps pendant lequel le watcher était
+   dans un état disponible (entre 0 et 1)
+ - `unavailable_rate` : la proportion du temps pendant lequel le watcher était
+   dans un état indisponible (entre 0 et 1)
+
+Un état est considéré comme disponible s'il est inférieur ou égal à la valeur
+donnée en paramètre dans le champs `available_state`.
+
+Les périodes pendant lesquels un pbehavior est actif sont exclues des valeurs
+ci-dessus. Le temps total `available_time + unavailable_time` peut donc être
+inférieur à la durée de la période `tstop - tstart`.
+
+**Remarque :** Si cette statistique est calculée pour plusieurs watchers à la
+fois, la somme des temps de disponibilité (ou d'indisponibilité) sera renvoyée.
+
 
 ## Exemples
 
@@ -268,6 +304,76 @@ Réponse:
     {
         "tags": {},
         "alarms_created": 13
+    }
+]
+```
+
+### Calcul du temps passé par un watcher dans chaque état
+
+`/api/v2/stats/time_in_state`
+
+Requête:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity_id": "watcher_0"
+        }
+    ]
+}
+```
+
+Réponse:
+
+```javascript
+[
+    {
+        "tags": {},
+        "time_in_state": {
+			"total": 2454,
+			"0": 1707,
+			"1": 105,
+			"2": 23,
+			"3": 619
+		}
+    }
+]
+```
+
+### Calcul du temps pendant lequel un watcher était disponible
+
+`/api/v2/stats/availability`
+
+Requête:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity_id": "watcher_0"
+        }
+    ],
+    "available_state": 2
+}
+```
+
+Réponse:
+
+```javascript
+[
+    {
+        "tags": {},
+        "availability": {
+			"available_time": 1835,
+			"unavailable_time": 619,
+			"available_rate": 0.747758761206194,
+			"unavailable_rate": 0.25224123879380606
+		}
     }
 ]
 ```

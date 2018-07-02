@@ -98,8 +98,10 @@ The statistic `ack_time_sla` is a JSON object with the following fields:
 
  - `above`: the number of alarms whose ack time is above the SLA.
  - `below`: the number of alarms whose ack time is below the SLA.
- - `above_rate`: the percentage of alarms whose ack time is above the SLA.
- - `below_rate`: the percentage of alarms whose ack time is below the SLA.
+ - `above_rate`: the ratio of alarms whose ack time is above the SLA (between 0
+   and 1).
+ - `below_rate`: the ratio of alarms whose ack time is below the SLA (between 0
+   and 1).
 
 ### Resolve time above or below the SLA
 
@@ -107,9 +109,39 @@ The statistic `resolve_time_sla` is a JSON object with the following fields:
 
  - `above`: the number of alarms whose resolve time is above the SLA.
  - `below`: the number of alarms whose resolve time is below the SLA.
- - `above_rate`: the percentage of alarms whose resolve time is above the SLA.
- - `below_rate`: the percentage of alarms whose resolve time is below the SLA.
+ - `above_rate`: the ratio of alarms whose resolve time is above the SLA
+   (between 0 and 1).
+ - `below_rate`: the ratio of alarms whose resolve time is below the SLA
+   (between 0 and 1).
 
+### Time spent in each state
+
+The statistic `time_in_state` is a JSON object with :
+
+ - one field for each state (between 0 and 3), containing the time spent by the
+   watcher in this state, in seconds
+ - a `total` field, containing the total time
+
+The intervals during which a pbehavior is active are excluded from these
+values. The total time may thus be inferior to the duration of the interval
+`tstop - tstart`.
+
+### Availability
+
+The statistic `availability` is a JSON object with the followign fields:
+
+ - `available_time`: the time during which the watcher was in an available
+   state, in seconds
+ - `unavailable_time`: the time during which the watcher was in an unavailable
+   state, in seconds
+ - `available_rate`: the ratio of time during which the watcher was in an
+   available state (between 0 and 1)
+ - `unavailable_rate`: the ratio of time during which the watcher was in an
+   unavailable state (between 0 and 1)
+
+The intervals during which a pbehavior is active are excluded from these
+values. The total time `available_time + unavailable_time` may thus be inferior
+to the duration of the interval `tstop - tstart`.
 
 ## Examples
 
@@ -226,7 +258,7 @@ Response:
 
 `/api/v2/stats/alarms_created`
 
-Requête:
+Request:
 
 ```javascript
 {
@@ -243,7 +275,7 @@ Requête:
 }
 ```
 
-Réponse:
+Response:
 
 ```javascript
 [
@@ -253,6 +285,77 @@ Réponse:
     }
 ]
 ```
+
+### Time spent by a watcher in each state
+
+`/api/v2/stats/time_in_state`
+
+Request:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity_id": "watcher_0"
+        }
+    ]
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {},
+        "time_in_state": {
+			"total": 2454,
+			"0": 1707,
+			"1": 105,
+			"2": 23,
+			"3": 619
+		}
+    }
+]
+```
+
+### Calcul du temps pendant lequel un watcher était disponible
+
+`/api/v2/stats/availability`
+
+Request:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity_id": "watcher_0"
+        }
+    ],
+    "available_state": 2
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {},
+        "availability": {
+			"available_time": 1835,
+			"unavailable_time": 619,
+			"available_rate": 0.747758761206194,
+			"unavailable_rate": 0.25224123879380606
+		}
+    }
+]
+```
+
 
 
 ### Multiple statistics in one request
