@@ -47,6 +47,7 @@ fi
 
 %files
 %defattr(0644, canopsis, canopsis, 0755)
+/opt/canopsis/deploy-ansible
 /opt/canopsis/include
 /opt/canopsis/lib
 /opt/canopsis/lib64
@@ -59,6 +60,7 @@ fi
 /opt/canopsis/bin/
 /opt/canopsis/opt/mongodb/filldb.py
 
+%attr(755, canopsis, canopsis) /opt/canopsis/deploy-ansible/install-self.sh
 %attr(755, canopsis, canopsis) /opt/canopsis/.bashrc
 %attr(755, canopsis, canopsis) /opt/canopsis/.bash_profile
 

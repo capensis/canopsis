@@ -82,6 +82,7 @@ Tags
 Some tags you can use with `--tags tag,list`:
 
  * `cps_services`: run only tasks related to the state of canopsis services (engines, webserver...)
+ * `cps_install_package`: this tag is **REQUIRED** when running ansible **AFTER** the package has been installed, aka when you want to deploy Canopsis from the packages's playbook.
 
 Groups
 ------

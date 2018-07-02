@@ -85,6 +85,9 @@ RUN . ${CPS_HOME}/bin/activate && \
     python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
     python /${CPS_HOME}/bin/brickmanager enable brick-timeline
 
+# Ansible
+COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
+
 USER ${CPS_USER}:${CPS_GROUP}
 
 EXPOSE 8082

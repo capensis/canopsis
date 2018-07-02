@@ -5,13 +5,19 @@
   yum:
     name: "{{ canopsis_deps | join(',') }}"
     state: present
+  tags:
+    - cps_install_package
 
 - name: copy package
   copy:
     src: '{{ canopsis_pkg_name }}'
     dest: '/root/{{ canopsis_pkg_name }}'
+  tags:
+    - cps_install_package
 
 - name: install package
   yum:
     name: '/root/{{ canopsis_pkg_name }}'
     state: present
+  tags:
+    - cps_install_package
