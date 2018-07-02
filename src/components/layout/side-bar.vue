@@ -46,7 +46,7 @@
         fixed,
         bottom,
         right,
-        color="blue darken-4"
+        color="green darken-4"
       )
         v-icon(dark) add
 </template>

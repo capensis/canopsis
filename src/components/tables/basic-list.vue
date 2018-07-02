@@ -1,5 +1,5 @@
 <template lang="pug">
-  ul
+  // ul
     li.header.sticky(ref="header")
       v-checkbox.checkbox(
       v-if="checkbox",
@@ -13,7 +13,7 @@
       div(v-else)
         li(v-for="item in items", :item="item")
           list-item(:item="item", :expanded="expanded")
-            v-checkbox.checkbox(
+            v-checkbox(
             v-if="checkbox",
             slot="checkbox",
             :input-value="selected",
@@ -29,6 +29,24 @@
         li(v-if="!items.length")
           div.container
             strong {{ $t('common.noResults') }}
+
+  v-data-table(
+    :items="items",
+    :headers="headers"
+  )
+    template(slot="headers", slot-scope="props")
+      tr
+        th(
+          v-for="header in props.headers",
+          :key="header.value"
+        ) {{ header.text }}
+    template(slot="items", slot-scope="props")
+      tr
+        td.text-xs-center(
+          v-for="prop in headers",
+        ) {{ props.item | get(prop.value, prop.filter) }}
+        td
+          slot(name="actionsPanel", :props="props.item")
 </template>
 
 <script>
@@ -43,6 +61,9 @@ export default {
     items: {
       type: Array,
       required: true,
+    },
+    headers: {
+      type: Array,
     },
     checkbox: {
       type: Boolean,
@@ -136,10 +157,5 @@ export default {
 
   .headerText {
     margin-left: 1%;
-  }
-  .checkbox {
-    position: absolute;
-    top: 25%;
-    width: 30px;
   }
 </style>

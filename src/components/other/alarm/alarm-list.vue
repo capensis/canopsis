@@ -1,50 +1,60 @@
 <template lang="pug">
-.white
-  v-layout(justify-space-between, align-center)
-    v-flex.ml-4(xs4)
-      mass-actions-panel(v-show="selected.length", :itemsIds="selected")
-    v-flex(xs2)
-      v-chip(
-        v-if="$route.query.interval",
-        @input="removeHistoryFilter",
-        close,
-        label,
-        color="blue darken-4 white--text"
-      ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
-      v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
-        v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
-      v-btn(icon, @click="$emit('openSettings')")
-        v-icon settings
-  v-layout.my-2(wrap, justify-space-between, align-center)
-    v-flex(xs12 md5)
-      alarm-list-search
-    v-flex(xs4)
-      pagination(:meta="meta", :limit="limit", type="top")
-  basic-list(:items="items", :pending="pending", :selected.sync="selected", expanded)
-    loader(slot="loader")
-    tr.container.header.pa-0(slot="header")
-      th.box(v-for="column in alarmProperties")
-        span {{ column.text }}
-        list-sorting(:column="column.value", class="blue--text")
-      th.box
-    tr.container(slot="row" slot-scope="item")
-        td.box(v-for="property in alarmProperties")
-          alarm-column-value(:alarm="item.props", :property="property")
-        td.box
-          actions-panel.actions(:item="item.props")
-    tr.container(slot="expandedRow", slot-scope="item")
-      time-line(:alarmProps="item.props")
-  v-layout(wrap)
-    v-flex(xs12, md7)
-    pagination(:meta="meta", :limit="limit")
-    records-per-page
+  v-container
+    v-layout(justify-space-between, align-center)
+      v-flex.ml-4(xs4)
+        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
+      v-flex(xs2)
+        v-chip(
+          v-if="$route.query.interval",
+          @input="removeHistoryFilter",
+          close,
+          label,
+          color="blue darken-4 white--text"
+        ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
+        v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
+          v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
+        v-btn(icon, @click="$emit('openSettings')")
+          v-icon settings
+    v-layout.my-2(wrap, justify-space-between, align-center)
+      v-flex(xs12 md5)
+        alarm-list-search
+      v-flex(xs4)
+        pagination(:meta="meta", :limit="limit", type="top")
+    v-data-table(
+      v-model="selected"
+      :items="items",
+      :headers="alarmProperties",
+      item-key="_id",
+      :total-items="meta.total",
+      :pagination.sync="pagination",
+      select-all,
+      hide-actions,
+    )
+      template(slot="headerCell", slot-scope="props")
+          span(
+          ) {{ props.header.text }}
+      template(slot="items", slot-scope="props")
+        td
+          v-checkbox(primary, hide-details, v-model="props.selected")
+        td(
+          v-for="prop in alarmProperties",
+          @click="props.expanded = !props.expanded"
+        )
+          alarm-column-value(:alarm="props.item", :property="prop")
+        td
+          actions-panel(:item="props.item")
+      template(slot="expand", slot-scope="props")
+        time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+    v-layout(wrap)
+      v-flex(xs12, md7)
+      pagination(:meta="meta", :limit="limit")
+      //records-per-page
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
 
-import BasicList from '@/components/tables/basic-list.vue';
 import ListSorting from '@/components/tables/list-sorting.vue';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -75,7 +85,6 @@ export default {
     TimeLine,
     MassActionsPanel,
     ActionsPanel,
-    BasicList,
     Loader,
     AlarmColumnValue,
     FilterSelector,
@@ -90,6 +99,7 @@ export default {
   data() {
     return {
       selected: [],
+      pagination: {},
     };
   },
   computed: {
@@ -98,6 +108,22 @@ export default {
       'meta',
       'pending',
     ]),
+    selectedIds() {
+      return this.selected.map(item => item._id);
+    },
+  },
+  watch: {
+    pagination: {
+      handler(e) {
+        this.$router.push({
+          query: {
+            page: e.page || '1',
+            sort_key: e.sortBy || '',
+            sort_dir: e.descending ? 'DESC' : 'ASC',
+          },
+        });
+      },
+    },
   },
   methods: {
     ...alarmMapActions({
@@ -120,20 +146,5 @@ export default {
 
   td {
     overflow-wrap: break-word;
-  }
-
-  .container {
-    padding: 0;
-    display: flex;
-    align-items: center;
-  }
-
-  .header {
-    border: 1px solid gray;
-  }
-
-  .box{
-    flex: 1;
-    padding: 1px;
   }
 </style>
