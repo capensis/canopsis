@@ -789,3 +789,118 @@ class PBehaviorManager(object):
         watchers = self.context.get_entities(query=query)
 
         return watchers
+
+    @staticmethod
+    def get_active_intervals(after, before, pbehavior):
+        """
+        Return all the time intervals between after and before during which the
+        pbehavior was active.
+
+        The intervals are returned as a list of tuples (start, end), ordered
+        chronologically. start and end are UTC timestamps, and are always
+        between after and before.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param Dict[str, Any] pbehavior:
+        :rtype: List[Tuple[int, int]]
+        """
+        rrule = pbehavior[PBehavior.RRULE]
+        tstart = pbehavior[PBehavior.TSTART]
+        tstop = pbehavior[PBehavior.TSTOP]
+
+        if not isinstance(tstart, (int, float)):
+            return
+        if not isinstance(tstop, (int, float)):
+            return
+
+        # Convert the timestamps to datetimes
+        tz = pytz.UTC
+        dttstart = datetime.utcfromtimestamp(tstart).replace(tzinfo=tz)
+        dttstop = datetime.utcfromtimestamp(tstop).replace(tzinfo=tz)
+        delta = dttstop - dttstart
+
+        dtafter = datetime.utcfromtimestamp(after).replace(tzinfo=tz)
+        dtbefore = datetime.utcfromtimestamp(before).replace(tzinfo=tz)
+
+        if not rrule:
+            # The only interval where the pbehavior is active is
+            # [dttstart, dttstop]. Ensure that it is included in
+            # [after, before], and convert the datetimes to timestamps.
+            if dttstart < dtafter:
+                dttstart = dtafter
+            if dttstop > dtbefore:
+                dttstop = dtbefore
+            yield (
+                timegm(dttstart.timetuple()),
+                timegm(dttstop.timetuple())
+            )
+        else:
+            # Get all the intervals that intersect with the [after, before]
+            # interval.
+            interval_starts = rrulestr(rrule, dtstart=dttstart).between(
+                dtafter - delta, dtbefore, inc=False)
+            for interval_start in interval_starts:
+                interval_end = interval_start + delta
+                # Ensure that the interval is included in [after, before], and
+                # datetimes to timestamps.
+                if interval_start < dtafter:
+                    interval_start = dtafter
+                if interval_end > dtbefore:
+                    interval_end = dtbefore
+                yield (
+                    timegm(interval_start.timetuple()),
+                    timegm(interval_end.timetuple())
+                )
+
+    def get_active_intervals_by_entity(self, after, before, entity_id):
+        """
+        Return all the time intervals between after and before during which a
+        pbehavior was active for an entity.
+
+        The intervals are returned as a list of tuples (start, end), ordered
+        chronologically. start and end are UTC timestamps, and are always
+        between after and before. None of the intervals overlap.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param str entity_id: the id of the entity
+        :rtype: List[Tuple[int, int]]
+        """
+        intervals = []
+
+        # Get all the intervals where a pbehavior is active
+        pbehaviors = self.get_pbehaviors(entity_id)
+        for pbehavior in pbehaviors:
+            for interval in self.get_active_intervals(after, before, pbehavior):
+                intervals.append(interval)
+
+        if not intervals:
+            return []
+
+        # Order them chronologically (by start date)
+        intervals.sort(key=lambda a: a[0])
+
+        # Merge overlapping intervals
+        merged_intervals = []
+        current_interval_start, current_interval_end = intervals[0]
+        for interval in intervals[1:]:
+            print(interval, current_interval_start, current_interval_end)
+            if interval[1] < current_interval_end:
+                continue
+
+            if interval[0] > current_interval_end:
+                merged_intervals.append((
+                    current_interval_start,
+                    current_interval_end
+                ))
+                current_interval_start, current_interval_end = interval
+            else:
+                current_interval_end = interval[1]
+
+        merged_intervals.append((
+            current_interval_start,
+            current_interval_end
+        ))
+
+        return merged_intervals

@@ -500,6 +500,99 @@ class TestManager(BaseTest):
             res = PBehaviorManager.check_active_pbehavior(ts[1], pbehavior)
             self.assertEqual(res, ts[0])
 
+    def test_get_active_intervals(self):
+        day = 24 * 3600
+        tstart = 1530288000  # 2018/06/29 18:00:00
+        tstop = tstart + 3600
+
+        pbehavior = {
+            'rrule': 'FREQ=DAILY',
+            'tstart': tstart,
+            'tstop': tstop
+        }
+
+        # after = tstart
+        expected_intervals = [
+            (tstart, tstop),
+            (tstart + day, tstop + day),
+            (tstart + 2 * day, tstop + 2 * day),
+            (tstart + 3 * day, tstop + 3 * day),
+            (tstart + 4 * day, tstop + 4 * day),
+        ]
+        intervals = list(PBehaviorManager.get_active_intervals(
+            tstart, tstart + 5 * day, pbehavior))
+        self.assertEqual(intervals, expected_intervals)
+
+        # after < tstart
+        intervals = list(PBehaviorManager.get_active_intervals(
+            tstart - 3 * day, tstart + 5 * day, pbehavior))
+        self.assertEqual(intervals, expected_intervals)
+
+        # after > tstart
+        intervals = list(PBehaviorManager.get_active_intervals(
+            tstart + 2 * day, tstart + 5 * day, pbehavior))
+        expected_intervals = [
+            (tstart + 2 * day, tstop + 2 * day),
+            (tstart + 3 * day, tstop + 3 * day),
+            (tstart + 4 * day, tstop + 4 * day),
+        ]
+        self.assertEqual(intervals, expected_intervals)
+
+        intervals = list(PBehaviorManager.get_active_intervals(
+            tstart + 2 * day + 1800, tstart + 5 * day, pbehavior))
+        expected_intervals = [
+            (tstart + 2 * day + 1800, tstop + 2 * day),
+            (tstart + 3 * day, tstop + 3 * day),
+            (tstart + 4 * day, tstop + 4 * day),
+        ]
+        self.assertEqual(intervals, expected_intervals)
+
+        # before < tstart
+        intervals = list(PBehaviorManager.get_active_intervals(
+            tstart - 3 * day, tstart - 2 * day, pbehavior))
+        expected_intervals = []
+        self.assertEqual(intervals, expected_intervals)
+
+    def test_get_active_intervals_by_entity(self):
+        day = 24 * 3600
+
+        tstart1 = 1530288000  # 2018/06/29 18:00:00
+        tstop1 = tstart1 + 3600
+
+        tstart2 = tstart1 + 1800
+        tstop2 = tstop1 + 1800
+
+        pbehavior1 = deepcopy(self.pbehavior)
+        pbehavior2 = deepcopy(self.pbehavior)
+        pbehavior1.update({
+            'eids': [1],
+            'rrule': 'FREQ=DAILY',
+            'tstart': tstart1,
+            'tstop': tstop1
+        })
+        pbehavior2.update({
+            'eids': [1],
+            'rrule': 'FREQ=DAILY',
+            'tstart': tstart2,
+            'tstop': tstop2
+        })
+
+        self.pbm.pb_storage.put_elements(
+            elements=(pbehavior1, pbehavior2)
+        )
+
+        expected_intervals = [
+            (tstart1, tstop2),
+            (tstart1 + day, tstop2 + day),
+            (tstart1 + 2 * day, tstop2 + 2 * day),
+            (tstart1 + 3 * day, tstop2 + 3 * day),
+            (tstart1 + 4 * day, tstop2 + 4 * day),
+        ]
+        intervals = self.pbm.get_active_intervals_by_entity(
+            tstart1, tstart1 + 5 * day, 1)
+        self.assertEqual(intervals, expected_intervals)
+
+
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"
     unittest.main(
