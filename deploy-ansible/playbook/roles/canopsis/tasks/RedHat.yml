@@ -1,0 +1,17 @@
+---
+- include_vars: "{{ ansible_os_family }}.yml"
+
+- name: install optional deps
+  yum:
+    name: "{{ canopsis_deps | join(',') }}"
+    state: present
+
+- name: copy package
+  copy:
+    src: '{{ canopsis_pkg_name }}'
+    dest: '/root/{{ canopsis_pkg_name }}'
+
+- name: install package
+  yum:
+    name: '/root/{{ canopsis_pkg_name }}'
+    state: present

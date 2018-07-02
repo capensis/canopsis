@@ -1,0 +1,7 @@
+canopsis_deps:
+  - tmux
+  - vim
+  - htop
+  - sudo
+
+canopsis_pkg_name: 'canopsis-cat-{{ canopsis_pkg_version }}-1.el{{ ansible_distribution_major_version }}.centos.{{ ansible_architecture }}.rpm'

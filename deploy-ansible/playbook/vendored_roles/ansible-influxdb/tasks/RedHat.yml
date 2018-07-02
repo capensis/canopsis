@@ -1,0 +1,16 @@
+- name: Install Influxdb Repo
+  copy:
+    src: files/{{ ansible_os_family }}
+    dest: /etc/yum.repos.d/influxdb.repo
+
+- name: Install Influxdb
+  yum:
+    name: influxdb
+    state: present
+    disable_gpg_check: yes
+
+- name: Define Config
+  template:
+    src: influxdb.j2
+    dest: /etc/influxdb/influxdb.conf
+  notify: Start Influxdb

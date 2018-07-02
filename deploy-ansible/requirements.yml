@@ -1,0 +1,14 @@
+- src: https://github.com/geerlingguy/ansible-role-haproxy.git
+  scm: git
+
+- src: https://github.com/UnderGreen/ansible-role-mongodb.git
+  scm: git
+
+- src: https://github.com/geerlingguy/ansible-role-rabbitmq.git
+  scm: git
+
+- src: https://github.com/geerlingguy/ansible-role-redis
+  scm: git
+
+- src: https://gitlab.capensis.fr/capensis-ansible/ansible-influxdb.git
+  scm: git

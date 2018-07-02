@@ -1,0 +1,7 @@
+canopsis_deps:
+  - tmux
+  - vim
+  - htop
+  - sudo
+
+canopsis_pkg_name: 'canopsis-cat-{{ canopsis_pkg_version }}.amd64.{{ ansible_distribution_release }}.deb'

@@ -1,0 +1,7 @@
+---
+# defaults file for influxdb
+influxdb_dependencies:
+  - epel-release
+
+influxdb_packages:
+  - python-pip
