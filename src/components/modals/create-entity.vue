@@ -1,9 +1,9 @@
 <template lang="pug">
   v-card
-    v-card-title
+    v-card-title.green.darken-4.white--text
       span.headline {{ $t('modals.createEntity.title') }}
-    v-card-text
-      v-container
+    v-container
+      v-card-text
         v-layout(row)
           v-text-field(
           :label="$t('common.name')",
@@ -21,19 +21,22 @@
           data-vv-name="description",
           multi-line
           )
-        v-layout(row)
-          v-switch(:label="$t('common.enabled')", v-model="enabled")
-          v-select(
-          :items="types"
-          v-model="form.type"
-          label="Type"
-          single-line
-          )
-    entities-select(label="Impacts", :entities.sync=entities)
-    entities-select(label="Dependencies", :entities.sync=entities)
-    v-card-actions
-      v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
-      v-btn(@click.prevent="manageInfos", color="primary") {{ $t('modals.createEntity.fields.manageInfos') }}
+        v-layout(row, justify-space-around, align-center)
+          v-flex(xs6)
+            v-select(
+              :items="types",
+              v-model="form.type",
+              label="Type",
+              single-line
+            )
+          v-spacer
+          v-flex
+            v-switch(:label="$t('common.enabled')", v-model="enabled", hide-details)
+      entities-select.my-1(label="Impacts", :entities.sync=entities)
+      entities-select.my-1(label="Dependencies", :entities.sync=entities)
+    v-card-actions.mt-2
+      v-btn(@click.prevent="submit", color="green darken-4 white--text") {{ $t('common.submit') }}
+      v-btn(@click.prevent="manageInfos", color="green darken-4 white--text") {{ $t('modals.createEntity.fields.manageInfos') }}
 </template>
 
 <script>
