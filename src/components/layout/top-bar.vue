@@ -5,7 +5,7 @@
     clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4
+    div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'desktop'")
       img(:src="canopsisLogo")
     v-toolbar-side-icon(@click="toggleSideBar")
     v-spacer

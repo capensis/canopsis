@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-navigation-drawer.grey.darken-4(
+  v-navigation-drawer.side-bar.grey.darken-4(
     v-model="isOpen",
     absolute,
     app,
@@ -98,5 +98,11 @@ export default {
   }
   .panel {
     box-shadow: none;
+  }
+
+  .side-bar {
+    position: fixed;
+    height: 100vh;
+    overflow-y: scroll;
   }
 </style>
