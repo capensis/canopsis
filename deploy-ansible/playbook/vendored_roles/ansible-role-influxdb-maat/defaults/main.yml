@@ -1,0 +1,25 @@
+---
+# defaults file for influxdb
+#influxdb_dependencies:
+#  - epel-release
+
+influxdb_packages:
+  - python-pip
+
+influxdb_version: 1.2.4
+influxdb_admin_interface: "{{ ansible_default_ipv4.interface }}"
+influxdb_admin_port: 8083
+influxdb_admin_use_ipv6: false
+influxdb_http_interface: "{{ ansible_default_ipv4.interface }}"
+influxdb_http_port: 8086
+influxdb_http_use_ipv6: false
+
+influxdb_ip_address: "{{ ansible_default_ipv4.address }}"
+#influxdb_database_name: test
+#influxdb_username: test
+#influxdb_password: test
+influxdb_deploy_additional_repository: false
+
+influxdb_udp_enabled: true
+influxdb_udp_bind_address: "{{ ansible_default_ipv4.address}}:4444"
+influxdb_udp_database_name: "canopsis"

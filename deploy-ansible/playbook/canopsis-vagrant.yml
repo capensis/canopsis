@@ -25,7 +25,7 @@
     -
       role: "ansible-role-rabbitmq"
     -
-      role: "ansible-influxdb"
+      role: "ansible-role-influxdb-maat"
     -
       role: "ansible-role-redis"
     -

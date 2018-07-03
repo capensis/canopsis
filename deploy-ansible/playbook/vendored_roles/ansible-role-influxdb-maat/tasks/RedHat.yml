@@ -1,11 +1,6 @@
-- name: Install Influxdb Repo
-  copy:
-    src: files/{{ ansible_os_family }}
-    dest: /etc/yum.repos.d/influxdb.repo
-
 - name: Install Influxdb
   yum:
-    name: influxdb
+    name: "influxdb{{ influxdb_version is defined|ternary('-'+influxdb_version|string, '')}}"
     state: present
     disable_gpg_check: yes
 

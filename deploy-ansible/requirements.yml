@@ -1,14 +1,18 @@
-- src: https://github.com/geerlingguy/ansible-role-haproxy.git
+- src: https://github.com/geerlingguy/ansible-role-haproxy
   scm: git
 
-- src: https://github.com/UnderGreen/ansible-role-mongodb.git
+- src: https://github.com/UnderGreen/ansible-role-mongodb
   scm: git
 
-- src: https://github.com/geerlingguy/ansible-role-rabbitmq.git
+- src: https://github.com/geerlingguy/ansible-role-rabbitmq
   scm: git
 
 - src: https://github.com/geerlingguy/ansible-role-redis
   scm: git
 
-- src: https://gitlab.capensis.fr/capensis-ansible/ansible-influxdb.git
+- src: https://gitlab.capensis.fr/projet-maat/ansible-role-repository-adder-maat
+  scm: git
+
+- src: https://gitlab.capensis.fr/projet-maat/ansible-role-influxdb-maat
+  version: debian_compat
   scm: git

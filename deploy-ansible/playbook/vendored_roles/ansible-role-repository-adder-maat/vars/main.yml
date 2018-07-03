@@ -1,0 +1,3 @@
+---
+# vars file for ansible-role-repository-adder
+repo_path: /etc/yum.repos.d/

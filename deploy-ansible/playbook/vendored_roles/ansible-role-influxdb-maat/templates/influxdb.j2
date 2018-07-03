@@ -148,7 +148,7 @@ reporting-disabled = false
 
 [admin]
   enabled = true
-  bind-address = ":8083"
+  bind-address = "{{ influxdb_admin_use_ipv6|ternary (vars['ansible_' +influxdb_admin_interface].ipv6[0].address, vars['ansible_' +influxdb_admin_interface].ipv4.address )  }}:{{ influxdb_admin_port|string }}"
   https-enabled = false
   https-certificate = "/etc/ssl/influxdb.pem"
 
@@ -161,7 +161,7 @@ reporting-disabled = false
 
 [http]
   enabled = true
-  bind-address = ":8086"
+  bind-address = "{{ influxdb_http_use_ipv6|ternary (vars['ansible_' +influxdb_http_interface].ipv6[0].address, vars['ansible_' +influxdb_http_interface].ipv4.address ) }}:{{ influxdb_http_port|string }}"
   auth-enabled = false
   log-enabled = true
   write-tracing = false
@@ -278,9 +278,10 @@ reporting-disabled = false
 ###
 
 [[udp]]
-  enabled = false
-  # bind-address = ""
-  # database = "udp"
+  enabled = {{ influxdb_udp_enabled | bool | lower }}
+  bind-address = "{{ influxdb_udp_bind_address }}"
+  database = "{{ influxdb_udp_database_name }}"
+
   # retention-policy = ""
 
   # These next lines control how batching works. You should have this enabled
