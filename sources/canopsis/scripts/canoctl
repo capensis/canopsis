@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -e
+set -o pipefail
+
+function help_usage() {
+    echo "$0 [start|status|restart|stop|deploy]"
+    echo "  deploy: stop services then play ansible playbook"
+    exit 1
+}
+
+while [ 1 ]; do
+    case $1 in
+        start|status|restart|stop)
+            /opt/canopsis/bin/canopsis-systemd $1
+            exit $?
+            ;;
+        deploy)
+            $0 stop
+            /opt/canopsis/deploy-ansible/install-self.sh
+            exit $?
+            ;;
+        *)
+            help_usage
+            ;;
+    esac
+    shift
+done
