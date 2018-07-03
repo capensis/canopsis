@@ -38,6 +38,7 @@ RUN /bin/bash /pip-ansible.sh
 COPY sources/canopsis /sources/canopsis
 COPY docker/build/pip-canopsis.sh /
 RUN /bin/bash /pip-canopsis.sh
+RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 
 ### Webserver
 COPY sources/webcore /sources/webcore

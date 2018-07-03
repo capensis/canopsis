@@ -20,6 +20,9 @@ cp -ar /usr/lib/systemd/system/canopsis-* %{buildroot}/usr/lib/systemd/system/
 mkdir -p %{buildroot}/opt
 rsync -aKSH --delete /opt/canopsis %{buildroot}/opt/
 
+mkdir -p %{buildroot}/usr/bin
+ln -s /opt/canopsis/bin/canoctl %{buildroot}/usr/bin/canoctl
+
 # ensure logs are clean
 rm -rf %{buildroot}/opt/canopsis/var/log
 mkdir -p %{buildroot}/opt/canopsis/var/log/engines
@@ -47,6 +50,7 @@ fi
 
 %files
 /opt/canopsis/venv-ansible
+/usr/bin/canoctl
 
 %defattr(0644, canopsis, canopsis, 0755)
 /opt/canopsis/deploy-ansible
