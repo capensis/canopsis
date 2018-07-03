@@ -269,7 +269,7 @@ example:
 The `entity` field should contain the entity as a JSON object.
 
 Event Statistics State Interval Structure
------------------------------------
+-----------------------------------------
 
 After defining the basic event structure, add the following fields :
 
