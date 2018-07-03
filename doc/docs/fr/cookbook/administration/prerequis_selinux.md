@@ -22,8 +22,9 @@ Ce document présente les pré-requis nécessaires au bon fonctionnement de Cano
 
 ## Ports en écoute - Connecteurs
 
-| Port/protocole | role                            |
-| 162/udp        | snmp                            |
+| Port/protocole | role |
+|----------------|------|
+| 162/udp        | snmp |
 
 
 ## Accès filesystem
