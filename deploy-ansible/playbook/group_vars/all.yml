@@ -9,6 +9,8 @@ influxdb_database_name: canopsis
 influxdb_username: canopsis
 influxdb_password: canopsis
 influxdb_ip_address: "127.0.0.1"
+influxdb_http_interface: "0.0.0.0"
+influxdb_admin_interface: "127.0.0.1"
 
 mongodb_root_admin_name: root
 mongodb_root_admin_password: root
