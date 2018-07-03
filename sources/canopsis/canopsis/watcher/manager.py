@@ -48,7 +48,7 @@ class Watcher:
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn())
 
-        self.event_publisher = StatEventPublisher(self.amqp_pub)
+        self.event_publisher = StatEventPublisher(self.logger, self.amqp_pub)
 
     def get_watcher(self, watcher_id):
         """Retreive from database the watcher specified by is watcher id.
