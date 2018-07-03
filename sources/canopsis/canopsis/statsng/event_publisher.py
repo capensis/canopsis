@@ -44,8 +44,8 @@ class StatEventPublisher(object):
     """
     Event publisher for the statsng engine.
     """
-    def __init__(self, amqp_pub):
-        self.logger = Logger.get('statsng', LOG_PATH)
+    def __init__(self, logger, amqp_pub):
+        self.logger = logger
         self.amqp_pub = amqp_pub
 
         # Only send events if the configuration file exists and sets

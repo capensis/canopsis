@@ -33,8 +33,9 @@ from canopsis.statsng.event_publisher import StatEventPublisher
 class StatEventPublisherTest(TestCase):
 
     def setUp(self):
+        logger = Mock()
         self.amqp_pub = Mock()
-        self.event_publisher = StatEventPublisher(self.amqp_pub)
+        self.event_publisher = StatEventPublisher(logger, self.amqp_pub)
 
     def test_no_events(self):
         self.event_publisher.send_events = False
