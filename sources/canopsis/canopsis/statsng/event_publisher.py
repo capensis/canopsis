@@ -26,23 +26,17 @@ Event publisher for the statsng engine.
 from __future__ import unicode_literals
 import os.path
 
-from canopsis.alerts.enums import AlarmField
 from canopsis.common import root_path
-from canopsis.common.amqp import AmqpPublisher
-from canopsis.common.amqp import get_default_connection as \
-    get_default_amqp_conn
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.confng.simpleconf import ConfigurationUnreachable
 from canopsis.event import Event, forger
-from canopsis.logger import Logger
 from canopsis.models.entity import Entity
 from canopsis.statsng.enums import StatEvents
 
 CONF_PATH = 'etc/statsng/engine.conf'
 CONF_SECTION = 'ENGINE'
 SEND_EVENTS_CONF_KEY = 'send_events'
-LOG_PATH = 'var/log/statsng.log'
 
 
 class StatEventPublisher(object):
