@@ -68,6 +68,7 @@ import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import modalMixin from '@/mixins/modal/modal';
 import paginationMixin from '@/mixins/pagination';
+import dateIntervals from '@/helpers/date-intervals';
 
 const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 
@@ -119,7 +120,6 @@ export default {
         this.$router.push({
           query: {
             ...this.$route.query,
-            page: e.page || '1',
             sort_key: e.sortBy || '',
             sort_dir: e.descending ? 'DESC' : 'ASC',
           },
@@ -135,6 +135,24 @@ export default {
     removeHistoryFilter() {
       const query = omit(this.$route.query, ['interval']);
       this.$router.push({ query });
+    },
+
+    getQuery() {
+      const query = omit(this.$route.query, ['page', 'interval']);
+
+      if (this.$route.query.interval && this.$route.query.interval !== 'custom') {
+        try {
+          const { tstart, tstop } = dateIntervals[this.$route.query.interval]();
+          query.tstart = tstart;
+          query.tstop = tstop;
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+      query.limit = this.limit;
+      query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
+
+      return query;
     },
   },
 };

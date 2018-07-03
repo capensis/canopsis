@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    v-card-title.green.darken-4.white--text
+    v-card-title
       span.headline {{ $t('modals.createEntity.title') }}
     v-container
       v-card-text

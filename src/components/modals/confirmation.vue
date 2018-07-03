@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-layout(wrap, justify-space-around)
-      v-flex.text-xs-center.py-2.blue.darken-4.white--text(xs12)
+      v-flex.text-xs-center.py-2(xs12)
         h3 {{ $t('common.confirmation') }}
       v-flex.text-xs-center.my-2(xs12)
         v-btn.green(small, @click="submit") {{ $t('common.yes') }}

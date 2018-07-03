@@ -49,7 +49,6 @@ import omit from 'lodash/omit';
 import { createNamespacedHelpers } from 'vuex';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
-import ListSorting from '@/components/tables/list-sorting.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
 
@@ -68,7 +67,6 @@ export default {
   components: {
     ContextSearch,
     RecordsPerPage,
-    ListSorting,
     CreateEntity,
     Loader,
   },
@@ -100,7 +98,6 @@ export default {
         this.$router.push({
           query: {
             ...this.$route.query,
-            page: e.page,
             sort_key: e.sortBy,
             sort_dir: e.descending ? 'DESC' : 'ASC',
           },
