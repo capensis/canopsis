@@ -2,7 +2,7 @@
 set -e
 set -o pipefail
 
-virtualenv ${CPS_HOME}/venv-ansible
+virtualenv --system-site-packages ${CPS_HOME}/venv-ansible
 
 source /etc/os-release
 repver="${ID}-${VERSION_ID}"
