@@ -19,6 +19,11 @@ while [ 1 ]; do
             /opt/canopsis/deploy-ansible/install-self.sh
             exit $?
             ;;
+        upgrade)
+            $0 stop
+            /opt/canopsis/deploy-ansible/upgrade-self.sh
+            exit $?
+            ;;
         *)
             help_usage
             ;;
