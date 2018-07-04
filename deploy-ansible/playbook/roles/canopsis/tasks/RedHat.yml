@@ -10,14 +10,14 @@
 
 - name: copy package
   copy:
-    src: '{{ canopsis_pkg_name }}'
-    dest: '/root/{{ canopsis_pkg_name }}'
+    src: '{{ canopsis_pkg_redhat }}'
+    dest: '/root/{{ canopsis_pkg_redhat }}'
   tags:
     - cps_install_package
 
 - name: install package
   yum:
-    name: '/root/{{ canopsis_pkg_name }}'
+    name: '/root/{{ canopsis_pkg_redhat }}'
     state: present
   tags:
     - cps_install_package

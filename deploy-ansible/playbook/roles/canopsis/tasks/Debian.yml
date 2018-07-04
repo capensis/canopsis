@@ -10,14 +10,14 @@
 
 - name: copy package
   copy:
-    src: '{{ canopsis_pkg_name }}'
-    dest: '/root/{{ canopsis_pkg_name }}'
+    src: '{{ canopsis_pkg_debian }}'
+    dest: '/root/{{ canopsis_pkg_debian }}'
   tags:
     - cps_install_package
 
 - name: install package
   apt:
-    deb: '/root/{{ canopsis_pkg_name }}'
+    deb: '/root/{{ canopsis_pkg_debian }}'
     state: present
   tags:
     - cps_install_package

@@ -3,5 +3,3 @@ canopsis_deps:
   - vim
   - htop
   - sudo
-
-canopsis_pkg_name: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}.amd64.{{ ansible_distribution_release }}.deb'

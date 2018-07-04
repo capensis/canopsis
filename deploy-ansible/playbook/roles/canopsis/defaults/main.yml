@@ -41,6 +41,9 @@ canopsis_redis_dbnum: 0
 # use 'cat' if you install canopsis-cat
 canopsis_pkg_edition: 'core'
 
+canopsis_pkg_debian: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}.amd64.{{ ansible_distribution_release }}.deb'
+canopsis_pkg_redhat: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.rpm'
+
 # supported options are:
 #  module:  module to be used
 #  name:    engine name

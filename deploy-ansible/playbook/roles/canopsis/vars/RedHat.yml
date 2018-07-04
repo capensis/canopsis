@@ -3,5 +3,3 @@ canopsis_deps:
   - vim
   - htop
   - sudo
-
-canopsis_pkg_name: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.rpm'
