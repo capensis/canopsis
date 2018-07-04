@@ -16,7 +16,7 @@ yum localinstall -y canopsis-cat-2.7.0-1.el7.x86_64.rpm
 canoctl deploy
 ```
 
-## Debian 8
+## Debian 8 / Jessie
 
 ### CORE
 
@@ -34,7 +34,7 @@ apt install -y -f
 canoctl deploy
 ```
 
-## Debian 9
+## Debian 9 / Stretch
 
 ### CORE
 
