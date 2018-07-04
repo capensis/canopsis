@@ -4,22 +4,22 @@ canopsis_engines:
     module: dynamic
     name: alerts
     state: stopped
-    started: false
+    enabled: no
   -
     module: cleaner
     name: cleaner_alerts
     state: stopped
-    started: false
+    enabled: no
   -
     module: cleaner
     name: cleaner_events
     state: stopped
-    started: false
+    enabled: no
   -
     module: dynamic
     name: context-graph
     state: stopped
-    started: false
+    enabled: no
   -
     module: event_filter
     name: event_filter
@@ -27,7 +27,7 @@ canopsis_engines:
     module: eventstore
     name: eventstore
     state: stopped
-    started: false
+    enabled: no
   -
     module: linklist
     name: linklist
