@@ -2,7 +2,6 @@
   get_url:
     url: "https://dl.influxdata.com/influxdb/releases/influxdb-{{ influxdb_version }}.x86_64.rpm"
     dest: "/var/cache/yum/influxdb_{{ influxdb_version }}.x86_64.rpm"
-    checksum: md5:0545d67217393282188e5d5cdedfdc85
   become: yes
 
 - name: Install Influxdb
