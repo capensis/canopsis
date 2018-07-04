@@ -9,5 +9,5 @@ mkdir -p ${PKG_ROOT}/lib/systemd/system/
 rsync -aKSH /opt/canopsis ${PKG_ROOT}/opt/
 
 mkdir -p ${PKG_ROOT}/usr/bin
-ln -s ${PKG_ROOT}/opt/canopsis/bin/canoctl ${PKG_ROOT}/usr/bin/canoctl
+ln -sf /opt/canopsis/bin/canoctl ${PKG_ROOT}/usr/bin/canoctl
 cp -ar /lib/systemd/system/canopsis-* ${PKG_ROOT}/lib/systemd/system/
