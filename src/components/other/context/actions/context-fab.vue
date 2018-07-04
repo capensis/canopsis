@@ -32,7 +32,9 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
-          ...this.modalConfig,
+          item: {
+            infos: [{ name: 'lol', description: 'lol', value: 'lol' }],
+          },
           title: 'modals.createEntity.title',
         },
       });

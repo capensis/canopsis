@@ -134,6 +134,7 @@ export default {
       fields: {
         type: 'Types',
         manageInfos: 'Gérer Infos',
+        form: 'Formulaire',
         types: {
           connector: 'connecteur',
           component: 'composant',
