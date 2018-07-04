@@ -38,6 +38,8 @@ canoctl deploy
 
 ## Debian 9 / Stretch
 
+**WARNING:** mongodb requires to be upgraded to 3.4 after deployment.
+
 ### CORE
 
 ```
