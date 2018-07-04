@@ -41,6 +41,11 @@ canopsis_redis_dbnum: 0
 # use 'cat' if you install canopsis-cat
 canopsis_pkg_edition: 'core'
 
+# supported options are:
+#  module:  module to be used
+#  name:    engine name
+#  state:   started|stopped
+#  enabled: yes|no -> enable or not the service. useful to remove some engines
 canopsis_engines:
   -
     module: dynamic
@@ -61,7 +66,6 @@ canopsis_engines:
     module: eventstore
     name: eventstore
     state: stopped
-    started: false
   -
     module: linklist
     name: linklist
@@ -96,4 +100,3 @@ canopsis_engines:
     module: dynamic
     name: watcher
     state: stopped
-    started: false
