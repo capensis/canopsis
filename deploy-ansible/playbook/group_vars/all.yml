@@ -3,6 +3,8 @@
 mongodb_version: '3.4'
 mongodb_pymongo_from_pip: false
 mongodb_security_authorization: enabled
+# keep this variable empty for no replication and avoid canopsis role crash
+mongodb_replication_replset:
 influxdb_database_name: canopsis
 
 # CHANGE ALLOWED
