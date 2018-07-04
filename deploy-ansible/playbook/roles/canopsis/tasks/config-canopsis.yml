@@ -18,3 +18,8 @@
   template:
     src: cstorage.j2
     dest: "{{ canopsis_home }}/etc/cstorage.conf"
+
+- name: deploy canopsis redis store configuration templates
+  template:
+    src: redis_store.j2
+    dest: "{{ canopsis_home }}/etc/common/redis_store.conf"
