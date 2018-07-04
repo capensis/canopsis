@@ -122,3 +122,12 @@ ansible-galaxy install -r requirements.yml -p playbook/vendored_roles/
 ```
 
 **NEVER CHANGE ANYTHING MANUALLY IN THESE ROLES.** If you do so, any fix or change **will** be wiped out in an upgrade.
+
+Why vendoring
+-------------
+
+Simplicity :
+
+ * Builds are simpler
+ * `ansible-galaxy` takes care of doing the job of upgrading if required, and is not specific to one SCM (unlike git submodules or subrepos)
+ * Keep track of modifications made to external roles so we can check regressions

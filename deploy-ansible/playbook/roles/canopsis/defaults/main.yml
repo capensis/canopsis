@@ -34,6 +34,9 @@ canopsis_influxdb_user: cpsinflux
 canopsis_influxdb_password: canopsis
 canopsis_influxdb_db: canopsis
 
+# use 'cat' if you install canopsis-cat
+canopsis_pkg_edition: 'core'
+
 canopsis_engines:
   -
     module: dynamic
