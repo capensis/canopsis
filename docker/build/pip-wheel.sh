@@ -16,6 +16,5 @@ mkdir -p /root/wheelrep/${repver}
 cd /root/wheelrep/${repver}
 
 pip wheel -r /sources/canopsis/requirements.txt
-pip wheel "ansible==2.4.4"
 
 chown -R ${1} /root/wheelrep
