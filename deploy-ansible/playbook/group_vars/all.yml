@@ -1,7 +1,7 @@
 ---
 # DO NOT CHANGE
 mongodb_version: '3.4'
-mongodb_pymongo_from_pip: true
+mongodb_pymongo_from_pip: false
 mongodb_security_authorization: enabled
 influxdb_database_name: canopsis
 
