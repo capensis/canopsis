@@ -148,7 +148,7 @@ reporting-disabled = false
 
 [admin]
   enabled = true
-  bind-address = "{{ influxdb_admin_interface }}"
+  bind-address = "{{ influxdb_admin_interface }}:{{ influxdb_admin_port }}"
   https-enabled = false
   https-certificate = "/etc/ssl/influxdb.pem"
 
@@ -161,7 +161,7 @@ reporting-disabled = false
 
 [http]
   enabled = true
-  bind-address = "{{ influxdb_http_interface }}"
+  bind-address = "{{ influxdb_http_interface }}:{{ influxdb_http_port }}"
   auth-enabled = false
   log-enabled = true
   write-tracing = false
