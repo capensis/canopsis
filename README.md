@@ -28,7 +28,7 @@ You can try Canopsis on demo platform:
 
 ## How to install ?
 
-For a standalone version of Canopsis on CentOS 7 and Debian 8 (Jessie), you can use the [auto deploy](/README-DEPLOY.md).
+For a standalone version of Canopsis on CentOS 7 and Debian 8 (Jessie), you can use the [auto deploy](/STANDALONE-DEPLOY.md).
 
 For a custom install, you can still use packages and follow [this documentation](/doc/docs/fr/guide_administrateur/package_install.md).
 
