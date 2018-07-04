@@ -11,7 +11,9 @@ source ${CPS_HOME}/venv-ansible/bin/activate
 find_links="file:///sources/wheels/${repver}"
 
 # jmespath is for ansible role repository adder
-pip install -U setuptools pip wheel jmespath
+# pymongo for mongo database and user setup
+# influxdb for influx database and user setup
+pip install -U setuptools pip wheel jmespath pymongo influxdb
 pip install -b /tmp/pipbuild --no-index -f ${find_links} "ansible==2.4.4"
 
 rm -rf /tmp/pipbuild
