@@ -1,6 +1,6 @@
 # Deploy a Standalone Canopsis from Packages
 
-## CentOS 7
+## CentOS/RedHat 7
 
 ### CORE
 
