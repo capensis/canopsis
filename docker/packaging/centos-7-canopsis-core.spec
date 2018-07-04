@@ -67,6 +67,7 @@ fi
 /opt/canopsis/opt/mongodb/filldb.py
 
 %attr(755, canopsis, canopsis) /opt/canopsis/deploy-ansible/install-self.sh
+%attr(755, canopsis, canopsis) /opt/canopsis/deploy-ansible/upgrade-self.sh
 %attr(755, canopsis, canopsis) /opt/canopsis/.bashrc
 %attr(755, canopsis, canopsis) /opt/canopsis/.bash_profile
 
