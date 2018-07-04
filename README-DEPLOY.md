@@ -5,6 +5,7 @@
 ### CORE
 
 ```
+yum install -y epel-release
 yum localinstall -y canopsis-core-2.7.0-1.el7.x86_64.rpm
 canoctl deploy
 ```
@@ -12,6 +13,7 @@ canoctl deploy
 ### CAT
 
 ```
+yum install -y epel-release
 yum localinstall -y canopsis-cat-2.7.0-1.el7.x86_64.rpm
 canoctl deploy
 ```
