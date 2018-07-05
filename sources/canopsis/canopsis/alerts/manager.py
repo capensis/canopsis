@@ -1171,8 +1171,6 @@ class Alerts(object):
                 )
                 if updated_alarm_value is not None:
                     new_value = updated_alarm_value
-
-                if updated_alarm_value is not None:
                     updated_once = True
                     self.update_current_alarm(docalarm, updated_alarm_value)
 

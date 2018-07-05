@@ -31,7 +31,7 @@ Ember.Application.initializer({
         var form = FormFactory('ticketform', {
             init:function() {
                 this._super();
-                this.set('partials.buttons', ['formbutton-cancel', 'formbutton-incident']);
+                this.set('partials.buttons', ['formbutton-cancel', 'formbutton-incident', 'formbutton-done']);
             }
         }, formOptions);
 

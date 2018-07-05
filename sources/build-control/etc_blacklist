@@ -1,5 +1,0 @@
-amqp.conf
-cstorage.conf
-storage/storage.conf
-mongo/storage.conf
-influx/storage.conf

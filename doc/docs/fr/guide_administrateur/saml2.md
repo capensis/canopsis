@@ -185,12 +185,6 @@ Donc si vous voulez apporter une modification de la configuration, pas besoin de
 Éditer le fichier de configuration canopsis `etc/webserver.conf` :
 
 ```ini
-[auth]
-; version pré-monopackage < 2.5.0
-providers = saml2
-; version monopackage >= 2.5.0
-providers = canopsis_cat.auth.saml2
-
 [webservices]
 ; version pré-monopackage < 2.5.0
 saml2 = 1

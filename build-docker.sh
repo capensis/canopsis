@@ -38,24 +38,10 @@ function build_for_sysbase() {
         if [ ! -d ${wheel_dir} ]; then
             mkdir -p ${wheel_dir}
         fi
-
-        if [ ! -f ${wheel_req_control} ]; then
-            touch ${wheel_req_control}
-        fi
-
-        current_requirements_control=$(md5sum sources/canopsis/requirements.txt | awk '{print $1}')
-
-        if [ "$(grep ${current_requirements_control} ${wheel_req_control})" = "" ]||[ ! -d ${wheel_dir}/${sysbase} ]; then
-            echo -n "${current_requirements_control}" > ${wheel_req_control}
-            echo "BUILDING WHEEL ${sysbase}"
-
-            docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.wheel -t canopsis/wheel-${sysbase}:latest .
-            mkdir -p ${wheel_dir}
-
-            echo "RUNNING WHEEL ${sysbase}"
-
-            docker run --rm -v ${wheel_dir}:/root/wheelrep/ canopsis/wheel-${sysbase}:latest "${fix_ownership}"
-        fi
+        echo "BUILDING WHEEL IMAGE ${sysbase}"
+        docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.wheel -t canopsis/wheel-${sysbase}:latest .
+        echo "RUNNING WHEEL BUILD ${sysbase}"
+        docker run --rm -v ${wheel_dir}:/root/wheelrep/ canopsis/wheel-${sysbase}:latest "${fix_ownership}"
 
         rm -rf ${workdir}/docker/wheels/
         cp -ar ${wheel_dir} ${workdir}/docker/wheels

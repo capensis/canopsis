@@ -29,6 +29,7 @@ import json
 
 HTTP_OK = 200
 HTTP_ERROR = 400
+HTTP_FORBIDDEN = 403
 HTTP_NOT_FOUND = 404
 HTTP_NOT_ALLOWED = 405
 
@@ -55,7 +56,7 @@ def __gen_json(result, status, allowed_keys=None):
 
     response.content_type = CONTENT_TYPE_JSON
     response.set_header("Cache-Control", "public, no-cache")
-    
+
     if isinstance(status, int):
         response.status = status
 

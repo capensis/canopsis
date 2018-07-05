@@ -2,8 +2,8 @@
 
 ## Migration des vues
 
-Canopsis 2.6 permet de renommer les colonnes du bac à alarmes. C'est complètement transparent, mais nécessite une migration en base de données 
-pour les vues existantes. Celle-ci doit être faite manuellement car la structure actuelle d'une vue ne permet pas de migrer automatiquement ces données sans risque. 
+Canopsis 2.6 permet de renommer les colonnes du bac à alarmes. C'est complètement transparent, mais nécessite une migration en base de données
+pour les vues existantes. Celle-ci doit être faite manuellement car la structure actuelle d'une vue ne permet pas de migrer automatiquement ces données sans risque.
 
 **Avant de commencer** : faire un dump de la base mongo pour éviter toute perte de données en cas de problème de migration
 
@@ -13,13 +13,13 @@ La migration sera faite avant la mise à jour de Canopsis : cela permet de maint
 - ouvrir chacun des liens vers les bacs à alarmes pour récupérer leurs IDs dans l'URL (dernière partie de l'URL)
 - noter les IDs et les noms des vues
 - ouvrir un shell MongoDB
-- Exécuter la commande pour chaque vue : 
+- Exécuter la commande pour chaque vue :
 
 ```javascript
-db.object.find({'_id': 'id trouvé dans lurl'}) 
+db.object.find({'_id': 'id trouvé dans lurl'})
 ```
 
-- Modifier le document obtenu, en ajoutant la structure suivante au même niveau que le tableau `columns`, juste après ce dernier : 
+- Modifier le document obtenu, en ajoutant la structure suivante au même niveau que le tableau `columns`, juste après ce dernier :
 
 ```javascript
 "widget_columns": [
@@ -59,7 +59,6 @@ Mettre à jour les dépendances systemd et redémarrer Canopsis (à exécuter en
 ```shell
 systemctl daemon-reload
 /opt/canopsis/bin/canopsis-systemd restart
-
 ```
 
 Vérifier que les bacs à alarmes sont toujours fonctionnels

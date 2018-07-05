@@ -19,3 +19,5 @@
 - [Reverse proxy](reverse-proxy.md)
 
 - [Services initialization](services_init.md)
+
+- [Statistics configuration](statsng.md)

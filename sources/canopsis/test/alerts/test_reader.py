@@ -20,30 +20,35 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
-from unittest import main
-from time import sleep
-import time
 
+import time
+import unittest
+from time import sleep
+
+import xmlrunner
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
+from canopsis.context_graph.manager import ContextGraph
 from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.context_graph.manager import ContextGraph
-import unittest
-from canopsis.common import root_path
-import xmlrunner
+
 from base import BaseTest
+
 
 class LoggerMock():
     def debug(self, *args, **kwargs):
         pass
+
     def info(self, *args, **kwargs):
         pass
+
     def warning(self, *args, **kwargs):
         pass
+
     def critical(self, *args, **kwargs):
         pass
 
@@ -369,203 +374,6 @@ class TestReader(BaseTest):
         }
         self.assertEqual(res_filter, filter_)
 
-    def test_clean_fast_count_cache(self):
-        class MockQuery(object):
-            def __init__(self, count):
-                self.c = count
-
-            def count(self, *args):
-                return self.c
-
-            def limit(self, _):
-                return self
-
-        self.reader.expiration = 1
-
-        query = MockQuery(count=11)
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=1, tstop=1,
-            opened=True, resolved=True,
-            filter_=1, search=1
-        )
-
-        self.assertEqual(count, 11)
-        self.assertEqual(truncated, False)
-
-        query = MockQuery(count=12)
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=1, tstop=1,
-            opened=True, resolved=True,
-            filter_=1, search=1
-        )
-
-        self.assertEqual(count, 11)
-        self.assertEqual(truncated, False)
-
-        sleep(1)
-        self.reader.clean_fast_count_cache()
-
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=1, tstop=1,
-            opened=True, resolved=True,
-            filter_=1, search=1
-        )
-
-        self.assertEqual(count, 12)
-        self.assertEqual(truncated, False)
-
-    def test__get_fast_count(self):
-        class MockQuery(object):
-            def __init__(self, count, limit=None):
-                self.c = count
-                self.l = limit
-
-            def count(self, *args):
-                if self.l is None:
-                    return self.c
-
-                return self.c if self.c <= self.l else self.l
-
-            def limit(self, limit):
-                self.l = limit
-                return self
-
-        # 1) resolved alarms, no cache, not truncated
-        query = MockQuery(count=1)
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=1, tstop=1,
-            opened=True, resolved=True,
-            filter_=1, search=1
-        )
-
-        self.assertEqual(count, 1)
-        self.assertEqual(truncated, False)
-
-        # 2) resolved alarms, no cache, truncated
-        query = MockQuery(count=200002)
-
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=2, tstop=2,
-            opened=True, resolved=True,
-            filter_=2, search=2
-        )
-
-        self.assertEqual(count, 200000)
-        self.assertEqual(truncated, True)
-
-        # 3) resolved alarms, cache, not truncated
-        query = MockQuery(count=3)
-
-        # caching value
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=3, tstop=3,
-            opened=True, resolved=True,
-            filter_=3, search=3
-        )
-
-        self.assertEqual(count, 3)
-        self.assertEqual(truncated, False)
-
-        query = MockQuery(count='random value')
-
-        # retrieving cached value with same cache_key but not same query
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=3, tstop=3,
-            opened=True, resolved=True,
-            filter_=3, search=3
-        )
-
-        self.assertEqual(count, 3)
-        self.assertEqual(truncated, False)
-
-        # 4) resolved alarms, cache, truncated
-        query = MockQuery(count=200004)
-
-        # caching value
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=4, tstop=4,
-            opened=True, resolved=True,
-            filter_=4, search=4
-        )
-
-        self.assertEqual(count, 200000)
-        self.assertEqual(truncated, True)
-
-        query = MockQuery(count='random value')
-
-        # retrieving cached value with same cache_key but not same query
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=4, tstop=4,
-            opened=True, resolved=True,
-            filter_=4, search=4
-        )
-
-        self.assertEqual(count, 200000)
-        self.assertEqual(truncated, True)
-
-        # 5) opened alarms, not truncated
-        query = MockQuery(count=5)
-
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=5, tstop=5,
-            opened=True, resolved=False,
-            filter_=5, search=5
-        )
-
-        self.assertEqual(count, 5)
-        self.assertEqual(truncated, False)
-
-        # 6) opened alarms, truncated
-        query = MockQuery(count=1006)
-
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=6, tstop=6,
-            opened=True, resolved=False,
-            filter_=6, search=6
-        )
-
-        self.assertEqual(count, 1000)
-        self.assertEqual(truncated, True)
-
-        # 7) change configuration
-        self.reader.resolved_truncate = False
-        self.reader.opened_truncate = False
-
-        query = MockQuery(count=200071)
-
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=71, tstop=71,
-            opened=True, resolved=True,
-            filter_=71, search=71
-        )
-
-        self.assertEqual(count, 200071)
-        self.assertEqual(truncated, False)
-
-        query = MockQuery(count=1072)
-
-        count, truncated = self.reader._get_fast_count(
-            query=query,
-            tstart=72, tstop=72,
-            opened=True, resolved=False,
-            filter_=72, search=72
-        )
-
-        self.assertEqual(count, 1072)
-        self.assertEqual(truncated, False)
-
     def test_count_alarms_by_period(self):
         day = 24 * 3600
 
@@ -662,7 +470,6 @@ class TestReader(BaseTest):
         alarms = self.reader.get(opened=True)
         print(alarms)
         self.assertEqual(len(alarms["alarms"]), 0)
-
 
 
 if __name__ == '__main__':

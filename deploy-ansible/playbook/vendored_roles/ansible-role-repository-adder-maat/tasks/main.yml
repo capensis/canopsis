@@ -1,0 +1,69 @@
+---
+# tasks file for ansible-role-repository-adder
+- name: check presence of repo
+  stat:
+    path: "{{ repo_path }}{{ item.name }}.repo"
+  with_items: "{{ repos }}"
+  register: repo_presence
+
+- name: Install RPM repo
+  yum:
+    name: "{{ item.item.url }}"
+    state: present
+  when:
+    - item.item.url is defined
+    - not item.stat.exists
+    - ansible_pkg_mgr == 'yum'
+    - item.item.url|basename|splitext|last != '.repo'
+  with_items: "{{ repo_presence|json_query('results')}}"
+
+- name: Copy repo file
+  get_url:
+    url: "{{ item.item.url }}"
+    dest: "/etc/yum.repos.d/{{ item.item.url|basename }}"
+  when:
+    - item.item.url is defined
+    - item.item.url|basename|splitext|last == '.repo'
+    - not item.stat.exists
+  with_items: "{{ repo_presence|json_query('results')}}"
+
+- name: Copy content in repo file
+  copy:
+    content: "{{ item.item.content }}"
+    dest: "/etc/yum.repos.d/{{ item.item.name }}.repo"
+  when:
+    - item.item.content is defined
+    - not item.stat.exists
+  with_items: "{{ repo_presence|json_query('results')}}"
+
+- name: Add GPG key(s)
+  rpm_key:
+    key: "{{ item.item.gpg_key }}"
+    state: present
+  when:
+    - not item.stat.exists
+    - ansible_pkg_mgr == 'yum'
+    - item.item.gpg_key is defined
+  with_items: "{{ repo_presence |json_query('results')}}"
+
+- name: Force yum to accept GPG key
+  command: "yum -q makecache -y --disablerepo=* --enablerepo={{ item.item.name|lower }}"
+  with_items: "{{ repo_presence|json_query('results')}}"
+  when:
+    - ( item.item.name|lower ) != 'centos-sclo-scl'
+  warn: False
+
+- name: Deploy Dependancies needed for Software Collection
+  yum:
+    name: yum-utils
+    state: present
+  when:
+    - ansible_os_family == "RedHat"
+    - (repos|json_query('[?name==`scl`]')|length) > 0
+
+- name: Enable Software collection
+  command: "yum-config-manager --enable rhel-server-rhscl-{{ ansible_distribution_major_version }}-rpms"
+  become: yes
+  when:
+    - ansible_os_family == "RedHat"
+    - (repos|json_query('[?name==`scl`]')|length) > 0

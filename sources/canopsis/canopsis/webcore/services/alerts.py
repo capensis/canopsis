@@ -27,11 +27,13 @@ from time import time
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.alerts.utils import compat_go_crop_states
+from canopsis.check import Check
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route, WebServiceError
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.event import forger
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
-from canopsis.alerts.utils import compat_go_crop_states
 
 
 def exports(ws):
@@ -319,7 +321,7 @@ def exports(ws):
     @ws.application.delete(
         '/api/v2/alerts/filters/<entity_id:id_filter>'
     )
-    def delete_filter(entity_id):
+    def delete_id(entity_id):
         """
         Delete a filter, based on his id.
 
@@ -341,3 +343,43 @@ def exports(ws):
         :rtype: dict
         """
         return gen_json(ar.alarm_storage._backend.remove(json.loads(mfilter)))
+
+    @ws.application.post(
+        '/api/v2/alerts/done'
+    )
+    def done_action():
+        """
+        Trigger done action.
+
+        For json payload, see doc/docs/fr/guide_developpeur/apis/v2/alerts.md
+
+        :rtype: dict
+        """
+        dico = request.json
+
+        if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
+            return gen_json_error(
+                {'description': 'wrong done dict'}, HTTP_ERROR)
+
+        author = dico.get(am.AUTHOR)
+        event = forger(
+            event_type=Check.EVENT_TYPE,
+            author=author,
+            connector=dico.get('connector'),
+            connector_name=dico.get('connector_name'),
+            component=dico.get('component'),
+            output=dico.get('comment')
+        )
+        if dico.get('source_type', None) == 'resource':
+            event['resource'] = dico['resource']
+            event['source_type'] = 'resource'
+        ws.logger.debug('Received done action: {}'.format(event))
+
+        entity_id = am.context_manager.get_id(event)
+        retour = am.execute_task(
+            'alerts.useraction.done',
+            event=event,
+            author=author,
+            entity_id=entity_id
+        )
+        return gen_json(retour)
