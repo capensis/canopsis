@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapGetters, mapActions } = createNamespacedHelpers('view');
 
 /**
- * @mixin
+ * @mixin Helpers for the alarms view
  */
 export default {
   methods: {
