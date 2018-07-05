@@ -22,17 +22,14 @@ from logging import ERROR
 from uuid import uuid4
 from copy import deepcopy
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
-from canopsis.middleware.registry import MiddlewareRegistry
 from canopsis.mongo.core import MongoCursor
 
 CATEGORY = 'RIGHTS'
 
 
-@conf_paths('organisation/rights.conf')
-@add_category(CATEGORY)
-class Rights(MiddlewareRegistry):
+#@conf_paths('organisation/rights.conf')
+#@add_category(CATEGORY)
+class Rights(dict):
 
     DATA_SCOPE = 'rights'
 

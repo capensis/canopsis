@@ -18,24 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.init import basestring
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.storage.core import Storage, DataBase, Cursor
-from canopsis.common.utils import isiterable
-from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection, CollectionError
-
-from pymongo import MongoClient
-from pymongo.cursor import Cursor as _Cursor
-from pymongo.errors import OperationFailure, DuplicateKeyError, PyMongoError
-from pymongo.errors import TimeoutError as NetworkTimeout
-from pymongo.bulk import BulkOperationBuilder
-from pymongo.read_preferences import ReadPreference
-from pymongo.son_manipulator import SONManipulator
 from uuid import uuid1
 
-
-CONF_RESOURCE = 'mongo/storage.conf'
+from canopsis.common.collection import CollectionError, MongoCollection
+from canopsis.common.init import basestring
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.utils import isiterable
+from canopsis.storage.core import Cursor, DataBase, Storage
+from pymongo import MongoClient
+from pymongo.bulk import BulkOperationBuilder
+from pymongo.cursor import Cursor as _Cursor
+from pymongo.errors import (DuplicateKeyError, NetworkTimeout,
+                            OperationFailure, PyMongoError)
+from pymongo.read_preferences import ReadPreference
+from pymongo.son_manipulator import SONManipulator
 
 
 class CanopsisSONManipulator(SONManipulator):
@@ -57,13 +53,12 @@ class CanopsisSONManipulator(SONManipulator):
         return son
 
 
-@conf_paths(CONF_RESOURCE)
 class MongoDataBase(DataBase):
     """Manage access to a mongodb."""
 
     def __init__(
             self, host=MongoClient.HOST, port=MongoClient.PORT,
-            read_preference=ReadPreference.NEAREST,
+            read_preference=ReadPreference.SECONDARY_PREFERRED,
             *args, **kwargs
     ):
 
@@ -75,26 +70,21 @@ class MongoDataBase(DataBase):
 
     @property
     def read_preference(self):
-
         return self._read_preference
 
     @read_preference.setter
     def read_preference(self, value):
-
-        if isinstance(value, basestring):
-            value = getattr(ReadPreference, value, ReadPreference.NEAREST)
-        else:
-            value = int(value)
-
-        self._read_preference = value
+        pass
 
     def _connect(self, *args, **kwargs):
+        from canopsis.common.callstack import log_stack
+        log_stack()
         result = None
         connection_args = {}
 
         from canopsis.confng import Configuration, Ini
 
-        mongo_cfg = Configuration.load('etc/common/mongo_store.conf', Ini)['DATABASE']
+        mongo_cfg = Configuration.load(MongoStore.CONF_PATH, Ini)[MongoStore.CONF_CAT]
 
         self._user = mongo_cfg['user']
         self._pwd = mongo_cfg['pwd']
@@ -140,10 +130,10 @@ class MongoDataBase(DataBase):
                     self.disconnect()
                     result = None
 
+        self._conn = result
         return result
 
     def _disconnect(self, *args, **kwargs):
-
         if self._conn is not None:
             self._conn.close()
             self._conn = None
@@ -243,7 +233,6 @@ class MongoStorage(MongoDataBase, Storage):
             if self.all_indexes() is not None:
 
                 for index in self.all_indexes():
-
                     try:
                         self._backend.ensure_index(index)
 
@@ -253,13 +242,11 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _disconnect(self, *args, **kwargs):
-
         super(MongoStorage, self)._disconnect(*args, **kwargs)
 
         self.halt_cache_thread()
 
     def _new_cache(self, *args, **kwargs):
-
         backend = self._get_backend(self.get_table())
         result = BulkOperationBuilder(backend, self._cache_ordered)
 
@@ -270,7 +257,6 @@ class MongoStorage(MongoDataBase, Storage):
         return self._cache.execute()
 
     def drop(self, *args, **kwargs):
-
         super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
@@ -605,9 +591,7 @@ class MongoStorage(MongoDataBase, Storage):
             backend = self._get_backend(backend=table)
             backend_command = getattr(backend, command)
             w = 1 if self.safe else 0
-            result = backend_command(
-                w=w, wtimeout=self.out_timeout, *args, **kwargs
-            )
+            result = backend_command(*args, **kwargs)
 
         except NetworkTimeout:
             self.logger.warning(

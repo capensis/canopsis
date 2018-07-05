@@ -34,13 +34,11 @@ from collections import Iterable
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
-from canopsis.configuration.model import Parameter
-from canopsis.middleware.core import Middleware
 
 __all__ = ['DataBase', 'Storage']
 
 
-class DataBase(Middleware):
+class DataBase(object):
     """Abstract class which aims to manage access to a data base.
 
     Related to a configuration file, it can connects to a database
