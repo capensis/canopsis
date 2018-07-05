@@ -22,48 +22,40 @@ from logging import ERROR
 from uuid import uuid4
 from copy import deepcopy
 
+from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import ClassEmulator as MiddlewareClass
 from canopsis.mongo.core import MongoCursor
 
-CATEGORY = 'RIGHTS'
+class Rights(MiddlewareClass):
 
-
-#@conf_paths('organisation/rights.conf')
-#@add_category(CATEGORY)
-class Rights(dict):
-
-    DATA_SCOPE = 'rights'
-
-    def __init__(
-        self, data_scope=DATA_SCOPE,
-        logging_level=ERROR,
-        *args, **kwargs
-    ):
-
-        super(Rights, self).__init__(data_scope=data_scope, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        """
+        NONE of arguments are used.
+        """
+        super(Rights, self).__init__()
+        self._storage = Middleware.get_middleware_by_uri('mongodb-default-rights://')
+        self._configure()
 
     # Generic getter
     def get_from_storage(self, s_type):
         def get_from_storage_(elem):
-            return self[s_type + '_storage'].get_elements(
+            return self._storage.get_elements(
                 ids=elem, query={'crecord_type': s_type})
         return get_from_storage_
 
     def get_users(self, projection={'_id': 1}):
-        return self['user_storage'].get_elements(
+        return self._storage.get_elements(
             query={'crecord_type': 'user'},
             projection=projection
         )
 
-    def _configure(self, unified_conf, *args, **kwargs):
-
-        super(Rights, self)._configure(
-            unified_conf=unified_conf, *args, **kwargs)
-
-        self.profile_storage = self['profile_storage']
-        self.group_storage = self['group_storage']
-        self.role_storage = self['role_storage']
-        self.action_storage = self['action_storage']
-        self.user_storage = self['user_storage']
+    def _configure(self):
+        # avoid missing attributes
+        self.profile_storage = self._storage
+        self.group_storage = self._storage
+        self.role_storage = self._storage
+        self.action_storage = self._storage
+        self.user_storage = self._storage
 
         self.get_profile = self.get_from_storage('profile')
         self.get_action = self.get_from_storage('action')
@@ -101,7 +93,7 @@ class Rights(dict):
             ``None`` otherwise
         """
 
-        return self['action_storage'].put_element(
+        return self._storage.put_element(
             element={
                 'crecord_name': a_id,
                 'crecord_type': 'action',
@@ -118,7 +110,7 @@ class Rights(dict):
             See MongoStorage
         """
 
-        return self['action_storage'].remove_elements(a_id)
+        return self._storage.remove_elements(a_id)
 
     # Check if an entity has the flags for a specific rigjt
     # The entity must have a rights field with a rights maps within
@@ -168,15 +160,15 @@ class Rights(dict):
 
         # Do not edit the following for a double for loop
         # list grouprehensions are much faster
-        groups = [self['group_storage'][x]
+        groups = [self._storage[x]
                   for y in profiles
                   for x in y['group']]
 
         if 'group' in role:
-            groups += [self['group_storage'][x]
+            groups += [self._storage[x]
                        for x in role['group']]
         if 'group' in user:
-            groups += [self['group_storage'][x]
+            groups += [self._storage[x]
                        for x in user['group']]
 
         # check in the role's comsposite
@@ -221,7 +213,7 @@ class Rights(dict):
         e_type += '_storage'
 
         if e_type in self:
-            entity = self[e_type].get_elements(ids=e_name)
+            entity = self._storage.get_elements(ids=e_name)
 
         if not entity:
             self.logger.error(
@@ -252,7 +244,7 @@ class Rights(dict):
             if kwargs[key]:
                 entity['rights'][right_id][key] = context
 
-        self[e_type].put_element(element=entity, _id=e_name)
+        getattl(self, e_type).put_element(element=entity, _id=e_name)
         result = entity['rights'][right_id]['checksum']
         return result if result else True
 
@@ -270,7 +262,7 @@ class Rights(dict):
             ``0`` otherwise
         """
 
-        entity = self[e_type + '_storage'].get_elements(ids=entity)
+        entity = self._storage.get_elements(ids=entity)
 
         if (
                 entity['rights']
@@ -285,12 +277,12 @@ class Rights(dict):
             # If all the permissions were removed from the right, delete it
             if not entity['rights'][right_id]['checksum']:
                 del entity['rights'][right_id]
-                self[e_type + "_storage"].put_element(
+                self._storage.put_element(
                     element=entity, _id=entity['_id']
                 )
                 return True
 
-            self[e_type + "_storage"].put_element(
+            self._storage.put_element(
                 element=entity, _id=entity['_id']
             )
             result = entity['rights'][right_id]['checksum']
@@ -324,7 +316,7 @@ class Rights(dict):
             'rights': {}
         }
 
-        self.group_storage.put_element(element=new_group, _id=group_name)
+        self._storage.put_element(element=new_group, _id=group_name)
 
         if not group_rights:
             return group_name
@@ -369,7 +361,7 @@ class Rights(dict):
         else:
             new_profile.setdefault('group', []).append(p_groups)
 
-        self.profile_storage.put_element(element=new_profile, _id=p_name)
+        self._storage.put_element(element=new_profile, _id=p_name)
 
         return p_name
 
@@ -390,15 +382,15 @@ class Rights(dict):
         t_type = 'profile' if e_type == 'group' else 'role'
         to_storage = t_type + '_storage'
 
-        if self[from_storage].get_elements(ids=e_name):
-            self[from_storage].remove_elements(e_name)
+        if self._storage.get_elements(ids=e_name):
+            self._storage.remove_elements(e_name)
 
             # remove the entity from every other entities that use it
-            for entity in self[to_storage].get_elements(
+            for entity in self._storage.get_elements(
                     query={'crecord_type': t_type}):
                 if e_type in entity and e_name in entity[e_type]:
                     entity[e_type].remove(e_name)
-                    self[to_storage].put_element(
+                    self._storage.put_element(
                         _id=entity['_id'], element=entity
                     )
 
@@ -419,16 +411,16 @@ class Rights(dict):
         """
 
         if self.get_role(r_name):
-            for user in self['user_storage'].get_elements(
+            for user in self._storage.get_elements(
                     query={'crecord_type': 'user'}
             ):
                 if user and 'role' in user and r_name == user['role']:
                     user.pop('role', None)
-                    self['user_storage'].put_element(
+                    self._storage.put_element(
                         _id=user['_id'], element=user
                     )
 
-            self['role_storage'].remove_elements(r_name)
+            self._storage.remove_elements(r_name)
             return True
 
         self.logger.error(
@@ -445,7 +437,7 @@ class Rights(dict):
             ``False`` otherwise
         """
 
-        return self['user_storage'].remove_elements(u_name)
+        return self._storage.remove_elements(u_name)
 
     # delete_entity wrapper
     def delete_profile(self, p_name):
@@ -491,10 +483,10 @@ class Rights(dict):
         if not self.get_group(group_name):
             self.create_group(group_rights, group_name)
 
-        entity = self[e_type].get_elements(ids=e_name)
+        entity = self._storage.get_elements(ids=e_name)
         if 'group' not in entity or group_name not in entity['group']:
             entity.setdefault('group', []).append(group_name)
-            self[e_type].put_element(_id=e_name, element=entity)
+            self._storage.put_element(_id=e_name, element=entity)
 
         return True
 
@@ -591,7 +583,7 @@ class Rights(dict):
         if role:
             s_user = self.get_user(u_name)
             s_user['role'] = r_name
-            self.user_storage.put_element(_id=u_name, element=s_user)
+            self._storage.put_element(_id=u_name, element=s_user)
 
             return True
 
@@ -599,13 +591,13 @@ class Rights(dict):
     # from_name can be a profile or a role
     # e_name can be a profile or a group
     def remove_entity(self, from_name, from_type, e_name, e_type):
-        entity = self[from_type + '_storage'].get_elements(
+        entity = self._storage.get_elements(
             query={'crecord_type': from_type}, ids=from_name
         )
 
         if e_type in entity and e_name in entity[e_type]:
             entity[e_type].remove(e_name)
-            self[from_type + '_storage'].put_element(
+            self._storage.put_element(
                 _id=from_name, element=entity
             )
             return True
@@ -763,7 +755,7 @@ class Rights(dict):
             user['groups'] = groups
 
         # Sometime the storage seam to alter the data we gave him...
-        self.user_storage.put_element(_id=u_id, element=deepcopy(user))
+        self._storage.put_element(_id=u_id, element=deepcopy(user))
         return user
 
     def set_user_fields(self, u_id, fields):
@@ -783,7 +775,7 @@ class Rights(dict):
             if key in supported_fields:
                 user.setdefault('contact', {})[key] = fields[key]
 
-        self.user_storage.put_element(_id=u_id, element=user)
+        self._storage.put_element(_id=u_id, element=user)
         return user
 
     def get_user_rights(self, u_id):
@@ -815,7 +807,7 @@ class Rights(dict):
         if 'group' in user:
             n_groups += user['group']
 
-        specific_rights = [self['group_storage'][x]['rights']
+        specific_rights = [self._storage[x]['rights']
                            for x in set(n_groups)]
 
         specific_rights.append(user.setdefault('rights', {}))
@@ -849,7 +841,7 @@ class Rights(dict):
         if not field or not e_id or not e_type:
             return None
 
-        entity = self[e_type + '_storage'].get_elements(
+        entity = self._storage.get_elements(
             ids=e_id, query={'crecord_type': e_type}
             )
 
@@ -867,12 +859,12 @@ class Rights(dict):
             ``False`` otherwise.
         """
 
-        entity = self[e_type + '_storage'].get_elements(
+        entity = self._storage.get_elements(
             query={'crecord_type': e_type}, ids=e_id)
 
         if entity:
             entity['crecord_name'] = new_name
-            self[e_type + '_storage'].put_element(_id=e_id, element=entity)
+            self._storage.put_element(_id=e_id, element=entity)
             return True
 
         return False
@@ -977,7 +969,7 @@ class Rights(dict):
             ``False`` otherwise
         """
 
-        entity = self[e_type + '_storage'].get_elements(ids=e_id)
+        entity = self._storage.get_elements(ids=e_id)
 
         if isinstance(entity, MongoCursor):
             entity = list(entity)[0]
@@ -986,7 +978,7 @@ class Rights(dict):
             for key in fields:
                 entity[key] = fields[key]
 
-            return self[e_type + '_storage'].put_element(
+            return self._storage.put_element(
                 _id=e_id, element=entity
             )
         else:

@@ -26,19 +26,14 @@ In such way, all methods execution are delegated to its registries.
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import lookup
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.common.middleware import ClassEmulator as MiddlewareClass
 
 
-CONF_PATH = 'ctxprop/ctxprop.conf'
+CONF_PATH = 'etc/ctxprop/ctxprop.conf'
 CATEGORY = 'CTXPROP'
 
 
-@add_category(CATEGORY)
-@conf_paths(CONF_PATH)
-class CTXPropManager(MiddlewareRegistry):
+class CTXPropManager(MiddlewareClass):
     """Manage context property."""
 
     class Error(Exception):

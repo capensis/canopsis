@@ -18,26 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category
-)
-from canopsis.configuration.model import Parameter
-
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.common.middleware import ClassEmulator as MiddlewareClass
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
 
 from urllib import unquote_plus
 
 
-CONF_RESOURCE = 'context/context.conf'  #: last context conf resource
+CONF_RESOURCE = 'etc/context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
-CONTENT = [Parameter('accept_event_types', Parameter.array())]
 
 
-@add_category(CATEGORY, content=CONTENT)
-@conf_paths(CONF_RESOURCE)
-class Context(MiddlewareRegistry):
+class Context(MiddlewareClass):
     """
     Manage access to a context (connector, component, resource) elements
     and context data (metric, downtime, etc.)

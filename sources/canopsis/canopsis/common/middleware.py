@@ -43,6 +43,10 @@ class ClassEmulator(dict):
     And yes, we derive from dict because… middleware.
     """
 
+    def __init__(self, *args, **kwargs):
+        self.logger = Logger.get(self.__class__.__name__, 'var/log/{}.log'.format(
+            self.__class__.__name__))
+
     @property
     def safe(self):
         return True

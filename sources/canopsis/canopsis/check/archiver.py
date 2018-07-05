@@ -23,10 +23,6 @@ from __future__ import unicode_literals
 from pymongo.errors import BulkWriteError
 from time import time
 
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
@@ -45,9 +41,7 @@ CONF_PATH = 'check/archiver.conf'
 CATEGORY = 'ARCHIVER'
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class Archiver(Configurable):
+class Archiver(object):
 
     def __init__(
         self, namespace, confnamespace='object', storage=None,

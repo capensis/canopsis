@@ -490,10 +490,10 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_kwargs={'update': document},
             query_kwargs={
-                'query': spec,
-                'command': 'update',
-                'document': document,
-                'upsert': upsert, 'multi': multi
+                'filter': spec,
+                'command': 'update_many',
+                'update': document,
+                'upsert': upsert,
             },
             cache=cache,
             **kwargs

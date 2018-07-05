@@ -389,7 +389,7 @@ class MongoDBNamespaceManager(NamespaceManager):
                 doc['$set']['valid_until'] = expiretime
 
         log.debug("Upserting Doc '%s' to _id '%s'" % (doc, _id))
-        self.mongo.update({"_id": _id}, doc, upsert=True, safe=True)
+        self.mongo.update({"_id": _id}, doc, upsert=True)
 
     def __setitem__(self, key, value):
         self.set_value(key, value)
