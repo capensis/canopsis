@@ -23,10 +23,6 @@ from canopsis.task.core import get_task
 from canopsis.engines.core import Engine
 from canopsis.common.middleware import ClassEmulator as MiddlewareClass
 
-CONF_PATH = 'etc/engines/engines.conf'  #: dynamic engine configuration path
-CATEGORY = 'ENGINE'  #: dynamic engine configuration category
-
-
 class engine(Engine, MiddlewareClass):
     """
     Engine which is able to load dynamically its event processing through
