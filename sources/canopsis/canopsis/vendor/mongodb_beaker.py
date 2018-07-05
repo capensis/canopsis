@@ -206,6 +206,7 @@ except ImportError:
     raise InvalidCacheBackendError("Unable to load the pymongo driver.")
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 class MongoDBNamespaceManager(NamespaceManager):
     clients = SyncDict()
@@ -290,7 +291,7 @@ class MongoDBNamespaceManager(NamespaceManager):
             fields['data.' + key] = True
 
         log.debug("[MongoDB] Get Query: id == %s Fields: %s", _id, fields)
-        result = self.mongo.find_one({'_id': _id}, fields=fields)
+        result = self.mongo.find_one({'_id': _id}, projection=fields)
         log.debug("[MongoDB] Get Result: %s", result)
 
         if result:
@@ -398,7 +399,7 @@ class MongoDBNamespaceManager(NamespaceManager):
         if self._sparse:
             self.mongo.remove({'_id.namespace': self.namespace})
         else:
-            self.mongo.update({'_id': self.namespace},
+            self.mongo.update_many({'_id': self.namespace},
                               {'$unset': {'data.' + key: True}}, upsert=False)
 
     def keys(self):
