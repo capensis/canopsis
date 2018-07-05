@@ -1,7 +1,7 @@
 import SettingsWrapper from '@/components/other/settings/settings-wrapper.vue';
 
 /**
- * @mixin
+ * @mixin For the setting bar 
  */
 export default {
   components: { SettingsWrapper },
