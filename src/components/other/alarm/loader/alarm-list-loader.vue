@@ -14,6 +14,11 @@ import take from 'lodash/take';
 import sum from 'lodash/sum';
 import VueContentLoading from 'vue-content-loading';
 
+/**
+ * Loader for the alarms list
+ *
+ * @module alarm
+ */
 export default {
   components: {
     VueContentLoading,

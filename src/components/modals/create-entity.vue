@@ -40,6 +40,9 @@
 import { MODALS } from '@/constants';
 import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
 
+/**
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {

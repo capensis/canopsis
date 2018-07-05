@@ -14,6 +14,9 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('app');
 
+/**
+ * Component for the top bar of the application
+ */
 export default {
   methods: {
     ...mapActions([

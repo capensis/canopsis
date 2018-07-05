@@ -20,6 +20,9 @@
 <script>
 import alarmInfoPopupMixin from '@/mixins/widget';
 
+/**
+ * Component to add/remove info popup on a column of the alarms list
+ */
 export default {
   mixins: [
     alarmInfoPopupMixin,

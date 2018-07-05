@@ -29,6 +29,13 @@ import ActionsPanelItem from './actions-panel-item.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
+/**
+ * Panel regrouping mass actions icons
+ *
+ * @module alarm
+ *
+ * @prop {Array} [itemIds] - Items selected for the mass action
+ */
 export default {
   components: { ActionsPanelItem },
   mixins: [actionsPanelMixin],
