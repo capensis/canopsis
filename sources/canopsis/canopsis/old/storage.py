@@ -28,7 +28,6 @@ import gridfs
 from bson import objectid
 
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection
 from pymongo.errors import PyMongoError
 from pymongo import ASCENDING
 from pymongo import DESCENDING
@@ -244,7 +243,7 @@ class Storage(object):
 
             return backend
         except Exception:
-            self.backend[namespace] = MongoCollection(self.conn.get_collection(namespace))
+            self.backend[namespace] = self.conn.get_collection(namespace)
             self.logger.debug("Connected to %s collection." % namespace)
             return self.backend[namespace]
 
@@ -341,14 +340,12 @@ class Storage(object):
                     if not _id:
                         _id = backend.insert(
                             data,
-                            safe=self.mongo_safe,
                             w=1
                         )
                     else:
                         backend.update(
                             {'_id': _id},
                             data,
-                            safe=self.mongo_safe,
                             upsert=True
                         )
 
@@ -387,14 +384,12 @@ class Storage(object):
                             {'_id': _id},
                             {"$set": data},
                             upsert=True,
-                            safe=self.mongo_safe
                         )
                     else:
                         ret = backend.update(
                             {'_id': _id},
                             data,
                             upsert=True,
-                            safe=self.mongo_safe
                         )
 
                     if self.mongo_safe:
@@ -582,7 +577,7 @@ class Storage(object):
         records = []
         try:
             if len(_ids) == 1:
-                raw_record = backend.find_one(mfilter, projection=mfields, safe=self.mongo_safe)
+                raw_record = backend.find_one(mfilter, projection=mfields)
 
                 # Remove binary (base64)
                 if ignore_bin and raw_record and raw_record.get('media_bin', None):
@@ -593,7 +588,7 @@ class Storage(object):
                 elif raw_record:
                     records.append(Record(raw_record=raw_record))
             else:
-                raw_records = backend.find(mfilter, projection=mfields, safe=self.mongo_safe)
+                raw_records = backend.find_many(mfilter, projection=mfields)
 
                 if mfields:
                     records = [raw_record for raw_record in raw_records]
@@ -656,7 +651,7 @@ class Storage(object):
 
             if access:
                 try:
-                    backend.remove({'_id': oid}, safe=self.mongo_safe)
+                    backend.remove({'_id': oid})
                 except Exception as err:
                     self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
 
