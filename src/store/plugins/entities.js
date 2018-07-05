@@ -102,6 +102,7 @@ const entitiesModule = {
       },
     ) {
       let data;
+
       if (isPost) {
         data = await request.post(route, params);
       } else {

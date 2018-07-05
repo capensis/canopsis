@@ -21,17 +21,23 @@
       v-model="lol",
       :error-messages="errorMsg",
       )
+    entities-select(label="Impacts", :entities.sync=entities)
+    entities-select(label="Dependencies", :entities.sync=entities)
     v-card-actions
+      v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
 </template>
 
 <script>
+import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
+
 import modalMixin from '@/mixins/modal/modal';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
+
 import { MODALS } from '@/constants';
+
 import CreateForm from './create-entity-form.vue';
 import ManageInfos from './manage-infos.vue';
-
 
 export default {
   name: MODALS.createEntity,
@@ -41,6 +47,7 @@ export default {
   components: {
     CreateForm,
     ManageInfos,
+    EntitiesSelect,
   },
   mixins: [modalMixin, modalInnerMixin],
   data() {
@@ -63,18 +70,22 @@ export default {
   },
   computed: {
     errorMsg() {
-      return this.$validator.errors ? false : 'lol';
+      return this.$validator.errors ? 'no' : 'yes';
     },
   },
   methods: {
+    updateImpact(entities) {
+      this.form.impacts = entities.map(entity => entity._id);
+    },
+    updateDependencies(entities) {
+      this.form.dependencies = entities.map(entity => entity._id);
+    },
     async create() {
       // TO DO
       // Entity creation
     },
     async submit() {
       const formIsValid = await this.$validator.validateAll();
-      console.log(formIsValid);
-      console.log(this.$validator);
       if (formIsValid) {
         await this.create();
       }
