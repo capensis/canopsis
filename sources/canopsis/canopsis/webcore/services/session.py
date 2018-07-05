@@ -160,3 +160,4 @@ def exports(ws):
         username = request.get('username', None)
 
         session_manager.session_start(username)
+        return {}

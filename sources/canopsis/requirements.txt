@@ -7,7 +7,7 @@ cffi==1.10.0
 chardet==2.3.0
 configparser==3.5.0
 coverage==4.4.2
-cryptography==1.9
+cryptography<2.3
 Cython==0.27.3
 defusedxml==0.5.0
 ecdsa==0.11
@@ -52,6 +52,7 @@ python-ldap==2.4.13
 python-mimeparse==1.5.1
 python3-saml==1.4.0
 pytz==2014.2
+redis<2.11
 requests==2.18.4
 RestrictedPython==3.6.0
 setuptools_cython==0.2.1

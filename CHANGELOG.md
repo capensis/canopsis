@@ -9,6 +9,53 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Go]: New engine interface
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+- [Python]: new metric engine
+
+## Canopsis 2.7.0 - Due date : 2018-06-28
+
+- [API]: new routes to manage frontend views
+- [CAT]: add routes and make some bugfixes for the new engine statsng
+- [CAT]: fix priviledge escalation and introduction of a default right group
+- [Go]: large service/adapter refacto
+- [Go]: fix timeout on mongo requests
+- [Service weather]: fixed an issue where periodical refresh process never refresh anymore
+- [Service weather]: add permission on action
+- [UI]: a new 'done' action is avalaible, which simply mark an alarm as done
+- [UI]: fix /sessionstart route
+- [UI]: fix snmp view that can be broken
+- [Webserver]: authentification trough WebSSO
+
+## Canopsis 2.6.8 - Maintenance release - Due date : 2018-06-20
+
+- [Service weather]: fixed an issue where the popup overlay could stay when the popup was closed, freezing the view
+- [CAT]: ported the email2canopsis connector to python3 and fixed an issue with pattern matching caused by the new python version.
+- [pbehaviors]: refactored the pbheaviors internal API to unify processing and avoid inconsistencies
+
+## Canopsis 2.6.7 - Maintenance release - not released
+
+This release was replaced by the 2.6.8 version to integrate an urgent fix on the pbehaviors.
+
+## Canopsis 2.6.6 - Maintenance release -  Due date : 2018-06-08
+
+- [Connector]: email2canopsis now with python3
+- [Docker]: add some usefull tools in debian-9 docker image
+- [EventFilter]: now can filter on subkeys
+- [Go]: fix crash when a non-check event arrive on an empty alarm
+- [Go]: add printEventOnError flag on engines
+- [Go]: update dependency, and notablly migrating from mgo to globalsign/mgo
+- [Go]: fix event-entity not always correctly associated
+- [Go]: fix PBehavior event message never acked in Che
+- [Go]: fix inaccurate messages in Che
+- [Python]: API can now produce correct HttpError on catched exception (instead of 200)
+- [Python]: limit /get-alarms response size by removing steps
+- [Python]: upsert mode on import context route
+- [Python]: alarms without a corresponding entity are not shadowed anymore
+- [Python]: fix active pbehavior search
+- [Python]: two new events (statcounterinc and statduration) for statistics purpose
+- [Python]: remove ticket engine from amqp2engines.conf
+- [UI]: fix BNF research on entity properties
+- [UI]: fix sort on current_state_duration
+- [Service Weather]: add new rights for actions in service weather
 
 
 ## Canopsis 2.6.5 - Maintenance release -  Due date : 2018-05-18

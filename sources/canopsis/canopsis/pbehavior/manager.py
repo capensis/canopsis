@@ -31,6 +31,8 @@ from six import string_types
 from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
+import pytz
+
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.common.utils import singleton_per_scope
@@ -517,6 +519,88 @@ class PBehaviorManager(object):
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
 
+    @staticmethod
+    def check_active_pbehavior(timestamp, pbehavior):
+        """
+        For a given pbehavior (as dict) check that the given timestamp is active
+        using either:
+
+        the rrule, if any, from the pbehavior + tstart and tstop to define
+        start and stop times.
+
+        tstart and tstop alone if no rrule is available.
+
+        All dates and times are computed using UTC timezone, so check that your
+        timestamp was exported using UTC.
+
+        :param int timestamp: timestamp to check
+        :param dict pbehavior: the pbehavior
+        :rtype bool:
+        :returns: pbehavior is currently active or not
+        """
+        fromts = datetime.utcfromtimestamp
+        tstart = pbehavior[PBehavior.TSTART]
+        tstop = pbehavior[PBehavior.TSTOP]
+
+        if not isinstance(tstart, (int, float)):
+            return False
+        if not isinstance(tstop, (int, float)):
+            return False
+
+        tz = pytz.UTC
+        dtts = fromts(timestamp).replace(tzinfo=tz)
+        dttstart = fromts(tstart).replace(tzinfo=tz)
+        dttstop = fromts(tstop).replace(tzinfo=tz)
+
+        dt_list = [dttstart, dttstop]
+        rrule = pbehavior['rrule']
+        if rrule:
+            # compute the minimal date from which to start generating
+            # dates from the rrule.
+            # a complementary date (missing_date) is computed and added
+            # at index 0 of the generated dt_list to ensure we manage
+            # dates at boundaries.
+            dt_tstart_date = dtts.date()
+            dt_tstart_time = dttstart.time().replace(tzinfo=tz)
+            dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
+
+            # dates in dt_list at 0 and 1 indexes can be equal, so we generate
+            # three dates to ensure [1] - [2] will give a non-zero timedelta
+            # object.
+            dt_list = list(
+                rrulestr(rrule, dtstart=dt_dtstart).xafter(
+                    dttstart, count=3, inc=True
+                )
+            )
+
+
+            # compute the "missing dates": dates before the rrule started to
+            # generate dates so we can check for a pbehavior in the past.
+            multiply = 1
+            while True:
+                missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
+                dt_list.insert(0, missing_date)
+
+                if missing_date < dtts:
+                    break
+
+                multiply += 1
+
+            delta = dttstop - dttstart
+
+            for dt in sorted(dt_list):
+                if dtts >= dt and dtts <= dt + delta:
+                    return True
+
+            return False
+
+        else:
+            if dtts >= dttstart and dtts <= dttstop:
+                return True
+            return False
+
+        return False
+
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
 
@@ -610,40 +694,41 @@ class PBehaviorManager(object):
 
     def get_all_active_pbehaviors(self):
         """
-        Return all pbehaviors currently active, using start and stop time.
+        Return all pbehaviors currently active using
+        self.check_active_pbehavior
         """
         now = int(time())
-        query = {
-            '$and': [
-                {'tstop': {'$gte': now}},
-                {'tstart': {'$lte': now}}
-            ]
-        }
+        query = {}
 
-        ret_val = list(self.pb_storage.get_elements(
-            query=query
-        ))
+        ret_val = list(self.pb_storage.get_elements(query=query))
 
-        return ret_val
+        results = []
 
-    def get_active_pbehaviors_from_type(self, types=[]):
+        for pb in ret_val:
+            if self.check_active_pbehavior(now, pb):
+                results.append(pb)
+
+        return results
+
+    def get_active_pbehaviors_from_type(self, types=None):
         """
-        Return pbehaviors currently active, with a specific type.
+        Return pbehaviors currently active, with a specific type,
+        using self.check_active_pbehavior
         """
+        if types is None:
+            types = []
         now = int(time())
-        query = {
-            '$and': [
-                {'tstop': {'$gte': now}},
-                {'tstart': {'$lte': now}},
-                {PBehavior.TYPE: {'$in': types}}
-            ]
-        }
+        query = {PBehavior.TYPE: {'$in': types}}
 
-        ret_val = list(self.pb_storage.get_elements(
-            query=query
-        ))
+        ret_val = list(self.pb_storage.get_elements(query=query))
 
-        return ret_val
+        results = []
+
+        for pb in ret_val:
+            if self.check_active_pbehavior(now, pb):
+                results.append(pb)
+
+        return results
 
     def get_varying_pbehavior_list(self):
         """

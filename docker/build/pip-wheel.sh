@@ -15,6 +15,6 @@ repver="${ID}-${VERSION_ID}"
 mkdir -p /root/wheelrep/${repver}
 cd /root/wheelrep/${repver}
 
-pip wheel --no-index -f file:///sources/python-libs/ -r /sources/canopsis/requirements.txt
+pip wheel -r /sources/canopsis/requirements.txt
 
 chown -R ${1} /root/wheelrep

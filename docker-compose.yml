@@ -1,3 +1,4 @@
+---
 version: '2'
 volumes:
   mongodbdata:
@@ -46,6 +47,11 @@ services:
     mem_limit: 1g
     mem_reservation: 1g
     oom_score_adj: -1000
+  redis:
+    image: redis:4.0
+    restart: unless-stopped
+    ports:
+      - 6379:6379
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_TAG}
     env_file:
@@ -65,7 +71,6 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-    #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
   event_filter:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
     env_file:
@@ -225,6 +230,18 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
+  metric:
+    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
+    depends_on:
+      - "influxdb"
+    environment:
+      - ENGINE_NAME=metric
+      - ENGINE_MODULE=canopsis.engines.metric
+    restart: unless-stopped
+    mem_limit: 200m
+    mem_reservation: 200m
   webserver:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
     env_file:
@@ -236,11 +253,10 @@ services:
     ports:
       - 28082:8082
     volumes:
-        - importctxdata:/opt/canopsis/tmp
-        - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
+      - importctxdata:/opt/canopsis/tmp
+      - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
     links:
       - mongodb
       - rabbitmq
       - influxdb
     restart: unless-stopped
-    #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]

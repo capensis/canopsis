@@ -22,7 +22,7 @@
 Python utility library.
 """
 
-from collections import Iterable
+from collections import Iterable, Mapping
 from imp import load_source
 from importlib import import_module
 from inspect import ismodule
@@ -577,6 +577,29 @@ def merge_two_dicts(x, y):
     return z
 
 
+def dict_merge(dct, merge_dct):
+    """
+    Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
+    updating only top-level keys, dict_merge recurses down into dicts nested
+    to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
+    ``dct``.
+    => https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
+
+    NB: merge_dict always win
+
+    :param dict dct: dict onto which the merge is executed
+    :param dict merge_dct: dct merged into dct
+    :return: None
+    """
+    for k, v in merge_dct.iteritems():
+        if (k in dct
+                and isinstance(dct[k], dict)
+                and isinstance(merge_dct[k], Mapping)):
+            dict_merge(dct[k], merge_dct[k])
+        else:
+            dct[k] = merge_dct[k]
+
+
 def is_mongo_successfull(dico):
     """
     Check if a pymongo dict response report a success ({'ok': 1.0, 'n': 2})
@@ -631,3 +654,45 @@ def get_sub_key(dico, key, default=None):
             return default
 
     return coid
+
+
+def get_sub_key_raise(dico, key):
+    """
+    Find a sub key (from a string) into a dict. If the given key or sub key is
+    not found, raises KeyError like a regular dict[key] access.
+
+    :param dict dico: a dict to search in
+    :param str key: a string describying the key to lookup
+    :param object default: default value returned
+    :returns: the corresponding value in dico
+    """
+    coid = dico
+    for k in key.split('.'):
+        if not isinstance(coid, dict):
+            # access an empty dict to raise a standard KeyError exception.
+            # return here is only to please pylint.
+            return {}[key]
+
+        coid = coid[k]
+
+    return coid
+
+
+def normalize_utf8(element):
+    """
+    Ensure that a string is utf-8 encoded
+
+    :param str element: the string to analyze
+    :returns: an unicode formatted string
+    :rtype: str
+    """
+    if isinstance(element, unicode):
+        return element
+
+    try:
+        return element.encode('utf-8')
+    except UnicodeError:
+        try:
+            return element.decode('utf-8')
+        except UnicodeError:
+            return element

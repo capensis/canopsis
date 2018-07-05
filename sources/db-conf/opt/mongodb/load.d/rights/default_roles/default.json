@@ -168,6 +168,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_done": {
+            "checksum": 1,
+            "desc": ""
+        },
         "view_current_alarms": {
             "checksum": 7,
             "desc": ""
@@ -175,8 +179,29 @@
         "view_history_alarms": {
             "checksum": 7,
             "desc": ""
+        },
+        "serviceweather_ack":{
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_confirm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_invalidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_declareticket": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_pause" : {
+            "checksum": 1,
+            "desc": ""
         }
-    }
+    },
+	"defaultview": "view.current_alarms"
 },{
     "_id": "Supervision",
     "rights": {
@@ -215,11 +240,24 @@
             "checksum": 7,
             "desc": ""
         },
-        "view_history_alarms": {
+        "view_current_alarms": {
             "checksum": 7,
             "desc": ""
+        },
+        "serviceweather_ack":{
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_confirm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_invalidate": {
+            "checksum": 1,
+            "desc": ""
         }
-    }
+    },
+	"defaultview": "view.current_alarms"
 },{
     "_id": "Support",
     "rights": {
@@ -255,21 +293,22 @@
             "desc": ""
         },
         "view_current_alarms": {
-            "checksum": 1,
+            "checksum": 5,
             "desc": ""
         },
-        "view_history_alarms": {
-            "checksum": 1,
+        "view_current_alarms": {
+            "checksum": 5,
             "desc": ""
         }
-    }
+    },
+	"defaultview": "view.current_alarms"
 },{
     "_id": "Manager",
     "rights": {
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
-        "actionbutton_history": {
+        "actionbutton_current": {
             "checksum": 15,
             "desc": ""
         },
@@ -309,25 +348,60 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_done": {
+            "checksum": 1,
+            "desc": ""
+        },
         "view_current_alarms": {
             "checksum": 7,
             "desc": ""
         },
-        "view_history_alarms": {
+        "view_current_alarms": {
             "checksum": 7,
             "desc": ""
+        },
+        "serviceweather_ack":{
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_confirm": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_invalidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_declareticket": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_pause" : {
+            "checksum": 1,
+            "desc": ""
         }
-    }
+    },
+	"defaultview": "view.current_alarms"
 },{
     "_id": "Visualisation",
     "rights": {
         "view_current_alarms": {
-            "checksum": 1,
+            "checksum": 5,
             "desc": ""
         },
-        "view_history_alarms": {
-            "checksum": 1,
+        "view_current_alarms": {
+            "checksum": 5,
             "desc": ""
         }
-    }
+    },
+	"defaultview": "view.current_alarms"
+},{
+    "_id": "Norights",
+    "rights": {
+        "view_norights": {
+            "checksum": 5,
+            "desc": ""
+        }
+    },
+    "defaultview": "view.norights"
 }]
