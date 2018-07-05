@@ -247,7 +247,6 @@ class MongoDBNamespaceManager(NamespaceManager):
 
         def _create_mongo_conn():
             store = MongoStore.get_default()
-            store.authenticate()
             return MongoCollection(store.get_collection(collection))
 
         self.mongo = MongoDBNamespaceManager.clients.get(data_key,
