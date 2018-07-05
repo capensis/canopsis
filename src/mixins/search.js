@@ -1,7 +1,8 @@
 import omit from 'lodash/omit';
 
 /**
- * @mixin
+ * @mixin Add searching logic, need Pagination mixins
+ * @see src/mixins/pagination.js
  */
 export default {
   methods: {
