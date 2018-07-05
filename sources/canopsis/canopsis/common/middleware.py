@@ -68,6 +68,11 @@ class Emulator(object):
             protocol = 'mongodb'
             storage = MongoStorage()
 
+        elif protocol == 'influxdb':
+            from canopsis.influxdb.core import InfluxDBStorage
+
+            storage = InfluxDBStorage()
+
         else:
             raise Exception('Unknown storage: {}'.format(protocol))
 
@@ -75,7 +80,10 @@ class Emulator(object):
         storage.data_type = data_type if table is None else None
         storage.data_scope = data_scope if table is None else None
         storage.table = table
-        storage.logger = Logger.get('storage-mongodb', 'var/log/mongodb.log')
+        storage.logger = Logger.get(
+            'storage-{}'.format(protocol),
+            'var/log/storage-{}.log'.format(protocol)
+        )
         storage._connect()
         storage._backend = storage._get_backend(backend=storage.get_table())
 

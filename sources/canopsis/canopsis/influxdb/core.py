@@ -19,7 +19,6 @@
 # ---------------------------------
 
 from canopsis.common.init import basestring
-from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage, DataBase, Cursor
 
 from influxdb import InfluxDBClient, InfluxDBClusterClient
@@ -27,11 +26,6 @@ from influxdb.exceptions import InfluxDBClientError
 
 from sys import getsizeof
 
-
-CONF_RESOURCE = 'influx/storage.conf'
-
-
-@conf_paths(CONF_RESOURCE)
 class InfluxDBDataBase(DataBase):
     """Manage access to influxDB."""
 
@@ -57,6 +51,17 @@ class InfluxDBDataBase(DataBase):
             host=host, port=port, user=user, pwd=pwd, db=db, ssl=ssl,
             conn_timeout=conn_timeout, proxies=proxies, *args, **kwargs
         )
+
+        from canopsis.confng import Configuration, Ini
+        config = Configuration.load('etc/influx/storage.conf', Ini)['DATABASE']
+
+        self.host = config['host']
+        self.port = int(config['port'])
+        self.ssl = config.get('ssl')
+        self.user = config.get('user')
+        self.pwd = config.get('pwd')
+        self.conn_timeout = int(config.get('conn_timeout', 3))
+        self.proxies = config.get('proxies')
 
     def _connect(self, *args, **kwargs):
 
