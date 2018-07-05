@@ -127,7 +127,7 @@ export default {
   },
   modals: {
     contextInfos: {
-      title: 'Infos sur l\'entité',
+      title: 'Entities infos',
     },
     createEntity: {
       title: 'Create an entity',

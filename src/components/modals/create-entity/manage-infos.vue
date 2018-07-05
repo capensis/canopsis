@@ -72,8 +72,8 @@ export default {
     };
   },
   mounted() {
-    if (this.config) {
-      this.form.infos = this.config.item.infos;
+    if (this.config.item) {
+      this.infos = this.config.item.infos;
     }
   },
   methods: {

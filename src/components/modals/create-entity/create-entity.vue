@@ -2,8 +2,7 @@
   v-card
     v-card-title
       span.headline {{ $t('modals.createEntity.title') }}
-    v-tabs(
-    )
+    v-tabs
       v-tab(
         v-for="tab in tabs",
         :key="tab.name",

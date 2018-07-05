@@ -109,15 +109,6 @@ export default {
         },
       });
     },
-    showContextInfosModal(item) {
-      this.showModal({
-        name: MODALS.contextInfos,
-        config: {
-          title: 'modals.contextInfos.title',
-          item,
-        },
-      });
-    },
     fetchList() {
       this.fetchContextEntities({
         params: this.getQuery(),
