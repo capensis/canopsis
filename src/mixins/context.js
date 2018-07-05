@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapGetters, mapActions } = createNamespacedHelpers('context');
 
 /**
- * @mixin
+ * @mixin Helpers' for context store
  */
 export default {
   computed: {
