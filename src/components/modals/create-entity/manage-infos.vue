@@ -2,9 +2,9 @@
   v-card
     v-card-text
       v-list(v-if="infos.length")
-          v-list-group(
+          v-list-group.mt-2(
             v-for="info in infos"
-            :key="info.name"
+            :key="info.name",
           )
             v-list-tile(slot="activator")
               v-list-tile-content
@@ -17,8 +17,7 @@
                 v-list-tile-title Description : {{ info.description }}
                 v-list-tile-title Value : {{ info.value }}
       v-card-text(v-else) No infos
-      v-btn(flat, @click="showForm = !showForm") Add info
-      v-form(ref="infoForm", v-show="showForm")
+      v-form(ref="infoForm")
         v-layout
           v-text-field(
             :label="$t('common.name')",
@@ -64,7 +63,6 @@ export default {
   },
   data() {
     return {
-      showForm: false,
       infos: [],
       form: {
         name: '',
@@ -76,7 +74,6 @@ export default {
   mounted() {
     if (this.config) {
       this.form.infos = this.config.item.infos;
-      this.$emit('update:infos', this.infos);
     }
   },
   methods: {
@@ -84,13 +81,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
       if (isFormValid) {
         this.infos.push({ ...this.form });
-        this.$emit('update:infos', this.infos);
         this.$refs.infoForm.reset();
       }
     },
     deleteInfo(name) {
       this.infos = filter(this.infos, info => info.name !== name);
-      this.$emit('update:infos', this.infos);
     },
   },
 };

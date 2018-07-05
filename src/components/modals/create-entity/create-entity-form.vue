@@ -32,14 +32,24 @@ v-card-text
         label="Type"
         single-line
       )
+    v-layout(wrap)
+      v-flex(xs12)
+        entities-select(label="Impacts", :entities.sync=entities)
+      v-flex(xs12)
+        entities-select(label="Dependencies", :entities.sync=entities)
 </template>
 
 <script>
+import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
+
 import { MODALS } from '@/constants';
 
 export default {
   name: MODALS.createEntity,
   inject: ['$validator'],
+  components: {
+    EntitiesSelect,
+  },
   data() {
     return {
       showValidationErrors: true,
