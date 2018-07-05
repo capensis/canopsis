@@ -458,7 +458,7 @@ class Storage(object):
         backend = self.get_backend(namespace)
 
         if one:
-            raw_records = backend.find_one(mfilter, fields=mfields, safe=self.mongo_safe)
+            raw_records = backend.find_one(mfilter, projection=mfields)
             if raw_records:
                 raw_records = [ raw_records ]
             else:
@@ -477,9 +477,9 @@ class Storage(object):
                     limit += 1
 
             if sort is None:
-                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit)
+                raw_records = backend.find(mfilter, projection=mfields, skip=offset, limit=limit)
             else:
-                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit, sort=sort)
+                raw_records = backend.find(mfilter, projection=mfields, skip=offset, limit=limit, sort=sort)
 
 
 
@@ -582,7 +582,7 @@ class Storage(object):
         records = []
         try:
             if len(_ids) == 1:
-                raw_record = backend.find_one(mfilter, fields=mfields, safe=self.mongo_safe)
+                raw_record = backend.find_one(mfilter, projection=mfields, safe=self.mongo_safe)
 
                 # Remove binary (base64)
                 if ignore_bin and raw_record and raw_record.get('media_bin', None):
@@ -593,7 +593,7 @@ class Storage(object):
                 elif raw_record:
                     records.append(Record(raw_record=raw_record))
             else:
-                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
+                raw_records = backend.find(mfilter, projection=mfields, safe=self.mongo_safe)
 
                 if mfields:
                     records = [raw_record for raw_record in raw_records]
