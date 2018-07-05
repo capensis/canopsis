@@ -67,7 +67,7 @@ class Emulator(object):
         storage = None
 
         if protocol == 'mongodb' or protocol == 'storage':
-            from canopsis.mongo.core import MongoStorage
+            from canopsis.mongo.composite import MongoCompositeStorage as MongoStorage
 
             protocol = 'mongodb'
             storage = MongoStorage()
