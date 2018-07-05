@@ -20,6 +20,11 @@ v-speed-dial(
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
+/**
+ * Buttons to open the modal to add entities
+ *
+ * @module context
+ */
 export default {
   mixins: [modalMixin],
   data() {

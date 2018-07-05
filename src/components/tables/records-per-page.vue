@@ -12,6 +12,9 @@
 <script>
 import { PAGINATION_LIMIT } from '@/config';
 
+/**
+ * Component to select number of items per page on lists
+ */
 export default {
   data: () => ({
     items: [5, 10, 20, 50],

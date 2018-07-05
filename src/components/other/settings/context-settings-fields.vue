@@ -29,6 +29,9 @@ const storeSample = {
   ],
 };
 
+/**
+* Component to regroup the entities list settings fields
+*/
 export default {
   components: {
     FieldTitle,

@@ -28,6 +28,9 @@ import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
+/**
+ * Modal to associate a ticket to an alarm
+ */
 export default {
   name: MODALS.createAssociateTicketEvent,
 

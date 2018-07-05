@@ -12,7 +12,17 @@
         span {{ action.title }}
 </template>
 
+
 <script>
+/**
+ * Component showing an action icon
+ *
+ * @module alarm
+ *
+ * @prop {String} [type] - Type of the action
+ * @prop {Function} [method] - Action to execute when user clicks on the action's icon
+ * @prop {Boolean} [isDropDown] - Boolean to decide whether to show a dropdown with actions, or actions separately
+ */
 export default {
   props: {
     type: {

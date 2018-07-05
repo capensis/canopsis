@@ -46,7 +46,15 @@ import CreateEntity from './actions/context-fab.vue';
 
 const { mapActions } = createNamespacedHelpers('context');
 
-
+/**
+ * Entities list
+ *
+ * @module context
+ *
+ * @prop {Array} [contextProperties] - List of entities properties
+ *
+ * @event openSettings#click
+ */
 export default {
   components: {
     BasicList,

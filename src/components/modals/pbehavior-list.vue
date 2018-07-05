@@ -25,6 +25,9 @@ import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
+/**
+ * Modal showing a list of an alarm's pbehaviors
+ */
 export default {
   name: MODALS.pbehaviorList,
 
