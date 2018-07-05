@@ -15,16 +15,9 @@
         :enabled.sync="form.enabled",
         :infos.sync="form.infos",
       )
-    v-text-field(
-      :label="$t('common.name')",
-      v-validate="'required|alpha'",
-      v-model="lol",
-      :error-messages="errorMsg",
-      )
     entities-select(label="Impacts", :entities.sync=entities)
     entities-select(label="Dependencies", :entities.sync=entities)
     v-card-actions
-      v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
 </template>
 
@@ -52,7 +45,6 @@ export default {
   mixins: [modalMixin, modalInnerMixin],
   data() {
     return {
-      lol: '',
       tabs: [
         { component: 'CreateForm', name: this.$t('modals.createEntity.fields.form') },
         { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
@@ -67,11 +59,6 @@ export default {
         infos: [],
       },
     };
-  },
-  computed: {
-    errorMsg() {
-      return this.$validator.errors ? 'no' : 'yes';
-    },
   },
   methods: {
     updateImpact(entities) {

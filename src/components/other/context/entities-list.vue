@@ -21,8 +21,6 @@
         td.box
           v-btn(@click.stop="deleteEntity(item)", icon, small)
             v-icon delete
-          v-btn(@click.stop="showContextInfosModal(item)", icon, small)
-            v-icon playlist_add
       tr.container(slot="expandedRow", slot-scope="item")
     pagination(:meta="contextEntitiesMeta", :limit="limit")
     create-entity.fab
