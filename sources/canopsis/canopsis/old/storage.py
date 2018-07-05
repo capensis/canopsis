@@ -28,6 +28,7 @@ import gridfs
 from bson import objectid
 
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from pymongo.errors import PyMongoError
 from pymongo import ASCENDING
 from pymongo import DESCENDING
@@ -243,7 +244,7 @@ class Storage(object):
 
             return backend
         except Exception:
-            self.backend[namespace] = self.conn.get_collection(namespace)
+            self.backend[namespace] = MongoCollection(self.conn.get_collection(namespace))
             self.logger.debug("Connected to %s collection." % namespace)
             return self.backend[namespace]
 
