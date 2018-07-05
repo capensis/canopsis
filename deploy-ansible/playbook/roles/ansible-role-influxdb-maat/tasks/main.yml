@@ -7,22 +7,6 @@
     name: influxdb
     state: started
   when: influxdb_database_name is defined
-  become: yes
-
-- name: Install pip
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - "{{ influxdb_packages }}"
-  when: influxdb_database_name is defined
-  become: yes
-
-- name: Install python-influxdb
-  pip:
-    name: influxdb
-  when: influxdb_database_name is defined
-  become: yes
 
 - name: Create database "{{ influxdb_database_name }}" without credentials
   influxdb_database:
@@ -32,7 +16,6 @@
   when:
     - influxdb_database_name is defined
     - influxdb_username is not defined
-  become: yes
 
 - name: Create database "{{ influxdb_database_name }}" using custom credentials
   influxdb_database:
@@ -44,4 +27,3 @@
   when: 
     - influxdb_database_name is defined
     - influxdb_username is defined 
-  become: yes
