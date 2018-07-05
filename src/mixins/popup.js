@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions } = createNamespacedHelpers('popup');
 
 /**
- * @mixin
+ * @mixin Add popup logic, for fetching messages (success, info, warning, error...)
  */
 export default {
   methods: {
