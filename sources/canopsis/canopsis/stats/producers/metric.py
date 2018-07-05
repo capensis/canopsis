@@ -20,24 +20,16 @@
 
 from hashlib import sha1
 
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.configuration.model import Parameter
 from canopsis.influxdb.core import InfluxDBStorage
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.common.middleware import ClassEmulator as MiddlewareRegistry
 from canopsis.old.mfilter import check
 from canopsis.timeserie.core import DEFAULT_ROUND_TIME, DEFAULT_PERIOD
 
 CONF_PATH = 'stats/producers/metric.conf'
 CATEGORY = 'METRIC_PRODUCER'
-CONTENT = [
-    Parameter('default_aggregation_interval', int),
-    Parameter('round_time_interval', Parameter.bool)
-]
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
 class MetricProducer(MiddlewareRegistry):
     """
     Base Metric producer.

@@ -21,20 +21,16 @@ from __future__ import unicode_literals
 
 from re import escape
 
-from canopsis.middleware.registry import MiddlewareRegistry
-from canopsis.configuration.configurable.decorator import (
-    conf_paths, add_category)
 from canopsis.influxdb.core import InfluxDBStorage
 from canopsis.common.utils import ensure_iterable
+from canopsis.common.middleware import ClassEmulator as MiddlewareClass
 
 CONF_PATH = 'stats/manager.conf'
 CATEGORY = 'STATS'
 CONTENT = []
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
-class Stats(MiddlewareRegistry):
+class Stats(MiddlewareClass):
     """
     Stats management
     """

@@ -19,8 +19,6 @@
 # ---------------------------------
 
 from canopsis.stats.producers.metric import MetricProducer
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.configurable.decorator import conf_paths
 
 
 CONF_PATH = 'stats/producers/user.conf'
@@ -28,8 +26,6 @@ CATEGORY = 'USER_METRIC_PRODUCER'
 CONTENT = []
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY, content=CONTENT)
 class UserMetricProducer(MetricProducer):
     """
     Metric producer for user statistics.

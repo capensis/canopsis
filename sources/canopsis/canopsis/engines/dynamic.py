@@ -21,16 +21,13 @@
 from canopsis.common.init import basestring
 from canopsis.task.core import get_task
 from canopsis.engines.core import Engine
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.model import Parameter
+from canopsis.common.middleware import ClassEmulator as MiddlewareClass
 
-CONF_PATH = 'engines/engines.conf'  #: dynamic engine configuration path
+CONF_PATH = 'etc/engines/engines.conf'  #: dynamic engine configuration path
 CATEGORY = 'ENGINE'  #: dynamic engine configuration category
 
 
-@conf_paths(CONF_PATH)
-class engine(Engine, Configurable):
+class engine(Engine, MiddlewareClass):
     """
     Engine which is able to load dynamically its event processing through
     configuration properties.
