@@ -22,8 +22,7 @@ Deploy Canopsis
 ---------------
 
 ```bash
-git clone git@git.canopsis.net:canopsis/deploy-ansible.git <ansible roles directory>/deploy-ansible
-cd <ansible roles directory>/deploy-ansible
+cd deploy-ansible/<ansible roles directory>/deploy-ansible
 
 cp <package> playbook/files/
 ```
