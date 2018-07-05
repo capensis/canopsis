@@ -1,0 +1,17 @@
+- name: Download influxdb package
+  get_url:
+    url: "https://dl.influxdata.com/influxdb/releases/influxdb-{{ influxdb_version }}.x86_64.rpm"
+    dest: "/var/cache/yum/influxdb_{{ influxdb_version }}.x86_64.rpm"
+  become: yes
+
+- name: Install Influxdb
+  yum:
+    name: "/var/cache/yum/influxdb_{{ influxdb_version }}.x86_64.rpm"
+    state: present
+    disable_gpg_check: yes
+
+- name: Define Config
+  template:
+    src: influxdb.j2
+    dest: /etc/influxdb/influxdb.conf
+  notify: Start Influxdb

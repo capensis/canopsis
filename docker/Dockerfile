@@ -30,10 +30,15 @@ COPY sources/canopsis/requirements.txt /sources/canopsis/requirements.txt
 COPY docker/build/pip-deps.sh /
 RUN /bin/bash /pip-deps.sh
 
+#### Ansible
+COPY docker/build/pip-ansible.sh /
+RUN /bin/bash /pip-ansible.sh
+
 #### Canopsis only
 COPY sources/canopsis /sources/canopsis
 COPY docker/build/pip-canopsis.sh /
 RUN /bin/bash /pip-canopsis.sh
+RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 
 ### Webserver
 COPY sources/webcore /sources/webcore
@@ -84,6 +89,9 @@ RUN . ${CPS_HOME}/bin/activate && \
     python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
     python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
     python /${CPS_HOME}/bin/brickmanager enable brick-timeline
+
+# Ansible
+COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
 
 USER ${CPS_USER}:${CPS_GROUP}
 

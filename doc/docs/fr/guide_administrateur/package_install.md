@@ -19,6 +19,7 @@ apt install -f
 Les fichiers suivants doivent être modifiés :
 
  * `/opt/canopsis/etc/common/mongo_store.conf`
+ * `/opt/canopsis/etc/common/redis_store.conf`
  * `/opt/canopsis/etc/infux/storage.conf`
  * `/opt/canopsis/etc/amqp.conf`
 
