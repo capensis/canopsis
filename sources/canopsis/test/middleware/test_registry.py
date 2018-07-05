@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 
-from canopsis.middleware.core import Middleware, SCHEME_SEPARATOR
+from canopsis.common.middleware import Emulator as Middleware, SCHEME_SEPARATOR
 from canopsis.middleware.registry import MiddlewareRegistry
 
 from tempfile import NamedTemporaryFile

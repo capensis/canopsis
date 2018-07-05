@@ -28,7 +28,7 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.task.core import register_task
 from canopsis.vevent.manager import VEventManager
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 
 @register_task('vevent.event_processing')
 def event_processing(event, veventmanager=None, **params):

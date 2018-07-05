@@ -23,7 +23,7 @@ from copy import copy
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.status import get_previous_step
 from canopsis.common.utils import singleton_per_scope
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 from canopsis.session.manager import Session
 from canopsis.stats.producers.event import EventMetricProducer
 from canopsis.stats.producers.user import UserMetricProducer

@@ -34,11 +34,12 @@ from collections import Iterable
 
 from canopsis.common.init import basestring
 from canopsis.common.utils import isiterable
+from canopsis.common.middleware import ClassEmulator as MiddlewareClass
 
 __all__ = ['DataBase', 'Storage']
 
 
-class DataBase(object):
+class DataBase(MiddlewareClass):
     """Abstract class which aims to manage access to a data base.
 
     Related to a configuration file, it can connects to a database
@@ -76,7 +77,7 @@ class DataBase(object):
         :param str retention: retention rule.
         """
 
-        super(DataBase, self).__init__(*args, **kwargs)
+        super(DataBase, self).__init__()
 
         # initialize instance properties with default values
         self._db = db
@@ -92,7 +93,6 @@ class DataBase(object):
     @db.setter
     def db(self, value):
         self._db = value
-        self.reconnect()
 
     @property
     def journaling(self):
@@ -101,7 +101,6 @@ class DataBase(object):
     @journaling.setter
     def journaling(self, value):
         self._journaling = value
-        self.reconnect()
 
     @property
     def retention(self):
@@ -118,7 +117,6 @@ class DataBase(object):
         :param str value: new retention rule to apply."""
 
         self._retention = value
-        self.reconnect()
 
     @property
     def sharding(self):
@@ -127,7 +125,6 @@ class DataBase(object):
     @sharding.setter
     def sharding(self, value):
         self._sharding = value
-        self.reconnect()
 
     @property
     def replicaset(self):
@@ -136,7 +133,6 @@ class DataBase(object):
     @replicaset.setter
     def replicaset(self, value):
         self._replicaset = value
-        self.reconnect()
 
     def drop(self, table=None, *args, **kwargs):
         """Drop related all tables or one table if given.
@@ -357,7 +353,6 @@ class Storage(DataBase):
     def table(self, value):
 
         self._table = value
-        self.reconnect()
 
     @property
     def data(self):
@@ -366,7 +361,6 @@ class Storage(DataBase):
     @data.setter
     def data(self, value):
         self._data = value
-        self.reconnect()
 
     @property
     def cache_size(self):

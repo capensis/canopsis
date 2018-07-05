@@ -29,7 +29,7 @@ from numbers import Number
 from time import time
 
 from canopsis.common.init import basestring
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 from canopsis.monitoring.parser import PerfDataParser
 from canopsis.timeserie.timewindow import get_offset_timewindow, TimeWindow
 from canopsis.context_graph.manager import ContextGraph

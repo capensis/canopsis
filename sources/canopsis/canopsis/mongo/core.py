@@ -77,11 +77,7 @@ class MongoDataBase(DataBase):
         pass
 
     def _connect(self, *args, **kwargs):
-        from canopsis.common.callstack import log_stack
-        log_stack()
         result = None
-        connection_args = {}
-
         from canopsis.confng import Configuration, Ini
 
         mongo_cfg = Configuration.load(MongoStore.CONF_PATH, Ini)[MongoStore.CONF_CAT]
@@ -98,14 +94,8 @@ class MongoDataBase(DataBase):
             ReadPreference.SECONDARY_PREFERRED
         )
 
-        try:
-            result = MongoStore.get_default()
-        except PyMongoError as cfe:
-            self.logger.error(
-                'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self._host, self._port, cfe)
-            )
-        else:
+        result = MongoStore.get_default()
+        if True:
             self._database = result.client
 
             if result.authenticated:
@@ -185,6 +175,9 @@ class MongoDataBase(DataBase):
         :raises: NotImplementedError
         .. seealso: DataBase.set_backend(self, backend)
         """
+        if backend is None:
+            raise Exception('none backend')
+
         return MongoCollection(self._conn.get_collection(backend))
 
 
@@ -588,9 +581,9 @@ class MongoStorage(MongoDataBase, Storage):
         try:
             if table is None:
                 table = self.get_table()
-            backend = self._get_backend(backend=table)
+            # get pymongo raw collection
+            backend = self._get_backend(backend=table).collection
             backend_command = getattr(backend, command)
-            w = 1 if self.safe else 0
             result = backend_command(*args, **kwargs)
 
         except NetworkTimeout:
@@ -606,7 +599,7 @@ class MongoStorage(MongoDataBase, Storage):
 
 
 class MongoCursor(Cursor):
-    """In charge of handle cursors wit MongoDB."""
+    """In charge of handle cursors with MongoDB."""
 
     __slots__ = ('_len', ) + Cursor.__slots__
 

@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 from canopsis.common.collection import CollectionError
 from canopsis.common.enumerations import FastEnum
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 
 
 class TraceError(Exception):

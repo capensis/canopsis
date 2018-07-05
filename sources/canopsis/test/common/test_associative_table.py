@@ -24,7 +24,7 @@ import unittest
 from canopsis.common import root_path
 from canopsis.common.associative_table.associative_table import AssociativeTable
 from canopsis.common.associative_table.manager import AssociativeTableManager
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 import xmlrunner
 
 class AssociativeTableTest(unittest.TestCase):

@@ -25,7 +25,7 @@ property managers such as the perfdata manager for example.
 """
 
 from canopsis.common.init import basestring
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 from canopsis.configuration.configurable.decorator import (
     conf_paths, add_category
 )

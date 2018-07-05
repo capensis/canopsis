@@ -12,7 +12,7 @@ from canopsis.common.utils import normalize_utf8
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 from canopsis.watcher.links import build_all_links
 
 
@@ -75,11 +75,12 @@ class InfosFilter:
         """Reload the schema and regenerate the internal structure used to
         filter the infos dict."""
 
-        try:
+        #try:
+        if True:
             self._schema = self.obj_storage.get_elements(
                 query={"_id": self._schema_id}, projection={"_id": 0})[0]
-        except IndexError:
-            raise ValueError("No infos schema found in database.")
+        #except IndexError as exc:
+        #    raise ValueError("No infos schema found in database: {}".format(exc))
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]

@@ -11,7 +11,7 @@ from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Emulator as Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
