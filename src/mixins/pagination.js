@@ -5,7 +5,7 @@ import dateIntervals from '@/helpers/date-intervals';
 import { PAGINATION_LIMIT } from '@/config';
 
 /**
- * @mixin
+ * @mixin Add pagination logic, and dynamic route
  */
 export default {
   components: {
