@@ -270,9 +270,12 @@ class Storage(object):
             self.logger.error("Invalid record type")
 
         for i, rec in enumerate(records):
-            if '_id' not in rec:
-                rec['_id'] = str(uuid1())
-                records[i] = rec
+            try:
+                if '_id' not in rec:
+                    rec['_id'] = str(uuid1())
+                    records[i] = rec
+            except TypeError:
+                pass
 
         backend = self.get_backend(namespace)
 
