@@ -68,6 +68,9 @@ export default {
         description: '',
         type: '',
         enabled: true,
+        depends: [],
+        impact: [],
+        infos: [],
       },
     };
   },
@@ -88,7 +91,8 @@ export default {
         if (this.config.item) {
           this.editEntity({ data: this.form });
         } else {
-          this.createEntity();
+          const formData = { ...this.form, _id: this.form.name };
+          this.createEntity({ data: formData });
         }
         this.hideModal();
       }

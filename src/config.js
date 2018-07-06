@@ -20,6 +20,7 @@ export const API_ROUTES = {
   login: '/login',
   alarmList: '/alerts/get-alarms',
   context: '/context',
+  createEntity: '/put-entities',
   pbehavior: '/api/v2/pbehavior',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',

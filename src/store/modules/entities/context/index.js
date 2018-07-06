@@ -8,6 +8,7 @@ export const types = {
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
   EDIT_FAILED: 'EDIT_FAILED',
+  CREATION_FAILED: 'CREATION_FAILED',
 };
 
 export default {
@@ -42,6 +43,9 @@ export default {
     [types.EDIT_FAILED](state, err) {
       state.error = err;
     },
+    [types.CREATION_FAILED](state, err) {
+      state.err = err;
+    },
   },
   actions: {
     async fetchList({ commit, dispatch }, { params } = {}) {
@@ -67,8 +71,15 @@ export default {
         commit(types.FETCH_LIST_FAILED);
       }
     },
-    async create({ commit }) {
-      console.warn('create');
+    async create({ commit, dispatch }, { data }) {
+      try {
+        await request.put(API_ROUTES.createEntity, { "entity": JSON.stringify(data) });
+        await dispatch('popup/add', { type: 'success', text: 'Entity successfully created' }, { root: true });
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        commit(types.CREATION_FAILED, err);
+      }
+
     },
     async edit({ commit, dispatch }, { data }) {
       try {
