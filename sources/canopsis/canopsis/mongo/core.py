@@ -564,8 +564,6 @@ class MongoStorage(MongoDataBase, Storage):
             # get pymongo raw collection
             backend = self._get_backend(backend=table).collection
             backend_command = getattr(backend, command)
-            print(backend_command)
-            print(args, kwargs)
             result = backend_command(*args, **kwargs)
 
         except NetworkTimeout:
