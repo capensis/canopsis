@@ -3,7 +3,7 @@
     .addContainer
         .label {{ label }}:&ensp;
         .entities.scrollbar
-          span(v-for="entity in entities") {{ entity._id }},&emsp;
+          span(v-for="entity in entities") {{ entity }},&emsp;
         v-btn(icon @click="showList=!showList")
           v-icon {{ listIcon }}
         v-btn(icon @click="clear")
@@ -18,7 +18,15 @@
 import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 import union from 'lodash/union';
 
-
+/**
+ * Component to select entities for impact/dependencies
+ *
+ * @module context
+ *
+ * @prop {String} [label] - "Impacts" or "Dependencies"
+ *
+ * @event selectedIds#update
+ */
 export default {
   components: { ContextGeneralList },
   props: {
@@ -40,7 +48,8 @@ export default {
   },
   methods: {
     updateEntities(entities) {
-      this.entities = union(entities, this.entities);
+      const entitiesIds = entities.map(entity => entity._id);
+      this.entities = union(entitiesIds, this.entities);
       this.$emit('update:entities', this.entities);
     },
     clear() {

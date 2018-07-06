@@ -29,8 +29,8 @@
             label="Type",
             single-line,
           )
-    entities-select(label="Impacts", :entities.sync=entities)
-    entities-select(label="Dependencies", :entities.sync=entities)
+    entities-select(label="Impacts", :entities.sync="form.impact")
+    entities-select(label="Dependencies", :entities.sync="form.depends")
     v-card-actions
       v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
       v-btn(
