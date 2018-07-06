@@ -75,12 +75,11 @@ class InfosFilter:
         """Reload the schema and regenerate the internal structure used to
         filter the infos dict."""
 
-        #try:
-        if True:
+        try:
             self._schema = self.obj_storage.get_elements(
                 query={"_id": self._schema_id}, projection={"_id": 0})[0]
-        #except IndexError as exc:
-        #    raise ValueError("No infos schema found in database: {}".format(exc))
+        except IndexError as exc:
+            raise ValueError("No infos schema found in database: {}".format(exc))
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
