@@ -26,10 +26,11 @@ class Entity(object):
     INFOS = 'infos'
     ENABLED = 'enabled'
     ENABLE_HISTORY = 'enable_history'
+    LAST_STATE_CHANGE = 'last_state_change'
 
     def __init__(self, _id, name, type_,
                  depends=None, impacts=None, measurements=None, infos=None,
-                 enabled=True, enable_history=None,
+                 enabled=True, enable_history=None, last_state_change=None,
                  *args, **kwargs):
         """
         :param str _id: entity id
@@ -41,6 +42,8 @@ class Entity(object):
         :param dic infos: extra informations
         :param bool enabled: his this entity enabled ?
         :param list enable_history: list of timestamp when the entity has been activated
+        :param int last_state_change: timestamp of the last time the entity's
+        state changed
         """
         if depends is None or not isinstance(depends, list):
             depends = []
@@ -62,6 +65,7 @@ class Entity(object):
         self.impacts = impacts
         self.measurements = measurements
         self.infos = infos
+        self.last_state_change = last_state_change
 
         self.enable_history = enable_history  # before enabled !!
         self.enabled = enabled
@@ -120,7 +124,8 @@ class Entity(object):
             self.MEASUREMENTS: self.measurements,
             self.INFOS: self.infos,
             self.ENABLED: self.enabled,
-            self.ENABLE_HISTORY: self.enable_history
+            self.ENABLE_HISTORY: self.enable_history,
+            self.LAST_STATE_CHANGE: self.last_state_change
         }
 
         return dictionnary

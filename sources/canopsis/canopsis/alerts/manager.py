@@ -51,9 +51,10 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
+from canopsis.models.entity import Entity
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
-from canopsis.statsng.enums import StatCounters
+from canopsis.statsng.enums import StatCounters, StatStateIntervals
 from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
 
@@ -733,9 +734,32 @@ class Alerts(object):
             )
 
         # Executing task
+        now = int(time())
         value = alarm.get(self.alerts_storage.VALUE)
         new_value, status = task(self, value, state, event)
-        new_value[AlarmField.last_update_date.value] = int(time())
+        new_value[AlarmField.last_update_date.value] = now
+
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+        try:
+            entity = self.context_manager.get_entities_by_id(entity_id)[0]
+        except IndexError:
+            entity = {}
+
+        # Send statistics event
+        last_state_change = entity.get(Entity.LAST_STATE_CHANGE)
+        if last_state_change:
+            self.event_publisher.publish_statstateinterval_event(
+                now,
+                StatStateIntervals.time_in_state,
+                now - last_state_change,
+                old_state,
+                entity,
+                new_value)
+
+        # Update entity's last_state_change
+        if entity:
+            entity[Entity.LAST_STATE_CHANGE] = now
+            self.context_manager.update_entity(entity)
 
         alarm[storage_value] = new_value
 
