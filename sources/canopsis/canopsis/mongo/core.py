@@ -501,7 +501,7 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={},
-            query_kwargs={'command': 'remove', 'query': document},
+            query_kwargs={'command': 'remove', 'spec_or_id': document},
             cache=cache,
             **kwargs
         )
