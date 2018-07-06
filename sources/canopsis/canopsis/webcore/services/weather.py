@@ -37,11 +37,13 @@ from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
+from canopsis.common.influx import get_influxdb_client
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
+influx_client = get_influxdb_client()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
@@ -97,6 +99,37 @@ def __format_pbehavior(pbehavior):
 
     return pbehavior
 
+def get_ok_ko(self, entity_id):
+    """
+    For an entity defined by component, connector, resource return
+    the number of OK check and KO check.
+
+    :param connector: the connector of the entity
+    :param component: the component of the entity
+    :param resource: the resource of the entity
+    :return: a dict with two key ok and ko or none if no data are found for
+    the given entity.
+    """
+    query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
+            "event_state_history WHERE \"eid\"='{}'"
+
+
+    # Why did I use a double '\' ? It's simple, for some mystical reason,
+    # somewhere between the call of influxdbstg.raw_query and the HTTP
+    # request is sent, the escaped simple quote are deescaped. So like the
+    # song says "you can't touch this".
+    entity_id = entity_id.replace("'", "\\'")
+    entity_id = entity_id.replace('"', '\\"')
+
+    result = influx_client.query(query.format(entity_id))
+
+    data = list(result.get_points())
+    if len(data) > 0:
+        data = data[0]
+        data.pop("time")
+        return data
+
+    return None
 
 def pbehavior_types(pbehaviors):
     """
@@ -450,7 +483,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            #enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
+            enriched_entity['stats'] = get_ok_ko(entity_id)
             if current_alarm is not None:
                 enriched_entity['ticket'] = current_alarm.get('ticket')
                 enriched_entity['state'] = current_alarm['state']
