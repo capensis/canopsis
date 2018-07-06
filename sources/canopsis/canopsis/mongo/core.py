@@ -465,14 +465,18 @@ class MongoStorage(MongoDataBase, Storage):
         else:
             cache_op = None
 
+        update_doc = document
+        if '$set' not in update_doc:
+            update_doc = {'$set': document}
+
         result = self._process_query(
             cache_op=cache_op,
             query_op=self._run_command,
             cache_kwargs={'update': document},
             query_kwargs={
                 'filter': spec,
-                'command': 'update_one',
-                'update': {'$set': document},
+                'command': 'update_many',
+                'update': update_doc,
                 'upsert': upsert,
             },
             cache=cache,
@@ -480,7 +484,7 @@ class MongoStorage(MongoDataBase, Storage):
         )
 
         return {
-            'updatedExisting': True,
+            'updatedExisting': True if result is not None else False,
         }
 
     def _find(self, document=None, projection=None, **kwargs):
