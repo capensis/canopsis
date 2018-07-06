@@ -465,9 +465,8 @@ class MongoStorage(MongoDataBase, Storage):
         else:
             cache_op = None
 
-        update_doc = document
-        if '$set' not in update_doc:
-            update_doc = {'$set': document}
+        if '$set' not in document:
+            document = {'$set': document}
 
         result = self._process_query(
             cache_op=cache_op,
@@ -476,7 +475,7 @@ class MongoStorage(MongoDataBase, Storage):
             query_kwargs={
                 'filter': spec,
                 'command': 'update_many',
-                'update': update_doc,
+                'update': document,
                 'upsert': upsert,
             },
             cache=cache,
