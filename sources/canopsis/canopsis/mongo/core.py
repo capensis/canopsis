@@ -471,8 +471,8 @@ class MongoStorage(MongoDataBase, Storage):
             cache_kwargs={'update': document},
             query_kwargs={
                 'filter': spec,
-                'command': 'update_many',
-                'update': document,
+                'command': 'update_one',
+                'update': {'$set': document},
                 'upsert': upsert,
             },
             cache=cache,
@@ -480,7 +480,7 @@ class MongoStorage(MongoDataBase, Storage):
         )
 
         return {
-            'updatedExisting': result.modified_count,
+            'updatedExisting': True,
         }
 
     def _find(self, document=None, projection=None, **kwargs):
