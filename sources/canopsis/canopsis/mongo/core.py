@@ -444,7 +444,7 @@ class MongoStorage(MongoDataBase, Storage):
             **kwargs
         )
 
-        return result
+        return result.inserted_id
 
     def _update(
             self, spec, document, cache=False, multi=True, upsert=True,
@@ -479,7 +479,12 @@ class MongoStorage(MongoDataBase, Storage):
             **kwargs
         )
 
-        return result
+        res = result.result
+
+
+        return {
+            'updatedExisting': res.modified_count,
+        }
 
     def _find(self, document=None, projection=None, **kwargs):
 
