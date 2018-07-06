@@ -465,7 +465,9 @@ class MongoStorage(MongoDataBase, Storage):
         else:
             cache_op = None
 
-        if '$set' not in document:
+        # catch any mongo command like $set or $addToSet so we do not
+        # override them
+        if len(document.keys()) > 1 or document.keys()[0][0] != '$':
             document = {'$set': document}
 
         result = self._process_query(
@@ -484,6 +486,7 @@ class MongoStorage(MongoDataBase, Storage):
 
         return {
             'updatedExisting': True if result is not None else False,
+            'n': result.modified_count if result is not None else 0,
         }
 
     def _find(self, document=None, projection=None, **kwargs):
