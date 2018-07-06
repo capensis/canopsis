@@ -30,7 +30,6 @@ from time import time
 from canopsis.confng import Configuration, Ini
 
 DEFAULT_METRIC_PRODUCER_VALUE = 'canopsis.stats.producers.metric.MetricProducer'
-DEFAULT_PERFDATA_MANAGER_VALUE = 'canopsis.perfdata.manager.PerfData'
 DEFAULT_ALIVE_SESSION_DURATION = 300
 
 
@@ -45,31 +44,25 @@ class Session(object):
 
     SESSION_COLLECTION = 'session_collection'
     METRIC_PRODUCER = 'metric_producer'
-    PERFDATA_MANAGER = 'perfdata_manager'
 
     def __init__(
             self,
             collection,
             metric_producer=None,
-            perfdata_manager=None
     ):
         """
         :param MongoCursor collection: the collection where user sessoins are located
         :param metric_producer:
-        :param perfdata_manager:
         """
 
         self.session_collection = collection
         self.metric_producer = metric_producer
-        self.perfdata_manager = perfdata_manager
 
         self.config = Configuration.load(self.CONF_PATH, Ini)
         session = self.config.get('SESSION', {})
 
         self.metric_producer_value = session.get('metric_producer_value',
                                                  DEFAULT_METRIC_PRODUCER_VALUE)
-        self.perfdata_manager_value = session.get('perfdata_manager_value',
-                                                  DEFAULT_PERFDATA_MANAGER_VALUE)
         self.alive_session_duration = int(session.get('alive_session_duration',
                                                       DEFAULT_ALIVE_SESSION_DURATION))
 
