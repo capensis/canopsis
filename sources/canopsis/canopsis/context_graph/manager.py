@@ -737,8 +737,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_graph_depends(self, _id, deepness=None):
         """Return the depends graph from the entity design by _id.
@@ -766,8 +765,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_leaves_impact(self, _id, deepness=None):
         """Return the entities at the end of the impact graph from the entity
