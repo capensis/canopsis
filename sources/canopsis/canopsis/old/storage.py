@@ -26,6 +26,7 @@ import ConfigParser
 import gridfs
 
 from bson import objectid
+from uuid import uuid1
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
@@ -34,7 +35,6 @@ from pymongo import ASCENDING
 from pymongo import DESCENDING
 
 from canopsis.common import root_path
-from canopsis.mongo.core import CanopsisSONManipulator
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 
@@ -198,18 +198,6 @@ class Storage(object):
 
         self.db = self.conn.get_database(self.mongo_db)
 
-        manipulators = self.db.incoming_manipulators
-        manipulators += self.db.outgoing_manipulators
-
-        for manipulator in manipulators:
-            if isinstance(manipulator, CanopsisSONManipulator):
-                break
-
-        else:
-            self.db.add_son_manipulator(
-                CanopsisSONManipulator('_id')
-            )
-
         try:
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")
         except Exception:
@@ -280,6 +268,11 @@ class Storage(object):
             records = _record_or_records
         else:
             self.logger.error("Invalid record type")
+
+        for i, rec in enumerate(records):
+            if '_id' not in rec:
+                rec['_id'] = str(uuid1())
+                records[i] = rec
 
         backend = self.get_backend(namespace)
 

@@ -31,26 +31,6 @@ from pymongo.cursor import Cursor as _Cursor
 from pymongo.errors import (DuplicateKeyError, NetworkTimeout,
                             OperationFailure, PyMongoError)
 from pymongo.read_preferences import ReadPreference
-from pymongo.son_manipulator import SONManipulator
-
-
-class CanopsisSONManipulator(SONManipulator):
-    """Manage transformations on incoming/outgoing objects."""
-
-    def __init__(self, idfield, *args, **kwargs):
-        super(CanopsisSONManipulator, self).__init__(*args, **kwargs)
-
-        self.idfield = idfield
-
-    def transform_incoming(self, *args, **kwargs):
-        son = super(CanopsisSONManipulator, self).transform_incoming(
-            *args, **kwargs
-        )
-
-        if self.idfield not in son:
-            son[self.idfield] = str(uuid1())
-
-        return son
 
 
 class MongoDataBase(DataBase):
@@ -191,18 +171,6 @@ class MongoStorage(MongoDataBase, Storage):
 
     def _connect(self, *args, **kwargs):
         result = super(MongoStorage, self)._connect(*args, **kwargs)
-
-        manipulators = self._database.incoming_manipulators
-        manipulators += self._database.outgoing_manipulators
-
-        for manipulator in manipulators:
-            if isinstance(manipulator, CanopsisSONManipulator):
-                break
-
-        else:
-            self._database.add_son_manipulator(
-                CanopsisSONManipulator(MongoStorage.ID)
-            )
 
         # initialize cache
         if not hasattr(self, '_cache'):
@@ -455,11 +423,23 @@ class MongoStorage(MongoDataBase, Storage):
 
         cache_op = self._cache.insert if cache else None
 
+        if isinstance(document, dict):
+            query_kwargs = {'command': 'insert_one', 'document': document}
+            if '_id' not in document:
+                document['_id'] = str(uuid1())
+        else:
+            for i, doc in enumerate(document):
+                if '_id' not in doc:
+                    doc['_id'] = str(uuid1())
+                    document[i] = doc
+
+            query_kwargs = {'command': 'insert_many', 'documents': document}
+
         result = self._process_query(
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={'document': document},
-            query_kwargs={'command': 'insert', 'document': document},
+            query_kwargs=query_kwargs,
             cache=cache,
             **kwargs
         )
@@ -584,6 +564,8 @@ class MongoStorage(MongoDataBase, Storage):
             # get pymongo raw collection
             backend = self._get_backend(backend=table).collection
             backend_command = getattr(backend, command)
+            print(backend_command)
+            print(args, kwargs)
             result = backend_command(*args, **kwargs)
 
         except NetworkTimeout:
