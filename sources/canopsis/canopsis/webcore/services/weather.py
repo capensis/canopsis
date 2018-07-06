@@ -37,13 +37,11 @@ from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.stats.manager import Stats
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
-tracer_manager = TracerManager(*TracerManager.provide_default_basics())
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 stats_manager = Stats()
 
@@ -216,22 +214,6 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     return False
 
 
-def check_baseline(merged_eids_tracer, watcher_depends):
-    """
-    check if the watcher has an entity with a baseline active
-
-    :param set merged_eids_tracer: all entities withan active baseline
-    :param list watcher_depends: watcher entities
-    :returns: true if the watcher has an entity with an active active_baseline
-    :rtype: bool
-    """
-    for entity_id in watcher_depends:
-        if entity_id in merged_eids_tracer:
-            return True
-
-    return False
-
-
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
@@ -282,18 +264,6 @@ def exports(ws):
         merged_pbehaviors_eids = set([])
         next_run_dict = {}
         watchers = []
-        merged_eids_tracer = []
-
-        # Find all entites with an activated baseline
-        active_baseline_tracer = tracer_manager.get(
-            {
-                'triggered_by': 'baseline',
-                'extra.active': True
-            }
-        )
-        for tracer in active_baseline_tracer:
-            merged_eids_tracer = merged_eids_tracer + tracer['impact_entities']
-        merged_eids_tracer = set(merged_eids_tracer)
 
         # List all activated pbh eids, ordered by pbh id
         actives_pb = pbehavior_manager.get_all_active_pbehaviors()
@@ -383,10 +353,6 @@ def exports(ws):
             enriched_entity["active_pb_some"] = wstatus[0]
             enriched_entity["active_pb_all"] = wstatus[1]
             enriched_entity['active_pb_watcher'] = len(enriched_entity['watcher_pbehavior']) > 0
-            enriched_entity['has_baseline'] = check_baseline(
-                merged_eids_tracer,
-                watcher['depends']
-            )
             tmp_next_run = get_next_run_alert(
                 watcher.get('depends', []),
                 next_run_dict
