@@ -354,9 +354,6 @@ class Alerts(object):
         """
         storage = self.alerts_storage
 
-        print(storage)
-        print(type(storage))
-        print(storage.get)
         result = storage.get(
             alarm_entity_id,
             timewindow=get_offset_timewindow(),

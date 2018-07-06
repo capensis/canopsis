@@ -68,13 +68,12 @@ class Middleware(dict):
         storage = None
 
         if protocol == 'mongodb' or protocol == 'storage':
-            if protocol == 'storage':
-                from canopsis.mongo.composite import MongoCompositeStorage as MongoStorage
+            if data_type == 'periodical':
+                from canopsis.mongo.periodical import MongoPeriodicalStorage as msc
+            else:
+                from canopsis.mongo.core import MongoStorage as msc
 
-            elif protocol == 'mongodb':
-                from canopsis.mongo.core import MongoStorage
-
-            storage = MongoStorage()
+            storage = msc()
 
         elif protocol == 'influxdb':
             from canopsis.influxdb.core import InfluxDBStorage
