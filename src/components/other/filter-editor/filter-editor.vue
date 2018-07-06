@@ -123,13 +123,13 @@ export default {
 
     handleResultTabClick() {
       this.newRequest = '';
-      this.$router.push({
+      /*this.$router.push({
         query: {
           limit: 5,
           filter: JSON.stringify(this.request),
           skip: 0,
         },
-      });
+      });*/
     },
 
     handleInputChange() {

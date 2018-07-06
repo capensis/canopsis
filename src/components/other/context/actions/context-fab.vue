@@ -7,7 +7,7 @@ v-speed-dial(
     v-icon add
     v-icon close
   v-tooltip(left)
-    v-btn(slot="activator", fab, dark, small, color='indigo')
+    v-btn(slot="activator", fab, dark, small, color='indigo', @click.prevent="showCreateWatcherModal")
       v-icon watch
     span {{ $t(`entities.watcher`)}}
   v-tooltip(left)
@@ -39,6 +39,14 @@ export default {
         config: {
           ...this.modalConfig,
           title: 'modals.createEntity.title',
+        },
+      });
+    },
+    showCreateWatcherModal() {
+      this.showModal({
+        name: MODALS.createWatcher,
+        config: {
+          title: 'modals.createWatcher.title',
         },
       });
     },

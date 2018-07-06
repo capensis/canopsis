@@ -22,7 +22,7 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
     }),
 });
 
-export const contextSchema = new schema.Entity(ENTITIES_TYPES.context, {}, { idAttribute: '_id' });
+export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAttribute: '_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
@@ -40,7 +40,7 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
-  [ENTITIES_TYPES.context]: contextSchema,
+  [ENTITIES_TYPES.entity]: entitySchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,

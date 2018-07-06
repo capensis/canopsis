@@ -25,6 +25,7 @@ import EditLiveReporting from './edit-live-reporting.vue';
 import MoreInfos from './more-infos.vue';
 import Confirmation from './confirmation.vue';
 import CreateEntity from './create-entity.vue';
+import CreateWatcher from './create-watcher.vue';
 
 /**
  * Wrapper for all modal windows
@@ -44,6 +45,7 @@ export default {
     MoreInfos,
     Confirmation,
     CreateEntity,
+    CreateWatcher,
   },
   data() {
     return {
@@ -60,6 +62,7 @@ export default {
         { name: MODALS.moreInfos },
         { name: MODALS.confirmation },
         { name: MODALS.createEntity },
+        { name: MODALS.createWatcher },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

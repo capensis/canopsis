@@ -28,7 +28,6 @@
 
 <script>
 import omit from 'lodash/omit';
-import { createNamespacedHelpers } from 'vuex';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -43,8 +42,6 @@ import contextEntityMixin from '@/mixins/context';
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
-
-const { mapActions } = createNamespacedHelpers('context');
 
 /**
  * Entities list
@@ -83,10 +80,6 @@ export default {
     };
   },
   methods: {
-    ...mapActions({
-      fetchListAction: 'fetchList',
-      remove: 'remove',
-    }),
     getQuery() {
       const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
       query.limit = this.limit;
