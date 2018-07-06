@@ -46,13 +46,15 @@
 </template>
 
 <script>
-import VueContentLoading from 'vue-content-loading';
 import { createNamespacedHelpers } from 'vuex';
+import VueContentLoading from 'vue-content-loading';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('app');
 
+/**
+ * Component for the side-bar, on the left of the application
+ */
 export default {
-  name: 'SideBar',
   components: {
     VueContentLoading,
   },

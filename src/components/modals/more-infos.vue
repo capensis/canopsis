@@ -11,10 +11,16 @@
 <script>
 import HandleBars from 'handlebars';
 import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS } from '@/constants';
 
 const { mapGetters } = createNamespacedHelpers('modal');
 
+/**
+ * Modal showing more infos on an alarm
+ *
+ * @prop {String} [template] - template to be shown on the modal
+ */
 export default {
   name: MODALS.moreInfos,
   props: {

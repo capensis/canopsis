@@ -1,13 +1,21 @@
 <template lang="pug">
-  span.info-popup-button(v-if="hasPopupForColumn", @click.stop="showPopup")
+  span.info-popup-button(v-if="popupData", @click.stop="showPopup")
     v-icon info
 </template>
 
 <script>
+import Handlebars from 'handlebars';
+import getProp from 'lodash/get';
+
 import widgetMixin from '@/mixins/widget';
 import popupComponentMixin from '@/mixins/popup';
-import Handlebars from 'handlebars';
 
+/**
+ * Button to display info popup
+ *
+ * @prop {String} [columnName] - Name of the column
+ * @prop {Object} [alarm] - Object representing the alarm
+ */
 export default {
   mixins: [
     widgetMixin,
@@ -24,20 +32,10 @@ export default {
     },
   },
   computed: {
-    hasPopupForColumn() {
-      return Boolean(this.popupData);
-    },
     popupData() {
-      const popups = this.getWidget({ widgetXType: 'listalarm' }).widget.popup;
-      let data = null;
+      const popups = getProp(this.getWidget({ widgetXType: 'listalarm' }), 'widget.popup', []);
 
-      popups.forEach((popup) => {
-        if (popup.column === this.columnName) {
-          data = popup;
-        }
-      });
-
-      return data;
+      return popups.find(popup => popup.column === this.columnName);
     },
     textContent() {
       const template = Handlebars.compile(this.popupData.template);

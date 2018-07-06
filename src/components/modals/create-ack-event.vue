@@ -44,11 +44,14 @@
 </template>
 
 <script>
-import AlarmGeneralTable from '@/components/other/alarm-list/alarm-general-list.vue';
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import EventActionsMixin from '@/mixins/event-actions';
+import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
 
+/**
+ * Modal to create an ack event
+ */
 export default {
   name: MODALS.createAckEvent,
   $_veeValidate: {
@@ -57,7 +60,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [ModalInnerItemsMixin, EventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsMixin],
   data() {
     return {
       showValidationErrors: false,

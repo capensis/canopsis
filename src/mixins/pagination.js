@@ -1,10 +1,12 @@
 import omit from 'lodash/omit';
 
+import Pagination from '@/components/tables/pagination.vue';
+import dateIntervals from '@/helpers/date-intervals';
 import { PAGINATION_LIMIT } from '@/config';
 
-import dateIntervals from '@/helpers/date-intervals';
-import Pagination from '@/components/tables/pagination.vue';
-
+/**
+ * @mixin Add pagination logic, and dynamic route
+ */
 export default {
   components: {
     Pagination,

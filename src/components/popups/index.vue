@@ -10,6 +10,9 @@ import Popup from './popup.vue';
 
 const { mapGetters } = createNamespacedHelpers('popup');
 
+/**
+* Wrapper for the popups
+*/
 export default {
   components: { Popup },
   computed: {
@@ -24,6 +27,5 @@ export default {
     z-index: 2;
     right: 2rem;
     top: 75px;
-    width: 350px;
   }
 </style>

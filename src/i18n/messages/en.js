@@ -2,15 +2,19 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 export default {
   common: {
+    watcher: 'Watcher',
     name: 'Name',
     description: 'Description',
+    submit: 'Submit',
+    enabled: 'Enabled',
+    login: 'Login',
+    yes: 'Yes',
+    no: 'No',
+    confirmation: 'Are you sure ?',
     by: 'By',
     date: 'Date',
     comment: 'Comment',
     end: 'End',
-    submit: 'Submit',
-    enabled: 'Enabled',
-    login: 'Login',
     username: 'Username',
     password: 'Password',
     title: 'Title',
@@ -46,6 +50,21 @@ export default {
       year: 'year | years',
     },
   },
+  search: {
+    advancedSearch: '<span>Help on the advanced research :</span>\n' +
+    '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+    '<p>The "-" before the research is required</p>\n' +
+    '<p>Operators :\n' +
+    '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+    '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+    '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
+    '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+    '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+    '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
+    '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
+    '</dl>',
+  },
   entities: {
     watcher: 'watcher',
     entities: 'entities',
@@ -67,7 +86,7 @@ export default {
       },
       iconsTitles: {
         ack: 'Ack',
-        declareTicket: 'Declared ticket',
+        declareTicket: 'Declare ticket',
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
@@ -77,8 +96,11 @@ export default {
       },
     },
   },
-  alarmListSettings: {
-    alarmListSettings: 'Alarm list settings',
+  settings: {
+    titles: {
+      alarmListSettings: 'Alarm list settings',
+      contextTableSettings: 'Context table settings',
+    },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default Sort Column',
@@ -93,6 +115,15 @@ export default {
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
     moreInfosModal: '"More Infos" Popup',
+    contextTypeOfEntities: {
+      title: 'Type of entities',
+      fields: {
+        component: 'Component',
+        connector: 'Connector',
+        resource: 'Resource',
+        watcher: 'Watcher',
+      },
+    },
   },
   modals: {
     createEntity: {
@@ -109,9 +140,9 @@ export default {
       },
     },
     createAckEvent: {
-      title: 'Add event type: ack',
+      title: 'Add event: Ack',
       tooltips: {
-        ackResources: 'Do you want to ack linked resources or not?',
+        ackResources: 'Do you want to ack linked resources ?',
       },
       fields: {
         ticket: 'Ticket number',
@@ -120,19 +151,19 @@ export default {
       },
     },
     createSnoozeEvent: {
-      title: 'Add event type: snooze',
+      title: 'Add event: Snooze',
       fields: {
         duration: 'Duration',
       },
     },
     createCancelEvent: {
-      title: 'Add event type: cancel',
+      title: 'Add event: Cancel',
       fields: {
         output: 'Note',
       },
     },
     createChangeStateEvent: {
-      title: 'Add event type: change state',
+      title: 'Add event: Change state',
       states: {
         ok: 'Info',
         minor: 'Minor',
@@ -155,13 +186,13 @@ export default {
       },
     },
     createAckRemove: {
-      title: 'Add event type: ackremove',
+      title: 'Add event: Remove ack',
     },
     createDeclareTicket: {
-      title: 'Add event type: declareticket',
+      title: 'Add event: Declare ticket',
     },
     createAssociateTicket: {
-      title: 'Add event type: assocticket',
+      title: 'Add event: Associate ticket number',
       fields: {
         ticket: 'Number of the ticket',
       },
@@ -183,6 +214,12 @@ export default {
     },
   },
   tables: {
+    contextList: {
+      title: 'Context List',
+      name: 'Name',
+      id: 'Id',
+      noDataText: 'Make a research',
+    },
     alarmGeneral: {
       title: 'General',
       author: 'Author',
@@ -203,6 +240,8 @@ export default {
     pbehaviorList: {
       name: 'Name',
       author: 'Author',
+      connector: 'Connector',
+      connector_name: 'Connector name',
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
@@ -222,6 +261,13 @@ export default {
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    contextEntities: {
+      columns: {
+        name: 'Name',
+        type: 'Type',
+        _id: 'Id',
+      },
     },
   },
   rRule: {
@@ -275,6 +321,9 @@ export default {
   },
   errors: {
     default: 'Something went wrong...',
+  },
+  success: {
+    default: 'Done !',
   },
   mFilterEditor: {
     tabs: {

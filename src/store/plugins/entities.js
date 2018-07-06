@@ -1,11 +1,13 @@
 import Vue from 'vue';
 import omit from 'lodash/omit';
-import merge from 'lodash/merge';
+import uniq from 'lodash/uniq';
+import mergeWith from 'lodash/mergeWith';
 import get from 'lodash/get';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
 import schemas from '@/store/schemas';
+import { prepareEntitiesToDelete } from '@/helpers/store';
 
 const entitiesModuleName = 'entities';
 
@@ -67,27 +69,23 @@ const entitiesModule = {
      */
     [internalTypes.ENTITIES_MERGE](state, entities) {
       Object.keys(entities).forEach((type) => {
-        Vue.set(state, type, merge({}, state[type] || {}, entities[type]));
+        Vue.set(state, type, mergeWith({}, state[type] || {}, entities[type]), (objValue, srcValue) => {
+          if (Array.isArray(objValue)) {
+            return uniq(objValue.concat(srcValue));
+          }
+
+          return undefined;
+        });
       });
     },
 
     /**
      * @param {Object} state - state of the module
-     * @param {Object.<string, Array.<string>>} entitiesIds - Object of entities ids
+     * @param {Object.<string, Object>} entities - Object of entities
      */
-    [internalTypes.ENTITIES_DELETE](state, entitiesIds) {
-      Object.keys(entitiesIds).forEach((type) => {
-        entitiesIds[type].forEach((id) => {
-          const entity = state[type][id];
-          const { parentType, parentId, relationType } = get(entity, '_embedded', {});
-          const parentEntity = get(state, [parentType, parentId]);
-
-          if (parentEntity) {
-            Vue.set(parentEntity, relationType, parentEntity[relationType].filter(v => v !== id));
-          }
-        });
-
-        Vue.set(state, type, omit(state[type], entitiesIds[type]));
+    [internalTypes.ENTITIES_DELETE](state, entities) {
+      Object.keys(entities).forEach((key) => {
+        Vue.set(state, key, omit(state[key], Object.keys(entities[key])));
       });
     },
   },
@@ -104,6 +102,7 @@ const entitiesModule = {
       },
     ) {
       let data;
+
       if (isPost) {
         data = await request.post(route, params);
       } else {
@@ -113,6 +112,35 @@ const entitiesModule = {
       commit(mutationType, normalizedData.entities);
 
       return { data, normalizedData };
+    },
+
+    /**
+     * Remove entity by id and type from store
+     */
+    removeFromStore({ commit, getters, state }, { id, type }) {
+      const data = getters.getItem(type, id);
+      const parents = get(data, '_embedded.parents', []);
+
+      const {
+        entitiesToMerge,
+        entitiesToDelete,
+      } = prepareEntitiesToDelete({ type, data });
+
+      parents.forEach((parent) => {
+        const parentEntity = state[parent.type][parent.id];
+
+        if (!entitiesToMerge[parent.type]) {
+          entitiesToMerge[parent.type] = {};
+        }
+
+        entitiesToMerge[parent.type][parent.id] = {
+          ...parentEntity,
+          [parent.key]: parentEntity[parent.key].filter(v => v !== id),
+        };
+      });
+
+      commit(internalTypes.ENTITIES_UPDATE, entitiesToMerge);
+      commit(internalTypes.ENTITIES_DELETE, entitiesToDelete);
     },
   },
 };

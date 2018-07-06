@@ -7,8 +7,13 @@ transition(name="fade" mode="out-in")
 </template>
 
 <script>
+
+/**
+* Component for list sorting
+*
+* @prop {String} [column] - Name of the colmun concerned by the sorting
+*/
 export default {
-  name: 'alarm-list-sorting',
   props: {
     column: {
       type: String,

@@ -29,23 +29,34 @@
             label="Type",
             single-line,
           )
+    entities-select(label="Impacts", :entities.sync=entities)
+    entities-select(label="Dependencies", :entities.sync=entities)
     v-card-actions
       v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
-      v-btn(@click.prevent="manageInfos", color="blue darken-4 white--text") {{ $t('modals.createEntity.fields.manageInfos') }}
+      v-btn(
+        @click.prevent="manageInfos",
+        color="blue darken-4 white--text"
+      ) {{ $t('modals.createEntity.fields.manageInfos') }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
+import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
 import ModalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
 const { mapActions: entitiesMapActions } = createNamespacedHelpers('context');
 
+/**
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {
     validator: 'new',
   },
+  components: { EntitiesSelect },
   mixins: [ModalInnerMixin],
   data() {
     return {
@@ -63,6 +74,8 @@ export default {
           value: 'resource',
         },
       ],
+      showValidationErrors: true,
+      enabled: true,
       form: {
         name: '',
         description: '',
@@ -84,6 +97,12 @@ export default {
       createEntity: 'create',
       editEntity: 'edit',
     }),
+    updateImpact(entities) {
+      this.form.impacts = entities.map(entity => entity._id);
+    },
+    updateDependencies(entities) {
+      this.form.dependencies = entities.map(entity => entity._id);
+    },
     async submit() {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
@@ -105,5 +124,8 @@ export default {
 <style scoped>
   .tooltip {
     flex: 1 1 auto;
+  }
+  .impact {
+    background-color: grey;
   }
 </style>

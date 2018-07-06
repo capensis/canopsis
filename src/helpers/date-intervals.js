@@ -1,5 +1,8 @@
 import moment from 'moment';
 
+/**
+ * Helper to calculate time intervals
+ */
 export default {
   today() {
     return ({

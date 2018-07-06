@@ -5,8 +5,6 @@
         span.headline {{ $t('modals.createPbehavior.title') }}
       v-card-text
         v-data-table(:headers="headers", :items="firstItem.pbehaviors", disable-initial-sort, hide-actions)
-          template(slot="headerCell", slot-scope="props")
-            span {{ $t(props.header.text) }}
           template(slot="items", slot-scope="props")
             td(v-for="key in fields")
               span(
@@ -22,15 +20,18 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
+/**
+ * Modal showing a list of an alarm's pbehaviors
+ */
 export default {
   name: MODALS.pbehaviorList,
 
-  mixins: [ModalInnerItemsMixin],
+  mixins: [modalInnerItemsMixin],
   data() {
     const fields = [
       'name',
@@ -45,7 +46,7 @@ export default {
 
     const headers = fields.map(v => ({ sortable: false, text: this.$t(`tables.pbehaviorList.${v}`) }));
 
-    headers.push({ sortable: false, text: 'common.actionsLabel' });
+    headers.push({ sortable: false, text: this.$t('common.actionsLabel') });
 
     return {
       fields,
