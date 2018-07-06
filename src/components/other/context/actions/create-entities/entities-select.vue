@@ -6,7 +6,11 @@
         v-card
           v-card-text
             v-layout
-              v-chip(v-for="entity in entities", :key="entity._id", close, @input="removeEntity(entity)") {{ entity._id }}
+              v-chip(v-for="entity in entities",
+                     :key="entity._id",
+                     close,
+                     @input="removeEntity(entity)"
+                     ) {{ entity._id }}
             v-btn.red.white--text(v-show="entities.length", @click="clear", small) Clear
             context-general-list(
               @update:selectedIds="updateEntities($event)",

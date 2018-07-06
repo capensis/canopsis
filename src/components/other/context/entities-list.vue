@@ -30,12 +30,13 @@
         td(
           v-for="prop in contextProperties",
           @click="props.expanded = !props.expanded"
-        ) {{ props.item | get(prop.value) }}
+        )
+          ellipsis(:text="$options.filters.get(props.item,prop.value) || ''",
+                   :maxLetters="prop.maxLetters || MAX_LETTERS")
         td
           v-btn(@click.stop="deleteEntity(props.item)", icon, small)
             v-icon delete
       template(slot="expand", slot-scope="props")
-        time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
     v-layout.white(align-center)
       v-flex(xs10)
         pagination(:meta="meta", :limit="limit")
@@ -51,12 +52,14 @@ import { createNamespacedHelpers } from 'vuex';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
+import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
 
 import { MODALS } from '@/constants';
+import { MAX_LETTERS } from '@/config';
 
 import CreateEntity from './actions/context-fab.vue';
 
@@ -69,6 +72,7 @@ export default {
     RecordsPerPage,
     CreateEntity,
     Loader,
+    Ellipsis,
   },
   mixins: [
     paginationMixin,
@@ -87,6 +91,7 @@ export default {
     return {
       selected: [],
       pagination: {},
+      MAX_LETTERS,
     };
   },
   computed: {
