@@ -40,7 +40,7 @@ from traceback import print_exc
 from canopsis.common import root_path
 
 from kombu.exceptions import SerializationError as KombuSerializationError
-from amqp.exceptions import FrameSyntaxError
+from struct import error as AmqpStructError
 
 # Number of tries to re-publish an event before it is lost
 # when connection problems
@@ -394,7 +394,7 @@ class Amqp(Thread):
 
                         operation_success = True
 
-                    except FrameSyntaxError:
+                    except AmqpStructError:
                         self.logger.warning(u'Malformed message: routing key is too long. Cancelling message')
                         return False
 
