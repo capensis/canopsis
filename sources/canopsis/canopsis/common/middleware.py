@@ -75,11 +75,6 @@ class Middleware(dict):
 
             storage = msc()
 
-        elif protocol == 'influxdb':
-            from canopsis.influxdb.core import InfluxDBStorage
-
-            storage = InfluxDBStorage()
-
         else:
             raise Exception('Unknown storage: {}'.format(protocol))
 
