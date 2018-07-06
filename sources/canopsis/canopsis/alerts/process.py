@@ -28,6 +28,9 @@ from canopsis.task.core import register_task
 from canopsis.watcher.manager import Watcher
 from canopsis.common.mongo_store import MongoStore
 
+# import this module so tasks are registered in canopsis.tasks.core
+import canopsis.alerts.tasks as __alerts_tasks
+
 alerts_manager = Alerts(*Alerts.provide_default_basics())
 alertsreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 
