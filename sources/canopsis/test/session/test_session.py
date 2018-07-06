@@ -25,7 +25,7 @@ from time import sleep
 from unittest import TestCase, main
 
 from canopsis.common.collection import MongoCollection
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.session.manager import Session
 import unittest
 from canopsis.common import root_path

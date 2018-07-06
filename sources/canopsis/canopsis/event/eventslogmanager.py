@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.timeserie.timewindow import Interval
 
 

@@ -7,7 +7,7 @@ import unittest
 from unittest import main, TestCase
 from canopsis.common import root_path
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.logger import Logger, OutputNull
 
 from test_infos_filter import Keys, SCHEMA, TEMPLATE_INFOS

@@ -26,12 +26,12 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.task.core import register_task
 from canopsis.watcher.manager import Watcher
+from canopsis.common.mongo_store import MongoStore
 
 alerts_manager = Alerts(*Alerts.provide_default_basics())
 alertsreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 
-mongo_client = alerts_manager.alerts_storage._backend.database
-
+mongo_store = MongoStore.get_default()
 
 @register_task
 def event_processing(engine, event, alertsmgr=None, **kwargs):
@@ -71,7 +71,7 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
         alertsmgr = alerts_manager
 
     alarms_service = AlarmService(
-        alarms_adapter=AlarmAdapter(mongo_client),
+        alarms_adapter=AlarmAdapter(mongo_store),
         context_manager=alertsmgr.context_manager,
         event_publisher=alertsmgr.event_publisher,
         watcher_manager=Watcher(),

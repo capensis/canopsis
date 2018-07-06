@@ -22,11 +22,10 @@ from logging import ERROR
 from uuid import uuid4
 from copy import deepcopy
 
-from canopsis.common.middleware import Emulator as Middleware
-from canopsis.common.middleware import ClassEmulator as MiddlewareClass
+from canopsis.common.middleware import Middleware
 from canopsis.mongo.core import MongoCursor
 
-class Rights(MiddlewareClass):
+class Rights(Middleware):
 
     def __init__(self, *args, **kwargs):
         """

@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.middleware import ClassEmulator as MiddlewareClass
+from canopsis.common.middleware import Middleware
 from canopsis.event import Event, forger
 from canopsis.storage.composite import CompositeStorage
 
@@ -29,7 +29,7 @@ CONF_RESOURCE = 'etc/context/context.conf'  #: last context conf resource
 CATEGORY = 'CONTEXT'  #: context category
 
 
-class Context(MiddlewareClass):
+class Context(Middleware):
     """
     Manage access to a context (connector, component, resource) elements
     and context data (metric, downtime, etc.)

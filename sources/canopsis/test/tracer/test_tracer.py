@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.common.utils import is_mongo_successfull
 from canopsis.tracer.manager import (
     Trace, TraceSetError, TraceNotFound, TracerManager

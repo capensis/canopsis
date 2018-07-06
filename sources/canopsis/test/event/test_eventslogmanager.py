@@ -22,7 +22,7 @@
 import unittest
 from canopsis.common import root_path
 from canopsis.event.eventslogmanager import EventsLog
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 import xmlrunner
 
 class EventsLogManagerTest(unittest.TestCase):

@@ -19,7 +19,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 #from canopsis.context_graph.process import create_entity
 from canopsis.logger.logger import Logger, OutputNull
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.watcher.manager import Watcher
 import xmlrunner

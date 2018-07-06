@@ -27,7 +27,7 @@ import base64
 from bottle import request, abort
 from canopsis.auth.check import check
 
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.common.utils import singleton_per_scope
 from canopsis.common.ws import route
 from canopsis.session.manager import Session

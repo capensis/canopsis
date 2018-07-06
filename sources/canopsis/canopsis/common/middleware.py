@@ -35,26 +35,27 @@ def parse_scheme(uri):
 
     return protocol, data_type, data_scope
 
-class ClassEmulator(dict):
+class Middleware(dict):
     """
-    ClassEmulator is to make other classes inherit from it instead of the
+    Emulator is to make other classes inherit from it instead of the
     regular Middleware class.
 
     And yes, we derive from dict because… middleware.
     """
 
     def __init__(self, *args, **kwargs):
-        self.logger = Logger.get(self.__class__.__name__, 'var/log/{}.log'.format(
-            self.__class__.__name__))
+        clsname = self.__class__.__name__
+        self.logger = Logger.get(clsname, 'var/log/{}.log'.format(clsname))
 
     @property
     def safe(self):
         return True
 
+    def _connect(self):
+        raise NotImplementedError('empty middleware')
+
     def reconnect(self):
         return self._connect()
-
-class Emulator(object):
 
     @staticmethod
     def get_middleware_by_uri(uri, table=None):
@@ -67,9 +68,12 @@ class Emulator(object):
         storage = None
 
         if protocol == 'mongodb' or protocol == 'storage':
-            from canopsis.mongo.composite import MongoCompositeStorage as MongoStorage
+            if protocol == 'storage':
+                from canopsis.mongo.composite import MongoCompositeStorage as MongoStorage
 
-            protocol = 'mongodb'
+            elif protocol == 'mongodb':
+                from canopsis.mongo.core import MongoStorage
+
             storage = MongoStorage()
 
         elif protocol == 'influxdb':

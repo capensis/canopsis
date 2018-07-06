@@ -28,7 +28,7 @@ from canopsis.common.link_builder.basic_alarm_link_builder import ALERTS_COLLECT
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
 from canopsis.common.mongo_store import MongoStore
 from canopsis.confng import Configuration, Ini
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 
 import xmlrunner
 

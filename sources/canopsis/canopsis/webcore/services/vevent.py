@@ -20,7 +20,7 @@
 
 from canopsis.common.ws import route
 from canopsis.vevent.manager import VEventManager
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 
 vem = VEventManager(storage=Middleware.get_middleware_by_uri(VEventManager.VEVENT_COLL_URL))
 

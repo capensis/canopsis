@@ -22,7 +22,7 @@ from hashlib import sha1
 
 from canopsis.configuration.model import Parameter
 from canopsis.influxdb.core import InfluxDBStorage
-from canopsis.common.middleware import ClassEmulator as MiddlewareRegistry
+from canopsis.common.middleware import Middleware
 from canopsis.old.mfilter import check
 from canopsis.timeserie.core import DEFAULT_ROUND_TIME, DEFAULT_PERIOD
 
@@ -30,7 +30,7 @@ CONF_PATH = 'stats/producers/metric.conf'
 CATEGORY = 'METRIC_PRODUCER'
 
 
-class MetricProducer(MiddlewareRegistry):
+class MetricProducer(Middleware):
     """
     Base Metric producer.
 

@@ -21,7 +21,7 @@
 import uuid
 
 from canopsis.logger import Logger
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 
 
 class Linklist(object):

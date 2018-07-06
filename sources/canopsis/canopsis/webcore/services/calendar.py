@@ -22,7 +22,7 @@ from json import dumps
 
 from canopsis.ccalendar.manager import CalendarManager
 from canopsis.common.ws import route
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 
 cm = CalendarManager(storage=Middleware.get_middleware_by_uri(CalendarManager.CALENDAR_COLL_URI))
 

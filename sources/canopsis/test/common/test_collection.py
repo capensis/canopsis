@@ -12,7 +12,7 @@ except ImportError:
 from canopsis.common import root_path
 from canopsis.common.collection import MongoCollection
 from canopsis.logger import Logger, OutputStream
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 import xmlrunner
 
 

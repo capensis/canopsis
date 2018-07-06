@@ -12,7 +12,7 @@ from canopsis.common.utils import normalize_utf8
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.watcher.links import build_all_links
 
 

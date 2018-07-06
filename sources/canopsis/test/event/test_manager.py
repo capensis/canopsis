@@ -21,7 +21,7 @@
 import unittest
 from unittest import TestCase, main
 from canopsis.common import root_path
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.event.manager import Event as EventManager
 import xmlrunner
 

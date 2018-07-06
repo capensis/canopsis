@@ -4,7 +4,7 @@
 from canopsis.context_graph.import_ctx import ContextGraphImport, ImportKey,\
     Manager
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 import copy
 import json
 import os

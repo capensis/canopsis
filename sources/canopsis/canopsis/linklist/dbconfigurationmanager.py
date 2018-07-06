@@ -2,7 +2,7 @@
 
 from canopsis.linklist.manager import Linklist
 from canopsis.logger import Logger
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 
 
 class DBConfiguration(object):

@@ -23,14 +23,14 @@ from re import escape
 
 from canopsis.influxdb.core import InfluxDBStorage
 from canopsis.common.utils import ensure_iterable
-from canopsis.common.middleware import ClassEmulator as MiddlewareClass
+from canopsis.common.middleware import Middleware
 
 CONF_PATH = 'stats/manager.conf'
 CATEGORY = 'STATS'
 CONTENT = []
 
 
-class Stats(MiddlewareClass):
+class Stats(Middleware):
     """
     Stats management
     """

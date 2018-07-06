@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.event import get_routingkey
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 
 
 class Event(object):

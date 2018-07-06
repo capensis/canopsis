@@ -28,7 +28,7 @@ except ImportError:
 
 """
 TODO: sla
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 """
 
 

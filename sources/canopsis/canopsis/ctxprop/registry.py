@@ -25,14 +25,13 @@ property managers such as the perfdata manager for example.
 """
 
 from canopsis.common.init import basestring
-from canopsis.common.middleware import Emulator as Middleware
-from canopsis.common.middleware import ClassEmulator as MiddlewareClass
+from canopsis.common.middleware import Middleware
 
 CONF_PATH = 'etc/ctxprop/ctxpropreg.conf'
 CATEGORY = 'CTXPROPREG'
 
 
-class CTXPropRegistry(MiddlewareClass):
+class CTXPropRegistry(Middleware):
     """dedicated to ctx events."""
 
     class Error(Exception):

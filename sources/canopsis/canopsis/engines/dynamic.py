@@ -21,9 +21,9 @@
 from canopsis.common.init import basestring
 from canopsis.task.core import get_task
 from canopsis.engines.core import Engine
-from canopsis.common.middleware import ClassEmulator as MiddlewareClass
+from canopsis.common.middleware import Middleware
 
-class engine(Engine, MiddlewareClass):
+class engine(Engine, Middleware):
     """
     Engine which is able to load dynamically its event processing through
     configuration properties.

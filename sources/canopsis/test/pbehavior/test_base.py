@@ -21,7 +21,7 @@
 
 import unittest
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.common.middleware import Emulator as Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.logger.logger import Logger, OutputNull
 
