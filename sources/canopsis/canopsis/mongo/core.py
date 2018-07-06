@@ -479,11 +479,8 @@ class MongoStorage(MongoDataBase, Storage):
             **kwargs
         )
 
-        res = result.result
-
-
         return {
-            'updatedExisting': res.modified_count,
+            'updatedExisting': result.modified_count,
         }
 
     def _find(self, document=None, projection=None, **kwargs):
