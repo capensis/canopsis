@@ -29,6 +29,7 @@ from canopsis.old.record import Record
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_connection
+from canopsis.common.middleware import Middleware
 
 legend_type = ['soft', 'hard']
 OFF = 0
@@ -41,7 +42,7 @@ CONF_PATH = 'check/archiver.conf'
 CATEGORY = 'ARCHIVER'
 
 
-class Archiver(object):
+class Archiver(Middleware):
 
     def __init__(
         self, namespace, confnamespace='object', storage=None,
