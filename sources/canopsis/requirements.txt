@@ -1,5 +1,5 @@
 Beaker<1.6.0
-bottle==0.12.13
+bottle==0.10.9
 chardet<3.1
 configparser<3.6.0
 coverage<4.6.0
