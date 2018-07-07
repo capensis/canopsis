@@ -207,12 +207,7 @@ class Rights(Middleware):
                 )
             return 0
 
-        entity = None
-
-        e_type += '_storage'
-
-        if e_type in self:
-            entity = self._storage.get_elements(ids=e_name)
+        entity = self._storage.get_elements(ids=e_name)
 
         if not entity:
             self.logger.error(
@@ -243,7 +238,7 @@ class Rights(Middleware):
             if kwargs[key]:
                 entity['rights'][right_id][key] = context
 
-        getattl(self, e_type).put_element(element=entity, _id=e_name)
+        self._storage.put_element(element=entity, _id=e_name)
         result = entity['rights'][right_id]['checksum']
         return result if result else True
 
@@ -377,9 +372,7 @@ class Rights(Middleware):
             ``False`` otherwise
         """
 
-        from_storage = e_type + '_storage'
         t_type = 'profile' if e_type == 'group' else 'role'
-        to_storage = t_type + '_storage'
 
         if self._storage.get_elements(ids=e_name):
             self._storage.remove_elements(e_name)
