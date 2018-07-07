@@ -25,12 +25,14 @@ services:
     mem_reservation: 2g
     oom_score_adj: -1000
   mongodb:
-    image: canopsis/canopsis-mongo-server:${MONGO_TAG}
+    image: mongo:3.6-jessie
+    env_file: compose.mongo.env
     ports:
       - "27027:27017"
     volumes:
       - mongodbdata:/data/db
       - dumpdata:/dump/dumpdata
+      - "./docker/mongo/:/docker-entrypoint-initdb.d"
     restart: unless-stopped
     mem_limit: 3g
     mem_reservation: 3g
