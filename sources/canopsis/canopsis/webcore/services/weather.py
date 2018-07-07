@@ -99,7 +99,7 @@ def __format_pbehavior(pbehavior):
 
     return pbehavior
 
-def get_ok_ko(self, entity_id):
+def get_ok_ko(entity_id):
     """
     For an entity defined by component, connector, resource return
     the number of OK check and KO check.
