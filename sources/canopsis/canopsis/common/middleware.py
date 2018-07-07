@@ -48,6 +48,10 @@ class Middleware(dict):
         self.logger = Logger.get(clsname, 'var/log/{}.log'.format(clsname))
 
     @property
+    def log_lvl(self):
+        return self.logger.level
+
+    @property
     def safe(self):
         return True
 
