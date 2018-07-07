@@ -13,6 +13,7 @@ from canopsis.common.utils import dict_merge
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.middleware.core import Middleware
+from canopsis.common import root_path
 
 # FIXME : move the check of the element in the superficial check method
 
@@ -69,7 +70,7 @@ class ImportKey:
     F_UPDATED = "updated"
 
     # import file pattern
-    IMPORT_FILE = "/opt/canopsis/tmp/import_{0}.json"
+    IMPORT_FILE = root_path + "/tmp/import_{0}.json"
 
     EVT_IMPORT_UUID = "jobs_uuid"
     EVT_JOBID = "jobid"

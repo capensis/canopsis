@@ -31,7 +31,7 @@ import xmlrunner
 
 
 class TestSearch(TestCase):
-    grammar_file = '/opt/canopsis/etc/alerts/search/grammar.bnf'
+    grammar_file = root_path + '/etc/alerts/search/grammar.bnf'
 
     def test_interpret_base(self):
         cases = [
