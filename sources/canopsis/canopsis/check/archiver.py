@@ -48,7 +48,7 @@ class Archiver(object):
         autolog=False, amqp_pub=None, *args, **kwargs
     ):
 
-        super(Archiver, self).__init__(*args, **kwargs)
+        super(Archiver, self).__init__()
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
 
