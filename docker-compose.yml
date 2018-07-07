@@ -109,19 +109,6 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  perfdata:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-      - "influxdb"
-    environment:
-      - ENGINE_NAME=perfdata
-      - ENGINE_MODULE=canopsis.engines.dynamic
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   eventstore:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
     env_file:
