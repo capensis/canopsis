@@ -27,6 +27,7 @@ from unittest import TestCase, main
 from canopsis.schema.utils import (
     get_schema_path, get_unique_key, get_xml, is_name_available
 )
+from canopsis.common import root_path
 import unittest
 from canopsis.common import root_path
 import xmlrunner
@@ -41,7 +42,7 @@ class TestUtils(TestCase):
 
     def test_get_schema_path(self):
         r = get_schema_path()
-        self.assertEqual(r, '/opt/canopsis/share/canopsis/schema')
+        self.assertEqual(r, root_path + '/share/canopsis/schema')
 
     def test_get_unique_key(self):
         supposed_schemas = [
