@@ -4,8 +4,11 @@ ARG TAG
 FROM canopsis/canopsis-core:${SYSBASE}-${TAG}
 
 COPY sources/canopsis/test/ ${CPS_HOME}/test
+COPY sources/functional_testing ${CPS_HOME}/functional_testing
 
 USER 0
+
 RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/test
+RUN chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/functional_testing
 
 USER ${CPS_USER}:${CPS_GROUP}

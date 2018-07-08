@@ -1,5 +1,6 @@
 stages:
-  - test
+  - unit_tests
+  - functional_tests
 
 before_script:
   - uname -a
@@ -9,29 +10,44 @@ before_script:
 variables:
   WHEEL_DIR: "/tmp/canopsis-wheelrep"
   COMPOSE_HTTP_TIMEOUT: "180"
-  COMPOSE_PROJECT_NAME: "test${CI_JOB_ID}"
+  COMPOSE_PROJECT_NAME_UT: "test${CI_JOB_ID}"
+  COMPOSE_PROJECT_NAME_FT: "test${CI_JOB_ID}"
   SYSBASE: "debian-9"
 
-stage_test:
-  stage: test
+stage_unit_tests:
+  stage: unit_tests
   tags: ["canopsis"]
   script:
     - git submodule update --init
     - ./build-docker.sh ci develop
     - ./build-docker.sh ci develop test-ci
     - echo CANOPSIS_TAG=${SYSBASE}-ci-test >> .env
-    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} up -d
-    - ./docker/wait-provisionning.sh docker-compose.ci.yml ${COMPOSE_PROJECT_NAME}
-    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} restart
-    - docker exec -t ${COMPOSE_PROJECT_NAME}_webserver_1 /bin/bash -c "source ~/.bashrc && /opt/canopsis/bin/ut_runner /opt/canopsis/test"
-    - docker cp ${COMPOSE_PROJECT_NAME}_webserver_1:/opt/canopsis/tmp/tests_report/ tests_report
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_UT} up -d
+    - ./docker/wait-provisionning.sh docker-compose.ci.yml ${COMPOSE_PROJECT_NAME_UT}
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_UT} restart
+    - docker exec -t ${COMPOSE_PROJECT_NAME_UT}_webserver_1 /bin/bash -c "source ~/.bashrc && /opt/canopsis/bin/ut_runner /opt/canopsis/test"
+    - docker cp ${COMPOSE_PROJECT_NAME_UT}_webserver_1:/opt/canopsis/tmp/tests_report/ tests_report
 
   artifacts:
     paths:
       - tests_report
 
+stage_functional_tests:
+  stage: unit_tests
+  tags: ["canopsis"]
+  script:
+    - git submodule update --init
+    - ./build-docker.sh ci develop
+    - ./build-docker.sh ci develop test-ci
+    - echo CANOPSIS_TAG=${SYSBASE}-ci-test >> .env
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_FT} up -d
+    - ./docker/wait-provisionning.sh docker-compose.ci.yml ${COMPOSE_PROJECT_NAME_FT}
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_FT} restart
+    - docker exec -t ${COMPOSE_PROJECT_NAME_FT}_webserver_1 /bin/bash -c "source ~/.bashrc && python /opt/canopsis/functional_testing/runner.py"
+
 after_script:
-  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
-  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
-  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
+  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_UT} kill
+  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_UT} down
+  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_FT} kill
+  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_FT} down
   - docker volume prune -f
