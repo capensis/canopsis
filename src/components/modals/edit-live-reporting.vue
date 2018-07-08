@@ -11,24 +11,26 @@
       v-layout(wrap)
         v-radio-group(v-model="selectedInterval")
           v-radio(
-            v-for="interval in dateIntervals",
-            :label="interval.text",
-            :value="interval",
-            :key="interval.value"
+          v-for="interval in dateIntervals",
+          :label="interval.text",
+          :value="interval",
+          :key="interval.value"
           )
       v-layout(wrap, v-if="isCustomRangeEnabled")
         v-flex(xs12)
-          date-time-picker(v-model="tstart", clearable, label="tstart", name="tstart", v-validate="'required'")
+          date-time-picker(v-model="tstart", clearable, label="From date", name="tstart", :rules="'required'")
         v-flex(xs12)
           date-time-picker(
-            v-model="tstop",
-            clearable, label="tstop",
-            name="tstop",
-            v-validate="'required|after:tstart'")
+          v-model="tstop",
+          clearable,
+          label="To date",
+          name="tstop",
+          :rules="tstopRules")
       v-btn(@click="submit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
 </template>
 
 <script>
+import moment from 'moment';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
@@ -85,6 +87,13 @@ export default {
   computed: {
     isCustomRangeEnabled() {
       return this.selectedInterval.value === 'custom';
+    },
+    tstopRules() {
+      return {
+        required: true,
+        after: [moment(this.tstart).format('DD/MM/YYYY HH:mm')],
+        date_format: 'DD/MM/YYYY HH:mm',
+      };
     },
   },
   methods: {

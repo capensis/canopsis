@@ -70,7 +70,7 @@ export default {
     value: Date,
     label: String,
     name: String,
-    rules: String,
+    rules: [String, Object],
     format: {
       type: String,
       default: 'DD/MM/YYYY HH:mm',
