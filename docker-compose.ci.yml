@@ -149,18 +149,6 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  selector:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=selector
-      - ENGINE_MODULE=canopsis.engines.selector
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   scheduler:
     image: canopsis/canopsis-core:${CANOPSIS_TAG}
     env_file:
@@ -220,11 +208,10 @@ services:
     depends_on:
       - "mongodb"
     volumes:
-        - importctxdata:/opt/canopsis/tmp
-        - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
+      - importctxdata:/opt/canopsis/tmp
+      - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
     links:
       - mongodb
       - rabbitmq
       - influxdb
     restart: unless-stopped
-    #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
