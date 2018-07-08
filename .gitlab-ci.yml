@@ -43,7 +43,7 @@ stage_functional_tests:
     - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_FT} up -d
     - ./docker/wait-provisionning.sh docker-compose.ci.yml ${COMPOSE_PROJECT_NAME_FT}
     - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_FT} restart
-    - docker exec -t ${COMPOSE_PROJECT_NAME_FT}_webserver_1 /bin/bash -c "source ~/.bashrc && python /opt/canopsis/functional_testing/runner.py"
+    - docker exec -t ${COMPOSE_PROJECT_NAME_FT}_webserver_1 /bin/bash -c "source ~/.bashrc && cd /opt/canopsis/functional_testing && python /opt/canopsis/functional_testing/runner.py"
 
 after_script:
   - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME_UT} kill
