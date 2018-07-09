@@ -40,37 +40,8 @@ export default {
     },
   },
   actions: {
-    fetch({ dispatch }, { params } = {}) {
-      return dispatch('entities/fetch', {
-        route: API_ROUTES.watcher,
-        schema: [watcherSchema],
-        params,
-        dataPreparer: d => d.data,
-        isPost: true,
-      }, { root: true });
-    },
-
-    async fetchList({ commit, dispatch }, { params } = {}) {
-      try {
-        commit(types.FETCH_LIST, { params });
-
-        const { normalizedData, data } = await dispatch('fetch', { params });
-
-        commit(types.FETCH_LIST_COMPLETED, {
-          allIds: normalizedData.result,
-          meta: {
-            total: data.total,
-          },
-        });
-      } catch (err) {
-        console.error(err);
-        commit(types.FETCH_LIST_FAILED);
-      }
-    },
-
     async create({ dispatch }, params = {}) {
       try {
-        console.log(params);
         await request.post(API_ROUTES.watcher, params);
       } catch (err) {
         console.warn(err);
