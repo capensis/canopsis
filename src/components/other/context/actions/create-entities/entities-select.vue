@@ -4,8 +4,7 @@
       v-expansion-panel-content.grey.darken-2.white--text
         div.white--text(slot="header") {{ label }}
         v-card
-          v-card-text
-            v-layout
+            v-layout(wrap)
               v-chip(v-for="entity in entities",
                      :key="entity._id",
                      close,
