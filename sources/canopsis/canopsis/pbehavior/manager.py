@@ -853,19 +853,21 @@ class PBehaviorManager(object):
                     timegm(interval_end.timetuple())
                 )
 
-    def get_active_intervals_by_entity(self, after, before, entity_id):
+    def get_intervals_with_pbehaviors(self, after, before, entity_id):
         """
-        Return all the time intervals between after and before during which a
-        pbehavior was active for an entity.
+        Yields intervals between after and before with a boolean indicating if
+        a pbehavior affects the entity during this interval.
 
-        The intervals are returned as a list of tuples (start, end), ordered
-        chronologically. start and end are UTC timestamps, and are always
-        between after and before. None of the intervals overlap.
+        The intervals are returned as a list of tuples (start, end, pbehavior),
+        ordered chronologically. start and end are UTC timestamps, and are
+        always between after and before, pbehavior is a boolean indicating if a
+        pbehavior affects the entity during this interval. None of the
+        intervals overlap.
 
         :param int after: a UTC timestamp
         :param int before: a UTC timestamp
         :param str entity_id: the id of the entity
-        :rtype: List[Tuple[int, int]]
+        :rtype: Iterator[Tuple[int, int, bool]]
         """
         intervals = []
 
@@ -876,31 +878,54 @@ class PBehaviorManager(object):
                 intervals.append(interval)
 
         if not intervals:
-            return []
+            yield (after, before, False)
+            return
 
         # Order them chronologically (by start date)
         intervals.sort(key=lambda a: a[0])
 
-        # Merge overlapping intervals
-        merged_intervals = []
-        current_interval_start, current_interval_end = intervals[0]
-        for interval in intervals[1:]:
-            print(interval, current_interval_start, current_interval_end)
-            if interval[1] < current_interval_end:
+
+        # Yield the first interval without any active pbehavior
+        merged_interval_start, merged_interval_end = intervals[0]
+        yield (
+            after,
+            merged_interval_start,
+            False
+        )
+
+        # At this point intervals is a list of intervals where a pbehavior is
+        # active, ordered by start date. Some of those intervals may be
+        # overlapping. This merges the overlapping intervals.
+        for interval_start, interval_end in intervals[1:]:
+            if interval_end < merged_interval_end:
+                # The interval is included in the merged interval, skip it.
                 continue
 
-            if interval[0] > current_interval_end:
-                merged_intervals.append((
-                    current_interval_start,
-                    current_interval_end
-                ))
-                current_interval_start, current_interval_end = interval
-            else:
-                current_interval_end = interval[1]
+            if interval_start > merged_interval_end:
+                # Since the interval starts after the end of the merged
+                # interval, they cannot be merged. Yield the merged interval,
+                # and move to the new one.
+                yield (
+                    merged_interval_start,
+                    merged_interval_end,
+                    True
+                )
+                yield (
+                    merged_interval_end,
+                    interval_start,
+                    False
+                )
+                merged_interval_start = interval_start
 
-        merged_intervals.append((
-            current_interval_start,
-            current_interval_end
-        ))
+            merged_interval_end = interval_end
 
-        return merged_intervals
+        yield (
+            merged_interval_start,
+            merged_interval_end,
+            True
+        )
+        yield (
+            merged_interval_end,
+            before,
+            False
+        )
