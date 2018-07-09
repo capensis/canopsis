@@ -15,10 +15,13 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import canopsisLogo from "@/assets/canopsis.png";
+import canopsisLogo from '@/assets/canopsis.png';
 
 const { mapActions } = createNamespacedHelpers('app');
 
+/**
+ * Component for the top bar of the application
+ */
 export default {
   data() {
     return {

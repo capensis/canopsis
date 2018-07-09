@@ -36,13 +36,17 @@
       entities-select.my-1(label="Dependencies", :entities.sync=entities)
     v-card-actions.mt-2
       v-btn(@click.prevent="submit", color="green darken-4 white--text") {{ $t('common.submit') }}
-      v-btn(@click.prevent="manageInfos", color="green darken-4 white--text") {{ $t('modals.createEntity.fields.manageInfos') }}
+      v-btn(@click.prevent="manageInfos",
+            color="green darken-4 white--text") {{ $t('modals.createEntity.fields.manageInfos') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
 
+/**
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {

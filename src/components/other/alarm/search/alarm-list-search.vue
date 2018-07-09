@@ -21,6 +21,11 @@
 <script>
 import searchMixin from '@/mixins/search';
 
+/**
+ * Search component for the alarms list
+ *
+ * @module alarm
+ */
 export default {
   mixins: [searchMixin],
   data() {

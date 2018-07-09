@@ -53,6 +53,21 @@
 </template>
 
 <script>
+/**
+ * Component representing a rule in MongoDB filter
+ *
+ * @prop {Number} [index] - Index of the group
+ * @prop {Array} [operators] - List of all possible operators. Ex : 'equal', 'not equal', 'contains', ...
+ * @prop {Array} [possibleFields] - List of all possible fields to filter on
+ * @prop {String} [field] - Selected field
+ * @prop {String} [operator] - Selected operator
+ * @prop {String} [input] - Input value
+ *
+ * @event field#update
+ * @event operator#update
+ * @event input#update
+ * @event deleteRule#click
+ */
 export default {
   props: {
     index: {

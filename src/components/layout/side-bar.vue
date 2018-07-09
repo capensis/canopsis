@@ -62,6 +62,9 @@ import { SIDE_BAR_WIDTH } from '@/config';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('app');
 
+/**
+ * Component for the side-bar, on the left of the application
+ */
 export default {
   components: {
     VueContentLoading,

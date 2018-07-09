@@ -19,39 +19,40 @@
           v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="$emit('openSettings')")
           v-icon settings
-    loader(v-if="pending")
-    v-data-table(
-      v-else,
-      v-model="selected",
-      :items="items",
-      :headers="alarmProperties",
-      item-key="_id",
-      :total-items="meta.total",
-      :pagination.sync="pagination",
-      select-all,
-      hide-actions,
-    )
-      template(slot="headerCell", slot-scope="props")
-          span(
-          ) {{ props.header.text }}
-      template(slot="items", slot-scope="props")
-        td
-          v-checkbox(primary, hide-details, v-model="props.selected")
-        td(
-          v-for="prop in alarmProperties",
-          @click="props.expanded = !props.expanded"
-        )
-          alarm-column-value(:alarm="props.item", :property="prop")
-        td
-          actions-panel(:item="props.item")
-      template(slot="expand", slot-scope="props")
-        time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
-    v-layout.white(align-center)
-      v-flex(xs10)
-        pagination(:meta="meta", :limit="limit")
-      v-spacer
-      v-flex(xs2)
-        records-per-page
+    transition(name="fade", mode="out-in")
+      loader.loader(v-if="pending")
+      div(v-else)
+          v-data-table(
+            v-model="selected",
+            :items="items",
+            :headers="alarmProperties",
+            item-key="_id",
+            :total-items="meta.total",
+            :pagination.sync="pagination",
+            select-all,
+            hide-actions,
+          )
+            template(slot="headerCell", slot-scope="props")
+                span(
+                ) {{ props.header.text }}
+            template(slot="items", slot-scope="props")
+              td
+                v-checkbox(primary, hide-details, v-model="props.selected")
+              td(
+                v-for="prop in alarmProperties",
+                @click="props.expanded = !props.expanded"
+              )
+                alarm-column-value(:alarm="props.item", :property="prop")
+              td
+                actions-panel(:item="props.item")
+            template(slot="expand", slot-scope="props")
+              time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+          v-layout.white(align-center)
+            v-flex(xs10)
+              pagination(:meta="meta", :limit="limit")
+            v-spacer
+            v-flex(xs2)
+              records-per-page
 </template>
 
 <script>
@@ -69,16 +70,20 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import modalMixin from '@/mixins/modal/modal';
 import paginationMixin from '@/mixins/pagination';
 import dateIntervals from '@/helpers/date-intervals';
+import alarmsMixin from '@/mixins/alarms';
 
-const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
+const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 
 /**
- * Alarm-list component.
+ * Alarm-list component
  *
- * @module components/alarm-list
- * @param {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
+ * @module alarm
+ *
+ * @prop {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
- * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
+ * @prop {integer} [itemsPerPage=5] - Number of Alarm to display per page
+ *
+ * @event openSettings#click
  */
 export default {
   components: {
@@ -91,7 +96,7 @@ export default {
     AlarmColumnValue,
     FilterSelector,
   },
-  mixins: [paginationMixin, modalMixin],
+  mixins: [alarmsMixin, paginationMixin, modalMixin],
   props: {
     alarmProperties: {
       type: Array,
@@ -128,10 +133,6 @@ export default {
     },
   },
   methods: {
-    ...alarmMapActions({
-      fetchListAction: 'fetchList',
-    }),
-
     removeHistoryFilter() {
       const query = omit(this.$route.query, ['interval']);
       this.$router.push({ query });
@@ -166,5 +167,15 @@ export default {
 
   td {
     overflow-wrap: break-word;
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+  .loader {
+    top: 15%;
+    position: absolute;
   }
 </style>

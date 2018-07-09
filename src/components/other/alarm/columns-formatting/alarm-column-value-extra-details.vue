@@ -51,6 +51,13 @@
 </template>
 
 <script>
+/**
+ * Component for the 'extra-details' column of the alarms list
+ *
+ * @module alarm
+ *
+ * @prop {Object} [alarm] - Object representing the alarm
+ */
 export default {
   props: {
     alarm: {

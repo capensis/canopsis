@@ -1,6 +1,9 @@
 import Pagination from '@/components/tables/pagination.vue';
 import { PAGINATION_LIMIT } from '@/config';
 
+/**
+ * @mixin Add pagination logic, and dynamic route
+ */
 export default {
   components: {
     Pagination,

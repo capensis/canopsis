@@ -9,40 +9,41 @@
       v-flex(xs2)
         v-btn(icon, @click.prevent="$emit('openSettings')")
           v-icon settings
-    loader(v-if="pending")
-    v-data-table(
-      v-else,
-      v-model="selected",
-      :items="contextEntities",
-      :headers="contextProperties",
-      item-key="_id",
-      :total-items="meta.total",
-      :pagination.sync="pagination",
-      select-all,
-      hide-actions,
-    )
-      template(slot="headerCell", slot-scope="props")
-          span(
-          ) {{ props.header.text }}
-      template(slot="items", slot-scope="props")
-        td
-          v-checkbox(primary, hide-details, v-model="props.selected")
-        td(
-          v-for="prop in contextProperties",
-          @click="props.expanded = !props.expanded"
+    transition(name="fade", mode="out-in")
+      loader(v-if="pending")
+      div(v-else)
+        v-data-table(
+          v-model="selected",
+          :items="contextEntities",
+          :headers="contextProperties",
+          item-key="_id",
+          :total-items="meta.total",
+          :pagination.sync="pagination",
+          select-all,
+          hide-actions,
         )
-          ellipsis(:text="$options.filters.get(props.item,prop.value) || ''",
-                   :maxLetters="prop.maxLetters || MAX_LETTERS")
-        td
-          v-btn(@click.stop="deleteEntity(props.item)", icon, small)
-            v-icon delete
-      template(slot="expand", slot-scope="props")
-    v-layout.white(align-center)
-      v-flex(xs10)
-        pagination(:meta="meta", :limit="limit")
-      v-flex(xs2)
-        records-per-page
-    create-entity.fab
+          template(slot="headerCell", slot-scope="props")
+              span(
+              ) {{ props.header.text }}
+          template(slot="items", slot-scope="props")
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+              v-for="prop in contextProperties",
+              @click="props.expanded = !props.expanded"
+            )
+              ellipsis(:text="$options.filters.get(props.item,prop.value) || ''",
+                       :maxLetters="prop.maxLetters || MAX_LETTERS")
+            td
+              v-btn(@click.stop="deleteEntity(props.item)", icon, small)
+                v-icon delete
+          template(slot="expand", slot-scope="props")
+        v-layout.white(align-center)
+          v-flex(xs10)
+            pagination(:meta="meta", :limit="limit")
+          v-flex(xs2)
+            records-per-page
+        create-entity.fab
 </template>
 
 <script>
@@ -65,7 +66,15 @@ import CreateEntity from './actions/context-fab.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('context');
 
-
+/**
+ * Entities list
+ *
+ * @module context
+ *
+ * @prop {Array} [contextProperties] - List of entities properties
+ *
+ * @event openSettings#click
+ */
 export default {
   components: {
     ContextSearch,
@@ -160,4 +169,11 @@ export default {
     bottom: 0;
     right: 0;
   }
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
 </style>
+
