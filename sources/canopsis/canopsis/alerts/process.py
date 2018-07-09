@@ -77,6 +77,7 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
         watcher_manager=Watcher(),
         bagot_time=alertsmgr.flapping_interval,
         cancel_autosolve_delay=alertsmgr.cancel_autosolve_delay,
+        done_autosolve_delay=alertsmgr.done_autosolve_delay,
         stealthy_interval=alertsmgr.stealthy_interval,
         logger=alertsmgr.logger
     )

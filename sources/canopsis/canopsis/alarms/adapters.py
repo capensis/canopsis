@@ -30,6 +30,7 @@ from .models import AlarmIdentity, AlarmStep, Alarm
 
 from canopsis.common.collection import MongoCollection
 
+
 class AlarmAdapter(object):
 
     """
@@ -178,6 +179,10 @@ def make_alarm_from_mongo(alarm_dict):
     if ald.get('canceled') is not None:
         cancel = make_alarm_step_from_mongo(ald['canceled'])
 
+    done = None
+    if ald.get('done') is not None:
+        done = make_alarm_step_from_mongo(ald['done'])
+
     snooze = None
     if ald.get('snooze') is not None:
         snooze = make_alarm_step_from_mongo(ald['snooze'])
@@ -204,6 +209,7 @@ def make_alarm_from_mongo(alarm_dict):
         tags=ald.get('tags'),
         ticket=ticket,
         alarm_filter=ald.get('alarm_filter'),
+        done=done,
         extra=ald.get('extra')
     )
 
