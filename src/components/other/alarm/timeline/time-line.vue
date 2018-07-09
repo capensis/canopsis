@@ -122,7 +122,7 @@ export default {
       return stepTitle.startsWith('status');
     },
     getFormattedDate(timestamp) {
-      return moment(timestamp).format('DD/MM/YYYY');
+      return moment.unix(timestamp).format('DD/MM/YYYY');
     },
   },
 };
