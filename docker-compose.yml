@@ -39,16 +39,23 @@ services:
     oom_score_adj: -1000
     command: '--wiredTigerCacheSizeGB 2560'
   influxdb:
-    image: canopsis/canopsis-influxdb-server:${INFLUX_TAG}
+    image: influxdb:1.5-alpine
     ports:
       - "8086:8086"
       - "4444:4444/udp"
-    volumes:
-      - influxdbdata:/var/lib/influxdb
+      - "8083:8083"
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 1g
     oom_score_adj: -1000
+    environment:
+      - INFLUXDB_DB=canopsis
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+      - INFLUXDB_USER=cpsinflux
+      - INFLUXDB_USER_PASSWORD=canopsis
+    volumes:
+      - influxdbdata:/var/lib/influxdb
   redis:
     image: redis:4.0
     restart: unless-stopped
