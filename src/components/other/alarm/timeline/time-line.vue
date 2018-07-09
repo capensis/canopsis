@@ -133,7 +133,7 @@ export default {
 
 <style lang="scss" scoped>
   $border_line: #DDDDE0;
-  $background: #FAFAFA;
+  $background: white;
   ul {
     list-style: none;
     color: #858585;
