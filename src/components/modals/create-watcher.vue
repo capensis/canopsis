@@ -4,10 +4,12 @@
       span.headline Create watcher
     v-form
       v-layout(wrap)
-        v-flex(xs12)
+        v-flex(xs10)
           v-text-field(label="Display name", v-model="form.name")
         v-flex(xs12)
-          div Filter
+          h3.text-xs-center Filter editor
+          v-divider
+          filter-editor
         v-btn(@click="submit") Submit
 </template>
 
