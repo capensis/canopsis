@@ -11,6 +11,9 @@
 <script>
 import ModalInnerMixin from '@/mixins/modal/modal-inner';
 
+/**
+ * Confirmation modal
+ */
 export default {
   name: 'confirmation',
   mixins: [ModalInnerMixin],

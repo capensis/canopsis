@@ -47,6 +47,9 @@ const storeSample = {
   ],
 };
 
+/**
+* Component to regroup the alarms list settings fields
+*/
 export default {
   components: {
     FieldTitle,

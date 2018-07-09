@@ -41,6 +41,13 @@ import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
+/**
+ * Component to regroup actions (actions-panel-item) for each alarm on the alarms list
+ *
+ * @module alarm
+ *
+ * @prop {Object} [item] - Object representing an alarm
+ */
 export default {
   components: { ActionsPanelItem },
   mixins: [actionsPanelMixin],

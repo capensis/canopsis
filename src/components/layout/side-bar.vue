@@ -51,6 +51,9 @@ import VueContentLoading from 'vue-content-loading';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('app');
 
+/**
+ * Component for the side-bar, on the left of the application
+ */
 export default {
   components: {
     VueContentLoading,

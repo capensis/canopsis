@@ -9,6 +9,13 @@
 </template>
 
 <script>
+
+/**
+* Wrapper component for a row on basic-list
+*
+* @prop {Object} [item] - Item (alarm, entity) to display on the row
+* @prop {Boolean} [expanded] - Boolean to determine if the row is expanded
+*/
 export default {
   props: {
     item: {

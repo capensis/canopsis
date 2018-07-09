@@ -56,6 +56,9 @@ import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
+/**
+ * Modal to create a pbehavior
+ */
 export default {
   name: MODALS.createPbehavior,
 
