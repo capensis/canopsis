@@ -19,7 +19,7 @@
 <script>
 import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 import union from 'lodash/union';
-import remove from 'lodash/remove';
+import filter from 'lodash/filter';
 
 
 export default {
@@ -45,9 +45,7 @@ export default {
       this.$emit('update:selectedIds', this.entities);
     },
     removeEntity(entity) {
-      const entities = [...this.entities];
-      remove(entities, item => item._id === entity._id);
-      this.entities = entities;
+      this.entities = filter(this.entities, item => item._id !== entity._id);
     },
   },
 };
