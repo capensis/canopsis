@@ -23,8 +23,7 @@
           hide-actions,
         )
           template(slot="headerCell", slot-scope="props")
-              span(
-              ) {{ props.header.text }}
+              span {{ props.header.text }}
           template(slot="items", slot-scope="props")
             td
               v-checkbox(primary, hide-details, v-model="props.selected")

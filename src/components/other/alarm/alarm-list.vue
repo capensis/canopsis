@@ -33,8 +33,7 @@
             hide-actions,
           )
             template(slot="headerCell", slot-scope="props")
-                span(
-                ) {{ props.header.text }}
+                span {{ props.header.text }}
             template(slot="items", slot-scope="props")
               td
                 v-checkbox(primary, hide-details, v-model="props.selected")
@@ -122,12 +121,15 @@ export default {
   watch: {
     pagination: {
       handler(e) {
+        let query = { ...this.$route.query };
+        if (e.sortBy) {
+          query.sort_key = e.sortBy;
+          query.sort_dir = e.descending ? 'DESC' : 'ASC';
+        } else {
+          query = omit(this.$route.query, ['sort_key', 'sort_dir']);
+        }
         this.$router.push({
-          query: {
-            ...this.$route.query,
-            sort_key: e.sortBy || '',
-            sort_dir: e.descending ? 'DESC' : 'ASC',
-          },
+          query,
         });
       },
     },
