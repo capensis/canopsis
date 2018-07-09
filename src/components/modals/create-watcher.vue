@@ -4,13 +4,16 @@
       span.headline Create watcher
     v-form
       v-layout(wrap, justify-center)
-        v-flex(xs10)
+        v-flex(xs11)
           v-text-field(label="Display name", v-model="form.display_name")
-        v-flex(xs12)
+      v-layout(wrap, justify-center)
+        v-flex(xs11)
           h3.text-xs-center Filter editor
           v-divider
           filter-editor
-        v-btn(@click="submit") Submit
+      v-layout
+        v-flex(xs3)
+          v-btn.green.darken-4.white--text(@click="submit") Submit
 </template>
 
 <script>
