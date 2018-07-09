@@ -24,6 +24,8 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
 
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAttribute: '_id' });
 
+export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: '_id' });
+
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
 });
@@ -41,6 +43,7 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
+  [ENTITIES_TYPES.watcher]: watcherSchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,

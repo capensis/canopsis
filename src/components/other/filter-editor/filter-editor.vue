@@ -117,6 +117,7 @@ export default {
     ...alarmsMapActions({ fetchListAction: 'fetchList' }),
 
     handleResultTabClick() {
+      console.log(JSON.stringify(this.request));
       this.newRequest = '';
       this.fetchListAction({
         params: {
