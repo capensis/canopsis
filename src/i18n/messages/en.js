@@ -126,12 +126,16 @@ export default {
     },
   },
   modals: {
+    contextInfos: {
+      title: 'Entities infos',
+    },
     createEntity: {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
       fields: {
         type: 'Types',
         manageInfos: 'Manage Infos',
+        form: 'Form',
         types: {
           connector: 'connector',
           component: 'component',

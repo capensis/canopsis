@@ -126,12 +126,16 @@ export default {
     },
   },
   modals: {
+    contextInfos: {
+      title: 'Infos sur l\'entité',
+    },
     createEntity: {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
       fields: {
         type: 'Types',
         manageInfos: 'Gérer Infos',
+        form: 'Formulaire',
         types: {
           connector: 'connecteur',
           component: 'composant',
