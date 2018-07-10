@@ -17,6 +17,8 @@
 /**
  * General table component for alarm entity
  *
+ * @module alarm
+ *
  * @prop {Object} item - alarm item
  */
 export default {

@@ -42,6 +42,13 @@ import { ENTITIES_STATES_STYLES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
+/**
+ * Component for the timeline of an alarm, on the alarmslist
+ *
+ * @module alarm
+ *
+ * @prop {alarmProp} [alarmProps] - Properties of an alarm
+ */
 export default {
   components: { AlarmChips, AlarmFlag },
   filters: {

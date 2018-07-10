@@ -49,6 +49,9 @@ import paginationMixin from '@/mixins/pagination';
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
 const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNamespacedHelpers('alarm');
 
+/**
+ * Component to create new MongoDB filter
+ */
 export default {
   name: 'mfilter-editor',
 
@@ -90,7 +93,6 @@ export default {
       isRequestChanged: false,
     };
   },
-
   computed: {
     ...mFilterGetters(['request', 'filter', 'possibleFields', 'parseError']),
     ...alarmsMapGetters(['items', 'meta']),

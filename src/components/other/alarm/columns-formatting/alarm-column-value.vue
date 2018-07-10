@@ -15,6 +15,14 @@ const PROPERTIES_COMPONENTS_MAP = {
   extra_details: 'extra-details',
 };
 
+/**
+ * Component to format alarms list columns
+ *
+ * @module alarm
+ *
+ * @prop {Object} [alarm] - Object representing the alarm
+ * @prop {Object} [property] - Property concerned on the column
+ */
 export default {
   components: {
     State,

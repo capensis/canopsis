@@ -20,6 +20,11 @@ v-speed-dial(
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
+/**
+ * Buttons to open the modal to add entities
+ *
+ * @module context
+ */
 export default {
   mixins: [modalMixin],
   data() {
@@ -32,7 +37,6 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
-          ...this.modalConfig,
           title: 'modals.createEntity.title',
         },
       });
