@@ -11,7 +11,6 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
     td {{ props.item.type }}
     td {{ props.item.reason }}
     td {{ props.item.rrule }}
-// div.red.darken-2.white--text.py-3.text-xs-center(v-else) No pbehaviors
 </template>
 
 <script>

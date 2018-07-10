@@ -55,7 +55,7 @@ export default {
     dependencies: 'Dépendances',
     moreInfos: {
       type: 'Type',
-      lastActiveDate: 'Dernière Date Active',
+      lastActiveDate: 'Dernière Date d\'Activité',
     },
   },
   search: {
