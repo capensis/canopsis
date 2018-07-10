@@ -1,5 +1,5 @@
-<template>
-  <v-btn @click="showForm">Add info</v-btn>
+<template lang="pug">
+  v-btn(@click="showForm") Add info
 </template>
 
 <script>

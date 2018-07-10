@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    info-object-form(@submit="handleSubmit", :infoObject="config.infoObject", :forbiddenNames="forbiddenNames")
+    info-object-form(@submit="submit", :infoObject="config.infoObject", :forbiddenNames="forbiddenNames")
 </template>
 
 <script>
@@ -23,7 +23,7 @@ export default {
     },
   },
   methods: {
-    async handleSubmit(infoObjectData) {
+    async submit(infoObjectData) {
       const updatedEntity = cloneDeep(this.config.entity.props);
       updatedEntity.infos[infoObjectData.name] = infoObjectData;
 

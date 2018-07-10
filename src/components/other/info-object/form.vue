@@ -1,20 +1,19 @@
-<template>
-  <v-container>
-    <v-layout>
-      <v-flex>
-        <v-form>
-          <v-text-field v-model="formData.name" name="name" v-validate="'required|unique-name'" label="Name" required>
-          </v-text-field>
-          <span class="red--text">{{ errors.first('name') }}</span>
-          <v-text-field v-model="formData.description" label="Description"></v-text-field>
-          <v-text-field v-model="formData.value" label="Value"></v-text-field>
-          <v-btn @click="submit">
-            Submit
-          </v-btn>
-        </v-form>
-      </v-flex>
-    </v-layout>
-  </v-container>
+<template lang="pug">
+  v-container
+    v-layout
+      v-flex
+        v-form
+          v-text-field(
+          v-model="formData.name",
+          name="name",
+          v-validate="'required|unique-name'",
+          label="Name",
+          required
+          )
+          span.red--text {{ errors.first('name') }}
+          v-text-field(v-model="formData.description", label="Description")
+          v-text-field(v-model="formData.value", label="Value")
+          v-btn(@click="submit") Submit
 </template>
 
 <script>

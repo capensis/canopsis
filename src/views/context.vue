@@ -11,7 +11,6 @@
 <script>
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
-import contextEntityMixin from '@/mixins/context/list';
 import settingsMixin from '@/mixins/settings';
 
 export default {
@@ -19,7 +18,7 @@ export default {
     EntitiesList,
     ContextSettingsFields,
   },
-  mixins: [contextEntityMixin, settingsMixin],
+  mixins: [settingsMixin],
   data() {
     return {
       settingsFields: [
@@ -57,9 +56,6 @@ export default {
         ],
       },
     };
-  },
-  mounted() {
-    this.fetchList();
   },
 };
 </script>

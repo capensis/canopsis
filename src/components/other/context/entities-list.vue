@@ -75,6 +75,9 @@ export default {
       selected: [],
     };
   },
+  mounted() {
+    this.fetchList();
+  },
   methods: {
     ...mapActions({
       fetchListAction: 'fetchList',
