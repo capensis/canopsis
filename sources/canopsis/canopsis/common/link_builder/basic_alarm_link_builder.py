@@ -31,8 +31,7 @@ from canopsis.logger import Logger
 
 ALERTS_COLLECTION = 'periodical_alarm'
 LOG_PATH = 'var/log/engines/context-graph.log'
-PARAM_REG = re.compile('\{([a-zA-Z0-9_\.\*]+)\}')
-SEPARATOR = '*'
+PARAM_REG = re.compile('\{([a-zA-Z0-9_\.]+)\}')
 
 
 class BasicAlarmLinkBuilder(HypertextLinkBuilder):
@@ -50,27 +49,43 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
         mongo = MongoStore(config=conf_store)
         self.alerts_collection = mongo.get_collection(name=ALERTS_COLLECTION)
 
+    def custom_format(self, phrase, entity, alarm):
+        """
+        Translate a custom format string, with entity and alarm informations.
+        Alarm informations must be prefixed with "alarm."
+
+        Ex: http://{infos.url.value}/{alarm.v.resource}
+
+        :param str phrase: a template string
+        :param dict entity: the entity
+        :param dict alarm: the alarm
+        :returns: a string with replaced parameters
+        :rtype: str
+        """
+        hay = {}
+        for m in re.finditer(PARAM_REG, phrase):
+            needles = m.group(0).strip('{').strip('}').split('.')
+            needle = '_'.join(needles)  # used as a parameter name in format !
+            value = ''
+            if needles[0] == 'alarm':
+                needle = '_'.join(needles[1:])
+                value = get_sub_key(alarm, '.'.join(needles[1:]))
+            else:
+                value = get_sub_key(entity, '.'.join(needles))
+
+            phrase = phrase[:m.start()] + '{' + needle + '}' + phrase[m.end():]
+            hay[needle] = value
+
+        return phrase.format(**hay)
+
     def build(self, entity, options={}):
         opt = merge_two_dicts(self.options, options)
         alarm = self.alerts_collection.find_one({'d': entity['_id']})
 
         if 'base_url' in opt:
-            url = opt['base_url']
-            hay = {}
-            for m in re.finditer(PARAM_REG, opt['base_url']):
-                needles = m.group(0).strip('{').strip('}').split('.')
-                needle = SEPARATOR.join(needles)
-                value = ''
-                if needles[0] == 'alarm':
-                    needle = SEPARATOR.join(needles[1:])
-                    value = get_sub_key(alarm, '.'.join(needles[1:]))
-                else:
-                    value = get_sub_key(entity, '.'.join(needles))
+            link = [self.custom_format(opt['base_url'], entity, alarm)]
 
-                url = url[:m.start()] + '{' + needle + '}' + url[m.end():]
-                hay[needle] = value
-
-            self.logger.debug(url.format(**hay))
-            return {self.category: [url.format(**hay)]}
+            self.logger.debug(link)
+            return {self.category: [link]}
 
         return {}
