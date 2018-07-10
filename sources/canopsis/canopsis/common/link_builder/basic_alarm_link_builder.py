@@ -83,7 +83,7 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
         alarm = self.alerts_collection.find_one({'d': entity['_id']})
 
         if 'base_url' in opt:
-            link = [self.custom_format(opt['base_url'], entity, alarm)]
+            link = self.custom_format(opt['base_url'], entity, alarm)
 
             self.logger.debug(link)
             return {self.category: [link]}
