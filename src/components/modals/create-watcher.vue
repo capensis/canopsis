@@ -26,6 +26,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
+import modalMixin from '@/mixins/modal/modal';
 
 const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
 const { mapGetters: filterEditorMapGetters } = createNamespacedHelpers('mFilterEditor');
@@ -37,6 +38,7 @@ export default {
   components: {
     FilterEditor,
   },
+  mixins: [modalMixin],
   data() {
     return {
       form: {
@@ -49,7 +51,7 @@ export default {
     ...filterEditorMapGetters(['request']),
   },
   mounted() {
-    if (this.config.item) {
+    if (this.config && this.config.item) {
       this.form = { ...this.config.item.props };
     }
   },
@@ -66,6 +68,7 @@ export default {
           mfilter: JSON.stringify(this.request),
         };
         this.create(formData);
+        this.hideModal();
       }
     },
   },
