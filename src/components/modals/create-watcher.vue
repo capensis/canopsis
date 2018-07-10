@@ -5,7 +5,13 @@
     v-form
       v-layout(wrap, justify-center)
         v-flex(xs11)
-          v-text-field(label="Display name", v-model="form.display_name")
+          v-text-field(
+            label="Display name",
+            v-model="form.display_name",
+            data-vv-name="name",
+            v-validate="'required'",
+            :error-messages="errors.collect('name')",
+          )
       v-layout(wrap, justify-center)
         v-flex(xs11)
           h3.text-xs-center Filter editor
@@ -25,6 +31,9 @@ const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
 const { mapGetters: filterEditorMapGetters } = createNamespacedHelpers('mFilterEditor');
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     FilterEditor,
   },
@@ -39,16 +48,25 @@ export default {
   computed: {
     ...filterEditorMapGetters(['request']),
   },
+  mounted() {
+    if (this.config.item) {
+      this.form = { ...this.config.item.props };
+    }
+  },
   methods: {
     ...watcherMapActions(['create']),
-    submit() {
-      const formData = {
-        ...this.form,
-        _id: this.form.display_name,
-        type: 'watcher',
-        mfilter: JSON.stringify(this.request),
-      };
-      this.create(formData);
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        const formData = {
+          ...this.form,
+          _id: this.form.display_name,
+          type: 'watcher',
+          mfilter: JSON.stringify(this.request),
+        };
+        this.create(formData);
+      }
     },
   },
 };
