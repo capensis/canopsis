@@ -72,6 +72,16 @@
 <script>
 import FilterRule from './filter-rule.vue';
 
+/**
+ * Component representing a group in MongoDB filter
+ *
+ * @prop {Boolean} [initialGroup] - Boolean to determine if it's the root filter's group
+ * @prop {Number} [index] - Index of the group
+ * @prop {String} [condition] - Base condition of the group : "$and" or "$or"
+ *
+ * @event condition#update
+ * @event deleteGroup#click
+ */
 export default {
   name: 'filter-group',
   components: {

@@ -17,9 +17,19 @@
 </template>
 
 <script>
+
+/**
+* Pagination component
+*
+* @prop {String} [type] - 'Top' or 'Bottom, to determine
+* if it's a top pagination (with less infos), or a bottom pagination
+* @prop {Object} [meta] - Object containing meta informations (Ex : total number of items)
+* @prop {Number} [limit] - Number of items per pages
+*/
 export default {
   props: {
     type: {
+      type: String,
       validator: value => ['top', 'bottom'].indexOf(value) !== -1,
       default: 'bottom',
     },

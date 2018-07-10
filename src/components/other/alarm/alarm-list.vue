@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
 
 import BasicList from '@/components/tables/basic-list.vue';
@@ -56,16 +55,18 @@ import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import modalMixin from '@/mixins/modal/modal';
 import paginationMixin from '@/mixins/pagination';
-
-const { mapActions: alarmMapActions, mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
+import alarmsMixin from '@/mixins/alarms';
 
 /**
- * Alarm-list component.
+ * Alarm-list component
  *
- * @module components/alarm-list
- * @param {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
+ * @module alarm
+ *
+ * @prop {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
- * @param {integer} [itemsPerPage=5] - Number of Alarm to display per page
+ * @prop {integer} [itemsPerPage=5] - Number of Alarm to display per page
+ *
+ * @event openSettings#click
  */
 export default {
   components: {
@@ -80,7 +81,7 @@ export default {
     AlarmColumnValue,
     FilterSelector,
   },
-  mixins: [paginationMixin, modalMixin],
+  mixins: [alarmsMixin, paginationMixin, modalMixin],
   props: {
     alarmProperties: {
       type: Array,
@@ -92,18 +93,7 @@ export default {
       selected: [],
     };
   },
-  computed: {
-    ...alarmMapGetters([
-      'items',
-      'meta',
-      'pending',
-    ]),
-  },
   methods: {
-    ...alarmMapActions({
-      fetchListAction: 'fetchList',
-    }),
-
     removeHistoryFilter() {
       const query = omit(this.$route.query, ['interval']);
       this.$router.push({ query });

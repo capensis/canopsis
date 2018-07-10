@@ -15,6 +15,14 @@
 </template>
 
 <script>
+
+/**
+* Component to select the default column to sort on settings
+*
+* @prop {Object} [value] - Object containing the default sort column's name and the sort direction
+*
+* @event value#input
+*/
 export default {
   props: {
     value: {
