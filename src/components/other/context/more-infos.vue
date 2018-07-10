@@ -13,7 +13,7 @@
               v-chip.red.white--text.title {{ $t(`common.disabled`) }}
           v-flex(xs4, md2)
             h4.text-xs-center {{ $t(`context.moreInfos.lastActiveDate`) }} :
-            p.text-xs-center {{ this.$d(new Date( item.props.enable_history[0] * 1000), 'short') }}
+            p.text-xs-center {{ this.$d(new Date(this.lastActiveDate), 'short') }}
           v-flex(xs6, md2)
             v-menu(:value="isImpactExpanded", bottom, offset-y, fixed)
               v-btn(@click.stop="isImpactExpanded = !isImpactExpanded", slot="activator") {{ $t(`context.impacts`) }}
@@ -36,7 +36,7 @@
         h3.text-xs-center Infos
         v-container(fluid, grid-list-sm)
           v-layout(row, wrap)
-            v-flex(v-for="(value, key) in lol.lol" xs4)
+            v-flex(v-for="(value, key) in item.props.infos", :key="key", xs4)
               h4.text-xs-center {{ key }}
               p.text-xs-center {{ $t(`common.description`) }} : {{ value.description }}
               p.text-xs-center {{ $t(`common.value`) }} : {{ value.value }}
@@ -62,45 +62,19 @@ export default {
     return {
       isImpactExpanded: false,
       isDependsExpanded: false,
-      lol: {
-        lol:
-    {
-      service_period: {
-        description: "Plage de service de l'application",
-        value: '',
-      },
-      manual_maintenance_comment: {
-        description: "Commentaire ajouté lors d'une mise en maintenance manuelle",
-        value: '',
-      },
-      display_on_weather: {
-        description: "Afficher ou non l'application sur une météo",
-        value: 'False',
-      },
-      application_crit_code: {
-        description: 'Criticité - Code',
-        value: '3',
-      },
-      weather_type: {
-        description: 'Type de météo de service',
-        value: 'MDSA',
-      },
-      application_label: {
-        description: 'Libellé application',
-        value: 'Gestion budgétaire du département pilotage GA SI',
-      },
-      manual_maintenance: {
-        description: "Indique si l'app est actuellement en maintenance manuelle",
-        value: 'False',
-      },
-    },
-      },
     };
   },
   computed: {
     infos() {
       return this.item.props.infos || '';
     },
+    lastActiveDate() {
+      const enableHistory = [...this.item.props.enable_history];
+      enableHistory.sort(((a, b) => a - b));
+      return enableHistory[0];
+    },
+  },
+  methods: {
   },
 };
 </script>
