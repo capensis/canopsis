@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import quote_ident
+from canopsis.common.influx import SECONDS, quote_ident
 
 
 class SelectColumn(object):
@@ -148,4 +148,26 @@ class SelectQuery(object):
         for condition in conditions:
             if condition:
                 self.where_conditions.append(condition)
+        return self
+
+    def after(self, timestamp):
+        """
+        Add a condition `time >= timestamp` to the WHERE statement.
+
+        :param Union[int, float] timestamp:
+        """
+        if timestamp is not None:
+            return self.where('time >= {:.0f}'.format(timestamp * SECONDS))
+
+        return self
+
+    def before(self, timestamp):
+        """
+        Add a condition `time < timestamp` to the WHERE statement.
+
+        :param Union[int, float] timestamp:
+        """
+        if timestamp is not None:
+            return self.where('time < {:.0f}'.format(timestamp * SECONDS))
+
         return self
