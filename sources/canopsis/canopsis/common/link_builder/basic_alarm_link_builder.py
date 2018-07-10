@@ -31,7 +31,8 @@ from canopsis.logger import Logger
 
 ALERTS_COLLECTION = 'periodical_alarm'
 LOG_PATH = 'var/log/engines/context-graph.log'
-PARAM_REG = re.compile('\{([a-zA-Z0-9_\.]+)\}')
+PARAM_REG = re.compile('\{([a-zA-Z0-9_\.\*]+)\}')
+SEPARATOR = '*'
 
 
 class BasicAlarmLinkBuilder(HypertextLinkBuilder):
@@ -58,10 +59,10 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
             hay = {}
             for m in re.finditer(PARAM_REG, opt['base_url']):
                 needles = m.group(0).strip('{').strip('}').split('.')
-                needle = '_'.join(needles)
+                needle = SEPARATOR.join(needles)
                 value = ''
                 if needles[0] == 'alarm':
-                    needle = '_'.join(needles[1:])
+                    needle = SEPARATOR.join(needles[1:])
                     value = get_sub_key(alarm, '.'.join(needles[1:]))
                 else:
                     value = get_sub_key(entity, '.'.join(needles))
