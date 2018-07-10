@@ -10,7 +10,6 @@ export default {
         .startOf('day')
         .unix(),
       tstop: moment()
-        .toDate()
         .unix(),
     });
   },
