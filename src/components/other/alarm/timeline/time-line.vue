@@ -4,7 +4,7 @@
       .timeline-item(v-if="isNewDate(step.t)")
         .date {{ getFormattedDate(step.t) }}
       .timeline-item
-        .time {{ $d(step.t, 'time') }}
+        .time {{ getFormattedTime(step.t) }}
         div(v-if="step._t !== 'statecounter'")
           alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
           .header
@@ -43,12 +43,12 @@ import { ENTITIES_STATES_STYLES } from '@/constants';
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 /**
- * Component for the timeline of an alarm, on the alarmslist
- *
- * @module alarm
- *
- * @prop {alarmProp} [alarmProps] - Properties of an alarm
- */
+   * Component for the timeline of an alarm, on the alarmslist
+   *
+   * @module alarm
+   *
+   * @prop {alarmProp} [alarmProps] - Properties of an alarm
+   */
 export default {
   components: { AlarmChips, AlarmFlag },
   filters: {
@@ -130,6 +130,9 @@ export default {
     },
     getFormattedDate(timestamp) {
       return moment.unix(timestamp).format('DD/MM/YYYY');
+    },
+    getFormattedTime(timestamp) {
+      return moment.unix(timestamp).format('HH:mm:SS');
     },
   },
 };
