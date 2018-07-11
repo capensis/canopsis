@@ -248,7 +248,7 @@ class Storage(object):
         count = self.count({'_id': _id}, namespace=namespace, account=account, for_write=True)
         if count:
             backend = self.get_backend(namespace)
-            backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
+            backend.update({'_id': self.clean_id(_id)}, {"$set": data})
         else:
             raise KeyError("'%s' not found ..." % _id)
 
@@ -261,7 +261,6 @@ class Storage(object):
         records = []
         return_ids = []
 
-
         if isinstance(_record_or_records, Record):
             records = [_record_or_records]
         elif isinstance(_record_or_records, list):
@@ -270,12 +269,16 @@ class Storage(object):
             self.logger.error("Invalid record type")
 
         for i, rec in enumerate(records):
-            try:
-                if '_id' not in rec:
-                    rec['_id'] = str(uuid1())
-                    records[i] = rec
-            except TypeError:
-                pass
+            if isinstance(rec, Record):
+                rec._id = str(uuid1()) if rec.get('_id') is None else rec._id
+                records[i] = rec
+            else:
+                try:
+                    if rec.get('_id') is None:
+                        rec['_id'] = str(uuid1())
+                        records[i] = rec
+                except TypeError:
+                    pass
 
         backend = self.get_backend(namespace)
 
