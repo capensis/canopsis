@@ -9,7 +9,31 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Go]: New engine interface
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+- [Python]: new metric engine
 
+## Canopsis 2.7.0 - Due date : 2018-06-28
+
+- [API]: new routes to manage frontend views
+- [CAT]: add routes and make some bugfixes for the new engine statsng
+- [CAT]: fix priviledge escalation and introduction of a default right group
+- [Go]: large service/adapter refacto
+- [Go]: fix timeout on mongo requests
+- [Service weather]: fixed an issue where periodical refresh process never refresh anymore
+- [Service weather]: add permission on action
+- [UI]: a new 'done' action is avalaible, which simply mark an alarm as done
+- [UI]: fix /sessionstart route
+- [UI]: fix snmp view that can be broken
+- [Webserver]: authentification trough WebSSO
+
+## Canopsis 2.6.8 - Maintenance release - Due date : 2018-06-20
+
+- [Service weather]: fixed an issue where the popup overlay could stay when the popup was closed, freezing the view
+- [CAT]: ported the email2canopsis connector to python3 and fixed an issue with pattern matching caused by the new python version.
+- [pbehaviors]: refactored the pbheaviors internal API to unify processing and avoid inconsistencies
+
+## Canopsis 2.6.7 - Maintenance release - not released
+
+This release was replaced by the 2.6.8 version to integrate an urgent fix on the pbehaviors.
 
 ## Canopsis 2.6.6 - Maintenance release -  Due date : 2018-06-08
 

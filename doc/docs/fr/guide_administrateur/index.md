@@ -35,6 +35,7 @@ Cette section couvre les informations utiles aux administrateurs de Canopsis
 
  - [SNMP](snmp.md)
  - [Custom SNMP trap handler](custom_snmp_trap.md)
+ - [Configuration des statistiques](statsng.md)
 
 ## Dépannage
 

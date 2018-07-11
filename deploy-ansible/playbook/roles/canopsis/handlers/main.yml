@@ -1,0 +1,6 @@
+---
+# handlers file for deploy-ansible
+- name: Restart Canopsis
+  service:
+    name: canopsis
+    state: restart

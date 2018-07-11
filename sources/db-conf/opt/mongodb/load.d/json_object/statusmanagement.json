@@ -10,6 +10,7 @@
   "flapping_persistant_steps": 10,
   "crecord_type": "statusmanagement",
   "cancel_autosolve_delay": 3600,
+  "done_autosolve_delay": 900,
   "bagot_time": 60,
   "crecord_creation_time": null,
   "crecord_name": "",

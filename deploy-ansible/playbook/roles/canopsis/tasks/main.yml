@@ -1,0 +1,36 @@
+---
+- include_tasks: "{{ ansible_os_family }}.yml"
+  tags:
+    - cps_system
+    - cps_install
+
+- import_tasks: config-mongodb.yml
+  tags:
+    - cps_mongodb
+
+- import_tasks: config-influxdb.yml
+  tags:
+    - cps_influxdb
+
+- import_tasks: config-rabbitmq.yml
+  tags:
+    - cps_rabbitmq
+
+- import_tasks: config-canopsis.yml
+  tags:
+    - cps_config
+
+- import_tasks: init-db.yml
+  become: true
+  become_user: "{{ canopsis_user }}"
+  tags:
+    - cps_initdb
+
+- import_tasks: canopsis.yml
+  tags:
+    - cps_start
+
+- import_tasks: canopsis-dev.yml
+  tags:
+    - cps_dev
+  when: canopsis_dev_src_path

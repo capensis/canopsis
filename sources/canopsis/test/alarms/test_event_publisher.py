@@ -36,7 +36,24 @@ class AlarmEventPublisherTest(TestCase):
         self.amqp_pub = Mock()
         self.event_publisher = AlarmEventPublisher(self.amqp_pub)
 
+    def test_no_events(self):
+        self.event_publisher.send_events = False
+
+        timestamp = 3
+        alarm = {
+            AlarmField.creation_date.value: 1,
+            AlarmField.last_update_date.value: timestamp
+        }
+        self.event_publisher.publish_statcounterinc_event(
+            1, 'counter_name', {}, alarm)
+        self.event_publisher.publish_statduration_event(
+            timestamp, 'duration_name', {}, alarm)
+
+        self.assertEqual(self.amqp_pub.canopsis_event.call_count, 0)
+
     def test_publish_statcounterinc_event(self):
+        self.event_publisher.send_events = True
+
         alarm = {
             AlarmField.creation_date.value: 1
         }
@@ -51,6 +68,8 @@ class AlarmEventPublisherTest(TestCase):
         self.assertEqual(event['timestamp'], 1)
 
     def test_publish_statduration_event(self):
+        self.event_publisher.send_events = True
+
         timestamp = 3
         alarm = {
             AlarmField.creation_date.value: 1,

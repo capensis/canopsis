@@ -47,6 +47,11 @@ services:
     mem_limit: 1g
     mem_reservation: 1g
     oom_score_adj: -1000
+  redis:
+    image: redis:4.0
+    restart: unless-stopped
+    ports:
+      - 6379:6379
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_TAG}
     env_file:
@@ -222,6 +227,18 @@ services:
       - ENGINE_MODULE=canopsis.engines.task_importctx
     volumes:
       - importctxdata:/opt/canopsis/tmp
+    restart: unless-stopped
+    mem_limit: 200m
+    mem_reservation: 200m
+  metric:
+    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    env_file:
+      - compose.env
+    depends_on:
+      - "influxdb"
+    environment:
+      - ENGINE_NAME=metric
+      - ENGINE_MODULE=canopsis.engines.metric
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m

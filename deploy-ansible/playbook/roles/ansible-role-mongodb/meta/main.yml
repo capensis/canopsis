@@ -1,0 +1,26 @@
+---
+
+dependencies: []
+
+galaxy_info:
+  author: Sergei Antipov
+  company: Self-employed
+  description: Manage MongoDB with authentication and replica sets
+  license: GPLv2
+  min_ansible_version: 2.4
+  platforms:
+  - name: Ubuntu
+    versions:
+    - trusty
+    - xenial
+  - name: Debian
+    versions:
+    - jessie
+    - stretch
+  - name: EL
+    versions:
+      - 6
+      - 7
+  galaxy_tags:
+  - database
+  - database:nosql

@@ -38,6 +38,9 @@ services:
     mem_limit: 1g
     mem_reservation: 1g
     oom_score_adj: -1000
+  redis:
+    image: redis:4.0
+    restart: unless-stopped
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_TAG}
     env_file:

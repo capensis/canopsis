@@ -30,14 +30,18 @@ COPY sources/canopsis/requirements.txt /sources/canopsis/requirements.txt
 COPY docker/build/pip-deps.sh /
 RUN /bin/bash /pip-deps.sh
 
+#### Ansible
+COPY docker/build/pip-ansible.sh /
+RUN /bin/bash /pip-ansible.sh
+
 #### Canopsis only
 COPY sources/canopsis /sources/canopsis
 COPY docker/build/pip-canopsis.sh /
 RUN /bin/bash /pip-canopsis.sh
+RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 
 ### Webserver
 COPY sources/webcore /sources/webcore
-COPY tools/brickmanager /sources/brickmanager
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 
 
@@ -62,7 +66,6 @@ COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
-COPY tools/brickmanager /${CPS_HOME}/bin/brickmanager
 
 RUN chmod +x /opt/canopsis/.bash_profile
 
@@ -84,6 +87,9 @@ RUN . ${CPS_HOME}/bin/activate && \
     python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
     python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
     python /${CPS_HOME}/bin/brickmanager enable brick-timeline
+
+# Ansible
+COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
 
 USER ${CPS_USER}:${CPS_GROUP}
 

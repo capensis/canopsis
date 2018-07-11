@@ -28,7 +28,9 @@ You can try Canopsis on demo platform:
 
 ## How to install ?
 
-Canopsis is available on `Debian 7 & ulterior`, `CentOS 7`, `Ubuntu 12.04 & ulterior 64Bits`. You can install it via <a href="https://canopsis.readthedocs.io/en/readthedocs/canopsis/canopsis/administrator-guide/setup/install.html" target="_blank">our documentation</a>
+For a standalone version of Canopsis on CentOS 7 and Debian 8 (Jessie), you can use the [auto deploy](/STANDALONE-DEPLOY.md).
+
+For a custom install, you can still use packages and follow [this documentation](/doc/docs/fr/guide_administrateur/package_install.md).
 
 ## How to use ?
 
