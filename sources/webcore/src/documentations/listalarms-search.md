@@ -1,8 +1,8 @@
 # Utilisation de la recherche du bac à alarmes
 
 Actullement, il y a deux type de recherches disponible dans le bac à alarmes :
-  1. la recherche naturelle
-  2. la recherche avancée
+  * la recherche naturelle
+  * la recherche avancée
 
 
 ## La recherche naturelle
