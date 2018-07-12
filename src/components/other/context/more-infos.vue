@@ -48,7 +48,6 @@
 import PbehaviorsList from './pbehaviors-list.vue';
 
 export default {
-  name: 'context-more-infos',
   components: {
     PbehaviorsList,
   },

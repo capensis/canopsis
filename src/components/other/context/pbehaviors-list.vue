@@ -19,7 +19,6 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapgetters } = createNamespacedHelpers('pbehavior');
 
 export default {
-  name: 'pbehaviors-list',
   props: {
     itemId: {
       type: String,
