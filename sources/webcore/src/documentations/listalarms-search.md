@@ -46,25 +46,25 @@ La valeur peut prendre plusieurs formes :
   - un booléen (**"TRUE"**, **"FALSE"**)
   - un entier
   - un nombre flottant
-  - ou "NULL"
+  - ou **"NULL"**
 
 #### Les opérateurs de comparaison
 
 Il existe 8 opérateurs de comparaison :
 
-  * "<=" pour sélectionner des alarmes dont la valeur numérique est inférieure
+  * "**<=**" pour sélectionner des alarmes dont la valeur numérique est inférieure
   ou égal à l'opérande de droite ;
-  * "<" pour sélectionner des alarmes dont la valeur numérique est strictement
+  * "**<**" pour sélectionner des alarmes dont la valeur numérique est strictement
   inférieure à l'opérande de droite ;
-  * "=" pour sélectionner des alarmes dont la valeur est égale à l'opérande de
+  * "**=**" pour sélectionner des alarmes dont la valeur est égale à l'opérande de
   droite ;
-  * "!=" pour sélectionner des alarmes dont la valeur est différente de
+  * "**!=**" pour sélectionner des alarmes dont la valeur est différente de
   l'opérande de droite ;
-  * ">=" pour sélectionner des alarmes dont la valeur numérique est supérieure
+  * "**>=**" pour sélectionner des alarmes dont la valeur numérique est supérieure
   ou égal à l'opérande de droite ;
-  * ">" pour sélectionner des alarmes dont la valeur numérique est strictement
+  * "**>**" pour sélectionner des alarmes dont la valeur numérique est strictement
   supérieure à l'opérande de droite ;
-  * "LIKE" pour rechercher des alarmes dont la chaine de caractères correspond
+  * "**LIKE**" pour rechercher des alarmes dont la chaine de caractères correspond
   à l'expression régulière mongoDB.
 
 
