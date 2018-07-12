@@ -95,5 +95,5 @@ Il existe 3 opérateurs booléens :
 
 ### Liste de requêtes utile
 
-  * Recherche d'alarmes à partir de son numéro de ticket :
+  * Recherche d'alarmes à partir d'un numéro de ticket :
   ```- ticket.val = "123456"```
