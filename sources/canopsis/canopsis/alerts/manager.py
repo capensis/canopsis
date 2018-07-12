@@ -32,6 +32,7 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
+from canopsis.alarms.models import AlarmState
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
@@ -753,6 +754,13 @@ class Alerts(object):
                 StatStateIntervals.time_in_state,
                 now - last_state_change,
                 old_state,
+                entity,
+                new_value)
+
+        if state == AlarmState.CRITICAL:
+            self.event_publisher.publish_statcounterinc_event(
+                now,
+                StatCounters.downtimes,
                 entity,
                 new_value)
 
