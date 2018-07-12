@@ -348,6 +348,11 @@
 </script>
 <script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
 <script type="text/x-handlebars" data-template-name="components/component-search"><div class='input-group input-group-sm'>
+    <span class="input-group-btn">
+        <button {{action 'openSearchDoc'}} class="btn btn-default btn-flat">
+            <span class="fa fa-book"></span>
+        </button>
+    </span>
     {{input insert-newline='search' value=value class="form-control inlineInput" placeholder=(tr 'Search') type="text"}}
     <span class="input-group-btn">
         <button {{action 'resetValue'}} class="btn btn-default btn-flat">

@@ -45,8 +45,11 @@ Ember.Application.initializer({
                  */
                 resetValue: function () {
                     this.set('value', '');
-                    this.sendAction('action', '');                   
-                }
+                    this.sendAction('action', '');
+                },
+				openSearchDoc: function (){
+					window.open("/api/v2/documentation/listalarms-search", "_blank")
+				}
             }
 
         });
