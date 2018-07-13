@@ -46,7 +46,6 @@ export default {
     Confirmation,
     CreateEntity,
     CreateWatcher,
-    ContextInfos,
   },
   data() {
     return {
@@ -64,7 +63,6 @@ export default {
         { name: MODALS.confirmation },
         { name: MODALS.createEntity },
         { name: MODALS.createWatcher },
-        { name: MODALS.contextInfos },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
