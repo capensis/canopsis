@@ -26,6 +26,7 @@ import ConfigParser
 import gridfs
 
 from bson import objectid
+from uuid import uuid1
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
@@ -34,7 +35,6 @@ from pymongo import ASCENDING
 from pymongo import DESCENDING
 
 from canopsis.common import root_path
-from canopsis.mongo.core import CanopsisSONManipulator
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 
@@ -198,18 +198,6 @@ class Storage(object):
 
         self.db = self.conn.get_database(self.mongo_db)
 
-        manipulators = self.db.incoming_manipulators
-        manipulators += self.db.outgoing_manipulators
-
-        for manipulator in manipulators:
-            if isinstance(manipulator, CanopsisSONManipulator):
-                break
-
-        else:
-            self.db.add_son_manipulator(
-                CanopsisSONManipulator('_id')
-            )
-
         try:
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")
         except Exception:
@@ -260,7 +248,7 @@ class Storage(object):
         count = self.count({'_id': _id}, namespace=namespace, account=account, for_write=True)
         if count:
             backend = self.get_backend(namespace)
-            backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
+            backend.update({'_id': self.clean_id(_id)}, {"$set": data})
         else:
             raise KeyError("'%s' not found ..." % _id)
 
@@ -273,13 +261,24 @@ class Storage(object):
         records = []
         return_ids = []
 
-
         if isinstance(_record_or_records, Record):
             records = [_record_or_records]
         elif isinstance(_record_or_records, list):
             records = _record_or_records
         else:
             self.logger.error("Invalid record type")
+
+        for i, rec in enumerate(records):
+            if isinstance(rec, Record):
+                rec._id = str(uuid1()) if rec.get('_id') is None else rec._id
+                records[i] = rec
+            else:
+                try:
+                    if rec.get('_id') is None:
+                        rec['_id'] = str(uuid1())
+                        records[i] = rec
+                except TypeError:
+                    pass
 
         backend = self.get_backend(namespace)
 
@@ -341,14 +340,12 @@ class Storage(object):
                     if not _id:
                         _id = backend.insert(
                             data,
-                            safe=self.mongo_safe,
                             w=1
                         )
                     else:
                         backend.update(
                             {'_id': _id},
                             data,
-                            safe=self.mongo_safe,
                             upsert=True
                         )
 
@@ -387,14 +384,12 @@ class Storage(object):
                             {'_id': _id},
                             {"$set": data},
                             upsert=True,
-                            safe=self.mongo_safe
                         )
                     else:
                         ret = backend.update(
                             {'_id': _id},
                             data,
                             upsert=True,
-                            safe=self.mongo_safe
                         )
 
                     if self.mongo_safe:
@@ -458,7 +453,7 @@ class Storage(object):
         backend = self.get_backend(namespace)
 
         if one:
-            raw_records = backend.find_one(mfilter, fields=mfields, safe=self.mongo_safe)
+            raw_records = backend.find_one(mfilter, projection=mfields)
             if raw_records:
                 raw_records = [ raw_records ]
             else:
@@ -477,9 +472,9 @@ class Storage(object):
                     limit += 1
 
             if sort is None:
-                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit)
+                raw_records = backend.find(mfilter, projection=mfields, skip=offset, limit=limit)
             else:
-                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe, skip=offset, limit=limit, sort=sort)
+                raw_records = backend.find(mfilter, projection=mfields, skip=offset, limit=limit, sort=sort)
 
 
 
@@ -582,7 +577,7 @@ class Storage(object):
         records = []
         try:
             if len(_ids) == 1:
-                raw_record = backend.find_one(mfilter, fields=mfields, safe=self.mongo_safe)
+                raw_record = backend.find_one(mfilter, projection=mfields)
 
                 # Remove binary (base64)
                 if ignore_bin and raw_record and raw_record.get('media_bin', None):
@@ -593,7 +588,7 @@ class Storage(object):
                 elif raw_record:
                     records.append(Record(raw_record=raw_record))
             else:
-                raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
+                raw_records = backend.find_many(mfilter, projection=mfields)
 
                 if mfields:
                     records = [raw_record for raw_record in raw_records]
@@ -656,7 +651,7 @@ class Storage(object):
 
             if access:
                 try:
-                    backend.remove({'_id': oid}, safe=self.mongo_safe)
+                    backend.remove({'_id': oid})
                 except Exception as err:
                     self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
 

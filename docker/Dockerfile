@@ -21,7 +21,6 @@ WORKDIR ${CPS_HOME}
 ### Canopsis Core
 
 #### Venv setup
-COPY docker/wheels /sources/wheels
 COPY docker/build/pip-setup.sh /
 RUN /bin/bash /pip-setup.sh
 

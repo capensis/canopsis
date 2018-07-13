@@ -23,5 +23,6 @@ tools/catag/vendor
 *.whl
 # python bytecode
 *.pyc
+.mypy_cache
 
 packages

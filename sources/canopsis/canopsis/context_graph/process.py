@@ -6,11 +6,9 @@ from __future__ import unicode_literals
 
 from canopsis.task.core import register_task
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.perfdata.manager import PerfData
 from canopsis.logger import Logger
 
 LOGGER = Logger.get('context_graph', 'var/log/context_graph.log')
-pertfdata_manager = PerfData(*PerfData.provide_default_basics())
 context_graph_manager = ContextGraph(LOGGER)
 
 cache = set()
@@ -142,11 +140,6 @@ def create_ent_metric(event):
     :return: an event
     :return type: a dict"""
     result = []
-
-    # Parse the perf_data field.
-    if "perf_data" in event and event["perf_data"] is not None:
-        parser = PerfData(event["perf_data"])
-        result += parser.perf_data_array()
 
     for perf in event["perf_data_array"]:
         id_ = "/metric/{0}/{1}/{2}/{3}".format(

@@ -12,7 +12,7 @@ import time
 from canopsis.common.utils import dict_merge
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.common import root_path
 
 # FIXME : move the check of the element in the superficial check method

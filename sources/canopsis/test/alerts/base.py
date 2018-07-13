@@ -35,7 +35,7 @@ from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.utils import merge_two_dicts
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.watcher.manager import Watcher
 
 

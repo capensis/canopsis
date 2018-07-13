@@ -20,7 +20,6 @@
 
 from uuid import uuid4 as uuid
 
-from canopsis.configuration.model import Parameter
 from canopsis.common.utils import ensure_iterable, isiterable, get_first
 from canopsis.storage.core import Storage
 
@@ -322,7 +321,7 @@ class CompositeStorage(Storage):
             category = _category
 
         # add path property to the last category
-        if category is not None:
-            category += Parameter(CompositeStorage.PATH, parser=eval)
+        #if category is not None:
+        #    category += Parameter(CompositeStorage.PATH, parser=eval)
 
         return result

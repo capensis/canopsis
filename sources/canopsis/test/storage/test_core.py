@@ -21,7 +21,6 @@
 
 import unittest
 from canopsis.common import root_path
-from canopsis.configuration.configurable.decorator import conf_paths
 from canopsis.storage.core import Storage
 
 from base import BaseTestConfiguration, BaseStorageTest
@@ -30,7 +29,6 @@ from tempfile import NamedTemporaryFile
 import xmlrunner
 
 
-@conf_paths('storage/test-core.conf')
 class TestConfiguration(BaseTestConfiguration):
     """Default test configuration."""
 

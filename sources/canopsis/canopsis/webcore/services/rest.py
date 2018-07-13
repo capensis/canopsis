@@ -301,11 +301,16 @@ def exports(ws):
         adapt=False
     )
     def rest(namespace, ctype=None, _id=None, **params):
-        records, nrecords = get_records(
+        results = get_records(
             ws, namespace,
             ctype=ctype, _id=_id,
             **params
         )
+
+        if type(results) != tuple:
+            raise results
+
+        records, nrecords = results
 
         for record in records:
             if record['crecord_type'] == 'event':

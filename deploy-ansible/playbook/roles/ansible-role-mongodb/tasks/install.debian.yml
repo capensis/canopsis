@@ -11,10 +11,10 @@
     mongodb_is_systemd: "{{ sbin_init.stat.islnk is defined and sbin_init.stat.islnk }}"
     mongodb_major_version: "{{ mongodb_version[0:3] }}"
 
-- name: Overwrite mongodb_version especially for Debian 9
-  set_fact:
-    mongodb_major_version: "3.2"
-  when: ansible_distribution_release == "stretch"
+#- name: Overwrite mongodb_version especially for Debian 9
+#  set_fact:
+#    mongodb_major_version: "3.2"
+#  when: ansible_distribution_release == "stretch"
 
 - name: Add APT key
   apt_key:

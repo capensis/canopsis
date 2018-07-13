@@ -27,15 +27,17 @@ from canopsis.alarms.adapters import (
 )
 from canopsis.alarms.models import AlarmStep, AlarmIdentity
 from canopsis.common import root_path
+from canopsis.common.mongo_store import MongoStore
 import xmlrunner
 
+mongo_store = MongoStore.get_default()
 
 class AlarmAdapterTest(unittest.TestCase):
 
     @classmethod
     def setUp(self):
 
-        self.adapter = AlarmAdapter(mongo_client={})
+        self.adapter = AlarmAdapter(mongo_store)
 
     def test_make_alarm_from_mongo(self):
         now = time.time()
