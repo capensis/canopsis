@@ -78,12 +78,16 @@ canopsis_engines:
   -
     module: dynamic
     name: perfdata
+    state: stopped
+    enabled: no
   -
     module: scheduler
     name: scheduler
   -
     module: selector
     name: selector
+    state: stopped
+    enabled: no
   -
     module: task_dataclean
     name: task_dataclean
