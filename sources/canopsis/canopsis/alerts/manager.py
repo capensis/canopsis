@@ -567,11 +567,32 @@ class Alerts(object):
                     entity = entity[0]
                 except IndexError:
                     entity = {}
+                alarm_value = alarm[self.alerts_storage.VALUE]
+                creation_date = alarm_value[AlarmField.creation_date.value]
+
+                # Increment alarms_created counter
                 self.event_publisher.publish_statcounterinc_event(
-                    alarm[self.alerts_storage.VALUE][AlarmField.creation_date.value],
+                    creation_date,
                     StatCounters.alarms_created,
                     entity,
-                    alarm[self.alerts_storage.VALUE])
+                    alarm_value)
+
+                # Increment alarms_impacting counter for each impacted entity
+                # (as well as the entity that created the alarm)
+                self.event_publisher.publish_statcounterinc_event(
+                    creation_date,
+                    StatCounters.alarms_impacting,
+                    entity,
+                    alarm_value)
+
+                impacted_entities = self.context_manager.get_entities_by_id(
+                    entity.get(Entity.IMPACTS))
+                for impacted_entity in impacted_entities:
+                    self.event_publisher.publish_statcounterinc_event(
+                        creation_date,
+                        StatCounters.alarms_impacting,
+                        impacted_entity,
+                        alarm_value)
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
