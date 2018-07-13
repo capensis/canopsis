@@ -107,6 +107,7 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
+          title: this.$t('modals.createEntity.editTitle'),
           item,
         },
       });

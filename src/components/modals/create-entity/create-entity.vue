@@ -1,42 +1,17 @@
 <template lang="pug">
   v-card
     v-card-title.blue.darken-4.white--text.text-xs-center
-      h2 {{ $t(config.title) }}
-    v-card-text
-      v-container
-        v-layout(row)
-          v-text-field(
-            :label="$t('common.name')",
-            :error-messages="errors.collect('name')",
-            v-model="form.name",
-            v-validate="'required'",
-            data-vv-name="name",
-          )
-        v-layout.mt-2(row)
-          v-text-field(
-            :label="$t('common.description')",
-            :error-messages="errors.collect('description')",
-            v-model="form.description",
-            v-validate="'required'",
-            data-vv-name="description",
-            multi-line,
-          )
-        v-layout.mt-2(row, align-center)
-          v-switch(:label="$t('common.enabled')", v-model="form.enabled")
-          v-select.pa-0(
-            :items="types",
-            v-model="form.type",
-            label="Type",
-            single-line,
-          )
-    entities-select(label="Impacts", :entities.sync="form.impact")
-    entities-select(label="Dependencies", :entities.sync="form.depends")
+      h2 {{ config.title }}
+    create-form(
+      :name.sync="form.name",
+      :description.sync="form.description",
+      :enabled.sync="form.enabled",
+      :type.sync="form.type",
+      :impact.sync="form.impact",
+      :depends.sync="form.depends",
+    )
     v-card-actions
       v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
-      v-btn(
-        @click.prevent="manageInfos",
-        color="blue darken-4 white--text"
-      ) {{ $t('modals.createEntity.fields.manageInfos') }}
 </template>
 
 <script>
@@ -44,7 +19,10 @@ import { createNamespacedHelpers } from 'vuex';
 
 import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
 import ModalInnerMixin from '@/mixins/modal/modal-inner';
+
 import { MODALS } from '@/constants';
+
+import CreateForm from './create-entity-form.vue';
 
 const { mapActions: entitiesMapActions } = createNamespacedHelpers('context');
 
@@ -56,7 +34,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EntitiesSelect },
+  components: { EntitiesSelect, CreateForm },
   mixins: [ModalInnerMixin],
   data() {
     return {
@@ -83,7 +61,6 @@ export default {
         enabled: true,
         depends: [],
         impact: [],
-        infos: [],
       },
     };
   },

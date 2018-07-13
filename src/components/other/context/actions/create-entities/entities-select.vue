@@ -3,7 +3,7 @@
     .addContainer
         .label {{ label }}:&ensp;
         .entities.scrollbar
-          span(v-for="entity in entities") {{ entity }},&emsp;
+          span(v-for="entity in entities") {{ entity }}
         v-btn(icon @click="showList=!showList")
           v-icon {{ listIcon }}
         v-btn(icon @click="clear")
@@ -34,11 +34,16 @@ export default {
       type: String,
       required: true,
     },
+    entities: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
     return {
       showList: false,
-      entities: [],
     };
   },
   computed: {
@@ -49,12 +54,12 @@ export default {
   methods: {
     updateEntities(entities) {
       const entitiesIds = entities.map(entity => entity._id);
-      this.entities = union(entitiesIds, this.entities);
-      this.$emit('update:entities', this.entities);
+      const selectedEntities = union(entitiesIds, ...this.entities);
+      this.$emit('updateEntities', selectedEntities);
     },
     clear() {
       this.entities = [];
-      this.$emit('update:selectedIds', this.entities);
+      this.$emit('updateEntities', this.entities);
     },
   },
 };

@@ -4,8 +4,8 @@ v-card-text
     v-layout(row)
       v-text-field(
         :label="$t('common.name')",
-        v-model="form.name",
-        @input="$emit('update:name', form.name)",
+        :value="name",
+        @input="(name) => $emit('update:name', name)",
         :error-messages="errors.collect('name')"
         v-validate="'required'",
         data-vv-name="name"
@@ -13,30 +13,31 @@ v-card-text
     v-layout(row)
       v-text-field(
         :label="$t('common.description')",
-        v-model="form.description",
-        @input="$emit('update:description', form.description)",
-        v-validate="'required'",
+        :value="description",
+        @input="(description) => $emit('update:description', description)",
         data-vv-name="description",
         :error-messages="errors.collect('description')"
         multi-line
       )
     v-layout(row)
-      v-switch(:label="$t('common.enabled')", v-model="form.enabled", @change="$emit('update:enabled', form.enabled)")
+      v-switch(:label="$t('common.enabled')", :input-value="enabled", @change="(enabled) => $emit('update:enabled', enabled)")
       v-select(
         :items="types",
-        v-model="form.type",
+        :value="entityType",
+        item-text="text",
+        item-value="value",
         data-vv-name="type",
         v-validate="'required'",
         :error-messages="errors.collect('type')"
-        @input="$emit('update:type', form.type)",
+        @input="(type) => $emit('update:type', type)",
         label="Type"
         single-line
       )
     v-layout(wrap)
       v-flex(xs12)
-        entities-select(label="Impacts", :entities.sync=entities)
+        entities-select(label="Impacts", :entities="impact", @updateEntities="updateImpact")
       v-flex(xs12)
-        entities-select(label="Dependencies", :entities.sync=entities)
+        entities-select(label="Dependencies", :entities="depends", @updateEntities="updateDepends")
 </template>
 
 <script>
@@ -50,20 +51,75 @@ export default {
   components: {
     EntitiesSelect,
   },
+  props: {
+    name: {
+      type: String,
+      default: '',
+    },
+    description: {
+      type: String,
+      default: '',
+    },
+    type: {
+      type: String,
+      default: '',
+    },
+    impact: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    depends: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    enabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       showValidationErrors: true,
       types: [
-        this.$t('modals.createEntity.fields.types.connector'),
-        this.$t('modals.createEntity.fields.types.component'),
-        this.$t('modals.createEntity.fields.types.resource')],
-      form: {
-        name: '',
-        description: '',
-        type: '',
-        enabled: true,
-      },
+        {
+          text: this.$t('modals.createEntity.fields.types.connector'),
+          value: 'connector',
+        },
+        {
+          text: this.$t('modals.createEntity.fields.types.component'),
+          value: 'component',
+        },
+        {
+          text: this.$t('modals.createEntity.fields.types.resource'),
+          value: 'resource',
+        },
+      ],
     };
+  },
+  computed: {
+    entityType() {
+      let entityType;
+      this.types.map((index, item) => {
+        if (this.type === item.value) {
+          console.log(item);
+          return entityType = this.types[index];
+        }
+        return null;
+      });
+      return entityType;
+    },
+  },
+  methods: {
+    updateImpact(entities) {
+      this.$emit('update:impact', entities);
+    },
+    updateDepends(entities) {
+      this.$emit('update:depends', entities);
+    },
   },
 };
 </script>
