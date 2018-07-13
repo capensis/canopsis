@@ -26,7 +26,7 @@ import os
 
 from canopsis.common import root_path
 
-DOC_DIR = os.path.join(root_path, "var/www/documentations")
+DOC_DIR = os.path.join(root_path, "var/www/src/documentations")
 
 PAGE_TEMPLATE = "<html><title>Documentation</title><body>{0}</body></html>"
 IO_ERROR = "<p>Can not render the page : documentation not found</p>"
