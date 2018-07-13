@@ -8,12 +8,6 @@ source /etc/os-release
 repver="${ID}-${VERSION_ID}"
 
 source ${CPS_HOME}/venv-ansible/bin/activate
-find_links="file:///sources/wheels/${repver}"
-
-# jmespath is for ansible role repository adder
-# pymongo for mongo database and user setup
-# influxdb for influx database and user setup
-
 source /etc/os-release
 
 pyopenssl="pyOpenSSL"

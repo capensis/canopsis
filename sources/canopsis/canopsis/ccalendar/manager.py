@@ -18,9 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
 from canopsis.vevent.manager import VEventManager
 
 #: calendar manager configuration path

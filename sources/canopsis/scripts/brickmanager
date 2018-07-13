@@ -12,7 +12,8 @@ def log_fatal(msg):
     sys.exit(1)
 
 def check_env():
-    cpshome = os.getenv('CPS_HOME')
+    cpshome_default = os.getenv('HOME', '/opt/canopsis')
+    cpshome = os.getenv('CPS_HOME', cpshome_default)
 
     if cpshome == '':
         log_fatal('CPS_HOME is empty')
@@ -41,7 +42,7 @@ def main():
 
         with open(ebricks, 'r') as fh:
             doc = json.load(fh)
-        
+
         doc.append(args.brick)
         doc = list(set(doc))
 
@@ -53,7 +54,7 @@ def main():
 
         with open(ebricks, 'r') as fh:
             doc = set(json.load(fh))
-        
+
         try:
             doc.remove(args.brick)
             with open(ebricks, 'w') as fh:

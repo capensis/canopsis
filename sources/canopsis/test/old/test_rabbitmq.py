@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 import os
 import unittest
 from kombu import pools, Connection
-from amqp.exceptions import FrameSyntaxError
 from contextlib import contextmanager
 
 from canopsis.common import root_path
@@ -67,15 +66,16 @@ class TestKombuAmqpPublisher(TestAmqp):
         rk = 'Johann.Gambolputty.de.von.Ausfern-schplenden-schiltter-crasscrenbon-fried-digger-dingle-dangle-dongle-dungle-burstein-von-knacker-thrasher-apple-banger-horowitz-ticolensic-grander-knotty-spelltinkle-grandlich-grumblemeyer-spelterwasser-kurstlich-himbleeisen-bahnwagen-gutenabend-bitte-ein-nürnburger-bratwustle-gerspurten-mitz-weimache-luber-hundsfut-gumeraber-shönendanker-kalbsfleisch-mittler-aucher.von.Hautkopft.of.Ulm'
 
         # Isolated test
+        import struct
         with self.producers[self.conn].acquire(block=True) as producer:
-            with self.assertRaises(FrameSyntaxError):
+            with self.assertRaises(struct.error):
                 producer.publish(
                     msg,
                     serializer="json",
                     routing_key=rk,
                     exchange=self.exchange_name
                 )
-            with self.assertNotRaises(FrameSyntaxError):
+            with self.assertNotRaises(struct.error):
                 try:
                     producer.publish(
                         msg,
@@ -83,7 +83,7 @@ class TestKombuAmqpPublisher(TestAmqp):
                         routing_key=rk,
                         exchange=self.exchange_name
                     )
-                except FrameSyntaxError:
+                except struct.error:
                     print('RK is too long !')
 
         # Inplace test (should not publish)

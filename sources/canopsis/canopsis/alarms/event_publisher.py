@@ -28,9 +28,6 @@ import os.path
 
 from canopsis.alerts.enums import AlarmField
 from canopsis.common import root_path
-from canopsis.common.amqp import AmqpPublisher
-from canopsis.common.amqp import get_default_connection as \
-    get_default_amqp_conn
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.confng.simpleconf import ConfigurationUnreachable

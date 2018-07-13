@@ -51,16 +51,20 @@ from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.statsng.enums import StatCounters
 from canopsis.watcher.manager import Watcher
 
+# register tasks manually
+import canopsis.alerts.tasks as __alerts_tasks
+
 # Extra fields from the event that should be stored in the alarm
 DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
 
-# if set to True, the last_event_date will be updated on each event that triggers the alarm
+# if set to True, the last_event_date will be updated on each event that
+# triggers the alarm
 DEFAULT_RECORD_LAST_EVENT_DATE = False
 DEFAULT_FILTER_AUTHOR = 'system'
 
@@ -72,6 +76,7 @@ DEFAULT_STEALTHY_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
 DEFAULT_RESTORE_EVENT = False
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
+DEFAULT_DONE_AUTOSOLVE_DELAY = 900
 
 
 class Alerts(object):
@@ -182,13 +187,19 @@ class Alerts(object):
                                     DEFAULT_CANCEL_AUTOSOLVE_DELAY)
 
     @property
+    def done_autosolve_delay(self):
+        """
+        Automatically close done alarms after a delay.
+        """
+        return self.config_data.get('done_autosolve_delay',
+                                    DEFAULT_DONE_AUTOSOLVE_DELAY)
+
+    @property
     def flapping_freq(self):
         """
         Number of alarm oscillation during flapping interval
         to consider an alarm as flapping.
-
         """
-
         #  The minimum accepted frequency is 3 changes, otherwise all alarms will bagot
         freq = self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
         if freq < 3:

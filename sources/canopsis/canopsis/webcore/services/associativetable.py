@@ -23,7 +23,7 @@ from __future__ import unicode_literals
 from bottle import request
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 

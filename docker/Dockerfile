@@ -21,7 +21,6 @@ WORKDIR ${CPS_HOME}
 ### Canopsis Core
 
 #### Venv setup
-COPY docker/wheels /sources/wheels
 COPY docker/build/pip-setup.sh /
 RUN /bin/bash /pip-setup.sh
 
@@ -42,7 +41,6 @@ RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 
 ### Webserver
 COPY sources/webcore /sources/webcore
-COPY tools/brickmanager /sources/brickmanager
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 
 
@@ -67,7 +65,6 @@ COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
-COPY tools/brickmanager /${CPS_HOME}/bin/brickmanager
 
 RUN chmod +x /opt/canopsis/.bash_profile
 
