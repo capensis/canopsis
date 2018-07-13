@@ -60,7 +60,7 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
                 needles = m.group(0).strip('{').strip('}').split('.')
                 needle = '_'.join(needles)
                 value = ''
-                if needles[0] == 'alarm':
+                if needles[0] == 'alarm' and alarm is not None:
                     needle = '_'.join(needles[1:])
                     value = get_sub_key(alarm, '.'.join(needles[1:]))
                 else:

@@ -128,7 +128,6 @@ def exports(ws):
         payload=['json']
     )
     def put_graph(json='{}'):
-
         uuid = get_uuid()
         # FIXME: A race condition may occur here
         import_col_man.create_import_status(uuid)
