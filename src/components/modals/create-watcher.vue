@@ -1,12 +1,12 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline Create watcher
+      span.headline {{ $t('modals.createWatcher.title') }}
     v-form
       v-layout(wrap, justify-center)
         v-flex(xs11)
           v-text-field(
-            label="Display name",
+            :label="$t('modals.createWatcher.displayName')",
             v-model="form.display_name",
             data-vv-name="name",
             v-validate="'required'",
@@ -14,12 +14,12 @@
           )
       v-layout(wrap, justify-center)
         v-flex(xs11)
-          h3.text-xs-center Filter editor
+          h3.text-xs-center {{ $t('mFilterEditor.title') }}
           v-divider
           filter-editor
       v-layout
         v-flex(xs3)
-          v-btn.green.darken-4.white--text(@click="submit") Submit
+          v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
