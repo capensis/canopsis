@@ -630,6 +630,10 @@ Ember.Application.initializer({
                 var sortColumn = this.get('model.default_sort_column.property');
                 var order = this.get('model.default_sort_column.direction');
 
+				if (columns === undefined){
+					columns = []
+				}
+
                 fields = columns.map(function (column) {
                     var obj = {};
                     if (column.value.startsWith('infos')){
