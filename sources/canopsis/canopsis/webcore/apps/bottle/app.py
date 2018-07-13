@@ -30,6 +30,8 @@ import importlib
 import os
 import sys
 
+import bottle
+
 from signal import SIGTERM, SIGINT
 from bottle import default_app as BottleApplication, HTTPError
 from beaker.middleware import SessionMiddleware
@@ -53,6 +55,8 @@ DEFAULT_ROOT_DIR = '~/var/www/src/'
 DEFAULT_COOKIES_EXPIRE = 300
 DEFAULT_SECRET = 'canopsis'
 DEFAULT_DATA_DIR = '~/var/cache/canopsis/webcore/'
+
+bottle.BaseRequest.MEMFILE_MAX = 1024*1024*1024
 
 
 class EnsureAuthenticated(object):
