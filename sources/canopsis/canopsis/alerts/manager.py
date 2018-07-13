@@ -51,11 +51,14 @@ from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.statsng.enums import StatCounters
 from canopsis.watcher.manager import Watcher
+
+# register tasks manually
+import canopsis.alerts.tasks as __alerts_tasks
 
 # Extra fields from the event that should be stored in the alarm
 DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
