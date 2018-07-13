@@ -20,12 +20,14 @@ v-card-text
         multi-line
       )
     v-layout(row)
-      v-switch(:label="$t('common.enabled')", :input-value="enabled", @change="(enabled) => $emit('update:enabled', enabled)")
+      v-switch(
+        :label="$t('common.enabled')",
+        :input-value="enabled",
+        @change="(enabled) => $emit('update:enabled', enabled)"
+      )
       v-select(
         :items="types",
         :value="entityType",
-        item-text="text",
-        item-value="value",
         data-vv-name="type",
         v-validate="'required'",
         :error-messages="errors.collect('type')"
@@ -41,10 +43,27 @@ v-card-text
 </template>
 
 <script>
-import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
-
 import { MODALS } from '@/constants';
 
+import EntitiesSelect from './entities-select.vue';
+
+/**
+ * Form to create a new entity
+ *
+ * @prop {String} [name] - Name of the entity (null if creating a new entity)
+ * @prop {String} [description] - Description on the entity (null if creating a new entity)
+ * @prop {String} [type] - Type of the entity (null if creating a new entity)
+ * @prop {Array} [impact] - List of the entity's impacts (null if creating a new entity)
+ * @prop {Array} [depends] - List of the entity's depends (null if creating a new entity)
+ * @prop {Boolean} [enabled] - Whether the entity is enabled or not
+ *
+ * @event name#update
+ * @event description#update
+ * @event enabled#update
+ * @event type#update
+ *
+ * @module context
+ */
 export default {
   name: MODALS.createEntity,
   inject: ['$validator'],
@@ -103,9 +122,8 @@ export default {
   computed: {
     entityType() {
       let entityType;
-      this.types.map((index, item) => {
+      this.types.map((item, index) => {
         if (this.type === item.value) {
-          console.log(item);
           return entityType = this.types[index];
         }
         return null;

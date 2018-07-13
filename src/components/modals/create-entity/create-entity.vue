@@ -17,9 +17,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import EntitiesSelect from '@/components/other/context/actions/create-entities/entities-select.vue';
-import ModalInnerMixin from '@/mixins/modal/modal-inner';
-
+import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
 import CreateForm from './create-entity-form.vue';
@@ -34,8 +32,8 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EntitiesSelect, CreateForm },
-  mixins: [ModalInnerMixin],
+  components: { CreateForm },
+  mixins: [modalInnerMixin],
   data() {
     return {
       types: [
