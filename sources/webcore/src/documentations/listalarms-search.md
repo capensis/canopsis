@@ -8,7 +8,7 @@ Actullement, il y a deux type de recherches disponible dans le bac à alarmes :
 ## La recherche naturelle
 
 La recherche naturelle consiste en la recherche d'une chaine de caractères,
-saisi dans le champs de recherche, sur toutes les colonnes affiché dans le
+saisie dans le champs de recherche, sur toutes les colonnes affichées dans le
 bac à alarmes.
 
 ## La recherche avancée
@@ -19,7 +19,7 @@ contrairement à la recherche naturelle.
 
 ### Description da la grammaire
 
-La grammaire est constituée d'une ou plusieurs conditions séparés par des
+La grammaire est constituée d'une ou plusieurs conditions séparées par des
 opérateurs logiques.
 
 Pour faire une recherche avec grammaire, il faut absolument la préfixer par
@@ -27,7 +27,7 @@ Pour faire une recherche avec grammaire, il faut absolument la préfixer par
 
 ### Les conditions
 
-Une condition est constituée de deux opérandes séparés par un opérateur de
+Une condition est constituée de deux opérandes séparées par un opérateur de
 comparaison. Cette condition peut être précédé d'inverseur qui va inverser le
 résultat de la condition.
 
@@ -36,13 +36,13 @@ rechercher la valeur contenue dans l'opérande de droite.
 
 #### Le nom de colonne
 
-Le nom de colonne est une chaine de caractères alphanumériques correspondant
+Le nom de colonne est une chaine de caractères alpha-numériques correspondante
 aux noms des colonnes affichées dans le bac à alarmes.
 
 #### Les types de valeur
 
 La valeur peut prendre plusieurs formes :
-  - une chaine de caractères alphanumérique entre guillemets
+  - une chaine de caractères alpha-numérique entre guillemets
   - un booléen (**"TRUE"**, **"FALSE"**)
   - un entier
   - un nombre flottant
