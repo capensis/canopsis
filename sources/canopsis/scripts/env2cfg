@@ -72,7 +72,7 @@ class Env2Cfg(object):
             influx.add_section('DATABASE')
 
         influx.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        influx.set('DATABASE', 'port', '4444' if pu.port is None else str(pu.port))
+        influx.set('DATABASE', 'port', '8086' if pu.port is None else str(pu.port))
         influx.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
         influx.set('DATABASE', 'user', 'cpsinflux' if pu.username is None else pu.username)
         influx.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)

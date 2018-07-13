@@ -23,27 +23,10 @@ from __future__ import print_function
 
 import unittest
 
-# from canopsis.storage.core import Storage
 from canopsis.common import root_path
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.configuration.configurable.decorator import add_category
-from canopsis.configuration.model import Parameter
-# from canopsis.common.utils import lookup
 import xmlrunner
 
-@conf_paths('storage/test.conf')
-@add_category(
-    'TEST',
-    content=[
-        Parameter('protocols', Parameter.array),
-        Parameter('data_type', Parameter.array),
-        Parameter('data_scopes', Parameter.array),
-        Parameter('storages', Parameter.array),
-        Parameter('params', eval)
-    ]
-)
-class BaseTestConfiguration(Configurable):
+class BaseTestConfiguration(object):
     """Default test configuration."""
 
 

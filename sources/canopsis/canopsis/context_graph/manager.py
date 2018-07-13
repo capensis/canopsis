@@ -12,7 +12,7 @@ from canopsis.common.utils import normalize_utf8
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.watcher.links import build_all_links
 
 
@@ -78,8 +78,8 @@ class InfosFilter:
         try:
             self._schema = self.obj_storage.get_elements(
                 query={"_id": self._schema_id}, projection={"_id": 0})[0]
-        except IndexError:
-            raise ValueError("No infos schema found in database.")
+        except IndexError as exc:
+            raise ValueError("No infos schema found in database: {}".format(exc))
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
@@ -737,8 +737,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_graph_depends(self, _id, deepness=None):
         """Return the depends graph from the entity design by _id.
@@ -766,8 +765,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_leaves_impact(self, _id, deepness=None):
         """Return the entities at the end of the impact graph from the entity

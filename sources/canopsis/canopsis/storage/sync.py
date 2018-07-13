@@ -21,10 +21,10 @@
 """Storage synchronization module."""
 
 from canopsis.configuration.model import Parameter, Configuration
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.registry import Middleware
 
 
-class Synchronizer(MiddlewareRegistry):
+class Synchronizer(Middleware):
     """Synchronize data from a source storage to target storages.
 
     Targets must respect a common storage type with the source storage.

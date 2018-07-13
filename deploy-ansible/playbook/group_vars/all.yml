@@ -1,6 +1,6 @@
 ---
 # DO NOT CHANGE
-mongodb_version: '3.4'
+mongodb_version: '3.6'
 mongodb_pymongo_from_pip: false
 mongodb_security_authorization: enabled
 mongodb_package: 'mongodb-org'
