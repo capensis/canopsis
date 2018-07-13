@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
 
 import BasicList from '@/components/tables/basic-list.vue';

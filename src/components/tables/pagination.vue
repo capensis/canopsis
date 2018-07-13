@@ -72,7 +72,7 @@ export default {
      */
     first() {
       const { page } = this.$route.query;
-      if (page === 1) {
+      if (page === 1 || !this.$route.query.page) {
         return 1;
       }
       if (this.$route.query.limit) {
@@ -91,7 +91,7 @@ export default {
         return this.meta.last;
       }
 
-      if (this.$route.query.page === 1) {
+      if (this.$route.query.page === 1 || !this.$route.query.page) {
         last = this.$route.query.limit || PAGINATION_LIMIT;
       } else if (this.$route.query.limit) {
         last = this.$route.query.page * this.$route.query.limit;
