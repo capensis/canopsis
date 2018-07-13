@@ -676,3 +676,23 @@ def get_sub_key_raise(dico, key):
         coid = coid[k]
 
     return coid
+
+
+def normalize_utf8(element):
+    """
+    Ensure that a string is utf-8 encoded
+
+    :param str element: the string to analyze
+    :returns: an unicode formatted string
+    :rtype: str
+    """
+    if isinstance(element, unicode):
+        return element
+
+    try:
+        return element.encode('utf-8')
+    except UnicodeError:
+        try:
+            return element.decode('utf-8')
+        except UnicodeError:
+            return element

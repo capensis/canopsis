@@ -27,9 +27,9 @@ import base64
 from bottle import request, abort
 from canopsis.auth.check import check
 
+from canopsis.common.middleware import Middleware
 from canopsis.common.utils import singleton_per_scope
 from canopsis.common.ws import route
-from canopsis.middleware.core import Middleware
 from canopsis.session.manager import Session
 from .rights import get_manager as get_rights
 
@@ -160,3 +160,4 @@ def exports(ws):
         username = request.get('username', None)
 
         session_manager.session_start(username)
+        return {}

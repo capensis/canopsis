@@ -24,7 +24,7 @@ from canopsis.common.utils import lookup
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 
 CONF_CATEGORY = 'CHECK'
 CONF_PATH = 'etc/check/check.conf'

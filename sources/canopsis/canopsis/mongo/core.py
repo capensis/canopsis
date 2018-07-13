@@ -18,52 +18,27 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.init import basestring
-from canopsis.configuration.configurable.decorator import conf_paths
-from canopsis.storage.core import Storage, DataBase, Cursor
-from canopsis.common.utils import isiterable
-from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection, CollectionError
-
-from pymongo import MongoClient
-from pymongo.cursor import Cursor as _Cursor
-from pymongo.errors import OperationFailure, DuplicateKeyError, PyMongoError
-from pymongo.errors import TimeoutError as NetworkTimeout
-from pymongo.bulk import BulkOperationBuilder
-from pymongo.read_preferences import ReadPreference
-from pymongo.son_manipulator import SONManipulator
 from uuid import uuid1
 
-
-CONF_RESOURCE = 'mongo/storage.conf'
-
-
-class CanopsisSONManipulator(SONManipulator):
-    """Manage transformations on incoming/outgoing objects."""
-
-    def __init__(self, idfield, *args, **kwargs):
-        super(CanopsisSONManipulator, self).__init__(*args, **kwargs)
-
-        self.idfield = idfield
-
-    def transform_incoming(self, *args, **kwargs):
-        son = super(CanopsisSONManipulator, self).transform_incoming(
-            *args, **kwargs
-        )
-
-        if self.idfield not in son:
-            son[self.idfield] = str(uuid1())
-
-        return son
+from canopsis.common.collection import CollectionError, MongoCollection
+from canopsis.common.init import basestring
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.utils import isiterable
+from canopsis.storage.core import Cursor, DataBase, Storage
+from pymongo import MongoClient
+from pymongo.bulk import BulkOperationBuilder
+from pymongo.cursor import Cursor as _Cursor
+from pymongo.errors import (DuplicateKeyError, NetworkTimeout,
+                            OperationFailure, PyMongoError)
+from pymongo.read_preferences import ReadPreference
 
 
-@conf_paths(CONF_RESOURCE)
 class MongoDataBase(DataBase):
     """Manage access to a mongodb."""
 
     def __init__(
             self, host=MongoClient.HOST, port=MongoClient.PORT,
-            read_preference=ReadPreference.NEAREST,
+            read_preference=ReadPreference.SECONDARY_PREFERRED,
             *args, **kwargs
     ):
 
@@ -75,26 +50,17 @@ class MongoDataBase(DataBase):
 
     @property
     def read_preference(self):
-
         return self._read_preference
 
     @read_preference.setter
     def read_preference(self, value):
-
-        if isinstance(value, basestring):
-            value = getattr(ReadPreference, value, ReadPreference.NEAREST)
-        else:
-            value = int(value)
-
-        self._read_preference = value
+        pass
 
     def _connect(self, *args, **kwargs):
         result = None
-        connection_args = {}
-
         from canopsis.confng import Configuration, Ini
 
-        mongo_cfg = Configuration.load('etc/common/mongo_store.conf', Ini)['DATABASE']
+        mongo_cfg = Configuration.load(MongoStore.CONF_PATH, Ini)[MongoStore.CONF_CAT]
 
         self._user = mongo_cfg['user']
         self._pwd = mongo_cfg['pwd']
@@ -108,14 +74,8 @@ class MongoDataBase(DataBase):
             ReadPreference.SECONDARY_PREFERRED
         )
 
-        try:
-            result = MongoStore.get_default()
-        except PyMongoError as cfe:
-            self.logger.error(
-                'Raised {2} during connection attempting to {0}:{1}.'.
-                format(self._host, self._port, cfe)
-            )
-        else:
+        result = MongoStore.get_default()
+        if True:
             self._database = result.client
 
             if result.authenticated:
@@ -140,10 +100,10 @@ class MongoDataBase(DataBase):
                     self.disconnect()
                     result = None
 
+        self._conn = result
         return result
 
     def _disconnect(self, *args, **kwargs):
-
         if self._conn is not None:
             self._conn.close()
             self._conn = None
@@ -195,6 +155,9 @@ class MongoDataBase(DataBase):
         :raises: NotImplementedError
         .. seealso: DataBase.set_backend(self, backend)
         """
+        if backend is None:
+            raise Exception('none backend')
+
         return MongoCollection(self._conn.get_collection(backend))
 
 
@@ -208,18 +171,6 @@ class MongoStorage(MongoDataBase, Storage):
 
     def _connect(self, *args, **kwargs):
         result = super(MongoStorage, self)._connect(*args, **kwargs)
-
-        manipulators = self._database.incoming_manipulators
-        manipulators += self._database.outgoing_manipulators
-
-        for manipulator in manipulators:
-            if isinstance(manipulator, CanopsisSONManipulator):
-                break
-
-        else:
-            self._database.add_son_manipulator(
-                CanopsisSONManipulator(MongoStorage.ID)
-            )
 
         # initialize cache
         if not hasattr(self, '_cache'):
@@ -243,7 +194,6 @@ class MongoStorage(MongoDataBase, Storage):
             if self.all_indexes() is not None:
 
                 for index in self.all_indexes():
-
                     try:
                         self._backend.ensure_index(index)
 
@@ -253,13 +203,11 @@ class MongoStorage(MongoDataBase, Storage):
         return result
 
     def _disconnect(self, *args, **kwargs):
-
         super(MongoStorage, self)._disconnect(*args, **kwargs)
 
         self.halt_cache_thread()
 
     def _new_cache(self, *args, **kwargs):
-
         backend = self._get_backend(self.get_table())
         result = BulkOperationBuilder(backend, self._cache_ordered)
 
@@ -270,7 +218,6 @@ class MongoStorage(MongoDataBase, Storage):
         return self._cache.execute()
 
     def drop(self, *args, **kwargs):
-
         super(MongoStorage, self).drop(table=self.get_table(), *args, **kwargs)
 
     def get_elements(
@@ -476,16 +423,28 @@ class MongoStorage(MongoDataBase, Storage):
 
         cache_op = self._cache.insert if cache else None
 
+        if isinstance(document, dict):
+            query_kwargs = {'command': 'insert_one', 'document': document}
+            if '_id' not in document:
+                document['_id'] = str(uuid1())
+        else:
+            for i, doc in enumerate(document):
+                if '_id' not in doc:
+                    doc['_id'] = str(uuid1())
+                    document[i] = doc
+
+            query_kwargs = {'command': 'insert_many', 'documents': document}
+
         result = self._process_query(
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={'document': document},
-            query_kwargs={'command': 'insert', 'document': document},
+            query_kwargs=query_kwargs,
             cache=cache,
             **kwargs
         )
 
-        return result
+        return result.inserted_id
 
     def _update(
             self, spec, document, cache=False, multi=True, upsert=True,
@@ -506,21 +465,29 @@ class MongoStorage(MongoDataBase, Storage):
         else:
             cache_op = None
 
+        # catch any mongo command like $set or $addToSet so we do not
+        # override them
+        if len(document.keys()) > 1 or document.keys()[0][0] != '$':
+            document = {'$set': document}
+
         result = self._process_query(
             cache_op=cache_op,
             query_op=self._run_command,
             cache_kwargs={'update': document},
             query_kwargs={
-                'query': spec,
-                'command': 'update',
-                'document': document,
-                'upsert': upsert, 'multi': multi
+                'filter': spec,
+                'command': 'update_many',
+                'update': document,
+                'upsert': upsert,
             },
             cache=cache,
             **kwargs
         )
 
-        return result
+        return {
+            'updatedExisting': True if result is not None else False,
+            'n': result.modified_count if result is not None else 0,
+        }
 
     def _find(self, document=None, projection=None, **kwargs):
 
@@ -542,7 +509,7 @@ class MongoStorage(MongoDataBase, Storage):
             query_op=self._run_command,
             cache_op=cache_op,
             cache_kwargs={},
-            query_kwargs={'command': 'remove', 'query': document},
+            query_kwargs={'command': 'remove', 'spec_or_id': document},
             cache=cache,
             **kwargs
         )
@@ -602,12 +569,10 @@ class MongoStorage(MongoDataBase, Storage):
         try:
             if table is None:
                 table = self.get_table()
-            backend = self._get_backend(backend=table)
+            # get pymongo raw collection
+            backend = self._get_backend(backend=table).collection
             backend_command = getattr(backend, command)
-            w = 1 if self.safe else 0
-            result = backend_command(
-                w=w, wtimeout=self.out_timeout, *args, **kwargs
-            )
+            result = backend_command(*args, **kwargs)
 
         except NetworkTimeout:
             self.logger.warning(
@@ -622,7 +587,7 @@ class MongoStorage(MongoDataBase, Storage):
 
 
 class MongoCursor(Cursor):
-    """In charge of handle cursors wit MongoDB."""
+    """In charge of handle cursors with MongoDB."""
 
     __slots__ = ('_len', ) + Cursor.__slots__
 

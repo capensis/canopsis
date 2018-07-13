@@ -27,7 +27,6 @@ from canopsis.common.ws import route
 
 rights = None
 
-
 def get_manager():
     global rights
 

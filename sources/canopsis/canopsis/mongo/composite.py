@@ -36,11 +36,11 @@ class MongoCompositeStorage(MongoStorage, CompositeStorage):
         # add all sub_paths concatened with id
         if self.path is not None:
             for n, _ in enumerate(self.path):
-    
+
                 sub_path = self.path[:n + 1]
                 index = [(path_name, Storage.ASC) for path_name in sub_path]
                 index.append((CompositeStorage.NAME, Storage.ASC))
-    
+
                 result.append(index)
 
         result.append([(CompositeStorage.NAME, Storage.ASC)])

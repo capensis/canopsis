@@ -1,0 +1,25 @@
+---
+- name: deploy canopsis amqp storage configuration templates
+  template:
+    src: storage-amqp.j2
+    dest: "{{ canopsis_home }}/etc/amqp.conf"
+
+- name: deploy canopsis influx storage configuration templates
+  template:
+    src: storage-influxdb.j2
+    dest: "{{ canopsis_home }}/etc/influx/storage.conf"
+
+- name: deploy canopsis mongo store configuration templates
+  template:
+    src: mongo_store.j2
+    dest: "{{ canopsis_home }}/etc/common/mongo_store.conf"
+
+- name: deploy canopsis cstorage configuration templates
+  template:
+    src: cstorage.j2
+    dest: "{{ canopsis_home }}/etc/cstorage.conf"
+
+- name: deploy canopsis redis store configuration templates
+  template:
+    src: redis_store.j2
+    dest: "{{ canopsis_home }}/etc/common/redis_store.conf"

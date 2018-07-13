@@ -19,7 +19,7 @@
 # ---------------------------------
 
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.migration.manager import MigrationModule
 
 DEFAULT_STORAGE = 'storage://'

@@ -1,20 +1,137 @@
 {
 	"type": "object",
-	"categories": [{
-		"title": "Source",
-		"keys":["connector", "connector_name"]
-	},{
-		"title": "Entities",
-		"keys":["component", "resource", "domain", "perimeter"]
-	},{
-		"title": "Event",
-		"keys":["event_type", "status.val", "state.val", "ack.isAck"]
-	},{
-		"title": "Event filter",
-		"keys":["state", "state_type", "status"]
-	}],
+	"categories": [
+		{
+			"title": "Source",
+			"keys":["connector", "connector_name"]
+		},
+		{
+			"title": "Entities",
+			"keys":["component", "resource", "domain", "perimeter"]
+		},
+		{
+			"title": "Event",
+			"keys":["event_type", "status.val", "state.val", "ack.isAck"]
+		},
+		{
+			"title": "Event filter",
+			"keys":["state", "state_type", "status"]
+		},
+		{
+			"title": "Alarms",
+			"keys": [
+				"v.connector",
+				"v.connector_name",
+				"v.component",
+				"v.resource",
+				"v.done.t",
+				"v.ack.t",
+				"v.snooze.t",
+				"v.ticket.t",
+				"v.canceled.t",
+				"v.state.val",
+				"v.status.val"
+			]
+		}
+	],
 	"showEditButton": true,
 	"properties": {
+		"v": {
+			"type": "object",
+			"role": "alarm",
+			"properties": {
+				"connector": {
+					"type": "string",
+					"role": "Connector"
+				},
+				"connector_name": {
+					"type": "string",
+					"title": "Connector name"
+				},
+				"component": {
+					"type":"string",
+					"title": "Component"
+				},
+				"resource": {
+					"type": "string",
+					"title": "Resource"
+				},
+				"ack": {
+					"type": "object",
+					"title": "Alarm ack",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date ACK"
+						}
+					}
+				},
+				"snooze": {
+					"type": "object",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date Snooze"
+						}
+					}
+				},
+				"ticket": {
+					"type": "object",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date Ticket"
+						}
+					}
+				},
+				"done": {
+					"type": "object",
+					"properties": {
+						"t": {
+							"type": "integer",
+							"role": "eventtimestamp",
+							"canDisplayAgo" : true,
+							"title": "Date Done"
+						}
+					}
+				},
+				"canceled": {
+					"type": "object"
+				},
+				"resolved": {
+					"type": "integer",
+					"role": "eventtimestamp",
+					"canDisplayAgo" : true
+				},
+				"state": {
+					"type": "object",
+					"required": false,
+					"role": "criticity",
+					"properties": {
+						"val": {
+							"type" : "number"
+						}
+					}
+				},
+				"status": {
+					"type": "number",
+					"required": false,
+					"role": "criticity",
+					"properties": {
+						"v": {
+							"type" : "number"
+						}
+					}
+				}
+
+			}
+		},
 		"hostgroups": {
 			"type": "array",
 			"items": {
@@ -145,6 +262,10 @@
 			}
 		},
 		"cancel": {
+			"type": "object",
+			"role": "object"
+		},
+		"done": {
 			"type": "object",
 			"role": "object"
 		},

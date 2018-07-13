@@ -94,7 +94,7 @@ Ember.Application.initializer({
                     crecord_type: event_type,
                     timestamp:  datesUtils.getNow()
                 };
-                var extra_fields = ['domain', 'perimeter', 'resource'];
+                var extra_fields = ['domain', 'perimeter', 'resource', 'output'];
                 for (var i = 0, l = extra_fields.length; i < l; i++) {
                     var field = extra_fields[i];
                     if (!isNone(get(crecord, field))) {
@@ -194,6 +194,9 @@ Ember.Application.initializer({
                     //send a delayed declare ticket when the option reportIncident is matched
                     if ($.inArray('reportIncident', arguments[1]) !== -1) {
                         me.submitEvents(crecords, record, 'declareticket');
+                    } else if ($.inArray('doneTicket', arguments[1]) !== -1) {
+                        set(record, 'output', '')
+                        me.submitEvents(crecords, record, 'done');
                     }
                     rollback();
                 }, rollback);
@@ -413,6 +416,27 @@ Ember.Application.initializer({
                         }));
                     }
                 },
+                done: {
+                    extract: function(record, crecord, formRecord) {
+                        if (formRecord === undefined) {
+                            record.output = '';
+                        } else {
+                            record.output = get(formRecord, 'output');
+                        }
+                    },
+                    filter: function(record) {
+                        return (get(record, 'ack.isAck'));
+                    },
+                    handle: function(crecords) {
+                        var record = this.getDisplayRecord('done', crecords[0]);
+                        this.getEventForm('done', record, crecords);
+                    },
+                    transform: function(crecord, record) {
+                        console.log('transform method for done', crecord, record);
+                        crecord.set('output', record.get('output'));
+                        //crecord.set('done_date', datesUtils.getNow());
+                    }
+                },
                 pbehavior: {
                     extract: function(record, crecord, formRecord) {
                         if (!isNone(formRecord)) {
@@ -475,6 +499,11 @@ Ember.Application.initializer({
                         console.log('transform method for declare ticket', crecord, record);
                         crecord.set('ticket_declared_author', record.author);
                         crecord.set('ticket_declared_date', datesUtils.getNow());
+                        if(!isNone(record.done)) {
+                            crecord.set('done', record.done);
+                            crecord.set('done_date', datesUtils.getNow());
+                        }
+                        //crecord.set('done_remove', undefined);
                     }
                 },
                 assocticket: {

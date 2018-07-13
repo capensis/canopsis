@@ -16,8 +16,6 @@ workdir=$(dirname $(readlink -e $0))
 cd $workdir
 
 fix_ownership="$(id -u):$(id -g)"
-wheel_dir=${WHEEL_DIR:-${workdir}/docker/wheelbuild/}
-wheel_req_control="${wheel_dir}/requirements_control"
 
 function build_for_sysbase() {
     if [ "${1}" = "" ]; then
@@ -30,38 +28,10 @@ function build_for_sysbase() {
     CPS_DOCKER_BUILD_ARGS="${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} --build-arg SYSBASE=${sysbase}"
 
     if [ ! "${mode}" == "test-ci" ]; then
-        echo "Wheeldir: ${wheel_dir}"
-
         echo "BUILDING SYSBASE ${sysbase}"
         docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.sysbase-${sysbase} -t canopsis/canopsis-sysbase:${sysbase}-${tag} .
 
-        if [ ! -d ${wheel_dir} ]; then
-            mkdir -p ${wheel_dir}
-        fi
-
-        if [ ! -f ${wheel_req_control} ]; then
-            touch ${wheel_req_control}
-        fi
-
-        current_requirements_control=$(md5sum sources/canopsis/requirements.txt | awk '{print $1}')
-
-        if [ "$(grep ${current_requirements_control} ${wheel_req_control})" = "" ]||[ ! -d ${wheel_dir}/${sysbase} ]; then
-            echo -n "${current_requirements_control}" > ${wheel_req_control}
-            echo "BUILDING WHEEL ${sysbase}"
-
-            docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.wheel -t canopsis/wheel-${sysbase}:latest .
-            mkdir -p ${wheel_dir}
-
-            echo "RUNNING WHEEL ${sysbase}"
-
-            docker run --rm -v ${wheel_dir}:/root/wheelrep/ canopsis/wheel-${sysbase}:latest "${fix_ownership}"
-        fi
-
-        rm -rf ${workdir}/docker/wheels/
-        cp -ar ${wheel_dir} ${workdir}/docker/wheels
-
         echo "BUILDING CORE ${sysbase}"
-
         docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile -t canopsis/canopsis-core:${sysbase}-${tag} .
 
 		echo "Building provisionning image"

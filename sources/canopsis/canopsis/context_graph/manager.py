@@ -8,10 +8,11 @@ import time
 
 from canopsis.common.associative_table.manager import AssociativeTableManager
 from canopsis.common.link_builder.link_builder import HypertextLinkManager
+from canopsis.common.utils import normalize_utf8
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.watcher.links import build_all_links
 
 
@@ -77,8 +78,8 @@ class InfosFilter:
         try:
             self._schema = self.obj_storage.get_elements(
                 query={"_id": self._schema_id}, projection={"_id": 0})[0]
-        except IndexError:
-            raise ValueError("No infos schema found in database.")
+        except IndexError as exc:
+            raise ValueError("No infos schema found in database: {}".format(exc))
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
@@ -154,37 +155,20 @@ class ContextGraph(object):
             source_type = event['type']
             source_field = 'type'
 
+        connector = normalize_utf8(event.get('connector'))
+        connector_name = normalize_utf8(event.get('connector_name'))
+        component = normalize_utf8(event.get('component'))
         id_ = ""
 
         if source_type == cls.COMPONENT:
-            try:
-                id_ = event["component"].encode('utf-8')
-            except UnicodeError:
-                id_ = event['component'].decode('utf-8')
+            id_ = component
 
         elif source_type == cls.RESOURCE:
-            try:
-                id_ = "{0}/{1}".format(
-                    event["resource"].encode('utf-8'),
-                    event["component"].encode('utf-8')
-                )
-            except UnicodeError:
-                id_ = "{0}/{1}".format(
-                    event["resource"].decode('utf-8'),
-                    event["component"].decode('utf-8')
-                )
+            resource = normalize_utf8(event.get('resource'))
+            id_ = "{}/{}".format(resource, component)
 
         elif source_type == cls.CONNECTOR:
-            try:
-                id_ = "{0}/{1}".format(
-                    event["connector"].encode('utf-8'),
-                    event["connector_name"].encode('utf-8')
-                )
-            except UnicodeError:
-                id_ = "{0}/{1}".format(
-                    event["connector"].decode('utf-8'),
-                    event["connector_name"].decode('utf-8')
-                )
+            id_ = "{}/{}".format(connector, connector_name)
 
         else:
             error_desc = (
@@ -753,8 +737,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_graph_depends(self, _id, deepness=None):
         """Return the depends graph from the entity design by _id.
@@ -782,8 +765,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_leaves_impact(self, _id, deepness=None):
         """Return the entities at the end of the impact graph from the entity

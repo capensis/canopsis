@@ -26,13 +26,10 @@ from functools import reduce
 from canopsis.common import root_path
 from canopsis.storage.composite import CompositeStorage
 
-from canopsis.configuration.configurable.decorator import conf_paths
-
 from base import BaseTestConfiguration, BaseStorageTest
 import xmlrunner
 
 
-@conf_paths('storage/test-composite.conf')
 class TestConfiguration(BaseTestConfiguration):
     """Default test configuration."""
 

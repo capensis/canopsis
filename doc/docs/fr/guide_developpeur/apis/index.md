@@ -2,6 +2,7 @@
 
 ## Nouvelles APIs
 
+  * [alerts](v2/alerts.md)
   * [context_graph](v2/context_graph.md)
   * [events](v2/events.md)
   * [pbehavior](v2/pbehavior.md)

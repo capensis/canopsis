@@ -206,6 +206,7 @@ except ImportError:
     raise InvalidCacheBackendError("Unable to load the pymongo driver.")
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 class MongoDBNamespaceManager(NamespaceManager):
     clients = SyncDict()
@@ -247,7 +248,6 @@ class MongoDBNamespaceManager(NamespaceManager):
 
         def _create_mongo_conn():
             store = MongoStore.get_default()
-            store.authenticate()
             return MongoCollection(store.get_collection(collection))
 
         self.mongo = MongoDBNamespaceManager.clients.get(data_key,
@@ -291,7 +291,7 @@ class MongoDBNamespaceManager(NamespaceManager):
             fields['data.' + key] = True
 
         log.debug("[MongoDB] Get Query: id == %s Fields: %s", _id, fields)
-        result = self.mongo.find_one({'_id': _id}, fields=fields)
+        result = self.mongo.find_one({'_id': _id}, projection=fields)
         log.debug("[MongoDB] Get Result: %s", result)
 
         if result:
@@ -389,7 +389,7 @@ class MongoDBNamespaceManager(NamespaceManager):
                 doc['$set']['valid_until'] = expiretime
 
         log.debug("Upserting Doc '%s' to _id '%s'" % (doc, _id))
-        self.mongo.update({"_id": _id}, doc, upsert=True, safe=True)
+        self.mongo.update({"_id": _id}, doc, upsert=True)
 
     def __setitem__(self, key, value):
         self.set_value(key, value)
@@ -399,7 +399,7 @@ class MongoDBNamespaceManager(NamespaceManager):
         if self._sparse:
             self.mongo.remove({'_id.namespace': self.namespace})
         else:
-            self.mongo.update({'_id': self.namespace},
+            self.mongo.update_many({'_id': self.namespace},
                               {'$unset': {'data.' + key: True}}, upsert=False)
 
     def keys(self):
@@ -496,6 +496,6 @@ def _parse_uri(uri, default_port=27017):
 def _depickle(value):
     try:
         return pickle.loads(value.encode('utf-8'))
-    except Exception, e:
+    except Exception as e:
         log.exception("Failed to unpickle value.", e)
         return None

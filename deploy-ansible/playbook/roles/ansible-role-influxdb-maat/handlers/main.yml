@@ -1,0 +1,7 @@
+---
+# handlers file for influxdb 
+- name: Start Influxdb
+  service:
+    name: influxdb
+    state: started
+    enabled: yes

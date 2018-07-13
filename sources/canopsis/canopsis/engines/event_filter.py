@@ -18,20 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine, DROP, publish
+import copy
+import time
+from json import loads
 
 from canopsis.alerts.manager import Alerts
+from canopsis.common.collection import MongoCollection
+from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.engines.core import Engine, DROP, publish
 from canopsis.event import forger, get_routingkey
 from canopsis.old.mfilter import check
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection
-from json import loads
 
-import copy
-import time
 
 class engine(Engine):
     etype = 'event_filter'
@@ -250,7 +250,6 @@ class engine(Engine):
                 rk='Engine_scheduler',
                 exchange='amq.direct'
             )
-            # publish(publisher=self.amqp, event=job, rk='Engine_scheduler')
             time.sleep(1)
         return True
 
@@ -421,7 +420,6 @@ class engine(Engine):
         event['rk'] = event['_id'] = get_routingkey(event)
         return event
 
-
     def __load_rules(self):
 
         tmp_rules = []
@@ -463,7 +461,6 @@ class engine(Engine):
             'Loaded {} rules'.format(len(self.configuration['rules']))
         )
         self.send_stat_event()
-
 
     def set_loaded(self, record):
 

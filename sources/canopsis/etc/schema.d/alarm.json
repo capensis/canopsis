@@ -91,6 +91,13 @@
               "type": "alarmstep",
               "required": false
             },
+            "done": {
+              "title": "Done step",
+              "description": "Is null if has not been done",
+
+              "type": "alarmstep",
+              "required": false
+            },
             "ticket": {
               "title": "Ticket step",
               "description": "Is null if no ticket was declared/associated",
