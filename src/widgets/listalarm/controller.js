@@ -422,7 +422,11 @@ Ember.Application.initializer({
 					controller.set('isNaturalSearch', false);
 				}
 
-                var columns = get(this, 'model.columns');
+                var columns = []
+				get(this, 'model.widget_columns').forEach(function(element) {
+					columns.push(element.value)
+				})
+
                 var prefixed_columns = [];
                 for (idx = 0; idx < columns.length; idx++) {
                     depth_one = columns[idx].split(".", 1)[0];
