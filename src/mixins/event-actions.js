@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+import moment from 'moment';
 
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
@@ -55,7 +56,7 @@ export default {
         state: item.v.state.val,
         event_type: type,
         crecord_type: type,
-        timestamp: Date.now(),
+        timestamp: moment().unix(),
         resource: item.v.resource,
         ref_rk: `${item.v.resource}/${item.v.component}`,
       };

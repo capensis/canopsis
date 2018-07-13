@@ -24,6 +24,7 @@ import PbehaviorList from './pbehavior-list.vue';
 import EditLiveReporting from './edit-live-reporting.vue';
 import MoreInfos from './more-infos.vue';
 import Confirmation from './confirmation.vue';
+import CreateWatcher from './create-watcher.vue';
 import CreateEntity from './create-entity/create-entity.vue';
 
 /**
@@ -44,6 +45,8 @@ export default {
     MoreInfos,
     Confirmation,
     CreateEntity,
+    CreateWatcher,
+    ContextInfos,
   },
   data() {
     return {
@@ -60,6 +63,8 @@ export default {
         { name: MODALS.moreInfos },
         { name: MODALS.confirmation },
         { name: MODALS.createEntity },
+        { name: MODALS.createWatcher },
+        { name: MODALS.contextInfos },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

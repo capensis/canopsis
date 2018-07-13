@@ -1,4 +1,4 @@
-import { contextSchema } from '@/store/schemas';
+import { entitySchema } from '@/store/schemas';
 import request from '@/services/request';
 import i18n from '@/i18n';
 import { API_ROUTES } from '@/config';
@@ -28,12 +28,12 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIds),
     pending: state => state.pending,
     error: state => state.error,
     meta: state => state.meta,
     allIdsGeneralList: state => state.allIds,
-    itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIdsGeneralList),
+    itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIdsGeneralList),
     pendingGeneralList: state => state.pendingGeneralList,
   },
   mutations: {
@@ -71,7 +71,7 @@ export default {
     fetch({ dispatch }, { params } = {}) {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,
-        schema: [contextSchema],
+        schema: [entitySchema],
         params,
         dataPreparer: d => d.data,
         isPost: true,
