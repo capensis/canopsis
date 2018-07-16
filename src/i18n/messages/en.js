@@ -142,6 +142,10 @@ export default {
         },
       },
     },
+    createWatcher: {
+      title: 'Create a watcher',
+      displayName: 'Name',
+    },
     createAckEvent: {
       title: 'Add event: Ack',
       tooltips: {
@@ -331,6 +335,7 @@ export default {
     default: 'Done !',
   },
   mFilterEditor: {
+    title: 'Filter editor',
     tabs: {
       visualEditor: 'Visual Editor',
       advancedEditor: 'Advanced Editor',

@@ -15,6 +15,27 @@ export default {
     limit() {
       return parseInt(this.$route.query.limit, 10) || PAGINATION_LIMIT;
     },
+    first() {
+      const { page } = this.$route.query;
+      if (page === 1) {
+        return 1;
+      }
+      if (this.$route.query.limit) {
+        return page + (this.$route.$query.limit * (page - 1));
+      }
+
+      return (page - 1) + (PAGINATION_LIMIT * (page - 1));
+    },
+    last() {
+      if (this.$route.query.page === 1) {
+        return this.$route.query.limit || PAGINATION_LIMIT;
+      }
+      if (this.$route.query.limit) {
+        return this.first + this.$route.query.limit;
+      }
+
+      return this.first + PAGINATION_LIMIT;
+    },
   },
   watch: {
     $route: {
@@ -26,6 +47,7 @@ export default {
   },
   methods: {
     getQuery() {
+      console.log(this.last);
       const query = omit(this.$route.query, ['page', 'interval']);
 
       if (this.$route.query.interval && this.$route.query.interval !== 'custom') {
