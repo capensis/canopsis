@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-
+import { ROUTER_MODE } from '@/config';
 import Login from '@/views/login.vue';
 import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
@@ -13,7 +13,7 @@ import Rrule from '@/components/forms/rrule.vue';
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: ROUTER_MODE,
   routes: [
     {
       path: '/',
