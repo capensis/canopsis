@@ -3,7 +3,7 @@
     div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
     ellipsis(v-else,
              :text="$options.filters.get(alarm, property.value, property.filter) || ''",
-             :maxLetters="property.maxLetters || MAX_LETTERS")
+             :maxLetters="property.maxLetters || EXPAND_DEFAULT_MAX_LETTERS")
     info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm")
 </template>
 
@@ -13,7 +13,7 @@ import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-colu
 import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-import { MAX_LETTERS } from '@/config';
+import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
 const PROPERTIES_COMPONENTS_MAP = {
   'v.state.val': 'state',
@@ -47,7 +47,7 @@ export default {
   },
   data() {
     return {
-      MAX_LETTERS,
+      EXPAND_DEFAULT_MAX_LETTERS,
     };
   },
   computed: {

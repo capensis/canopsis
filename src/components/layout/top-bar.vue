@@ -5,8 +5,8 @@
     clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'desktop'")
-      img(:src="canopsisLogo")
+    div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'laptop'")
+      img(src="../../assets/canopsis.png")
     v-toolbar-side-icon(@click="toggleSideBar")
     v-spacer
     div {{ $t('common.username') }}
@@ -15,19 +15,12 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import canopsisLogo from '@/assets/canopsis.png';
-
 const { mapActions } = createNamespacedHelpers('app');
 
 /**
  * Component for the top bar of the application
  */
 export default {
-  data() {
-    return {
-      canopsisLogo,
-    };
-  },
   methods: {
     ...mapActions([
       'toggleSideBar',

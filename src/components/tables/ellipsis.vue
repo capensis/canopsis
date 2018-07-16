@@ -10,11 +10,13 @@
 </template>
 
 <script>
+import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
+
 export default {
   props: {
     maxLetters: {
       type: Number,
-      default: 50,
+      default: EXPAND_DEFAULT_MAX_LETTERS,
     },
     text: {
       type: String,

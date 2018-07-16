@@ -32,7 +32,7 @@
               @click="props.expanded = !props.expanded"
             )
               ellipsis(:text="$options.filters.get(props.item,prop.value) || ''",
-                       :maxLetters="prop.maxLetters || MAX_LETTERS")
+                       :maxLetters="prop.maxLetters || EXPAND_DEFAULT_MAX_LETTERS")
             td
               v-btn(@click.stop="deleteEntity(props.item)", icon, small)
                 v-icon delete
@@ -59,7 +59,7 @@ import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
 
 import { MODALS } from '@/constants';
-import { MAX_LETTERS } from '@/config';
+import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
 import CreateEntity from './actions/context-fab.vue';
 
@@ -99,7 +99,7 @@ export default {
     return {
       selected: [],
       pagination: {},
-      MAX_LETTERS,
+      EXPAND_DEFAULT_MAX_LETTERS,
     };
   },
   computed: {
