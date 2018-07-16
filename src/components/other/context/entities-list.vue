@@ -98,25 +98,11 @@ export default {
   data() {
     return {
       selected: [],
-      pagination: {},
       EXPAND_DEFAULT_MAX_LETTERS,
     };
   },
   computed: {
     ...mapGetters(['items', 'meta', 'pending']),
-  },
-  watch: {
-    pagination: {
-      handler(e) {
-        this.$router.push({
-          query: {
-            ...this.$route.query,
-            sort_key: e.sortBy,
-            sort_dir: e.descending ? 'DESC' : 'ASC',
-          },
-        });
-      },
-    },
   },
   methods: {
     ...mapActions({

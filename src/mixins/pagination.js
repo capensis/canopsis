@@ -11,6 +11,11 @@ export default {
   components: {
     Pagination,
   },
+  data() {
+    return {
+      pagination: {},
+    };
+  },
   computed: {
     limit() {
       return parseInt(this.$route.query.limit, 10) || PAGINATION_LIMIT;
@@ -42,6 +47,20 @@ export default {
       immediate: true,
       handler() {
         this.fetchList();
+      },
+    },
+    pagination: {
+      handler(e) {
+        let query = { ...this.$route.query };
+        if (e.sortBy) {
+          query.sort_key = e.sortBy;
+          query.sort_dir = e.descending ? 'DESC' : 'ASC';
+        } else {
+          query = omit(this.$route.query, ['sort_key', 'sort_dir']);
+        }
+        this.$router.push({
+          query,
+        });
       },
     },
   },

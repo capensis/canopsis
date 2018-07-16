@@ -105,7 +105,6 @@ export default {
   data() {
     return {
       selected: [],
-      pagination: {},
     };
   },
   computed: {
@@ -116,22 +115,6 @@ export default {
     ]),
     selectedIds() {
       return this.selected.map(item => item._id);
-    },
-  },
-  watch: {
-    pagination: {
-      handler(e) {
-        let query = { ...this.$route.query };
-        if (e.sortBy) {
-          query.sort_key = e.sortBy;
-          query.sort_dir = e.descending ? 'DESC' : 'ASC';
-        } else {
-          query = omit(this.$route.query, ['sort_key', 'sort_dir']);
-        }
-        this.$router.push({
-          query,
-        });
-      },
     },
   },
   methods: {
