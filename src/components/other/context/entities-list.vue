@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import omit from 'lodash/omit';
 
 import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -43,8 +43,6 @@ import AddInfoObject from '@/components/other/context/actions/manage-info-object
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
-
-const { mapActions } = createNamespacedHelpers('context');
 
 /**
  * Entities list
@@ -83,14 +81,21 @@ export default {
       selected: [],
     };
   },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
-    ...mapActions({
-      fetchListAction: 'fetchList',
-      remove: 'remove',
-    }),
+    getQuery() {
+      const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
+      query.limit = this.limit;
+      query.start = ((this.$route.query.page - 1) * this.limit) || 0;
+
+      if (this.$route.query.sort_key) {
+        query.sort = [{
+          property: this.$route.query.sort_key,
+          direction: this.$route.query.sort_dir ? this.$route.query.sort_dir : 'ASC',
+        }];
+      }
+
+      return query;
+    },
     deleteEntity(item) {
       this.showModal({
         name: MODALS.confirmation,

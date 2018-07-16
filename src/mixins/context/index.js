@@ -1,14 +1,14 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('context');
+const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 
 /**
  * @mixin Helpers' for context store
  */
 export default {
   computed: {
-    ...mapGetters(['pending']),
     ...mapGetters({
+      pending: 'pending',
       contextEntities: 'items',
       contextEntitiesMeta: 'meta',
     }),
@@ -17,6 +17,7 @@ export default {
     ...mapActions({
       fetchContextEntities: 'fetchList',
       updateContextEntity: 'update',
+      remove: 'remove',
     }),
   },
 };

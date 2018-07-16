@@ -24,13 +24,14 @@ import PbehaviorList from './pbehavior-list.vue';
 import EditLiveReporting from './edit-live-reporting.vue';
 import MoreInfos from './more-infos.vue';
 import Confirmation from './confirmation.vue';
+import CreateWatcher from './create-watcher.vue';
 import CreateEntity from './create-entity/create-entity.vue';
 import ContextInfos from './create-entity/manage-infos.vue';
 import InfoObject from './info-object.vue';
 
 /**
-   * Wrapper for all modal windows
-   */
+ * Wrapper for all modal windows
+ */
 export default {
   components: {
     Modal,
@@ -46,6 +47,7 @@ export default {
     MoreInfos,
     Confirmation,
     CreateEntity,
+    CreateWatcher,
     ContextInfos,
     InfoObject,
   },
@@ -65,6 +67,7 @@ export default {
         { name: MODALS.confirmation },
         { name: MODALS.createEntity },
         { name: MODALS.infoObject },
+        { name: MODALS.createWatcher },
         { name: MODALS.contextInfos },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
