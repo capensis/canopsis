@@ -9,7 +9,7 @@
       img(:src="canopsisLogo")
     v-toolbar-side-icon(@click="toggleSideBar")
     v-spacer
-    div Nom d'utilisateur
+    div {{ $t('common.username') }}
 </template>
 
 <script>
