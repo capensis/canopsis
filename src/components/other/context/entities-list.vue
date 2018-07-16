@@ -63,7 +63,7 @@ import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
 import CreateEntity from './actions/context-fab.vue';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('context');
+const { mapGetters } = createNamespacedHelpers('entity');
 
 /**
  * Entities list
@@ -105,10 +105,6 @@ export default {
     ...mapGetters(['items', 'meta', 'pending']),
   },
   methods: {
-    ...mapActions({
-      fetchListAction: 'fetchList',
-      remove: 'remove',
-    }),
     getQuery() {
       const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
       query.limit = this.limit;

@@ -15,7 +15,7 @@
     v-tab-item
       v-text-field(
           v-model="inputValue",
-          rows="20",
+          rows="10",
           :label="$t('mFilterEditor.tabs.advancedEditor')",
           textarea,
           @input="handleInputChange"
@@ -29,14 +29,12 @@
       v-data-table.elevation-1(
         :headers='resultsTableHeaders',
         :items="items",
-        hide-actions,
       )
         template(slot="items", slot-scope="props")
           td {{props.item.v.connector}}
           td {{props.item.v.connector_name}}
           td {{props.item.v.component}}
           td {{props.item.v.resource}}
-      pagination(:limit="limit", :meta="meta")
 </template>
 
 
@@ -44,7 +42,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import FilterGroup from '@/components/other/filter-editor/filter-group.vue';
-import paginationMixin from '@/mixins/pagination';
 
 const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
 const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNamespacedHelpers('alarm');
@@ -54,14 +51,12 @@ const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNam
  */
 export default {
   name: 'mfilter-editor',
-
   components: {
     FilterGroup,
   },
-  mixins: [paginationMixin],
   data() {
     return {
-      paginationLength: 0,
+      pagination: {},
       activeTab: 0,
       newRequest: '',
       resultsTableHeaders: [
@@ -123,11 +118,9 @@ export default {
 
     handleResultTabClick() {
       this.newRequest = '';
-      this.$router.push({
-        query: {
-          limit: 5,
-          filter: JSON.stringify(this.request),
-          skip: 0,
+      this.fetchListAction({
+        params: {
+          filter: this.request,
         },
       });
     },

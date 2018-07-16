@@ -142,6 +142,10 @@ export default {
         },
       },
     },
+    createWatcher: {
+      title: 'Créer un observateur',
+      displayName: 'Nom',
+    },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',
       tooltips: {
@@ -329,6 +333,7 @@ export default {
     default: 'Action effectuée avec succès',
   },
   mFilterEditor: {
+    title: 'Editeur de filtre',
     tabs: {
       visualEditor: 'Éditeur visuel',
       advancedEditor: 'Éditeur avancé',
