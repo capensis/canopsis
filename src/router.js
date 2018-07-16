@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { ROUTER_MODE } from '@/config';
+import { ROUTER_MODE, ENVIRONNEMENT } from '@/config';
 import Login from '@/views/login.vue';
 import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
@@ -9,17 +9,22 @@ import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
 import Rrule from '@/components/forms/rrule.vue';
 
-
 Vue.use(Router);
 
-export default new Router({
-  mode: ROUTER_MODE,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home,
-    },
+let routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: Home,
+  },
+  {
+    path: '/context',
+    name: 'context',
+    component: Context,
+  },
+];
+if (ENVIRONNEMENT === 'development') {
+  routes = routes.concat([
     {
       path: '/login',
       name: 'login',
@@ -36,11 +41,6 @@ export default new Router({
       component: Alarm,
     },
     {
-      path: '/context',
-      name: 'context',
-      component: Context,
-    },
-    {
       path: '/filter',
       name: 'filter',
       component: Filter,
@@ -50,5 +50,10 @@ export default new Router({
       name: 'rrule',
       component: Rrule,
     },
-  ],
+  ]);
+}
+
+export default new Router({
+  mode: ROUTER_MODE,
+  routes,
 });
