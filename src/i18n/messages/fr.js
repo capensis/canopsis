@@ -210,6 +210,8 @@ export default {
       thisMonth: 'Ce mois',
       lastMonth: 'Mois dernier',
       custom: 'Personnalisé',
+      tstart: 'Démarre',
+      tstop: 'Finis',
     },
     moreInfos: {
       moreInfos: 'Plus d\'infos',

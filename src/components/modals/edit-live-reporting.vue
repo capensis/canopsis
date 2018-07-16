@@ -18,12 +18,16 @@
           )
       v-layout(wrap, v-if="isCustomRangeEnabled")
         v-flex(xs12)
-          date-time-picker(v-model="tstart", clearable, label="From date", name="tstart", :rules="'required'")
+          date-time-picker(v-model="tstart",
+          clearable,
+          :label="getLabelTranslation('tstart')",
+          name="tstart",
+          :rules="'required'")
         v-flex(xs12)
           date-time-picker(
           v-model="tstop",
           clearable,
-          label="To date",
+          :label="getLabelTranslation('tstop')",
           name="tstop",
           :rules="tstopRules")
       v-btn(@click="submit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
@@ -36,8 +40,8 @@ import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
 /**
- * Modal to add a time filter on alarm-list
- */
+   * Modal to add a time filter on alarm-list
+   */
 export default {
   name: MODALS.editLiveReporting,
   $_veeValidate: {
@@ -120,6 +124,9 @@ export default {
         }
         this.hideModal();
       }
+    },
+    getLabelTranslation(field) {
+      return this.$t(`modals.liveReporting.${field}`);
     },
   },
 };
