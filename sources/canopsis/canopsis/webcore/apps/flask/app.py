@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import importlib
 import logging
 import os
@@ -11,11 +15,9 @@ from canopsis.webcore.apps.flask.helpers import Resource
 
 app = Flask(__name__)
 
-def _auto_import(app, api, exports_funcname='exports_v3', configuration=os.path.join(root_path, 'etc/webserver.conf')):
-    conf = Configuration.load(configuration, Ini)
-    webservices = conf.get('webservices')
 
-    for webservice, enabled in webservices.items():
+def _auto_import(app, api, configuration, exports_funcname='exports_v3'):
+    for webservice, enabled in configuration.items():
         if int(enabled) == 1:
             wsmod = importlib.import_module('{}'.format(webservice))
 
@@ -24,9 +26,11 @@ def _auto_import(app, api, exports_funcname='exports_v3', configuration=os.path.
                 getattr(wsmod, exports_funcname)(app, api)
                 app.logger.info('webservice v3 {}: loaded'.format(webservice))
             else:
-                app.logger.debug('webservice v3 {}: {} unavailable'.format(webservice, exports_funcname))
+                app.logger.debug('webservice v3 {}: {} unavailable'
+                                 .format(webservice, exports_funcname))
         else:
             app.logger.debug('webservice v3 {}: skipped'.format(webservice))
+
 
 def _init(app):
     """
@@ -45,26 +49,29 @@ def _init(app):
     app.logger.addHandler(logfile_handler)
     app.logger.setLevel(logging.INFO)
 
+    configuration = os.path.join(root_path, 'etc/webserver.conf')
+    conf = Configuration.load(configuration, Ini)
+    webservices = conf.get('webservices')
+
     from beaker.middleware import SessionMiddleware
-    from flask import session
     from flask.sessions import SessionInterface
     from canopsis.old.account import Account
     from canopsis.old.storage import get_storage
 
     db = get_storage(account=Account(user='root', group='root'))
 
+    cfg_session = conf.get('session', {})
     session_opts = {
         'session.type': 'mongodb',
-        'session.cookie_expires': 300,
+        'session.cookie_expires': int(cfg_session.get('cookie_expires', 300)),
         'session.url': '{0}.beaker'.format(db.uri),
-        'session.secret': 'canopsis',
-        'session.lock_dir': '~/tmp/webcore_cache',
+        'session.secret': cfg_session.get('secret', 'canopsis'),
+        'session.lock_dir': cfg_session.get('data_dir'),
     }
 
     class BeakerSessionInterface(SessionInterface):
         def open_session(self, app, request):
-            session = request.environ['beaker.session']
-            return session
+            return request.environ['beaker.session']
 
         def save_session(self, app, session, response):
             session.save()
@@ -74,12 +81,12 @@ def _init(app):
 
     api = Api(app)
 
-    _auto_import(app, api)
+    _auto_import(app, api, webservices)
 
     return app, api
 
 from flask import session
-from flask_restful import reqparse
+
 
 class APIRoot(Resource):
 
@@ -88,6 +95,7 @@ class APIRoot(Resource):
     def get(self):
         self._app.logger.info(session)
         return {'message': 'authenticate with /auth | get v3 routes with /api/v3/routes/all | get other routes with /api/v2/rule/them/all/'}
+
 
 def exports_v3(app, api):
     APIRoot.init(app, api)

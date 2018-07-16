@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 from routes import Mapper
+
 
 class AppMapper():
 
@@ -40,10 +45,10 @@ class AppMapper():
         start_response('404 Not Found', headers)
         return [html]
 
+
 def get_default_app():
     from canopsis.webcore.apps.bottle.app import get_default_app as get_default_app_v1
     from canopsis.webcore.apps.flask.app import app as app_v3
-    from canopsis.webcore.apps.flask.app import api as api_v3
 
     app_v1 = get_default_app_v1()
 

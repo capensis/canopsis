@@ -1,6 +1,12 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import flask_restful
-from flask import session, request
+
+from flask import session
 from flask_restful import Resource as FlaskResource
+
 
 def authenticate(func):
     def wrapper(*args, **kwargs):
@@ -11,6 +17,7 @@ def authenticate(func):
         flask_restful.abort(401)
 
     return wrapper
+
 
 class Resource(FlaskResource):
     """
