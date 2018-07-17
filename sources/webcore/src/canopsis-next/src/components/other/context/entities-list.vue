@@ -22,7 +22,7 @@
           v-btn(@click.stop="deleteEntity(item)", icon, small)
             v-icon delete
       tr.container(slot="expandedRow", slot-scope="item")
-    pagination(:meta="contextEntitiesMeta", :limit="limit")
+    pagination(:meta="contextEntitiesMeta", :limit="limit", :first="first", :last="last")
     create-entity.fab
 </template>
 
