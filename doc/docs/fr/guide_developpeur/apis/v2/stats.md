@@ -163,6 +163,20 @@ Les périodes pendant lesquels un pbehavior est actif sont exclues des valeurs
 ci-dessus. Le temps total `available_time + unavailable_time` peut donc être
 inférieur à la durée de la période `tstop - tstart`.
 
+### Maintenance
+
+La statistique `maintenance` est un objet JSON avec les champs suivants :
+
+ - `maintenance` : le temps pendant lequel l'entité avait un pbehavior actif,
+   en secondes.
+ - `no_maintenance` : le temps pendant lequel l'entité n'avait pas de pbehavior
+   actif, en secondes.
+
+### Indice de fiabilité
+
+La statistique `mtbf` (Mean Time Between Failures) est le temps hors
+maintenance divisé par le nombre d'indisponibilités.
+
 
 ## Exemples
 

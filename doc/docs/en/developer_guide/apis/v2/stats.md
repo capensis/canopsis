@@ -135,7 +135,7 @@ values. The total time may thus be inferior to the duration of the interval
 
 ### Availability
 
-The statistic `availability` is a JSON object with the followign fields:
+The statistic `availability` is a JSON object with the following fields:
 
  - `available_time`: the time during which the entity was in an available
    state, in seconds
@@ -152,6 +152,21 @@ the value of the parameter `available_state`.
 The intervals during which a pbehavior is active are excluded from these
 values. The total time `available_time + unavailable_time` may thus be inferior
 to the duration of the interval `tstop - tstart`.
+
+### Maintenance
+
+The statistic `maintenance` is a JSON object with the following fields:
+
+ - `maintenance`: the time during which the entity had an active pbehavior, in
+   seconds.
+ - `no_maintenance`: the time during which the entity had no active pbehavior,
+   in seconds
+
+### Mean Time Between Failures
+
+The statistic `mtbf` is the mean time between failures, i.e. the time without
+maintenance divided by the number of failures.
+
 
 ## Examples
 
