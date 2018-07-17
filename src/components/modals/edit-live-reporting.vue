@@ -1,11 +1,10 @@
 <template lang="pug">
   v-card
-    v-card-title.blue.darken-4.white--text(primary-title)
+    v-card-title
       v-layout(justify-space-between, align-center)
         h2 {{ $t('modals.liveReporting.editLiveReporting') }}
         v-btn(@click="hideModal", icon, small)
-          v-icon(color="white") close
-    v-divider
+          v-icon close
     v-card-text
       h3 {{ $t('modals.liveReporting.dateInterval') }}
       v-layout(wrap)
