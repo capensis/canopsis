@@ -10,5 +10,5 @@
 	branch = master
 [submodule "sources/webcore/src/canopsis-next"]
 	path = sources/webcore/src/canopsis-next
-	url = git@git.canopsis.net:canopsis/canopsis-next.git
+	url = https://git.canopsis.net/canopsis/canopsis-next.git 
 	branch = develop
