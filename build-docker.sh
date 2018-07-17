@@ -26,6 +26,17 @@ function build_for_distribution() {
     echo "BUILDING DISTRIBUTION ${distribution}"
     docker build ${docker_args} -f docker/Dockerfile.sysbase-${distribution} -t canopsis/canopsis-sysbase:${full_tag} .
 
+    if [ "${CANOPSIS_BUILD_NEXT}" = "1" ]; then
+        echo "BUILDING CORE NEXT"
+        docker build ${docker_args} -f docker/Dockerfile.canopsis-next -t canopsis/canopsis-next:${full_tag} .
+
+        next_dist="${workdir}/sources/webcore/src/canopsis-next/dist"
+        if [ ! -d ${next_dist} ]; then
+            mkdir -p ${next_dist}
+        fi
+        docker run -v ${next_dist}:/dist/ canopsis/canopsis-next:${full_tag}
+    fi
+
     echo "BUILDING CORE ${distribution}"
     docker build ${docker_args} -f docker/Dockerfile -t canopsis/canopsis-core:${full_tag} .
 

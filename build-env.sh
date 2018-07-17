@@ -10,6 +10,7 @@ export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
 export CANOPSIS_CATAG_TOKEN=${CANOPSIS_CATAG_TOKEN:=""}
 export CANOPSIS_SKIP_GO=${CANOPSIS_SKIP_GO:="0"}
+export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="1"}
 export GOPATH=${GOPATH:=""}
 export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
@@ -21,6 +22,7 @@ function env_recap() {
     echo "CANOPSIS_PACKAGE_TAG: ${CANOPSIS_PACKAGE_TAG}"
     echo "CANOPSIS_PACKAGE_REL: ${CANOPSIS_PACKAGE_REL}"
     echo "CANOPSIS_DOCKER_MODE: ${CANOPSIS_DOCKER_MODE}"
+    echo "CANOPSIS_BUILD_NEXT: ${CANOPSIS_BUILD_NEXT}"
     echo "CANOPSIS_CATAG_TOKEN: set, hidden."
     echo "GOPATH: ${GOPATH}"
 }

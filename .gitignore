@@ -26,3 +26,5 @@ tools/catag/vendor
 .mypy_cache
 
 packages
+
+sources/webcore/src/canopsis-next/dist
