@@ -35,9 +35,9 @@ function ensure_env() {
 
     # just try to run these programs so with set -e if they are not found,
     # it will exit with command not found
-    rsync -h 2>&1 > /dev/null
-    git -h 2>&1 > /dev/null
-    go -h 2>&1 > /dev/null
+    rsync --version 2>&1 > /dev/null
+    git --version 2>&1 > /dev/null
+    go version 2>&1 > /dev/null
 }
 
 function deploy_catag() {
