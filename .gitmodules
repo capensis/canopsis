@@ -8,7 +8,3 @@
 	url = https://git.canopsis.net/canopsis/canopsis-webcore.git
 	ignore = dirty
 	branch = master
-[submodule "sources/webcore/src/canopsis-next"]
-	path = sources/webcore/src/canopsis-next
-	url = https://git.canopsis.net/canopsis/canopsis-next.git 
-	branch = develop
