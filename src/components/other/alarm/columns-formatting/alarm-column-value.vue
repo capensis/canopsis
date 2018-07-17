@@ -1,9 +1,11 @@
 <template lang="pug">
   div
     div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
-    ellipsis(v-else,
-             :text="$options.filters.get(alarm, property.value, property.filter) || ''",
-             :maxLetters="property.maxLetters || EXPAND_DEFAULT_MAX_LETTERS")
+    ellipsis(
+      v-else,
+      :text="$options.filters.get(alarm, property.value, property.filter) || ''",
+      :maxLetters="property.maxLetters"
+    )
     info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm")
 </template>
 
@@ -12,8 +14,6 @@ import State from '@/components/other/alarm/columns-formatting/alarm-column-valu
 import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
-
-import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
 const PROPERTIES_COMPONENTS_MAP = {
   'v.state.val': 'state',
@@ -44,11 +44,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      EXPAND_DEFAULT_MAX_LETTERS,
-    };
   },
   computed: {
     component() {

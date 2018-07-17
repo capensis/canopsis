@@ -31,8 +31,10 @@
               v-for="prop in contextProperties",
               @click="props.expanded = !props.expanded"
             )
-              ellipsis(:text="$options.filters.get(props.item,prop.value) || ''",
-                       :maxLetters="prop.maxLetters || EXPAND_DEFAULT_MAX_LETTERS")
+              ellipsis(
+                :text="$options.filters.get(props.item,prop.value) || ''",
+                :maxLetters="prop.maxLetters"
+              )
             td
               v-btn(@click.stop="deleteEntity(props.item)", icon, small)
                 v-icon delete
@@ -59,7 +61,6 @@ import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context';
 
 import { MODALS } from '@/constants';
-import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
 import CreateEntity from './actions/context-fab.vue';
 
@@ -98,7 +99,6 @@ export default {
   data() {
     return {
       selected: [],
-      EXPAND_DEFAULT_MAX_LETTERS,
     };
   },
   computed: {
