@@ -63,10 +63,10 @@ function bump_canopsis_next() {
     rm -rf tmp-canopsis-next
     git clone ssh://git@git.canopsis.net/canopsis/canopsis-next -b ${CANOPSIS_TAG} tmp-canopsis-next
     rm -rf tmp-canopsis-next/.git
-    rsync -avKSH tmp-canopsis-next/ canopsis-next/
+    rsync -avKSH tmp-canopsis-next/ sources/webcore/src/canopsis-next/
     rm -rf tmp-canopsis-next
 
-    git add canopsis-next
+    git add sources/webcore/src/canopsis-next
     git commit --allow-empty -am "auto: bump canopsis-next ${CANOPSIS_TAG}"
     git push $(git remote) $(git rev-parse --abbrev-ref HEAD)
 }
