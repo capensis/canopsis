@@ -11,34 +11,7 @@ set -o pipefail
 workdir=$(dirname $(readlink -e $0))
 cd ${workdir}
 
-function ensure_env() {
-    cd ${workdir}
-
-    if [ "${GOPATH}" = "" ]; then
-        echo "\$GOPATH is not initialised: setup go environment properly."
-        exit 1
-    fi
-
-    if [ ! -d "${GOPATH}/src" ]; then
-        mkdir -p ${GOPATH}/src
-    fi
-
-    if [ "${CATAG_TOKEN}" = "" ]; then
-        echo "\$CATAG_TOKEN is not initialised: provide gitlab api access token"
-        exit 2
-    fi
-
-    if [ "${CANOPSIS_TAG}" = "" ]; then
-        echo "\$CANOPSIS_TAG is not initialised: provide TAG for release"
-        exit 3
-    fi
-
-    # just try to run these programs so with set -e if they are not found,
-    # it will exit with command not found
-    rsync --version 2>&1 > /dev/null
-    git --version 2>&1 > /dev/null
-    go version 2>&1 > /dev/null
-}
+source ${workdir}/build-env.sh
 
 function deploy_catag() {
     cd ${workdir}
@@ -54,7 +27,7 @@ function deploy_catag() {
 function run_catag() {
     cd ${workdir}
 
-    ./tools/catag/catag -ini tools/catag/catag.ini -tag ${CANOPSIS_TAG} -token ${CATAG_TOKEN}
+    ./tools/catag/catag -ini tools/catag/catag.ini -tag ${CANOPSIS_TAG} -token ${CANOPSIS_CATAG_TOKEN}
 }
 
 function bump_canopsis_next() {
@@ -62,8 +35,11 @@ function bump_canopsis_next() {
 
     rm -rf tmp-canopsis-next
     git clone ssh://git@git.canopsis.net/canopsis/canopsis-next -b ${CANOPSIS_TAG} tmp-canopsis-next
+
     rm -rf tmp-canopsis-next/.git
+
     rsync -avKSH tmp-canopsis-next/ sources/webcore/src/canopsis-next/
+
     rm -rf tmp-canopsis-next
 
     git add sources/webcore/src/canopsis-next
@@ -71,7 +47,6 @@ function bump_canopsis_next() {
     git push $(git remote) $(git rev-parse --abbrev-ref HEAD)
 }
 
-ensure_env
 deploy_catag
 run_catag
 bump_canopsis_next

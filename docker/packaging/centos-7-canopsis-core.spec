@@ -1,6 +1,6 @@
 Name:		canopsis-core
-Version:	CPS_PKG_TAG
-Release:	CPS_PKG_REL%{?dist}
+Version:	CANOPSIS_PACKAGE_TAG
+Release:	CANOPSIS_PACKAGE_REL%{?dist}
 Summary:	Canopsis with CAT package
 
 Group:		Canopsis

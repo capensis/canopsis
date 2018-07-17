@@ -101,6 +101,13 @@ Lancer le script `build-release.sh` avec les variables d’environnement nécess
 
 Le script va faire le nécessaire pour ajouter les tags sur les projets définis dans `tools/catag/catag.ini`, cloner `canopsis-next` et faire tout autre travail nécessaire aux préparatifs d’une *release*.
 
+Il vous faudra :
+
+ * Un TOKEN d’accès à l’API GitLab de `git.canopsis.net`
+ * Les droits de suppression et d’ajout de tag sur les dépôts configurés dans `catag.ini`
+ * Le droit de *pull* et *push* sur les dépôts configurés dans `catag.ini`
+ * Avoir installé `git`, `go` et `rsync` (présence vérifiée par le script)
+
 ```bash
 export CANOPSIS_TAG=${tag}
 export CATAG_TOKEN="VOTRE_TOKEN_GITLAB"
