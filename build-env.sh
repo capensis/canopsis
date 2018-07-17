@@ -9,6 +9,7 @@ export CANOPSIS_UIV2_BRICKS_TAG=${CANOPSIS_UIV2_BRICKS_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
 export CANOPSIS_CATAG_TOKEN=${CANOPSIS_CATAG_TOKEN:=""}
+export CANOPSIS_SKIP_GO=${CANOPSIS_SKIP_GO:="0"}
 export GOPATH=${GOPATH:=""}
 export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
@@ -25,13 +26,15 @@ function env_recap() {
 }
 
 function ensure_env() {
-    if [ "${GOPATH}" = "" ]; then
-        echo "\$GOPATH is not initialised: setup go environment properly."
-        exit 1
-    fi
+    if [ ! "${CANOPSIS_SKIP_GO}" = "1" ]; then
+        if [ "${GOPATH}" = "" ]; then
+            echo "\$GOPATH is not initialised: setup go environment properly."
+            exit 1
+        fi
 
-    if [ ! -d "${GOPATH}/src" ]; then
-        mkdir -p ${GOPATH}/src
+        if [ ! -d "${GOPATH}/src" ]; then
+            mkdir -p ${GOPATH}/src
+        fi
     fi
 
     if [ "${CANOPSIS_CATAG_TOKEN}" = "" ]; then
@@ -67,7 +70,9 @@ function ensure_env() {
     # it will exit with command not found
     rsync --version 2>&1 > /dev/null
     git --version 2>&1 > /dev/null
-    go version 2>&1 > /dev/null
+    if [ ! "${CANOPSIS_SKIP_GO}" = "1" ]; then
+        go version 2>&1 > /dev/null
+    fi
 
     if [ ! "${CANOPSIS_ENV_RECAP}" = "0" ]; then
         env_recap

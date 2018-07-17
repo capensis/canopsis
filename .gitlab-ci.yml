@@ -13,6 +13,7 @@ variables:
   CANOPSIS_TAG: "ci"
   CANOPSIS_UIV2_BRICKS_TAG: "develop"
   CANOPSIS_DOCKER_MODE: "test-ci"
+  CANOPSIS_SKIP_GO: "1"
 
 stage_test:
   stage: test
