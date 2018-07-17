@@ -122,24 +122,6 @@ export default {
       const query = omit(this.$route.query, ['interval']);
       this.$router.push({ query });
     },
-
-    getQuery() {
-      const query = omit(this.$route.query, ['page', 'interval']);
-
-      if (this.$route.query.interval && this.$route.query.interval !== 'custom') {
-        try {
-          const { tstart, tstop } = dateIntervals[this.$route.query.interval]();
-          query.tstart = tstart;
-          query.tstop = tstop;
-        } catch (err) {
-          console.warn(err);
-        }
-      }
-      query.limit = this.limit;
-      query.skip = ((this.$route.query.page - 1) * this.limit) || 0;
-
-      return query;
-    },
   },
 };
 </script>
