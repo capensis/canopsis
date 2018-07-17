@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
+import { createNamespacedHelpers } from 'vuex';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -68,7 +68,6 @@ import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import modalMixin from '@/mixins/modal/modal';
 import paginationMixin from '@/mixins/pagination';
-import dateIntervals from '@/helpers/date-intervals';
 import alarmsMixin from '@/mixins/alarms';
 
 const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
