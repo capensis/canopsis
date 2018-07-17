@@ -683,7 +683,8 @@ class ContextGraph(object):
 
         # keys from entity that should not be in event
         delete_keys = [
-            "_id", "depends", "impact", "type", "measurements", "infos"
+            "_id", "depends", "impact", "type", "measurements", "infos",
+            "last_state_change"
         ]
 
         kwargs['event_type'] = event_type
