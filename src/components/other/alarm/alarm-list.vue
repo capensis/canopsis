@@ -36,12 +36,11 @@
       time-line(:alarmProps="item.props")
   v-layout(wrap)
     v-flex(xs12, md7)
-    pagination(:meta="meta", :limit="limit")
+    pagination(:meta="meta", :limit="limit", :first="first", :last="last")
     records-per-page
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
 
 import BasicList from '@/components/tables/basic-list.vue';
