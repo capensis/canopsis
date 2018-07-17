@@ -5,6 +5,7 @@ export default {
     watcher: 'Watcher',
     name: 'Name',
     description: 'Description',
+    author: 'Author',
     submit: 'Submit',
     enabled: 'Enabled',
     login: 'Login',
@@ -103,6 +104,16 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
+  },
+  pbehaviorsList: {
+    connector: 'Connector',
+    connectorName: 'Connector name',
+    isEnabled: 'Is enabled',
+    begins: 'Begins',
+    ends: 'Ends',
+    type: 'Type',
+    reason: 'Reason',
+    rrule: 'Rrule',
   },
   settings: {
     titles: {

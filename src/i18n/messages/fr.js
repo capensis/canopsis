@@ -5,6 +5,7 @@ export default {
     watcher: 'Observateur',
     name: 'Nom',
     description: 'Description',
+    author: 'Auteur',
     yes: 'Oui',
     no: 'Non',
     confirmation: 'Etes-vous sûr(e) ?',
@@ -103,6 +104,16 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+  },
+  pbehaviorsList: {
+    connector: 'Connecteur',
+    connectorName: 'Nom du connecteur',
+    isEnabled: 'Est actif',
+    begins: 'Débute',
+    ends: 'Se termine',
+    type: 'Type',
+    reason: 'Raison',
+    rrule: 'Rrule',
   },
   settings: {
     titles: {

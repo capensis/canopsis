@@ -30,43 +30,43 @@ export default {
       items: [],
       pbehaviorsTableHeaders: [
         {
-          text: 'Name',
+          text: this.$t('common.name'),
           sortable: false,
         },
         {
-          text: 'Author',
+          text: this.$t('common.author'),
           sortable: false,
         },
         {
-          text: 'Connector',
+          text: this.$t('pbehaviorsList.connector'),
           sortable: false,
         },
         {
-          text: 'Connector name',
+          text: this.$t('pbehaviorsList.connectorName'),
           sortable: false,
         },
         {
-          text: 'Is Enabled',
+          text: this.$t('pbehaviorsList.isEnabled'),
           sortable: false,
         },
         {
-          text: 'Begins',
+          text: this.$t('pbehaviorsList.begins'),
           sortable: false,
         },
         {
-          text: 'Ends',
+          text: this.$t('pbehaviorsList.ends'),
           sortable: false,
         },
         {
-          text: 'Type',
+          text: this.$t('pbehaviorsList.type'),
           sortable: false,
         },
         {
-          text: 'Reason',
+          text: this.$t('pbehaviorsList.reason'),
           sortable: false,
         },
         {
-          text: 'Rrule',
+          text: this.$t('pbehaviorsList.rrule'),
           sortable: false,
         },
       ],
