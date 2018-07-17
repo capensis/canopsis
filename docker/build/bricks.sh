@@ -3,8 +3,8 @@ set -e
 set -o pipefail
 set -u
 
-workdir=$(dirname $(readlink -e $0))
-source ${workdir}/../../build-env.sh
+workdir=$(dirname $(readlink -e $0))/../..
+source ${workdir}/build-env.sh
 
 rm -rf docker/bricks && mkdir -p docker/bricks
 
