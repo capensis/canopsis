@@ -22,6 +22,9 @@ These routes take a JSON object with the following fields:
  - `filter` (optional) : a list of *entity groups*. The entities that are part
    of at least one of the groups will be taken into account when computing the
    statistics.
+ - `parameters` (optional) : an object containing parameters for the
+   statistics. For the `/api/v2/stats` route, the parameters for a statistic
+   should be in `parameters.<stat_name>`.
 
 An *entity group* is a JSON object containing `"<tag name>" : <tag filter>`
 couples. An entity is part of this group if each of its tags validates the
@@ -103,6 +106,8 @@ The statistic `ack_time_sla` is a JSON object with the following fields:
  - `below_rate`: the ratio of alarms whose ack time is below the SLA (between 0
    and 1).
 
+The value of the SLA should be provided in seconds in the parameter `sla`.
+
 ### Resolve time above or below the SLA
 
 The statistic `resolve_time_sla` is a JSON object with the following fields:
@@ -114,12 +119,14 @@ The statistic `resolve_time_sla` is a JSON object with the following fields:
  - `below_rate`: the ratio of alarms whose resolve time is below the SLA
    (between 0 and 1).
 
+The value of the SLA should be provided in seconds in the parameter `sla`.
+
 ### Time spent in each state
 
 The statistic `time_in_state` is a JSON object with :
 
  - one field for each state (between 0 and 3), containing the time spent by the
-   watcher in this state, in seconds
+   entity in this state, in seconds
  - a `total` field, containing the total time
 
 The intervals during which a pbehavior is active are excluded from these
@@ -130,14 +137,17 @@ values. The total time may thus be inferior to the duration of the interval
 
 The statistic `availability` is a JSON object with the followign fields:
 
- - `available_time`: the time during which the watcher was in an available
+ - `available_time`: the time during which the entity was in an available
    state, in seconds
- - `unavailable_time`: the time during which the watcher was in an unavailable
+ - `unavailable_time`: the time during which the entity was in an unavailable
    state, in seconds
- - `available_rate`: the ratio of time during which the watcher was in an
+ - `available_rate`: the ratio of time during which the entity was in an
    available state (between 0 and 1)
- - `unavailable_rate`: the ratio of time during which the watcher was in an
+ - `unavailable_rate`: the ratio of time during which the entity was in an
    unavailable state (between 0 and 1)
+
+The entity is considered to be available if it is in a state lower or equal to
+the value of the parameter `available_state`.
 
 The intervals during which a pbehavior is active are excluded from these
 values. The total time `available_time + unavailable_time` may thus be inferior
@@ -233,7 +243,9 @@ Request:
             "component": "component"
         }
     ],
-    "ack_time_sla": 600
+    "parameters": {
+        "sla": 600
+    }
 }
 ```
 
@@ -336,7 +348,9 @@ Request:
             "entity_id": "watcher_0"
         }
     ],
-    "available_state": 2
+    "parameters": {
+        "available_state": 2
+    }
 }
 ```
 
@@ -366,7 +380,7 @@ Request:
 
 ```javascript
 {
-    "stats": ["alarms_created", "alarms_resolved"],
+    "stats": ["alarms_created", "alarms_resolved", "ack_time_sla", "resolve_time_sla"],
     "tstart": 1528290000,
     "tstop": 1528293000,
     "filter": [
@@ -375,7 +389,15 @@ Request:
             "connector_name": "connector_name",
             "component": "component"
         }
-    ]
+    ],
+    "parameters": {
+        "ack_time_sla": {
+            "sla": 900
+        },
+        "resolve_time_sla": {
+            "sla": 3600
+        }
+    }
 }
 ```
 
@@ -385,8 +407,20 @@ Response:
 [
     {
         "tags": {},
-        "alarms_created": 13,
-        "alarms_created": 8,
+        "alarms_created": 12,
+        "alarms_resolved": 8,
+        "ack_time_sla": {
+            "above": 4,
+            "below": 8,
+            "above_rate": 0.3333333333333333,
+            "below_rate": 0.6666666666666666
+        },
+        "ack_time_sla": {
+            "above": 2
+            "below": 6,
+            "above_rate": 0.25,
+            "below_rate": 0.75
+        }
     }
 ]
 ```

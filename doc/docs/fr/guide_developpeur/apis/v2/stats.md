@@ -25,6 +25,9 @@ Ces routes acceptent un objet JSON contenant les paramètres suivants :
  - `filter` (optionnel) : une liste de *groupes d'entités*. Une entité est
    prise en compte dans le calcul des statistiques si elle fait partie d'un des
    groupes d'entités.
+ - `parameters` (optionnel) : un objet contenant des paramètres pour les
+   statistiques. Pour la route `/api/v2/stats`, les paramètres de chaque
+   statistiques sont dans l'objet `parameters.<nom de la statistique>`.
 
 Un *groupe d'entités* est un objet JSON contenant des couples
 `"<nom de tag>" : <filtre de tag>`. Une entité fait partie d'un groupe
@@ -111,8 +114,7 @@ La statistique `ack_time_sla` est un objet JSON avec les champs suivants :
  - `below_rate`: la proportion d'alarmes dont le temps d'acquittement est
    inférieur au SLA (entre 0 et 1)
 
-Le SLA doit être indiqué en secondes dans la requête dans un champs
-`ack_time_sla`.
+Le SLA doit être indiqué en secondes dans la requête dans le paramètre `sla`.
 
 ### Taux de résolution inférieur ou supérieur au SLA
 
@@ -127,14 +129,13 @@ La statistique `resolve_time_sla` est un objet JSON avec les champs suivants :
  - `below_rate`: la proportion d'alarmes dont le temps de résolution est
    inférieur au SLA (entre 0 et 1)
 
-Le SLA doit être indiqué en secondes dans la requête dans un champs
-`resolve_time_sla`.
+Le SLA doit être indiqué en secondes dans la requête dans le paramètre `sla`.
 
 ### Temps passé dans chaque état
 
 La statistique `time_in_state` est un objet JSON avec :
 
- - un champ par état (0-3), contenant le temps passé par le watcher dans cet
+ - un champ par état (0-3), contenant le temps passé par l'entité dans cet
    état en secondes
  - un champ `total`, contenant le temps total
 
@@ -146,24 +147,21 @@ ci-dessus. Le temps total peut donc être inférieur à la durée de la période
 
 La statistique `availability` est un objet JSON avec les champs suivants :
 
- - `available_time` : le temps pendant lequel le watcher était dans un état
+ - `available_time` : le temps pendant lequel l'entité était dans un état
    disponible en secondes
- - `unavailable_time` : le temps pendant lequel le watcher était dans un état
+ - `unavailable_time` : le temps pendant lequel l'entité était dans un état
    indisponible en secondes
- - `available_rate` : la proportion du temps pendant lequel le watcher était
+ - `available_rate` : la proportion du temps pendant lequel l'entité était
    dans un état disponible (entre 0 et 1)
- - `unavailable_rate` : la proportion du temps pendant lequel le watcher était
+ - `unavailable_rate` : la proportion du temps pendant lequel l'entité était
    dans un état indisponible (entre 0 et 1)
 
-Un état est considéré comme disponible s'il est inférieur ou égal à la valeur
-donnée en paramètre dans le champs `available_state`.
+L'entité est considérée comme disponible si elle est dans un état inférieur ou
+égal à la valeur donnée dans le paramètre `available_state`.
 
 Les périodes pendant lesquels un pbehavior est actif sont exclues des valeurs
 ci-dessus. Le temps total `available_time + unavailable_time` peut donc être
 inférieur à la durée de la période `tstop - tstart`.
-
-**Remarque :** Si cette statistique est calculée pour plusieurs watchers à la
-fois, la somme des temps de disponibilité (ou d'indisponibilité) sera renvoyée.
 
 
 ## Exemples
@@ -256,7 +254,9 @@ Requête:
             "component": "component"
         }
     ],
-    "ack_time_sla": 600
+    "parameters": {
+        "sla": 600
+    }
 }
 ```
 
@@ -270,7 +270,7 @@ Réponse:
             "above": 3
             "below": 9,
             "above_rate": 0.25,
-            "below_rate": 0.75,
+            "below_rate": 0.75
         }
     }
 ]
@@ -358,7 +358,9 @@ Requête:
             "entity_id": "watcher_0"
         }
     ],
-    "available_state": 2
+    "parameters": {
+        "available_state": 2
+    }
 }
 ```
 
@@ -386,7 +388,7 @@ Requête:
 
 ```javascript
 {
-    "stats": ["alarms_created", "alarms_resolved"],
+    "stats": ["alarms_created", "alarms_resolved", "ack_time_sla", "resolve_time_sla"],
     "tstart": 1528290000,
     "tstop": 1528293000,
     "filter": [
@@ -395,7 +397,15 @@ Requête:
             "connector_name": "connector_name",
             "component": "component"
         }
-    ]
+    ],
+    "parameters": {
+        "ack_time_sla": {
+            "sla": 900
+        },
+        "resolve_time_sla": {
+            "sla": 3600
+        }
+    }
 }
 ```
 
@@ -405,8 +415,20 @@ Réponse:
 [
     {
         "tags": {},
-        "alarms_created": 13,
-        "alarms_created": 8,
+        "alarms_created": 12,
+        "alarms_resolved": 8,
+        "ack_time_sla": {
+            "above": 4,
+            "below": 8,
+            "above_rate": 0.3333333333333333,
+            "below_rate": 0.6666666666666666
+        },
+        "ack_time_sla": {
+            "above": 2
+            "below": 6,
+            "above_rate": 0.25,
+            "below_rate": 0.75
+        }
     }
 ]
 ```
