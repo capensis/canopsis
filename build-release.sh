@@ -32,6 +32,12 @@ function ensure_env() {
         echo "\$CANOPSIS_TAG is not initialised: provide TAG for release"
         exit 3
     fi
+
+    # just try to run these programs so with set -e if they are not found,
+    # it will exit with command not found
+    rsync -h 2>&1 > /dev/null
+    git -h 2>&1 > /dev/null
+    go -h 2>&1 > /dev/null
 }
 
 function deploy_catag() {
