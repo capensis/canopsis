@@ -23,22 +23,20 @@ function build_for_distribution() {
     local docker_args="${opt_squash} --build-arg PROXY=$http_proxy --build-arg CANOPSIS_TAG=${tag} --build-arg CANOPSIS_DISTRIBUTION=${distribution}"
     local full_tag="${distribution}-${tag}"
 
-    if [ ! "${mode}" == "test-ci" ]; then
-        echo "BUILDING DISTRIBUTION ${distribution}"
-        docker build ${docker_args} -f docker/Dockerfile.sysbase-${distribution} -t canopsis/canopsis-sysbase:${full_tag} .
+    echo "BUILDING DISTRIBUTION ${distribution}"
+    docker build ${docker_args} -f docker/Dockerfile.sysbase-${distribution} -t canopsis/canopsis-sysbase:${full_tag} .
 
-        echo "BUILDING CORE ${distribution}"
-        docker build ${docker_args} -f docker/Dockerfile -t canopsis/canopsis-core:${full_tag} .
+    echo "BUILDING CORE ${distribution}"
+    docker build ${docker_args} -f docker/Dockerfile -t canopsis/canopsis-core:${full_tag} .
 
-		echo "Building provisionning image"
-		docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
+	echo "Building provisionning image"
+	docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
 
-        if [ "${distribution}" = "debian-9" ]; then
-            echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
+    if [ "${distribution}" = "debian-9" ]; then
+        echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
 
-            docker tag canopsis/canopsis-core:${full_tag} canopsis/canopsis-core:${tag}
-            docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${tag}
-        fi
+        docker tag canopsis/canopsis-core:${full_tag} canopsis/canopsis-core:${tag}
+        docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${tag}
     fi
 
     if [ "${CANOPSIS_DOCKER_MODE}" == "test" ]||[ "${CANOPSIS_DOCKER_MODE}" == "test-ci" ]; then
