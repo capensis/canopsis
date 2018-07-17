@@ -67,7 +67,7 @@ function bump_canopsis_next() {
     rm -rf tmp-canopsis-next
 
     git add sources/webcore/src/canopsis-next
-    git commit --allow-empty --author="build-release.sh" -m "auto: bump canopsis-next ${CANOPSIS_TAG}"
+    git commit --allow-empty --author="build-release.sh <canopsis@canopsis.fr>" -m "auto: bump canopsis-next ${CANOPSIS_TAG}"
     git push $(git remote) $(git rev-parse --abbrev-ref HEAD)
 }
 
