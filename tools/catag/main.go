@@ -4,19 +4,21 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/vaughan0/go-ini"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	ini "github.com/vaughan0/go-ini"
 )
 
 type Args struct {
-	Token  *string
-	APIUrl *string
-	Tag    *string
-	INI    *string
+	Token   *string
+	APIUrl  *string
+	Tag     *string
+	INI     *string
+	Cleanup *bool
 }
 
 type GitLab struct {
@@ -89,10 +91,11 @@ func (g *GitLab) AddTag(tag string, ref string, project_path string) error {
 
 func args() Args {
 	a := Args{
-		Token:  flag.String("token", "", "GitLab private token"),
-		APIUrl: flag.String("apiurl", "https://git.canopsis.net/api/v4", "gitlab api url"),
-		Tag:    flag.String("tag", "", "tag name"),
-		INI:    flag.String("ini", "catag.ini", "path to ini file"),
+		Token:   flag.String("token", "", "GitLab private token"),
+		APIUrl:  flag.String("apiurl", "https://git.canopsis.net/api/v4", "gitlab api url"),
+		Tag:     flag.String("tag", "", "tag name"),
+		INI:     flag.String("ini", "catag.ini", "path to ini file"),
+		Cleanup: flag.Bool("cleanup", false, "do not add tags, only remove the specified one"),
 	}
 
 	flag.Parse()
@@ -105,7 +108,7 @@ func work(g *GitLab, args Args, project_path string, ref string) {
 	fmt.Printf("working on %s:%s: ", project_path, ref)
 	if err := g.DelTag(tag, project_path); err != nil {
 		fmt.Printf("%s\n", err)
-	} else {
+	} else if !*args.Cleanup {
 		if err := g.AddTag(tag, ref, project_path); err != nil {
 			fmt.Printf("%s\n", err)
 		}
