@@ -20,14 +20,14 @@
         v-flex(xs12)
           date-time-picker(v-model="tstart",
           clearable,
-          :label="getLabelTranslation('tstart')",
+          :label="$t(`modals.liveReporting.tstart`)",
           name="tstart",
           :rules="'required'")
         v-flex(xs12)
           date-time-picker(
           v-model="tstop",
           clearable,
-          :label="getLabelTranslation('tstop')",
+          :label="$t(`modals.liveReporting.tstop`)",
           name="tstop",
           :rules="tstopRules")
       v-btn(@click="submit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
@@ -124,9 +124,6 @@ export default {
         }
         this.hideModal();
       }
-    },
-    getLabelTranslation(field) {
-      return this.$t(`modals.liveReporting.${field}`);
     },
   },
 };
