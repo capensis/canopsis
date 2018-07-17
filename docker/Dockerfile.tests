@@ -1,7 +1,7 @@
-ARG SYSBASE
-ARG TAG
+ARG CANOPSIS_DISTRIBUTION
+ARG CANOPSIS_TAG
 
-FROM canopsis/canopsis-core:${SYSBASE}-${TAG}
+FROM canopsis/canopsis-core:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
 
 COPY sources/canopsis/test/ ${CPS_HOME}/test
 

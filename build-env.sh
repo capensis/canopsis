@@ -8,6 +8,7 @@ export CANOPSIS_ENV_CONFIRM=${CANOPSIS_ENV_CONFIRM:=1}
 export CANOPSIS_UIV2_BRICKS_TAG=${CANOPSIS_UIV2_BRICKS_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
+export CANOPSIS_CATAG_TOKEN=${CANOPSIS_CATAG_TOKEN:=""}
 export GOPATH=${GOPATH:=""}
 export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
@@ -24,8 +25,6 @@ function env_recap() {
 }
 
 function ensure_env() {
-    cd ${workdir}
-
     if [ "${GOPATH}" = "" ]; then
         echo "\$GOPATH is not initialised: setup go environment properly."
         exit 1
