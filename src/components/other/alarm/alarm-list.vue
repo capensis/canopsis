@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     removeHistoryFilter() {
-      const query = omit(this.$route.query, ['interval']);
+      const query = omit(this.$route.query, ['interval', 'tstart', 'tstop']);
       this.$router.push({ query });
     },
   },
