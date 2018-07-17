@@ -133,7 +133,7 @@ class TestManager(BaseTest):
         self.assertTrue(isinstance(pb['comments'], list))
         self.assertEqual(len(pb['comments']), 2)
 
-        self.pbm._update_pbehavior(self.pbehavior_id, {'$set': {'comments': None}})
+        self.pbm._update_pbehavior(self.pbehavior_id, {'$set': {'comments': []}})
         self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
         pb = self.pbm.get(self.pbehavior_id)
         self.assertTrue('comments' in pb)

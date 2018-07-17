@@ -145,6 +145,7 @@ class Alarm(object):
             tags,
             ticket,
             alarm_filter=None,
+            done=None,
             extra={}
     ):
         """
@@ -166,6 +167,7 @@ class Alarm(object):
         :param list steps: all alarm steps
         :param list tags: list of associated tags
         :param AlarmStep ticket: declareticket step
+        :param AlarmStep done: done step
         """
         self._id = _id
         self.identity = identity
@@ -174,6 +176,7 @@ class Alarm(object):
         self.canceled = canceled
         self.creation_date = creation_date
         self.display_name = display_name
+        self.done = done
         self.entity = None
         self.extra = extra
         self.hard_limit = hard_limit
@@ -205,6 +208,7 @@ class Alarm(object):
             'initial_output': self.initial_output,
             'last_update_date': self.last_update_date,
             'hard_limit': self.hard_limit,
+            'done': None,
             'status': None,
             'state': None,
             'ticket': None,
@@ -228,6 +232,9 @@ class Alarm(object):
 
         if self.canceled is not None:
             value['canceled'] = self.canceled.to_dict()
+
+        if self.done is not None:
+            value['done'] = self.done.to_dict()
 
         if self.ack is not None:
             value['ack'] = self.ack.to_dict()
@@ -315,6 +322,22 @@ class Alarm(object):
 
         return False
 
+    def resolve_done(self, done_delay):
+        """
+        Resolve an alarm if it has been done, after the done_delay
+
+        :param int done_delay: the delay where the alarm must stay in "done" state
+        :returns: True if the alarm has been done, False otherwise
+        :rtype: bool
+        """
+        if self.done is not None:
+            done_date = self.done.timestamp
+            if (int(time()) - done_date) >= done_delay:
+                self.resolved = done_date
+                return True
+
+        return False
+
     def resolve_snooze(self):
         """
         Checks if the snooze has expired.
@@ -394,3 +417,6 @@ class Alarm(object):
         """
         self.status = new_status
         self.steps.append(new_status)
+
+    def __repr__(self):
+        return '<Alarm {}>'.format(self._id)

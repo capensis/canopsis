@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 
 
 class Entitylink(object):

@@ -25,7 +25,7 @@ from canopsis.common import root_path
 
 from canopsis.linklist.manager import Linklist
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 import xmlrunner
 
 

@@ -22,14 +22,12 @@
 from unittest import main
 
 from canopsis.timeserie.timewindow import TimeWindow
-from canopsis.configuration.configurable.decorator import conf_paths
 
 from base import BaseTestConfiguration, BaseStorageTest
 import unittest
 from canopsis.common import root_path
 import xmlrunner
 
-@conf_paths('storage/test-timed.conf')
 class TestConfiguration(BaseTestConfiguration):
     """Default test configuration."""
 

@@ -42,6 +42,7 @@ yum install -y \
     python \
     redhat-lsb-core \
     rsync \
+    sudo \
     tmux \
     xmlsec1 \
     xmlsec1-openssl \

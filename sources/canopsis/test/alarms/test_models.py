@@ -139,6 +139,19 @@ class AlarmsModelsTest(TestCase):
         self.assertTrue(self.alarm.resolve_cancel(0))
         self.assertEqual(self.alarm.resolved, ts)
 
+    def test_alarm_resolve_done(self):
+        self.assertFalse(self.alarm.resolve_done(0))
+
+        ts = 1506808800
+        self.alarm.done = AlarmStep(
+            author='Tricia',
+            message='Lange',
+            type_='done',
+            timestamp=ts
+        )
+        self.assertTrue(self.alarm.resolve_done(0))
+        self.assertEqual(self.alarm.resolved, ts)
+
     def test_alarm_resolve_snooze(self):
         self.assertFalse(self.alarm.resolve_snooze())
 

@@ -55,3 +55,11 @@ dpkg -i canopsis-cat-2.7.0-1.amd64.stretch.deb
 apt install -y -f
 canoctl deploy
 ```
+
+# Develop in a standalone installation
+
+```
+chown -R canopsis:canopsis /opt/canopsis/lib/python2.7
+su - canopsis
+pip install -U . /path/to/canopsis/sources/canopsis
+```

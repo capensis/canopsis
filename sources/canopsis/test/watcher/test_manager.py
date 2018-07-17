@@ -18,7 +18,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 #from canopsis.context_graph.process import create_entity
 from canopsis.logger.logger import Logger, OutputNull
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
