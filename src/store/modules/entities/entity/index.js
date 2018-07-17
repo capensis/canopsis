@@ -97,8 +97,9 @@ export default {
     },
     async create({ commit, dispatch }, { data }) {
       try {
+        // Need this special syntax for request params for the backend to handle it
         await request.put(API_ROUTES.createEntity, { "entity": JSON.stringify(data) });
-        await dispatch('popup/add', { type: 'success', text: 'Entity successfully created' }, { root: true });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.createEntity') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
         commit(types.CREATION_FAILED, err);
@@ -108,7 +109,7 @@ export default {
     async edit({ commit, dispatch }, { data }) {
       try {
         await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
-        await dispatch('popup/add', { type: 'success', text: 'Entity successfully edited' }, { root: true });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.editEntity') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
         commit(types.EDIT_FAILED, err);

@@ -22,7 +22,7 @@ import { MODALS } from '@/constants';
 
 import CreateForm from './create-entity-form.vue';
 
-const { mapActions: entitiesMapActions } = createNamespacedHelpers('context');
+const { mapActions: entitiesMapActions } = createNamespacedHelpers('entity');
 
 /**
  * Modal to create an entity (watcher, resource, component, connector)
@@ -59,6 +59,7 @@ export default {
         enabled: true,
         depends: [],
         impact: [],
+        infos: {},
       },
     };
   },

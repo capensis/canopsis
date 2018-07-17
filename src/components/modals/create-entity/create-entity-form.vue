@@ -5,7 +5,7 @@ v-card-text
       v-text-field(
         :label="$t('common.name')",
         :value="name",
-        @input="(name) => $emit('update:name', name)",
+        @input="$emit('update:name', $event)",
         :error-messages="errors.collect('name')"
         v-validate="'required'",
         data-vv-name="name"
@@ -14,7 +14,7 @@ v-card-text
       v-text-field(
         :label="$t('common.description')",
         :value="description",
-        @input="(description) => $emit('update:description', description)",
+        @input="$emit('update:description', $event)",
         data-vv-name="description",
         :error-messages="errors.collect('description')"
         multi-line
@@ -23,7 +23,7 @@ v-card-text
       v-switch(
         :label="$t('common.enabled')",
         :input-value="enabled",
-        @change="(enabled) => $emit('update:enabled', enabled)"
+        @change="$emit('update:enabled', $event)"
       )
       v-select(
         :items="types",
@@ -31,7 +31,7 @@ v-card-text
         data-vv-name="type",
         v-validate="'required'",
         :error-messages="errors.collect('type')"
-        @input="(type) => $emit('update:type', type)",
+        @input="$emit('update:type', $event)",
         label="Type"
         single-line
       )

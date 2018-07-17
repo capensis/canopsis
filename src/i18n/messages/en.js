@@ -332,6 +332,8 @@ export default {
   },
   success: {
     default: 'Done !',
+    createEntity: 'Entity successfully created',
+    editEntity: 'Entity successfully edited',
   },
   mFilterEditor: {
     title: 'Filter editor',

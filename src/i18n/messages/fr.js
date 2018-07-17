@@ -332,6 +332,8 @@ export default {
   },
   success: {
     default: 'Action effectuée avec succès',
+    createEntity: 'Entité créée avec succès',
+    editEntity: 'Entité éditée avec succès',
   },
   mFilterEditor: {
     title: 'Editeur de filtre',
