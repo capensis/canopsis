@@ -21,7 +21,7 @@ stage_test:
   stage: test
   tags: ["canopsis"]
   script:
-    - ci-gitlab.sh
+    - ./ci-gitlab.sh
 
   artifacts:
     paths:
