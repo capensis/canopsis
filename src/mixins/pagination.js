@@ -22,10 +22,6 @@ export default {
       const page = this.$route.query.page || 1;
       const limit = this.$route.query.limit || PAGINATION_LIMIT;
 
-      if (page === 1) {
-        return 1;
-      }
-
       return 1 + (limit * (page - 1));
     },
     /**
