@@ -97,22 +97,16 @@ ssh-add
 
 ### Setup - Tag sur les dépôts
 
-Vous devez cloner le dépôt canopsis dans la branche que vous aller faire tagger par *catag*.
+Lancer le script `build-release.sh` avec les variables d’environnement nécessaires.
+
+Le script va faire le nécessaire pour ajouter les tags sur les projets définis dans `tools/catag/catag.ini`, cloner `canopsis-next` et faire tout autre travail nécessaire aux préparatifs d’une *release*.
 
 ```bash
-cd ${workdir}
+export CANOPSIS_TAG=${tag}
+export CATAG_TOKEN="VOTRE_TOKEN_GITLAB"
+# une variable GOPATH doit être définie
 
-git clone ssh://git@git.canopsis.net/canopsis/canopsis.git -b ${start_branch} canopsis
-cd canopsis
-
-git submodule update --init
-
-cd tools/catag
-
-go get github.com/vaughan0/go-ini
-go build .
-
-./catag -token "<token gitlab>" -tag ${tag}
+./build-release.sh
 ```
 
 ### Build - Core
