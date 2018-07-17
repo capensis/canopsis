@@ -19,31 +19,23 @@ export default {
      * Calculate first item nb to display on pagination, in case it's not given by the backend
      */
     first() {
-      const { page } = this.$route.query;
-      if (page === 1 || !this.$route.query.page) {
+      const page = this.$route.query.page || 1;
+      const limit = this.$route.query.limit || PAGINATION_LIMIT;
+
+      if (page === 1) {
         return 1;
       }
-      if (this.$route.query.limit) {
-        return 1 + (this.$route.query.limit * (page - 1));
-      }
 
-      return 1 + (PAGINATION_LIMIT * (page - 1));
+      return 1 + (limit * (page - 1));
     },
     /**
      * Calculate last item nb to display on pagination, in case it's not given by the backend
      */
     last() {
-      let last;
+      const page = this.$route.query.page || 1;
+      const limit = this.$route.query.limit || PAGINATION_LIMIT;
 
-      if (this.$route.query.page === 1 || !this.$route.query.page) {
-        last = this.$route.query.limit || PAGINATION_LIMIT;
-      } else if (this.$route.query.limit) {
-        last = this.$route.query.page * this.$route.query.limit;
-      } else {
-        last = this.$route.query.page * PAGINATION_LIMIT;
-      }
-
-      return last;
+      return page * limit;
     },
   },
   watch: {
