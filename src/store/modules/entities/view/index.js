@@ -1,6 +1,7 @@
 import request from '@/services/request';
 import { viewSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
 import widgetModule, { types as widgetMutations } from './widget';
 
 export const types = {
@@ -15,15 +16,21 @@ export default {
     widget: widgetModule,
   },
   state: {
-    loadedView: null,
+    activeViewId: null,
+    loadedView: null, // TODO:
     pending: false,
+  },
+  getters: {
+    activeItem: (state, getters, rootState, rootGetters) =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
+    pending: state => state.pending,
   },
   mutations: {
     [types.FETCH_ITEM]: (state) => {
       state.pending = true;
     },
-    [types.FETCH_ITEM_COMPLETED]: (state, view) => {
-      state.loadedView = view;
+    [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
+      state.activeViewId = viewId;
       state.pending = false;
     },
     [types.SET_LOADED_VIEW]: (state, view) => {
@@ -40,7 +47,7 @@ export default {
           dataPreparer: d => d.data[0],
         }, { root: true });
 
-        commit(types.FETCH_ITEM_COMPLETED, result.data[0]);
+        commit(types.FETCH_ITEM_COMPLETED, result.normalizedData.result);
         commit(
           `view/widget/${widgetMutations.SET_WIDGETS}`,
           result.normalizedData.entities.widgetWrapper,
@@ -63,9 +70,5 @@ export default {
         console.error(e);
       }
     },
-  },
-  getters: {
-    getItem: state => state.loadedView,
-    pending: state => state.pending,
   },
 };

@@ -22,11 +22,11 @@ const entitiesModule = {
   getters: {
     getItem(state) {
       return (type, id) => {
-        if (typeof type !== 'string' || !id) {
+        if (typeof type !== 'string') {
           throw new Error('[entities/getItem] Missing required argument.');
         }
 
-        if (!state[type]) {
+        if (!state[type] || !id) {
           return null;
         }
 

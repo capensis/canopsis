@@ -101,3 +101,8 @@ export const ENTITY_STATUS_STYLES = {
     icon: 'keyboard_arrow_up',
   },
 };
+
+export const WIDGET_TYPES = {
+  alarmList: 'listalarm',
+  context: 'crudcontext',
+};

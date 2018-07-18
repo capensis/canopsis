@@ -15,6 +15,7 @@ export default {
   computed: {
     ...mapGetters({
       getWidget: 'getItem',
+      getWidgets: 'getItems',
     }),
   },
   methods: {
