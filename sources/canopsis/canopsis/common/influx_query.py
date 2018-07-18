@@ -130,6 +130,13 @@ class SelectQuery(object):
         self.select_columns.append(select_column)
         return self
 
+    def select_all(self):
+        """
+        Select all the columns.
+        """
+        self.select_columns = ['*']
+        return self
+
     def group_by(self, *tags):
         """
         Add columns to the GROUP BY statement.
