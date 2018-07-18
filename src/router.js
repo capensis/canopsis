@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { ROUTER_MODE, ENVIRONNEMENT } from '@/config';
+import { ROUTER_MODE } from '@/config';
 import Login from '@/views/login.vue';
 import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
@@ -23,7 +23,7 @@ let routes = [
     component: Context,
   },
 ];
-if (ENVIRONNEMENT === 'development') {
+if (process.env.NODE_ENV === 'development') {
   routes = routes.concat([
     {
       path: '/login',
