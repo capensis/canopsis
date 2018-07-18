@@ -58,7 +58,7 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
-import contextEntityMixin from '@/mixins/context';
+import contextEntityMixin from '@/mixins/context/list';
 import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
 import { MODALS } from '@/constants';
 
