@@ -32,7 +32,7 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
-from canopsis.alarms.event_publisher import AlarmEventPublisher
+from canopsis.alarms.models import AlarmState
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
@@ -52,9 +52,11 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
+from canopsis.models.entity import Entity
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
-from canopsis.statsng.enums import StatCounters
+from canopsis.statsng.enums import StatCounters, StatStateIntervals
+from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
 
 # register tasks manually
@@ -171,7 +173,7 @@ class Alerts(object):
         watcher_manager = Watcher()
 
         amqp_pub = AmqpPublisher(get_default_amqp_conn())
-        event_publisher = AlarmEventPublisher(amqp_pub)
+        event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
                 filter_storage, context_manager, watcher_manager,
@@ -570,17 +572,7 @@ class Alerts(object):
 
             if is_new_alarm:
                 self.check_alarm_filters()
-
-                entity = self.context_manager.get_entities_by_id(entity_id)
-                try:
-                    entity = entity[0]
-                except IndexError:
-                    entity = {}
-                self.event_publisher.publish_statcounterinc_event(
-                    alarm[self.alerts_storage.VALUE][AlarmField.creation_date.value],
-                    StatCounters.alarms_created,
-                    entity,
-                    alarm[self.alerts_storage.VALUE])
+                self.publish_new_alarm_stats(alarm)
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
@@ -744,9 +736,39 @@ class Alerts(object):
             )
 
         # Executing task
+        now = int(time())
         value = alarm.get(self.alerts_storage.VALUE)
         new_value, status = task(self, value, state, event)
-        new_value[AlarmField.last_update_date.value] = int(time())
+        new_value[AlarmField.last_update_date.value] = now
+
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+        try:
+            entity = self.context_manager.get_entities_by_id(entity_id)[0]
+        except IndexError:
+            entity = {}
+
+        # Send statistics event
+        last_state_change = entity.get(Entity.LAST_STATE_CHANGE)
+        if last_state_change:
+            self.event_publisher.publish_statstateinterval_event(
+                now,
+                StatStateIntervals.time_in_state,
+                now - last_state_change,
+                old_state,
+                entity,
+                new_value)
+
+        if state == AlarmState.CRITICAL:
+            self.event_publisher.publish_statcounterinc_event(
+                now,
+                StatCounters.downtimes,
+                entity,
+                new_value)
+
+        # Update entity's last_state_change
+        if entity:
+            entity[Entity.LAST_STATE_CHANGE] = now
+            self.context_manager.update_entity(entity)
 
         alarm[storage_value] = new_value
 
@@ -1200,3 +1222,43 @@ class Alerts(object):
             new_value[AlarmField.alarmfilter.value] = alarmfilter
 
             self.update_current_alarm(docalarm, new_value)
+
+    def publish_new_alarm_stats(self, alarm):
+        """
+        Publish statistics events for a new alarm.
+
+        :param Dict[str, Any] alarm:
+        """
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+        entity = self.context_manager.get_entities_by_id(entity_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
+
+        alarm_value = alarm[self.alerts_storage.VALUE]
+        creation_date = alarm_value[AlarmField.creation_date.value]
+
+        # Increment alarms_created counter
+        self.event_publisher.publish_statcounterinc_event(
+            creation_date,
+            StatCounters.alarms_created,
+            entity,
+            alarm_value)
+
+        # Increment alarms_impacting counter for each impacted entity
+        # (as well as the entity that created the alarm)
+        self.event_publisher.publish_statcounterinc_event(
+            creation_date,
+            StatCounters.alarms_impacting,
+            entity,
+            alarm_value)
+
+        impacted_entities = self.context_manager.get_entities_by_id(
+            entity.get(Entity.IMPACTS))
+        for impacted_entity in impacted_entities:
+            self.event_publisher.publish_statcounterinc_event(
+                creation_date,
+                StatCounters.alarms_impacting,
+                impacted_entity,
+                alarm_value)

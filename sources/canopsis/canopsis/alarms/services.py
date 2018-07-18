@@ -58,7 +58,7 @@ class AlarmService(object):
 
         :param AlarmAdapter alarms_adapter: Alarms DB adapter
         :param ContextGraph context_manager: Context graph
-        :param AlarmEventPublisher event_publisher: Event publisher
+        :param StatEventPublisher event_publisher: Event publisher
         :param WatcherManager watcher_manager: ref to a WatcherManager object
         :param int bagot_time: period to consider status oscilations
         :param int cancel_autosolve_delay: delay before validating a cancel
@@ -163,6 +163,7 @@ class AlarmService(object):
                 self.event_publisher.publish_statduration_event(
                     alarm.last_update_date,
                     StatDurations.resolve_time,
+                    alarm.last_update_date - alarm.creation_date,
                     entity,
                     alarm_dict['v'])
 

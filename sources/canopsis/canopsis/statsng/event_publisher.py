@@ -20,13 +20,12 @@
 # ---------------------------------
 
 """
-Event publisher for alarms.
+Event publisher for the statsng engine.
 """
 
 from __future__ import unicode_literals
 import os.path
 
-from canopsis.alerts.enums import AlarmField
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
@@ -38,15 +37,15 @@ from canopsis.statsng.enums import StatEvents
 CONF_PATH = 'etc/statsng/engine.conf'
 CONF_SECTION = 'ENGINE'
 SEND_EVENTS_CONF_KEY = 'send_events'
-LOG_PATH = 'var/log/alarms.log'
+LOG_PATH = 'var/log/statsng.log'
 
 
-class AlarmEventPublisher(object):
+class StatEventPublisher(object):
     """
-    Event publisher for alarms.
+    Event publisher for the statsng engine.
     """
-    def __init__(self, amqp_pub):
-        self.logger = Logger.get('alarms', LOG_PATH)
+    def __init__(self, logger, amqp_pub):
+        self.logger = logger
         self.amqp_pub = amqp_pub
 
         # Only send events if the configuration file exists and sets
@@ -117,6 +116,7 @@ class AlarmEventPublisher(object):
     def publish_statduration_event(self,
                                    timestamp,
                                    duration_name,
+                                   duration_value,
                                    entity,
                                    alarm):
         """
@@ -124,20 +124,12 @@ class AlarmEventPublisher(object):
 
         :param int timestamp: the time at which the event occurs
         :param str duration_name: the name of the duration to add
+        :param str duration_value: the value of the duration
         :param dict entity: the entity
         :param dict alarm: the alarm
         """
         if not self.send_events:
             return
-
-        creation_date = alarm.get(AlarmField.creation_date.value)
-
-        if not creation_date:
-            self.logger.warning(
-                "The alarm does not have a creation date. Ignoring it.")
-            return
-
-        duration = timestamp - creation_date
 
         component = alarm.get(Event.COMPONENT)
         resource = alarm.get(Event.RESOURCE)
@@ -162,7 +154,57 @@ class AlarmEventPublisher(object):
             resource=resource,
             timestamp=timestamp,
             duration_name=duration_name,
-            duration=duration,
+            duration=duration_value,
+            alarm=alarm,
+            entity=entity)
+
+        self.amqp_pub.canopsis_event(event)
+
+    def publish_statstateinterval_event(self,
+                                        timestamp,
+                                        state_name,
+                                        state_duration,
+                                        state_value,
+                                        entity,
+                                        alarm):
+        """
+        Publish a statstateinterval event on amqp.
+
+        :param int timestamp: the time at which the event occurs
+        :param str state_name: the name of the state
+        :param str state_duration: the time spent in this state
+        :param str state_value: the value of the state
+        :param dict entity: the entity
+        :param dict alarm: the alarm
+        """
+        if not self.send_events:
+            return
+
+        component = alarm.get(Event.COMPONENT)
+        resource = alarm.get(Event.RESOURCE)
+
+        # AmqpPublisher.canopsis needs the component and resource of the event
+        # to be unicode strings.
+        try:
+            component = component.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+        try:
+            resource = resource.decode('utf-8')
+        except (UnicodeError, AttributeError):
+            pass
+
+        event = forger(
+            connector="canopsis",
+            connector_name="engine",
+            event_type=StatEvents.statstateinterval,
+            source_type=Event.RESOURCE if resource else Event.COMPONENT,
+            component=component,
+            resource=resource,
+            timestamp=timestamp,
+            state_name=state_name,
+            state_duration=state_duration,
+            state_value=state_value,
             alarm=alarm,
             entity=entity)
 

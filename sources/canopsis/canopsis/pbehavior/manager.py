@@ -789,3 +789,143 @@ class PBehaviorManager(object):
         watchers = self.context.get_entities(query=query)
 
         return watchers
+
+    @staticmethod
+    def get_active_intervals(after, before, pbehavior):
+        """
+        Return all the time intervals between after and before during which the
+        pbehavior was active.
+
+        The intervals are returned as a list of tuples (start, end), ordered
+        chronologically. start and end are UTC timestamps, and are always
+        between after and before.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param Dict[str, Any] pbehavior:
+        :rtype: List[Tuple[int, int]]
+        """
+        rrule = pbehavior[PBehavior.RRULE]
+        tstart = pbehavior[PBehavior.TSTART]
+        tstop = pbehavior[PBehavior.TSTOP]
+
+        if not isinstance(tstart, (int, float)):
+            return
+        if not isinstance(tstop, (int, float)):
+            return
+
+        # Convert the timestamps to datetimes
+        tz = pytz.UTC
+        dttstart = datetime.utcfromtimestamp(tstart).replace(tzinfo=tz)
+        dttstop = datetime.utcfromtimestamp(tstop).replace(tzinfo=tz)
+        delta = dttstop - dttstart
+
+        dtafter = datetime.utcfromtimestamp(after).replace(tzinfo=tz)
+        dtbefore = datetime.utcfromtimestamp(before).replace(tzinfo=tz)
+
+        if not rrule:
+            # The only interval where the pbehavior is active is
+            # [dttstart, dttstop]. Ensure that it is included in
+            # [after, before], and convert the datetimes to timestamps.
+            if dttstart < dtafter:
+                dttstart = dtafter
+            if dttstop > dtbefore:
+                dttstop = dtbefore
+            yield (
+                timegm(dttstart.timetuple()),
+                timegm(dttstop.timetuple())
+            )
+        else:
+            # Get all the intervals that intersect with the [after, before]
+            # interval.
+            interval_starts = rrulestr(rrule, dtstart=dttstart).between(
+                dtafter - delta, dtbefore, inc=False)
+            for interval_start in interval_starts:
+                interval_end = interval_start + delta
+                # Ensure that the interval is included in [after, before], and
+                # datetimes to timestamps.
+                if interval_start < dtafter:
+                    interval_start = dtafter
+                if interval_end > dtbefore:
+                    interval_end = dtbefore
+                yield (
+                    timegm(interval_start.timetuple()),
+                    timegm(interval_end.timetuple())
+                )
+
+    def get_intervals_with_pbehaviors(self, after, before, entity_id):
+        """
+        Yields intervals between after and before with a boolean indicating if
+        a pbehavior affects the entity during this interval.
+
+        The intervals are returned as a list of tuples (start, end, pbehavior),
+        ordered chronologically. start and end are UTC timestamps, and are
+        always between after and before, pbehavior is a boolean indicating if a
+        pbehavior affects the entity during this interval. None of the
+        intervals overlap.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param str entity_id: the id of the entity
+        :rtype: Iterator[Tuple[int, int, bool]]
+        """
+        intervals = []
+
+        # Get all the intervals where a pbehavior is active
+        pbehaviors = self.get_pbehaviors(entity_id)
+        for pbehavior in pbehaviors:
+            for interval in self.get_active_intervals(after, before, pbehavior):
+                intervals.append(interval)
+
+        if not intervals:
+            yield (after, before, False)
+            return
+
+        # Order them chronologically (by start date)
+        intervals.sort(key=lambda a: a[0])
+
+
+        # Yield the first interval without any active pbehavior
+        merged_interval_start, merged_interval_end = intervals[0]
+        yield (
+            after,
+            merged_interval_start,
+            False
+        )
+
+        # At this point intervals is a list of intervals where a pbehavior is
+        # active, ordered by start date. Some of those intervals may be
+        # overlapping. This merges the overlapping intervals.
+        for interval_start, interval_end in intervals[1:]:
+            if interval_end < merged_interval_end:
+                # The interval is included in the merged interval, skip it.
+                continue
+
+            if interval_start > merged_interval_end:
+                # Since the interval starts after the end of the merged
+                # interval, they cannot be merged. Yield the merged interval,
+                # and move to the new one.
+                yield (
+                    merged_interval_start,
+                    merged_interval_end,
+                    True
+                )
+                yield (
+                    merged_interval_end,
+                    interval_start,
+                    False
+                )
+                merged_interval_start = interval_start
+
+            merged_interval_end = interval_end
+
+        yield (
+            merged_interval_start,
+            merged_interval_end,
+            True
+        )
+        yield (
+            merged_interval_end,
+            before,
+            False
+        )

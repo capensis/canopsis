@@ -231,7 +231,6 @@ class Watcher:
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
             nb_ok, nb_minor, nb_major, nb_crit)
 
-        # Updating watcher state
         if computed_state != watcher_entity.get('state', None):
             watcher_entity['state'] = computed_state
             self.context_graph.update_entity(watcher_entity)
