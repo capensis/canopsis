@@ -215,6 +215,8 @@ export default {
       thisMonth: 'This month',
       lastMonth: 'Last month',
       custom: 'Custom',
+      tstart: 'Begins',
+      tstop: 'Ends',
     },
     moreInfos: {
       moreInfos: 'More infos',

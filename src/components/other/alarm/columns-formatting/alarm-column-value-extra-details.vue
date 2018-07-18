@@ -1,8 +1,8 @@
 <template lang="pug">
-  div
+  v-layout
     div(v-if="alarm.v.ack")
       v-tooltip(top)
-        v-chip(slot="activator", color="purple")
+        v-chip(small, slot="activator", color="purple")
           v-icon(color="white") check
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.ack') }}
@@ -11,7 +11,7 @@
           div(v-if="alarm.v.ack.m") {{ $t('common.comment') }} : {{ alarm.v.ack.m }}
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
-        v-chip(slot="activator", color="blue")
+        v-chip(small, slot="activator", color="blue")
           v-icon(color="white") local_play
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
@@ -22,7 +22,7 @@
           ) {{ $t('alarmList.actions.iconsFields.ticketNumber') }} : {{ alarm.v.ticket.val }}
     div(v-if="alarm.v.canceled")
       v-tooltip(top)
-        v-chip(slot="activator", color="blue-grey")
+        v-chip(small, slot="activator", color="blue-grey")
           v-icon(color="white") delete
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
@@ -31,7 +31,7 @@
           div(v-if="alarm.v.canceled.m") {{ $t('common.comment') }} : {{ alarm.v.canceled.m }}
     div(v-if="alarm.v.snooze")
       v-tooltip(top)
-        v-chip(slot="activator", color="pink")
+        v-chip(small, slot="activator", color="pink")
           v-icon(color="white") alarm
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
@@ -40,7 +40,7 @@
           div {{ $t('common.end') }} : {{ $d(alarm.v.snooze.val, 'long') }}
     div(v-if="pbehaviors.length")
       v-tooltip(top)
-        v-chip(slot="activator", color="cyan accent-2")
+        v-chip(small, slot="activator", color="cyan accent-2")
           v-icon(color="white") event
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}

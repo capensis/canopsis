@@ -12,13 +12,11 @@
           v-icon chevron_right
     div(v-else)
       span {{ $t('common.showing') }} {{ meta.first || first }} {{ $t('common.to') }}
-      |  {{ meta.last || last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
+      |  {{ meta.last || lastItem }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
       v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
-import { PAGINATION_LIMIT } from '@/config';
-
 /**
 * Pagination component
 *
@@ -46,6 +44,14 @@ export default {
       type: Number,
       required: true,
     },
+    first: {
+      type: Number,
+      default: () => 0,
+    },
+    last: {
+      type: Number,
+      default: () => 0,
+    },
   },
   computed: {
     currentPage: {
@@ -67,43 +73,11 @@ export default {
       }
       return 0;
     },
-    /**
-     * Calculate first item nb to display on pagination, in case it's not given by the backend
-     */
-    first() {
-      const { page } = this.$route.query;
-      if (page === 1) {
-        return 1;
-      }
-      if (this.$route.query.limit) {
-        return 1 + (this.$route.query.limit * (page - 1));
-      }
-
-      return 1 + (PAGINATION_LIMIT * (page - 1));
-    },
-    /**
-     * Calculate last item nb to display on pagination, in case it's not given by the backend
-     */
-    last() {
-      let last;
-
-      if (this.meta.last) {
-        return this.meta.last;
-      }
-
-      if (this.$route.query.page === 1) {
-        last = this.$route.query.limit || PAGINATION_LIMIT;
-      } else if (this.$route.query.limit) {
-        last = this.$route.query.page * this.$route.query.limit;
-      } else {
-        last = this.$route.query.page * PAGINATION_LIMIT;
-      }
-
-      if (last > this.meta.total) {
+    lastItem() {
+      if (this.last > this.meta.total) {
         return this.meta.total;
       }
-
-      return last;
+      return this.last;
     },
   },
   methods: {

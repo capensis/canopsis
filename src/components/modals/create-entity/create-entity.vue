@@ -65,7 +65,7 @@ export default {
   },
   mounted() {
     if (this.config.item) {
-      this.form = { ...this.config.item.props };
+      this.form = { ...this.config.item };
     }
   },
   methods: {

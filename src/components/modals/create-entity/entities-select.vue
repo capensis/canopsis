@@ -1,22 +1,25 @@
 <template lang="pug">
-  div
-    .addContainer
-        .label {{ label }}:&ensp;
-        .entities.scrollbar
-          span(v-for="entity in entities") {{ entity }}
-        v-btn(icon @click="showList=!showList")
-          v-icon {{ listIcon }}
-        v-btn(icon @click="clear")
-          v-icon clear
-    context-general-list(
-      v-show="showList",
-      @update:selectedIds="updateEntities($event)",
-    )
+  v-container
+    v-expansion-panel
+      v-expansion-panel-content.grey.darken-2.white--text
+        div.white--text(slot="header") {{ label }}
+        v-card
+            v-layout(wrap)
+              v-chip(v-for="entity in entities",
+                     :key="entity._id",
+                     close,
+                     @input="removeEntity(entity)"
+                     ) {{ entity }}
+            v-btn.red.white--text(v-show="entities.length", @click="clear", small) Clear
+            context-general-list(
+              @update:selectedIds="updateEntities($event)",
+            )
 </template>
 
 <script>
 import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 import union from 'lodash/union';
+import filter from 'lodash/filter';
 
 /**
  * Component to select entities for impact/dependencies
@@ -43,13 +46,8 @@ export default {
   },
   data() {
     return {
-      showList: false,
+      updatedEntities: [],
     };
-  },
-  computed: {
-    listIcon() {
-      return this.showList ? 'remove' : 'add';
-    },
   },
   methods: {
     updateEntities(entities) {
@@ -58,8 +56,12 @@ export default {
       this.$emit('updateEntities', selectedEntities);
     },
     clear() {
-      this.entities = [];
-      this.$emit('updateEntities', this.entities);
+      this.updatedEntities = [];
+      this.$emit('updateEntities', this.updatedEntities);
+    },
+    removeEntity(entity) {
+      const updatedEntities = filter(this.entities, item => item !== entity);
+      this.$emit('updateEntities', updatedEntities);
     },
   },
 };

@@ -1,41 +1,62 @@
 <template lang="pug">
-  div
-    v-layout(justify-space-between, align-center)
+  v-container
+    v-layout.white(justify-space-between, align-center)
+      v-flex(xs12, md4)
+        context-search
       v-flex.ml-4(xs4)
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
       v-flex(xs2)
         v-btn(icon, @click.prevent="$emit('openSettings')")
           v-icon settings
-    context-search
-    records-per-page
-    basic-list(:items="contextEntities", :selected.sync="selected", :pending="pending")
-      loader(slot="loader")
-      tr.container(slot="header")
-        th.box(v-for="columnProperty in contextProperties")
-          span {{ columnProperty.text }}
-          list-sorting.blue--text(:column="columnProperty.value")
-        th.box
-      tr.container(slot="row" slot-scope="item")
-        td.box(v-for="property in contextProperties") {{ item.props | get(property.value, property.filter) }}
-        td.box
-          v-btn(@click.stop="editEntity(item)", icon, small)
-            v-icon edit
-          v-btn(@click.stop="deleteEntity(item)", icon, small)
-            v-icon delete
-      tr.container(slot="expandedRow", slot-scope="item")
-    pagination(:meta="contextEntitiesMeta", :limit="limit")
-    create-entity.fab
+    transition(name="fade", mode="out-in")
+      loader(v-if="pending")
+      div(v-else)
+        v-data-table(
+          v-model="selected",
+          :items="contextEntities",
+          :headers="contextProperties",
+          item-key="_id",
+          :total-items="meta.total",
+          :pagination.sync="pagination",
+          select-all,
+          hide-actions,
+        )
+          template(slot="headerCell", slot-scope="props")
+              span {{ props.header.text }}
+          template(slot="items", slot-scope="props")
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+              v-for="prop in contextProperties",
+              @click="props.expanded = !props.expanded"
+            )
+              ellipsis(
+                :text="$options.filters.get(props.item,prop.value) || ''",
+                :maxLetters="prop.maxLetters"
+              )
+            td
+              v-btn(@click.stop="editEntity(props.item)", icon, small)
+                v-icon edit
+              v-btn(@click.stop="deleteEntity(props.item)", icon, small)
+                v-icon delete
+          template(slot="expand", slot-scope="props")
+        v-layout.white(align-center)
+          v-flex(xs10)
+            pagination(:meta="meta", :limit="limit", :last="last", :first="first")
+          v-flex(xs2)
+            records-per-page
+        create-entity.fab
 </template>
 
 <script>
 import omit from 'lodash/omit';
+import { createNamespacedHelpers } from 'vuex';
 
-import BasicList from '@/components/tables/basic-list.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
-import ListSorting from '@/components/tables/list-sorting.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
+import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
@@ -44,6 +65,8 @@ import contextEntityMixin from '@/mixins/context';
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
+
+const { mapGetters } = createNamespacedHelpers('entity');
 
 /**
  * Entities list
@@ -56,12 +79,11 @@ import CreateEntity from './actions/context-fab.vue';
  */
 export default {
   components: {
-    BasicList,
     ContextSearch,
     RecordsPerPage,
-    ListSorting,
     CreateEntity,
     Loader,
+    Ellipsis,
   },
   mixins: [
     paginationMixin,
@@ -80,6 +102,9 @@ export default {
     return {
       selected: [],
     };
+  },
+  computed: {
+    ...mapGetters(['items', 'meta', 'pending']),
   },
   methods: {
     getQuery() {
@@ -109,7 +134,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.remove({ id: item.props._id }),
+          action: () => this.remove({ id: item._id }),
         },
       });
     },
@@ -117,7 +142,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => Promise.all(this.selected.map(id => this.remove({ id }))),
+          action: () => Promise.all(this.selected.map(item => this.remove({ id: item._id }))),
         },
       });
     },
@@ -131,27 +156,16 @@ export default {
 </script>
 
 <style scoped>
-  th {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  td {
-    overflow-wrap: break-word;
-  }
-
-  .container {
-    display: flex;
-  }
-
-  .box {
-    width: 10%;
-    flex: 1;
-  }
-
-  .fab {
+.fab {
     position: fixed;
     bottom: 0;
     right: 0;
   }
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
 </style>
+

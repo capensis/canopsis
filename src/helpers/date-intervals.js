@@ -8,11 +8,9 @@ export default {
     return ({
       tstart: moment()
         .startOf('day')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
       tstop: moment()
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
     });
   },
   yesterday() {
@@ -20,46 +18,38 @@ export default {
       tstart: moment()
         .subtract(1, 'day')
         .startOf('day')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
       tstop: moment()
         .subtract(1, 'day')
         .endOf('day')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
     });
   },
   last7Days() {
     return ({
       tstart: moment()
         .subtract(7, 'day')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
       tstop: moment()
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
     });
   },
   last30Days() {
     return ({
       tstart: moment()
         .subtract(30, 'day')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
       tstop: moment()
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
     });
   },
   thisMonth() {
     return ({
       tstart: moment()
         .startOf('month')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
       tstop: moment()
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
     });
   },
   lastMonth() {
@@ -67,12 +57,10 @@ export default {
       tstart: moment()
         .subtract(1, 'month')
         .startOf('month')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
       tstop: moment()
         .startOf('month')
-        .toDate()
-        .getTime() / 1000,
+        .unix(),
     });
   },
 };

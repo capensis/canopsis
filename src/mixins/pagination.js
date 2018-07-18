@@ -11,30 +11,32 @@ export default {
   components: {
     Pagination,
   },
+  data() {
+    return {
+      pagination: {},
+    };
+  },
   computed: {
     limit() {
       return parseInt(this.$route.query.limit, 10) || PAGINATION_LIMIT;
     },
+    /**
+     * Calculate first item nb to display on pagination, in case it's not given by the backend
+     */
     first() {
-      const { page } = this.$route.query;
-      if (page === 1) {
-        return 1;
-      }
-      if (this.$route.query.limit) {
-        return page + (this.$route.$query.limit * (page - 1));
-      }
+      const page = this.$route.query.page || 1;
+      const limit = this.$route.query.limit || PAGINATION_LIMIT;
 
-      return (page - 1) + (PAGINATION_LIMIT * (page - 1));
+      return 1 + (limit * (page - 1));
     },
+    /**
+     * Calculate last item nb to display on pagination, in case it's not given by the backend
+     */
     last() {
-      if (this.$route.query.page === 1) {
-        return this.$route.query.limit || PAGINATION_LIMIT;
-      }
-      if (this.$route.query.limit) {
-        return this.first + this.$route.query.limit;
-      }
+      const page = this.$route.query.page || 1;
+      const limit = this.$route.query.limit || PAGINATION_LIMIT;
 
-      return this.first + PAGINATION_LIMIT;
+      return page * limit;
     },
   },
   watch: {
@@ -44,10 +46,23 @@ export default {
         this.fetchList();
       },
     },
+    pagination: {
+      handler(e) {
+        let query = { ...this.$route.query };
+        if (e.sortBy) {
+          query.sort_key = e.sortBy;
+          query.sort_dir = e.descending ? 'DESC' : 'ASC';
+        } else {
+          query = omit(this.$route.query, ['sort_key', 'sort_dir']);
+        }
+        this.$router.push({
+          query,
+        });
+      },
+    },
   },
   methods: {
     getQuery() {
-      console.log(this.last);
       const query = omit(this.$route.query, ['page', 'interval']);
 
       if (this.$route.query.interval && this.$route.query.interval !== 'custom') {
