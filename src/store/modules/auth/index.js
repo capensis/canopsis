@@ -41,7 +41,7 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        await request.post(API_ROUTES.auth, credentials);
+        await request.post(API_ROUTES.auth, { ...credentials, json_response: true });
         commit(types.LOGIN_COMPLETED);
 
         return dispatch('getCurrentUser');

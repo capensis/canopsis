@@ -37,7 +37,7 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
-          title: 'modals.createEntity.title',
+          title: this.$t('modals.createEntity.createTitle'),
         },
       });
     },

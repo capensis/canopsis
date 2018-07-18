@@ -130,7 +130,8 @@ export default {
       title: 'Entities infos',
     },
     createEntity: {
-      title: 'Create an entity',
+      createTitle: 'Create an entity',
+      editTitle: 'Edit an entity',
       fields: {
         type: 'Types',
         manageInfos: 'Manage Infos',
@@ -333,6 +334,8 @@ export default {
   },
   success: {
     default: 'Done !',
+    createEntity: 'Entity successfully created',
+    editEntity: 'Entity successfully edited',
   },
   mFilterEditor: {
     title: 'Filter editor',
