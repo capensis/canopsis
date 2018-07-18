@@ -208,6 +208,7 @@ except ImportError:
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+
 class MongoDBNamespaceManager(NamespaceManager):
     clients = SyncDict()
     _pickle = True
@@ -258,8 +259,9 @@ class MongoDBNamespaceManager(NamespaceManager):
         I think mongo can properly avoid dog piling for us.
         """
         return file_synchronizer(
-            identifier = "mongodb_container/funclock/%s" % self.namespace,
-            lock_dir = self.lock_dir)
+            identifier="mongodb_container/funclock/%s" % self.namespace,
+            lock_dir=self.lock_dir
+        )
 
     def do_remove(self):
         """Clears the entire filesystem (drops the collection)"""
