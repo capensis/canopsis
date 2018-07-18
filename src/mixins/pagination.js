@@ -11,9 +11,32 @@ export default {
   components: {
     Pagination,
   },
+  data() {
+    return {
+      pagination: {},
+    };
+  },
   computed: {
     limit() {
       return parseInt(this.$route.query.limit, 10) || PAGINATION_LIMIT;
+    },
+    /**
+     * Calculate first item nb to display on pagination, in case it's not given by the backend
+     */
+    first() {
+      const page = this.$route.query.page || 1;
+      const limit = this.$route.query.limit || PAGINATION_LIMIT;
+
+      return 1 + (limit * (page - 1));
+    },
+    /**
+     * Calculate last item nb to display on pagination, in case it's not given by the backend
+     */
+    last() {
+      const page = this.$route.query.page || 1;
+      const limit = this.$route.query.limit || PAGINATION_LIMIT;
+
+      return page * limit;
     },
   },
   watch: {
@@ -21,6 +44,20 @@ export default {
       immediate: true,
       handler() {
         this.fetchList();
+      },
+    },
+    pagination: {
+      handler(e) {
+        let query = { ...this.$route.query };
+        if (e.sortBy) {
+          query.sort_key = e.sortBy;
+          query.sort_dir = e.descending ? 'DESC' : 'ASC';
+        } else {
+          query = omit(this.$route.query, ['sort_key', 'sort_dir']);
+        }
+        this.$router.push({
+          query,
+        });
       },
     },
   },

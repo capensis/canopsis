@@ -1,11 +1,10 @@
 <template lang="pug">
   v-card
-    v-card-title.blue.darken-4.white--text(primary-title)
+    v-card-title
       v-layout(justify-space-between, align-center)
         h2 {{ $t('modals.liveReporting.editLiveReporting') }}
         v-btn(@click="hideModal", icon, small)
-          v-icon(color="white") close
-    v-divider
+          v-icon close
     v-card-text
       h3 {{ $t('modals.liveReporting.dateInterval') }}
       v-layout(wrap)
@@ -25,7 +24,7 @@
             clearable, label="tstop",
             name="tstop",
             v-validate="'required|after:tstart'")
-      v-btn(@click="submit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
+      v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.apply') }}
 </template>
 
 <script>

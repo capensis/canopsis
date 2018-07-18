@@ -11,13 +11,12 @@
         button.pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
           v-icon chevron_right
     div(v-else)
-      span {{ $t('common.showing') }} {{ meta.first }} {{ $t('common.to') }}
-      | {{ meta.last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
+      span {{ $t('common.showing') }} {{ meta.first || first }} {{ $t('common.to') }}
+      |  {{ meta.last || lastItem }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
       v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
-
 /**
 * Pagination component
 *
@@ -45,6 +44,14 @@ export default {
       type: Number,
       required: true,
     },
+    first: {
+      type: Number,
+      default: () => 0,
+    },
+    last: {
+      type: Number,
+      default: () => 0,
+    },
   },
   computed: {
     currentPage: {
@@ -65,6 +72,12 @@ export default {
         return Math.ceil(this.meta.total / this.limit);
       }
       return 0;
+    },
+    lastItem() {
+      if (this.last > this.meta.total) {
+        return this.meta.total;
+      }
+      return this.last;
     },
   },
   methods: {

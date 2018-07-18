@@ -1,12 +1,15 @@
 <template lang="pug">
-    v-toolbar(
-      dense,
-      fixed,
-      clipped-left,
-      app,
-      color="blue darken-4",
-    )
-      v-toolbar-side-icon.white--text(@click="toggleSideBar")
+  v-toolbar.white(
+    dense,
+    fixed,
+    clipped-left,
+    app,
+  )
+    div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'laptop'")
+      img(src="../../assets/canopsis.png")
+    v-toolbar-side-icon(@click="toggleSideBar")
+    v-spacer
+    div {{ $t('common.username') }}
 </template>
 
 <script>
@@ -25,3 +28,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .brand {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    width: 250px;
+    height: 100%;
+
+    img {
+      margin: auto;
+    }
+  }
+</style>

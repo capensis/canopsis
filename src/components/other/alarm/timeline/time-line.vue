@@ -2,37 +2,38 @@
   ul.timeline
     li(v-for="step in steps")
       .timeline-item(v-if="isNewDate(step.t)")
-        .date {{ step.t }}
+        .date {{ getFormattedDate(step.t) }}
       .timeline-item
-          .time {{ $d(step.t, 'time') }}
-          div(v-if="step._t !== 'statecounter'")
-            alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
-            .header
-              alarm-chips.chips(:value="step.val", :isStatus="isStatus(step._t)")
-              p {{ step._t | stepTitle(step.a) }}
-            .content
-              p {{ step.m }}
-          div(v-else)
-            alarm-flag.flag(isCroppedState)
-            .header
-              p Cropped State (since last change of status)
-            .content
-              table
-                tr
-                  td State increased :
-                  td {{ step.val.stateinc }}
-                tr
-                  td State decreases :
-                  td {{ step.val.statedec }}
-                tr(v-for="(value, state) in stateSteps(step.val)")
-                  td State {{ stateName(state) }} :
-                  td {{ value }}
+        .time {{ getFormattedTime(step.t) }}
+        div(v-if="step._t !== 'statecounter'")
+          alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
+          .header
+            alarm-chips.chips(:value="step.val", :isStatus="isStatus(step._t)")
+            p {{ step._t | stepTitle(step.a) }}
+          .content
+            p {{ step.m }}
+        div(v-else)
+          alarm-flag.flag(isCroppedState)
+          .header
+            p Cropped State (since last change of status)
+          .content
+            table
+              tr
+                td State increased :
+                td {{ step.val.stateinc }}
+              tr
+                td State decreases :
+                td {{ step.val.statedec }}
+              tr(v-for="(value, state) in stateSteps(step.val)")
+                td State {{ stateName(state) }} :
+                td {{ value }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
+import moment from 'moment';
 
 import AlarmFlag from '@/components/other/alarm/timeline/alarm-flag.vue';
 import AlarmChips from '@/components/other/alarm/timeline/alarm-chips.vue';
@@ -42,12 +43,12 @@ import { ENTITIES_STATES_STYLES } from '@/constants';
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 /**
- * Component for the timeline of an alarm, on the alarmslist
- *
- * @module alarm
- *
- * @prop {alarmProp} [alarmProps] - Properties of an alarm
- */
+   * Component for the timeline of an alarm, on the alarmslist
+   *
+   * @module alarm
+   *
+   * @prop {alarmProp} [alarmProps] - Properties of an alarm
+   */
 export default {
   components: { AlarmChips, AlarmFlag },
   filters: {
@@ -117,8 +118,8 @@ export default {
       const date = new Date(timestamp);
       if (!this.lastDate ||
           (date.getDay() !== this.lastDate.getDay()
-          && date.getMonth() !== this.lastDate.getMonth()
-          && date.getFullYear() !== this.lastDate.getFullYear())) {
+            && date.getMonth() !== this.lastDate.getMonth()
+            && date.getFullYear() !== this.lastDate.getFullYear())) {
         this.lastDate = date;
         return true;
       }
@@ -127,19 +128,25 @@ export default {
     isStatus(stepTitle) {
       return stepTitle.startsWith('status');
     },
+    getFormattedDate(timestamp) {
+      return moment.unix(timestamp).format('DD/MM/YYYY');
+    },
+    getFormattedTime(timestamp) {
+      return moment.unix(timestamp).format('HH:mm:SS');
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
   $border_line: #DDDDE0;
-  $background: #FAFAFA;
+  $background: white;
   ul {
     list-style: none;
     color: #858585;
   }
 
-  li:last-child  {
+  li:last-child {
     .timeline-item {
       border-image: linear-gradient(
           to bottom,
@@ -147,6 +154,7 @@ export default {
           $background) 1 100%;
     }
   }
+
   .timeline {
     margin: 0 auto;
     width: 90%
@@ -157,7 +165,7 @@ export default {
     position: relative;
     border-left: 2px solid $border_line;
 
-    .time{
+    .time {
       position: absolute;
       left: 2em;
       top: 9px;
@@ -167,10 +175,10 @@ export default {
   }
 
   .flag, .date {
-     top: 0;
-     position: absolute;
-     background: $background;
-   }
+    top: 0;
+    position: absolute;
+    background: $background;
+  }
 
   .flag {
     left: -19px;
@@ -193,18 +201,18 @@ export default {
     align-items: baseline;
     font-weight: bold;
 
-    .chips{
+    .chips {
       font-size: 15px;
       height: 25px;
     }
 
-    p{
+    p {
       font-size: 17px;
     }
 
   }
 
-  p{
+  p {
     overflow-wrap: break-word;
     text-overflow: ellipsis;
     width: 90%;

@@ -1,4 +1,4 @@
-import { contextSchema } from '@/store/schemas';
+import { entitySchema } from '@/store/schemas';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
@@ -24,11 +24,11 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIds),
     pending: state => state.pending,
     meta: state => state.meta,
     allIdsGeneralList: state => state.allIds,
-    itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIdsGeneralList),
+    itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIdsGeneralList),
     pendingGeneralList: state => state.pendingGeneralList,
   },
   mutations: {
@@ -60,7 +60,7 @@ export default {
     fetch({ dispatch }, { params } = {}) {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,
-        schema: [contextSchema],
+        schema: [entitySchema],
         params,
         dataPreparer: d => d.data,
         isPost: true,
