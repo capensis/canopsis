@@ -60,9 +60,12 @@ Versions de Docker testées : version Canopsis :
 Afin de correctement délivrer une *release*, certaines varibles d’environnement sont obligatoires :
 
 ```
-workdir="${HOME}/cps-release
+# variables pour faciliter le boulot via cette doc
+workdir="${HOME}/cps-release"
+tag="version_a_produire"
 
-export CANOPSIS_TAG="version_a_produire"
+# variables réellement obligatoires
+export CANOPSIS_TAG="${tag}"
 export CANOPSIS_CATAG_TOKEN="ACCESS TOKEN GITLAB"
 #export CANOPSIS_DISTRIBUTION="all"
 export CANOPSIS_DISTRIBUTION="debian-9"
@@ -154,10 +157,12 @@ ssh-agent -k
 
 ## Build des paquets
 
+Les scripts `build-all.sh` exécutent automatiquement la construction des paquets. Cependant s’il est nécessaire de le faire à la main :
+
 Se mettre à la racine du dépôt CAT puis :
 
 ```bash
-./build-packages.sh ${tag}
+./build-packages.sh
 ```
 
 Les paquets sont alors disponibles dans le dossier `packages`.
