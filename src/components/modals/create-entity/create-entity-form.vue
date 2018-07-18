@@ -6,7 +6,7 @@ v-card-text
         :label="$t('common.name')",
         :value="name",
         @input="$emit('update:name', $event)",
-        :error-messages="errors.collect('name')"
+        :error-messages="errors.collect('name')",
         v-validate="'required'",
         data-vv-name="name"
       )
@@ -16,7 +16,7 @@ v-card-text
         :value="description",
         @input="$emit('update:description', $event)",
         data-vv-name="description",
-        :error-messages="errors.collect('description')"
+        :error-messages="errors.collect('description')",
         multi-line
       )
     v-layout(row)
@@ -30,9 +30,9 @@ v-card-text
         :value="entityType",
         data-vv-name="type",
         v-validate="'required'",
-        :error-messages="errors.collect('type')"
+        :error-messages="errors.collect('type')",
         @input="$emit('update:type', $event)",
-        label="Type"
+        label="Type",
         single-line
       )
     v-layout(wrap)

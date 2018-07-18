@@ -22,7 +22,6 @@ export default {
     meta: {},
     pending: false,
     fetchingParams: {},
-    error: '',
     allIdsGeneralList: [],
     pendingGeneralList: false,
   },
@@ -30,7 +29,6 @@ export default {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIds),
     pending: state => state.pending,
-    error: state => state.error,
     meta: state => state.meta,
     allIdsGeneralList: state => state.allIds,
     itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIdsGeneralList),
@@ -102,17 +100,14 @@ export default {
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.createEntity') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-        commit(types.CREATION_FAILED, err);
       }
-
     },
-    async edit({ commit, dispatch }, { data }) {
+    async edit({ dispatch }, { data }) {
       try {
         await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.editEntity') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-        commit(types.EDIT_FAILED, err);
       }
     },
     async fetchGeneralList({ commit, dispatch }, { params } = {}) {
