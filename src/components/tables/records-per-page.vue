@@ -16,22 +16,22 @@ import { PAGINATION_LIMIT } from '@/config';
  * Component to select number of items per page on lists
  */
 export default {
+  props: {
+    query: {
+      type: Object,
+      required: true,
+    },
+  },
   data: () => ({
     items: [5, 10, 20, 50],
   }),
   computed: {
     itemPerPage: {
       get() {
-        return parseInt(this.$route.query.limit, 10) || PAGINATION_LIMIT;
+        return this.query.limit || PAGINATION_LIMIT;
       },
       set(limit) {
-        this.$router.push({
-          query: {
-            ...this.$route.query,
-            limit,
-            page: 1,
-          },
-        });
+        this.$emit('update:query', { ...this.query, page: 1, limit });
       },
     },
   },

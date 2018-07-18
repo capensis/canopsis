@@ -5,17 +5,23 @@ import omit from 'lodash/omit';
  * @see src/mixins/pagination.js
  */
 export default {
+  props: {
+    query: {
+      type: Object,
+      required: true,
+    },
+  },
   methods: {
     clear() {
-      const query = omit(this.$route.query, [this.requestParam]);
-      this.$router.push({ query });
+      this.searchingText = '';
+
+      this.$emit('update:query', omit(this.query, [this.requestParam]));
     },
     submit() {
-      const query = {
-        ...this.$route.query,
-      };
-      query[this.requestParam] = this.requestData;
-      this.$router.replace({ query });
+      this.$emit('update:query', {
+        ...this.query,
+        [this.requestParam]: this.requestData,
+      });
     },
   },
 };

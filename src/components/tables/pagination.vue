@@ -40,8 +40,8 @@ export default {
         last: 0,
       }),
     },
-    limit: {
-      type: Number,
+    query: {
+      type: Object,
       required: true,
     },
     first: {
@@ -56,20 +56,15 @@ export default {
   computed: {
     currentPage: {
       get() {
-        return parseInt(this.$route.query.page, 10) || 1;
+        return this.query.page || 1;
       },
       set(page) {
-        this.$router.push({
-          query: {
-            ...this.$route.query,
-            page,
-          },
-        });
+        this.$emit('update:query', { ...this.query, page });
       },
     },
     totalPages() {
       if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.limit);
+        return Math.ceil(this.meta.total / this.query.limit);
       }
       return 0;
     },

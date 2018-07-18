@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     div(v-for="widgetWrapper in widgetWrappers", :key="widgetWrapper._id")
-      div(:is="widgetsMap[widgetWrapper.widget.xtype]")
+      div(:is="widgetsMap[widgetWrapper.widget.xtype]", :widget="widgetWrapper.widget")
 </template>
 
 <script>

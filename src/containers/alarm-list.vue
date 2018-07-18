@@ -3,6 +3,7 @@
     settings-wrapper(v-model="isSettingsOpen", :title="$t('settings.titles.alarmListSettings')")
       alarm-settings-fields
     alarm-list(
+    :widget="widget",
     :alarmProperties="$mq | mq(alarmProperties)",
     @openSettings="openSettings"
     )
@@ -23,6 +24,12 @@ export default {
     viewMixin,
     settingsMixin,
   ],
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       alarmProperties: {
@@ -88,9 +95,6 @@ export default {
         ],
       },
     };
-  },
-  mounted() {
-    this.fetchView({ id: 'view.current_alarms' });
   },
 };
 </script>

@@ -2,9 +2,9 @@
   v-container
     v-layout.white(wrap, justify-space-between, align-center)
       v-flex(xs12 md3)
-        alarm-list-search
+        alarm-list-search(:query.sync="query")
       v-flex(xs2)
-        pagination(:meta="meta", :limit="limit", type="top")
+        pagination(:meta="meta", :query.sync="query", type="top")
       v-flex.ml-4(xs3)
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
       v-flex(xs3)
@@ -27,8 +27,7 @@
             :items="items",
             :headers="alarmProperties",
             item-key="_id",
-            :total-items="meta.total",
-            :pagination.sync="pagination",
+            :pagination.sync="vDataTablePagination"
             select-all,
             hide-actions,
           )
@@ -48,10 +47,10 @@
               time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
           v-layout.white(align-center)
             v-flex(xs10)
-              pagination(:meta="meta", :limit="limit")
+              pagination(:meta="meta", :query.sync="query")
             v-spacer
             v-flex(xs2)
-              records-per-page
+              records-per-page(:query.sync="query")
 </template>
 
 <script>
@@ -96,6 +95,10 @@ export default {
   },
   mixins: [alarmsMixin, paginationMixin, modalMixin],
   props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
     alarmProperties: {
       type: Array,
       default: () => ([]),

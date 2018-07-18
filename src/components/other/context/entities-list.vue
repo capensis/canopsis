@@ -99,6 +99,7 @@ export default {
   data() {
     return {
       selected: [],
+      queryPrefix: 'context',
     };
   },
   computed: {

@@ -4,82 +4,86 @@ import Pagination from '@/components/tables/pagination.vue';
 import dateIntervals from '@/helpers/date-intervals';
 import { PAGINATION_LIMIT } from '@/config';
 
-const QUERY_FIELDS_MAP = {
-  page: 'p',
-  limit: 'l',
-  interval: 'i',
-  sort_key: 'sk',
-  sort_dir: 'sd',
-};
-
 /**
- * @mixin Add pagination logic, and dynamic route
+ * @mixin Add pagination logic
  */
 export default {
   components: {
     Pagination,
   },
   data() {
+    const query = {
+      page: 1,
+      limit: 10,
+    };
+
+    if (this.widget.default_sort_column) {
+      query.sort_key = `v.${this.widget.default_sort_column.property}`;
+      query.sort_dir = this.widget.default_sort_column.direction;
+    }
+
     return {
-      pagination: {},
-      queryPrefix: `${Math.random()}`,
+      selected: [],
+      query,
+      vDataTablePagination: {
+        page: query.page,
+        rowsPerPage: query.limit,
+        sortBy: query.sort_key,
+        descending: query.sort_dir === 'DESC',
+      },
     };
   },
   computed: {
     limit() {
-      return parseInt(this.getQueryValue('limit'), 10) || PAGINATION_LIMIT;
+      return this.query.limit || PAGINATION_LIMIT;
+    },
+    page() {
+      return this.query.page || 1;
     },
     /**
      * Calculate first item nb to display on pagination, in case it's not given by the backend
      */
     first() {
-      const page = this.getQueryValue('page') || 1;
-
-      return 1 + (this.limit * (page - 1));
+      return 1 + (this.limit * (this.page - 1));
     },
     /**
      * Calculate last item nb to display on pagination, in case it's not given by the backend
      */
     last() {
-      const page = this.getQueryValue('page') || 1;
-
-      return page * this.limit;
+      return this.page * this.limit;
     },
   },
   watch: {
-    $route: {
+    query: {
       immediate: true,
       handler() {
         this.fetchList();
       },
     },
-    pagination: {
-      handler(e) {
-        const sortKeyKey = this.getQueryKey('sort_key');
-        const sortDirKey = this.getQueryKey('sort_dir');
-        let query = { ...this.$route.query };
+    vDataTablePagination(value, oldValue) {
+      if (value.sortBy !== oldValue.sortBy || value.descending !== oldValue.descending) {
+        let query = { ...this.query };
 
-        if (e.sortBy) {
-          query[sortKeyKey] = e.sortBy;
-          query[sortDirKey] = e.descending ? 'DESC' : 'ASC';
+        if (value.sortBy) {
+          query.sort_key = value.sortBy;
+          query.sort_dir = value.descending ? 'DESC' : 'ASC';
         } else {
-          query = omit(this.$route.query, [sortKeyKey, sortDirKey]);
+          query = omit(this.query, ['sort_key', 'sort_dir']);
         }
-        this.$router.push({
-          query,
-        });
-      },
+
+        this.query = query;
+      }
     },
   },
   methods: {
     getQuery() {
-      const query = omit(this.$route.query, ['page', 'interval']);
-      const interval = this.getQueryValue('interval');
-      const page = this.getQueryValue('page');
+      const query = omit(this.query, ['page', 'interval']);
+      const { page, interval } = this.query;
 
       if (interval && interval !== 'custom') {
         try {
           const { tstart, tstop } = dateIntervals[interval]();
+
           query.tstart = tstart;
           query.tstop = tstop;
         } catch (err) {
@@ -90,12 +94,6 @@ export default {
       query.skip = ((page - 1) * this.limit) || 0;
 
       return query;
-    },
-    getQueryValue(key) {
-      return this.$route.query[this.getQueryKey(key)];
-    },
-    getQueryKey(key) {
-      return this.queryPrefix + QUERY_FIELDS_MAP[key];
     },
     fetchList() {
       this.fetchListAction({
