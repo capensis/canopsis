@@ -144,7 +144,8 @@ export default {
       },
     },
     createWatcher: {
-      title: 'Create a watcher',
+      createTitle: 'Create a watcher',
+      editTitle: 'Edit a watcher',
       displayName: 'Name',
     },
     createAckEvent: {

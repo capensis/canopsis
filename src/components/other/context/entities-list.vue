@@ -122,13 +122,23 @@ export default {
       return query;
     },
     editEntity(item) {
-      this.showModal({
-        name: MODALS.createEntity,
-        config: {
-          title: this.$t('modals.createEntity.editTitle'),
-          item,
-        },
-      });
+      if (item.type === 'watcher') {
+        this.showModal({
+          name: MODALS.createWatcher,
+          config: {
+            title: 'modals.createWatcher.editTitle',
+            item,
+          },
+        });
+      } else {
+        this.showModal({
+          name: MODALS.createEntity,
+          config: {
+            title: 'modals.createEntity.editTitle',
+            item,
+          },
+        });
+      }
     },
     deleteEntity(item) {
       this.showModal({

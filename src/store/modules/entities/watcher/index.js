@@ -48,6 +48,14 @@ export default {
       }
     },
 
+    async edit({ dispatch }, { data }) {
+      try {
+        await request.put(API_ROUTES.watcher, { watcher_id: data._id, data });
+      } catch (err) {
+        console.warn(err);
+      }
+    },
+
     async remove({ dispatch }, { id } = {}) {
       try {
         await request.delete(API_ROUTES.watcher, { params: { watcher_id: id } });

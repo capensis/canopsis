@@ -144,7 +144,8 @@ export default {
       },
     },
     createWatcher: {
-      title: 'Créer un observateur',
+      createTitle: 'Créer un observateur',
+      editTitle: 'Editer un observateur',
       displayName: 'Nom',
     },
     createAckEvent: {

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-title.blue.darken-4.white--text.text-xs-center
-      h2 {{ config.title }}
+      h2 {{ $t(config.title) }}
     create-form(
       :name.sync="form.name",
       :description.sync="form.description",
