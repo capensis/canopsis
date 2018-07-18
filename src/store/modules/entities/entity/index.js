@@ -47,12 +47,6 @@ export default {
     [types.FETCH_LIST_FAILED](state) {
       state.pending = false;
     },
-    [types.EDIT_FAILED](state, err) {
-      state.error = err;
-    },
-    [types.CREATION_FAILED](state, err) {
-      state.err = err;
-    },
     [types.FETCH_GENERAL_LIST](state, { params }) {
       state.pendingGeneralList = true;
       state.fetchingParamsGeneralList = params;
@@ -93,7 +87,7 @@ export default {
         commit(types.FETCH_LIST_FAILED);
       }
     },
-    async create({ commit, dispatch }, { data }) {
+    async create({ dispatch }, { data }) {
       try {
         // Need this special syntax for request params for the backend to handle it
         await request.put(API_ROUTES.createEntity, { "entity": JSON.stringify(data) });
