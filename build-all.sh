@@ -8,6 +8,7 @@ cd ${workdir}
 
 # just avoid double confirmations
 ./build-env.sh
+export CANOPSIS_ENV_CONFIRM=0
 
 # launch all builds
 ./build-docker.sh
