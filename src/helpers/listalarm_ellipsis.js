@@ -25,7 +25,7 @@
         isArray = Ember.isArray;
 
 
-    var helper = function (txt, nbChar) {
+    var helper = function (txt, nbChar, name) {
         var style = "";
 
         if (typeof (nbChar) !== 'number')
@@ -44,7 +44,7 @@
 		}
         html += '<p onclick="showOutput(\'';
         html += txt.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "<br />").replace(/\"/g, "&quot;").replace(/'/g, "&rsquo;");
-        html += '\')" ' + style + '>' + output + '</p>';
+        html += '\',\'' + name + ' \')" ' + style + '>' + output + '</p>';
 
         return new Ember.String.htmlSafe(html);
     };
@@ -52,7 +52,7 @@
     Handlebars.registerHelper('listalarm_ellipsis', helper);
     Ember.Handlebars.helper('listalarm_ellipsis', helper);
     window.ellipsis = helper;
-    window.showOutput = function (output) {
+    window.showOutput = function (output, name) {
         if ($("#modal-default-output").length) {
             hideOutput();
         }
@@ -63,7 +63,7 @@
         modal += '      <div class="modal-header">';
         modal += '        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick=hideOutput()>';
         modal += '        <span aria-hidden="true">×</span></button>';
-        modal += '        <h4 class="modal-title">Output</h4>';
+        modal += '        <h4 class="modal-title">'+ name +'</h4>';
         modal += '      </div>';
         modal += '      <div class="modal-body">';
         modal += '        <p style="margin: auto; word-wrap: break-word;">' + output + '</p>';
