@@ -167,6 +167,68 @@ The statistic `maintenance` is a JSON object with the following fields:
 The statistic `mtbf` is the mean time between failures, i.e. the time without
 maintenance divided by the number of failures.
 
+### Alarm List
+
+The statistic `alarm_list` returns a list of alarms. It is a JSON array of
+objects which contains the tags of the entity that created the alarm
+(`entity_id`, `entity_type`, `entity_infos.<information_id>`, `connector`,
+`connector_name`, `component`, `resource` and `alarm_state`), as well as the
+following fields:
+
+ - `time`: the date of creation of the alarm
+ - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
+   created, `"False"` otherwise.
+
+### Entities impacted by the most alarms
+
+The statistic `most_alarms_impacting` is a list containing the groups of
+entities that are impacted by the largest number of alarms. The request takes
+the following parameters:
+
+ - `group_by`: the tags used to group the entities.
+ - `filter` (optional): an *entity filter* used to filter the entities. This
+   parameters has the same format as the main `filter` parameter.
+ - `limit` (optional): the maximum number of groups to return.
+
+It returns a list of objects ordered by descending number of alarms, with the
+following fields:
+
+ - `tags`: the tags of the entity group.
+ - `value`: the number of alarms impacting this entity group.
+
+### Entities with the worst Mean Time Between Failures
+
+The statistic `worst_mtbf` is a list containing the groups of entities that
+have the worst mtbf. The request takes the following parameters:
+
+ - `group_by`: the tags used to group the entities.
+ - `filter` (optional): an *entity filter* used to filter the entities. This
+   parameters has the same format as the main `filter` parameter.
+ - `limit` (optional): the maximum number of groups to return.
+
+It returns a list of objects ordered by ascending mtbf, with the following
+fields:
+
+ - `tags`: the tags of the entity group.
+ - `value`: the mtbf.
+
+### Longest alarms
+
+The statistic `longest_alarms` returns a list of alarms that took the longest
+time to resolve. The request takes the following parameters:
+
+ - `limit` (optional): the maximum number of groups to return.
+
+It returns a JSON array of objects which contains the tags of the entity that
+created the alarm (`entity_id`, `entity_type`, `entity_infos.<information_id>`,
+`connector`, `connector_name`, `component`, `resource` and `alarm_state`), as
+well as the following fields:
+
+ - `time`: the date of creation of the alarm
+ - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
+   created, `"False"` otherwise.
+ - `value`: the time it took for the alarm to be resolved.
+
 
 ## Examples
 
@@ -313,7 +375,7 @@ Response:
 ]
 ```
 
-### Time spent by a watcher in each state
+### Time spent by an entity in each state
 
 `/api/v2/stats/time_in_state`
 
@@ -348,7 +410,7 @@ Response:
 ]
 ```
 
-### Calcul du temps pendant lequel un watcher était disponible
+### Time during which an entity was available
 
 `/api/v2/stats/availability`
 
@@ -385,7 +447,122 @@ Response:
 ]
 ```
 
+### For each component, the 10 resources with the worst MTBF
 
+`/api/v2/stats/worst_mtbf`
+
+Request:
+
+```javascript
+{
+	"group_by": ["component"],
+	"parameters": {
+		"group_by": ["resource"],
+		"limit": 10
+	}
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component_0"
+        },
+        "worst_mtbf": [
+            {
+                "tags": {
+                    "resource": "resource_0"
+                },
+                "value": 57.333333333333336
+            },
+            {
+                "tags": {
+                    "resource": "resource_1"
+                },
+                "value": 106
+            },
+            // ...
+        ]
+    },
+    {
+        "tags": {
+            "component": "component_1"
+        },
+        "worst_mtbf": [
+            {
+                "tags": {
+                    "resource": "resource_0"
+                },
+                "value": 57.333333333333336
+            },
+            {
+                "tags": {
+                    "resource": "resource_1"
+                },
+                "value": 57.333333333333336
+            },
+            // ...
+        ]
+    },
+    // ...
+]
+```
+
+### 10 longest alarms of each component
+
+`/api/v2/stats/longest_alarms`
+
+Request:
+
+```javascript
+{
+    "group_by": ["component"],
+    "parameters": {
+        "limit": 10
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component_0"
+        }
+        "longest_alarms": [
+            {
+                "alarm_state": "3",
+                "connector": "...",
+                "connector_name": "...",
+                "entity_id": "resource_0/component_0",
+                "entity_type": "resource",
+                "pbehavior": "False",
+                "resource": "resource_0",
+                "time": 1531833020,
+                "value": 3754
+            },
+            {
+                "alarm_state": "3",
+                "connector": "...",
+                "connector_name": "...",
+                "entity_id": "resource_1/component_0",
+                "entity_type": "resource",
+                "pbehavior": "False",
+                "resource": "resource_1",
+                "time": 1531830121,
+                "value": 3562
+            },
+            //...
+        ]
+    },
+    // ...
+]
+```
 
 ### Multiple statistics in one request
 
