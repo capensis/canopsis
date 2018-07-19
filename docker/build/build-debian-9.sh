@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 set -e
 set -o pipefail
+set -u
 
 apt-get update
 apt-get -y --no-install-recommends install \

@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
 set -o pipefail
+set -u
 
-PKG_ROOT="/root/canopsis-core-${CPS_PKG_TAG}"
+PKG_ROOT="/root/canopsis-core-${CANOPSIS_PACKAGE_TAG}"
 
 mkdir -p ${PKG_ROOT}/{DEBIAN,opt}
 mkdir -p ${PKG_ROOT}/lib/systemd/system/

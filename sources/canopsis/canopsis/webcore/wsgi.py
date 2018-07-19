@@ -50,7 +50,7 @@ def get_default_app():
     from canopsis.webcore.apps.bottle.app import get_default_app as get_default_app_v1
     from canopsis.webcore.apps.flask.app import app as app_v3
 
-    app_v1 = get_default_app_v1()
+    app_v1 = get_default_app_v1(logger=app_v3.logger)
 
     app_mappings = []
     app_mappings.append(['app_v3', '/api/v3{path:.*}', app_v3])

@@ -1,39 +1,36 @@
 #!/usr/bin/env bash
 set -e
 set -o pipefail
-
-if [ "${1}" = "" ]; then
-    echo "Usage: $0 <tag>"
-    exit 1
-fi
+set -u
 
 opt_squash=""
-tag="${1}"
-release="${CPS_PKG_REL:-1}"
-CPS_PKG_TAG=${CPS_PKG_TAG:="${tag}"}
 workdir=$(dirname $(readlink -e $0))
-export FIX_OWNERSHIP="$(id -u):$(id -g)"
 cd $workdir
 
-function build_package_for_sysbase() {
+source ${workdir}/build-env.sh
+
+function build_package_for_distribution() {
     if [ "${1}" = "" ]; then
-        echo "wrong params: $0 sysbase"
+        echo "wrong params: $0 distribution"
         exit 2
     fi
 
-    local sysbase="${1}"
+    local distribution="${1}"
+    local fix_ownership="$(id -u):$(id -g)"
+    local tag=${CANOPSIS_TAG}
+    local full_tag="${distribution}-${tag}"
 
-    echo "BUILDING PACKAGE FOR ${sysbase}"
-    docker_args="${opt_squash} --build-arg FIX_OWNERSHIP=${FIX_OWNERSHIP} --build-arg PROXY=$http_proxy --build-arg SYSBASE=${sysbase} --build-arg TAG=${tag} --build-arg CPS_PKG_TAG=${CPS_PKG_TAG} --build-arg CPS_PKG_REL=${release}"
+    echo "BUILDING PACKAGE FOR ${distribution}"
+    docker_args="${opt_squash} --build-arg FIX_OWNERSHIP=${fix_ownership} --build-arg PROXY=$http_proxy --build-arg CANOPSIS_DISTRIBUTION=${distribution} --build-arg CANOPSIS_TAG=${tag} --build-arg CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG} --build-arg CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL}"
 
-    docker build ${docker_args} -f docker/Dockerfile.packaging --rm=false -t canopsis/canopsis-packaging:${sysbase}-${tag} .
-    docker run -ti -v $(pwd)/packages:/packages canopsis/canopsis-packaging:${sysbase}-${tag}
+    docker build ${docker_args} -f docker/Dockerfile.packaging --rm=false -t canopsis/canopsis-packaging:${full_tag} .
+    docker run -ti -v $(pwd)/packages:/packages canopsis/canopsis-packaging:${full_tag}
 }
 
-if [ "${SYSBASE}" = "" ]; then
-    build_package_for_sysbase "centos-7"
-    build_package_for_sysbase "debian-8"
-    build_package_for_sysbase "debian-9"
+if [ "${CANOPSIS_DISTRIBUTION}" = "all" ]; then
+    build_package_for_distribution "debian-9"
+    build_package_for_distribution "debian-8"
+    build_package_for_distribution "centos-7"
 else
-    build_package_for_sysbase "${SYSBASE}"
+    build_package_for_distribution "${CANOPSIS_DISTRIBUTION}"
 fi
