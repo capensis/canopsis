@@ -70,6 +70,8 @@ export CANOPSIS_CATAG_TOKEN="ACCESS TOKEN GITLAB"
 #export CANOPSIS_DISTRIBUTION="all"
 export CANOPSIS_DISTRIBUTION="debian-9"
 export CANOPSIS_ENV_CONFIRM=1
+
+# chemin vers la racine du dépôt canopsis core à utiliser. Cette varible n’est utilisée que par les scripts pour CAT.
 export CANOPSIS_CORE_PATH="${HOME}/path/to/canopsis"
 ```
 

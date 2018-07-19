@@ -2,15 +2,35 @@ set -e
 set -o pipefail
 set -u
 
+# docker mode is only a hint for build scripts to operate.
+# regular doesn't mean anything in particular, only that it is not
+# test or test-ci for example, which is set by .gitlab-ci.yml
 export CANOPSIS_DOCKER_MODE=${CANOPSIS_DOCKER_MODE:=regular}
+
+# print env vars and ask for confirmation
 export CANOPSIS_ENV_RECAP=${CANOPSIS_ENV_RECAP:=1}
 export CANOPSIS_ENV_CONFIRM=${CANOPSIS_ENV_CONFIRM:=1}
+
+# which version of uiv2 bricks to pull
 export CANOPSIS_UIV2_BRICKS_TAG=${CANOPSIS_UIV2_BRICKS_TAG:="${CANOPSIS_TAG}"}
+
+# override package version/tag and release if it must be different from the
+# regular CANOPSIS_TAG variable
 export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
+
+# GitLab Access Token
 export CANOPSIS_CATAG_TOKEN=${CANOPSIS_CATAG_TOKEN:=""}
+
+# Do not check GOPATH and Go installation.
+# Can be used by any other script to avoid doing anything with Go.
 export CANOPSIS_SKIP_GO=${CANOPSIS_SKIP_GO:="0"}
+
+# By default, pull, commit and push sources/webcore/src/canopsis-next from
+# the canopsis/canopsis-next repository.
 export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="1"}
+
+# Only avoid undefined variable error
 export GOPATH=${GOPATH:=""}
 export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
@@ -80,10 +100,10 @@ function ensure_env() {
         env_recap
 
         if [ "${CANOPSIS_ENV_CONFIRM}" = "1" ]; then
-            echo -n "Confirm environment [Y/n]: "
+            echo -n "Confirm environment [y/N]: "
             local confirm="N"
             read confirm
-            if [ ! "${confirm}" = "Y" ]; then
+            if [ ! "${confirm}" = "Y" ]&&[ ! "${confirm}" = "y" ]; then
                 echo "Environment not confirmed, exit."
                 exit 6
             else
