@@ -73,6 +73,9 @@ export CANOPSIS_ENV_CONFIRM=1
 
 # chemin vers la racine du dépôt canopsis core à utiliser. Cette varible n’est utilisée que par les scripts pour CAT.
 export CANOPSIS_CORE_PATH="${HOME}/path/to/canopsis"
+
+# Dans le cas où la version CANOPSIS_TAG n’est pas compatible avec le système de construction de packages :
+export CANOPSIS_PACKAGE_TAG=<vraie version>
 ```
 
 Il vous faudra aussi avoir un environnement Go utilisable et donc une variable `GOPATH` correctement positionnée.
