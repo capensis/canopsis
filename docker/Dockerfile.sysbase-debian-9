@@ -1,8 +1,7 @@
 FROM debian:stretch-slim
 
 ARG PROXY
-ARG TAG
-ARG SYSBASE
+ARG CANOPSIS_DISTRIBUTION
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
@@ -19,5 +18,5 @@ RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
-COPY docker/build/run-${SYSBASE}.sh /run.sh
+COPY docker/build/run-${CANOPSIS_DISTRIBUTION}.sh /run.sh
 RUN /bin/bash /run.sh

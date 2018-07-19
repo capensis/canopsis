@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 set -o pipefail
+set -u
 
 repo_baseurl="http://centos.mirrors.ovh.net/ftp.centos.org/"
 
