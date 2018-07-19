@@ -5,9 +5,9 @@
         v-layout(justify-space-around, align-center, wrap)
           v-flex(xs4, md2)
             h4.text-xs-center {{ $t(`context.moreInfos.type`) }} :
-            p.text-xs-center {{ item.props.type }}
+            p.text-xs-center {{ item.type }}
           v-flex(xs4, md2)
-            template(v-if="item.props.enabled")
+            template(v-if="item.enabled")
               v-chip.green.white--text {{ $t(`common.enabled`) }}
             template(v-else)
               v-chip.red.white--text.title {{ $t(`common.disabled`) }}
@@ -18,7 +18,7 @@
             v-menu(:value="isImpactExpanded", bottom, offset-y, fixed)
               v-btn(@click.stop="isImpactExpanded = !isImpactExpanded", slot="activator") {{ $t(`context.impacts`) }}
               v-list(dense)
-                template(v-for="item in item.props.impact")
+                template(v-for="item in item.impact")
                   v-list-tile
                     v-list-tile-content {{ item }}
           v-flex(xs6, md2)
@@ -26,17 +26,17 @@
               v-btn(@click.stop="isDependsExpanded = !isDependsExpanded",
                     slot="activator") {{ $t(`context.dependencies`) }}
               v-list(dense)
-                template(v-for="item in item.props.depends")
+                template(v-for="item in item.depends")
                   v-list-tile
                     v-list-tile-content {{ item }}
       v-flex.my-2(xs12)
         h3.text-xs-center.my-2 Pbehaviors
-        pbehaviors-list(:itemId="item.props._id")
+        pbehaviors-list(:itemId="item.item._id")
       v-flex.my-2(xs12)
         h3.text-xs-center Infos
         v-container(fluid, grid-list-sm)
           v-layout(row, wrap)
-            v-flex(v-for="(value, key) in item.props.infos", :key="key", xs4)
+            v-flex(v-for="(value, key) in item.infos", :key="key", xs4)
               h4.text-xs-center {{ key }}
               p.text-xs-center {{ $t(`common.description`) }} : {{ value.description }}
               p.text-xs-center {{ $t(`common.value`) }} : {{ value.value }}
@@ -65,10 +65,10 @@ export default {
   },
   computed: {
     infos() {
-      return this.item.props.infos || '';
+      return this.item.infos || '';
     },
     lastActiveDate() {
-      const enableHistory = [...this.item.props.enable_history];
+      const enableHistory = [...this.item.item.enable_history];
       enableHistory.sort(((a, b) => a - b));
       return enableHistory[0];
     },

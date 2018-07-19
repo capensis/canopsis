@@ -1,5 +1,6 @@
-import { contextSchema } from '@/store/schemas';
+import { entitySchema } from '@/store/schemas';
 import request from '@/services/request';
+import i18n from '@/i18n';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
@@ -7,6 +8,8 @@ export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+  EDIT_FAILED: 'EDIT_FAILED',
+  CREATION_FAILED: 'CREATION_FAILED',
   FETCH_GENERAL_LIST: 'FETCH_GENERAL_LIST',
   FETCH_GENERAL_LIST_COMPLETED: 'FETCH_GENERAL_LIST_COMPLETED',
   FETCH_GENERAL_LIST_FAILED: 'FETCH_GENERAL_LIST_FAILED',
@@ -24,11 +27,11 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIds),
     pending: state => state.pending,
     meta: state => state.meta,
     allIdsGeneralList: state => state.allIds,
-    itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('context', state.allIdsGeneralList),
+    itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIdsGeneralList),
     pendingGeneralList: state => state.pendingGeneralList,
   },
   mutations: {
@@ -60,7 +63,7 @@ export default {
     fetch({ dispatch }, { params } = {}) {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,
-        schema: [contextSchema],
+        schema: [entitySchema],
         params,
         dataPreparer: d => d.data,
         isPost: true,
@@ -84,7 +87,23 @@ export default {
         commit(types.FETCH_LIST_FAILED);
       }
     },
-
+    async create({ dispatch }, { data }) {
+      try {
+        // Need this special syntax for request params for the backend to handle it
+        await request.put(API_ROUTES.createEntity, { "entity": JSON.stringify(data) });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.createEntity') }, { root: true });
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+      }
+    },
+    async edit({ dispatch }, { data }) {
+      try {
+        await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.editEntity') }, { root: true });
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+      }
+    },
     async fetchGeneralList({ commit, dispatch }, { params } = {}) {
       try {
         commit(types.FETCH_GENERAL_LIST, { params });

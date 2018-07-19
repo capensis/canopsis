@@ -21,14 +21,14 @@ export default {
   data() {
     return {
       rectHeight: 4,
-      margin: 10,
-      begining: 10,
-      inBetweenSpace: 16,
-      rectWidths: [20, 30, 35, 25, 20, 20, 20, 20],
+      margin: 5,
+      begining: 15,
+      inBetweenSpace: 19,
+      rectWidths: [20, 30, 35, 25, 20, 20, 20, 20, 30],
       circleR: 2.5,
       lines: 9,
-      rectPerLines: 4,
-      circlePerLines: 3,
+      rectPerLines: 5,
+      circlePerLines: 1,
       height: 100,
       width: 300,
     };

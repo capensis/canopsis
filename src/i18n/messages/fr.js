@@ -149,7 +149,8 @@ export default {
       title: 'Infos sur l\'entité',
     },
     createEntity: {
-      title: 'Créer une entitée',
+      createTitle: 'Créer une entitée',
+      editTitle: 'Editer une entitée',
       fields: {
         type: 'Types',
         manageInfos: 'Gérer Infos',
@@ -160,6 +161,10 @@ export default {
           resource: 'ressource',
         },
       },
+    },
+    createWatcher: {
+      title: 'Créer un observateur',
+      displayName: 'Nom',
     },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',
@@ -229,6 +234,8 @@ export default {
       thisMonth: 'Ce mois',
       lastMonth: 'Mois dernier',
       custom: 'Personnalisé',
+      tstart: 'Démarre',
+      tstop: 'Finis',
     },
     moreInfos: {
       moreInfos: 'Plus d\'infos',
@@ -346,8 +353,11 @@ export default {
   },
   success: {
     default: 'Action effectuée avec succès',
+    createEntity: 'Entité créée avec succès',
+    editEntity: 'Entité éditée avec succès',
   },
   mFilterEditor: {
+    title: 'Editeur de filtre',
     tabs: {
       visualEditor: 'Éditeur visuel',
       advancedEditor: 'Éditeur avancé',

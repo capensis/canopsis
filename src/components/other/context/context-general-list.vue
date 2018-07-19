@@ -1,7 +1,6 @@
 <template lang="pug">
 div
-    v-subheader {{ $t('tables.contextList.title') }}
-    v-toolbar.toolbar(dense, flat)
+    v-toolbar.toolbar.white(dense, flat)
       v-text-field(
       label="Search",
       v-model="searchingText",
@@ -11,8 +10,10 @@ div
       )
       v-btn(icon, @click="submit")
         v-icon search
-      v-btn(icon, @click="$emit('update:selectedIds',selectedEntities)")
-        v-icon done
+    v-btn.green.white--text(
+      v-show="selectedEntities.length",
+      @click="$emit('update:selectedIds',selectedEntities)"
+    ) Add selection
     v-data-table(
       :no-data-text="this.$t('tables.contextList.noDataText')",
       :headers="headers",
@@ -21,7 +22,7 @@ div
       v-model="selectedEntities",
       select-all,
       item-key="_id",
-      )
+    )
       template(slot="items", slot-scope="props")
         td
           v-checkbox(
@@ -32,12 +33,15 @@ div
           )
         td.text-xs-left {{ props.item.name }}
         td.text-xs-left {{ props.item._id}}
+        td
+          v-btn(icon, @click="$emit('update:selectedIds', [props.item])")
+            v-icon add
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('context');
+const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 export default {
   data() {
     return {

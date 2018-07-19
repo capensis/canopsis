@@ -149,7 +149,8 @@ export default {
       title: 'Entities infos',
     },
     createEntity: {
-      title: 'Create an entity',
+      createTitle: 'Create an entity',
+      editTitle: 'Edit an entity',
       fields: {
         type: 'Types',
         manageInfos: 'Manage Infos',
@@ -160,6 +161,10 @@ export default {
           resource: 'resource',
         },
       },
+    },
+    createWatcher: {
+      title: 'Create a watcher',
+      displayName: 'Name',
     },
     createAckEvent: {
       title: 'Add event: Ack',
@@ -229,6 +234,8 @@ export default {
       thisMonth: 'This month',
       lastMonth: 'Last month',
       custom: 'Custom',
+      tstart: 'Begins',
+      tstop: 'Ends',
     },
     moreInfos: {
       moreInfos: 'More infos',
@@ -346,8 +353,11 @@ export default {
   },
   success: {
     default: 'Done !',
+    createEntity: 'Entity successfully created',
+    editEntity: 'Entity successfully edited',
   },
   mFilterEditor: {
+    title: 'Filter editor',
     tabs: {
       visualEditor: 'Visual Editor',
       advancedEditor: 'Advanced Editor',

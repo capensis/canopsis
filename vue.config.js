@@ -1,8 +1,9 @@
 module.exports = {
   lintOnSave: false,
   chainWebpack: (config) => {
-    // config.output.publicPath('/en/static/cn/dist/');
-
+    if (process.env.NODE_ENV === 'production') {
+      config.output.publicPath('/en/static/canopsis-next/dist/');
+    }
     config.resolve.alias.store.set('handlebars', 'handlebars/dist/handlebars.js');
 
     return config;

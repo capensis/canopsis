@@ -1,6 +1,7 @@
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
-  context: 'context',
+  entity: 'entity',
+  watcher: 'watcher',
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
@@ -17,11 +18,11 @@ export const MODALS = {
   createSnoozeEvent: 'create-snooze-event',
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
+  createWatcher: 'create-watcher',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
-  contextInfos: 'context-infos',
 };
 
 export const EVENT_ENTITY_TYPES = {
