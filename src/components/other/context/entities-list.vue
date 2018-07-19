@@ -2,7 +2,7 @@
   v-container
     v-layout.white(justify-space-between, align-center)
       v-flex(xs12, md4)
-        context-search
+        context-search(:query.sync="query")
       v-flex.ml-4(xs4)
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
@@ -18,7 +18,7 @@
           :headers="contextProperties",
           item-key="_id",
           :total-items="meta.total",
-          :pagination.sync="pagination",
+          :pagination.sync="vDataTablePagination",
           select-all,
           hide-actions,
         )
@@ -41,9 +41,9 @@
           template(slot="expand", slot-scope="props")
         v-layout.white(align-center)
           v-flex(xs10)
-            pagination(:meta="meta", :limit="limit")
+            pagination(:meta="meta", :query.sync="query")
           v-flex(xs2)
-            records-per-page
+            records-per-page(:query.sync="query")
         create-entity.fab
 </template>
 
@@ -89,6 +89,10 @@ export default {
     modalMixin,
   ],
   props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
     contextProperties: {
       type: Array,
       default() {

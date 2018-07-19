@@ -3,6 +3,7 @@
     settings-wrapper(v-model="isSettingsOpen", :title="$t('settings.titles.contextTableSettings')")
       context-settings-fields
     entities-list(
+    :widget="widget",
     :contextProperties="$mq| mq(contextProperties)",
     @openSettings="openSettings"
     )
@@ -20,6 +21,12 @@ export default {
     ContextSettingsFields,
   },
   mixins: [contextEntityMixin, settingsMixin],
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       settingsFields: [
