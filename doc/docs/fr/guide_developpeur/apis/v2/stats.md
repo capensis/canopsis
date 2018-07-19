@@ -187,6 +187,7 @@ d'objets JSON contenant les tags de l'entité qui a créé l'alarme (`entity_id`
  - `time` : la date de création de l'alarme.
  - `pbehavior` : `"True"` s'il y avait un pbehavior actifs quand l'alarme a été
    créé, `"False"` sinon.
+ - `value` : le temps de résolution de l'alarme.
 
 ### Entités impactées par le plus d'alarmes
 

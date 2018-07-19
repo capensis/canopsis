@@ -178,6 +178,7 @@ following fields:
  - `time`: the date of creation of the alarm
  - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
    created, `"False"` otherwise.
+ - `value`: the time it took for the alarm to be resolved.
 
 ### Entities impacted by the most alarms
 
