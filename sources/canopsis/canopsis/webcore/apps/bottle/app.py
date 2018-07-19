@@ -46,6 +46,7 @@ from canopsis.old.account import Account
 # TODO: replace with canopsis.mongo.MongoStorage
 from canopsis.old.storage import get_storage
 from canopsis.webcore.services import session as session_module
+from canopsis.common import root_path
 
 from canopsis.vendor import mongodb_beaker
 
@@ -84,7 +85,7 @@ class EnsureAuthenticated(object):
 class WebServer():
 
     CONF_PATH = 'etc/webserver.conf'
-    LOG_FILE = 'var/log/webserver.log'
+    LOG_FILE = root_path + '/var/log/webserver.log'
 
     @property
     def application(self):
