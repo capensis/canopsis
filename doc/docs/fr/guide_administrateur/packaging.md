@@ -82,6 +82,8 @@ ssh-add
 
 ## Setup - Release
 
+**Après avoir revérifié votre fichier d’environnement** et _sourcé_ ce fichier dans votre shell courant :
+
 Lancer le script `build-release.sh` avec les variables d’environnement nécessaires.
 
 Le script va faire le nécessaire pour ajouter les tags sur les projets définis dans `tools/catag/catag.ini`, cloner `canopsis-next` et faire tout autre travail nécessaire aux préparatifs d’une *release*.
