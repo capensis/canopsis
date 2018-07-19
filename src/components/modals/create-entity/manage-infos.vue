@@ -2,43 +2,43 @@
   v-card
     v-card-text
       v-list(v-if="infos.length")
-          v-list-group.mt-2(
-            v-for="info in infos"
-            :key="info.name",
-          )
-            v-list-tile(slot="activator")
-              v-list-tile-content
-                v-list-tile-title {{ info.name }}
-              v-list-tile-action
-                v-btn(icon, flat, @click.stop="deleteInfo(info.name)")
-                  v-icon delete
-            v-list-tile(@click="")
-              v-list-tile-content
-                v-list-tile-title Description : {{ info.description }}
-                v-list-tile-title Value : {{ info.value }}
+        v-list-group.mt-2(
+        v-for="info in infos"
+        :key="info.name",
+        )
+          v-list-tile(slot="activator")
+            v-list-tile-content
+              v-list-tile-title {{ info.name }}
+            v-list-tile-action
+              v-btn(icon, flat, @click.stop="deleteInfo(info.name)")
+                v-icon delete
+          v-list-tile(@click="")
+            v-list-tile-content
+              v-list-tile-title Description : {{ info.description }}
+              v-list-tile-title Value : {{ info.value }}
       v-card-text(v-else) No infos
       v-form(ref="infoForm")
         v-layout
           v-text-field(
-            :label="$t('common.name')",
-            v-model="form.name",
-            v-validate="'required'",
-            data-vv-name="name",
-            :error-messages="errors.collect('name')"
+          :label="$t('common.name')",
+          v-model="form.name",
+          v-validate="'required|unique-name'",
+          data-vv-name="name",
+          :error-messages="errors.collect('name')"
           )
           v-text-field(
-            :label="$t('common.description')",
-            v-model="form.description",
-            v-validate="'required'",
-            data-vv-name="description",
-            :error-messages="errors.collect('description')"
+          :label="$t('common.description')",
+          v-model="form.description",
+          v-validate="'required'",
+          data-vv-name="description",
+          :error-messages="errors.collect('description')"
           )
           v-text-field(
-            :label="$t('common.value')",
-            v-model="form.value",
-            v-validate="'required'",
-            data-vv-name="value",
-            :error-messages="errors.collect('value')"
+          :label="$t('common.value')",
+          v-model="form.value",
+          v-validate="'required'",
+          data-vv-name="value",
+          :error-messages="errors.collect('value')"
           )
           v-btn(icon, flat, @click="addInfo")
             v-icon done
@@ -46,9 +46,9 @@
 
 <script>
 import filter from 'lodash/filter';
+import map from 'lodash/map';
 import ModalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
-
 
 export default {
   name: MODALS.contextInfos,
@@ -71,7 +71,13 @@ export default {
       },
     };
   },
+  computed: {
+    forbiddenNames() {
+      return map(this.infos, 'name');
+    },
+  },
   mounted() {
+    this.createUniqueValidationRule();
     if (this.config.item) {
       this.infos = this.config.item.infos;
     }
@@ -82,10 +88,25 @@ export default {
       if (isFormValid) {
         this.infos.push({ ...this.form });
         this.$refs.infoForm.reset();
+        this.$validator.reset();
+        this.$emit('update:infos', this.infos);
       }
     },
     deleteInfo(name) {
       this.infos = filter(this.infos, info => info.name !== name);
+      this.$emit('update:infos', this.infos);
+      this.$validator.reset();
+      this.$nextTick(() => {
+        if (this.form.name) {
+          this.$validator.validate();
+        }
+      });
+    },
+    createUniqueValidationRule() {
+      this.$validator.extend('unique-name', {
+        getMessage: () => this.$t('validator.unique'),
+        validate: value => !this.forbiddenNames.includes(value),
+      });
     },
   },
 };

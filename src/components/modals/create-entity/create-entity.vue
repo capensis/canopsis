@@ -18,7 +18,7 @@
           :infos.sync="form.infos",
         )
       v-tab-item
-        manage-infos
+        manage-infos(:infos.sync="form.infos")
     v-card-actions
       v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
 </template>
@@ -69,6 +69,7 @@ export default {
     async create() {
       // TO DO
       // Entity creation
+      // todo create object infos after entity creating
     },
     async submit() {
       const formIsValid = await this.$validator.validateAll();
