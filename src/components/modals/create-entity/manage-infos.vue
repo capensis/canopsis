@@ -1,21 +1,21 @@
 <template lang="pug">
   v-card
     v-card-text
-      v-list(v-if="infos.length")
+      v-list(v-if="Object.keys(infos).length")
         v-list-group.mt-2(
-        v-for="info in infos"
-        :key="info.name",
+        v-for="infoName in Object.keys(infos)"
+        :key="infoName",
         )
           v-list-tile(slot="activator")
             v-list-tile-content
-              v-list-tile-title {{ info.name }}
+              v-list-tile-title {{ infoName }}
             v-list-tile-action
-              v-btn(icon, flat, @click.stop="deleteInfo(info.name)")
+              v-btn(icon, flat, @click.stop="deleteInfo(infoName)")
                 v-icon delete
           v-list-tile(@click="")
             v-list-tile-content
-              v-list-tile-title Description : {{ info.description }}
-              v-list-tile-title Value : {{ info.value }}
+              v-list-tile-title Description : {{ infos[infoName].description }}
+              v-list-tile-title Value : {{ infos[infoName].value }}
       v-card-text(v-else) No infos
       v-form(ref="infoForm")
         v-layout
@@ -45,8 +45,6 @@
 </template>
 
 <script>
-import filter from 'lodash/filter';
-import map from 'lodash/map';
 import ModalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
@@ -55,7 +53,9 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [ModalInnerMixin],
+  mixins: [
+    ModalInnerMixin,
+  ],
   props: {
     template: {
       type: String,
@@ -63,39 +63,33 @@ export default {
   },
   data() {
     return {
-      infos: [],
       form: {
         name: '',
         description: '',
         value: '',
       },
+      infos: {},
     };
-  },
-  computed: {
-    forbiddenNames() {
-      return map(this.infos, 'name');
-    },
   },
   mounted() {
     this.createUniqueValidationRule();
-    if (this.config.item) {
-      this.infos = this.config.item.infos;
-    }
+    this.infos = this.config.item ? this.config.item.infos : {};
   },
   methods: {
     async addInfo() {
       const isFormValid = await this.$validator.validateAll();
       if (isFormValid) {
-        this.infos.push({ ...this.form });
+        this.infos[this.form.name] = { ...this.form };
         this.$refs.infoForm.reset();
         this.$validator.reset();
         this.$emit('update:infos', this.infos);
       }
     },
     deleteInfo(name) {
-      this.infos = filter(this.infos, info => info.name !== name);
+      delete this.infos[name];
       this.$emit('update:infos', this.infos);
       this.$validator.reset();
+      this.$forceUpdate();
       this.$nextTick(() => {
         if (this.form.name) {
           this.$validator.validate();
@@ -105,8 +99,11 @@ export default {
     createUniqueValidationRule() {
       this.$validator.extend('unique-name', {
         getMessage: () => this.$t('validator.unique'),
-        validate: value => !this.forbiddenNames.includes(value),
+        validate: value => !this.forbiddenNames().includes(value),
       });
+    },
+    forbiddenNames() {
+      return Object.keys(this.infos);
     },
   },
 };

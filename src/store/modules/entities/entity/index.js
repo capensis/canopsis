@@ -96,7 +96,7 @@ export default {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
-    async edit({ dispatch }, { data }) {
+    async update({ dispatch }, { data }) {
       try {
         await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.editEntity') }, { root: true });
@@ -129,16 +129,6 @@ export default {
         }, { root: true });
       } catch (err) {
         console.warn(err);
-      }
-    },
-    async update(context, { entity }) {
-      try {
-        await request.put(API_ROUTES.context, {
-          _type: 'crudcontext',
-          entity,
-        });
-      } catch (err) {
-        console.error(err);
       }
     },
   },

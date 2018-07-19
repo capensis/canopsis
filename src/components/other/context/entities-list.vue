@@ -135,7 +135,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.remove({ id: item._id }),
+          action: () => this.removeContextEntity({ id: item._id }),
         },
       });
     },
