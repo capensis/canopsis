@@ -127,19 +127,6 @@ def get_install_requires(pkgpath):
     return reqs
 
 
-def get_description(pkgpath):
-    """
-    Get the long description from README.md
-    """
-    readme_path = join(pkgpath, 'README.md')
-    description = None
-
-    with open(readme_path) as f:
-        description = f.read()
-
-    return description
-
-
 def get_test_suite(pkgpath):
     test_folder = None
 
@@ -174,7 +161,7 @@ def setup_canopsis(pkgpath):
     setuptools_args['keywords'] = KEYWORDS
     setuptools_args['version'] = VERSION
     setuptools_args['install_requires'] = get_install_requires(pkgpath)
-    setuptools_args['long_description'] = get_description(pkgpath)
+    setuptools_args['long_description'] = ''
     setuptools_args['test_suite'] = get_test_suite(pkgpath)
     setuptools_args['data_files'] = get_data_files(pkgpath)
     setuptools_args['scripts'] = get_scripts(pkgpath)
