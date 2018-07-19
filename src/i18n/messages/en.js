@@ -356,4 +356,7 @@ export default {
       resource: 'Resource',
     },
   },
+  validator: {
+    unique: 'Field must be unique',
+  },
 };

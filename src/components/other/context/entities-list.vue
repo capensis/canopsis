@@ -60,8 +60,8 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
-import contextEntityMixin from '@/mixins/context';
-
+import contextEntityMixin from '@/mixins/context/list';
+import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
@@ -79,6 +79,7 @@ const { mapGetters } = createNamespacedHelpers('entity');
  */
 export default {
   components: {
+    AddInfoObject,
     ContextSearch,
     RecordsPerPage,
     CreateEntity,
@@ -134,7 +135,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.remove({ id: item._id }),
+          action: () => this.removeContextEntity({ id: item._id }),
         },
       });
     },

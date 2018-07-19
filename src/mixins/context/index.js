@@ -16,7 +16,9 @@ export default {
   methods: {
     ...mapActions({
       fetchContextEntities: 'fetchList',
-      remove: 'remove',
+      removeContextEntity: 'remove',
+      updateContextEntity: 'update',
+      createContextEntity: 'create',
     }),
   },
 };

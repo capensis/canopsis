@@ -1,39 +1,51 @@
 <template lang="pug">
   v-card
-    v-card-title.blue.darken-4.white--text.text-xs-center
-      h2 {{ config.title }}
-    create-form(
-      :name.sync="form.name",
-      :description.sync="form.description",
-      :enabled.sync="form.enabled",
-      :type.sync="form.type",
-      :impact.sync="form.impact",
-      :depends.sync="form.depends",
-    )
+    v-card-title
+      span.headline {{ config.title }}
+    v-tabs
+      v-tab(
+      v-for="tab in tabs",
+      :key="tab.name",
+      @click.prevent="currentComponent = tab.component",
+      ) {{ tab.name }}
+      v-tab-item
+        keep-alive
+        create-form(
+        :name.sync="form.name",
+        :description.sync="form.description",
+        :type.sync="form.type",
+        :enabled.sync="form.enabled",
+        )
+      v-tab-item
+        manage-infos(:infos.sync="form.infos")
     v-card-actions
       v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
-
-import CreateForm from './create-entity-form.vue';
-
-const { mapActions: entitiesMapActions } = createNamespacedHelpers('entity');
+import CreateForm from '@/components/modals/create-entity/create-entity-form.vue';
+import contextMixin from '@/mixins/context/index';
+import ManageInfos from '@/components/modals/create-entity/manage-infos.vue';
 
 /**
- * Modal to create an entity (watcher, resource, component, connector)
- */
+   * Modal to create an entity (watcher, resource, component, connector)
+   */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { CreateForm },
-  mixins: [modalInnerMixin],
+  components: {
+    CreateForm,
+    ManageInfos,
+  },
+  mixins: [
+    modalInnerMixin,
+    contextMixin,
+  ],
   data() {
     return {
       types: [
@@ -49,6 +61,10 @@ export default {
           text: this.$t('modals.createEntity.fields.types.resource'),
           value: 'resource',
         },
+      ],
+      tabs: [
+        { component: 'CreateForm', name: this.$t('modals.createEntity.fields.form') },
+        { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
       ],
       showValidationErrors: true,
       enabled: true,
@@ -69,10 +85,6 @@ export default {
     }
   },
   methods: {
-    ...entitiesMapActions({
-      createEntity: 'create',
-      editEntity: 'edit',
-    }),
     updateImpact(entities) {
       this.form.impacts = entities.map(entity => entity._id);
     },
@@ -82,13 +94,13 @@ export default {
     async submit() {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
-        // If there's an item, means we're editing. If there's not, we're creating an entity
         if (this.config.item) {
-          this.editEntity({ data: this.form });
+          this.updateContextEntity({ data: this.form });
         } else {
           const formData = { ...this.form, _id: this.form.name };
-          this.createEntity({ data: formData });
+          this.createContextEntity({ data: formData });
         }
+
         this.hideModal();
       }
     },
@@ -101,6 +113,7 @@ export default {
   .tooltip {
     flex: 1 1 auto;
   }
+
   .impact {
     background-color: grey;
   }
