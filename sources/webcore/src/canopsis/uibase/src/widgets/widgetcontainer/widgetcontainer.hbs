@@ -1,9 +1,0 @@
-{{#if controller.editMode}}
-    {{#if controller.isOnMainView}}
-        <button type="button" class="btn btn-info btn-xs btn-add-widget" {{action 'insertWidget' controller}} >
-            <span class="glyphicon glyphicon-plus-sign"></span>
-             {{tr 'Insert widget'}}
-        </button>
-    {{/if}}
-{{/if}}
-{{partialslot slot=controller._partials.layout}}

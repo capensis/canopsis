@@ -1,9 +1,0 @@
----
-- hosts: canopsis-standalone
-  remote_user: root
-  gather_facts: no
-  roles:
-    -
-      role: "canopsis"
-      tags:
-        - canopsis

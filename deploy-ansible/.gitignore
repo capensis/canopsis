@@ -1,7 +1,0 @@
-.vagrant
-.idea
-tests/test.retry
-playbook/files/*.rpm
-playbook/files/*.deb
-*.retry
-inventory.fpt
