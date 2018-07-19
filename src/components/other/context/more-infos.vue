@@ -13,7 +13,7 @@
               v-chip.red.white--text.title {{ $t(`common.disabled`) }}
           v-flex(xs4, md2)
             h4.text-xs-center {{ $t(`context.moreInfos.lastActiveDate`) }} :
-            p.text-xs-center {{ this.$d(new Date(this.lastActiveDate * 1000), 'short') }}
+            p.text-xs-center {{ this.lastActiveDate | moment("MM-D-YYYY") }}
           v-flex(xs6, md2)
             v-menu(:value="isImpactExpanded", bottom, offset-y, fixed)
               v-btn(@click.stop="isImpactExpanded = !isImpactExpanded", slot="activator") {{ $t(`context.impacts`) }}
@@ -45,7 +45,10 @@
 </template>
 
 <script>
+import * as moment from 'moment';
+
 import PbehaviorsList from './pbehaviors-list.vue';
+
 
 export default {
   components: {
@@ -68,12 +71,14 @@ export default {
       return this.item.infos || '';
     },
     lastActiveDate() {
+      console.log(this.moment);
       const enableHistory = [...this.item.item.enable_history];
       enableHistory.sort(((a, b) => a - b));
       return enableHistory[0];
     },
   },
   methods: {
+    moment,
   },
 };
 </script>
