@@ -166,13 +166,11 @@ su - canopsis -c "hypcontrol start"
 Pour pouvoir utiliser docker compose, il faut préalablement construire l'image docker de compatibilité, ainsi que les images Docker des engines en Go.
 
 ```bash
-source .env
-
 # archive de tous les binaires construits dans Docker
-make docker_release
+make docker_images
 
 # ou avec tag custom
-make docker_release TAG=develop
+make docker_images TAG=develop
 ```
 
 Pour que le provisionning soit complet (reinit), il faut supprimer le volume mongo et perdre toutes les données:
@@ -184,6 +182,12 @@ Pour ne construire qu’un seul projet :
 
 ```bash
 make -C cmd/<project> -f ../../Makefile.cmd docker_image
+```
+
+Pour faire une release (archive tar):
+
+```bash
+make docker_release
 ```
 
 ### RabbitMQ
