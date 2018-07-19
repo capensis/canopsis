@@ -63,19 +63,12 @@ Afin de correctement délivrer une *release*, certaines varibles d’environneme
 # variables pour faciliter le boulot via cette doc
 workdir="${HOME}/cps-release"
 tag="version_a_produire"
+```
 
-# variables réellement obligatoires
-export CANOPSIS_TAG="${tag}"
-export CANOPSIS_CATAG_TOKEN="ACCESS TOKEN GITLAB"
-#export CANOPSIS_DISTRIBUTION="all"
-export CANOPSIS_DISTRIBUTION="debian-9"
-export CANOPSIS_ENV_CONFIRM=1
+**Prendre exemple sur le fichier `env-release.example.sh`** : en faire une copie que vous ne versionnerez **pas** dans canopsis contenant les paramètres désirés, puis :
 
-# chemin vers la racine du dépôt canopsis core à utiliser. Cette varible n’est utilisée que par les scripts pour CAT.
-export CANOPSIS_CORE_PATH="${HOME}/path/to/canopsis"
-
-# Dans le cas où la version CANOPSIS_TAG n’est pas compatible avec le système de construction de packages :
-export CANOPSIS_PACKAGE_TAG=<vraie version>
+```
+source env-release.copie.sh
 ```
 
 Il vous faudra aussi avoir un environnement Go utilisable et donc une variable `GOPATH` correctement positionnée.
