@@ -36,12 +36,14 @@
                 :maxLetters="prop.maxLetters"
               )
             td
+              v-btn(@click.stop="editEntity(props.item)", icon, small)
+                v-icon edit
               v-btn(@click.stop="deleteEntity(props.item)", icon, small)
                 v-icon delete
           template(slot="expand", slot-scope="props")
         v-layout.white(align-center)
           v-flex(xs10)
-            pagination(:meta="meta", :limit="limit")
+            pagination(:meta="meta", :limit="limit", :last="last", :first="first")
           v-flex(xs2)
             records-per-page
         create-entity.fab
@@ -119,6 +121,15 @@ export default {
       }
 
       return query;
+    },
+    editEntity(item) {
+      this.showModal({
+        name: MODALS.createEntity,
+        config: {
+          title: this.$t('modals.createEntity.editTitle'),
+          item,
+        },
+      });
     },
     deleteEntity(item) {
       this.showModal({

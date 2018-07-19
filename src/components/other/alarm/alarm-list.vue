@@ -48,7 +48,7 @@
               time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
           v-layout.white(align-center)
             v-flex(xs10)
-              pagination(:meta="meta", :limit="limit")
+              pagination(:meta="meta", :limit="limit", :first="first", :last="last")
             v-spacer
             v-flex(xs2)
               records-per-page
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     removeHistoryFilter() {
-      const query = omit(this.$route.query, ['interval']);
+      const query = omit(this.$route.query, ['interval', 'tstart', 'tstop']);
       this.$router.push({ query });
     },
   },

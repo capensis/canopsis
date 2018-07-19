@@ -23,8 +23,6 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
-  infoObject: 'info-object',
-  contextInfos: 'context-infos',
 };
 
 export const EVENT_ENTITY_TYPES = {

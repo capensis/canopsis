@@ -20,61 +20,85 @@
       v-tab-item
         manage-infos(:infos.sync="form.infos")
     v-card-actions
-      v-btn(@click.prevent="submit", color="primary") {{ $t('common.submit') }}
+      v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal/modal';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import { createNamespacedHelpers } from 'vuex';
 
+import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
 import CreateForm from './create-entity-form.vue';
-import ManageInfos from './manage-infos.vue';
 
+const { mapActions: entitiesMapActions } = createNamespacedHelpers('entity');
+
+/**
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    CreateForm,
-    ManageInfos,
-  },
-  mixins: [modalMixin, modalInnerMixin],
+  components: { CreateForm },
+  mixins: [modalInnerMixin],
   data() {
     return {
-      tabs: [
-        { component: 'CreateForm', name: this.$t('modals.createEntity.fields.form') },
-        { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
+      types: [
+        {
+          text: this.$t('modals.createEntity.fields.types.connector'),
+          value: 'connector',
+        },
+        {
+          text: this.$t('modals.createEntity.fields.types.component'),
+          value: 'component',
+        },
+        {
+          text: this.$t('modals.createEntity.fields.types.resource'),
+          value: 'resource',
+        },
       ],
-      currentComponent: 'CreateForm',
       showValidationErrors: true,
+      enabled: true,
       form: {
         name: '',
         description: '',
         type: '',
         enabled: true,
-        infos: [],
+        depends: [],
+        impact: [],
+        infos: {},
       },
     };
   },
+  mounted() {
+    if (this.config.item) {
+      this.form = { ...this.config.item };
+    }
+  },
   methods: {
+    ...entitiesMapActions({
+      createEntity: 'create',
+      editEntity: 'edit',
+    }),
     updateImpact(entities) {
       this.form.impacts = entities.map(entity => entity._id);
     },
     updateDependencies(entities) {
       this.form.dependencies = entities.map(entity => entity._id);
     },
-    async create() {
-      // TO DO
-      // Entity creation
-      // todo create object infos after entity creating
-    },
     async submit() {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
-        await this.create();
+        // If there's an item, means we're editing. If there's not, we're creating an entity
+        if (this.config.item) {
+          this.editEntity({ data: this.form });
+        } else {
+          const formData = { ...this.form, _id: this.form.name };
+          this.createEntity({ data: formData });
+        }
+        this.hideModal();
       }
     },
 
@@ -85,5 +109,8 @@ export default {
 <style scoped>
   .tooltip {
     flex: 1 1 auto;
+  }
+  .impact {
+    background-color: grey;
   }
 </style>
