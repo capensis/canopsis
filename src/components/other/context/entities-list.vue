@@ -44,7 +44,6 @@
             pagination(:meta="meta", :query.sync="query")
           v-flex(xs2)
             records-per-page(:query.sync="query")
-        create-entity.fab
 </template>
 
 <script>

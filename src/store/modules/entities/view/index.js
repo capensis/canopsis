@@ -2,6 +2,8 @@ import request from '@/services/request';
 import { viewSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+import uuid from '@/helpers/uuid';
+
 import widgetModule, { types as widgetMutations } from './widget';
 
 export const types = {
@@ -69,6 +71,69 @@ export default {
       } catch (e) {
         console.error(e);
       }
+    },
+    async addWidget({ commit, getters }, { widget }) {
+      const widgetWrapperId = uuid('widgetwrapper');
+      const widgetId = uuid(`widget_${widget.xtype}`);
+
+      const userpreferenciesRequest = {
+        widget_preferences: {},
+        crecord_name: 'root',
+        widget_id: 'widget_listalarm_d247f77e-e0d0-b776-45b3-81b32abf45c0',
+        widgetXtype: 'listalarm',
+        id: 'widget_listalarm_d247f77e-e0d0-b776-45b3-81b32abf45c0_root',
+        _id: 'widget_listalarm_d247f77e-e0d0-b776-45b3-81b32abf45c0_root',
+        crecord_type: 'userpreferences',
+      };
+
+      const userpreferencesResponse = {
+        total: 1,
+        data: [
+          {
+            widget_preferences: {},
+            crecord_write_time: 1532022345,
+            enable: true,
+            id: 'widget_listalarm_d247f77e-e0d0-b776-45b3-81b32abf45c0_root',
+            crecord_type: 'userpreferences',
+            widgetXtype: 'listalarm',
+            _id: 'widget_listalarm_d247f77e-e0d0-b776-45b3-81b32abf45c0_root',
+            widget_id: 'widget_listalarm_d247f77e-e0d0-b776-45b3-81b32abf45c0',
+            crecord_name: 'root',
+          },
+        ],
+        success: true,
+      };
+
+      const widgetWrapper = {
+        title: 'wrapper',
+        xtype: 'widgetwrapper',
+        mixins: [],
+        widget: {
+          widgetId,
+          title: widget.title,
+          preference_id: uuid(),
+          xtype: widget.xtype,
+          tagName: null,
+          mixins: [],
+          default_sort_column: {
+            direction: 'ASC',
+          },
+          alarms_state_filter: null,
+          hide_resources: false,
+          columns: [
+            'connector_name',
+            'component',
+          ],
+          widget_columns: [],
+          popup: [],
+          id: widgetId,
+        },
+        id: widgetWrapperId,
+      };
+
+      const view = getters.activeItem;
+
+      console.log(widgetWrapperId, widgetId);
     },
   },
 };

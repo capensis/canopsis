@@ -88,4 +88,26 @@ export default {
       }
     },
   },
+  async create({ commit }, { data }) {
+    await request.post(API_ROUTES.userPreferences, {
+      widget_preferences: {
+        user_filters: getters.filters.map(filter => ({
+          filter: filter.filter,
+          title: filter.title,
+        })),
+        selected_filter: {
+          filter: selectedFilter.filter,
+          isActive: true,
+          title: selectedFilter.title,
+        },
+      },
+      crecord_name: data.crecord_name,
+      widget_id: data.widget_id,
+      widgetXtype: data.widgetXtype,
+      title: data.title,
+      id: data.id,
+      _id: data._id,
+      crecord_type: data.crecord_type,
+    });
+  },
 };
