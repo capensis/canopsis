@@ -7,9 +7,35 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ### Experimental features
 
-- [Go]: New engine interface
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
-- [Python]: new metric engine
+
+## Canopsis 3.0.0 - Due date : 2018-07-20
+
+- [Chore]: Finalizing new building process
+- [CAT]: New stats in statsng: time_in_state, availability, maintenance and mtbf
+- [CAT]: Provisionning for docker demos
+- [Deploy]: Automated standalone deployment
+- [Docker]: Multiple cleanup and fixes
+- [Go]: Fix an uncatched exception in alarm
+- [Go]: Large refacto on engines and services
+- [Go]: New engine interface
+- [Go]: New Done action
+- [Go]: Support watcher
+- [Python]: Huge code cleanup, upgrade to pymongo 3.6
+- [Python]: New Done action
+- [Python]: New metric engine
+- [Python]: New stat event: statstateinterval
+- [Python]: New webserver handler using Flask
+- [Python]: Small refacto and optimization on linkbuilder classes
+- [UI]: Beginning Canopsis-next integration (context view)
+- [UI]: Fix brickmanager when used with canopsis user
+- [UI]: New documentation subprocess (visible on search field in Alarm list)
+- [UI]: New 'unknown' state marker
+- [Alarm list]: Natural search only on visible columns
+- [Alarm list]: Possibility to search on ticket number
+- [Service weather]: Add rights for actions
+- [Service weather]: Fix blink on pbehaviored watchers
+- [Service weather]: Fix refresh (again)
 
 ## Canopsis 2.7.0 - Due date : 2018-06-28
 
