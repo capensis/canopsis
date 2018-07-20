@@ -307,26 +307,6 @@ class ContextGraph(object):
 
         self.filter_ = InfosFilter(logger=self.logger)
 
-    def get_entities_by_id(self, _id):
-        """
-        Retreive the entity identified by an id. If id is a list of id,
-        get_entities_by_id return every entities who match the ids present
-        in the list
-
-        :param id: the id of an entity. id can be a list
-        :return type: a list of entity
-        """
-
-        query = {"_id": None}
-        if isinstance(_id, list):
-            query["_id"] = {"$in": _id}
-        else:
-            query["_id"] = _id
-
-        result = self.get_entities(query=query)
-
-        return result
-
     def _put_entities(self, entities):
         """
         Store entities into database. Do no use this function unless you know
@@ -622,7 +602,8 @@ class ContextGraph(object):
                      limit=0,
                      start=0,
                      sort=False,
-                     with_count=False):
+                     with_count=False,
+                     with_links=False):
         """
         Retreives entities matching the query and the projection.
 
@@ -634,6 +615,7 @@ class ContextGraph(object):
         :type sort: list of {(str, {ASC, DESC}}), or str}
         :param bool with_count: If True (False by default), add count to
             the result
+        :param bool with_links: If True (False by default), add builded links
 
         :return: a list of entities
         :rtype: list of dict elements
@@ -663,7 +645,7 @@ class ContextGraph(object):
         # Enrich each entity with http links
         for res in result:
             res['links'] = {}
-            if hasattr(self, 'hlb_manager'):
+            if with_links and hasattr(self, 'hlb_manager'):
                 links = self.hlb_manager.links_for_entity(res)
                 res['links'] = links
 
@@ -671,6 +653,27 @@ class ContextGraph(object):
             return result, count
         else:
             return result
+
+    def get_entities_by_id(self, _id, with_links=False):
+        """
+        Retreive the entity identified by an id. If id is a list of id,
+        get_entities_by_id return every entities who match the ids present
+        in the list
+
+        :param id: the id of an entity. id can be a list
+        :param bool with_links: If True (False by default), add builded links
+        :returns: a list of entity
+        """
+
+        query = {"_id": None}
+        if isinstance(_id, list):
+            query["_id"] = {"$in": _id}
+        else:
+            query["_id"] = _id
+
+        result = self.get_entities(query=query, with_links=with_links)
+
+        return result
 
     def get_event(self, entity, event_type='check', **kwargs):
         """Get an event from an entity.
