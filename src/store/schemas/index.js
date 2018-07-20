@@ -1,12 +1,12 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-// import { childProcessStrategy, childMergeStrategy } from '@/helpers/schema';
+import { childProcessStrategy, childMergeStrategy } from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
-  // processStrategy: childProcessStrategy,
-  // mergeStrategy: childMergeStrategy,
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
 });
 
 export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
