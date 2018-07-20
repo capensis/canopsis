@@ -8,7 +8,7 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
     td {{ props.item.enabled }}
     td {{ props.item.tstart | moment("MM-D-YYYY, hh:mm:ss") }}
     td {{ props.item.tstop | moment("MM-D-YYYY, hh:mm:ss") }}
-    td {{ props.item.type }}
+    td {{ props.item.type_ }}
     td {{ props.item.reason }}
     td {{ props.item.rrule }}
 </template>
@@ -38,42 +38,44 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.connector'),
+          text: this.$t('pbehaviors.connector'),
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.connectorName'),
+          text: this.$t('pbehaviors.connectorName'),
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.isEnabled'),
+          text: this.$t('pbehaviors.isEnabled'),
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.begins'),
+          text: this.$t('pbehaviors.begins'),
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.ends'),
+          text: this.$t('pbehaviors.ends'),
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.type'),
+          text: this.$t('pbehaviors.type'),
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.reason'),
+          text: this.$t('pbehaviors.reason'),
           sortable: false,
         },
         {
-          text: this.$t('pbehaviorsList.rrule'),
+          text: this.$t('pbehaviors.rrule'),
           sortable: false,
         },
       ],
     };
   },
   computed: {
-    ...pbehaviorMapgetters(['pbehaviorsList']),
+    ...pbehaviorMapgetters({
+      pbehaviorsList: 'items',
+    }),
   },
   mounted() {
     this.fetchItems();

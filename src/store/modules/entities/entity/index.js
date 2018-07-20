@@ -90,7 +90,7 @@ export default {
     async create({ dispatch }, { data }) {
       try {
         // Need this special syntax for request params for the backend to handle it
-        await request.put(API_ROUTES.createEntity, { "entity": JSON.stringify(data) });
+        await request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.createEntity') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });

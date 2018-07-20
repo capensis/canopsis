@@ -14,18 +14,19 @@ const types = {
 export default {
   namespaced: true,
   state: {
-    pbehaviorsList: [],
+    allIds: [],
     error: '',
     pending: true,
   },
   getters: {
-    pbehaviorsList: state => state.pbehaviorsList,
+    allIds: state => state.allIds,
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('pbehavior', state.allIds),
     error: state => state.error,
     pending: state => state.pending,
   },
   mutations: {
-    [types.FETCH_BY_ID_COMPLETED](state, payload) {
-      state.pbehaviorsList = payload;
+    [types.FETCH_BY_ID_COMPLETED](state, ids) {
+      state.allIds = ids;
       state.pending = false;
     },
     [types.FETCH_BY_ID_FAILED](state, err) {
@@ -66,10 +67,17 @@ export default {
         console.warn(err);
       }
     },
-    async fetchById({ commit }, { id }) {
+    fetch({ dispatch }, { id }) {
+      return dispatch('entities/fetch', {
+        route: `${API_ROUTES.pbehaviorById}/${id}`,
+        schema: [schemas.pbehavior],
+        dataPreparer: d => d,
+      }, { root: true });
+    },
+    async fetchById({ commit, dispatch }, { id }) {
       try {
-        const data = await request.get(`${API_ROUTES.pbehaviorById}/${id}`);
-        commit(types.FETCH_BY_ID_COMPLETED, data);
+        const { normalizedData } = await dispatch('fetch', { id });
+        commit(types.FETCH_BY_ID_COMPLETED, normalizedData.result);
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
         console.warn(err);
@@ -77,3 +85,4 @@ export default {
     },
   },
 };
+

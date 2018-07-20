@@ -105,7 +105,7 @@ export default {
       },
     },
   },
-  pbehaviorsList: {
+  pbehaviors: {
     connector: 'Connecteur',
     connectorName: 'Nom du connecteur',
     isEnabled: 'Est actif',

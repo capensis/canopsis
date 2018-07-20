@@ -71,7 +71,6 @@ export default {
       return this.item.infos || '';
     },
     lastActiveDate() {
-      console.log(this.moment);
       const enableHistory = [...this.item.item.enable_history];
       enableHistory.sort(((a, b) => a - b));
       return enableHistory[0];
