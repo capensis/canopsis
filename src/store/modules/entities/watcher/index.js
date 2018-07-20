@@ -39,7 +39,7 @@ export default {
     },
   },
   actions: {
-    async create(params = {}) {
+    async create(context, params = {}) {
       try {
         await request.post(API_ROUTES.watcher, params);
       } catch (err) {
