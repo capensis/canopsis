@@ -30,13 +30,15 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
   idAttribute: '_id',
 });
 
-const widgetWrapper = new schema.Entity(ENTITIES_TYPES.widgetWrapper);
+const widgetSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper);
 
-const widgetWrapperList = new schema.Array(widgetWrapper);
+const widgetWrapperSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper, {
+  widget: widgetSchema,
+});
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   containerwidget: {
-    items: widgetWrapperList,
+    items: [widgetWrapperSchema],
   },
 });
 
@@ -47,4 +49,6 @@ export default {
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,
+  [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
+  [ENTITIES_TYPES.widget]: widgetSchema,
 };

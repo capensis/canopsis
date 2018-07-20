@@ -7,6 +7,7 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   view: 'view',
   widgetWrapper: 'widgetWrapper',
+  widget: 'widget',
 };
 
 export const MODALS = {

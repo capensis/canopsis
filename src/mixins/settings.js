@@ -1,4 +1,4 @@
-import SettingsWrapper from '@/components/other/settings/settings-wrapper.vue';
+import SettingsWrapper from '@/components/other/settings/settings.vue';
 
 /**
  * @mixin For the setting bar's displaying

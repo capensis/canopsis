@@ -1,7 +1,5 @@
 <template lang="pug">
   div
-    settings-wrapper(v-model="isSettingsOpen", :title="$t('settings.titles.contextTableSettings')")
-      context-settings-fields
     entities-list(
     :widget="widget",
     :contextProperties="$mq| mq(contextProperties)",
@@ -11,16 +9,13 @@
 
 <script>
 import EntitiesList from '@/components/other/context/entities-list.vue';
-import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
 import contextEntityMixin from '@/mixins/context';
-import settingsMixin from '@/mixins/settings';
 
 export default {
   components: {
     EntitiesList,
-    ContextSettingsFields,
   },
-  mixins: [contextEntityMixin, settingsMixin],
+  mixins: [contextEntityMixin],
   props: {
     widget: {
       type: Object,

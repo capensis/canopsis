@@ -113,6 +113,24 @@ const entitiesModule = {
 
       return { data, normalizedData };
     },
+    async update(
+      { commit },
+      {
+        route,
+        schema,
+        params,
+        body,
+        dataPreparer,
+        mutationType = internalTypes.ENTITIES_UPDATE,
+      },
+    ) {
+      const data = await request.put(route, body, { params });
+      const normalizedData = normalize(dataPreparer(data), schema);
+
+      commit(mutationType, normalizedData.entities);
+
+      return { data, normalizedData };
+    },
 
     /**
      * Remove entity by id and type from store

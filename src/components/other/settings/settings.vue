@@ -7,16 +7,17 @@
   fixed,
   right
   )
-    v-toolbar(color="blue darken-4")
-      v-list
-        v-list-tile
-          v-list-tile-title.white--text.text-xs-center {{ config.title }}
-      v-icon.closeIcon(@click.stop="close", color="white") close
-    v-divider
-    div(
-    :is="config.component",
-    :widget="widget"
-    )
+    div(v-if="widget")
+      v-toolbar(color="blue darken-4")
+        v-list
+          v-list-tile
+            v-list-tile-title.white--text.text-xs-center {{ config.title }}
+        v-icon.closeIcon(@click.stop="close", color="white") close
+      v-divider
+      div(
+      :is="config.component",
+      :widget="widget"
+      )
 </template>
 
 <script>

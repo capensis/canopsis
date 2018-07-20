@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import Settings from '@/components/other/settings/settings-wrapper.vue';
+import Settings from '@/components/other/settings/settings.vue';
 import AlarmListContainer from '@/containers/alarm-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
 import viewMixin from '@/mixins/view';
