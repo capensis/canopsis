@@ -30,9 +30,9 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
   idAttribute: '_id',
 });
 
-const widgetSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper);
+export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper);
 
-const widgetWrapperSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper, {
+export const widgetWrapperSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper, {
   widget: widgetSchema,
 });
 

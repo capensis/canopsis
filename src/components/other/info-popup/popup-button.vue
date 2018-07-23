@@ -7,7 +7,6 @@
 import Handlebars from 'handlebars';
 import getProp from 'lodash/get';
 
-import widgetMixin from '@/mixins/widget';
 import popupComponentMixin from '@/mixins/popup';
 
 /**
@@ -18,7 +17,6 @@ import popupComponentMixin from '@/mixins/popup';
  */
 export default {
   mixins: [
-    widgetMixin,
     popupComponentMixin,
   ],
   props: {
@@ -30,10 +28,14 @@ export default {
       type: Object,
       required: true,
     },
+    widget: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     popupData() {
-      const popups = getProp(this.getWidget({ widgetXType: 'listalarm' }), 'widget.popup', []);
+      const popups = getProp(this.widget, 'widget.popup', []);
 
       return popups.find(popup => popup.column === this.columnName);
     },

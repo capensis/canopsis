@@ -40,7 +40,7 @@
                 v-for="prop in alarmProperties",
                 @click="props.expanded = !props.expanded"
               )
-                alarm-column-value(:alarm="props.item", :property="prop")
+                alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
               td
                 actions-panel(:item="props.item")
             template(slot="expand", slot-scope="props")
