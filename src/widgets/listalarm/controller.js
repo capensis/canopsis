@@ -241,7 +241,7 @@ Ember.Application.initializer({
                     opened: filterState == 'opened',
                     resolved: filterState == 'resolved',
                     hide_resources: hide_resources,
-                    lookups: JSON.stringify(["pbehaviors", "linklist"]) ,
+                    lookups: JSON.stringify(["pbehaviors"]) ,
                     filter: filter,
                     sort_key: this.get('model.default_sort_column.property'),
                     sort_dir: this.get('model.default_sort_column.direction'),
@@ -692,7 +692,7 @@ Ember.Application.initializer({
                     }
                     adapter.findQuery('alarm',
                         {
-                            lookups: JSON.stringify(["pbehaviors", "linklist"]),
+                            lookups: JSON.stringify(["pbehaviors"]),
                             'filter': ('{"$or":[{"_id":"' + alarm_record.get('id') + '"}]}')
                         }).then(function (found_alarm) {
                             if (found_alarm.success) {

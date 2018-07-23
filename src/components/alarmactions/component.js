@@ -236,13 +236,6 @@ Ember.Application.initializer({
             }.property('alarm.extra_details.snooze'),
 
             /**
-             * @property hasLinks
-             */
-            hasLinks: function() {
-                return this.get('alarm.linklist.event_links.length') > 0;
-            }.property('alarm.linklist.event_links'),
-
-            /**
              * @property isChangedByUser
              */
             isChangedByUser: function () {

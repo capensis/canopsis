@@ -119,7 +119,7 @@ Here is the webservice used, you can see all available parameters:
          :param bool opened: If True, consider alarms that are currently opened
          :param bool resolved: If True, consider alarms that have been resolved
          :param list lookups: List of extra columns to compute for each
-           returned alarm. Extra columns are "pbehaviors" and/or "linklist".
+           returned alarm. Extra columns are "pbehaviors".
          :param dict filter: Mongo filter. Keys are UI column names.
          :param str search: Search expression in custom DSL
          :param str sort_key: Name of the column to sort
@@ -261,31 +261,6 @@ Cancel description
    "", "m", "string", "alarm was cancelled from MMA", "Message that comes with the cancel action"
    "", "t", "number/timestamp", "1476654503", "Timestamp of the cancel"
    "", "val", "string", "null", "N/A"
-
-
-Linklist description
-^^^^^^^^^^^^^^^^^^^^
-
-.. csv-table:: Linklist description
-   :header: "Structure", "Attribute", "Type", "Example", "Description"
-   :widths: 5, 10, 5, 10, 30
-
-   "linklist", "url", "string", "http://urltoticket.local/?id=entity_id", "Url associated to a label"
-   "", "label", "string", "Ticket", "Label associated to an url"
-
-
-Linklist is a list of urls associated to the entity.
-Links must appear in the modal like potentialy any other variables but with special helper.
-
-The goal is to let the user access a handlebar for the renderer
-
- {{ linklist category="procedure" }}
-
-Must return something like
-
- foreach linklist with category = "procedure"
-
- <a href="http://urloflinklist">labeloflinklist</a><br>
 
 
 Pbehavior description
@@ -497,16 +472,6 @@ Popup results from a template compilation which can be defined by the user.
 The user must be able to set multiple infopopup on multiple columns.
 
 .. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/recordinfopopup.png
-
-
-Linklist
-^^^^^^^^
-
-As said before, linklists are links with categories that are attached to an entity.
-The widget has to display it like on screenshots
-
-
-.. image:: https://git.canopsis.net/canopsis-ui-bricks/brick-alarms/blob/master/doc/screenshots/linklistrender.png
 
 
 Pbehavior

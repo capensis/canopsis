@@ -14,20 +14,6 @@
                 </button>
             {{/if}}
     {{/each}}
-
-    {{#if hasLinks}}
-          <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              <i class="fa fa-info"></i>
-              <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" role="menu" style="right:0;">
-            {{#each link in alarm.linklist.event_links}}
-              <li>
-                  <a target="_blank" {{bind-attr href=link.url}}>{{link.label}}</a>
-              </li>
-            {{/each}}
-          </ul>
-    {{/if}}
   </div>
   <!-- Modal -->
 <div {{bind-attr id=pBehaviorListActionId}} class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">

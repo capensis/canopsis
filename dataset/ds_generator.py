@@ -148,9 +148,6 @@ def generate():
                     'domain': choice(domains),
                     'perimeter': choice(perimeters)
                 },
-                'linklist': {
-                    'computed_links': []
-                },
                 'pbehaviors': choice([None, []]),
                 'hard_limit': 'to be ignored...',
                 'steps': ['to be ignored...']
@@ -158,16 +155,6 @@ def generate():
             'd': entity_id,
             't': randts(tstart, tstop)
         }
-
-        if choice([True, True, False]):
-            for i in range(randint(2, 4)):
-                randurl = 'http{}://{}'.format(choice(['', 's']), uuid4().hex)
-                alarm['v']['linklist']['computed_links'].append(
-                    {
-                        'url': randurl,
-                        'label': randword(3)
-                    }
-                )
 
         if choice([True, False, False]):
             alarm['v']['linklist']['event_links'] = []
