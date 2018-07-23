@@ -38,7 +38,6 @@ from canopsis.common.redis_store import RedisStore
 from canopsis.common.utils import get_sub_key
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
-from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -72,21 +71,18 @@ class AlertsReader(object):
                               "v.resource",
                               "v.connector_name"]
 
-    def __init__(self, logger, config, storage,
-                 pbehavior_manager, entitylink_manager):
+    def __init__(self, logger, config, storage, pbehavior_manager):
         """
         :param logger: a logger object
         :param config: a confng instance
         :param storage: a storage instance
         :param pbehavior_manager: a pbehavior manager instance
-        :param entitylink_manager: a entitylink manager instance
         """
         self.logger = logger
         self.config = config
         self.alarm_storage = storage
         self.alarm_collection = MongoCollection(self.alarm_storage._backend)
         self.pbehavior_manager = pbehavior_manager
-        self.entitylink_manager = entitylink_manager
         self.pbh_filter = None
 
         category = self.config.get(self.CATEGORY, {})
@@ -115,8 +111,7 @@ class AlertsReader(object):
         :rtype: Union[logging.Logger,
                       canospis.confng.simpleconf.Configuration,
                       canopsis.storage.core.Storage,
-                      canopsis.pbehavior.manager.PBehaviorManager,
-                      canopsis.entitylink.manager.EntityLink]
+                      canopsis.pbehavior.manager.PBehaviorManager]
         """
         logger = Logger.get('alertsreader', cls.LOG_PATH)
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
@@ -128,9 +123,8 @@ class AlertsReader(object):
         )
 
         pbm = PBehaviorManager(logger=logger, pb_storage=pb_storage)
-        llm = Entitylink(*Entitylink.provide_default_basics())
 
-        return (logger, conf, alerts_storage, pbm, llm)
+        return (logger, conf, alerts_storage, pbm)
 
     @property
     def alarm_fields(self):
@@ -544,7 +538,7 @@ class AlertsReader(object):
         :param bool resolved: If True, consider alarms that have been resolved
 
         :param list lookups: List of extra columns to compute for each
-          returned alarm. Extra columns are "pbehaviors" and/or "linklist".
+          returned alarm. Extra columns are "pbehaviors".
 
         :param dict filter_: Mongo filter
         :param str search: Search expression in custom DSL

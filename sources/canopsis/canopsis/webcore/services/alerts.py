@@ -94,7 +94,7 @@ def exports(ws):
         :param bool resolved: If True, consider alarms that have been resolved
 
         :param list lookups: List of extra columns to compute for each
-          returned alarm. Extra columns are "pbehaviors" and/or "linklist".
+          returned alarm. Extra columns are "pbehaviors".
 
         :param dict filter: Mongo filter. Keys are UI column names.
         :param str search: Search expression in custom DSL

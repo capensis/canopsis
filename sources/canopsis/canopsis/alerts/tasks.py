@@ -425,28 +425,6 @@ def hard_limit(manager, alarm):
     return alarm
 
 
-@register_task('alerts.lookup.linklist')
-def linklist(manager, alarm):
-    """
-    Called to add a linklist field to an alarm.
-    """
-
-    entity_id = alarm['d']
-
-    linklist = list(manager.entitylink_manager.find(ids=[entity_id]))
-
-    if not linklist:
-        alarm[AlarmField.linklist.value] = {}
-
-    else:
-        if '_id' in linklist[0]:
-            linklist[0].pop('_id')
-
-        alarm[AlarmField.linklist.value] = linklist[0]
-
-    return alarm
-
-
 @register_task('alerts.lookup.pbehaviors')
 def pbehaviors(manager, alarm):
     """
