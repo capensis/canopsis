@@ -20,7 +20,7 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('pbehavior', state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.pbehavior, state.allIds),
     error: state => state.error,
     pending: state => state.pending,
   },
@@ -74,7 +74,7 @@ export default {
         dataPreparer: d => d,
       }, { root: true });
     },
-    async fetchById({ commit, dispatch }, { id }) {
+    async fetchListByEntityId({ commit, dispatch }, { id }) {
       try {
         const { normalizedData } = await dispatch('fetch', { id });
         commit(types.FETCH_BY_ID_COMPLETED, normalizedData.result);

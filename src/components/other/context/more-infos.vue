@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import * as moment from 'moment';
 
 import PbehaviorsList from './pbehaviors-list.vue';
 
@@ -77,7 +76,6 @@ export default {
     },
   },
   methods: {
-    moment,
   },
 };
 </script>

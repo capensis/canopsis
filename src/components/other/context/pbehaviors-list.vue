@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     ...pbehaviorMapAction({
-      fetchPbehaviorsList: 'fetchById',
+      fetchPbehaviorsList: 'fetchListByEntityId',
     }),
     async fetchItems() {
       await this.fetchPbehaviorsList({ id: this.itemId });

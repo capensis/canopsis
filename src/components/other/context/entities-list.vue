@@ -41,7 +41,7 @@
               v-btn(@click.stop="deleteEntity(props.item)", icon, small)
                 v-icon delete
           template(slot="expand", slot-scope="props")
-            more-infos(:item="props", @click="props.expanded = !props.expanded")
+            more-infos(:item="props")
         v-layout.white(align-center)
           v-flex(xs10)
             pagination(:meta="meta", :limit="limit", :last="last", :first="first")
