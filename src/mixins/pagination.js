@@ -18,8 +18,13 @@ export default {
     };
 
     if (this.widget.default_sort_column) {
-      query.sort_key = `v.${this.widget.default_sort_column.property}`;
-      query.sort_dir = this.widget.default_sort_column.direction;
+      if (this.widget.default_sort_column.property) {
+        query.sort_key = `v.${this.widget.default_sort_column.property}`;
+      }
+
+      if (this.widget.default_sort_column.direction) {
+        query.sort_dir = this.widget.default_sort_column.direction;
+      }
     }
 
     return {
@@ -35,7 +40,6 @@ export default {
   },
   watch: {
     query: {
-      immediate: true,
       handler() {
         this.fetchList();
       },

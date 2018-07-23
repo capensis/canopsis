@@ -62,7 +62,6 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context/list';
-import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
 import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
@@ -70,6 +69,7 @@ import MoreInfos from './more-infos.vue';
 
 const { mapGetters } = createNamespacedHelpers('entity');
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
+const { mapActions } = createNamespacedHelpers('userPreference');
 
 /**
  * Entities list
@@ -82,7 +82,6 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  */
 export default {
   components: {
-    AddInfoObject,
     ContextSearch,
     RecordsPerPage,
     CreateEntity,
@@ -122,9 +121,27 @@ export default {
       return this.getItem(ENTITIES_TYPES.userPreference, `${this.widget.id}_root`); // TODO: fix it
     },
   },
+  async mounted() {
+    await this.fetchUserPreferencesList({
+      params: {
+        limit: 1,
+        filter: {
+          crecord_name: 'root',
+          widget_id: this.widget.id,
+          _id: `${this.widget.id}_root`, // TODO: change to real user
+        },
+      },
+    });
+
+    await this.fetchList();
+  },
   methods: {
+    ...mapActions({
+      fetchUserPreferencesList: 'fetchList',
+    }),
     getQuery() {
-      const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
+      const query = omit(this.query.query, ['page', 'sort_dir', 'sort_key']);
+
       query.limit = this.query.limit;
       query.start = ((this.query.page - 1) * this.query.limit) || 0;
 
