@@ -22,12 +22,16 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import Settings from '@/components/other/settings/settings.vue';
 import AlarmListContainer from '@/containers/alarm-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
 import viewMixin from '@/mixins/view';
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
+
+const { mapActions } = createNamespacedHelpers('userPreference');
 
 export default {
   components: {
@@ -67,10 +71,24 @@ export default {
       },
     },
   },
-  mounted() {
-    this.fetchView({ id: this.id });
+  async mounted() {
+    await this.fetchView({ id: this.id });
+
+    // TODO: fix it
+    await Promise.all(this.widgetWrappers.map(widgetWrapper => this.fetchUserPreferences({
+      params: {
+        limit: 1,
+        filter: {
+          crecord_name: 'root',
+          widget_id: widgetWrapper.widget.id,
+          _id: `${widgetWrapper.widget.id}_root`, // TODO: change to real user
+        },
+      },
+    })));
   },
   methods: {
+    ...mapActions({ fetchUserPreferences: 'fetchList' }),
+
     openSettings(widgetId) {
       this.activeWidgetSettings = widgetId;
     },

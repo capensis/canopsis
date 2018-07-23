@@ -49,7 +49,7 @@ export default {
           route: API_ROUTES.userPreferences,
           schema: [userPreferenceSchema],
           params,
-          dataPreparer: d => d,
+          dataPreparer: d => d.data,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
@@ -88,7 +88,7 @@ export default {
       }
     },
   },
-  async create({ commit }, { data }) {
+  async create({ getters }, { data, selectedFilter }) {
     await request.post(API_ROUTES.userPreferences, {
       widget_preferences: {
         user_filters: getters.filters.map(filter => ({

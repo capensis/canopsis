@@ -17,8 +17,6 @@
 </template>
 
 <script>
-import { PAGINATION_LIMIT } from '@/config';
-
 /**
 * Pagination component
 *
@@ -56,12 +54,6 @@ export default {
         this.$emit('update:query', { ...this.query, page });
       },
     },
-    limit() {
-      return this.query.limit || PAGINATION_LIMIT;
-    },
-    page() {
-      return this.query.page || 1;
-    },
     totalPages() {
       if (this.meta.total) {
         return Math.ceil(this.meta.total / this.query.limit);
@@ -76,7 +68,7 @@ export default {
         return this.meta.first;
       }
 
-      return 1 + (this.limit * (this.page - 1));
+      return 1 + (this.query.limit * (this.query.page - 1));
     },
     /**
      * Calculate last item nb to display on pagination, in case it's not given by the backend
@@ -86,7 +78,7 @@ export default {
         return this.meta.last;
       }
 
-      const calculatedLast = this.page * this.limit;
+      const calculatedLast = this.query.page * this.query.limit;
 
       return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
     },

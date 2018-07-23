@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import find from 'lodash/find';
 import omit from 'lodash/omit';
 import { createNamespacedHelpers } from 'vuex';
 
@@ -62,12 +63,13 @@ import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context/list';
 import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
-import { MODALS } from '@/constants';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
 
 const { mapGetters } = createNamespacedHelpers('entity');
+const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 /**
  * Entities list
@@ -113,6 +115,12 @@ export default {
   },
   computed: {
     ...mapGetters(['items', 'meta', 'pending']),
+
+    ...entitiesMapGetters(['getItem']),
+
+    userPreference() {
+      return this.getItem(ENTITIES_TYPES.userPreference, `${this.widget.id}_root`); // TODO: fix it
+    },
   },
   methods: {
     getQuery() {
@@ -125,6 +133,17 @@ export default {
           property: this.query.sort_key,
           direction: this.query.sort_dir ? this.query.sort_dir : 'ASC',
         }];
+      }
+
+      // TODO: fix it
+      if (this.userPreference) {
+        const filter = find(this.userPreference.widget_preferences.user_filters, { title: 'default_type_filter' });
+
+        if (filter) {
+          query._filter = filter.filter;
+        } else {
+          delete query._filter;
+        }
       }
 
       return query;
