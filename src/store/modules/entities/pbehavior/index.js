@@ -6,8 +6,34 @@ import { ENTITIES_TYPES } from '@/constants';
 import schemas from '@/store/schemas';
 import { types as entitiesTypes } from '@/store/plugins/entities';
 
+const types = {
+  FETCH_BY_ID_COMPLETED: 'FETCH_BY_ID_COMPLETED',
+  FETCH_BY_ID_FAILED: 'FETCH_BY_ID_FAILED',
+};
+
 export default {
   namespaced: true,
+  state: {
+    allIds: [],
+    error: '',
+    pending: true,
+  },
+  getters: {
+    allIds: state => state.allIds,
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.pbehavior, state.allIds),
+    error: state => state.error,
+    pending: state => state.pending,
+  },
+  mutations: {
+    [types.FETCH_BY_ID_COMPLETED](state, ids) {
+      state.allIds = ids;
+      state.pending = false;
+    },
+    [types.FETCH_BY_ID_FAILED](state, err) {
+      state.error = err;
+      state.pending = false;
+    },
+  },
   actions: {
     async create({ commit }, { data, parents, parentsType }) {
       try {
@@ -41,5 +67,22 @@ export default {
         console.warn(err);
       }
     },
+    fetch({ dispatch }, { id }) {
+      return dispatch('entities/fetch', {
+        route: `${API_ROUTES.pbehaviorById}/${id}`,
+        schema: [schemas.pbehavior],
+        dataPreparer: d => d,
+      }, { root: true });
+    },
+    async fetchListByEntityId({ commit, dispatch }, { id }) {
+      try {
+        const { normalizedData } = await dispatch('fetch', { id });
+        commit(types.FETCH_BY_ID_COMPLETED, normalizedData.result);
+      } catch (err) {
+        commit(types.FETCH_BY_ID_FAILED, err);
+        console.warn(err);
+      }
+    },
   },
 };
+

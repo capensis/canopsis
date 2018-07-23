@@ -62,7 +62,6 @@ export default {
 
       try {
         const { user } = await request.get(API_ROUTES.currentUser);
-
         return commit(types.FETCH_USER_COMPLETED, user);
       } catch (err) {
         commit(types.FETCH_USER_FAILED);

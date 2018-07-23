@@ -1,9 +1,8 @@
 <template lang="pug">
   div(
-    v-if="expanded || (!expanded && text.length<=maxLetters)",
-    @click.stop="expanded = !expanded"
+    v-if="expanded || (!expanded && text.length<=maxLetters)"
   )
-    span {{ text }}
+    span(@click.stop="expanded = !expanded") {{ text }}
   div(v-else)
     span {{ text.substr(0, maxLetters) }}
     span(@click.stop="expanded = !expanded") ...

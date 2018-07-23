@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 /**
  * If entity has parent we should use this processStrategy
  *
@@ -5,12 +7,17 @@
  * @param parent
  * @param key
  */
-export const childProcessStrategy = (entity, parent, key) => ({
-  ...entity,
-  _embedded: {
-    parents: [{ type: parent._embedded.type, id: parent._id, key }],
-  },
-});
+export const childProcessStrategy = (entity, parent, key) => {
+  const result = { ...entity };
+
+  if (parent && parent._embedded) {
+    result._embedded = {
+      parents: [{ type: parent._embedded.type, id: parent._id, key }],
+    };
+  }
+
+  return result;
+};
 
 /**
  * If entity has parent we should use this mergeStrategy
@@ -18,15 +25,23 @@ export const childProcessStrategy = (entity, parent, key) => ({
  * @param entityA
  * @param entityB
  */
-export const childMergeStrategy = (entityA, entityB) => ({
-  ...entityA,
-  ...entityB,
-  _embedded: {
-    parents: [...entityA._embedded.parents, ...entityB._embedded.parents],
-  },
-});
+export const childMergeStrategy = (entityA, entityB) => {
+  const result = {
+    ...entityA,
+    ...entityB,
+  };
+
+  if (entityA._embedded || entityB._embedded) {
+    result._embedded = {
+      parents: [...get(entityA, '_embedded.parents', []), ...get(entityB, '_embedded.parents', [])],
+    };
+  }
+
+  return result;
+};
 
 export default {
   childProcessStrategy,
   childMergeStrategy,
 };
+
