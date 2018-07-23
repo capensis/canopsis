@@ -10,13 +10,14 @@
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
 import contextEntityMixin from '@/mixins/context';
+import settingsMixin from '@/mixins/settings';
 
 export default {
   components: {
     EntitiesList,
     ContextSettingsFields,
   },
-  mixins: [contextEntityMixin],
+  mixins: [contextEntityMixin, settingsMixin],
   data() {
     return {
       settingsFields: [

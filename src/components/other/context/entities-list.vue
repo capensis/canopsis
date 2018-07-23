@@ -36,9 +36,12 @@
                 :maxLetters="prop.maxLetters"
               )
             td
+              v-btn(@click.stop="editEntity(props.item)", icon, small)
+                v-icon edit
               v-btn(@click.stop="deleteEntity(props.item)", icon, small)
                 v-icon delete
           template(slot="expand", slot-scope="props")
+            more-infos(:item="props")
         v-layout.white(align-center)
           v-flex(xs10)
             pagination(:meta="meta", :query.sync="query")
@@ -57,11 +60,12 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
-import contextEntityMixin from '@/mixins/context';
-
+import contextEntityMixin from '@/mixins/context/list';
+import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
+import MoreInfos from './more-infos.vue';
 
 const { mapGetters } = createNamespacedHelpers('entity');
 
@@ -76,9 +80,11 @@ const { mapGetters } = createNamespacedHelpers('entity');
  */
 export default {
   components: {
+    AddInfoObject,
     ContextSearch,
     RecordsPerPage,
     CreateEntity,
+    MoreInfos,
     Loader,
     Ellipsis,
   },
@@ -111,23 +117,32 @@ export default {
   methods: {
     getQuery() {
       const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
-      query.limit = this.limit;
-      query.start = ((this.$route.query.page - 1) * this.limit) || 0;
+      query.limit = this.query.limit;
+      query.start = ((this.query.page - 1) * this.query.limit) || 0;
 
-      if (this.$route.query.sort_key) {
+      if (this.query.sort_key) {
         query.sort = [{
-          property: this.$route.query.sort_key,
-          direction: this.$route.query.sort_dir ? this.$route.query.sort_dir : 'ASC',
+          property: this.query.sort_key,
+          direction: this.query.sort_dir ? this.query.sort_dir : 'ASC',
         }];
       }
 
       return query;
     },
+    editEntity(item) {
+      this.showModal({
+        name: MODALS.createEntity,
+        config: {
+          title: this.$t('modals.createEntity.editTitle'),
+          item,
+        },
+      });
+    },
     deleteEntity(item) {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.remove({ id: item._id }),
+          action: () => this.removeContextEntity({ id: item._id }),
         },
       });
     },

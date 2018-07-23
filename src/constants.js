@@ -24,7 +24,6 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
-  contextInfos: 'context-infos',
   insertWidget: 'insert-widget',
 };
 

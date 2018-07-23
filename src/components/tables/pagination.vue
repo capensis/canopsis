@@ -11,12 +11,14 @@
         button.pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
           v-icon chevron_right
     div(v-else)
-      span {{ $t('common.showing') }} {{ meta.first || first }} {{ $t('common.to') }}
-      |  {{ meta.last || lastItem }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
+      span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
+      |  {{ last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
       v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
+import { PAGINATION_LIMIT } from '@/config';
+
 /**
 * Pagination component
 *
@@ -44,14 +46,6 @@ export default {
       type: Object,
       required: true,
     },
-    first: {
-      type: Number,
-      default: () => 0,
-    },
-    last: {
-      type: Number,
-      default: () => 0,
-    },
   },
   computed: {
     currentPage: {
@@ -62,17 +56,39 @@ export default {
         this.$emit('update:query', { ...this.query, page });
       },
     },
+    limit() {
+      return this.query.limit || PAGINATION_LIMIT;
+    },
+    page() {
+      return this.query.page || 1;
+    },
     totalPages() {
       if (this.meta.total) {
         return Math.ceil(this.meta.total / this.query.limit);
       }
       return 0;
     },
-    lastItem() {
-      if (this.last > this.meta.total) {
-        return this.meta.total;
+    /**
+     * Calculate first item nb to display on pagination, in case it's not given by the backend
+     */
+    first() {
+      if (this.meta.first) {
+        return this.meta.first;
       }
-      return this.last;
+
+      return 1 + (this.limit * (this.page - 1));
+    },
+    /**
+     * Calculate last item nb to display on pagination, in case it's not given by the backend
+     */
+    last() {
+      if (this.meta.last) {
+        return this.meta.last;
+      }
+
+      const calculatedLast = this.page * this.limit;
+
+      return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
     },
   },
   methods: {

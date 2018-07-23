@@ -14,7 +14,7 @@ export default {
   data() {
     const query = {
       page: 1,
-      limit: 10,
+      limit: PAGINATION_LIMIT,
     };
 
     if (this.widget.default_sort_column) {
@@ -32,26 +32,6 @@ export default {
         descending: query.sort_dir === 'DESC',
       },
     };
-  },
-  computed: {
-    limit() {
-      return this.query.limit || PAGINATION_LIMIT;
-    },
-    page() {
-      return this.query.page || 1;
-    },
-    /**
-     * Calculate first item nb to display on pagination, in case it's not given by the backend
-     */
-    first() {
-      return 1 + (this.limit * (this.page - 1));
-    },
-    /**
-     * Calculate last item nb to display on pagination, in case it's not given by the backend
-     */
-    last() {
-      return this.page * this.limit;
-    },
   },
   watch: {
     query: {
@@ -90,8 +70,8 @@ export default {
           console.warn(err);
         }
       }
-      query.limit = this.limit;
-      query.skip = ((page - 1) * this.limit) || 0;
+      query.limit = this.query.limit;
+      query.skip = ((page - 1) * this.query.limit) || 0;
 
       return query;
     },

@@ -1,4 +1,3 @@
-import { watcherSchema } from '@/store/schemas';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
@@ -40,7 +39,7 @@ export default {
     },
   },
   actions: {
-    async create({ dispatch }, params = {}) {
+    async create(context, params = {}) {
       try {
         await request.post(API_ROUTES.watcher, params);
       } catch (err) {

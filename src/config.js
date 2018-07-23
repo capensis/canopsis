@@ -1,8 +1,4 @@
-export const API_HOST = process.env.VUE_APP_API_HOST;
-
-export const ENVIRONNEMENT = process.env.NODE_ENV || 'development';
-
-export const ROUTER_MODE = ENVIRONNEMENT === 'development' ? 'history' : 'hash';
+export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 
@@ -28,8 +24,10 @@ export const API_ROUTES = {
   login: '/login',
   alarmList: '/alerts/get-alarms',
   context: '/context',
+  createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   pbehavior: '/api/v2/pbehavior',
+  pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',

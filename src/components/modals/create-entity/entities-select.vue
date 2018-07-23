@@ -9,7 +9,7 @@
                      :key="entity._id",
                      close,
                      @input="removeEntity(entity)"
-                     ) {{ entity._id }}
+                     ) {{ entity }}
             v-btn.red.white--text(v-show="entities.length", @click="clear", small) Clear
             context-general-list(
               @update:selectedIds="updateEntities($event)",
@@ -21,7 +21,15 @@ import ContextGeneralList from '@/components/other/context/context-general-list.
 import union from 'lodash/union';
 import filter from 'lodash/filter';
 
-
+/**
+ * Component to select entities for impact/dependencies
+ *
+ * @module context
+ *
+ * @prop {String} [label] - "Impacts" or "Dependencies"
+ *
+ * @event selectedIds#update
+ */
 export default {
   components: { ContextGeneralList },
   props: {
@@ -29,23 +37,31 @@ export default {
       type: String,
       required: true,
     },
+    entities: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
     return {
-      entities: [],
+      updatedEntities: [],
     };
   },
   methods: {
     updateEntities(entities) {
-      this.entities = union(entities, this.entities);
-      this.$emit('update:entities', this.entities);
+      const entitiesIds = entities.map(entity => entity._id);
+      const selectedEntities = union(entitiesIds, ...this.entities);
+      this.$emit('updateEntities', selectedEntities);
     },
     clear() {
-      this.entities = [];
-      this.$emit('update:selectedIds', this.entities);
+      this.updatedEntities = [];
+      this.$emit('updateEntities', this.updatedEntities);
     },
     removeEntity(entity) {
-      this.entities = filter(this.entities, item => item._id !== entity._id);
+      const updatedEntities = filter(this.entities, item => item !== entity);
+      this.$emit('updateEntities', updatedEntities);
     },
   },
 };
