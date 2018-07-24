@@ -281,4 +281,6 @@ make docker_images TAG+[TAG]
 
 A la racine du projet, exécuter :
 
-`docker-compose up`
+```bash
+docker-compose up
+```
