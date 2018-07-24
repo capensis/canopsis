@@ -17,7 +17,8 @@
       v-divider
       div(
       :is="config.component",
-      :widget="widget"
+      :widget="widget",
+      :isNew="isNew"
       )
 </template>
 
@@ -44,6 +45,10 @@ export default {
     widget: {
       type: Object,
       default: () => ({}),
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -20,6 +20,8 @@ import FieldDefaultColumnSort from '@/components/other/settings/fields/default-c
 import FieldContextEntitiesTypesFilter from '@/components/other/settings/fields/context-entities-types-filter.vue';
 
 const { mapGetters } = createNamespacedHelpers('entities');
+const { mapActions } = createNamespacedHelpers('view');
+const { mapActions: userPreferenceMapActions } = createNamespacedHelpers('userPreference');
 
 /**
 * Component to regroup the entities list settings fields
@@ -34,6 +36,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -57,11 +63,14 @@ export default {
 
     if (filter) {
       const filterData = JSON.parse(filter.filter);
-      console.warn(filterData);
-      this.settings.selectedTypes = filter.types;
+
+      this.settings.selectedTypes = filterData.$or.map(({ type }) => type);
     }
   },
   methods: {
+    ...mapActions(['createWidget', 'updateWidget']),
+    ...userPreferenceMapActions(['save']),
+
     submit() {
       const widget = {
         ...this.widget,

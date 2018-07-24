@@ -1,3 +1,5 @@
+import omit from 'lodash/omit';
+
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { userPreferenceSchema } from '@/store/schemas';
@@ -41,6 +43,16 @@ export default {
       } catch (e) {
         commit(types.FETCH_LIST_FAILED);
         console.warn(e);
+      }
+    },
+    async save(context, { userPreference }) {
+      try {
+        const data = omit(userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
+        const response = await request.post(API_ROUTES.userPreferences, JSON.stringify(data));
+
+        console.warn(response);
+      } catch (err) {
+        console.warn(err);
       }
     },
     async setActiveFilter({ commit, getters }, { data, selectedFilter }) {

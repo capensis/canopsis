@@ -18,7 +18,7 @@
         v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showInsertWidgetModal")
           v-icon widgets
         span widget
-    settings(v-model="isSettingsOpen", :widget="activeWidgetSettings")
+    settings(v-model="isSettingsOpen", :widget="activeWidgetSettings", :isWidgetNew="isActiveWidgetNew")
 </template>
 
 <script>
@@ -48,6 +48,7 @@ export default {
   data() {
     return {
       activeWidgetSettings: null,
+      isActiveWidgetNew: false,
       fab: false,
       widgetsMap: {
         listalarm: 'alarm-list-container',
@@ -71,11 +72,13 @@ export default {
     this.fetchView({ id: this.id });
   },
   methods: {
-    openSettings(widget) {
+    openSettings(widget, isNew) {
       this.activeWidgetSettings = widget;
+      this.isActiveWidgetNew = isNew;
     },
     closeSettings() {
       this.activeWidgetSettings = null;
+      this.isActiveWidgetNew = false;
     },
     showInsertWidgetModal() {
       this.showModal({
