@@ -344,9 +344,9 @@ def exports(ws):
                 '{}'.format(watcher['_id']),
                 []
             )
-            tmp_linklist = []
+            tmp_links = []
             for k, val in watcher['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': val})
+                tmp_links.append({'cat_name': k, 'links': val})
 
             enriched_entity['entity_id'] = watcher['_id']
             enriched_entity['infos'] = watcher['infos']
@@ -354,7 +354,7 @@ def exports(ws):
             enriched_entity['org'] = watcher['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
-            enriched_entity['linklist'] = tmp_linklist
+            enriched_entity['linklist'] = tmp_links
             enriched_entity['state'] = {'val': watcher.get('state', 0)}
 
             if tmp_alarm != []:
@@ -470,13 +470,13 @@ def exports(ws):
             current_alarm = entity['cur_alarm']
             raw_entity = entity['entity']
 
-            tmp_linklist = []
+            tmp_links = []
             for k, val in raw_entity['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': val})
+                tmp_links.append({'cat_name': k, 'links': val})
 
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
-            enriched_entity['linklist'] = tmp_linklist
+            enriched_entity['linklist'] = tmp_links
             enriched_entity['infos'] = raw_entity['infos']
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
             enriched_entity['org'] = raw_entity['infos'].get('org', '')

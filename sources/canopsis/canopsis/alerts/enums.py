@@ -36,7 +36,6 @@ class AlarmField(DefaultEnum):
     comment = 'comment'
     extra = 'extra'
     hard_limit = 'hard_limit'
-    linklist = 'linklist'
     pbehaviors = 'phbehaviors'
     resolved = 'resolved'
     snooze = 'snooze'
