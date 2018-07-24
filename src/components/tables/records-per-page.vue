@@ -12,7 +12,7 @@
 import { PAGINATION_LIMIT } from '@/config';
 
 /**
- * Component to select number of items per page on lists`
+ * Component to select number of items per page on lists
  *
  * @prop {Object} query - Object containing widget query information
  *

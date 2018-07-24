@@ -15,7 +15,7 @@
         v-data-table(
           v-model="selected",
           :items="contextEntities",
-          :headers="contextProperties",
+          :headers="properties",
           item-key="_id",
           :total-items="meta.total",
           :pagination.sync="vDataTablePagination",
@@ -28,7 +28,7 @@
             td
               v-checkbox(primary, hide-details, v-model="props.selected")
             td(
-              v-for="prop in contextProperties",
+              v-for="prop in properties",
               @click="props.expanded = !props.expanded"
             )
               ellipsis(
@@ -76,7 +76,7 @@ const { mapGetters } = createNamespacedHelpers('entity');
  * @module context
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Array} contextProperties - List of entities properties
+ * @prop {Array} properties - List of entities properties
  *
  * @event openSettings#click
  */
@@ -100,7 +100,7 @@ export default {
       type: Object,
       required: true,
     },
-    contextProperties: {
+    properties: {
       type: Array,
       default() {
         return [];

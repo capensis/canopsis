@@ -2,20 +2,18 @@
   div
     entities-list(
     :widget="widget",
-    :contextProperties="$mq | mq(contextProperties)",
+    :properties="$mq | mq(contextProperties)",
     @openSettings="$emit('openSettings', $event)"
     )
 </template>
 
 <script>
 import EntitiesList from '@/components/other/context/entities-list.vue';
-import contextEntityMixin from '@/mixins/context';
 
 export default {
   components: {
     EntitiesList,
   },
-  mixins: [contextEntityMixin],
   props: {
     widget: {
       type: Object,

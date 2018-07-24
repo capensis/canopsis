@@ -25,7 +25,7 @@
           v-data-table(
             v-model="selected",
             :items="items",
-            :headers="alarmProperties",
+            :headers="properties",
             item-key="_id",
             :pagination.sync="vDataTablePagination"
             select-all,
@@ -37,7 +37,7 @@
               td
                 v-checkbox(primary, hide-details, v-model="props.selected")
               td(
-                v-for="prop in alarmProperties",
+                v-for="prop in properties",
                 @click="props.expanded = !props.expanded"
               )
                 alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
@@ -77,7 +77,7 @@ const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
  * @module alarm
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
+ * @prop {Object} properties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
  *
  * @event openSettings#click
@@ -98,7 +98,7 @@ export default {
       type: Object,
       required: true,
     },
-    alarmProperties: {
+    properties: {
       type: Array,
       default: () => ([]),
     },

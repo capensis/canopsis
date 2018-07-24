@@ -1,25 +1,19 @@
 <template lang="pug">
   div
-    alarm-list(
+    alarms-list(
     :widget="widget",
-    :alarmProperties="$mq | mq(alarmProperties)",
+    :properties="$mq | mq(alarmProperties)",
     @openSettings="$emit('openSettings', $event)"
     )
 </template>
 
 <script>
-import AlarmList from '@/components/other/alarm/alarm-list.vue';
-import AlarmSettingsFields from '@/components/other/settings/alarm-settings-fields.vue';
-import viewMixin from '@/mixins/entities/view';
+import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 
 export default {
   components: {
-    AlarmList,
-    AlarmSettingsFields,
+    AlarmsList,
   },
-  mixins: [
-    viewMixin,
-  ],
   props: {
     widget: {
       type: Object,

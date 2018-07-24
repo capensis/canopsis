@@ -23,7 +23,7 @@
 
 <script>
 import Settings from '@/components/other/settings/settings.vue';
-import AlarmListContainer from '@/containers/alarm-list.vue';
+import AlarmsListContainer from '@/containers/alarms-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
 import { MODALS, WIDGET_TYPES } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
@@ -32,7 +32,7 @@ import entitiesWidgetMixin from '@/mixins/entities/widget';
 
 export default {
   components: {
-    AlarmListContainer,
+    AlarmsListContainer,
     EntitiesListContainer,
     Settings,
   },
@@ -53,7 +53,7 @@ export default {
       isWidgetNew: false,
       fab: false,
       widgetsMap: {
-        [WIDGET_TYPES.alarmList]: 'alarm-list-container',
+        [WIDGET_TYPES.alarmList]: 'alarms-list-container',
         [WIDGET_TYPES.context]: 'entities-list-container',
       },
     };
