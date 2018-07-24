@@ -13,12 +13,13 @@
         v-list
           v-list-tile
             v-list-tile-title.white--text.text-xs-center {{ config.title }}
-        v-icon.closeIcon(@click.stop="close", color="white") close
+        v-icon.closeIcon(@click.stop="closeSettings", color="white") close
       v-divider
       div(
       :is="config.component",
       :widget="widget",
-      :isNew="isNew"
+      :isNew="isNew",
+      @closeSettings="closeSettings"
       )
 </template>
 
@@ -75,7 +76,7 @@ export default {
     },
   },
   methods: {
-    close() {
+    closeSettings() {
       this.$emit('input', false);
     },
   },

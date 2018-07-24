@@ -11,17 +11,14 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import cloneDeep from 'lodash/cloneDeep';
 import find from 'lodash/find';
+import omit from 'lodash/omit';
 
 import FieldTitle from '@/components/other/settings/fields/title.vue';
 import FieldDefaultColumnSort from '@/components/other/settings/fields/default-column-sort.vue';
 import FieldContextEntitiesTypesFilter from '@/components/other/settings/fields/context-entities-types-filter.vue';
-
-const { mapGetters } = createNamespacedHelpers('entities');
-const { mapActions } = createNamespacedHelpers('view');
-const { mapActions: userPreferenceMapActions } = createNamespacedHelpers('userPreference');
+import widgetSettingsInnerMixin from '@/mixins/widget-settings-inner';
 
 /**
 * Component to regroup the entities list settings fields
@@ -32,16 +29,9 @@ export default {
     FieldDefaultColumnSort,
     FieldContextEntitiesTypesFilter,
   },
-  props: {
-    widget: {
-      type: Object,
-      required: true,
-    },
-    isNew: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  mixins: [
+    widgetSettingsInnerMixin,
+  ],
   data() {
     return {
       settings: {
@@ -50,13 +40,6 @@ export default {
         selectedTypes: [],
       },
     };
-  },
-  computed: {
-    ...mapGetters(['getItem']),
-
-    userPreference() {
-      return this.getItem('userPreference', `${this.widget.id}_root`); // TODO: fix it
-    },
   },
   created() {
     const filter = find(this.userPreference.widget_preferences.user_filters, { title: 'default_type_filter' });
@@ -68,22 +51,18 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['createWidget', 'updateWidget']),
-    ...userPreferenceMapActions(['save']),
-
-    submit() {
+    async submit() {
       const widget = {
         ...this.widget,
         title: this.settings.title,
         default_sort_column: this.settings.defaultSortColumn,
       };
 
-      const userPreference = { ...this.userPreference };
+      const userPreference = omit(this.userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
       const userFilters = userPreference.widget_preferences.user_filters || [];
-
       const defaultTypeFilterIndex = userFilters.findIndex(filter => filter.title === 'default_type_filter');
 
-      if (defaultTypeFilterIndex > 0) {
+      if (defaultTypeFilterIndex >= 0) {
         if (this.settings.selectedTypes.length) {
           userPreference.widget_preferences.user_filters[defaultTypeFilterIndex] = {
             title: 'default_type_filter',
@@ -103,7 +82,15 @@ export default {
         }];
       }
 
-      console.warn(widget, userPreference);
+      await this.createUserPreference({ userPreference });
+
+      if (this.isNew) {
+        await this.createWidget({ widget });
+      } else {
+        await this.updateWidget({ widget });
+      }
+
+      this.closeSettings();
     },
   },
 };

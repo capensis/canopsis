@@ -2,6 +2,7 @@ import omit from 'lodash/omit';
 
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
 import { userPreferenceSchema } from '@/store/schemas';
 
 export const types = {
@@ -16,6 +17,26 @@ export default {
   state: {
     activeFilter: null,
     pending: false,
+  },
+  getters: {
+    getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
+      const id = `${widget.id}_root`;
+      const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, id);
+
+      if (!userPreference) {
+        return {
+          id,
+          _id: id,
+          widget_preferences: {},
+          crecord_name: 'root', // TODO: username
+          widget_id: widget.id,
+          widgetXtype: widget.xtype,
+          crecord_type: 'userpreferences',
+        };
+      }
+
+      return userPreference;
+    },
   },
   mutations: {
     [types.SET_ACTIVE_FILTER]: (state, filter) => state.activeFilter = filter,
@@ -45,12 +66,16 @@ export default {
         console.warn(e);
       }
     },
-    async save(context, { userPreference }) {
+    async create({ dispatch }, { userPreference }) {
       try {
-        const data = omit(userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
-        const response = await request.post(API_ROUTES.userPreferences, JSON.stringify(data));
+        const body = omit(userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
 
-        console.warn(response);
+        await dispatch('entities/update', {
+          route: `${API_ROUTES.userPreferences}`,
+          schema: userPreferenceSchema,
+          body: JSON.stringify(body),
+          dataPreparer: d => d.data[0],
+        }, { root: true });
       } catch (err) {
         console.warn(err);
       }

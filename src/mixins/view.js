@@ -13,15 +13,15 @@ export default {
   },
   computed: {
     ...mapGetters({
-      activeView: 'activeItem',
+      view: 'item',
       viewPending: 'pending',
     }),
     widgetWrappers() {
-      if (!this.activeView) {
+      if (!this.view) {
         return [];
       }
 
-      return this.activeView.containerwidget.items;
+      return this.view.containerwidget.items;
     },
   },
 };

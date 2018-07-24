@@ -90,46 +90,59 @@ const entitiesModule = {
     },
   },
   actions: {
-    async fetch(
+    async sendRequest(
       { commit },
       {
         route,
         schema,
-        params,
         dataPreparer,
-        isPost,
+        body,
+        params = {},
+        method = 'GET',
         mutationType = internalTypes.ENTITIES_UPDATE,
       },
     ) {
       let data;
 
-      if (isPost) {
-        data = await request.post(route, params);
-      } else {
-        data = await request.get(route, { params });
+      switch (method) {
+        case 'GET':
+          data = await request.get(route, { params });
+          break;
+        case 'POST':
+          data = await request.post(route, body, { params });
+          break;
+        case 'PUT':
+          data = await request.put(route, body, { params });
+          break;
+        case 'DELETE':
+          data = await request.delete(route, { params });
+          break;
+        default:
+          throw new Error(`Invalid method: ${method}`);
       }
+
       const normalizedData = normalize(dataPreparer(data), schema);
       commit(mutationType, normalizedData.entities);
 
       return { data, normalizedData };
     },
-    async update(
-      { commit },
-      {
-        route,
-        schema,
-        params,
-        body,
-        dataPreparer,
-        mutationType = internalTypes.ENTITIES_UPDATE,
-      },
-    ) {
-      const data = await request.put(route, body, { params });
-      const normalizedData = normalize(dataPreparer(data), schema);
+    async fetch({ dispatch }, config) {
+      const newConfig = omit(config, ['isPost']);
 
-      commit(mutationType, normalizedData.entities);
+      if (config.isPost) {
+        newConfig.method = 'POST';
+      }
 
-      return { data, normalizedData };
+      return dispatch('sendRequest', newConfig);
+    },
+    async create({ dispatch }, config) {
+      return dispatch('sendRequest', { ...config, method: 'POST' });
+    },
+    async update({ dispatch }, config) {
+      return dispatch('sendRequest', { ...config, method: 'PUT' });
+    },
+    async delete({ dispatch }, config) {
+      return dispatch('sendRequest', { ...config, method: 'DELETE' });
     },
 
     /**

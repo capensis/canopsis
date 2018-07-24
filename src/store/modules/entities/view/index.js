@@ -21,13 +21,12 @@ export default {
     widget: widgetModule,
   },
   state: {
-    activeViewId: null,
-    loadedView: null, // TODO:
+    viewId: null,
     pending: false,
   },
   getters: {
-    activeItem: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
+    item: (state, getters, rootState, rootGetters) =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.viewId),
     pending: state => state.pending,
   },
   mutations: {
@@ -35,7 +34,7 @@ export default {
       state.pending = true;
     },
     [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
-      state.activeViewId = viewId;
+      state.viewId = viewId;
       state.pending = false;
     },
     [types.SET_LOADED_VIEW]: (state, view) => {
@@ -63,7 +62,7 @@ export default {
       }
     },
     async saveItem({ commit, rootGetters, getters }) {
-      const view = getters.getItem;
+      const view = getters.item;
 
       view.containerwidget.items = rootGetters['view/widget/getItems'](true);
 
@@ -76,7 +75,7 @@ export default {
       }
     },
     async createWidget({ commit, dispatch, getters }, { widget }) {
-      const view = getters.activeItem;
+      const view = getters.item;
 
       view.items.push({
         id: uuid('widgetwrapper'),
@@ -100,7 +99,7 @@ export default {
     async updateWidget({ commit, dispatch, getters }, { widget }) {
       const normalizedData = normalize(widget, widgetSchema);
 
-      commit(`entities/${entitiesTypes.ENTITIES_UPDATE}`, normalizedData.entities, { root: true });
+      commit(entitiesTypes.ENTITIES_UPDATE, normalizedData.entities, { root: true });
 
       const view = getters.activeItem;
 
