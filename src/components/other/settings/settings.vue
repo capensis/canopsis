@@ -24,14 +24,17 @@
 </template>
 
 <script>
+import { WIDGET_TYPES } from '@/constants';
+
 import AlarmSettingsFields from './alarm-settings-fields.vue';
 import ContextSettingsFields from './context-settings-fields.vue';
 
 /**
- * Settings wrapper component
+ * Settings component
  *
  * @prop {bool} value - controls visibility of current component
- * @prop {string} title - title for settings header
+ * @prop {Object} widget - active widget
+ * @prop {bool} isNew - is widget new
  */
 export default {
   components: {
@@ -55,11 +58,11 @@ export default {
   data() {
     return {
       widgetsSettingsMap: {
-        listalarm: {
+        [WIDGET_TYPES.alarmList]: {
           title: this.$t('settings.titles.alarmListSettings'),
           component: 'alarm-settings-fields',
         },
-        crudcontext: {
+        [WIDGET_TYPES.context]: {
           title: this.$t('settings.titles.contextTableSettings'),
           component: 'context-settings-fields',
         },

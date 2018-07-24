@@ -24,7 +24,7 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
-  insertWidget: 'insert-widget',
+  createWidget: 'create-widget',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -106,4 +106,5 @@ export const ENTITY_STATUS_STYLES = {
 export const WIDGET_TYPES = {
   alarmList: 'listalarm',
   context: 'crudcontext',
+  widgetWrapper: 'widgetwrapper',
 };

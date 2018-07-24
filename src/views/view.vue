@@ -15,10 +15,10 @@
       v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
         v-icon add
       v-tooltip(left)
-        v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showInsertWidgetModal")
+        v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
           v-icon widgets
         span widget
-    settings(v-model="isSettingsOpen", :widget="activeWidgetSettings", :isNew="isActiveWidgetNew")
+    settings(v-model="isSettingsOpen", :widget="widgetSettings", :isNew="isWidgetNew")
 </template>
 
 <script>
@@ -26,9 +26,9 @@ import Settings from '@/components/other/settings/settings.vue';
 import AlarmListContainer from '@/containers/alarm-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
 import viewMixin from '@/mixins/view';
-import entitiesWidgetMixin from '@/mixins/entities/widget';
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS } from '@/constants';
+import entitiesWidgetMixin from '@/mixins/entities/widget';
+import { MODALS, WIDGET_TYPES } from '@/constants';
 
 export default {
   components: {
@@ -49,23 +49,23 @@ export default {
   },
   data() {
     return {
-      activeWidgetSettings: null,
-      isActiveWidgetNew: false,
+      widgetSettings: null,
+      isWidgetNew: false,
       fab: false,
       widgetsMap: {
-        listalarm: 'alarm-list-container',
-        crudcontext: 'entities-list-container',
+        [WIDGET_TYPES.alarmList]: 'alarm-list-container',
+        [WIDGET_TYPES.context]: 'entities-list-container',
       },
     };
   },
   computed: {
     isSettingsOpen: {
       get() {
-        return !!this.activeWidgetSettings;
+        return !!this.widgetSettings;
       },
       set(value) {
         if (!value) {
-          this.activeWidgetSettings = null;
+          this.closeSettings();
         }
       },
     },
@@ -75,16 +75,16 @@ export default {
   },
   methods: {
     openSettings(widget, isNew) {
-      this.activeWidgetSettings = widget;
-      this.isActiveWidgetNew = isNew;
+      this.widgetSettings = widget;
+      this.isWidgetNew = isNew;
     },
     closeSettings() {
-      this.activeWidgetSettings = null;
-      this.isActiveWidgetNew = false;
+      this.widgetSettings = null;
+      this.isWidgetNew = false;
     },
-    showInsertWidgetModal() {
+    showCreateWidgetModal() {
       this.showModal({
-        name: MODALS.insertWidget,
+        name: MODALS.createWidget,
         config: {
           action: widget => this.openSettings(widget, true),
         },

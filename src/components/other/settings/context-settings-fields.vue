@@ -22,8 +22,13 @@ import entitiesWidgetMixin from '@/mixins/entities/widget';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
-* Component to regroup the entities list settings fields
-*/
+ * Component to regroup the entities list settings fields
+ *
+ * @prop {Object} widget - active widget
+ * @prop {bool} isNew - is widget new
+ *
+ * @event closeSettings#click
+ */
 export default {
   components: {
     FieldTitle,

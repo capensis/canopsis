@@ -23,7 +23,6 @@ export default {
   getters: {
     item: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.viewId),
-    pending: state => state.pending,
   },
   mutations: {
     [types.FETCH_ITEM]: (state) => {
@@ -38,6 +37,12 @@ export default {
     },
   },
   actions: {
+    /**
+     * This action updates view id and updates widgets ids in the store
+     *
+     * @param {function} commit
+     * @param {Object} normalizedData
+     */
     fetchedItem({ commit }, { normalizedData }) {
       commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
       commit(
@@ -46,6 +51,14 @@ export default {
         { root: true },
       );
     },
+
+    /**
+     * This action fetches view by id
+     *
+     * @param {function} commit
+     * @param {function} dispatch
+     * @param {string|number} id
+     */
     async fetchItem({ commit, dispatch }, { id }) {
       try {
         commit(types.FETCH_ITEM);
@@ -60,6 +73,13 @@ export default {
         console.error(e);
       }
     },
+
+    /**
+     * This action updates view
+     *
+     * @param {function} dispatch
+     * @param {Object} view
+     */
     async update({ dispatch }, { view }) {
       try {
         const result = await dispatch('entities/update', {
@@ -74,6 +94,7 @@ export default {
         console.warn(err);
       }
     },
+
     async saveItem({ commit, rootGetters, getters }) {
       const view = getters.item;
 

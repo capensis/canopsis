@@ -2,7 +2,7 @@ import { entitySchema } from '@/store/schemas';
 import request from '@/services/request';
 import i18n from '@/i18n';
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
+import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -98,7 +98,7 @@ export default {
     },
     async update({ dispatch }, { data }) {
       try {
-        await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
+        await request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.editEntity') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
