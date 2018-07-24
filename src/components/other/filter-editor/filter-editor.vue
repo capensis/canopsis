@@ -41,9 +41,10 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import parseGroupToFilter from '@/services/mfilter-editor/parseRequestToFilter';
+import parseFilterToRequest from '@/services/mfilter-editor/parseFilterToRequest';
 import FilterGroup from '@/components/other/filter-editor/filter-group.vue';
 
-const { mapActions: mFilterActions, mapGetters: mFilterGetters } = createNamespacedHelpers('mFilterEditor');
 const { mapActions: alarmsMapActions, mapGetters: alarmsMapGetters } = createNamespacedHelpers('alarm');
 
 /**
@@ -86,12 +87,25 @@ export default {
         },
       ],
       isRequestChanged: false,
+      possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
+      filter: [{
+        condition: '$or',
+        groups: [],
+        rules: [],
+      }],
+      parseError: '',
     };
   },
   computed: {
-    ...mFilterGetters(['request', 'filter', 'possibleFields', 'parseError']),
     ...alarmsMapGetters(['items', 'meta']),
 
+    request() {
+      try {
+        return parseFilterToRequest(this.filter);
+      } catch (e) {
+        return e;
+      }
+    },
     /**
      * @description Value of the input field of the advanced editor.
      * Prettify the value of the parsed filter
@@ -113,8 +127,20 @@ export default {
     },
   },
   methods: {
-    ...mFilterActions(['deleteParseError', 'updateFilter', 'onParseError']),
     ...alarmsMapActions({ fetchListAction: 'fetchList' }),
+
+    updateFilter() {
+      try {
+        const newFilter = parseGroupToFilter(this.request);
+        this.filter = [newFilter];
+      } catch (error) {
+        this.parseError = error.message;
+      }
+    },
+
+    deleteParseError() {
+      this.parseError = '';
+    },
 
     handleResultTabClick() {
       this.newRequest = '';
@@ -139,7 +165,7 @@ export default {
         this.isRequestChanged = false;
         return this.updateFilter(JSON.parse(this.newRequest));
       } catch (e) {
-        this.onParseError('Invalid JSON');
+        this.parseError = 'Invalid JSON';
         return this.isRequestChanged = true;
       }
     },

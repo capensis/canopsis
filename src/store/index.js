@@ -7,7 +7,6 @@ import AuthModule from './modules/auth';
 import modalModule from './modules/modal';
 import popupModule from './modules/popup';
 import eventModule from './modules/event';
-import mFilterEditorModule from './modules/mfilter-editor';
 import entitiesModules from './modules/entities';
 
 import entitiesPlugin from './plugins/entities';
@@ -22,7 +21,6 @@ export default new Vuex.Store({
     popup: popupModule,
     event: eventModule,
     auth: AuthModule,
-    mFilterEditor: mFilterEditorModule,
 
     ...entitiesModules,
   },
