@@ -1,28 +1,28 @@
+import { normalize } from 'normalizr';
+
+import uuid from '@/helpers/uuid';
+import { ENTITIES_TYPES } from '@/constants';
+import { widgetSchema } from '@/store/schemas';
+import { types as entitiesTypes } from '@/store/plugins/entities';
+
 export const types = {
-  SET_WIDGETS: 'SET_WIDGETS',
   SET_WIDGET: 'SET_WIDGET',
-  UPDATE_QUERY: 'UPDATE_QUERY',
+  UPDATE_WIDGETS_IDS: 'UPDATE_WIDGETS_IDS',
 };
 
 export default {
   namespaced: true,
   state: {
-    widgets: null,
-    queries: {},
+    allIds: [],
   },
   mutations: {
-    [types.UPDATE_QUERY]: (state, { id, query }) => {
-      state.queries[id] = query;
-    },
-    [types.SET_WIDGETS]: (state, widgets) => {
-      state.widgets = widgets;
-    },
-    [types.SET_WIDGET]: (state, widgetWrapper) => {
-      state.widgets[widgetWrapper.id] = widgetWrapper;
+    [types.UPDATE_WIDGETS_IDS]: (state, allIds) => {
+      state.allIds = allIds;
     },
   },
   getters: {
-    getQuery: state => id => state.queries[id],
+    items: (state, getters, rootState, rootGetters) =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.widget, state.allIds),
     getItem: state => ({ widgetXType }) => {
       if (!state.widgets) {
         return null;
@@ -52,8 +52,28 @@ export default {
       commit(types.SET_WIDGET, widgetWrapper);
       await dispatch('view/saveItem', {}, { root: true });
     },
-    updateQuery({ commit }, { id, query }) {
-      commit(types.UPDATE_QUERY, { id, query });
+    async create({ dispatch, rootGetters }, { widget }) {
+      const view = rootGetters['view/item'];
+      const widgetWrapper = {
+        id: uuid('widgetwrapper'),
+        title: 'wrapper',
+        xtype: 'widgetwrapper',
+        mixins: [],
+        widget,
+      };
+
+      view.containerwidget.items.push(widgetWrapper);
+
+      await dispatch('view/update', { view }, { root: true });
+    },
+    async update({ commit, dispatch, rootGetters }, { widget }) {
+      const normalizedData = normalize(widget, widgetSchema);
+
+      commit(entitiesTypes.ENTITIES_UPDATE, normalizedData.entities, { root: true });
+
+      const view = rootGetters['view/item'];
+
+      await dispatch('view/update', { view }, { root: true });
     },
   },
 };

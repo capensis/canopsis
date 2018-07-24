@@ -16,12 +16,5 @@ export default {
       view: 'item',
       viewPending: 'pending',
     }),
-    widgetWrappers() {
-      if (!this.view) {
-        return [];
-      }
-
-      return this.view.containerwidget.items;
-    },
   },
 };

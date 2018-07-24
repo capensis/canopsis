@@ -1,13 +1,9 @@
-import { normalize } from 'normalizr';
-
 import request from '@/services/request';
-import { viewSchema, widgetSchema } from '@/store/schemas';
+import { viewSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
-import uuid from '@/helpers/uuid';
-import { types as entitiesTypes } from '@/store/plugins/entities';
 
-import widgetModule, { types as widgetMutations } from './widget';
+import widgetModule, { types as widgetTypes } from './widget';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',
@@ -42,6 +38,14 @@ export default {
     },
   },
   actions: {
+    fetchedItem({ commit }, { normalizedData }) {
+      commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
+      commit(
+        `view/widget/${widgetTypes.UPDATE_WIDGETS_IDS}`,
+        Object.keys(normalizedData.entities.widget),
+        { root: true },
+      );
+    },
     async fetchItem({ commit, dispatch }, { id }) {
       try {
         commit(types.FETCH_ITEM);
@@ -51,14 +55,23 @@ export default {
           dataPreparer: d => d.data[0],
         }, { root: true });
 
-        commit(types.FETCH_ITEM_COMPLETED, result.normalizedData.result);
-        commit(
-          `view/widget/${widgetMutations.SET_WIDGETS}`,
-          result.normalizedData.entities.widgetWrapper,
-          { root: true },
-        );
+        await dispatch('fetchedItem', result);
       } catch (e) {
         console.error(e);
+      }
+    },
+    async update({ dispatch }, { view }) {
+      try {
+        const result = await dispatch('entities/update', {
+          route: `${API_ROUTES.view}/${view.id}`,
+          schema: viewSchema,
+          body: view,
+          dataPreparer: d => d.data[0],
+        }, { root: true });
+
+        await dispatch('fetchedItem', result);
+      } catch (err) {
+        console.warn(err);
       }
     },
     async saveItem({ commit, rootGetters, getters }) {
@@ -73,46 +86,6 @@ export default {
       } catch (e) {
         console.error(e);
       }
-    },
-    async createWidget({ commit, dispatch, getters }, { widget }) {
-      const view = getters.item;
-
-      view.items.push({
-        id: uuid('widgetwrapper'),
-        title: 'wrapper',
-        xtype: 'widgetwrapper',
-        mixins: [],
-        widget,
-      });
-
-      commit(types.FETCH_ITEM);
-
-      const result = await dispatch('entities/update', {
-        route: `${API_ROUTES.view}/${view.id}`,
-        schema: viewSchema,
-        body: view,
-        dataPreparer: d => d.data[0],
-      }, { root: true });
-
-      commit(types.FETCH_ITEM_COMPLETED, result.normalizedData.result);
-    },
-    async updateWidget({ commit, dispatch, getters }, { widget }) {
-      const normalizedData = normalize(widget, widgetSchema);
-
-      commit(entitiesTypes.ENTITIES_UPDATE, normalizedData.entities, { root: true });
-
-      const view = getters.activeItem;
-
-      commit(types.FETCH_ITEM);
-
-      const result = await dispatch('entities/update', {
-        route: `${API_ROUTES.view}/${view.id}`,
-        schema: viewSchema,
-        body: view,
-        dataPreparer: d => d.data[0],
-      }, { root: true });
-
-      commit(types.FETCH_ITEM_COMPLETED, result.normalizedData.result);
     },
   },
 };

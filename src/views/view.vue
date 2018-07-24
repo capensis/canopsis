@@ -1,11 +1,11 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="widgetWrapper in widgetWrappers", :key="widgetWrapper._id")
+      div(v-for="widget in widgets", :key="widget._id")
         div(
-        :is="widgetsMap[widgetWrapper.widget.xtype]",
-        :widget="widgetWrapper.widget",
-        @openSettings="openSettings(widgetWrapper.widget)"
+        :is="widgetsMap[widget.xtype]",
+        :widget="widget",
+        @openSettings="openSettings(widget)"
         )
     v-speed-dial.fab(
     direction="top",
@@ -18,7 +18,7 @@
         v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showInsertWidgetModal")
           v-icon widgets
         span widget
-    settings(v-model="isSettingsOpen", :widget="activeWidgetSettings", :isWidgetNew="isActiveWidgetNew")
+    settings(v-model="isSettingsOpen", :widget="activeWidgetSettings", :isNew="isActiveWidgetNew")
 </template>
 
 <script>
@@ -26,6 +26,7 @@ import Settings from '@/components/other/settings/settings.vue';
 import AlarmListContainer from '@/containers/alarm-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
 import viewMixin from '@/mixins/view';
+import entitiesWidgetMixin from '@/mixins/entities/widget';
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
@@ -38,6 +39,7 @@ export default {
   mixins: [
     viewMixin,
     modalMixin,
+    entitiesWidgetMixin,
   ],
   props: {
     id: {
@@ -84,7 +86,7 @@ export default {
       this.showModal({
         name: MODALS.insertWidget,
         config: {
-          action: widget => this.activeWidgetSettings = widget,
+          action: widget => this.openSettings(widget, true),
         },
       });
     },

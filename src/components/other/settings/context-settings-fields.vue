@@ -18,7 +18,8 @@ import omit from 'lodash/omit';
 import FieldTitle from '@/components/other/settings/fields/title.vue';
 import FieldDefaultColumnSort from '@/components/other/settings/fields/default-column-sort.vue';
 import FieldContextEntitiesTypesFilter from '@/components/other/settings/fields/context-entities-types-filter.vue';
-import widgetSettingsInnerMixin from '@/mixins/widget-settings-inner';
+import entitiesWidgetMixin from '@/mixins/entities/widget';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
 * Component to regroup the entities list settings fields
@@ -30,8 +31,19 @@ export default {
     FieldContextEntitiesTypesFilter,
   },
   mixins: [
-    widgetSettingsInnerMixin,
+    entitiesWidgetMixin,
+    entitiesUserPreferenceMixin,
   ],
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       settings: {
@@ -90,7 +102,7 @@ export default {
         await this.updateWidget({ widget });
       }
 
-      this.closeSettings();
+      this.$emit('closeSettings');
     },
   },
 };
