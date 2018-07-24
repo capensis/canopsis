@@ -1,11 +1,10 @@
 <template lang="pug">
-  v-select.select(
+  v-select.select.pa-0(
     :items="items",
     v-model="itemPerPage",
     single-line,
     dense,
-    hide-details,
-    class="pa-0"
+    hide-details
   )
 </template>
 
@@ -13,7 +12,11 @@
 import { PAGINATION_LIMIT } from '@/config';
 
 /**
- * Component to select number of items per page on lists
+ * Component to select number of items per page on lists`
+ *
+ * @prop {Object} query - Object containing widget query information
+ *
+ * @event query#update
  */
 export default {
   props: {

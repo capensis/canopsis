@@ -10,7 +10,7 @@
 <script>
 import AlarmList from '@/components/other/alarm/alarm-list.vue';
 import AlarmSettingsFields from '@/components/other/settings/alarm-settings-fields.vue';
-import viewMixin from '@/mixins/view';
+import viewMixin from '@/mixins/entities/view';
 
 export default {
   components: {

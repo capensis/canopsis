@@ -2,7 +2,7 @@ import omit from 'lodash/omit';
 
 /**
  * @mixin Add searching logic, need Pagination mixins
- * @see src/mixins/pagination.js
+ * @see src/mixins/query.js
  */
 export default {
   props: {
@@ -20,6 +20,7 @@ export default {
     submit() {
       this.$emit('update:query', {
         ...this.query,
+        page: 1,
         [this.requestParam]: this.requestData,
       });
     },

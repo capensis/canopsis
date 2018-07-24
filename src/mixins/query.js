@@ -5,7 +5,7 @@ import dateIntervals from '@/helpers/date-intervals';
 import { PAGINATION_LIMIT } from '@/config';
 
 /**
- * @mixin Add pagination logic
+ * @mixin Add query logic
  */
 export default {
   components: {

@@ -2,6 +2,9 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('view/widget');
 
+/**
+ * @mixin Helpers for the widget entity
+ */
 export default {
   computed: {
     ...mapGetters({

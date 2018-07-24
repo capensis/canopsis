@@ -18,13 +18,15 @@
 
 <script>
 /**
-* Pagination component
-*
-* @prop {String} [type] - 'Top' or 'Bottom, to determine
-* if it's a top pagination (with less infos), or a bottom pagination
-* @prop {Object} [meta] - Object containing meta informations (Ex : total number of items)
-* @prop {Number} [limit] - Number of items per pages
-*/
+ * Pagination component
+ *
+ * @prop {String} type - 'Top' or 'Bottom, to determine
+ * if it's a top pagination (with less infos), or a bottom pagination
+ * @prop {Object} meta - Object containing meta information (Ex : total number of items)
+ * @prop {Number} query - Object containing widget query information
+ *
+ * @event query#update
+ */
 export default {
   props: {
     type: {

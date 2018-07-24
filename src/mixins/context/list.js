@@ -1,6 +1,6 @@
 import omit from 'lodash/omit';
 import ContextMixin from '@/mixins/context/index';
-import PaginationMixin from '@/mixins/pagination';
+import PaginationMixin from '@/mixins/query';
 
 export default {
   mixins: [

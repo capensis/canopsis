@@ -64,10 +64,10 @@ import Loader from '@/components/other/alarm/loader/alarm-list-loader.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import modalMixin from '@/mixins/modal/modal';
-import paginationMixin from '@/mixins/pagination';
+import queryMixin from '@/mixins/query';
 import alarmsMixin from '@/mixins/alarms';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 
@@ -76,9 +76,9 @@ const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
  *
  * @module alarm
  *
- * @prop {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
+ * @prop {Object} widget - Object representing the widget
+ * @prop {Object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
- * @prop {integer} [itemsPerPage=5] - Number of Alarm to display per page
  *
  * @event openSettings#click
  */
@@ -91,9 +91,8 @@ export default {
     ActionsPanel,
     Loader,
     AlarmColumnValue,
-    FilterSelector,
   },
-  mixins: [alarmsMixin, paginationMixin, modalMixin],
+  mixins: [alarmsMixin, queryMixin, modalMixin, entitiesUserPreferenceMixin],
   props: {
     widget: {
       type: Object,
@@ -119,10 +118,13 @@ export default {
       return this.selected.map(item => item._id);
     },
   },
+  async mounted() {
+    await this.fetchUserPreferenceItemByWidgetId({ widgetId: this.widget.id });
+    await this.fetchList();
+  },
   methods: {
     removeHistoryFilter() {
-      const query = omit(this.$route.query, ['interval', 'tstart', 'tstop']);
-      this.$router.push({ query });
+      this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
     },
   },
 };

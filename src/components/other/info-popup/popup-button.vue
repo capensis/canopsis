@@ -12,8 +12,9 @@ import popupComponentMixin from '@/mixins/popup';
 /**
  * Button to display info popup
  *
- * @prop {String} [columnName] - Name of the column
- * @prop {Object} [alarm] - Object representing the alarm
+ * @prop {String} columnName - Name of the column
+ * @prop {Object} alarm - Object representing the alarm
+ * @prop {Object} widget - Object representing the widget
  */
 export default {
   mixins: [
@@ -35,7 +36,7 @@ export default {
   },
   computed: {
     popupData() {
-      const popups = getProp(this.widget, 'widget.popup', []);
+      const popups = getProp(this.widget, 'popup', []);
 
       return popups.find(popup => popup.column === this.columnName);
     },

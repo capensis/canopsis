@@ -56,7 +56,7 @@
  *
  * @module alarm
  *
- * @prop {Object} [alarm] - Object representing the alarm
+ * @prop {Object} alarm - Object representing the alarm
  */
 export default {
   props: {

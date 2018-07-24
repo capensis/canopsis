@@ -59,24 +59,24 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-import paginationMixin from '@/mixins/pagination';
+import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context/list';
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import entitiesUserPreference from '@/mixins/entities/user-preference';
+import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
 
 const { mapGetters } = createNamespacedHelpers('entity');
-const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
-const { mapActions } = createNamespacedHelpers('userPreference');
 
 /**
  * Entities list
  *
  * @module context
  *
- * @prop {Array} [contextProperties] - List of entities properties
+ * @prop {Object} widget - Object representing the widget
+ * @prop {Array} contextProperties - List of entities properties
  *
  * @event openSettings#click
  */
@@ -90,9 +90,10 @@ export default {
     Ellipsis,
   },
   mixins: [
-    paginationMixin,
-    contextEntityMixin,
+    queryMixin,
     modalMixin,
+    contextEntityMixin,
+    entitiesUserPreference,
   ],
   props: {
     widget: {
@@ -114,33 +115,14 @@ export default {
   },
   computed: {
     ...mapGetters(['items', 'meta', 'pending']),
-
-    ...entitiesMapGetters(['getItem']),
-
-    userPreference() {
-      return this.getItem(ENTITIES_TYPES.userPreference, `${this.widget.id}_root`); // TODO: fix it
-    },
   },
   async mounted() {
-    await this.fetchUserPreferencesList({
-      params: {
-        limit: 1,
-        filter: {
-          crecord_name: 'root',
-          widget_id: this.widget.id,
-          _id: `${this.widget.id}_root`, // TODO: change to real user
-        },
-      },
-    });
-
+    await this.fetchUserPreferenceItemByWidgetId({ widgetId: this.widget.id });
     await this.fetchList();
   },
   methods: {
-    ...mapActions({
-      fetchUserPreferencesList: 'fetchList',
-    }),
     getQuery() {
-      const query = omit(this.query.query, ['page', 'sort_dir', 'sort_key']);
+      const query = omit(this.query, ['page', 'sort_dir', 'sort_key']);
 
       query.limit = this.query.limit;
       query.start = ((this.query.page - 1) * this.query.limit) || 0;

@@ -14,10 +14,6 @@ export const types = {
 
 export default {
   namespaced: true,
-  state: {
-    activeFilter: null,
-    pending: false,
-  },
   getters: {
     getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
       const id = `${widget.id}_root`;
@@ -39,7 +35,6 @@ export default {
     },
   },
   mutations: {
-    [types.SET_ACTIVE_FILTER]: (state, filter) => state.activeFilter = filter,
     [types.FETCH_LIST]: state => state.pending = true,
     [types.FETCH_LIST_COMPLETED]: (state) => {
       state.pending = false;
@@ -49,6 +44,13 @@ export default {
     },
   },
   actions: {
+    /**
+     * This action fetches user preferences list
+     *
+     * @param {function} commit
+     * @param {function} dispatch
+     * @param {Object} params
+     */
     async fetchList({ commit, dispatch }, { params }) {
       try {
         commit(types.FETCH_LIST);
@@ -66,6 +68,32 @@ export default {
         console.warn(e);
       }
     },
+
+    /**
+     * This action fetches user preference item by widget id
+     *
+     * @param {function} dispatch
+     * @param {string|number} widgetId
+     */
+    async fetchItemByWidgetId({ dispatch }, { widgetId }) {
+      await dispatch('fetchList', {
+        params: {
+          limit: 1,
+          filter: {
+            crecord_name: 'root',
+            widget_id: widgetId,
+            _id: `${widgetId}_root`, // TODO: change to real user
+          },
+        },
+      });
+    },
+
+    /**
+     * This action creates user preference
+     *
+     * @param {function} dispatch
+     * @param {Object} userPreference
+     */
     async create({ dispatch }, { userPreference }) {
       try {
         const body = omit(userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
@@ -80,6 +108,7 @@ export default {
         console.warn(err);
       }
     },
+
     async setActiveFilter({ commit, getters }, { data, selectedFilter }) {
       try {
         await request.post(API_ROUTES.userPreferences, {

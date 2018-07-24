@@ -12,10 +12,8 @@ import { ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 /**
  * Component for the 'state' column of the alarms list
  *
- * @module alarm
- *
- * @prop {Object} [alarm] - Object representing the alarm
- * @prop {String} [propertyKey] - Property name
+ * @prop {Object} alarm - Object representing the alarm
+ * @prop {String} propertyKey - Property name
  */
 export default {
   props: {

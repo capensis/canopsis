@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import viewMixin from './view';
+import viewMixin from './entities/view';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view/widget');
 

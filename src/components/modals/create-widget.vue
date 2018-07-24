@@ -21,54 +21,18 @@
 </template>
 
 <script>
-import uuid from '@/helpers/uuid';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS, WIDGET_TYPES } from '@/constants';
-
-const generateWidgetByType = (type) => {
-  const id = uuid(`widget_${type}`);
-  const widget = {
-    id,
-    widgetId: id,
-    title: null,
-    preference_id: uuid(),
-    xtype: type,
-    tagName: null,
-    mixins: [],
-    default_sort_column: {
-      direction: 'ASC',
-    },
-    columns: [],
-    popup: [],
-  };
-
-  if (type === WIDGET_TYPES.alarmList) { // TODO: move into constants
-    widget.alarms_state_filter = null;
-    widget.hide_resources = false;
-    widget.widget_columns = [];
-    widget.columns = [
-      'connector_name',
-      'component',
-      'resource',
-      'state',
-      'status',
-      'last_update_date',
-      'extra_details',
-    ];
-  }
-
-  return widget;
-};
+import modalInnerMixin from '@/mixins/modal/modal-inner';
+import { generateWidgetByType } from '@/helpers/entities';
 
 /**
- * Modal to add a time filter on alarm-list
+ * Modal to create widget
  */
 export default {
   name: MODALS.createWidget,
   mixins: [modalInnerMixin],
   data() {
     return {
-      // TODO: add correct value
       widgetsTypes: [
         { title: WIDGET_TYPES.alarmList, icon: 'list', value: 'listalarm' },
         { title: WIDGET_TYPES.context, icon: 'list', value: 'crudcontext' },

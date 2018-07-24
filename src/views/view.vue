@@ -25,10 +25,10 @@
 import Settings from '@/components/other/settings/settings.vue';
 import AlarmListContainer from '@/containers/alarm-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
-import viewMixin from '@/mixins/view';
-import modalMixin from '@/mixins/modal/modal';
-import entitiesWidgetMixin from '@/mixins/entities/widget';
 import { MODALS, WIDGET_TYPES } from '@/constants';
+import modalMixin from '@/mixins/modal/modal';
+import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesWidgetMixin from '@/mixins/entities/widget';
 
 export default {
   components: {
@@ -37,8 +37,8 @@ export default {
     Settings,
   },
   mixins: [
-    viewMixin,
     modalMixin,
+    entitiesViewMixin,
     entitiesWidgetMixin,
   ],
   props: {
