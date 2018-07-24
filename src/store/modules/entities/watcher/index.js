@@ -49,7 +49,7 @@ export default {
 
     async edit({ dispatch }, { data }) {
       try {
-        await request.put(API_ROUTES.watcher, { watcher_id: data._id, data });
+        await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
       } catch (err) {
         console.warn(err);
       }
