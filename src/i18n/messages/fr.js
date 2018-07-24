@@ -5,6 +5,7 @@ export default {
     watcher: 'Observateur',
     name: 'Nom',
     description: 'Description',
+    author: 'Auteur',
     yes: 'Oui',
     no: 'Non',
     confirmation: 'Etes-vous sûr(e) ?',
@@ -48,6 +49,14 @@ export default {
       week: 'semaine | semaines',
       month: 'mois | mois',
       year: 'année | années',
+    },
+  },
+  context: {
+    impacts: 'Impacts',
+    dependencies: 'Dépendances',
+    moreInfos: {
+      type: 'Type',
+      lastActiveDate: 'Dernière Date d\'Activité',
     },
   },
   search: {
@@ -95,6 +104,16 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+  },
+  pbehaviors: {
+    connector: 'Connecteur',
+    connectorName: 'Nom du connecteur',
+    isEnabled: 'Est actif',
+    begins: 'Débute',
+    ends: 'Se termine',
+    type: 'Type',
+    reason: 'Raison',
+    rrule: 'Rrule',
   },
   settings: {
     titles: {
@@ -356,5 +375,8 @@ export default {
       component: 'Composant',
       resource: 'Ressource',
     },
+  },
+  validator: {
+    unique: 'Le champ doit être unique',
   },
 };

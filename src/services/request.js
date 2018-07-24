@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-import { API_HOST } from '@/config';
-
 /**
  * Check error field inside successful response and reject them
  *
@@ -34,7 +32,7 @@ function errorResponseHandler(responseWithError) {
 }
 
 const request = axios.create({
-  baseURL: process.env.NODE_ENV === 'development' ? '/api' : API_HOST,
+  baseURL: process.env.NODE_ENV === 'development' ? '/api' : '',
   withCredentials: true,
 });
 

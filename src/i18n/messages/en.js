@@ -5,6 +5,7 @@ export default {
     watcher: 'Watcher',
     name: 'Name',
     description: 'Description',
+    author: 'Author',
     submit: 'Submit',
     enabled: 'Enabled',
     login: 'Login',
@@ -48,6 +49,14 @@ export default {
       week: 'week | weeks',
       month: 'month | months',
       year: 'year | years',
+    },
+  },
+  context: {
+    impacts: 'Impacts',
+    dependencies: 'Dependencies',
+    moreInfos: {
+      type: 'Type',
+      lastActiveDate: 'Last Active Date',
     },
   },
   search: {
@@ -95,6 +104,16 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
+  },
+  pbehaviors: {
+    connector: 'Connector',
+    connectorName: 'Connector name',
+    isEnabled: 'Is enabled',
+    begins: 'Begins',
+    ends: 'Ends',
+    type: 'Type',
+    reason: 'Reason',
+    rrule: 'Rrule',
   },
   settings: {
     titles: {
@@ -356,5 +375,8 @@ export default {
       component: 'Component',
       resource: 'Resource',
     },
+  },
+  validator: {
+    unique: 'Field must be unique',
   },
 };

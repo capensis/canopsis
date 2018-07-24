@@ -41,6 +41,7 @@
               v-btn(@click.stop="deleteEntity(props.item)", icon, small)
                 v-icon delete
           template(slot="expand", slot-scope="props")
+            more-infos(:item="props")
         v-layout.white(align-center)
           v-flex(xs10)
             pagination(:meta="meta", :limit="limit", :last="last", :first="first")
@@ -60,11 +61,12 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
-import contextEntityMixin from '@/mixins/context';
-
+import contextEntityMixin from '@/mixins/context/list';
+import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
+import MoreInfos from './more-infos.vue';
 
 const { mapGetters } = createNamespacedHelpers('entity');
 
@@ -79,9 +81,11 @@ const { mapGetters } = createNamespacedHelpers('entity');
  */
 export default {
   components: {
+    AddInfoObject,
     ContextSearch,
     RecordsPerPage,
     CreateEntity,
+    MoreInfos,
     Loader,
     Ellipsis,
   },
@@ -144,7 +148,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.remove({ id: item._id }),
+          action: () => this.removeContextEntity({ id: item._id }),
         },
       });
     },
