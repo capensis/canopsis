@@ -61,8 +61,8 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
-import contextEntityMixin from '@/mixins/context/list';
-import entitiesUserPreference from '@/mixins/entities/user-preference';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
@@ -92,8 +92,8 @@ export default {
   mixins: [
     queryMixin,
     modalMixin,
-    contextEntityMixin,
-    entitiesUserPreference,
+    entitiesContextEntityMixin,
+    entitiesUserPreferenceMixin,
   ],
   props: {
     widget: {

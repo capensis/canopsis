@@ -3,8 +3,8 @@
     v-card-text
       v-list(v-if="Object.keys(infos).length")
         v-list-group.mt-2(
-        v-for="infoName in Object.keys(infos)"
-        :key="infoName",
+        v-for="infoName in Object.keys(infos)",
+        :key="infoName"
         )
           v-list-tile(slot="activator")
             v-list-tile-content
