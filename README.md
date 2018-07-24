@@ -2,15 +2,7 @@
     <img src="https://github.com/capensis/canopsis/wiki/images/logo_canopsis.png"/>
 </a>
 
-<a href="https://travis-ci.org/capensis/canopsis">
-    <img src="https://travis-ci.org/capensis/canopsis.svg?branch=master"/>
-</a>
-
-
-
 [![pipeline status](https://git.canopsis.net/canopsis/canopsis/badges/develop/pipeline.svg)](https://git.canopsis.net/canopsis/canopsis/commits/develop)
-
-
 
 ## What is Canopsis ?
 
