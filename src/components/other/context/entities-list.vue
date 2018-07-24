@@ -117,7 +117,7 @@ export default {
     ...mapGetters(['items', 'meta', 'pending']),
   },
   async mounted() {
-    await this.fetchUserPreferenceItemByWidgetId({ widgetId: this.widget.id });
+    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
     await this.fetchList();
   },
   methods: {

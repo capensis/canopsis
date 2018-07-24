@@ -106,10 +106,7 @@ export default {
     },
 
     isSimpleTabDisabled() {
-      if (this.isRequestChanged || this.parseError !== '') {
-        return true;
-      }
-      return false;
+      return this.isRequestChanged || this.parseError !== '';
     },
   },
   methods: {

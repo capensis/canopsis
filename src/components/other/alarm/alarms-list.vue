@@ -66,7 +66,7 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import modalMixin from '@/mixins/modal/modal';
 import queryMixin from '@/mixins/query';
-import alarmsMixin from '@/mixins/alarms';
+import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
@@ -92,7 +92,11 @@ export default {
     Loader,
     AlarmColumnValue,
   },
-  mixins: [alarmsMixin, queryMixin, modalMixin, entitiesUserPreferenceMixin],
+  mixins: [
+    queryMixin,
+    modalMixin,
+    entitiesAlarmMixin,
+    entitiesUserPreferenceMixin],
   props: {
     widget: {
       type: Object,
@@ -119,7 +123,7 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchUserPreferenceItemByWidgetId({ widgetId: this.widget.id });
+    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
     await this.fetchList();
   },
   methods: {

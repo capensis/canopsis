@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    alarm-list(
+    alarms-list(
     :alarmProperties="$mq | mq(alarmProperties)",
     @openSettings="openSettings"
     )
