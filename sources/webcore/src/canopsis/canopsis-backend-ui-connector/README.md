@@ -95,7 +95,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-backend-ui-conn
 
 ### Lint
 
-Tested on commit : bb59cb0.
+Tested on commit : 14d6578.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
