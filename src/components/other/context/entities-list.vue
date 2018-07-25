@@ -168,7 +168,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => Promise.all(this.selected.map(item => this.remove({ id: item._id }))),
+          action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
         },
       });
     },

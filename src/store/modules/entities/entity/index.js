@@ -122,13 +122,12 @@ export default {
     async remove({ dispatch }, { id } = {}) {
       try {
         await request.delete(API_ROUTES.context, { params: { ids: id } });
-
         await dispatch('entities/removeFromStore', {
           id,
-          type: ENTITIES_TYPES.context,
+          type: ENTITIES_TYPES.entity,
         }, { root: true });
       } catch (err) {
-        console.warn(err);
+        console.error(err);
       }
     },
   },
