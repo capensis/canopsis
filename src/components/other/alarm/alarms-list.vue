@@ -9,14 +9,14 @@
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
       v-flex(xs3)
         v-chip(
-          v-if="$route.query.interval",
+          v-if="query.interval",
           @input="removeHistoryFilter",
           close,
           label,
           color="blue darken-4 white--text"
-        ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
-        v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
-          v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
+        ) {{ $t(`modals.liveReporting.${query.interval}`) }}
+        v-btn(@click="showEditLiveReportModal", icon, small)
+          v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="$emit('openSettings')")
           v-icon settings
     transition(name="fade", mode="out-in")
@@ -128,6 +128,14 @@ export default {
       this.fetchAlarmsList({
         params: this.getQuery(),
         widgetId: this.widget.id,
+      });
+    },
+    showEditLiveReportModal() {
+      this.showModal({
+        name: 'edit-live-reporting',
+        config: {
+          updateQuery: params => this.query = { ...this.query, ...params },
+        },
       });
     },
   },
