@@ -7,6 +7,7 @@ import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
+import ServiceWeather from '@/views/service-weather.vue';
 import Rrule from '@/components/forms/rrule.vue';
 
 Vue.use(Router);
@@ -49,6 +50,11 @@ if (process.env.NODE_ENV === 'development') {
       path: '/rrule',
       name: 'rrule',
       component: Rrule,
+    },
+    {
+      path: '/weather',
+      name: 'weather',
+      component: ServiceWeather,
     },
   ]);
 }

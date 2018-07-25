@@ -23,6 +23,9 @@
               router-link(to="context") Context
           v-card.grey.darken-3.white--text
             v-card-text
+              router-link(to="weather") Service Weather
+          v-card.grey.darken-3.white--text
+            v-card-text
               router-link(to="filter") Filters
           v-card.grey.darken-3.white--text
             v-card-text
