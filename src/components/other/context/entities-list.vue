@@ -10,14 +10,14 @@
         v-btn(icon, @click.prevent="$emit('openSettings')")
           v-icon settings
     transition(name="fade", mode="out-in")
-      loader(v-if="pending")
+      loader(v-if="contextEntitiesPending")
       div(v-else)
         v-data-table(
           v-model="selected",
           :items="contextEntities",
           :headers="properties",
           item-key="_id",
-          :total-items="meta.total",
+          :total-items="contextEntitiesMeta.total",
           :pagination.sync="vDataTablePagination",
           select-all,
           hide-actions,
@@ -44,7 +44,7 @@
             more-infos(:item="props")
         v-layout.white(align-center)
           v-flex(xs10)
-            pagination(:meta="meta", :query.sync="query")
+            pagination(:meta="contextEntitiesMeta", :query.sync="query")
           v-flex(xs2)
             records-per-page(:query.sync="query")
 </template>
@@ -52,7 +52,6 @@
 <script>
 import find from 'lodash/find';
 import omit from 'lodash/omit';
-import { createNamespacedHelpers } from 'vuex';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -67,8 +66,6 @@ import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
-
-const { mapGetters } = createNamespacedHelpers('entity');
 
 /**
  * Entities list
@@ -110,11 +107,7 @@ export default {
   data() {
     return {
       selected: [],
-      queryPrefix: 'context',
     };
-  },
-  computed: {
-    ...mapGetters(['items', 'meta', 'pending']),
   },
   async mounted() {
     await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
@@ -173,8 +166,9 @@ export default {
       });
     },
     fetchList() {
-      this.fetchContextEntities({
+      this.fetchContextEntitiesList({
         params: this.getQuery(),
+        widgetId: this.widget.id,
       });
     },
   },

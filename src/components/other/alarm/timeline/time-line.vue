@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
 import capitalize from 'lodash/capitalize';
 import moment from 'moment';
@@ -39,8 +38,7 @@ import AlarmFlag from '@/components/other/alarm/timeline/alarm-flag.vue';
 import AlarmChips from '@/components/other/alarm/timeline/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
 import { ENTITIES_STATES_STYLES } from '@/constants';
-
-const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
+import entitiesAlarmMixin from '@/mixins/entities/alarm';
 
 /**
    * Component for the timeline of an alarm, on the alarmslist
@@ -65,6 +63,9 @@ export default {
       return capitalize(formattedStepTitle);
     },
   },
+  mixins: [
+    entitiesAlarmMixin,
+  ],
   props: {
     alarmProps: {
       type: Object,
@@ -75,9 +76,8 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['item']),
     steps() {
-      const alarm = this.item(this.alarmProps._id);
+      const alarm = this.getAlarmItem(this.alarmProps._id);
       if (alarm && alarm.v.steps) {
         const steps = [...alarm.v.steps];
         return numericSortObject(steps, 't', 'desc');
@@ -93,7 +93,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchItem({
+    this.fetchAlarmItem({
       id: this.alarmProps.d,
       params: {
         opened: 'true',
@@ -111,9 +111,6 @@ export default {
     this.lastDate = null;
   },
   methods: {
-    ...mapActions([
-      'fetchItem',
-    ]),
     isNewDate(timestamp) {
       const date = new Date(timestamp);
       if (!this.lastDate ||

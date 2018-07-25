@@ -8,14 +8,24 @@ const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 export default {
   computed: {
     ...mapGetters({
-      pending: 'pending',
-      contextEntities: 'items',
-      contextEntitiesMeta: 'meta',
+      getContextEntitiesListByWidgetId: 'getListByWidgetId',
+      getContextEntitiesMetaByWidgetId: 'getMetaByWidgetId',
+      getContextEntitiesPendingByWidgetId: 'getPendingByWidgetId',
     }),
+
+    contextEntities() {
+      return this.getContextEntitiesListByWidgetId(this.widget.id);
+    },
+    contextEntitiesMeta() {
+      return this.getContextEntitiesMetaByWidgetId(this.widget.id);
+    },
+    contextEntitiesPending() {
+      return this.getContextEntitiesPendingByWidgetId(this.widget.id);
+    },
   },
   methods: {
     ...mapActions({
-      fetchContextEntities: 'fetchList',
+      fetchContextEntitiesList: 'fetchList',
       removeContextEntity: 'remove',
       updateContextEntity: 'update',
       createContextEntity: 'create',

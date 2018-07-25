@@ -4,7 +4,7 @@
       v-flex(xs12 md3)
         alarm-list-search(:query.sync="query")
       v-flex(xs2)
-        pagination(:meta="meta", :query.sync="query", type="top")
+        pagination(:meta="alarmsMeta", :query.sync="query", type="top")
       v-flex.ml-4(xs3)
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
       v-flex(xs3)
@@ -20,13 +20,14 @@
         v-btn(icon, @click="$emit('openSettings')")
           v-icon settings
     transition(name="fade", mode="out-in")
-      loader.loader(v-if="pending")
+      loader.loader(v-if="alarmsPending")
       div(v-else)
           v-data-table(
             v-model="selected",
-            :items="items",
+            :items="alarms",
             :headers="properties",
             item-key="_id",
+            :total-items="alarmsMeta.total",
             :pagination.sync="vDataTablePagination"
             select-all,
             hide-actions,
@@ -42,12 +43,12 @@
               )
                 alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
               td
-                actions-panel(:item="props.item")
+                actions-panel(:item="props.item", :widget="widget")
             template(slot="expand", slot-scope="props")
               time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
           v-layout.white(align-center)
             v-flex(xs10)
-              pagination(:meta="meta", :query.sync="query")
+              pagination(:meta="alarmsMeta", :query.sync="query")
             v-spacer
             v-flex(xs2)
               records-per-page(:query.sync="query")
@@ -55,7 +56,6 @@
 
 <script>
 import omit from 'lodash/omit';
-import { createNamespacedHelpers } from 'vuex';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -68,8 +68,6 @@ import modalMixin from '@/mixins/modal/modal';
 import queryMixin from '@/mixins/query';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-
-const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
 
 /**
  * Alarm-list component
@@ -96,7 +94,8 @@ export default {
     queryMixin,
     modalMixin,
     entitiesAlarmMixin,
-    entitiesUserPreferenceMixin],
+    entitiesUserPreferenceMixin,
+  ],
   props: {
     widget: {
       type: Object,
@@ -113,11 +112,6 @@ export default {
     };
   },
   computed: {
-    ...alarmMapGetters([
-      'items',
-      'meta',
-      'pending',
-    ]),
     selectedIds() {
       return this.selected.map(item => item._id);
     },
@@ -129,6 +123,12 @@ export default {
   methods: {
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
+    },
+    fetchList() {
+      this.fetchAlarmsList({
+        params: this.getQuery(),
+        widgetId: this.widget.id,
+      });
     },
   },
 };
