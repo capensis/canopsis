@@ -32,7 +32,6 @@
 				"filter_rule",
 				"group",
 				"job",
-				"linklist",
 				"logauthor",
 				"profile",
 				"rangecolor",
@@ -50,7 +49,7 @@
 				"trap",
 				"user",
 				"userview",
-				"widgetpreferences"   
+				"widgetpreferences"
 			],
 			"default": "group",
 			"role": "simplelist"
