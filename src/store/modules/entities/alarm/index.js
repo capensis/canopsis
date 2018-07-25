@@ -51,10 +51,10 @@ export default {
     },
   },
   actions: {
-    async fetchList({ commit, dispatch }, { params, withoutPending, widgetId } = {}) {
+    async fetchList({ commit, dispatch }, { widgetId, params, withoutPending } = {}) {
       try {
         if (!withoutPending) {
-          commit(types.FETCH_LIST, { params, widgetId });
+          commit(types.FETCH_LIST, { widgetId, params });
         }
 
         const { normalizedData, data } = await dispatch('entities/fetch', {

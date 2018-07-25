@@ -19,6 +19,7 @@ import FieldTitle from '@/components/other/settings/fields/title.vue';
 import FieldDefaultColumnSort from '@/components/other/settings/fields/default-column-sort.vue';
 import FieldContextEntitiesTypesFilter from '@/components/other/settings/fields/context-entities-types-filter.vue';
 import entitiesWidgetMixin from '@/mixins/entities/widget';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
@@ -37,6 +38,7 @@ export default {
   },
   mixins: [
     entitiesWidgetMixin,
+    entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
   ],
   props: {

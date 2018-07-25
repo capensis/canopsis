@@ -82,9 +82,9 @@ export default {
       }, { root: true });
     },
 
-    async fetchList({ commit, dispatch }, { params, widgetId } = {}) {
+    async fetchList({ commit, dispatch }, { widgetId, params } = {}) {
       try {
-        commit(types.FETCH_LIST, { params, widgetId });
+        commit(types.FETCH_LIST, { widgetId, params });
 
         const { normalizedData, data } = await dispatch('fetch', { params });
 

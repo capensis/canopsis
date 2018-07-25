@@ -109,9 +109,13 @@ export default {
       selected: [],
     };
   },
+  watch: {
+    userPreference() {
+      this.fetchList(); // TODO: check requests count
+    },
+  },
   async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
-    await this.fetchList();
+    this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
   },
   methods: {
     getQuery() {
