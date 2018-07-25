@@ -44,12 +44,19 @@ export default {
      * @param {Object} normalizedData
      */
     fetchedItem({ commit }, { normalizedData }) {
-      commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
-      commit(
-        `view/widget/${widgetTypes.UPDATE_WIDGETS_IDS}`,
-        Object.keys(normalizedData.entities.widget),
-        { root: true },
-      );
+      try {
+        commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
+
+        if (normalizedData.entities.widget) {
+          commit(
+            `view/widget/${widgetTypes.UPDATE_WIDGETS_IDS}`,
+            Object.keys(normalizedData.entities.widget),
+            { root: true },
+          );
+        }
+      } catch (err) {
+        console.error(err);
+      }
     },
 
     /**
@@ -69,8 +76,8 @@ export default {
         }, { root: true });
 
         await dispatch('fetchedItem', result);
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
     },
 
@@ -104,8 +111,8 @@ export default {
         await request.put(`${API_ROUTES.view}/${view.id}`, view);
 
         commit(types.SET_LOADED_VIEW, view);
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
     },
   },
