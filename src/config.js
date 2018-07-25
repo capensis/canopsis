@@ -1,5 +1,7 @@
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
+export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
+
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 
 export const DEFAULT_LOCALE = 'fr';

@@ -1,5 +1,7 @@
+import Cookies from 'js-cookie';
+
 import request from '@/services/request';
-import { API_ROUTES } from '@/config';
+import { API_ROUTES, COOKIE_SESSION_KEY } from '@/config';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -16,7 +18,7 @@ const types = {
 export default {
   namespaced: true,
   state: {
-    isLoggedIn: false,
+    isLoggedIn: !!Cookies.get(COOKIE_SESSION_KEY),
     user: {},
   },
   getter: {
@@ -29,6 +31,7 @@ export default {
     },
     [types.LOGOUT](state) {
       state.isLoggedIn = false;
+      state.user = {};
     },
     [types.FETCH_USER]() {
     },
@@ -41,12 +44,12 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        await request.post(API_ROUTES.auth, { ...credentials, json_response: true });
+        await request.post(API_ROUTES.auth, { ...credentials/* , json_response: true */ });
         commit(types.LOGIN_COMPLETED);
 
         return dispatch('getCurrentUser');
       } catch (err) {
-        commit(types.LOGIN_FAILED);
+        commit(types.LOGOUT);
 
         throw err;
       }

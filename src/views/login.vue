@@ -13,13 +13,13 @@
               v-toolbar.green.darken-2.white--text
                 v-toolbar-title {{ $t('common.login') }}
             v-flex(xs12, py-2)
-              v-form
+              v-form(@submit.prevent="submit")
                 v-flex(px-3)
                   v-text-field(
                     autofocus,
                     clearable,
                     color="blue darken-4",
-                    v-model="formData.username",
+                    v-model="form.username",
                     name="username",
                     :label="$t('common.username')"
                   )
@@ -27,14 +27,14 @@
                   v-text-field(
                     clearable,
                     color="blue darken-4",
-                    v-model="formData.password",
+                    v-model="form.password",
                     type="password",
                     name="password",
                     :label="$t('common.password')"
                   )
                 v-flex(xs2 px-2)
                   v-btn(
-                    @click="handleSubmit",
+                    type="submit",
                     color="blue darken-4 white--text"
                   ) {{ $t('common.submit') }}
 </template>
@@ -48,7 +48,7 @@ export default {
   name: 'login-page',
   data() {
     return {
-      formData: {
+      form: {
         username: '',
         password: '',
       },
@@ -57,8 +57,25 @@ export default {
   methods: {
     ...mapActions(['login']),
 
-    handleSubmit() {
-      this.login({ username: this.formData.username, password: this.formData.password });
+    async submit() {
+      try {
+        await this.login({
+          username: this.form.username,
+          password: this.form.password,
+        });
+
+        if (this.$route.query.redirect) {
+          this.$router.push(this.$route.query.redirect);
+        } else {
+          this.$router.push({
+            name: 'home', // TODO: fix it
+          });
+        }
+      } catch (err) {
+        console.error(err);
+
+        // TODO: check response
+      }
     },
   },
 };
