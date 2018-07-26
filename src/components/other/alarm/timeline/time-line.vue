@@ -97,7 +97,7 @@ export default {
         with_steps: 'true',
       },
     });
-    this.currentDate = undefined;
+    this.lastDate = undefined;
   },
   updated() {
     // Useful like for example when the user change the translation
@@ -110,9 +110,9 @@ export default {
     stepType,
     isNewDate(timestamp) {
       const date = moment.unix(timestamp);
-      if (!this.currentDate ||
-            (date.diff(this.currentDate, 'days') < 0)) {
-        this.currentDate = date;
+      if (!this.lastDate ||
+            (date.diff(this.lastDate, 'days') < 0)) {
+        this.lastDate = date;
         return true;
       }
       return false;
@@ -175,6 +175,7 @@ export default {
   }
 
   .date {
+    top: 4px;
     left: -11px;
   }
 
