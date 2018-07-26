@@ -31,7 +31,6 @@ from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.confng.simpleconf import ConfigurationUnreachable
 from canopsis.event import Event, forger
-from canopsis.logger import Logger
 from canopsis.statsng.enums import StatEvents
 
 CONF_PATH = 'etc/statsng/engine.conf'
