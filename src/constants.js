@@ -33,6 +33,7 @@ export const EVENT_ENTITY_TYPES = {
   changeState: 'changestate',
   declareTicket: 'declareticket',
   snooze: 'snooze',
+  done: 'done',
 };
 
 export const STEPS_TYPES = {
@@ -126,7 +127,12 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.snooze]: {
     color: 'pink',
     text: 'Snoozed',
-    icon: 'local_play',
+    icon: 'alarm',
+  },
+  [EVENT_ENTITY_TYPES.done]: {
+    color: 'green',
+    text: 'Done',
+    icon: 'assignment_turned_in',
   },
 };
 
