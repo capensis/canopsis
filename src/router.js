@@ -14,7 +14,7 @@ import Rrule from '@/components/forms/rrule.vue';
 Vue.use(Router);
 
 const requiresLoginMeta = {
-  requiresLogin: false,
+  requiresLogin: true,
 };
 
 const routes = [
