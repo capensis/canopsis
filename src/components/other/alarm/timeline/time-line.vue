@@ -60,9 +60,6 @@ export default {
     alarmProps: {
       type: Object,
       required: true,
-      // This data represent the last step timestamp encountered
-      // Its used for group step under the same date
-      lastDate: null,
     },
   },
   data() {
@@ -100,11 +97,11 @@ export default {
         with_steps: 'true',
       },
     });
-    this.lastDate = null;
+    this.currentDate = undefined;
   },
   updated() {
     // Useful like for example when the user change the translation
-    this.lastDate = null;
+    this.lastDate = undefined;
   },
   methods: {
     ...mapActions([
@@ -112,12 +109,10 @@ export default {
     ]),
     stepType,
     isNewDate(timestamp) {
-      const date = new Date(timestamp);
-      if (!this.lastDate ||
-          (date.getDay() !== this.lastDate.getDay()
-            && date.getMonth() !== this.lastDate.getMonth()
-            && date.getFullYear() !== this.lastDate.getFullYear())) {
-        this.lastDate = date;
+      const date = moment.unix(timestamp);
+      if (!this.currentDate ||
+            (date.diff(this.currentDate, 'days') < 0)) {
+        this.currentDate = date;
         return true;
       }
       return false;
