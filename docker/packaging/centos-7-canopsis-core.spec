@@ -1,6 +1,6 @@
 Name:		canopsis-core
-Version:	CPS_PKG_TAG
-Release:	CPS_PKG_REL%{?dist}
+Version:	CANOPSIS_PACKAGE_TAG
+Release:	CANOPSIS_PACKAGE_REL%{?dist}
 Summary:	Canopsis with CAT package
 
 Group:		Canopsis
@@ -57,7 +57,6 @@ fi
 /opt/canopsis/include
 /opt/canopsis/lib
 /opt/canopsis/lib64
-/opt/canopsis/share
 /opt/canopsis/tmp
 /opt/canopsis/var
 /opt/canopsis/.vimrc

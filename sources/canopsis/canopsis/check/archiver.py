@@ -23,16 +23,13 @@ from __future__ import unicode_literals
 from pymongo.errors import BulkWriteError
 from time import time
 
-from canopsis.configuration.configurable import Configurable
-from canopsis.configuration.configurable.decorator import (
-    add_category, conf_paths
-)
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_connection
+from canopsis.common.middleware import Middleware
 
 legend_type = ['soft', 'hard']
 OFF = 0
@@ -45,16 +42,14 @@ CONF_PATH = 'check/archiver.conf'
 CATEGORY = 'ARCHIVER'
 
 
-@conf_paths(CONF_PATH)
-@add_category(CATEGORY)
-class Archiver(Configurable):
+class Archiver(Middleware):
 
     def __init__(
         self, namespace, confnamespace='object', storage=None,
         autolog=False, amqp_pub=None, *args, **kwargs
     ):
 
-        super(Archiver, self).__init__(*args, **kwargs)
+        super(Archiver, self).__init__()
         self.namespace = namespace
         self.namespace_log = namespace + '_log'
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 set -o pipefail
+set -u
 
 repo_baseurl="http://centos.mirrors.ovh.net/ftp.centos.org/"
 
@@ -42,6 +43,7 @@ yum install -y \
     python \
     redhat-lsb-core \
     rsync \
+    sudo \
     tmux \
     xmlsec1 \
     xmlsec1-openssl \

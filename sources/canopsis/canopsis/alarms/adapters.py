@@ -39,13 +39,15 @@ class AlarmAdapter(object):
 
     COLLECTION = 'periodical_alarm'
 
-    def __init__(self, mongo_client, mongo_store=None):
+    def __init__(self, mongo_store):
         """
-        :param pymongo.MongoClient mongo_client: raw mongo client
         :param canopsis.common.mongo_store.MongoStore mongo_store: optional MongoStore that handle HA
         """
-        self.mongo_client = mongo_client
+        super(AlarmAdapter, self).__init__()
+
         self.mongo_store = mongo_store
+
+        self.collection = self.mongo_store.get_collection(self.COLLECTION)
 
     def find_unresolved_snoozed_alarms(self):
         """
@@ -71,8 +73,7 @@ class AlarmAdapter(object):
 
         alarms = []
 
-        col_adapter = self.mongo_client[self.COLLECTION]
-        for alarm in col_adapter.find(query):
+        for alarm in self.collection.find(query):
             alarms.append(make_alarm_from_mongo(alarm))
 
         return alarms
@@ -99,9 +100,7 @@ class AlarmAdapter(object):
             ]
         }
 
-        col_adapter = self.mongo_client[self.COLLECTION]
-
-        for alarm in col_adapter.find(query):
+        for alarm in self.collection.find(query):
             yield make_alarm_from_mongo(alarm)
 
     def get_current_alarm(self, eid, connector_name=None):
@@ -115,9 +114,6 @@ class AlarmAdapter(object):
         :returns: alarm document or None if no alarm found
         """
 
-        collection = MongoCollection(
-            self.mongo_store.get_collection(self.COLLECTION)
-        )
         filter_ = {
             "d": eid,
             "$or": [
@@ -129,7 +125,7 @@ class AlarmAdapter(object):
         if connector_name is not None:
             filter_['v.connector_name'] = connector_name
 
-        return collection.find_one(filter_)
+        return self.collection.find_one(filter_)
 
     def update(self, alarm):
         """
@@ -141,9 +137,8 @@ class AlarmAdapter(object):
         selector = {
             "_id": alarm._id
         }
-        col_adapter = self.mongo_client[self.COLLECTION]
 
-        col_adapter.update(selector, alarm.to_dict())
+        self.collection.update(selector, alarm.to_dict())
 
         return alarm
 

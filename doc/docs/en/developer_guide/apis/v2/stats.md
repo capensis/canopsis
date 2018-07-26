@@ -22,6 +22,9 @@ These routes take a JSON object with the following fields:
  - `filter` (optional) : a list of *entity groups*. The entities that are part
    of at least one of the groups will be taken into account when computing the
    statistics.
+ - `parameters` (optional) : an object containing parameters for the
+   statistics. For the `/api/v2/stats` route, the parameters for a statistic
+   should be in `parameters.<stat_name>`.
 
 An *entity group* is a JSON object containing `"<tag name>" : <tag filter>`
 couples. An entity is part of this group if each of its tags validates the
@@ -29,13 +32,13 @@ corresponding filter.
 
 The tag name can be used to filter according to :
 
- - The entity's identity, with the names `entity.connector`,
-   `entity.connector_name`, `entity.component`, `entity.resource`.
+ - The entity's identity, with the names `entity_id` and `entity_type`.
  - One of the entity's informations, with the names
-   `entity.infos.<information_id>`. Only the information ids specified in the
+   `entity_infos.<information_id>`. Only the information ids specified in the
    [statsng engine configuration](../../../admin_guide/statsng.md#entity-tags)
    can be used in filters.
- - The alarm's state, with the name `alarm.state`.
+ - The alarm, with the names `connector`, `connector_name`, `component`,
+   `resource` and `alarm_state`.
 
 The tag filter can be :
 
@@ -98,8 +101,12 @@ The statistic `ack_time_sla` is a JSON object with the following fields:
 
  - `above`: the number of alarms whose ack time is above the SLA.
  - `below`: the number of alarms whose ack time is below the SLA.
- - `above_rate`: the percentage of alarms whose ack time is above the SLA.
- - `below_rate`: the percentage of alarms whose ack time is below the SLA.
+ - `above_rate`: the ratio of alarms whose ack time is above the SLA (between 0
+   and 1).
+ - `below_rate`: the ratio of alarms whose ack time is below the SLA (between 0
+   and 1).
+
+The value of the SLA should be provided in seconds in the parameter `sla`.
 
 ### Resolve time above or below the SLA
 
@@ -107,8 +114,121 @@ The statistic `resolve_time_sla` is a JSON object with the following fields:
 
  - `above`: the number of alarms whose resolve time is above the SLA.
  - `below`: the number of alarms whose resolve time is below the SLA.
- - `above_rate`: the percentage of alarms whose resolve time is above the SLA.
- - `below_rate`: the percentage of alarms whose resolve time is below the SLA.
+ - `above_rate`: the ratio of alarms whose resolve time is above the SLA
+   (between 0 and 1).
+ - `below_rate`: the ratio of alarms whose resolve time is below the SLA
+   (between 0 and 1).
+
+The value of the SLA should be provided in seconds in the parameter `sla`.
+
+### Time spent in each state
+
+The statistic `time_in_state` is a JSON object with :
+
+ - one field for each state (between 0 and 3), containing the time spent by the
+   entity in this state, in seconds
+ - a `total` field, containing the total time
+
+The intervals during which a pbehavior is active are excluded from these
+values. The total time may thus be inferior to the duration of the interval
+`tstop - tstart`.
+
+### Availability
+
+The statistic `availability` is a JSON object with the following fields:
+
+ - `available_time`: the time during which the entity was in an available
+   state, in seconds
+ - `unavailable_time`: the time during which the entity was in an unavailable
+   state, in seconds
+ - `available_rate`: the ratio of time during which the entity was in an
+   available state (between 0 and 1)
+ - `unavailable_rate`: the ratio of time during which the entity was in an
+   unavailable state (between 0 and 1)
+
+The entity is considered to be available if it is in a state lower or equal to
+the value of the parameter `available_state`.
+
+The intervals during which a pbehavior is active are excluded from these
+values. The total time `available_time + unavailable_time` may thus be inferior
+to the duration of the interval `tstop - tstart`.
+
+### Maintenance
+
+The statistic `maintenance` is a JSON object with the following fields:
+
+ - `maintenance`: the time during which the entity had an active pbehavior, in
+   seconds.
+ - `no_maintenance`: the time during which the entity had no active pbehavior,
+   in seconds
+
+### Mean Time Between Failures
+
+The statistic `mtbf` is the mean time between failures, i.e. the time without
+maintenance divided by the number of failures.
+
+### Alarm List
+
+The statistic `alarm_list` returns a list of alarms. It is a JSON array of
+objects which contains the tags of the entity that created the alarm
+(`entity_id`, `entity_type`, `entity_infos.<information_id>`, `connector`,
+`connector_name`, `component`, `resource` and `alarm_state`), as well as the
+following fields:
+
+ - `time`: the date of creation of the alarm
+ - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
+   created, `"False"` otherwise.
+ - `value`: the time it took for the alarm to be resolved.
+
+### Entities impacted by the most alarms
+
+The statistic `most_alarms_impacting` is a list containing the groups of
+entities that are impacted by the largest number of alarms. The request takes
+the following parameters:
+
+ - `group_by`: the tags used to group the entities.
+ - `filter` (optional): an *entity filter* used to filter the entities. This
+   parameters has the same format as the main `filter` parameter.
+ - `limit` (optional): the maximum number of groups to return.
+
+It returns a list of objects ordered by descending number of alarms, with the
+following fields:
+
+ - `tags`: the tags of the entity group.
+ - `value`: the number of alarms impacting this entity group.
+
+### Entities with the worst Mean Time Between Failures
+
+The statistic `worst_mtbf` is a list containing the groups of entities that
+have the worst mtbf. The request takes the following parameters:
+
+ - `group_by`: the tags used to group the entities.
+ - `filter` (optional): an *entity filter* used to filter the entities. This
+   parameters has the same format as the main `filter` parameter.
+ - `limit` (optional): the maximum number of groups to return.
+
+It returns a list of objects ordered by ascending mtbf, with the following
+fields:
+
+ - `tags`: the tags of the entity group.
+ - `value`: the mtbf.
+
+### Longest alarms
+
+The statistic `longest_alarms` returns a list of alarms that took the longest
+time to resolve. The request takes the following parameters:
+
+ - `limit` (optional): the maximum number of groups to return.
+
+It returns a JSON array of objects which contains the tags of the entity that
+created the alarm (`entity_id`, `entity_type`, `entity_infos.<information_id>`,
+`connector`, `connector_name`, `component`, `resource` and `alarm_state`), as
+well as the following fields:
+
+ - `time`: the date of creation of the alarm
+ - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
+   created, `"False"` otherwise.
+ - `value`: the time it took for the alarm to be resolved.
 
 
 ## Examples
@@ -201,7 +321,9 @@ Request:
             "component": "component"
         }
     ],
-    "ack_time_sla": 600
+    "parameters": {
+        "sla": 600
+    }
 }
 ```
 
@@ -226,51 +348,18 @@ Response:
 
 `/api/v2/stats/alarms_created`
 
-Requête:
-
-```javascript
-{
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "entity.connector": "connector",
-            "entity.connector_name": "connector_name",
-            "entity.component": "component",
-            "alarm.state": 3
-        }
-    ]
-}
-```
-
-Réponse:
-
-```javascript
-[
-    {
-        "tags": {},
-        "alarms_created": 13
-    }
-]
-```
-
-
-### Multiple statistics in one request
-
-`/api/v2/stats`
-
 Request:
 
 ```javascript
 {
-    "stats": ["alarms_created", "alarms_resolved"],
     "tstart": 1528290000,
     "tstop": 1528293000,
     "filter": [
         {
             "connector": "connector",
             "connector_name": "connector_name",
-            "component": "component"
+            "component": "component",
+            "alarm_state": 3
         }
     ]
 }
@@ -282,8 +371,249 @@ Response:
 [
     {
         "tags": {},
-        "alarms_created": 13,
-        "alarms_created": 8,
+        "alarms_created": 13
+    }
+]
+```
+
+### Time spent by an entity in each state
+
+`/api/v2/stats/time_in_state`
+
+Request:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity_id": "watcher_0"
+        }
+    ]
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {},
+        "time_in_state": {
+			"total": 2454,
+			"0": 1707,
+			"1": 105,
+			"2": 23,
+			"3": 619
+		}
+    }
+]
+```
+
+### Time during which an entity was available
+
+`/api/v2/stats/availability`
+
+Request:
+
+```javascript
+{
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "entity_id": "watcher_0"
+        }
+    ],
+    "parameters": {
+        "available_state": 2
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {},
+        "availability": {
+			"available_time": 1835,
+			"unavailable_time": 619,
+			"available_rate": 0.747758761206194,
+			"unavailable_rate": 0.25224123879380606
+		}
+    }
+]
+```
+
+### For each component, the 10 resources with the worst MTBF
+
+`/api/v2/stats/worst_mtbf`
+
+Request:
+
+```javascript
+{
+	"group_by": ["component"],
+	"parameters": {
+		"group_by": ["resource"],
+		"limit": 10
+	}
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component_0"
+        },
+        "worst_mtbf": [
+            {
+                "tags": {
+                    "resource": "resource_0"
+                },
+                "value": 57.333333333333336
+            },
+            {
+                "tags": {
+                    "resource": "resource_1"
+                },
+                "value": 106
+            },
+            // ...
+        ]
+    },
+    {
+        "tags": {
+            "component": "component_1"
+        },
+        "worst_mtbf": [
+            {
+                "tags": {
+                    "resource": "resource_0"
+                },
+                "value": 57.333333333333336
+            },
+            {
+                "tags": {
+                    "resource": "resource_1"
+                },
+                "value": 57.333333333333336
+            },
+            // ...
+        ]
+    },
+    // ...
+]
+```
+
+### 10 longest alarms of each component
+
+`/api/v2/stats/longest_alarms`
+
+Request:
+
+```javascript
+{
+    "group_by": ["component"],
+    "parameters": {
+        "limit": 10
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component_0"
+        }
+        "longest_alarms": [
+            {
+                "alarm_state": "3",
+                "connector": "...",
+                "connector_name": "...",
+                "entity_id": "resource_0/component_0",
+                "entity_type": "resource",
+                "pbehavior": "False",
+                "resource": "resource_0",
+                "time": 1531833020,
+                "value": 3754
+            },
+            {
+                "alarm_state": "3",
+                "connector": "...",
+                "connector_name": "...",
+                "entity_id": "resource_1/component_0",
+                "entity_type": "resource",
+                "pbehavior": "False",
+                "resource": "resource_1",
+                "time": 1531830121,
+                "value": 3562
+            },
+            //...
+        ]
+    },
+    // ...
+]
+```
+
+### Multiple statistics in one request
+
+`/api/v2/stats`
+
+Request:
+
+```javascript
+{
+    "stats": ["alarms_created", "alarms_resolved", "ack_time_sla", "resolve_time_sla"],
+    "tstart": 1528290000,
+    "tstop": 1528293000,
+    "filter": [
+        {
+            "connector": "connector",
+            "connector_name": "connector_name",
+            "component": "component"
+        }
+    ],
+    "parameters": {
+        "ack_time_sla": {
+            "sla": 900
+        },
+        "resolve_time_sla": {
+            "sla": 3600
+        }
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {},
+        "alarms_created": 12,
+        "alarms_resolved": 8,
+        "ack_time_sla": {
+            "above": 4,
+            "below": 8,
+            "above_rate": 0.3333333333333333,
+            "below_rate": 0.6666666666666666
+        },
+        "ack_time_sla": {
+            "above": 2
+            "below": 6,
+            "above_rate": 0.25,
+            "below_rate": 0.75
+        }
     }
 ]
 ```

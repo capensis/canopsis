@@ -19,7 +19,8 @@ db_entity = {
     "enabled": True,
     "depends": ["red/alert"],
     "infos": {},
-    "type": "resource"
+    "type": "resource",
+    "last_state_change": 0
 }
 
 

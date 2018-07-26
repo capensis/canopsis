@@ -418,7 +418,6 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
-        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_change_of_status_canceled(self):
         alarm_id = '/fake/alarm/id'
@@ -460,7 +459,6 @@ class TestManager(BaseTest):
             StatCounters.alarms_canceled,
             {},
             alarm['value'])
-        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_archive_state_nochange(self):
         alarm_id = 'ut-comp'
@@ -491,11 +489,19 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
-        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
             alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_impacting,
+            {},
+            alarm['value'])
+        self.assertEqual(
+            self.event_publisher.publish_statcounterinc_event.call_count,
+            2)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         event1 = {
@@ -517,7 +523,6 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
-        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_archive_state_changed(self):
         alarm_id = 'ut-comp'
@@ -549,11 +554,19 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
         self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
 
-        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
             alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_impacting,
+            {},
+            alarm['value'])
+        self.assertEqual(
+            self.event_publisher.publish_statcounterinc_event.call_count,
+            2)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Testing state increase
@@ -640,7 +653,6 @@ class TestManager(BaseTest):
         self.assertFalse(is_keeped_state(alarm['value']))
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
-        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_archive_status_nochange(self):
         alarm_id = 'ut-comp'
@@ -671,11 +683,19 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
-        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
             alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_impacting,
+            {},
+            alarm['value'])
+        self.assertEqual(
+            self.event_publisher.publish_statcounterinc_event.call_count,
+            2)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Force status to stealthy
@@ -698,7 +718,6 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
-        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_archive_status_changed(self):
         alarm_id = 'ut-comp'
@@ -730,11 +749,19 @@ class TestManager(BaseTest):
         self.assertDictEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
         self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
 
-        self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
             alarm['value'])
+        self.event_publisher.publish_statcounterinc_event.assert_any_call(
+            alarm['value'][AlarmField.last_update_date.value],
+            StatCounters.alarms_impacting,
+            {},
+            alarm['value'])
+        self.assertEqual(
+            self.event_publisher.publish_statcounterinc_event.call_count,
+            2)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Force status to stealthy
@@ -765,7 +792,6 @@ class TestManager(BaseTest):
         self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
-        self.event_publisher.publish_statduration_event.assert_not_called()
 
     def test_crop_flapping_steps(self):
         # Creating alarm /component/test/test0/ut-comp1

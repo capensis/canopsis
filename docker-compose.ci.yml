@@ -21,35 +21,40 @@ services:
     mem_reservation: 2g
     oom_score_adj: -1000
   mongodb:
-    image: canopsis/canopsis-mongo-server:${MONGO_TAG}
+    image: mongo:3.6-jessie
+    env_file: compose.mongo.env
     volumes:
       - mongodbdata:/data/db
       - dumpdata:/dump/dumpdata
+      - "./docker/mongo:/docker-entrypoint-initdb.d"
     restart: unless-stopped
     mem_limit: 3g
     mem_reservation: 3g
     oom_score_adj: -1000
     command: '--wiredTigerCacheSizeGB 2560'
   influxdb:
-    image: canopsis/canopsis-influxdb-server:${INFLUX_TAG}
-    volumes:
-      - influxdbdata:/var/lib/influxdb
+    image: influxdb:1.5-alpine
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 1g
     oom_score_adj: -1000
-  redis:
-    image: redis:4.0
-    restart: unless-stopped
+    environment:
+      - INFLUXDB_DB=canopsis
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+      - INFLUXDB_USER=cpsinflux
+      - INFLUXDB_USER_PASSWORD=canopsis
+    volumes:
+      - influxdbdata:/var/lib/influxdb
   provisionning:
-    image: canopsis/canopsis-prov:${CANOPSIS_TAG}
+    image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     restart: "no"
   cleaner_events:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -62,7 +67,7 @@ services:
     mem_reservation: 200m
     #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]
   event_filter:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -74,7 +79,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   pbehavior:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -86,7 +91,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   ticket:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -97,21 +102,8 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  perfdata:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-      - "influxdb"
-    environment:
-      - ENGINE_NAME=perfdata
-      - ENGINE_MODULE=canopsis.engines.dynamic
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   eventstore:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -123,7 +115,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   context-graph:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -135,7 +127,7 @@ services:
     mem_limit: 2g
     mem_reservation: 2g
   linklist:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -147,7 +139,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   alerts:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -158,20 +150,8 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  selector:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=selector
-      - ENGINE_MODULE=canopsis.engines.selector
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   scheduler:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -183,7 +163,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   task_mail:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -195,7 +175,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   task_linklist:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -207,7 +187,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   task_importctx:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
@@ -221,7 +201,7 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   webserver:
-    image: canopsis/canopsis-core:${CANOPSIS_TAG}
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     environment:
@@ -229,11 +209,10 @@ services:
     depends_on:
       - "mongodb"
     volumes:
-        - importctxdata:/opt/canopsis/tmp
-        - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
+      - importctxdata:/opt/canopsis/tmp
+      - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
     links:
       - mongodb
       - rabbitmq
       - influxdb
     restart: unless-stopped
-    #entrypoint: ["/usr/bin/tail", "-F", "/dev/null"]

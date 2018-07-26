@@ -24,7 +24,7 @@ from time import time
 
 from canopsis.common import root_path
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.migration.manager import MigrationModule
 from canopsis.organisation.rights import Rights
 

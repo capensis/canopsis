@@ -27,7 +27,7 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.entitylink.manager import Entitylink
 from canopsis.event import forger
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 import xmlrunner
 
 

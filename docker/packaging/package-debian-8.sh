@@ -1,13 +1,14 @@
 #!/bin/bash
 set -e
 set -o pipefail
+set -u
 
 arch="amd64"
 
-deb_version="${CPS_PKG_TAG}"
-deb_release="${CPS_PKG_REL:-1}"
+deb_version="${CANOPSIS_PACKAGE_TAG}"
+deb_release="${CANOPSIS_PACKAGE_REL}"
 deb_name="canopsis-core"
-deb_path="/root/${deb_name}-${CPS_PKG_TAG}"
+deb_path="/root/${deb_name}-${CANOPSIS_PACKAGE_TAG}"
 
 cat > ${deb_path}/DEBIAN/control << EOF
 Package: ${deb_name}

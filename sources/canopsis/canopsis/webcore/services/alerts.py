@@ -143,7 +143,7 @@ def exports(ws):
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
-        entities = context_manager.get_entities_by_id(alarms_ids)
+        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
         entity_dict = {}
         for entity in entities:
             entity_dict[entity.get('_id')] = entity

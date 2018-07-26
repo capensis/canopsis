@@ -1,19 +1,19 @@
-ARG TAG
-ARG SYSBASE
+ARG CANOPSIS_TAG
+ARG CANOPSIS_DISTRIBUTION
 
 
 
 ## Canopsis Build Image
-FROM canopsis/canopsis-sysbase:${SYSBASE}-${TAG} as build
+FROM canopsis/canopsis-sysbase:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG} as build
 
-ARG TAG
-ARG SYSBASE
+ARG CANOPSIS_TAG
+ARG CANOPSIS_DISTRIBUTION
 ARG PROXY
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
-COPY docker/build/build-${SYSBASE}.sh /build.sh
+COPY docker/build/build-${CANOPSIS_DISTRIBUTION}.sh /build.sh
 RUN /bin/bash /build.sh
 
 WORKDIR ${CPS_HOME}
@@ -21,7 +21,6 @@ WORKDIR ${CPS_HOME}
 ### Canopsis Core
 
 #### Venv setup
-COPY docker/wheels /sources/wheels
 COPY docker/build/pip-setup.sh /
 RUN /bin/bash /pip-setup.sh
 
@@ -44,10 +43,8 @@ RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 COPY sources/webcore /sources/webcore
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 
-
-
 ## Canopsis Core Image
-FROM canopsis/canopsis-sysbase:${SYSBASE}-${TAG}
+FROM canopsis/canopsis-sysbase:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
 
 ARG PROXY
 

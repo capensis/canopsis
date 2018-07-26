@@ -1,21 +1,21 @@
-ARG SYSBASE
-ARG TAG
+ARG CANOPSIS_DISTRIBUTION
+ARG CANOPSIS_TAG
 
-FROM canopsis/canopsis-core:${SYSBASE}-${TAG}
+FROM canopsis/canopsis-core:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
 
 ARG FIX_OWNERSHIP
-ARG SYSBASE
 ARG PROXY
-ARG CPS_PKG_REL
-ARG CPS_PKG_TAG
+ARG CANOPSIS_DISTRIBUTION
+ARG CANOPSIS_PACKAGE_REL
+ARG CANOPSIS_PACKAGE_TAG
 
-ENV CPS_PKG_TAG ${CPS_PKG_TAG}
-ENV CPS_PKG_REL ${CPS_PKG_REL}
+ENV CANOPSIS_PACKAGE_TAG ${CANOPSIS_PACKAGE_TAG}
+ENV CANOPSIS_PACKAGE_REL ${CANOPSIS_PACKAGE_REL}
 ENV FIX_OWNERSHIP ${FIX_OWNERSHIP}
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
-COPY docker/packaging/setup-${SYSBASE}.sh /setup.sh
+COPY docker/packaging/setup-${CANOPSIS_DISTRIBUTION}.sh /setup.sh
 
 USER 0:0
 
@@ -23,6 +23,6 @@ RUN /bin/bash /setup.sh
 RUN mkdir -p /packages
 
 COPY docker/packaging /packaging
-COPY docker/packaging/package-${SYSBASE}.sh /packaging/package.sh
+COPY docker/packaging/package-${CANOPSIS_DISTRIBUTION}.sh /packaging/package.sh
 
 ENTRYPOINT ["/bin/bash", "/packaging/package.sh"]
