@@ -6,12 +6,14 @@
       .timeline-item
         .time {{ getFormattedTime(step.t) }}
         div(v-if="step._t !== 'statecounter'")
-          alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
-          .header
-            alarm-chips.chips(:value="step.val", :isStatus="isStatus(step._t)")
-            p {{ step._t | stepTitle(step.a) }}
-          .content
-            p {{ step.m }}
+          alarm-flag.flag(:type="stepType(step._t)", :step="step")
+          .card
+            .header
+              alarm-chips.chips(v-if="stepType(step._t) !== STEPS_TYPES.action",
+                                :value="step.val", :type="stepType(step._t)")
+              p  &nbsp {{ step._t | stepTitle(step.a) }}
+            .content
+              p {{ step.m }}
         div(v-else)
           alarm-flag.flag(isCroppedState)
           .header
@@ -32,13 +34,13 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
-import capitalize from 'lodash/capitalize';
 import moment from 'moment';
+import { stepTitle, stepType } from '@/helpers/timeline';
 
 import AlarmFlag from '@/components/other/alarm/timeline/alarm-flag.vue';
 import AlarmChips from '@/components/other/alarm/timeline/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
-import { ENTITIES_STATES_STYLES } from '@/constants';
+import { ENTITIES_STATES_STYLES, STEPS_TYPES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
@@ -52,18 +54,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 export default {
   components: { AlarmChips, AlarmFlag },
   filters: {
-    stepTitle(stepTitle, stepAuthor) {
-      let formattedStepTitle = '';
-      formattedStepTitle = stepTitle.replace(/(status)|(state)/g, '$& ');
-      formattedStepTitle = formattedStepTitle.replace(/(inc)|(dec)/g, '$&reased ');
-      formattedStepTitle += 'by ';
-      if (stepAuthor === 'canopsis.engine') {
-        formattedStepTitle += 'system';
-      } else {
-        formattedStepTitle += stepAuthor;
-      }
-      return capitalize(formattedStepTitle);
-    },
+    stepTitle,
   },
   props: {
     alarmProps: {
@@ -73,6 +64,11 @@ export default {
       // Its used for group step under the same date
       lastDate: null,
     },
+  },
+  data() {
+    return {
+      STEPS_TYPES,
+    };
   },
   computed: {
     ...mapGetters(['item']),
@@ -114,6 +110,7 @@ export default {
     ...mapActions([
       'fetchItem',
     ]),
+    stepType,
     isNewDate(timestamp) {
       const date = new Date(timestamp);
       if (!this.lastDate ||
@@ -124,9 +121,6 @@ export default {
         return true;
       }
       return false;
-    },
-    isStatus(stepTitle) {
-      return stepTitle.startsWith('status');
     },
     getFormattedDate(timestamp) {
       return moment.unix(timestamp).format('DD/MM/YYYY');
@@ -181,7 +175,8 @@ export default {
   }
 
   .flag {
-    left: -19px;
+    top: 4px;
+    left: -13px;
   }
 
   .date {
@@ -200,6 +195,10 @@ export default {
     display: flex;
     align-items: baseline;
     font-weight: bold;
+    border-bottom: solid 1px $border_line;
+    padding-left: 5px;
+    padding-top: 5px;
+
 
     .chips {
       font-size: 15px;
@@ -207,7 +206,7 @@ export default {
     }
 
     p {
-      font-size: 17px;
+      font-size: 15px;
     }
 
   }

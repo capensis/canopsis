@@ -1,9 +1,11 @@
 <template lang="pug">
-  v-chip(:color="color" text-color="white") {{ this.text }}
+  div
+    span.badge(:style="{backgroundColor : style.color}") {{ style.text }}
 </template>
 
 <script>
-import formatStateAndStatus from '@/helpers/state-and-status-formatting';
+import { formatState, formatStatus } from '@/helpers/state-and-status-formatting';
+import { STEPS_TYPES } from '@/constants';
 
 /**
  * Chips for the state/status of the alarm on timeline
@@ -19,18 +21,34 @@ export default {
       type: [Number, String],
       default: 0,
     },
-    isStatus: {
-      type: Boolean,
-      default: false,
+    type: {
+      type: String,
     },
   },
   computed: {
-    color() {
-      return formatStateAndStatus(this.value, this.isStatus).color;
-    },
-    text() {
-      return formatStateAndStatus(this.value, this.isStatus).text;
+    style() {
+      if (this.type === STEPS_TYPES.status) {
+        return formatStatus(this.value);
+      }
+      return formatState(this.value);
     },
   },
 };
 </script>
+<style scoped>
+  .badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: #777;
+    border-radius: 10px;
+  }
+
+</style>

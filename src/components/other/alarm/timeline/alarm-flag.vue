@@ -1,9 +1,10 @@
 <template lang="pug">
-  v-icon(large :color="color") {{ icon }}
+  div
+    i.material-icons(:style="{color: style.color}") {{ style.icon }}
 </template>
 
 <script>
-import formatStateAndStatus from '@/helpers/state-and-status-formatting';
+import { formatState, formatStatus, formatEvent } from '@/helpers/state-and-status-formatting';
 
 /**
  * Component for the flag on the alarms list's timeline
@@ -16,13 +17,13 @@ import formatStateAndStatus from '@/helpers/state-and-status-formatting';
  */
 export default {
   props: {
-    value: {
-      type: [Number, String],
-      default: 0,
+    step: {
+      type: Object,
+      required: true,
     },
-    isStatus: {
-      type: Boolean,
-      default: false,
+    type: {
+      type: String,
+      required: true,
     },
     isCroppedState: {
       type: Boolean,
@@ -30,11 +31,14 @@ export default {
     },
   },
   computed: {
-    color() {
-      return formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).color;
-    },
-    icon() {
-      return formatStateAndStatus(this.value, this.isStatus, this.isCroppedState).icon;
+    style() {
+      if (this.step._t.startsWith('status')) {
+        return formatStatus(this.step.val, this.isCroppedState);
+      }
+      if (this.step._t.startsWith('state')) {
+        return formatState(this.step.val);
+      }
+      return formatEvent(this.step._t);
     },
   },
 };

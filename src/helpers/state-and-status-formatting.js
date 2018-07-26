@@ -1,32 +1,45 @@
-import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES } from '@/constants';
+import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES, EVENT_ENTITY_STYLE, UNKNOWN_VALUE_STYLE } from '@/constants';
 
 /**
- * Format state and status on list-alarm with color, text and icon.
- *
- * @param {Number} value => Value of the state/status
- * @param {Boolean} isStatus => Is it a status, or a state
- * @param {Boolean} isCroppedState => Is this state a croppedState
- *
- * @returns {Object}
+ * Return object that contains the state style
+ * @param value The state value
+ * @returns {*} Object with the color, icon and text associated
  */
-export default function formatStateAndStatus(value, isStatus, isCroppedState) {
-  if (isStatus && ENTITY_STATUS_STYLES[value]) {
-    if (isCroppedState) {
-      return {
-        ...ENTITY_STATUS_STYLES[value],
-        icon: 'vertical_align_center',
-      };
-    }
-    return ENTITY_STATUS_STYLES[value];
+export function formatState(value) {
+  if (!ENTITIES_STATES_STYLES[value]) {
+    return UNKNOWN_VALUE_STYLE;
   }
-
-  if (!isStatus && ENTITIES_STATES_STYLES[value]) {
-    return ENTITIES_STATES_STYLES[value];
-  }
-
-  return {
-    color: 'black',
-    text: 'Invalid val',
-    icon: 'clear',
-  };
+  return ENTITIES_STATES_STYLES[value];
 }
+
+/**
+ * Return object that contains the status style
+ * @param value The status value
+ * @param isCroppedState If it's a croppedState
+ * @returns {*} Object with the color, icon and text associated
+ */
+export function formatStatus(value, isCroppedState) {
+  if (!ENTITY_STATUS_STYLES[value]) {
+    return UNKNOWN_VALUE_STYLE;
+  }
+  if (isCroppedState) {
+    return {
+      ...ENTITY_STATUS_STYLES[value],
+      icon: 'vertical_align_center',
+    };
+  }
+  return ENTITY_STATUS_STYLES[value];
+}
+
+/**
+ * Return object that contains the event style
+ * @param event The event name
+ * @returns {*} Object with the color, icon and text associated
+ */
+export function formatEvent(event) {
+  if (!EVENT_ENTITY_STYLE[event]) {
+    return UNKNOWN_VALUE_STYLE;
+  }
+  return EVENT_ENTITY_STYLE[event];
+}
+
