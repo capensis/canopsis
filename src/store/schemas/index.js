@@ -26,6 +26,8 @@ export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAtt
 
 export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: '_id' });
 
+export const weatherSchema = new schema.Entity(ENTITIES_TYPES.weather, {}, { idAttribute: 'entity_id' });
+
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
 });
@@ -44,6 +46,7 @@ export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
   [ENTITIES_TYPES.watcher]: watcherSchema,
+  [ENTITIES_TYPES.weather]: weatherSchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,

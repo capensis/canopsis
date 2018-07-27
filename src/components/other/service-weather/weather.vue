@@ -9,7 +9,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import WeatherItem from './weather-item.vue';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('event');
+const { mapActions, mapGetters } = createNamespacedHelpers('watcher');
 
 export default {
   components: {
@@ -25,10 +25,15 @@ export default {
     ...mapGetters(['items', 'allIds']),
   },
   mounted() {
-    this.fetchList({ params: { limit: 0, ids: [...this.ids] } });
+    this.fetchWeatherList({
+      direction: 'ASC',
+      limit: NaN,
+      orderby: 'display_name',
+      start: null,
+    });
   },
   methods: {
-    ...mapActions(['fetchList']),
+    ...mapActions(['fetchWeatherList']),
   },
 };
 </script>

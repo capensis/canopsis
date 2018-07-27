@@ -1,10 +1,10 @@
 <template lang="pug">
-v-card.ma-2(:class="values[watcher.state].color", tile, raised)
+v-card.ma-2.white--text(:class="color", tile, raised)
   v-layout(justify-start, align-center)
     v-flex(xs2)
-      component.ma-2(:is="values[watcher.state].icon")
+      component.ma-2(:is="values[watcher.state.val].icon")
     v-flex(xs10)
-      p.watcherName {{ watcher._id }}
+      p.watcherName {{ watcher.display_name }}
   v-layout
     v-flex(xs12)
       div.moreInfos.py-1
@@ -36,7 +36,7 @@ export default {
     return {
       values: {
         0: {
-          color: 'white--text green darken-1',
+          color: 'green darken-1',
           icon: sun,
         },
         1: {
@@ -51,12 +51,13 @@ export default {
           color: 'red darken-1',
           icon: rainingCloud,
         },
-        pbehavior: {
-          color: 'grey lighten-1',
-          icon: 'pause',
-        },
       },
     };
+  },
+  computed: {
+    color() {
+      return this.watcher.active_pb_watcher || this.watcher.active_pb_watcher ? 'grey lighten-1' : this.values[this.watcher.state.val].color;
+    },
   },
 };
 </script>

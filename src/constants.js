@@ -2,6 +2,7 @@ export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
   watcher: 'watcher',
+  weather: 'weather',
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
