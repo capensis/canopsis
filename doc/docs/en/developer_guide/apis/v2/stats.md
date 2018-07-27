@@ -1,38 +1,41 @@
 # Statistics API
 
-## Specification
+## Routes
+
+### Compute a single statistic
 
 #### URL
 
-This API defines two routes :
-
- - `POST /api/v2/stats/<stat name>`: to compute the value of the statistic
-   `<stat_name>`.
- - `POST /api/v2/stats`: to compute the value of multiple statistics.
+`POST /api/v2/stats/<stat name>`
 
 #### Parameters
 
-These routes take a JSON object with the following fields:
+This route takes a JSON object with the following fields:
 
- - `stats` (only for `/api/v2/stats`, required) : a list containing the names
-   of the statistics to compute.
- - `tstart` (optional) : a timestamp indicating the start of the interval.
- - `tstop` (optional) : a timestamp indicating the end of the interval.
- - `group_by` (optional) : a list of tags.
- - `filter` (optional) : a list of *entity groups*. The entities that are part
+ - `tstart` (optional): a timestamp indicating the start of the last period
+   for which the statistics will be computed.
+ - `tstop` (optional): a timestamp indicating the end of the last period for
+   which the statistics will be computed.
+ - `periods` (optional): the number of periods for which the statistics will
+   be computed.
+ - `group_by` (optional): a list of tags used to group the results. The
+   available tags or the same as the ones used in the *alarm groups*, and are
+   defined below.
+ - `filter` (optional): a list of *alarm groups*. The alarms that are part
    of at least one of the groups will be taken into account when computing the
    statistics.
- - `parameters` (optional) : an object containing parameters for the
-   statistics. For the `/api/v2/stats` route, the parameters for a statistic
-   should be in `parameters.<stat_name>`.
+ - `parameters` (optional): an object containing parameters for the computed
+   statistic. See the documentation of each statistic below for the available
+   parameters.
 
-An *entity group* is a JSON object containing `"<tag name>" : <tag filter>`
-couples. An entity is part of this group if each of its tags validates the
+An *alarm group* is a JSON object containing `"<tag name>": <tag filter>`
+couples. An alarm is part of this group if each of its tags validates the
 corresponding filter.
 
-The tag name can be used to filter according to :
+The tag name can be used to filter according to:
 
- - The entity's identity, with the names `entity_id` and `entity_type`.
+ - The identity of the entity that created the alarm, with the names
+   `entity_id` and `entity_type`.
  - One of the entity's informations, with the names
    `entity_infos.<information_id>`. Only the information ids specified in the
    [statsng engine configuration](../../../admin_guide/statsng.md#entity-tags)
@@ -40,7 +43,7 @@ The tag name can be used to filter according to :
  - The alarm, with the names `connector`, `connector_name`, `component`,
    `resource` and `alarm_state`.
 
-The tag filter can be :
+The tag filter can be:
 
  - a string, a tag validates this filter if its value is equal to this string.
  - a list of strings, a tag validates this filter if its value is in this list.
@@ -49,8 +52,8 @@ The tag filter can be :
    filter if its value is matched by this regular expression.
 
 ```javascript
-[ // Compute statistics for entities belonging to at least one of the following groups
-    { // This group contains the entities whose tags validate the following conditions
+[ // Compute statistics for alarms belonging to at least one of the following groups
+    { // This group contains the alarms whose tags validate the following conditions
         "<tag1>": "value",                   // tag1's value is "value" ET
         "<tag2>": ["value1", "value2", ...], // tag2's value is in [...] ET
         "<tag3>": {"matches": "value\d+"}    // tag3's value is matched by the regex
@@ -61,56 +64,461 @@ The tag filter can be :
 
 #### Response
 
-The response is a JSON array containing objects with :
+If the request succeeded, the response is a JSON array containing the groups
+obtained by grouping with the tags defined in `group_by`.
 
- - a `tags` field, whose value is an object containing the values of the tags
-   specified in `group_by` (or an empty object if `group_by` is not defined).
- - one field for each statistic that was requested.
+Each group is an object containing the following fields:
+
+ - `tags`: an object containing the balues of the tags defined in `group_by`.
+ - `periods`: an array containing the statistics for each period. The period
+   or ordered chronologically.
+
+Each period is an object containing the following fields:
+
+ - `tstart`: a timestamp indicating the start of the period.
+ - `tstop`: a timestamp indicating the end of the period.
+ - `<stat name>`: the value of the statistic. The type of this value depends
+   on the computed statistic.
+
+#### Example
+
+The following request returns the proportion of alarms per day whose resolve
+time is lower than a SLA for each resource of the component `c`, between the
+23rd and the 29th of July 2018.
+
+```javascript
+POST /api/v2/stats/resolve_time_sla
+{
+    "filter": [{
+        "component": "c",
+        "entity_type": "resource"
+    }],
+    "group_by": ["resource"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "periods": 7,
+    "parameters": {
+        "sla": 3600
+    }
+}
+```
+
+The alarms whose component is `c` and created by an entity of type `resource`
+are taken into account.
+
+The statistic is computed for seven consecutive periods of same duration. The
+last of these periods starts at `tstart` (July 29th at 00:00) and ends at
+`tstop` (July 30th at 00:00).
+
+The value of the SLA is defined in the `parameters` field, since it is a
+parameter that is spectific to the `resolve_time_sla` statistic.
+
+The JSON document below is an example of a response to the previous request.
+The value of the statistic is a dictionnary containing multiple values. See the
+documentation of the `resolve_time_sla` statistic for more details.
+
+```javascript
+[ // Array of groups
+    {
+        "tags": { // Tags of the group
+            "resource": "resource1"
+        },
+        "periods": [ // Array of periods
+            {
+                "tstart": 1532296800, // July 23rd at 00:00
+                "tstop": 1532383200, // July 24th at 00:00
+                "resolve_time_sla": { // Value of the statistic
+                    "above": 10,
+                    "below": 90,
+                    "above_rate": 0.1,
+                    "below_rate": 0.9
+                }
+            },
+            {
+                "tstart": 1532383200, // July 24th at 00:00
+                "tstop": 1532469600, // July 25th at 00:00
+                "resolve_time_sla": {
+                    "above": 0,
+                    "below": 47,
+                    "above_rate": 0,
+                    "below_rate": 1,
+                }
+            },
+            // ...
+            {
+                "tstart": 1532815200, // July 29th at 00:00
+                "tstop": 1532901600, // July 30th at 00:00
+                "resolve_time_sla": {
+                    "above": 4,
+                    "below": 28,
+                    "above_rate": 0.125,
+                    "below_rate": 0.875,
+                }
+            }
+        ]
+    },
+    {
+        "tags": {
+            "resource": "resource2"
+        },
+        "periods": [
+            // ...
+        ]
+    },
+    // ...
+]
+```
+
+
+### Compute multiple statistics in one request
+
+#### URL
+
+`POST /api/v2/stats`
+
+#### Parameters
+
+This route takes a JSON object with the same parameters as the previous route,
+with two exceptions:
+
+ - A new `stats` field (required) containing a list of the statistics to
+   compute.
+ - The `parameters`field containing an object associating to each statistic its
+   parameters.
+
+#### Response
+
+The response has the same format as the previous route. Each period contains
+the value of multiple statistics.
+
+#### Example
+
+The following request returns the ratio of alarms per day whose resolve time is
+lower than a SLA and the alarms created per day for each resource of the
+component `c`, between the 23rd and the 29th of July 2018.
+
+```javascript
+POST /api/v2/stats
+{
+    "stats": ["resolve_time_sla", "alarms_created"],
+    "filter": [{
+        "component": "c",
+        "entity_type": "resource"
+    }],
+    "group_by": ["resource"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "periods": 7,
+    "parameters": {
+        "resolve_time_sla": {
+            "sla": 3600
+        }
+    }
+}
+```
+
+The body of this request is the same as the previous example, with two
+exceptions:
+
+ - The list of the statistics to compute has been added to the `stats` field.
+ - The `sla` parameter which was in the `parameters` field has been moved to
+   `parameters.resolve_time_sla`. The `alarms_created` statistic does not take
+   parameters. If it did, they would have to be defined in
+   `parameters.alarms_created`.
+
+The JSON document below is an example of a response to the previous request.
+
+```javascript
+[ // Array of groups
+    {
+        "tags": { // Tags of the group
+            "resource": "resource1"
+        },
+        "periods": [ // Array of periods
+            {
+                "tstart": 1532296800, // July 23rd at 00:00
+                "tstop": 1532383200, // July 24th at 00:00
+                // Values of the two statistics
+                "alarms_created": 100,
+                "resolve_time_sla": {
+                    "above": 10,
+                    "below": 90,
+                    "above_rate": 0.1,
+                    "below_rate": 0.9
+                }
+            },
+            // ...
+        ]
+    },
+    // ...
+]
+```
 
 
 ## Statistics
 
 ### Number of alarms created
 
-The statistic `alarms_created` is equal to the number of alarms created
-during a time interval.
+The `alarms_created` statistic returns the number of alarms created. The alarms
+created while a pbehavior was active are not taken into account. It does not
+take any parameters.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/alarms_created
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "alarms_created": 100
+            }
+        ]
+    },
+    // ...
+]
+```
 
 ### Number of alarms resolved
 
-The statistic `alarms_resolved` is equal to the number of alarms resolved
-during a time interval.
+The `alarms_resolved` statistic returns the number of alarms resolved. The
+alarms *created* while a pbehavior was active are not taken into account. It
+does not take any parameters.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/alarms_resolved
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "alarms_resolved": 86
+            }
+        ]
+    },
+    // ...
+]
+```
 
 ### Number of alarms canceled
 
-The statistic `alarms_canceled` is equal to the number of alarms canceled
-during a time interval.
+The `alarms_canceled` statistic returns the number of alarms canceled. The
+alarms *created* while a pbehavior was active are not taken into account. It
+does not take any parameters.
 
-### Mean ack time
+#### Example
 
-The statistic `mean_ack_time` is equal to average time taken for an alarm to
-be acknowledged.
+Request:
+
+```javascript
+POST /api/v2/stats/alarms_canceled
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "alarms_canceled": 7
+            }
+        ]
+    },
+    // ...
+]
+```
+
+### Mean acknowledgement time
+
+The `mean_ack_time` rstatistic eturns the average acknowledgement time. The
+alarms *created* while a pbehavior was active are not taken into account. It
+does not take any parameters.
+
+The acknowledgement time is the difference between the date of the *first*
+acknowledgement and the date of creation of the alarm.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/mean_ack_time
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "mean_ack_time": 426
+            }
+        ]
+    },
+    // ...
+]
+```
 
 ### Mean resolve time
 
-The statistic `mean_resolve_time` is equal to average time taken for an alarm
-to be resolved.
+The `mean_resolve_time` statistic returns the average resolve time. The alarms
+*created* while a pbehavior was active are not taken into account. It does not
+take any parameters.
 
-### Ack time above or below the SLA
+The resolve time is the difference between the date of the resolution and the
+date of creation of the alarm.
 
-The statistic `ack_time_sla` is a JSON object with the following fields:
+#### Example
 
- - `above`: the number of alarms whose ack time is above the SLA.
- - `below`: the number of alarms whose ack time is below the SLA.
- - `above_rate`: the ratio of alarms whose ack time is above the SLA (between 0
-   and 1).
- - `below_rate`: the ratio of alarms whose ack time is below the SLA (between 0
-   and 1).
+Request:
 
-The value of the SLA should be provided in seconds in the parameter `sla`.
+```javascript
+POST /api/v2/stats/mean_resolve_time
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "mean_resolve_time": 2687
+            }
+        ]
+    },
+    // ...
+]
+```
+
+### Acknowledgement time above or below the SLA
+
+The `ack_time_sla` statistic returns the numbers and rates of acknowledgement
+times above or below a SLA. The alarms *created* while a pbehavior was active
+are not taken into account. The statistic takes a `sla` parameter whose value
+is the SLA in seconds, and returns a JSON object containing the following
+fields:
+
+ - `above`: the number of alarms whose acknowledgement time is above the SLA.
+ - `below`: the number of alarms whose acknowledgement time is below the SLA.
+ - `above_rate`: the ratio of alarms whose acknowledgement time is above the
+   SLA (between 0 and 1).
+ - `below_rate`: the ratio of alarms whose acknowledgement time is below the
+   SLA (between 0 and 1).
+
+The acknowledgement time is the difference between the date of the *first*
+acknowledgement and the date of creation of the alarm.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/resolve_time_sla
+{
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "parameters": {
+        "sla": 3600
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {},
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "ack_time_sla": {
+                    "above": 10
+                    "below": 90,
+                    "above_rate": 0.1,
+                    "below_rate": 0.9,
+                }
+            }
+        ]
+    }
+]
+```
 
 ### Resolve time above or below the SLA
 
-The statistic `resolve_time_sla` is a JSON object with the following fields:
+The `resolve_time_sla` statistic returns the numbers and rates of resolve times
+above or below a SLA. The alarms *created* while a pbehavior was active are not
+taken into account. The statistic takes a `sla` parameter whose value is the
+SLA in seconds, and returns a JSON object containing the following fields:
 
  - `above`: the number of alarms whose resolve time is above the SLA.
  - `below`: the number of alarms whose resolve time is below the SLA.
@@ -119,103 +527,519 @@ The statistic `resolve_time_sla` is a JSON object with the following fields:
  - `below_rate`: the ratio of alarms whose resolve time is below the SLA
    (between 0 and 1).
 
-The value of the SLA should be provided in seconds in the parameter `sla`.
+The resolve time is the difference between the date of the resolution and the
+date of creation of the alarm.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/resolve_time_sla
+{
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "parameters": {
+        "sla": 3600
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {},
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "ack_time_sla": {
+                    "above": 10
+                    "below": 90,
+                    "above_rate": 0.1,
+                    "below_rate": 0.9,
+                }
+            }
+        ]
+    }
+]
+```
 
 ### Time spent in each state
 
-The statistic `time_in_state` is a JSON object with :
+The `time_in_state` statistic returns a JSON object with:
 
  - one field for each state (between 0 and 3), containing the time spent by the
    entity in this state, in seconds
  - a `total` field, containing the total time
 
-The intervals during which a pbehavior is active are excluded from these
+The intervals during which a pbehavior was active are excluded from these
 values. The total time may thus be inferior to the duration of the interval
 `tstop - tstart`.
 
+This statistic can only be computed for groups containing only one entity. It
+is necessary to ensure that each group only contains one, for example by adding
+`entity_id` to the `group_by`parameter.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/time_in_state
+{
+    "filter": [{
+        "component": "c"
+    }],
+    "group_by": ["entity_id"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "periods": 2
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "ressource1/c"
+        },
+        "periods": [
+            {
+                "tstart": 1532728800,
+                "tstop": 1532815200,
+                "time_in_state": {
+                    0: 48159,
+                    1: 34051,
+                    2: 2203,
+                    3: 1387,
+                    "total": 85800
+                }
+            },
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "time_in_state": {
+                    0: 52563,
+                    1: 28465,
+                    2: 4245,
+                    3: 527,
+                    "total": 85800
+                }
+            }
+        ]
+    },
+    // ...
+]
+```
+
 ### Availability
 
-The statistic `availability` is a JSON object with the following fields:
+The `availability` statistic returns the times and rates of availability and
+unavailability. It takes an `available_state` parameter whose value is the
+state until which an entity is considered to be available. It returns a JSON
+object with the following fields:
 
- - `available_time`: the time during which the entity was in an available
-   state, in seconds
- - `unavailable_time`: the time during which the entity was in an unavailable
-   state, in seconds
+ - `available`: the time during which the entity was in an available state
+   (lower or equal to `available_state`), in seconds.
+ - `unavailable`: the time during which the entity was in an unavailable state
+   (strictly higher than `available_state`), in seconds
  - `available_rate`: the ratio of time during which the entity was in an
-   available state (between 0 and 1)
+   available state (lower or equal to `available_state`). This value is between
+   0 and 1.
  - `unavailable_rate`: the ratio of time during which the entity was in an
-   unavailable state (between 0 and 1)
+   unavailable state (strictly higher than `available_state`). This value is
+   between 0 and 1.
 
-The entity is considered to be available if it is in a state lower or equal to
-the value of the parameter `available_state`.
-
-The intervals during which a pbehavior is active are excluded from these
+The intervals during which a pbehavior was active are excluded from these
 values. The total time `available_time + unavailable_time` may thus be inferior
 to the duration of the interval `tstop - tstart`.
 
+This statistic can only be computed for groups containing only one entity. It
+is necessary to ensure that each group only contains one, for example by adding
+`entity_id` to the `group_by`parameter.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/availability
+{
+    "filter": [{
+        "component": "c"
+    }],
+    "group_by": ["entity_id"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "parameters": {
+        "available_state": 1
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "ressource1/c"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "time_in_state": {
+                    "available": 81028,
+                    "unavailable": 4772,
+                    "available_rate": 0.9443822843822843,
+                    "unavailable_rate": 0.05561771561771562
+                }
+            }
+        ]
+    },
+    // ...
+]
+```
+
 ### Maintenance
 
-The statistic `maintenance` is a JSON object with the following fields:
+The `maintenance` statistic returns the time during which a pbehavior was or
+was not active on an entity. It does not take any parameters and returns a JSON
+object with the following fields:
 
  - `maintenance`: the time during which the entity had an active pbehavior, in
    seconds.
  - `no_maintenance`: the time during which the entity had no active pbehavior,
-   in seconds
+   in seconds.
+
+This statistic can only be computed for groups containing only one entity. It
+is necessary to ensure that each group only contains one, for example by adding
+`entity_id` to the `group_by`parameter.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/maintenance
+{
+    "filter": [{
+        "component": "c"
+    }],
+    "group_by": ["entity_id"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "ressource1/c"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "maintenance": {
+                    "maintenance": 600,
+                    "no_maintenance": 85800
+                }
+            }
+        ]
+    },
+    // ...
+]
+```
 
 ### Mean Time Between Failures
 
-The statistic `mtbf` is the mean time between failures, i.e. the time without
-maintenance divided by the number of failures.
+The `mtbf` statistic returns the mean time between failures, i.e. the time
+without maintenance divided by the number of failures.
+
+This statistic can only be computed for groups containing only one entity. It
+is necessary to ensure that each group only contains one, for example by adding
+`entity_id` to the `group_by`parameter.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/mtbf
+{
+    "filter": [{
+        "component": "c"
+    }],
+    "group_by": ["entity_id"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "ressource1/c"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "mtbf": 31.931522143654632
+            }
+        ]
+    },
+    // ...
+]
+```
 
 ### Alarm List
 
-The statistic `alarm_list` returns a list of alarms. It is a JSON array of
-objects which contains the tags of the entity that created the alarm
-(`entity_id`, `entity_type`, `entity_infos.<information_id>`, `connector`,
-`connector_name`, `component`, `resource` and `alarm_state`), as well as the
-following fields:
+The `alarm_list` statistic returns a list of alarms. It does not take any
+parameters, and returns a JSON array of objects which contains the tags of the
+entity that created the alarm (`entity_id`, `entity_type`,
+`entity_infos.<information_id>`, `connector`, `connector_name`, `component`,
+`resource` and `alarm_state`), as well as the following fields:
 
  - `time`: the date of creation of the alarm
  - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
    created, `"False"` otherwise.
  - `value`: the time it took for the alarm to be resolved.
 
+Only the resolved alarms are taken into account.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/alarm_list
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "alarm_list": [
+                    {
+                        "time": 1532815202,
+                        "entity_id": "resource1/component1",
+                        "entity_type": "resource",
+                        "connector": "connector",
+                        "connector_name": "connector_name",
+                        "resource": "resource1",
+                        "alarm_state": "3",
+                        "pbehavior": "False",
+                        "value": 157
+                    },
+                    {
+                        "time": 1532815325,
+                        "entity_id": "resource2/component1",
+                        "entity_type": "resource",
+                        "connector": "connector",
+                        "connector_name": "connector_name",
+                        "resource": "resource2",
+                        "alarm_state": "1",
+                        "pbehavior": "False",
+                        "value": 849
+                    },
+                    // ...
+                ]
+            }
+        ]
+    },
+    // ...
+]
+```
+
 ### Entities impacted by the most alarms
 
-The statistic `most_alarms_impacting` is a list containing the groups of
+The `most_alarms_impacting` statistic returns a list containing the groups of
 entities that are impacted by the largest number of alarms. The request takes
 the following parameters:
 
- - `group_by`: the tags used to group the entities.
- - `filter` (optional): an *entity filter* used to filter the entities. This
-   parameters has the same format as the main `filter` parameter.
+ - `group_by` (required): the tags used to group the entities.
+ - `filter` (optional): an entity filter. This parameters has the same format
+   as the main `filter` parameter.
  - `limit` (optional): the maximum number of groups to return.
 
-It returns a list of objects ordered by descending number of alarms, with the
-following fields:
+The parameters `group_by` and `filter` have to be defined in the `parameters`
+field (or in `parameters.most_alarms_impacting` for the `/api/v2/stats` route),
+and are distinct from the main `group_by` and `filter` fields. For example, to
+get a the resources impacted by the most alarms grouped by components, the
+`parameters.group_by` field should be set to `resource` (to compute the number
+of alarms per resources), the `parameters.filter`field should contain
+`"entity_type: "resource"` (to compute the number of alarms only for
+resources), and the `group_by` field should be set to `component` (to group the
+results by component). See the example below for the full request.
 
- - `tags`: the tags of the entity group.
- - `value`: the number of alarms impacting this entity group.
+The request returns a list of objects ordered by descending number of alarms,
+with the following fields:
+
+ - `tags`: the tags of the group.
+ - `value`: the number of alarms impacting this group.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/most_alarms_impacting
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "parameters": {
+        "group_by": ["resource"],
+        "filter": [{
+            "entity_type": "resource"
+        }],
+        "limit": 2
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "most_alarms_impacting": [
+                    {
+                        "tags": {
+                            "resource": "resource3"
+                        },
+                        "value": 451
+                    },
+                    {
+                        "tags": {
+                            "resource": "resource1"
+                        },
+                        "value": 210
+                    }
+                ]
+            }
+        ]
+    },
+    // ...
+]
+```
 
 ### Entities with the worst Mean Time Between Failures
 
-The statistic `worst_mtbf` is a list containing the groups of entities that
-have the worst mtbf. The request takes the following parameters:
+The `worst_mtbf` statistic returns a list containing the groups of entities
+that have the worst mtbf. The request takes the following parameters:
 
- - `group_by`: the tags used to group the entities.
- - `filter` (optional): an *entity filter* used to filter the entities. This
-   parameters has the same format as the main `filter` parameter.
+ - `group_by` (required): the tags used to group the entities.
+ - `filter` (optional): an entity filter. This parameters has the same format
+   as the main `filter` parameter.
  - `limit` (optional): the maximum number of groups to return.
 
-It returns a list of objects ordered by ascending mtbf, with the following
-fields:
+The parameters `group_by` and `filter` have to be defined in the `parameters`
+field (or in `parameters.most_alarms_impacting` for the `/api/v2/stats` route),
+and are distinct from the main `group_by` and `filter` fields. For example, to
+get a the resources impacted by the most alarms grouped by components, the
+`parameters.group_by` field should be set to `resource` (to compute the number
+of alarms per resources), the `parameters.filter`field should contain
+`"entity_type: "resource"` (to compute the number of alarms only for
+resources), and the `group_by` field should be set to `component` (to group the
+results by component). See the example below for the full request.
 
- - `tags`: the tags of the entity group.
+The request returns a list of objects ordered by descending number of alarms,
+with the following fields:
+
+ - `tags`: the tags of the group.
  - `value`: the mtbf.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/worst_mtbf
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "parameters": {
+        "group_by": ["resource"],
+        "filter": [{
+            "entity_type": "resource"
+        }],
+        "limit": 2
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "worst_mtbf": [
+                    {
+                        "tags": {
+                            "resource": "resource3"
+                        },
+                        "value": 45
+                    },
+                    {
+                        "tags": {
+                            "resource": "resource1"
+                        },
+                        "value": 157
+                    }
+                ]
+            }
+        ]
+    },
+    // ...
+]
+```
 
 ### Longest alarms
 
-The statistic `longest_alarms` returns a list of alarms that took the longest
+The `longest_alarms` statistic returns a list of alarms that took the longest
 time to resolve. The request takes the following parameters:
 
  - `limit` (optional): the maximum number of groups to return.
@@ -230,300 +1054,16 @@ well as the following fields:
    created, `"False"` otherwise.
  - `value`: the time it took for the alarm to be resolved.
 
-
-## Examples
-
-### Number of alarms created by a component
-
-`/api/v2/stats/alarms_created`
+#### Example
 
 Request:
 
 ```javascript
-{
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
-        }
-    ]
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {},
-        "alarms_created": 13
-    }
-]
-```
-
-### Number of alarms created by each resource of a component
-
-`/api/v2/stats/alarms_resolved`
-
-Request:
-
-```javascript
-{
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
-        }
-    ],
-    "group_by": ["resource"]
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {"resource": "resource1"},
-        "alarms_resolved": 4
-    },
-    {
-        "tags": {"resource": "resource2"},
-        "alarms_resolved": 3
-    },
-    {
-        "tags": {"resource": "resource3"},
-        "alarms_resolved": 1
-    }
-]
-```
-
-### Ack time above or below the SLA
-
-`/api/v2/stats/ack_time_sla`
-
-Request:
-
-```javascript
-{
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
-        }
-    ],
-    "parameters": {
-        "sla": 600
-    }
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {},
-        "ack_time_sla": {
-            "above": 3
-            "below": 9,
-            "above_rate": 0.25,
-            "below_rate": 0.75,
-        }
-    }
-]
-```
-
-
-### Number of critical alarms created by a component
-
-`/api/v2/stats/alarms_created`
-
-Request:
-
-```javascript
-{
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component",
-            "alarm_state": 3
-        }
-    ]
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {},
-        "alarms_created": 13
-    }
-]
-```
-
-### Time spent by an entity in each state
-
-`/api/v2/stats/time_in_state`
-
-Request:
-
-```javascript
-{
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "entity_id": "watcher_0"
-        }
-    ]
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {},
-        "time_in_state": {
-			"total": 2454,
-			"0": 1707,
-			"1": 105,
-			"2": 23,
-			"3": 619
-		}
-    }
-]
-```
-
-### Time during which an entity was available
-
-`/api/v2/stats/availability`
-
-Request:
-
-```javascript
-{
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "entity_id": "watcher_0"
-        }
-    ],
-    "parameters": {
-        "available_state": 2
-    }
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {},
-        "availability": {
-			"available_time": 1835,
-			"unavailable_time": 619,
-			"available_rate": 0.747758761206194,
-			"unavailable_rate": 0.25224123879380606
-		}
-    }
-]
-```
-
-### For each component, the 10 resources with the worst MTBF
-
-`/api/v2/stats/worst_mtbf`
-
-Request:
-
-```javascript
-{
-	"group_by": ["component"],
-	"parameters": {
-		"group_by": ["resource"],
-		"limit": 10
-	}
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {
-            "component": "component_0"
-        },
-        "worst_mtbf": [
-            {
-                "tags": {
-                    "resource": "resource_0"
-                },
-                "value": 57.333333333333336
-            },
-            {
-                "tags": {
-                    "resource": "resource_1"
-                },
-                "value": 106
-            },
-            // ...
-        ]
-    },
-    {
-        "tags": {
-            "component": "component_1"
-        },
-        "worst_mtbf": [
-            {
-                "tags": {
-                    "resource": "resource_0"
-                },
-                "value": 57.333333333333336
-            },
-            {
-                "tags": {
-                    "resource": "resource_1"
-                },
-                "value": 57.333333333333336
-            },
-            // ...
-        ]
-    },
-    // ...
-]
-```
-
-### 10 longest alarms of each component
-
-`/api/v2/stats/longest_alarms`
-
-Request:
-
-```javascript
+POST /api/v2/stats/longest_alarms
 {
     "group_by": ["component"],
-    "parameters": {
-        "limit": 10
-    }
+    "tstart": 1532815200,
+    "tstop": 1532901600
 }
 ```
 
@@ -533,87 +1073,40 @@ Response:
 [
     {
         "tags": {
-            "component": "component_0"
-        }
-        "longest_alarms": [
+            "component": "component1"
+        },
+        "periods": [
             {
-                "alarm_state": "3",
-                "connector": "...",
-                "connector_name": "...",
-                "entity_id": "resource_0/component_0",
-                "entity_type": "resource",
-                "pbehavior": "False",
-                "resource": "resource_0",
-                "time": 1531833020,
-                "value": 3754
-            },
-            {
-                "alarm_state": "3",
-                "connector": "...",
-                "connector_name": "...",
-                "entity_id": "resource_1/component_0",
-                "entity_type": "resource",
-                "pbehavior": "False",
-                "resource": "resource_1",
-                "time": 1531830121,
-                "value": 3562
-            },
-            //...
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "alarm_list": [
+                    {
+                        "time": 1532895472,
+                        "entity_id": "resource2/component1",
+                        "entity_type": "resource",
+                        "connector": "connector",
+                        "connector_name": "connector_name",
+                        "resource": "resource2",
+                        "alarm_state": "1",
+                        "pbehavior": "False",
+                        "value": 4892
+                    },
+                    {
+                        "time": 1532854763,
+                        "entity_id": "resource1/component1",
+                        "entity_type": "resource",
+                        "connector": "connector",
+                        "connector_name": "connector_name",
+                        "resource": "resource1",
+                        "alarm_state": "3",
+                        "pbehavior": "False",
+                        "value": 3542
+                    },
+                   // ...
+                ]
+            }
         ]
     },
     // ...
-]
-```
-
-### Multiple statistics in one request
-
-`/api/v2/stats`
-
-Request:
-
-```javascript
-{
-    "stats": ["alarms_created", "alarms_resolved", "ack_time_sla", "resolve_time_sla"],
-    "tstart": 1528290000,
-    "tstop": 1528293000,
-    "filter": [
-        {
-            "connector": "connector",
-            "connector_name": "connector_name",
-            "component": "component"
-        }
-    ],
-    "parameters": {
-        "ack_time_sla": {
-            "sla": 900
-        },
-        "resolve_time_sla": {
-            "sla": 3600
-        }
-    }
-}
-```
-
-Response:
-
-```javascript
-[
-    {
-        "tags": {},
-        "alarms_created": 12,
-        "alarms_resolved": 8,
-        "ack_time_sla": {
-            "above": 4,
-            "below": 8,
-            "above_rate": 0.3333333333333333,
-            "below_rate": 0.6666666666666666
-        },
-        "ack_time_sla": {
-            "above": 2
-            "below": 6,
-            "above_rate": 0.25,
-            "below_rate": 0.75
-        }
-    }
 ]
 ```
