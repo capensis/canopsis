@@ -1,5 +1,5 @@
 <template lang="pug">
-  weather(:ids=['Engine.engine.check.resource.centOS.Engine_event_filter_data', 'Engine.engine.check.resource.centOS.Engine_pbehavior'])
+  weather(:ids=["periode.moderne.check.resource.Les lumières.L'Encyclopédie","periode.historique.check.resource.Moyen âge.Serments de Strasbourg","periode.moderne.check.resource.Renaissance.L'École d'Athènes"])
 </template>
 
 <script>

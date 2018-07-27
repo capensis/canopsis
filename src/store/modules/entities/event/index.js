@@ -54,9 +54,7 @@ export default {
     async fetchList({ commit, dispatch }, { params } = {}) {
       try {
         commit(types.FETCH_LIST, { params });
-        console.log(params);
         const { normalizedData, data } = await dispatch('fetch', { params });
-        console.log(normalizedData);
         commit(types.FETCH_LIST_COMPLETED, {
           items: normalizedData.entities.entity,
           allIds: normalizedData.result,
