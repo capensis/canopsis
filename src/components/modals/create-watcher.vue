@@ -70,7 +70,7 @@ export default {
             type: 'watcher',
             mfilter: JSON.stringify(this.request),
           };
-          this.edit({ watcher_id: formData._id, data: formData });
+          await this.edit({ watcher_id: formData._id, data: formData });
         } else {
           const formData = {
             ...this.form,
@@ -79,7 +79,7 @@ export default {
             type: 'watcher',
             mfilter: JSON.stringify(this.request),
           };
-          this.create(formData);
+          await this.create(formData);
         }
         this.hideModal();
       }
