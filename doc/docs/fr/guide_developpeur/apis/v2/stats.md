@@ -68,7 +68,8 @@ Le filtre de tag peut être :
 
 #### Réponse
 
-En cas de succès, la réponse est un tableau JSON contenant les groupes obtenus en groupant par les tags précisés dans `group_by`.
+En cas de succès, la réponse est un tableau JSON contenant les groupes obtenus
+en groupant par les tags précisés dans `group_by`.
 
 Chaque groupe est un objet contenant les champs suivants :
 
@@ -133,20 +134,20 @@ Voir la documentation de `resolve_time_sla` pour plus de détails.
                 "tstart": 1532296800, // 23 juillet à 00:00
                 "tstop": 1532383200, // 24 juillet à 00:00
                 "resolve_time_sla": { // Valeur de la statistique
-                    "above": 10
+                    "above": 10,
                     "below": 90,
                     "above_rate": 0.1,
-                    "below_rate": 0.9,
+                    "below_rate": 0.9
                 }
             },
             {
                 "tstart": 1532383200, // 24 juillet à 00:00
                 "tstop": 1532469600, // 25 juillet à 00:00
                 "resolve_time_sla": {
-                    "above": 0
+                    "above": 0,
                     "below": 47,
                     "above_rate": 0,
-                    "below_rate": 1,
+                    "below_rate": 1
                 }
             },
             // ...
@@ -157,7 +158,7 @@ Voir la documentation de `resolve_time_sla` pour plus de détails.
                     "above": 4,
                     "below": 28,
                     "above_rate": 0.125,
-                    "below_rate": 0.875,
+                    "below_rate": 0.875
                 }
             }
         ]
@@ -173,6 +174,7 @@ Voir la documentation de `resolve_time_sla` pour plus de détails.
     // ...
 ]
 ```
+
 
 ### Calcul de plusieurs statistiques
 
@@ -248,7 +250,7 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
                     "above": 10
                     "below": 90,
                     "above_rate": 0.1,
-                    "below_rate": 0.9,
+                    "below_rate": 0.9
                 }
             },
             // ...
@@ -470,13 +472,13 @@ actif ne sont pas prises en compte. Elle prend un paramètre `sla` dont la
 valeur est le SLA en secondes, et renvoie un objet JSON contenant les champs
 suivants :
 
- - `above`: le nombre d'alarmes dont le temps d'acquittement est supérieur au
+ - `above` : le nombre d'alarmes dont le temps d'acquittement est supérieur au
    SLA.
- - `below`: le nombre d'alarmes dont le temps d'acquittement est inférieur au
+ - `below` : le nombre d'alarmes dont le temps d'acquittement est inférieur au
    SLA.
- - `above_rate`: la proportion d'alarmes dont le temps d'acquittement est
+ - `above_rate` : la proportion d'alarmes dont le temps d'acquittement est
    supérieur au SLA (entre 0 et 1).
- - `below_rate`: la proportion d'alarmes dont le temps d'acquittement est
+ - `below_rate` : la proportion d'alarmes dont le temps d'acquittement est
    inférieur au SLA (entre 0 et 1).
 
 Le temps d'acquittement est la différence entre la date du *premier*
@@ -527,19 +529,21 @@ actif ne sont pas prises en compte. Elle prend un paramètre `sla` dont la
 valeur est le SLA en secondes, et renvoie un objet JSON contenant les champs
 suivants :
 
- - `above`: le nombre d'alarmes dont le temps de résolution est supérieur au
+ - `above` : le nombre d'alarmes dont le temps de résolution est supérieur au
    SLA.
- - `below`: le nombre d'alarmes dont le temps de résolution est inférieur au
+ - `below` : le nombre d'alarmes dont le temps de résolution est inférieur au
    SLA.
- - `above_rate`: la proportion d'alarmes dont le temps de résolution est
+ - `above_rate` : la proportion d'alarmes dont le temps de résolution est
    supérieur au SLA (entre 0 et 1).
- - `below_rate`: la proportion d'alarmes dont le temps de résolution est
+ - `below_rate` : la proportion d'alarmes dont le temps de résolution est
    inférieur au SLA (entre 0 et 1).
 
 Le temps de résolution est la différence entre la date de résolution et la date
 de création de l'alarme.
 
 #### Exemple
+
+Requête :
 
 ```javascript
 POST /api/v2/stats/resolve_time_sla
@@ -578,8 +582,8 @@ Réponse :
 
 La statistique `time_in_state` renvoie un objet JSON avec :
 
- - un champ par état (0-3), contenant le temps passé par l'entité dans cet
-   état en secondes.
+ - un champ par état (entre 0 et 3), contenant le temps passé par l'entité dans
+   cet état en secondes.
  - un champ `total`, contenant le temps total.
 
 Les périodes pendant lesquels un pbehavior est actif sont exclues des valeurs
@@ -587,9 +591,8 @@ ci-dessus. Le temps total peut donc être inférieur à la durée de la période
 `tstop - tstart`.
 
 Cette statistique ne peut être calculée que pour des groupes contenant une
-seule entité. Il est donc nécessaire de s'assurer que chaque groupe d'entité
-n'en contient qu'une, par exemple en ajoutant `entity_id` au paramètre
-`group_by`.
+seule entité. Il est donc nécessaire de s'assurer que chaque groupe n'en
+contient qu'une, par exemple en ajoutant `entity_id` au paramètre `group_by`.
 
 #### Exemple
 
@@ -649,7 +652,7 @@ Réponse :
 
 La statistique `availability` renvoie les temps et taux de disponibilité et
 d'indisponibilité. Elle prend un paramètre `available_state` dont la valeur est
-l'état à partir duquel une entité est considérée comme étant disponible. Elle
+l'état jusqu'auquel une entité est considérée comme étant disponible. Elle
 renvoie un objet JSON contenant les champs suivants :
 
  - `available` : le temps pendant lequel l'entité était dans un état
@@ -668,9 +671,8 @@ ci-dessus. Le temps total `available + unavailable` peut donc être
 inférieur à la durée de la période `tstop - tstart`.
 
 Cette statistique ne peut être calculée que pour des groupes contenant une
-seule entité. Il est donc nécessaire de s'assurer que chaque groupe d'entité
-n'en contient qu'une, par exemple en ajoutant `entity_id` au paramètre
-`group_by`.
+seule entité. Il est donc nécessaire de s'assurer que chaque groupe n'en
+contient qu'une, par exemple en ajoutant `entity_id` au paramètre `group_by`.
 
 #### Exemple
 
@@ -728,9 +730,8 @@ un objet JSON contenant les champs suivants :
    actif, en secondes.
 
 Cette statistique ne peut être calculée que pour des groupes contenant une
-seule entité. Il est donc nécessaire de s'assurer que chaque groupe d'entité
-n'en contient qu'une, par exemple en ajoutant `entity_id` au paramètre
-`group_by`.
+seule entité. Il est donc nécessaire de s'assurer que chaque groupe n'en
+contient qu'une, par exemple en ajoutant `entity_id` au paramètre `group_by`.
 
 #### Exemple
 
@@ -778,9 +779,8 @@ fiabilité, c'est-à-dire le temps hors maintenance divisé par le nombre
 d'indisponibilités.
 
 Cette statistique ne peut être calculée que pour des groupes contenant une
-seule entité. Il est donc nécessaire de s'assurer que chaque groupe d'entité
-n'en contient qu'une, par exemple en ajoutant `entity_id` au paramètre
-`group_by`.
+seule entité. Il est donc nécessaire de s'assurer que chaque groupe n'en
+contient qu'une, par exemple en ajoutant `entity_id` au paramètre `group_by`.
 
 #### Exemple
 
@@ -817,7 +817,6 @@ Réponse :
     // ...
 ]
 ```
-
 
 ### Liste d'alarmes
 
@@ -1050,7 +1049,6 @@ Réponse :
     // ...
 ]
 ```
-
 
 ### Alarmes les plus longues
 
