@@ -6,10 +6,10 @@
       .timeline-item
         .time {{ getFormattedTime(step.t) }}
         div(v-if="step._t !== 'statecounter'")
-          alarm-flag.flag(:type="stepType(step._t)", :step="step")
+          flag.flag(:type="stepType(step._t)", :step="step")
           .card
             .header
-              alarm-chips.chips(v-if="stepType(step._t) !== STEPS_TYPES.action",
+              alarm-chips.chips(v-if="stepType(step._t) !== ENTITY_INFOS_TYPE.action",
                                 :value="step.val", :type="stepType(step._t)")
               p  &nbsp {{ step._t | stepTitle(step.a) }}
             .content
@@ -37,10 +37,11 @@ import pickBy from 'lodash/pickBy';
 import moment from 'moment';
 import { stepTitle, stepType } from '@/helpers/timeline';
 
-import AlarmFlag from '@/components/other/alarm/timeline/alarm-flag.vue';
-import AlarmChips from '@/components/other/alarm/timeline/alarm-chips.vue';
+import Flag from '@/components/other/alarm/timeline/timeline-flag.vue';
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
-import { ENTITIES_STATES_STYLES, STEPS_TYPES } from '@/constants';
+import { ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE } from '@/constants';
+
 
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
@@ -52,7 +53,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
    * @prop {alarmProp} [alarmProps] - Properties of an alarm
    */
 export default {
-  components: { AlarmChips, AlarmFlag },
+  components: { AlarmChips, Flag },
   filters: {
     stepTitle,
   },
@@ -64,7 +65,7 @@ export default {
   },
   data() {
     return {
-      STEPS_TYPES,
+      ENTITY_INFOS_TYPE,
     };
   },
   computed: {

@@ -36,7 +36,7 @@ export const EVENT_ENTITY_TYPES = {
   done: 'done',
 };
 
-export const STEPS_TYPES = {
+export const ENTITY_INFOS_TYPE = {
   state: 'state',
   status: 'status',
   action: 'action',

@@ -2,20 +2,20 @@
 We regroup this two function, because in the component, stepTitle can't access stepType since the 'this' doesn't exist
 in the component filter
  */
-import { STEPS_TYPES } from '@/constants';
+import { ENTITY_INFOS_TYPE } from '@/constants';
 import capitalize from 'lodash/capitalize';
 
 export function stepType(title) {
   if (title.startsWith('status')) {
-    return STEPS_TYPES.status;
+    return ENTITY_INFOS_TYPE.status;
   } else if (title.startsWith('state')) {
-    return STEPS_TYPES.state;
+    return ENTITY_INFOS_TYPE.state;
   }
-  return STEPS_TYPES.action;
+  return ENTITY_INFOS_TYPE.action;
 }
 export function stepTitle(title, author) {
   let formattedStepTitle = '';
-  if (stepType(title) !== STEPS_TYPES.action) {
+  if (stepType(title) !== ENTITY_INFOS_TYPE.action) {
     formattedStepTitle = title.replace(/(status)|(state)/g, '$& ');
     formattedStepTitle = formattedStepTitle.replace(/(inc)|(dec)/g, '$&reased');
   } else {
