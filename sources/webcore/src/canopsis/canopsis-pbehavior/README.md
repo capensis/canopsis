@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-pbehavior/blob/
 
 ### Lint
 
-Tested on commit : [ERROR : The brick is not in a dedicated git repository].
+Tested on commit : 606530e.
 
 | Target | Status | Log |
 | ------ | ------ | --- |

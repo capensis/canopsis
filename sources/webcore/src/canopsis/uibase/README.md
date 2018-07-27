@@ -51,7 +51,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/uibase/blob/master/doc/i
 
 ### Lint
 
-Tested on commit : c34d6e4.
+Tested on commit : 606530e.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -110,4 +110,4 @@ Tested on commit : c34d6e4.
 ## Additional-info
 
 Minified version : 4 files (size: 504K)
-Development version : 290 files (size: 1.8M)
+Development version : 290 files (size: 1,8M)

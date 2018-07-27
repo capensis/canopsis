@@ -95,7 +95,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-backend-ui-conn
 
 ### Lint
 
-Tested on commit : 7acc10e.
+Tested on commit : 606530e.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -108,8 +108,8 @@ Tested on commit : 7acc10e.
 
 | File   | Note   |
 |--------|--------|
-| src/serializers/ctx.js |: autodetect xtype |
 | src/adapters/cservice.js |: do not use userPreferencesModelName |
+| src/serializers/ctx.js |: autodetect xtype |
 
 
 ### FIXMES
