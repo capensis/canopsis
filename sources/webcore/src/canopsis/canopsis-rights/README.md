@@ -70,7 +70,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-rights/blob/mas
 
 ### Lint
 
-Tested on commit : 5468d50.
+Tested on commit : 606530e.
 
 | Target | Status | Log |
 | ------ | ------ | --- |

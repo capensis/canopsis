@@ -177,6 +177,68 @@ La statistique `maintenance` est un objet JSON avec les champs suivants :
 La statistique `mtbf` (Mean Time Between Failures) est le temps hors
 maintenance divisé par le nombre d'indisponibilités.
 
+### Liste d'alarmes
+
+La statistique `alarm_list` renvoie une liste d'alarmes. C'est un tableau
+d'objets JSON contenant les tags de l'entité qui a créé l'alarme (`entity_id`,
+`entity_type`, `entity_infos.<information_id>`, `connector`, `connector_name`,
+`component`, `resource` et `alarm_state`), et les champs suivants :
+
+ - `time` : la date de création de l'alarme.
+ - `pbehavior` : `"True"` s'il y avait un pbehavior actifs quand l'alarme a été
+   créé, `"False"` sinon.
+ - `value` : le temps de résolution de l'alarme.
+
+### Entités impactées par le plus d'alarmes
+
+La statistique `most_alarms_impacting` renvoie une liste contenant les groupes
+d'entités impactés par le plus d'alarmes. La requête prend les paramètres
+suivants :
+
+ - `group_by` : les tags utilisé pour regrouper les entités.
+ - `filter` (optionnel) : un filtre d'entités. Le format de ce paramètre est le
+   même que celui du paramètre `filter` principal.
+ - `limit` (optionnel) : le nombre maximal de groupes à renvoyer.
+
+La requête renvoie une liste d'objets triés par nombre d'alarmes décroissant,
+avec les champs suivants :
+
+ - `tags` : les tags du groupe d'entités.
+ - `value` : le nombre d'alarmes impactant ce groupe d'entités.
+
+### Entités avec le pire indice de fiabilité
+
+La statistique `worst_mtbf` renvoie une liste de groupes d'entités ayant le
+pire indice de fiabilité. La requête prend les paramètres suivants :
+
+ - `group_by` : les tags utilisé pour regrouper les entités.
+ - `filter` (optionnel) : un filtre d'entités. Le format de ce paramètre est le
+   même que celui du paramètre `filter` principal.
+ - `limit` (optionnel) : le nombre maximal de groupes à renvoyer.
+
+La requête renvoie une liste d'objets triés par indice de fiabilité croissant,
+avec les champs suivants :
+
+ - `tags` : les tags du groupe d'entités.
+ - `value` : l'indice de fiabilité.
+
+### Alarmes les plus longues
+
+La statistique `longest_alarms` renvoie une liste des alarmes qui ont pris le
+plus de temps à être résolues. La requête prend les paramètres suivants :
+
+ - `limit` (optionnel): the maximum number of groups to return.
+
+La requête renvoie un tableau d'objets JSON contenant les tags de l'entité qui
+a créé l'alarme (`entity_id`, `entity_type`, `entity_infos.<information_id>`,
+`connector`, `connector_name`, `component`, `resource` et `alarm_state`), et
+les champs suivants :
+
+ - `time` : la date de création de l'alarme.
+ - `pbehavior` : `"True"` s'il y avait un pbehavior actifs quand l'alarme a été
+   créé, `"False"` sinon.
+ - `value` : le temps de résolution de l'alarme.
+
 
 ## Exemples
 
@@ -322,7 +384,7 @@ Réponse:
 ]
 ```
 
-### Calcul du temps passé par un watcher dans chaque état
+### Calcul du temps passé par une entité dans chaque état
 
 `/api/v2/stats/time_in_state`
 
@@ -357,7 +419,7 @@ Réponse:
 ]
 ```
 
-### Calcul du temps pendant lequel un watcher était disponible
+### Calcul du temps pendant lequel une entité était disponible
 
 `/api/v2/stats/availability`
 
@@ -393,6 +455,124 @@ Réponse:
     }
 ]
 ```
+
+### Pour chaque composant, liste des 10 resources avec le pire indice de fiabilité
+
+`/api/v2/stats/worst_mtbf`
+
+Requête :
+
+```javascript
+{
+	"group_by": ["component"],
+	"parameters": {
+		"group_by": ["resource"],
+		"limit": 10
+	}
+}
+```
+
+Réponse :
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component_0"
+        },
+        "worst_mtbf": [
+            {
+                "tags": {
+                    "resource": "resource_0"
+                },
+                "value": 57.333333333333336
+            },
+            {
+                "tags": {
+                    "resource": "resource_1"
+                },
+                "value": 106
+            },
+            // ...
+        ]
+    },
+    {
+        "tags": {
+            "component": "component_1"
+        },
+        "worst_mtbf": [
+            {
+                "tags": {
+                    "resource": "resource_0"
+                },
+                "value": 57.333333333333336
+            },
+            {
+                "tags": {
+                    "resource": "resource_1"
+                },
+                "value": 57.333333333333336
+            },
+            // ...
+        ]
+    },
+    // ...
+]
+```
+
+### 10 alarmes les plus longues de chaque composant
+
+`/api/v2/stats/longest_alarms`
+
+Requête :
+
+```javascript
+{
+    "group_by": ["component"],
+    "parameters": {
+        "limit": 10
+    }
+}
+```
+
+Réponse :
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component_0"
+        }
+        "longest_alarms": [
+            {
+                "alarm_state": "3",
+                "connector": "...",
+                "connector_name": "...",
+                "entity_id": "resource_0/component_0",
+                "entity_type": "resource",
+                "pbehavior": "False",
+                "resource": "resource_0",
+                "time": 1531833020,
+                "value": 3754
+            },
+            {
+                "alarm_state": "3",
+                "connector": "...",
+                "connector_name": "...",
+                "entity_id": "resource_1/component_0",
+                "entity_type": "resource",
+                "pbehavior": "False",
+                "resource": "resource_1",
+                "time": 1531830121,
+                "value": 3562
+            },
+            //...
+        ]
+    },
+    // ...
+]
+```
+
 
 ### Calcul de plusieurs statistiques
 

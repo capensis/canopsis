@@ -66,6 +66,8 @@ class SelectQuery(object):
         self.measurement = measurement
         self.select_columns = []
         self.group_by_tags = []
+        self.group_by_time_interval = None
+        self.group_by_time_offset = None
         self.where_conditions = []
 
     def build(self):
@@ -92,12 +94,23 @@ class SelectQuery(object):
                     for condition in self.where_conditions))
 
         # Generate group by statement
+        group_by_tags = []
+        if self.group_by_time_interval:
+            if self.group_by_time_offset:
+                group_by_tags.append('time({}, {})'.format(
+                    self.group_by_time_interval,
+                    self.group_by_time_offset))
+            else:
+                group_by_tags.append('time({})'.format(
+                    self.group_by_time_interval))
+
+        for tag in self.group_by_tags:
+            group_by_tags.append(quote_ident(tag))
+
         group_by_statement = ''
-        if self.group_by_tags:
+        if group_by_tags:
             group_by_statement = 'GROUP BY {}'.format(
-                ', '.join(
-                    quote_ident(tag)
-                    for tag in self.group_by_tags))
+                ', '.join(group_by_tags))
 
         return (
             "SELECT {select_columns} "
@@ -128,6 +141,30 @@ class SelectQuery(object):
                 ).format(select_column.alias))
 
         self.select_columns.append(select_column)
+        return self
+
+    def select_all(self):
+        """
+        Select all the columns.
+        """
+        self.select_columns = ['*']
+        return self
+
+    def group_by_time(self, interval, offset=None):
+        """
+        Add a GROUP BY time(...) statement.
+
+        interval and offset should be influxdb duration literals, e.g. "50s" or
+        "10d". See the documentation for more details:
+        https://docs.influxdata.com/influxdb/v1.6/query_language/spec/#durations
+
+        :param str interval: An influxdb duration literal indicating the
+            duration of the interval
+        :param Optional[str] interval: An influxdb duration literal that shifts
+            influxdb's time boundaries
+        """
+        self.group_by_time_interval = interval
+        self.group_by_time_offset = offset
         return self
 
     def group_by(self, *tags):
