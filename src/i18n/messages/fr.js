@@ -241,6 +241,13 @@ export default {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
+    watcherData: {
+      criticity: 'Criticity',
+      organization: 'Organization',
+      nombreOk: 'Nombre Ok',
+      nombreKo: 'Nombre Ko',
+      state: 'State',
+    },
   },
   tables: {
     contextList: {

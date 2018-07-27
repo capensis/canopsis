@@ -26,10 +26,11 @@ import MoreInfos from './more-infos.vue';
 import Confirmation from './confirmation.vue';
 import CreateWatcher from './create-watcher.vue';
 import CreateEntity from './create-entity/create-entity.vue';
+import WatcherData from './watcher-data/watcher-data.vue';
 
 /**
- * Wrapper for all modal windows
- */
+   * Wrapper for all modal windows
+   */
 export default {
   components: {
     Modal,
@@ -46,6 +47,7 @@ export default {
     Confirmation,
     CreateEntity,
     CreateWatcher,
+    WatcherData,
   },
   data() {
     return {
@@ -63,6 +65,7 @@ export default {
         { name: MODALS.confirmation },
         { name: MODALS.createEntity },
         { name: MODALS.createWatcher },
+        { name: MODALS.watcherData },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

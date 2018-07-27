@@ -8,6 +8,7 @@ import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
 import Rrule from '@/components/forms/rrule.vue';
+import Weather from '@/views/weather.vue';
 
 Vue.use(Router);
 
@@ -49,6 +50,12 @@ if (process.env.NODE_ENV === 'development') {
       path: '/rrule',
       name: 'rrule',
       component: Rrule,
+    },
+    // only for testing open watcher modal. Can delete
+    {
+      path: '/weather',
+      name: 'weather',
+      component: Weather,
     },
   ]);
 }

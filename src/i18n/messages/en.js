@@ -241,6 +241,13 @@ export default {
       moreInfos: 'More infos',
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
+    watcherData: {
+      criticity: 'Criticity',
+      organization: 'Organization',
+      nombreOk: 'Nombre Ok',
+      nombreKo: 'Nombre Ko',
+      state: 'State',
+    },
   },
   tables: {
     contextList: {

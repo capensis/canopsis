@@ -23,6 +23,7 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
+  watcherData: 'watcher-data',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -48,6 +49,13 @@ export const ENTITIES_STATUSES = {
   stealthy: 2,
   flapping: 3,
   cancelled: 4,
+};
+
+export const WATCHER_STATES = {
+  ok: 0,
+  minor: 1,
+  major: 2,
+  critical: 3,
 };
 
 export const ENTITIES_STATES_STYLES = {
