@@ -1,4 +1,5 @@
 import alarmModule from './alarm';
+import eventModule from './event';
 import entityModule from './entity';
 import watcherModule from './watcher';
 import pbehaviorModule from './pbehavior';
@@ -7,6 +8,7 @@ import viewModule from './view';
 
 export default {
   alarm: alarmModule,
+  event: eventModule,
   entity: entityModule,
   watcher: watcherModule,
   pbehavior: pbehaviorModule,

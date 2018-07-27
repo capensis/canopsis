@@ -26,6 +26,7 @@ export const API_ROUTES = {
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
+  events: '/rest/events',
   pbehavior: '/api/v2/pbehavior',
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
