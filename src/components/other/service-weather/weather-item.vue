@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card.ma-2(:class="values[watcher.state].color")
+v-card.ma-2(:class="values[watcher.state].color", tile, raised)
   v-layout(justify-start, align-center)
     v-flex(xs2)
       component.ma-2(:is="values[watcher.state].icon")
