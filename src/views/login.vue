@@ -1,9 +1,9 @@
 <template lang="pug">
   v-container.blue.darken-4(
-    fill-height,
-    fluid,
-    d-flex,
-    align-center
+  fill-height,
+  fluid,
+  d-flex,
+  align-center
   )
     v-layout(justify-center, align-center, row)
       v-flex(xs11, md6, lg5)
@@ -15,39 +15,50 @@
             v-flex(xs12, py-2)
               v-form(@submit.prevent="submit")
                 v-flex(px-3)
+                  v-alert(:value="hasServerError", type="error")
+                    span {{ $t('login.errors.incorrectEmailOrPassword') }}
+                v-flex(px-3)
                   v-text-field(
-                    autofocus,
-                    clearable,
-                    color="blue darken-4",
-                    v-model="form.username",
-                    name="username",
-                    :label="$t('common.username')"
+                  :label="$t('common.username')"
+                  autofocus,
+                  clearable,
+                  color="blue darken-4",
+                  v-model="form.username",
+                  name="username",
+                  v-validate="'required'",
+                  data-vv-name="username",
+                  :error-messages="errors.collect('username')",
                   )
                 v-flex(px-3)
                   v-text-field(
-                    clearable,
-                    color="blue darken-4",
-                    v-model="form.password",
-                    type="password",
-                    name="password",
-                    :label="$t('common.password')"
+                  :label="$t('common.password')"
+                  clearable,
+                  color="blue darken-4",
+                  v-model="form.password",
+                  type="password",
+                  name="password",
+                  v-validate="'required'",
+                  data-vv-name="password",
+                  :error-messages="errors.collect('password')",
                   )
                 v-flex(xs2 px-2)
                   v-btn(
-                    type="submit",
-                    color="blue darken-4 white--text"
+                  type="submit",
+                  color="blue darken-4 white--text"
                   ) {{ $t('common.submit') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions } = createNamespacedHelpers('auth');
+import authMixin from '@/mixins/auth';
 
 export default {
-  name: 'login-page',
+  $_veeValidate: {
+    validator: 'new',
+  },
+  mixins: [authMixin],
   data() {
     return {
+      hasServerError: false,
       form: {
         username: '',
         password: '',
@@ -55,32 +66,27 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['login']),
-
     async submit() {
       try {
-        await this.login({
-          username: this.form.username,
-          password: this.form.password,
-        });
+        this.hasServerError = false;
 
-        if (this.$route.query.redirect) {
-          this.$router.push(this.$route.query.redirect);
-        } else {
-          this.$router.push({
-            name: 'home', // TODO: fix it
-          });
+        const formIsValid = await this.$validator.validateAll();
+
+        if (formIsValid) {
+          await this.login(this.form);
+
+          if (this.$route.query.redirect) {
+            this.$router.push(this.$route.query.redirect);
+          } else {
+            this.$router.push({
+              name: 'home',
+            });
+          }
         }
       } catch (err) {
-        console.error(err);
-
-        // TODO: check response
+        this.hasServerError = true;
       }
     },
   },
 };
 </script>
-
-<style scoped>
-</style>
-

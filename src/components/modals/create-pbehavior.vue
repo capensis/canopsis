@@ -40,8 +40,8 @@
           :items="selectItems.types"
           )
         v-layout(row)
-          v-alert(:value="this.serverError", type="error")
-            span {{ this.serverError }}
+          v-alert(:value="serverError", type="error")
+            span {{ serverError }}
       v-card-actions
         v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
 </template>

@@ -22,8 +22,8 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 
 export const API_ROUTES = {
   auth: '/auth',
+  logout: '/logout',
   currentUser: '/account/me',
-  login: '/login',
   alarmList: '/alerts/get-alarms',
   context: '/context',
   createEntity: '/put-entities',

@@ -19,20 +19,20 @@ import SideBar from '@/components/layout/side-bar.vue';
 import Modals from '@/components/modals/index.vue';
 import Popups from '@/components/popups/index.vue';
 
-const { mapState } = createNamespacedHelpers('app');
+const { mapActions } = createNamespacedHelpers('auth');
 
 export default {
-  name: 'App',
   components: {
     TopBar,
     SideBar,
     Modals,
     Popups,
   },
-  computed: {
-    ...mapState({
-      isSideBarOpen: state => state.app.isSideBarOpen,
-    }),
+  mounted() {
+    this.fetchCurrentUser();
+  },
+  methods: {
+    ...mapActions(['fetchCurrentUser']),
   },
 };
 </script>

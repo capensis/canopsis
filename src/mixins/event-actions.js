@@ -3,6 +3,8 @@ import moment from 'moment';
 
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import authMixin from './auth';
+
 const { mapActions: eventMapActions } = createNamespacedHelpers('event');
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
@@ -10,6 +12,7 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
  * @mixin
  */
 export default {
+  mixins: [authMixin],
   methods: {
     ...eventMapActions({
       createEventAction: 'create',
@@ -47,7 +50,7 @@ export default {
       }
 
       const preparedData = {
-        author: 'root',
+        author: this.currentUser.crecord_name,
         id: item.id,
         connector: item.v.connector,
         connector_name: item.v.connector_name,

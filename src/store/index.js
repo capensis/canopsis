@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 import appModule from './modules/app';
 import i18nModule from './modules/i18n';
-import AuthModule from './modules/auth';
+import authModule from './modules/auth';
 import modalModule from './modules/modal';
 import popupModule from './modules/popup';
 import eventModule from './modules/event';
@@ -15,12 +15,12 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
+    auth: authModule,
     app: appModule,
     i18n: i18nModule,
     modal: modalModule,
     popup: popupModule,
     event: eventModule,
-    auth: AuthModule,
 
     ...entitiesModules,
   },
