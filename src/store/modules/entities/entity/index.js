@@ -97,7 +97,9 @@ export default {
         });
       } catch (err) {
         console.error(err);
+
         commit(types.FETCH_LIST_FAILED, { widgetId });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
     async create({ dispatch }, { data }) {
@@ -105,6 +107,7 @@ export default {
         // Need this special syntax for request params for the backend to handle it
         await request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.createEntity') }, { root: true });
+        // dispatch('fetchList', { params: state.fetchingParams });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
