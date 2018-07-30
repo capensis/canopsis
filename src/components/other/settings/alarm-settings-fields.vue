@@ -15,7 +15,7 @@
       v-divider
       field-filters
       v-divider
-      field-info-popup
+      field-info-popup(:widget="widget")
       v-divider
       field-more-info
       v-divider
@@ -35,6 +35,9 @@ import FieldFilters from '@/components/other/settings/fields/filters.vue';
 import FieldInfoPopup from '@/components/other/settings/fields/info-popup.vue';
 import FieldMoreInfo from '@/components/other/settings/fields/more-info.vue';
 
+import entitiesWidgetMixin from '@/mixins/entities/widget';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+
 const storeSample = {
   default_sort_column: {
     direction: 'DESC',
@@ -48,8 +51,11 @@ const storeSample = {
 };
 
 /**
-* Component to regroup the alarms list settings fields
-*/
+ * Component to regroup the alarms list settings fields
+ *
+ * @prop {Object} widget - active widget
+ * @prop {bool} isNew - is widget new
+ */
 export default {
   components: {
     FieldTitle,
@@ -61,6 +67,20 @@ export default {
     FieldFilters,
     FieldInfoPopup,
     FieldMoreInfo,
+  },
+  mixins: {
+    entitiesWidgetMixin,
+    entitiesUserPreferenceMixin,
+  },
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

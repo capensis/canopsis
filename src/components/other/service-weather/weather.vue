@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container(fluid)
     v-layout(wrap)
-      v-flex(v-for="item in items", xs3)
+      v-flex(v-for="item in items", :key="item._id" xs3)
         weather-item(:watcher="item")
 </template>
 

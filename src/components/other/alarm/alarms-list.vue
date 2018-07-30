@@ -2,33 +2,33 @@
   v-container
     v-layout.white(wrap, justify-space-between, align-center)
       v-flex(xs12 md3)
-        alarm-list-search
+        alarm-list-search(:query.sync="query")
       v-flex(xs2)
-        pagination(:meta="meta", :limit="limit", type="top")
+        pagination(:meta="alarmsMeta", :query.sync="query", type="top")
       v-flex.ml-4(xs3)
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
       v-flex(xs3)
         v-chip(
-          v-if="$route.query.interval",
+          v-if="query.interval",
           @input="removeHistoryFilter",
           close,
           label,
           color="blue darken-4 white--text"
-        ) {{ $t(`modals.liveReporting.${$route.query.interval}`) }}
-        v-btn(@click="showModal({ name: 'edit-live-reporting' })", icon, small)
-          v-icon(:color="$route.query.interval ? 'blue' : 'black'") schedule
+        ) {{ $t(`modals.liveReporting.${query.interval}`) }}
+        v-btn(@click="showEditLiveReportModal", icon, small)
+          v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="$emit('openSettings')")
           v-icon settings
     transition(name="fade", mode="out-in")
-      loader.loader(v-if="pending")
+      loader.loader(v-if="alarmsPending")
       div(v-else)
           v-data-table(
             v-model="selected",
-            :items="items",
-            :headers="alarmProperties",
+            :items="alarms",
+            :headers="properties",
             item-key="_id",
-            :total-items="meta.total",
-            :pagination.sync="pagination",
+            :total-items="alarmsMeta.total",
+            :pagination.sync="vDataTablePagination"
             select-all,
             hide-actions,
           )
@@ -38,25 +38,24 @@
               td
                 v-checkbox(primary, hide-details, v-model="props.selected")
               td(
-                v-for="prop in alarmProperties",
+                v-for="prop in properties",
                 @click="props.expanded = !props.expanded"
               )
-                alarm-column-value(:alarm="props.item", :property="prop")
+                alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
               td
-                actions-panel(:item="props.item")
+                actions-panel(:item="props.item", :widget="widget")
             template(slot="expand", slot-scope="props")
               time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
           v-layout.white(align-center)
             v-flex(xs10)
-              pagination(:meta="meta", :limit="limit", :first="first", :last="last")
+              pagination(:meta="alarmsMeta", :query.sync="query")
             v-spacer
             v-flex(xs2)
-              records-per-page
+              records-per-page(:query.sync="query")
 </template>
 
 <script>
 import omit from 'lodash/omit';
-import { createNamespacedHelpers } from 'vuex';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -65,21 +64,19 @@ import Loader from '@/components/other/alarm/loader/alarm-list-loader.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import modalMixin from '@/mixins/modal/modal';
-import paginationMixin from '@/mixins/pagination';
-import alarmsMixin from '@/mixins/alarms';
-
-const { mapGetters: alarmMapGetters } = createNamespacedHelpers('alarm');
+import queryMixin from '@/mixins/query';
+import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
  * Alarm-list component
  *
  * @module alarm
  *
- * @prop {object} alarmProperties - Object that describe the columns names and the alarms attributes corresponding
+ * @prop {Object} widget - Object representing the widget
+ * @prop {Object} properties - Object that describe the columns names and the alarms attributes corresponding
  *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
- * @prop {integer} [itemsPerPage=5] - Number of Alarm to display per page
  *
  * @event openSettings#click
  */
@@ -92,11 +89,19 @@ export default {
     ActionsPanel,
     Loader,
     AlarmColumnValue,
-    FilterSelector,
   },
-  mixins: [alarmsMixin, paginationMixin, modalMixin],
+  mixins: [
+    queryMixin,
+    modalMixin,
+    entitiesAlarmMixin,
+    entitiesUserPreferenceMixin,
+  ],
   props: {
-    alarmProperties: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+    properties: {
       type: Array,
       default: () => ([]),
     },
@@ -107,19 +112,31 @@ export default {
     };
   },
   computed: {
-    ...alarmMapGetters([
-      'items',
-      'meta',
-      'pending',
-    ]),
     selectedIds() {
       return this.selected.map(item => item._id);
     },
   },
+  async mounted() {
+    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
+    await this.fetchList();
+  },
   methods: {
     removeHistoryFilter() {
-      const query = omit(this.$route.query, ['interval', 'tstart', 'tstop']);
-      this.$router.push({ query });
+      this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
+    },
+    fetchList() {
+      this.fetchAlarmsList({
+        params: this.getQuery(),
+        widgetId: this.widget.id,
+      });
+    },
+    showEditLiveReportModal() {
+      this.showModal({
+        name: 'edit-live-reporting',
+        config: {
+          updateQuery: params => this.query = { ...this.query, ...params },
+        },
+      });
     },
   },
 };

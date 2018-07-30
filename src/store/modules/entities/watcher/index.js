@@ -69,7 +69,6 @@ export default {
           params,
           dataPreparer: d => d,
         }, { root: true });
-        console.log(data);
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
