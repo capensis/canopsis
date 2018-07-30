@@ -37,6 +37,7 @@
 
 <script>
 import actionsPanelMixin from '@/mixins/actions-panel';
+import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
@@ -50,9 +51,13 @@ import ActionsPanelItem from './actions-panel-item.vue';
  */
 export default {
   components: { ActionsPanelItem },
-  mixins: [actionsPanelMixin],
+  mixins: [actionsPanelMixin, entitiesAlarmMixin],
   props: {
     item: {
+      type: Object,
+      required: true,
+    },
+    widget: {
       type: Object,
       required: true,
     },
@@ -108,6 +113,7 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: [this.item._id],
+        afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget.id }),
       };
     },
     actions() {

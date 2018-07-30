@@ -7,6 +7,7 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   view: 'view',
   widgetWrapper: 'widgetWrapper',
+  widget: 'widget',
 };
 
 export const MODALS = {
@@ -23,6 +24,7 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
+  createWidget: 'create-widget',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -106,6 +108,12 @@ export const ENTITY_STATUS_STYLES = {
     text: 'cancelled',
     icon: 'keyboard_arrow_up',
   },
+};
+
+export const WIDGET_TYPES = {
+  alarmList: 'listalarm',
+  context: 'crudcontext',
+  widgetWrapper: 'widgetwrapper',
 };
 
 export const EVENT_ENTITY_STYLE = {

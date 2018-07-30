@@ -2,7 +2,7 @@
   v-container
     v-layout.white(justify-space-between, align-center)
       v-flex(xs12, md4)
-        context-search
+        context-search(:query.sync="query")
       v-flex.ml-4(xs4)
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
@@ -10,15 +10,15 @@
         v-btn(icon, @click.prevent="$emit('openSettings')")
           v-icon settings
     transition(name="fade", mode="out-in")
-      loader(v-if="pending")
+      loader(v-if="contextEntitiesPending")
       div(v-else)
         v-data-table(
           v-model="selected",
           :items="contextEntities",
-          :headers="contextProperties",
+          :headers="properties",
           item-key="_id",
-          :total-items="meta.total",
-          :pagination.sync="pagination",
+          :total-items="contextEntitiesMeta.total",
+          :pagination.sync="vDataTablePagination",
           select-all,
           hide-actions,
         )
@@ -28,7 +28,7 @@
             td
               v-checkbox(primary, hide-details, v-model="props.selected")
             td(
-              v-for="prop in contextProperties",
+              v-for="prop in properties",
               @click="props.expanded = !props.expanded"
             )
               ellipsis(
@@ -44,44 +44,41 @@
             more-infos(:item="props")
         v-layout.white(align-center)
           v-flex(xs10)
-            pagination(:meta="meta", :limit="limit", :last="last", :first="first")
+            pagination(:meta="contextEntitiesMeta", :query.sync="query")
           v-flex(xs2)
-            records-per-page
-        create-entity.fab
+            records-per-page(:query.sync="query")
 </template>
 
 <script>
+import find from 'lodash/find';
 import omit from 'lodash/omit';
-import { createNamespacedHelpers } from 'vuex';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-import paginationMixin from '@/mixins/pagination';
+import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
-import contextEntityMixin from '@/mixins/context/list';
-import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
-
-const { mapGetters } = createNamespacedHelpers('entity');
 
 /**
  * Entities list
  *
  * @module context
  *
- * @prop {Array} [contextProperties] - List of entities properties
+ * @prop {Object} widget - Object representing the widget
+ * @prop {Array} properties - List of entities properties
  *
  * @event openSettings#click
  */
 export default {
   components: {
-    AddInfoObject,
     ContextSearch,
     RecordsPerPage,
     CreateEntity,
@@ -90,12 +87,17 @@ export default {
     Ellipsis,
   },
   mixins: [
-    paginationMixin,
-    contextEntityMixin,
+    queryMixin,
     modalMixin,
+    entitiesContextEntityMixin,
+    entitiesUserPreferenceMixin,
   ],
   props: {
-    contextProperties: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+    properties: {
       type: Array,
       default() {
         return [];
@@ -107,20 +109,37 @@ export default {
       selected: [],
     };
   },
-  computed: {
-    ...mapGetters(['items', 'meta', 'pending']),
+  watch: {
+    userPreference() {
+      this.fetchList(); // TODO: check requests count
+    },
+  },
+  async mounted() {
+    this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
   },
   methods: {
     getQuery() {
-      const query = omit(this.$route.query, ['page', 'sort_dir', 'sort_key']);
-      query.limit = this.limit;
-      query.start = ((this.$route.query.page - 1) * this.limit) || 0;
+      const query = omit(this.query, ['page', 'sort_dir', 'sort_key']);
 
-      if (this.$route.query.sort_key) {
+      query.limit = this.query.limit;
+      query.start = ((this.query.page - 1) * this.query.limit) || 0;
+
+      if (this.query.sort_key) {
         query.sort = [{
-          property: this.$route.query.sort_key,
-          direction: this.$route.query.sort_dir ? this.$route.query.sort_dir : 'ASC',
+          property: this.query.sort_key,
+          direction: this.query.sort_dir ? this.query.sort_dir : 'ASC',
         }];
+      }
+
+      // TODO: fix it
+      if (this.userPreference) {
+        const filter = find(this.userPreference.widget_preferences.user_filters, { title: 'default_type_filter' });
+
+        if (filter) {
+          query._filter = filter.filter;
+        } else {
+          delete query._filter;
+        }
       }
 
       return query;
@@ -146,13 +165,14 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => Promise.all(this.selected.map(item => this.remove({ id: item._id }))),
+          action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
         },
       });
     },
     fetchList() {
-      this.fetchContextEntities({
+      this.fetchContextEntitiesList({
         params: this.getQuery(),
+        widgetId: this.widget.id,
       });
     },
   },

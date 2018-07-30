@@ -16,7 +16,7 @@ export default {
     }),
 
     ...alarmMapActions({
-      fetchAlarmListWithPreviousParams: 'fetchListWithPreviousParams',
+      fetchAlarmsListWithPreviousParams: 'fetchListWithPreviousParams',
     }),
 
     /**
@@ -30,7 +30,15 @@ export default {
     async createEvent(type, item, data) {
       await this.createEventAction({ data: this.prepareData(type, item, data) });
 
-      return this.fetchAlarmListWithPreviousParams(); // TODO: check items type for correct request
+      if (this.config && this.config.afterSubmit) {
+        return this.config.afterSubmit();
+      }
+
+      if (this.widget) {
+        return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget.id });
+      }
+
+      return undefined;
     },
 
     /**

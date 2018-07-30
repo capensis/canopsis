@@ -5,7 +5,7 @@
         v-container
           v-layout(class="text-md-center")
             v-flex
-              v-btn(color="error", @click="deleteItem(index)") Delete
+              v-btn(color="error", @click="remove(index)") Delete
           v-layout
             v-flex(:justify-center="true")
               v-text-field(placeholder="Column", v-model="popup.column")
@@ -18,34 +18,30 @@
 </template>
 
 <script>
-import alarmInfoPopupMixin from '@/mixins/widget';
+import entitiesWidgetMixin from '@/mixins/entities/widget';
 
 /**
  * Component to add/remove info popup on a column of the alarms list
+ *
+ * @prop {Object} widget - Object representing the widget
  */
 export default {
   mixins: [
-    alarmInfoPopupMixin,
+    entitiesWidgetMixin,
   ],
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
-      popups: [],
+      popups: [...this.widget.popup],
     };
   },
-  computed: {
-    widget() {
-      return this.getWidget({ widgetXType: 'listalarm' });
-    },
-  },
-  watch: {
-    widget() {
-      if (this.widget) {
-        this.popups = this.widget.widget.popup;
-      }
-    },
-  },
   methods: {
-    deleteItem(index) {
+    remove(index) {
       this.popups.splice(index, 1);
     },
     add() {
@@ -54,8 +50,8 @@ export default {
         template: '',
       });
     },
-    async save() {
-      await this.saveWidget({ widgetWrapper: this.widget });
+    save() {
+      this.updateWidget({ widget: { ...this.widget, popup: this.popups } });
     },
   },
 };
