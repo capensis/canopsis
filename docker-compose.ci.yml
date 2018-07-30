@@ -126,18 +126,6 @@ services:
     restart: unless-stopped
     mem_limit: 2g
     mem_reservation: 2g
-  linklist:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=linklist
-      - ENGINE_MODULE=canopsis.engines.linklist
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   alerts:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:

@@ -95,7 +95,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-backend-ui-conn
 
 ### Lint
 
-Tested on commit : 606530e.
+Tested on commit : 5f65581.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -108,8 +108,8 @@ Tested on commit : 606530e.
 
 | File   | Note   |
 |--------|--------|
-| src/adapters/cservice.js |: do not use userPreferencesModelName |
 | src/serializers/ctx.js |: autodetect xtype |
+| src/adapters/cservice.js |: do not use userPreferencesModelName |
 
 
 ### FIXMES
@@ -119,4 +119,4 @@ Tested on commit : 606530e.
 ## Additional-info
 
 Minified version : 4 files (size: 52K)
-Development version : 36 files (size: 168K)
+Development version : 34 files (size: 160K)

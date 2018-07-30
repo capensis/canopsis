@@ -758,24 +758,6 @@
     {{input type="text" value=content.url class="form-control" placeholder=url_placeholder}}
 </div>
 </script>
-<script type="text/x-handlebars" data-template-name="components/component-linklist">{{#if links.length}}
-    {{#component-tooltip content="External links"}}
-        <div class="btn-group">
-            <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <i class="fa fa-info"></i>
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu" style="right:0; left:auto">
-                {{#each linkInformation in links}}
-                    <li>
-                        <a target="_blank" {{bind-attr href=linkInformation.url}}>{{tr linkInformation.label}}</a>
-                    </li>
-                {{/each}}
-            </ul>
-        </div>
-    {{/component-tooltip}}
-{{/if}}
-</script>
 <script type="text/x-handlebars" data-template-name="components/component-mixinselector">{{#if loadingInitialContent}}
     <i class="fa fa-refresh fa-spin"></i>
 {{else}}
@@ -2044,10 +2026,7 @@ Page {{input type="number" value=currentPage}} / {{totalPages}}
 {{/if}}
 
 </script>
-<script type="text/x-handlebars" data-template-name="actionbutton-info">{{#if controller.rights.actionbutton_info.checksum}}
-    {{component-linklist record=this linkInfoPattern=controller.controllers.application.frontendConfig.list_info_button_pattern}}
-{{/if}}
-</script>
+<script type="text/x-handlebars" data-template-name="actionbutton-info"></script>
 <script type="text/x-handlebars" data-template-name="actionbutton-remove">{{#if controller.userCanDeleteRecord}}
     <button class="btn btn-default btn-xs" {{action 'remove' this}} >
         <span class="glyphicon glyphicon-trash"></span>

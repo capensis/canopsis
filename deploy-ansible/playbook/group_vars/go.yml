@@ -29,9 +29,6 @@ canopsis_engines:
     state: stopped
     enabled: no
   -
-    module: linklist
-    name: linklist
-  -
     module: dynamic
     name: pbehavior
   -
@@ -49,9 +46,6 @@ canopsis_engines:
   -
     module: task_importctx
     name: task_importctx
-  -
-    module: task_linklist
-    name: task_linklist
   -
     module: task_mail
     name: task_mail
