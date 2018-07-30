@@ -815,9 +815,9 @@ entity that created the alarm (`entity_id`, `entity_type`,
 `resource` and `alarm_state`), as well as the following fields:
 
  - `time`: the date of creation of the alarm
- - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
-   created, `"False"` otherwise.
- - `value`: the time it took for the alarm to be resolved.
+ - `pbehavior`: `true` if there was an active pbehavior when the alarm was
+   created, `false` otherwise.
+ - `resolve_time`: the time it took for the alarm to be resolved.
 
 Only the resolved alarms are taken into account.
 
@@ -1050,9 +1050,9 @@ created the alarm (`entity_id`, `entity_type`, `entity_infos.<information_id>`,
 well as the following fields:
 
  - `time`: the date of creation of the alarm
- - `pbehavior`: `"True"` if there was an active pbehavior when the alarm was
-   created, `"False"` otherwise.
- - `value`: the time it took for the alarm to be resolved.
+ - `pbehavior`: `true` if there was an active pbehavior when the alarm was
+   created, `false` otherwise.
+ - `resolve_time`: the time it took for the alarm to be resolved.
 
 #### Example
 
