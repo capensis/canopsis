@@ -1,7 +1,7 @@
 <template lang="pug">
   svg(
-    style="width:48px;height:48px",
-    viewBox="0 0 24 24"
+    style="width:44px;height:44px",
+    viewBox="0 0 23 23"
   )
     path(
       fill="#fff",

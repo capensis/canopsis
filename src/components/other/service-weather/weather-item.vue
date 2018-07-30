@@ -1,8 +1,10 @@
 <template lang="pug">
 v-card.ma-2.white--text(:class="color", tile, raised)
+  div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
+    v-icon.pauseIcon pause
   v-layout(justify-start, align-center)
     v-flex(xs2)
-      component.ma-2(:is="values[watcher.state.val].icon")
+      component.ma-2(:is="icon")
     v-flex(xs10)
       p.watcherName {{ watcher.display_name }}
   v-layout
@@ -18,6 +20,7 @@ import sun from './icons/sun.vue';
 import cloudySun from './icons/cloudy-sun.vue';
 import cloud from './icons/cloud.vue';
 import rainingCloud from './icons/raining-cloud.vue';
+import pause from './icons/pause.vue';
 
 export default {
   components: {
@@ -56,19 +59,45 @@ export default {
   },
   computed: {
     color() {
-      return this.watcher.active_pb_watcher || this.watcher.active_pb_watcher ? 'grey lighten-1' : this.values[this.watcher.state.val].color;
+      return this.watcher.active_pb_watcher || this.watcher.active_pb_all ? 'grey lighten-1' : this.values[this.watcher.state.val].color;
+    },
+    icon() {
+      return this.watcher.active_pb_watcher || this.watcher.active_pb_all ? pause : this.values[this.watcher.state.val].icon;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+  .iconContainer {
+    font-size: 48px;
+  }
+  .pauseContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 25%;
+    clip-path: polygon(100% 0 , 0 100%, 100% 100%);
+    background-color: white;
+    z-index: 1;
+    position: absolute;
+    right: 0;
+  }
+  .pauseIcon {
+    z-index: 4;
+    position: relative;
+    top: 1em;
+    left: 20%;
+    color: black;
+  }
   .watcherName {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .moreInfos {
+    z-index: 2;
     background-color: rgba(0,0,0,0.2);
   }
 </style>
