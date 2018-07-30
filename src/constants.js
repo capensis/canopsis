@@ -149,3 +149,8 @@ export const UNKNOWN_VALUE_STYLE = {
   text: 'Invalid val',
   icon: 'clear',
 };
+
+export const ALARM_FILTER_STATES = {
+  opened: 'opened',
+  resolved: 'resolved',
+};

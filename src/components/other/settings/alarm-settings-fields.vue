@@ -3,15 +3,15 @@
     v-list.pt-0(expand)
       field-title(v-model="settings.title")
       v-divider
-      field-default-column-sort(v-model="settings.default_sort_column")
+      field-default-column-sort(v-model="settings.defaultSortColumn")
       v-divider
-      field-columns
+      field-columns(v-model="settings.widgetColumns")
       v-divider
       field-periodic-refresh
       v-divider
       field-default-elements-per-page
       v-divider
-      field-opened-resolved-filter
+      field-opened-resolved-filter(v-model="settings.alarmStateFilter")
       v-divider
       field-filters
       v-divider
@@ -38,17 +38,7 @@ import FieldMoreInfo from '@/components/other/settings/fields/more-info.vue';
 import entitiesWidgetMixin from '@/mixins/entities/widget';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
-const storeSample = {
-  default_sort_column: {
-    direction: 'DESC',
-    property: 'creation_date',
-  },
-  title: null,
-  selected_types: [
-    'connector',
-    'watcher',
-  ],
-};
+import { ALARM_FILTER_STATES } from '@/constants';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -57,6 +47,9 @@ const storeSample = {
  * @prop {bool} isNew - is widget new
  */
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     FieldTitle,
     FieldDefaultColumnSort,
@@ -84,12 +77,19 @@ export default {
   },
   data() {
     return {
-      settings: cloneDeep(storeSample),
+      settings: {
+        title: this.widget.title,
+        defaultSortColumn: cloneDeep(this.widget.default_sort_column),
+        widgetColumns: cloneDeep(this.widget.widget_columns),
+        alarmStateFilter: this.widget.alarms_state_filter ?
+          this.widget.alarms_state_filter.state : ALARM_FILTER_STATES.opened,
+      },
     };
   },
   methods: {
-    submit() {
-      console.warn(this.settings);
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+      console.warn(isFormValid, this.settings);
     },
   },
 };
