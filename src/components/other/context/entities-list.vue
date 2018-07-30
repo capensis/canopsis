@@ -63,7 +63,7 @@ import paginationMixin from '@/mixins/pagination';
 import modalMixin from '@/mixins/modal/modal';
 import contextEntityMixin from '@/mixins/context/list';
 import AddInfoObject from '@/components/other/context/actions/manage-info-object.vue';
-import { MODALS } from '@/constants';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -126,7 +126,7 @@ export default {
       return query;
     },
     editEntity(item) {
-      if (item.type === 'watcher') {
+      if (item.type === ENTITIES_TYPES.watcher) {
         this.showModal({
           name: MODALS.createWatcher,
           config: {

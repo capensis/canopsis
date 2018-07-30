@@ -1,6 +1,7 @@
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+import { entitySchema } from '@/store/schemas';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -47,9 +48,16 @@ export default {
       }
     },
 
-    async edit({ dispatch }, { data }) {
+    async edit({ dispatch }, { data, params }) {
       try {
         await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
+        dispatch('entities/fetch', {
+          route: API_ROUTES.context,
+          schema: [entitySchema],
+          params,
+          dataPreparer: d => d.data,
+          isPost: true,
+        }, { root: true });
       } catch (err) {
         console.warn(err);
       }

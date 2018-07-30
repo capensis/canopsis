@@ -24,8 +24,8 @@ import PbehaviorList from './pbehavior-list.vue';
 import EditLiveReporting from './edit-live-reporting.vue';
 import MoreInfos from './more-infos.vue';
 import Confirmation from './confirmation.vue';
-import CreateWatcher from './create-watcher.vue';
-import CreateEntity from './create-entity/create-entity.vue';
+import CreateWatcher from './context/create-watcher.vue';
+import CreateEntity from './context/create-entity.vue';
 
 /**
  * Wrapper for all modal windows
