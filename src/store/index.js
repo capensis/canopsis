@@ -13,6 +13,16 @@ import entitiesPlugin from './plugins/entities';
 
 Vue.use(Vuex);
 
+/**
+ * @typedef {Object} ActionContext
+ * @property {function} commit
+ * @property {function} dispatch
+ * @property {Object} getters
+ * @property {Object} rootGetters
+ * @property {Object} state
+ * @property {Object} rootState
+ */
+
 export default new Vuex.Store({
   modules: {
     auth: authModule,

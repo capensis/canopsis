@@ -9,6 +9,7 @@ import Home from '@/views/home.vue';
 import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
+import View from '@/views/view.vue';
 import Rrule from '@/components/forms/rrule.vue';
 
 Vue.use(Router);
@@ -37,6 +38,12 @@ const routes = [
     name: 'context',
     component: Context,
     meta: requiresLoginMeta,
+  },
+  {
+    path: '/view/:id',
+    name: 'view',
+    component: View,
+    props: route => ({ id: route.params.id }),
   },
 ];
 if (process.env.NODE_ENV === 'development') {

@@ -35,7 +35,7 @@
 <script>
 import moment from 'moment';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
-import modalMixin from '@/mixins/modal/modal';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
 /**
@@ -49,7 +49,7 @@ export default {
   components: {
     DateTimePicker,
   },
-  mixins: [modalMixin],
+  mixins: [modalInnerMixin],
   data() {
     return {
       selectedInterval: '',
@@ -103,24 +103,17 @@ export default {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid) {
+      if (isFormValid && this.config.updateQuery) {
+        const params = {
+          interval: this.selectedInterval.value,
+        };
+
         if (this.isCustomRangeEnabled) {
-          this.$router.push({
-            query: {
-              ...this.$route.query,
-              interval: this.selectedInterval.value,
-              tstart: this.tstart.getTime() / 1000,
-              tstop: this.tstop.getTime() / 1000,
-            },
-          });
-        } else {
-          this.$router.push({
-            query: {
-              ...this.$route.query,
-              interval: this.selectedInterval.value,
-            },
-          });
+          params.tstart = this.tstart.getTime() / 1000;
+          params.tstop = this.tstop.getTime() / 1000;
         }
+
+        this.config.updateQuery(params);
         this.hideModal();
       }
     },
