@@ -25,23 +25,6 @@
           "t": 1483311600
         },
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://841f03b7d88544f79f76a92c57d6a9d3",
-              "label": "iir"
-            },
-            {
-              "url": "http://d2f208f7551b470894279ba85489b19b",
-              "label": "vli"
-            },
-            {
-              "url": "https://cf402fcebbfd4a24856ec67940ea0b01",
-              "label": "cjb"
-            }
-          ],
-          "computed_links": []
-        },
         "component": "ibg",
         "connector": "qta",
         "snooze": null,
@@ -87,32 +70,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "https://309a535861aa4256916e867df531556a",
-              "label": "spx"
-            },
-            {
-              "url": "http://f8333ebfd9f147148f9b976045de7b9a",
-              "label": "foa"
-            },
-            {
-              "url": "http://532a4f56de9a4ff89b85f7f6886fa45a",
-              "label": "idb"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "http://cf6d727237ae4a4fbe798aeb9589cad9",
-              "label": "zpk"
-            },
-            {
-              "url": "https://aa5a5f9c40164f668cec603be8fbeee6",
-              "label": "lqz"
-            }
-          ]
-        },
         "component": "yqo",
         "connector": "fqd",
         "snooze": {
@@ -178,22 +135,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://2d7deed9916e451d8d0d86fa1f515447",
-              "label": "rvs"
-            },
-            {
-              "url": "https://6248cc93eaac409c821f2bb1cea6afbe",
-              "label": "wsj"
-            },
-            {
-              "url": "http://69e64d637ded41c9a4c5fc8fd2fb1b42",
-              "label": "oyg"
-            }
-          ]
-        },
         "component": "ust",
         "connector": "qta",
         "snooze": null,
@@ -240,26 +181,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://2eec7e0e3ed24dc4b8df6b228763fadf",
-              "label": "jtu"
-            },
-            {
-              "url": "http://2af1b4848fe94315b43efdb8f1986dd1",
-              "label": "zve"
-            },
-            {
-              "url": "http://7abcba70aa2c4ba8ab9a1703b6475c8b",
-              "label": "skm"
-            },
-            {
-              "url": "http://8743a95794e04c5a8e087c14e303b529",
-              "label": "hrh"
-            }
-          ]
-        },
         "component": "tgn",
         "connector": "qta",
         "snooze": null,
@@ -310,18 +231,6 @@
           "t": 1483225200
         },
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://bbe326637be945f69a4e5cf985312650",
-              "label": "xyp"
-            },
-            {
-              "url": "https://95031718ed99433cb50d95ef1caf0ae4",
-              "label": "zxc"
-            }
-          ]
-        },
         "component": "rsd",
         "connector": "fqd",
         "snooze": {
@@ -368,18 +277,6 @@
         },
         "ack": null,
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://9785e6b88c8340c7b0ba6c3e0887232e",
-              "label": "ldr"
-            },
-            {
-              "url": "http://5759ec80568444208fc0647c642e8b87",
-              "label": "ggj"
-            }
-          ]
-        },
         "component": "gzo",
         "connector": "qta",
         "snooze": null,
@@ -436,9 +333,6 @@
           "t": 1483225200
         },
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": []
-        },
         "component": "ynp",
         "connector": "tpt",
         "snooze": {
@@ -490,9 +384,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": []
-        },
         "component": "wbj",
         "connector": "tpt",
         "snooze": {
@@ -545,26 +436,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://7f32af2d6f07414ba38f25ac552db0f9",
-              "label": "zik"
-            },
-            {
-              "url": "http://677ad391d41a448280e546dbebf356bd",
-              "label": "bky"
-            },
-            {
-              "url": "http://2a027bdd1f4e4780ba210e43859eda53",
-              "label": "fzw"
-            },
-            {
-              "url": "https://f02362316c3c4678b5edf5536e18811b",
-              "label": "fwf"
-            }
-          ]
-        },
         "component": "jlh",
         "connector": "qta",
         "snooze": {
@@ -611,9 +482,6 @@
         },
         "ack": null,
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "bsw",
         "connector": "tpt",
         "snooze": {
@@ -685,9 +553,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "bmx",
         "connector": "fqd",
         "snooze": {
@@ -739,9 +604,6 @@
           "t": 1483225200
         },
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": []
-        },
         "component": "rxc",
         "connector": "fqd",
         "snooze": null,
@@ -801,23 +663,6 @@
             "rrule": "FREQ=YEARLY"
           }
         ],
-        "linklist": {
-          "event_links": [
-            {
-              "url": "https://cc3171634c154be0a22170e46fcbee89",
-              "label": "hkc"
-            },
-            {
-              "url": "http://483d7e68f7d14ff19bfc440c2e0f9437",
-              "label": "dhu"
-            },
-            {
-              "url": "http://fb616fb26de6423fa1fed9cb44bf337c",
-              "label": "jqq"
-            }
-          ],
-          "computed_links": []
-        },
         "component": "cqv",
         "connector": "tpt",
         "snooze": {
@@ -864,23 +709,6 @@
         },
         "ack": null,
         "pbehaviors": [],
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://5fede46987674fa4a5d25788995e519e",
-              "label": "vni"
-            },
-            {
-              "url": "https://1b353a79f55445e997da267c43e86fc6",
-              "label": "sdm"
-            },
-            {
-              "url": "https://d81cda77f3f844dcb3ef80ee6ee9e1bd",
-              "label": "sax"
-            }
-          ],
-          "computed_links": []
-        },
         "component": "ege",
         "connector": "tpt",
         "snooze": {
@@ -948,9 +776,6 @@
             "rrule": "FREQ=DAILY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "uhx",
         "connector": "tpt",
         "snooze": null,
@@ -1007,9 +832,6 @@
           "t": 1483311600
         },
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": []
-        },
         "component": "kxf",
         "connector": "fqd",
         "snooze": {
@@ -1072,22 +894,6 @@
           "t": 1483311600
         },
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://a4c9e1f5cc6248f6a70cc59b007fe941",
-              "label": "ols"
-            },
-            {
-              "url": "https://fc6effb7abd64972b4aebd07d322f716",
-              "label": "fev"
-            },
-            {
-              "url": "https://9d11f4f29db64b64a1d73a6870c925d8",
-              "label": "kil"
-            }
-          ]
-        },
         "component": "glc",
         "connector": "fqd",
         "snooze": {
@@ -1134,23 +940,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://5e1d22d9fadb4e0bb9a0d80b66e149c1",
-              "label": "wce"
-            },
-            {
-              "url": "http://eb6cc239999a463182b0804bcd9d6359",
-              "label": "haa"
-            },
-            {
-              "url": "https://e28bdc639f2d4629929ff19210285388",
-              "label": "hka"
-            }
-          ],
-          "computed_links": []
-        },
         "component": "btg",
         "connector": "tpt",
         "snooze": {
@@ -1203,18 +992,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://c4b21c70ac504297853f334f66d5f87d",
-              "label": "sey"
-            },
-            {
-              "url": "https://56235dcabf20498daccf768a35891cfc",
-              "label": "biz"
-            }
-          ]
-        },
         "component": "wwb",
         "connector": "tpt",
         "snooze": {
@@ -1261,23 +1038,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://f0ee55291eae4c83be05dd1fdea2864f",
-              "label": "stt"
-            },
-            {
-              "url": "https://de6a5d1381604c4485b87b2af481e106",
-              "label": "otc"
-            },
-            {
-              "url": "https://98bf3c795f8d461582274ad5d8de97c5",
-              "label": "bsd"
-            }
-          ],
-          "computed_links": []
-        },
         "component": "xpv",
         "connector": "qta",
         "snooze": null,
@@ -1329,22 +1089,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://946ab9482ebf4c628359c92544294204",
-              "label": "wkz"
-            },
-            {
-              "url": "http://8591d4aaf37a4c9ca3f57b784d6dc4dd",
-              "label": "mng"
-            },
-            {
-              "url": "https://8da17d1f32944a01be0420e47ea0dfcf",
-              "label": "gvf"
-            }
-          ]
-        },
         "component": "usx",
         "connector": "fqd",
         "snooze": null,
@@ -1398,9 +1142,6 @@
             "rrule": "FREQ=DAILY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "yar",
         "connector": "tpt",
         "snooze": null,
@@ -1454,9 +1195,6 @@
             "rrule": "FREQ=YEARLY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "hah",
         "connector": "qta",
         "snooze": null,
@@ -1517,26 +1255,6 @@
             "rrule": "FREQ=YEARLY"
           }
         ],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://f74798d06b82433e9f204f9ce9fbd138",
-              "label": "wwu"
-            },
-            {
-              "url": "http://43d6ca4628374e449992d1a19e9ed4d0",
-              "label": "fic"
-            },
-            {
-              "url": "http://c19c379754b04e4b83c4cfa4a1d8b96f",
-              "label": "ble"
-            },
-            {
-              "url": "http://6ad4b0c8b952477794b6d11ac6b40746",
-              "label": "ntx"
-            }
-          ]
-        },
         "component": "upl",
         "connector": "fqd",
         "snooze": null,
@@ -1590,22 +1308,6 @@
             "rrule": "FREQ=YEARLY"
           }
         ],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://e9270a71d4f149d0b5ebee170f416c5d",
-              "label": "avo"
-            },
-            {
-              "url": "https://07cecbdae39346d992cbbbbe287f49b3",
-              "label": "lbv"
-            },
-            {
-              "url": "https://b89e71bfbb624d2f84b033c9dcbc50f2",
-              "label": "uxf"
-            }
-          ]
-        },
         "component": "xss",
         "connector": "tpt",
         "snooze": {
@@ -1663,36 +1365,6 @@
         },
         "ack": null,
         "pbehaviors": [],
-        "linklist": {
-          "event_links": [
-            {
-              "url": "https://9cdda38ead794fbcbef3ae6625ef8602",
-              "label": "yar"
-            },
-            {
-              "url": "https://35d845bb541c4aee8c4014b1422e5d27",
-              "label": "gdx"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "https://b77dcf2c2f744da79b708f78278b7281",
-              "label": "aqq"
-            },
-            {
-              "url": "http://616835754cfb4511a0e8b34a2bcd7b84",
-              "label": "mni"
-            },
-            {
-              "url": "http://85d925ede95d483387f98e039e3661df",
-              "label": "ykh"
-            },
-            {
-              "url": "https://f80dab6cdc8e454cbe77e55c49e3a053",
-              "label": "szx"
-            }
-          ]
-        },
         "component": "zyq",
         "connector": "tpt",
         "snooze": null,
@@ -1749,9 +1421,6 @@
           "t": 1483311600
         },
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": []
-        },
         "component": "clz",
         "connector": "tpt",
         "snooze": {
@@ -1829,36 +1498,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "event_links": [
-            {
-              "url": "https://6780d2d870df43a0b69012b48e024a90",
-              "label": "xni"
-            },
-            {
-              "url": "http://a15c8abcab884c66b512bbfde1b8fadd",
-              "label": "qko"
-            },
-            {
-              "url": "http://b074bafd76f44ce5bfff55121a4a8753",
-              "label": "axb"
-            },
-            {
-              "url": "https://1e77d153b62b4a4aa546ff578d8263b4",
-              "label": "mrq"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "http://d07d2a022a3a4fe7973e022055af2040",
-              "label": "mgw"
-            },
-            {
-              "url": "http://18f3b984b80247f4b34a386ee6e8b685",
-              "label": "jln"
-            }
-          ]
-        },
         "component": "boc",
         "connector": "fqd",
         "snooze": null,
@@ -1904,22 +1543,6 @@
           "t": 1483398000
         },
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://b6af29f194184f24b06cd31456c617a7",
-              "label": "loa"
-            },
-            {
-              "url": "https://c464b8171f5f40cf8e7e965c701faf06",
-              "label": "hcq"
-            },
-            {
-              "url": "http://5766b470b73b42fa8b7e0d887f65131b",
-              "label": "tnu"
-            }
-          ]
-        },
         "component": "rkl",
         "connector": "tpt",
         "snooze": {
@@ -1972,32 +1595,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://e2d271971b9d4e4ab0f701e3a6f9af34",
-              "label": "qub"
-            },
-            {
-              "url": "https://0337976d61664f079e22c2024bcc5dd0",
-              "label": "qmh"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "http://67b7548813a34bce867ad576080637a6",
-              "label": "boc"
-            },
-            {
-              "url": "http://22816cb53a394722902a25c35e74a5dd",
-              "label": "ekl"
-            },
-            {
-              "url": "https://b439c2efc3994739af55a74a71ada526",
-              "label": "hak"
-            }
-          ]
-        },
         "component": "yml",
         "connector": "tpt",
         "snooze": {
@@ -2063,22 +1660,6 @@
             "rrule": "FREQ=YEARLY"
           }
         ],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://a3c9bb5174b14464b918e576bcfa25e4",
-              "label": "hpn"
-            },
-            {
-              "url": "http://7f59ea1f2ec04b599671b0e6411cfe80",
-              "label": "jcg"
-            },
-            {
-              "url": "http://4479648e512f40438fdfcb08e3e96963",
-              "label": "zph"
-            }
-          ]
-        },
         "component": "xzq",
         "connector": "fqd",
         "snooze": null,
@@ -2124,18 +1705,6 @@
           "t": 1483311600
         },
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://3dafe09f25114dd0bcb6a60966e8d45a",
-              "label": "dzo"
-            },
-            {
-              "url": "http://3a50561a9e504e409ebe7f228b21ab7a",
-              "label": "iwq"
-            }
-          ]
-        },
         "component": "lmx",
         "connector": "qta",
         "snooze": null,
@@ -2182,18 +1751,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://8c40232fd859494f97f56be05c4201c2",
-              "label": "eyx"
-            },
-            {
-              "url": "https://c59d9fd79532449b9464dc8eef9d9c32",
-              "label": "zty"
-            }
-          ]
-        },
         "component": "gth",
         "connector": "fqd",
         "snooze": {
@@ -2246,40 +1803,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://7f658bf172284bac80f75aafc329e738",
-              "label": "jvm"
-            },
-            {
-              "url": "http://bcb02bc3937f4b24b34be9f50ff02259",
-              "label": "spy"
-            },
-            {
-              "url": "https://3d3251cff1154c2e8e74fd717dbb2456",
-              "label": "bhj"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "http://b64eec6cb0764bccbeed62024c85af8e",
-              "label": "wzg"
-            },
-            {
-              "url": "http://4c23969eee374ec5af33d85647ca4f33",
-              "label": "zfz"
-            },
-            {
-              "url": "http://882d0b851bd0471eaa9a942f8bb31037",
-              "label": "mmd"
-            },
-            {
-              "url": "http://7503b9448a5348be867b806a8b01defb",
-              "label": "qql"
-            }
-          ]
-        },
         "component": "wfe",
         "connector": "fqd",
         "snooze": {
@@ -2331,32 +1854,6 @@
           "t": 1483311600
         },
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "https://1bb68a8a957c4fa2a3d10b45aae0328b",
-              "label": "roc"
-            },
-            {
-              "url": "http://c7d98ff936cb44bb988c35e8c24fb548",
-              "label": "xgu"
-            },
-            {
-              "url": "http://11e3ed9f187b496a86f4194d75f5c862",
-              "label": "fro"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "https://5b565e751ba54c3ca48b6953a7f0c2c4",
-              "label": "khs"
-            },
-            {
-              "url": "http://6990ae775c1d41d8a73a459ed1f6473c",
-              "label": "zza"
-            }
-          ]
-        },
         "component": "ydr",
         "connector": "qta",
         "snooze": null,
@@ -2421,36 +1918,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "event_links": [
-            {
-              "url": "https://bcd4b8228c6b4735811b9ef0fd6eb082",
-              "label": "sga"
-            },
-            {
-              "url": "http://6ce63ddd17f946ef9d7b57115f2c325d",
-              "label": "hxf"
-            },
-            {
-              "url": "https://920f6c1427554faca9c2208634688282",
-              "label": "rbq"
-            },
-            {
-              "url": "http://945206f196514a359d7189662fdaa282",
-              "label": "jlq"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "https://08bacfc2d71a44e7878e91b910f65eea",
-              "label": "tum"
-            },
-            {
-              "url": "http://e530714f73e54e3585953e8fa7c6b32b",
-              "label": "weh"
-            }
-          ]
-        },
         "component": "wjz",
         "connector": "tpt",
         "snooze": null,
@@ -2502,36 +1969,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "https://1a08f03fd24a4dbfbb2e0240ccdcb236",
-              "label": "gxf"
-            },
-            {
-              "url": "https://97bc78a4ede94483b8e10376c3184547",
-              "label": "qex"
-            },
-            {
-              "url": "http://36f987f381c94426ac6ae6846eefedb0",
-              "label": "vcm"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "https://4d611f36a3e24fb18dbddf8cd7e5d374",
-              "label": "ide"
-            },
-            {
-              "url": "https://10ece8991f1b4d41bb93b7ef061cc178",
-              "label": "htb"
-            },
-            {
-              "url": "https://271a26807f324e098d585a8e850147e7",
-              "label": "lft"
-            }
-          ]
-        },
         "component": "ccg",
         "connector": "tpt",
         "snooze": null,
@@ -2572,9 +2009,6 @@
         },
         "ack": null,
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "iqq",
         "connector": "tpt",
         "snooze": null,
@@ -2620,9 +2054,6 @@
           "t": 1483311600
         },
         "pbehaviors": null,
-        "linklist": {
-          "computed_links": []
-        },
         "component": "fyq",
         "connector": "tpt",
         "snooze": {
@@ -2689,22 +2120,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "https://1dd4a5e0c628474480f92c5cdbb895d8",
-              "label": "uqc"
-            },
-            {
-              "url": "https://38f89fac563546c6bfd0897939aa2e88",
-              "label": "ehf"
-            },
-            {
-              "url": "http://e68d45943d2c4227a06dd022ebab3990",
-              "label": "lpb"
-            }
-          ]
-        },
         "component": "zin",
         "connector": "fqd",
         "snooze": {
@@ -2769,22 +2184,6 @@
             "rrule": "FREQ=YEARLY"
           }
         ],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://56fbd230969b47bab315735275f707ea",
-              "label": "ecz"
-            },
-            {
-              "url": "http://62ba7d1fd6f04c46a9ced64162496dab",
-              "label": "zmk"
-            },
-            {
-              "url": "https://1bcf5695da864946858a575ff152bc1c",
-              "label": "dar"
-            }
-          ]
-        },
         "component": "jkr",
         "connector": "fqd",
         "snooze": null,
@@ -2840,9 +2239,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "qqn",
         "connector": "tpt",
         "snooze": {
@@ -2894,44 +2290,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://3b91455e0c0b4980bf5d2a0d4eed8080",
-              "label": "mqh"
-            },
-            {
-              "url": "http://773f291755b6404ba8a566b2293d9e2c",
-              "label": "xdw"
-            },
-            {
-              "url": "http://2e1d603736904f35ae41f5a25c4e5210",
-              "label": "pdg"
-            },
-            {
-              "url": "http://3f41ecf80c9843488ac6b6f4a886e08b",
-              "label": "lde"
-            }
-          ],
-          "computed_links": [
-            {
-              "url": "http://1a6b74af6b7f4984886ca9c23c3b38f0",
-              "label": "dff"
-            },
-            {
-              "url": "http://9db7a2dbcc5f4d2293101eff0e9931d9",
-              "label": "yps"
-            },
-            {
-              "url": "http://b6ba330b71af41d39ea11fcdf06d84fd",
-              "label": "cjf"
-            },
-            {
-              "url": "https://b356d2f6d816460eb736c3286e87e61b",
-              "label": "sjf"
-            }
-          ]
-        },
         "component": "uuj",
         "connector": "qta",
         "snooze": null,
@@ -2977,19 +2335,6 @@
         },
         "ack": null,
         "pbehaviors": null,
-        "linklist": {
-          "event_links": [
-            {
-              "url": "http://754a86c13aac4933a59d4e1e63e2f7c5",
-              "label": "cse"
-            },
-            {
-              "url": "https://5398e947d8394367a5c4a6b3a867e606",
-              "label": "nrb"
-            }
-          ],
-          "computed_links": []
-        },
         "component": "seh",
         "connector": "qta",
         "snooze": {
@@ -3062,9 +2407,6 @@
             "rrule": "FREQ=YEARLY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "cbw",
         "connector": "fqd",
         "snooze": null,
@@ -3120,9 +2462,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "pwm",
         "connector": "tpt",
         "snooze": {
@@ -3180,9 +2519,6 @@
         },
         "ack": null,
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "bty",
         "connector": "fqd",
         "snooze": null,
@@ -3247,22 +2583,6 @@
             "rrule": "FREQ=WEEKLY"
           }
         ],
-        "linklist": {
-          "computed_links": [
-            {
-              "url": "http://b258114727d241d3a3928be22e4bd40a",
-              "label": "nsa"
-            },
-            {
-              "url": "https://67c198038ac64b50a24b10b7f6567ce8",
-              "label": "hbk"
-            },
-            {
-              "url": "http://8864eba8ea4c40b68617ab107b2ecd39",
-              "label": "lir"
-            }
-          ]
-        },
         "component": "bnp",
         "connector": "fqd",
         "snooze": {
@@ -3314,9 +2634,6 @@
         },
         "ack": null,
         "pbehaviors": [],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "fyw",
         "connector": "fqd",
         "snooze": {
@@ -3376,9 +2693,6 @@
             "rrule": "FREQ=DAILY"
           }
         ],
-        "linklist": {
-          "computed_links": []
-        },
         "component": "bkw",
         "connector": "tpt",
         "snooze": {

@@ -40,6 +40,5 @@ Features
     - Ack
     - Ticket
     - Pbehaviors
-    - Linklist
 
 - This widget must be responsive
