@@ -247,6 +247,8 @@ export default {
       nombreOk: 'Nombre Ok',
       nombreKo: 'Nombre Ko',
       state: 'State',
+      name: 'Name',
+      org: 'Org',
     },
   },
   tables: {

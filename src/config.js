@@ -31,4 +31,5 @@ export const API_ROUTES = {
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',
+  watchers: '/api/v2/weather/watchers',
 };

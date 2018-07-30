@@ -1,18 +1,14 @@
 <template lang="pug">
   v-expansion-panel
-    v-expansion-panel-content
-      div(slot="header", :class="stateColorClass") Watcher name
+    v-expansion-panel-content(hide-actions)
+      div(slot="header", :class="stateColorClass")
+        | {{ watchedEntity.name }}
+        div.actions-button-wrapper
+          v-btn
+            v-icon local_play
+          v-btn
+            v-icon pause
       v-card
-        v-card-text
-          attribute-block
-            template(slot="name")
-              | Actions
-            template(slot="content")
-              v-btn
-                v-icon local_play
-              v-btn
-                v-icon pause
-        v-divider
         template(v-for="attribute in Object.keys(attributes)")
           v-card-text
             attribute-block
@@ -31,14 +27,24 @@ export default {
   components: {
     AttributeBlock,
   },
+  props: {
+    watcher: {
+      type: Object,
+      required: true,
+    },
+    watchedEntity: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       attributes: {
         criticity: 'Good',
-        organization: 'Noveo',
+        organization: this.watchedEntity.org,
         nombreOk: 'No data',
         nombreKo: 'Some data',
-        state: 3,
+        state: this.watchedEntity.state.val,
       },
     };
   },
@@ -51,7 +57,7 @@ export default {
         [WATCHER_STATES.critical]: 'color-critical',
       };
 
-      return classes[0];
+      return classes[this.attributes.state];
     },
   },
 };
@@ -59,10 +65,10 @@ export default {
 
 <style scoped>
   .expansion-panel__header {
-    padding: 12px 12px!important;
+    padding: 12px 12px !important;
   }
 
-  .expansion-panel__header div:first-child {
+  .expansion-panel__header > div:first-child {
     padding: 15px;
   }
 
@@ -87,13 +93,17 @@ export default {
   }
 
   .attribute, .divider {
-    width: 60%;
-    margin-left: 40%;
+    width: 100%;
   }
 
   .btn {
     margin: 0;
     max-width: 40px;
     min-width: 30px;
+  }
+
+  .actions-button-wrapper {
+    float: right;
+    padding: 0;
   }
 </style>

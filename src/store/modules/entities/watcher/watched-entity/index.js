@@ -1,9 +1,7 @@
-import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
-import { watcherOtherSchema } from '@/store/schemas';
-import i18n from '@/i18n';
-import watchedEntityModule from './watched-entity';
+import i18n from '@/i18n/index';
+import { watchedEntitiesSchema } from '@/store/schemas/index';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -18,18 +16,13 @@ export default {
     meta: {},
     pending: false,
     fetchingParams: {},
-    allIdsGeneralList: [],
-    pendingGeneralList: false,
-  },
-  modules: {
-    watchedEntity: watchedEntityModule,
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.otherWatcher, state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.watchedEntity, state.allIds),
     pending: state => state.pending,
     meta: state => state.meta,
-    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](ENTITIES_TYPES.otherWatcher, id),
+    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](ENTITIES_TYPES.watchedEntity, id),
   },
   mutations: {
     [types.FETCH_LIST](state, { params }) {
@@ -46,34 +39,13 @@ export default {
     },
   },
   actions: {
-    async create(context, params = {}) {
-      try {
-        await request.post(API_ROUTES.watcher, params);
-      } catch (err) {
-        console.warn(err);
-      }
-    },
-
-    async remove({ dispatch }, { id } = {}) {
-      try {
-        await request.delete(API_ROUTES.watcher, { params: { watcher_id: id } });
-
-        await dispatch('entities/removeFromStore', {
-          id,
-          type: ENTITIES_TYPES.watcher,
-        }, { root: true });
-      } catch (err) {
-        console.warn(err);
-      }
-    },
-
-    async fetchList({ dispatch, commit }, { params, filter } = { params: {}, filter: {} }) {
+    async fetchList({ dispatch, commit }, { watcherId, params }) {
       try {
         commit(types.FETCH_LIST, { params });
 
         const { normalizedData } = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.watchers}/${JSON.stringify(filter)}`,
-          schema: [watcherOtherSchema],
+          route: `${API_ROUTES.watchers}/${watcherId}`,
+          schema: [watchedEntitiesSchema],
           params,
           dataPreparer: d => d,
         }, { root: true });
@@ -87,3 +59,4 @@ export default {
     },
   },
 };
+

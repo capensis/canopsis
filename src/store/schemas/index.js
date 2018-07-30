@@ -40,6 +40,10 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   },
 });
 
+export const watcherOtherSchema = new schema.Entity(ENTITIES_TYPES.otherWatcher, {}, { idAttribute: 'entity_id' });
+
+export const watchedEntitiesSchema = new schema.Entity(ENTITIES_TYPES.watchedEntity, {}, { idAttribute: 'entity_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -47,4 +51,6 @@ export default {
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,
+  [ENTITIES_TYPES.otherWatcher]: watcherOtherSchema,
+  [ENTITIES_TYPES.watchedEntity]: watchedEntitiesSchema,
 };

@@ -7,6 +7,8 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   view: 'view',
   widgetWrapper: 'widgetWrapper',
+  otherWatcher: 'otherWatcher',
+  watchedEntity: 'watchedEntity',
 };
 
 export const MODALS = {
