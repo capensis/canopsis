@@ -12,14 +12,11 @@
 
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import TopBar from '@/components/layout/top-bar.vue';
 import SideBar from '@/components/layout/side-bar.vue';
 import Modals from '@/components/modals/index.vue';
 import Popups from '@/components/popups/index.vue';
-
-const { mapActions } = createNamespacedHelpers('auth');
+import authMixin from '@/mixins/auth';
 
 export default {
   components: {
@@ -28,11 +25,9 @@ export default {
     Modals,
     Popups,
   },
+  mixins: [authMixin],
   mounted() {
     this.fetchCurrentUser();
-  },
-  methods: {
-    ...mapActions(['fetchCurrentUser']),
   },
 };
 </script>
