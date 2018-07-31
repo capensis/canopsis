@@ -11,6 +11,8 @@ export default {
       getContextEntitiesListByWidgetId: 'getListByWidgetId',
       getContextEntitiesMetaByWidgetId: 'getMetaByWidgetId',
       getContextEntitiesPendingByWidgetId: 'getPendingByWidgetId',
+      contextEntitiesWidgets: 'widgets',
+      getContextEntitiesFetchingParamsByWidgetId: 'getParamsByWidgetId',
     }),
 
     contextEntities() {

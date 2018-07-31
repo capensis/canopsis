@@ -101,6 +101,10 @@ export default {
           this.createContextEntity({ data: formData });
         }
 
+        if (this.config.callback && typeof this.config.callback === 'function') {
+          this.config.callback();
+        }
+
         this.hideModal();
       }
     },

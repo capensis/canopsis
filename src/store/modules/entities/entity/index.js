@@ -36,6 +36,8 @@ export default {
     allIdsGeneralList: state => state.allIds,
     itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIdsGeneralList),
     pendingGeneralList: state => state.pendingGeneralList,
+    widgets: state => state.widgets,
+    getParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
