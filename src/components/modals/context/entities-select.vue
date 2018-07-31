@@ -49,12 +49,8 @@ export default {
       updatedEntities: [],
     };
   },
-  mounted() {
-    console.log(this.entities);
-  },
   methods: {
     updateEntities(entities) {
-      console.log(entities);
       const entitiesIds = entities.map(entity => entity._id);
       const selectedEntities = union(entitiesIds, ...this.entities);
       this.$emit('updateEntities', selectedEntities);
