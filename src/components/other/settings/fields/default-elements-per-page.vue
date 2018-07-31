@@ -14,13 +14,13 @@
 </template>
 
 <script>
-import { PAGINATION_PER_PAGE_VALUES } from '@/config';
+import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
 export default {
   props: {
     value: {
       type: Number,
-      default: PAGINATION_PER_PAGE_VALUES[0],
+      default: PAGINATION_LIMIT,
     },
   },
   data() {

@@ -56,6 +56,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import get from 'lodash/get';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -123,6 +124,12 @@ export default {
   },
   async mounted() {
     await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
+    // TODO: see it
+    const itemsPerPage = get(this.userPreference, 'widget_preferences.itemsPerPage', this.query.limit);
+
+    if (itemsPerPage) {
+      this.query.limit = itemsPerPage;
+    }
 
     return this.fetchList();
   },

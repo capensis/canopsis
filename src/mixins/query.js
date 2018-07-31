@@ -31,8 +31,6 @@ export default {
       selected: [],
       query,
       vDataTablePagination: {
-        page: query.page,
-        rowsPerPage: query.limit,
         sortBy: query.sort_key,
         descending: query.sort_dir === 'DESC',
       },
