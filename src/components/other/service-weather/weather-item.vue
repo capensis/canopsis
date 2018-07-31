@@ -1,10 +1,10 @@
 <template lang="pug">
-v-card.ma-2.white--text(:class="color", tile, raised)
+v-card.ma-2.white--text(:class="format.color", tile, raised)
   div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
     v-icon.pauseIcon pause
   v-layout(justify-start, align-center)
     v-flex(xs2)
-      component.ma-2(:is="icon")
+      component.ma-2(:is="format.icon")
     v-flex(xs10)
       p.watcherName {{ watcher.display_name }}
   v-layout
@@ -16,6 +16,8 @@ v-card.ma-2.white--text(:class="color", tile, raised)
 </template>
 
 <script>
+import { ENTITIES_STATES } from '@/constants';
+
 import sun from './icons/sun.vue';
 import cloudySun from './icons/cloudy-sun.vue';
 import cloud from './icons/cloud.vue';
@@ -38,19 +40,19 @@ export default {
   data() {
     return {
       values: {
-        0: {
+        [ENTITIES_STATES.ok]: {
           color: 'green darken-1',
           icon: sun,
         },
-        1: {
+        [ENTITIES_STATES.minor]: {
           color: 'yellow darken-1',
           icon: cloudySun,
         },
-        2: {
+        [ENTITIES_STATES.major]: {
           color: 'orange darken-1',
           icon: cloud,
         },
-        3: {
+        [ENTITIES_STATES.critical]: {
           color: 'red darken-1',
           icon: rainingCloud,
         },
@@ -58,11 +60,16 @@ export default {
     };
   },
   computed: {
-    color() {
-      return this.watcher.active_pb_watcher || this.watcher.active_pb_all ? 'grey lighten-1' : this.values[this.watcher.state.val].color;
-    },
-    icon() {
-      return this.watcher.active_pb_watcher || this.watcher.active_pb_all ? pause : this.values[this.watcher.state.val].icon;
+    format() {
+      // Boolean showing if there's a pbehavior on all entities of the watcher
+      const activePbOnAll = this.watcher.active_pb_all;
+      // Boolean showing if there's a pbehavior on the watcher
+      const activePbOnWatcher = this.watcher.active_pb_watcher;
+
+      return {
+        icon: activePbOnWatcher || activePbOnAll ? pause : this.values[this.watcher.state.val].icon,
+        color: activePbOnWatcher || activePbOnAll ? 'grey lighten-1' : this.values[this.watcher.state.val].color,
+      };
     },
   },
 };

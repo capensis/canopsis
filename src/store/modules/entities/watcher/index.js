@@ -1,7 +1,7 @@
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
-import { weatherSchema } from '@/store/schemas';
+import { watcherSchema } from '@/store/schemas';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -21,7 +21,7 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('weather', state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('watcher', state.allIds),
     pending: state => state.pending,
     meta: state => state.meta,
   },
@@ -61,11 +61,11 @@ export default {
       }
     },
 
-    async fetchWeatherList({ dispatch, commit }, params = {}) {
+    async fetchWatcherList({ dispatch, commit }, params = {}) {
       try {
         const { normalizedData, data } = await dispatch('entities/fetch', {
           route: API_ROUTES.weather,
-          schema: [weatherSchema],
+          schema: [watcherSchema],
           params,
           dataPreparer: d => d,
         }, { root: true });

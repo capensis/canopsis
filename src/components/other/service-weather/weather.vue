@@ -25,7 +25,7 @@ export default {
     ...mapGetters(['items', 'allIds']),
   },
   mounted() {
-    this.fetchWeatherList({
+    this.fetchWatcherList({
       direction: 'ASC',
       limit: NaN,
       orderby: 'display_name',
@@ -33,7 +33,7 @@ export default {
     });
   },
   methods: {
-    ...mapActions(['fetchWeatherList']),
+    ...mapActions(['fetchWatcherList']),
   },
 };
 </script>
