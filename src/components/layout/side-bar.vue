@@ -49,7 +49,8 @@
         fixed,
         bottom,
         right,
-        color="green darken-4"
+        color="green darken-4",
+        @click="showCreateViewModal"
       )
         v-icon(dark) add
 </template>
@@ -57,6 +58,8 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import VueContentLoading from 'vue-content-loading';
+import { MODALS } from '@/constants';
+import modalMixin from '@/mixins/modal/modal';
 
 import { SIDE_BAR_WIDTH } from '@/config';
 
@@ -69,6 +72,7 @@ export default {
   components: {
     VueContentLoading,
   },
+  mixins: [modalMixin],
   data() {
     return {
       width: SIDE_BAR_WIDTH,
@@ -90,6 +94,11 @@ export default {
   },
   methods: {
     ...mapActions(['toggleSideBar']),
+    showCreateViewModal() {
+      this.showModal({
+        name: MODALS.createView,
+      });
+    },
   },
 };
 </script>

@@ -25,6 +25,7 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  createView: 'create-view',
 };
 
 export const EVENT_ENTITY_TYPES = {

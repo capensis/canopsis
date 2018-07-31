@@ -27,6 +27,7 @@ import Confirmation from './confirmation.vue';
 import CreateWatcher from './create-watcher.vue';
 import CreateEntity from './create-entity/create-entity.vue';
 import CreateWidget from './create-widget.vue';
+import CreateView from './create-view.vue';
 
 /**
  * Wrapper for all modal windows
@@ -48,6 +49,7 @@ export default {
     CreateEntity,
     CreateWatcher,
     CreateWidget,
+    CreateView,
   },
   data() {
     return {
@@ -66,6 +68,7 @@ export default {
         { name: MODALS.createEntity },
         { name: MODALS.createWatcher },
         { name: MODALS.createWidget, dialogProps: { maxWidth: 500, lazy: true } },
+        { name: MODALS.createView },
       ],
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
