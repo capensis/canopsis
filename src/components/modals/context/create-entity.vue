@@ -21,7 +21,7 @@
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
-import contextMixin from '@/mixins/context/index';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import ManageInfos from './manage-infos.vue';
 import CreateForm from './create-entity-form.vue';
@@ -40,7 +40,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    contextMixin,
+    entitiesContextEntityMixin,
   ],
   data() {
     return {

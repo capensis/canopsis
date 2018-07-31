@@ -7,12 +7,21 @@ import AuthModule from './modules/auth';
 import modalModule from './modules/modal';
 import popupModule from './modules/popup';
 import eventModule from './modules/event';
-import mFilterEditorModule from './modules/mfilter-editor';
 import entitiesModules from './modules/entities';
 
 import entitiesPlugin from './plugins/entities';
 
 Vue.use(Vuex);
+
+/**
+ * @typedef {Object} ActionContext
+ * @property {function} commit
+ * @property {function} dispatch
+ * @property {Object} getters
+ * @property {Object} rootGetters
+ * @property {Object} state
+ * @property {Object} rootState
+ */
 
 export default new Vuex.Store({
   modules: {
@@ -22,7 +31,6 @@ export default new Vuex.Store({
     popup: popupModule,
     event: eventModule,
     auth: AuthModule,
-    mFilterEditor: mFilterEditorModule,
 
     ...entitiesModules,
   },

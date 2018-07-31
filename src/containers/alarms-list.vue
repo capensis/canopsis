@@ -1,24 +1,25 @@
 <template lang="pug">
   div
     alarms-list(
-    :alarmProperties="$mq | mq(alarmProperties)",
-    @openSettings="openSettings"
+    :widget="widget",
+    :properties="$mq | mq(alarmProperties)",
+    @openSettings="$emit('openSettings', $event)"
     )
 </template>
 
 <script>
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
-import AlarmSettingsFields from '@/components/other/settings/alarm-settings-fields.vue';
-import viewMixin from '@/mixins/entities/view';
 
 export default {
   components: {
     AlarmsList,
-    AlarmSettingsFields,
   },
-  mixins: [
-    viewMixin,
-  ],
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       alarmProperties: {
@@ -84,9 +85,6 @@ export default {
         ],
       },
     };
-  },
-  mounted() {
-    this.fetchView({ id: 'view.current_alarms' });
   },
 };
 </script>
