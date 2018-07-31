@@ -52,6 +52,7 @@ import { createNamespacedHelpers } from 'vuex';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import authMixin from '@/mixins/auth';
 import { MODALS } from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
@@ -61,12 +62,11 @@ const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior')
  */
 export default {
   name: MODALS.createPbehavior,
-
   $_veeValidate: {
     validator: 'new',
   },
   components: { DateTimePicker, RRuleForm },
-  mixins: [modalInnerItemsMixin],
+  mixins: [modalInnerItemsMixin, authMixin],
   data() {
     const start = new Date();
     const stop = new Date(start.getTime());
@@ -104,7 +104,7 @@ export default {
         const data = {
           ...this.form,
 
-          author: 'Username of current user', // TODO: add this field after login task finish
+          author: this.currentUser.crecord_name,
           filter: {
             _id: { $in: this.items.map(v => v.d) },
           },

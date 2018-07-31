@@ -97,7 +97,7 @@ router.beforeEach((to, from, next) => {
     });
   } else if (isLoggedIn && isDontRequiresAuth) {
     return next({
-      name: 'home', // TODO: change page
+      name: 'home',
     });
   }
 
