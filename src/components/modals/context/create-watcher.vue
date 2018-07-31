@@ -77,28 +77,19 @@ export default {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
-        // If there's an item, means we're editing. If there's not, we're creating an entity
-        let formData = { ...this.form };
+        const formData = {
+          ...this.form,
+          _id: this.config.item ? this.config.item._id : this.form.name,
+          display_name: this.form.name,
+          type: ENTITIES_TYPES.watcher,
+          impact: this.form.impact,
+          depends: this.form.depends,
+          mfilter: JSON.stringify(this.request),
+        };
+
         if (this.config.item) {
-          formData = {
-            _id: this.config.item._id,
-            display_name: this.form.name,
-            type: ENTITIES_TYPES.watcher,
-            impact: this.form.impact,
-            depends: this.form.depends,
-            mfilter: JSON.stringify(this.request),
-          };
           await this.edit({ watcher_id: formData._id, data: formData });
         } else {
-          formData = {
-            ...this.form,
-            _id: this.form.name,
-            display_name: this.form.name,
-            type: ENTITIES_TYPES.watcher,
-            impact: this.form.impact,
-            depends: this.form.depends,
-            mfilter: JSON.stringify(this.request),
-          };
           await this.create(formData);
         }
         this.hideModal();
