@@ -13,20 +13,21 @@
 import { MODALS } from '@/constants';
 
 import Modal from './layouts/modal.vue';
-import CreateAckEvent from './create-ack-event.vue';
-import CreateAssociateTicketEvent from './create-associate-ticket-event.vue';
-import CreateCancelEvent from './create-cancel-event.vue';
-import CreateChangeStateEvent from './create-change-state-event.vue';
-import CreateDeclareTicketEvent from './create-declare-ticket-event.vue';
-import CreateSnoozeEvent from './create-snooze-event.vue';
-import CreatePbehavior from './create-pbehavior.vue';
-import PbehaviorList from './pbehavior-list.vue';
-import EditLiveReporting from './edit-live-reporting.vue';
-import MoreInfos from './more-infos.vue';
-import Confirmation from './confirmation.vue';
-import CreateWatcher from './create-watcher.vue';
-import CreateEntity from './create-entity/create-entity.vue';
-import CreateWidget from './create-widget.vue';
+import CreateAckEvent from './alarm/create-ack-event.vue';
+import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
+import CreateCancelEvent from './alarm/create-cancel-event.vue';
+import CreateChangeStateEvent from './alarm/create-change-state-event.vue';
+import CreateDeclareTicketEvent from './alarm/create-declare-ticket-event.vue';
+import CreateSnoozeEvent from './alarm/create-snooze-event.vue';
+import EditLiveReporting from './alarm/edit-live-reporting.vue';
+import MoreInfos from './alarm/more-infos.vue';
+import CreatePbehavior from './pbehavior/create-pbehavior.vue';
+import PbehaviorList from './pbehavior/pbehavior-list.vue';
+import Confirmation from './common/confirmation.vue';
+import CreateWidget from './common/create-widget.vue';
+import CreateWatcher from './context/create-watcher.vue';
+import CreateEntity from './context/create-entity.vue';
+
 
 /**
  * Wrapper for all modal windows
