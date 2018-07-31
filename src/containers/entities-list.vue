@@ -1,19 +1,24 @@
 <template lang="pug">
   div
     entities-list(
-    :contextProperties="$mq | mq(contextProperties)",
-    @openSettings="openSettings"
+    :widget="widget",
+    :properties="$mq | mq(contextProperties)",
+    @openSettings="$emit('openSettings', $event)"
     )
 </template>
 
 <script>
 import EntitiesList from '@/components/other/context/entities-list.vue';
-import ContextSettingsFields from '@/components/other/settings/context-settings-fields.vue';
 
 export default {
   components: {
     EntitiesList,
-    ContextSettingsFields,
+  },
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
