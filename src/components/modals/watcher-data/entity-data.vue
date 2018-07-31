@@ -17,10 +17,18 @@
               template(slot="content")
                 | {{ attributes[attribute] }}
           v-divider
+        v-card-text
+          attribute-block
+            template(slot="name")
+              | {{ $t('modals.watcherData.ticketing') }}
+            template(slot="content")
+              v-icon local_play
+        v-divider
 </template>
 
 <script>
 import { WATCHER_STATES } from '@/constants';
+import moment from 'moment';
 import AttributeBlock from './attribute-block.vue';
 
 export default {
@@ -40,16 +48,20 @@ export default {
   data() {
     return {
       attributes: {
-        criticity: 'Good',
+        criticity: this.watchedEntity.criticity,
         organization: this.watchedEntity.org,
-        nombreOk: 'No data',
-        nombreKo: 'Some data',
+        nombreOk: this.watchedEntity.stats ? this.watchedEntity.stats.ok : this.$t('modals.watcherData.noData'),
+        nombreKo: this.watchedEntity.stats ? this.watchedEntity.stats.ko : this.$t('modals.watcherData.noData'),
         state: this.watchedEntity.state.val,
       },
     };
   },
   computed: {
     stateColorClass() {
+      if (this.isUnderActivePBehavior) {
+        return 'color-pbehavior';
+      }
+
       const classes = {
         [WATCHER_STATES.ok]: 'color-ok',
         [WATCHER_STATES.minor]: 'color-minor',
@@ -58,6 +70,23 @@ export default {
       };
 
       return classes[this.attributes.state];
+    },
+    isUnderActivePBehavior() {
+      if (!this.watchedEntity.pbehavior || !this.watchedEntity.pbehavior.length) {
+        return false;
+      }
+
+      let underPBehavior = false;
+
+      this.watchedEntity.pbehavior.forEach((pBehavior) => {
+        if (pBehavior.isActive) {
+          if (pBehavior.tstart <= moment().unix() && moment().unix() <= pBehavior.tstop) {
+            underPBehavior = true;
+          }
+        }
+      });
+
+      return underPBehavior;
     },
   },
 };

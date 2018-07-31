@@ -249,6 +249,8 @@ export default {
       state: 'State',
       name: 'Nom',
       org: 'Org',
+      noData: 'Pas de données',
+      ticketing: 'Ticketing',
     },
   },
   tables: {
