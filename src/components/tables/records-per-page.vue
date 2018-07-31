@@ -1,15 +1,15 @@
 <template lang="pug">
   v-select.select.pa-0(
-    :items="items",
-    v-model="itemPerPage",
-    single-line,
-    dense,
-    hide-details
+  :items="items",
+  v-model="itemPerPage",
+  hide-details,
+  single-line,
+  dense,
   )
 </template>
 
 <script>
-import { PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
 /**
  * Component to select number of items per page on lists
@@ -26,7 +26,7 @@ export default {
     },
   },
   data: () => ({
-    items: [5, 10, 20, 50],
+    items: PAGINATION_PER_PAGE_VALUES,
   }),
   computed: {
     itemPerPage: {

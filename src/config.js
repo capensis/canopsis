@@ -2,6 +2,8 @@ export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 
 
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 
+export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
+
 export const DEFAULT_LOCALE = 'fr';
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;

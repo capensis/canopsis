@@ -116,9 +116,15 @@ export default {
       return this.selected.map(item => item._id);
     },
   },
+  watch: {
+    userPreference() {
+      this.fetchList(); // TODO: check requests count
+    },
+  },
   async mounted() {
     await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
-    await this.fetchList();
+
+    return this.fetchList();
   },
   methods: {
     removeHistoryFilter() {

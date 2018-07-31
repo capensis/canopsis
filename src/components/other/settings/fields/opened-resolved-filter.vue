@@ -3,25 +3,32 @@
     v-list-tile(slot="activator") {{$t('settings.filterOnOpenResolved')}}
     v-container
       v-layout
-        v-radio-group(v-model="value", @change="$emit('input', $event)")
-          v-radio(:value="ALARM_FILTER_STATES.opened", :label="$t('settings.open')", hide-details)
-          v-radio(:value="ALARM_FILTER_STATES.resolved", :label="$t('settings.resolved')", hide-details)
+        v-checkbox(
+        :label="$t('settings.open')",
+        v-model="value.opened",
+        @change="change('opened')($event)"
+        hide-details
+        )
+        v-checkbox(
+        :label="$t('settings.resolved')",
+        v-model="value.resolved",
+        @change="change('resolved')($event)"
+        hide-details
+        )
 </template>
 
 <script>
-import { ALARM_FILTER_STATES } from '@/constants';
-
 export default {
   props: {
     value: {
-      type: String,
-      default: ALARM_FILTER_STATES.opened,
+      type: Object,
+      default: () => ({}),
     },
   },
-  data() {
-    return {
-      ALARM_FILTER_STATES,
-    };
+  methods: {
+    change(key) {
+      return value => this.$emit('input', { ...this.value, [key]: value });
+    },
   },
 };
 </script>

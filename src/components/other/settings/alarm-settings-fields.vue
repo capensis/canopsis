@@ -7,15 +7,15 @@
       v-divider
       field-columns(v-model="settings.widgetColumns")
       v-divider
-      field-periodic-refresh
+      field-periodic-refresh(v-model="settings.periodicRefresh")
       v-divider
-      field-default-elements-per-page
+      field-default-elements-per-page(v-model="settings.itemsPerPage")
       v-divider
       field-opened-resolved-filter(v-model="settings.alarmStateFilter")
       v-divider
-      field-filters
+      field-filters(v-model="settings.selectedFilter", :filters="settings.filters")
       v-divider
-      field-info-popup(:widget="widget")
+      field-info-popup(v-model="settings.popups", :widget="widget")
       v-divider
       field-more-info
       v-divider
@@ -38,8 +38,6 @@ import FieldMoreInfo from '@/components/other/settings/fields/more-info.vue';
 import entitiesWidgetMixin from '@/mixins/entities/widget';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
-import { ALARM_FILTER_STATES } from '@/constants';
-
 /**
  * Component to regroup the alarms list settings fields
  *
@@ -61,10 +59,10 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: {
+  mixins: [
     entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
-  },
+  ],
   props: {
     widget: {
       type: Object,
@@ -81,15 +79,21 @@ export default {
         title: this.widget.title,
         defaultSortColumn: cloneDeep(this.widget.default_sort_column),
         widgetColumns: cloneDeep(this.widget.widget_columns),
-        alarmStateFilter: this.widget.alarms_state_filter ?
-          this.widget.alarms_state_filter.state : ALARM_FILTER_STATES.opened,
+        periodicRefresh: cloneDeep(this.widget.periodicRefresh) || {},
+        alarmStateFilter: cloneDeep(this.widget.alarms_state_filter) || {},
+        popups: cloneDeep(this.widget.popup) || [],
       },
     };
+  },
+  created() {
+    this.settings.itemsPerPage = this.userPreference.widget_preferences.itemsPerPage;
+    this.settings.filters = this.userPreference.widget_preferences.user_filters;
+    this.settings.selectedFilter = this.userPreference.widget_preferences.selected_filter;
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
-      console.warn(isFormValid, this.settings);
+      console.warn(this.userPreference, isFormValid, this.settings);
     },
   },
 };
