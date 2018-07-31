@@ -148,7 +148,7 @@ export default {
         console.error(err);
       }
     },
-    async refreshLists({ dispatch, getters }) {
+    refreshLists({ dispatch, getters }) {
       const widgetsIds = Object.keys(getters.widgets);
 
       widgetsIds.forEach((widgetId) => {
