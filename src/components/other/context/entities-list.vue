@@ -175,24 +175,6 @@ export default {
         widgetId: this.widget.id,
       });
     },
-    showCreateEntityModal() {
-      this.showModal({
-        name: MODALS.createEntity,
-        config: {
-          title: this.$t('modals.createEntity.createTitle'),
-          callback: () => {
-            const widgetsIds = Object.keys(this.contextEntitiesWidgets);
-
-            widgetsIds.forEach((widgetId) => {
-              this.fetchContextEntitiesList({
-                widgetId,
-                params: this.getContextEntitiesFetchingParamsByWidgetId(widgetId),
-              });
-            });
-          },
-        },
-      });
-    },
   },
 };
 </script>

@@ -148,5 +148,15 @@ export default {
         console.error(err);
       }
     },
+    async refreshLists({ dispatch, getters }) {
+      const widgetsIds = Object.keys(getters.widgets);
+
+      widgetsIds.forEach((widgetId) => {
+        dispatch('fetchList', {
+          widgetId,
+          params: getters.getParamsByWidgetId(widgetId),
+        });
+      });
+    },
   },
 };

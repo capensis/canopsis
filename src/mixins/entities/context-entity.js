@@ -31,6 +31,7 @@ export default {
       removeContextEntity: 'remove',
       updateContextEntity: 'update',
       createContextEntity: 'create',
+      refreshContextEntitiesLists: 'refreshLists',
     }),
   },
 };

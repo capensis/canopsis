@@ -42,16 +42,6 @@ export default {
         name: MODALS.createEntity,
         config: {
           title: this.$t('modals.createEntity.createTitle'),
-          callback: () => {
-            const widgetsIds = Object.keys(this.contextEntitiesWidgets);
-
-            widgetsIds.forEach((widgetId) => {
-              this.fetchContextEntitiesList({
-                widgetId,
-                params: this.getContextEntitiesFetchingParamsByWidgetId(widgetId),
-              });
-            });
-          },
         },
       });
     },
