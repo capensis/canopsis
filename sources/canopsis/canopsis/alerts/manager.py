@@ -50,6 +50,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
+from canopsis.lock.manager import AlertLock
 from canopsis.logger import Logger
 from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
@@ -130,6 +131,8 @@ class Alerts(object):
 
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
+
+        self.lock_manager = AlertLock(*AlertLock.provide_default_basics())
 
     @classmethod
     def provide_default_basics(cls):
@@ -524,6 +527,8 @@ class Alerts(object):
         entity_id = self.context_manager.get_id(event)
         event_type = event['event_type']
 
+        self.lock_manager.lock(entity_id)
+
         if event_type in [Check.EVENT_TYPE, 'watcher']:
 
             alarm = self.get_current_alarm(entity_id)
@@ -533,8 +538,10 @@ class Alerts(object):
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
+                    self.lock_manager.unlock(entity_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
+                    self.lock_manager.unlock(entity_id)
                     return
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
@@ -543,8 +550,10 @@ class Alerts(object):
             else:  # Alarm is already opened
                 value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
+                    self.lock_manager.unlock(entity_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
+                    self.lock_manager.unlock(entity_id)
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -564,6 +573,7 @@ class Alerts(object):
                 try:
                     entity = entity[0]
                 except IndexError:
+                    self.lock_manager.unlock(entity_id)
                     entity = {}
                 self.event_publisher.publish_statcounterinc_event(
                     alarm[self.alerts_storage.VALUE][AlarmField.creation_date.value],
@@ -576,6 +586,7 @@ class Alerts(object):
                               event=event,
                               author=event.get(self.AUTHOR, None),
                               entity_id=entity_id)
+        self.lock_manager.unlock(entity_id)
 
     def execute_task(self, name, event, entity_id,
                      author=None, new_state=None, diff_counter=None):
