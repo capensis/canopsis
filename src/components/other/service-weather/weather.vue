@@ -25,12 +25,7 @@ export default {
     ...mapGetters(['items', 'allIds']),
   },
   mounted() {
-    this.fetchWatcherList({
-      direction: 'ASC',
-      limit: NaN,
-      orderby: 'display_name',
-      start: null,
-    });
+    this.fetchWatcherList();
   },
   methods: {
     ...mapActions(['fetchWatcherList']),
