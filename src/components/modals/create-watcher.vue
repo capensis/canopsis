@@ -17,11 +17,6 @@
           h3.text-xs-center {{ $t('mFilterEditor.title') }}
           v-divider
           filter-editor
-      v-layout(wrap)
-        v-flex(xs12)
-          entities-select(label="Impacts", :entities="form.impact", @updateEntities="updateImpact")
-        v-flex(xs12)
-          entities-select(label="Dependencies", :entities="form.depends", @updateEntities="updateDepends")
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
@@ -31,7 +26,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
-import EntitiesSelect from '@/components/modals/context/entities-select.vue';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { ENTITIES_TYPES } from '@/constants';
 
@@ -44,7 +38,6 @@ export default {
   },
   components: {
     FilterEditor,
-    EntitiesSelect,
   },
   mixins: [modalInnerMixin],
   data() {
@@ -52,8 +45,6 @@ export default {
       form: {
         name: '',
         mfilter: '',
-        impact: [],
-        depends: [],
       },
     };
   },
@@ -67,30 +58,22 @@ export default {
   },
   methods: {
     ...watcherMapActions(['create', 'edit']),
-    updateImpact(entities) {
-      this.form.impact = entities;
-    },
-    updateDepends(entities) {
-      this.form.depends = entities;
-    },
     async submit() {
-      const formIsValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-      if (formIsValid) {
-        const formData = {
+      if (isFormValid) {
+        const data = {
           ...this.form,
           _id: this.config.item ? this.config.item._id : this.form.name,
           display_name: this.form.name,
           type: ENTITIES_TYPES.watcher,
-          impact: this.form.impact,
-          depends: this.form.depends,
           mfilter: JSON.stringify(this.request),
         };
 
         if (this.config.item) {
-          await this.edit({ watcher_id: formData._id, data: formData });
+          await this.edit({ data });
         } else {
-          await this.create(formData);
+          await this.create({ data });
         }
         this.hideModal();
       }

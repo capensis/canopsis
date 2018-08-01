@@ -60,7 +60,7 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -145,7 +145,7 @@ export default {
       return query;
     },
     editEntity(item) {
-      if (item.type === ENTITIES_TYPES.watcher) {
+      if (item.type === 'watcher') {
         this.showModal({
           name: MODALS.createWatcher,
           config: {

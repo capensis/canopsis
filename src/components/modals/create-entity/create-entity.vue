@@ -22,9 +22,8 @@
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-
-import ManageInfos from './manage-infos.vue';
-import CreateForm from './create-entity-form.vue';
+import CreateForm from '@/components/modals/create-entity/create-entity-form.vue';
+import ManageInfos from '@/components/modals/create-entity/manage-infos.vue';
 
 /**
    * Modal to create an entity (watcher, resource, component, connector)

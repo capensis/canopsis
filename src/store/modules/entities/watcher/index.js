@@ -1,6 +1,6 @@
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
+import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 import { entitySchema } from '@/store/schemas';
 
 export const types = {
@@ -48,16 +48,9 @@ export default {
       }
     },
 
-    async edit({ dispatch }, { data, params }) {
+    async edit({ dispatch }, { data }) {
       try {
-        await request.put(API_ROUTES.context, { entity: data, _type: 'crudcontext' });
-        dispatch('entities/fetch', {
-          route: API_ROUTES.context,
-          schema: [entitySchema],
-          params,
-          dataPreparer: d => d.data,
-          isPost: true,
-        }, { root: true });
+        await request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
       } catch (err) {
         console.warn(err);
       }
