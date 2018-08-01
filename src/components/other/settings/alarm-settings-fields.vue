@@ -123,7 +123,9 @@ export default {
           actions.push(this.updateWidget({ widget }));
         }
 
+        await this.$store.dispatch('query/startPending', { id: widget.id }); // TODO: fix it
         await Promise.all(actions);
+        await this.$store.dispatch('query/stopPending', { id: widget.id }); // TODO: fix it
 
         this.$emit('closeSettings');
       }

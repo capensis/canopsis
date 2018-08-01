@@ -31,30 +31,6 @@ export default {
      */
     items: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getList'](ENTITIES_TYPES.widget, state.allIds),
-
-    getItem: state => ({ widgetXType }) => {
-      if (!state.widgets) {
-        return null;
-      }
-
-      let widgetWrapper = null;
-
-      Object.keys(state.widgets)
-        .forEach((id) => {
-          if (state.widgets[id].widget.xtype === widgetXType) {
-            widgetWrapper = state.widgets[id];
-          }
-        });
-
-      return widgetWrapper;
-    },
-    getItems: state => (asArray = false) => {
-      if (asArray) {
-        return Object.values(state.widgets);
-      }
-
-      return state.widgets;
-    },
   },
   actions: {
     /**

@@ -9,11 +9,11 @@
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
       v-flex(xs3)
         v-chip(
-          v-if="query.interval",
-          @input="removeHistoryFilter",
-          close,
-          label,
-          color="blue darken-4 white--text"
+        v-if="query.interval",
+        @input="removeHistoryFilter",
+        close,
+        label,
+        color="blue darken-4 white--text"
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
@@ -22,41 +22,40 @@
     transition(name="fade", mode="out-in")
       loader.loader(v-if="alarmsPending")
       div(v-else)
-          v-data-table(
-            v-model="selected",
-            :items="alarms",
-            :headers="properties",
-            item-key="_id",
-            :total-items="alarmsMeta.total",
-            :pagination.sync="vDataTablePagination"
-            select-all,
-            hide-actions,
-          )
-            template(slot="headerCell", slot-scope="props")
-                span {{ props.header.text }}
-            template(slot="items", slot-scope="props")
-              td
-                v-checkbox(primary, hide-details, v-model="props.selected")
-              td(
-                v-for="prop in properties",
-                @click="props.expanded = !props.expanded"
-              )
-                alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
-              td
-                actions-panel(:item="props.item", :widget="widget")
-            template(slot="expand", slot-scope="props")
-              time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
-          v-layout.white(align-center)
-            v-flex(xs10)
-              pagination(:meta="alarmsMeta", :query.sync="query")
-            v-spacer
-            v-flex(xs2)
-              records-per-page(:query.sync="query")
+        v-data-table(
+        v-model="selected",
+        :items="alarms",
+        :headers="properties",
+        :total-items="alarmsMeta.total",
+        :pagination.sync="query",
+        item-key="_id",
+        select-all,
+        hide-actions,
+        )
+          template(slot="headerCell", slot-scope="props")
+            span {{ props.header.text }}
+          template(slot="items", slot-scope="props")
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+            v-for="prop in properties",
+            @click="props.expanded = !props.expanded"
+            )
+              alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
+            td
+              actions-panel(:item="props.item", :widget="widget")
+          template(slot="expand", slot-scope="props")
+            time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+        v-layout.white(align-center)
+          v-flex(xs10)
+            pagination(:meta="alarmsMeta", :query.sync="query")
+          v-spacer
+          v-flex(xs2)
+            records-per-page(:query.sync="query")
 </template>
 
 <script>
 import omit from 'lodash/omit';
-import get from 'lodash/get';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -117,31 +116,9 @@ export default {
       return this.selected.map(item => item._id);
     },
   },
-  watch: {
-    userPreference() {
-      this.fetchList(); // TODO: check requests count
-    },
-  },
-  async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
-    // TODO: see it
-    const itemsPerPage = get(this.userPreference, 'widget_preferences.itemsPerPage', this.query.limit);
-
-    if (itemsPerPage) {
-      this.query.limit = itemsPerPage;
-    }
-
-    return this.fetchList();
-  },
   methods: {
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
-    },
-    fetchList() {
-      this.fetchAlarmsList({
-        params: this.getQuery(),
-        widgetId: this.widget.id,
-      });
     },
     showEditLiveReportModal() {
       this.showModal({

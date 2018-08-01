@@ -12,7 +12,6 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
-import omit from 'lodash/omit';
 
 import FieldTitle from '@/components/other/settings/fields/title.vue';
 import FieldDefaultColumnSort from '@/components/other/settings/fields/default-column-sort.vue';
@@ -68,9 +67,13 @@ export default {
         default_sort_column: this.settings.defaultSortColumn,
       };
 
-      const userPreference = omit(this.userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
-
-      userPreference.widget_preferences.selectedTypes = this.settings.selectedTypes;
+      const userPreference = {
+        ...this.userPreference,
+        widget_preferences: {
+          ...this.userPreference.widget_preferences,
+          selectedTypes: this.settings.selectedTypes,
+        },
+      };
 
       const actions = [this.createUserPreference({ userPreference })];
 
@@ -80,7 +83,9 @@ export default {
         actions.push(this.updateWidget({ widget }));
       }
 
+      await this.$store.dispatch('query/startPending', { id: widget.id }); // TODO: fix it
       await Promise.all(actions);
+      await this.$store.dispatch('query/stopPending', { id: widget.id }); // TODO: fix it
 
       this.$emit('closeSettings');
     },

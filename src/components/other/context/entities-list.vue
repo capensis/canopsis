@@ -13,27 +13,27 @@
       loader(v-if="contextEntitiesPending")
       div(v-else)
         v-data-table(
-          v-model="selected",
-          :items="contextEntities",
-          :headers="properties",
-          item-key="_id",
-          :total-items="contextEntitiesMeta.total",
-          :pagination.sync="vDataTablePagination",
-          select-all,
-          hide-actions,
+        v-model="selected",
+        :items="contextEntities",
+        :headers="properties",
+        :total-items="contextEntitiesMeta.total",
+        :pagination.sync="query",
+        item-key="_id",
+        select-all,
+        hide-actions,
         )
           template(slot="headerCell", slot-scope="props")
-              span {{ props.header.text }}
+            span {{ props.header.text }}
           template(slot="items", slot-scope="props")
             td
               v-checkbox(primary, hide-details, v-model="props.selected")
             td(
-              v-for="prop in properties",
-              @click="props.expanded = !props.expanded"
+            v-for="prop in properties",
+            @click="props.expanded = !props.expanded"
             )
               ellipsis(
-                :text="$options.filters.get(props.item,prop.value) || ''",
-                :maxLetters="prop.maxLetters"
+              :text="$options.filters.get(props.item,prop.value) || ''",
+              :maxLetters="prop.maxLetters"
               )
             td
               v-btn(@click.stop="editEntity(props.item)", icon, small)
@@ -108,36 +108,37 @@ export default {
       selected: [],
     };
   },
-  watch: {
-    userPreference() {
-      this.fetchList(); // TODO: check requests count
-    },
-  },
-  async mounted() {
-    this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
-  },
   methods: {
     getQuery() {
-      const query = omit(this.query, ['page', 'sort_dir', 'sort_key']);
+      const query = omit(this.query, [
+        'page',
+        'descending',
+        'sortBy',
+        'selectedTypes',
+        'rowsPerPage',
+        'totalItems',
+      ]);
 
-      query.limit = this.query.limit;
-      query.start = ((this.query.page - 1) * this.query.limit) || 0;
+      query.limit = this.query.rowsPerPage;
+      query.start = ((this.query.page - 1) * this.query.rowsPerPage) || 0;
 
-      if (this.query.sort_key) {
+      if (this.query.sortBy) {
         query.sort = [{
-          property: this.query.sort_key,
-          direction: this.query.sort_dir ? this.query.sort_dir : 'ASC',
+          property: this.query.sortBy,
+          direction: this.query.descending ? 'DESC' : 'ASC',
         }];
       }
 
-      const { selectedTypes } = this.userPreference.widget_preferences;
+      if (!query._filter) {
+        const selectedTypes = this.userPreference.widget_preferences.selectedTypes || [];
 
-      if (selectedTypes.length) {
-        query._filter = JSON.stringify({
-          $or: selectedTypes.map(type => ({ type })),
-        });
-      } else {
-        delete query._filter;
+        if (selectedTypes.length) {
+          query._filter = JSON.stringify({
+            $or: selectedTypes.map(type => ({ type })),
+          });
+        } else {
+          delete query._filter;
+        }
       }
 
       return query;
@@ -167,27 +168,21 @@ export default {
         },
       });
     },
-    fetchList() {
-      this.fetchContextEntitiesList({
-        params: this.getQuery(),
-        widgetId: this.widget.id,
-      });
-    },
   },
 };
 </script>
 
 <style scoped>
-.fab {
+  .fab {
     position: fixed;
     bottom: 0;
     right: 0;
   }
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
 </style>
 

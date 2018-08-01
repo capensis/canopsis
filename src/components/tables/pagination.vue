@@ -56,12 +56,15 @@ export default {
         this.$emit('update:query', { ...this.query, page });
       },
     },
+
     totalPages() {
       if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.query.limit);
+        return Math.ceil(this.meta.total / this.query.rowsPerPage);
       }
+
       return 0;
     },
+
     /**
      * Calculate first item nb to display on pagination, in case it's not given by the backend
      */
@@ -70,8 +73,9 @@ export default {
         return this.meta.first;
       }
 
-      return 1 + (this.query.limit * (this.query.page - 1));
+      return 1 + (this.query.rowsPerPage * (this.query.page - 1));
     },
+
     /**
      * Calculate last item nb to display on pagination, in case it's not given by the backend
      */
@@ -80,7 +84,7 @@ export default {
         return this.meta.last;
       }
 
-      const calculatedLast = this.query.page * this.query.limit;
+      const calculatedLast = this.query.page * this.query.rowsPerPage;
 
       return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
     },
@@ -89,6 +93,7 @@ export default {
     previous() {
       this.currentPage = this.currentPage - 1;
     },
+
     next() {
       this.currentPage = this.currentPage + 1;
     },

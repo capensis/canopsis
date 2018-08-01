@@ -1,8 +1,12 @@
+import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 
 import Pagination from '@/components/tables/pagination.vue';
 import dateIntervals from '@/helpers/date-intervals';
-import { PAGINATION_LIMIT } from '@/config';
+import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
+
+const { mapGetters: queryMapGetters, mapActions: queryMapActions } = createNamespacedHelpers('query');
 
 /**
  * @mixin Add query logic
@@ -11,67 +15,76 @@ export default {
   components: {
     Pagination,
   },
-  data() {
-    const query = {
-      page: 1,
-      limit: PAGINATION_LIMIT,
-    };
+  computed: {
+    ...queryMapGetters(['getQueryById', 'getQueryPendingById']),
 
-    if (this.widget.default_sort_column) {
-      if (this.widget.default_sort_column.property) {
-        query.sort_key = `v.${this.widget.default_sort_column.property}`;
-      }
-
-      if (this.widget.default_sort_column.direction) {
-        query.sort_dir = this.widget.default_sort_column.direction;
-      }
-    }
-
-    return {
-      query,
-      vDataTablePagination: {
-        sortBy: query.sort_key,
-        descending: query.sort_dir === 'DESC',
+    query: {
+      get() {
+        return this.getQueryById(this.widget.id);
       },
-    };
+      set(query) {
+        return this.updateQuery({ id: this.widget.id, query });
+      },
+    },
+
+    queryPending() {
+      return this.getQueryPendingById(this.widget.id);
+    },
   },
   watch: {
-    widget() {
-      const vDataTablePagination = {};
-
-      if (this.widget.default_sort_column) {
-        if (this.widget.default_sort_column.property) {
-          vDataTablePagination.sortBy = `v.${this.widget.default_sort_column.property}`;
-        }
-
-        if (this.widget.default_sort_column.direction) {
-          vDataTablePagination.descending = this.widget.default_sort_column.direction;
-        }
-
-        // this.vDataTablePagination = { ...this.vDataTablePagination, ...vDataTablePagination };
+    query(value, oldValue) {
+      if (!isEqual(value, oldValue)) {
+        this.fetchList();
       }
     },
-    query() {
+    queryPending() {
       this.fetchList();
     },
-    vDataTablePagination(value, oldValue) {
-      if (value.sortBy !== oldValue.sortBy || value.descending !== oldValue.descending) {
-        let query = { ...this.query };
+    widget(value) {
+      const widgetQuery = convertWidgetToQuery(value);
 
-        if (value.sortBy) {
-          query.sort_key = value.sortBy;
-          query.sort_dir = value.descending ? 'DESC' : 'ASC';
-        } else {
-          query = omit(this.query, ['sort_key', 'sort_dir']);
-        }
+      this.updateQuery({
+        id: this.widget.id,
+        query: {
+          ...this.query,
+          ...widgetQuery,
+        },
+      });
+    },
+    userPreference(value) {
+      const userPreferenceQuery = convertUserPreferenceToQuery(value);
 
-        this.query = query;
-      }
+      this.updateQuery({
+        id: this.widget.id,
+        query: {
+          ...this.query,
+          ...userPreferenceQuery,
+        },
+      });
     },
   },
+  async mounted() {
+    await this.startQueryPending({ id: this.widget.id });
+    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
+    await this.stopQueryPending({ id: this.widget.id });
+  },
   methods: {
+    ...queryMapActions({
+      updateQuery: 'update',
+      startQueryPending: 'startPending',
+      stopQueryPending: 'stopPending',
+    }),
+
     getQuery() {
-      const query = omit(this.query, ['page', 'interval']);
+      const query = omit(this.query, [
+        'page',
+        'interval',
+        'descending',
+        'sortBy',
+        'rowsPerPage',
+        'totalItems',
+      ]);
+
       const { page, interval } = this.query;
 
       if (interval && interval !== 'custom') {
@@ -84,15 +97,34 @@ export default {
           console.warn(err);
         }
       }
-      query.limit = this.query.limit;
-      query.skip = ((page - 1) * this.query.limit) || 0;
+
+      if (this.query.sortBy) {
+        query.sort_key = this.query.sortBy;
+        query.sort_dir = this.query.descending ? 'DESC' : 'ASC';
+      }
+
+      query.limit = this.query.rowsPerPage;
+      query.skip = ((page - 1) * this.query.rowsPerPage) || 0;
 
       return query;
     },
     fetchList() {
-      this.fetchListAction({
-        params: this.getQuery(),
-      });
+      if (!this.queryPending) {
+        let method;
+
+        if (this.fetchAlarmsList) {
+          method = 'fetchAlarmsList';
+        } else if (this.fetchContextEntitiesList) {
+          method = 'fetchContextEntitiesList';
+        }
+
+        if (method) {
+          this[method]({
+            widgetId: this.widget.id,
+            params: this.getQuery(),
+          });
+        }
+      }
     },
   },
 };

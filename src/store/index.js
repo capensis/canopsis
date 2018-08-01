@@ -8,6 +8,7 @@ import modalModule from './modules/modal';
 import popupModule from './modules/popup';
 import eventModule from './modules/event';
 import entitiesModules from './modules/entities';
+import queryModule from './modules/query';
 
 import entitiesPlugin from './plugins/entities';
 
@@ -31,6 +32,7 @@ export default new Vuex.Store({
     popup: popupModule,
     event: eventModule,
     auth: AuthModule,
+    query: queryModule,
 
     ...entitiesModules,
   },
