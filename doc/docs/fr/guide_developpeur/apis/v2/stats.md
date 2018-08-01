@@ -302,6 +302,48 @@ Réponse :
 ]
 ```
 
+### Nombre d'alarmes impactant une entité
+
+La statistique `alarms_impacting` renvoie le nombre d'alarmes impactant une
+entité. Les alarmes créées alors qu'un pbehavior est actif ne sont pas prises
+en compte. Elle ne prends pas de paramètres.
+
+#### Exemple
+
+Requête :
+
+```javascript
+POST /api/v2/stats/alarms_impacting
+{
+    "group_by": ["entity_id"],
+    "filter": [{
+        "entity_type": "component"
+    }],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Réponse :
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "alarms_impacting": 100
+            }
+        ]
+    },
+    // ...
+]
+```
+
 ### Nombre d'alarmes résolues
 
 La statistique `alarms_resolved` renvoie le nombre d'alarmes résolues. Les
@@ -890,6 +932,73 @@ Réponse :
 ]
 ```
 
+### Liste d'états
+
+La statistique `state_list` renvoie une liste contenant les intervalles de
+temps passé dans chaque état par les entités. Elle ne prend pas de paramètres,
+et renvoie un tableau d'objets JSON contenant les champs suivants :
+
+ - `start` : la date du début de l'intervalle.
+ - `stop` : la date de fin de l'intervalle.
+ - `duration` : la durée de l'intervalle.
+ - `state` : l'état dans lequel était l'entité dans cet intervalle.
+
+Cette statistique ne peut être calculée que pour des groupes contenant une
+seule entité. Il est donc nécessaire de s'assurer que chaque groupe n'en
+contient qu'une, par exemple en ajoutant `entity_id` au paramètre `group_by`.
+
+#### Exemple
+
+Requête :
+
+```javascript
+POST /api/v2/stats/state_list
+{
+    "group_by": ["entity_id"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Réponse :
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "c/r"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "state_list": [
+                    {
+                        "start": 1532815200,
+                        "end": 1532875424,
+                        "duration": 60224,
+                        "state: 0
+                    },
+                    {
+                        "start": 1532875424,
+                        "end": 1532878559,
+                        "duration": 3135,
+                        "state: 3
+                    },
+                    {
+                        "start": 1532878559,
+                        "end": 1532901600,
+                        "duration": 23041,
+                        "state: 0
+                    }
+                ]
+            }
+        ]
+    },
+    // ...
+]
+```
+
 ### Groupes d'entités impactées par le plus d'alarmes
 
 La statistique `most_alarms_impacting` renvoie une liste contenant les groupes
@@ -950,6 +1059,86 @@ Réponse :
                 "tstart": 1532815200,
                 "tstop": 1532901600,
                 "most_alarms_impacting": [
+                    {
+                        "tags": {
+                            "resource": "resource3"
+                        },
+                        "value": 451
+                    },
+                    {
+                        "tags": {
+                            "resource": "resource1"
+                        },
+                        "value": 210
+                    }
+                ]
+            }
+        ]
+    },
+    // ...
+]
+```
+
+### Groupes d'entités créant le plus d'alarmes
+
+La statistique `most_alarms_created` renvoie une liste contenant les groupes
+d'entités créant le plus d'alarmes. Elle prend les paramètres suivants :
+
+ - `group_by` (requis) : une liste de tags utilisés pour regrouper les entités.
+ - `filter` (optionnel) : un filtre d'entités. Le format de ce paramètre est le
+   même que celui du champ `filter` principal.
+ - `limit` (optionnel) : le nombre maximal de groupes à renvoyer.
+
+Les paramètres `group_by` est `filter` doivent être définis dans le champ
+`parameters` (ou `parameters.most_alarms_created` pour la route
+`/api/v2/stats`), et sont distincts des champs `group_by` et `filter`
+principaux. Par exemple, pour obtenir les ressources impactées par le plus
+d'alarmes regroupées par composant, le champ `parameters.group_by` doit
+contenir `resource` (pour calculer le nombre d'alarme par ressource), le champ
+`parameters.filter` doit contenir `"entity_type": "resource"` (pour ne calculer
+le nombre d'alarmes que pour les ressources), et le champ `group_by` doit
+contenir `component` (pour regrouper les résultats par composant). Voir
+l'exemple ci-dessous pour la requête complète.
+
+La requête renvoie une liste d'objets triés par nombre d'alarmes décroissant,
+avec les champs suivants :
+
+ - `tags` : les tags du groupe d'entités.
+ - `value` : le nombre d'alarmes créées par ce groupe d'entités.
+
+#### Exemple
+
+Requête :
+
+```javascript
+POST /api/v2/stats/most_alarms_created
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "parameters": {
+        "group_by": ["resource"],
+        "filter": [{
+            "entity_type": "resource"
+        }],
+        "limit": 2
+    }
+}
+```
+
+Réponse :
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "most_alarms_created": [
                     {
                         "tags": {
                             "resource": "resource3"
