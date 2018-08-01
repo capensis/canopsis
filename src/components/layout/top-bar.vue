@@ -9,11 +9,18 @@
       img(src="../../assets/canopsis.png")
     v-toolbar-side-icon(@click="toggleSideBar")
     v-spacer
-    div {{ $t('common.username') }}
+    v-toolbar-items
+      v-menu(offset-y, bottom)
+        v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
+        v-list
+          v-list-tile(@click.prevent="logoutWithRedirect")
+            v-list-tile-title {{ $t('common.logout') }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
+import authMixin from '@/mixins/auth';
 
 const { mapActions } = createNamespacedHelpers('app');
 
@@ -21,10 +28,16 @@ const { mapActions } = createNamespacedHelpers('app');
  * Component for the top bar of the application
  */
 export default {
+  mixins: [authMixin],
   methods: {
-    ...mapActions([
-      'toggleSideBar',
-    ]),
+    ...mapActions(['toggleSideBar']),
+
+    async logoutWithRedirect() {
+      await this.logout();
+      this.$router.push({
+        name: 'login',
+      });
+    },
   },
 };
 </script>
