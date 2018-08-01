@@ -36,7 +36,7 @@ export default {
     allIdsGeneralList: state => state.allIds,
     itemsGeneralList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('entity', state.allIdsGeneralList),
     pendingGeneralList: state => state.pendingGeneralList,
-    getParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
+    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
@@ -150,12 +150,10 @@ export default {
     refreshLists({ dispatch, getters, state }) {
       const widgetsIds = Object.keys(state.widgets);
 
-      widgetsIds.forEach((widgetId) => {
-        dispatch('fetchList', {
-          widgetId,
-          params: getters.getParamsByWidgetId(widgetId),
-        });
-      });
+      widgetsIds.forEach(widgetId => dispatch('fetchList', {
+        widgetId,
+        params: getters.getFetchingParamsByWidgetId(widgetId),
+      }));
     },
   },
 };
