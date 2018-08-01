@@ -26,9 +26,9 @@
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
-import CreateForm from '@/components/modals/create-entity/create-entity-form.vue';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import ManageInfos from '@/components/modals/create-entity/manage-infos.vue';
+import CreateForm from './create-entity-form.vue';
+import ManageInfos from './manage-infos.vue';
 
 /**
    * Modal to create an entity (watcher, resource, component, connector)
@@ -95,11 +95,13 @@ export default {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
         if (this.config.item) {
-          this.updateContextEntity({ data: this.form });
+          await this.updateContextEntity({ data: this.form });
         } else {
           const formData = { ...this.form, _id: this.form.name };
-          this.createContextEntity({ data: formData });
+          await this.createContextEntity({ data: formData });
         }
+
+        this.refreshContextEntitiesLists();
 
         this.hideModal();
       }
