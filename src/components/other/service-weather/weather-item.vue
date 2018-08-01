@@ -61,15 +61,13 @@ export default {
   },
   computed: {
     format() {
-      // Boolean showing if there's a pbehavior on all entities of the watcher
-      const activePbOnAll = this.watcher.active_pb_all;
-      // Boolean showing if there's a pbehavior on the watcher
-      const activePbOnWatcher = this.watcher.active_pb_watcher;
+      const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
 
-      return {
-        icon: activePbOnWatcher || activePbOnAll ? pause : this.values[this.watcher.state.val].icon,
-        color: activePbOnWatcher || activePbOnAll ? 'grey lighten-1' : this.values[this.watcher.state.val].color,
-      };
+      if (hasActivePb) {
+        return { icon: pause, color: 'grey lighten-1' };
+      }
+
+      return this.values[this.watcher.state.val];
     },
   },
 };
