@@ -12,7 +12,6 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
-import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import FieldTitle from '@/components/other/settings/fields/title.vue';
@@ -59,13 +58,7 @@ export default {
     };
   },
   created() {
-    const filter = find(this.userPreference.widget_preferences.user_filters, { title: 'default_type_filter' });
-
-    if (filter) {
-      const filterData = JSON.parse(filter.filter);
-
-      this.settings.selectedTypes = filterData.$or.map(({ type }) => type);
-    }
+    this.settings.selectedTypes = this.userPreference.widget_preferences.selectedTypes || [];
   },
   methods: {
     async submit() {
@@ -76,36 +69,18 @@ export default {
       };
 
       const userPreference = omit(this.userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
-      const userFilters = userPreference.widget_preferences.user_filters || [];
-      const defaultTypeFilterIndex = userFilters.findIndex(filter => filter.title === 'default_type_filter');
 
-      if (defaultTypeFilterIndex >= 0) {
-        if (this.settings.selectedTypes.length) {
-          userPreference.widget_preferences.user_filters[defaultTypeFilterIndex] = {
-            title: 'default_type_filter',
-            filter: JSON.stringify({
-              $or: this.settings.selectedTypes.map(type => ({ type })),
-            }),
-          };
-        } else {
-          delete userPreference.widget_preferences.user_filters[defaultTypeFilterIndex];
-        }
-      } else if (this.settings.selectedTypes.length) {
-        userPreference.widget_preferences.user_filters = [...userFilters, {
-          title: 'default_type_filter',
-          filter: JSON.stringify({
-            $or: this.settings.selectedTypes.map(type => ({ type })),
-          }),
-        }];
-      }
+      userPreference.widget_preferences.selectedTypes = this.settings.selectedTypes;
 
-      await this.createUserPreference({ userPreference });
+      const actions = [this.createUserPreference({ userPreference })];
 
       if (this.isNew) {
-        await this.createWidget({ widget });
+        actions.push(this.createWidget({ widget }));
       } else {
-        await this.updateWidget({ widget });
+        actions.push(this.updateWidget({ widget }));
       }
+
+      await Promise.all(actions);
 
       this.$emit('closeSettings');
     },

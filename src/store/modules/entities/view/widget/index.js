@@ -57,10 +57,6 @@ export default {
     },
   },
   actions: {
-    async saveItem({ commit, dispatch }, { widgetWrapper }) {
-      commit(types.SET_WIDGET, widgetWrapper);
-      await dispatch('view/saveItem', {}, { root: true });
-    },
     /**
      * This action does: create widget, put it into view and update view
      *

@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -131,15 +130,14 @@ export default {
         }];
       }
 
-      // TODO: fix it
-      if (this.userPreference) {
-        const filter = find(this.userPreference.widget_preferences.user_filters, { title: 'default_type_filter' });
+      const { selectedTypes } = this.userPreference.widget_preferences;
 
-        if (filter) {
-          query._filter = filter.filter;
-        } else {
-          delete query._filter;
-        }
+      if (selectedTypes.length) {
+        query._filter = JSON.stringify({
+          $or: selectedTypes.map(type => ({ type })),
+        });
+      } else {
+        delete query._filter;
       }
 
       return query;

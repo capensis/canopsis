@@ -115,13 +115,15 @@ export default {
           },
         };
 
-        await this.createUserPreference({ userPreference });
+        const actions = [this.createUserPreference({ userPreference })];
 
         if (this.isNew) {
-          await this.createWidget({ widget });
+          actions.push(this.createWidget({ widget }));
         } else {
-          await this.updateWidget({ widget });
+          actions.push(this.updateWidget({ widget }));
         }
+
+        await Promise.all(actions);
 
         this.$emit('closeSettings');
       }
