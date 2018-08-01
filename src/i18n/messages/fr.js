@@ -166,6 +166,10 @@ export default {
       title: 'Créer un observateur',
       displayName: 'Nom',
     },
+    createView: {
+      title: 'Créer une vue',
+      crecordName: 'Nom',
+    },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',
       tooltips: {

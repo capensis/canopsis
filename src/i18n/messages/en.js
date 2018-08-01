@@ -166,6 +166,10 @@ export default {
       title: 'Create a watcher',
       displayName: 'Name',
     },
+    createView: {
+      title: 'Create a watcher',
+      crecordName: 'Name',
+    },
     createAckEvent: {
       title: 'Add event: Ack',
       tooltips: {
