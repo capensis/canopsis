@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
+from time import time, sleep
+from pymongo import errors
+
+from canopsis.common.mongo_store import MongoStore
+from canopsis.confng import Configuration, Ini
+from canopsis.logger import Logger
+
+
+class AlertLock(object):
+
+    LOG_PATH = 'var/log/alert_lock.log'
+    LOCK_COLLECTION = 'lock'
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+            provide default basics
+        """
+        conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
+
+        mongo = MongoStore(config=conf_store)
+        lock_collection = mongo.get_collection(name=cls.LOCK_COLLECTION)
+
+        logger = Logger.get('lock', cls.LOG_PATH)
+
+        return (logger, lock_collection)
+
+
+    def __init__(self, logger, lock_collection):
+        """
+            AlertLock constructor
+        """
+        self.logger = logger
+        self.lock_collection = lock_collection
+
+    def lock(self, entity_id):
+        """
+            create a document in lock collection
+        """
+        document = {
+            "_id": entity_id,
+            "timestamp": time()
+        }
+        try:
+            self.lock_collection.insert(document)
+        except errors.DuplicateKeyError:
+            sleep(0.2)
+            self.clear_old_locks()
+            self.lock(entity_id)
+
+
+    def unlock(self, entity_id):
+        """
+            remove lock documentt
+        """
+        self.lock_collection.remove({'_id': entity_id})
+
+    def clear_old_locks(self):
+        """
+            remove locks older than 13 seconds
+        """
+        self.lock_collection.remove({'timestamp':{'$lt':time() - 13}})
+
