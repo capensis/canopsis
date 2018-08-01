@@ -922,9 +922,10 @@ Response:
 
 ### State list
 
-The `state_list` statistic returns a list containing time intervals during
-which an entity was in a certain state. It does not take any parameters, and
-returns an array of JSON objects containing the following fields:
+The `state_list` statistic returns a list containing time intervals and the
+state of the entity during each of these intervals. It does not take any
+parameters, and returns an array of JSON objects containing the following
+fields:
 
  - `start` : the date of the start of the interval.
  - `stop` : the date of the end of the interval.
