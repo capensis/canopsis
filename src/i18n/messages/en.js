@@ -18,6 +18,7 @@ export default {
     end: 'End',
     username: 'Username',
     password: 'Password',
+    logout: 'Logout',
     title: 'Title',
     save: 'Save',
     label: 'Label',
@@ -77,6 +78,11 @@ export default {
   entities: {
     watcher: 'watcher',
     entities: 'entities',
+  },
+  login: {
+    errors: {
+      incorrectEmailOrPassword: 'Incorrect email or password',
+    },
   },
   alarmList: {
     actions: {

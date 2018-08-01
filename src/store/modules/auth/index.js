@@ -1,5 +1,7 @@
+import Cookies from 'js-cookie';
+
 import request from '@/services/request';
-import { API_ROUTES } from '@/config';
+import { API_ROUTES, COOKIE_SESSION_KEY } from '@/config';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -8,20 +10,18 @@ const types = {
 
   LOGOUT: 'LOGOUT',
 
-  FETCH_USER: 'FETCH_USER',
   FETCH_USER_COMPLETED: 'FETCH_USER_COMPLETED',
-  FETCH_USER_FAILED: 'FETCH_USER_FAILED',
 };
 
 export default {
   namespaced: true,
   state: {
-    isLoggedIn: false,
-    user: {},
+    isLoggedIn: !!Cookies.get(COOKIE_SESSION_KEY),
+    currentUser: {},
   },
-  getter: {
+  getters: {
     isLoggedIn: state => state.isLoggedIn,
-    user: state => state.user,
+    currentUser: state => state.currentUser,
   },
   mutations: {
     [types.LOGIN_COMPLETED](state) {
@@ -29,13 +29,10 @@ export default {
     },
     [types.LOGOUT](state) {
       state.isLoggedIn = false;
+      state.currentUser = {};
     },
-    [types.FETCH_USER]() {
-    },
-    [types.FETCH_USER_FAILED]() {
-    },
-    [types.FETCH_USER_COMPLETED](state, user) {
-      state.user = user;
+    [types.FETCH_USER_COMPLETED](state, currentUser) {
+      state.currentUser = currentUser;
     },
   },
   actions: {
@@ -44,33 +41,35 @@ export default {
         await request.post(API_ROUTES.auth, { ...credentials, json_response: true });
         commit(types.LOGIN_COMPLETED);
 
-        return dispatch('getCurrentUser');
+        return dispatch('fetchCurrentUser');
       } catch (err) {
-        commit(types.LOGIN_FAILED);
+        commit(types.LOGOUT);
 
         throw err;
       }
     },
-    async getCurrentUser({ commit, dispatch, state }) {
-      commit(types.FETCH_USER);
-
+    async fetchCurrentUser({ commit, dispatch, state }) {
       if (!state.isLoggedIn) {
-        commit(types.FETCH_USER_FAILED);
-
-        return dispatch('logout');
+        return commit(types.LOGOUT);
       }
 
       try {
-        const { user } = await request.get(API_ROUTES.currentUser);
-        return commit(types.FETCH_USER_COMPLETED, user);
+        const { data } = await request.get(API_ROUTES.currentUser);
+
+        return commit(types.FETCH_USER_COMPLETED, data[0]);
       } catch (err) {
-        commit(types.FETCH_USER_FAILED);
+        dispatch('logout');
 
         throw err;
       }
     },
     async logout({ commit }) {
-      commit(types.LOGOUT);
+      try {
+        commit(types.LOGOUT);
+        await request.get(API_ROUTES.logout);
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 };
