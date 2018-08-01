@@ -28,7 +28,6 @@ export default {
     }
 
     return {
-      selected: [],
       query,
       vDataTablePagination: {
         sortBy: query.sort_key,
@@ -37,10 +36,23 @@ export default {
     };
   },
   watch: {
-    query: {
-      handler() {
-        this.fetchList();
-      },
+    widget() {
+      const vDataTablePagination = {};
+
+      if (this.widget.default_sort_column) {
+        if (this.widget.default_sort_column.property) {
+          vDataTablePagination.sortBy = `v.${this.widget.default_sort_column.property}`;
+        }
+
+        if (this.widget.default_sort_column.direction) {
+          vDataTablePagination.descending = this.widget.default_sort_column.direction;
+        }
+
+        // this.vDataTablePagination = { ...this.vDataTablePagination, ...vDataTablePagination };
+      }
+    },
+    query() {
+      this.fetchList();
     },
     vDataTablePagination(value, oldValue) {
       if (value.sortBy !== oldValue.sortBy || value.descending !== oldValue.descending) {

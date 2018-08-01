@@ -5,8 +5,8 @@
       v-select.select(
       :label="$t('settings.elementsPerPage')",
       :items="items",
-      v-model="value",
-      @change="$emit('input', $event)"
+      :value="value",
+      @change="$emit('input', $event)",
       hide-details,
       single-line,
       dense,

@@ -93,7 +93,38 @@ export default {
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
-      console.warn(this.userPreference, isFormValid, this.settings);
+
+      if (isFormValid) {
+        const widget = {
+          ...this.widget,
+          title: this.settings.title,
+          default_sort_column: this.settings.defaultSortColumn,
+          widget_columns: this.settings.widgetColumns,
+          periodicRefresh: this.settings.periodicRefresh,
+          alarms_state_filter: this.settings.alarmStateFilter,
+          popups: this.settings.popups,
+        };
+
+        const userPreference = {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            itemsPerPage: this.settings.itemsPerPage,
+            user_filters: this.settings.filters,
+            selected_filter: this.settings.selectedFilter,
+          },
+        };
+
+        await this.createUserPreference({ userPreference });
+
+        if (this.isNew) {
+          await this.createWidget({ widget });
+        } else {
+          await this.updateWidget({ widget });
+        }
+
+        this.$emit('closeSettings');
+      }
     },
   },
 };
