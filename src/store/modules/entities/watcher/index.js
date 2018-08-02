@@ -1,7 +1,10 @@
+import Vue from 'vue';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { watcherSchema } from '@/store/schemas';
+import i18n from '@/i18n';
+import get from 'lodash/get';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -12,31 +15,35 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    allIds: [],
-    meta: {},
-    pending: false,
-    fetchingParams: {},
-    allIdsGeneralList: [],
-    pendingGeneralList: false,
+    widgets: {},
   },
   getters: {
-    allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('watcher', state.allIds),
-    pending: state => state.pending,
-    meta: state => state.meta,
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.watcher, get(state.widgets[widgetId], 'allIds', [])),
+    getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
+    getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
   },
   mutations: {
-    [types.FETCH_LIST](state, { params }) {
-      state.pending = true;
-      state.fetchingParams = params;
+    [types.FETCH_LIST](state, { widgetId, params }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: true,
+        fetchingParams: params,
+      });
     },
-    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
-      state.allIds = allIds;
-      state.meta = meta;
-      state.pending = false;
+    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+        allIds,
+        meta,
+      });
     },
-    [types.FETCH_LIST_FAILED](state) {
-      state.pending = false;
+    [types.FETCH_LIST_FAILED](state, { widgetId }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+      });
     },
   },
   actions: {
@@ -61,15 +68,16 @@ export default {
       }
     },
 
-    async fetchWatcherList({ dispatch, commit }, { params, filter = {} } = {}) {
+    async fetchList({ dispatch, commit }, { widgetId, params, filter = {} } = {}) {
       try {
         const { normalizedData, data } = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.weather}/${JSON.stringify(filter)}`,
+          route: `${API_ROUTES.weatherWatcher}/${JSON.stringify(filter)}`,
           schema: [watcherSchema],
           params,
           dataPreparer: d => d,
         }, { root: true });
         commit(types.FETCH_LIST_COMPLETED, {
+          widgetId,
           allIds: normalizedData.result,
           meta: {
             first: data.first,
@@ -78,8 +86,9 @@ export default {
           },
         });
       } catch (err) {
-        console.warn(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        commit(types.FETCH_LIST_FAILED, { widgetId });
       }
-    }
+    },
   },
 };

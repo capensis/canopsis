@@ -114,6 +114,7 @@ export const ENTITY_STATUS_STYLES = {
 export const WIDGET_TYPES = {
   alarmList: 'listalarm',
   context: 'crudcontext',
+  weather: 'serviceweather',
   widgetWrapper: 'widgetwrapper',
 };
 

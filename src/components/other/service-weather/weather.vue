@@ -1,34 +1,38 @@
 <template lang="pug">
   v-container(fluid)
     v-layout(wrap)
-      v-flex(v-for="item in items", :key="item._id" xs3)
+      v-flex(v-for="item in watchers", :key="item._id" xs3)
         weather-item(:watcher="item")
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import WeatherItem from './weather-item.vue';
-
-const { mapActions, mapGetters } = createNamespacedHelpers('watcher');
+import entitiesWatcherMixin from '@/mixins/entities/watcher';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import queryMixin from '@/mixins/query';
 
 export default {
   components: {
     WeatherItem,
   },
+  mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, queryMixin],
   props: {
-    ids: {
-      type: Array,
+    widget: {
+      type: Object,
       required: true,
     },
   },
-  computed: {
-    ...mapGetters(['items', 'allIds']),
-  },
-  mounted() {
-    this.fetchWatcherList();
+  async mounted() {
+    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
+    await this.fetchList();
   },
   methods: {
-    ...mapActions(['fetchWatcherList']),
+    fetchList() {
+      this.fetchWatchersList({
+        params: this.getQuery(),
+        widgetId: this.widget.id,
+      });
+    },
   },
 };
 </script>
