@@ -11,6 +11,7 @@ export default {
       getContextEntitiesListByWidgetId: 'getListByWidgetId',
       getContextEntitiesMetaByWidgetId: 'getMetaByWidgetId',
       getContextEntitiesPendingByWidgetId: 'getPendingByWidgetId',
+      getContextEntitiesFetchingParamsByWidgetId: 'getFetchingParamsByWidgetId',
     }),
 
     contextEntities() {
@@ -29,6 +30,7 @@ export default {
       removeContextEntity: 'remove',
       updateContextEntity: 'update',
       createContextEntity: 'create',
+      refreshContextEntitiesLists: 'refreshLists',
     }),
   },
 };

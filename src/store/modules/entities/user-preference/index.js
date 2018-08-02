@@ -15,7 +15,8 @@ export default {
   namespaced: true,
   getters: {
     getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
-      const id = `${widget.id}_root`;
+      const currentUser = rootGetters['auth/currentUser'];
+      const id = `${widget.id}_${currentUser.crecord_name}`;
       const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, id);
 
       if (!userPreference) {
@@ -23,7 +24,7 @@ export default {
           id,
           _id: id,
           widget_preferences: {},
-          crecord_name: 'root', // TODO: username
+          crecord_name: currentUser.crecord_name,
           widget_id: widget.id,
           widgetXtype: widget.xtype,
           crecord_type: 'userpreferences',
@@ -72,16 +73,19 @@ export default {
      * This action fetches user preference item by widget id
      *
      * @param {function} dispatch
+     * @param {function} rootGetters
      * @param {string|number} widgetId
      */
-    async fetchItemByWidgetId({ dispatch }, { widgetId }) {
+    fetchItemByWidgetId({ dispatch, rootGetters }, { widgetId }) {
+      const currentUser = rootGetters['auth/currentUser'];
+
       return dispatch('fetchList', {
         params: {
           limit: 1,
           filter: {
-            crecord_name: 'root',
+            crecord_name: currentUser.crecord_name,
             widget_id: widgetId,
-            _id: `${widgetId}_root`, // TODO: change to real user
+            _id: `${widgetId}_${currentUser.crecord_name}`,
           },
         },
       });

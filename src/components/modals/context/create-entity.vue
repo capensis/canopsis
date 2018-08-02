@@ -95,11 +95,13 @@ export default {
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
         if (this.config.item) {
-          this.updateContextEntity({ data: this.form });
+          await this.updateContextEntity({ data: this.form });
         } else {
           const formData = { ...this.form, _id: this.form.name };
-          this.createContextEntity({ data: formData });
+          await this.createContextEntity({ data: formData });
         }
+
+        this.refreshContextEntitiesLists();
 
         this.hideModal();
       }
