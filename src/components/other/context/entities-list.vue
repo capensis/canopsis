@@ -9,6 +9,8 @@
       v-flex(xs2)
         v-btn(icon, @click.prevent="$emit('openSettings')")
           v-icon settings
+      v-flex(xs2)
+        context-fab
     transition(name="fade", mode="out-in")
       loader(v-if="contextEntitiesPending")
       div(v-else)
@@ -57,6 +59,7 @@ import ContextSearch from '@/components/other/context/search/context-search.vue'
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+import ContextFab from '@/components/other/context/actions/context-fab.vue';
 
 import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
@@ -85,6 +88,7 @@ export default {
     MoreInfos,
     Loader,
     Ellipsis,
+    ContextFab,
   },
   mixins: [
     queryMixin,
