@@ -102,7 +102,7 @@ export default {
           widget_columns: this.settings.widgetColumns,
           periodicRefresh: this.settings.periodicRefresh,
           alarms_state_filter: this.settings.alarmStateFilter,
-          popups: this.settings.popups,
+          popup: this.settings.popups,
         };
 
         const userPreference = {
