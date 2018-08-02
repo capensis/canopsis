@@ -1,7 +1,7 @@
 <template lang="pug">
   v-select.select.pa-0(
   :items="items",
-  v-model="rowsPerPage",
+  v-model="limit",
   hide-details,
   single-line,
   dense,
@@ -29,12 +29,12 @@ export default {
     items: PAGINATION_PER_PAGE_VALUES,
   }),
   computed: {
-    rowsPerPage: {
+    limit: {
       get() {
-        return this.query.rowsPerPage || PAGINATION_LIMIT;
+        return this.query.limit || PAGINATION_LIMIT;
       },
-      set(rowsPerPage) {
-        this.$emit('update:query', { ...this.query, page: 1, rowsPerPage });
+      set(limit) {
+        this.$emit('update:query', { ...this.query, page: 1, limit });
       },
     },
   },

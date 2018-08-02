@@ -9,13 +9,13 @@ export function convertAlarmWidgetToQuery(widget) {
   const { default_sort_column: defaultSortColumn } = widget;
 
   if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortBy = defaultSortColumn.property.startsWith('v.') ?
+    query.sortKey = defaultSortColumn.property.startsWith('v.') ?
       defaultSortColumn.property : `v.${defaultSortColumn.property}`;
 
-    query.descending = defaultSortColumn.direction === 'DESC';
+    query.sortDir = defaultSortColumn.direction;
   } else {
-    query.sortBy = null;
-    query.descending = null;
+    query.sortKey = null;
+    query.sortDir = null;
   }
 
   return query;
@@ -29,11 +29,11 @@ export function convertContextWidgetToQuery(widget) {
   const { default_sort_column: defaultSortColumn } = widget;
 
   if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortBy = defaultSortColumn.property;
-    query.descending = defaultSortColumn.direction === 'DESC';
+    query.sortKey = defaultSortColumn.property;
+    query.sortDir = defaultSortColumn.direction;
   } else {
-    query.sortBy = null;
-    query.descending = null;
+    query.sortKey = null;
+    query.sortDir = null;
   }
 
   return query;
@@ -41,13 +41,13 @@ export function convertContextWidgetToQuery(widget) {
 
 export function convertAlarmUserPreferenceToQuery(userPreference) {
   return {
-    rowsPerPage: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
+    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
   };
 }
 
 export function convertContextUserPreferenceToQuery(userPreference) {
   return {
-    rowsPerPage: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
+    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
     selectedTypes: userPreference.widget_preferences.selectedTypes || [],
   };
 }

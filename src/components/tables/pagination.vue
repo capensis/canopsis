@@ -59,7 +59,7 @@ export default {
 
     totalPages() {
       if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.query.rowsPerPage);
+        return Math.ceil(this.meta.total / this.query.limit);
       }
 
       return 0;
@@ -73,7 +73,7 @@ export default {
         return this.meta.first;
       }
 
-      return 1 + (this.query.rowsPerPage * (this.query.page - 1));
+      return 1 + (this.query.limit * (this.query.page - 1));
     },
 
     /**
@@ -84,7 +84,7 @@ export default {
         return this.meta.last;
       }
 
-      const calculatedLast = this.query.page * this.query.rowsPerPage;
+      const calculatedLast = this.query.page * this.query.limit;
 
       return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
     },

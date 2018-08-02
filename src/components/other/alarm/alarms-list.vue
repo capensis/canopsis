@@ -27,7 +27,7 @@
         :items="alarms",
         :headers="properties",
         :total-items="alarmsMeta.total",
-        :pagination.sync="query",
+        :pagination.sync="vDataTablePagination",
         item-key="_id",
         select-all,
         hide-actions,

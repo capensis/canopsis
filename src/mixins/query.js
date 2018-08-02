@@ -30,6 +30,19 @@ export default {
     queryPending() {
       return this.getQueryPendingById(this.widget.id);
     },
+
+    vDataTablePagination: {
+      get() {
+        return { sortBy: this.query.sortKey, descending: this.query.sortDir === 'DESC' };
+      },
+      set(value) {
+        this.query = {
+          ...this.query,
+          sortKey: value.sortBy,
+          sortDir: value.descending ? 'DESC' : 'ASC',
+        };
+      },
+    },
   },
   watch: {
     query(value, oldValue) {
@@ -79,10 +92,8 @@ export default {
       const query = omit(this.query, [
         'page',
         'interval',
-        'descending',
-        'sortBy',
-        'rowsPerPage',
-        'totalItems',
+        'sortKey',
+        'sortDir',
       ]);
 
       const { page, interval } = this.query;
@@ -99,12 +110,12 @@ export default {
       }
 
       if (this.query.sortBy) {
-        query.sort_key = this.query.sortBy;
-        query.sort_dir = this.query.descending ? 'DESC' : 'ASC';
+        query.sort_key = this.query.sortKey;
+        query.sort_dir = this.query.sortDir;
       }
 
-      query.limit = this.query.rowsPerPage;
-      query.skip = ((page - 1) * this.query.rowsPerPage) || 0;
+      query.limit = this.query.limit;
+      query.skip = ((page - 1) * this.query.limit) || 0;
 
       return query;
     },

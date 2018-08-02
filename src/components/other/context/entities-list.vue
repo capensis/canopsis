@@ -17,7 +17,7 @@
         :items="contextEntities",
         :headers="properties",
         :total-items="contextEntitiesMeta.total",
-        :pagination.sync="query",
+        :pagination.sync="vDataTablePagination",
         item-key="_id",
         select-all,
         hide-actions,
@@ -112,20 +112,17 @@ export default {
     getQuery() {
       const query = omit(this.query, [
         'page',
-        'descending',
-        'sortBy',
+        'sortKey',
+        'sortDir',
         'selectedTypes',
-        'rowsPerPage',
-        'totalItems',
       ]);
 
-      query.limit = this.query.rowsPerPage;
-      query.start = ((this.query.page - 1) * this.query.rowsPerPage) || 0;
+      query.start = ((this.query.page - 1) * this.query.limit) || 0;
 
-      if (this.query.sortBy) {
+      if (this.query.sortKey) {
         query.sort = [{
-          property: this.query.sortBy,
-          direction: this.query.descending ? 'DESC' : 'ASC',
+          property: this.query.sortKey,
+          direction: this.query.sortDir,
         }];
       }
 
