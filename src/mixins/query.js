@@ -109,7 +109,7 @@ export default {
         }
       }
 
-      if (this.query.sortBy) {
+      if (this.query.sortKey) {
         query.sort_key = this.query.sortKey;
         query.sort_dir = this.query.sortDir;
       }

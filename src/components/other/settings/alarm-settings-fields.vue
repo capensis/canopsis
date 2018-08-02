@@ -1,21 +1,21 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.title")
+      field-title(v-model="settings.widget.title")
       v-divider
-      field-default-column-sort(v-model="settings.defaultSortColumn")
+      field-default-column-sort(v-model="settings.widget.default_sort_column")
       v-divider
-      field-columns(v-model="settings.widgetColumns")
+      field-columns(v-model="settings.widget.widget_columns")
       v-divider
-      field-periodic-refresh(v-model="settings.periodicRefresh")
+      field-periodic-refresh(v-model="settings.widget.periodicRefresh")
       v-divider
       field-default-elements-per-page(v-model="settings.itemsPerPage")
       v-divider
-      field-opened-resolved-filter(v-model="settings.alarmStateFilter")
+      field-opened-resolved-filter(v-model="settings.widget.alarms_state_filter")
       v-divider
-      field-filters(v-model="settings.selectedFilter", :filters="settings.filters")
+      field-filters(v-model="settings.selected_filter", :filters="settings.user_filters")
       v-divider
-      field-info-popup(v-model="settings.popups", :widget="widget")
+      field-info-popup(v-model="settings.widget.popup", :widget="widget")
       v-divider
       field-more-info
       v-divider
@@ -76,19 +76,22 @@ export default {
   data() {
     return {
       settings: {
-        title: this.widget.title,
-        defaultSortColumn: cloneDeep(this.widget.default_sort_column),
-        widgetColumns: cloneDeep(this.widget.widget_columns),
-        periodicRefresh: cloneDeep(this.widget.periodicRefresh) || {},
-        alarmStateFilter: cloneDeep(this.widget.alarms_state_filter) || {},
-        popups: cloneDeep(this.widget.popup) || [],
+        widget: {
+          title: this.widget.title,
+          default_sort_column: cloneDeep(this.widget.default_sort_column),
+          widget_columns: cloneDeep(this.widget.widget_columns),
+          periodicRefresh: cloneDeep(this.widget.periodicRefresh),
+          alarms_state_filter: cloneDeep(this.widget.alarms_state_filter),
+          popup: cloneDeep(this.widget.popup),
+        },
+        userPreference: {},
       },
     };
   },
   created() {
     this.settings.itemsPerPage = this.userPreference.widget_preferences.itemsPerPage;
-    this.settings.filters = this.userPreference.widget_preferences.user_filters;
-    this.settings.selectedFilter = this.userPreference.widget_preferences.selected_filter;
+    this.settings.user_filters = this.userPreference.widget_preferences.user_filters;
+    this.settings.selected_filter = this.userPreference.widget_preferences.selected_filter;
   },
   methods: {
     async submit() {
@@ -97,21 +100,14 @@ export default {
       if (isFormValid) {
         const widget = {
           ...this.widget,
-          title: this.settings.title,
-          default_sort_column: this.settings.defaultSortColumn,
-          widget_columns: this.settings.widgetColumns,
-          periodicRefresh: this.settings.periodicRefresh,
-          alarms_state_filter: this.settings.alarmStateFilter,
-          popup: this.settings.popups,
+          ...this.settings.widget,
         };
 
         const userPreference = {
           ...this.userPreference,
           widget_preferences: {
             ...this.userPreference.widget_preferences,
-            itemsPerPage: this.settings.itemsPerPage,
-            user_filters: this.settings.filters,
-            selected_filter: this.settings.selectedFilter,
+            ...this.settings.userPreference,
           },
         };
 
