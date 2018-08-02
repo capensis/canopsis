@@ -1,9 +1,9 @@
 <template lang="pug">
 v-speed-dial(
-  direction="top",
+  direction="left",
   :open-on-hover="true",
   transition="scale-transition")
-  v-btn(slot='activator', v-model="fab", color='green darken-3', dark, fab)
+  v-btn(slot='activator', v-model="fab", color='green darken-3', dark, fab, small)
     v-icon add
     v-icon close
   v-tooltip(left)
@@ -19,6 +19,7 @@ v-speed-dial(
 <script>
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
+import entityMixin from '@/mixins/entities/context-entity';
 
 /**
  * Buttons to open the modal to add entities
@@ -26,7 +27,10 @@ import { MODALS } from '@/constants';
  * @module context
  */
 export default {
-  mixins: [modalMixin],
+  mixins: [
+    modalMixin,
+    entityMixin,
+  ],
   data() {
     return {
       fab: false,
