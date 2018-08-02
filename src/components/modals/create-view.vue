@@ -17,6 +17,13 @@
           v-model="form.description",
           data-vv-name="description",
           )
+          v-switch(v-model="enabled", :label="$t('common.enabled')")
+      v-layout(wrap, justify-center)
+        v-flex(xs11)
+          v-combobox(v-model='tags',
+          label='Tags', tags='', clearable='',  multiple='', append-icon='')
+            template(slot='selection', slot-scope='data')
+              v-chip(:selected='data.selected', close='', @input='remove(data.item)') {{ data.item }}
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
@@ -25,6 +32,8 @@
 <script>
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+
+const uuid = require('uuid/v1');
 
 /**
  * Modal to create widget
@@ -37,6 +46,7 @@ export default {
   mixins: [modalMixin],
   data() {
     return {
+      tags: [],
       form: {
         crecord_name: '',
         description: '',
@@ -44,6 +54,16 @@ export default {
     };
   },
   methods: {
+    remove(item) {
+      this.tags.splice(this.tags.indexOf(item), 1);
+      this.tags = [...this.tags];
+    },
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+      if (isFormValid) {
+        (uuid());
+      }
+    },
   },
 };
 </script>
