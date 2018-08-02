@@ -62,13 +62,6 @@ export const ENTITIES_STATUSES = {
   cancelled: 4,
 };
 
-export const WATCHER_STATES = {
-  ok: 0,
-  minor: 1,
-  major: 2,
-  critical: 3,
-};
-
 export const ENTITIES_STATES_STYLES = {
   [ENTITIES_STATES.ok]: {
     color: '#4CAF50',

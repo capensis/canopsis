@@ -2,7 +2,7 @@
   v-expansion-panel
     v-expansion-panel-content(hide-actions)
       div(slot="header", :class="stateColorClass")
-        | {{ watchedEntity.name }}
+        span {{ watchedEntity.name }}
         div.actions-button-wrapper
           v-btn
             v-icon local_play
@@ -13,22 +13,24 @@
           v-card-text
             attribute-block
               template(slot="name")
-                | {{ $t(`modals.watcherData.${attribute}`) }}
+                span {{ $t(`modals.watcherData.${attribute}`) }}
               template(slot="content")
-                | {{ attributes[attribute] }}
+                span {{ attributes[attribute] }}
           v-divider
         v-card-text
           attribute-block
             template(slot="name")
-              | {{ $t('modals.watcherData.ticketing') }}
+              span {{ $t('modals.watcherData.ticketing') }}
             template(slot="content")
               v-icon local_play
         v-divider
 </template>
 
 <script>
-import { WATCHER_STATES } from '@/constants';
 import moment from 'moment';
+
+import { ENTITIES_STATES } from '@/constants';
+
 import AttributeBlock from './attribute-block.vue';
 
 export default {
@@ -50,8 +52,8 @@ export default {
       attributes: {
         criticity: this.watchedEntity.criticity,
         organization: this.watchedEntity.org,
-        nombreOk: this.watchedEntity.stats ? this.watchedEntity.stats.ok : this.$t('modals.watcherData.noData'),
-        nombreKo: this.watchedEntity.stats ? this.watchedEntity.stats.ko : this.$t('modals.watcherData.noData'),
+        numberOk: this.watchedEntity.stats ? this.watchedEntity.stats.ok : this.$t('modals.watcherData.noData'),
+        numberKo: this.watchedEntity.stats ? this.watchedEntity.stats.ko : this.$t('modals.watcherData.noData'),
         state: this.watchedEntity.state.val,
       },
     };
@@ -63,10 +65,10 @@ export default {
       }
 
       const classes = {
-        [WATCHER_STATES.ok]: 'color-ok',
-        [WATCHER_STATES.minor]: 'color-minor',
-        [WATCHER_STATES.major]: 'color-major',
-        [WATCHER_STATES.critical]: 'color-critical',
+        [ENTITIES_STATES.ok]: 'color-ok',
+        [ENTITIES_STATES.minor]: 'color-minor',
+        [ENTITIES_STATES.major]: 'color-major',
+        [ENTITIES_STATES.critical]: 'color-critical',
       };
 
       return classes[this.attributes.state];

@@ -244,8 +244,8 @@ export default {
     watcherData: {
       criticity: 'Criticity',
       organization: 'Organization',
-      nombreOk: 'Nombre Ok',
-      nombreKo: 'Nombre Ko',
+      numberOk: 'Number Ok',
+      numberKo: 'Number Ko',
       state: 'State',
       name: 'Name',
       org: 'Org',
