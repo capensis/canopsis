@@ -43,6 +43,7 @@ const routes = [
     path: '/view/:id',
     name: 'view',
     component: View,
+    meta: requiresLoginMeta,
     props: route => ({ id: route.params.id }),
   },
 ];

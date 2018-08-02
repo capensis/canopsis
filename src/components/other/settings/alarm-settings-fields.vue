@@ -9,11 +9,11 @@
       v-divider
       field-periodic-refresh(v-model="settings.widget.periodicRefresh")
       v-divider
-      field-default-elements-per-page(v-model="settings.itemsPerPage")
+      field-default-elements-per-page(v-model="settings.userPreference.itemsPerPage")
       v-divider
       field-opened-resolved-filter(v-model="settings.widget.alarms_state_filter")
       v-divider
-      field-filters(v-model="settings.selected_filter", :filters="settings.user_filters")
+      field-filters(v-model="settings.userPreference.selected_filter", :filters="settings.userPreference.user_filters")
       v-divider
       field-info-popup(v-model="settings.widget.popup", :widget="widget")
       v-divider
@@ -89,9 +89,9 @@ export default {
     };
   },
   created() {
-    this.settings.itemsPerPage = this.userPreference.widget_preferences.itemsPerPage;
-    this.settings.user_filters = this.userPreference.widget_preferences.user_filters;
-    this.settings.selected_filter = this.userPreference.widget_preferences.selected_filter;
+    this.settings.userPreference.itemsPerPage = this.userPreference.widget_preferences.itemsPerPage;
+    this.settings.userPreference.user_filters = this.userPreference.widget_preferences.user_filters;
+    this.settings.userPreference.selected_filter = cloneDeep(this.userPreference.widget_preferences.selected_filter);
   },
   methods: {
     async submit() {
