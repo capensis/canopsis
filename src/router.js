@@ -78,7 +78,7 @@ if (process.env.NODE_ENV === 'development') {
       name: 'weather',
       component: ServiceWeather,
     },
-  ]);
+  );
 }
 
 const router = new Router({
