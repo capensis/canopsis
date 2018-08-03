@@ -9,6 +9,8 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [CAT]: New stats in statsng: most_alarms_impacting, worst_mtbf, alarm_list, longest_alarms (!67 et !70) 
 - [CAT]: Add a "periods" parameter to the statsng API (!69) 
 - [CAT]: New stats in statsng: most_alarms_created, alarms_impacting, state_list (!71)
+- [CAT]: send stats with alarm duration
+- [CAT]: default sats value
 - [snooze]: faster snooze application 
 - [perriodic refresh]: fix infinite loop with periodic refresh
 - [link list]: remove linklist 
