@@ -296,6 +296,48 @@ Response:
 ]
 ```
 
+### Number of alarms impacting an entity
+
+The `alarms_impacting` statistic returns the number of alarms impacting an
+entity. The alarms created while a pbehavior was active are not taken into
+account. It does not take any parameters.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/alarms_impacting
+{
+    "group_by": ["entity_id"],
+    "filter": [{
+        "entity_type": "component"
+    }],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "alarms_impacting": 100
+            }
+        ]
+    },
+    // ...
+]
+```
+
 ### Number of alarms resolved
 
 The `alarms_resolved` statistic returns the number of alarms resolved. The
@@ -878,6 +920,74 @@ Response:
 ]
 ```
 
+### State list
+
+The `state_list` statistic returns a list containing time intervals and the
+state of the entity during each of these intervals. It does not take any
+parameters, and returns an array of JSON objects containing the following
+fields:
+
+ - `start` : the date of the start of the interval.
+ - `stop` : the date of the end of the interval.
+ - `duration` : the duration of the interval.
+ - `state` : the state of the entity during this interval.
+
+This statistic can only be computed for groups containing only one entity. It
+is necessary to ensure that each group only contains one, for example by adding
+`entity_id` to the `group_by`parameter.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/state_list
+{
+    "group_by": ["entity_id"],
+    "tstart": 1532815200,
+    "tstop": 1532901600
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "entity_id": "c/r"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "state_list": [
+                    {
+                        "start": 1532815200,
+                        "end": 1532875424,
+                        "duration": 60224,
+                        "state: 0
+                    },
+                    {
+                        "start": 1532875424,
+                        "end": 1532878559,
+                        "duration": 3135,
+                        "state: 3
+                    },
+                    {
+                        "start": 1532878559,
+                        "end": 1532901600,
+                        "duration": 23041,
+                        "state: 0
+                    }
+                ]
+            }
+        ]
+    },
+    // ...
+]
+```
+
 ### Entities impacted by the most alarms
 
 The `most_alarms_impacting` statistic returns a list containing the groups of
@@ -938,6 +1048,86 @@ Response:
                 "tstart": 1532815200,
                 "tstop": 1532901600,
                 "most_alarms_impacting": [
+                    {
+                        "tags": {
+                            "resource": "resource3"
+                        },
+                        "value": 451
+                    },
+                    {
+                        "tags": {
+                            "resource": "resource1"
+                        },
+                        "value": 210
+                    }
+                ]
+            }
+        ]
+    },
+    // ...
+]
+```
+
+### Entities creating the most alarms
+
+The `most_alarms_created` statistic returns a list containing the groups of
+entities that created the largest number of alarms. The request takes the
+following parameters:
+
+ - `group_by` (required): the tags used to group the entities.
+ - `filter` (optional): an entity filter. This parameters has the same format
+   as the main `filter` parameter.
+ - `limit` (optional): the maximum number of groups to return.
+
+The parameters `group_by` and `filter` have to be defined in the `parameters`
+field (or in `parameters.most_alarms_created` for the `/api/v2/stats` route),
+and are distinct from the main `group_by` and `filter` fields. For example, to
+get a the resources impacted by the most alarms grouped by components, the
+`parameters.group_by` field should be set to `resource` (to compute the number
+of alarms per resources), the `parameters.filter`field should contain
+`"entity_type: "resource"` (to compute the number of alarms only for
+resources), and the `group_by` field should be set to `component` (to group the
+results by component). See the example below for the full request.
+
+The request returns a list of objects ordered by descending number of alarms,
+with the following fields:
+
+ - `tags`: the tags of the group.
+ - `value`: the number of alarms created by this group.
+
+#### Example
+
+Request:
+
+```javascript
+POST /api/v2/stats/most_alarms_created
+{
+    "group_by": ["component"],
+    "tstart": 1532815200,
+    "tstop": 1532901600,
+    "parameters": {
+        "group_by": ["resource"],
+        "filter": [{
+            "entity_type": "resource"
+        }],
+        "limit": 2
+    }
+}
+```
+
+Response:
+
+```javascript
+[
+    {
+        "tags": {
+            "component": "component1"
+        },
+        "periods": [
+            {
+                "tstart": 1532815200,
+                "tstop": 1532901600,
+                "most_alarms_created": [
                     {
                         "tags": {
                             "resource": "resource3"
