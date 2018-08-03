@@ -432,7 +432,10 @@ def exports(ws):
 
         query["enabled"] = True
 
-        raw_entities = context_manager.get_entities(query=query)
+        raw_entities = context_manager.get_entities(
+            query=query,
+            with_links=True
+        )
         entity_ids = [entity['_id'] for entity in raw_entities]
         enriched_entities = []
 
