@@ -869,9 +869,9 @@ paramètres, et renvoie un tableau d'objets JSON contenant les tags de l'alarme
 suivants :
 
  - `time` : la date de création de l'alarme.
- - `pbehavior` : `"True"` s'il y avait un pbehavior actifs quand l'alarme a été
-   créé, `"False"` sinon.
- - `value` : le temps de résolution de l'alarme.
+ - `pbehavior` : `true` s'il y avait un pbehavior actifs quand l'alarme a été
+   créé, `false` sinon.
+ - `resolve_time` : le temps de résolution de l'alarme.
 
 Seules les alarmes résolues sont prises en compte.
 
@@ -1252,9 +1252,9 @@ a créé l'alarme (`entity_id`, `entity_type`, `entity_infos.<information_id>`,
 les champs suivants :
 
  - `time` : la date de création de l'alarme.
- - `pbehavior` : `"True"` s'il y avait un pbehavior actifs quand l'alarme a été
-   créé, `"False"` sinon.
- - `value` : le temps de résolution de l'alarme.
+ - `pbehavior` : `true` s'il y avait un pbehavior actifs quand l'alarme a été
+   créé, `false` sinon.
+ - `resolve_time` : le temps de résolution de l'alarme.
 
 #### Exemple
 
