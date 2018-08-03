@@ -64,8 +64,9 @@ import Loader from '@/components/other/alarm/loader/alarm-list-loader.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
+
 import modalMixin from '@/mixins/modal/modal';
-import queryMixin from '@/mixins/query';
+import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -91,8 +92,8 @@ export default {
     AlarmColumnValue,
   },
   mixins: [
-    queryMixin,
     modalMixin,
+    widgetQueryMixin,
     entitiesAlarmMixin,
     entitiesUserPreferenceMixin,
   ],

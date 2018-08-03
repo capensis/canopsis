@@ -59,8 +59,8 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
+import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { MODALS } from '@/constants';
@@ -88,8 +88,8 @@ export default {
     ContextFab,
   },
   mixins: [
-    queryMixin,
     modalMixin,
+    widgetQueryMixin,
     entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
   ],

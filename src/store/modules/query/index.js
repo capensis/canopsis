@@ -10,11 +10,9 @@ export default {
   namespaced: true,
   state: {
     queries: {},
-    pending: {},
   },
   getters: {
-    getQueryById: state => id => state.queries[id] || {},
-    getQueryPendingById: state => id => state.pending[id],
+    getItemById: state => id => state.queries[id] || {},
   },
   mutations: {
     [types.UPDATE](state, { id, query }) {
@@ -33,12 +31,6 @@ export default {
     },
     merge({ commit }, { id, query }) {
       commit(types.MERGE, { id, query });
-    },
-    startPending({ commit }, { id }) {
-      commit(types.SET_PENDING, { id, value: true });
-    },
-    stopPending({ commit }, { id }) {
-      commit(types.SET_PENDING, { id, value: false });
     },
   },
 };
