@@ -58,3 +58,9 @@ class RedisStore(object):
         parameters.
         """
         return self.conn.set(name, value, ex=ex, px=px, nx=nx, xx=xx)
+
+    def remove(self, name):
+        """
+        remove object to free alert cash
+        """
+        return self.conn.remove(name)

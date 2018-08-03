@@ -544,16 +544,16 @@ class Alerts(object):
             alarm = self.get_current_alarm(entity_id)
             is_new_alarm = alarm is None
 
-            self.lock_manager.lock(entity_id)
+            lock_id = self.lock_manager.lock(entity_id)
 
             if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
-                    self.lock_manager.unlock(entity_id)
+                    self.lock_manager.unlock(lock_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
-                    self.lock_manager.unlock(entity_id)
+                    self.lock_manager.unlock(lock_id)
                     return
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
@@ -562,10 +562,10 @@ class Alerts(object):
             else:  # Alarm is already opened
                 value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
-                    self.lock_manager.unlock(entity_id)
+                    self.lock_manager.unlock(lock_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
-                    self.lock_manager.unlock(entity_id)
+                    self.lock_manager.unlock(lock_id)
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -587,7 +587,7 @@ class Alerts(object):
                               event=event,
                               author=event.get(self.AUTHOR, None),
                               entity_id=entity_id)
-        self.lock_manager.unlock(entity_id)
+        self.lock_manager.unlock(lock_id)
 
     def execute_task(self, name, event, entity_id,
                      author=None, new_state=None, diff_counter=None):

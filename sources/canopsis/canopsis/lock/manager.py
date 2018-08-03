@@ -5,8 +5,10 @@ from __future__ import unicode_literals
 
 from time import time, sleep
 from pymongo import errors
+from redlock import Redlock
 
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.redis_store import RedisStore
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
 
@@ -30,7 +32,6 @@ class AlertLock(object):
 
         return (logger, lock_collection)
 
-
     def __init__(self, logger, lock_collection):
         """
             AlertLock constructor
@@ -53,7 +54,6 @@ class AlertLock(object):
             self.clear_old_locks()
             self.lock(entity_id)
 
-
     def unlock(self, entity_id):
         """
             remove lock documentt
@@ -64,5 +64,47 @@ class AlertLock(object):
         """
             remove locks older than 13 seconds
         """
-        self.lock_collection.remove({'timestamp':{'$lt':time() - 13}})
+        self.lock_collection.remove({'timestamp': {'$lt': time() - 13}})
 
+
+class AlertLockRedis(object):
+
+    LOG_PATH = 'var/log/alert_lock.log'
+    LOCK_COLLECTION = 'lock'
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+            provide default basics
+        """
+        conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
+
+        redis = RedisStore(*RedisStore.get_default())
+        redlock = Redlock(
+            [{'host': redis.db_host, 'port': redis.db_port, db: redis.db_num}])
+
+        logger = Logger.get('lock', cls.LOG_PATH)
+
+        return (logger, lock_collection)
+
+    def __init__(self, logger, redlock):
+        """
+            AlertLock constructor
+        """
+        self.logger = logger
+        self.redlock = redlock
+
+    def lock(self, entity_id):
+        """
+            create a document in lock collection
+        """
+        lock_id = 'redlock_{0}'.format(entity_id)
+        while not self.redlock.lock(lock_id, 10000):
+            sleep(0.2)
+        return lock_id
+
+    def unlock(self, lock):
+        """
+            remove lock documentt
+        """
+        return lock.unlock()
