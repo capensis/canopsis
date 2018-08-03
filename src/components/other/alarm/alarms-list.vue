@@ -110,11 +110,26 @@ export default {
   data() {
     return {
       selected: [],
+      interval: null,
     };
   },
   computed: {
     selectedIds() {
       return this.selected.map(item => item._id);
+    },
+  },
+  watch: {
+    widget: {
+      immediate: true,
+      handler(value) {
+        const periodicRefresh = value.periodicRefresh || {};
+
+        if (periodicRefresh.enabled && periodicRefresh.interval && !this.interval) {
+          this.interval = setInterval(() => this.fetchList(), parseInt(periodicRefresh.interval, 10) * 1000);
+        } else if (this.interval && (!periodicRefresh.enabled || !periodicRefresh.interval)) {
+          clearInterval(this.interval);
+        }
+      },
     },
   },
   methods: {
