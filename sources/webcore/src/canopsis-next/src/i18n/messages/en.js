@@ -5,6 +5,7 @@ export default {
     watcher: 'Watcher',
     name: 'Name',
     description: 'Description',
+    author: 'Author',
     submit: 'Submit',
     enabled: 'Enabled',
     login: 'Login',
@@ -17,6 +18,7 @@ export default {
     end: 'End',
     username: 'Username',
     password: 'Password',
+    logout: 'Logout',
     title: 'Title',
     save: 'Save',
     label: 'Label',
@@ -50,6 +52,14 @@ export default {
       year: 'year | years',
     },
   },
+  context: {
+    impacts: 'Impacts',
+    dependencies: 'Dependencies',
+    moreInfos: {
+      type: 'Type',
+      lastActiveDate: 'Last Active Date',
+    },
+  },
   search: {
     advancedSearch: '<span>Help on the advanced research :</span>\n' +
     '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
@@ -68,6 +78,11 @@ export default {
   entities: {
     watcher: 'watcher',
     entities: 'entities',
+  },
+  login: {
+    errors: {
+      incorrectEmailOrPassword: 'Incorrect email or password',
+    },
   },
   alarmList: {
     actions: {
@@ -95,6 +110,16 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
+  },
+  pbehaviors: {
+    connector: 'Connector',
+    connectorName: 'Connector name',
+    isEnabled: 'Is enabled',
+    begins: 'Begins',
+    ends: 'Ends',
+    type: 'Type',
+    reason: 'Reason',
+    rrule: 'Rrule',
   },
   settings: {
     titles: {

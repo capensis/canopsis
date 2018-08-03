@@ -11,20 +11,22 @@
         button.pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
           v-icon chevron_right
     div(v-else)
-      span {{ $t('common.showing') }} {{ meta.first || first }} {{ $t('common.to') }}
-      |  {{ meta.last || lastItem }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
+      span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
+      |  {{ last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
       v-pagination(v-model="currentPage", :length="totalPages")
 </template>
 
 <script>
 /**
-* Pagination component
-*
-* @prop {String} [type] - 'Top' or 'Bottom, to determine
-* if it's a top pagination (with less infos), or a bottom pagination
-* @prop {Object} [meta] - Object containing meta informations (Ex : total number of items)
-* @prop {Number} [limit] - Number of items per pages
-*/
+ * Pagination component
+ *
+ * @prop {String} type - 'Top' or 'Bottom, to determine
+ * if it's a top pagination (with less infos), or a bottom pagination
+ * @prop {Object} meta - Object containing meta information (Ex : total number of items)
+ * @prop {Number} query - Object containing widget query information
+ *
+ * @event query#update
+ */
 export default {
   props: {
     type: {
@@ -40,44 +42,47 @@ export default {
         last: 0,
       }),
     },
-    limit: {
-      type: Number,
+    query: {
+      type: Object,
       required: true,
-    },
-    first: {
-      type: Number,
-      default: () => 0,
-    },
-    last: {
-      type: Number,
-      default: () => 0,
     },
   },
   computed: {
     currentPage: {
       get() {
-        return parseInt(this.$route.query.page, 10) || 1;
+        return this.query.page || 1;
       },
       set(page) {
-        this.$router.push({
-          query: {
-            ...this.$route.query,
-            page,
-          },
-        });
+        this.$emit('update:query', { ...this.query, page });
       },
     },
     totalPages() {
       if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.limit);
+        return Math.ceil(this.meta.total / this.query.limit);
       }
       return 0;
     },
-    lastItem() {
-      if (this.last > this.meta.total) {
-        return this.meta.total;
+    /**
+     * Calculate first item nb to display on pagination, in case it's not given by the backend
+     */
+    first() {
+      if (this.meta.first) {
+        return this.meta.first;
       }
-      return this.last;
+
+      return 1 + (this.query.limit * (this.query.page - 1));
+    },
+    /**
+     * Calculate last item nb to display on pagination, in case it's not given by the backend
+     */
+    last() {
+      if (this.meta.last) {
+        return this.meta.last;
+      }
+
+      const calculatedLast = this.query.page * this.query.limit;
+
+      return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
     },
   },
   methods: {

@@ -1,5 +1,8 @@
+import omit from 'lodash/omit';
+
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
 import { userPreferenceSchema } from '@/store/schemas';
 
 export const types = {
@@ -11,29 +14,30 @@ export const types = {
 
 export default {
   namespaced: true,
-  state: {
-    activeFilter: null,
-    pending: false,
-    allIds: [],
-  },
   getters: {
-    filters: (state, getters, rootState, rootGetters) => {
-      const userPreferences = rootGetters['entities/getList']('userPreference', state.allIds);
-      let filters = [];
+    getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
+      const currentUser = rootGetters['auth/currentUser'];
+      const id = `${widget.id}_${currentUser.crecord_name}`;
+      const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, id);
 
-      userPreferences.forEach((userPreferenceObject) => {
-        filters = filters.concat(userPreferenceObject.widget_preferences.user_filters);
-      });
+      if (!userPreference) {
+        return {
+          id,
+          _id: id,
+          widget_preferences: {},
+          crecord_name: currentUser.crecord_name,
+          widget_id: widget.id,
+          widgetXtype: widget.xtype,
+          crecord_type: 'userpreferences',
+        };
+      }
 
-      return filters;
+      return userPreference;
     },
-    activeFilter: state => state.activeFilter,
   },
   mutations: {
-    [types.SET_ACTIVE_FILTER]: (state, filter) => state.activeFilter = filter,
     [types.FETCH_LIST]: state => state.pending = true,
-    [types.FETCH_LIST_COMPLETED]: (state, { allIds }) => {
-      state.allIds = allIds;
+    [types.FETCH_LIST_COMPLETED]: (state) => {
       state.pending = false;
     },
     [types.FETCH_LIST_FAILED]: (state) => {
@@ -41,25 +45,74 @@ export default {
     },
   },
   actions: {
+    /**
+     * This action fetches user preferences list
+     *
+     * @param {function} commit
+     * @param {function} dispatch
+     * @param {Object} params
+     */
     async fetchList({ commit, dispatch }, { params }) {
       try {
         commit(types.FETCH_LIST);
 
-        const { normalizedData } = await dispatch('entities/fetch', {
+        await dispatch('entities/fetch', {
           route: API_ROUTES.userPreferences,
           schema: [userPreferenceSchema],
           params,
-          dataPreparer: d => d,
+          dataPreparer: d => d.data,
         }, { root: true });
 
-        commit(types.FETCH_LIST_COMPLETED, {
-          allIds: normalizedData.result,
-        });
+        commit(types.FETCH_LIST_COMPLETED);
       } catch (e) {
         commit(types.FETCH_LIST_FAILED);
         console.warn(e);
       }
     },
+
+    /**
+     * This action fetches user preference item by widget id
+     *
+     * @param {function} dispatch
+     * @param {function} rootGetters
+     * @param {string|number} widgetId
+     */
+    async fetchItemByWidgetId({ dispatch, rootGetters }, { widgetId }) {
+      const currentUser = rootGetters['auth/currentUser'];
+
+      await dispatch('fetchList', {
+        params: {
+          limit: 1,
+          filter: {
+            crecord_name: currentUser.crecord_name,
+            widget_id: widgetId,
+            _id: `${widgetId}_${currentUser.crecord_name}`,
+          },
+        },
+      });
+    },
+
+    /**
+     * This action creates user preference
+     *
+     * @param {function} dispatch
+     * @param {Object} userPreference
+     */
+    async create({ dispatch }, { userPreference }) {
+      try {
+        const body = omit(userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
+
+        await dispatch('entities/update', {
+          route: `${API_ROUTES.userPreferences}`,
+          schema: userPreferenceSchema,
+          body: JSON.stringify(body),
+          dataPreparer: d => d.data[0],
+        }, { root: true });
+      } catch (err) {
+        console.warn(err);
+      }
+    },
+
     async setActiveFilter({ commit, getters }, { data, selectedFilter }) {
       try {
         await request.post(API_ROUTES.userPreferences, {

@@ -1,27 +1,23 @@
 <template lang="pug">
   div
-    settings-wrapper(v-model="isSettingsOpen", :title="$t('settings.titles.alarmListSettings')")
-      alarm-settings-fields
-    alarm-list(
+    alarms-list(
     :alarmProperties="$mq | mq(alarmProperties)",
     @openSettings="openSettings"
     )
 </template>
 
 <script>
-import AlarmList from '@/components/other/alarm/alarm-list.vue';
+import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import AlarmSettingsFields from '@/components/other/settings/alarm-settings-fields.vue';
-import viewMixin from '@/mixins/view';
-import settingsMixin from '@/mixins/settings';
+import viewMixin from '@/mixins/entities/view';
 
 export default {
   components: {
-    AlarmList,
+    AlarmsList,
     AlarmSettingsFields,
   },
   mixins: [
     viewMixin,
-    settingsMixin,
   ],
   data() {
     return {

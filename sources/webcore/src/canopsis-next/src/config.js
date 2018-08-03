@@ -1,5 +1,7 @@
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
+export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
+
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 
 export const DEFAULT_LOCALE = 'fr';
@@ -20,13 +22,14 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 
 export const API_ROUTES = {
   auth: '/auth',
+  logout: '/logout',
   currentUser: '/account/me',
-  login: '/login',
   alarmList: '/alerts/get-alarms',
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   pbehavior: '/api/v2/pbehavior',
+  pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',

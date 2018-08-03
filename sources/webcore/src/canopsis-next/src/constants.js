@@ -7,6 +7,7 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   view: 'view',
   widgetWrapper: 'widgetWrapper',
+  widget: 'widget',
 };
 
 export const MODALS = {
@@ -23,6 +24,7 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
+  createWidget: 'create-widget',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -33,6 +35,13 @@ export const EVENT_ENTITY_TYPES = {
   changeState: 'changestate',
   declareTicket: 'declareticket',
   snooze: 'snooze',
+  done: 'done',
+};
+
+export const ENTITY_INFOS_TYPE = {
+  state: 'state',
+  status: 'status',
+  action: 'action',
 };
 
 export const ENTITIES_STATES = {
@@ -52,12 +61,12 @@ export const ENTITIES_STATUSES = {
 
 export const ENTITIES_STATES_STYLES = {
   [ENTITIES_STATES.ok]: {
-    color: 'green',
+    color: '#4CAF50',
     text: 'ok',
     icon: 'assistant_photo',
   },
   [ENTITIES_STATES.minor]: {
-    color: 'yellow darken-1',
+    color: 'gold',
     text: 'minor',
     icon: 'assistant_photo',
   },
@@ -85,7 +94,7 @@ export const ENTITY_STATUS_STYLES = {
     icon: 'keyboard_arrow_up',
   },
   [ENTITIES_STATUSES.stealthy]: {
-    color: 'yellow darken-1',
+    color: 'gold',
     text: 'stealthy',
     icon: 'keyboard_arrow_up',
   },
@@ -99,4 +108,44 @@ export const ENTITY_STATUS_STYLES = {
     text: 'cancelled',
     icon: 'keyboard_arrow_up',
   },
+};
+
+export const WIDGET_TYPES = {
+  alarmList: 'listalarm',
+  context: 'crudcontext',
+  widgetWrapper: 'widgetwrapper',
+};
+
+export const EVENT_ENTITY_STYLE = {
+  [EVENT_ENTITY_TYPES.ack]: {
+    color: 'purple',
+    text: 'Acknowledged',
+    icon: 'done',
+  },
+  [EVENT_ENTITY_TYPES.ackRemove]: {
+    color: 'purple',
+    text: 'Ack removed',
+    icon: 'not_interested',
+  },
+  [EVENT_ENTITY_TYPES.declareTicket]: {
+    color: 'blue',
+    text: 'Ticket declared',
+    icon: 'local_play',
+  },
+  [EVENT_ENTITY_TYPES.snooze]: {
+    color: 'pink',
+    text: 'Snoozed',
+    icon: 'alarm',
+  },
+  [EVENT_ENTITY_TYPES.done]: {
+    color: 'green',
+    text: 'Done',
+    icon: 'assignment_turned_in',
+  },
+};
+
+export const UNKNOWN_VALUE_STYLE = {
+  color: 'black',
+  text: 'Invalid val',
+  icon: 'clear',
 };

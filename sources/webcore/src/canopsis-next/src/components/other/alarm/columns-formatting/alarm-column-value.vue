@@ -6,7 +6,7 @@
       :text="$options.filters.get(alarm, property.value, property.filter) || ''",
       :maxLetters="property.maxLetters"
     )
-    info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm")
+    info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm", :widget="widget")
 </template>
 
 <script>
@@ -25,8 +25,9 @@ const PROPERTIES_COMPONENTS_MAP = {
  *
  * @module alarm
  *
- * @prop {Object} [alarm] - Object representing the alarm
- * @prop {Object} [property] - Property concerned on the column
+ * @prop {Object} alarm - Object representing the alarm
+ * @prop {Object} widget - Object representing the widget
+ * @prop {Object} property - Property concerned on the column
  */
 export default {
   components: {
@@ -37,6 +38,10 @@ export default {
   },
   props: {
     alarm: {
+      type: Object,
+      required: true,
+    },
+    widget: {
       type: Object,
       required: true,
     },

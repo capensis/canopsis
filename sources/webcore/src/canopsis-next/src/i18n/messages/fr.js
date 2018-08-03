@@ -5,6 +5,7 @@ export default {
     watcher: 'Observateur',
     name: 'Nom',
     description: 'Description',
+    author: 'Auteur',
     yes: 'Oui',
     no: 'Non',
     confirmation: 'Etes-vous sûr(e) ?',
@@ -17,6 +18,7 @@ export default {
     end: 'Fin',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
+    logout: 'Se déconnecter',
     title: 'Titre',
     save: 'Sauvegarder',
     label: 'Label',
@@ -50,6 +52,14 @@ export default {
       year: 'année | années',
     },
   },
+  context: {
+    impacts: 'Impacts',
+    dependencies: 'Dépendances',
+    moreInfos: {
+      type: 'Type',
+      lastActiveDate: 'Dernière Date d\'Activité',
+    },
+  },
   search: {
     advancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
     '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
@@ -68,6 +78,11 @@ export default {
   entities: {
     watcher: 'observateurs',
     entities: 'entités',
+  },
+  login: {
+    errors: {
+      incorrectEmailOrPassword: 'Mot de passe/Email incorrect',
+    },
   },
   alarmList: {
     actions: {
@@ -95,6 +110,16 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+  },
+  pbehaviors: {
+    connector: 'Connecteur',
+    connectorName: 'Nom du connecteur',
+    isEnabled: 'Est actif',
+    begins: 'Débute',
+    ends: 'Se termine',
+    type: 'Type',
+    reason: 'Raison',
+    rrule: 'Rrule',
   },
   settings: {
     titles: {

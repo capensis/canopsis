@@ -3,6 +3,8 @@ import moment from 'moment';
 
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import authMixin from './auth';
+
 const { mapActions: eventMapActions } = createNamespacedHelpers('event');
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
@@ -10,13 +12,14 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
  * @mixin
  */
 export default {
+  mixins: [authMixin],
   methods: {
     ...eventMapActions({
       createEventAction: 'create',
     }),
 
     ...alarmMapActions({
-      fetchAlarmListWithPreviousParams: 'fetchListWithPreviousParams',
+      fetchAlarmsListWithPreviousParams: 'fetchListWithPreviousParams',
     }),
 
     /**
@@ -30,7 +33,15 @@ export default {
     async createEvent(type, item, data) {
       await this.createEventAction({ data: this.prepareData(type, item, data) });
 
-      return this.fetchAlarmListWithPreviousParams(); // TODO: check items type for correct request
+      if (this.config && this.config.afterSubmit) {
+        return this.config.afterSubmit();
+      }
+
+      if (this.widget) {
+        return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget.id });
+      }
+
+      return undefined;
     },
 
     /**
@@ -47,7 +58,7 @@ export default {
       }
 
       const preparedData = {
-        author: 'root',
+        author: this.currentUser.crecord_name,
         id: item.id,
         connector: item.v.connector,
         connector_name: item.v.connector_name,

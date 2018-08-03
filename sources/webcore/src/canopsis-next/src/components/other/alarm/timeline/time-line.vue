@@ -6,12 +6,14 @@
       .timeline-item
         .time {{ getFormattedTime(step.t) }}
         div(v-if="step._t !== 'statecounter'")
-          alarm-flag.flag(:value="step.val", :isStatus="isStatus(step._t)")
-          .header
-            alarm-chips.chips(:value="step.val", :isStatus="isStatus(step._t)")
-            p {{ step._t | stepTitle(step.a) }}
-          .content
-            p {{ step.m }}
+          flag.flag(:type="stepType(step._t)", :step="step")
+          .card
+            .header
+              alarm-chips.chips(v-if="stepType(step._t) !== ENTITY_INFOS_TYPE.action",
+                                :value="step.val", :type="stepType(step._t)")
+              p  &nbsp {{ step._t | stepTitle(step.a) }}
+            .content
+              p {{ step.m }}
         div(v-else)
           alarm-flag.flag(isCroppedState)
           .header
@@ -30,17 +32,16 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import pickBy from 'lodash/pickBy';
-import capitalize from 'lodash/capitalize';
 import moment from 'moment';
+import { stepTitle, stepType } from '@/helpers/timeline';
 
-import AlarmFlag from '@/components/other/alarm/timeline/alarm-flag.vue';
-import AlarmChips from '@/components/other/alarm/timeline/alarm-chips.vue';
+import Flag from '@/components/other/alarm/timeline/timeline-flag.vue';
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
-import { ENTITIES_STATES_STYLES } from '@/constants';
+import { ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE } from '@/constants';
+import entitiesAlarmMixin from '@/mixins/entities/alarm';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 /**
    * Component for the timeline of an alarm, on the alarmslist
@@ -50,34 +51,27 @@ const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
    * @prop {alarmProp} [alarmProps] - Properties of an alarm
    */
 export default {
-  components: { AlarmChips, AlarmFlag },
+  components: { AlarmChips, Flag },
   filters: {
-    stepTitle(stepTitle, stepAuthor) {
-      let formattedStepTitle = '';
-      formattedStepTitle = stepTitle.replace(/(status)|(state)/g, '$& ');
-      formattedStepTitle = formattedStepTitle.replace(/(inc)|(dec)/g, '$&reased ');
-      formattedStepTitle += 'by ';
-      if (stepAuthor === 'canopsis.engine') {
-        formattedStepTitle += 'system';
-      } else {
-        formattedStepTitle += stepAuthor;
-      }
-      return capitalize(formattedStepTitle);
-    },
+    stepTitle,
   },
+  mixins: [
+    entitiesAlarmMixin,
+  ],
   props: {
     alarmProps: {
       type: Object,
       required: true,
-      // This data represent the last step timestamp encountered
-      // Its used for group step under the same date
-      lastDate: null,
     },
   },
+  data() {
+    return {
+      ENTITY_INFOS_TYPE,
+    };
+  },
   computed: {
-    ...mapGetters(['item']),
     steps() {
-      const alarm = this.item(this.alarmProps._id);
+      const alarm = this.getAlarmItem(this.alarmProps._id);
       if (alarm && alarm.v.steps) {
         const steps = [...alarm.v.steps];
         return numericSortObject(steps, 't', 'desc');
@@ -93,7 +87,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchItem({
+    this.fetchAlarmItem({
       id: this.alarmProps.d,
       params: {
         opened: 'true',
@@ -104,29 +98,22 @@ export default {
         with_steps: 'true',
       },
     });
-    this.lastDate = null;
+    this.lastDate = undefined;
   },
   updated() {
     // Useful like for example when the user change the translation
-    this.lastDate = null;
+    this.lastDate = undefined;
   },
   methods: {
-    ...mapActions([
-      'fetchItem',
-    ]),
+    stepType,
     isNewDate(timestamp) {
-      const date = new Date(timestamp);
+      const date = moment.unix(timestamp);
       if (!this.lastDate ||
-          (date.getDay() !== this.lastDate.getDay()
-            && date.getMonth() !== this.lastDate.getMonth()
-            && date.getFullYear() !== this.lastDate.getFullYear())) {
+            (date.diff(this.lastDate, 'days') < 0)) {
         this.lastDate = date;
         return true;
       }
       return false;
-    },
-    isStatus(stepTitle) {
-      return stepTitle.startsWith('status');
     },
     getFormattedDate(timestamp) {
       return moment.unix(timestamp).format('DD/MM/YYYY');
@@ -181,10 +168,12 @@ export default {
   }
 
   .flag {
-    left: -19px;
+    top: 4px;
+    left: -13px;
   }
 
   .date {
+    top: 4px;
     left: -11px;
   }
 
@@ -200,6 +189,10 @@ export default {
     display: flex;
     align-items: baseline;
     font-weight: bold;
+    border-bottom: solid 1px $border_line;
+    padding-left: 5px;
+    padding-top: 5px;
+
 
     .chips {
       font-size: 15px;
@@ -207,7 +200,7 @@ export default {
     }
 
     p {
-      font-size: 17px;
+      font-size: 15px;
     }
 
   }
