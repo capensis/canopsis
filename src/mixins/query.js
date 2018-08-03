@@ -33,14 +33,21 @@ export default {
 
     vDataTablePagination: {
       get() {
-        return { sortBy: this.query.sortKey, descending: this.query.sortDir === 'DESC' };
+        const descending = this.query.sortDir !== null ? this.query.sortDir === 'DESC' : null;
+
+        return { sortBy: this.query.sortKey, descending };
       },
       set(value) {
-        this.query = {
-          ...this.query,
-          sortKey: value.sortBy,
-          sortDir: value.descending ? 'DESC' : 'ASC',
-        };
+        const isNotEqualSortBy = value.sortBy !== this.vDataTablePagination.sortBy;
+        const isNotEqualDescending = value.descending !== this.vDataTablePagination.descending;
+
+        if (isNotEqualSortBy || isNotEqualDescending) {
+          this.query = {
+            ...this.query,
+            sortKey: value.sortBy,
+            sortDir: value.descending ? 'DESC' : 'ASC',
+          };
+        }
       },
     },
   },
@@ -50,34 +57,39 @@ export default {
         this.fetchList();
       }
     },
-    queryPending() {
-      this.fetchList();
+    queryPending(value, oldValue) {
+      if (!value && value !== oldValue) {
+        this.fetchList();
+      }
     },
     widget(value) {
       const widgetQuery = convertWidgetToQuery(value);
 
-      this.updateQuery({
-        id: this.widget.id,
-        query: {
-          ...this.query,
-          ...widgetQuery,
-        },
-      });
+      this.query = {
+        ...this.query,
+        ...widgetQuery,
+      };
     },
     userPreference(value) {
       const userPreferenceQuery = convertUserPreferenceToQuery(value);
 
-      this.updateQuery({
-        id: this.widget.id,
-        query: {
-          ...this.query,
-          ...userPreferenceQuery,
-        },
-      });
+      this.query = {
+        ...this.query,
+        ...userPreferenceQuery,
+      };
     },
   },
-  async mounted() {
+  async created() {
     await this.startQueryPending({ id: this.widget.id });
+  },
+  async mounted() {
+    const widgetQuery = convertWidgetToQuery(this.widget);
+
+    this.query = {
+      ...this.query,
+      ...widgetQuery,
+    };
+
     await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
     await this.stopQueryPending({ id: this.widget.id });
   },

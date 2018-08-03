@@ -6,13 +6,13 @@
         v-checkbox(
         :label="$t('settings.open')",
         v-model="value.opened",
-        @change="change('opened')($event)"
+        @change="updateField('opened', $event)"
         hide-details
         )
         v-checkbox(
         :label="$t('settings.resolved')",
         v-model="value.resolved",
-        @change="change('resolved')($event)"
+        @change="updateField('resolved', $event)"
         hide-details
         )
 </template>
@@ -26,8 +26,8 @@ export default {
     },
   },
   methods: {
-    change(key) {
-      return value => this.$emit('input', { ...this.value, [key]: value });
+    updateField(key, value) {
+      this.$emit('input', { ...this.value, [key]: value });
     },
   },
 };

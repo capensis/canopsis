@@ -18,7 +18,7 @@
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
           v-icon widgets
-        span widget
+        span {{ $t('common.widget') }}
     settings(v-model="isSettingsOpen", :widget="widgetSettings", :isNew="isWidgetNew")
 </template>
 
