@@ -4,6 +4,17 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Unreleased
 
+## Canopsis 3.0.1 - Due date : 2018-08-03
+
+- [CAT]: New stats in statsng: most_alarms_impacting, worst_mtbf, alarm_list, longest_alarms (!67 et !70) 
+- [CAT]: Add a "periods" parameter to the statsng API (!69) 
+- [CAT]: New stats in statsng: most_alarms_created, alarms_impacting, state_list (!71)
+- [snooze]: faster snooze application 
+- [perriodic refresh]: fix infinite loop with periodic refresh
+- [link list]: remove linklist 
+- [links]: fix links in service weather
+- [UI]: views in canopsis-next
+- [UI]: alarms in canopsis-next 
 
 ### Experimental features
 
