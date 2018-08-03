@@ -135,6 +135,14 @@ task "status_increase".
 A list of all available tasks can be founded in [the corresponding
 documentation](../TR/alarm.md) (all are available, except assocticket).
 
+! Be carefull ! With `alerts.useraction.cancel`, there is no repetition
+available and you should use a condition excluding `resolved` alarms to avoid
+crashes. For example:
+
+```json
+"condition" : "{\"$and\":[{\"v.resolved\":null},{\"v.canceled\" : null}]}",
+```
+
 For the output message, it takes the old one (« {old} »), and append it
 a static string (« -- message »).
 
