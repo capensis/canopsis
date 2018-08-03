@@ -161,7 +161,7 @@ class AlarmService(object):
                     entity,
                     alarm_dict['v'])
                 self.event_publisher.publish_statduration_event(
-                    alarm.last_update_date,
+                    alarm.creation_date,
                     StatDurations.resolve_time,
                     alarm.last_update_date - alarm.creation_date,
                     entity,
