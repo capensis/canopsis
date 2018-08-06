@@ -99,7 +99,7 @@ class AlertLockRedis(object):
             create a document in lock collection
         """
         lock_id = 'redlock_{0}'.format(entity_id)
-        while not self.redlock.lock(lock_id, 10000):
+        while not self.redlock.lock(lock_id, 12000):
             sleep(0.2)
         return lock_id
 
