@@ -3,7 +3,6 @@ import Vue from 'vue';
 export const types = {
   UPDATE: 'UPDATE',
   MERGE: 'MERGE',
-  SET_PENDING: 'SET_PENDING',
 };
 
 export default {
@@ -20,9 +19,6 @@ export default {
     },
     [types.MERGE](state, { id, query }) {
       Vue.set(state.queries, id, { ...state.queries[id], ...query });
-    },
-    [types.SET_PENDING](state, { id, value }) {
-      Vue.set(state.pending, id, value);
     },
   },
   actions: {
