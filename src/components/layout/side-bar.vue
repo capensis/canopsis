@@ -17,19 +17,16 @@
           div(slot="header") Examples
           v-card.grey.darken-3.white--text
             v-card-text
-              router-link(to="alarms") Alarms List
+              router-link(:to="{ name: 'home' }") Home
           v-card.grey.darken-3.white--text
             v-card-text
-              router-link(to="context") Context
+              router-link(:to="{ name: 'filter' }") Filters
           v-card.grey.darken-3.white--text
             v-card-text
-              router-link(to="filter") Filters
+              router-link(:to="{ name: 'login' }") Login
           v-card.grey.darken-3.white--text
             v-card-text
-              router-link(to="login") Login
-          v-card.grey.darken-3.white--text
-            v-card-text
-              router-link(to="rrule") Rrule
+              router-link(:to="{ name: 'rrule' }") Rrule
       v-expansion-panel(
         class="panel",
         expand,
