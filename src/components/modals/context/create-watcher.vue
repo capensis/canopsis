@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     ...watcherMapActions(['create']),
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -64,9 +63,7 @@ export default {
           type: 'watcher',
           mfilter: JSON.stringify(this.request),
         };
-
-        await this.create(formData);
-
+        this.create(formData);
         this.hideModal();
       }
     },
