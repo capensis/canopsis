@@ -6,18 +6,25 @@
       v-layout(wrap, justify-center)
         v-flex(xs11)
           v-text-field(
-          :label="$t('modals.createWatcher.displayName')",
-          v-model="form.crecord_name",
+          :label="$t('common.name')",
+          v-model="form.name",
           data-vv-name="name",
           v-validate="'required'",
           :error-messages="errors.collect('name')",
+          )
+          v-text-field(
+          :label="$t('common.title')",
+          v-model="form.title",
+          data-vv-name="title",
+          v-validate="'required'",
+          :error-messages="errors.collect('title')",
           )
           v-text-field(
           :label="$t('common.description')",
           v-model="form.description",
           data-vv-name="description",
           )
-          v-switch(v-model="enabled", :label="$t('common.enabled')")
+          v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-layout(wrap, justify-center)
         v-flex(xs11)
           v-combobox(v-model='tags',
@@ -33,8 +40,6 @@
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
-const uuid = require('uuid/v1');
-
 /**
  * Modal to create widget
  */
@@ -48,8 +53,10 @@ export default {
     return {
       tags: [],
       form: {
-        crecord_name: '',
+        name: '',
+        title: '',
         description: '',
+        enabled: '',
       },
     };
   },
@@ -59,10 +66,10 @@ export default {
       this.tags = [...this.tags];
     },
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
-      if (isFormValid) {
-        (uuid());
-      }
+      /* const isFormValid = await this.$validator.validateAll();
+       if (isFormValid) {
+
+      } */
     },
   },
 };

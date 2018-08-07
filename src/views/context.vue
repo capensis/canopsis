@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     entities-list(
-    :contextProperties="$mq | mq(contextProperties)",
+    :properties="$mq | mq(contextProperties)",
     @openSettings="openSettings"
     )
 </template>
