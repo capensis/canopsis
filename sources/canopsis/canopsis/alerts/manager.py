@@ -539,12 +539,12 @@ class Alerts(object):
         entity_id = self.context_manager.get_id(event)
         event_type = event['event_type']
 
+        lock_id = self.lock_manager.lock(entity_id)
         if event_type in [Check.EVENT_TYPE, 'watcher']:
 
             alarm = self.get_current_alarm(entity_id)
             is_new_alarm = alarm is None
 
-            lock_id = self.lock_manager.lock(entity_id)
 
             if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
