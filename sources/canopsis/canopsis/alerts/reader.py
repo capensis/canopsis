@@ -524,7 +524,8 @@ class AlertsReader(object):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            with_count=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -650,6 +651,7 @@ class AlertsReader(object):
                 pipeline, allowDiskUse=True, cursor={}
             )
 
+
             alarms = list(result)
             # Manual count is much faster than mongo's
             truncated = len(alarms)
@@ -659,7 +661,53 @@ class AlertsReader(object):
                 'truncated': truncated,
             }
 
-            return res
+            if with_count:
+                count =  self.alarm_collection.aggregate(
+                    pipeline, allowDiskUse=True, cursor={}
+                ).count()
+                return (count, res)
+            else:
+                return res
+
+        def get_with_count(
+            self,
+            tstart=None,
+            tstop=None,
+            opened=True,
+            resolved=False,
+            lookups=None,
+            filter_=None,
+            search='',
+            sort_key='opened',
+            sort_dir='DESC',
+            skip=0,
+            limit=None,
+            with_steps=False,
+            natural_search=False,
+            active_columns=None,
+            hide_resources=False,
+        ):
+            """
+                force count in get method
+            """
+            return self.get(
+                tstart,
+                tstop,
+                opened,
+                resolved,
+                lookups,
+                filter_,
+                search,
+                sort_key,
+                sort_dir,
+                skip,
+                limit,
+                with_steps,
+                natural_search,
+                active_columns,
+                hide_resources,
+                with_count=True
+            )
 
         def offset_aggregate(results, skip, limit, filters):
             """

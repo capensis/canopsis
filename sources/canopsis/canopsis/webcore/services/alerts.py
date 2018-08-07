@@ -117,7 +117,7 @@ def exports(ws):
             search = str(search)
 
         try:
-            alarms = ar.get(
+            alarms = ar.get_with_count(
                 tstart=tstart,
                 tstop=tstop,
                 opened=opened,
