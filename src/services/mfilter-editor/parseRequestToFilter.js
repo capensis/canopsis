@@ -1,8 +1,8 @@
 import isEmpty from 'lodash/isEmpty';
 
 /**
- * @param Object
  * @description Determine the operator and the input value of a rule
+ * @param {Object} rule
  */
 function ruleOperatorAndInput(rule) {
   const parsedRule = {
@@ -36,7 +36,7 @@ function ruleOperatorAndInput(rule) {
         break;
       }
       case ('$ne'): {
-        if (Object.values(ruleValue)[0] == null) {
+        if (Object.values(ruleValue)[0] === null) {
           parsedRule.operator = 'is not null';
         } else if (Object.values(ruleValue)[0] === '') {
           parsedRule.operator = 'is not empty';
@@ -66,7 +66,7 @@ function ruleOperatorAndInput(rule) {
         /**
          * Throw an error if the operator was not found.
          */
-        throw new Error('Operator not found');
+        throw new Error(`Operator not found: ${operator}`); // TODO: translate
       }
     }
   }

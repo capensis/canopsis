@@ -29,7 +29,6 @@ import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
 import modalMixin from '@/mixins/modal/modal';
 
 const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
-const { mapGetters: filterEditorMapGetters } = createNamespacedHelpers('mFilterEditor');
 
 export default {
   $_veeValidate: {
@@ -47,9 +46,6 @@ export default {
       },
     };
   },
-  computed: {
-    ...filterEditorMapGetters(['request']),
-  },
   mounted() {
     if (this.config && this.config.item) {
       this.form = { ...this.config.item.props };
@@ -57,6 +53,7 @@ export default {
   },
   methods: {
     ...watcherMapActions(['create']),
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -67,7 +64,9 @@ export default {
           type: 'watcher',
           mfilter: JSON.stringify(this.request),
         };
-        this.create(formData);
+
+        await this.create(formData);
+
         this.hideModal();
       }
     },
