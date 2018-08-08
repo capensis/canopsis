@@ -44,6 +44,12 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
 
 export const watcherOtherSchema = new schema.Entity(ENTITIES_TYPES.otherWatcher, {}, { idAttribute: 'entity_id' });
 
+export const weatherWatcherSchema = new schema.Entity(ENTITIES_TYPES.weatherWatcher, {}, { idAttribute: 'entity_id' });
+
+export const weatherWatcherEntitySchema = new schema.Entity(ENTITIES_TYPES.weatherWatcherEntity, {}, {
+  idAttribute: 'entity_id',
+});
+
 export const watchedEntitiesSchema = new schema.Entity(ENTITIES_TYPES.watchedEntity, {}, { idAttribute: 'entity_id' });
 
 export default {
@@ -55,6 +61,8 @@ export default {
   [ENTITIES_TYPES.view]: viewSchema,
   [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
-  [ENTITIES_TYPES.otherWatcher]: watcherOtherSchema,
-  [ENTITIES_TYPES.watchedEntity]: watchedEntitiesSchema,
+  [ENTITIES_TYPES.otherWatcher]: watcherOtherSchema, // TODO: remove
+  [ENTITIES_TYPES.watchedEntity]: watchedEntitiesSchema, // TODO: remove
+  [ENTITIES_TYPES.weatherWatcher]: weatherWatcherSchema,
+  [ENTITIES_TYPES.weatherWatcherEntity]: weatherWatcherEntitySchema,
 };

@@ -11,11 +11,13 @@
 </template>
 
 <script>
-import EntityData from '@/components/modals/watcher-data/entity-data.vue';
+import EntityData from '@/components/modals/weather-watcher/entity-data.vue';
 import watcherMixin from '@/mixins/watcher';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
+import { MODALS } from '@/constants';
 
 export default {
+  name: MODALS.weatherWatcher,
   components: {
     EntityData,
   },

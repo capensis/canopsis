@@ -6,6 +6,7 @@
 <script>
 import modalMixin from '@/mixins/modal/modal';
 import watcherMixin from '@/mixins/watcher';
+import { MODALS } from '@/constants';
 
 export default {
   mixins: [
@@ -13,14 +14,14 @@ export default {
     watcherMixin,
   ],
   created() {
-    this.fetchWatchersList();
+    this.fetchWatchersList({ filter: { _id: 'AE05C0454680067A' } });
   },
   methods: {
     click() {
       this.showModal({
-        name: 'watcher-data',
+        name: MODALS.weatherWatcher,
         config: {
-          watcherId: 'test-watcher',
+          watcherId: 'AE05C0454680067A',
         },
       });
     },

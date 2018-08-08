@@ -8,6 +8,8 @@ export const ENTITIES_TYPES = {
   view: 'view',
   widgetWrapper: 'widgetWrapper',
   otherWatcher: 'otherWatcher',
+  weatherWatcher: 'weatherWatcher',
+  weatherWatcherEntity: 'weatherWatcherEntity',
   watchedEntity: 'watchedEntity',
   widget: 'widget',
 };
@@ -26,7 +28,7 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
-  watcherData: 'watcher-data',
+  weatherWatcher: 'weather-watcher',
   createWidget: 'create-widget',
 };
 
