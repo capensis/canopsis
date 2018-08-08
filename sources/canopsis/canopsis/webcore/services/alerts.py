@@ -117,7 +117,7 @@ def exports(ws):
             search = str(search)
 
         try:
-            alarms = ar.get_with_count(
+            alarms = ar.get(
                 tstart=tstart,
                 tstop=tstop,
                 opened=opened,
@@ -132,7 +132,8 @@ def exports(ws):
                 with_steps=with_steps,
                 natural_search=natural_search,
                 active_columns=active_columns,
-                hide_resources=hide_resources
+                hide_resources=hide_resources,
+                with_count=True
             )
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)
