@@ -4,13 +4,8 @@ import Cookies from 'js-cookie';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import Login from '@/views/login.vue';
-import Alarm from '@/views/alarm.vue';
 import Home from '@/views/home.vue';
-import About from '@/views/about.vue';
-import Context from '@/views/context.vue';
-import Filter from '@/views/filter.vue';
 import View from '@/views/view.vue';
-import Rrule from '@/components/forms/rrule.vue';
 
 Vue.use(Router);
 
@@ -34,46 +29,12 @@ const routes = [
     meta: requiresLoginMeta,
   },
   {
-    path: '/context',
-    name: 'context',
-    component: Context,
-    meta: requiresLoginMeta,
-  },
-  {
     path: '/view/:id',
     name: 'view',
     component: View,
     props: route => ({ id: route.params.id }),
   },
 ];
-if (process.env.NODE_ENV === 'development') {
-  routes.push(
-    {
-      path: '/about',
-      name: 'about',
-      component: About,
-      meta: requiresLoginMeta,
-    },
-    {
-      path: '/alarms',
-      name: 'alarms',
-      component: Alarm,
-      meta: requiresLoginMeta,
-    },
-    {
-      path: '/filter',
-      name: 'filter',
-      component: Filter,
-      meta: requiresLoginMeta,
-    },
-    {
-      path: '/rrule',
-      name: 'rrule',
-      component: Rrule,
-      meta: requiresLoginMeta,
-    },
-  );
-}
 
 const router = new Router({
   mode: ROUTER_MODE,
