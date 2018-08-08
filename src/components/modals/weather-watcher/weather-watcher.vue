@@ -4,19 +4,25 @@
       span.headline {{ watcher.display_name }}
     v-divider
     v-card-text
-      div {{ $t('modals.weatherWatcher.name') }}: {{ watcher.display_name }}
-      div {{ $t('modals.weatherWatcher.org') }}: {{ watcher.org }}
-      div.entities-list(v-if="!watchedEntitiesPending", v-for="watchedEntity in watchedEntities")
-        entity(:entity="watchedEntity")
+      v-layout(v-for="attribute in Object.keys(attributes)", row, wrap)
+        v-flex.text-md-right(xs3)
+          b {{ $t(`modals.weatherWatcher.${attribute}`) }}:
+        v-flex.pl-2(xs9)
+          span {{ attributes[attribute] }}
+      div.mt-4(v-if="!watchedEntitiesPending", v-for="watchedEntity in watchedEntities")
+        weather-watcher-entity(:entity="watchedEntity")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import pick from 'lodash/pick';
+import mapValues from 'lodash/mapValues';
 
-import Entity from '@/components/modals/weather-watcher/entity.vue';
+import { MODALS } from '@/constants';
+import WeatherWatcherEntity from '@/components/modals/weather-watcher/entity.vue';
+
 import watcherMixin from '@/mixins/watcher';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import { MODALS } from '@/constants';
 
 const { mapGetters } = createNamespacedHelpers('weatherWatcher');
 
@@ -24,12 +30,17 @@ const { mapGetters } = createNamespacedHelpers('weatherWatcher');
 export default {
   name: MODALS.weatherWatcher,
   components: {
-    Entity,
+    WeatherWatcherEntity,
   },
   mixins: [
     watcherMixin,
     modalInnerMixin,
   ],
+  data() {
+    return {
+      attributes: {},
+    };
+  },
   computed: {
     ...mapGetters({
       getWeatherWatcher: 'getItem',
@@ -39,13 +50,21 @@ export default {
     },
   },
   mounted() {
+    const info = mapValues(pick(this.watcher.infos, [
+      'application_crit_label',
+      'product_line',
+      'service_period',
+      'isInCarat',
+      'application_label',
+      'target_platform',
+    ]), v => v.value);
+
+    this.attributes = {
+      org: this.watcher.org,
+      ...info,
+    };
+
     this.fetchWatchedEntities({ watcherId: this.config.watcherId });
   },
 };
 </script>
-
-<style scoped>
-  .entities-list {
-    margin-top: 20px;
-  }
-</style>

@@ -15,20 +15,24 @@
           v-card-text
             v-layout(row, wrap)
               v-flex.text-md-right(xs4)
-                b {{ $t(`modals.weatherWatcher.${attribute}`) }}
+                b {{ $t(`modals.weatherWatcher.${attribute}`) }}:
               v-flex.pl-2(xs8)
                 span {{ attributes[attribute] }}
           v-divider
         v-card-text
           v-layout(row, wrap)
             v-flex.text-md-right(xs4)
-              b {{ $t('modals.weatherWatcher.ticketing') }}
+              b {{ $t('modals.weatherWatcher.ticketing') }}:
             v-flex.pl-2(xs8)
               v-icon local_play
         v-divider
 </template>
 
 <script>
+import get from 'lodash/get';
+import pick from 'lodash/pick';
+import mapValues from 'lodash/mapValues';
+
 import { ENTITIES_STATES } from '@/constants';
 
 export default {
@@ -39,12 +43,24 @@ export default {
     },
   },
   data() {
+    const main = pick(this.entity, [
+      'criticity',
+      'org',
+    ]);
+
+    const info = mapValues(pick(this.entity.infos, [
+      'scenario_label',
+      'scenario_probe_name',
+      'scenario_calendar',
+    ]), v => v.value);
+
     return {
       attributes: {
-        criticity: this.entity.criticity,
-        organization: this.entity.org,
-        numberOk: this.entity.stats ? this.entity.stats.ok : this.$t('modals.weatherWatcher.noData'),
-        numberKo: this.entity.stats ? this.entity.stats.ko : this.$t('modals.weatherWatcher.noData'),
+        ...main,
+        ...info,
+
+        numberOk: get(this.entity.stats, 'ok', this.$t('modals.weatherWatcher.noData')),
+        numberKo: get(this.entity.stats, 'ko', this.$t('modals.weatherWatcher.noData')),
         state: this.entity.state.val,
       },
     };
@@ -89,12 +105,10 @@ export default {
       .entity-title {
         line-height: 52px;
       }
-    }
-  }
-</style>
 
-<style scoped>
-  .actions-button-wrapper {
-    float: right;
+      .actions-button-wrapper {
+        float: right;
+      }
+    }
   }
 </style>

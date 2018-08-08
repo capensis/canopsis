@@ -18,7 +18,7 @@ export default {
     watcherMixin,
   ],
   created() {
-    this.fetchWeatherWatchersList({ filter: { _id: '5D0A5D2A4CAF0003' } });
+    this.fetchWeatherWatchersList({ filter: { _id: 'BD41E18E45870569' } });
   },
   methods: {
     ...mapActions({
@@ -28,7 +28,7 @@ export default {
       this.showModal({
         name: MODALS.weatherWatcher,
         config: {
-          watcherId: '5D0A5D2A4CAF0003',
+          watcherId: 'BD41E18E45870569',
         },
       });
     },
