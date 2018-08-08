@@ -63,9 +63,9 @@ import ContextFab from '@/components/other/context/actions/context-fab.vue';
 
 import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import { MODALS } from '@/constants';
 
 import CreateEntity from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -149,13 +149,23 @@ export default {
       return query;
     },
     editEntity(item) {
-      this.showModal({
-        name: MODALS.createEntity,
-        config: {
-          title: this.$t('modals.createEntity.editTitle'),
-          item,
-        },
-      });
+      if (item.type === ENTITIES_TYPES.watcher) {
+        this.showModal({
+          name: MODALS.createWatcher,
+          config: {
+            title: 'modals.createWatcher.editTitle',
+            item,
+          },
+        });
+      } else {
+        this.showModal({
+          name: MODALS.createEntity,
+          config: {
+            title: 'modals.createEntity.editTitle',
+            item,
+          },
+        });
+      }
     },
     deleteEntity(item) {
       this.showModal({

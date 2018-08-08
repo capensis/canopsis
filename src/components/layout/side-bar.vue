@@ -14,25 +14,11 @@
         dark
       )
         v-expansion-panel-content.grey.darken-4.white--text
-          div(slot="header") Examples
+          div(slot="header") View Group 1
           v-card.grey.darken-3.white--text
-            v-card-text
-              router-link(to="alarms") Alarms List
+            v-card-text View 1
           v-card.grey.darken-3.white--text
-            v-card-text
-              router-link(to="context") Context
-          v-card.grey.darken-3.white--text
-            v-card-text
-              router-link(to="weather") Service Weather
-          v-card.grey.darken-3.white--text
-            v-card-text
-              router-link(to="filter") Filters
-          v-card.grey.darken-3.white--text
-            v-card-text
-              router-link(to="login") Login
-          v-card.grey.darken-3.white--text
-            v-card-text
-              router-link(to="rrule") Rrule
+            v-card-text View 2
       v-expansion-panel(
         class="panel",
         expand,

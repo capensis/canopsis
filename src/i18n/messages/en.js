@@ -162,6 +162,8 @@ export default {
         type: 'Types',
         manageInfos: 'Manage Infos',
         form: 'Form',
+        impact: 'Impact',
+        depends: 'Depends',
         types: {
           connector: 'connector',
           component: 'component',
@@ -170,7 +172,8 @@ export default {
       },
     },
     createWatcher: {
-      title: 'Create a watcher',
+      createTitle: 'Create a watcher',
+      editTitle: 'Edit a watcher',
       displayName: 'Name',
     },
     createAckEvent: {
