@@ -161,6 +161,8 @@ export default {
         type: 'Types',
         manageInfos: 'Manage Infos',
         form: 'Form',
+        impact: 'Impact',
+        depends: 'Depends',
         types: {
           connector: 'connector',
           component: 'component',

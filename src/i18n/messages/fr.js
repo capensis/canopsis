@@ -161,6 +161,8 @@ export default {
         type: 'Types',
         manageInfos: 'Gérer Infos',
         form: 'Formulaire',
+        impact: 'Impacts',
+        depends: 'Dépendances',
         types: {
           connector: 'connecteur',
           component: 'composant',

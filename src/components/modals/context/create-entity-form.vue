@@ -32,18 +32,27 @@ v-card-text
         v-validate="'required'",
         :error-messages="errors.collect('type')",
         @input="updateField('type', $event)",
-        label="Type",
+        :label="$t('modals.createEntity.types')",
         single-line
       )
     v-layout(wrap)
       v-flex(xs12)
-        entities-select(label="Impacts", :entities="form.impact", @updateEntities="updateImpact")
+        entities-select(
+          :label="$t('modals.createEntity.fields.impact')",
+          :entities="form.impact",
+          @updateEntities="updateImpact"
+        )
       v-flex(xs12)
-        entities-select(label="Dependencies", :entities="form.depends", @updateEntities="updateDepends")
+        entities-select(
+          :label="$t('modals.createEntity.fields.depends')",
+          :entities="form.depends",
+          @updateEntities="updateDepends"
+        )
 </template>
 
 <script>
 import { MODALS } from '@/constants';
+import formMixin from '@/mixins/form.js';
 
 import EntitiesSelect from './entities-select.vue';
 
@@ -70,6 +79,7 @@ export default {
   components: {
     EntitiesSelect,
   },
+  mixins: [formMixin],
   props: {
     form: {
       type: Object,
@@ -113,9 +123,6 @@ export default {
     },
     updateDepends(entities) {
       this.updateField('depends', entities);
-    },
-    updateField(fieldName, value) {
-      this.$emit('update:form', { ...this.form, [fieldName]: value });
     },
   },
 };
