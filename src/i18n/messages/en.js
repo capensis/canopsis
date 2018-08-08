@@ -247,7 +247,7 @@ export default {
       moreInfos: 'More infos',
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
-    watcherData: {
+    weatherWatcher: {
       criticity: 'Criticity',
       organization: 'Organization',
       numberOk: 'Number Ok',

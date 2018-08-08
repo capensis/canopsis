@@ -4,9 +4,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import modalMixin from '@/mixins/modal/modal';
 import watcherMixin from '@/mixins/watcher';
 import { MODALS } from '@/constants';
+
+const { mapActions } = createNamespacedHelpers('weatherWatcher');
 
 export default {
   mixins: [
@@ -14,14 +18,17 @@ export default {
     watcherMixin,
   ],
   created() {
-    this.fetchWatchersList({ filter: { _id: 'AE05C0454680067A' } });
+    this.fetchWeatherWatchersList({ filter: { _id: '5D0A5D2A4CAF0003' } });
   },
   methods: {
+    ...mapActions({
+      fetchWeatherWatchersList: 'fetchList',
+    }),
     click() {
       this.showModal({
         name: MODALS.weatherWatcher,
         config: {
-          watcherId: 'AE05C0454680067A',
+          watcherId: '5D0A5D2A4CAF0003',
         },
       });
     },

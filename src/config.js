@@ -28,10 +28,10 @@ export const API_ROUTES = {
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
+  weatherWatcher: '/api/v2/weather/watchers',
   pbehavior: '/api/v2/pbehavior',
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',
-  watchers: '/api/v2/weather/watchers',
 };

@@ -247,7 +247,7 @@ export default {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
-    watcherData: {
+    weatherWatcher: {
       criticity: 'Criticity',
       organization: 'Organization',
       numberOk: 'Nombre Ok',

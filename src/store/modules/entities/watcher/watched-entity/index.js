@@ -44,7 +44,7 @@ export default {
         commit(types.FETCH_LIST, { params });
 
         const { normalizedData } = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.watchers}/${watcherId}`,
+          route: `${API_ROUTES.weatherWatcher}/${watcherId}`,
           schema: [watchedEntitiesSchema],
           params,
           dataPreparer: d => d,
