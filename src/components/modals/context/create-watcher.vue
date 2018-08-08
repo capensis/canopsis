@@ -1,13 +1,13 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline {{ $t('modals.createWatcher.title') }}
+      span.headline {{ $t(config.title) }}
     v-form
       v-layout(wrap, justify-center)
         v-flex(xs11)
           v-text-field(
             :label="$t('modals.createWatcher.displayName')",
-            v-model="form.display_name",
+            v-model="form.name",
             data-vv-name="name",
             v-validate="'required'",
             :error-messages="errors.collect('name')",
@@ -26,7 +26,8 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
-import modalMixin from '@/mixins/modal/modal';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
+import { ENTITIES_TYPES } from '@/constants';
 
 const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
 
@@ -37,33 +38,39 @@ export default {
   components: {
     FilterEditor,
   },
-  mixins: [modalMixin],
+  mixins: [modalInnerMixin],
   data() {
     return {
       form: {
-        display_name: '',
+        name: '',
         mfilter: '',
       },
     };
   },
   mounted() {
-    if (this.config && this.config.item) {
-      this.form = { ...this.config.item.props };
+    if (this.config.item) {
+      this.form = { ...this.config.item };
     }
   },
   methods: {
-    ...watcherMapActions(['create']),
+    ...watcherMapActions(['create', 'edit']),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const formData = {
+        const data = {
           ...this.form,
-          _id: this.form.display_name,
-          type: 'watcher',
+          _id: this.config.item ? this.config.item._id : this.form.name,
+          display_name: this.form.name,
+          type: ENTITIES_TYPES.watcher,
           mfilter: JSON.stringify(this.request),
         };
-        this.create(formData);
+
+        if (this.config.item) {
+          await this.edit({ data });
+        } else {
+          await this.create({ data });
+        }
         this.hideModal();
       }
     },

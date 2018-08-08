@@ -41,7 +41,7 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
-          title: this.$t('modals.createEntity.createTitle'),
+          title: 'modals.createEntity.createTitle',
         },
       });
     },
@@ -49,7 +49,7 @@ export default {
       this.showModal({
         name: MODALS.createWatcher,
         config: {
-          title: 'modals.createWatcher.title',
+          title: 'modals.createWatcher.createTitle',
         },
       });
     },

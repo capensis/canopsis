@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline {{ config.title }}
+      h2 {{ $t(config.title) }}
     v-tabs
       v-tab(
       v-for="tab in tabs",
@@ -10,12 +10,7 @@
       ) {{ tab.name }}
       v-tab-item
         keep-alive
-        create-form(
-        :name.sync="form.name",
-        :description.sync="form.description",
-        :type.sync="form.type",
-        :enabled.sync="form.enabled",
-        )
+        create-form(:form.sync="form")
       v-tab-item
         manage-infos(:infos.sync="form.infos")
     v-card-actions
