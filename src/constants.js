@@ -2,6 +2,7 @@ export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
   watcher: 'watcher',
+  weather: 'weather',
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
@@ -113,6 +114,7 @@ export const ENTITY_STATUS_STYLES = {
 export const WIDGET_TYPES = {
   alarmList: 'listalarm',
   context: 'crudcontext',
+  weather: 'serviceweather',
   widgetWrapper: 'widgetwrapper',
 };
 
