@@ -1,9 +1,11 @@
+import Vue from 'vue';
+import get from 'lodash/get';
+
+import i18n from '@/i18n';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
-import { watcherOtherSchema } from '@/store/schemas';
-import i18n from '@/i18n';
-import watchedEntityModule from './watched-entity';
+import { watcherSchema } from '@/store/schemas';
+import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -14,41 +16,49 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    allIds: [],
-    meta: {},
-    pending: false,
-    fetchingParams: {},
-    allIdsGeneralList: [],
-    pendingGeneralList: false,
-  },
-  modules: {
-    watchedEntity: watchedEntityModule,
+    widgets: {},
   },
   getters: {
-    allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.otherWatcher, state.allIds),
-    pending: state => state.pending,
-    meta: state => state.meta,
-    item: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](ENTITIES_TYPES.otherWatcher, id),
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.watcher, get(state.widgets[widgetId], 'allIds', [])),
+    getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
+    getItem: (state, getters, rootState, rootGetters) => id =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.watcher, id),
   },
   mutations: {
-    [types.FETCH_LIST](state, { params }) {
-      state.pending = true;
-      state.fetchingParams = params;
+    [types.FETCH_LIST](state, { widgetId, params }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: true,
+        fetchingParams: params,
+      });
     },
-    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
-      state.allIds = allIds;
-      state.meta = meta;
-      state.pending = false;
+    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+        allIds,
+      });
     },
-    [types.FETCH_LIST_FAILED](state) {
-      state.pending = false;
+    [types.FETCH_LIST_FAILED](state, { widgetId }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+      });
     },
   },
   actions: {
     async create(context, params = {}) {
       try {
         await request.post(API_ROUTES.watcher, params);
+      } catch (err) {
+        console.warn(err);
+      }
+    },
+
+    async edit(context, { data }) {
+      try {
+        await request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
       } catch (err) {
         console.warn(err);
       }
@@ -67,22 +77,22 @@ export default {
       }
     },
 
-    async fetchList({ dispatch, commit }, { params, filter } = { params: {}, filter: {} }) {
+    async fetchList({ dispatch, commit }, { widgetId, params, filter = {} } = {}) {
       try {
-        commit(types.FETCH_LIST, { params });
-
         const { normalizedData } = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.watchers}/${JSON.stringify(filter)}`,
-          schema: [watcherOtherSchema],
+          route: `${API_ROUTES.weatherWatcher}/${JSON.stringify(filter)}`,
+          schema: [watcherSchema],
           params,
           dataPreparer: d => d,
         }, { root: true });
 
-        commit(types.FETCH_LIST_COMPLETED, { allIds: normalizedData.result, meta: {} });
-      } catch (e) {
-        commit(types.FETCH_LIST_FAILED);
-        console.error(e);
+        commit(types.FETCH_LIST_COMPLETED, {
+          widgetId,
+          allIds: normalizedData.result,
+        });
+      } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        commit(types.FETCH_LIST_FAILED, { widgetId });
       }
     },
   },

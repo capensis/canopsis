@@ -125,6 +125,7 @@ export default {
     titles: {
       alarmListSettings: 'Paramètres du bac à alarmes',
       contextTableSettings: 'Paramètres de l\'explorateur de contexte',
+      weatherSettings: 'Paramètres de la météo des services',
     },
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
@@ -161,6 +162,8 @@ export default {
         type: 'Types',
         manageInfos: 'Gérer Infos',
         form: 'Formulaire',
+        impact: 'Impacts',
+        depends: 'Dépendances',
         types: {
           connector: 'connecteur',
           component: 'composant',
@@ -169,7 +172,8 @@ export default {
       },
     },
     createWatcher: {
-      title: 'Créer un observateur',
+      createTitle: 'Créer un observateur',
+      editTitle: 'Editer un observateur',
       displayName: 'Nom',
     },
     createAckEvent: {
