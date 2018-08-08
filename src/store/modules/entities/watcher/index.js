@@ -1,10 +1,10 @@
 import Vue from 'vue';
+import get from 'lodash/get';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { watcherSchema } from '@/store/schemas';
 import i18n from '@/i18n';
-import get from 'lodash/get';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',

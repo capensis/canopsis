@@ -125,6 +125,7 @@ export default {
     titles: {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
+      weatherSettings: 'Service weather settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',

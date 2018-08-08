@@ -15,10 +15,10 @@ export default {
     watchers() {
       return this.getWatchersListByWidgetId(this.widget.id);
     },
-    alarmsMeta() {
+    watchersMeta() {
       return this.getWatchersMetaByWidgetId(this.widget.id);
     },
-    alarmsPending() {
+    watchersPending() {
       return this.getWatchersPendingByWidgetId(this.widget.id);
     },
   },

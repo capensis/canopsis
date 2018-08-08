@@ -125,6 +125,7 @@ export default {
     titles: {
       alarmListSettings: 'Paramètres du bac à alarmes',
       contextTableSettings: 'Paramètres de l\'explorateur de contexte',
+      weatherSettings: 'Paramètres de la météo des services',
     },
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
