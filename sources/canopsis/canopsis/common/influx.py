@@ -120,22 +120,6 @@ def get_influxdb_client(conf_path=INFLUXDB_CONF_PATH,
     return client
 
 
-def encode_tags(tags):
-    """
-    Encode a point's tags in utf-8.
-
-    This is required because of a bug in influxdb-python<=2.12.0.
-    """
-    encoded_tags = {}
-    for key, value in tags.items():
-        key = key.encode('utf-8')
-        if value:
-            value = value.encode('utf-8')
-        encoded_tags[key] = value
-
-    return encoded_tags
-
-
 # The two following functions are defined in the influx.line_protocol module of
 # influxdb-python>=4.0.0
 def quote_ident(value):
