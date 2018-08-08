@@ -29,7 +29,6 @@ import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
 import modalMixin from '@/mixins/modal/modal';
 
 const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
-const { mapGetters: filterEditorMapGetters } = createNamespacedHelpers('mFilterEditor');
 
 export default {
   $_veeValidate: {
@@ -46,9 +45,6 @@ export default {
         mfilter: '',
       },
     };
-  },
-  computed: {
-    ...filterEditorMapGetters(['request']),
   },
   mounted() {
     if (this.config && this.config.item) {

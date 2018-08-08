@@ -76,14 +76,13 @@ import FilterRule from './filter-rule.vue';
  * Component representing a group in MongoDB filter
  *
  * @prop {Boolean} [initialGroup] - Boolean to determine if it's the root filter's group
- * @prop {Number} [index] - Index of the group
+ * @prop {Number} index - Index of the group
  * @prop {String} [condition] - Base condition of the group : "$and" or "$or"
  *
  * @event condition#update
  * @event deleteGroup#click
  */
 export default {
-  name: 'filter-group',
   components: {
     FilterRule,
   },
@@ -151,7 +150,7 @@ export default {
     },
     /**
      * @description Invoked when a 'deleteRuleClick' event is fired. Delete a rule from the 'rules' array
-     * @param Int
+     * @param {number} index
      */
     handleDeleteRuleClick(index) {
       this.rules.splice(index, 1);
@@ -175,7 +174,7 @@ export default {
     },
     /**
      * @description Invoked when a 'deleteGroup' event is fired. Delete a group from the 'groups' array
-     * @param INT
+     * @param {number} index
      */
     deleteGroup(index) {
       this.groups.splice(index, 1);
@@ -190,7 +189,7 @@ export default {
   }
 
   button {
-    @media (max-width:'500px') {
+    @media (max-width: 500px) {
       font-size: 0.6em;
     }
   }
