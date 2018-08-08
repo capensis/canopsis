@@ -36,6 +36,8 @@ export const widgetWrapperSchema = new schema.Entity(ENTITIES_TYPES.widgetWrappe
   widget: widgetSchema,
 });
 
+widgetSchema.define({ items: [widgetWrapperSchema] });
+
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   containerwidget: {
     items: [widgetWrapperSchema],

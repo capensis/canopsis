@@ -14,18 +14,14 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
 import { MODALS } from '@/constants';
 import WeatherWatcherEntity from '@/components/modals/weather-watcher/entity.vue';
 
-import watcherMixin from '@/mixins/watcher';
+import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-
-const { mapGetters } = createNamespacedHelpers('weatherWatcher');
-
 
 export default {
   name: MODALS.weatherWatcher,
@@ -33,7 +29,7 @@ export default {
     WeatherWatcherEntity,
   },
   mixins: [
-    watcherMixin,
+    entitiesWatcherMixin,
     modalInnerMixin,
   ],
   data() {
@@ -42,15 +38,12 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      getWeatherWatcher: 'getItem',
-    }),
     watcher() {
-      return this.getWeatherWatcher(this.config.watcherId);
+      return this.getWatcher(this.config.watcherId);
     },
   },
   mounted() {
-    const info = mapValues(pick(this.watcher.infos, [
+    const infoAttributes = mapValues(pick(this.watcher.infos, [
       'application_crit_label',
       'product_line',
       'service_period',
@@ -61,10 +54,10 @@ export default {
 
     this.attributes = {
       org: this.watcher.org,
-      ...info,
+      ...infoAttributes,
     };
 
-    this.fetchWatchedEntities({ watcherId: this.config.watcherId });
+    //    this.fetchWatchedEntities({ watcherId: this.config.watcherId });
   },
 };
 </script>

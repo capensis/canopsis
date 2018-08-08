@@ -43,12 +43,12 @@ export default {
     },
   },
   data() {
-    const main = pick(this.entity, [
+    const mainAttributes = pick(this.entity, [
       'criticity',
       'org',
     ]);
 
-    const info = mapValues(pick(this.entity.infos, [
+    const infoAttributes = mapValues(pick(this.entity.infos, [
       'scenario_label',
       'scenario_probe_name',
       'scenario_calendar',
@@ -56,8 +56,8 @@ export default {
 
     return {
       attributes: {
-        ...main,
-        ...info,
+        ...mainAttributes,
+        ...infoAttributes,
 
         numberOk: get(this.entity.stats, 'ok', this.$t('modals.weatherWatcher.noData')),
         numberKo: get(this.entity.stats, 'ko', this.$t('modals.weatherWatcher.noData')),
@@ -80,6 +80,7 @@ export default {
 
       return classes[this.attributes.state];
     },
+
     hasActivePbehavior() {
       if (!this.entity.pbehavior || !this.entity.pbehavior.length) {
         return false;

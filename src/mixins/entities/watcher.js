@@ -11,6 +11,7 @@ export default {
       getWatchersListByWidgetId: 'getListByWidgetId',
       getWatchersMetaByWidgetId: 'getMetaByWidgetId',
       getWatchersPendingByWidgetId: 'getPendingByWidgetId',
+      getWatcher: 'getItem',
     }),
     watchers() {
       return this.getWatchersListByWidgetId(this.widget.id);

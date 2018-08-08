@@ -9,14 +9,15 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
       p.watcherName {{ watcher.display_name }}
   v-layout
     v-flex(xs12)
-      div.moreInfos.py-1
+      div.moreInfos.py-1(@click="showWeatherWatcherModal")
         v-layout(justify-center)
           div More infos
           v-icon.pl-1(color="white", small) arrow_forward
 </template>
 
 <script>
-import { ENTITIES_STATES } from '@/constants';
+import { ENTITIES_STATES, MODALS } from '@/constants';
+import modalMixin from '@/mixins/modal/modal';
 
 import SunIcon from './icons/sun.vue';
 import CloudySunIcon from './icons/cloudy-sun.vue';
@@ -32,6 +33,7 @@ export default {
     RainingCloudIcon,
     PauseIcon,
   },
+  mixins: [modalMixin],
   props: {
     watcher: {
       type: Object,
@@ -71,6 +73,16 @@ export default {
       return this.values[this.watcher.state.val];
     },
   },
+  methods: {
+    showWeatherWatcherModal() {
+      this.showModal({
+        name: MODALS.weatherWatcher,
+        config: {
+          watcherId: this.watcher.entity_id,
+        },
+      });
+    },
+  },
 };
 </script>
 
@@ -78,6 +90,7 @@ export default {
   .iconContainer {
     font-size: 48px;
   }
+
   .pauseContainer {
     display: flex;
     align-items: center;
@@ -90,6 +103,7 @@ export default {
     position: absolute;
     right: 0;
   }
+
   .pauseIcon {
     z-index: 4;
     position: relative;
@@ -97,13 +111,16 @@ export default {
     left: 20%;
     color: black;
   }
+
   .watcherName {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   .moreInfos {
     z-index: 2;
     background-color: rgba(0,0,0,0.2);
+    cursor: pointer;
   }
 </style>

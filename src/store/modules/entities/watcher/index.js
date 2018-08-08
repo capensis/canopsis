@@ -77,10 +77,10 @@ export default {
       }
     },
 
-    async fetchList({ dispatch, commit }, { widgetId, params, filter = {} } = {}) {
+    async fetchList({ dispatch, commit }, { widgetId, params, filter } = {}) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.weatherWatcher}/${JSON.stringify(filter)}`,
+          route: `${API_ROUTES.weatherWatcher}/${filter}`,
           schema: [watcherSchema],
           params,
           dataPreparer: d => d,

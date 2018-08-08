@@ -30,6 +30,7 @@ export default {
   methods: {
     fetchList() {
       this.fetchWatchersList({
+        filter: this.widget.filter,
         params: this.getQuery(),
         widgetId: this.widget.id,
       });
