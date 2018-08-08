@@ -18,18 +18,19 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 <script>
 import { ENTITIES_STATES } from '@/constants';
 
-import sun from './icons/sun.vue';
-import cloudySun from './icons/cloudy-sun.vue';
-import cloud from './icons/cloud.vue';
-import rainingCloud from './icons/raining-cloud.vue';
-import pause from './icons/pause.vue';
+import SunIcon from './icons/sun.vue';
+import CloudySunIcon from './icons/cloudy-sun.vue';
+import CloudIcon from './icons/cloud.vue';
+import RainingCloudIcon from './icons/raining-cloud.vue';
+import PauseIcon from './icons/pause.vue';
 
 export default {
   components: {
-    sun,
-    cloudySun,
-    cloud,
-    rainingCloud,
+    SunIcon,
+    CloudySunIcon,
+    CloudIcon,
+    RainingCloudIcon,
+    PauseIcon,
   },
   props: {
     watcher: {
@@ -42,19 +43,19 @@ export default {
       values: {
         [ENTITIES_STATES.ok]: {
           color: 'green darken-1',
-          icon: sun,
+          icon: SunIcon,
         },
         [ENTITIES_STATES.minor]: {
           color: 'yellow darken-1',
-          icon: cloudySun,
+          icon: CloudySunIcon,
         },
         [ENTITIES_STATES.major]: {
           color: 'orange darken-1',
-          icon: cloud,
+          icon: CloudIcon,
         },
         [ENTITIES_STATES.critical]: {
           color: 'red darken-1',
-          icon: rainingCloud,
+          icon: RainingCloudIcon,
         },
       },
     };
@@ -64,7 +65,7 @@ export default {
       const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
 
       if (hasActivePb) {
-        return { icon: pause, color: 'grey lighten-1' };
+        return { icon: PauseIcon, color: 'grey lighten-1' };
       }
 
       return this.values[this.watcher.state.val];

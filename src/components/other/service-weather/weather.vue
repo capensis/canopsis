@@ -6,10 +6,11 @@
 </template>
 
 <script>
-import WeatherItem from './weather-item.vue';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import queryMixin from '@/mixins/query';
+
+import WeatherItem from './weather-item.vue';
 
 export default {
   components: {
