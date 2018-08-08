@@ -25,6 +25,8 @@ Adapter for view object.
 
 from __future__ import unicode_literals
 
+from uuid import uuid4
+
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.views.enums import ViewField, GroupField, ViewResponseField
@@ -96,8 +98,13 @@ class ViewAdapter(object):
         :param Dict[str, Any] view:
         :rtype: str
         """
-        self.validate(None, view)
-        return self.view_collection.insert(view)
+        view_id = str(uuid4())
+
+        view[ViewField.id] = view_id
+        self.validate(view_id, view)
+
+        self.view_collection.insert(view)
+        return view_id
 
     def update(self, view_id, view):
         """
@@ -284,23 +291,21 @@ class GroupAdapter(object):
             ViewField.group_id: group_id
         }).limit(1).count() == 0
 
-    def create(self, group_id, group):
+    def create(self, group):
         """
         Create a new group.
 
-        :param str group_id:
         :param Dict group:
         :rtype: str
         :raises: InvalidGroupError
         """
-        if self.exists(group_id):
-            raise InvalidGroupError(
-                'There is already a group with the id: {0}'.format(group_id))
+        group_id = str(uuid4())
 
         group[GroupField.id] = group_id
         self.validate(group_id, group)
 
         self.group_collection.insert(group)
+        return group_id
 
     def update(self, group_id, group):
         """
