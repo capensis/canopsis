@@ -1,6 +1,9 @@
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
+import uuid from '@/helpers/uuid';
 import { ENTITIES_TYPES } from '@/constants';
+import i18n from '@/i18n';
+import { groupSchema } from '@/store/schemas';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -12,17 +15,13 @@ export default {
   namespaced: true,
   state: {
     allIds: [],
-    meta: {},
     pending: false,
     fetchingParams: {},
-    allIdsGeneralList: [],
-    pendingGeneralList: false,
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('watcher', state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.group, state.allIds),
     pending: state => state.pending,
-    meta: state => state.meta,
   },
   mutations: {
     [types.FETCH_LIST](state, { params }) {
@@ -41,21 +40,30 @@ export default {
   actions: {
     async create(context, params = {}) {
       try {
-        await request.post(API_ROUTES.watcher, params);
+        const route = API_ROUTES.viewV3.groups + uuid('groupid_');
+        await request.post(route, params);
       } catch (err) {
         console.warn(err);
       }
     },
-    async remove({ dispatch }, { id } = {}) {
+    async fetchList({ commit, dispatch }, { name } = {}) {
       try {
-        await request.delete(API_ROUTES.watcher, { params: { watcher_id: id } });
-
-        await dispatch('entities/removeFromStore', {
-          id,
-          type: ENTITIES_TYPES.watcher,
+        let route = API_ROUTES.viewV3.groups;
+        if (name) {
+          route += name;
+        }
+        const { normalizedData } = await dispatch('entities/fetch', {
+          route,
+          schema: [groupSchema],
+          dataPreparer: d => d,
         }, { root: true });
+
+        commit(types.FETCH_LIST_COMPLETED, {
+          allIds: normalizedData.result,
+        });
       } catch (err) {
-        console.warn(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        commit(types.FETCH_LIST_FAILED);
       }
     },
   },

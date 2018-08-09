@@ -6,6 +6,8 @@ export const ENTITIES_TYPES = {
   event: 'event',
   userPreference: 'userPreference',
   view: 'view',
+  viewV3: 'viewV3',
+  group: 'group',
   widgetWrapper: 'widgetWrapper',
   widget: 'widget',
 };

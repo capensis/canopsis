@@ -10,6 +10,7 @@ import About from '@/views/about.vue';
 import Context from '@/views/context.vue';
 import Filter from '@/views/filter.vue';
 import View from '@/views/view.vue';
+import ViewV3 from '@/views/viewV3.vue';
 import Rrule from '@/components/forms/rrule.vue';
 
 Vue.use(Router);
@@ -41,6 +42,13 @@ const routes = [
   },
   {
     path: '/view/:id',
+    name: 'viewV3',
+    component: ViewV3,
+    meta: requiresLoginMeta,
+    props: route => ({ id: route.params.id }),
+  },
+  {
+    path: '/view/archive/:id',
     name: 'view',
     component: View,
     meta: requiresLoginMeta,

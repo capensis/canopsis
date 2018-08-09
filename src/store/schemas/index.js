@@ -42,6 +42,12 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   },
 });
 
+export const viewV3Schema = new schema.Entity(ENTITIES_TYPES.viewV3, {
+});
+
+export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
+});
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -49,6 +55,8 @@ export default {
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,
+  [ENTITIES_TYPES.viewV3]: viewV3Schema,
+  [ENTITIES_TYPES.group]: groupSchema,
   [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
 };

@@ -173,8 +173,10 @@ export default {
       displayName: 'Name',
     },
     createView: {
-      title: 'Create a watcher',
-      crecordName: 'Name',
+      title: 'Create a view',
+      fields: {
+        groupIds: 'Choose a group, or create a new one',
+      },
     },
     createAckEvent: {
       title: 'Add event: Ack',

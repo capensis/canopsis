@@ -27,10 +27,15 @@
           v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-layout(wrap, justify-center)
         v-flex(xs11)
-          v-combobox(v-model='tags',
+          v-combobox(v-model='form.tags',
           label='Tags', tags='', clearable='',  multiple='', append-icon='')
             template(slot='selection', slot-scope='data')
               v-chip(:selected='data.selected', close='', @input='remove(data.item)') {{ data.item }}
+          v-combobox(v-model='form.group_id',
+          @click="fetchGroupList",
+          :items="groupList",
+          :label="$t('modals.createView.fields.groupIds')",
+          )
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
@@ -39,6 +44,8 @@
 <script>
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import viewMixin from '@/mixins/entities/viewV3/viewV3';
+import groupMixin from '@/mixins/entities/viewV3/group';
 
 /**
  * Modal to create widget
@@ -48,28 +55,32 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalMixin],
+  mixins: [modalMixin, viewMixin, groupMixin],
   data() {
     return {
-      tags: [],
       form: {
         name: '',
         title: '',
+        group_id: '',
         description: '',
         enabled: '',
+        tags: [],
       },
     };
   },
   methods: {
     remove(item) {
-      this.tags.splice(this.tags.indexOf(item), 1);
-      this.tags = [...this.tags];
+      this.form.tags.splice(this.form.tags.indexOf(item), 1);
+      this.form.tags = [...this.form.tags];
     },
     async submit() {
-      /* const isFormValid = await this.$validator.validateAll();
-       if (isFormValid) {
+      /* if (!this.groupList.include(this.form.group_id)) {
 
       } */
+      const isFormValid = await this.$validator.validateAll();
+      if (isFormValid) {
+        this.createView(this.form);
+      }
     },
   },
 };

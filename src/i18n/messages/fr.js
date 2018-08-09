@@ -174,7 +174,9 @@ export default {
     },
     createView: {
       title: 'Créer une vue',
-      crecordName: 'Nom',
+      fields: {
+        groupIds: 'Choisir un groupe, ou en créer un nouveau',
+      },
     },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',
