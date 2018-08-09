@@ -1,5 +1,5 @@
 <template lang="pug">
-v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
+v-data-table(:items="items", :headers="pbehaviorsTableHeaders", hide-actions)
   template(slot="items" slot-scope="props")
     td {{ props.item.name }}
     td {{ props.item.author }}
@@ -16,7 +16,7 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapgetters } = createNamespacedHelpers('pbehavior');
+const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapGetters } = createNamespacedHelpers('pbehavior');
 
 export default {
   props: {
@@ -73,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...pbehaviorMapgetters({
+    ...pbehaviorMapGetters({
       pbehaviorsList: 'items',
     }),
   },
