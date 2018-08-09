@@ -22,12 +22,12 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 
 export const API_ROUTES = {
   auth: '/auth',
-  logout: '/logout',
   currentUser: '/account/me',
   alarmList: '/alerts/get-alarms',
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
+  weatherWatcher: '/api/v2/weather/watchers',
   pbehavior: '/api/v2/pbehavior',
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',

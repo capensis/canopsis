@@ -1,9 +1,9 @@
 <template lang="pug">
 v-speed-dial(
-  direction="top",
+  direction="left",
   :open-on-hover="true",
   transition="scale-transition")
-  v-btn(slot='activator', v-model="fab", color='green darken-3', dark, fab)
+  v-btn(slot='activator', v-model="fab", color='green darken-3', dark, fab, small)
     v-icon add
     v-icon close
   v-tooltip(left)
@@ -41,7 +41,7 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
-          title: this.$t('modals.createEntity.createTitle'),
+          title: 'modals.createEntity.createTitle',
         },
       });
     },
@@ -49,7 +49,7 @@ export default {
       this.showModal({
         name: MODALS.createWatcher,
         config: {
-          title: 'modals.createWatcher.title',
+          title: 'modals.createWatcher.createTitle',
         },
       });
     },

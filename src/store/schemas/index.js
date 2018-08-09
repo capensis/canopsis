@@ -24,7 +24,7 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
 
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAttribute: '_id' });
 
-export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: '_id' });
+export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
