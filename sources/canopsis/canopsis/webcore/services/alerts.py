@@ -115,7 +115,7 @@ def exports(ws):
             search = str(search)
 
         try:
-            alarms = ar.get(
+            tmp_tuple = ar.get(
                 tstart=tstart,
                 tstop=tstop,
                 opened=opened,
@@ -130,8 +130,11 @@ def exports(ws):
                 with_steps=with_steps,
                 natural_search=natural_search,
                 active_columns=active_columns,
-                hide_resources=hide_resources
+                hide_resources=hide_resources,
+                with_count=True
             )
+            alarms = tmp_tuple[0]
+            alarms_count = tmp_tuple[1]
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)
             raise WebServiceError(message)
@@ -172,7 +175,7 @@ def exports(ws):
 
         alarms['alarms'] = list_alarm
 
-        return alarms
+        return alarms, alarms_count
 
     @route(
         ws.application.get,

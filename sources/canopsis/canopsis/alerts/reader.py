@@ -605,7 +605,8 @@ class AlertsReader(object):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            with_count=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -724,6 +725,8 @@ class AlertsReader(object):
 
         self.add_pbh_filter(pipeline, filter_)
 
+        count_pipeline = pipeline
+
         pipeline.append({
             "$skip": skip
         })
@@ -754,6 +757,12 @@ class AlertsReader(object):
             'first': first,
             'last': last
         }
+
+        if with_count:
+            count_pipeline = count_pipeline.append({'$group': {'_id': None, 'count': {'$sum': 1}}}) 
+            count = self.alarm_collection.aggregate(pipeline, allowDiskUse=True,cursor={})
+            alarms_count = list(count)[0].get('count')
+            return res, alarms_count
 
         return res
 
