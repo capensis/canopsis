@@ -15,14 +15,14 @@
       loader(v-if="contextEntitiesPending")
       div(v-else)
         v-data-table(
-        v-model="selected",
-        :items="contextEntities",
-        :headers="properties",
-        :total-items="contextEntitiesMeta.total",
-        :pagination.sync="vDataTablePagination",
-        item-key="_id",
-        select-all,
-        hide-actions,
+          v-model="selected",
+          :items="contextEntities",
+          :headers="headers",
+          item-key="_id",
+          :total-items="contextEntitiesMeta.total",
+          :pagination.sync="vDataTablePagination",
+          select-all,
+          hide-actions,
         )
           template(slot="headerCell", slot-scope="props")
             span {{ props.header.text }}
@@ -109,6 +109,19 @@ export default {
     return {
       selected: [],
     };
+  },
+  computed: {
+    headers() {
+      return [...this.properties, { text: '', sortable: false }];
+    },
+  },
+  watch: {
+    userPreference() {
+      this.fetchList(); // TODO: check requests count
+    },
+  },
+  async mounted() {
+    this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
   },
   methods: {
     getQuery() {
