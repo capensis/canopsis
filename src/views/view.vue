@@ -26,6 +26,7 @@
 import Settings from '@/components/other/settings/settings.vue';
 import AlarmsListContainer from '@/containers/alarms-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
+import WeatherContainer from '@/containers/weather.vue';
 import { MODALS, WIDGET_TYPES } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -35,6 +36,7 @@ export default {
   components: {
     AlarmsListContainer,
     EntitiesListContainer,
+    WeatherContainer,
     Settings,
   },
   mixins: [
@@ -56,6 +58,7 @@ export default {
       widgetsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list-container',
         [WIDGET_TYPES.context]: 'entities-list-container',
+        [WIDGET_TYPES.weather]: 'weather-container',
       },
     };
   },

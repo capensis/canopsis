@@ -66,6 +66,10 @@ export default {
           title: this.$t('settings.titles.contextTableSettings'),
           component: 'context-settings-fields',
         },
+        [WIDGET_TYPES.weather]: {
+          title: this.$t('settings.titles.weatherSettings'),
+          component: 'weather-settings-fields',
+        },
       },
     };
   },

@@ -126,6 +126,7 @@ export default {
     titles: {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
+      weatherSettings: 'Service weather settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -162,6 +163,8 @@ export default {
         type: 'Types',
         manageInfos: 'Manage Infos',
         form: 'Form',
+        impact: 'Impact',
+        depends: 'Depends',
         types: {
           connector: 'connector',
           component: 'component',
@@ -170,7 +173,8 @@ export default {
       },
     },
     createWatcher: {
-      title: 'Create a watcher',
+      createTitle: 'Create a watcher',
+      editTitle: 'Edit a watcher',
       displayName: 'Name',
     },
     createAckEvent: {
