@@ -4,12 +4,12 @@
     v-container
       v-text-field(
       :value="value.property",
-      @input="inputProperty",
+      @input="updateField('property', $event)",
       :placeholder="$t('settings.columnName')"
       )
       v-select(
       :value="value.direction",
-      @input="inputDirection",
+      @input="updateField('direction', $event)",
       :items="directions"
       )
 </template>
@@ -39,11 +39,8 @@ export default {
     };
   },
   methods: {
-    inputProperty(property) {
-      this.$emit('input', { ...this.value, property });
-    },
-    inputDirection(direction) {
-      this.$emit('input', { ...this.value, direction });
+    updateField(key, value) {
+      this.$emit('input', { ...this.value, [key]: value });
     },
   },
 };

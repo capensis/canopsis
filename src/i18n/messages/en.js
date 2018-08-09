@@ -3,11 +3,13 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 export default {
   common: {
     watcher: 'Watcher',
+    widget: 'Widget',
     name: 'Name',
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
     enabled: 'Enabled',
+    disabled: 'Disabled',
     login: 'Login',
     yes: 'Yes',
     no: 'No',
