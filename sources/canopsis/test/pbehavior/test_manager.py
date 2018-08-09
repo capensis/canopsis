@@ -468,6 +468,26 @@ class TestManager(BaseTest):
 
         self.assertFalse(self.pbm.check_active_pbehavior(now, pb_n_rrule))
 
+        # hourly rrule
+        pb_w_rrule = PBModel(
+            'w_rrule',
+            'w_rrule',
+            {},
+            now - 10,
+            now + 10,
+            'FREQ=HOURLY',
+            'test'
+        ).to_dict()
+
+        self.assertTrue(self.pbm.check_active_pbehavior(now, pb_w_rrule))
+        self.assertTrue(self.pbm.check_active_pbehavior(now + hour, pb_w_rrule))
+        self.assertTrue(self.pbm.check_active_pbehavior(now + 2 * hour, pb_w_rrule))
+        self.assertTrue(self.pbm.check_active_pbehavior(now + 3 * hour, pb_w_rrule))
+        self.assertTrue(self.pbm.check_active_pbehavior(now + 4 * hour, pb_w_rrule))
+        self.assertTrue(self.pbm.check_active_pbehavior(now + 10 * hour, pb_w_rrule))
+        self.assertTrue(self.pbm.check_active_pbehavior(now + 25 * hour, pb_w_rrule))
+        self.assertTrue(self.pbm.check_active_pbehavior(now + 100 * hour, pb_w_rrule))
+
     def test_check_active_pbehavior_2(self):
         timestamps = []
 
