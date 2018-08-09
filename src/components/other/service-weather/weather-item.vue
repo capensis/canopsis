@@ -16,7 +16,7 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 </template>
 
 <script>
-import { ENTITIES_STATES, MODALS } from '@/constants';
+import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBHAVIOR_COLOR } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
 import SunIcon from './icons/sun.vue';
@@ -40,43 +40,30 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      values: {
-        [ENTITIES_STATES.ok]: {
-          color: 'green darken-1',
-          icon: SunIcon,
-        },
-        [ENTITIES_STATES.minor]: {
-          color: 'yellow darken-1',
-          icon: CloudySunIcon,
-        },
-        [ENTITIES_STATES.major]: {
-          color: 'orange darken-1',
-          icon: CloudIcon,
-        },
-        [ENTITIES_STATES.critical]: {
-          color: 'red darken-1',
-          icon: RainingCloudIcon,
-        },
-      },
-    };
-  },
   computed: {
     format() {
       const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
+      const iconsMap = {
+        [ENTITIES_STATES.ok]: SunIcon,
+        [ENTITIES_STATES.minor]: CloudySunIcon,
+        [ENTITIES_STATES.major]: CloudIcon,
+        [ENTITIES_STATES.critical]: RainingCloudIcon,
+      };
 
       if (hasActivePb) {
-        return { icon: PauseIcon, color: 'grey lighten-1' };
+        return { icon: PauseIcon, color: WATCHER_PBHAVIOR_COLOR };
       }
 
-      return this.values[this.watcher.state.val];
+      return {
+        icon: iconsMap[this.watcher.state.val],
+        color: WATCHER_STATES_COLORS[this.watcher.state.val],
+      };
     },
   },
   methods: {
     showWeatherWatcherModal() {
       this.showModal({
-        name: MODALS.weatherWatcher,
+        name: MODALS.watcher,
         config: {
           watcherId: this.watcher.entity_id,
         },

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-expansion-panel
     v-expansion-panel-content.weather-watcher-entity-expansion-panel(hide-actions)
-      .pa-2(slot="header", :class="stateColorClass")
+      .pa-2(slot="header", :class="entityClass")
         span.pl-1.white--text.subheading.entity-title {{ entity.name }}
         div.actions-button-wrapper
           v-btn(fab, small)
@@ -33,7 +33,7 @@ import get from 'lodash/get';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
-import { ENTITIES_STATES } from '@/constants';
+import { WATCHER_STATES_COLORS, WATCHER_PBHAVIOR_COLOR } from '@/constants';
 
 export default {
   props: {
@@ -66,19 +66,12 @@ export default {
     };
   },
   computed: {
-    stateColorClass() {
+    entityClass() {
       if (this.hasActivePbehavior) {
-        return 'grey lighten-1';
+        return WATCHER_PBHAVIOR_COLOR;
       }
 
-      const classes = {
-        [ENTITIES_STATES.ok]: 'green darken-1',
-        [ENTITIES_STATES.minor]: 'yellow darken-1',
-        [ENTITIES_STATES.major]: 'orange darken-1',
-        [ENTITIES_STATES.critical]: 'red darken-1',
-      };
-
-      return classes[this.attributes.state];
+      return WATCHER_STATES_COLORS[this.attributes.state];
     },
 
     hasActivePbehavior() {

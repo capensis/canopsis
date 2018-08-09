@@ -9,8 +9,9 @@
           b {{ $t(`modals.weatherWatcher.${attribute}`) }}:
         v-flex.pl-2(xs9)
           span {{ attributes[attribute] }}
-      div.mt-4(v-if="!watchedEntitiesPending", v-for="watchedEntity in watchedEntities")
-        weather-watcher-entity(:entity="watchedEntity")
+      div(v-if="!watcherEntitiesPending")
+        div.mt-4(v-for="watcherEntity in watcherEntities")
+          watcher-entity(:entity="watcherEntity")
 </template>
 
 <script>
@@ -18,19 +19,22 @@ import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
 import { MODALS } from '@/constants';
-import WeatherWatcherEntity from '@/components/modals/weather-watcher/entity.vue';
-
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 
+import WatcherEntity from './partial/entity.vue';
+
+
 export default {
-  name: MODALS.weatherWatcher,
+  name: MODALS.watcher,
   components: {
-    WeatherWatcherEntity,
+    WatcherEntity,
   },
   mixins: [
-    entitiesWatcherMixin,
     modalInnerMixin,
+    entitiesWatcherMixin,
+    entitiesWatcherEntityMixin,
   ],
   data() {
     return {
@@ -57,7 +61,7 @@ export default {
       ...infoAttributes,
     };
 
-    //    this.fetchWatchedEntities({ watcherId: this.config.watcherId });
+    this.fetchWatcherEntitiesList({ watcherId: this.config.watcherId });
   },
 };
 </script>

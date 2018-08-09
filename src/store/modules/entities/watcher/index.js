@@ -7,6 +7,8 @@ import { API_ROUTES } from '@/config';
 import { watcherSchema } from '@/store/schemas';
 import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 
+import watcherEntityModule from './entity';
+
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
@@ -15,6 +17,9 @@ export const types = {
 
 export default {
   namespaced: true,
+  modules: {
+    entity: watcherEntityModule,
+  },
   state: {
     widgets: {},
   },
@@ -26,11 +31,10 @@ export default {
       rootGetters['entities/getItem'](ENTITIES_TYPES.watcher, id),
   },
   mutations: {
-    [types.FETCH_LIST](state, { widgetId, params }) {
+    [types.FETCH_LIST](state, { widgetId }) {
       Vue.set(state.widgets, widgetId, {
         ...state.widgets[widgetId],
         pending: true,
-        fetchingParams: params,
       });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds }) {
@@ -79,6 +83,8 @@ export default {
 
     async fetchList({ dispatch, commit }, { widgetId, params, filter } = {}) {
       try {
+        commit(types.FETCH_LIST, { widgetId });
+
         const { normalizedData } = await dispatch('entities/fetch', {
           route: `${API_ROUTES.weatherWatcher}/${filter}`,
           schema: [watcherSchema],
@@ -91,8 +97,9 @@ export default {
           allIds: normalizedData.result,
         });
       } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
         commit(types.FETCH_LIST_FAILED, { widgetId });
+
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
   },

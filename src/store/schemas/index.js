@@ -26,6 +26,10 @@ export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAtt
 
 export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
 
+export const watcherEntitySchema = new schema.Entity(ENTITIES_TYPES.watcherEntity, {}, {
+  idAttribute: 'entity_id',
+});
+
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
 });
@@ -44,27 +48,14 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   },
 });
 
-export const watcherOtherSchema = new schema.Entity(ENTITIES_TYPES.otherWatcher, {}, { idAttribute: 'entity_id' });
-
-export const weatherWatcherSchema = new schema.Entity(ENTITIES_TYPES.weatherWatcher, {}, { idAttribute: 'entity_id' });
-
-export const weatherWatcherEntitySchema = new schema.Entity(ENTITIES_TYPES.weatherWatcherEntity, {}, {
-  idAttribute: 'entity_id',
-});
-
-export const watchedEntitiesSchema = new schema.Entity(ENTITIES_TYPES.watchedEntity, {}, { idAttribute: 'entity_id' });
-
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
   [ENTITIES_TYPES.watcher]: watcherSchema,
+  [ENTITIES_TYPES.watcherEntity]: watcherEntitySchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,
   [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
-  [ENTITIES_TYPES.otherWatcher]: watcherOtherSchema, // TODO: remove
-  [ENTITIES_TYPES.watchedEntity]: watchedEntitiesSchema, // TODO: remove
-  [ENTITIES_TYPES.weatherWatcher]: weatherWatcherSchema,
-  [ENTITIES_TYPES.weatherWatcherEntity]: weatherWatcherEntitySchema,
 };
