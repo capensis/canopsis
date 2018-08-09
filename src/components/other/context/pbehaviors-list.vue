@@ -1,5 +1,5 @@
 <template lang="pug">
-v-data-table(:items="items", :headers="pbehaviorsTableHeaders", hide-actions)
+v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
   template(slot="items" slot-scope="props")
     td {{ props.item.name }}
     td {{ props.item.author }}
