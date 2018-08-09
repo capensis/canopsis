@@ -11,6 +11,7 @@ export default {
     confirmation: 'Etes-vous sûr(e) ?',
     submit: 'Soumettre',
     enabled: 'Activé',
+    disabled: 'Désactivée',
     login: 'Connexion',
     by: 'Par',
     date: 'Date',
