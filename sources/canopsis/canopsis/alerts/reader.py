@@ -567,6 +567,7 @@ class AlertsReader(object):
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+        global_count = 0
         if sort_key == 'v.duration':
             sort_key = 'v.creation_date'
         elif sort_key == 'v.current_state_duration':
@@ -643,6 +644,8 @@ class AlertsReader(object):
 
             self.add_pbh_filter(pipeline, filter_)
 
+            count_pipeline = pipeline
+
             pipeline.append({
                 "$skip": skip
             })
@@ -665,10 +668,11 @@ class AlertsReader(object):
             }
 
             if with_count:
-                count =  self.alarm_collection.aggregate(
-                    pipeline, allowDiskUse=True, cursor={}
-                ).count()
-                return (count, res)
+                count_pipeline = count_pipeline.append({'$group': {'_id': None, 'count': {'$sum': 1}}}) 
+                count = self.alarm_collection.aggregate(pipeline, allowDiskUse=True,cursor={})
+                global_count = list(count)[0].get('count')
+                return res 
+
             else:
                 return res
 
@@ -752,6 +756,8 @@ class AlertsReader(object):
             post_sort = True
             filters.append(self._hide_resources)
 
+        if with_count:
+            return (loop_aggregate(skip, limit, filters, post_sort=post_sort),global_count)
         return loop_aggregate(skip, limit, filters, post_sort=post_sort)
 
     @staticmethod
