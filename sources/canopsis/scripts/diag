@@ -14,7 +14,7 @@ import unittest
 from canopsis.common.amqp import get_default_connection as DefaultAMQPConnection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
-from canopsis.common.influx import get_influxdb_client
+from canopsis.common.influx import InfluxDBClient
 
 
 class CpsDiagTest(unittest.TestCase):
@@ -38,7 +38,7 @@ class CpsDiagTest(unittest.TestCase):
 
     def test_influx_connection(self):
         try:
-            client = get_influxdb_client()
+            client = InfluxDBClient.from_configuration()
         except Exception as exc:
             self.print_exc(exc)
 

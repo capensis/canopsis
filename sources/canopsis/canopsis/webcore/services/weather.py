@@ -37,13 +37,13 @@ from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
-from canopsis.common.influx import get_influxdb_client
+from canopsis.common.influx import InfluxDBClient
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
-influx_client = get_influxdb_client()
+influx_client = InfluxDBClient.from_configuration()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'

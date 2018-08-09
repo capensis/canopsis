@@ -21,7 +21,7 @@
 from __future__ import unicode_literals
 import os
 
-from influxdb import InfluxDBClient
+from influxdb import InfluxDBClient as Client
 from influxdb.exceptions import InfluxDBClientError
 
 from canopsis.common import root_path
@@ -56,68 +56,77 @@ class InfluxDBOptions(object):
     udp_port = 'port'
 
 
-def get_influxdb_client(conf_path=INFLUXDB_CONF_PATH,
-                        conf_section=INFLUXDB_CONF_SECTION):
+class InfluxDBClient(Client):
     """
-    Read the influxdb database's configuration from conf_path, and return an
-    InfluxDBClient for this database.
-
-    If a database name is specified in the configuration file and this database
-    does not exist, it will be automatically created.
-
-    :param str conf_path: the path of the file containing the database
-    configuration.
-    :param str conf_section: the section of the ini file containing the
-    database configuration.
-    :rtype: InfluxDBClient
+    This class is a wrapper around influxdb.InfluxDBClient that provides
+    additional functionalities (initialization from configuration, continuous
+    queries).
     """
-    influxdb_client_args = {}
+    def __init__(self, **kwargs):
+        self.database = kwargs.get('database')
+        super(InfluxDBClient, self).__init__(**kwargs)
 
-    cfg = Configuration.load(
-        os.path.join(root_path, conf_path), Ini
-    ).get(conf_section, {})
+    @staticmethod
+    def from_configuration(conf_path=INFLUXDB_CONF_PATH,
+                           conf_section=INFLUXDB_CONF_SECTION):
+        """
+        Read the influxdb database's configuration from conf_path, and return
+        an InfluxDBClient for this database.
 
-    if InfluxDBOptions.host in cfg:
-        influxdb_client_args['host'] = cfg[InfluxDBOptions.host]
+        If a database name is specified in the configuration file and this
+        database does not exist, it will be automatically created.
 
-    if InfluxDBOptions.port in cfg:
-        influxdb_client_args['port'] = int(cfg[InfluxDBOptions.port])
+        :param str conf_path: the path of the file containing the database
+            configuration.
+        :param str conf_section: the section of the ini file containing the
+            database configuration.
+        :rtype: InfluxDBClient
+        """
+        influxdb_client_args = {}
 
-    if InfluxDBOptions.username in cfg:
-        influxdb_client_args['username'] = cfg[InfluxDBOptions.username]
+        cfg = Configuration.load(
+            os.path.join(root_path, conf_path), Ini
+        ).get(conf_section, {})
 
-    if InfluxDBOptions.password in cfg:
-        influxdb_client_args['password'] = cfg[InfluxDBOptions.password]
+        if InfluxDBOptions.host in cfg:
+            influxdb_client_args['host'] = cfg[InfluxDBOptions.host]
 
-    if InfluxDBOptions.database in cfg:
-        influxdb_client_args['database'] = cfg[InfluxDBOptions.database]
-    else:
-        raise RuntimeError(
-            "The {} option is required.".format(InfluxDBOptions.database))
+        if InfluxDBOptions.port in cfg:
+            influxdb_client_args['port'] = int(cfg[InfluxDBOptions.port])
 
-    if InfluxDBOptions.ssl in cfg:
-        influxdb_client_args['ssl'] = cfg_to_bool(cfg[InfluxDBOptions.ssl])
+        if InfluxDBOptions.username in cfg:
+            influxdb_client_args['username'] = cfg[InfluxDBOptions.username]
 
-    if InfluxDBOptions.verify_ssl in cfg:
-        influxdb_client_args['verify_ssl'] = cfg_to_bool(
-            cfg[InfluxDBOptions.verify_ssl])
+        if InfluxDBOptions.password in cfg:
+            influxdb_client_args['password'] = cfg[InfluxDBOptions.password]
 
-    if InfluxDBOptions.timeout in cfg:
-        influxdb_client_args['timeout'] = int(cfg[InfluxDBOptions.timeout])
+        if InfluxDBOptions.database in cfg:
+            influxdb_client_args['database'] = cfg[InfluxDBOptions.database]
+        else:
+            raise RuntimeError(
+                "The {} option is required.".format(InfluxDBOptions.database))
 
-    if InfluxDBOptions.retries in cfg:
-        influxdb_client_args['retries'] = int(cfg[InfluxDBOptions.retries])
+        if InfluxDBOptions.ssl in cfg:
+            influxdb_client_args['ssl'] = cfg_to_bool(cfg[InfluxDBOptions.ssl])
 
-    if InfluxDBOptions.use_udp in cfg:
-        influxdb_client_args['use_udp'] = cfg_to_bool(
-            cfg[InfluxDBOptions.use_udp])
+        if InfluxDBOptions.verify_ssl in cfg:
+            influxdb_client_args['verify_ssl'] = cfg_to_bool(
+                cfg[InfluxDBOptions.verify_ssl])
 
-    if InfluxDBOptions.udp_port in cfg:
-        influxdb_client_args['udp_port'] = int(cfg[InfluxDBOptions.udp_port])
+        if InfluxDBOptions.timeout in cfg:
+            influxdb_client_args['timeout'] = int(cfg[InfluxDBOptions.timeout])
 
-    client = InfluxDBClient(**influxdb_client_args)
+        if InfluxDBOptions.retries in cfg:
+            influxdb_client_args['retries'] = int(cfg[InfluxDBOptions.retries])
 
-    return client
+        if InfluxDBOptions.use_udp in cfg:
+            influxdb_client_args['use_udp'] = cfg_to_bool(
+                cfg[InfluxDBOptions.use_udp])
+
+        if InfluxDBOptions.udp_port in cfg:
+            influxdb_client_args['udp_port'] = int(cfg[InfluxDBOptions.udp_port])
+
+        return InfluxDBClient(**influxdb_client_args)
 
 
 # The two following functions are defined in the influx.line_protocol module of
