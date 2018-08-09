@@ -43,7 +43,7 @@
               v-btn(@click.stop="deleteEntity(props.item)", icon, small)
                 v-icon delete
           template(slot="expand", slot-scope="props")
-            more-infos(:item="props")
+            more-infos(:item="props.item")
         v-layout.white(align-center)
           v-flex(xs10)
             pagination(:meta="contextEntitiesMeta", :query.sync="query")
@@ -59,7 +59,6 @@ import ContextSearch from '@/components/other/context/search/context-search.vue'
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
-import ContextFab from '@/components/other/context/actions/context-fab.vue';
 
 import queryMixin from '@/mixins/query';
 import modalMixin from '@/mixins/modal/modal';
@@ -67,7 +66,7 @@ import { MODALS, ENTITIES_TYPES } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
-import CreateEntity from './actions/context-fab.vue';
+import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
 
 /**
@@ -84,7 +83,6 @@ export default {
   components: {
     ContextSearch,
     RecordsPerPage,
-    CreateEntity,
     MoreInfos,
     Loader,
     Ellipsis,

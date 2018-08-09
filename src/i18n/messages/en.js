@@ -8,6 +8,7 @@ export default {
     author: 'Author',
     submit: 'Submit',
     enabled: 'Enabled',
+    disabled: 'Disabled',
     login: 'Login',
     yes: 'Yes',
     no: 'No',
