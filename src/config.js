@@ -34,7 +34,7 @@ export const API_ROUTES = {
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',
   viewV3: {
-    view: '/api/v2/views',
-    groups: '/api/v2/view/groups',
+    view: '/v2/views',
+    groups: '/v2/views/groups',
   },
 };
