@@ -42,7 +42,10 @@ export default {
   actions: {
     async create(context, params = {}) {
       try {
-        await request.post(API_ROUTES.watcher, params);
+        await request.post(
+          API_ROUTES.watcher,
+          { _id: params.data._id, mfilter: params.data.mfilter, display_name: params.data.display_name },
+        );
       } catch (err) {
         console.warn(err);
       }

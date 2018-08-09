@@ -57,6 +57,14 @@ export default {
   components: {
     FilterGroup,
   },
+  props: {
+    initialFilter: {
+      type: String,
+      default() {
+        return '';
+      },
+    },
+  },
   data() {
     return {
       items: [],
@@ -66,12 +74,12 @@ export default {
       activeTab: 0,
       newRequest: '',
       parseError: '',
-      isRequestChanged: false,
       filter: [{
         condition: '$or',
         groups: [],
         rules: [],
       }],
+      isRequestChanged: false,
       possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
       resultsTableHeaders: [
         {
@@ -135,6 +143,12 @@ export default {
     },
     activeTab() {
       this.newRequest = '';
+    },
+    filter: {
+      handler(value) {
+        this.$emit('update:initialFilter', JSON.stringify(parseFilterToRequest(value)));
+      },
+      deep: true,
     },
   },
   methods: {
