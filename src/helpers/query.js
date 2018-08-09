@@ -1,6 +1,12 @@
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
+/**
+ * This function converts widget with type 'listalarm' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
 export function convertAlarmWidgetToQuery(widget) {
   const query = {
     page: 1,
@@ -21,6 +27,12 @@ export function convertAlarmWidgetToQuery(widget) {
   return query;
 }
 
+/**
+ * This function converts widget with type 'crudcontext' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
 export function convertContextWidgetToQuery(widget) {
   const query = {
     page: 1,
@@ -39,12 +51,24 @@ export function convertContextWidgetToQuery(widget) {
   return query;
 }
 
+/**
+ * This function converts userPreference with widgetXtype 'listalarm' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{}}
+ */
 export function convertAlarmUserPreferenceToQuery(userPreference) {
   return {
     limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
   };
 }
 
+/**
+ * This function converts userPreference with widgetXtype 'crudcontext' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{}}
+ */
 export function convertContextUserPreferenceToQuery(userPreference) {
   return {
     limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
@@ -52,6 +76,12 @@ export function convertContextUserPreferenceToQuery(userPreference) {
   };
 }
 
+/**
+ * This function converts userPreference to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{}}
+ */
 export function convertUserPreferenceToQuery(userPreference) {
   switch (userPreference.widgetXtype) {
     case WIDGET_TYPES.alarmList:
@@ -63,6 +93,12 @@ export function convertUserPreferenceToQuery(userPreference) {
   }
 }
 
+/**
+ * This function converts widget to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
 export function convertWidgetToQuery(widget) {
   switch (widget.xtype) {
     case WIDGET_TYPES.alarmList:

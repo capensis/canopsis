@@ -67,6 +67,7 @@ import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-
 
 import modalMixin from '@/mixins/modal/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -94,6 +95,7 @@ export default {
   mixins: [
     modalMixin,
     widgetQueryMixin,
+    widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
     entitiesUserPreferenceMixin,
   ],
@@ -110,26 +112,11 @@ export default {
   data() {
     return {
       selected: [],
-      interval: null,
     };
   },
   computed: {
     selectedIds() {
       return this.selected.map(item => item._id);
-    },
-  },
-  watch: {
-    widget: {
-      immediate: true,
-      handler(value) {
-        const periodicRefresh = value.periodicRefresh || {};
-
-        if (periodicRefresh.enabled && periodicRefresh.interval && !this.interval) {
-          this.interval = setInterval(() => this.fetchList(), parseInt(periodicRefresh.interval, 10) * 1000);
-        } else if (this.interval && (!periodicRefresh.enabled || !periodicRefresh.interval)) {
-          clearInterval(this.interval);
-        }
-      },
     },
   },
   methods: {
