@@ -4,7 +4,7 @@
       template(v-if="$route.name !== 'login'")
         side-bar
         top-bar
-      v-content
+      v-content(v-if="!currentUserPending")
         router-view
     modals
     popups

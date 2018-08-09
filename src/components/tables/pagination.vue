@@ -56,12 +56,15 @@ export default {
         this.$emit('update:query', { ...this.query, page });
       },
     },
+
     totalPages() {
       if (this.meta.total) {
         return Math.ceil(this.meta.total / this.query.limit);
       }
+
       return 0;
     },
+
     /**
      * Calculate first item nb to display on pagination, in case it's not given by the backend
      */
@@ -72,6 +75,7 @@ export default {
 
       return 1 + (this.query.limit * (this.query.page - 1));
     },
+
     /**
      * Calculate last item nb to display on pagination, in case it's not given by the backend
      */
@@ -89,6 +93,7 @@ export default {
     previous() {
       this.currentPage = this.currentPage - 1;
     },
+
     next() {
       this.currentPage = this.currentPage + 1;
     },

@@ -9,14 +9,15 @@
 </template>
 
 <script>
-import ModalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
+import { MODALS } from '@/constants';
 
 /**
  * Confirmation modal
  */
 export default {
-  name: 'confirmation',
-  mixins: [ModalInnerMixin],
+  name: MODALS.confirmation,
+  mixins: [modalInnerMixin],
   methods: {
     async submit() {
       if (this.config.action) {

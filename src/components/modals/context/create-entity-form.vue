@@ -52,7 +52,7 @@ v-card-text
 
 <script>
 import { MODALS } from '@/constants';
-import formMixin from '@/mixins/form.js';
+import formMixin from '@/mixins/form';
 
 import EntitiesSelect from './entities-select.vue';
 
