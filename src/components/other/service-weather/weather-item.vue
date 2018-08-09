@@ -9,14 +9,14 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
       p.watcherName {{ watcher.display_name }}
   v-layout
     v-flex(xs12)
-      div.moreInfos.py-1(@click="showWeatherWatcherModal")
+      div.moreInfos.py-1(@click="showWatcherModal")
         v-layout(justify-center)
           div More infos
           v-icon.pl-1(color="white", small) arrow_forward
 </template>
 
 <script>
-import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBHAVIOR_COLOR } from '@/constants';
+import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
 import SunIcon from './icons/sun.vue';
@@ -51,7 +51,7 @@ export default {
       };
 
       if (hasActivePb) {
-        return { icon: PauseIcon, color: WATCHER_PBHAVIOR_COLOR };
+        return { icon: PauseIcon, color: WATCHER_PBEHAVIOR_COLOR };
       }
 
       return {
@@ -61,7 +61,7 @@ export default {
     },
   },
   methods: {
-    showWeatherWatcherModal() {
+    showWatcherModal() {
       this.showModal({
         name: MODALS.watcher,
         config: {

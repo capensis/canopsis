@@ -15,14 +15,14 @@
           v-card-text
             v-layout(row, wrap)
               v-flex.text-md-right(xs4)
-                b {{ $t(`modals.weatherWatcher.${attribute}`) }}:
+                b {{ $t(`modals.watcher.${attribute}`) }}:
               v-flex.pl-2(xs8)
                 span {{ attributes[attribute] }}
           v-divider
         v-card-text
           v-layout(row, wrap)
             v-flex.text-md-right(xs4)
-              b {{ $t('modals.weatherWatcher.ticketing') }}:
+              b {{ $t('modals.watcher.ticketing') }}:
             v-flex.pl-2(xs8)
               v-icon local_play
         v-divider
@@ -33,7 +33,7 @@ import get from 'lodash/get';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
-import { WATCHER_STATES_COLORS, WATCHER_PBHAVIOR_COLOR } from '@/constants';
+import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 
 export default {
   props: {
@@ -59,8 +59,8 @@ export default {
         ...mainAttributes,
         ...infoAttributes,
 
-        numberOk: get(this.entity.stats, 'ok', this.$t('modals.weatherWatcher.noData')),
-        numberKo: get(this.entity.stats, 'ko', this.$t('modals.weatherWatcher.noData')),
+        numberOk: get(this.entity.stats, 'ok', this.$t('modals.watcher.noData')),
+        numberKo: get(this.entity.stats, 'ko', this.$t('modals.watcher.noData')),
         state: this.entity.state.val,
       },
     };
@@ -68,7 +68,7 @@ export default {
   computed: {
     entityClass() {
       if (this.hasActivePbehavior) {
-        return WATCHER_PBHAVIOR_COLOR;
+        return WATCHER_PBEHAVIOR_COLOR;
       }
 
       return WATCHER_STATES_COLORS[this.attributes.state];

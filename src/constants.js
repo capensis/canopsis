@@ -92,7 +92,7 @@ export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.critical]: 'red darken-1',
 };
 
-export const WATCHER_PBHAVIOR_COLOR = 'grey lighten-1';
+export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
 
 export const ENTITY_STATUS_STYLES = {
   [ENTITIES_STATUSES.off]: {

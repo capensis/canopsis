@@ -9,7 +9,6 @@ export default {
   computed: {
     ...mapGetters({
       getWatchersListByWidgetId: 'getListByWidgetId',
-      getWatchersMetaByWidgetId: 'getMetaByWidgetId',
       getWatchersPendingByWidgetId: 'getPendingByWidgetId',
       getWatcher: 'getItem',
     }),
