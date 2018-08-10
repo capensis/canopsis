@@ -81,13 +81,13 @@ Return the list of all the groups, optionally filtered by name.
 ### Create a group
 
 ```
-POST /api/v2/views/groups/<group_id>
+POST /api/v2/views/groups
 {
     "name": "..."
 }
 ```
 
-Return an error if the id provided by the user already exists.
+Create a group and return its id (which is generated automatically).
 
 ### List the views of a group
 

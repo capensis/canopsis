@@ -152,9 +152,9 @@ def exports(ws):
         return gen_json(group)
 
     @ws.application.post(
-        '/api/v2/views/groups/<group_id>'
+        '/api/v2/views/groups'
     )
-    def create_group(group_id):
+    def create_group():
         try:
             request_body = request.json
         except ValueError as verror:
@@ -163,13 +163,15 @@ def exports(ws):
             }, HTTP_ERROR)
 
         try:
-            group_adapter.create(group_id, request_body)
+            group_id = group_adapter.create(request_body)
         except InvalidGroupError as e:
             return gen_json_error({
                 'description': e.message
             }, HTTP_ERROR)
 
-        return gen_json({})
+        return gen_json({
+            GroupField.id: group_id
+        })
 
     @ws.application.delete(
         '/api/v2/views/groups/<group_id>'
