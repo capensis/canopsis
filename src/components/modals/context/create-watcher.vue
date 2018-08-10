@@ -16,7 +16,7 @@
         v-flex(xs11)
           h3.text-xs-center {{ $t('mFilterEditor.title') }}
           v-divider
-          filter-editor(:initialFilter.sync="form.filter")
+          filter-editor(:filter.sync="form.filter")
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}

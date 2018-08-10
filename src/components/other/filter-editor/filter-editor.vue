@@ -57,14 +57,6 @@ export default {
   components: {
     FilterGroup,
   },
-  props: {
-    initialFilter: {
-      type: String,
-      default() {
-        return '';
-      },
-    },
-  },
   data() {
     return {
       items: [],
@@ -146,7 +138,7 @@ export default {
     },
     filter: {
       handler(value) {
-        this.$emit('update:initialFilter', JSON.stringify(parseFilterToRequest(value)));
+        this.$emit('update:filter', JSON.stringify(parseFilterToRequest(value)));
       },
       deep: true,
     },
