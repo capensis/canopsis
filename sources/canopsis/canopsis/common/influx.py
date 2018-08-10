@@ -128,6 +128,45 @@ class InfluxDBClient(Client):
 
         return InfluxDBClient(**influxdb_client_args)
 
+    def create_continuous_query(self,
+                                name,
+                                query,
+                                resample_every=None,
+                                resample_for=None):
+        """
+        Create a continuous query.
+
+        See https://docs.influxdata.com/influxdb/v1.6/query_language/continuous_queries
+        for details on continuous queries.
+
+        :param str name: The name of the continous query
+        :param str query: The InfluxQL query
+        :param str resample_every:
+        :param str resample_for:
+        """
+        resample_statement = ''
+        if resample_every is not None and resample_for is not None:
+            resample_statement = 'RESAMPLE EVERY {} FOR {}'.format(
+                resample_every, resample_for)
+        elif resample_every is not None or resample_for is not None:
+            raise ValueError(
+                'resample_every and resample_for should either be both defined '
+                'or both undefined.')
+
+        creation_query = (
+            "CREATE CONTINUOUS QUERY {name} ON {database} "
+            "{resample_statement} "
+            "BEGIN "
+            "{query} "
+            "END"
+        ).format(
+            name=quote_ident(name),
+            database=quote_ident(self.database),
+            resample_statement=resample_statement,
+            query=query)
+
+        return self.query(creation_query, epoch='s')
+
 
 # The two following functions are defined in the influx.line_protocol module of
 # influxdb-python>=4.0.0
