@@ -26,6 +26,10 @@ export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAtt
 
 export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
 
+export const watcherEntitySchema = new schema.Entity(ENTITIES_TYPES.watcherEntity, {}, {
+  idAttribute: 'entity_id',
+});
+
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
 });
@@ -35,6 +39,8 @@ export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget);
 export const widgetWrapperSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper, {
   widget: widgetSchema,
 });
+
+widgetSchema.define({ items: [widgetWrapperSchema] });
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   containerwidget: {
@@ -46,6 +52,7 @@ export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
   [ENTITIES_TYPES.watcher]: watcherSchema,
+  [ENTITIES_TYPES.watcherEntity]: watcherEntitySchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.view]: viewSchema,

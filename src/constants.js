@@ -2,6 +2,7 @@ export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
   watcher: 'watcher',
+  watcherEntity: 'watcherEntity',
   weather: 'weather',
   pbehavior: 'pbehavior',
   event: 'event',
@@ -21,6 +22,7 @@ export const MODALS = {
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
+  watcher: 'watcher',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
@@ -62,7 +64,7 @@ export const ENTITIES_STATUSES = {
 
 export const ENTITIES_STATES_STYLES = {
   [ENTITIES_STATES.ok]: {
-    color: '#4CAF50',
+    color: 'green',
     text: 'ok',
     icon: 'assistant_photo',
   },
@@ -82,6 +84,15 @@ export const ENTITIES_STATES_STYLES = {
     icon: 'assistant_photo',
   },
 };
+
+export const WATCHER_STATES_COLORS = {
+  [ENTITIES_STATES.ok]: 'green darken-1',
+  [ENTITIES_STATES.minor]: 'yellow darken-1',
+  [ENTITIES_STATES.major]: 'orange darken-1',
+  [ENTITIES_STATES.critical]: 'red darken-1',
+};
+
+export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
 
 export const ENTITY_STATUS_STYLES = {
   [ENTITIES_STATUSES.off]: {

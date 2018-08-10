@@ -30,6 +30,7 @@ import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
+import Watcher from './watcher/watcher.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -53,6 +54,7 @@ export default {
     CreateEntity,
     CreateWatcher,
     CreateWidget,
+    Watcher,
   },
   data() {
     return {
