@@ -11,13 +11,13 @@
           v-btn(v-show="hasActivePbehavior", fab, small)
             v-icon play_arrow
       v-card
-        template(v-for="attribute in Object.keys(attributes)")
+        template(v-for="(attribute, attributeKey) in attributes")
           v-card-text
             v-layout(row, wrap)
               v-flex.text-md-right(xs4)
-                b {{ $t(`modals.watcher.${attribute}`) }}:
+                b {{ $t(`modals.watcher.${attributeKey}`) }}:
               v-flex.pl-2(xs8)
-                span {{ attributes[attribute] }}
+                span {{ attribute }}
           v-divider
         v-card-text
           v-layout(row, wrap)

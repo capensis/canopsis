@@ -8,7 +8,7 @@
 <script>
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import queryMixin from '@/mixins/query';
+import widgetQueryMixin from '@/mixins/widget/query';
 
 import WeatherItem from './weather-item.vue';
 
@@ -16,16 +16,12 @@ export default {
   components: {
     WeatherItem,
   },
-  mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, queryMixin],
+  mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, widgetQueryMixin],
   props: {
     widget: {
       type: Object,
       required: true,
     },
-  },
-  async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
-    await this.fetchList();
   },
   methods: {
     fetchList() {

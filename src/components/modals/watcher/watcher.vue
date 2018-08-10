@@ -4,11 +4,11 @@
       span.headline {{ watcher.display_name }}
     v-divider
     v-card-text
-      v-layout(v-for="attribute in Object.keys(attributes)", row, wrap)
+      v-layout(v-for="(attribute, attributeKey) in attributes", :key="attributeKey", row, wrap)
         v-flex.text-md-right(xs3)
-          b {{ $t(`modals.watcher.${attribute}`) }}:
+          b {{ $t(`modals.watcher.${attributeKey}`) }}:
         v-flex.pl-2(xs9)
-          span {{ attributes[attribute] }}
+          span {{ attribute }}
       div(v-if="!watcherEntitiesPending")
         div.mt-4(v-for="watcherEntity in watcherEntities")
           watcher-entity(:entity="watcherEntity")
