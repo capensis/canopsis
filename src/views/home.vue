@@ -1,6 +1,23 @@
 <template lang="pug">
-  div#brand Canopsis Next
+  div
+    v-btn(@click="openModal") Modal
+    div#brand Canopsis Next
 </template>
+
+<script>
+export default {
+  methods: {
+    openModal() {
+      this.$store.dispatch('modal/show', {
+        name: 'confirmation',
+        config: {
+          number: 0,
+        },
+      });
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
   #brand {

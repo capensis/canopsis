@@ -1,15 +1,30 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import modalMixin from './modal';
-
-const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
+const { mapActions: modalMapActions } = createNamespacedHelpers('modal');
 
 /**
  * @mixin
  */
 export default {
-  mixins: [modalMixin],
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
   computed: {
-    ...modalMapGetters(['config']),
+    config() {
+      return this.modal.config;
+    },
+  },
+  methods: {
+    ...modalMapActions({
+      showModal: 'show',
+      hideModalAction: 'hide',
+    }),
+
+    hideModal() {
+      this.hideModalAction({ id: this.modal.id });
+    },
   },
 };
