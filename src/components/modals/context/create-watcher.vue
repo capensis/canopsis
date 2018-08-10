@@ -69,7 +69,7 @@ export default {
         if (this.config.item) {
           await this.edit({ data });
         } else {
-          await this.create({ data });
+          await this.create({ params: data });
         }
         this.hideModal();
       }
