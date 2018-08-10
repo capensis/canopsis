@@ -2,6 +2,7 @@
   v-container
     div
       div(v-for="widget in widgets", :key="widget._id")
+        h2 {{ widget.title }}
         div(
         :is="widgetsMap[widget.xtype]",
         :widget="widget",
@@ -17,7 +18,7 @@
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
           v-icon widgets
-        span widget
+        span {{ $t('common.widget') }}
     settings(v-model="isSettingsOpen", :widget="widgetSettings", :isNew="isWidgetNew")
 </template>
 
