@@ -134,7 +134,8 @@ class InfluxDBClient(Client):
                                 name,
                                 query,
                                 resample_every=None,
-                                resample_for=None):
+                                resample_for=None,
+                                overwrite=False):
         """
         Create a continuous query.
 
@@ -145,6 +146,8 @@ class InfluxDBClient(Client):
         :param str query: The InfluxQL query
         :param str resample_every:
         :param str resample_for:
+        :param bool overwrite: True to overwrite the query if it already exists
+        :rtype: ResultSet
         """
         resample_statement = ''
         if resample_every is not None and resample_for is not None:
@@ -167,7 +170,33 @@ class InfluxDBClient(Client):
             resample_statement=resample_statement,
             query=query)
 
-        return self.query(creation_query, epoch='s')
+        try:
+            return self.query(creation_query, epoch='s')
+        except InfluxDBClientError as error:
+            # I could not find a better way to catch this specific error
+            if (error.content == 'continuous query already exists'
+                and overwrite):
+                # The continuous query already exists, recreate it.
+                self.logger.info(
+                    'A different continuous query already exists with this '
+                    'name, overwriting it.')
+                self.drop_continuous_query(name)
+                return self.query(creation_query, epoch='s')
+            else:
+                # This is a different error, raise it.
+                raise
+
+    def drop_continuous_query(self, name):
+        """
+        Drop a continuous query.
+
+        :param str name: The name of the continuous query.
+        :rtype: ResultSet
+        """
+        query = 'DROP CONTINUOUS QUERY {name} ON {database}'.format(
+            name=quote_ident(name),
+            database=quote_ident(self.database))
+        return self.query(query)
 
 
 # The two following functions are defined in the influx.line_protocol module of
