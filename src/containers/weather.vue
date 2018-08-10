@@ -1,6 +1,7 @@
 <template lang="pug">
   weather(
-    :widget="widget"
+    :widget="widget",
+    @openSettings="$emit('openSettings', $event)"
   )
 </template>
 

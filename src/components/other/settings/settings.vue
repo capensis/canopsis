@@ -28,6 +28,7 @@ import { WIDGET_TYPES } from '@/constants';
 
 import AlarmSettingsFields from './alarm-settings-fields.vue';
 import ContextSettingsFields from './context-settings-fields.vue';
+import WeatherSettingsFields from './weather-settings-fields.vue';
 
 /**
  * Settings component
@@ -40,6 +41,7 @@ export default {
   components: {
     AlarmSettingsFields,
     ContextSettingsFields,
+    WeatherSettingsFields,
   },
   props: {
     value: {

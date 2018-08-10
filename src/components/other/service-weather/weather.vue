@@ -1,5 +1,8 @@
 <template lang="pug">
   v-container(fluid)
+    v-layout
+      v-btn(icon, @click="$emit('openSettings')")
+        v-icon settings
     v-layout(wrap)
       v-flex(v-for="item in watchers", :key="item._id" xs3)
         weather-item(:watcher="item")
