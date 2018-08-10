@@ -62,12 +62,14 @@ class InfluxDBClient(Client):
     additional functionalities (initialization from configuration, continuous
     queries).
     """
-    def __init__(self, **kwargs):
+    def __init__(self, logger, **kwargs):
+        self.logger = logger
         self.database = kwargs.get('database')
         super(InfluxDBClient, self).__init__(**kwargs)
 
     @staticmethod
-    def from_configuration(conf_path=INFLUXDB_CONF_PATH,
+    def from_configuration(logger,
+                           conf_path=INFLUXDB_CONF_PATH,
                            conf_section=INFLUXDB_CONF_SECTION):
         """
         Read the influxdb database's configuration from conf_path, and return
@@ -126,7 +128,7 @@ class InfluxDBClient(Client):
         if InfluxDBOptions.udp_port in cfg:
             influxdb_client_args['udp_port'] = int(cfg[InfluxDBOptions.udp_port])
 
-        return InfluxDBClient(**influxdb_client_args)
+        return InfluxDBClient(logger, **influxdb_client_args)
 
     def create_continuous_query(self,
                                 name,

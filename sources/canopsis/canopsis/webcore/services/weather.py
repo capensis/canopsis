@@ -43,7 +43,6 @@ alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
-influx_client = InfluxDBClient.from_configuration()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
@@ -99,14 +98,13 @@ def __format_pbehavior(pbehavior):
 
     return pbehavior
 
-def get_ok_ko(entity_id):
+def get_ok_ko(influx_client, entity_id):
     """
-    For an entity defined by component, connector, resource return
-    the number of OK check and KO check.
+    For an entity defined by its id, return the number of OK check and KO
+    check.
 
-    :param connector: the connector of the entity
-    :param component: the component of the entity
-    :param resource: the resource of the entity
+    :param InfluxDBClient influx_client:
+    :param str entity_id: the id of the entity
     :return: a dict with two key ok and ko or none if no data are found for
     the given entity.
     """
@@ -248,6 +246,8 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
+
+    influx_client = InfluxDBClient.from_configuration(ws.logger)
 
     @ws.application.route(
         '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
@@ -486,7 +486,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = get_ok_ko(entity_id)
+            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id)
             if current_alarm is not None:
                 enriched_entity['ticket'] = current_alarm.get('ticket')
                 enriched_entity['state'] = current_alarm['state']

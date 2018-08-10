@@ -41,7 +41,7 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kwargs)
 
         self.context_manager = ContextGraph(self.logger)
-        self.influxdb_client = InfluxDBClient.from_configuration()
+        self.influxdb_client = InfluxDBClient.from_configuration(self.logger)
 
         cfg = Configuration.load(
             os.path.join(root_path, self.CONF_PATH), Ini
