@@ -64,6 +64,7 @@ class SelectQuery(object):
     """
     def __init__(self, measurement):
         self.measurement = measurement
+        self.into_measurement = None
         self.select_columns = []
         self.group_by_tags = []
         self.group_by_time_interval = None
@@ -84,6 +85,12 @@ class SelectQuery(object):
         select_columns = ', '.join(
             str(select_column)
             for select_column in self.select_columns)
+
+        # Generate into statement
+        into_statement = ''
+        if self.into_measurement is not None:
+            into_statement = 'INTO {}'.format(
+                quote_ident(self.into_measurement))
 
         # Generate where statement
         where_statement = ''
@@ -114,11 +121,13 @@ class SelectQuery(object):
 
         return (
             "SELECT {select_columns} "
+            "{into_statement} "
             "FROM {measurement} "
             "{where_statement} "
             "{group_by_statement}"
         ).format(
             select_columns=select_columns,
+            into_statement=into_statement,
             measurement=quote_ident(self.measurement),
             where_statement=where_statement,
             group_by_statement=group_by_statement)
@@ -148,6 +157,15 @@ class SelectQuery(object):
         Select all the columns.
         """
         self.select_columns = ['*']
+        return self
+
+    def into(self, measurement):
+        """
+        Add an INTO statement.
+
+        :param str measurement: The name of the measurement
+        """
+        self.into_measurement = measurement
         return self
 
     def group_by_time(self, interval, offset=None):
