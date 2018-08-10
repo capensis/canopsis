@@ -9,14 +9,11 @@ export default {
   computed: {
     ...mapGetters({
       getWatchersListByWidgetId: 'getListByWidgetId',
-      getWatchersMetaByWidgetId: 'getMetaByWidgetId',
       getWatchersPendingByWidgetId: 'getPendingByWidgetId',
+      getWatcher: 'getItem',
     }),
     watchers() {
       return this.getWatchersListByWidgetId(this.widget.id);
-    },
-    watchersMeta() {
-      return this.getWatchersMetaByWidgetId(this.widget.id);
     },
     watchersPending() {
       return this.getWatchersPendingByWidgetId(this.widget.id);

@@ -2,7 +2,7 @@
   v-container
     div
       div(v-for="widget in widgets", :key="widget._id")
-        h2 {{ widget.title }}
+        h2 {{ widget.title }} {{ widgetsMap[widget.xtype] }}
         div(
         :is="widgetsMap[widget.xtype]",
         :widget="widget",
@@ -27,6 +27,7 @@ import Settings from '@/components/other/settings/settings.vue';
 import AlarmsListContainer from '@/containers/alarms-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
 import WeatherContainer from '@/containers/weather.vue';
+
 import { MODALS, WIDGET_TYPES } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -94,6 +95,7 @@ export default {
         },
       });
     },
+
   },
 };
 </script>
