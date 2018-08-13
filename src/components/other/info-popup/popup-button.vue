@@ -5,9 +5,9 @@
 
 <script>
 import Handlebars from 'handlebars';
-import getProp from 'lodash/get';
+import get from 'lodash/get';
 
-import popupComponentMixin from '@/mixins/popup';
+import popupMixin from '@/mixins/popup';
 
 /**
  * Button to display info popup
@@ -18,7 +18,7 @@ import popupComponentMixin from '@/mixins/popup';
  */
 export default {
   mixins: [
-    popupComponentMixin,
+    popupMixin,
   ],
   props: {
     columnName: {
@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     popupData() {
-      const popups = getProp(this.widget, 'popup', []);
+      const popups = get(this.widget, 'popup', []);
 
       return popups.find(popup => popup.column === this.columnName);
     },
