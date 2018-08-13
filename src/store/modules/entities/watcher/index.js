@@ -52,9 +52,12 @@ export default {
     },
   },
   actions: {
-    async create(context, params = {}) {
+    async create(context, { params = {} } = {}) {
       try {
-        await request.post(API_ROUTES.watcher, params);
+        await request.post(
+          API_ROUTES.watcher,
+          { _id: params._id, mfilter: params.mfilter, display_name: params.display_name },
+        );
       } catch (err) {
         console.warn(err);
       }

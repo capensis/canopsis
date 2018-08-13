@@ -66,12 +66,12 @@ export default {
       activeTab: 0,
       newRequest: '',
       parseError: '',
-      isRequestChanged: false,
       filter: [{
         condition: '$or',
         groups: [],
         rules: [],
       }],
+      isRequestChanged: false,
       possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
       resultsTableHeaders: [
         {
@@ -135,6 +135,12 @@ export default {
     },
     activeTab() {
       this.newRequest = '';
+    },
+    filter: {
+      handler(value) {
+        this.$emit('update:filter', JSON.stringify(parseFilterToRequest(value)));
+      },
+      deep: true,
     },
   },
   methods: {

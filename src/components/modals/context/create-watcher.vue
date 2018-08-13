@@ -16,7 +16,7 @@
         v-flex(xs11)
           h3.text-xs-center {{ $t('mFilterEditor.title') }}
           v-divider
-          filter-editor
+          filter-editor(:filter.sync="form.filter")
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
@@ -43,7 +43,7 @@ export default {
     return {
       form: {
         name: '',
-        mfilter: '',
+        filter: '{}',
       },
     };
   },
@@ -63,13 +63,13 @@ export default {
           _id: this.config.item ? this.config.item._id : this.form.name,
           display_name: this.form.name,
           type: ENTITIES_TYPES.watcher,
-          mfilter: JSON.stringify(this.request),
+          mfilter: this.form.filter,
         };
 
         if (this.config.item) {
           await this.edit({ data });
         } else {
-          await this.create({ data });
+          await this.create({ params: data });
         }
         this.hideModal();
       }
