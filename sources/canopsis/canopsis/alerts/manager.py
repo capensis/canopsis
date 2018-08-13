@@ -135,6 +135,8 @@ class Alerts(object):
         self.record_last_event_date = cfg_to_bool(alerts_.get('record_last_event_date',
                                                               DEFAULT_RECORD_LAST_EVENT_DATE))
 
+        self.update_longoutput_fields = alerts_.get("update_long_output",
+                                                          False)
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
 
@@ -528,9 +530,10 @@ class Alerts(object):
 
         return True
 
-    def update_output_fields(self, value, event):
-        with open("/tmp/plop.log", "a") as fd:
-            fd.write("*** Event {}\n\n".format(event["long_output"]))
+    def update_output_fields(self, value, event, state_updated):
+
+        if not self.update_longoutput_fields and not state_updated:
+            return value
 
         value[AlarmField.output.value] = event["output"]
 
@@ -562,10 +565,11 @@ class Alerts(object):
         """
         entity_id = self.context_manager.get_id(event)
         event_type = event['event_type']
-
+        initial_state = event["state"]
         if event_type in [Check.EVENT_TYPE, 'watcher']:
 
             alarm = self.get_current_alarm(entity_id)
+
             is_new_alarm = alarm is None
 
             if is_new_alarm:
@@ -580,6 +584,7 @@ class Alerts(object):
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
             else:  # Alarm is already opened
+                initial_state = alarm["value"]["state"]["val"]
                 value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
                     return
@@ -588,11 +593,11 @@ class Alerts(object):
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
+            state_updated = not initial_state == alarm["value"]["state"]["val"]
+
             value = alarm.get(self.alerts_storage.VALUE)
 
-            value = self.update_output_fields(value, event)
-            with open("/tmp/plop.log", "a") as fd:
-                fd.write("*** Value {}\n\n".format(value))
+            value = self.update_output_fields(value, event, state_updated)
 
             value = self.crop_flapping_steps(value)
 
