@@ -62,7 +62,7 @@ export default {
         id: item.id,
         connector: item.v.connector,
         connector_name: item.v.connector_name,
-        source_type: item.entity.type,
+        source_type: item.entity ? item.entity.type : null,
         component: item.v.component,
         state: item.v.state.val,
         event_type: type,
