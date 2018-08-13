@@ -1,5 +1,6 @@
 <template lang="pug">
-  div#brand Canopsis Next
+  div
+    div#brand Canopsis Next
 </template>
 
 <style lang="scss" scoped>

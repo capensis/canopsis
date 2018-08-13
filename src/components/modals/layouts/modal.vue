@@ -1,24 +1,28 @@
 <template lang="pug">
-  v-dialog(v-model="isOpened", v-bind="dialogProps")
+  v-dialog(v-model="isOpened", :hide-overlay="index !== 0", v-bind="dialogProps")
     // @slot use this slot default
-    slot(v-if="isActive")
+    slot
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapGetters, mapActions } = createNamespacedHelpers('modal');
+import modalMixin from '@/mixins/modal/modal';
 
 /**
  * Wrapper for each modal window
  *
- * @prop {string} name - Name of the modal
+ * @prop {Object} modal - The current modal object
+ * @prop {number} index - The current modal index in the store
  * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
  */
 export default {
+  mixins: [modalMixin],
   props: {
-    name: {
-      type: String,
+    modal: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
       required: true,
     },
     dialogProps: {
@@ -26,27 +30,23 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      ready: false,
+    };
+  },
   computed: {
-    ...mapGetters({
-      modalName: 'name',
-      modalAnimationPending: 'animationPending',
-    }),
-    isActive() {
-      return this.modalName === this.name;
-    },
     isOpened: {
       get() {
-        return this.modalName === this.name && !this.modalAnimationPending;
+        return !this.modal.hideAnimationPending && this.ready;
       },
       set() {
-        this.hideModal();
+        this.hideModal({ id: this.modal.id });
       },
     },
   },
-  methods: {
-    ...mapActions({
-      hideModal: 'hide',
-    }),
+  mounted() {
+    this.ready = true;
   },
 };
 </script>
