@@ -11,44 +11,43 @@
           v-icon settings
       v-flex(xs2)
         context-fab
-    transition(name="fade", mode="out-in")
-      loader(v-if="contextEntitiesPending")
-      div(v-else)
-        v-data-table(
-          v-model="selected",
-          :items="contextEntities",
-          :headers="headers",
-          item-key="_id",
-          :total-items="contextEntitiesMeta.total",
-          :pagination.sync="vDataTablePagination",
-          select-all,
-          hide-actions,
-        )
-          template(slot="headerCell", slot-scope="props")
-            span {{ props.header.text }}
-          template(slot="items", slot-scope="props")
-            td
-              v-checkbox(primary, hide-details, v-model="props.selected")
-            td(
-            v-for="prop in properties",
-            @click="props.expanded = !props.expanded"
+    div
+      v-data-table(
+      v-model="selected",
+      :items="contextEntities",
+      :headers="headers",
+      :loading="contextEntitiesPending",
+      :total-items="contextEntitiesMeta.total",
+      :pagination.sync="vDataTablePagination",
+      item-key="_id",
+      select-all,
+      hide-actions,
+      )
+        template(slot="headerCell", slot-scope="props")
+          span {{ props.header.text }}
+        template(slot="items", slot-scope="props")
+          td
+            v-checkbox(primary, hide-details, v-model="props.selected")
+          td(
+          v-for="prop in properties",
+          @click="props.expanded = !props.expanded"
+          )
+            ellipsis(
+            :text="$options.filters.get(props.item,prop.value) || ''",
+            :maxLetters="prop.maxLetters"
             )
-              ellipsis(
-              :text="$options.filters.get(props.item,prop.value) || ''",
-              :maxLetters="prop.maxLetters"
-              )
-            td
-              v-btn(@click.stop="editEntity(props.item)", icon, small)
-                v-icon edit
-              v-btn(@click.stop="deleteEntity(props.item)", icon, small)
-                v-icon delete
-          template(slot="expand", slot-scope="props")
-            more-infos(:item="props.item")
-        v-layout.white(align-center)
-          v-flex(xs10)
-            pagination(:meta="contextEntitiesMeta", :query.sync="query")
-          v-flex(xs2)
-            records-per-page(:query.sync="query")
+          td
+            v-btn(@click.stop="editEntity(props.item)", icon, small)
+              v-icon edit
+            v-btn(@click.stop="deleteEntity(props.item)", icon, small)
+              v-icon delete
+        template(slot="expand", slot-scope="props")
+          more-infos(:item="props.item")
+      v-layout.white(align-center)
+        v-flex(xs10)
+          pagination(:meta="contextEntitiesMeta", :query.sync="query")
+        v-flex(xs2)
+          records-per-page(:query.sync="query")
 </template>
 
 <script>
@@ -56,7 +55,6 @@ import omit from 'lodash/omit';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import { MODALS, ENTITIES_TYPES } from '@/constants';
@@ -83,7 +81,6 @@ export default {
     ContextSearch,
     RecordsPerPage,
     MoreInfos,
-    Loader,
     Ellipsis,
     ContextFab,
   },
@@ -114,14 +111,6 @@ export default {
     headers() {
       return [...this.properties, { text: '', sortable: false }];
     },
-  },
-  watch: {
-    userPreference() {
-      this.fetchList(); // TODO: check requests count
-    },
-  },
-  async mounted() {
-    this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
   },
   methods: {
     getQuery() {
