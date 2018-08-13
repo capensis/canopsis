@@ -528,6 +528,32 @@ class Alerts(object):
 
         return True
 
+    def update_output_fields(self, value, event):
+        with open("/tmp/plop.log", "a") as fd:
+            fd.write("*** Event {}\n\n".format(event["long_output"]))
+
+        value[AlarmField.output.value] = event["output"]
+
+        if value.get(AlarmField.long_output.value, "") != event["long_output"]:
+            value[AlarmField.long_output.value] = event["long_output"]
+
+            if AlarmField.long_output_history.value not in value:
+                value[AlarmField.long_output_history.value] = []
+
+                value[AlarmField.long_output_history.value].append(
+                    event[AlarmField.long_output.value]
+                )
+
+            value[AlarmField.steps.value].append({
+                "a": value["state"]["a"],
+                "_t": "long_output",
+                "m": "update long_output to {}.".format(event["long_output"]),
+                "t": int(time()),
+                "val": value["state"]["val"]
+            })
+
+        return value
+
     def archive(self, event):
         """
         Archive event in corresponding alarm history.
@@ -564,9 +590,14 @@ class Alerts(object):
 
             value = alarm.get(self.alerts_storage.VALUE)
 
+            value = self.update_output_fields(value, event)
+            with open("/tmp/plop.log", "a") as fd:
+                fd.write("*** Value {}\n\n".format(value))
+
             value = self.crop_flapping_steps(value)
 
             value = self.check_hard_limit(value)
+
 
             self.update_current_alarm(alarm, value)
 
@@ -858,7 +889,8 @@ class Alerts(object):
                     field: event[field]
                     for field in self.extra_fields
                     if field in event
-                }
+                },
+                AlarmField.initial_long_output.value: event["long_output"]
             }
         }
 
