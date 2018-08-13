@@ -3,7 +3,7 @@
   :temporary="$mq === 'mobile' || $mq === 'tablet'",
   :value="value",
   @input="$emit('input', $event)",
-  width="400",
+  width="800",
   temporary,
   fixed,
   right
