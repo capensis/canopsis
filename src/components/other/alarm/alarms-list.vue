@@ -19,39 +19,38 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="$emit('openSettings')")
           v-icon settings
-    transition(name="fade", mode="out-in")
-      loader.loader(v-if="alarmsPending")
-      div(v-else)
-        v-data-table(
-        v-model="selected",
-        :items="alarms",
-        :headers="properties",
-        :total-items="alarmsMeta.total",
-        :pagination.sync="vDataTablePagination",
-        item-key="_id",
-        select-all,
-        hide-actions,
-        )
-          template(slot="headerCell", slot-scope="props")
-            span {{ props.header.text }}
-          template(slot="items", slot-scope="props")
-            td
-              v-checkbox(primary, hide-details, v-model="props.selected")
-            td(
-            v-for="prop in properties",
-            @click="props.expanded = !props.expanded"
-            )
-              alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
-            td
-              actions-panel(:item="props.item", :widget="widget")
-          template(slot="expand", slot-scope="props")
-            time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
-        v-layout.white(align-center)
-          v-flex(xs10)
-            pagination(:meta="alarmsMeta", :query.sync="query")
-          v-spacer
-          v-flex(xs2)
-            records-per-page(:query.sync="query")
+    div
+      v-data-table(
+      v-model="selected",
+      :items="alarms",
+      :headers="headers",
+      :total-items="alarmsMeta.total",
+      :pagination.sync="vDataTablePagination",
+      :loading="alarmsPending",
+      item-key="_id",
+      select-all,
+      hide-actions,
+      )
+        template(slot="headerCell", slot-scope="props")
+          span {{ props.header.text }}
+        template(slot="items", slot-scope="props")
+          td
+            v-checkbox(primary, hide-details, v-model="props.selected")
+          td(
+          v-for="prop in properties",
+          @click="props.expanded = !props.expanded"
+          )
+            alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
+          td
+            actions-panel(:item="props.item", :widget="widget")
+        template(slot="expand", slot-scope="props")
+          time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+      v-layout.white(align-center)
+        v-flex(xs10)
+          pagination(:meta="alarmsMeta", :query.sync="query")
+        v-spacer
+        v-flex(xs2)
+          records-per-page(:query.sync="query")
 </template>
 
 <script>
@@ -60,7 +59,6 @@ import omit from 'lodash/omit';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
-import Loader from '@/components/other/alarm/loader/alarm-list-loader.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
@@ -89,7 +87,6 @@ export default {
     TimeLine,
     MassActionsPanel,
     ActionsPanel,
-    Loader,
     AlarmColumnValue,
   },
   mixins: [
@@ -117,6 +114,9 @@ export default {
   computed: {
     selectedIds() {
       return this.selected.map(item => item._id);
+    },
+    headers() {
+      return [...this.properties, { text: '', sortable: false }];
     },
   },
   methods: {
