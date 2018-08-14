@@ -565,9 +565,10 @@ class Alerts(object):
         """
         entity_id = self.context_manager.get_id(event)
         event_type = event['event_type']
-        initial_state = event["state"]
-        if event_type in [Check.EVENT_TYPE, 'watcher']:
+        initial_state = None
 
+        if event_type in [Check.EVENT_TYPE, 'watcher']:
+            initial_state = event["state"]
             alarm = self.get_current_alarm(entity_id)
 
             is_new_alarm = alarm is None
