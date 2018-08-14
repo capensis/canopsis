@@ -6,7 +6,7 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
     v-flex(xs2)
       component.ma-2(:is="format.icon")
     v-flex(xs10)
-      p.watcherName {{ watcher.display_name }}
+      div.watcherName(v-html="compiledTemplate")
   v-layout
     v-flex(xs12)
       div.moreInfos.py-1(@click="showWatcherModal")
@@ -16,6 +16,8 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 </template>
 
 <script>
+import Handlebars from 'handlebars';
+
 import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
@@ -39,6 +41,9 @@ export default {
       type: Object,
       required: true,
     },
+    template: {
+      type: String,
+    },
   },
   computed: {
     format() {
@@ -58,6 +63,11 @@ export default {
         icon: iconsMap[this.watcher.state.val],
         color: WATCHER_STATES_COLORS[this.watcher.state.val],
       };
+    },
+    compiledTemplate() {
+      const template = Handlebars.compile(this.template);
+      const context = {};
+      return template(context);
     },
   },
   methods: {
