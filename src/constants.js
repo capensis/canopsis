@@ -28,6 +28,7 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  createFilter: 'create-filter',
 };
 
 export const EVENT_ENTITY_TYPES = {
