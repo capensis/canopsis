@@ -24,6 +24,11 @@ export function convertAlarmWidgetToQuery(widget) {
     query.sortDir = null;
   }
 
+  if (widget.alarms_state_filter) {
+    query.opened = Boolean(widget.alarms_state_filter.opened);
+    query.resolved = Boolean(widget.alarms_state_filter.resolved);
+  }
+
   return query;
 }
 
