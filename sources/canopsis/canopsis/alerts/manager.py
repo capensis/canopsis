@@ -895,7 +895,8 @@ class Alerts(object):
                     for field in self.extra_fields
                     if field in event
                 },
-                AlarmField.initial_long_output.value: event["long_output"]
+                AlarmField.initial_long_output.value:
+                event.get("long_output", "")
             }
         }
 
