@@ -50,7 +50,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
-from canopsis.lock.manager import AlertLock
+from canopsis.lock.manager import AlertLockRedis
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
 from canopsis.models.entity import Entity
@@ -138,7 +138,7 @@ class Alerts(object):
 
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
-        self.lock_manager = AlertLock(*AlertLock.provide_default_basics())
+        self.lock_manager = AlertLockRedis(*AlertLockRedis.provide_default_basics())
 
     @classmethod
     def provide_default_basics(cls):
