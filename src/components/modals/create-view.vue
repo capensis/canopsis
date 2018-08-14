@@ -31,11 +31,13 @@
           label='Tags', tags='', clearable='',  multiple='', append-icon='')
             template(slot='selection', slot-scope='data')
               v-chip(:selected='data.selected', close='', @input='remove(data.item)') {{ data.item }}
-          v-combobox(v-model='form.group_id',
+          v-combobox(
+          v-model='group_name',
           @click="fetchGroupList",
-          :items="groupList",
+          :items="groupNames",
           :label="$t('modals.createView.fields.groupIds')",
           )
+          span {{ this.form.group_id }}
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
@@ -46,6 +48,7 @@ import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import viewMixin from '@/mixins/entities/viewV3/viewV3';
 import groupMixin from '@/mixins/entities/viewV3/group';
+import find from 'lodash/find';
 
 /**
  * Modal to create widget
@@ -58,15 +61,20 @@ export default {
   mixins: [modalMixin, viewMixin, groupMixin],
   data() {
     return {
+      group_name: '',
       form: {
         name: '',
         title: '',
-        group_id: '',
         description: '',
         enabled: '',
         tags: [],
       },
     };
+  },
+  computed: {
+    groupNames() {
+      return this.groupList.map(group => group.name);
+    },
   },
   methods: {
     remove(item) {
@@ -74,12 +82,19 @@ export default {
       this.form.tags = [...this.form.tags];
     },
     async submit() {
-      /* if (!this.groupList.include(this.form.group_id)) {
-
-      } */
+      let groupId;
+      if (this.groupNames.includes(this.group_name)) {
+        groupId = find(this.groupList, { name: this.group_name })._id;
+      } else {
+        groupId = await this.createGroup({ name: this.group_name });
+      }
+      const data = {
+        ...this.form,
+        group_id: groupId,
+      };
       const isFormValid = await this.$validator.validateAll();
       if (isFormValid) {
-        this.createView(this.form);
+        await this.createView(data);
       }
     },
   },

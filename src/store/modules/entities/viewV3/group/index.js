@@ -1,6 +1,5 @@
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
-import uuid from '@/helpers/uuid';
 import { ENTITIES_TYPES } from '@/constants';
 import i18n from '@/i18n';
 import { groupSchema } from '@/store/schemas';
@@ -40,10 +39,11 @@ export default {
   actions: {
     async create(context, params = {}) {
       try {
-        const route = API_ROUTES.viewV3.groups + uuid('groupid_');
-        await request.post(route, params);
+        const route = API_ROUTES.viewV3.groups;
+        return await request.post(route, params);
       } catch (err) {
         console.warn(err);
+        return undefined;
       }
     },
     async fetchList({ commit, dispatch }, { name } = {}) {
