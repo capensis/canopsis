@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") Weather modal template
-    quill-editor(:config="editorConfig")
+    quill-editor(:config="editorConfig", :value="content", @input="$emit('update:content', $event)")
 </template>
 
 <script>
@@ -14,6 +14,11 @@ import { quillEditor } from 'vue-quill-editor';
 export default {
   components: {
     quillEditor,
+  },
+  props: {
+    content: {
+      type: String,
+    },
   },
   data() {
     return {

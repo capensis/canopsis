@@ -3,9 +3,9 @@
     v-list.pt-0(expand)
       field-title(v-model="settings.widget.title")
       field-weather-data-set
-      field-weather-template
-      field-weather-modal-template
-      field-weather-entity-template
+      field-weather-template(:content.sync="settings.widget.block_template")
+      field-weather-modal-template(:content.sync="settings.widget.modal_template")
+      field-weather-entity-template(:content.sync="settings.widget.entity_template")
     v-btn(@click="submit", color="green darken-4 white--text", depressed, fixed, right) {{ $t('common.save') }}
 </template>
 
@@ -31,6 +31,9 @@ export default {
       settings: {
         widget: {
           title: this.widget.title,
+          block_template: '',
+          modal_template: '',
+          entity_template: '',
         },
       },
     };
