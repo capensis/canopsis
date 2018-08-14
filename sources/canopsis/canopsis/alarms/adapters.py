@@ -103,6 +103,23 @@ class AlarmAdapter(object):
         for alarm in self.collection.find(query):
             yield make_alarm_from_mongo(alarm)
 
+    def find_unresolved_alarms(self):
+        """
+        Yields all the alarms that are unresolved.
+
+        :rtype: Iterator[Dict[str, Any]]
+        """
+
+        query = {
+            "$or": [
+                {"v.resolved": None},
+                {"v.resolved": {"$exists": False}},
+            ],
+        }
+
+        for alarm in self.collection.find(query):
+            yield make_alarm_from_mongo(alarm)
+
     def get_current_alarm(self, eid, connector_name=None):
         """
         Returns exactly one alarm or None.
