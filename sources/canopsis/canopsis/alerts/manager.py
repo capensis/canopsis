@@ -593,6 +593,14 @@ class Alerts(object):
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
+            # set default value to event["long_output"] and event["output"]
+            if "long_output" not in event:
+                event["long_output"] = alarm.get(AlarmField.long_output.value,
+                                                 "")
+
+            if "output" not in event:
+                event["output"] = alarm.get(AlarmField.output.value, "")
+
             state_updated = not initial_state == alarm["value"]["state"]["val"]
 
             value = alarm.get(self.alerts_storage.VALUE)
