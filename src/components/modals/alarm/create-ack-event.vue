@@ -92,7 +92,9 @@ export default {
         });
       }
 
-      await this.fetchAlarmListWithPreviousParams();
+      if (this.config && this.config.afterSubmit) {
+        await this.config.afterSubmit();
+      }
 
       this.hideModal();
     },
