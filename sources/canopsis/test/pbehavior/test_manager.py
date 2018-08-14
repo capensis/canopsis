@@ -553,7 +553,7 @@ class TestManager(BaseTest):
         expected_intervals = []
         self.assertEqual(intervals, expected_intervals)
 
-    def test_get_intervals_with_pbehaviors(self):
+    def test_get_intervals_with_pbehaviors_by_eid(self):
         day = 24 * 3600
 
         tstart1 = 1530288000  # 2018/06/29 18:00:00
@@ -594,7 +594,7 @@ class TestManager(BaseTest):
             (tstart1 + 4 * day, tstop2 + 4 * day, True),
             (tstop2 + 4 * day, tstart1 + 5 * day, False),
         ]
-        intervals = list(self.pbm.get_intervals_with_pbehaviors(
+        intervals = list(self.pbm.get_intervals_with_pbehaviors_by_eid(
             tstart1, tstart1 + 5 * day, 1))
         self.assertEqual(intervals, expected_intervals)
 
@@ -602,7 +602,7 @@ class TestManager(BaseTest):
         expected_intervals = [
             (tstart1, tstart1 + 5 * day, False),
         ]
-        intervals = list(self.pbm.get_intervals_with_pbehaviors(
+        intervals = list(self.pbm.get_intervals_with_pbehaviors_by_eid(
             tstart1, tstart1 + 5 * day, 2))
         self.assertEqual(intervals, expected_intervals)
 
