@@ -16,5 +16,6 @@
   "Hard limit reached !": "Limite physique atteinte !",
   "by ": "par ",
   "system": "système",
-  "Mark as done by ": "Marqué comme fait par "
+  "Mark as done by ": "Marqué comme fait par ",
+  "update_output" : "Sortie mise à jour"
 }
