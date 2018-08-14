@@ -93,6 +93,7 @@ export default {
       }
       const data = {
         ...this.form,
+        widgets: [],
         group_id: groupId,
       };
       const isFormValid = await this.$validator.validateAll();
