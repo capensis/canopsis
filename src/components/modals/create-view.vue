@@ -36,6 +36,9 @@
           @click="fetchGroupList",
           :items="groupNames",
           :label="$t('modals.createView.fields.groupIds')",
+          data-vv-name="group",
+          v-validate="'required'",
+          :error-messages="errors.collect('group')",
           )
           span {{ this.form.group_id }}
       v-layout
@@ -95,6 +98,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
       if (isFormValid) {
         await this.createView(data);
+        this.hideModal();
       }
     },
   },

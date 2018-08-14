@@ -18,11 +18,12 @@ export default {
   mutations: {
   },
   actions: {
-    async create(context, params = {}) {
+    async create({ dispatch }, params = {}) {
       try {
         await request.post(API_ROUTES.viewV3.view, params);
       } catch (err) {
         console.warn(err);
+        await dispatch('popup/add', { type: 'error', text: err.description }, { root: true });
       }
     },
   },
