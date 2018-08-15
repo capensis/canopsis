@@ -1,5 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 
+import { OPERATORS } from '@/constants';
+
 /**
  * @description Determine the operator and the input value of a rule
  * @param {Object} rule
@@ -18,11 +20,11 @@ function ruleOperatorAndInput(rule) {
    */
   if (typeof ruleValue === 'string') {
     if (Object.values(rule)[0] === '') {
-      parsedRule.operator = 'is empty';
+      parsedRule.operator = OPERATORS.isEmpty;
     } else {
       const [input] = Object.values(rule);
       parsedRule.input = input;
-      parsedRule.operator = 'equal';
+      parsedRule.operator = OPERATORS.equal;
     }
   } else if (typeof ruleValue === 'object') {
     /**
@@ -32,19 +34,19 @@ function ruleOperatorAndInput(rule) {
       case ('$eq'): {
         const [input] = Object.values(rule);
         parsedRule.input = input;
-        parsedRule.operator = 'equal';
+        parsedRule.operator = OPERATORS.equal;
         break;
       }
       case ('$ne'): {
         if (Object.values(ruleValue)[0] === null) {
-          parsedRule.operator = 'is not null';
+          parsedRule.operator = OPERATORS.isNotNull;
         } else if (Object.values(ruleValue)[0] === '') {
-          parsedRule.operator = 'is not empty';
+          parsedRule.operator = OPERATORS.isNotEmpty;
         } else {
           const [inputObject] = Object.values(rule);
           const [input] = Object.values(inputObject);
           parsedRule.input = input;
-          parsedRule.operator = 'not equal';
+          parsedRule.operator = OPERATORS.notEqual;
         }
         break;
       }
@@ -52,14 +54,14 @@ function ruleOperatorAndInput(rule) {
         const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
-        parsedRule.operator = 'in';
+        parsedRule.operator = OPERATORS.in;
         break;
       }
       case ('$nin'): {
         const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
-        parsedRule.operator = 'not in';
+        parsedRule.operator = OPERATORS.notIn;
         break;
       }
       default: {

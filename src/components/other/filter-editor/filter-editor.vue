@@ -4,12 +4,11 @@
     v-tab-item
       v-container
         filter-group(
-        initialGroup,
-        :index = 0,
         :condition.sync="filter[0].condition",
-        :possibleFields="possibleFields",
-        :rules="filter[0].rules",
         :groups="filter[0].groups",
+        :rules="filter[0].rules",
+        :possibleFields="possibleFields",
+        initialGroup
         )
     v-tab {{$t('mFilterEditor.tabs.advancedEditor')}}
     v-tab-item

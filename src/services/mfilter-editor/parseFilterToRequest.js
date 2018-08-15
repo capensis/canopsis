@@ -1,5 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 
+import { OPERATORS } from '@/constants';
+
 function parseFilterRuleToRequest(rule) {
   const parsedRule = {};
 
@@ -11,80 +13,80 @@ function parseFilterRuleToRequest(rule) {
    * Determine the rule syntax based on the rule operator
    */
   switch (rule.operator) {
-    case ('equal'): {
+    case OPERATORS.equal: {
       parsedRule[rule.field] = rule.input;
       break;
     }
-    case ('not equal'): {
+    case OPERATORS.notEqual: {
       parsedRule[rule.field] = {
         $ne: rule.input,
       };
       break;
     }
-    case ('in'): {
+    case OPERATORS.in: {
       parsedRule[rule.field] = {
         $in: [rule.input],
       };
       break;
     }
-    case ('not in'): {
+    case OPERATORS.notIn: {
       parsedRule[rule.field] = {
         $nin: [rule.input],
       };
       break;
     }
-    case ('begins with'): {
+    case OPERATORS.beginsWith: {
       parsedRule[rule.field] = {
         $regex: `^${rule.input}`,
       };
       break;
     }
-    case ('doesn\'t begin with'): {
+    case OPERATORS.doesntBeginWith: {
       parsedRule[rule.field] = {
         $regex: `^(?!'${rule.input}')`,
       };
       break;
     }
-    case ('contains'): {
+    case OPERATORS.contains: {
       parsedRule[rule.field] = {
         $regex: rule.input,
       };
       break;
     }
-    case ('doesn\'t contain'): {
+    case OPERATORS.doesntContains: {
       parsedRule[rule.field] = {
         $regex: `^((?!'${rule.input}').)*$`,
         $options: 's',
       };
       break;
     }
-    case ('ends with'): {
+    case OPERATORS.endsWith: {
       parsedRule[rule.field] = {
         $regex: `${rule.input}$`,
       };
       break;
     }
-    case ('doesn\'t end with'): {
+    case OPERATORS.doesntEndWith: {
       parsedRule[rule.field] = {
         $regex: `(?<!'${rule.input}')$`,
       };
       break;
     }
-    case ('is empty'): {
+    case OPERATORS.isEmpty: {
       parsedRule[rule.field] = '';
       break;
     }
-    case ('is not empty'): {
+    case OPERATORS.isNotEmpty: {
       parsedRule[rule.field] = {
         $ne: '',
       };
       break;
     }
-    case ('is null'): {
+    case OPERATORS.isNull: {
       parsedRule[rule.field] = null;
       break;
     }
-    case ('is not null'): {
+    case OPERATORS.isNotNull: {
       parsedRule[rule.field] = {
         $ne: null,
       };
@@ -138,7 +140,8 @@ function parseFilterGroupToRequest(group) {
 }
 
 /**
- * @param Array filter
+ * @param {Array} filter
+ *
  * @description Take the filter data (from the form of the visual editor)
  * , and return a JSON object representing the request
  */
@@ -146,10 +149,6 @@ export default function parseFilterToRequest(filter) {
   const request = {};
 
   request[filter[0].condition] = [];
-
-  if (isEmpty(filter[0].groups) && isEmpty(filter[0].rules)) {
-    throw new Error('Empty group');
-  }
 
   filter[0].rules.map((rule) => {
     try {

@@ -1,58 +1,52 @@
 <template lang="pug">
-  v-container(fluid, class='filterRule pa-0')
+  v-card.my-1.pa-0(fluid)
     v-layout(justify-end)
       v-btn(
-          @click="handleDeleteRuleClick",
-          fab,
-          small,
-          flat,
-          dark,
-          color="red"
-        )
-          v-icon close
+      @click="$emit('deleteRule', index)",
+      color="red",
+      small,
+      flat,
+      dark,
+      fab
+      )
+        v-icon close
     v-layout(row, wrap, justify-space-around)
       v-flex(xs10, md3)
         v-select.my-2(
-          solo-inverted,
-          flat,
-          hide-details,
-          dense,
-          @input="$emit('update:field', $event)",
-          :items="possibleFields",
-          :value="field",
-          combobox
+        :items="possibleFields",
+        :value="field",
+        @input="$emit('update:field', $event)",
+        solo-inverted,
+        hide-details,
+        combobox,
+        dense,
+        flat
         )
       v-flex(xs10, md3)
         v-select.my-2(
-          solo-inverted,
-          hide-details,
-          flat,
-          dense,
-          @change="$emit('update:operator', $event)",
-          :value="operator",
-          :items="operators",
-          item-text="value"
+        :value="operator",
+        :items="operators",
+        @change="$emit('update:operator', $event)",
+        solo-inverted,
+        hide-details,
+        dense,
+        flat
         )
-      v-flex(
-        xs10,
-        md3,
-        v-if=`
-          operator != 'is empty'
-          && operator != 'is not empty'
-          && operator != 'is null'
-          && operator != 'is not null'`
-      )
+      v-flex(xs10, md3)
         v-text-field.my-2(
-          solo-inverted,
-          flat,
-          hide-details,
-          single-line,
-          :value="input",
-          @input="$emit('update:input', $event)"
+        v-show="isShownTextField",
+        :value="input",
+        @input="$emit('update:input', $event)",
+        solo-inverted,
+        hide-details,
+        single-line,
+        flat
         )
 </template>
 
 <script>
+import { OPERATORS } from '@/constants';
+
 /**
  * Component representing a rule in MongoDB filter
  *
@@ -78,6 +72,10 @@ export default {
       type: Array,
       required: true,
     },
+    operator: {
+      type: String,
+      required: true,
+    },
     possibleFields: {
       type: Array,
       required: true,
@@ -86,22 +84,19 @@ export default {
       type: String,
       required: true,
     },
-    operator: {
-      type: String,
-      required: true,
-    },
     input: {
       type: String,
       required: true,
     },
   },
-  methods: {
-    /**
-     * Invoked on a click on 'Delete' button. Emit a 'deleteRuleClick' event to the parent,
-     * that will actually delete the rule
-     */
-    handleDeleteRuleClick() {
-      this.$emit('deleteRuleClick', this.index);
+  computed: {
+    isShownTextField() {
+      return ![
+        OPERATORS.isEmpty,
+        OPERATORS.isNotEmpty,
+        OPERATORS.isNull,
+        OPERATORS.isNotNull,
+      ].includes(this.operator);
     },
   },
 };
@@ -110,6 +105,5 @@ export default {
 <style scoped>
   .filterRule {
     border: 1px solid lightgray;
-    margin: 0.2em 0;
   }
 </style>

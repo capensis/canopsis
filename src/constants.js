@@ -162,3 +162,20 @@ export const UNKNOWN_VALUE_STYLE = {
   text: 'Invalid val',
   icon: 'clear',
 };
+
+export const OPERATORS = {
+  equal: 'equal',
+  notEqual: 'not equal',
+  in: 'in',
+  notIn: 'not in',
+  beginsWith: 'begins with',
+  doesntBeginWith: 'doesn\'t begin with',
+  contains: 'contains',
+  doesntContains: 'doesn\'t contain',
+  endsWith: 'ends with',
+  doesntEndWith: 'doesn\'t end with',
+  isEmpty: 'is empty',
+  isNotEmpty: 'is not empty',
+  isNull: 'is null',
+  isNotNull: 'is not null',
+};
