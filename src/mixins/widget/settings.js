@@ -1,4 +1,5 @@
 import queryMixin from '@/mixins/query';
+import sideBarMixins from '@/mixins/side-bar/side-bar';
 import entitiesWidgetMixin from '@/mixins/entities/widget';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -6,20 +7,22 @@ import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/qu
 
 export default {
   props: {
-    widget: {
+    config: {
       type: Object,
       required: true,
-    },
-    isNew: {
-      type: Boolean,
-      default: false,
     },
   },
   mixins: [
     queryMixin,
+    sideBarMixins,
     entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
   ],
+  computed: {
+    widget() {
+      return this.config.widget;
+    },
+  },
   methods: {
     async submit() {
       const widget = {
@@ -53,7 +56,7 @@ export default {
         },
       });
 
-      this.$emit('closeSettings');
+      this.hideSideBar();
     },
   },
 };

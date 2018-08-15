@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    modal(
+    modal-wrapper(
     v-for="(modal, key, index) in modals",
     :key="key",
     :modal="modal",
@@ -15,7 +15,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import Modal from './layouts/modal.vue';
+import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
 import CreateCancelEvent from './alarm/create-cancel-event.vue';
@@ -40,7 +40,7 @@ const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
  */
 export default {
   components: {
-    Modal,
+    ModalWrapper,
     CreateAckEvent,
     CreateAssociateTicketEvent,
     CreateCancelEvent,

@@ -130,6 +130,16 @@ export const WIDGET_TYPES = {
   widgetWrapper: 'widgetwrapper',
 };
 
+export const SIDE_BARS = {
+  alarmSettings: 'alarm-settings-fields',
+  contextSettings: 'context-settings-fields',
+};
+
+export const SIDE_BARS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
+  [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+};
+
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
     color: 'purple',

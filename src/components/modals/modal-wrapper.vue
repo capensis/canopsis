@@ -38,7 +38,7 @@ export default {
   computed: {
     isOpened: {
       get() {
-        return !this.modal.hideAnimationPending && this.ready;
+        return !this.modal.hidden && this.ready;
       },
       set() {
         this.hideModal({ id: this.modal.id });

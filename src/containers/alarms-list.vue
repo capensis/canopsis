@@ -3,7 +3,6 @@
     alarms-list(
     :widget="widget",
     :properties="$mq | mq(alarmProperties)",
-    @openSettings="$emit('openSettings', $event)"
     )
 </template>
 

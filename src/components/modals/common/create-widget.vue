@@ -11,8 +11,8 @@
           v-list
             v-list-tile(
             v-for='widgetType in widgetsTypes',
-            @click='selectWidgetType(widgetType.value)',
-            :key='widgetType.title'
+            :key='widgetType.title',
+            @click='selectWidgetType(widgetType.value)'
             )
               v-list-tile-action
                 v-icon {{ widgetType.icon }}
@@ -21,32 +21,35 @@
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES } from '@/constants';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 import { generateWidgetByType } from '@/helpers/entities';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 /**
  * Modal to create widget
  */
 export default {
   name: MODALS.createWidget,
-  mixins: [modalInnerMixin],
+  mixins: [modalInnerMixin, sideBarMixin],
   data() {
     return {
       widgetsTypes: [
-        { title: WIDGET_TYPES.alarmList, icon: 'list', value: 'listalarm' },
-        { title: WIDGET_TYPES.context, icon: 'list', value: 'crudcontext' },
+        { title: WIDGET_TYPES.alarmList, icon: 'list', value: WIDGET_TYPES.alarmList },
+        { title: WIDGET_TYPES.context, icon: 'list', value: WIDGET_TYPES.context },
       ],
     };
   },
   methods: {
     selectWidgetType(type) {
-      const widgetWrapper = generateWidgetByType(type);
+      const widget = generateWidgetByType(type);
 
-      if (this.config.action) {
-        this.config.action(widgetWrapper);
-      }
-
+      this.showSideBar({
+        name: SIDE_BARS_BY_WIDGET_TYPES[type],
+        config: {
+          widget,
+        },
+      });
       this.hideModal();
     },
   },

@@ -3,7 +3,6 @@
     entities-list(
     :widget="widget",
     :properties="$mq | mq(contextProperties)",
-    @openSettings="$emit('openSettings', $event)"
     )
 </template>
 
