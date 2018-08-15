@@ -1,6 +1,6 @@
 <template lang="pug">
   v-navigation-drawer(
-  v-model="isOpened",
+  v-model="isOpen",
   :stateless="hasModals",
   v-bind="navigationDrawerProps"
   )
@@ -49,7 +49,7 @@ export default {
 
       return this.sideBarConfig.sideBarTitle || TITLES_MAP[this.sideBarName];
     },
-    isOpened: {
+    isOpen: {
       get() {
         return !this.isSideBarHidden && this.ready && this.sideBarName;
       },

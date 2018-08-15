@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     top-bar(@toggleSideBar="toggleSideBar")
-    side-bar(v-model="isOpened")
+    side-bar(v-model="isOpen")
 </template>
 
 <script>
@@ -15,12 +15,12 @@ export default {
   },
   data() {
     return {
-      isOpened: false,
+      isOpen: false,
     };
   },
   methods: {
     toggleSideBar() {
-      this.isOpened = !this.isOpened;
+      this.isOpen = !this.isOpen;
     },
   },
 };
