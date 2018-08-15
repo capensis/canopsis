@@ -17,18 +17,16 @@
 </template>
 
 <script>
-import settingsInnerMixin from '@/mixins/side-bar/side-bar-inner';
+import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
 import { SIDE_BARS } from '@/constants';
 
 /**
  * Wrapper for each modal window
  *
- * @prop {Object} modal - The current modal object
- * @prop {number} index - The current modal index in the store
- * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
+ * @prop {Object} [navigationDrawerProps={}] - Properties for vuetify v-navigation-drawer
  */
 export default {
-  mixins: [settingsInnerMixin],
+  mixins: [sideBarInnerMixin],
   props: {
     navigationDrawerProps: {
       type: Object,
