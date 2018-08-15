@@ -48,6 +48,9 @@ import FieldMoreInfo from '../partial/fields/more-info.vue';
  * @prop {Object} widget - active widget
  */
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     FieldTitle,
     FieldDefaultColumnSort,

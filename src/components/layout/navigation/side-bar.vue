@@ -50,6 +50,8 @@ import { SIDE_BAR_WIDTH } from '@/config';
  * Component for the side-bar, on the left of the application
  *
  * @prop {bool} [value=false] - visibility control
+ *
+ * @event input#update
  */
 export default {
   props: {

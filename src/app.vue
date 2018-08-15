@@ -12,17 +12,18 @@
 
 <script>
 import Navigation from '@/components/layout/navigation/index.vue';
+import SideBars from '@/components/side-bars/index.vue';
 import Modals from '@/components/modals/index.vue';
 import Popups from '@/components/popups/index.vue';
-import SideBars from '@/components/side-bars/index.vue';
+
 import authMixin from '@/mixins/auth';
 
 export default {
   components: {
     Navigation,
+    SideBars,
     Modals,
     Popups,
-    SideBars,
   },
   mixins: [authMixin],
   mounted() {

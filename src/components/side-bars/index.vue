@@ -12,7 +12,7 @@ import AlarmSettingsFields from './settings/widgets/alarm.vue';
 import ContextSettingsFields from './settings/widgets/context.vue';
 
 /**
- * Wrapper for all modal windows
+ * Wrapper for all side-bars
  */
 export default {
   components: {

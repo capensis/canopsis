@@ -6,7 +6,7 @@
     app,
   )
     div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'laptop'")
-      img(src="../../../assets/canopsis.png")
+      img(src="@/assets/canopsis.png")
     v-toolbar-side-icon(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
@@ -22,6 +22,8 @@ import authMixin from '@/mixins/auth';
 
 /**
  * Component for the top bar of the application
+ *
+ * @event toggleSideBar#click
  */
 export default {
   mixins: [authMixin],
