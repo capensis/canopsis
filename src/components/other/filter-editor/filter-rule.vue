@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.my-1.pa-0(fluid)
+  v-card.my-1.pa-0
     v-layout(justify-end)
       v-btn(
       @click="$emit('deleteRule', index)",
@@ -50,12 +50,12 @@ import { OPERATORS } from '@/constants';
 /**
  * Component representing a rule in MongoDB filter
  *
- * @prop {Number} [index] - Index of the group
- * @prop {Array} [operators] - List of all possible operators. Ex : 'equal', 'not equal', 'contains', ...
- * @prop {Array} [possibleFields] - List of all possible fields to filter on
- * @prop {String} [field] - Selected field
- * @prop {String} [operator] - Selected operator
- * @prop {String} [input] - Input value
+ * @prop {Number} index - Index of the group
+ * @prop {Array} operators - List of all possible operators. Ex : 'equal', 'not equal', 'contains', ...
+ * @prop {Array} possibleFields - List of all possible fields to filter on
+ * @prop {string} operator - Selected operator
+ * @prop {string} field - Selected field
+ * @prop {string} input - Input value
  *
  * @event field#update
  * @event operator#update
@@ -72,12 +72,12 @@ export default {
       type: Array,
       required: true,
     },
-    operator: {
-      type: String,
-      required: true,
-    },
     possibleFields: {
       type: Array,
+      required: true,
+    },
+    operator: {
+      type: String,
       required: true,
     },
     field: {
@@ -101,9 +101,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .filterRule {
-    border: 1px solid lightgray;
-  }
-</style>

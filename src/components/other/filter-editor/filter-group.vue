@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.my-1.pa-2()
+  v-card.my-1.pa-2
     v-radio-group(
     :input-value="condition",
     @change="$emit('update:condition', $event)",
@@ -37,10 +37,10 @@
         flat
         ) {{$t("mFilterEditor.buttons.deleteGroup")}}
 
-    div(v-for="(rule, index) in rules", :key="`rule-${index}`")
+    div(v-for="(rule, ruleIndex) in rules", :key="`rule-${ruleIndex}`")
       filter-rule(
       @deleteRule="deleteRule",
-      :index="index",
+      :index="ruleIndex",
       :field.sync="rule.field",
       :operator.sync="rule.operator",
       :input.sync="rule.input",
@@ -48,10 +48,10 @@
       :possibleFields="possibleFields",
       )
 
-    div(v-for="(group, index) in groups", :key="`group-${index}`")
+    div(v-for="(group, groupIndex) in groups", :key="`group-${groupIndex}`")
       filter-group.filterGroup(
       @deleteGroup="deleteGroup",
-      :index="index",
+      :index="groupIndex",
       :condition.sync="group.condition",
       :possibleFields="possibleFields",
       :rules="group.rules",
@@ -67,9 +67,12 @@ import FilterRule from './filter-rule.vue';
 /**
  * Component representing a group in MongoDB filter
  *
- * @prop {Boolean} [initialGroup] - Boolean to determine if it's the root filter's group
- * @prop {Number} index - Index of the group
- * @prop {String} [condition] - Base condition of the group : "$and" or "$or"
+ * @prop {Array} possibleFields - Boolean to determine if it's the root filter's group
+ * @prop {boolean} [initialGroup=false] - Boolean to determine if it's the root filter's group
+ * @prop {number} [index=0] - Index of the group
+ * @prop {string} [condition='$and'] - Base condition of the group : "$and" or "$or"
+ * @prop {Array} [rules=[]] - Rules of the current group
+ * @prop {Array} [groups=[]] - Groups of the current group
  *
  * @event condition#update
  * @event deleteGroup#click
@@ -80,8 +83,13 @@ export default {
     FilterRule,
   },
   props: {
+    possibleFields: {
+      type: Array,
+      required: true,
+    },
     initialGroup: {
       type: Boolean,
+      default: false,
     },
     index: {
       type: Number,
@@ -89,9 +97,7 @@ export default {
     },
     condition: {
       type: String,
-      default() {
-        return '$and';
-      },
+      default: '$and',
     },
     rules: {
       type: Array,
@@ -104,10 +110,6 @@ export default {
       default() {
         return [];
       },
-    },
-    possibleFields: {
-      type: Array,
-      required: true,
     },
   },
   data() {
