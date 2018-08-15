@@ -17,7 +17,7 @@
         block,
         small,
         flat
-        ) {{$t("mFilterEditor.buttons.addRule")}}
+        ) {{$t("filterEditor.buttons.addRule")}}
       v-flex(xs5, md3)
         v-btn(
         @click="addGroup",
@@ -25,7 +25,7 @@
         block,
         small,
         flat
-        ) {{$t("mFilterEditor.buttons.addGroup")}}
+        ) {{$t("filterEditor.buttons.addGroup")}}
       v-flex(xs5, md3)
         v-btn(
         v-if="!initialGroup",
@@ -35,7 +35,7 @@
         block,
         small,
         flat
-        ) {{$t("mFilterEditor.buttons.deleteGroup")}}
+        ) {{$t("filterEditor.buttons.deleteGroup")}}
 
     div(v-for="(rule, ruleIndex) in rules", :key="`rule-${ruleIndex}`")
       filter-rule(

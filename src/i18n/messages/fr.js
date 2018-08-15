@@ -378,7 +378,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
   },
-  mFilterEditor: {
+  filterEditor: {
     title: 'Editeur de filtre',
     tabs: {
       visualEditor: 'Éditeur visuel',

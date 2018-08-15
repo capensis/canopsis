@@ -14,7 +14,7 @@
           )
       v-layout(wrap, justify-center)
         v-flex(xs11)
-          h3.text-xs-center {{ $t('mFilterEditor.title') }}
+          h3.text-xs-center {{ $t('filterEditor.title') }}
           v-divider
           filter-editor(:filter.sync="form.filter")
       v-layout
