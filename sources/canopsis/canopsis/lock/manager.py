@@ -12,6 +12,7 @@ from canopsis.common.redis_store import RedisStore
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
+import os
 
 
 class AlertLock(object):
@@ -84,7 +85,7 @@ class AlertLockRedis(object):
         """
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
         config = Configuration.load(
-            cls.path.join(root_path, cls.CONF_PATH), Ini)
+            os.path.join(root_path, cls.CONF_PATH), Ini)
         redis_host = config.get('host', cls.DEFAULT_DB_HOST)
         redis_port = int(config.get('port', cls.DEFAULT_DB_PORT))
         redis_db_num = int(config.get('dbnum', cls.DEFAULT_DB_NUM))
