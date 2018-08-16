@@ -57,8 +57,21 @@ export default {
   components: {
     FilterGroup,
   },
+  props: {
+    value: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
+    const filter = this.value !== '' ? [parseGroupToFilter(JSON.parse(this.value))] : [{
+      condition: '$or',
+      groups: [],
+      rules: [],
+    }];
+
     return {
+      filter,
       items: [],
       meta: {},
       pending: false,
@@ -66,11 +79,6 @@ export default {
       activeTab: 0,
       newRequest: '',
       parseError: '',
-      filter: [{
-        condition: '$or',
-        groups: [],
-        rules: [],
-      }],
       isRequestChanged: false,
       possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
       resultsTableHeaders: [

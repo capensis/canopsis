@@ -5,14 +5,14 @@
     v-divider
     v-card-text
       v-text-field(
-      :label="$t('modals.createFilter.nameLabel')",
-      v-model="name",
+      :label="$t('modals.createFilter.fields.title')",
+      :error-messages="errors.collect('title')"
+      v-model="form.title",
       v-validate="'required'",
       required,
-      name="name",
-      :error-messages="errors.collect('name')"
+      name="title",
       )
-      filter-editor(:filter.sync="filterValue")
+      filter-editor(:filter.sync="form.filter", v-model="form.filter")
       v-btn(@click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -34,8 +34,10 @@ export default {
   ],
   data() {
     return {
-      name: '',
-      filterValue: '{}',
+      form: {
+        title: this.modal.config.filter.title,
+        filter: this.modal.config.filter.filter,
+      },
     };
   },
   methods: {

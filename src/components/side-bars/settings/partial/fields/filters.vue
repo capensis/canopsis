@@ -11,19 +11,16 @@
       item-value="title",
       clearable
       )
-    v-container
       v-list
-        v-list-tile(@click="")
-          v-list-tile-content Some filterSome filterSome filterSome filter
+        v-list-tile(v-for="filter in filters", :key="filter.title", @click="")
+          v-list-tile-content {{ filter.title }}
           v-list-tile-action
             div
-              v-btn.ma-1(icon, @click="showFilterModal")
-                v-icon delete
-              v-btn.ma-1(icon)
+              v-btn.ma-1(icon, @click="showFilterModal(filter)")
                 v-icon settings
-        v-divider
-        v-list-tile(@click="")
-          v-list-tile-content Test
+              v-btn.ma-1(icon, @click="showFilterModal(filter)")
+                v-icon delete
+      v-btn(color="success", @click.prevent="showFilterModal") Add
 </template>
 
 <script>
@@ -46,9 +43,12 @@ export default {
     updateField(value) {
       this.$emit('input', this.filters.find(v => v.title === value));
     },
-    showFilterModal() {
+    showFilterModal(filter) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: MODALS.createFilter,
+        config: {
+          filter,
+        },
       });
     },
   },
