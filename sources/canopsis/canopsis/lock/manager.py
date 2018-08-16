@@ -71,6 +71,10 @@ class AlertLockRedis(object):
 
     LOG_PATH = 'var/log/alert_lock.log'
     LOCK_COLLECTION = 'lock'
+    CONF_PATH = 'etc/common/redis_store.conf'
+    DEFAULT_DB_HOST = 'redis'
+    DEFAULT_DB_PORT = '6379'
+    DEFAULT_DB_NUM = '0'
 
     @classmethod
     def provide_default_basics(cls):
@@ -78,14 +82,16 @@ class AlertLockRedis(object):
             provide default basics
         """
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
-
-        redis = RedisStore(*RedisStore.get_default())
+        config = Configuration.load(cls.CONF_PATH, Ini)
+        redis_host = config.get('host', cls.DEFAULT_DB_HOST)
+        redis_port = int(config.get('port', cls.DEFAULT_DB_PORT))
+        redis_db_num = int(config.get('dbnum', cls.DEFAULT_DB_NUM))
         redlock = Redlock(
-            [{'host': redis.db_host, 'port': redis.db_port, db: redis.db_num}])
+            [{'host': redis_host, 'port': redis_port , 'db': redis_db_num}])
 
         logger = Logger.get('lock', cls.LOG_PATH)
 
-        return (logger, lock_collection)
+        return (logger, redlock)
 
     def __init__(self, logger, redlock):
         """
