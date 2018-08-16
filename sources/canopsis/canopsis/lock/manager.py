@@ -9,6 +9,7 @@ from redlock import Redlock
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.redis_store import RedisStore
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
 
@@ -72,7 +73,7 @@ class AlertLockRedis(object):
     LOG_PATH = 'var/log/alert_lock.log'
     LOCK_COLLECTION = 'lock'
     CONF_PATH = 'etc/common/redis_store.conf'
-    DEFAULT_DB_HOST = 'redis'
+    DEFAULT_DB_HOST = 'localhost'
     DEFAULT_DB_PORT = '6379'
     DEFAULT_DB_NUM = '0'
 
@@ -82,12 +83,13 @@ class AlertLockRedis(object):
             provide default basics
         """
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
-        config = Configuration.load(cls.CONF_PATH, Ini)
+        config = Configuration.load(
+            cls.path.join(root_path, cls.CONF_PATH), Ini)
         redis_host = config.get('host', cls.DEFAULT_DB_HOST)
         redis_port = int(config.get('port', cls.DEFAULT_DB_PORT))
         redis_db_num = int(config.get('dbnum', cls.DEFAULT_DB_NUM))
         redlock = Redlock(
-            [{'host': redis_host, 'port': redis_port , 'db': redis_db_num}])
+            [{'host': redis_host, 'port': redis_port, 'db': redis_db_num}])
 
         logger = Logger.get('lock', cls.LOG_PATH)
 
