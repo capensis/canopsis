@@ -105,12 +105,15 @@ class AlertLockRedis(object):
             create a document in lock collection
         """
         lock_id = 'redlock_{0}'.format(entity_id)
-        while not self.redlock.lock(lock_id, 12000):
+        stop = False
+        stop = self.redlock.lock(lock_id, 12000)
+        while type(stop) == bool:
             sleep(0.2)
-        return lock_id
+            stop = self.redlock.lock(lock_id, 12000)
+        return stop
 
     def unlock(self, lock):
         """
             remove lock documentt
         """
-        return lock.unlock()
+        return self.redlock.unlock(lock)

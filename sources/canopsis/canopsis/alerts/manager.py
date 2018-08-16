@@ -545,7 +545,6 @@ class Alerts(object):
             alarm = self.get_current_alarm(entity_id)
             is_new_alarm = alarm is None
 
-
             if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
