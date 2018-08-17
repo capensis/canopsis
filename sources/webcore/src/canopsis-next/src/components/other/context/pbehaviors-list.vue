@@ -16,7 +16,7 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapgetters } = createNamespacedHelpers('pbehavior');
+const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapGetters } = createNamespacedHelpers('pbehavior');
 
 export default {
   props: {
@@ -73,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...pbehaviorMapgetters({
+    ...pbehaviorMapGetters({
       pbehaviorsList: 'items',
     }),
   },

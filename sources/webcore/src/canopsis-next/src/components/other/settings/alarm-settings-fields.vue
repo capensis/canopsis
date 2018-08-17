@@ -1,21 +1,24 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.title")
+      field-title(v-model="settings.widget.title")
       v-divider
-      field-default-column-sort(v-model="settings.default_sort_column")
+      field-default-column-sort(v-model="settings.widget.default_sort_column")
       v-divider
-      field-columns
+      field-columns(v-model="settings.widget.widget_columns")
       v-divider
-      field-periodic-refresh
+      field-periodic-refresh(v-model="settings.widget.periodicRefresh")
       v-divider
-      field-default-elements-per-page
+      field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
       v-divider
-      field-opened-resolved-filter
+      field-opened-resolved-filter(v-model="settings.widget.alarms_state_filter")
       v-divider
-      field-filters
+      field-filters(
+      v-model="settings.widget_preferences.selected_filter",
+      :filters="settings.widget_preferences.user_filters"
+      )
       v-divider
-      field-info-popup(:widget="widget")
+      field-info-popup(v-model="settings.widget.popup", :widget="widget")
       v-divider
       field-more-info
       v-divider
@@ -23,6 +26,7 @@
 </template>
 
 <script>
+import pick from 'lodash/pick';
 import cloneDeep from 'lodash/cloneDeep';
 
 import FieldTitle from '@/components/other/settings/fields/title.vue';
@@ -35,20 +39,7 @@ import FieldFilters from '@/components/other/settings/fields/filters.vue';
 import FieldInfoPopup from '@/components/other/settings/fields/info-popup.vue';
 import FieldMoreInfo from '@/components/other/settings/fields/more-info.vue';
 
-import entitiesWidgetMixin from '@/mixins/entities/widget';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-
-const storeSample = {
-  default_sort_column: {
-    direction: 'DESC',
-    property: 'creation_date',
-  },
-  title: null,
-  selected_types: [
-    'connector',
-    'watcher',
-  ],
-};
+import widgetSettingsMixin from '@/mixins/widget/settings';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -57,6 +48,9 @@ const storeSample = {
  * @prop {bool} isNew - is widget new
  */
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     FieldTitle,
     FieldDefaultColumnSort,
@@ -68,29 +62,34 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: {
-    entitiesWidgetMixin,
-    entitiesUserPreferenceMixin,
-  },
-  props: {
-    widget: {
-      type: Object,
-      required: true,
-    },
-    isNew: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  mixins: [
+    widgetSettingsMixin,
+  ],
   data() {
     return {
-      settings: cloneDeep(storeSample),
+      settings: {
+        widget: {
+          title: this.widget.title,
+          default_sort_column: cloneDeep(this.widget.default_sort_column) || {},
+          widget_columns: cloneDeep(this.widget.widget_columns) || {},
+          periodicRefresh: cloneDeep(this.widget.periodicRefresh) || {},
+          alarms_state_filter: cloneDeep(this.widget.alarms_state_filter) || {},
+          popup: cloneDeep(this.widget.popup) || [],
+        },
+        widget_preferences: {
+          itemsPerPage: '',
+          user_filters: [],
+          selected_filter: {},
+        },
+      },
     };
   },
-  methods: {
-    submit() {
-      console.warn(this.settings);
-    },
+  created() {
+    this.settings.widget_preferences = pick(this.userPreference.widget_preferences, [
+      'itemsPerPage',
+      'user_filters',
+      'selected_filter',
+    ]);
   },
 };
 </script>

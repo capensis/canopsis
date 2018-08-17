@@ -2,6 +2,7 @@ import Vue from 'vue';
 import merge from 'lodash/merge';
 import get from 'lodash/get';
 
+import request from '@/services/request';
 import i18n from '@/i18n';
 import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
@@ -51,6 +52,17 @@ export default {
     },
   },
   actions: {
+    async fetchListWithoutStore({ dispatch }, { params }) {
+      try {
+        const { data: [result] } = await request.get(API_ROUTES.alarmList, { params });
+
+        return result;
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+
+        return { alarms: [], total: 0 };
+      }
+    },
     async fetchList({ commit, dispatch }, { widgetId, params, withoutPending } = {}) {
       try {
         if (!withoutPending) {

@@ -11,6 +11,7 @@ export default {
     confirmation: 'Etes-vous sûr(e) ?',
     submit: 'Soumettre',
     enabled: 'Activé',
+    disabled: 'Désactivée',
     login: 'Connexion',
     by: 'Par',
     date: 'Date',
@@ -125,6 +126,7 @@ export default {
     titles: {
       alarmListSettings: 'Paramètres du bac à alarmes',
       contextTableSettings: 'Paramètres de l\'explorateur de contexte',
+      weatherSettings: 'Paramètres de la météo des services',
     },
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
@@ -161,6 +163,8 @@ export default {
         type: 'Types',
         manageInfos: 'Gérer Infos',
         form: 'Formulaire',
+        impact: 'Impacts',
+        depends: 'Dépendances',
         types: {
           connector: 'connecteur',
           component: 'composant',
@@ -169,7 +173,8 @@ export default {
       },
     },
     createWatcher: {
-      title: 'Créer un observateur',
+      createTitle: 'Créer un observateur',
+      editTitle: 'Editer un observateur',
       displayName: 'Nom',
     },
     createAckEvent: {
@@ -246,6 +251,17 @@ export default {
     moreInfos: {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    },
+    watcher: {
+      criticity: 'Criticity',
+      organization: 'Organization',
+      numberOk: 'Nombre Ok',
+      numberKo: 'Nombre Ko',
+      state: 'State',
+      name: 'Nom',
+      org: 'Org',
+      noData: 'Pas de données',
+      ticketing: 'Ticketing',
     },
   },
   tables: {
@@ -362,7 +378,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
   },
-  mFilterEditor: {
+  filterEditor: {
     title: 'Editeur de filtre',
     tabs: {
       visualEditor: 'Éditeur visuel',

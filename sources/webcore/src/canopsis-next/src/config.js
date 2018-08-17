@@ -4,6 +4,8 @@ export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
 
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
 
+export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
+
 export const DEFAULT_LOCALE = 'fr';
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
@@ -22,12 +24,12 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 
 export const API_ROUTES = {
   auth: '/auth',
-  logout: '/logout',
   currentUser: '/account/me',
   alarmList: '/alerts/get-alarms',
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
+  weatherWatcher: '/api/v2/weather/watchers',
   pbehavior: '/api/v2/pbehavior',
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',

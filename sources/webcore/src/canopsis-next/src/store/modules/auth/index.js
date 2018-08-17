@@ -10,6 +10,7 @@ const types = {
 
   LOGOUT: 'LOGOUT',
 
+  FETCH_USER: 'FETCH_USER',
   FETCH_USER_COMPLETED: 'FETCH_USER_COMPLETED',
 };
 
@@ -18,10 +19,12 @@ export default {
   state: {
     isLoggedIn: !!Cookies.get(COOKIE_SESSION_KEY),
     currentUser: {},
+    pending: false,
   },
   getters: {
     isLoggedIn: state => state.isLoggedIn,
     currentUser: state => state.currentUser,
+    pending: state => state.pending,
   },
   mutations: {
     [types.LOGIN_COMPLETED](state) {
@@ -30,9 +33,14 @@ export default {
     [types.LOGOUT](state) {
       state.isLoggedIn = false;
       state.currentUser = {};
+      state.pending = false;
+    },
+    [types.FETCH_USER](state) {
+      state.pending = true;
     },
     [types.FETCH_USER_COMPLETED](state, currentUser) {
       state.currentUser = currentUser;
+      state.pending = false;
     },
   },
   actions: {
@@ -54,9 +62,11 @@ export default {
       }
 
       try {
-        const { data } = await request.get(API_ROUTES.currentUser);
+        commit(types.FETCH_USER);
 
-        return commit(types.FETCH_USER_COMPLETED, data[0]);
+        const { data: [currentUser] } = await request.get(API_ROUTES.currentUser);
+
+        return commit(types.FETCH_USER_COMPLETED, currentUser);
       } catch (err) {
         dispatch('logout');
 
@@ -66,7 +76,9 @@ export default {
     async logout({ commit }) {
       try {
         commit(types.LOGOUT);
-        await request.get(API_ROUTES.logout);
+        Cookies.remove(COOKIE_SESSION_KEY);
+
+        window.location.reload();
       } catch (err) {
         console.error(err);
       }
