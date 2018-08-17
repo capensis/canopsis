@@ -51,12 +51,9 @@ import formMixin from '@/mixins/form';
 /**
  * Component representing a rule in MongoDB filter
  *
- * @prop {Number} index - Index of the group
- * @prop {Array} operators - List of all possible operators. Ex : 'equal', 'not equal', 'contains', ...
+ * @prop {Object} rule - Object of the rule
  * @prop {Array} possibleFields - List of all possible fields to filter on
- * @prop {string} operator - Selected operator
- * @prop {string} field - Selected field
- * @prop {string} input - Input value
+ * @prop {Array} [operators=Object.values(FILTER_OPERATORS)] - List of all possible operators. Ex : 'equal', ...
  *
  * @event field#update
  * @event operator#update
@@ -70,13 +67,15 @@ export default {
       type: Object,
       required: true,
     },
-    operators: {
-      type: Array,
-      required: true,
-    },
     possibleFields: {
       type: Array,
       required: true,
+    },
+    operators: {
+      type: Array,
+      default() {
+        return Object.values(FILTER_OPERATORS);
+      },
     },
   },
   data() {

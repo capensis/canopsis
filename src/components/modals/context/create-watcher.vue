@@ -16,7 +16,7 @@
         v-flex(xs11)
           h3.text-xs-center {{ $t('filterEditor.title') }}
           v-divider
-          filter-editor(:filter.sync="form.filter")
+          filter-editor(v-model="form.mfilter")
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
@@ -40,20 +40,24 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
-    return {
-      form: {
-        name: '',
-        filter: '{}',
-      },
+    const { item } = this.modal.config;
+
+    let form = {
+      name: '',
+      mfilter: '{}',
     };
-  },
-  mounted() {
-    if (this.config.item) {
-      this.form = { ...this.config.item };
+
+    if (item) {
+      form = { ...item };
     }
+
+    return {
+      form,
+    };
   },
   methods: {
     ...watcherMapActions(['create', 'edit']),
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -63,15 +67,20 @@ export default {
           _id: this.config.item ? this.config.item._id : this.form.name,
           display_name: this.form.name,
           type: ENTITIES_TYPES.watcher,
-          mfilter: this.form.filter,
+          mfilter: this.form.mfilter,
         };
 
-        if (this.config.item) {
-          await this.edit({ data });
-        } else {
-          await this.create({ params: data });
+        try {
+          if (this.config.item) {
+            await this.edit({ data });
+          } else {
+            await this.create({ data });
+          }
+
+          this.hideModal();
+        } catch (err) {
+          console.error(err);
         }
-        this.hideModal();
       }
     },
   },
