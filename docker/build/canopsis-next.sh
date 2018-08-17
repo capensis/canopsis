@@ -6,6 +6,6 @@ set -u
 cd /canopsis-next
 
 npm install
-npm run build
+NODE_ENV=production npm run build
 
 cp -ar dist/* /dist/
