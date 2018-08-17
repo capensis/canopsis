@@ -69,6 +69,7 @@ class SelectQuery(object):
         self.group_by_tags = []
         self.group_by_time_interval = None
         self.group_by_time_offset = None
+        self.group_by_time_fill = None
         self.where_conditions = []
 
     def build(self):
@@ -119,18 +120,24 @@ class SelectQuery(object):
             group_by_statement = 'GROUP BY {}'.format(
                 ', '.join(group_by_tags))
 
+        fill_statement = ''
+        if self.group_by_time_interval and self.group_by_time_fill:
+            fill_statement = 'fill({})'.format(self.group_by_time_fill)
+
         return (
             "SELECT {select_columns} "
             "{into_statement} "
             "FROM {measurement} "
             "{where_statement} "
             "{group_by_statement}"
+            "{fill_statement}"
         ).format(
             select_columns=select_columns,
             into_statement=into_statement,
             measurement=quote_ident(self.measurement),
             where_statement=where_statement,
-            group_by_statement=group_by_statement)
+            group_by_statement=group_by_statement,
+            fill_statement=fill_statement)
 
     def select(self, key, function=None, alias=None):
         """
@@ -168,7 +175,7 @@ class SelectQuery(object):
         self.into_measurement = measurement
         return self
 
-    def group_by_time(self, interval, offset=None):
+    def group_by_time(self, interval, offset=None, fill=None):
         """
         Add a GROUP BY time(...) statement.
 
@@ -180,9 +187,12 @@ class SelectQuery(object):
             duration of the interval
         :param Optional[str] interval: An influxdb duration literal that shifts
             influxdb's time boundaries
+        :param Optional[str] fill: An influxdb fill option (linear, none, null,
+            previous or a number)
         """
         self.group_by_time_interval = interval
         self.group_by_time_offset = offset
+        self.group_by_time_fill = fill
         return self
 
     def group_by(self, *tags):
