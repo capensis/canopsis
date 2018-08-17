@@ -66,7 +66,7 @@ export default {
     },
     compiledTemplate() {
       const template = Handlebars.compile(this.template);
-      const context = {};
+      const context = { ...this.watcher };
       return template(context);
     },
   },
