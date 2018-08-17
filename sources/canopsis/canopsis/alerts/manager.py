@@ -547,7 +547,6 @@ class Alerts(object):
                 event[AlarmField.long_output.value]
             )
 
-            self.logger.critical("*** Coucou {}".format(len(value[AlarmField.long_output_history.value])))
             if len(value[AlarmField.long_output_history.value]) > 100:
                 new_hist = value[AlarmField.long_output_history.value][0:99]
                 value[AlarmField.long_output_history.value] = new_hist
