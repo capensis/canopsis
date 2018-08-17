@@ -52,23 +52,15 @@ export default {
     },
   },
   actions: {
-    async create(context, { params = {} } = {}) {
-      try {
-        await request.post(
-          API_ROUTES.watcher,
-          { _id: params._id, mfilter: params.mfilter, display_name: params.display_name },
-        );
-      } catch (err) {
-        console.warn(err);
-      }
+    create(context, { data }) {
+      return request.post(
+        API_ROUTES.watcher,
+        { _id: data._id, mfilter: data.mfilter, display_name: data.display_name },
+      );
     },
 
-    async edit(context, { data }) {
-      try {
-        await request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
-      } catch (err) {
-        console.warn(err);
-      }
+    edit(context, { data }) {
+      return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
     },
 
     async remove({ dispatch }, { id } = {}) {
