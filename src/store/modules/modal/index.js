@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import uid from 'uid';
-import omit from 'lodash/omit';
+
+import uid from '@/helpers/uid';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
@@ -34,7 +34,7 @@ export default {
       });
     },
     [types.HIDE_COMPLETED](state, { id }) {
-      state.modals = omit(state.modals, [id]);
+      Vue.delete(state.modals, id);
     },
   },
   actions: {
@@ -46,7 +46,7 @@ export default {
      * @param {Object} [config={}]
      * @param {string} [id=uid()]
      */
-    show({ commit }, { name, config = {}, id = uid() } = {}) {
+    show({ commit }, { name, config = {}, id = uid('modal') } = {}) {
       commit(types.SHOW, { id, name, config });
     },
     /**

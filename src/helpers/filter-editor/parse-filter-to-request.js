@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { OPERATORS } from '@/constants';
+import { FILTER_OPERATORS } from '@/constants';
 
 function parseFilterRuleToRequest(rule) {
   const parsedRule = {};
@@ -13,80 +13,80 @@ function parseFilterRuleToRequest(rule) {
    * Determine the rule syntax based on the rule operator
    */
   switch (rule.operator) {
-    case OPERATORS.equal: {
+    case FILTER_OPERATORS.equal: {
       parsedRule[rule.field] = rule.input;
       break;
     }
-    case OPERATORS.notEqual: {
+    case FILTER_OPERATORS.notEqual: {
       parsedRule[rule.field] = {
         $ne: rule.input,
       };
       break;
     }
-    case OPERATORS.in: {
+    case FILTER_OPERATORS.in: {
       parsedRule[rule.field] = {
         $in: [rule.input],
       };
       break;
     }
-    case OPERATORS.notIn: {
+    case FILTER_OPERATORS.notIn: {
       parsedRule[rule.field] = {
         $nin: [rule.input],
       };
       break;
     }
-    case OPERATORS.beginsWith: {
+    case FILTER_OPERATORS.beginsWith: {
       parsedRule[rule.field] = {
         $regex: `^${rule.input}`,
       };
       break;
     }
-    case OPERATORS.doesntBeginWith: {
+    case FILTER_OPERATORS.doesntBeginWith: {
       parsedRule[rule.field] = {
         $regex: `^(?!'${rule.input}')`,
       };
       break;
     }
-    case OPERATORS.contains: {
+    case FILTER_OPERATORS.contains: {
       parsedRule[rule.field] = {
         $regex: rule.input,
       };
       break;
     }
-    case OPERATORS.doesntContains: {
+    case FILTER_OPERATORS.doesntContains: {
       parsedRule[rule.field] = {
         $regex: `^((?!'${rule.input}').)*$`,
         $options: 's',
       };
       break;
     }
-    case OPERATORS.endsWith: {
+    case FILTER_OPERATORS.endsWith: {
       parsedRule[rule.field] = {
         $regex: `${rule.input}$`,
       };
       break;
     }
-    case OPERATORS.doesntEndWith: {
+    case FILTER_OPERATORS.doesntEndWith: {
       parsedRule[rule.field] = {
         $regex: `(?<!'${rule.input}')$`,
       };
       break;
     }
-    case OPERATORS.isEmpty: {
+    case FILTER_OPERATORS.isEmpty: {
       parsedRule[rule.field] = '';
       break;
     }
-    case OPERATORS.isNotEmpty: {
+    case FILTER_OPERATORS.isNotEmpty: {
       parsedRule[rule.field] = {
         $ne: '',
       };
       break;
     }
-    case OPERATORS.isNull: {
+    case FILTER_OPERATORS.isNull: {
       parsedRule[rule.field] = null;
       break;
     }
-    case OPERATORS.isNotNull: {
+    case FILTER_OPERATORS.isNotNull: {
       parsedRule[rule.field] = {
         $ne: null,
       };
@@ -108,10 +108,13 @@ function parseFilterGroupToRequest(group) {
     throw new Error('Empty Group');
   }
 
+  const rules = Object.values(group.rules);
+  const groups = Object.values(group.groups);
+
   /**
    * Parse each rule of a group and add it to the parsedGroup array
    */
-  group.rules.map((rule) => {
+  rules.map((rule) => {
     try {
       parsedGroup[group.condition].push(parseFilterRuleToRequest(rule));
     } catch (e) {
@@ -124,8 +127,8 @@ function parseFilterGroupToRequest(group) {
   /**
    * Parse each group of the group ans add it to the parsedGroup array
    */
-  group.groups.map((item) => {
-    if (isEmpty(group.groups) && isEmpty(group.rules)) {
+  groups.map((item) => {
+    if (isEmpty(rules)) {
       throw new Error('Empty Group');
     }
 
@@ -140,21 +143,25 @@ function parseFilterGroupToRequest(group) {
 }
 
 /**
- * @param {Array} filter
+ * @param {Object} filter
  *
  * @description Take the filter data (from the form of the visual editor)
  * , and return a JSON object representing the request
  */
 export default function parseFilterToRequest(filter) {
+  const { condition } = filter;
   const request = {};
 
-  request[filter[0].condition] = [];
+  const rules = Object.values(filter.rules);
+  const groups = Object.values(filter.groups);
 
-  filter[0].rules.map((rule) => {
+  request[condition] = [];
+
+  rules.map((rule) => {
     try {
-      return request[filter[0].condition].push(parseFilterRuleToRequest(rule));
+      return request[condition].push(parseFilterRuleToRequest(rule));
     } catch (e) {
-      return request[filter[0].condition].push({});
+      return request[condition].push({});
     }
   });
 
@@ -163,11 +170,11 @@ export default function parseFilterToRequest(filter) {
    * to parse Groups, and group's groups, etc
    */
 
-  filter[0].groups.map((group) => {
+  groups.map((group) => {
     try {
-      return request[filter[0].condition].push(parseFilterGroupToRequest(group));
+      return request[condition].push(parseFilterGroupToRequest(group));
     } catch (e) {
-      return request[filter[0].condition].push({});
+      return request[condition].push({});
     }
   });
 

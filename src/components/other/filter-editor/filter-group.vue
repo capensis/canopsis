@@ -29,7 +29,7 @@
       v-flex(xs5, md3)
         v-btn(
         v-if="!initialGroup",
-        @click="$emit('deleteGroup', index)",
+        @click="$emit('deleteGroup')",
         color="red darken-4",
         outline,
         block,
@@ -37,30 +37,31 @@
         flat
         ) {{$t("filterEditor.buttons.deleteGroup")}}
 
-    div(v-for="(rule, ruleIndex) in rules", :key="`rule-${ruleIndex}`")
+    div(v-for="(rule, ruleKey) in rules", :key="ruleKey")
       filter-rule(
-      @deleteRule="deleteRule",
-      :index="ruleIndex",
-      :field.sync="rule.field",
-      :operator.sync="rule.operator",
-      :input.sync="rule.input",
+      @deleteRule="deleteRule(ruleKey)",
+      @update:rule="updateRule(ruleKey, $event)",
+      :rule="rule",
       :operators="operators",
       :possibleFields="possibleFields",
       )
 
-    div(v-for="(group, groupIndex) in groups", :key="`group-${groupIndex}`")
+    div(v-for="(group, groupKey) in groups", :key="groupKey")
       filter-group.filterGroup(
-      @deleteGroup="deleteGroup",
-      :index="groupIndex",
+      @deleteGroup="deleteGroup(groupKey)",
       :condition.sync="group.condition",
+      :rules.sync="group.rules",
+      :groups.sync="group.groups",
       :possibleFields="possibleFields",
-      :rules="group.rules",
-      :groups="group.groups",
       )
 </template>
 
 <script>
-import { OPERATORS } from '@/constants';
+import omit from 'lodash/omit';
+import cloneDeep from 'lodash/cloneDeep';
+
+import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
+import uid from '@/helpers/uid';
 
 import FilterRule from './filter-rule.vue';
 
@@ -69,7 +70,6 @@ import FilterRule from './filter-rule.vue';
  *
  * @prop {Array} possibleFields - Boolean to determine if it's the root filter's group
  * @prop {boolean} [initialGroup=false] - Boolean to determine if it's the root filter's group
- * @prop {number} [index=0] - Index of the group
  * @prop {string} [condition='$and'] - Base condition of the group : "$and" or "$or"
  * @prop {Array} [rules=[]] - Rules of the current group
  * @prop {Array} [groups=[]] - Groups of the current group
@@ -91,41 +91,40 @@ export default {
       type: Boolean,
       default: false,
     },
-    index: {
-      type: Number,
-      default: 0,
-    },
     condition: {
       type: String,
-      default: '$and',
+      default: FILTER_DEFAULT_VALUES.condition,
     },
     rules: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return {};
       },
     },
     groups: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return {};
       },
     },
   },
   data() {
     return {
-      operators: Object.values(OPERATORS),
+      operators: Object.values(FILTER_OPERATORS),
     };
   },
   methods: {
+    updateRule(key, value) {
+      this.$emit('update:rules', { ...this.rules, [key]: value });
+    },
+
     /**
      * @description Invoked on a click on 'Add Rule' button. Add an empty object to the 'rules' array
      */
     addRule() {
-      this.rules.push({
-        field: '',
-        operator: '',
-        input: '',
+      this.$emit('update:rules', {
+        ...this.rules,
+        [uid('rule')]: cloneDeep(FILTER_DEFAULT_VALUES.rule),
       });
     },
 
@@ -133,27 +132,26 @@ export default {
      * @description Invoked on a click on 'Add Group' button. Add a Group to the 'groups' array
      */
     addGroup() {
-      this.groups.push({
-        condition: '$and',
-        groups: [],
-        rules: [],
+      this.$emit('update:groups', {
+        ...this.groups,
+        [uid('group')]: cloneDeep(FILTER_DEFAULT_VALUES.group),
       });
     },
 
     /**
      * @description Invoked when a 'deleteRule' event is fired. Delete a rule from the 'rules' array
-     * @param {number} index
+     * @param {string} key
      */
-    deleteRule(index) {
-      this.rules.splice(index, 1);
+    deleteRule(key) {
+      this.$emit('update:rules', omit(this.rules, [key]));
     },
 
     /**
      * @description Invoked when a 'deleteGroup' event is fired. Delete a group from the 'groups' array
-     * @param {number} index
+     * @param {string} key
      */
-    deleteGroup(index) {
-      this.groups.splice(index, 1);
+    deleteGroup(key) {
+      this.$emit('update:groups', omit(this.groups, [key]));
     },
   },
 };

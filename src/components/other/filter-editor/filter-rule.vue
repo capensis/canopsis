@@ -2,7 +2,7 @@
   v-card.my-1.pa-0
     v-layout(justify-end)
       v-btn(
-      @click="$emit('deleteRule', index)",
+      @click="$emit('deleteRule')",
       color="red",
       small,
       flat,
@@ -14,8 +14,8 @@
       v-flex(xs10, md3)
         v-select.my-2(
         :items="possibleFields",
-        :value="field",
-        @input="$emit('update:field', $event)",
+        :value="rule.field",
+        @input="updateField('field', $event)",
         solo-inverted,
         hide-details,
         combobox,
@@ -24,9 +24,9 @@
         )
       v-flex(xs10, md3)
         v-select.my-2(
-        :value="operator",
+        :value="rule.operator",
         :items="operators",
-        @change="$emit('update:operator', $event)",
+        @change="updateField('operator', $event)",
         solo-inverted,
         hide-details,
         dense,
@@ -35,8 +35,8 @@
       v-flex(xs10, md3)
         v-text-field.my-2(
         v-show="isShownTextField",
-        :value="input",
-        @input="$emit('update:input', $event)",
+        :value="rule.input",
+        @input="updateField('input', $event)",
         solo-inverted,
         hide-details,
         single-line,
@@ -45,7 +45,8 @@
 </template>
 
 <script>
-import { OPERATORS } from '@/constants';
+import { FILTER_OPERATORS } from '@/constants';
+import formMixin from '@/mixins/form';
 
 /**
  * Component representing a rule in MongoDB filter
@@ -63,9 +64,10 @@ import { OPERATORS } from '@/constants';
  * @event deleteRule#click
  */
 export default {
+  mixins: [formMixin],
   props: {
-    index: {
-      type: Number,
+    rule: {
+      type: Object,
       required: true,
     },
     operators: {
@@ -76,27 +78,20 @@ export default {
       type: Array,
       required: true,
     },
-    operator: {
-      type: String,
-      required: true,
-    },
-    field: {
-      type: String,
-      required: true,
-    },
-    input: {
-      type: String,
-      required: true,
-    },
+  },
+  data() {
+    return {
+      formKey: 'rule',
+    };
   },
   computed: {
     isShownTextField() {
       return ![
-        OPERATORS.isEmpty,
-        OPERATORS.isNotEmpty,
-        OPERATORS.isNull,
-        OPERATORS.isNotNull,
-      ].includes(this.operator);
+        FILTER_OPERATORS.isEmpty,
+        FILTER_OPERATORS.isNotEmpty,
+        FILTER_OPERATORS.isNull,
+        FILTER_OPERATORS.isNotNull,
+      ].includes(this.rule.operator);
     },
   },
 };

@@ -163,7 +163,7 @@ export const UNKNOWN_VALUE_STYLE = {
   icon: 'clear',
 };
 
-export const OPERATORS = {
+export const FILTER_OPERATORS = {
   equal: 'equal',
   notEqual: 'not equal',
   in: 'in',
@@ -178,4 +178,18 @@ export const OPERATORS = {
   isNotEmpty: 'is not empty',
   isNull: 'is null',
   isNotNull: 'is not null',
+};
+
+export const FILTER_DEFAULT_VALUES = {
+  condition: '$and',
+  rule: {
+    field: '',
+    operator: '',
+    input: '',
+  },
+  group: {
+    condition: '$and',
+    groups: {},
+    rules: {},
+  },
 };

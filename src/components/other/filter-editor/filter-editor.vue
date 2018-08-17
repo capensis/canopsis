@@ -4,9 +4,9 @@
     v-tab-item
       v-container
         filter-group(
-        :condition.sync="filter[0].condition",
-        :groups="filter[0].groups",
-        :rules="filter[0].rules",
+        :condition.sync="filter.condition",
+        :groups.sync="filter.groups",
+        :rules.sync="filter.rules",
         :possibleFields="possibleFields",
         initialGroup
         )
@@ -29,7 +29,7 @@
       :items="items",
       :pagination.sync="pagination",
       :total-items="meta.total",
-      :rows-per-page-items="[5, 10, 25, 50]",
+      :rows-per-page-items="rowsPerPageItems",
       :loading="pending"
       )
         template(slot="items", slot-scope="props")
@@ -42,9 +42,12 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import cloneDeep from 'lodash/cloneDeep';
 
-import parseGroupToFilter from '@/services/mfilter-editor/parseRequestToFilter';
-import parseFilterToRequest from '@/services/mfilter-editor/parseFilterToRequest';
+import { PAGINATION_PER_PAGE_VALUES } from '@/config';
+import { FILTER_DEFAULT_VALUES } from '@/constants';
+import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
+import parseFilterToRequest from '@/helpers/filter-editor/parse-filter-to-request';
 import FilterGroup from '@/components/other/filter-editor/filter-group.vue';
 
 const { mapActions: alarmsMapActions } = createNamespacedHelpers('alarm');
@@ -65,11 +68,7 @@ export default {
       activeTab: 0,
       newRequest: '',
       parseError: '',
-      filter: [{
-        condition: '$or',
-        groups: [],
-        rules: [],
-      }],
+      filter: cloneDeep(FILTER_DEFAULT_VALUES.group),
       isRequestChanged: false,
       possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
       resultsTableHeaders: [
@@ -101,6 +100,9 @@ export default {
     };
   },
   computed: {
+    rowsPerPageItems() {
+      return PAGINATION_PER_PAGE_VALUES;
+    },
     request() {
       try {
         return parseFilterToRequest(this.filter);
@@ -149,7 +151,7 @@ export default {
 
     updateFilter(value) {
       try {
-        this.filter = [parseGroupToFilter(value)];
+        this.filter = parseGroupToFilter(value);
       } catch (err) {
         this.parseError = err.message;
       }

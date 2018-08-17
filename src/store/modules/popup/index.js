@@ -1,4 +1,4 @@
-import uid from 'uid';
+import uid from '@/helpers/uid';
 
 export const types = {
   ADD: 'ADD',
@@ -23,8 +23,8 @@ export default {
   },
   actions: {
     add({ commit }, {
-      id = uid(), type, text, autoClose,
-    }) {
+      id = uid('popup'), type, text, autoClose,
+    } = {}) {
       commit(types.ADD, {
         popup: {
           id, type, text, autoClose,
