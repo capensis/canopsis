@@ -12,6 +12,11 @@ volumes:
     driver: local
 
 services:
+  redis:
+    image: redis:4.0
+    restart: unless-stopped
+    ports:
+      - 6379:6379
   rabbitmq:
     image: canopsis/canopsis-rabbitmq-server:${RABBIT_TAG}
     volumes:
