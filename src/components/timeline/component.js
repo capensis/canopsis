@@ -103,7 +103,8 @@ Ember.Application.initializer({
                 'snooze': {'icon': 'fa-clock-o', 'color': 'bg-fuchsia'},
                 'statecounter': {'icon': 'fa-scissors', 'color': 'bg-black'},
                 'done': {'icon': 'fa-check-square', 'color': 'bg-olive'},
-                'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'}
+                'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'},
+                'long_output': {'icon': 'fa-warning', 'color': 'bg-red'}
             },
 
             addAuthor: ['stateinc', 'statedec', 'changestate', 'statusinc', 'statusdec'],
@@ -204,6 +205,12 @@ Ember.Application.initializer({
                             if (step._t === 'assocticket') {
                                 step.m += ' ' + step.val;
                             }
+
+							if((step.state === undefined) && (step.status === undefined)) {
+								step.name = __("update_output")
+								step.icon = "fa-pencil"
+								step.color = 'bg-grey'
+							}
 
                             steps.push(step);
 
