@@ -173,3 +173,34 @@ export const UNKNOWN_VALUE_STYLE = {
   text: 'Invalid val',
   icon: 'clear',
 };
+
+export const FILTER_OPERATORS = {
+  equal: 'equal',
+  notEqual: 'not equal',
+  in: 'in',
+  notIn: 'not in',
+  beginsWith: 'begins with',
+  doesntBeginWith: 'doesn\'t begin with',
+  contains: 'contains',
+  doesntContains: 'doesn\'t contain',
+  endsWith: 'ends with',
+  doesntEndWith: 'doesn\'t end with',
+  isEmpty: 'is empty',
+  isNotEmpty: 'is not empty',
+  isNull: 'is null',
+  isNotNull: 'is not null',
+};
+
+export const FILTER_DEFAULT_VALUES = {
+  condition: '$and',
+  rule: {
+    field: '',
+    operator: '',
+    input: '',
+  },
+  group: {
+    condition: '$and',
+    groups: {},
+    rules: {},
+  },
+};

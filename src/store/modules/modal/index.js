@@ -1,9 +1,8 @@
 import Vue from 'vue';
-import uid from 'uid';
-import omit from 'lodash/omit';
 import isEmpty from 'lodash/isEmpty';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import uid from '@/helpers/uid';
 
 export const types = {
   SHOW: 'SHOW',
@@ -36,7 +35,7 @@ export default {
       });
     },
     [types.HIDE_COMPLETED](state, { id }) {
-      state.modals = omit(state.modals, [id]);
+      Vue.delete(state.modals, id);
     },
   },
   actions: {
@@ -48,7 +47,7 @@ export default {
      * @param {Object} [config={}]
      * @param {string} [id=uid()]
      */
-    show({ commit }, { name, config = {}, id = uid() } = {}) {
+    show({ commit }, { name, config = {}, id = uid('modal') } = {}) {
       commit(types.SHOW, { id, name, config });
     },
     /**
