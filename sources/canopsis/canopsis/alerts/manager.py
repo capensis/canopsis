@@ -531,6 +531,12 @@ class Alerts(object):
         return True
 
     def update_output_fields(self, value, event, state_updated):
+        """
+        Update the field output, long_output, long_output_history.
+        :param value: the alarm.value field of an alarm
+        :param event: the event used to update the alarm
+        :param state_updated: if the state of the alarm change.
+        """
 
         if not self.update_longoutput_fields and not state_updated:
             return value
