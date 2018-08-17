@@ -152,7 +152,7 @@ Ember.Application.initializer({
                     case "assignticketnumber":
                         name = func(actions, rights, actions[i]["name"], "listalarm_assignTicketNumber")
                         break;
-                    case "done":
+                    case "donealarm":
                         name = func(actions, rights, actions[i]["name"], "listalarm_done")
                         break;
                     case "pbehavior":
