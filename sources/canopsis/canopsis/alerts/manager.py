@@ -543,9 +543,15 @@ class Alerts(object):
             if AlarmField.long_output_history.value not in value:
                 value[AlarmField.long_output_history.value] = []
 
-                value[AlarmField.long_output_history.value].append(
-                    event[AlarmField.long_output.value]
-                )
+            value[AlarmField.long_output_history.value].append(
+                event[AlarmField.long_output.value]
+            )
+
+            self.logger.critical("*** Coucou {}".format(len(value[AlarmField.long_output_history.value])))
+            if len(value[AlarmField.long_output_history.value]) > 100:
+                new_hist = value[AlarmField.long_output_history.value][0:99]
+                value[AlarmField.long_output_history.value] = new_hist
+
 
             value[AlarmField.steps.value].append({
                 "a": value["state"]["a"],
