@@ -1,4 +1,8 @@
 import isEmpty from 'lodash/isEmpty';
+import cloneDeep from 'lodash/cloneDeep';
+
+import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
+import uid from '@/helpers/uid';
 
 /**
  * @description Determine the operator and the input value of a rule
@@ -18,11 +22,11 @@ function ruleOperatorAndInput(rule) {
    */
   if (typeof ruleValue === 'string') {
     if (Object.values(rule)[0] === '') {
-      parsedRule.operator = 'is empty';
+      parsedRule.operator = FILTER_OPERATORS.isEmpty;
     } else {
       const [input] = Object.values(rule);
       parsedRule.input = input;
-      parsedRule.operator = 'equal';
+      parsedRule.operator = FILTER_OPERATORS.equal;
     }
   } else if (typeof ruleValue === 'object') {
     /**
@@ -32,19 +36,19 @@ function ruleOperatorAndInput(rule) {
       case ('$eq'): {
         const [input] = Object.values(rule);
         parsedRule.input = input;
-        parsedRule.operator = 'equal';
+        parsedRule.operator = FILTER_OPERATORS.equal;
         break;
       }
       case ('$ne'): {
         if (Object.values(ruleValue)[0] === null) {
-          parsedRule.operator = 'is not null';
+          parsedRule.operator = FILTER_OPERATORS.isNotNull;
         } else if (Object.values(ruleValue)[0] === '') {
-          parsedRule.operator = 'is not empty';
+          parsedRule.operator = FILTER_OPERATORS.isNotEmpty;
         } else {
           const [inputObject] = Object.values(rule);
           const [input] = Object.values(inputObject);
           parsedRule.input = input;
-          parsedRule.operator = 'not equal';
+          parsedRule.operator = FILTER_OPERATORS.notEqual;
         }
         break;
       }
@@ -52,14 +56,14 @@ function ruleOperatorAndInput(rule) {
         const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
-        parsedRule.operator = 'in';
+        parsedRule.operator = FILTER_OPERATORS.in;
         break;
       }
       case ('$nin'): {
         const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
-        parsedRule.operator = 'not in';
+        parsedRule.operator = FILTER_OPERATORS.notIn;
         break;
       }
       default: {
@@ -75,11 +79,7 @@ function ruleOperatorAndInput(rule) {
 }
 
 function parseRuleToFilter(rule) {
-  const parsedRule = {
-    field: '',
-    operator: '',
-    input: '',
-  };
+  const parsedRule = cloneDeep(FILTER_DEFAULT_VALUES.rule);
 
   if (isEmpty(rule)) {
     return parsedRule;
@@ -97,12 +97,7 @@ function parseRuleToFilter(rule) {
 
 
 export default function parseGroupToFilter(group) {
-  const parsedGroup = {
-    condition: '$and',
-    groups: [],
-    rules: [],
-  };
-
+  const parsedGroup = cloneDeep(FILTER_DEFAULT_VALUES.group);
   const groupContent = Object.values(group)[0];
 
   if (isEmpty(groupContent)) {
@@ -119,9 +114,9 @@ export default function parseGroupToFilter(group) {
   */
   groupContent.map((item) => {
     if (Array.isArray(Object.values(item)[0])) {
-      parsedGroup.groups.push(parseGroupToFilter(item));
+      parsedGroup.groups[uid('group')] = parseGroupToFilter(item);
     } else {
-      parsedGroup.rules.push(parseRuleToFilter(item));
+      parsedGroup.rules[uid('rules')] = parseRuleToFilter(item);
     }
     return group;
   });
