@@ -1,5 +1,3 @@
-import isEmpty from 'lodash/isEmpty';
-
 export default {
   props: {
     widget: {
@@ -18,15 +16,6 @@ export default {
 
     hasColumns() {
       return this.columns.length > 0;
-    },
-  },
-  watch: {
-    'widget.widget_columns': {
-      handler(value, oldValue) {
-        if (!isEmpty(value) && isEmpty(oldValue) && this.fetchList) {
-          this.fetchList();
-        }
-      },
     },
   },
 };

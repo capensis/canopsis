@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
-    ellipsis(v-else, :text="$options.filters.get(alarm, columnValue, columnFilter, '')")
+    ellipsis(v-else, :text="alarm | get(column.value, columnFilter, '')")
     info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm", :widget="widget")
 </template>
 
@@ -42,17 +42,8 @@ export default {
     },
   },
   computed: {
-    columnValue() {
-      const PROPERTIES_WITHOUT_PREFIX = ['extra_details'];
-
-      if (this.column.value.startsWith('v.') || PROPERTIES_WITHOUT_PREFIX.includes(this.column.value)) {
-        return this.column.value;
-      }
-
-      return `v.${this.column.value}`;
-    },
     columnName() {
-      return this.columnValue.split('.')[1];
+      return this.column.value.split('.')[1];
     },
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
@@ -60,7 +51,7 @@ export default {
         'v.last_update_date': value => this.$d(new Date(value * 1000), 'long'),
       };
 
-      return PROPERTIES_FILTERS_MAP[this.columnValue];
+      return PROPERTIES_FILTERS_MAP[this.column.value];
     },
     component() {
       const PROPERTIES_COMPONENTS_MAP = {
@@ -68,7 +59,7 @@ export default {
         extra_details: 'extra-details',
       };
 
-      return PROPERTIES_COMPONENTS_MAP[this.columnValue];
+      return PROPERTIES_COMPONENTS_MAP[this.column.value];
     },
   },
 };

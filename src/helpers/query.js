@@ -37,6 +37,10 @@ export function convertAlarmWidgetToQuery(widget) {
     query.resolved = Boolean(widget.alarms_state_filter.resolved);
   }
 
+  if (widget.widget_columns) {
+    query.active_columns = widget.widget_columns.map(v => v.value);
+  }
+
   return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 

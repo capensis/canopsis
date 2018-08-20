@@ -20,10 +20,10 @@
           v-flex(xs11)
             v-text-field(
             :placeholder="$t('common.label')",
-            :error-messages="errors.collect(`value[${index}]`)",
+            :error-messages="errors.collect(`label[${index}]`)",
             v-model="column.label",
             v-validate="'required'",
-            :data-vv-name="`value[${index}]`"
+            :data-vv-name="`label[${index}]`"
             )
           v-flex(xs11)
             v-text-field(
