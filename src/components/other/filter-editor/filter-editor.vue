@@ -66,7 +66,11 @@ export default {
       const valueObject = JSON.parse(this.value);
 
       if (!isEmpty(valueObject)) {
-        filter = parseGroupToFilter(valueObject);
+        try {
+          filter = parseGroupToFilter(valueObject);
+        } catch (err) {
+          console.warn(err);
+        }
       }
     }
 

@@ -30,6 +30,7 @@ import pick from 'lodash/pick';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { PAGINATION_LIMIT } from '@/config';
+import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldTitle from '../partial/fields/title.vue';
@@ -44,10 +45,9 @@ import FieldMoreInfo from '../partial/fields/more-info.vue';
 
 /**
  * Component to regroup the alarms list settings fields
- *
- * @prop {Object} widget - active widget
  */
 export default {
+  name: SIDE_BARS.alarmSettings,
   $_veeValidate: {
     validator: 'new',
   },

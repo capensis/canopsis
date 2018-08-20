@@ -131,8 +131,8 @@ export const WIDGET_TYPES = {
 };
 
 export const SIDE_BARS = {
-  alarmSettings: 'alarm-settings-fields',
-  contextSettings: 'context-settings-fields',
+  alarmSettings: 'alarm-settings',
+  contextSettings: 'context-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {

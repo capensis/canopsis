@@ -14,6 +14,7 @@
 import pick from 'lodash/pick';
 import cloneDeep from 'lodash/cloneDeep';
 
+import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldTitle from '../partial/fields/title.vue';
@@ -22,13 +23,9 @@ import FieldContextEntitiesTypesFilter from '../partial/fields/context-entities-
 
 /**
  * Component to regroup the entities list settings fields
- *
- * @prop {Object} widget - active widget
- * @prop {bool} isNew - is widget new
- *
- * @event closeSettings#click
  */
 export default {
+  name: SIDE_BARS.contextSettings,
   components: {
     FieldTitle,
     FieldDefaultColumnSort,

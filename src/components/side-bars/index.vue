@@ -8,8 +8,8 @@
 import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
 
 import SideBarWrapper from './side-bar-wrapper.vue';
-import AlarmSettingsFields from './settings/widgets/alarm.vue';
-import ContextSettingsFields from './settings/widgets/context.vue';
+import AlarmSettings from './settings/widgets/alarm.vue';
+import ContextSettings from './settings/widgets/context.vue';
 
 /**
  * Wrapper for all side-bars
@@ -17,8 +17,8 @@ import ContextSettingsFields from './settings/widgets/context.vue';
 export default {
   components: {
     SideBarWrapper,
-    AlarmSettingsFields,
-    ContextSettingsFields,
+    AlarmSettings,
+    ContextSettings,
   },
   mixins: [sideBarInnerMixin],
   data() {

@@ -40,7 +40,7 @@ export default {
 
       const actions = [this.createUserPreference({ userPreference })];
 
-      if (this.isNew) {
+      if (this.config.isNew) {
         actions.push(this.createWidget({ widget }));
       } else {
         actions.push(this.updateWidget({ widget }));
@@ -48,7 +48,7 @@ export default {
 
       await Promise.all(actions);
 
-      await this.mergeQuery({
+      this.mergeQuery({
         id: widget.id,
         query: {
           ...convertWidgetToQuery(widget),

@@ -48,6 +48,7 @@ export default {
         name: SIDE_BARS_BY_WIDGET_TYPES[type],
         config: {
           widget,
+          isNew: true,
         },
       });
       this.hideModal();
