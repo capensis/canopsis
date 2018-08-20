@@ -1,7 +1,7 @@
 <template lang="pug">
   v-navigation-drawer.side-bar.grey.darken-4(
   v-model="isOpen",
-  :clipped="$mq !== 'mobile' && $mq !== 'tablet'",
+  :clipped="$mq | mq({ mobile: false, laptop: true })",
   :width="width",
   absolute,
   app,
