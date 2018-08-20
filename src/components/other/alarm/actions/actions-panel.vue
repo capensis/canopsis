@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    div(v-show="$mq === 'laptop'")
+    div(v-show="$mq | mq({ l: true })")
       actions-panel-item(
       v-for="(action, index) in actions.main",
       v-bind="action",
@@ -16,7 +16,7 @@
           isDropDown,
           :key="`drop-down-${index}`"
           )
-    div(v-show="$mq === 'mobile' || $mq === 'tablet'")
+    div(v-show="$mq | mq({ m: true, l: false })")
       v-menu(bottom, left, @click.native.stop)
         v-btn(icon slot="activator")
           v-icon more_vert
