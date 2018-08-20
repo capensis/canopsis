@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    div(v-show="$options.filters.mq($mq, { t: true })")
+    div(v-show="$options.filters.mq($mq, { l: true })")
       actions-panel-item(
       v-for="(action, index) in actions",
       v-bind="action",
