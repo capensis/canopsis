@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import SECONDS, quote_ident
+from canopsis.common.influx import SECONDS, quote_ident, quote_literal
 
 
 class SelectColumn(object):
@@ -215,6 +215,25 @@ class SelectQuery(object):
                 self.where_conditions.append(condition)
         return self
 
+    def where_in(self, tag, values):
+        """
+        Add a condition to the WHERE statement checking that the value of a tag
+        is in a list of values.
+
+        :param str tag: The name of the tag
+        :param List[str] values: A list of values the tag should be in.
+        """
+        if not values:
+            # The list of values is empty. No value should match this
+            # condition.
+            return self.where('false')
+
+        condition = ' OR '.join(
+            '{} = {}'.format(quote_ident(tag), quote_literal(value))
+            for value in values
+        )
+        return self.where(condition)
+
     def after(self, timestamp):
         """
         Add a condition `time >= timestamp` to the WHERE statement.
@@ -236,3 +255,20 @@ class SelectQuery(object):
             return self.where('time < {:.0f}'.format(timestamp * SECONDS))
 
         return self
+
+    def copy(self):
+        """
+        Return a copy of the SelectQuery.
+
+        :rtype: SelectQuery
+        """
+        copy = SelectQuery(self.measurement)
+        copy.into_measurement = self.into_measurement
+        copy.select_columns = self.select_columns[:]
+        copy.group_by_tags = self.group_by_tags[:]
+        copy.group_by_time_interval = self.group_by_time_interval
+        copy.group_by_time_offset = self.group_by_time_offset
+        copy.group_by_time_fill = self.group_by_time_fill
+        copy.where_conditions = self.where_conditions[:]
+
+        return copy
