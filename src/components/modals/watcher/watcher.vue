@@ -11,7 +11,7 @@
           span {{ attribute }}
       div(v-if="!watcherEntitiesPending")
         div.mt-4(v-for="watcherEntity in watcherEntities")
-          watcher-entity(:entity="watcherEntity")
+          watcher-entity(:entity="watcherEntity", :template="config.entityTemplate")
 </template>
 
 <script>

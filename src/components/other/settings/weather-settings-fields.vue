@@ -38,6 +38,9 @@ export default {
       },
     };
   },
+  mounted() {
+    this.settings.widget = { ...this.widget };
+  },
 };
 </script>
 

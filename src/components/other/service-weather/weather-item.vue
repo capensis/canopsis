@@ -6,7 +6,7 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
     v-flex(xs2)
       component.ma-2(:is="format.icon")
     v-flex(xs10)
-      div.watcherName(v-html="compiledTemplate")
+      div.watcherName.pt-2(v-html="compiledTemplate")
   v-layout
     v-flex(xs12)
       div.moreInfos.py-1(@click="showWatcherModal")
@@ -44,6 +44,9 @@ export default {
     template: {
       type: String,
     },
+    widget: {
+      type: Object,
+    },
   },
   computed: {
     format() {
@@ -76,6 +79,7 @@ export default {
         name: MODALS.watcher,
         config: {
           watcherId: this.watcher.entity_id,
+          entityTemplate: this.widget.entity_template,
         },
       });
     },
