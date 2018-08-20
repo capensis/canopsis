@@ -4,19 +4,26 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Unreleased
 
+## Canopsis 3.1 - Due date : 2018-08-17
+- [Python]: add a feature that track the change of the longoutput field and alter the behavior of the output field of an alarm.
+- [Python]: fix a bug that duplicate an alarm.
+- [Build]: fix an error during the compilation of canopsis-next.
+- [UI]: fix a right issue in the listalarm brick that allow the done button to be displayed without any right.
+
+
 ## Canopsis 3.0.1 - Due date : 2018-08-03
 
-- [CAT]: New stats in statsng: most_alarms_impacting, worst_mtbf, alarm_list, longest_alarms (!67 et !70) 
-- [CAT]: Add a "periods" parameter to the statsng API (!69) 
+- [CAT]: New stats in statsng: most_alarms_impacting, worst_mtbf, alarm_list, longest_alarms (!67 et !70)
+- [CAT]: Add a "periods" parameter to the statsng API (!69)
 - [CAT]: New stats in statsng: most_alarms_created, alarms_impacting, state_list (!71)
 - [CAT]: send stats with alarm duration
 - [CAT]: default sats value
-- [snooze]: faster snooze application 
+- [snooze]: faster snooze application
 - [perriodic refresh]: fix infinite loop with periodic refresh
-- [link list]: remove linklist 
+- [link list]: remove linklist
 - [links]: fix links in service weather
 - [UI]: views in canopsis-next
-- [UI]: alarms in canopsis-next 
+- [UI]: alarms in canopsis-next
 
 ### Experimental features
 
@@ -423,5 +430,3 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 - feat (backend) : Canopsis now generates alarmes based on the status of events. This new object keep tracks of the full history of a real-world alarm
 - feat(UI) : new "Service weather" UI brick that can display the status of up to 120 entities on a single window
 - feat (UI): new "Alarms list" UI brick as a replacement of the old events list.
-
-
