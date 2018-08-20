@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       alarmProperties: {
-        laptop: [
+        l: [
           {
             text: this.$t('tables.alarmGeneral.connector'),
             value: 'v.connector_name',
@@ -59,7 +59,7 @@ export default {
             value: 'extra_details',
           },
         ],
-        tablet: [
+        t: [
           {
             text: this.$t('tables.alarmGeneral.connector'),
             value: 'v.connector',
@@ -73,7 +73,7 @@ export default {
             value: 'v.resource',
           },
         ],
-        mobile: [
+        m: [
           {
             text: this.$t('tables.alarmGeneral.connector'),
             value: 'v.connector',

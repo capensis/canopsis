@@ -1,12 +1,12 @@
 <template lang="pug">
   div
-    div(v-show="$mq | mq({ l: true })")
+    div(v-show="$options.filters.mq($mq, { t: true })")
       actions-panel-item(
       v-for="(action, index) in actions",
       v-bind="action",
       :key="`multiple-${index}`"
       )
-    div(v-show="$mq | mq({ m: true, l: false })")
+    div(v-show="$options.filters.mq($mq, { m: true, l: false })")
       v-menu(bottom, left, @click.native.stop)
         v-btn(icon slot="activator")
           v-icon more_vert
