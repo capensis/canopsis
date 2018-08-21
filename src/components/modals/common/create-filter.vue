@@ -43,9 +43,9 @@ export default {
   },
   methods: {
     async submit() {
-      const validationResult = await this.$validator.validate();
+      const isFormValid = await this.$validator.validate();
 
-      if (validationResult) {
+      if (isFormValid) {
         if (this.config.action) {
           await this.config.action(this.form);
         }

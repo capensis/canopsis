@@ -37,6 +37,7 @@ export default {
       widgetsTypes: [
         { title: WIDGET_TYPES.alarmList, icon: 'list', value: WIDGET_TYPES.alarmList },
         { title: WIDGET_TYPES.context, icon: 'list', value: WIDGET_TYPES.context },
+        { title: WIDGET_TYPES.weather, icon: 'list', value: WIDGET_TYPES.weather },
       ],
     };
   },
