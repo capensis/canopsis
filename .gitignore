@@ -23,3 +23,10 @@ tools/catag/vendor
 *.whl
 # python bytecode
 *.pyc
+.mypy_cache
+
+packages
+
+sources/webcore/src/canopsis-next/dist
+
+env-release.sh

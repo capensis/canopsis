@@ -32,7 +32,7 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
-from canopsis.alarms.event_publisher import AlarmEventPublisher
+from canopsis.alarms.models import AlarmState
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
 from canopsis.alerts.status import (
@@ -50,17 +50,24 @@ from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
+from canopsis.lock.manager import AlertLockRedis
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
+from canopsis.models.entity import Entity
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
-from canopsis.statsng.enums import StatCounters
+from canopsis.statsng.enums import StatCounters, StatStateIntervals
+from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
+
+# register tasks manually
+import canopsis.alerts.tasks as __alerts_tasks
 
 # Extra fields from the event that should be stored in the alarm
 DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
 
-# if set to True, the last_event_date will be updated on each event that triggers the alarm
+# if set to True, the last_event_date will be updated on each event that
+# triggers the alarm
 DEFAULT_RECORD_LAST_EVENT_DATE = False
 DEFAULT_FILTER_AUTHOR = 'system'
 
@@ -72,6 +79,7 @@ DEFAULT_STEALTHY_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
 DEFAULT_RESTORE_EVENT = False
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
+DEFAULT_DONE_AUTOSOLVE_DELAY = 900
 
 
 class Alerts(object):
@@ -128,8 +136,11 @@ class Alerts(object):
         self.record_last_event_date = cfg_to_bool(alerts_.get('record_last_event_date',
                                                               DEFAULT_RECORD_LAST_EVENT_DATE))
 
+        self.update_longoutput_fields = alerts_.get("update_long_output",
+                                                          False)
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
+        self.lock_manager = AlertLockRedis(*AlertLockRedis.provide_default_basics())
 
     @classmethod
     def provide_default_basics(cls):
@@ -166,7 +177,7 @@ class Alerts(object):
         watcher_manager = Watcher()
 
         amqp_pub = AmqpPublisher(get_default_amqp_conn())
-        event_publisher = AlarmEventPublisher(amqp_pub)
+        event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
                 filter_storage, context_manager, watcher_manager,
@@ -182,13 +193,19 @@ class Alerts(object):
                                     DEFAULT_CANCEL_AUTOSOLVE_DELAY)
 
     @property
+    def done_autosolve_delay(self):
+        """
+        Automatically close done alarms after a delay.
+        """
+        return self.config_data.get('done_autosolve_delay',
+                                    DEFAULT_DONE_AUTOSOLVE_DELAY)
+
+    @property
     def flapping_freq(self):
         """
         Number of alarm oscillation during flapping interval
         to consider an alarm as flapping.
-
         """
-
         #  The minimum accepted frequency is 3 changes, otherwise all alarms will bagot
         freq = self.config_data.get('bagot_freq', DEFAULT_FLAPPING_FREQ)
         if freq < 3:
@@ -515,6 +532,44 @@ class Alerts(object):
 
         return True
 
+    def update_output_fields(self, value, event, state_updated):
+        """
+        Update the field output, long_output, long_output_history.
+        :param value: the alarm.value field of an alarm
+        :param event: the event used to update the alarm
+        :param state_updated: if the state of the alarm change.
+        """
+
+        if not self.update_longoutput_fields and not state_updated:
+            return value
+
+        value[AlarmField.output.value] = event["output"]
+
+        if value.get(AlarmField.long_output.value, "") != event["long_output"]:
+            value[AlarmField.long_output.value] = event["long_output"]
+
+            if AlarmField.long_output_history.value not in value:
+                value[AlarmField.long_output_history.value] = []
+
+            value[AlarmField.long_output_history.value].append(
+                event[AlarmField.long_output.value]
+            )
+
+            if len(value[AlarmField.long_output_history.value]) > 100:
+                new_hist = value[AlarmField.long_output_history.value][0:99]
+                value[AlarmField.long_output_history.value] = new_hist
+
+
+            value[AlarmField.steps.value].append({
+                "a": value["state"]["a"],
+                "_t": "long_output",
+                "m": "update long_output to {}.".format(event["long_output"]),
+                "t": int(time()),
+                "val": value["state"]["val"]
+            })
+
+        return value
+
     def archive(self, event):
         """
         Archive event in corresponding alarm history.
@@ -523,59 +578,71 @@ class Alerts(object):
         """
         entity_id = self.context_manager.get_id(event)
         event_type = event['event_type']
+        initial_state = None
 
+        lock_id = self.lock_manager.lock(entity_id)
         if event_type in [Check.EVENT_TYPE, 'watcher']:
-
+            initial_state = event["state"]
             alarm = self.get_current_alarm(entity_id)
+
             is_new_alarm = alarm is None
 
             if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
+                    self.lock_manager.unlock(lock_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
+                    self.lock_manager.unlock(lock_id)
                     return
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
             else:  # Alarm is already opened
+                initial_state = alarm["value"]["state"]["val"]
                 value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
+                    self.lock_manager.unlock(lock_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
+                    self.lock_manager.unlock(lock_id)
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
+            # set default value to event["long_output"] and event["output"]
+            if "long_output" not in event:
+                event["long_output"] = alarm.get(AlarmField.long_output.value,
+                                                 "")
+
+            if "output" not in event:
+                event["output"] = alarm.get(AlarmField.output.value, "")
+
+            state_updated = not initial_state == alarm["value"]["state"]["val"]
+
             value = alarm.get(self.alerts_storage.VALUE)
+
+            value = self.update_output_fields(value, event, state_updated)
 
             value = self.crop_flapping_steps(value)
 
             value = self.check_hard_limit(value)
 
+
             self.update_current_alarm(alarm, value)
 
             if is_new_alarm:
                 self.check_alarm_filters()
-
-                entity = self.context_manager.get_entities_by_id(entity_id)
-                try:
-                    entity = entity[0]
-                except IndexError:
-                    entity = {}
-                self.event_publisher.publish_statcounterinc_event(
-                    alarm[self.alerts_storage.VALUE][AlarmField.creation_date.value],
-                    StatCounters.alarms_created,
-                    entity,
-                    alarm[self.alerts_storage.VALUE])
+                self.publish_new_alarm_stats(alarm)
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
                               event=event,
                               author=event.get(self.AUTHOR, None),
                               entity_id=entity_id)
+        self.lock_manager.unlock(lock_id)
 
     def execute_task(self, name, event, entity_id,
                      author=None, new_state=None, diff_counter=None):
@@ -733,9 +800,39 @@ class Alerts(object):
             )
 
         # Executing task
+        now = int(time())
         value = alarm.get(self.alerts_storage.VALUE)
         new_value, status = task(self, value, state, event)
-        new_value[AlarmField.last_update_date.value] = int(time())
+        new_value[AlarmField.last_update_date.value] = now
+
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+        try:
+            entity = self.context_manager.get_entities_by_id(entity_id)[0]
+        except IndexError:
+            entity = {}
+
+        # Send statistics event
+        last_state_change = entity.get(Entity.LAST_STATE_CHANGE)
+        if last_state_change:
+            self.event_publisher.publish_statstateinterval_event(
+                now,
+                StatStateIntervals.time_in_state,
+                now - last_state_change,
+                old_state,
+                entity,
+                new_value)
+
+        if state == AlarmState.CRITICAL:
+            self.event_publisher.publish_statcounterinc_event(
+                now,
+                StatCounters.downtimes,
+                entity,
+                new_value)
+
+        # Update entity's last_state_change
+        if entity:
+            entity[Entity.LAST_STATE_CHANGE] = now
+            self.context_manager.update_entity(entity)
 
         alarm[storage_value] = new_value
 
@@ -825,7 +922,9 @@ class Alerts(object):
                     field: event[field]
                     for field in self.extra_fields
                     if field in event
-                }
+                },
+                AlarmField.initial_long_output.value:
+                event.get("long_output", "")
             }
         }
 
@@ -1189,3 +1288,43 @@ class Alerts(object):
             new_value[AlarmField.alarmfilter.value] = alarmfilter
 
             self.update_current_alarm(docalarm, new_value)
+
+    def publish_new_alarm_stats(self, alarm):
+        """
+        Publish statistics events for a new alarm.
+
+        :param Dict[str, Any] alarm:
+        """
+        entity_id = alarm[self.alerts_storage.DATA_ID]
+        entity = self.context_manager.get_entities_by_id(entity_id)
+        try:
+            entity = entity[0]
+        except IndexError:
+            entity = {}
+
+        alarm_value = alarm[self.alerts_storage.VALUE]
+        creation_date = alarm_value[AlarmField.creation_date.value]
+
+        # Increment alarms_created counter
+        self.event_publisher.publish_statcounterinc_event(
+            creation_date,
+            StatCounters.alarms_created,
+            entity,
+            alarm_value)
+
+        # Increment alarms_impacting counter for each impacted entity
+        # (as well as the entity that created the alarm)
+        self.event_publisher.publish_statcounterinc_event(
+            creation_date,
+            StatCounters.alarms_impacting,
+            entity,
+            alarm_value)
+
+        impacted_entities = self.context_manager.get_entities_by_id(
+            entity.get(Entity.IMPACTS))
+        for impacted_entity in impacted_entities:
+            self.event_publisher.publish_statcounterinc_event(
+                creation_date,
+                StatCounters.alarms_impacting,
+                impacted_entity,
+                alarm_value)

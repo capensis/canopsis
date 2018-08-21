@@ -23,7 +23,6 @@ from __future__ import unicode_literals
 
 import time
 import unittest
-from time import sleep
 
 import xmlrunner
 from canopsis.alerts.manager import Alerts
@@ -31,9 +30,8 @@ from canopsis.alerts.reader import AlertsReader
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.entitylink.manager import Entitylink
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 
 from base import BaseTest
@@ -59,23 +57,16 @@ class TestReader(BaseTest):
         self.pb_storage = Middleware.get_middleware_by_uri(
             PBehaviorManager.PB_STORAGE_URI
         )
-        self.el_storage = Middleware.get_middleware_by_uri(
-            Entitylink.ENTITYLINK_STORAGE_URI
-        )
 
         self.logger = Logger.get('alertsreader', '/tmp/null')
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
         self.pbehavior_manager = PBehaviorManager(logger=self.logger,
                                                   pb_storage=self.pb_storage)
-        self.entitylink_manager = Entitylink(logger=self.logger,
-                                             storage=self.el_storage,
-                                             context_graph=self.cg_manager)
 
         self.reader = AlertsReader(config=conf,
                                    logger=self.logger,
                                    storage=self.manager.alerts_storage,
-                                   pbehavior_manager=self.pbehavior_manager,
-                                   entitylink_manager=self.entitylink_manager)
+                                   pbehavior_manager=self.pbehavior_manager)
 
         self.reader._alarm_fields = {
             'properties': {
@@ -89,7 +80,6 @@ class TestReader(BaseTest):
         """Teardown"""
         super(TestReader, self).setUp()
         self.pb_storage.remove_elements()
-        self.el_storage.remove_elements()
 
     def test__translate_key(self):
         cases = [

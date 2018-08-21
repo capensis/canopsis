@@ -30,6 +30,7 @@ import logging
 from canopsis.statsng.enums import StatCounters, StatDurations
 
 DEFAULT_CANCEL_AUTOSOLVE_DELAY = 3600
+DEFAULT_DONE_AUTOSOLVE_DELAY = 900
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
 DEFAULT_STEALTHY_INTERVAL = 0
@@ -48,6 +49,7 @@ class AlarmService(object):
                  watcher_manager,
                  bagot_time=DEFAULT_FLAPPING_INTERVAL,
                  cancel_autosolve_delay=DEFAULT_CANCEL_AUTOSOLVE_DELAY,
+                 done_autosolve_delay=DEFAULT_DONE_AUTOSOLVE_DELAY,
                  stealthy_duration=DEFAULT_STEALTHY_SHOW_DURATION,
                  stealthy_interval=DEFAULT_STEALTHY_INTERVAL,
                  logger=None):
@@ -56,10 +58,11 @@ class AlarmService(object):
 
         :param AlarmAdapter alarms_adapter: Alarms DB adapter
         :param ContextGraph context_manager: Context graph
-        :param AlarmEventPublisher event_publisher: Event publisher
+        :param StatEventPublisher event_publisher: Event publisher
         :param WatcherManager watcher_manager: ref to a WatcherManager object
         :param int bagot_time: period to consider status oscilations
         :param int cancel_autosolve_delay: delay before validating a cancel
+        :param int done_autosolve_delay: delay before validating a done
         :param int stealthy_duration: period to consider an alarm as stealthy
         :param int stealthy_interval: period to show an alarm as stealthy
         :param Logger logger: a logger instance
@@ -70,6 +73,7 @@ class AlarmService(object):
         self.watcher_manager = watcher_manager
         self.bagot_time = bagot_time
         self.cancel_delay = cancel_autosolve_delay
+        self.done_delay = done_autosolve_delay
         self.stealthy_duration = stealthy_duration
         self.stealthy_interval = stealthy_interval
         self.logger = logger
@@ -136,8 +140,11 @@ class AlarmService(object):
             resolved = alarm.resolve(self.bagot_time)
             resolved_flapping = alarm.resolve_flapping(self.bagot_time)
             resolved_cancel = alarm.resolve_cancel(self.cancel_delay)
+            resolved_done = alarm.resolve_done(self.done_delay)
             resolved_stealthy = alarm.resolve_stealthy(self.stealthy_interval)
-            if resolved or resolved_cancel or resolved_stealthy or resolved_flapping:
+            if resolved \
+               or resolved_cancel or resolved_stealthy \
+               or resolved_flapping or resolved_done:
                 self.update_alarm(alarm)
                 updated_alarm_counter += 1
 
@@ -154,8 +161,9 @@ class AlarmService(object):
                     entity,
                     alarm_dict['v'])
                 self.event_publisher.publish_statduration_event(
-                    alarm.last_update_date,
+                    alarm.creation_date,
                     StatDurations.resolve_time,
+                    alarm.last_update_date - alarm.creation_date,
                     entity,
                     alarm_dict['v'])
 

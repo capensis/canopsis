@@ -35,17 +35,15 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
-from canopsis.stats.manager import Stats
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.tracer.manager import TracerManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
+from canopsis.common.influx import get_influxdb_client
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
-tracer_manager = TracerManager(*TracerManager.provide_default_basics())
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
-stats_manager = Stats()
+influx_client = get_influxdb_client()
 
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
@@ -101,6 +99,37 @@ def __format_pbehavior(pbehavior):
 
     return pbehavior
 
+def get_ok_ko(entity_id):
+    """
+    For an entity defined by component, connector, resource return
+    the number of OK check and KO check.
+
+    :param connector: the connector of the entity
+    :param component: the component of the entity
+    :param resource: the resource of the entity
+    :return: a dict with two key ok and ko or none if no data are found for
+    the given entity.
+    """
+    query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
+            "event_state_history WHERE \"eid\"='{}'"
+
+
+    # Why did I use a double '\' ? It's simple, for some mystical reason,
+    # somewhere between the call of influxdbstg.raw_query and the HTTP
+    # request is sent, the escaped simple quote are deescaped. So like the
+    # song says "you can't touch this".
+    entity_id = entity_id.replace("'", "\\'")
+    entity_id = entity_id.replace('"', '\\"')
+
+    result = influx_client.query(query.format(entity_id))
+
+    data = list(result.get_points())
+    if len(data) > 0:
+        data = data[0]
+        data.pop("time")
+        return data
+
+    return None
 
 def pbehavior_types(pbehaviors):
     """
@@ -216,22 +245,6 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     return False
 
 
-def check_baseline(merged_eids_tracer, watcher_depends):
-    """
-    check if the watcher has an entity with a baseline active
-
-    :param set merged_eids_tracer: all entities withan active baseline
-    :param list watcher_depends: watcher entities
-    :returns: true if the watcher has an entity with an active active_baseline
-    :rtype: bool
-    """
-    for entity_id in watcher_depends:
-        if entity_id in merged_eids_tracer:
-            return True
-
-    return False
-
-
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
@@ -282,18 +295,6 @@ def exports(ws):
         merged_pbehaviors_eids = set([])
         next_run_dict = {}
         watchers = []
-        merged_eids_tracer = []
-
-        # Find all entites with an activated baseline
-        active_baseline_tracer = tracer_manager.get(
-            {
-                'triggered_by': 'baseline',
-                'extra.active': True
-            }
-        )
-        for tracer in active_baseline_tracer:
-            merged_eids_tracer = merged_eids_tracer + tracer['impact_entities']
-        merged_eids_tracer = set(merged_eids_tracer)
 
         # List all activated pbh eids, ordered by pbh id
         actives_pb = pbehavior_manager.get_all_active_pbehaviors()
@@ -343,9 +344,9 @@ def exports(ws):
                 '{}'.format(watcher['_id']),
                 []
             )
-            tmp_linklist = []
+            tmp_links = []
             for k, val in watcher['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': val})
+                tmp_links.append({'cat_name': k, 'links': val})
 
             enriched_entity['entity_id'] = watcher['_id']
             enriched_entity['infos'] = watcher['infos']
@@ -353,7 +354,7 @@ def exports(ws):
             enriched_entity['org'] = watcher['infos'].get('org', '')
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
-            enriched_entity['linklist'] = tmp_linklist
+            enriched_entity['linklist'] = tmp_links
             enriched_entity['state'] = {'val': watcher.get('state', 0)}
 
             if tmp_alarm != []:
@@ -383,10 +384,6 @@ def exports(ws):
             enriched_entity["active_pb_some"] = wstatus[0]
             enriched_entity["active_pb_all"] = wstatus[1]
             enriched_entity['active_pb_watcher'] = len(enriched_entity['watcher_pbehavior']) > 0
-            enriched_entity['has_baseline'] = check_baseline(
-                merged_eids_tracer,
-                watcher['depends']
-            )
             tmp_next_run = get_next_run_alert(
                 watcher.get('depends', []),
                 next_run_dict
@@ -435,7 +432,10 @@ def exports(ws):
 
         query["enabled"] = True
 
-        raw_entities = context_manager.get_entities(query=query)
+        raw_entities = context_manager.get_entities(
+            query=query,
+            with_links=True
+        )
         entity_ids = [entity['_id'] for entity in raw_entities]
         enriched_entities = []
 
@@ -473,20 +473,20 @@ def exports(ws):
             current_alarm = entity['cur_alarm']
             raw_entity = entity['entity']
 
-            tmp_linklist = []
+            tmp_links = []
             for k, val in raw_entity['links'].items():
-                tmp_linklist.append({'cat_name': k, 'links': val})
+                tmp_links.append({'cat_name': k, 'links': val})
 
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
-            enriched_entity['linklist'] = tmp_linklist
+            enriched_entity['linklist'] = tmp_links
             enriched_entity['infos'] = raw_entity['infos']
             enriched_entity['sla_text'] = ''  # TODO when sla, use it
             enriched_entity['org'] = raw_entity['infos'].get('org', '')
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = stats_manager.get_ok_ko(entity_id)
+            enriched_entity['stats'] = get_ok_ko(entity_id)
             if current_alarm is not None:
                 enriched_entity['ticket'] = current_alarm.get('ticket')
                 enriched_entity['state'] = current_alarm['state']

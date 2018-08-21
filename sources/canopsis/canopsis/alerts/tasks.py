@@ -55,8 +55,19 @@ def acknowledge(manager, alarm, author, message, event):
             entity = entity[0]
         except IndexError:
             entity = {}
-        manager.event_publisher.publish_statduration_event(
-            event['timestamp'], StatDurations.ack_time, entity, alarm)
+
+        try:
+            creation_date = alarm[AlarmField.creation_date.value]
+            ack_time = event['timestamp'] - creation_date
+        except KeyError:
+            manager.logger.exception("The alarm does not have a creation date.")
+        else:
+            manager.event_publisher.publish_statduration_event(
+                creation_date,
+                StatDurations.ack_time,
+                ack_time,
+                entity,
+                alarm)
 
     return alarm
 
@@ -411,28 +422,6 @@ def hard_limit(manager, alarm):
 
     alarm[AlarmField.hard_limit.value] = step
     alarm[AlarmField.steps.value].append(step)
-
-    return alarm
-
-
-@register_task('alerts.lookup.linklist')
-def linklist(manager, alarm):
-    """
-    Called to add a linklist field to an alarm.
-    """
-
-    entity_id = alarm['d']
-
-    linklist = list(manager.entitylink_manager.find(ids=[entity_id]))
-
-    if not linklist:
-        alarm[AlarmField.linklist.value] = {}
-
-    else:
-        if '_id' in linklist[0]:
-            linklist[0].pop('_id')
-
-        alarm[AlarmField.linklist.value] = linklist[0]
 
     return alarm
 

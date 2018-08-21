@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.middleware.registry import MiddlewareRegistry
+from canopsis.middleware.registry import Middleware
 
 
-class User(MiddlewareRegistry):
+class User(Middleware):
 
     def __init__(
         self,

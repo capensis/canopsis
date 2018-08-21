@@ -22,7 +22,7 @@
 import unittest
 from canopsis.common import root_path
 from canopsis.ccalendar.manager import CalendarManager
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 import xmlrunner
 
 class CalendarManagerTest(unittest.TestCase):

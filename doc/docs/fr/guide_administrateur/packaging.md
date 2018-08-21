@@ -18,33 +18,16 @@ Les images Docker sont construites pour chaque plateforme supportée avec un tag
 
 L’image Docker "officielle" se repose sur Debian 9 et sera taggée simplement avec le numéro de version.
 
-Tous les scripts peuvent utiliser une variable d’environnement `SYSBASE` permettant de ne construire les images que sur un seul OS.
+Tous les scripts peuvent utiliser une variable d’environnement `CANOPSIS_DISTRIBUTION` permettant de ne construire les images que sur un seul OS.
 
 Pour activer cette fonctionnalité, dans votre shell exécutez :
 
 ```bash
-# export SYSBASE="platform-version"
-export SYSBASE="centos-7"
+# export CANOPSIS_DISTRIBUTION="platform-version"
+export CANOPSIS_DISTRIBUTION="centos-7"
 ```
 
-Si cette variable n’existe pas ou est vide, toutes les plateformes supportées seront alors construites.
-
-## Python Wheels
-
-Le script de build docker que vous allez utiliser créer et démarre une image qui va créer des `wheels` python et les mettre en cache. Cela permet de considérablement accélérer la construction des images lorsqu’on fait une nouvelle release.
-
-Les wheels sont reconstruites dans les cas suivants :
-
- * Dépôt inexistant pour la plateforme en cours de construction
- * Changement du contenu du fichier `requirements.txt` de canopsis
-
-L’emplacement du cache des wheels peut être modifié :
-
-```bash
-export WHEEL_DIR="/tmp/canopsis-wheelrep"
-```
-
-Par défaut les wheels seront entreposée dans `docker/wheelbuild` lors de la construction, puis copiées dans `docker/wheels`.
+Si cette variable n’existe contient `all`, toutes les plateformes supportées seront alors construites.
 
 ## Docker
 
@@ -72,21 +55,23 @@ Versions de Docker testées : version Canopsis :
  * `17.xx.x-ce / canopsis <= 2.5.6`
  * `18.02.0-ce / canopsis >= 2.5.7`
 
-### Setup - Environnement
+## Setup - Environnement
 
-Nous vous proposons ici un certain nombre de commandes destinées à vous faciliter la tâche. Conservez votre instance de shell tout au long du processus.
+Afin de correctement délivrer une *release*, certaines varibles d’environnement sont obligatoires :
 
-```bash
-start_branch="<START_BRANCH>"
-tag="<TAG_CANOPSIS>"
-workdir="${HOME}/cps-docker"
-
-mkdir -p ${workdir} && cd ${workdir}
+```
+# variables pour faciliter le boulot via cette doc
+workdir="${HOME}/cps-release"
+tag="version_a_produire"
 ```
 
- * `<START_BRANCH>` doit correspondre à la branche du projet `canopsis/canopsis` que vous allez utiliser pour fabriquer les images. Cette valeur doit être égale à celle présente dans `catag.ini` pour ce projet (la branche doit être présente dans tous les dépots annexes, comme les différentes bricks).
- * `<TAG_CANOPSIS>` la version à publier.
- * Vous pouvez changer le `workdir` à votre convenance. Ce doit être un dossier dans lequel vous pourrez écrire. Aucune permission particulière n’est nécessaire.
+**Prendre exemple sur le fichier `env-release.example.sh`** : en faire une copie que vous ne versionnerez **pas** dans canopsis contenant les paramètres désirés, puis :
+
+```
+source env-release.copie.sh
+```
+
+Il vous faudra aussi avoir un environnement Go utilisable et donc une variable `GOPATH` correctement positionnée.
 
 Afin d’éviter de saisir votre *passphrase* ssh :
 
@@ -95,32 +80,48 @@ eval $(ssh-agent -s)
 ssh-add
 ```
 
-### Setup - Tag sur les dépôts
+## Setup - Release
 
-Vous devez cloner le dépôt canopsis dans la branche que vous aller faire tagger par *catag*.
+**Après avoir revérifié votre fichier d’environnement** et _sourcé_ ce fichier dans votre shell courant :
+
+Lancer le script `build-release.sh` avec les variables d’environnement nécessaires.
+
+Le script va faire le nécessaire pour ajouter les tags sur les projets définis dans `tools/catag/catag.ini`, cloner `canopsis-next` et faire tout autre travail nécessaire aux préparatifs d’une *release*.
+
+Il vous faudra :
+
+ * Avoir cloné le dépôt `canopsis/canopsis` dans la version qui va servir au build : ce dépôt n’est pas recloné par le script, tout comme CAT.
+ * Un TOKEN d’accès à l’API GitLab de `git.canopsis.net`
+ * Les droits de suppression et d’ajout de tag sur les dépôts configurés dans `catag.ini`
+ * Le droit de *pull* et *push* sur les dépôts configurés dans `catag.ini`
+ * Avoir installé `git`, `go` et `rsync` (présence vérifiée par le script)
 
 ```bash
 cd ${workdir}
 
-git clone ssh://git@git.canopsis.net/canopsis/canopsis.git -b ${start_branch} canopsis
-cd canopsis
-
-git submodule update --init
-
-cd tools/catag
-
-go get github.com/vaughan0/go-ini
-go build .
-
-./catag -token "<token gitlab>" -tag ${tag}
+git clone ssh://git@git.canopsis.net/canopsis/canopsis -b <branch|commit>
+./build-release.sh
 ```
+
+## Build
+
+Une fois les étapes `Setup` exécutées, les scripts `build-docker.sh` et `build-packages.sh` peuvent être lancés indépendemment.
+
+Seul `build-packages.sh` requiert que `build-docker.sh` ai été exécuté préalablement.
+
+En revanche nous allons utiliser `build-all.sh` qui va prendre cela en charge et assurer un lancement dans l’ordre.
+
+À la moindre erreur, les scripts s’arrêteront.
 
 ### Build - Core
 
 ```bash
 cd ${workdir}/canopsis
-./build-docker.sh ${tag} ${start_branch}
+./build-all.sh
 ```
+
+ * Images docker produites
+ * Paquets disponibles dans le dossier `packages`
 
 ### Build - CAT
 
@@ -131,7 +132,7 @@ cd ${workdir}
 
 git clone ssh://git@git.canopsis.net/cat/canopsis-cat.git -b ${tag} canopsis-cat
 cd canopsis-cat
-./build-docker.sh ${tag} ${start_branch}
+./build-all.sh
 ```
 
 ### Push
@@ -156,21 +157,24 @@ ssh-agent -k
 
 ## Build des paquets
 
+Les scripts `build-all.sh` exécutent automatiquement la construction des paquets. Cependant s’il est nécessaire de le faire à la main :
+
 Se mettre à la racine du dépôt CAT puis :
 
 ```bash
-./build-packages.sh ${tag}
+./build-packages.sh
 ```
 
 Les paquets sont alors disponibles dans le dossier `packages`.
 
-### RC release (centos)
+### RC release 
 
-Pour builder un package release candidat pour centos, il n'est pas possible d'utiliser le tiret dans le numéro de version.
-Pour contourner le problème, il est possible de surcharger les valeurs de `CPS_PKG_TAG` et `CPS_PKG_REL` comme suit :
+Dans le cas où la version utilisée en `CANOPSIS_TAG` n’est pas compatible avec le système de *build* des paquets, deux variables sont à disposition et utilisables pour toutes les plateformes :
 
 ```bash
-CPS_PKG_TAG=2.x.x CPS_PKG_REL=rc1 ./build-packages.sh ${tag}
+CANOPSIS_PACKAGE_TAG=2.x.x CANOPSIS_PACKAGE_REL=2 ./build-packages.sh ${tag}
+
+CANOPSIS_PACKAGE_TAG=2.x.x CANOPSIS_PACKAGE_REL=rc1 ./build-packages.sh ${tag}
 ```
 
 ## Erreurs connues

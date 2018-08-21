@@ -130,6 +130,9 @@ class MongoStore(object):
         """
         return MongoStore.hr(getattr, self.conn, name)
 
+    def alive(self):
+        return self.conn is not None
+
     def authenticate(self):
         """
         Authenticate against the requested database.
@@ -143,12 +146,6 @@ class MongoStore(object):
         :rtype: bool
         """
         return self._authenticated
-
-    def alive(self):
-        """
-        :rtype: bool
-        """
-        return self.conn.alive() and self.conn is not None
 
     def close(self):
         return MongoStore.hr(self.conn.close)

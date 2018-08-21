@@ -95,7 +95,7 @@ See [Howto](https://git.canopsis.net/canopsis-ui-bricks/canopsis-backend-ui-conn
 
 ### Lint
 
-Tested on commit : 7acc10e.
+Tested on commit : 5f65581.
 
 | Target | Status | Log |
 | ------ | ------ | --- |
@@ -119,4 +119,4 @@ Tested on commit : 7acc10e.
 ## Additional-info
 
 Minified version : 4 files (size: 52K)
-Development version : 36 files (size: 168K)
+Development version : 34 files (size: 160K)

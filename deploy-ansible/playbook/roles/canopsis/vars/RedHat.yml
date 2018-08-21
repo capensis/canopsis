@@ -1,0 +1,5 @@
+canopsis_deps:
+  - tmux
+  - vim
+  - htop
+  - sudo

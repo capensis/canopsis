@@ -12,7 +12,7 @@ from canopsis.common.utils import normalize_utf8
 from canopsis.confng import Configuration, Ini
 from canopsis.event import forger
 from canopsis.logger import Logger, OutputFile
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.watcher.links import build_all_links
 
 
@@ -78,8 +78,8 @@ class InfosFilter:
         try:
             self._schema = self.obj_storage.get_elements(
                 query={"_id": self._schema_id}, projection={"_id": 0})[0]
-        except IndexError:
-            raise ValueError("No infos schema found in database.")
+        except IndexError as exc:
+            raise ValueError("No infos schema found in database: {}".format(exc))
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
@@ -306,26 +306,6 @@ class ContextGraph(object):
                 self.hlb_manager = HypertextLinkManager(conf, self.logger)
 
         self.filter_ = InfosFilter(logger=self.logger)
-
-    def get_entities_by_id(self, _id):
-        """
-        Retreive the entity identified by an id. If id is a list of id,
-        get_entities_by_id return every entities who match the ids present
-        in the list
-
-        :param id: the id of an entity. id can be a list
-        :return type: a list of entity
-        """
-
-        query = {"_id": None}
-        if isinstance(_id, list):
-            query["_id"] = {"$in": _id}
-        else:
-            query["_id"] = _id
-
-        result = self.get_entities(query=query)
-
-        return result
 
     def _put_entities(self, entities):
         """
@@ -622,7 +602,8 @@ class ContextGraph(object):
                      limit=0,
                      start=0,
                      sort=False,
-                     with_count=False):
+                     with_count=False,
+                     with_links=False):
         """
         Retreives entities matching the query and the projection.
 
@@ -634,6 +615,7 @@ class ContextGraph(object):
         :type sort: list of {(str, {ASC, DESC}}), or str}
         :param bool with_count: If True (False by default), add count to
             the result
+        :param bool with_links: If True (False by default), add builded links
 
         :return: a list of entities
         :rtype: list of dict elements
@@ -663,7 +645,7 @@ class ContextGraph(object):
         # Enrich each entity with http links
         for res in result:
             res['links'] = {}
-            if hasattr(self, 'hlb_manager'):
+            if with_links and hasattr(self, 'hlb_manager'):
                 links = self.hlb_manager.links_for_entity(res)
                 res['links'] = links
 
@@ -671,6 +653,27 @@ class ContextGraph(object):
             return result, count
         else:
             return result
+
+    def get_entities_by_id(self, _id, with_links=False):
+        """
+        Retreive the entity identified by an id. If id is a list of id,
+        get_entities_by_id return every entities who match the ids present
+        in the list
+
+        :param id: the id of an entity. id can be a list
+        :param bool with_links: If True (False by default), add builded links
+        :returns: a list of entity
+        """
+
+        query = {"_id": None}
+        if isinstance(_id, list):
+            query["_id"] = {"$in": _id}
+        else:
+            query["_id"] = _id
+
+        result = self.get_entities(query=query, with_links=with_links)
+
+        return result
 
     def get_event(self, entity, event_type='check', **kwargs):
         """Get an event from an entity.
@@ -683,7 +686,8 @@ class ContextGraph(object):
 
         # keys from entity that should not be in event
         delete_keys = [
-            "_id", "depends", "impact", "type", "measurements", "infos"
+            "_id", "depends", "impact", "type", "measurements", "infos",
+            "last_state_change"
         ]
 
         kwargs['event_type'] = event_type
@@ -737,8 +741,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_graph_depends(self, _id, deepness=None):
         """Return the depends graph from the entity design by _id.
@@ -766,8 +769,7 @@ class ContextGraph(object):
             glookup['$graphLookup']['maxDepth'] = deepness
         aggregate.append(glookup)
 
-        res = col.aggregate(aggregate)
-        return res['result'][0]
+        return list(col.aggregate(aggregate))[0]
 
     def get_leaves_impact(self, _id, deepness=None):
         """Return the entities at the end of the impact graph from the entity

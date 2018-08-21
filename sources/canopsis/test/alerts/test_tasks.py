@@ -23,8 +23,6 @@ from unittest import main
 
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
-from canopsis.entitylink.manager import Entitylink
-from canopsis.middleware.core import Middleware
 from canopsis.task.core import get_task
 from canopsis.statsng.enums import StatDurations
 
@@ -77,7 +75,7 @@ class TestTasks(BaseTest):
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
         self.event_publisher.publish_statduration_event.assert_called_once_with(
-            0, StatDurations.ack_time, {}, alarm)
+            0, StatDurations.ack_time, 0, {}, alarm)
 
     def test_unacknowledge(self):
         event = {'timestamp': 0}
@@ -129,7 +127,7 @@ class TestTasks(BaseTest):
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
         self.event_publisher.publish_statduration_event.assert_called_once_with(
-            0, StatDurations.ack_time, {}, alarm)
+            0, StatDurations.ack_time, 0, {}, alarm)
 
     def test_cancel(self):
         event = {'timestamp': 0}
@@ -376,39 +374,6 @@ class TestTasks(BaseTest):
         self.assertTrue(
             alarm[AlarmField.status.value] is get_previous_step(alarm, 'statusdec')
         )
-
-    def test_linklist(self):
-        self.el_storage = Middleware.get_middleware_by_uri(
-            Entitylink.ENTITYLINK_STORAGE_URI
-        )
-        self.entitylink_manager = Entitylink(logger=self.logger,
-                                             storage=self.el_storage,
-                                             context_graph=self.cg_manager)
-
-        eid0 = '/entity/id'
-        linklist_eid0 = {
-            'computed_links': [{'label': 'doc', 'url': 'http://path/to/doc'}],
-            'entity_links': [{'label': 'support', 'url': 'http://path/to/sup'}]
-        }
-        self.entitylink_manager.put(_id=eid0, document=linklist_eid0)
-
-        task = get_task('alerts.lookup.linklist')
-
-        res = task(self, {'d': eid0})
-        self.assertEqual(
-            res,
-            {
-                'd': eid0,
-                AlarmField.linklist.value: linklist_eid0
-            }
-        )
-
-        eid1 = '/no/link/entity'
-        res = task(self, {'d': eid1})
-        self.assertEqual(res, {'d': eid1, AlarmField.linklist.value: {}})
-
-        self.el_storage.remove_elements()
-        del self.entitylink_manager
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

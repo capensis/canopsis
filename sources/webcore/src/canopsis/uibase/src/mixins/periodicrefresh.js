@@ -15,6 +15,12 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with Canopsis. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * 
+ * IMPORTANT
+ *  The periodic refresh loads once per widget in the view hierarchy. So if you have 2 widgets, each with
+ *  an insance of this mixin, they might run twice on each widget. 
+ *  As a general rule, try to have only one periodic refresh instance per view to get the expected refresh rate.
  */
 
 
@@ -47,13 +53,23 @@ Ember.Application.initializer({
                 var mixin = this;
 
                 Ember.run(function(){
+                    // We get the refreshInteval from the local config.      
+                    refreshIntvalConfigValue = widgetController.get('mixinOptions.periodicrefresh.refreshInterval') * 1000;
+                    
+                    // If no value is fetched, that means that this particular instance should not run
+                    // so we return early to avoid setInterval to be called in a 0-delay loop, causing 
+                    // a full UI crash.
+                    if (isNaN(refreshIntvalConfigValue)) {
+                        return;
+                    }
+
                     interval = setInterval(function () {
                         console.log('refreshing widget ' + get(widgetController, 'title'), widgetController.get('mixinOptions.periodicrefresh.refreshInterval'), widgetController);
                         //FIXME periodicrefresh deactivated in testing mode because it throws global failures
                         if(window.environment !== 'test') {
                             widgetController.refreshContent();
                         }
-                    }, widgetController.get('mixinOptions.periodicrefresh.refreshInterval') * 1000);
+                    },refreshIntvalConfigValue);
 
                     //keep track of this interval
                     set(mixin, 'widgetRefreshInterval', interval);

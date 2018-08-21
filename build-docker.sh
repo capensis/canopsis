@@ -2,78 +2,73 @@
 set -e
 set -o pipefail
 
-if [ "${2}" = "" ]; then
-    echo "Usage: $0 <tag> <brick_branch> [test]"
-    exit 1
-fi
-
 opt_squash=""
-tag="${1}"
-bricks_tag="${2}"
-mode="${3}"
-workdir=$(dirname $(readlink -e $0))
 
+workdir=$(dirname $(readlink -e $0))
 cd $workdir
 
-fix_ownership="$(id -u):$(id -g)"
-wheel_dir=${WHEEL_DIR:-${workdir}/docker/wheelbuild/}
-wheel_req_control="${wheel_dir}/requirements_control"
+source ${workdir}/build-env.sh
 
-function build_for_sysbase() {
+fix_ownership="$(id -u):$(id -g)"
+mode=${CANOPSIS_DOCKER_MODE}
+
+function build_for_distribution() {
     if [ "${1}" = "" ]; then
         echo "wrong arguments"
         exit 2
     fi
 
-    local sysbase="${1}"
+    local distribution="${1}"
+    local tag=${CANOPSIS_TAG}
+    local docker_args="${opt_squash} --build-arg PROXY=$http_proxy --build-arg CANOPSIS_TAG=${tag} --build-arg CANOPSIS_DISTRIBUTION=${distribution}"
+    local full_tag="${distribution}-${tag}"
 
-    CPS_DOCKER_BUILD_ARGS="${opt_squash} --build-arg PROXY=$http_proxy --build-arg TAG=${tag} --build-arg SYSBASE=${sysbase}"
+    echo "BUILDING DISTRIBUTION ${distribution}"
+    docker build ${docker_args} -f docker/Dockerfile.sysbase-${distribution} -t canopsis/canopsis-sysbase:${full_tag} .
 
-    if [ ! "${mode}" == "test-ci" ]; then
-        echo "Wheeldir: ${wheel_dir}"
+    if [ "${CANOPSIS_BUILD_NEXT}" = "1" ]; then
+        echo "BUILDING CORE NEXT"
+        docker build ${docker_args} -f docker/Dockerfile.canopsis-next -t canopsis/canopsis-next:${full_tag} .
 
-        echo "BUILDING SYSBASE ${sysbase}"
-        docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.sysbase-${sysbase} -t canopsis/canopsis-sysbase:${sysbase}-${tag} .
-
-        if [ ! -d ${wheel_dir} ]; then
-            mkdir -p ${wheel_dir}
+        next_dist="${workdir}/sources/webcore/src/canopsis-next/dist"
+        if [ ! -d ${next_dist} ]; then
+            mkdir -p ${next_dist}
         fi
-        echo "BUILDING WHEEL IMAGE ${sysbase}"
-        docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.wheel -t canopsis/wheel-${sysbase}:latest .
-        echo "RUNNING WHEEL BUILD ${sysbase}"
-        docker run --rm -v ${wheel_dir}:/root/wheelrep/ canopsis/wheel-${sysbase}:latest "${fix_ownership}"
-
-        rm -rf ${workdir}/docker/wheels/
-        cp -ar ${wheel_dir} ${workdir}/docker/wheels
-
-        echo "BUILDING CORE ${sysbase}"
-
-        docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile -t canopsis/canopsis-core:${sysbase}-${tag} .
-
-		echo "Building provisionning image"
-		docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${sysbase}-${tag} .
-
-        if [ "${sysbase}" = "debian-9" ]; then
-            echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
-
-            docker tag canopsis/canopsis-core:${sysbase}-${tag} canopsis/canopsis-core:${tag}
-            docker tag canopsis/canopsis-prov:${sysbase}-${tag} canopsis/canopsis-prov:${tag}
-        fi
+        docker run -v ${next_dist}:/dist/ canopsis/canopsis-next:${full_tag}
     fi
 
-    if [ "${mode}" == "test" ]||[ "${mode}" == "test-ci" ]; then
-        echo "BUILDING TEST ${sysbase}"
-        docker tag canopsis/canopsis-prov:${sysbase}-${tag} canopsis/canopsis-prov:${sysbase}-${tag}-test
-        docker build ${CPS_DOCKER_BUILD_ARGS} -f docker/Dockerfile.tests -t canopsis/canopsis-core:${sysbase}-${tag}-test .
+    echo "BUILDING CORE ${distribution}"
+    docker build ${docker_args} -f docker/Dockerfile -t canopsis/canopsis-core:${full_tag} .
+
+	echo "Building provisionning image"
+	docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
+
+    if [ "${distribution}" = "debian-9" ]; then
+        echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
+
+        docker tag canopsis/canopsis-core:${full_tag} canopsis/canopsis-core:${tag}
+        docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${tag}
+    fi
+
+    if [ "${CANOPSIS_DOCKER_MODE}" == "test" ]||[ "${CANOPSIS_DOCKER_MODE}" == "test-ci" ]; then
+        echo "BUILDING TEST ${distribution}"
+        docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${full_tag}-test
+        docker build ${docker_args} -f docker/Dockerfile.tests -t canopsis/canopsis-core:${full_tag}-test .
     fi
 }
 
-./docker/build/bricks.sh "${bricks_tag}"
+function build() {
+    cd ${workdir}
 
-if [ "${SYSBASE}" = "" ]; then
-    build_for_sysbase "centos-7"
-    build_for_sysbase "debian-8"
-    build_for_sysbase "debian-9"
-else
-    build_for_sysbase "${SYSBASE}"
-fi
+    ./docker/build/bricks.sh
+
+    if [ "${CANOPSIS_DISTRIBUTION}" = "all" ]; then
+        build_for_distribution "debian-9"
+        build_for_distribution "debian-8"
+        build_for_distribution "centos-7"
+    else
+        build_for_distribution "${CANOPSIS_DISTRIBUTION}"
+    fi
+}
+
+build

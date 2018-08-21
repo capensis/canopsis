@@ -36,7 +36,6 @@ class AlarmField(DefaultEnum):
     comment = 'comment'
     extra = 'extra'
     hard_limit = 'hard_limit'
-    linklist = 'linklist'
     pbehaviors = 'phbehaviors'
     resolved = 'resolved'
     snooze = 'snooze'
@@ -52,6 +51,10 @@ class AlarmField(DefaultEnum):
     display_name = 'display_name'
     last_event_date = 'last_event_date'
     done = 'done'
+    initial_long_output = "initial_long_output"
+    long_output = "long_output"
+    output = "output"
+    long_output_history = "long_out_history"
 
 
 class States(DefaultEnum):

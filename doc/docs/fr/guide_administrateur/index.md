@@ -37,6 +37,10 @@ Cette section couvre les informations utiles aux administrateurs de Canopsis
  - [Custom SNMP trap handler](custom_snmp_trap.md)
  - [Configuration des statistiques](statsng.md)
 
+## Documentation utilisateur
+
+ - [gestion de la documation utilisateur](documentations.md)
+
 ## Dépannage
 
  - [Gestion d'un cas de disque plein sur Mongo 2](troubleshooting/fulldisk_mongo2.md)

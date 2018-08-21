@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 set -o pipefail
+set -u
 
 yum makecache
 
@@ -24,6 +25,7 @@ yum install -y \
     python-devel \
     python-virtualenv \
     python-wheel \
+    sudo \
     xmlsec1-devel \
     xmlsec1-openssl-devel \
     zlib-devel

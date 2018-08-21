@@ -1,8 +1,0 @@
-NAME="python"
-
-function install(){
-	virtualenv -p /usr/bin/python2.7 ${PREFIX}
-	check_code $?
-
-	chown $HUSER:$HGROUP -R $PREFIX
-}

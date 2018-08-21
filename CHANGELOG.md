@@ -4,12 +4,58 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Unreleased
 
+## Canopsis 3.1 - Due date : 2018-08-17
+- [Python]: add a feature that track the change of the longoutput field and alter the behavior of the output field of an alarm.
+- [Python]: fix a bug that duplicate an alarm.
+- [Build]: fix an error during the compilation of canopsis-next.
+- [UI]: fix a right issue in the listalarm brick that allow the done button to be displayed without any right.
+
+
+## Canopsis 3.0.1 - Due date : 2018-08-03
+
+- [CAT]: New stats in statsng: most_alarms_impacting, worst_mtbf, alarm_list, longest_alarms (!67 et !70)
+- [CAT]: Add a "periods" parameter to the statsng API (!69)
+- [CAT]: New stats in statsng: most_alarms_created, alarms_impacting, state_list (!71)
+- [CAT]: send stats with alarm duration
+- [CAT]: default sats value
+- [snooze]: faster snooze application
+- [perriodic refresh]: fix infinite loop with periodic refresh
+- [link list]: remove linklist
+- [links]: fix links in service weather
+- [UI]: views in canopsis-next
+- [UI]: alarms in canopsis-next
 
 ### Experimental features
 
-- [Go]: New engine interface
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
-- [Python]: new metric engine
+
+## Canopsis 3.0.0 - Due date : 2018-07-20
+
+- [Chore]: Finalizing new building process
+- [CAT]: New stats in statsng: time_in_state, availability, maintenance and mtbf
+- [CAT]: Provisionning for docker demos
+- [Deploy]: Automated standalone deployment
+- [Docker]: Multiple cleanup and fixes
+- [Go]: Fix an uncatched exception in alarm
+- [Go]: Large refacto on engines and services
+- [Go]: New engine interface
+- [Go]: New Done action
+- [Go]: Support watcher
+- [Python]: Huge code cleanup, upgrade to pymongo 3.6
+- [Python]: New Done action
+- [Python]: New metric engine
+- [Python]: New stat event: statstateinterval
+- [Python]: New webserver handler using Flask
+- [Python]: Small refacto and optimization on linkbuilder classes
+- [UI]: Beginning Canopsis-next integration (context view)
+- [UI]: Fix brickmanager when used with canopsis user
+- [UI]: New documentation subprocess (visible on search field in Alarm list)
+- [UI]: New 'unknown' state marker
+- [Alarm list]: Natural search only on visible columns
+- [Alarm list]: Possibility to search on ticket number
+- [Service weather]: Add rights for actions
+- [Service weather]: Fix blink on pbehaviored watchers
+- [Service weather]: Fix refresh (again)
 
 ## Canopsis 2.7.0 - Due date : 2018-06-28
 
@@ -384,5 +430,3 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 - feat (backend) : Canopsis now generates alarmes based on the status of events. This new object keep tracks of the full history of a real-world alarm
 - feat(UI) : new "Service weather" UI brick that can display the status of up to 120 entities on a single window
 - feat (UI): new "Alarms list" UI brick as a replacement of the old events list.
-
-

@@ -1,0 +1,23 @@
+---
+- include_vars: "{{ ansible_os_family }}.yml"
+
+- name: install optional deps
+  apt:
+    name: "{{ canopsis_deps | join(',') }}"
+    state: present
+  tags:
+    - cps_install_package
+
+- name: copy package
+  copy:
+    src: '{{ canopsis_pkg_debian }}'
+    dest: '/root/{{ canopsis_pkg_debian }}'
+  tags:
+    - cps_install_package
+
+- name: install package
+  apt:
+    deb: '/root/{{ canopsis_pkg_debian }}'
+    state: present
+  tags:
+    - cps_install_package

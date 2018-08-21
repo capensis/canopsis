@@ -11,7 +11,7 @@ from canopsis.check import Check
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.logger import Logger
-from canopsis.middleware.core import Middleware
+from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
@@ -231,7 +231,6 @@ class Watcher:
         output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
             nb_ok, nb_minor, nb_major, nb_crit)
 
-        # Updating watcher state
         if computed_state != watcher_entity.get('state', None):
             watcher_entity['state'] = computed_state
             self.context_graph.update_entity(watcher_entity)

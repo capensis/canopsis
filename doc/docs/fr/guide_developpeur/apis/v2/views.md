@@ -81,13 +81,13 @@ Renvoie la liste des groupes, optionnellement filtrées par nom.
 ### Créer un groupe
 
 ```
-POST /api/v2/views/groups/<group_id>
+POST /api/v2/views/groups
 {
     "name": "..."
 }
 ```
 
-Renvoie une erreur si l'id (qui est donné par l'utilisateur) existe déjà.
+Crée un groupe et renvoie son id (qui est généré automatiquement).
 
 ### Lister les vues d'un groupe
 
