@@ -6,8 +6,8 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
     td {{ props.item.connector }}
     td {{ props.item.connector_name }}
     td {{ props.item.enabled }}
-    td {{ props.item.tstart | date('datetime') }}
-    td {{ props.item.tstop | date('datetime') }}
+    td {{ props.item.tstart | date('long') }}
+    td {{ props.item.tstop | date('long') }}
     td {{ props.item.type_ }}
     td {{ props.item.reason }}
     td {{ props.item.rrule }}

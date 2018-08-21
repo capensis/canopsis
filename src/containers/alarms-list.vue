@@ -52,7 +52,7 @@ export default {
           {
             text: this.$t('tables.alarmGeneral.lastUpdateDate'),
             value: 'v.last_update_date',
-            filter: value => this.$options.filters.date(value, 'datetime'),
+            filter: value => this.$options.filters.date(value, 'long'),
           },
           {
             text: this.$t('tables.alarmGeneral.extraDetails'),
