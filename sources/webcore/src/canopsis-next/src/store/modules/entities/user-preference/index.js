@@ -1,6 +1,5 @@
 import omit from 'lodash/omit';
 
-import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { userPreferenceSchema } from '@/store/schemas';
@@ -64,9 +63,9 @@ export default {
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED);
-      } catch (e) {
+      } catch (err) {
         commit(types.FETCH_LIST_FAILED);
-        console.warn(e);
+        console.warn(err);
       }
     },
 
@@ -77,10 +76,10 @@ export default {
      * @param {function} rootGetters
      * @param {string|number} widgetId
      */
-    async fetchItemByWidgetId({ dispatch, rootGetters }, { widgetId }) {
+    fetchItemByWidgetId({ dispatch, rootGetters }, { widgetId }) {
       const currentUser = rootGetters['auth/currentUser'];
 
-      await dispatch('fetchList', {
+      return dispatch('fetchList', {
         params: {
           limit: 1,
           filter: {
@@ -103,41 +102,13 @@ export default {
         const body = omit(userPreference, ['crecord_creation_time', 'crecord_write_time', 'enable']);
 
         await dispatch('entities/update', {
-          route: `${API_ROUTES.userPreferences}`,
+          route: API_ROUTES.userPreferences,
           schema: userPreferenceSchema,
           body: JSON.stringify(body),
           dataPreparer: d => d.data[0],
         }, { root: true });
       } catch (err) {
         console.warn(err);
-      }
-    },
-
-    async setActiveFilter({ commit, getters }, { data, selectedFilter }) {
-      try {
-        await request.post(API_ROUTES.userPreferences, {
-          widget_preferences: {
-            user_filters: getters.filters.map(filter => ({
-              filter: filter.filter,
-              title: filter.title,
-            })),
-            selected_filter: {
-              filter: selectedFilter.filter,
-              isActive: true,
-              title: selectedFilter.title,
-            },
-          },
-          crecord_name: data.crecord_name,
-          widget_id: data.widget_id,
-          widgetXtype: data.widgetXtype,
-          title: data.title,
-          id: data.id,
-          _id: data._id,
-          crecord_type: data.crecord_type,
-        });
-        commit(types.SET_ACTIVE_FILTER, selectedFilter);
-      } catch (e) {
-        console.warn(e);
       }
     },
   },

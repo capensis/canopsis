@@ -3,11 +3,13 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 export default {
   common: {
     watcher: 'Watcher',
+    widget: 'Widget',
     name: 'Name',
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
     enabled: 'Enabled',
+    disabled: 'Disabled',
     login: 'Login',
     yes: 'Yes',
     no: 'No',
@@ -125,6 +127,7 @@ export default {
     titles: {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
+      weatherSettings: 'Service weather settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -161,6 +164,8 @@ export default {
         type: 'Types',
         manageInfos: 'Manage Infos',
         form: 'Form',
+        impact: 'Impact',
+        depends: 'Depends',
         types: {
           connector: 'connector',
           component: 'component',
@@ -169,7 +174,8 @@ export default {
       },
     },
     createWatcher: {
-      title: 'Create a watcher',
+      createTitle: 'Create a watcher',
+      editTitle: 'Edit a watcher',
       displayName: 'Name',
     },
     createAckEvent: {
@@ -246,6 +252,26 @@ export default {
     moreInfos: {
       moreInfos: 'More infos',
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
+    },
+    watcher: {
+      criticity: 'Criticity',
+      organization: 'Organization',
+      numberOk: 'Number Ok',
+      numberKo: 'Number Ko',
+      state: 'State',
+      name: 'Name',
+      org: 'Org',
+      noData: 'No data',
+      ticketing: 'Ticketing',
+      application_crit_label: 'Criticality',
+      product_line: 'Product line',
+      service_period: 'Plage surveillanc',
+      isInCarat: 'Cartographic repository',
+      application_label: 'Description',
+      target_platform: 'Environment',
+      scenario_label: 'Label',
+      scenario_probe_name: 'Sonde',
+      scenario_calendar: 'Range of execution',
     },
   },
   tables: {
@@ -362,7 +388,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
   },
-  mFilterEditor: {
+  filterEditor: {
     title: 'Filter editor',
     tabs: {
       visualEditor: 'Visual Editor',
@@ -379,6 +405,9 @@ export default {
       connectorName: 'Connector name',
       component: 'Component',
       resource: 'Resource',
+    },
+    errors: {
+      invalidJSON: 'Invalid JSON',
     },
   },
   validator: {

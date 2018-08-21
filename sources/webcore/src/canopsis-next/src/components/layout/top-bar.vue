@@ -13,7 +13,7 @@
       v-menu(offset-y, bottom)
         v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
         v-list
-          v-list-tile(@click.prevent="logoutWithRedirect")
+          v-list-tile(@click.prevent="logout")
             v-list-tile-title {{ $t('common.logout') }}
 </template>
 
@@ -31,13 +31,6 @@ export default {
   mixins: [authMixin],
   methods: {
     ...mapActions(['toggleSideBar']),
-
-    async logoutWithRedirect() {
-      await this.logout();
-      this.$router.push({
-        name: 'login',
-      });
-    },
   },
 };
 </script>

@@ -50,6 +50,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
+from canopsis.lock.manager import AlertLockRedis
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
 from canopsis.models.entity import Entity
@@ -135,8 +136,11 @@ class Alerts(object):
         self.record_last_event_date = cfg_to_bool(alerts_.get('record_last_event_date',
                                                               DEFAULT_RECORD_LAST_EVENT_DATE))
 
+        self.update_longoutput_fields = alerts_.get("update_long_output",
+                                                          False)
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
+        self.lock_manager = AlertLockRedis(*AlertLockRedis.provide_default_basics())
 
     @classmethod
     def provide_default_basics(cls):
@@ -528,6 +532,44 @@ class Alerts(object):
 
         return True
 
+    def update_output_fields(self, value, event, state_updated):
+        """
+        Update the field output, long_output, long_output_history.
+        :param value: the alarm.value field of an alarm
+        :param event: the event used to update the alarm
+        :param state_updated: if the state of the alarm change.
+        """
+
+        if not self.update_longoutput_fields and not state_updated:
+            return value
+
+        value[AlarmField.output.value] = event["output"]
+
+        if value.get(AlarmField.long_output.value, "") != event["long_output"]:
+            value[AlarmField.long_output.value] = event["long_output"]
+
+            if AlarmField.long_output_history.value not in value:
+                value[AlarmField.long_output_history.value] = []
+
+            value[AlarmField.long_output_history.value].append(
+                event[AlarmField.long_output.value]
+            )
+
+            if len(value[AlarmField.long_output_history.value]) > 100:
+                new_hist = value[AlarmField.long_output_history.value][0:99]
+                value[AlarmField.long_output_history.value] = new_hist
+
+
+            value[AlarmField.steps.value].append({
+                "a": value["state"]["a"],
+                "_t": "long_output",
+                "m": "update long_output to {}.".format(event["long_output"]),
+                "t": int(time()),
+                "val": value["state"]["val"]
+            })
+
+        return value
+
     def archive(self, event):
         """
         Archive event in corresponding alarm history.
@@ -536,37 +578,58 @@ class Alerts(object):
         """
         entity_id = self.context_manager.get_id(event)
         event_type = event['event_type']
+        initial_state = None
 
+        lock_id = self.lock_manager.lock(entity_id)
         if event_type in [Check.EVENT_TYPE, 'watcher']:
-
+            initial_state = event["state"]
             alarm = self.get_current_alarm(entity_id)
+
             is_new_alarm = alarm is None
 
             if is_new_alarm:
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
+                    self.lock_manager.unlock(lock_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
+                    self.lock_manager.unlock(lock_id)
                     return
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
             else:  # Alarm is already opened
+                initial_state = alarm["value"]["state"]["val"]
                 value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
+                    self.lock_manager.unlock(lock_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
+                    self.lock_manager.unlock(lock_id)
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
 
+            # set default value to event["long_output"] and event["output"]
+            if "long_output" not in event:
+                event["long_output"] = alarm.get(AlarmField.long_output.value,
+                                                 "")
+
+            if "output" not in event:
+                event["output"] = alarm.get(AlarmField.output.value, "")
+
+            state_updated = not initial_state == alarm["value"]["state"]["val"]
+
             value = alarm.get(self.alerts_storage.VALUE)
+
+            value = self.update_output_fields(value, event, state_updated)
 
             value = self.crop_flapping_steps(value)
 
             value = self.check_hard_limit(value)
+
 
             self.update_current_alarm(alarm, value)
 
@@ -579,6 +642,7 @@ class Alerts(object):
                               event=event,
                               author=event.get(self.AUTHOR, None),
                               entity_id=entity_id)
+        self.lock_manager.unlock(lock_id)
 
     def execute_task(self, name, event, entity_id,
                      author=None, new_state=None, diff_counter=None):
@@ -858,7 +922,9 @@ class Alerts(object):
                     field: event[field]
                     for field in self.extra_fields
                     if field in event
-                }
+                },
+                AlarmField.initial_long_output.value:
+                event.get("long_output", "")
             }
         }
 

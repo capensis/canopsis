@@ -1,6 +1,13 @@
+import Vue from 'vue';
+import get from 'lodash/get';
+
+import i18n from '@/i18n';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
+import { watcherSchema } from '@/store/schemas';
+import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
+
+import watcherEntityModule from './entity';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -10,41 +17,50 @@ export const types = {
 
 export default {
   namespaced: true,
+  modules: {
+    entity: watcherEntityModule,
+  },
   state: {
-    allIds: [],
-    meta: {},
-    pending: false,
-    fetchingParams: {},
-    allIdsGeneralList: [],
-    pendingGeneralList: false,
+    widgets: {},
   },
   getters: {
-    allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList']('watcher', state.allIds),
-    pending: state => state.pending,
-    meta: state => state.meta,
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.watcher, get(state.widgets[widgetId], 'allIds', [])),
+    getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
+    getItem: (state, getters, rootState, rootGetters) => id =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.watcher, id),
   },
   mutations: {
-    [types.FETCH_LIST](state, { params }) {
-      state.pending = true;
-      state.fetchingParams = params;
+    [types.FETCH_LIST](state, { widgetId }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: true,
+      });
     },
-    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
-      state.allIds = allIds;
-      state.meta = meta;
-      state.pending = false;
+    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+        allIds,
+      });
     },
-    [types.FETCH_LIST_FAILED](state) {
-      state.pending = false;
+    [types.FETCH_LIST_FAILED](state, { widgetId }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+      });
     },
   },
   actions: {
-    async create(context, params = {}) {
-      try {
-        await request.post(API_ROUTES.watcher, params);
-      } catch (err) {
-        console.warn(err);
-      }
+    create(context, { data }) {
+      return request.post(
+        API_ROUTES.watcher,
+        { _id: data._id, mfilter: data.mfilter, display_name: data.display_name },
+      );
+    },
+
+    edit(context, { data }) {
+      return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
     },
 
     async remove({ dispatch }, { id } = {}) {
@@ -57,6 +73,30 @@ export default {
         }, { root: true });
       } catch (err) {
         console.warn(err);
+      }
+    },
+
+    async fetchList({ dispatch, commit }, { widgetId, params, filter } = {}) {
+      try {
+        const requestFilter = filter || '{}';
+
+        commit(types.FETCH_LIST, { widgetId });
+
+        const { normalizedData } = await dispatch('entities/fetch', {
+          route: `${API_ROUTES.weatherWatcher}/${requestFilter}`,
+          schema: [watcherSchema],
+          params,
+          dataPreparer: d => d,
+        }, { root: true });
+
+        commit(types.FETCH_LIST_COMPLETED, {
+          widgetId,
+          allIds: normalizedData.result,
+        });
+      } catch (err) {
+        commit(types.FETCH_LIST_FAILED, { widgetId });
+
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
   },

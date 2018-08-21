@@ -2,6 +2,7 @@
   v-container
     div
       div(v-for="widget in widgets", :key="widget._id")
+        h2 {{ widget.title }} {{ widgetsMap[widget.xtype] }}
         div(
         :is="widgetsMap[widget.xtype]",
         :widget="widget",
@@ -17,7 +18,7 @@
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
           v-icon widgets
-        span widget
+        span {{ $t('common.widget') }}
     settings(v-model="isSettingsOpen", :widget="widgetSettings", :isNew="isWidgetNew")
 </template>
 
@@ -25,6 +26,8 @@
 import Settings from '@/components/other/settings/settings.vue';
 import AlarmsListContainer from '@/containers/alarms-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
+import WeatherContainer from '@/containers/weather.vue';
+
 import { MODALS, WIDGET_TYPES } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -34,6 +37,7 @@ export default {
   components: {
     AlarmsListContainer,
     EntitiesListContainer,
+    WeatherContainer,
     Settings,
   },
   mixins: [
@@ -55,6 +59,7 @@ export default {
       widgetsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list-container',
         [WIDGET_TYPES.context]: 'entities-list-container',
+        [WIDGET_TYPES.weather]: 'weather-container',
       },
     };
   },
@@ -90,6 +95,7 @@ export default {
         },
       });
     },
+
   },
 };
 </script>

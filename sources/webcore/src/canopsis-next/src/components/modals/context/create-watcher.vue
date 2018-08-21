@@ -1,22 +1,22 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline {{ $t('modals.createWatcher.title') }}
+      span.headline {{ $t(config.title) }}
     v-form
       v-layout(wrap, justify-center)
         v-flex(xs11)
           v-text-field(
             :label="$t('modals.createWatcher.displayName')",
-            v-model="form.display_name",
+            v-model="form.name",
             data-vv-name="name",
             v-validate="'required'",
             :error-messages="errors.collect('name')",
           )
       v-layout(wrap, justify-center)
         v-flex(xs11)
-          h3.text-xs-center {{ $t('mFilterEditor.title') }}
+          h3.text-xs-center {{ $t('filterEditor.title') }}
           v-divider
-          filter-editor
+          filter-editor(v-model="form.mfilter")
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
@@ -26,10 +26,10 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
-import modalMixin from '@/mixins/modal/modal';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
+import { ENTITIES_TYPES } from '@/constants';
 
 const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
-const { mapGetters: filterEditorMapGetters } = createNamespacedHelpers('mFilterEditor');
 
 export default {
   $_veeValidate: {
@@ -38,37 +38,49 @@ export default {
   components: {
     FilterEditor,
   },
-  mixins: [modalMixin],
+  mixins: [modalInnerMixin],
   data() {
+    const { item } = this.modal.config;
+
+    let form = {
+      name: '',
+      mfilter: '{}',
+    };
+
+    if (item) {
+      form = { ...item };
+    }
+
     return {
-      form: {
-        display_name: '',
-        mfilter: '',
-      },
+      form,
     };
   },
-  computed: {
-    ...filterEditorMapGetters(['request']),
-  },
-  mounted() {
-    if (this.config && this.config.item) {
-      this.form = { ...this.config.item.props };
-    }
-  },
   methods: {
-    ...watcherMapActions(['create']),
+    ...watcherMapActions(['create', 'edit']),
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const formData = {
+        const data = {
           ...this.form,
-          _id: this.form.display_name,
-          type: 'watcher',
-          mfilter: JSON.stringify(this.request),
+          _id: this.config.item ? this.config.item._id : this.form.name,
+          display_name: this.form.name,
+          type: ENTITIES_TYPES.watcher,
+          mfilter: this.form.mfilter,
         };
-        this.create(formData);
-        this.hideModal();
+
+        try {
+          if (this.config.item) {
+            await this.edit({ data });
+          } else {
+            await this.create({ data });
+          }
+
+          this.hideModal();
+        } catch (err) {
+          console.error(err);
+        }
       }
     },
   },
