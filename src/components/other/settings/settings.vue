@@ -1,6 +1,6 @@
 <template lang="pug">
   v-navigation-drawer(
-  :temporary="$mq === 'mobile' || $mq === 'tablet'",
+  :temporary="$mq | mq({ m: true, l: false })",
   :value="value",
   @input="$emit('input', $event)",
   width="400",
