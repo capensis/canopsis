@@ -3,7 +3,7 @@
     v-model="isOpen",
     absolute,
     app,
-    :clipped="$mq === 'mobile' || $mq === 'tablet' ? false : true",
+    :clipped="$mq | mq({ m: true, l: false })",
     :width="width"
   )
       v-card(flat)
