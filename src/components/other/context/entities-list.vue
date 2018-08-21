@@ -33,7 +33,7 @@
           @click="props.expanded = !props.expanded"
           )
             ellipsis(
-            :text="$options.filters.get(props.item,prop.value) || ''",
+            :text="props.item | get(prop.value, null, '')",
             :maxLetters="prop.maxLetters"
             )
           td

@@ -3,7 +3,7 @@
     div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
     ellipsis(
       v-else,
-      :text="$options.filters.get(alarm, property.value, property.filter) || ''",
+      :text="alarm | get(property.value, property.filter, '')",
       :maxLetters="property.maxLetters"
     )
     info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm", :widget="widget")
