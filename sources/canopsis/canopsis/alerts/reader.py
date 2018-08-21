@@ -725,7 +725,7 @@ class AlertsReader(object):
 
         self.add_pbh_filter(pipeline, filter_)
 
-        count_pipeline = pipeline
+        count_pipeline = pipeline[:]
 
         pipeline.append({
             "$skip": skip
