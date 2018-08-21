@@ -4,11 +4,10 @@ export default {
   },
   long: {
     year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-    hour: 'numeric',
-    minute: 'numeric',
+    month: '2-digit',
+    hour12: true,
+    pattern: '{day}-{month}-{year} {hour}:{minute}:{second}',
+    pattern12: '{hour}:{minute}:{second} {ampm}',
   },
   time: {
     hour: 'numeric', minute: 'numeric', second: 'numeric',

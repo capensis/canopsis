@@ -193,3 +193,9 @@ export const FILTER_DEFAULT_VALUES = {
     rules: {},
   },
 };
+
+export const DATETIME_FORMATS = {
+  datetime: 'DD/MM/YYYY H:mm:ss',
+  date: 'DD/MM/YYYY',
+  time: 'H:mm:ss',
+};
