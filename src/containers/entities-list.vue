@@ -28,7 +28,7 @@ export default {
         'context-entities-types-filter',
       ],
       contextProperties: {
-        laptop: [
+        l: [
           {
             text: this.$t('tables.contextEntities.columns._id'),
             value: '_id',
@@ -42,13 +42,7 @@ export default {
             value: 'name',
           },
         ],
-        mobile: [
-          {
-            text: this.$t('tables.contextEntities.columns.name'),
-            value: 'name',
-          },
-        ],
-        tablet: [
+        m: [
           {
             text: this.$t('tables.contextEntities.columns.name'),
             value: 'name',

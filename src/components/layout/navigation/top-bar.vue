@@ -5,7 +5,7 @@
     clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'laptop'")
+    div.brand.ma-0.green.darken-4(v-show="$options.filters.mq($mq, { t: true })")
       img(src="@/assets/canopsis.png")
     v-toolbar-side-icon(@click="$emit('toggleSideBar')")
     v-spacer
