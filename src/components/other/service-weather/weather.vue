@@ -4,7 +4,7 @@
       v-btn(icon, @click="$emit('openSettings')")
         v-icon settings
     v-layout(wrap)
-      v-flex(v-for="item in watchers", :key="item._id", xs3)
+      v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
         weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
 </template>
 
@@ -24,6 +24,15 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    flexSize() {
+      return [
+        `xs${this.widget.columnSM}`,
+        `md${this.widget.columnMD}`,
+        `lg${this.widget.columnLG}`,
+      ];
     },
   },
   methods: {

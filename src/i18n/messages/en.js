@@ -143,6 +143,9 @@ export default {
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
     moreInfosModal: '"More Infos" Popup',
+    columnSM: 'Columns - Small',
+    columnMD: 'Columns - Medium',
+    columnLG: 'Columns - Large',
     contextTypeOfEntities: {
       title: 'Type of entities',
       fields: {

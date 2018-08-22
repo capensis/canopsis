@@ -1,6 +1,6 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") Columns - Large
+    v-list-tile(slot="activator") {{ title }}
     v-container
       v-slider(
       :value="value",
@@ -16,6 +16,10 @@ export default {
   props: {
     value: {
       type: Number,
+    },
+    title: {
+      type: String,
+      required: true,
     },
   },
 };

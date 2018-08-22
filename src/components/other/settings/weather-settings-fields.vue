@@ -6,9 +6,9 @@
       field-weather-template(:content.sync="settings.widget.block_template", :value="widget.block_template")
       field-weather-modal-template(:content.sync="settings.widget.modal_template", :value="widget.modal_template")
       field-weather-entity-template(:content.sync="settings.widget.entity_template", :value="widget.entity_template")
-      field-grid-size(:value.sync="widget.columnSM")
-      field-grid-size(:value.sync="widget.columnMD")
-      field-grid-size(:value.sync="widget.columnLG")
+      field-grid-size(:value.sync="settings.widget.columnSM", :title="$t('settings.columnSM')")
+      field-grid-size(:value.sync="settings.widget.columnMD", :title="$t('settings.columnMD')")
+      field-grid-size(:value.sync="settings.widget.columnLG", :title="$t('settings.columnLG')")
     v-btn(@click="submit", color="green darken-4 white--text", depressed, fixed, right) {{ $t('common.save') }}
 </template>
 
