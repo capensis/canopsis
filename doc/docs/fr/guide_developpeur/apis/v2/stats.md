@@ -24,9 +24,15 @@ suivants :
  - `parameters` : un objet contenant les paramètres spécifiques à la
    statistique calculée. Ces paramètres sont précisés dans la documentation de
    chacune des statistiques.
- - `trend` (optionnel): `true` pour calculer la tendance par rapport à la
+ - `trend` (optionnel) : `true` pour calculer la tendance par rapport à la
    période précédente.
- - `sla` (optionnel): un SLA, représenté par une inégalité (e.g. `">= 0.99"`).
+ - `sla` (optionnel) : un SLA, représenté par une inégalité (e.g. `">= 0.99"`).
+ - `sort_order` (optionnel) : `"desc"` pour trier les résultats par valeur
+   décroissante, `"asc"` pour les trier par valeur croissante. Les résultats ne
+   sont pas triés par défaut.
+ - `limit` (optionnel) : le nombre maximal de valeurs à renvoyer. Toutes les
+   valeurs sont renvoyées par défaut.
+
 
 #### Réponse
 
@@ -131,6 +137,14 @@ les paramètres suivants :
       période précédente.
     - `sla` (optionnel): un SLA, représenté par une inégalité (e.g.
       `">= 0.99"`).
+ - `sort_column` (optionnel) : le titre de la statistique dont la valeur sera
+   utilisée pour trier les résultats.
+ - `sort_order` (optionnel) : `"desc"` pour trier les résultats par valeur
+   décroissante, `"asc"` pour les trier par valeur croissante. Les résultats ne
+   sont pas triés par défaut.
+ - `limit` (optionnel) : le nombre maximal de valeurs à renvoyer. Toutes les
+   valeurs sont renvoyées par défaut.
+
 
 #### Réponse
 
@@ -186,7 +200,9 @@ POST /api/v2/stats
             },
             "trend": true
         }
-    }
+    },
+    "sort_column": "Alarmes critiques",
+    "sort_order": "desc"
 }
 ```
 

@@ -24,6 +24,11 @@ This route takes a JSON object with the following fields:
    See the documentation of each statistic below for the available parameters.
  - `trend` (optional): `true` to compute the trend with the previous period.
  - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
+ - `sort_order` (optional): `"desc"` to sort the results by descending value,
+   `"asc"` to sort them by ascending value. The results are not sorted by
+   default.
+ - `limit` (optional): the maximum number of values to return. All values are
+   returned by default.
 
 
 #### Response
@@ -125,6 +130,13 @@ This route is similar to the previous one, but allows to compute multiple statis
       parameters.
     - `trend` (optional): `true` to compute the trend with the previous period.
     - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
+ - `sort_column` (optional): the title of the statistic whose values will be
+   used to sort the results.
+ - `sort_order` (optional): `"desc"` to sort the results by descending value,
+   `"asc"` to sort them by ascending value. The results are not sorted by
+   default.
+ - `limit` (optional): the maximum number of values to return. All values are
+   returned by default.
 
 #### Response
 
@@ -181,7 +193,9 @@ POST /api/v2/stats
             },
             "trend": true
         }
-    }
+    },
+    "sort_column": "Critical alarms",
+    "sort_order": "desc"
 }
 ```
 
