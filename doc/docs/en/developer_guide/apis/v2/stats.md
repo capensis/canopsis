@@ -22,6 +22,9 @@ This route takes a JSON object with the following fields:
    statistic should be computed.
  - `parameters`: an object containing parameters for the computed statistic.
    See the documentation of each statistic below for the available parameters.
+ - `trend` (optional): `true` to compute the trend with the previous period.
+ - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
+
 
 #### Response
 
@@ -32,7 +35,9 @@ entity, as follows:
 ```javascript
 {
     'entity': {...},  // The entity for which the statistic was computed
-    'value': ...  // The value of the statistic
+    'value': ...,  // The value of the statistic
+    'trend': ...,  // The trend
+    'sla': ...  // true if the value is conform to the SLA
 }
 ```
 
@@ -54,7 +59,8 @@ POST /api/v2/stats/alarms_created
     "duration": "2d",
     "parameters": {
         "states": [3]
-    }
+    },
+    "trend": true
 }
 ```
 
@@ -72,7 +78,8 @@ The JSON document below is an example of a response to the previous request.
                 ],
                 // ...
             },
-            "value": 117
+            "value": 117,
+            "trend": 96
         },
         {
             "entity": {
@@ -83,7 +90,8 @@ The JSON document below is an example of a response to the previous request.
                 ],
                 // ...
             },
-            "value": 2
+            "value": 2,
+            "trend": -3
         },
         // ...
     ]
@@ -115,6 +123,8 @@ This route is similar to the previous one, but allows to compute multiple statis
     - `parameters`: an object containing parameters for the computed statistic.
       See the documentation of each statistic below for the available
       parameters.
+    - `trend` (optional): `true` to compute the trend with the previous period.
+    - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
 
 #### Response
 
@@ -125,8 +135,16 @@ entity, as follows:
 ```javascript
 {
     'entity': {...},  // The entity for which the statistic was computed
-    'title of the 1st statistic': ...,  // The value of the statistic
-    'title of the 2nd statistic': ...  // The value of the statistic
+    'title of the 1st statistic': {
+        'value': ...,  // The value of the statistic
+        'trend': ...,  // The trend
+        'sla': ...  // true if the value is conform to the SLA
+    },
+    'title of the 2nd statistic': {
+        'value': ...,  // The value of the statistic
+        'trend': ...,  // The trend
+        'sla': ...  // true if the value is conform to the SLA
+    }
 }
 ```
 
@@ -152,13 +170,16 @@ POST /api/v2/stats
             "stat": "alarms_created",
             "parameters": {
                 "states": [3]
-            }
+            },
+            "trend": true,
+            "sla": "<= 20"
         },
         "Major alarms": {
             "stat": "alarms_created",
             "parameters": {
                 "states": [2]
-            }
+            },
+            "trend": true
         }
     }
 }
@@ -179,8 +200,15 @@ The JSON document below is an example of a response to the previous request.
                 ],
                 // ...
             },
-            "Critical alarms": 117,
-            "Major alarms": 37
+            "Critical alarms": {
+                "value": 117,
+                "trend": 76,
+                "sla": false
+            },
+            "Major alarms": {
+                "value": 37,
+                "trend": 10
+            }
         },
         {
             "entity": {
@@ -191,8 +219,14 @@ The JSON document below is an example of a response to the previous request.
                 ],
                 // ...
             },
-            "Critical alarms": 2,
-            "Major alarms": 3
+            "Critical alarms": {
+                "value": 2,
+                "trend": -1
+            },
+            "Major alarms": {
+                "value": 3,
+                "trend": -1
+            }
         },
         // ...
     ]

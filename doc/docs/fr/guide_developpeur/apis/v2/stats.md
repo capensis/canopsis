@@ -24,6 +24,9 @@ suivants :
  - `parameters` : un objet contenant les paramètres spécifiques à la
    statistique calculée. Ces paramètres sont précisés dans la documentation de
    chacune des statistiques.
+ - `trend` (optionnel): `true` pour calculer la tendance par rapport à la
+   période précédente.
+ - `sla` (optionnel): un SLA, représenté par une inégalité (e.g. `">= 0.99"`).
 
 #### Réponse
 
@@ -34,7 +37,9 @@ entité, sous la forme suivante :
 ```javascript
 {
     'entity': {...},  // L'entité pour laquelle la statistique a été calculée
-    'value': ...  // La valeur de la statistique
+    'value': ...,  // La valeur de la statistique
+    'trend': ...,  // La tendance
+    'sla': ...  // true si la valeur est conforme au SLA
 }
 ```
 
@@ -74,7 +79,8 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
                 ],
                 // ...
             },
-            "value": 117
+            "value": 117,
+            "trend": 96
         },
         {
             "entity": {
@@ -85,7 +91,8 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
                 ],
                 // ...
             },
-            "value": 2
+            "value": 2,
+            "trend": -3
         },
         // ...
     ]
@@ -120,6 +127,10 @@ les paramètres suivants :
     - `parameters`: un objet contenant les paramètres spécifiques à la
       statistique calculée. Ces paramètres sont précisés dans la documentation
       de chacune des statistiques.
+    - `trend` (optionnel): `true` pour calculer la tendance par rapport à la
+      période précédente.
+    - `sla` (optionnel): un SLA, représenté par une inégalité (e.g.
+      `">= 0.99"`).
 
 #### Réponse
 
@@ -130,8 +141,16 @@ entité, sous la forme suivante :
 ```javascript
 {
     'entity': {...},  // L'entité pour laquelle la statistique a été calculée
-    'titre de la statistique 1': ...  // La valeur de la statistique
-    'titre de la statistique 2': ...  // La valeur de la statistique
+    'titre de la statistique 1': {
+        'value': ...,  // La valeur de la statistique
+        'trend': ...,  // La tendance
+        'sla': ...  // true si la valeur est conforme au SLA
+    },
+    'titre de la statistique 2': {
+        'value': ...,  // La valeur de la statistique
+        'trend': ...,  // La tendance
+        'sla': ...  // true si la valeur est conforme au SLA
+    }
 }
 ```
 
@@ -156,13 +175,16 @@ POST /api/v2/stats
             "stat": "alarms_created",
             "parameters": {
                 "states": [3]
-            }
+            },
+            "trend": true,
+            "sla": "<= 20"
         },
         "Alarms majeures": {
             "stat": "alarms_created",
             "parameters": {
                 "states": [2]
-            }
+            },
+            "trend": true
         }
     }
 }
@@ -183,8 +205,15 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
                 ],
                 // ...
             },
-            "Alarmes critiques": 117,
-            "Alarmes majeures": 37
+            "Alarmes critiques": {
+                "value": 117,
+                "trend": 76,
+                "sla": false
+            },
+            "Alarmes majeures": {
+                "value": 37,
+                "trend": 10
+            }
         },
         {
             "entity": {
@@ -195,8 +224,14 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
                 ],
                 // ...
             },
-            "Alarmes critiques": 2,
-            "Alarmes majeures": 3
+            "Alarmes critiques": {
+                "value": 2,
+                "trend": -1
+            },
+            "Alarmes majeures":
+                "value": 3,
+                "trend": -1
+            }
         },
         // ...
     ]
