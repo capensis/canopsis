@@ -323,7 +323,7 @@ POST /api/v2/stats/resolve_time_sla
  - `time_in_state` returns the time spent in some states.
  - `state_rate` returns the proportion of time spent in some states.
 
-The periods during which an pbehavior was actie are not taken into account.
+The periods during which a pbehavior was active are not taken into account.
 
 #### Parameters
 
