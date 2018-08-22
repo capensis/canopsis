@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
@@ -68,9 +70,10 @@ export function convertContextWidgetToQuery(widget) {
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertAlarmUserPreferenceToQuery(userPreference) {
+export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   return {
-    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
+    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
+    filter: get(widgetPreferences, 'selected_filter.filter'),
   };
 }
 
@@ -80,10 +83,10 @@ export function convertAlarmUserPreferenceToQuery(userPreference) {
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertContextUserPreferenceToQuery(userPreference) {
+export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   return {
-    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
-    selectedTypes: userPreference.widget_preferences.selectedTypes || [],
+    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
+    selectedTypes: get(widgetPreferences, 'selectedTypes', []),
   };
 }
 

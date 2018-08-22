@@ -2,7 +2,6 @@
   div
     alarms-list(
     :widget="widget",
-    @openSettings="$emit('openSettings', $event)"
     )
 </template>
 

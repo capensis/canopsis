@@ -17,7 +17,7 @@
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
-        v-btn(icon, @click="$emit('openSettings')")
+        v-btn(icon, @click="showSettings")
           v-icon settings
     .table__overflow(v-if="!hasColumns")
       table.datatable.table
@@ -61,6 +61,8 @@
 <script>
 import omit from 'lodash/omit';
 
+import { MODALS, SIDE_BARS } from '@/constants';
+
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
@@ -69,6 +71,7 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 
 import modalMixin from '@/mixins/modal/modal';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
@@ -95,6 +98,7 @@ export default {
   },
   mixins: [
     modalMixin,
+    sideBarMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
@@ -129,14 +133,25 @@ export default {
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
     },
+
     showEditLiveReportModal() {
       this.showModal({
-        name: 'edit-live-reporting',
+        name: MODALS.editLiveReporting,
         config: {
           updateQuery: params => this.query = { ...this.query, ...params },
         },
       });
     },
+
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.alarmSettings,
+        config: {
+          widget: this.widget,
+        },
+      });
+    },
+
     fetchList() {
       if (this.hasColumns) {
         this.fetchAlarmsList({

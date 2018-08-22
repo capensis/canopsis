@@ -273,6 +273,17 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
     },
+    filter: {
+      create: {
+        title: 'Create filter',
+      },
+      edit: {
+        title: 'Edit filter',
+      },
+      fields: {
+        title: 'Title',
+      },
+    },
   },
   tables: {
     contextList: {

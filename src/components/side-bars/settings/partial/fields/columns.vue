@@ -41,7 +41,7 @@ export default {
   inject: ['$validator'],
   props: {
     value: {
-      type: Array,
+      type: [Array, Object],
       default: () => [],
     },
   },

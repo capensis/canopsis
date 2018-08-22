@@ -2,8 +2,7 @@
   div
     entities-list(
     :widget="widget",
-    :columns="$mq | mq(contextColumns)",
-    @openSettings="$emit('openSettings', $event)"
+    :properties="$mq | mq(contextColumns)",
     )
 </template>
 

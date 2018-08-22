@@ -1,4 +1,5 @@
 import queryMixin from '@/mixins/query';
+import sideBarMixins from '@/mixins/side-bar/side-bar';
 import entitiesWidgetMixin from '@/mixins/entities/widget';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -6,20 +7,22 @@ import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/qu
 
 export default {
   props: {
-    widget: {
+    config: {
       type: Object,
       required: true,
-    },
-    isNew: {
-      type: Boolean,
-      default: false,
     },
   },
   mixins: [
     queryMixin,
+    sideBarMixins,
     entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
   ],
+  computed: {
+    widget() {
+      return this.config.widget;
+    },
+  },
   methods: {
     isFormValid() {
       if (this.$validator) {
@@ -45,7 +48,7 @@ export default {
 
         const actions = [this.createUserPreference({ userPreference })];
 
-        if (this.isNew) {
+        if (this.config.isNew) {
           actions.push(this.createWidget({ widget }));
         } else {
           actions.push(this.updateWidget({ widget }));
@@ -53,7 +56,7 @@ export default {
 
         await Promise.all(actions);
 
-        await this.mergeQuery({
+        this.mergeQuery({
           id: widget.id,
           query: {
             ...convertWidgetToQuery(widget),
@@ -61,7 +64,7 @@ export default {
           },
         });
 
-        this.$emit('closeSettings');
+        this.hideSideBar();
       }
     },
   },

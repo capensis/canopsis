@@ -28,6 +28,7 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  createFilter: 'create-filter',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -127,6 +128,16 @@ export const WIDGET_TYPES = {
   context: 'crudcontext',
   weather: 'serviceweather',
   widgetWrapper: 'widgetwrapper',
+};
+
+export const SIDE_BARS = {
+  alarmSettings: 'alarm-settings',
+  contextSettings: 'context-settings',
+};
+
+export const SIDE_BARS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
+  [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
