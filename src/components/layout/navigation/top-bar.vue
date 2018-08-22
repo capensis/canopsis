@@ -5,9 +5,9 @@
     clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'laptop'")
-      img(src="../../assets/canopsis.png")
-    v-toolbar-side-icon(@click="toggleSideBar")
+    div.brand.ma-0.green.darken-4(v-show="$options.filters.mq($mq, { t: true })")
+      img(src="@/assets/canopsis.png")
+    v-toolbar-side-icon(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
       v-menu(offset-y, bottom)
@@ -18,20 +18,15 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import authMixin from '@/mixins/auth';
-
-const { mapActions } = createNamespacedHelpers('app');
 
 /**
  * Component for the top bar of the application
+ *
+ * @event toggleSideBar#click
  */
 export default {
   mixins: [authMixin],
-  methods: {
-    ...mapActions(['toggleSideBar']),
-  },
 };
 </script>
 

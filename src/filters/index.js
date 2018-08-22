@@ -1,4 +1,4 @@
-import get from './getProp';
+import get from './get';
 import date from './date';
 import formatContextSearch from './contextSearchFilter';
 
