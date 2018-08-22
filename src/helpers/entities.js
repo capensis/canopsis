@@ -20,18 +20,8 @@ export function generateWidgetByType(type) {
   };
 
   if (type === WIDGET_TYPES.alarmList) {
-    widget.alarms_state_filter = null;
-    widget.hide_resources = false;
+    widget.alarms_state_filter = {};
     widget.widget_columns = [];
-    widget.columns = [
-      'connector_name',
-      'component',
-      'resource',
-      'state',
-      'status',
-      'last_update_date',
-      'extra_details',
-    ];
   }
 
   return widget;

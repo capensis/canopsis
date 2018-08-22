@@ -15,7 +15,7 @@
       v-divider
       field-filters(
       v-model="settings.widget_preferences.selected_filter",
-      :filters="settings.widget_preferences.user_filters"
+      :filters.sync="settings.widget_preferences.user_filters"
       )
       v-divider
       field-info-popup(v-model="settings.widget.popup", :widget="widget")
@@ -29,25 +29,25 @@
 import pick from 'lodash/pick';
 import cloneDeep from 'lodash/cloneDeep';
 
-import FieldTitle from '@/components/other/settings/fields/title.vue';
-import FieldDefaultColumnSort from '@/components/other/settings/fields/default-column-sort.vue';
-import FieldColumns from '@/components/other/settings/fields/columns.vue';
-import FieldPeriodicRefresh from '@/components/other/settings/fields/periodic-refresh.vue';
-import FieldDefaultElementsPerPage from '@/components/other/settings/fields/default-elements-per-page.vue';
-import FieldOpenedResolvedFilter from '@/components/other/settings/fields/opened-resolved-filter.vue';
-import FieldFilters from '@/components/other/settings/fields/filters.vue';
-import FieldInfoPopup from '@/components/other/settings/fields/info-popup.vue';
-import FieldMoreInfo from '@/components/other/settings/fields/more-info.vue';
-
+import { PAGINATION_LIMIT } from '@/config';
+import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
+
+import FieldTitle from '../partial/fields/title.vue';
+import FieldDefaultColumnSort from '../partial/fields/default-column-sort.vue';
+import FieldColumns from '../partial/fields/columns.vue';
+import FieldPeriodicRefresh from '../partial/fields/periodic-refresh.vue';
+import FieldDefaultElementsPerPage from '../partial/fields/default-elements-per-page.vue';
+import FieldOpenedResolvedFilter from '../partial/fields/opened-resolved-filter.vue';
+import FieldFilters from '../partial/fields/filters.vue';
+import FieldInfoPopup from '../partial/fields/info-popup.vue';
+import FieldMoreInfo from '../partial/fields/more-info.vue';
 
 /**
  * Component to regroup the alarms list settings fields
- *
- * @prop {Object} widget - active widget
- * @prop {bool} isNew - is widget new
  */
 export default {
+  name: SIDE_BARS.alarmSettings,
   $_veeValidate: {
     validator: 'new',
   },
@@ -62,22 +62,22 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: [
-    widgetSettingsMixin,
-  ],
+  mixins: [widgetSettingsMixin],
   data() {
+    const { widget } = this.config;
+
     return {
       settings: {
         widget: {
-          title: this.widget.title,
-          default_sort_column: cloneDeep(this.widget.default_sort_column) || {},
-          widget_columns: cloneDeep(this.widget.widget_columns) || {},
-          periodicRefresh: cloneDeep(this.widget.periodicRefresh) || {},
-          alarms_state_filter: cloneDeep(this.widget.alarms_state_filter) || {},
-          popup: cloneDeep(this.widget.popup) || [],
+          title: widget.title,
+          default_sort_column: cloneDeep(widget.default_sort_column) || {},
+          widget_columns: cloneDeep(widget.widget_columns) || [],
+          periodicRefresh: cloneDeep(widget.periodicRefresh) || {},
+          alarms_state_filter: cloneDeep(widget.alarms_state_filter) || {},
+          popup: cloneDeep(widget.popup) || [],
         },
         widget_preferences: {
-          itemsPerPage: '',
+          itemsPerPage: PAGINATION_LIMIT,
           user_filters: [],
           selected_filter: {},
         },
@@ -93,9 +93,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .closeIcon:hover {
-    cursor: pointer;
-  }
-</style>

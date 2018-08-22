@@ -7,7 +7,7 @@
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
       v-flex(xs2)
-        v-btn(icon, @click.prevent="$emit('openSettings')")
+        v-btn(icon, @click.prevent="showSettings")
           v-icon settings
       v-flex(xs2)
         context-fab
@@ -29,12 +29,12 @@
           td
             v-checkbox(primary, hide-details, v-model="props.selected")
           td(
-          v-for="prop in properties",
+          v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
             ellipsis(
             :text="props.item | get(prop.value, null, '')",
-            :maxLetters="prop.maxLetters"
+            :maxLetters="column.maxLetters"
             )
           td
             v-btn(@click.stop="editEntity(props.item)", icon, small)
@@ -57,8 +57,9 @@ import ContextSearch from '@/components/other/context/search/context-search.vue'
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -72,7 +73,7 @@ import MoreInfos from './more-infos.vue';
  * @module context
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Array} properties - List of entities properties
+ * @prop {Array} columns - List of entities columns
  *
  * @event openSettings#click
  */
@@ -86,6 +87,7 @@ export default {
   },
   mixins: [
     modalMixin,
+    sideBarMixin,
     widgetQueryMixin,
     entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
@@ -95,7 +97,7 @@ export default {
       type: Object,
       required: true,
     },
-    properties: {
+    columns: {
       type: Array,
       default() {
         return [];
@@ -109,7 +111,7 @@ export default {
   },
   computed: {
     headers() {
-      return [...this.properties, { text: '', sortable: false }];
+      return [...this.columns, { text: '', sortable: false }];
     },
   },
   methods: {
@@ -176,6 +178,14 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
+        },
+      });
+    },
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.contextSettings,
+        config: {
+          widget: this.widget,
         },
       });
     },

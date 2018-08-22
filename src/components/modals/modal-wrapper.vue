@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-dialog(v-model="isOpened", :hide-overlay="index !== 0", v-bind="dialogProps")
+  v-dialog(v-model="isOpen", :hide-overlay="index !== 0", v-bind="dialogProps")
     // @slot use this slot default
     slot
 </template>
@@ -36,9 +36,9 @@ export default {
     };
   },
   computed: {
-    isOpened: {
+    isOpen: {
       get() {
-        return !this.modal.hideAnimationPending && this.ready;
+        return !this.modal.hidden && this.ready;
       },
       set() {
         this.hideModal({ id: this.modal.id });

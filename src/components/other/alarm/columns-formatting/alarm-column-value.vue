@@ -1,12 +1,8 @@
 <template lang="pug">
   div
     div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
-    ellipsis(
-      v-else,
-      :text="alarm | get(property.value, property.filter, '')",
-      :maxLetters="property.maxLetters"
-    )
-    info-popup-button(v-if="columnName", :columnName="columnName", :alarm="alarm", :widget="widget")
+    ellipsis(v-else, :text="alarm | get(column.value, columnFilter, '')")
+    info-popup-button(v-if="columnName", :column="column.value", :alarm="alarm", :widget="widget")
 </template>
 
 <script>
@@ -15,11 +11,6 @@ import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-colu
 import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-const PROPERTIES_COMPONENTS_MAP = {
-  'v.state.val': 'state',
-  extra_details: 'extra-details',
-};
-
 /**
  * Component to format alarms list columns
  *
@@ -27,7 +18,7 @@ const PROPERTIES_COMPONENTS_MAP = {
  *
  * @prop {Object} alarm - Object representing the alarm
  * @prop {Object} widget - Object representing the widget
- * @prop {Object} property - Property concerned on the column
+ * @prop {Object} column - Property concerned on the column
  */
 export default {
   components: {
@@ -45,17 +36,35 @@ export default {
       type: Object,
       required: true,
     },
-    property: {
+    column: {
       type: Object,
       required: true,
     },
   },
   computed: {
-    component() {
-      return PROPERTIES_COMPONENTS_MAP[this.property.value];
-    },
     columnName() {
-      return this.property.value.split('.')[1];
+      return this.column.value.split('.')[1];
+    },
+    columnFilter() {
+      const PROPERTIES_FILTERS_MAP = {
+        'v.status.val': value => this.$t(`tables.alarmStatus.${value}`),
+        'v.last_update_date': value => this.$d(new Date(value * 1000), 'long'),
+        'v.creation_date': value => this.$d(new Date(value * 1000), 'long'),
+        'v.last_event_date': value => this.$d(new Date(value * 1000), 'long'),
+        'v.state.t': value => this.$d(new Date(value * 1000), 'long'),
+        'v.status.t': value => this.$d(new Date(value * 1000), 'long'),
+        t: value => this.$d(new Date(value * 1000), 'long'),
+      };
+
+      return PROPERTIES_FILTERS_MAP[this.column.value];
+    },
+    component() {
+      const PROPERTIES_COMPONENTS_MAP = {
+        'v.state.val': 'state',
+        extra_details: 'extra-details',
+      };
+
+      return PROPERTIES_COMPONENTS_MAP[this.column.value];
     },
   },
 };
