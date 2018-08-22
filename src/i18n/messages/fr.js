@@ -3,6 +3,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 export default {
   common: {
     watcher: 'Observateur',
+    widget: 'Widget',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
