@@ -415,3 +415,50 @@ POST /api/v2/stats/state_rate
     ]
 }
 ```
+
+
+### Mean Time Between Failures
+
+The `mtbf` statistic returns the Mean Time Between Failures, i.e. the available
+time divided by the number of alarms.
+
+The periods during which a pbehavior was active are not taken into account.
+
+#### Paramètres
+
+This statistic does not take any parameters.
+
+#### Exemple
+
+```javascript
+POST /api/v2/stats/mtbf
+{
+	"mfilter": {
+		"type": "resource",
+		"impact": {
+			"$in": ["feeder2_80"]
+		}
+	},
+	"tstop": 1534716000,
+	"duration": "2d"
+}
+```
+
+```javascript
+{
+    "values": [
+        {
+            "entity": {
+                "_id": "resource1/component1",
+                "type": "resource"
+                "impact": [
+                    "service"
+                ],
+                // ...
+            },
+            "value": 406.56
+        },
+        // ...
+    ]
+}
+`

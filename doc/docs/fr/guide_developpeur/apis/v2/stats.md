@@ -425,3 +425,52 @@ POST /api/v2/stats/state_rate
     ]
 }
 ```
+
+
+### Indice de fiabilité
+
+La statistique `mtbf` (Mean Time Between Failures) renvoie l'indice de
+fiabilité, ou temps moyen entre panne, c'est-à-dire le temps de disponibilité
+divisé par le nombre d'indisponibilités.
+
+Les périodes pendant lesquelles un pbehavior était actif ne sont pas
+prises en compte.
+
+#### Paramètres
+
+Cette statistique ne prend pas de paramètres.
+
+#### Exemple
+
+```javascript
+POST /api/v2/stats/mtbf
+{
+	"mfilter": {
+		"type": "resource",
+		"impact": {
+			"$in": ["feeder2_80"]
+		}
+	},
+	"tstop": 1534716000,
+	"duration": "2d"
+}
+```
+
+```javascript
+{
+    "values": [
+        {
+            "entity": {
+                "_id": "resource1/component1",
+                "type": "resource"
+                "impact": [
+                    "service"
+                ],
+                // ...
+            },
+            "value": 406.56
+        },
+        // ...
+    ]
+}
+```
