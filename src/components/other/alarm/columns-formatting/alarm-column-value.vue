@@ -47,7 +47,7 @@ export default {
     },
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
-        'v.state.val': value => this.$t(`tables.alarmStatus.${value}`),
+        'v.status.val': value => this.$t(`tables.alarmStatus.${value}`),
         'v.last_update_date': value => this.$d(new Date(value * 1000), 'long'),
         'v.creation_date': value => this.$d(new Date(value * 1000), 'long'),
         'v.last_event_date': value => this.$d(new Date(value * 1000), 'long'),
