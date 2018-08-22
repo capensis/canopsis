@@ -723,8 +723,9 @@ class AlertsReader(object):
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
 
-        self.add_pbh_filter(pipeline, filter_)
+        test_has_active_pbehavior = self.has_active_pbh is not None
 
+        self.add_pbh_filter(pipeline, filter_)
         count_pipeline = pipeline[:]
 
         pipeline.append({
@@ -759,11 +760,13 @@ class AlertsReader(object):
         }
 
         if with_count:
-            count_pipeline.append({'$group': {'_id': None, 'count': {'$sum': 1}}}) 
-            count = self.alarm_storage._backend.aggregate(count_pipeline, allowDiskUse=True,cursor={})
-            alarms_count = list(count)[0].get('count')
-            res['total'] = alarms_count
-            return res, alarms_count
+            if test_has_active_pbehavior: 
+                count_pipeline.append({'$group': {'_id': None, 'count': {'$sum': 1}}}) 
+                count = self.alarm_storage._backend.aggregate(count_pipeline, allowDiskUse=True,cursor={})
+                alarms_count = list(count)[0].get('count')
+                res['total'] = alarms_count
+                return res, alarms_count
+            return res, res.get('total')
 
         return res
 
