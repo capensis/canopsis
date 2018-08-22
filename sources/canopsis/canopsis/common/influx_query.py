@@ -121,7 +121,8 @@ class SelectQuery(object):
                 ', '.join(group_by_tags))
 
         fill_statement = ''
-        if self.group_by_time_interval and self.group_by_time_fill:
+        if not (self.group_by_time_interval is None
+                or self.group_by_time_fill is None):
             fill_statement = 'fill({})'.format(self.group_by_time_fill)
 
         return (
