@@ -10,10 +10,10 @@ import get from 'lodash/get';
  * @returns {String}
  */
 export default function (object, property, filter, defaultValue) {
-  const value = get(object, property);
+  let value = get(object, property);
 
   if (filter) {
-    return filter(value);
+    value = filter(value);
   }
 
   return value || defaultValue;
