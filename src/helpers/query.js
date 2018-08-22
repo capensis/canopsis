@@ -2,6 +2,26 @@ import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
 /**
+ * WIDGET CONVERTERS
+ */
+
+/**
+ * This function converts widget.default_sort_column to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertDefaultSortColumnToQuery(widget) {
+  const { default_sort_column: defaultSortColumn } = widget;
+
+  if (defaultSortColumn && defaultSortColumn.property) {
+    return { sortKey: defaultSortColumn.property, sortDir: defaultSortColumn.direction };
+  }
+
+  return { sortKey: null, sortDir: null };
+}
+
+/**
  * This function converts widget with type 'listalarm' to query Object
  *
  * @param {Object} widget
@@ -12,24 +32,16 @@ export function convertAlarmWidgetToQuery(widget) {
     page: 1,
   };
 
-  const { default_sort_column: defaultSortColumn } = widget;
-
-  if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortKey = defaultSortColumn.property.startsWith('v.') ?
-      defaultSortColumn.property : `v.${defaultSortColumn.property}`;
-
-    query.sortDir = defaultSortColumn.direction;
-  } else {
-    query.sortKey = null;
-    query.sortDir = null;
-  }
-
   if (widget.alarms_state_filter) {
     query.opened = Boolean(widget.alarms_state_filter.opened);
     query.resolved = Boolean(widget.alarms_state_filter.resolved);
   }
 
-  return query;
+  if (widget.widget_columns) {
+    query.active_columns = widget.widget_columns.map(v => v.value);
+  }
+
+  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 
 /**
@@ -43,18 +55,12 @@ export function convertContextWidgetToQuery(widget) {
     page: 1,
   };
 
-  const { default_sort_column: defaultSortColumn } = widget;
-
-  if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortKey = defaultSortColumn.property;
-    query.sortDir = defaultSortColumn.direction;
-  } else {
-    query.sortKey = null;
-    query.sortDir = null;
-  }
-
-  return query;
+  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
+
+/**
+ * USER_PREFERENCE CONVERTERS
+ */
 
 /**
  * This function converts userPreference with widgetXtype 'listalarm' to query Object
@@ -80,6 +86,10 @@ export function convertContextUserPreferenceToQuery(userPreference) {
     selectedTypes: userPreference.widget_preferences.selectedTypes || [],
   };
 }
+
+/**
+ * MAIN CONVERTERS
+ */
 
 /**
  * This function converts userPreference to query Object

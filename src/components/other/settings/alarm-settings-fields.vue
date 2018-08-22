@@ -71,7 +71,7 @@ export default {
         widget: {
           title: this.widget.title,
           default_sort_column: cloneDeep(this.widget.default_sort_column) || {},
-          widget_columns: cloneDeep(this.widget.widget_columns) || {},
+          widget_columns: cloneDeep(this.widget.widget_columns) || [],
           periodicRefresh: cloneDeep(this.widget.periodicRefresh) || {},
           alarms_state_filter: cloneDeep(this.widget.alarms_state_filter) || {},
           popup: cloneDeep(this.widget.popup) || [],
