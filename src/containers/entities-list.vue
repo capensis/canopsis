@@ -2,7 +2,7 @@
   div
     entities-list(
     :widget="widget",
-    :properties="$mq | mq(contextProperties)",
+    :properties="$mq | mq(contextColumns)",
     )
 </template>
 
@@ -27,7 +27,7 @@ export default {
         'column-names',
         'context-entities-types-filter',
       ],
-      contextProperties: {
+      contextColumns: {
         l: [
           {
             text: this.$t('tables.contextEntities.columns._id'),

@@ -1,10 +1,10 @@
 <template lang="pug">
   v-container
     v-layout.white(wrap, justify-space-between, align-center)
-      v-flex(xs12 md3)
+      v-flex(xs12, md3)
         alarm-list-search(:query.sync="query")
       v-flex(xs2)
-        pagination(:meta="alarmsMeta", :query.sync="query", type="top")
+        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
       v-flex.ml-4(xs3)
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
       v-flex(xs3)
@@ -19,7 +19,12 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="showSettings")
           v-icon settings
-    div
+    .table__overflow(v-if="!hasColumns")
+      table.datatable.table
+        tbody
+          tr
+            td.text-xs-center You have to select at least 1 column
+    div(v-else)
       v-data-table(
       v-model="selected",
       :items="alarms",
@@ -37,10 +42,10 @@
           td
             v-checkbox(primary, hide-details, v-model="props.selected")
           td(
-          v-for="prop in properties",
+          v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
-            alarm-column-value(:alarm="props.item", :property="prop", :widget="widget")
+            alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
           td
             actions-panel(:item="props.item", :widget="widget")
         template(slot="expand", slot-scope="props")
@@ -68,6 +73,7 @@ import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -78,8 +84,6 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
  * @module alarm
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Object} properties - Object that describe the columns names and the alarms attributes corresponding
- *            e.g : { ColumnName : 'att1.att2', Connector : 'v.connector' }
  *
  * @event openSettings#click
  */
@@ -96,6 +100,7 @@ export default {
     modalMixin,
     sideBarMixin,
     widgetQueryMixin,
+    widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
     entitiesUserPreferenceMixin,
@@ -104,10 +109,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    properties: {
-      type: Array,
-      default: () => ([]),
     },
   },
   data() {
@@ -119,14 +120,20 @@ export default {
     selectedIds() {
       return this.selected.map(item => item._id);
     },
+
     headers() {
-      return [...this.properties, { text: '', sortable: false }];
+      if (this.hasColumns) {
+        return [...this.columns, { text: '', sortable: false }];
+      }
+
+      return [];
     },
   },
   methods: {
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
     },
+
     showEditLiveReportModal() {
       this.showModal({
         name: MODALS.editLiveReporting,
@@ -135,6 +142,7 @@ export default {
         },
       });
     },
+
     showSettings() {
       this.showSideBar({
         name: SIDE_BARS.alarmSettings,
@@ -142,6 +150,15 @@ export default {
           widget: this.widget,
         },
       });
+    },
+
+    fetchList() {
+      if (this.hasColumns) {
+        this.fetchAlarmsList({
+          widgetId: this.widget.id,
+          params: this.getQuery(),
+        });
+      }
     },
   },
 };

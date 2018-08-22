@@ -29,12 +29,12 @@
           td
             v-checkbox(primary, hide-details, v-model="props.selected")
           td(
-          v-for="prop in properties",
+          v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
             ellipsis(
-            :text="$options.filters.get(props.item,prop.value) || ''",
-            :maxLetters="prop.maxLetters"
+            :text="props.item | get(column.value) || ''",
+            :maxLetters="column.maxLetters"
             )
           td
             v-btn(@click.stop="editEntity(props.item)", icon, small)
@@ -73,7 +73,7 @@ import MoreInfos from './more-infos.vue';
  * @module context
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Array} properties - List of entities properties
+ * @prop {Array} columns - List of entities columns
  *
  * @event openSettings#click
  */
@@ -97,7 +97,7 @@ export default {
       type: Object,
       required: true,
     },
-    properties: {
+    columns: {
       type: Array,
       default() {
         return [];
@@ -111,7 +111,7 @@ export default {
   },
   computed: {
     headers() {
-      return [...this.properties, { text: '', sortable: false }];
+      return [...this.columns, { text: '', sortable: false }];
     },
   },
   methods: {

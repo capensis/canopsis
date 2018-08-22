@@ -24,39 +24,48 @@ export default {
     },
   },
   methods: {
-    async submit() {
-      const widget = {
-        ...this.widget,
-        ...this.settings.widget,
-      };
-
-      const userPreference = {
-        ...this.userPreference,
-        widget_preferences: {
-          ...this.userPreference.widget_preferences,
-          ...this.settings.widget_preferences,
-        },
-      };
-
-      const actions = [this.createUserPreference({ userPreference })];
-
-      if (this.config.isNew) {
-        actions.push(this.createWidget({ widget }));
-      } else {
-        actions.push(this.updateWidget({ widget }));
+    isFormValid() {
+      if (this.$validator) {
+        return this.$validator.validateAll();
       }
 
-      await Promise.all(actions);
+      return true;
+    },
+    async submit() {
+      if (this.isFormValid) {
+        const widget = {
+          ...this.widget,
+          ...this.settings.widget,
+        };
 
-      this.mergeQuery({
-        id: widget.id,
-        query: {
-          ...convertWidgetToQuery(widget),
-          ...convertUserPreferenceToQuery(userPreference),
-        },
-      });
+        const userPreference = {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            ...this.settings.widget_preferences,
+          },
+        };
 
-      this.hideSideBar();
+        const actions = [this.createUserPreference({ userPreference })];
+
+        if (this.config.isNew) {
+          actions.push(this.createWidget({ widget }));
+        } else {
+          actions.push(this.updateWidget({ widget }));
+        }
+
+        await Promise.all(actions);
+
+        this.mergeQuery({
+          id: widget.id,
+          query: {
+            ...convertWidgetToQuery(widget),
+            ...convertUserPreferenceToQuery(userPreference),
+          },
+        });
+
+        this.hideSideBar();
+      }
     },
   },
 };
