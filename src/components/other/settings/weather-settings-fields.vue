@@ -6,6 +6,9 @@
       field-weather-template(:content.sync="settings.widget.block_template", :value="widget.block_template")
       field-weather-modal-template(:content.sync="settings.widget.modal_template", :value="widget.modal_template")
       field-weather-entity-template(:content.sync="settings.widget.entity_template", :value="widget.entity_template")
+      field-grid-size(:value.sync="widget.columnSM")
+      field-grid-size(:value.sync="widget.columnMD")
+      field-grid-size(:value.sync="widget.columnLG")
     v-btn(@click="submit", color="green darken-4 white--text", depressed, fixed, right) {{ $t('common.save') }}
 </template>
 
@@ -15,6 +18,7 @@ import FieldWeatherDataSet from '@/components/other/settings/fields/weather-data
 import FieldWeatherTemplate from '@/components/other/settings/fields/weather-template.vue';
 import FieldWeatherModalTemplate from '@/components/other/settings/fields/weather-modal-template.vue';
 import FieldWeatherEntityTemplate from '@/components/other/settings/fields/weather-entity-template.vue';
+import FieldGridSize from '@/components/other/settings/fields/grid-size.vue';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 export default {
@@ -24,6 +28,7 @@ export default {
     FieldWeatherTemplate,
     FieldWeatherModalTemplate,
     FieldWeatherEntityTemplate,
+    FieldGridSize,
   },
   mixins: [widgetSettingsMixin],
   data() {
@@ -34,6 +39,9 @@ export default {
           block_template: '',
           modal_template: '',
           entity_template: '',
+          columnSM: 0,
+          columnMD: 2,
+          columnLG: 4,
         },
       },
     };

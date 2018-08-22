@@ -4,7 +4,7 @@
       v-btn(icon, @click="$emit('openSettings')")
         v-icon settings
     v-layout(wrap)
-      v-flex(v-for="item in watchers", :key="item._id" xs3)
+      v-flex(v-for="item in watchers", :key="item._id", xs3)
         weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
 </template>
 
