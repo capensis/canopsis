@@ -50,8 +50,7 @@
         }}
         {{tr 'records per page'}}
     </div>
-
-{{#if controller.rights.list_filters.checksum}}
+{{#if controller.login.rights.listalarm_listFilters.checksum}}
     <div class="pull-right btn-group" data-toggle="btn-toggle">
         {{#each filter in controller.filters_list}}
             <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active"}} data-col="all" {{action "setFilter" filter}}>
@@ -61,15 +60,19 @@
         {{#each filter in controller.custom_filters_list}}
             <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "selectFilter" filter}}>
                 {{filter.title}}
-                <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
-                <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{#if controller.login.rights.listalarm_editFilter.checksum}}
+                        <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                        <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{/if}}
             </span>
         {{/each}}
         {{#each filter in controller.user_filters}}
             <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "setFilter" filter}}>
                 {{filter.title}}
-                <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
-                <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{#if controller.login.rights.listalarm_editFilter.checksum}}
+                        <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                        <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{/if}}
             </span>
         {{/each}}
         {{#if controller.mixinOptions.customfilterlist.can_mix_filters}}
@@ -77,7 +80,7 @@
                 <button {{bind-attr class=":btn operator.active:btn-primary:btn-default :btn-sm operator.active:active"}} {{action "setActiveOperator" operator}}>{{operator.display}}</button>
             {{/each}}
         {{/if}}
-        {{#if controller.canAddCustomFiltersInUserPreferences}}
+        {{#if controller.login.rights.listalarm_addFilter.checksum}}
             <button type="button" class="btn btn-primary btn-sm btn-add-customfilter" {{action "addUserFilter"}} data-col="all">
                 <i class="fa fa-plus"></i> {{tr 'Add filter'}}
             </button>
