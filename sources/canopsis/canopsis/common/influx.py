@@ -33,6 +33,11 @@ INFLUXDB_CONF_SECTION = 'DATABASE'
 
 SECONDS = 1000000000
 
+# This string contains the special characters that need to be escaped in a go
+# regexp:
+# https://github.com/golang/go/blob/c5d38b896df504e3354d7a27f7ad86fa9661ce6b/src/regexp/regexp.go#L628
+REGEX_SPECIAL_CHARS = '\.+*?()|[]{}^$'
+
 
 class InfluxDBOptions(object):
     """
@@ -232,5 +237,17 @@ def quote_regex(value):
     :param str value: An influxdb regex.
     :rtype: str
     """
-    return "/{}/".format(value.replace("\\", "\\\\")
-                              .replace("/", "\\/"))
+    return "/{}/".format(value.replace("/", "\\/"))
+
+
+def escape_regex(pattern):
+    """
+    Escape the special characters in the pattern.
+
+    This function does the same thing as re.escape, but for go regexp.
+    """
+    s = list(pattern)
+    for i, c in enumerate(pattern):
+        if c in REGEX_SPECIAL_CHARS:
+            s[i] = "\\" + c
+    return pattern[:0].join(s)

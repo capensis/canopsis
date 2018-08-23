@@ -20,7 +20,10 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import SECONDS, quote_ident, quote_literal
+import re
+
+from canopsis.common.influx import SECONDS, quote_ident, quote_literal, \
+    quote_regex, escape_regex
 
 
 class SelectColumn(object):
@@ -229,10 +232,15 @@ class SelectQuery(object):
             # condition.
             return self.where('false')
 
-        condition = ' OR '.join(
-            '{} = {}'.format(quote_ident(tag), quote_literal(value))
+        # Build a regular expression checking that the tag matches one of the
+        # values.
+        regex = '^({})$'.format('|'.join(
+            escape_regex(value)
             for value in values
-        )
+        ))
+        condition = '{} =~ {}'.format(
+            quote_ident(tag),
+            quote_regex(regex))
         return self.where(condition)
 
     def after(self, timestamp):
