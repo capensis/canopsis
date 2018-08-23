@@ -247,6 +247,157 @@ The JSON document below is an example of a response to the previous request.
 }
 ```
 
+### Compute statistics on multiple periods
+
+#### URL
+
+`POST /api/v2/stats/evolution`
+
+#### Parameters
+
+This route is similar to the previous one, but allows to compute statistics on
+multiple periods. It takes a JSON object with the following fields:
+
+ - `tstop`: a timestamp indicating the end of the last period for which the
+   statistics will be computed. This timestamp should be at the top of an hour
+   (e.g. 12:00, not 12:03).
+ - `duration`: the duration of the period, represented by a string
+   `"<n><unit>"`, where `<n>` is an integer and `<unit>` a time unit (`h`, `d`
+   ou `w`).
+ - `mfilter`: a mongodb filter, filtering the entities for which the
+   statistics should be computed.
+ - `stats`: an object containing the statistics to compute. This objects maps a
+   title (which will be used in the response) to an object defining the
+   statistic, which has the following fields:
+    - `stat`: the statistic (for example `alarms_crated`).
+    - `parameters`: an object containing parameters for the computed statistic.
+      See the documentation of each statistic below for the available
+      parameters.
+    - `trend` (optional): `true` to compute the trend with the previous period.
+    - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
+ - `periods`: the number of periods.
+
+#### Response
+
+If the request succeeded, the response is a JSON object containing a `values`
+field. This field is a table containing the values of the statistics for each
+entity, as follows:
+
+```javascript
+{
+    'entity': {...},  // L'entité pour laquelle la statistique a été calculée
+    'titre de la statistique 1': [
+        {
+            'start': ...,  // Timestamp du début de la période
+            'end': ...,  // Timestamp du fin de la période
+            'value': ...,  // La valeur de la statistique
+            'trend': ...,  // La tendance
+            'sla': ...  // true si la valeur est conforme au SLA
+        },
+        {
+            'start': ...,  // Timestamp du début de la période
+            'end': ...,  // Timestamp du fin de la période
+            'value': ...,  // La valeur de la statistique
+            'trend': ...,  // La tendance
+            'sla': ...  // true si la valeur est conforme au SLA
+        },
+        // ...
+    ],
+    'titre de la statistique 2': [
+        // ...
+    ]
+}
+```
+
+#### Example
+
+The following request returns the number of critical and major alarms opened on
+each resource impacting the entity `service`, on the 18th and 19th of August
+2018.
+
+```javascript
+POST /api/v2/stats/evolution
+{
+    "mfilter": {
+        "type": "resource",
+        "impact": {
+            "$in": ["service"]
+        }
+    },
+    "tstop": 1534716000,  // 20 août à 00:00
+    "duration": "1d",
+    "periods": 2,
+    "stats": {
+        "Critical alarms": {
+            "stat": "alarms_created",
+            "parameters": {
+                "states": [3]
+            },
+            "trend": true,
+            "sla": "<= 20"
+        },
+        "Major alarms": {
+            "stat": "alarms_created",
+            "parameters": {
+                "states": [2]
+            },
+            "trend": true
+        }
+    }
+}
+```
+
+The JSON document below is an example of a response to the previous request.
+
+
+```javascript
+{
+    "values": [
+        {
+            "entity": {
+                "_id": "resource1/component1",
+                "type": "resource"
+                "impact": [
+                    "service"
+                ],
+                // ...
+            },
+            "Critical alarms": [
+                {
+                    "start": 1534543200,  // August 18 at 0:00
+                    "end: 1534629600,
+                    "value": 19,
+                    "trend": 12,
+                    "sla": false
+                },
+                {
+                    "start": 1534629600,  // August 19 at 00:00
+                    "end": 1534716000,
+                    "value": 98,
+                    "trend": 79,
+                    "sla": false
+                }
+            ],
+            "Major alarms": [
+                {
+                    "start": 1534543200,  // August 18 at 00:00
+                    "end: 1534629600,
+                    "value": 11,
+                    "trend": -1
+                },
+                {
+                    "start": 1534629600,  // August 19 at 00:00
+                    "end": 1534716000,
+                    "value": 26,
+                    "trend": 15
+                }
+            ]
+        },
+        // ...
+    ]
+}
+```
+
 
 ## Statistics
 

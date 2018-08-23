@@ -254,6 +254,164 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
 }
 ```
 
+### Calcul de statistiques sur plusieurs périodes
+
+#### URL
+
+`POST /api/v2/stats/evolution`
+
+#### Paramètres
+
+Cette route est similaire à la précédente, mais permet de calculer les
+statistiques sur plusieurs périodes. Elle accepte en requête un objet JSON
+contenant les paramètres suivants :
+
+ - `tstop` : un timestamp indiquant le fin de la période pour laquelle la
+   statistique doit être calculées. Ce timestamp doit correspondre à une heure
+   pile (e.g.  12:00, et non 12:03).
+ - `duration` : la durée de la période, représentée par une chaîne
+   `"<n><unité>"`, avec `<n>` un entier et `<unité>` une unité de temps (`h`,
+   `d` ou `w`).
+ - `mfilter` : un filtre mongodb, filtrant les entités pour lesquelles les
+   statistiques doivent être calculées.
+ - `stats`: un objet contenant les statistiques à calculer. Cet objet associe
+   un titre de statistique (qui sera utilisé dans la réponse) à un objet
+   définissant la statistique. Cet objet contient les champs suivants :
+    - `stat`: la statistique à calculer (par exemple `alarms_created`).
+    - `parameters`: un objet contenant les paramètres spécifiques à la
+      statistique calculée. Ces paramètres sont précisés dans la documentation
+      de chacune des statistiques.
+    - `trend` (optionnel): `true` pour calculer la tendance par rapport à la
+      période précédente.
+    - `sla` (optionnel): un SLA, représenté par une inégalité (e.g.
+      `">= 0.99"`).
+ - `periods`: le nombre de périodes pour lesquelles les statistiques doivent
+   être calculéees.
+
+Les paramètres `sort_column`, `sort_order` et `limit` ne sont pas disponibles
+pour cette route.
+
+#### Réponse
+
+En cas de succès, la réponse est un objet JSON contenant un champ `values`. Ce
+champ est un tableau contenant les valeurs des statistiques pour chaque
+entité, sous la forme suivante :
+
+```javascript
+{
+    'entity': {...},  // L'entité pour laquelle la statistique a été calculée
+    'titre de la statistique 1': [
+        {
+            'start': ...,  // Timestamp du début de la période
+            'end': ...,  // Timestamp du fin de la période
+            'value': ...,  // La valeur de la statistique
+            'trend': ...,  // La tendance
+            'sla': ...  // true si la valeur est conforme au SLA
+        },
+        {
+            'start': ...,  // Timestamp du début de la période
+            'end': ...,  // Timestamp du fin de la période
+            'value': ...,  // La valeur de la statistique
+            'trend': ...,  // La tendance
+            'sla': ...  // true si la valeur est conforme au SLA
+        },
+        // ...
+    ],
+    'titre de la statistique 2': [
+        // ...
+    ]
+}
+```
+
+#### Exemple
+
+La requête suivante renvoie le nombre d'alarmes critiques et majeures ouvertes
+sur chaque ressource impactant l'entité `service`, les 18 et 19 août 2018.
+
+```javascript
+POST /api/v2/stats/evolution
+{
+    "mfilter": {
+        "type": "resource",
+        "impact": {
+            "$in": ["service"]
+        }
+    },
+    "tstop": 1534716000,  // 20 août à 00:00
+    "duration": "1d",
+    "periods": 2,
+    "stats": {
+        "Alarms critiques": {
+            "stat": "alarms_created",
+            "parameters": {
+                "states": [3]
+            },
+            "trend": true,
+            "sla": "<= 20"
+        },
+        "Alarms majeures": {
+            "stat": "alarms_created",
+            "parameters": {
+                "states": [2]
+            },
+            "trend": true
+        }
+    }
+}
+```
+
+Le document JSON ci-dessous est un exemple de réponse à la requête précédente.
+
+
+```javascript
+{
+    "values": [
+        {
+            "entity": {
+                "_id": "resource1/component1",
+                "type": "resource"
+                "impact": [
+                    "service"
+                ],
+                // ...
+            },
+            "Alarmes critiques": [
+                {
+                    "start": 1534543200,  // 18 août à 00:00
+                    "end: 1534629600,
+                    "value": 19,
+                    "trend": 12,
+                    "sla": false
+                },
+                {
+                    "start": 1534629600,  // 19 août à 00:00
+                    "end": 1534716000,
+                    "value": 98,
+                    "trend": 79,
+                    "sla": false
+                }
+            ],
+            "Alarmes majeures": [
+                {
+                    "start": 1534543200,  // 18 août à 00:00
+                    "end: 1534629600,
+                    "value": 11,
+                    "trend": -1
+                },
+                {
+                    "start": 1534629600,  // 19 août à 00:00
+                    "end": 1534716000,
+                    "value": 26,
+                    "trend": 15
+                }
+            ]
+        },
+        // ...
+    ]
+}
+```
+
+
 ## Statistiques
 
 ### Compteurs d'alarmes
