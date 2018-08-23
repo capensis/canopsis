@@ -1,6 +1,10 @@
+FROM node:10.6-stretch
+
+RUN cd sources/webcore/src/canopsis-next; npm install; NODE_ENV=production npm run build
 
 # Use this image as a build image in a multistage build ?
-FROM %%BASE_IMAGE%%
+# FROM %%BASE_IMAGE%% as build
+FROM debian:stretch-slim
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
@@ -23,3 +27,45 @@ COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
 COPY docker/build/run-${DISTRIBUTION}.sh /run.sh
 RUN /bin/bash /run.sh
+
+WORKDIR ${CPS_HOME}
+
+### Install virtualenv
+RUN virtualenv .;\
+	source /etc/os-release;\
+	source ${CPS_HOME}/bin/activate;\
+	pip install -b /tmp/pipbuild -U setuptools pip wheel;
+	pip install -b /tmp/pipbuild -r /sources/canopsis/requirements.txt
+	pyopenssl="pyOpenSSL"\
+	if [ "${VERSION_ID}" = "8" ]&&[ "${ID}" = "debian" ]; then\
+	   pyopenssl="pyOpenSSL==17.5.0";\
+	fi;\
+	pip install -b /tmp/pipbuild -U setuptools jmespath "pymongo==3.5.0" "influxdb==5.1.0" "${pyopenssl}" "ansible==2.4.4"\
+	rm -rf /tmp/pipbuild
+
+RUN mkdir -p ./etc/init.d && \
+    mkdir -p var/log/engines && \
+    mkdir -p var/cache/canopsis && \
+    mkdir -p tmp && \
+    sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
+    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
+
+### Webserver
+RUN mkdir -p ${CPS_HOME}/var/www
+COPY sources/webcore/ ${CPS_HOME}/var/www/
+RUN rm -rf ${CPS_HOME}/var/www/doc
+
+# Copy UI bricks as root
+COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
+RUN . ${CPS_HOME}/bin/activate && \
+    python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
+    python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
+    python /${CPS_HOME}/bin/brickmanager enable brick-timeline
+
+# Ansible
+COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
+
+USER ${CPS_USER}:${CPS_GROUP}
+
+EXPOSE 8082
+ENTRYPOINT /entrypoint.sh
