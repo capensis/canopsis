@@ -16,10 +16,9 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 </template>
 
 <script>
-import Handlebars from 'handlebars';
-
 import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import compile from '@/helpers/handlebars-compile';
 
 import SunIcon from './icons/sun.vue';
 import CloudySunIcon from './icons/cloudy-sun.vue';
@@ -68,9 +67,7 @@ export default {
       };
     },
     compiledTemplate() {
-      const template = Handlebars.compile(this.template);
-      const context = { ...this.watcher };
-      return template(context);
+      return compile(this.template, { ...this.watcher });
     },
   },
   methods: {
@@ -80,6 +77,7 @@ export default {
         config: {
           watcherId: this.watcher.entity_id,
           entityTemplate: this.widget.entity_template,
+          modalTemplate: this.widget.modal_template,
         },
       });
     },
