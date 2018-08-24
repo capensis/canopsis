@@ -109,12 +109,12 @@ def exports(ws):
     )
     def get_entities(
             query={},
-            projection={},
+            projection=None,
             limit=0,
             sort=False,
             with_count=False
     ):
-        return get_entities(
+        return manager.get_entities(
             query=query,
             projection=projection,
             limit=limit,
