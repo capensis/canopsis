@@ -204,3 +204,9 @@ export const FILTER_DEFAULT_VALUES = {
     rules: {},
   },
 };
+
+export const DATETIME_FORMATS = {
+  long: 'DD/MM/YYYY H:mm:ss',
+  short: 'DD/MM/YYYY',
+  time: 'H:mm:ss',
+};

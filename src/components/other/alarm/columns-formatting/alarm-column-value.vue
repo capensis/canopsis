@@ -48,12 +48,12 @@ export default {
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
         'v.status.val': value => this.$t(`tables.alarmStatus.${value}`),
-        'v.last_update_date': value => this.$d(new Date(value * 1000), 'long'),
-        'v.creation_date': value => this.$d(new Date(value * 1000), 'long'),
-        'v.last_event_date': value => this.$d(new Date(value * 1000), 'long'),
-        'v.state.t': value => this.$d(new Date(value * 1000), 'long'),
-        'v.status.t': value => this.$d(new Date(value * 1000), 'long'),
-        t: value => this.$d(new Date(value * 1000), 'long'),
+        'v.last_update_date': value => this.$options.filters.date(value, 'long'),
+        'v.creation_date': value => this.$options.filters.date(value, 'long'),
+        'v.last_event_date': value => this.$options.filters.date(value, 'long'),
+        'v.state.t': value => this.$options.filters.date(value, 'long'),
+        'v.status.t': value => this.$options.filters.date(value, 'long'),
+        t: value => this.$options.filters.date(value, 'long'),
       };
 
       return PROPERTIES_FILTERS_MAP[this.column.value];

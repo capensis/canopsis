@@ -13,7 +13,7 @@
               v-chip.red.white--text.title {{ $t('common.disabled') }}
           v-flex(xs4, md2)
             h4.text-xs-center {{ $t('context.moreInfos.lastActiveDate') }} :
-            p.text-xs-center {{ $d(this.lastActiveDate, 'long') }}
+            p.text-xs-center {{ this.lastActiveDate | date('long') }}
           v-flex(xs6, md2)
             v-menu(:value="isImpactExpanded", bottom, offset-y, fixed)
               v-btn(@click.stop="isImpactExpanded = !isImpactExpanded", slot="activator") {{ $t('context.impacts') }}
