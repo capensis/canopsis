@@ -7,66 +7,64 @@
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
       v-flex(xs2)
-        v-btn(icon, @click.prevent="$emit('openSettings')")
+        v-btn(icon, @click.prevent="showSettings")
           v-icon settings
       v-flex(xs2)
         context-fab
-    transition(name="fade", mode="out-in")
-      loader(v-if="contextEntitiesPending")
-      div(v-else)
-        v-data-table(
-          v-model="selected",
-          :items="contextEntities",
-          :headers="properties",
-          item-key="_id",
-          :total-items="contextEntitiesMeta.total",
-          :pagination.sync="vDataTablePagination",
-          select-all,
-          hide-actions,
-        )
-          template(slot="headerCell", slot-scope="props")
-              span {{ props.header.text }}
-          template(slot="items", slot-scope="props")
-            td
-              v-checkbox(primary, hide-details, v-model="props.selected")
-            td(
-              v-for="prop in properties",
-              @click="props.expanded = !props.expanded"
+    div
+      v-data-table(
+      v-model="selected",
+      :items="contextEntities",
+      :headers="headers",
+      :loading="contextEntitiesPending",
+      :total-items="contextEntitiesMeta.total",
+      :pagination.sync="vDataTablePagination",
+      item-key="_id",
+      select-all,
+      hide-actions,
+      )
+        template(slot="headerCell", slot-scope="props")
+          span {{ props.header.text }}
+        template(slot="items", slot-scope="props")
+          td
+            v-checkbox(primary, hide-details, v-model="props.selected")
+          td(
+          v-for="column in columns",
+          @click="props.expanded = !props.expanded"
+          )
+            ellipsis(
+            :text="props.item | get(column.value) || ''",
+            :maxLetters="column.maxLetters"
             )
-              ellipsis(
-                :text="$options.filters.get(props.item,prop.value) || ''",
-                :maxLetters="prop.maxLetters"
-              )
-            td
-              v-btn(@click.stop="editEntity(props.item)", icon, small)
-                v-icon edit
-              v-btn(@click.stop="deleteEntity(props.item)", icon, small)
-                v-icon delete
-          template(slot="expand", slot-scope="props")
-            more-infos(:item="props")
-        v-layout.white(align-center)
-          v-flex(xs10)
-            pagination(:meta="contextEntitiesMeta", :query.sync="query")
-          v-flex(xs2)
-            records-per-page(:query.sync="query")
+          td
+            v-btn(@click.stop="editEntity(props.item)", icon, small)
+              v-icon edit
+            v-btn(@click.stop="deleteEntity(props.item)", icon, small)
+              v-icon delete
+        template(slot="expand", slot-scope="props")
+          more-infos(:item="props.item")
+      v-layout.white(align-center)
+        v-flex(xs10)
+          pagination(:meta="contextEntitiesMeta", :query.sync="query")
+        v-flex(xs2)
+          records-per-page(:query.sync="query")
 </template>
 
 <script>
-import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
-import ContextFab from '@/components/other/context/actions/context-fab.vue';
 
-import queryMixin from '@/mixins/query';
+import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
+import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
+import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
 
 /**
@@ -75,7 +73,7 @@ import MoreInfos from './more-infos.vue';
  * @module context
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Array} properties - List of entities properties
+ * @prop {Array} columns - List of entities columns
  *
  * @event openSettings#click
  */
@@ -84,13 +82,13 @@ export default {
     ContextSearch,
     RecordsPerPage,
     MoreInfos,
-    Loader,
     Ellipsis,
     ContextFab,
   },
   mixins: [
-    queryMixin,
     modalMixin,
+    sideBarMixin,
+    widgetQueryMixin,
     entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
   ],
@@ -99,7 +97,7 @@ export default {
       type: Object,
       required: true,
     },
-    properties: {
+    columns: {
       type: Array,
       default() {
         return [];
@@ -111,34 +109,36 @@ export default {
       selected: [],
     };
   },
-  watch: {
-    userPreference() {
-      this.fetchList(); // TODO: check requests count
+  computed: {
+    headers() {
+      return [...this.columns, { text: '', sortable: false }];
     },
-  },
-  async mounted() {
-    this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
   },
   methods: {
     getQuery() {
-      const query = omit(this.query, ['page', 'sort_dir', 'sort_key']);
+      const query = omit(this.query, [
+        'page',
+        'sortKey',
+        'sortDir',
+        'selectedTypes',
+      ]);
 
-      query.limit = this.query.limit;
       query.start = ((this.query.page - 1) * this.query.limit) || 0;
 
-      if (this.query.sort_key) {
+      if (this.query.sortKey) {
         query.sort = [{
-          property: this.query.sort_key,
-          direction: this.query.sort_dir ? this.query.sort_dir : 'ASC',
+          property: this.query.sortKey,
+          direction: this.query.sortDir,
         }];
       }
 
-      // TODO: fix it
-      if (this.userPreference) {
-        const filter = find(this.userPreference.widget_preferences.user_filters, { title: 'default_type_filter' });
+      if (!query._filter) {
+        const selectedTypes = this.userPreference.widget_preferences.selectedTypes || [];
 
-        if (filter) {
-          query._filter = filter.filter;
+        if (selectedTypes.length) {
+          query._filter = JSON.stringify({
+            $or: selectedTypes.map(type => ({ type })),
+          });
         } else {
           delete query._filter;
         }
@@ -181,10 +181,12 @@ export default {
         },
       });
     },
-    fetchList() {
-      this.fetchContextEntitiesList({
-        params: this.getQuery(),
-        widgetId: this.widget.id,
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.contextSettings,
+        config: {
+          widget: this.widget,
+        },
       });
     },
   },
@@ -192,16 +194,16 @@ export default {
 </script>
 
 <style scoped>
-.fab {
+  .fab {
     position: fixed;
     bottom: 0;
     right: 0;
   }
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
 </style>
 

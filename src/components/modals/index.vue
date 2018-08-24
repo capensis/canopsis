@@ -1,18 +1,21 @@
 <template lang="pug">
   div
-    modal(
-    v-for="modal in modals",
-    :key="modal.name",
-    :name="modal.name",
-    :dialogProps="modal.dialogProps || defaultDialogProps"
+    modal-wrapper(
+    v-for="(modal, key, index) in modals",
+    :key="key",
+    :modal="modal",
+    :index="index",
+    :dialogProps="dialogPropsMap[modal.name] || defaultDialogProps",
     )
-      component(:is="modal.name")
+      component(:is="modal.name", :modal="modal")
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS } from '@/constants';
 
-import Modal from './layouts/modal.vue';
+import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
 import CreateCancelEvent from './alarm/create-cancel-event.vue';
@@ -28,13 +31,17 @@ import CreateWidget from './common/create-widget.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import CreateView from './create-view.vue';
+import CreateFilter from './common/create-filter.vue';
+import Watcher from './watcher/watcher.vue';
+
+const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
 /**
  * Wrapper for all modal windows
  */
 export default {
   components: {
-    Modal,
+    ModalWrapper,
     CreateAckEvent,
     CreateAssociateTicketEvent,
     CreateCancelEvent,
@@ -50,28 +57,20 @@ export default {
     CreateWatcher,
     CreateWidget,
     CreateView,
+    CreateFilter,
+    Watcher,
   },
   data() {
     return {
-      modals: [
-        { name: MODALS.createAckEvent },
-        { name: MODALS.createAssociateTicketEvent },
-        { name: MODALS.createCancelEvent },
-        { name: MODALS.createChangeStateEvent },
-        { name: MODALS.createDeclareTicketEvent },
-        { name: MODALS.createSnoozeEvent },
-        { name: MODALS.createPbehavior },
-        { name: MODALS.pbehaviorList, dialogProps: { maxWidth: 1280, lazy: true } },
-        { name: MODALS.editLiveReporting },
-        { name: MODALS.moreInfos },
-        { name: MODALS.confirmation },
-        { name: MODALS.createEntity },
-        { name: MODALS.createWatcher },
-        { name: MODALS.createWidget, dialogProps: { maxWidth: 500, lazy: true } },
-        { name: MODALS.createView },
-      ],
+      dialogPropsMap: {
+        [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
+        [MODALS.createWidget]: { maxWidth: 500, lazy: true },
+      },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
+  },
+  computed: {
+    ...modalMapGetters(['modals']),
   },
 };
 </script>

@@ -3,11 +3,13 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 export default {
   common: {
     watcher: 'Watcher',
+    widget: 'Widget',
     name: 'Name',
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
     enabled: 'Enabled',
+    disabled: 'Disabled',
     login: 'Login',
     yes: 'Yes',
     no: 'No',
@@ -257,6 +259,37 @@ export default {
       moreInfos: 'More infos',
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
+    watcher: {
+      criticity: 'Criticity',
+      organization: 'Organization',
+      numberOk: 'Number Ok',
+      numberKo: 'Number Ko',
+      state: 'State',
+      name: 'Name',
+      org: 'Org',
+      noData: 'No data',
+      ticketing: 'Ticketing',
+      application_crit_label: 'Criticality',
+      product_line: 'Product line',
+      service_period: 'Plage surveillanc',
+      isInCarat: 'Cartographic repository',
+      application_label: 'Description',
+      target_platform: 'Environment',
+      scenario_label: 'Label',
+      scenario_probe_name: 'Sonde',
+      scenario_calendar: 'Range of execution',
+    },
+    filter: {
+      create: {
+        title: 'Create filter',
+      },
+      edit: {
+        title: 'Edit filter',
+      },
+      fields: {
+        title: 'Title',
+      },
+    },
   },
   tables: {
     contextList: {
@@ -372,7 +405,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
   },
-  mFilterEditor: {
+  filterEditor: {
     title: 'Filter editor',
     tabs: {
       visualEditor: 'Visual Editor',
@@ -389,6 +422,9 @@ export default {
       connectorName: 'Connector name',
       component: 'Component',
       resource: 'Resource',
+    },
+    errors: {
+      invalidJSON: 'Invalid JSON',
     },
   },
   validator: {

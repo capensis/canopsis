@@ -2,6 +2,7 @@ export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
   watcher: 'watcher',
+  watcherEntity: 'watcherEntity',
   weather: 'weather',
   pbehavior: 'pbehavior',
   event: 'event',
@@ -23,12 +24,14 @@ export const MODALS = {
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
+  watcher: 'watcher',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createView: 'create-view',
+  createFilter: 'create-filter',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -65,7 +68,7 @@ export const ENTITIES_STATUSES = {
 
 export const ENTITIES_STATES_STYLES = {
   [ENTITIES_STATES.ok]: {
-    color: '#4CAF50',
+    color: 'green',
     text: 'ok',
     icon: 'assistant_photo',
   },
@@ -85,6 +88,15 @@ export const ENTITIES_STATES_STYLES = {
     icon: 'assistant_photo',
   },
 };
+
+export const WATCHER_STATES_COLORS = {
+  [ENTITIES_STATES.ok]: 'green darken-1',
+  [ENTITIES_STATES.minor]: 'yellow darken-1',
+  [ENTITIES_STATES.major]: 'orange darken-1',
+  [ENTITIES_STATES.critical]: 'red darken-1',
+};
+
+export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
 
 export const ENTITY_STATUS_STYLES = {
   [ENTITIES_STATUSES.off]: {
@@ -121,6 +133,16 @@ export const WIDGET_TYPES = {
   widgetWrapper: 'widgetwrapper',
 };
 
+export const SIDE_BARS = {
+  alarmSettings: 'alarm-settings',
+  contextSettings: 'context-settings',
+};
+
+export const SIDE_BARS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
+  [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+};
+
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
     color: 'purple',
@@ -153,4 +175,41 @@ export const UNKNOWN_VALUE_STYLE = {
   color: 'black',
   text: 'Invalid val',
   icon: 'clear',
+};
+
+export const FILTER_OPERATORS = {
+  equal: 'equal',
+  notEqual: 'not equal',
+  in: 'in',
+  notIn: 'not in',
+  beginsWith: 'begins with',
+  doesntBeginWith: 'doesn\'t begin with',
+  contains: 'contains',
+  doesntContains: 'doesn\'t contain',
+  endsWith: 'ends with',
+  doesntEndWith: 'doesn\'t end with',
+  isEmpty: 'is empty',
+  isNotEmpty: 'is not empty',
+  isNull: 'is null',
+  isNotNull: 'is not null',
+};
+
+export const FILTER_DEFAULT_VALUES = {
+  condition: '$and',
+  rule: {
+    field: '',
+    operator: '',
+    input: '',
+  },
+  group: {
+    condition: '$and',
+    groups: {},
+    rules: {},
+  },
+};
+
+export const DATETIME_FORMATS = {
+  long: 'DD/MM/YYYY H:mm:ss',
+  short: 'DD/MM/YYYY',
+  time: 'H:mm:ss',
 };

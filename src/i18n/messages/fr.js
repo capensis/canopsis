@@ -3,6 +3,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 export default {
   common: {
     watcher: 'Observateur',
+    widget: 'Widget',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
@@ -11,6 +12,7 @@ export default {
     confirmation: 'Etes-vous sûr(e) ?',
     submit: 'Soumettre',
     enabled: 'Activé',
+    disabled: 'Désactivée',
     login: 'Connexion',
     by: 'Par',
     date: 'Date',
@@ -257,6 +259,17 @@ export default {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
+    watcher: {
+      criticity: 'Criticity',
+      organization: 'Organization',
+      numberOk: 'Nombre Ok',
+      numberKo: 'Nombre Ko',
+      state: 'State',
+      name: 'Nom',
+      org: 'Org',
+      noData: 'Pas de données',
+      ticketing: 'Ticketing',
+    },
   },
   tables: {
     contextList: {
@@ -372,7 +385,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
   },
-  mFilterEditor: {
+  filterEditor: {
     title: 'Editeur de filtre',
     tabs: {
       visualEditor: 'Éditeur visuel',

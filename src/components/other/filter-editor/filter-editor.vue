@@ -1,104 +1,86 @@
 <template lang="pug">
   v-tabs(v-model="activeTab" slider-color="blue darken-4" centered)
-    v-tab(:disabled="isSimpleTabDisabled") {{$t('mFilterEditor.tabs.visualEditor')}}
+    v-tab(:disabled="isRequestStringChanged") {{$t('filterEditor.tabs.visualEditor')}}
     v-tab-item
       v-container
         filter-group(
-        initialGroup,
-        :index = 0,
-        :condition.sync="filter[0].condition",
+        @update:group="updateFilter",
+        :group="filter",
         :possibleFields="possibleFields",
-        :rules="filter[0].rules",
-        :groups="filter[0].groups",
+        isInitial
         )
-    v-tab {{$t('mFilterEditor.tabs.advancedEditor')}}
+    v-tab(@click="openAdvancedTab") {{$t('filterEditor.tabs.advancedEditor')}}
     v-tab-item
       v-text-field(
-      v-model="inputValue",
+      v-model="requestString",
+      :label="$t('filterEditor.tabs.advancedEditor')",
+      @input="updateRequestString",
       rows="10",
-      :label="$t('mFilterEditor.tabs.advancedEditor')",
       textarea,
       )
       v-layout(justify-center)
         v-flex(xs10 md-6)
           v-alert(:value="parseError", type="error") {{ parseError }}
-      v-btn(@click="parse", :disabled="!isRequestChanged") {{$t('common.parse')}}
-    v-tab(@click="fetchList", :disabled="isRequestChanged") {{$t('mFilterEditor.tabs.results')}}
+      v-btn(@click="parse", :disabled="!isRequestStringChanged") {{$t('common.parse')}}
+    v-tab(@click="openResultsTab", :disabled="isRequestStringChanged") {{$t('filterEditor.tabs.results')}}
     v-tab-item
-      v-data-table.elevation-1(
-      :headers="resultsTableHeaders",
-      :items="items",
-      :pagination.sync="pagination",
-      :total-items="meta.total",
-      :rows-per-page-items="[5, 10, 25, 50]",
-      :loading="pending"
-      )
-        template(slot="items", slot-scope="props")
-          td {{props.item.v.connector}}
-          td {{props.item.v.connector_name}}
-          td {{props.item.v.component}}
-          td {{props.item.v.resource}}
+      filter-results(:filter="request")
 </template>
 
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import cloneDeep from 'lodash/cloneDeep';
+import isEmpty from 'lodash/isEmpty';
 
-import parseGroupToFilter from '@/services/mfilter-editor/parseRequestToFilter';
-import parseFilterToRequest from '@/services/mfilter-editor/parseFilterToRequest';
-import FilterGroup from '@/components/other/filter-editor/filter-group.vue';
+import EventBus from '@/event-bus';
+import { FILTER_DEFAULT_VALUES } from '@/constants';
 
-const { mapActions: alarmsMapActions } = createNamespacedHelpers('alarm');
+import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
+import parseFilterToRequest from '@/helpers/filter-editor/parse-filter-to-request';
+
+import FilterGroup from '@/components/other/filter-editor/partial/filter-group.vue';
+import FilterResults from '@/components/other/filter-editor/partial/filter-results.vue';
 
 /**
  * Component to create new MongoDB filter
+ *
+ * @prop {string} value - Initial value for filter
+ *
+ * @event input
  */
 export default {
   components: {
     FilterGroup,
+    FilterResults,
+  },
+  props: {
+    value: {
+      type: String,
+      default: '',
+    },
   },
   data() {
+    let filter = cloneDeep(FILTER_DEFAULT_VALUES.group);
+
+    if (this.value !== '') {
+      const valueObject = JSON.parse(this.value);
+
+      if (!isEmpty(valueObject)) {
+        try {
+          filter = parseGroupToFilter(valueObject);
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+    }
+
     return {
-      items: [],
-      meta: {},
-      pending: false,
-      pagination: {},
+      filter,
       activeTab: 0,
-      newRequest: '',
+      requestString: '',
       parseError: '',
-      isRequestChanged: false,
-      filter: [{
-        condition: '$or',
-        groups: [],
-        rules: [],
-      }],
+      isRequestStringChanged: false,
       possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
-      resultsTableHeaders: [
-        {
-          text: this.$t('mFilterEditor.resultsTableHeaders.connector'),
-          align: 'left',
-          sortable: false,
-          value: 'connector',
-        },
-        {
-          text: this.$t('mFilterEditor.resultsTableHeaders.connectorName'),
-          align: 'left',
-          sortable: false,
-          value: 'connector_name',
-        },
-        {
-          text: this.$t('mFilterEditor.resultsTableHeaders.component'),
-          align: 'left',
-          sortable: false,
-          value: 'component',
-        },
-        {
-          text: this.$t('mFilterEditor.resultsTableHeaders.resource'),
-          align: 'left',
-          sortable: false,
-          value: 'resource',
-        },
-      ],
     };
   },
   computed: {
@@ -106,82 +88,45 @@ export default {
       try {
         return parseFilterToRequest(this.filter);
       } catch (err) {
-        return err;
-      }
-    },
-    /**
-     * @description Value of the input field of the advanced editor.
-     * Prettify the value of the parsed filter
-     */
-    inputValue: {
-      get() {
-        return JSON.stringify(this.request, undefined, 4);
-      },
-      set(value) {
-        this.newRequest = value;
-        this.isRequestChanged = true;
-      },
-    },
+        console.error(err);
 
-    isSimpleTabDisabled() {
-      return this.isRequestChanged || this.parseError !== '';
-    },
-  },
-  watch: {
-    pagination(value, oldValue) {
-      if (value.page !== oldValue.page || value.rowsPerPage !== oldValue.rowsPerPage) {
-        this.fetchList();
+        return {};
       }
-    },
-    activeTab() {
-      this.newRequest = '';
     },
   },
   methods: {
-    ...alarmsMapActions({
-      fetchAlarmListWithoutStore: 'fetchListWithoutStore',
-    }),
-
     updateFilter(value) {
-      try {
-        this.filter = [parseGroupToFilter(value)];
-      } catch (err) {
-        this.parseError = err.message;
+      this.filter = value;
+      this.$emit('input', JSON.stringify(parseFilterToRequest(value)));
+    },
+
+    updateRequestString() {
+      this.isRequestStringChanged = true;
+    },
+
+    openAdvancedTab() {
+      if (!this.isRequestStringChanged) {
+        this.requestString = JSON.stringify(this.request, undefined, 4);
       }
     },
 
-    async fetchList() {
-      const { rowsPerPage: limit, page } = this.pagination;
-
-      this.pending = true;
-      const { alarms, total } = await this.fetchAlarmListWithoutStore({
-        params: {
-          limit,
-          skip: limit * (page - 1),
-          filter: this.request,
-        },
-      });
-
-      this.pending = false;
-      this.items = alarms;
-      this.meta = { total };
+    openResultsTab() {
+      EventBus.$emit('filter-editor:results:fetch');
     },
 
     parse() {
       this.parseError = '';
 
       try {
-        if (this.newRequest === '') {
-          this.isRequestChanged = false;
-          return this.updateFilter(JSON.parse(JSON.stringify(this.request)));
+        if (this.requestString !== '') {
+          this.updateFilter(parseGroupToFilter(JSON.parse(this.requestString)));
+          this.isRequestStringChanged = false;
+        } else {
+          this.requestString = JSON.stringify(this.request, undefined, 4);
+          this.isRequestStringChanged = false;
         }
-
-        this.isRequestChanged = false;
-
-        return this.updateFilter(JSON.parse(this.newRequest));
       } catch (err) {
-        this.parseError = 'Invalid JSON'; // TODO: translate
-        return this.isRequestChanged = true;
+        this.parseError = this.$t('filterEditor.errors.invalidJSON');
       }
     },
   },
