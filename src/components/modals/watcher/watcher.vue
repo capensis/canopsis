@@ -15,7 +15,7 @@ import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
 import { MODALS } from '@/constants';
-import compile from '@/helpers/handlebars-compile';
+import compile from '@/helpers/handlebars';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
