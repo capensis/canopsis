@@ -8,9 +8,3 @@ Handlebars.registerHelper('timestamp', (date) => {
 
   return '';
 });
-
-export default function compile(template, context) {
-  const handleBarFunction = Handlebars.compile(template);
-
-  return handleBarFunction(context);
-}

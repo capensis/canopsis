@@ -18,7 +18,7 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 <script>
 import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
-import compile from '@/helpers/handlebars';
+import compile from '@/helpers/handlebars/compile';
 
 import SunIcon from './icons/sun.vue';
 import CloudySunIcon from './icons/cloudy-sun.vue';

@@ -20,7 +20,7 @@ import get from 'lodash/get';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
-import compile from '@/helpers/handlebars';
+import compile from '@/helpers/handlebars/compile';
 
 import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 
