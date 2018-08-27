@@ -548,9 +548,13 @@ class PBehaviorManager(object):
             return False
 
         tz = pytz.UTC
-        dtts = fromts(timestamp).replace(tzinfo=tz)
         dttstart = fromts(tstart).replace(tzinfo=tz)
         dttstop = fromts(tstop).replace(tzinfo=tz)
+
+        pbh_duration = tstop - tstart
+
+        dtts = fromts(timestamp).replace(tzinfo=tz)
+        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
 
         dt_list = [dttstart, dttstop]
         rrule = pbehavior['rrule']
@@ -560,7 +564,7 @@ class PBehaviorManager(object):
             # a complementary date (missing_date) is computed and added
             # at index 0 of the generated dt_list to ensure we manage
             # dates at boundaries.
-            dt_tstart_date = dtts.date()
+            dt_tstart_date = dtts_offset.date()
             dt_tstart_time = dttstart.time().replace(tzinfo=tz)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
 
@@ -572,19 +576,6 @@ class PBehaviorManager(object):
                     dttstart, count=3, inc=True
                 )
             )
-
-
-            # compute the "missing dates": dates before the rrule started to
-            # generate dates so we can check for a pbehavior in the past.
-            multiply = 1
-            while True:
-                missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
-                dt_list.insert(0, missing_date)
-
-                if missing_date < dtts:
-                    break
-
-                multiply += 1
 
             delta = dttstop - dttstart
 
