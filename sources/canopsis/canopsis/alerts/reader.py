@@ -762,8 +762,13 @@ class AlertsReader(object):
         if with_count:
             count_pipeline.append({'$group': {'_id': None, 'count': {'$sum': 1}}}) 
             count = self.alarm_storage._backend.aggregate(count_pipeline, allowDiskUse=True,cursor={})
-            alarms_count = list(count)[0].get('count')
-            res['total'] = alarms_count
+            count_list = list(count)
+            if len(count_list) > 0:
+                alarms_count = count_list[0].get('count')
+                res['total'] = alarms_count
+            else:
+                alarms_count = 0
+                res['total'] = 0
             return res, alarms_count
 
         return res
