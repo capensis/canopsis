@@ -183,6 +183,7 @@ export default {
       fields: {
         groupIds: 'Choisir un groupe, ou en créer un nouveau',
       },
+      success: 'Nouvelle vue crée',
     },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',

@@ -2,6 +2,7 @@ import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { viewV3Schema } from '@/store/schemas';
+import i18n from '@/i18n';
 import groupModule from './group';
 
 export const types = {
@@ -33,6 +34,7 @@ export default {
     async create({ dispatch }, params = {}) {
       try {
         await request.post(API_ROUTES.viewV3.view, params);
+        await dispatch('popup/add', { type: 'success', text: i18n.t('modals.createView.success') }, { root: true });
       } catch (err) {
         console.warn(err);
         await dispatch('popup/add', { type: 'error', text: err.description }, { root: true });

@@ -1,7 +1,7 @@
 <template lang='pug'>
   v-card
     v-card-title
-      span.headline {{ $t('modals.createWatcher.title') }}
+      span.headline {{ $t('modals.createView.title') }}
     v-form
       v-layout(wrap, justify-center)
         v-flex(xs11)
@@ -48,7 +48,7 @@
 
 <script>
 import { MODALS } from '@/constants';
-import modalMixin from '@/mixins/modal/modal';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
 import viewMixin from '@/mixins/entities/viewV3/viewV3';
 import groupMixin from '@/mixins/entities/viewV3/group';
 import find from 'lodash/find';
@@ -61,7 +61,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalMixin, viewMixin, groupMixin],
+  mixins: [modalInnerMixin, viewMixin, groupMixin],
   data() {
     return {
       group_name: '',
