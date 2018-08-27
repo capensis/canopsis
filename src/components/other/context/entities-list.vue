@@ -33,7 +33,7 @@
           @click="props.expanded = !props.expanded"
           )
             ellipsis(
-            :text="props.item | get(column.value) || ''",
+            :text="props.item | get(prop.value, null, '')",
             :maxLetters="column.maxLetters"
             )
           td
