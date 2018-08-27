@@ -20,7 +20,7 @@ import get from 'lodash/get';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
-import compile from '@/helpers/handlebars/compile';
+import compile from '@/helpers/handlebars';
 
 import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 
@@ -81,7 +81,7 @@ export default {
     },
 
     compiledTemplate() {
-      return compile(this.template, { watcher: { ...this.watcher }, entity: { ...this.entity } });
+      return compile(this.template, { watcher: this.watcher, entity: this.entity });
     },
   },
 };

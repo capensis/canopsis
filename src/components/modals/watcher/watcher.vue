@@ -15,7 +15,7 @@ import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
 import { MODALS } from '@/constants';
-import compile from '@/helpers/handlebars/compile';
+import compile from '@/helpers/handlebars';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -43,7 +43,7 @@ export default {
       return this.getWatcher(this.config.watcherId);
     },
     compiledTemplate() {
-      return compile(this.config.modalTemplate, { ...this.watcher });
+      return compile(this.config.modalTemplate, { watcher: this.watcher });
     },
   },
   mounted() {
