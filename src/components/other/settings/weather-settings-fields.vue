@@ -3,12 +3,12 @@
     v-list.pt-0(expand)
       field-title(v-model="settings.widget.title")
       field-weather-data-set
-      field-weather-template(:value.sync="settings.widget.block_template", :title="$t('settings.weatherTemplate')")
-      field-weather-template(:value.sync="settings.widget.modal_template", :title="$t('settings.modalTemplate')")
-      field-weather-template(:value.sync="settings.widget.entity_template", :title="$t('settings.entityTemplate')")
+      field-weather-template(v-model="settings.widget.block_template", :title="$t('settings.weatherTemplate')")
+      field-weather-template(v-model="settings.widget.modal_template", :title="$t('settings.modalTemplate')")
+      field-weather-template(v-model="settings.widget.entity_template", :title="$t('settings.entityTemplate')")
       field-grid-size(v-model="settings.widget.columnSM", :title="$t('settings.columnSM')")
-      field-grid-size(:value.sync="settings.widget.columnMD", :title="$t('settings.columnMD')")
-      field-grid-size(:value.sync="settings.widget.columnLG", :title="$t('settings.columnLG')")
+      field-grid-size(v-model="settings.widget.columnMD", :title="$t('settings.columnMD')")
+      field-grid-size(v-model="settings.widget.columnLG", :title="$t('settings.columnLG')")
     v-btn(@click="submit", color="green darken-4 white--text", depressed, fixed, right) {{ $t('common.save') }}
 </template>
 

@@ -7,7 +7,7 @@
       max=12,
       always-dirty,
       thumb-label,
-      @input="$emit('update:value', $event)"
+      @input="$emit('input', $event)"
       )
 </template>
 
