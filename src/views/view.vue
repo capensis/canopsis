@@ -2,7 +2,7 @@
   v-container
     div
       div(v-for="widget in widgets", :key="widget._id")
-        h2 {{ widget.title }} {{ widgetsMap[widget.xtype] }}
+        h2 {{ widget.title }}
         div(
         :is="widgetsMap[widget.xtype]",
         :widget="widget",

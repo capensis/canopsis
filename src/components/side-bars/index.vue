@@ -10,6 +10,7 @@ import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
 import SideBarWrapper from './side-bar-wrapper.vue';
 import AlarmSettings from './settings/widgets/alarm.vue';
 import ContextSettings from './settings/widgets/context.vue';
+import WeatherSettings from './settings/widgets/weather.vue';
 
 /**
  * Wrapper for all side-bars
@@ -19,6 +20,7 @@ export default {
     SideBarWrapper,
     AlarmSettings,
     ContextSettings,
+    WeatherSettings,
   },
   mixins: [sideBarInnerMixin],
   data() {

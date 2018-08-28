@@ -143,6 +143,12 @@ export default {
     selectAFilter: 'Sélectionner un filtre',
     infoPopup: 'Info popup',
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
+    weatherTemplate: 'Template - Tuiles',
+    modalTemplate: 'Template - Modal',
+    entityTemplate: 'Template - Entitées',
+    columnSM: 'Colonnes - Petit',
+    columnMD: 'Colonnes - Moyen',
+    columnLG: 'Colonnes - Large',
     contextTypeOfEntities: {
       title: 'Type d\'entitées',
       fields: {

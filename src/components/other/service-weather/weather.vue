@@ -1,14 +1,20 @@
 <template lang="pug">
   v-container(fluid)
+    v-layout
+      v-btn(icon, @click="showSettings")
+        v-icon settings
     v-layout(wrap)
-      v-flex(v-for="item in watchers", :key="item._id" xs3)
-        weather-item(:watcher="item")
+      v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
+        weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
 </template>
 
 <script>
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetQueryMixin from '@/mixins/widget/query';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
+
+import { SIDE_BARS } from '@/constants';
 
 import WeatherItem from './weather-item.vue';
 
@@ -16,11 +22,20 @@ export default {
   components: {
     WeatherItem,
   },
-  mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, widgetQueryMixin],
+  mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, widgetQueryMixin, sideBarMixin],
   props: {
     widget: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    flexSize() {
+      return [
+        `xs${this.widget.columnSM}`,
+        `md${this.widget.columnMD}`,
+        `lg${this.widget.columnLG}`,
+      ];
     },
   },
   methods: {
@@ -29,6 +44,15 @@ export default {
         filter: this.widget.filter,
         params: this.getQuery(),
         widgetId: this.widget.id,
+      });
+    },
+
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.weatherSettings,
+        config: {
+          widget: this.widget,
+        },
       });
     },
   },

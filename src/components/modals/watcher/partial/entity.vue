@@ -11,27 +11,16 @@
           v-btn(v-show="hasActivePbehavior", fab, small)
             v-icon play_arrow
       v-card
-        template(v-for="(attribute, attributeKey) in attributes")
-          v-card-text
-            v-layout(row, wrap)
-              v-flex.text-md-right(xs4)
-                b {{ $t(`modals.watcher.${attributeKey}`) }}:
-              v-flex.pl-2(xs8)
-                span {{ attribute }}
-          v-divider
-        v-card-text
-          v-layout(row, wrap)
-            v-flex.text-md-right(xs4)
-              b {{ $t('modals.watcher.ticketing') }}:
-            v-flex.pl-2(xs8)
-              v-icon local_play
-        v-divider
+        v-card-text(v-html="compiledTemplate")
+      v-divider
 </template>
 
 <script>
 import get from 'lodash/get';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
+
+import compile from '@/helpers/handlebars';
 
 import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 
@@ -40,6 +29,9 @@ export default {
     entity: {
       type: Object,
       required: true,
+    },
+    template: {
+      type: String,
     },
   },
   data() {
@@ -86,6 +78,10 @@ export default {
 
         return start <= now && now < end;
       }).length;
+    },
+
+    compiledTemplate() {
+      return compile(this.template, { watcher: this.watcher, entity: this.entity });
     },
   },
 };

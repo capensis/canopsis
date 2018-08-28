@@ -43,6 +43,7 @@ export default {
       const TITLES_MAP = {
         [SIDE_BARS.alarmSettings]: this.$t('settings.titles.alarmListSettings'),
         [SIDE_BARS.contextSettings]: this.$t('settings.titles.contextTableSettings'),
+        [SIDE_BARS.weatherSettings]: this.$t('settings.titles.weatherSettings'),
       };
 
       return this.sideBarConfig.sideBarTitle || TITLES_MAP[this.sideBarName];

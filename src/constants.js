@@ -133,6 +133,7 @@ export const WIDGET_TYPES = {
 export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
+  weatherSettings: 'weather-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
