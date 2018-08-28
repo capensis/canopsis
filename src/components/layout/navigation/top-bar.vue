@@ -5,40 +5,28 @@
     clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4(v-show="$mq === 'tablet' || $mq === 'laptop'")
-      img(src="../../assets/canopsis.png")
-    v-toolbar-side-icon(@click="toggleSideBar")
+    div.brand.ma-0.green.darken-4(v-show="$options.filters.mq($mq, { t: true })")
+      img(src="@/assets/canopsis.png")
+    v-toolbar-side-icon(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
       v-menu(offset-y, bottom)
         v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
         v-list
-          v-list-tile(@click.prevent="logoutWithRedirect")
+          v-list-tile(@click.prevent="logout")
             v-list-tile-title {{ $t('common.logout') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import authMixin from '@/mixins/auth';
-
-const { mapActions } = createNamespacedHelpers('app');
 
 /**
  * Component for the top bar of the application
+ *
+ * @event toggleSideBar#click
  */
 export default {
   mixins: [authMixin],
-  methods: {
-    ...mapActions(['toggleSideBar']),
-
-    async logoutWithRedirect() {
-      await this.logout();
-      this.$router.push({
-        name: 'login',
-      });
-    },
-  },
 };
 </script>
 

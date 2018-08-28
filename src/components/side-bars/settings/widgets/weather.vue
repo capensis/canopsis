@@ -13,13 +13,17 @@
 </template>
 
 <script>
-import FieldTitle from '@/components/other/settings/fields/title.vue';
-import FieldWeatherDataSet from '@/components/other/settings/fields/weather-data-set.vue';
-import FieldWeatherTemplate from '@/components/other/settings/fields/weather-template.vue';
-import FieldGridSize from '@/components/other/settings/fields/grid-size.vue';
+import FieldTitle from '@/components/side-bars/settings/partial/fields/title.vue';
+import FieldWeatherDataSet from '@/components/side-bars/settings/partial/fields/weather-data-set.vue';
+import FieldWeatherTemplate from '@/components/side-bars/settings/partial/fields/weather-template.vue';
+import FieldGridSize from '@/components/side-bars/settings/partial/fields/grid-size.vue';
+
+import { SIDE_BARS } from '@/constants';
+
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 export default {
+  name: SIDE_BARS.weatherSettings,
   components: {
     FieldTitle,
     FieldWeatherDataSet,
@@ -31,14 +35,14 @@ export default {
     return {
       settings: {
         widget: {
-          title: this.widget.title || '',
-          block_template: this.widget.block_template || '',
-          modal_template: this.widget.modal_template || '',
-          entity_template: this.widget.entity_template || '',
-          columnSM: this.widget.columnSM || 0,
-          columnMD: this.widget.columnMD || 0,
-          columnLG: this.widget.columnLG || 0,
-          columnHG: this.widget.columnHG || 0,
+          title: '',
+          block_template: '',
+          modal_template: '',
+          entity_template: '',
+          columnSM: 0,
+          columnMD: 0,
+          columnLG: 0,
+          columnHG: 0,
         },
       },
     };

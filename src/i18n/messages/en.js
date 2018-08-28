@@ -279,6 +279,17 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
     },
+    filter: {
+      create: {
+        title: 'Create filter',
+      },
+      edit: {
+        title: 'Edit filter',
+      },
+      fields: {
+        title: 'Title',
+      },
+    },
   },
   tables: {
     contextList: {
@@ -394,7 +405,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
   },
-  mFilterEditor: {
+  filterEditor: {
     title: 'Filter editor',
     tabs: {
       visualEditor: 'Visual Editor',
@@ -411,6 +422,9 @@ export default {
       connectorName: 'Connector name',
       component: 'Component',
       resource: 'Resource',
+    },
+    errors: {
+      invalidJSON: 'Invalid JSON',
     },
   },
   validator: {

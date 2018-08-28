@@ -19,16 +19,15 @@
         v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
           v-icon widgets
         span {{ $t('common.widget') }}
-    settings(v-model="isSettingsOpen", :widget="widgetSettings", :isNew="isWidgetNew")
 </template>
 
 <script>
-import Settings from '@/components/other/settings/settings.vue';
+import { MODALS, WIDGET_TYPES } from '@/constants';
+
 import AlarmsListContainer from '@/containers/alarms-list.vue';
 import EntitiesListContainer from '@/containers/entities-list.vue';
 import WeatherContainer from '@/containers/weather.vue';
 
-import { MODALS, WIDGET_TYPES } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesWidgetMixin from '@/mixins/entities/widget';
@@ -38,7 +37,6 @@ export default {
     AlarmsListContainer,
     EntitiesListContainer,
     WeatherContainer,
-    Settings,
   },
   mixins: [
     modalMixin,
@@ -53,8 +51,6 @@ export default {
   },
   data() {
     return {
-      widgetSettings: null,
-      isWidgetNew: false,
       fab: false,
       widgetsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list-container',
@@ -63,36 +59,13 @@ export default {
       },
     };
   },
-  computed: {
-    isSettingsOpen: {
-      get() {
-        return !!this.widgetSettings;
-      },
-      set(value) {
-        if (!value) {
-          this.closeSettings();
-        }
-      },
-    },
-  },
   mounted() {
     this.fetchView({ id: this.id });
   },
   methods: {
-    openSettings(widget, isNew) {
-      this.widgetSettings = widget;
-      this.isWidgetNew = isNew;
-    },
-    closeSettings() {
-      this.widgetSettings = null;
-      this.isWidgetNew = false;
-    },
     showCreateWidgetModal() {
       this.showModal({
         name: MODALS.createWidget,
-        config: {
-          action: widget => this.openSettings(widget, true),
-        },
       });
     },
 

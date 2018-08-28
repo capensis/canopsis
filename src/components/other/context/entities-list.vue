@@ -7,48 +7,47 @@
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
       v-flex(xs2)
-        v-btn(icon, @click.prevent="$emit('openSettings')")
+        v-btn(icon, @click.prevent="showSettings")
           v-icon settings
       v-flex(xs2)
         context-fab
-    transition(name="fade", mode="out-in")
-      loader(v-if="contextEntitiesPending")
-      div(v-else)
-        v-data-table(
-          v-model="selected",
-          :items="contextEntities",
-          :headers="headers",
-          item-key="_id",
-          :total-items="contextEntitiesMeta.total",
-          :pagination.sync="vDataTablePagination",
-          select-all,
-          hide-actions,
-        )
-          template(slot="headerCell", slot-scope="props")
-            span {{ props.header.text }}
-          template(slot="items", slot-scope="props")
-            td
-              v-checkbox(primary, hide-details, v-model="props.selected")
-            td(
-            v-for="prop in properties",
-            @click="props.expanded = !props.expanded"
+    div
+      v-data-table(
+      v-model="selected",
+      :items="contextEntities",
+      :headers="headers",
+      :loading="contextEntitiesPending",
+      :total-items="contextEntitiesMeta.total",
+      :pagination.sync="vDataTablePagination",
+      item-key="_id",
+      select-all,
+      hide-actions,
+      )
+        template(slot="headerCell", slot-scope="props")
+          span {{ props.header.text }}
+        template(slot="items", slot-scope="props")
+          td
+            v-checkbox(primary, hide-details, v-model="props.selected")
+          td(
+          v-for="column in columns",
+          @click="props.expanded = !props.expanded"
+          )
+            ellipsis(
+            :text="props.item | get(prop.value, null, '')",
+            :maxLetters="column.maxLetters"
             )
-              ellipsis(
-              :text="$options.filters.get(props.item,prop.value) || ''",
-              :maxLetters="prop.maxLetters"
-              )
-            td
-              v-btn(@click.stop="editEntity(props.item)", icon, small)
-                v-icon edit
-              v-btn(@click.stop="deleteEntity(props.item)", icon, small)
-                v-icon delete
-          template(slot="expand", slot-scope="props")
-            more-infos(:item="props.item")
-        v-layout.white(align-center)
-          v-flex(xs10)
-            pagination(:meta="contextEntitiesMeta", :query.sync="query")
-          v-flex(xs2)
-            records-per-page(:query.sync="query")
+          td
+            v-btn(@click.stop="editEntity(props.item)", icon, small)
+              v-icon edit
+            v-btn(@click.stop="deleteEntity(props.item)", icon, small)
+              v-icon delete
+        template(slot="expand", slot-scope="props")
+          more-infos(:item="props.item")
+      v-layout.white(align-center)
+        v-flex(xs10)
+          pagination(:meta="contextEntitiesMeta", :query.sync="query")
+        v-flex(xs2)
+          records-per-page(:query.sync="query")
 </template>
 
 <script>
@@ -56,11 +55,11 @@ import omit from 'lodash/omit';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import Loader from '@/components/other/context/loader/context-loader.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -74,7 +73,7 @@ import MoreInfos from './more-infos.vue';
  * @module context
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Array} properties - List of entities properties
+ * @prop {Array} columns - List of entities columns
  *
  * @event openSettings#click
  */
@@ -83,12 +82,12 @@ export default {
     ContextSearch,
     RecordsPerPage,
     MoreInfos,
-    Loader,
     Ellipsis,
     ContextFab,
   },
   mixins: [
     modalMixin,
+    sideBarMixin,
     widgetQueryMixin,
     entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
@@ -98,7 +97,7 @@ export default {
       type: Object,
       required: true,
     },
-    properties: {
+    columns: {
       type: Array,
       default() {
         return [];
@@ -112,16 +111,8 @@ export default {
   },
   computed: {
     headers() {
-      return [...this.properties, { text: '', sortable: false }];
+      return [...this.columns, { text: '', sortable: false }];
     },
-  },
-  watch: {
-    userPreference() {
-      this.fetchList(); // TODO: check requests count
-    },
-  },
-  async mounted() {
-    this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
   },
   methods: {
     getQuery() {
@@ -187,6 +178,14 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
+        },
+      });
+    },
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.contextSettings,
+        config: {
+          widget: this.widget,
         },
       });
     },

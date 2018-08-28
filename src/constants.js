@@ -28,6 +28,7 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  createFilter: 'create-filter',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -129,6 +130,17 @@ export const WIDGET_TYPES = {
   widgetWrapper: 'widgetwrapper',
 };
 
+export const SIDE_BARS = {
+  alarmSettings: 'alarm-settings',
+  contextSettings: 'context-settings',
+  weatherSettings: 'weather-settings',
+};
+
+export const SIDE_BARS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
+  [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+};
+
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
     color: 'purple',
@@ -161,4 +173,41 @@ export const UNKNOWN_VALUE_STYLE = {
   color: 'black',
   text: 'Invalid val',
   icon: 'clear',
+};
+
+export const FILTER_OPERATORS = {
+  equal: 'equal',
+  notEqual: 'not equal',
+  in: 'in',
+  notIn: 'not in',
+  beginsWith: 'begins with',
+  doesntBeginWith: 'doesn\'t begin with',
+  contains: 'contains',
+  doesntContains: 'doesn\'t contain',
+  endsWith: 'ends with',
+  doesntEndWith: 'doesn\'t end with',
+  isEmpty: 'is empty',
+  isNotEmpty: 'is not empty',
+  isNull: 'is null',
+  isNotNull: 'is not null',
+};
+
+export const FILTER_DEFAULT_VALUES = {
+  condition: '$and',
+  rule: {
+    field: '',
+    operator: '',
+    input: '',
+  },
+  group: {
+    condition: '$and',
+    groups: {},
+    rules: {},
+  },
+};
+
+export const DATETIME_FORMATS = {
+  long: 'DD/MM/YYYY H:mm:ss',
+  short: 'DD/MM/YYYY',
+  time: 'H:mm:ss',
 };

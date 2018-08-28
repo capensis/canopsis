@@ -1,4 +1,8 @@
+import Vue from 'vue';
+import isEmpty from 'lodash/isEmpty';
+
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import uid from '@/helpers/uid';
 
 export const types = {
   SHOW: 'SHOW',
@@ -9,43 +13,59 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    name: null,
-    config: {},
-    animationPending: false,
+    modals: {},
   },
   getters: {
-    name: state => state.name,
-    config: state => state.config,
-    animationPending: state => state.animationPending,
+    modals: state => state.modals,
+    hasModals: state => !isEmpty(state.modals),
   },
   mutations: {
-    [types.SHOW](state, { name, config = {} }) {
-      state.name = name;
-      state.config = config;
-      state.animationPending = false;
+    [types.SHOW](state, { id, name, config = {} }) {
+      Vue.set(state.modals, id, {
+        id,
+        name,
+        config,
+        hidden: false,
+      });
     },
-    [types.HIDE](state) {
-      state.animationPending = true;
+    [types.HIDE](state, { id }) {
+      Vue.set(state.modals, id, {
+        ...state.modals[id],
+        hidden: true,
+      });
     },
-    [types.HIDE_COMPLETED](state) {
-      state.name = null;
-      state.config = {};
-      state.animationPending = false;
+    [types.HIDE_COMPLETED](state, { id }) {
+      Vue.delete(state.modals, id);
     },
   },
   actions: {
-    show({ commit }, payload) {
-      commit(types.SHOW, payload);
+    /**
+     * Show modal window by name with unique id
+     *
+     * @param {function} commit
+     * @param {string} name
+     * @param {Object} [config={}]
+     * @param {string} [id=uid()]
+     */
+    show({ commit }, { name, config = {}, id = uid('modal') } = {}) {
+      commit(types.SHOW, { id, name, config });
     },
-    hide({ commit, state }) {
-      commit(types.HIDE);
+    /**
+     * Hide modal by id
+     *
+     * @param {function} commit
+     * @param {Object} state
+     * @param {string} [id=uid()]
+     */
+    hide({ commit, state }, { id } = {}) {
+      commit(types.HIDE, { id });
 
       /**
        * This function added for vuetify animation waiting
        */
       setTimeout(() => {
-        if (state.animationPending) {
-          commit(types.HIDE_COMPLETED);
+        if (state.modals[id]) {
+          commit(types.HIDE_COMPLETED, { id });
         }
       }, VUETIFY_ANIMATION_DELAY);
     },
