@@ -40,6 +40,7 @@ If the request succeeded, the response is a JSON object containing :
 
  - a `values` field. This field is a table containing the values of the
    statistic for each entity, as follows:
+
    ```javascript
    {
        'entity': {...},  // The entity for which the statistic was computed
@@ -156,6 +157,7 @@ If the request succeeded, the response is a JSON object containing:
 
  - a `values` field. This field is a table containing the values of the
    statistics for each entity, as follows:
+
    ```javascript
    {
        'entity': {...},  // The entity for which the statistic was computed
@@ -307,6 +309,7 @@ If the request succeeded, the response is a JSON object containing:
 
  - a `values` field. This field is a table containing the values of the
    statistics for each entity, as follows:
+
    ```javascript
    {
        'entity': {...},  // L'entité pour laquelle la statistique a été calculée

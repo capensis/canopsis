@@ -43,6 +43,7 @@ En cas de succès, la réponse est un objet JSON contenant :
 
  - un champ `values`. Ce champ est un tableau contenant les valeurs de la
    statistique pour chaque entité, sous la forme suivante :
+
    ```javascript
    {
        'entity': {...},  // L'entité pour laquelle la statistique a été calculée
@@ -166,6 +167,7 @@ En cas de succès, la réponse est un objet JSON contenant :
 
  - un champ `values`. Ce champ est un tableau contenant les valeurs des
    statistiques pour chaque entité, sous la forme suivante :
+
    ```javascript
    {
        'entity': {...},  // L'entité pour laquelle la statistique a été calculée
@@ -323,6 +325,7 @@ En cas de succès, la réponse est un objet JSON contenant ;
 
  - un champ `values`. Ce champ est un tableau contenant les valeurs des
    statistiques pour chaque entité, sous la forme suivante :
+
    ```javascript
    {
        'entity': {...},  // L'entité pour laquelle la statistique a été calculée
