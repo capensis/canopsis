@@ -35,6 +35,7 @@ export default {
     apply: 'Appliquer',
     to: 'à',
     of: 'sur',
+    tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
     actions: {
@@ -180,6 +181,7 @@ export default {
     },
     createView: {
       title: 'Créer une vue',
+      noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
       fields: {
         groupIds: 'Choisir un groupe, ou en créer un nouveau',
       },

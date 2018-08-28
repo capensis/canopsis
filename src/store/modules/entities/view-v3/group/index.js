@@ -15,17 +15,13 @@ export default {
   state: {
     allIds: [],
     pending: false,
-    fetchingParams: {},
   },
   getters: {
-    allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.group, state.allIds),
-    pending: state => state.pending,
   },
   mutations: {
-    [types.FETCH_LIST](state, { params }) {
+    [types.FETCH_LIST](state) {
       state.pending = true;
-      state.fetchingParams = params;
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.allIds = allIds;
@@ -46,11 +42,11 @@ export default {
         return undefined;
       }
     },
-    async fetchList({ commit, dispatch }, { name } = {}) {
+    async fetchList({ commit, dispatch }, { id } = {}) {
       try {
         let route = API_ROUTES.viewV3.groups;
-        if (name) {
-          route += name;
+        if (id) {
+          route += `/${id}`;
         }
         const { normalizedData } = await dispatch('entities/fetch', {
           route,

@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   v-card
     v-card-title
       span.headline {{ $t('modals.createView.title') }}
@@ -27,19 +27,24 @@
           v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-layout(wrap, justify-center)
         v-flex(xs11)
-          v-combobox(v-model='form.tags',
-          label='Tags', tags='', clearable='',  multiple='', append-icon='')
-            template(slot='selection', slot-scope='data')
-              v-chip(:selected='data.selected', close='', @input='remove(data.item)') {{ data.item }}
+          v-combobox(v-model="form.tags",
+          label="$t('modals.createView.fields.groupIds')",
+          tags, clearable, multiple, append-icon, chips, deletable-chips
+          )
           v-combobox(
-          v-model='group_name',
-          @click="fetchGroupList",
+          v-model="groupName",
           :items="groupNames",
           :label="$t('modals.createView.fields.groupIds')",
+          :search-input.sync="search"
           data-vv-name="group",
           v-validate="'required'",
           :error-messages="errors.collect('group')",
           )
+            template(slot="no-data")
+              v-list-tile
+                v-list-tile-content
+                  v-list-tile-title(v-html="$t('modals.createView.noData')")
+
           span {{ this.form.group_id }}
       v-layout
         v-flex(xs3)
@@ -49,8 +54,8 @@
 <script>
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import viewMixin from '@/mixins/entities/viewV3/viewV3';
-import groupMixin from '@/mixins/entities/viewV3/group';
+import viewMixin from '@/mixins/entities/view-v3/view-v3';
+import groupMixin from '@/mixins/entities/view-v3/group';
 import find from 'lodash/find';
 
 /**
@@ -64,41 +69,44 @@ export default {
   mixins: [modalInnerMixin, viewMixin, groupMixin],
   data() {
     return {
-      group_name: '',
+      search: '',
+      groupName: '',
       form: {
         name: '',
         title: '',
         description: '',
-        enabled: '',
+        enabled: false,
         tags: [],
       },
     };
   },
   computed: {
     groupNames() {
-      return this.groupList.map(group => group.name);
+      return this.groups.map(group => group.name);
     },
   },
+  mounted() {
+    this.fetchGroupsList();
+  },
   methods: {
-    remove(item) {
-      this.form.tags.splice(this.form.tags.indexOf(item), 1);
-      this.form.tags = [...this.form.tags];
-    },
     async submit() {
-      let groupId;
-      if (this.groupNames.includes(this.group_name)) {
-        groupId = find(this.groupList, { name: this.group_name })._id;
-      } else {
-        groupId = await this.createGroup({ name: this.group_name });
-      }
-      const data = {
-        ...this.form,
-        widgets: [],
-        group_id: groupId,
-      };
       const isFormValid = await this.$validator.validateAll();
+
       if (isFormValid) {
+        let group = find(this.groups, { name: this.groupName })._id;
+
+        if (!group) {
+          group = await this.createGroup({ name: this.groupName });
+        }
+
+        const data = {
+          ...this.form,
+          widgets: [],
+          group_id: group,
+        };
+
         await this.createView(data);
+
         this.hideModal();
       }
     },

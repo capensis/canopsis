@@ -30,7 +30,7 @@ import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
-import CreateView from './create-view.vue';
+import CreateView from './view/create-view.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 

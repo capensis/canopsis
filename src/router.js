@@ -6,7 +6,7 @@ import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
-import ViewV3 from '@/views/viewV3.vue';
+import ViewV3 from '@/views/view-v3.vue';
 
 Vue.use(Router);
 

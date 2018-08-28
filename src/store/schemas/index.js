@@ -48,8 +48,7 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   },
 });
 
-export const viewV3Schema = new schema.Entity(ENTITIES_TYPES.viewV3, {
-});
+export const viewV3Schema = new schema.Entity(ENTITIES_TYPES.viewV3);
 
 export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {}, {
   idAttribute: '_id',

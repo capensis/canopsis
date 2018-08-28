@@ -4,7 +4,7 @@ import watcherModule from './watcher';
 import pbehaviorModule from './pbehavior';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
-import viewV3Module from './viewV3';
+import viewV3Module from './view-v3';
 
 export default {
   alarm: alarmModule,
