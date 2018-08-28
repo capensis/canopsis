@@ -24,6 +24,9 @@ This route takes a JSON object with the following fields:
    See the documentation of each statistic below for the available parameters.
  - `trend` (optional): `true` to compute the trend with the previous period.
  - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
+ - `aggregate` (optional): an array containing the names of aggregations
+   functions used to aggregate the values of the statistic (`"sum"` is the only
+   available function for now).
  - `sort_order` (optional): `"desc"` to sort the results by descending value,
    `"asc"` to sort them by ascending value. The results are not sorted by
    default.
@@ -33,18 +36,20 @@ This route takes a JSON object with the following fields:
 
 #### Response
 
-If the request succeeded, the response is a JSON object containing a `values`
-field. This field is a table containing the values of the statistic for each
-entity, as follows:
+If the request succeeded, the response is a JSON object containing :
 
-```javascript
-{
-    'entity': {...},  // The entity for which the statistic was computed
-    'value': ...,  // The value of the statistic
-    'trend': ...,  // The trend
-    'sla': ...  // true if the value is conform to the SLA
-}
-```
+ - a `values` field. This field is a table containing the values of the
+   statistic for each entity, as follows:
+   ```javascript
+   {
+       'entity': {...},  // The entity for which the statistic was computed
+       'value': ...,  // The value of the statistic
+       'trend': ...,  // The trend
+       'sla': ...  // true if the value is conform to the SLA
+   }
+   ```
+ - an `aggregations` field. This field is an object containing the values of
+   the aggregations, using the functions given in the `aggregate` parameter.
 
 #### Example
 
@@ -65,7 +70,8 @@ POST /api/v2/stats/alarms_created
     "parameters": {
         "states": [3]
     },
-    "trend": true
+    "trend": true,
+    "aggregate": ["sum"]
 }
 ```
 
@@ -99,7 +105,10 @@ The JSON document below is an example of a response to the previous request.
             "trend": -3
         },
         // ...
-    ]
+    ],
+    "aggregations": {
+        "sum": 253  // 117 + 2 + ...
+    }
 }
 ```
 
@@ -130,6 +139,9 @@ This route is similar to the previous one, but allows to compute multiple statis
       parameters.
     - `trend` (optional): `true` to compute the trend with the previous period.
     - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
+    - `aggregate` (optional): an array containing the names of aggregations
+      functions used to aggregate the values of the statistic (`"sum"` is the
+      only available function for now).
  - `sort_column` (optional): the title of the statistic whose values will be
    used to sort the results.
  - `sort_order` (optional): `"desc"` to sort the results by descending value,
@@ -140,25 +152,27 @@ This route is similar to the previous one, but allows to compute multiple statis
 
 #### Response
 
-If the request succeeded, the response is a JSON object containing a `values`
-field. This field is a table containing the values of the statistics for each
-entity, as follows:
+If the request succeeded, the response is a JSON object containing:
 
-```javascript
-{
-    'entity': {...},  // The entity for which the statistic was computed
-    'title of the 1st statistic': {
-        'value': ...,  // The value of the statistic
-        'trend': ...,  // The trend
-        'sla': ...  // true if the value is conform to the SLA
-    },
-    'title of the 2nd statistic': {
-        'value': ...,  // The value of the statistic
-        'trend': ...,  // The trend
-        'sla': ...  // true if the value is conform to the SLA
-    }
-}
-```
+ - a `values` field. This field is a table containing the values of the
+   statistics for each entity, as follows:
+   ```javascript
+   {
+       'entity': {...},  // The entity for which the statistic was computed
+       'title of the 1st statistic': {
+           'value': ...,  // The value of the statistic
+           'trend': ...,  // The trend
+           'sla': ...  // true if the value is conform to the SLA
+       },
+       'title of the 2nd statistic': {
+           'value': ...,  // The value of the statistic
+           'trend': ...,  // The trend
+           'sla': ...  // true if the value is conform to the SLA
+       }
+   }
+   ```
+ - an `aggregation` field. This field is an object containing the values of the
+   aggregations for each statistic.
 
 #### Example
 
@@ -184,7 +198,8 @@ POST /api/v2/stats
                 "states": [3]
             },
             "trend": true,
-            "sla": "<= 20"
+            "sla": "<= 20",
+            "aggregate": ["sum"]
         },
         "Major alarms": {
             "stat": "alarms_created",
@@ -235,7 +250,8 @@ The JSON document below is an example of a response to the previous request.
             },
             "Critical alarms": {
                 "value": 2,
-                "trend": -1
+                "trend": -1,
+                "sla": true
             },
             "Major alarms": {
                 "value": 3,
@@ -243,7 +259,12 @@ The JSON document below is an example of a response to the previous request.
             }
         },
         // ...
-    ]
+    ],
+    "aggregations": {
+        "Critical alarms": {
+            "sum": 253
+        }
+    }
 }
 ```
 
@@ -275,39 +296,44 @@ multiple periods. It takes a JSON object with the following fields:
       parameters.
     - `trend` (optional): `true` to compute the trend with the previous period.
     - `sla` (optional): a SLA, represented by an inequality (e.g. `">= 0.99"`).
+    - `aggregate` (optional): an array containing the names of aggregations
+      functions used to aggregate the values of the statistic (`"sum"` is the
+      only available function for now).
  - `periods`: the number of periods.
 
 #### Response
 
-If the request succeeded, the response is a JSON object containing a `values`
-field. This field is a table containing the values of the statistics for each
-entity, as follows:
+If the request succeeded, the response is a JSON object containing:
 
-```javascript
-{
-    'entity': {...},  // L'entité pour laquelle la statistique a été calculée
-    'titre de la statistique 1': [
-        {
-            'start': ...,  // Timestamp du début de la période
-            'end': ...,  // Timestamp du fin de la période
-            'value': ...,  // La valeur de la statistique
-            'trend': ...,  // La tendance
-            'sla': ...  // true si la valeur est conforme au SLA
-        },
-        {
-            'start': ...,  // Timestamp du début de la période
-            'end': ...,  // Timestamp du fin de la période
-            'value': ...,  // La valeur de la statistique
-            'trend': ...,  // La tendance
-            'sla': ...  // true si la valeur est conforme au SLA
-        },
-        // ...
-    ],
-    'titre de la statistique 2': [
-        // ...
-    ]
-}
-```
+ - a `values` field. This field is a table containing the values of the
+   statistics for each entity, as follows:
+   ```javascript
+   {
+       'entity': {...},  // L'entité pour laquelle la statistique a été calculée
+       'titre de la statistique 1': [
+           {
+               'start': ...,  // Timestamp du début de la période
+               'end': ...,  // Timestamp du fin de la période
+               'value': ...,  // La valeur de la statistique
+               'trend': ...,  // La tendance
+               'sla': ...  // true si la valeur est conforme au SLA
+           },
+           {
+               'start': ...,  // Timestamp du début de la période
+               'end': ...,  // Timestamp du fin de la période
+               'value': ...,  // La valeur de la statistique
+               'trend': ...,  // La tendance
+               'sla': ...  // true si la valeur est conforme au SLA
+           },
+           // ...
+       ],
+       'titre de la statistique 2': [
+           // ...
+       ]
+   }
+   ```
+ - an `aggregations` field. This field is an object containing the values of
+   the aggregations, using the functions given in the `aggregate` parameter.
 
 #### Example
 
@@ -334,7 +360,8 @@ POST /api/v2/stats/evolution
                 "states": [3]
             },
             "trend": true,
-            "sla": "<= 20"
+            "sla": "<= 20",
+            "aggregate": ["sum"]
         },
         "Major alarms": {
             "stat": "alarms_created",
@@ -394,7 +421,21 @@ The JSON document below is an example of a response to the previous request.
             ]
         },
         // ...
-    ]
+    ],
+    "aggregations": {
+        "Critical alarms": [
+            {
+                "start": 1534543200,  // August 18 at 00:00
+                "end: 1534629600,
+                "value": 37
+            },
+            {
+                "start": 1534629600,  // August 19 at 00:00
+                "end": 1534716000,
+                "value": 136
+            }
+        ]
+    }
 }
 ```
 

@@ -27,6 +27,9 @@ suivants :
  - `trend` (optionnel) : `true` pour calculer la tendance par rapport à la
    période précédente.
  - `sla` (optionnel) : un SLA, représenté par une inégalité (e.g. `">= 0.99"`).
+ - `aggregate` (optionnel) : un tableau contenant les noms de fonctions
+   d'aggrégation à appliquer aux valeurs de la statistique (`"sum"` est la
+   seule fonction disponible pour le moment).
  - `sort_order` (optionnel) : `"desc"` pour trier les résultats par valeur
    décroissante, `"asc"` pour les trier par valeur croissante. Les résultats ne
    sont pas triés par défaut.
@@ -36,18 +39,21 @@ suivants :
 
 #### Réponse
 
-En cas de succès, la réponse est un objet JSON contenant un champ `values`. Ce
-champ est un tableau contenant les valeurs de la statistique pour chaque
-entité, sous la forme suivante :
+En cas de succès, la réponse est un objet JSON contenant :
 
-```javascript
-{
-    'entity': {...},  // L'entité pour laquelle la statistique a été calculée
-    'value': ...,  // La valeur de la statistique
-    'trend': ...,  // La tendance
-    'sla': ...  // true si la valeur est conforme au SLA
-}
-```
+ - un champ `values`. Ce champ est un tableau contenant les valeurs de la
+   statistique pour chaque entité, sous la forme suivante :
+   ```javascript
+   {
+       'entity': {...},  // L'entité pour laquelle la statistique a été calculée
+       'value': ...,  // La valeur de la statistique
+       'trend': ...,  // La tendance
+       'sla': ...  // true si la valeur est conforme au SLA
+   }
+   ```
+ - un champs `aggregations`. Ce champ est un objet contenant la valeurs des
+   aggregations, obtenues en utilisant les fonctions données en paramètre
+   `aggregate`.
 
 #### Exemple
 
@@ -67,7 +73,9 @@ POST /api/v2/stats/alarms_created
     "duration": "2d",
     "parameters": {
         "states": [3]
-    }
+    },
+    "trend": true,
+    "aggregate": ["sum"]
 }
 ```
 
@@ -101,7 +109,10 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
             "trend": -3
         },
         // ...
-    ]
+    ],
+    "aggregations": {
+        "sum": 253  // 117 + 2 + ...
+    }
 }
 ```
 
@@ -137,6 +148,9 @@ les paramètres suivants :
       période précédente.
     - `sla` (optionnel): un SLA, représenté par une inégalité (e.g.
       `">= 0.99"`).
+    - `aggregate` (optionnel) : un tableau contenant les noms de fonctions
+      d'aggrégation à appliquer aux valeurs de la statistique (`"sum"` est la
+      seule fonction disponible pour le moment).
  - `sort_column` (optionnel) : le titre de la statistique dont la valeur sera
    utilisée pour trier les résultats.
  - `sort_order` (optionnel) : `"desc"` pour trier les résultats par valeur
@@ -148,25 +162,27 @@ les paramètres suivants :
 
 #### Réponse
 
-En cas de succès, la réponse est un objet JSON contenant un champ `values`. Ce
-champ est un tableau contenant les valeurs des statistiques pour chaque
-entité, sous la forme suivante :
+En cas de succès, la réponse est un objet JSON contenant :
 
-```javascript
-{
-    'entity': {...},  // L'entité pour laquelle la statistique a été calculée
-    'titre de la statistique 1': {
-        'value': ...,  // La valeur de la statistique
-        'trend': ...,  // La tendance
-        'sla': ...  // true si la valeur est conforme au SLA
-    },
-    'titre de la statistique 2': {
-        'value': ...,  // La valeur de la statistique
-        'trend': ...,  // La tendance
-        'sla': ...  // true si la valeur est conforme au SLA
-    }
-}
-```
+ - un champ `values`. Ce champ est un tableau contenant les valeurs des
+   statistiques pour chaque entité, sous la forme suivante :
+   ```javascript
+   {
+       'entity': {...},  // L'entité pour laquelle la statistique a été calculée
+       'titre de la statistique 1': {
+           'value': ...,  // La valeur de la statistique
+           'trend': ...,  // La tendance
+           'sla': ...  // true si la valeur est conforme au SLA
+       },
+       'titre de la statistique 2': {
+           'value': ...,  // La valeur de la statistique
+           'trend': ...,  // La tendance
+           'sla': ...  // true si la valeur est conforme au SLA
+       }
+   }
+   ```
+ - un champ `aggregations`. Ce champs est un objet contenant les valeurs des
+   aggrégations pour chaque statistiques.
 
 #### Exemple
 
@@ -191,7 +207,8 @@ POST /api/v2/stats
                 "states": [3]
             },
             "trend": true,
-            "sla": "<= 20"
+            "sla": "<= 20",
+            "aggregation": ["sum"]
         },
         "Alarms majeures": {
             "stat": "alarms_created",
@@ -242,7 +259,8 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
             },
             "Alarmes critiques": {
                 "value": 2,
-                "trend": -1
+                "trend": -1,
+                "sla": true
             },
             "Alarmes majeures":
                 "value": 3,
@@ -250,7 +268,12 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
             }
         },
         // ...
-    ]
+    ],
+    "aggregations": {
+        "Alarmes critiques": {
+            "sum": 253
+        }
+    }
 }
 ```
 
@@ -285,6 +308,9 @@ contenant les paramètres suivants :
       période précédente.
     - `sla` (optionnel): un SLA, représenté par une inégalité (e.g.
       `">= 0.99"`).
+    - `aggregate` (optionnel) : un tableau contenant les noms de fonctions
+      d'aggrégation à appliquer aux valeurs de la statistique (`"sum"` est la
+      seule fonction disponible pour le moment).
  - `periods`: le nombre de périodes pour lesquelles les statistiques doivent
    être calculéees.
 
@@ -293,35 +319,37 @@ pour cette route.
 
 #### Réponse
 
-En cas de succès, la réponse est un objet JSON contenant un champ `values`. Ce
-champ est un tableau contenant les valeurs des statistiques pour chaque
-entité, sous la forme suivante :
+En cas de succès, la réponse est un objet JSON contenant ;
 
-```javascript
-{
-    'entity': {...},  // L'entité pour laquelle la statistique a été calculée
-    'titre de la statistique 1': [
-        {
-            'start': ...,  // Timestamp du début de la période
-            'end': ...,  // Timestamp du fin de la période
-            'value': ...,  // La valeur de la statistique
-            'trend': ...,  // La tendance
-            'sla': ...  // true si la valeur est conforme au SLA
-        },
-        {
-            'start': ...,  // Timestamp du début de la période
-            'end': ...,  // Timestamp du fin de la période
-            'value': ...,  // La valeur de la statistique
-            'trend': ...,  // La tendance
-            'sla': ...  // true si la valeur est conforme au SLA
-        },
-        // ...
-    ],
-    'titre de la statistique 2': [
-        // ...
-    ]
-}
-```
+ - un champ `values`. Ce champ est un tableau contenant les valeurs des
+   statistiques pour chaque entité, sous la forme suivante :
+   ```javascript
+   {
+       'entity': {...},  // L'entité pour laquelle la statistique a été calculée
+       'titre de la statistique 1': [
+           {
+               'start': ...,  // Timestamp du début de la période
+               'end': ...,  // Timestamp du fin de la période
+               'value': ...,  // La valeur de la statistique
+               'trend': ...,  // La tendance
+               'sla': ...  // true si la valeur est conforme au SLA
+           },
+           {
+               'start': ...,  // Timestamp du début de la période
+               'end': ...,  // Timestamp du fin de la période
+               'value': ...,  // La valeur de la statistique
+               'trend': ...,  // La tendance
+               'sla': ...  // true si la valeur est conforme au SLA
+           },
+           // ...
+       ],
+       'titre de la statistique 2': [
+           // ...
+       ]
+   }
+   ```
+ - un champ `aggregations`. Ce champs est un objet contenant les valeurs des
+   aggrégations pour chaque statistiques, sur chaque période.
 
 #### Exemple
 
@@ -347,7 +375,8 @@ POST /api/v2/stats/evolution
                 "states": [3]
             },
             "trend": true,
-            "sla": "<= 20"
+            "sla": "<= 20",
+            "aggregation": ["sum"]
         },
         "Alarms majeures": {
             "stat": "alarms_created",
@@ -407,7 +436,21 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
             ]
         },
         // ...
-    ]
+    ],
+    "aggregations": {
+        "Alarmes critiques": [
+            {
+                "start": 1534543200,  // 18 août à 00:00
+                "end: 1534629600,
+                "value": 37
+            },
+            {
+                "start": 1534629600,  // 19 août à 00:00
+                "end": 1534716000,
+                "value": 136
+            }
+        ]
+    }
 }
 ```
 
