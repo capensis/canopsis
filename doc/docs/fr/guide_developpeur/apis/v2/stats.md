@@ -18,7 +18,7 @@ suivants :
    pile (e.g. 12:00, et non 12:03).
  - `duration` : la durée de la période, représentée par une chaîne
    `"<n><unité>"`, avec `<n>` un entier et `<unité>` une unité de temps (`h`,
-   `d` ou `w`).
+   `d`, `w` ou `m`).
  - `mfilter` : un filtre mongodb, filtrant les entités pour lesquelles les
    statistiques doivent être calculées.
  - `parameters` : un objet contenant les paramètres spécifiques à la

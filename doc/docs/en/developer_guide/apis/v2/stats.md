@@ -16,8 +16,8 @@ This route takes a JSON object with the following fields:
    statistic will be computed. This timestamp should be at the top of an hour
    (e.g. 12:00, not 12:03).
  - `duration`: the duration of the period, represented by a string
-   `"<n><unit>"`, where `<n>` is an integer and `<unit>` a time unit (`h`, `d`
-   ou `w`).
+   `"<n><unit>"`, where `<n>` is an integer and `<unit>` a time unit (`h`, `d`,
+   `w` or `m`).
  - `mfilter`: a mongodb filter, filtering the entities for which the
    statistic should be computed.
  - `parameters`: an object containing parameters for the computed statistic.
