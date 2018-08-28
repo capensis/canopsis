@@ -6,31 +6,26 @@
   absolute,
   app,
   )
-    v-card(flat)
     v-expansion-panel(
     class="panel",
     expand,
     focusable,
     dark
     )
-      v-expansion-panel-content.grey.darken-4.white--text
-        div(slot="header") View Group 1
-        v-card.grey.darken-3.white--text
-          v-card-text View 1
-        v-card.grey.darken-3.white--text
-          v-card-text View 2
-    v-expansion-panel(
-    class="panel",
-    expand,
-    focusable,
-    dark
-    )
-      v-expansion-panel-content.grey.darken-4.white--text
-        div(slot="header") View Group 2
-        v-card.grey.darken-3.white--text
-          v-card-text View 1
-        v-card.grey.darken-3.white--text
-          v-card-text View 2
+      v-expansion-panel-content
+        div(slot="header") Views
+        v-expansion-panel(
+        class="panel",
+        expand,
+        focusable,
+        dark
+        )
+          v-expansion-panel-content
+            div(slot="header") View Group 1
+            v-card.grey.darken-3.white--text
+              v-card-text View 1
+            v-card.grey.darken-3.white--text
+              v-card-text View 2
     v-divider
     v-btn.addBtn(
     fab,
