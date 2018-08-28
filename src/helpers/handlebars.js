@@ -1,9 +1,9 @@
 import Handlebars from 'handlebars';
-import i18n from '@/i18n';
+import dateFilter from '@/filters/date';
 
 Handlebars.registerHelper('timestamp', (date) => {
   if (date) {
-    return i18n.d(new Date(date * 1000), 'long');
+    return dateFilter(date, 'long');
   }
 
   return '';
