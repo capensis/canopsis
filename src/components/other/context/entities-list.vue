@@ -33,7 +33,7 @@
           @click="props.expanded = !props.expanded"
           )
             ellipsis(
-            :text="props.item | get(prop.value, null, '')",
+            :text="props.item | get(column.value, null, '')",
             :maxLetters="column.maxLetters"
             )
           td
@@ -61,6 +61,7 @@ import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -89,6 +90,7 @@ export default {
     modalMixin,
     sideBarMixin,
     widgetQueryMixin,
+    widgetColumnsMixin,
     entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
   ],
@@ -96,12 +98,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    columns: {
-      type: Array,
-      default() {
-        return [];
-      },
     },
   },
   data() {
@@ -111,7 +107,11 @@ export default {
   },
   computed: {
     headers() {
-      return [...this.columns, { text: '', sortable: false }];
+      if (this.hasColumns) {
+        return [...this.columns, { text: '', sortable: false }];
+      }
+
+      return [];
     },
   },
   methods: {
