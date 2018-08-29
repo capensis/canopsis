@@ -657,3 +657,49 @@ POST /api/v2/stats/mtbf
     ]
 }
 `
+
+
+### Current state
+
+The `current_state` statistic returns the current state of an entity (at the
+time the request was made). This statistic does not take into account the
+`tstop` and `duration` parameters.
+
+#### Paramètres
+
+This statistic does not take any parameters.
+
+#### Exemple
+
+```javascript
+POST /api/v2/stats/current_state
+{
+	"mfilter": {
+		"type": "resource",
+		"impact": {
+			"$in": ["feeder2_80"]
+		}
+	},
+	"tstop": 1534716000,
+	"duration": "2d"
+}
+```
+
+```javascript
+{
+    "values": [
+        {
+            "entity": {
+                "_id": "resource1/component1",
+                "type": "resource"
+                "impact": [
+                    "service"
+                ],
+                // ...
+            },
+            "value": 3
+        },
+        // ...
+    ]
+}
+```
