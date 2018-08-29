@@ -56,6 +56,8 @@ import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import viewMixin from '@/mixins/entities/view-v3/view-v3';
 import groupMixin from '@/mixins/entities/view-v3/group';
+import popupMixin from '@/mixins/popup';
+import i18n from '@/i18n';
 import find from 'lodash/find';
 
 /**
@@ -66,7 +68,12 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin, viewMixin, groupMixin],
+  mixins: [
+    modalInnerMixin,
+    viewMixin,
+    groupMixin,
+    popupMixin,
+  ],
   data() {
     return {
       search: '',
@@ -90,24 +97,29 @@ export default {
   },
   methods: {
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid) {
-        let group = find(this.groups, { name: this.groupName })._id;
+        if (isFormValid) {
+          let group = find(this.groups, { name: this.groupName })._id;
 
-        if (!group) {
-          group = await this.createGroup({ name: this.groupName });
+          if (!group) {
+            group = await this.createGroup({ name: this.groupName });
+          }
+
+          const data = {
+            ...this.form,
+            widgets: [],
+            group_id: group,
+          };
+
+          await this.createView(data);
+          this.addSuccessPopup({ text: i18n.t('modals.createView.success') });
+          this.hideModal();
         }
-
-        const data = {
-          ...this.form,
-          widgets: [],
-          group_id: group,
-        };
-
-        await this.createView(data);
-
-        this.hideModal();
+      } catch (err) {
+        this.addErrorPopup({ text: i18n.t('modals.createView.fail') });
+        console.error(err.description);
       }
     },
   },

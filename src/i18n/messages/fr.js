@@ -186,6 +186,7 @@ export default {
         groupIds: 'Choisir un groupe, ou en créer un nouveau',
       },
       success: 'Nouvelle vue crée',
+      fail: 'Erreur dans la création de vue',
     },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',

@@ -33,14 +33,8 @@ export default {
     },
   },
   actions: {
-    async create(context, params = {}) {
-      try {
-        const route = API_ROUTES.viewV3.groups;
-        return await request.post(route, params);
-      } catch (err) {
-        console.warn(err);
-        return undefined;
-      }
+    create(context, params = {}) {
+      return request.post(API_ROUTES.viewV3.groups, params);
     },
     async fetchList({ commit, dispatch }, { id } = {}) {
       try {
