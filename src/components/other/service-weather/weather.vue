@@ -3,12 +3,18 @@
     v-layout
       v-btn(icon, @click="showSettings")
         v-icon settings
-    v-layout(wrap)
+    v-layout(wrap, v-if="!watchersPending")
       v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
         weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
+    v-layout(column, v-if="watchersPending")
+      v-flex(xs12)
+        v-layout(justify-center)
+          spinner
 </template>
 
 <script>
+import Spinner from 'vue-spinner/src/PulseLoader.vue';
+
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -21,6 +27,7 @@ import WeatherItem from './weather-item.vue';
 export default {
   components: {
     WeatherItem,
+    Spinner,
   },
   mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, widgetQueryMixin, sideBarMixin],
   props: {
