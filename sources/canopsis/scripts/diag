@@ -12,7 +12,8 @@ Usage (with canopsis account):
 import unittest
 from mock import Mock
 
-from canopsis.common.amqp import get_default_connection as DefaultAMQPConnection
+from canopsis.common.amqp import get_default_connection \
+    as DefaultAMQPConnection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.common.influx import InfluxDBClient

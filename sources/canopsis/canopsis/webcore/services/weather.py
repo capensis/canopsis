@@ -98,6 +98,7 @@ def __format_pbehavior(pbehavior):
 
     return pbehavior
 
+
 def get_ok_ko(influx_client, entity_id):
     """
     For an entity defined by its id, return the number of OK check and KO
@@ -110,7 +111,6 @@ def get_ok_ko(influx_client, entity_id):
     """
     query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
             "event_state_history WHERE \"eid\"='{}'"
-
 
     # Why did I use a double '\' ? It's simple, for some mystical reason,
     # somewhere between the call of influxdbstg.raw_query and the HTTP
@@ -128,6 +128,7 @@ def get_ok_ko(influx_client, entity_id):
         return data
 
     return None
+
 
 def pbehavior_types(pbehaviors):
     """

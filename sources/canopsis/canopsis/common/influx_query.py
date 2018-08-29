@@ -20,10 +20,8 @@
 
 from __future__ import unicode_literals
 
-import re
-
-from canopsis.common.influx import SECONDS, quote_ident, quote_literal, \
-    quote_regex, escape_regex
+from canopsis.common.influx import SECONDS, quote_ident, quote_regex,\
+    escape_regex
 
 
 class SelectColumn(object):

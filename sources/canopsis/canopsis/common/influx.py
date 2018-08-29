@@ -131,7 +131,8 @@ class InfluxDBClient(Client):
                 cfg[InfluxDBOptions.use_udp])
 
         if InfluxDBOptions.udp_port in cfg:
-            influxdb_client_args['udp_port'] = int(cfg[InfluxDBOptions.udp_port])
+            influxdb_client_args['udp_port'] = int(cfg[
+                InfluxDBOptions.udp_port])
 
         return InfluxDBClient(logger, **influxdb_client_args)
 
