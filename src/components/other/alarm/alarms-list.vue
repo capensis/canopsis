@@ -32,11 +32,15 @@
       :total-items="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
+      ref="dataTable",
       item-key="_id",
       hide-actions,
       select-all,
       expand,
       )
+        template(slot="progress")
+          transition(name="fade")
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="{ header }")
           span {{ header.text }}
         template(slot="items", slot-scope="props")
@@ -45,7 +49,7 @@
               v-checkbox(primary, hide-details, v-model="props.selected")
             td(
             v-for="column in columns",
-            @click="toggleExpand(props)"
+            @click="props.expanded = !props.expanded"
             )
               alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
             td
@@ -62,6 +66,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, SIDE_BARS } from '@/constants';
 
@@ -116,7 +121,6 @@ export default {
   data() {
     return {
       selected: [],
-      expanded: null,
     };
   },
   computed: {
@@ -133,13 +137,6 @@ export default {
     },
   },
   methods: {
-    toggleExpand(props) {
-      if (props.expanded) {
-        this.expanded = props.item._id;
-      } else {
-        this.expanded = null;
-      }
-    },
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
     },
@@ -160,6 +157,16 @@ export default {
           widget: this.widget,
         },
       });
+    },
+
+    getQuery() {
+      const query = widgetQueryMixin.methods.getQuery.call(this);
+
+      if (!isEmpty(this.$refs.dataTable.expanded)) {
+        query.with_steps = true;
+      }
+
+      return query;
     },
 
     fetchList() {
