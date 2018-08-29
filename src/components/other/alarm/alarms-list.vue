@@ -36,13 +36,13 @@
       item-key="_id",
       hide-actions,
       select-all,
-      expand,
+      expand
       )
         template(slot="progress")
           transition(name="fade")
             v-progress-linear(height="2", indeterminate)
-        template(slot="headerCell", slot-scope="{ header }")
-          span {{ header.text }}
+        template(slot="headerCell", slot-scope="props")
+          span {{ props.header.text }}
         template(slot="items", slot-scope="props")
           tr
             td
@@ -159,21 +159,17 @@ export default {
       });
     },
 
-    getQuery() {
-      const query = widgetQueryMixin.methods.getQuery.call(this);
-
-      if (!isEmpty(this.$refs.dataTable.expanded)) {
-        query.with_steps = true;
-      }
-
-      return query;
-    },
-
-    fetchList() {
+    fetchList({ isPeriodicRefresh } = {}) {
       if (this.hasColumns) {
+        const query = this.getQuery();
+
+        if (isPeriodicRefresh && !isEmpty(this.$refs.dataTable.expanded)) {
+          query.with_steps = true;
+        }
+
         this.fetchAlarmsList({
           widgetId: this.widget.id,
-          params: this.getQuery(),
+          params: query,
         });
       }
     },
