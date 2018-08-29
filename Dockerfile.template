@@ -1,6 +1,10 @@
 FROM node:10.6-stretch
 
-RUN cd sources/webcore/src/canopsis-next; npm install; NODE_ENV=production npm run build
+COPY sources/webcore/src/canopsis-next /canopsis-next
+WORKDIR /canopsis-next
+RUN npm install
+
+RUN NODE_ENV=production npm run build
 
 # Use this image as a build image in a multistage build ?
 # FROM %%BASE_IMAGE%% as build
@@ -31,11 +35,12 @@ RUN /bin/bash /run.sh
 WORKDIR ${CPS_HOME}
 
 ### Install virtualenv
+RUN which virtualenv
 RUN virtualenv .;\
 	source /etc/os-release;\
 	source ${CPS_HOME}/bin/activate;\
-	pip install -b /tmp/pipbuild -U setuptools pip wheel;
-	pip install -b /tmp/pipbuild -r /sources/canopsis/requirements.txt
+	pip install -b /tmp/pipbuild -U setuptools pip wheel;\
+	pip install -b /tmp/pipbuild -r /sources/canopsis/requirements.txt;\
 	pyopenssl="pyOpenSSL"\
 	if [ "${VERSION_ID}" = "8" ]&&[ "${ID}" = "debian" ]; then\
 	   pyopenssl="pyOpenSSL==17.5.0";\
