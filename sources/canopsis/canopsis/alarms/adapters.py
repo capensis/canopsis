@@ -103,19 +103,27 @@ class AlarmAdapter(object):
         for alarm in self.collection.find(query):
             yield make_alarm_from_mongo(alarm)
 
-    def find_unresolved_alarms(self):
+    def find_unresolved_alarms(self, entity_ids=None):
         """
-        Yields all the alarms that are unresolved.
+        Yields all the alarms that are unresolved, optionally filtered by
+        entity id.
 
+        :param Optional[List[str]] entity_ids: A list of entity ids.
         :rtype: Iterator[Dict[str, Any]]
         """
-
         query = {
             "$or": [
                 {"v.resolved": None},
                 {"v.resolved": {"$exists": False}},
             ],
         }
+        if entity_ids is not None:
+            query = {
+                '$and': [
+                    {'d': {'$in': entity_ids}},
+                    query
+                ]
+            }
 
         for alarm in self.collection.find(query):
             yield make_alarm_from_mongo(alarm)
