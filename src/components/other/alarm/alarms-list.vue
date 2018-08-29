@@ -33,23 +33,25 @@
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
       item-key="_id",
-      select-all,
       hide-actions,
+      select-all,
+      expand,
       )
-        template(slot="headerCell", slot-scope="props")
-          span {{ props.header.text }}
+        template(slot="headerCell", slot-scope="{ header }")
+          span {{ header.text }}
         template(slot="items", slot-scope="props")
-          td
-            v-checkbox(primary, hide-details, v-model="props.selected")
-          td(
-          v-for="column in columns",
-          @click="props.expanded = !props.expanded"
-          )
-            alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
-          td
-            actions-panel(:item="props.item", :widget="widget")
+          tr
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+            v-for="column in columns",
+            @click="toggleExpand(props)"
+            )
+              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+            td
+              actions-panel(:item="props.item", :widget="widget")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+          time-line(:alarmProps="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(:meta="alarmsMeta", :query.sync="query")
@@ -114,6 +116,7 @@ export default {
   data() {
     return {
       selected: [],
+      expanded: null,
     };
   },
   computed: {
@@ -130,6 +133,13 @@ export default {
     },
   },
   methods: {
+    toggleExpand(props) {
+      if (props.expanded) {
+        this.expanded = props.item._id;
+      } else {
+        this.expanded = null;
+      }
+    },
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
     },
