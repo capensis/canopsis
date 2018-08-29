@@ -70,7 +70,11 @@ Ember.Application.initializer({
 				var actions = new Array()
 				for(i = 0; i < this.get("actionsMap").length; i++) {
 					if (this.get("canAction")(this.get("rights"), this.actionsMap[i]["rightName"])) {
-						actions.push(this.actionsMap[i])
+						if(this.actionsMap[i]["rightName"] !== 'listalarm_restoreAlarm'){
+							actions.push(this.actionsMap[i])
+						} else if (this.get("_parentView._controller.alarmSearchOptions.opened") === false) {
+							actions.push(this.actionsMap[i])
+						}
 					}
 				}
 				this.set("availableAction", actions)
