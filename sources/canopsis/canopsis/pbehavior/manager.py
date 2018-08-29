@@ -206,7 +206,7 @@ class PBehaviorManager(object):
             tstart, tstop, rrule='',
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            type_=PBehavior.DEFAULT_TYPE, reason=''):
+            type_=PBehavior.DEFAULT_TYPE, reason='', pb_action=None):
         """
         Method creates pbehavior record
 
@@ -278,6 +278,9 @@ class PBehaviorManager(object):
         else:
             for comment in data.comments:
                 comment.update({'_id': str(uuid4())})
+        if pb_action:
+            data['pb_action'] = pb_action
+        self.logger.critical('la on va le mettre en base ce con')
         result = self.pb_storage.put_element(element=data.to_dict())
 
         return result
@@ -929,3 +932,35 @@ class PBehaviorManager(object):
             before,
             False
         )
+
+        def stop_1(self, event, eid):
+            self.logger.critical('coucou stop_1')
+            self.create(
+                'prodop',
+                {'_id': eid},
+                'prodop',
+                int(time.now()),
+                2147483647,
+                type_ = 'PRODOP',
+                pb_action = 'stop_1'
+            )
+
+        def get_stop_1_pbs(self, eid):
+            res =  list(
+                self.pb_store.find({
+                    'pb_action': 'stop_1',
+                    PBehavior.EIDS: {"$in": eid},
+                    PBehavior.TYPE: 'PRODOP'
+                })
+            )
+            self.logger.critical(res)
+            return res
+
+        def start_1(self, eid):
+            pb_end = int(time.now()) + 360
+            for pb in self.get_stop_1_pbs(eid):
+                self.update(pb.PBehavior.ID, {
+                    PBehavior.TSTOP :pb_end,
+                    'pb_action': 'start-1'
+                })
+

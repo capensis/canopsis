@@ -93,6 +93,12 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
     if event.get('event_type') == EVENT_TYPE:
         entity_id = ContextGraph.get_id(event)
         engine.logger.debug("Start processing event {}".format(event))
+        if event.get('pb_type') == 'PRODOP':
+            if event.get('action') == 'start-1':
+                pbm.start_1(event, entity_id)
+            if event.get('action') == 'stop-1':
+                pbm.stop_1(event, entity_id)
+            return event
 
         logger.debug("entity_id: {}\naction: {}".format(
             entity_id, event.get('action')))
