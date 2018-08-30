@@ -554,6 +554,10 @@ class PBehaviorManager(object):
         pbh_duration = tstop - tstart
 
         dtts = fromts(timestamp).replace(tzinfo=tz)
+        # ddts_offset contains the current timestamp minus the duration of
+        # the pbhevior, so the computation of the rrules occurences
+        # will include the running occurence. Thus the current pbehavior
+        # will be detected.
         dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
 
         dt_list = [dttstart, dttstop]
