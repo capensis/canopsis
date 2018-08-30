@@ -106,10 +106,12 @@ export default {
         const isFormValid = await this.$validator.validateAll();
 
         if (isFormValid) {
-          let group = find(this.groups, { name: this.groupName })._id;
+          let group = find(this.groups, { name: this.groupName });
 
           if (!group) {
             group = await this.createGroup({ name: this.groupName });
+          } else {
+            group = group._id;
           }
 
           const params = {
