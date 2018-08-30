@@ -9,12 +9,10 @@
     v-layout(column, v-if="watchersPending")
       v-flex(xs12)
         v-layout(justify-center)
-          spinner
+          v-progress-circular(indeterminate)
 </template>
 
 <script>
-import Spinner from 'vue-spinner/src/PulseLoader.vue';
-
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -27,7 +25,6 @@ import WeatherItem from './weather-item.vue';
 export default {
   components: {
     WeatherItem,
-    Spinner,
   },
   mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, widgetQueryMixin, sideBarMixin],
   props: {
