@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import pick from 'lodash/pick';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { PAGINATION_LIMIT } from '@/config';
@@ -84,12 +83,12 @@ export default {
       },
     };
   },
-  created() {
-    this.settings.widget_preferences = pick(this.userPreference.widget_preferences, [
-      'itemsPerPage',
-      'user_filters',
-      'selected_filter',
-    ]);
+  mounted() {
+    this.settings.widget_preferences = {
+      itemsPerPage: this.userPreference.widget_preferences.itemsPerPage,
+      user_filters: this.userPreference.widget_preferences.user_filters,
+      selected_filter: this.userPreference.widget_preferences.selected_filter,
+    };
   },
 };
 </script>
