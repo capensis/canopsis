@@ -366,11 +366,17 @@ class TestManager(BaseTest):
         pbehavior_2 = deepcopy(self.pbehavior)
         pb_name1, pb_name2, = 'cheerfull', 'blue'
 
+        now = int(time.time())
+        hour = 3600
+
         pbehavior_1.update(
             {
                 'name': pb_name1,
                 'eids': [self.entity_id_1, self.entity_id_2],
-                PBehavior.TYPE: 'maintenance'
+                PBehavior.TYPE: 'maintenance',
+                "rrule": 'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
+                'tstart': now - hour,
+                'tstop': now + hour
             }
         )
 
