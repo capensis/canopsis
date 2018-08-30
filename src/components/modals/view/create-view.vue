@@ -110,9 +110,9 @@ export default {
 
           if (!group) {
             group = await this.createGroup({ name: this.groupName });
-          } else {
-            group = group._id;
           }
+
+          group = group._id;
 
           const params = {
             ...this.form,
