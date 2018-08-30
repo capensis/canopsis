@@ -72,7 +72,10 @@ export default {
           default_sort_column: cloneDeep(widget.default_sort_column) || {},
           widget_columns: cloneDeep(widget.widget_columns) || [],
           periodicRefresh: cloneDeep(widget.periodicRefresh) || {},
-          alarms_state_filter: cloneDeep(widget.alarms_state_filter) || {},
+          alarms_state_filter: {
+            opened: widget.alarms_state_filter.opened || widget.alarms_state_filter === 'opened',
+            resolved: widget.alarms_state_filter.resolved || widget.alarms_state_filter === 'resolved',
+          },
           popup: cloneDeep(widget.popup) || [],
         },
         widget_preferences: {

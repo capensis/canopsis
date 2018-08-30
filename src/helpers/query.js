@@ -33,16 +33,21 @@ export function convertAlarmWidgetToQuery(widget) {
   const query = {
     page: 1,
   };
+  const stateFilter = widget.alarms_state_filter;
 
-  if (widget.alarms_state_filter) {
-    query.opened = Boolean(widget.alarms_state_filter.opened);
-    query.resolved = Boolean(widget.alarms_state_filter.resolved);
+  if (stateFilter) {
+    if (stateFilter.state && (stateFilter.opened === undefined && stateFilter.resolved === undefined)) {
+      query.opened = stateFilter.state === 'opened';
+      query.resolved = stateFilter.state === 'resolved';
+    } else {
+      query.opened = Boolean(stateFilter.opened);
+      query.resolved = Boolean(stateFilter.resolved);
+    }
   }
 
   if (widget.widget_columns) {
     query.active_columns = widget.widget_columns.map(v => v.value);
   }
-
   return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 
