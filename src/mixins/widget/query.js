@@ -5,7 +5,6 @@ import Pagination from '@/components/tables/pagination.vue';
 import queryMixin from '@/mixins/query';
 import dateIntervals from '@/helpers/date-intervals';
 import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
-import { WIDGET_TYPES } from '@/constants';
 
 /**
  * @mixin Add query logic
@@ -94,17 +93,6 @@ export default {
       query.skip = ((page - 1) * this.query.limit) || 0;
 
       return query;
-    },
-    fetchList() {
-      const fetchListMethodsMap = {
-        [WIDGET_TYPES.context]: 'fetchContextEntitiesList',
-        [WIDGET_TYPES.alarmList]: 'fetchAlarmsList',
-      };
-
-      this[fetchListMethodsMap[this.widget.xtype]]({
-        widgetId: this.widget.id,
-        params: this.getQuery(),
-      });
     },
   },
 };
