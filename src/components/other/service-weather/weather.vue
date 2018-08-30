@@ -3,13 +3,14 @@
     v-layout
       v-btn(icon, @click="showSettings")
         v-icon settings
-    v-layout(wrap, v-if="!watchersPending")
+    v-layout(wrap, v-show="!watchersPending")
       v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
         weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
-    v-layout(column, v-if="watchersPending")
-      v-flex(xs12)
-        v-layout(justify-center)
-          v-progress-circular(indeterminate)
+    fade-transition
+      v-layout(column v-if="watchersPending")
+        v-flex(xs12)
+          v-layout(justify-center)
+            v-progress-circular(indeterminate)
 </template>
 
 <script>
@@ -17,6 +18,7 @@ import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetQueryMixin from '@/mixins/widget/query';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
+import FadeTransition from '@/components/transition/fade.vue';
 
 import { SIDE_BARS } from '@/constants';
 
@@ -25,6 +27,7 @@ import WeatherItem from './weather-item.vue';
 export default {
   components: {
     WeatherItem,
+    FadeTransition,
   },
   mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, widgetQueryMixin, sideBarMixin],
   props: {
@@ -62,4 +65,3 @@ export default {
   },
 };
 </script>
-
