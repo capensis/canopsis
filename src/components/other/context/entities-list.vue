@@ -11,7 +11,12 @@
           v-icon settings
       v-flex(xs2)
         context-fab
-    div
+    .table__overflow(v-if="!hasColumns")
+      table.datatable.table
+        tbody
+          tr
+            td.text-xs-center You have to select at least 1 column
+    div(v-else)
       v-data-table(
       v-model="selected",
       :items="contextEntities",
@@ -188,6 +193,14 @@ export default {
           widget: this.widget,
         },
       });
+    },
+    fetchList() {
+      if (this.hasColumns) {
+        this.fetchContextEntitiesList({
+          widgetId: this.widget.id,
+          params: this.getQuery(),
+        });
+      }
     },
   },
 };
