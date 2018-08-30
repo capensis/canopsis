@@ -15,23 +15,20 @@ export default {
     group: groupModule,
   },
   state: {
-    pending: false,
   },
   getters: {
     item: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.viewV3.view, state.viewId),
   },
   mutations: {
-    [types.FETCH_ITEM_COMPLETED]: (state) => {
-      state.pending = false;
+    [types.FETCH_ITEM]: () => {
     },
-    [types.FETCH_ITEM]: (state) => {
-      state.pending = true;
+    [types.FETCH_ITEM_COMPLETED]: () => {
     },
   },
   actions: {
-    async create(context, params = {}) {
-      await request.post(API_ROUTES.viewV3.view, params);
+    create(context, { params } = {}) {
+      return request.post(API_ROUTES.viewV3.view, params);
     },
 
     async fetchItem({ commit, dispatch }, { id }) {

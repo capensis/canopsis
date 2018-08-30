@@ -27,7 +27,8 @@
           v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-layout(wrap, justify-center)
         v-flex(xs11)
-          v-combobox(v-model="form.tags",
+          v-combobox(
+          v-model="form.tags",
           label="$t('modals.createView.fields.groupIds')",
           tags, clearable, multiple, append-icon, chips, deletable-chips
           )
@@ -57,7 +58,6 @@ import modalInnerMixin from '@/mixins/modal/modal-inner';
 import viewMixin from '@/mixins/entities/view-v3/view-v3';
 import groupMixin from '@/mixins/entities/view-v3/group';
 import popupMixin from '@/mixins/popup';
-import i18n from '@/i18n';
 import find from 'lodash/find';
 
 /**
@@ -114,11 +114,11 @@ export default {
           };
 
           await this.createView(data);
-          this.addSuccessPopup({ text: i18n.t('modals.createView.success') });
+          this.addSuccessPopup({ text: this.$t('modals.createView.success') });
           this.hideModal();
         }
       } catch (err) {
-        this.addErrorPopup({ text: i18n.t('modals.createView.fail') });
+        this.addErrorPopup({ text: this.$t('modals.createView.fail') });
         console.error(err.description);
       }
     },
