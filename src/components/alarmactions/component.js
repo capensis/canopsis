@@ -152,7 +152,7 @@ Ember.Application.initializer({
                     case "assignticketnumber":
                         name = func(actions, rights, actions[i]["name"], "listalarm_assignTicketNumber")
                         break;
-                    case "done":
+                    case "donealarm":
                         name = func(actions, rights, actions[i]["name"], "listalarm_done")
                         break;
                     case "pbehavior":
@@ -234,13 +234,6 @@ Ember.Application.initializer({
             isSnoozed: function () {
                 return this.get('alarm.extra_details.snooze') != undefined;
             }.property('alarm.extra_details.snooze'),
-
-            /**
-             * @property hasLinks
-             */
-            hasLinks: function() {
-                return this.get('alarm.linklist.event_links.length') > 0;
-            }.property('alarm.linklist.event_links'),
 
             /**
              * @property isChangedByUser

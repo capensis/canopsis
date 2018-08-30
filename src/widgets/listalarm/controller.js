@@ -241,7 +241,7 @@ Ember.Application.initializer({
                     opened: filterState == 'opened',
                     resolved: filterState == 'resolved',
                     hide_resources: hide_resources,
-                    lookups: JSON.stringify(["pbehaviors", "linklist"]) ,
+                    lookups: JSON.stringify(["pbehaviors"]) ,
                     filter: filter,
                     sort_key: this.get('model.default_sort_column.property'),
                     sort_dir: this.get('model.default_sort_column.direction'),
@@ -422,7 +422,11 @@ Ember.Application.initializer({
 					controller.set('isNaturalSearch', false);
 				}
 
-                var columns = get(this, 'model.columns');
+                var columns = []
+				get(this, 'model.widget_columns').forEach(function(element) {
+					columns.push(element.value)
+				})
+
                 var prefixed_columns = [];
                 for (idx = 0; idx < columns.length; idx++) {
                     depth_one = columns[idx].split(".", 1)[0];
@@ -626,6 +630,10 @@ Ember.Application.initializer({
                 var sortColumn = this.get('model.default_sort_column.property');
                 var order = this.get('model.default_sort_column.direction');
 
+				if (columns === undefined){
+					columns = []
+				}
+
                 fields = columns.map(function (column) {
                     var obj = {};
                     if (column.value.startsWith('infos')){
@@ -684,7 +692,7 @@ Ember.Application.initializer({
                     }
                     adapter.findQuery('alarm',
                         {
-                            lookups: JSON.stringify(["pbehaviors", "linklist"]),
+                            lookups: JSON.stringify(["pbehaviors"]),
                             'filter': ('{"$or":[{"_id":"' + alarm_record.get('id') + '"}]}')
                         }).then(function (found_alarm) {
                             if (found_alarm.success) {
