@@ -565,6 +565,8 @@
         {{/each}}
     </div>
 </p></script>
+<script type="text/x-handlebars" data-template-name="_infos_hostgroups_value">{{listalarm_ellipsis value 8 "hostgroups"}}
+</script>
 <script type="text/x-handlebars" data-template-name="_v_ack">{{#component-rendererack value=value}}
 {{/component-rendererack}}</script>
 <script type="text/x-handlebars" data-template-name="_v_creation_date">{{timestampfulldate value}}</script>
@@ -587,7 +589,8 @@
 <script type="text/x-handlebars" data-template-name="_v_state">{{#component-rendererstate value=value}}
 {{/component-rendererstate}}
 </script>
-<script type="text/x-handlebars" data-template-name="_v_state_m">{{listalarm_ellipsis value 100}}</script>
+<script type="text/x-handlebars" data-template-name="_v_state_m">{{listalarm_ellipsis value 100 "output"}}
+</script>
 <script type="text/x-handlebars" data-template-name="_v_state_t">{{timestamp value 'r'}}
 
 </script>
@@ -595,7 +598,8 @@
 {{/component-rendererstatus}}</script>
 <script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
 {{/component-rendererstatusval}}</script>
-<script type="text/x-handlebars" data-template-name="renderer-listalarm_ellipsis">{{!* * @renderer object }} {{listalarm_ellipsis value attr.options.nbChar}}</script>
+<script type="text/x-handlebars" data-template-name="renderer-listalarm_ellipsis">{{!* * @renderer object }} {{listalarm_ellipsis value attr.options.nbChar name}}
+</script>
 <script type="text/x-handlebars" data-template-name="listalarm">
 <div class="pull-left">
     {{#component-selectionactions action='massAction'}}
