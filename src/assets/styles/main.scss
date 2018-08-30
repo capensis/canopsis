@@ -1,0 +1,15 @@
+.v-list {
+  .v-input {
+    &, &__slot {
+      margin-top: 4px;
+    }
+
+    &__slot {
+      margin-bottom: 8px;
+    }
+
+    .v-messages {
+      display: block;
+    }
+  }
+}

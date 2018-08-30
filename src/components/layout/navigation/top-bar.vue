@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-toolbar.white(
+  v-toolbar.top-bar.white(
     dense,
     fixed,
     clipped-left,
@@ -41,5 +41,9 @@ export default {
     img {
       margin: auto;
     }
+  }
+
+  .top-bar /deep/ .v-toolbar__content {
+    padding: 0;
   }
 </style>
