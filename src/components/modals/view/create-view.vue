@@ -30,7 +30,12 @@
           v-combobox(
           v-model="form.tags",
           label="$t('modals.createView.fields.groupIds')",
-          tags, clearable, multiple, append-icon, chips, deletable-chips
+          tags,
+          clearable,
+          multiple,
+          append-icon,
+          chips,
+          deletable-chips,
           )
           v-combobox(
           v-model="groupName",
