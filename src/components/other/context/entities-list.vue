@@ -23,6 +23,9 @@
       select-all,
       hide-actions,
       )
+        template(slot="progress")
+          transition(name="fade")
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
