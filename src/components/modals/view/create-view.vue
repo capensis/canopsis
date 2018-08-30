@@ -112,13 +112,13 @@ export default {
             group = await this.createGroup({ name: this.groupName });
           }
 
-          const data = {
+          const params = {
             ...this.form,
             widgets: [],
             group_id: group,
           };
 
-          await this.createView(data);
+          await this.createView({ params });
           this.addSuccessPopup({ text: this.$t('modals.createView.success') });
           this.hideModal();
         }
