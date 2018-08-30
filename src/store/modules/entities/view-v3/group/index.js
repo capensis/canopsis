@@ -23,9 +23,8 @@ export default {
     [types.FETCH_LIST](state) {
       state.pending = true;
     },
-    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
+    [types.FETCH_LIST_COMPLETED](state, { allIds }) {
       state.allIds = allIds;
-      state.meta = meta;
       state.pending = false;
     },
     [types.FETCH_LIST_FAILED](state) {
