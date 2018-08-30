@@ -35,6 +35,7 @@ export default {
     apply: 'Appliquer',
     to: 'à',
     of: 'sur',
+    tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
     actions: {
@@ -183,6 +184,15 @@ export default {
       createTitle: 'Créer un observateur',
       editTitle: 'Editer un observateur',
       displayName: 'Nom',
+    },
+    createView: {
+      title: 'Créer une vue',
+      noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
+      fields: {
+        groupIds: 'Choisir un groupe, ou en créer un nouveau',
+      },
+      success: 'Nouvelle vue crée',
+      fail: 'Erreur dans la création de vue',
     },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',

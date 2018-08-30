@@ -35,6 +35,7 @@ export default {
     apply: 'Apply',
     to: 'to',
     of: 'of',
+    tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
     actions: {
@@ -183,6 +184,15 @@ export default {
       createTitle: 'Create a watcher',
       editTitle: 'Edit a watcher',
       displayName: 'Name',
+    },
+    createView: {
+      title: 'Create a view',
+      noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
+      fields: {
+        groupIds: 'Choose a group, or create a new one',
+      },
+      success: 'New view created',
+      fail: 'Fail in creation view',
     },
     createAckEvent: {
       title: 'Add event: Ack',
