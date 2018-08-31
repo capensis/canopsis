@@ -5,7 +5,7 @@
       v-divider
       field-default-column-sort(v-model="settings.widget.default_sort_column")
       v-divider
-      field-columns(v-model="settings.widget.widget_columns")
+      field-columns(v-model="settings.widget.widget_columns", :prefixFormatter="prefixFormatter")
       v-divider
       field-periodic-refresh(v-model="settings.widget.periodicRefresh")
       v-divider
@@ -18,7 +18,7 @@
       :filters.sync="settings.widget_preferences.user_filters"
       )
       v-divider
-      field-info-popup(v-model="settings.widget.popup", :widget="widget")
+      field-info-popup(v-model="settings.widget.popup", :widget="widget", :prefixFormatter="prefixFormatter")
       v-divider
       field-more-info
       v-divider
@@ -90,6 +90,11 @@ export default {
       'user_filters',
       'selected_filter',
     ]);
+  },
+  methods: {
+    prefixFormatter(value) {
+      return value.replace('alarm.', 'v.');
+    },
   },
 };
 </script>
