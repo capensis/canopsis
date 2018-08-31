@@ -24,9 +24,9 @@
 <script>
 import { MODALS, WIDGET_TYPES } from '@/constants';
 
-import AlarmsListContainer from '@/containers/alarms-list.vue';
-import EntitiesListContainer from '@/containers/entities-list.vue';
-import WeatherContainer from '@/containers/weather.vue';
+import AlarmsList from '@/components/other/alarm/alarms-list.vue';
+import EntitiesList from '@/components/other/context/entities-list.vue';
+import Weather from '@/components/other/service-weather/weather.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -34,9 +34,9 @@ import entitiesWidgetMixin from '@/mixins/entities/widget';
 
 export default {
   components: {
-    AlarmsListContainer,
-    EntitiesListContainer,
-    WeatherContainer,
+    AlarmsList,
+    EntitiesList,
+    Weather,
   },
   mixins: [
     modalMixin,
@@ -53,9 +53,9 @@ export default {
     return {
       fab: false,
       widgetsMap: {
-        [WIDGET_TYPES.alarmList]: 'alarms-list-container',
-        [WIDGET_TYPES.context]: 'entities-list-container',
-        [WIDGET_TYPES.weather]: 'weather-container',
+        [WIDGET_TYPES.alarmList]: 'alarms-list',
+        [WIDGET_TYPES.context]: 'entities-list',
+        [WIDGET_TYPES.weather]: 'weather',
       },
     };
   },

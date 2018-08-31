@@ -38,13 +38,16 @@
     fixed,
     bottom,
     right,
-    color="green darken-4"
+    color="green darken-4",
+    @click="showCreateViewModal"
     )
       v-icon(dark) add
 </template>
 
 <script>
 import { SIDE_BAR_WIDTH } from '@/config';
+import { MODALS } from '@/constants';
+import modalMixin from '@/mixins/modal/modal';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -54,6 +57,7 @@ import { SIDE_BAR_WIDTH } from '@/config';
  * @event input#update
  */
 export default {
+  mixins: [modalMixin],
   props: {
     value: {
       type: Boolean,
@@ -75,6 +79,13 @@ export default {
           this.$emit('input', value);
         }
       },
+    },
+  },
+  methods: {
+    showCreateViewModal() {
+      this.showModal({
+        name: MODALS.createView,
+      });
     },
   },
 };

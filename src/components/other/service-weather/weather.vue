@@ -47,20 +47,20 @@ export default {
     },
   },
   methods: {
-    fetchList() {
-      this.fetchWatchersList({
-        filter: this.widget.filter,
-        params: this.getQuery(),
-        widgetId: this.widget.id,
-      });
-    },
-
     showSettings() {
       this.showSideBar({
         name: SIDE_BARS.weatherSettings,
         config: {
           widget: this.widget,
         },
+      });
+    },
+
+    fetchList() {
+      this.fetchWatchersList({
+        filter: this.widget.filter,
+        params: this.getQuery(),
+        widgetId: this.widget.id,
       });
     },
   },
