@@ -71,4 +71,4 @@ class RedisSentinelStore(object):
         """
         remove object to free alert cash
         """
-        return self.conn.remove(name)
+        return self.conn.delete(name)
