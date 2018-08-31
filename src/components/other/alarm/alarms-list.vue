@@ -19,11 +19,7 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="showSettings")
           v-icon settings
-    .table__overflow(v-if="!hasColumns")
-      table.datatable.table
-        tbody
-          tr
-            td.text-xs-center You have to select at least 1 column
+    no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
       v-model="selected",
@@ -69,6 +65,7 @@ import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
+import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -95,6 +92,7 @@ export default {
     MassActionsPanel,
     ActionsPanel,
     AlarmColumnValue,
+    NoColumnsTable,
   },
   mixins: [
     modalMixin,
