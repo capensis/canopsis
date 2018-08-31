@@ -8,7 +8,7 @@ from pymongo import errors
 from redlock import Redlock
 
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.redis_store import RedisStore
+from canopsis.common.redis_sentinel_store import RedisSentinelStore
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
@@ -120,3 +120,26 @@ class AlertLockRedis(object):
             remove lock documentt
         """
         return self.redlock.unlock(lock)
+
+class AlertLockRedisSentinel(object):
+    LOG_PATH = 'var/log/alert_lock.log'
+
+    @classmethod
+    def provide_default_basics(cls):
+        redis_sentinel_store = RedisSentinelStore.get_default()
+        logger = Logger.get('lock', cls.LOG_PATH)
+        return logger, redis_sentinel_store
+
+    def __init__(self, logger, redis_sentinel_store):
+        self.redis_sentinel_store = redis_sentinel_store
+        self.logger = logger
+
+    def lock(self, entity_id):
+        lock_id = 'redlock_{0}'.format(entity_id)
+        while self.redis_sentinel_store.exists(lock_id):
+            sleep(0.1)
+        self.redis_sentinel_store.set(lock_id, lock_id, ex=12)
+
+    def unlock(self, entity_id):
+        lock_id = 'redlock_{0}'.format(entity_id)
+        self.redis_sentinel_store.remove(lock_id)

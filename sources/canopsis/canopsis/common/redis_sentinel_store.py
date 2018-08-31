@@ -19,12 +19,12 @@ class RedisSentinelStore(object):
         Get default redis connection using the default configuration file.
         """
         config = Configuration.load(cls.CONF_PATH, Ini)
-        return RedisStore(config)
+        return RedisSentinelStore(config)
 
     def __init__(self, config):
         self.config = config
         conf = self.config.get(self.CONF_CAT, {})
-        self.db_hosts = conf.get('host', self.DEFAULT_DB_HOST)
+        self.db_hosts = conf.get('hosts', self.DEFAULT_DB_HOST)
         self.db_pass = conf.get('pwd')
         self.master_name = conf.get('master', self.DEFAULT_MASTER_NAME)
         self.sentinel = None
@@ -41,8 +41,8 @@ class RedisSentinelStore(object):
         return ret_val
 
     def _connect(self):
-        self.sentinel = Sentinel(self.parse_hosts, socket_timeout=0.1, password=self.db_pass)
-        self.conn = sentinel.master_for(self.master_name)
+        self.sentinel = Sentinel(self.parse_hosts(), socket_timeout=0.1, password=self.db_pass)
+        self.conn = self.sentinel.master_for(self.master_name)
 
     def get_new_master(self):
         return self.sentinel.master_for(self.master_name)
