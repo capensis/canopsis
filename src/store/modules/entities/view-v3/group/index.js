@@ -32,7 +32,7 @@ export default {
     },
   },
   actions: {
-    create(context, data = {}) {
+    create(context, { data } = {}) {
       return request.post(API_ROUTES.viewV3Group, data);
     },
     async fetchList({ commit, dispatch }, { id } = {}) {

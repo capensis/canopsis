@@ -109,7 +109,7 @@ export default {
           let group = find(this.groups, { name: this.groupName });
 
           if (!group) {
-            group = await this.createGroup({ name: this.groupName });
+            group = await this.createGroup({ data: { name: this.groupName } });
           }
 
           const data = {
@@ -117,7 +117,6 @@ export default {
             widgets: [],
             group_id: group._id,
           };
-
           await this.createView({ data });
           this.addSuccessPopup({ text: this.$t('modals.createView.success') });
           this.hideModal();
