@@ -32,12 +32,12 @@ export default {
     },
   },
   actions: {
-    create(context, params = {}) {
-      return request.post(API_ROUTES.viewV3.groups, params);
+    create(context, data = {}) {
+      return request.post(API_ROUTES.viewV3Group, data);
     },
     async fetchList({ commit, dispatch }, { id } = {}) {
       try {
-        let route = API_ROUTES.viewV3.groups;
+        let route = API_ROUTES.viewV3Group;
         if (id) {
           route += `/${id}`;
         }

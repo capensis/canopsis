@@ -190,6 +190,7 @@ export default {
       noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
       fields: {
         groupIds: 'Choisir un groupe, ou en créer un nouveau',
+        groupTags: 'Tags du groupe',
       },
       success: 'Nouvelle vue crée',
       fail: 'Erreur dans la création de vue',
