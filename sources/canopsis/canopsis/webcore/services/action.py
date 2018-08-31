@@ -70,14 +70,19 @@ def exports(ws):
                 HTTP_ERROR
             )
 
-        if element is None:
+        if element is None or not isinstance(element, dict):
             return gen_json_error(
                 {'description': 'nothing to insert'}, HTTP_ERROR)
+        try:
+            Action(**element)
+        except TypeError:
+            return gen_json_error(
+                {'description': 'invalid action format'}, HTTP_ERROR)
 
         try:
             ok = action_manager.create(action=element)
         except CollectionError as ce:
-            ws.logger.info('Action creation error : {}'.format(ce))
+            ws.logger.error('Action creation error : {}'.format(ce))
             return gen_json_error(
                 {'description': 'error while creating an action'},
                 HTTP_ERROR
@@ -101,21 +106,26 @@ def exports(ws):
         :returns: nothing
         """
         try:
-            dico = request.json
+            element = request.json
         except ValueError:
             return gen_json_error(
                 {'description': 'invalid JSON'},
                 HTTP_ERROR
             )
 
-        if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
+        if element is None or not isinstance(element, dict) or len(element) <= 0:
             return gen_json_error(
                 {'description': 'wrong update dict'}, HTTP_ERROR)
+        try:
+            Action(**element)
+        except TypeError:
+            return gen_json_error(
+                {'description': 'invalid action format'}, HTTP_ERROR)
 
         try:
-            ok = action_manager.update_id(id_=action_id, action=dico)
+            ok = action_manager.update_id(id_=action_id, action=element)
         except CollectionError as ce:
-            ws.logger.info('Action update error : {}'.format(ce))
+            ws.logger.error('Action update error : {}'.format(ce))
             return gen_json_error(
                 {'description': 'error while updating an action'},
                 HTTP_ERROR
