@@ -73,8 +73,8 @@ export default {
           widget_columns: cloneDeep(widget.widget_columns) || [],
           periodicRefresh: cloneDeep(widget.periodicRefresh) || {},
           alarms_state_filter: {
-            opened: widget.alarms_state_filter.opened || widget.alarms_state_filter === 'opened',
-            resolved: widget.alarms_state_filter.resolved || widget.alarms_state_filter === 'resolved',
+            opened: widget.alarms_state_filter.opened || widget.alarms_state_filter.state === 'opened',
+            resolved: widget.alarms_state_filter.resolved || widget.alarms_state_filter.state === 'resolved',
           },
           popup: cloneDeep(widget.popup) || [],
         },
