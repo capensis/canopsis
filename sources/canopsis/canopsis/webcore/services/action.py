@@ -62,8 +62,13 @@ def exports(ws):
 
         :returns: nothing
         """
-        # element is a full Action (dict) to insert
-        element = request.json
+        try:
+            element = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
 
         if element is None:
             return gen_json_error(
@@ -73,8 +78,10 @@ def exports(ws):
             ok = action_manager.create(action=element)
         except CollectionError as ce:
             ws.logger.info('Action creation error : {}'.format(ce))
-            return gen_json_error({'description': 'error while creating an action'},
-                                  HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'error while creating an action'},
+                HTTP_ERROR
+            )
 
         if not ok:
             return gen_json_error({'description': 'failed to create action'},
@@ -93,7 +100,13 @@ def exports(ws):
         :type action_id: str
         :returns: nothing
         """
-        dico = request.json
+        try:
+            dico = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
 
         if dico is None or not isinstance(dico, dict) or len(dico) <= 0:
             return gen_json_error(
@@ -103,8 +116,10 @@ def exports(ws):
             ok = action_manager.update_id(id_=action_id, action=dico)
         except CollectionError as ce:
             ws.logger.info('Action update error : {}'.format(ce))
-            return gen_json_error({'description': 'error while updating an action'},
-                                  HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'error while updating an action'},
+                HTTP_ERROR
+            )
         if not ok:
             return gen_json_error({'description': 'failed to update action'},
                                   HTTP_ERROR)
