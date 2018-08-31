@@ -11,7 +11,6 @@ from canopsis.action.manager import ActionManager
 from canopsis.common import root_path
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
-from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger, OutputStream
 from canopsis.models.action import Action
 import xmlrunner
@@ -23,8 +22,7 @@ class TestActionManager(unittest.TestCase):
         output = StringIO()
         self.logger = Logger.get('test', output, OutputStream)
 
-        mongo_conf = Configuration.load(MongoStore.CONF_PATH, Ini)
-        store = MongoStore(config=mongo_conf)
+        store = MongoStore.get_default()
         self.collection = store.get_collection(name='default_test')
         self.mongo_collection = MongoCollection(
             collection=self.collection,

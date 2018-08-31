@@ -27,7 +27,6 @@ from __future__ import unicode_literals
 
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
-from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
 from canopsis.models.action import Action
 
@@ -55,8 +54,7 @@ class ActionManager(object):
                       canopsis.common.collection.MongoCollection]
         """
         logger = Logger.get('action', cls.LOG_PATH)
-        mongo_conf = Configuration.load(MongoStore.CONF_PATH, Ini)
-        store = MongoStore(config=mongo_conf)
+        store = MongoStore.get_default()
         collection = store.get_collection(name=cls.ACTION_COLLECTION)
         mongo_collection = MongoCollection(collection)
 

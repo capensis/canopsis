@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from bottle import request
 
 from canopsis.action.manager import ActionManager
+from canopsis.common.collection import CollectionError
 from canopsis.common.converters import id_filter
 from canopsis.models.action import Action
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
@@ -59,7 +60,7 @@ def exports(ws):
         """
         Create a new action.
 
-        :returns: an <Action>
+        :returns: nothing
         """
         # element is a full Action (dict) to insert
         element = request.json
@@ -68,7 +69,13 @@ def exports(ws):
             return gen_json_error(
                 {'description': 'nothing to insert'}, HTTP_ERROR)
 
-        ok = action_manager.create(action=element)
+        try:
+            ok = action_manager.create(action=element)
+        except CollectionError as ce:
+            ws.logger.info('Action creation error : {}'.format(ce))
+            return gen_json_error({'description': 'error while creating an action'},
+                                  HTTP_ERROR)
+
         if not ok:
             return gen_json_error({'description': 'failed to create action'},
                                   HTTP_ERROR)
@@ -80,12 +87,11 @@ def exports(ws):
     )
     def update_action(action_id):
         """
-        Update an existing alam action.
+        Update an existing alarm action.
 
         :param action_id: ID of the action
         :type action_id: str
-        :returns: <Action>
-        :rtype: dict
+        :returns: nothing
         """
         dico = request.json
 
@@ -93,7 +99,12 @@ def exports(ws):
             return gen_json_error(
                 {'description': 'wrong update dict'}, HTTP_ERROR)
 
-        ok = action_manager.update_id(id_=action_id, action=dico)
+        try:
+            ok = action_manager.update_id(id_=action_id, action=dico)
+        except CollectionError as ce:
+            ws.logger.info('Action update error : {}'.format(ce))
+            return gen_json_error({'description': 'error while updating an action'},
+                                  HTTP_ERROR)
         if not ok:
             return gen_json_error({'description': 'failed to update action'},
                                   HTTP_ERROR)
@@ -110,7 +121,7 @@ def exports(ws):
         :param action_id: ID of the action
         :type action_id: str
 
-        :rtype: dict
+        :rtype: bool
         """
         ws.logger.info('Delete action : {}'.format(action_id))
 
