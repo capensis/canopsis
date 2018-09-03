@@ -35,6 +35,7 @@ export default {
     apply: 'Apply',
     to: 'to',
     of: 'of',
+    tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
     actions: {
@@ -143,6 +144,12 @@ export default {
     selectAFilter: 'Select a filter',
     infoPopup: 'Info popup',
     moreInfosModal: '"More Infos" Popup',
+    weatherTemplate: 'Template - Weather item',
+    modalTemplate: 'Template - Modal',
+    entityTemplate: 'Template - Entities',
+    columnSM: 'Columns - Small',
+    columnMD: 'Columns - Medium',
+    columnLG: 'Columns - Large',
     contextTypeOfEntities: {
       title: 'Type of entities',
       fields: {
@@ -177,6 +184,16 @@ export default {
       createTitle: 'Create a watcher',
       editTitle: 'Edit a watcher',
       displayName: 'Name',
+    },
+    createView: {
+      title: 'Create a view',
+      noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
+      fields: {
+        groupIds: 'Choose a group, or create a new one',
+        groupTags: 'Group tags',
+      },
+      success: 'New view created',
+      fail: 'Fail in creation view',
     },
     createAckEvent: {
       title: 'Add event: Ack',
@@ -272,6 +289,17 @@ export default {
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
+    },
+    filter: {
+      create: {
+        title: 'Create filter',
+      },
+      edit: {
+        title: 'Edit filter',
+      },
+      fields: {
+        title: 'Title',
+      },
     },
   },
   tables: {

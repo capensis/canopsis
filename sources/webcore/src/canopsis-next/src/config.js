@@ -17,9 +17,9 @@ export const SIDE_BAR_WIDTH = 250;
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
 
 export const MEDIA_QUERIES_BREAKPOINTS = {
-  mobile: 450,
-  tablet: 900,
-  laptop: 'Infinity',
+  m: 450,
+  t: 900,
+  l: 'Infinity',
 };
 
 export const API_ROUTES = {
@@ -35,4 +35,6 @@ export const API_ROUTES = {
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',
+  viewV3: '/api/v2/views',
+  viewV3Group: '/api/v2/views/groups',
 };

@@ -8,6 +8,8 @@ export const ENTITIES_TYPES = {
   event: 'event',
   userPreference: 'userPreference',
   view: 'view',
+  viewV3: 'viewV3',
+  group: 'group',
   widgetWrapper: 'widgetWrapper',
   widget: 'widget',
 };
@@ -28,6 +30,8 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  createView: 'create-view',
+  createFilter: 'create-filter',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -129,6 +133,17 @@ export const WIDGET_TYPES = {
   widgetWrapper: 'widgetwrapper',
 };
 
+export const SIDE_BARS = {
+  alarmSettings: 'alarm-settings',
+  contextSettings: 'context-settings',
+  weatherSettings: 'weather-settings',
+};
+
+export const SIDE_BARS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
+  [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+};
+
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
     color: 'purple',
@@ -192,4 +207,10 @@ export const FILTER_DEFAULT_VALUES = {
     groups: {},
     rules: {},
   },
+};
+
+export const DATETIME_FORMATS = {
+  long: 'DD/MM/YYYY H:mm:ss',
+  short: 'DD/MM/YYYY',
+  time: 'H:mm:ss',
 };

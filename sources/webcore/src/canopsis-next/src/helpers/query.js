@@ -1,5 +1,27 @@
+import get from 'lodash/get';
+
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
+
+/**
+ * WIDGET CONVERTERS
+ */
+
+/**
+ * This function converts widget.default_sort_column to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertDefaultSortColumnToQuery(widget) {
+  const { default_sort_column: defaultSortColumn } = widget;
+
+  if (defaultSortColumn && defaultSortColumn.property) {
+    return { sortKey: defaultSortColumn.property, sortDir: defaultSortColumn.direction };
+  }
+
+  return { sortKey: null, sortDir: null };
+}
 
 /**
  * This function converts widget with type 'listalarm' to query Object
@@ -11,25 +33,22 @@ export function convertAlarmWidgetToQuery(widget) {
   const query = {
     page: 1,
   };
+  const stateFilter = widget.alarms_state_filter;
 
-  const { default_sort_column: defaultSortColumn } = widget;
-
-  if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortKey = defaultSortColumn.property.startsWith('v.') ?
-      defaultSortColumn.property : `v.${defaultSortColumn.property}`;
-
-    query.sortDir = defaultSortColumn.direction;
-  } else {
-    query.sortKey = null;
-    query.sortDir = null;
+  if (stateFilter) {
+    if (stateFilter.state && (stateFilter.opened === undefined && stateFilter.resolved === undefined)) {
+      query.opened = stateFilter.state === 'opened';
+      query.resolved = stateFilter.state === 'resolved';
+    } else {
+      query.opened = Boolean(stateFilter.opened);
+      query.resolved = Boolean(stateFilter.resolved);
+    }
   }
 
-  if (widget.alarms_state_filter) {
-    query.opened = Boolean(widget.alarms_state_filter.opened);
-    query.resolved = Boolean(widget.alarms_state_filter.resolved);
+  if (widget.widget_columns) {
+    query.active_columns = widget.widget_columns.map(v => v.value);
   }
-
-  return query;
+  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 
 /**
@@ -43,18 +62,12 @@ export function convertContextWidgetToQuery(widget) {
     page: 1,
   };
 
-  const { default_sort_column: defaultSortColumn } = widget;
-
-  if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortKey = defaultSortColumn.property;
-    query.sortDir = defaultSortColumn.direction;
-  } else {
-    query.sortKey = null;
-    query.sortDir = null;
-  }
-
-  return query;
+  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
+
+/**
+ * USER_PREFERENCE CONVERTERS
+ */
 
 /**
  * This function converts userPreference with widgetXtype 'listalarm' to query Object
@@ -62,9 +75,10 @@ export function convertContextWidgetToQuery(widget) {
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertAlarmUserPreferenceToQuery(userPreference) {
+export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   return {
-    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
+    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
+    filter: get(widgetPreferences, 'selected_filter.filter'),
   };
 }
 
@@ -74,12 +88,16 @@ export function convertAlarmUserPreferenceToQuery(userPreference) {
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertContextUserPreferenceToQuery(userPreference) {
+export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   return {
-    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
-    selectedTypes: userPreference.widget_preferences.selectedTypes || [],
+    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
+    selectedTypes: get(widgetPreferences, 'selectedTypes', []),
   };
 }
+
+/**
+ * MAIN CONVERTERS
+ */
 
 /**
  * This function converts userPreference to query Object

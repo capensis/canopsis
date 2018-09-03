@@ -7,11 +7,16 @@
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
       v-flex(xs2)
-        v-btn(icon, @click.prevent="$emit('openSettings')")
+        v-btn(icon, @click.prevent="showSettings")
           v-icon settings
       v-flex(xs2)
         context-fab
-    div
+    .table__overflow(v-if="!hasColumns")
+      table.datatable.table
+        tbody
+          tr
+            td.text-xs-center You have to select at least 1 column
+    div(v-else)
       v-data-table(
       v-model="selected",
       :items="contextEntities",
@@ -29,12 +34,12 @@
           td
             v-checkbox(primary, hide-details, v-model="props.selected")
           td(
-          v-for="prop in properties",
+          v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
             ellipsis(
-            :text="$options.filters.get(props.item,prop.value) || ''",
-            :maxLetters="prop.maxLetters"
+            :text="props.item | get(column.value, null, '')",
+            :maxLetters="column.maxLetters"
             )
           td
             v-btn(@click.stop="editEntity(props.item)", icon, small)
@@ -57,9 +62,11 @@ import ContextSearch from '@/components/other/context/search/context-search.vue'
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -72,7 +79,7 @@ import MoreInfos from './more-infos.vue';
  * @module context
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Array} properties - List of entities properties
+ * @prop {Array} columns - List of entities columns
  *
  * @event openSettings#click
  */
@@ -86,7 +93,9 @@ export default {
   },
   mixins: [
     modalMixin,
+    sideBarMixin,
     widgetQueryMixin,
+    widgetColumnsMixin,
     entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
   ],
@@ -94,12 +103,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    properties: {
-      type: Array,
-      default() {
-        return [];
-      },
     },
   },
   data() {
@@ -109,7 +112,11 @@ export default {
   },
   computed: {
     headers() {
-      return [...this.properties, { text: '', sortable: false }];
+      if (this.hasColumns) {
+        return [...this.columns, { text: '', sortable: false }];
+      }
+
+      return [];
     },
   },
   methods: {
@@ -178,6 +185,22 @@ export default {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
         },
       });
+    },
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.contextSettings,
+        config: {
+          widget: this.widget,
+        },
+      });
+    },
+    fetchList() {
+      if (this.hasColumns) {
+        this.fetchContextEntitiesList({
+          widgetId: this.widget.id,
+          params: this.getQuery(),
+        });
+      }
     },
   },
 };

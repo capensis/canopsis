@@ -3,6 +3,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 export default {
   common: {
     watcher: 'Observateur',
+    widget: 'Widget',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
@@ -34,6 +35,7 @@ export default {
     apply: 'Appliquer',
     to: 'à',
     of: 'sur',
+    tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
     actions: {
@@ -142,6 +144,12 @@ export default {
     selectAFilter: 'Sélectionner un filtre',
     infoPopup: 'Info popup',
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
+    weatherTemplate: 'Template - Tuiles',
+    modalTemplate: 'Template - Modal',
+    entityTemplate: 'Template - Entitées',
+    columnSM: 'Colonnes - Petit',
+    columnMD: 'Colonnes - Moyen',
+    columnLG: 'Colonnes - Large',
     contextTypeOfEntities: {
       title: 'Type d\'entitées',
       fields: {
@@ -176,6 +184,16 @@ export default {
       createTitle: 'Créer un observateur',
       editTitle: 'Editer un observateur',
       displayName: 'Nom',
+    },
+    createView: {
+      title: 'Créer une vue',
+      noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
+      fields: {
+        groupIds: 'Choisir un groupe, ou en créer un nouveau',
+        groupTags: 'Tags du groupe',
+      },
+      success: 'Nouvelle vue crée',
+      fail: 'Erreur dans la création de vue',
     },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',
