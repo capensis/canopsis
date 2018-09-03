@@ -4,12 +4,24 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Unreleased
 
+### Experimental features
+
+- [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+
+## Canopsis 3.2 - Due date : 2018-09-01
+
+- [Python]: fix rruled pbehavior computation
+- [Python]: two bugfix on /get-entities route
+- [Service weather]: fix unfoldable item when it contains a %
+- [UI]: add ellipsis on hostgroups field
+- [UI]: add rights on filters (create, list, modify)
+- [UI]: hide "Restore alarm" button on open alarm list
+
 ## Canopsis 3.1 - Due date : 2018-08-17
 - [Python]: add a feature that track the change of the longoutput field and alter the behavior of the output field of an alarm.
 - [Python]: fix a bug that duplicate an alarm.
 - [Build]: fix an error during the compilation of canopsis-next.
 - [UI]: fix a right issue in the listalarm brick that allow the done button to be displayed without any right.
-
 
 ## Canopsis 3.0.1 - Due date : 2018-08-03
 
@@ -18,16 +30,12 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [CAT]: New stats in statsng: most_alarms_created, alarms_impacting, state_list (!71)
 - [CAT]: send stats with alarm duration
 - [CAT]: default sats value
-- [snooze]: faster snooze application
-- [perriodic refresh]: fix infinite loop with periodic refresh
-- [link list]: remove linklist
-- [links]: fix links in service weather
+- [Snooze]: faster snooze application
+- [Periodic refresh]: fix infinite loop with periodic refresh
+- [Link list]: remove linklist
+- [Links]: fix links in service weather
 - [UI]: views in canopsis-next
 - [UI]: alarms in canopsis-next
-
-### Experimental features
-
-- [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
 ## Canopsis 3.0.0 - Due date : 2018-07-20
 
