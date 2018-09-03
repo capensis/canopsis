@@ -848,7 +848,7 @@ class PBehaviorManager(object):
                     timegm(interval_end.timetuple())
                 )
 
-    def get_intervals_with_pbehaviors(self, after, before, entity_id):
+    def get_intervals_with_pbehaviors_by_eid(self, after, before, entity_id):
         """
         Yields intervals between after and before with a boolean indicating if
         a pbehavior affects the entity during this interval.
@@ -864,10 +864,28 @@ class PBehaviorManager(object):
         :param str entity_id: the id of the entity
         :rtype: Iterator[Tuple[int, int, bool]]
         """
+        return self.get_intervals_with_pbehaviors(
+            after, before, self.get_pbehaviors(entity_id))
+
+    def get_intervals_with_pbehaviors(self, after, before, pbehaviors):
+        """
+        Yields intervals between after and before with a boolean indicating if
+        one of the pbehaviors is active during this interval.
+
+        The intervals are returned as a list of tuples (start, end, pbehavior),
+        ordered chronologically. start and end are UTC timestamps, and are
+        always between after and before, pbehavior is a boolean indicating if a
+        pbehavior affects the entity during this interval. None of the
+        intervals overlap.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param List[Dict[str, Any]] pbehaviors: a list of pbehabiors
+        :rtype: Iterator[Tuple[int, int, bool]]
+        """
         intervals = []
 
         # Get all the intervals where a pbehavior is active
-        pbehaviors = self.get_pbehaviors(entity_id)
         for pbehavior in pbehaviors:
             for interval in self.get_active_intervals(after, before, pbehavior):
                 intervals.append(interval)
@@ -924,3 +942,13 @@ class PBehaviorManager(object):
             before,
             False
         )
+
+    def get_enabled_pbehaviors(self):
+        """
+        Yields all the enabled pbehaviors.
+
+        :rtype: Iterator[Dict[str, Any]]
+        """
+        return self.pb_storage._backend.find({
+            PBehavior.ENABLED: True
+        })

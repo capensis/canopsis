@@ -1311,20 +1311,3 @@ class Alerts(object):
             StatCounters.alarms_created,
             entity,
             alarm_value)
-
-        # Increment alarms_impacting counter for each impacted entity
-        # (as well as the entity that created the alarm)
-        self.event_publisher.publish_statcounterinc_event(
-            creation_date,
-            StatCounters.alarms_impacting,
-            entity,
-            alarm_value)
-
-        impacted_entities = self.context_manager.get_entities_by_id(
-            entity.get(Entity.IMPACTS))
-        for impacted_entity in impacted_entities:
-            self.event_publisher.publish_statcounterinc_event(
-                creation_date,
-                StatCounters.alarms_impacting,
-                impacted_entity,
-                alarm_value)
