@@ -17,7 +17,10 @@ export default {
     pending: false,
   },
   getters: {
+    allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.group, state.allIds),
+    error: state => state.error,
+    pending: state => state.pending,
   },
   mutations: {
     [types.FETCH_LIST](state) {
@@ -35,18 +38,13 @@ export default {
     create(context, { data } = {}) {
       return request.post(API_ROUTES.viewV3Group, data);
     },
-    async fetchList({ commit, dispatch }, { id } = {}) {
+    async fetchList({ commit, dispatch }) {
       try {
-        let route = API_ROUTES.viewV3Group;
-        if (id) {
-          route += `/${id}`;
-        }
         const { normalizedData } = await dispatch('entities/fetch', {
-          route,
+          route: API_ROUTES.viewV3,
           schema: [groupSchema],
-          dataPreparer: d => d,
+          dataPreparer: d => d.groups,
         }, { root: true });
-
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
         });

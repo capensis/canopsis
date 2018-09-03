@@ -48,11 +48,13 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   },
 });
 
-export const viewV3Schema = new schema.Entity(ENTITIES_TYPES.viewV3);
+export const viewV3Schema = new schema.Entity(ENTITIES_TYPES.viewV3, {}, { idAttribute: '_id' });
 
-export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {}, {
-  idAttribute: '_id',
+export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, { views: [viewV3Schema] }, {
+  idAttribute: 'name',
 });
+
+export const groupsSchema = new schema.Values(groupSchema);
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -64,6 +66,7 @@ export default {
   [ENTITIES_TYPES.view]: viewSchema,
   [ENTITIES_TYPES.viewV3]: viewV3Schema,
   [ENTITIES_TYPES.group]: groupSchema,
+  [ENTITIES_TYPES.groups]: groupsSchema,
   [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
 };
