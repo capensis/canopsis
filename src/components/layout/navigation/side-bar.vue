@@ -6,7 +6,6 @@
   absolute,
   app,
   )
-    v-card(flat)
     v-expansion-panel(
     class="panel",
     expand,
