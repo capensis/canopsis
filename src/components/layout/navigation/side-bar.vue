@@ -15,7 +15,8 @@
       v-expansion-panel-content(v-for="group in groups", :key="group._id").grey.darken-4.white--text
         div(slot="header") {{ group.name }}
         v-card.grey.darken-3.white--text(v-for="view in group.views", :key="view._id")
-          v-card-text {{ view.title }}
+          v-card-text
+            router-link(:to="{ name: 'viewV3', params: { id: view._id } }") {{ view.title }}
     v-divider
     v-btn.addBtn(
     fab,
