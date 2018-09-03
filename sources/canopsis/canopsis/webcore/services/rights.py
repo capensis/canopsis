@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import HTTPError, request
 import json
+from bottle import HTTPError, request
 
 from canopsis.organisation.rights import Rights
 from canopsis.common.ws import route
