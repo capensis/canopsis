@@ -81,6 +81,9 @@ def save_role(ws, role):
 
     fields = {}
 
+    if not role and not rights.create_role(rid, rprofile):
+        raise ws.Error('Impossible to create role')
+
     if defaultview is not None:
         fields["defaultview"] = defaultview
 
@@ -88,9 +91,6 @@ def save_role(ws, role):
         fields["description"] = description
 
     rights.update_fields(rid, 'role', fields)
-
-    if not role and not rights.create_role(rid, rprofile):
-        raise ws.Error('Impossible to create role')
 
     if rprofile:
         rights.update_profile(rid, 'role', rgroup, role)
