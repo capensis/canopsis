@@ -39,7 +39,7 @@ POST /api/v2/views
 }
 ```
 
-Créer une vue et renvoie son id (qui est généré automatiquement).
+Crée une vue et renvoie son id (qui est généré automatiquement).
 
 ### Récupérer une vue
 
