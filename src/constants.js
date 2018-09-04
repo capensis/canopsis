@@ -36,9 +36,13 @@ export const MODALS = {
 
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
+  fastAck: 'fastAck',
   ackRemove: 'ackremove',
+  pbehaviorAdd: 'pbehaviorAdd',
+  pbehaviorList: 'pbehaviorList',
   associateTicket: 'assocticket',
   cancel: 'cancel',
+  delete: 'delete',
   changeState: 'changestate',
   declareTicket: 'declareticket',
   snooze: 'snooze',
@@ -148,7 +152,18 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
     color: 'purple',
     text: 'Acknowledged',
-    icon: 'done',
+    icon: 'playlist_add_check',
+  },
+  [EVENT_ENTITY_TYPES.fastAck]: {
+    icon: 'check',
+  },
+  [EVENT_ENTITY_TYPES.pbehaviorAdd]: {
+    text: 'Acknowledged',
+    icon: 'pause',
+  },
+  [EVENT_ENTITY_TYPES.pbehaviorList]: {
+    text: 'Acknowledged',
+    icon: 'list',
   },
   [EVENT_ENTITY_TYPES.ackRemove]: {
     color: 'purple',
@@ -158,7 +173,16 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.declareTicket]: {
     color: 'blue',
     text: 'Ticket declared',
+    icon: 'report_problem',
+  },
+  [EVENT_ENTITY_TYPES.assocTicket]: {
     icon: 'local_play',
+  },
+  [EVENT_ENTITY_TYPES.delete]: {
+    icon: 'delete',
+  },
+  [EVENT_ENTITY_TYPES.changeState]: {
+    icon: 'thumbs_up_down',
   },
   [EVENT_ENTITY_TYPES.snooze]: {
     color: 'pink',
