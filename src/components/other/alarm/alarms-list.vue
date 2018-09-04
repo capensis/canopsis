@@ -25,7 +25,7 @@
           tr
             td.text-xs-center You have to select at least 1 column
     div(v-else)
-      v-data-table(
+      v-data-table.alarmList(
       v-model="selected",
       :items="alarms",
       :headers="headers",
@@ -165,6 +165,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .alarmList {
+    cursor: pointer;
+  }
+
   th {
     overflow: hidden;
     text-overflow: ellipsis;

@@ -2,10 +2,10 @@
   div(
     v-if="expanded || (!expanded && text.length<=maxLetters)"
   )
-    span(@click.stop="expanded = !expanded") {{ text }}
+    span(@click.stop="textClicked") {{ text }}
   div(v-else)
     span {{ text.substr(0, maxLetters) }}
-    span(@click.stop="expanded = !expanded") ...
+    span(@click.stop="textClicked") ...
 </template>
 
 <script>
@@ -21,12 +21,24 @@ export default {
       type: String,
       required: true,
     },
+    hasInfoPopup: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
       expanded: false,
     };
   },
-  computed: {},
+  methods: {
+    textClicked() {
+      this.expanded = !this.expanded;
+
+      if (this.hasInfoPopup) {
+        this.$emit('showPopup');
+      }
+    },
+  },
 };
 </script>
