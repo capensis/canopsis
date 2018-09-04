@@ -182,9 +182,6 @@ def exports(ws):
 
     @route(ws.application.post, name='account/role', payload=['role'])
     def create_role(role):
-        with open("/tmp/plop", "a") as fd:
-            import pprint
-            fd.write("Role {}".format(pprint.pformat(role)))
         return save_role(ws, role)
 
     @route(ws.application.put, name='account/role', payload=['role'])
