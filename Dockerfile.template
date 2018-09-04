@@ -29,8 +29,31 @@ RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
-COPY docker/build/run-${DISTRIBUTION}.sh /run.sh
-RUN /bin/bash /run.sh
+RUN apt-get update
+RUN apt-cache search curl
+
+RUN apt-get -y --no-install-recommends install \
+    build-essential \
+    curl \
+    libcurl4-openssl-dev \
+    libsasl2-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    libssl-dev \
+    libffi-dev \
+    libxmlsec1-dev \
+    libxmlsec1-openssl \
+    libldap2-dev \
+    pkg-config \
+    python2.7-dev \
+    python-pip \
+    python-pkg-resources \
+    python-virtualenv \
+    python-wheel \
+	virtualenv; \
+	apt-get clean
+
+RUN virtualenv -h
 
 WORKDIR ${CPS_HOME}
 
@@ -45,7 +68,7 @@ RUN virtualenv .;\
 	if [ "${VERSION_ID}" = "8" ]&&[ "${ID}" = "debian" ]; then\
 	   pyopenssl="pyOpenSSL==17.5.0";\
 	fi;\
-	pip install -b /tmp/pipbuild -U setuptools jmespath "pymongo==3.5.0" "influxdb==5.1.0" "${pyopenssl}" "ansible==2.4.4"\
+	pip install -b /tmp/pipbuild -U setuptools jmespath "pymongo==3.5.0" "influxdb==5.1.0" "${pyopenssl}" "ansible==2.4.4";\
 	rm -rf /tmp/pipbuild
 
 RUN mkdir -p ./etc/init.d && \
