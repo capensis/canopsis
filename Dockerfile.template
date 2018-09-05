@@ -1,10 +1,12 @@
-FROM node:10.6-stretch
+FROM node:10.6-stretch as canopsis-next_build
 
 COPY sources/webcore/src/canopsis-next /canopsis-next
 WORKDIR /canopsis-next
 RUN npm install
 
 RUN NODE_ENV=production npm run build
+
+
 
 # Use this image as a build image in a multistage build ?
 # FROM %%BASE_IMAGE%% as build
@@ -19,6 +21,8 @@ ENV CPS_GROUP canopsis
 
 ARG DISTRIBUTION
 ARG PROXY
+
+SHELL ["/bin/bash", "-c"]
 
 # In case of error with the boot of the image or services, use the value set in the Dockerfile.sysbase-*
 COPY docker/files/systemd/* /etc/systemd/system/
@@ -53,47 +57,62 @@ RUN apt-get -y --no-install-recommends install \
 	virtualenv; \
 	apt-get clean
 
-RUN virtualenv -h
-
 WORKDIR ${CPS_HOME}
 
 ### Install virtualenv
-RUN which virtualenv
 RUN virtualenv .;\
 	source /etc/os-release;\
 	source ${CPS_HOME}/bin/activate;\
 	pip install -b /tmp/pipbuild -U setuptools pip wheel;\
 	pip install -b /tmp/pipbuild -r /sources/canopsis/requirements.txt;\
-	pyopenssl="pyOpenSSL"\
+	pyopenssl="pyOpenSSL"; \
 	if [ "${VERSION_ID}" = "8" ]&&[ "${ID}" = "debian" ]; then\
 	   pyopenssl="pyOpenSSL==17.5.0";\
 	fi;\
 	pip install -b /tmp/pipbuild -U setuptools jmespath "pymongo==3.5.0" "influxdb==5.1.0" "${pyopenssl}" "ansible==2.4.4";\
 	rm -rf /tmp/pipbuild
 
-RUN mkdir -p ./etc/init.d && \
-    mkdir -p var/log/engines && \
-    mkdir -p var/cache/canopsis && \
-    mkdir -p tmp && \
-    sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
-    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
+# Install canopsis requirements
+COPY sources/canopsis/requirements.txt /sources/canopsis/requirements.txt
+RUN source ./bin/activate && pip install -r /sources/canopsis/requirements.txt -b /tmp/pipbuild
 
-### Webserver
-RUN mkdir -p ${CPS_HOME}/var/www
-COPY sources/webcore/ ${CPS_HOME}/var/www/
-RUN rm -rf ${CPS_HOME}/var/www/doc
+# Install canopsis
+COPY sources/canopsis /sources/canopsis
 
-# Copy UI bricks as root
-COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
-RUN . ${CPS_HOME}/bin/activate && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-timeline
+RUN source ./bin/activate; pip install -b /tmp/pipbuild --no-deps /sources/canopsis/
+RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 
-# Ansible
-COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
+RUN ls .
+RUN ls etc/
 
-USER ${CPS_USER}:${CPS_GROUP}
+# RUN mkdir -p ./etc/init.d && \
+#     mkdir -p var/log/engines && \
+#     mkdir -p var/cache/canopsis && \
+#     mkdir -p tmp && \
+#     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
+#     chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
-EXPOSE 8082
-ENTRYPOINT /entrypoint.sh
+
+# # Install webcore
+# RUN mkdir -p ${CPS_HOME}/var/www
+# COPY sources/webcore ${CPS_HOME}/var/www
+# RUN rm -r ${CPS_HOME}/var/www/doc
+
+# # Copy UI bricks as root
+# COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
+# RUN . ${CPS_HOME}/bin/activate && \
+#     python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
+#     python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
+#     python /${CPS_HOME}/bin/brickmanager enable brick-timeline
+
+
+# # Clean up
+# RUN rm -rf /tmp/pipbuild ; rm -rf ~/.cache; rm -rf /sources/
+
+# # # Ansible
+# # COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
+
+# USER ${CPS_USER}:${CPS_GROUP}
+
+# EXPOSE 8082
+# ENTRYPOINT /entrypoint.sh
