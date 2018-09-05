@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-text
-      div(v-if="!template")
+      div(v-if="!config.widget.more_infos_popup")
         v-layout(justify-center)
           v-icon(color="info") infos
           p(class="ma-0") {{ $t('modals.moreInfos.defineATemplate') }}
@@ -10,11 +10,10 @@
 
 <script>
 import HandleBars from 'handlebars';
-import { createNamespacedHelpers } from 'vuex';
 
+import modalInnerMixin from '@/mixins/modal/modal-inner';
+import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import { MODALS } from '@/constants';
-
-const { mapGetters } = createNamespacedHelpers('modal');
 
 /**
  * Modal showing more infos on an alarm
@@ -23,18 +22,11 @@ const { mapGetters } = createNamespacedHelpers('modal');
  */
 export default {
   name: MODALS.moreInfos,
-  props: {
-    template: {
-      type: String,
-    },
-  },
+  mixins: [modalInnerMixin, entitiesAlarmMixin],
   computed: {
-
-    ...mapGetters(['config']),
-
     output() {
-      const output = HandleBars.compile(this.template);
-      const context = { alarm: this.config.alarm.props, entity: this.config.alarm.props.entity };
+      const output = HandleBars.compile(this.config.widget.more_infos_popup);
+      const context = { alarm: this.config.item, entity: this.config.item.entity };
       return output(context);
     },
   },
