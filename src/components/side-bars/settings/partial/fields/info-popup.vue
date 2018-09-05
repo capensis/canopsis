@@ -13,13 +13,18 @@
           v-flex(xs11)
             v-text-field(placeholder="Column", v-model="popup.column")
           v-flex(xs11)
-            v-text-field(placeholder="Template", :multi-line="true", v-model="popup.template")
-
+            text-editor(v-model="popup.template", @update:value="updateTemplate($event, index)")
+            //v-text-field(placeholder="Template", :multi-line="true", v-model="popup.template")
       v-btn(color="success", @click="add") Add
 </template>
 
 <script>
+import TextEditor from '@/components/other/text-editor/text-editor.vue';
+
 export default {
+  components: {
+    TextEditor,
+  },
   props: {
     value: {
       type: Array,
@@ -32,6 +37,9 @@ export default {
     },
     remove(index) {
       this.$emit('input', this.value.filter((v, i) => i !== index));
+    },
+    updateTemplate(event, index) {
+      this.value[index].template = event;
     },
   },
 };
