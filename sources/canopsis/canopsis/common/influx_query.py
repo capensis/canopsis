@@ -62,9 +62,12 @@ class SelectQuery(object):
     >>> print(query.build())
     SELECT 'value' FROM 'measurement' WHERE type = "watcher" GROUP_BY 'id'
     ```
+
+    :param Union[str, SelectQuery] from_series: The name of a measurement or a
+        subquery.
     """
-    def __init__(self, measurement):
-        self.measurement = measurement
+    def __init__(self, from_series):
+        self.from_series = from_series
         self.into_measurement = None
         self.select_columns = []
         self.group_by_tags = []
@@ -87,6 +90,12 @@ class SelectQuery(object):
         select_columns = ', '.join(
             str(select_column)
             for select_column in self.select_columns)
+
+        # Generate from
+        if isinstance(self.from_series, SelectQuery):
+            from_series = '({})'.format(self.from_series.build())
+        else:
+            from_series = quote_ident(self.from_series)
 
         # Generate into statement
         into_statement = ''
@@ -129,14 +138,14 @@ class SelectQuery(object):
         return (
             "SELECT {select_columns} "
             "{into_statement} "
-            "FROM {measurement} "
+            "FROM {from_series} "
             "{where_statement} "
             "{group_by_statement}"
             "{fill_statement}"
         ).format(
             select_columns=select_columns,
             into_statement=into_statement,
-            measurement=quote_ident(self.measurement),
+            from_series=from_series,
             where_statement=where_statement,
             group_by_statement=group_by_statement,
             fill_statement=fill_statement)
@@ -269,7 +278,11 @@ class SelectQuery(object):
 
         :rtype: SelectQuery
         """
-        copy = SelectQuery(self.measurement)
+        from_series = self.from_series
+        if isinstance(from_series, SelectQuery):
+            from_series = from_series.copy()
+
+        copy = SelectQuery(from_series)
         copy.into_measurement = self.into_measurement
         copy.select_columns = self.select_columns[:]
         copy.group_by_tags = self.group_by_tags[:]
