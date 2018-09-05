@@ -105,6 +105,10 @@ export default {
           type: 'changeState',
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
+        moreInfos: {
+          type: 'moreInfos',
+          method: this.showActionModal(MODALS.moreInfos),
+        },
       },
     };
   },
@@ -129,6 +133,7 @@ export default {
               actionsMap.changeState,
               actionsMap.pbehavior,
               actionsMap.pbehaviorList,
+              actionsMap.moreInfos,
             ],
           };
         }

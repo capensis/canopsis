@@ -81,6 +81,10 @@ export default {
           icon: 'report_problem',
           title: this.$t('alarmList.actions.titles.changeState'),
         },
+        moreInfos: {
+          icon: 'more_horiz',
+          title: this.$t('alarmList.actions.titles.moreInfos'),
+        },
       },
     };
   },
