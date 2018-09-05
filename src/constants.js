@@ -40,7 +40,7 @@ export const EVENT_ENTITY_TYPES = {
   ackRemove: 'ackremove',
   pbehaviorAdd: 'pbehaviorAdd',
   pbehaviorList: 'pbehaviorList',
-  associateTicket: 'assocticket',
+  assocTicket: 'assocticket',
   cancel: 'cancel',
   delete: 'delete',
   changeState: 'changestate',
