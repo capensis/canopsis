@@ -28,24 +28,30 @@
       :total-items="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
+      ref="dataTable",
       item-key="_id",
-      select-all,
       hide-actions,
+      select-all,
+      expand
       )
+        template(slot="progress")
+          transition(name="fade")
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          td
-            v-checkbox(primary, hide-details, v-model="props.selected")
-          td(
-          v-for="column in columns",
-          @click="props.expanded = !props.expanded"
-          )
-            alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
-          td
-            actions-panel(:item="props.item", :widget="widget")
+          tr
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+            v-for="column in columns",
+            @click="props.expanded = !props.expanded"
+            )
+              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+            td
+              actions-panel(:item="props.item", :widget="widget")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+          time-line(:alarmProps="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(:meta="alarmsMeta", :query.sync="query")
@@ -56,6 +62,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, SIDE_BARS } from '@/constants';
 
@@ -150,11 +157,17 @@ export default {
       });
     },
 
-    fetchList() {
+    fetchList({ isPeriodicRefresh } = {}) {
       if (this.hasColumns) {
+        const query = this.getQuery();
+
+        if (isPeriodicRefresh && !isEmpty(this.$refs.dataTable.expanded)) {
+          query.with_steps = true;
+        }
+
         this.fetchAlarmsList({
           widgetId: this.widget.id,
-          params: this.getQuery(),
+          params: query,
         });
       }
     },
