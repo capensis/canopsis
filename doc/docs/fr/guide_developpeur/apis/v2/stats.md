@@ -410,7 +410,7 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
             "Alarmes critiques": [
                 {
                     "start": 1534543200,  // 18 août à 00:00
-                    "end: 1534629600,
+                    "end": 1534629600,
                     "value": 19,
                     "trend": 12,
                     "sla": false
@@ -426,7 +426,7 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
             "Alarmes majeures": [
                 {
                     "start": 1534543200,  // 18 août à 00:00
-                    "end: 1534629600,
+                    "end": 1534629600,
                     "value": 11,
                     "trend": -1
                 },
@@ -444,7 +444,7 @@ Le document JSON ci-dessous est un exemple de réponse à la requête précéden
         "Alarmes critiques": [
             {
                 "start": 1534543200,  // 18 août à 00:00
-                "end: 1534629600,
+                "end": 1534629600,
                 "value": 37
             },
             {

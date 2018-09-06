@@ -395,7 +395,7 @@ The JSON document below is an example of a response to the previous request.
             "Critical alarms": [
                 {
                     "start": 1534543200,  // August 18 at 0:00
-                    "end: 1534629600,
+                    "end": 1534629600,
                     "value": 19,
                     "trend": 12,
                     "sla": false
@@ -411,7 +411,7 @@ The JSON document below is an example of a response to the previous request.
             "Major alarms": [
                 {
                     "start": 1534543200,  // August 18 at 00:00
-                    "end: 1534629600,
+                    "end": 1534629600,
                     "value": 11,
                     "trend": -1
                 },
@@ -429,7 +429,7 @@ The JSON document below is an example of a response to the previous request.
         "Critical alarms": [
             {
                 "start": 1534543200,  // August 18 at 00:00
-                "end: 1534629600,
+                "end": 1534629600,
                 "value": 37
             },
             {
