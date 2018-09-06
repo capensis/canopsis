@@ -1,23 +1,23 @@
 <template lang='pug'>
   v-card
-    v-card-title
+    v-card-title.green.darken-4.white--text
       v-layout(justify-space-between, align-center)
-        h2 Select a widget
+        h2 {{ $t('modals.widgetCreation.title') }}
         v-btn(@click='hideModal', icon, small)
-          v-icon close
+          v-icon.white--text close
     v-card-text
-      v-layout(row)
-        v-flex(xs12 sm8 offset-sm2)
-          v-list
-            v-list-tile(
-            v-for='widgetType in widgetsTypes',
-            :key='widgetType.title',
-            @click='selectWidgetType(widgetType.value)'
-            )
-              v-list-tile-action
-                v-icon {{ widgetType.icon }}
-              v-list-tile-content
-                v-list-tile-title {{ widgetType.title }}
+      v-layout(row, wrap)
+        v-flex.my-1(
+        xs12,
+        v-for="widgetType in widgetsTypes",
+        :key="widgetType.value",
+        @click='selectWidgetType(widgetType.value)'
+        )
+          v-card.widgetType
+            v-card-title(primary-title)
+              v-layout(wrap)
+                v-flex(xs12)
+                  div.subheading {{ widgetType.title }}
 </template>
 
 <script>
@@ -35,9 +35,9 @@ export default {
   data() {
     return {
       widgetsTypes: [
-        { title: WIDGET_TYPES.alarmList, icon: 'list', value: WIDGET_TYPES.alarmList },
-        { title: WIDGET_TYPES.context, icon: 'list', value: WIDGET_TYPES.context },
-        { title: WIDGET_TYPES.weather, icon: 'list', value: WIDGET_TYPES.weather },
+        { title: this.$t('modals.widgetCreation.types.alarmList.title'), value: WIDGET_TYPES.alarmList },
+        { title: this.$t('modals.widgetCreation.types.context.title'), value: WIDGET_TYPES.context },
+        { title: this.$t('modals.widgetCreation.types.weather.title'), value: WIDGET_TYPES.weather },
       ],
     };
   },
@@ -57,3 +57,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .widgetType {
+    cursor: pointer,
+  }
+</style>
+

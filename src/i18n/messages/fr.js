@@ -287,6 +287,23 @@ export default {
       noData: 'Pas de données',
       ticketing: 'Ticketing',
     },
+    widgetCreation: {
+      title: 'Sélectionnez un widget',
+      types: {
+        alarmList: {
+          title: 'Bac à alarmes',
+          description: '',
+        },
+        context: {
+          title: 'Explorateur de contexte',
+          description: '',
+        },
+        weather: {
+          title: 'Météo de services',
+          description: '',
+        },
+      },
+    },
   },
   tables: {
     contextList: {
