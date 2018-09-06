@@ -20,7 +20,7 @@
       :data-vv-name="name",
       data-vv-validate-on="none",
       :append-icon="clearable ? 'close' : ''",
-      :append-icon-cb="clear"
+      @click:append="clear"
       )
     .v-picker__title.primary.text-xs-center
       span.subheading {{ dateTimeString || '--/--/---- --:--' }}
