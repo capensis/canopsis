@@ -1,18 +1,19 @@
 <template lang="pug">
-  v-expansion-panel
-    v-expansion-panel-content.weather-watcher-entity-expansion-panel(hide-actions)
-      .pa-2(slot="header", :class="entityClass")
-        span.pl-1.white--text.subheading.entity-title {{ entity.name }}
-        div.actions-button-wrapper
-          v-btn(fab, small)
-            v-icon local_play
-          v-btn(v-show="!hasActivePbehavior", fab, small)
-            v-icon pause
-          v-btn(v-show="hasActivePbehavior", fab, small)
-            v-icon play_arrow
-      v-card
-        v-card-text(v-html="compiledTemplate")
-      v-divider
+  .weather-watcher-entity-expansion-panel
+    v-expansion-panel
+      v-expansion-panel-content(hide-actions)
+        .pa-2(slot="header", :class="entityClass")
+          span.pl-1.white--text.subheading.entity-title {{ entity.name }}
+          div.actions-button-wrapper
+            v-btn(fab, small)
+              v-icon local_play
+            v-btn(v-show="!hasActivePbehavior", fab, small)
+              v-icon pause
+            v-btn(v-show="hasActivePbehavior", fab, small)
+              v-icon play_arrow
+        v-card
+          v-card-text(v-html="compiledTemplate")
+        v-divider
 </template>
 
 <script>
@@ -87,18 +88,17 @@ export default {
 };
 </script>
 
-<style lang="scss">
-  .weather-watcher-entity-expansion-panel {
-    .expansion-panel__header {
-      padding: 0;
+<style lang="scss" scoped>
+  .weather-watcher-entity-expansion-panel /deep/ .v-expansion-panel__header {
+    padding: 0;
+    height: auto;
 
-      .entity-title {
-        line-height: 52px;
-      }
+    .entity-title {
+      line-height: 52px;
+    }
 
-      .actions-button-wrapper {
-        float: right;
-      }
+    .actions-button-wrapper {
+      float: right;
     }
   }
 </style>

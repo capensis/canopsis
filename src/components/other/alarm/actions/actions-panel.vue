@@ -7,7 +7,7 @@
       :key="`main-${index}`"
       )
       v-menu(v-show="actions.dropDown && actions.dropDown.length", bottom, left, @click.native.stop)
-        v-btn(icon, slot="activator")
+        v-btn.mx-1(icon, slot="activator")
           v-icon more_vert
         v-list
           actions-panel-item(
@@ -18,7 +18,7 @@
           )
     div(v-show="$options.filters.mq($mq, { m: true, l: false })")
       v-menu(bottom, left, @click.native.stop)
-        v-btn(icon slot="activator")
+        v-btn.mx-1(icon slot="activator")
           v-icon more_vert
         v-list
           actions-panel-item(

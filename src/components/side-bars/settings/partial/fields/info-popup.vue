@@ -1,6 +1,6 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{$t('settings.infoPopup')}}
+    v-list-tile(slot="activator") {{$t('settings.infoPopup.title')}}
     v-container
       v-card.my-2(v-for="(popup, index) in value", :key="`info-popup-${index}`")
         v-layout(justify-space-between)
@@ -11,11 +11,11 @@
                 v-icon(color="red") close
         v-layout(justify-center wrap)
           v-flex(xs11)
-            v-text-field(placeholder="Column", v-model="popup.column")
+            v-text-field(v-model="popup.column", :placeholder="$t('settings.infoPopup.fields.column')")
           v-flex(xs11)
-            v-text-field(placeholder="Template", :multi-line="true", v-model="popup.template")
+            v-textarea(v-model="popup.template", :placeholder="$t('settings.infoPopup.fields.template')")
 
-      v-btn(color="success", @click="add") Add
+      v-btn(color="success", @click="add") {{ $t('common.add') }}
 </template>
 
 <script>
