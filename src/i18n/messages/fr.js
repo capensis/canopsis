@@ -344,6 +344,9 @@ export default {
         _id: 'Id',
       },
     },
+    noColumns: {
+      message: 'Veuillez sélectionner au moins 1 colonne',
+    },
   },
   rRule: {
     advancedHint: 'Séparer les nombres par une virgule',
