@@ -74,6 +74,11 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
+        if not request_body:
+            return gen_json_error({
+                'description': 'Empty request'
+            }, HTTP_ERROR)
+
         try:
             view_id = view_adapter.create(request_body)
         except InvalidViewError as e:
@@ -112,6 +117,11 @@ def exports(ws):
         except ValueError as verror:
             return gen_json_error({
                 'description': 'Malformed JSON: {0}'.format(verror)
+            }, HTTP_ERROR)
+
+        if not request_body:
+            return gen_json_error({
+                'description': 'Empty request'
             }, HTTP_ERROR)
 
         try:
@@ -162,6 +172,11 @@ def exports(ws):
                 'description': 'Malformed JSON: {0}'.format(verror)
             }, HTTP_ERROR)
 
+        if not request_body:
+            return gen_json_error({
+                'description': 'Empty request'
+            }, HTTP_ERROR)
+
         try:
             group_id = group_adapter.create(request_body)
         except InvalidGroupError as e:
@@ -205,6 +220,11 @@ def exports(ws):
         except ValueError as verror:
             return gen_json_error({
                 'description': 'Malformed JSON: {0}'.format(verror)
+            }, HTTP_ERROR)
+
+        if not request_body:
+            return gen_json_error({
+                'description': 'Empty request'
             }, HTTP_ERROR)
 
         try:
