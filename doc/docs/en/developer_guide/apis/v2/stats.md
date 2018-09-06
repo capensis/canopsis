@@ -703,3 +703,57 @@ POST /api/v2/stats/current_state
     ]
 }
 ```
+
+
+### Ongoing Alarms
+
+The following statistics compute the numver of ongoing alarms.
+
+ - `ongoing_alarms` returns the number of ongoing alarms during a period.
+ - `current_ongoing_alarms` returns the number of ongoing alarms at the time of
+   the request. This statistic does not take into account the `tstop` and
+   `duration` parameters.
+
+The alarms created while a pbehavior was active are not taken into account.
+
+#### Parameters
+
+These statistics take the following parameters (in the `parameters` field) :
+
+ - `states` (optional): Only the alarms whose state at the creation date is in
+   this list will be taken into account.
+
+#### Example
+
+```javascript
+POST /api/v2/stats/ongoing_alarms
+{
+	"mfilter": {
+		"type": "resource",
+		"impact": {
+			"$in": ["feeder2_80"]
+		}
+	},
+	"tstop": 1534716000,
+	"duration": "2d"
+}
+```
+
+```javascript
+{
+    "values": [
+        {
+            "entity": {
+                "_id": "resource1/component1",
+                "type": "resource"
+                "impact": [
+                    "service"
+                ],
+                // ...
+            },
+            "value": 3
+        },
+        // ...
+    ]
+}
+```

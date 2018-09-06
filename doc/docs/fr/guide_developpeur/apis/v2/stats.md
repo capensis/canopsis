@@ -724,3 +724,58 @@ POST /api/v2/stats/current_state
     ]
 }
 ```
+
+
+### Alarmes en cours
+
+Les statistiques suivantes permettent de calculer le nombre d'alarmes en cours.
+
+ - `ongoing_alarms` renvoie le nombre d'alarmes en cours pendant une période.
+ - `current_ongoing_alarms` renvoie le nombre d'alarmes en cours lorsque la
+   requête est effectuée. Cette statistique ne prend pas en compte les
+   paramètres `tstop` et `duration`.
+
+Les alarmes créées alors qu'un pbehavior est actif ne sont pas prises en compte.
+
+#### Paramètres
+
+Ces statistiques acceptent les paramètres suivants (à indiquer dans le champ
+`parameters` d'une requête).
+
+ - `states` (optionnel) : Un tableau contenant les états des alarmes à prendre
+   en compte (par exemple `[3]` pour ne compter que les alarmes critiques).
+
+#### Exemple
+
+```javascript
+POST /api/v2/stats/ongoing_alarms
+{
+	"mfilter": {
+		"type": "resource",
+		"impact": {
+			"$in": ["feeder2_80"]
+		}
+	},
+	"tstop": 1534716000,
+	"duration": "2d"
+}
+```
+
+```javascript
+{
+    "values": [
+        {
+            "entity": {
+                "_id": "resource1/component1",
+                "type": "resource"
+                "impact": [
+                    "service"
+                ],
+                // ...
+            },
+            "value": 3
+        },
+        // ...
+    ]
+}
+```
