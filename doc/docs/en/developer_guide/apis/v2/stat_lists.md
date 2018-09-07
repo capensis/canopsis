@@ -32,7 +32,7 @@ If the request succeeded, the response is an array if JSON objects containing :
 
 ## Lists
 
-### Intervalles passés dans un état
+### Intervals spent in each state
 
 The `state_intervals` list returns a list of time intervals with the state of
 the entity in each of these intervals.

@@ -38,7 +38,7 @@ En cas de succès, la réponse est un tableau d'objets JSON contenant :
 ### Intervalles passés dans un état
 
 La liste `state_intervals` renvoie une liste contenant les intervalles de temps
-passé dans chaque état par les entités.
+passés dans chaque état par les entités.
 
 #### Paramètres
 
