@@ -1,13 +1,23 @@
 <template lang="pug">
   v-container
     v-layout.white(wrap, justify-space-between, align-center)
-      v-flex(xs12, md3)
+      v-flex
         alarm-list-search(:query.sync="query")
-      v-flex(xs2)
+      v-flex
         pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
-      v-flex.ml-4(xs3)
+      v-flex.ml-4
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
-      v-flex(xs3)
+      v-flex
+        v-select(
+        :label="$t('settings.selectAFilter')",
+        :items="userPreference.widget_preferences.user_filters",
+        @change="updateSelectedFilter",
+        item-text="title",
+        item-value="filter",
+        return-object,
+        clearable
+        )
+      v-flex
         v-chip(
         v-if="query.interval",
         @input="removeHistoryFilter",
@@ -77,6 +87,7 @@ import NoColumnsTable from '@/components/tables/no-columns.vue';
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
+
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -169,6 +180,14 @@ export default {
           widgetId: this.widget.id,
           params: query,
         });
+      }
+    },
+
+    updateSelectedFilter(event) {
+      if (event && event.filter) {
+        this.query = { ...this.query, filter: event.filter };
+      } else {
+        this.query = { ...this.query, filter: undefined };
       }
     },
   },
