@@ -11,7 +11,8 @@
         v-select(
         :label="$t('settings.selectAFilter')",
         :items="userPreference.widget_preferences.user_filters",
-        @change="updateSelectedFilter",
+        @input="updateSelectedFilter",
+        :value="userPreference.widget_preferences.selected_filter",
         item-text="title",
         item-value="filter",
         return-object,
@@ -184,6 +185,16 @@ export default {
     },
 
     updateSelectedFilter(event) {
+      this.createUserPreference({
+        userPreference: {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            selected_filter: event,
+          },
+        },
+      });
+
       if (event && event.filter) {
         this.query = { ...this.query, filter: event.filter };
       } else {
