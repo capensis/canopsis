@@ -8,3 +8,16 @@ Dans la console mongo, fait un :
 ```bash
 db.getCollection('object').remove({'task':'tasklinklist'})
 ```
+
+
+## Changements dans les moteurs
+
+Les moteurs suivants ont été supprimés et doivent être désactivés via systemd ou docker après la mise à jour : 
+
+- linklist
+- selector
+- perfdata
+- context (attention, context-graph est maintenu)
+
+Le moteur `metric` remplace le moteur perfdata.
+
