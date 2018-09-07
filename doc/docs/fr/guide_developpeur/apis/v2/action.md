@@ -14,7 +14,7 @@ Renvoie l'action demandée.
 {
     "_id": "action_id",
     "regex": ".*",
-    "field": "Resource",
+    "fields": ["Resource", "Component"],
     "parameters": {
         "name": "pbehavior_name",
         "author": "System",
@@ -32,7 +32,7 @@ POST /api/v2/actions
 {
     "_id": "action_id",
     "regex": ".*",
-    "field": "Resource",
+    "fields": ["Resource", "Component"],
     "parameters": {
         "name": "pbehavior_name",
         "author": "System",
@@ -52,7 +52,7 @@ PUT /api/v2/actions/<action_id>
 {
     "_id": "action_id",
     "regex": ".*",
-    "field": "Resource",
+    "fields": ["Resource", "Component"],
     "parameters": {
         "name": "pbehavior_name",
         "author": "Myself",

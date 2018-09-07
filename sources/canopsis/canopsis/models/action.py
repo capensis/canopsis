@@ -16,22 +16,24 @@ class Action(object):
 
     # Keys as seen in db
     _ID = '_id'
-    FIELD = 'field'
+    FIELDS = 'fields'
     REGEX = 'regex'
     PARAMETERS = 'parameters'
 
-    def __init__(self, _id, field, regex, parameters=None, *args, **kwargs):
+    def __init__(self, _id, fields, regex, parameters=None, *args, **kwargs):
         """
         :param str _id: action id
-        :param str field: targeted field
-        :param str regex: regex matcher on the field
+        :param list fields: targeted fields
+        :param str regex: regex matcher on the fields
         :param dict parameters: variable parameters to apply
         """
+        if fields is None or not isinstance(fields, list):
+            fields = []
         if parameters is None or not isinstance(parameters, dict):
             parameters = {}
 
         self._id = _id
-        self.field = field
+        self.fields = fields
         self.regex = regex
         self.parameters = parameters
 
@@ -52,7 +54,7 @@ class Action(object):
         """
         dictionnary = {
             self._ID: self._id,
-            self.FIELD: self.field,
+            self.FIELDS: self.fields,
             self.REGEX: self.regex,
             self.PARAMETERS: self.parameters,
         }
