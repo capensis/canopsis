@@ -95,7 +95,7 @@ RUN mkdir -p ./etc/init.d && \
 ##############
 FROM debian:stretch-slim as core
 
-ARG DISTRIBUTION
+ARG TAG
 
 ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis
@@ -109,13 +109,13 @@ RUN useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER}
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 ADD docker/files/entrypoint.sh /
-RUN echo "coucou"
 
 # Configure OS
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
 RUN cat /etc/sudoers.d/canopsis
 
 # Template here
+# Check if every dependencies are required by canopsis-core
 RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list ;\
 	echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list; \
 	#
@@ -177,7 +177,25 @@ COPY sources/webcore/src ${CPS_HOME}/var/www/src
 COPY --from=canopsis_build /${CPS_HOME} /${CPS_HOME}
 COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/canopsis-next
 
-# USER ${CPS_USER}:${CPS_GROUP}
+RUN echo "coucou"
+# Install required bricks
+## Delele it if #932 is closed
+RUN ls ./var/www
+RUN ls ./var/www/src/
+RUN ls ./var/www/src/canopsis
+RUN cd ./var/www/src/canopsis; \
+	curl -LsS https://git.canopsis.net/canopsis-ui-bricks/brick-timeline/-/archive/${TAG}/brick-timeline-${TAG}.tar.gz | tar zx; \
+	curl -LsS https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/-/archive/${TAG}/brick-listalarm-${TAG}.tar.gz | tar zx; \
+	curl -LsS https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/-/archive/${TAG}/brick-querybuilder-${TAG}.tar.gz | tar zx; \
+	mv ./brick-timeline-${TAG} ./brick-timeline; \
+	mv ./brick-listalarm-${TAG} ./brick-listalarm; \
+	mv ./brick-querybuilder-${TAG} ./brick-querybuilder
+RUN ls ./var/www/src/canopsis
+
+
+
+RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R
+USER ${CPS_USER}:${CPS_GROUP}
 
 EXPOSE 8082
 ENTRYPOINT /entrypoint.sh
