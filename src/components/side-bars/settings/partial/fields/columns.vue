@@ -21,7 +21,7 @@
             v-text-field(
             :placeholder="$t('common.label')",
             :error-messages="errors.collect(`label[${index}]`)",
-            @input="updateValue(index, 'label', $event)"
+            @input="updateFieldInArrayItem(index, 'label', $event)"
             v-validate="'required'",
             :data-vv-name="`label[${index}]`",
             )
@@ -29,7 +29,7 @@
             v-text-field(
             :placeholder="$t('common.value')",
             :error-messages="errors.collect(`value[${index}]`)",
-            @input="updateValue(index, 'value', $event)"
+            @input="updateFieldInArrayItem(index, 'value', $event)"
             v-validate="'required'",
             :data-vv-name="`value[${index}]`",
             v-model="column.value"
@@ -39,12 +39,19 @@
 
 <script>
 import settingsColumnMixin from '@/mixins/settings-column';
+import formMixin from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
   mixins: [
     settingsColumnMixin,
+    formMixin,
   ],
+  data() {
+    return {
+      formKey: 'value',
+    };
+  },
   methods: {
     add() {
       this.$emit('input', [...this.value, { label: '', value: '' }]);

@@ -88,6 +88,7 @@ export default {
   },
   data() {
     return {
+      formKey: 'form',
       showValidationErrors: true,
       types: [
         {
