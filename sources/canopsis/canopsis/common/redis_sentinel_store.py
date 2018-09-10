@@ -41,7 +41,11 @@ class RedisSentinelStore(object):
         return ret_val
 
     def _connect(self):
-        self.sentinel = Sentinel(self.parse_hosts(), socket_timeout=0.1, password=self.db_pass)
+        self.sentinel = Sentinel(
+            self.parse_hosts(),
+            socket_timeout=0.1,
+            password=self.db_pass
+        )
         self.conn = self.sentinel.master_for(self.master_name)
 
     def get_new_master(self):

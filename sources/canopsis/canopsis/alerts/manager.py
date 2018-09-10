@@ -133,14 +133,18 @@ class Alerts(object):
         alerts_ = self.config.get(self.ALERTS_CAT, {})
         self.extra_fields = cfg_to_array(alerts_.get('extra_fields',
                                                      DEFAULT_EXTRA_FIELDS))
-        self.record_last_event_date = cfg_to_bool(alerts_.get('record_last_event_date',
-                                                              DEFAULT_RECORD_LAST_EVENT_DATE))
+        self.record_last_event_date = cfg_to_bool(
+            alerts_.get('record_last_event_date',
+                        DEFAULT_RECORD_LAST_EVENT_DATE)
+        )
 
         self.update_longoutput_fields = alerts_.get("update_long_output",
-                                                          False)
+                                                    False)
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
-        self.lock_manager = AlertLockRedisSentinel(*AlertLockRedisSentinel.provide_default_basics())
+        self.lock_manager = AlertLockRedisSentinel(
+            *AlertLockRedisSentinel.provide_default_basics()
+        )
 
     @classmethod
     def provide_default_basics(cls):
@@ -558,7 +562,6 @@ class Alerts(object):
             if len(value[AlarmField.long_output_history.value]) > 100:
                 new_hist = value[AlarmField.long_output_history.value][0:99]
                 value[AlarmField.long_output_history.value] = new_hist
-
 
             value[AlarmField.steps.value].append({
                 "a": value["state"]["a"],

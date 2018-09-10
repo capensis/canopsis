@@ -78,13 +78,13 @@ class AlertLockRedis(object):
     DEFAULT_DB_HOST = 'localhost'
     DEFAULT_DB_PORT = '6379'
     DEFAULT_DB_NUM = '0'
+    VALIDITY_TIME = 12000  # milliseconds
 
     @classmethod
     def provide_default_basics(cls):
         """
             provide default basics
         """
-        conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
         config = Configuration.load(
             os.path.join(root_path, cls.CONF_PATH), Ini).get(cls.CONF_SECTION)
         redis_host = config.get('host', cls.DEFAULT_DB_HOST)
@@ -109,10 +109,10 @@ class AlertLockRedis(object):
             create a document in lock collection
         """
         lock_id = 'redlock_{0}'.format(entity_id)
-        stop = self.redlock.lock(lock_id, 12000)
+        stop = self.redlock.lock(lock_id, self.VALIDITY_TIME)
         while type(stop) == bool:
             sleep(0.2)
-            stop = self.redlock.lock(lock_id, 12000)
+            stop = self.redlock.lock(lock_id, self.VALIDITY_TIME)
         return stop
 
     def unlock(self, lock):
@@ -120,6 +120,7 @@ class AlertLockRedis(object):
             remove lock documentt
         """
         return self.redlock.unlock(lock)
+
 
 class AlertLockRedisSentinel(object):
     LOG_PATH = 'var/log/alert_lock.log'
