@@ -4,11 +4,11 @@
       v-btn(icon, @click="showSettings")
         v-icon settings
     v-fade-transition
-      v-layout(wrap, v-show="!watchersPending")
+      v-layout(v-show="!watchersPending", wrap)
         v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
           weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
     v-fade-transition
-      v-layout(column v-show="watchersPending")
+      v-layout(v-show="watchersPending", column)
         v-flex(xs12)
           v-layout(justify-center)
             v-progress-circular(indeterminate, color="primary")
