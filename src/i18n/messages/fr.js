@@ -174,7 +174,7 @@ export default {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
       fields: {
-        type: 'Types',
+        type: 'Type',
         manageInfos: 'Gérer Infos',
         form: 'Formulaire',
         impact: 'Impacts',

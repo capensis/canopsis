@@ -1,8 +1,9 @@
 <template lang="pug">
   v-card
     v-card-text
+      .title.text-xs-center.my-2 Infos list
       v-list(v-if="Object.keys(infos).length")
-        v-list-group.mt-2(
+        v-list-group.my-1(
         v-for="infoName in Object.keys(infos)",
         :key="infoName"
         )
@@ -13,11 +14,11 @@
               v-btn(icon, flat, @click.stop="deleteInfo(infoName)")
                 v-icon delete
           v-list-tile(@click="")
-            v-list-tile-content
-              v-list-tile-title Description : {{ infos[infoName].description }}
-              v-list-tile-title Value : {{ infos[infoName].value }}
+            v-list-tile-content Description : {{ infos[infoName].description }}
+            v-list-tile-content Value : {{ infos[infoName].value }}
       v-card-text(v-else) No infos
       v-form(ref="infoForm")
+        .title.text-xs-center.my-2 Add info
         v-layout
           v-text-field(
           :label="$t('common.name')",
@@ -41,11 +42,11 @@
           :error-messages="errors.collect('value')"
           )
           v-btn(icon, flat, @click="addInfo")
-            v-icon done
+            v-icon add
 </template>
 
 <script>
-import ModalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
 export default {
@@ -54,7 +55,7 @@ export default {
     validator: 'new',
   },
   mixins: [
-    ModalInnerMixin,
+    modalInnerMixin,
   ],
   props: {
     template: {

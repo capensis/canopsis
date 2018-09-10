@@ -174,7 +174,7 @@ export default {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
       fields: {
-        type: 'Types',
+        type: 'Type',
         manageInfos: 'Manage Infos',
         form: 'Form',
         impact: 'Impact',
