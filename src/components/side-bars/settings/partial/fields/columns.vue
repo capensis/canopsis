@@ -24,7 +24,6 @@
             @input="updateValue(index, 'label', $event)"
             v-validate="'required'",
             :data-vv-name="`label[${index}]`",
-            v-model="column.label"
             )
           v-flex(xs11)
             v-text-field(

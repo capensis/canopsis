@@ -35,6 +35,7 @@ export default {
     apply: 'Appliquer',
     to: 'à',
     of: 'sur',
+    tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
     actions: {
@@ -141,7 +142,13 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     selectAFilter: 'Sélectionner un filtre',
-    infoPopup: 'Info popup',
+    infoPopup: {
+      title: 'Info popup',
+      fields: {
+        column: 'Column',
+        template: 'Template',
+      },
+    },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modal',
@@ -183,6 +190,16 @@ export default {
       createTitle: 'Créer un observateur',
       editTitle: 'Editer un observateur',
       displayName: 'Nom',
+    },
+    createView: {
+      title: 'Créer une vue',
+      noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
+      fields: {
+        groupIds: 'Choisir un groupe, ou en créer un nouveau',
+        groupTags: 'Tags du groupe',
+      },
+      success: 'Nouvelle vue crée',
+      fail: 'Erreur dans la création de vue',
     },
     createAckEvent: {
       title: 'Ajouter un événement: Ack',
@@ -326,6 +343,9 @@ export default {
         type: 'Type',
         _id: 'Id',
       },
+    },
+    noColumns: {
+      message: 'Veuillez sélectionner au moins 1 colonne',
     },
   },
   rRule: {

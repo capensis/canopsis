@@ -35,4 +35,6 @@ export const API_ROUTES = {
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/rest/object/view',
+  viewV3: '/api/v2/views',
+  viewV3Group: '/api/v2/views/groups',
 };

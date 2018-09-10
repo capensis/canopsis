@@ -19,11 +19,7 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="showSettings")
           v-icon settings
-    .table__overflow(v-if="!hasColumns")
-      table.datatable.table
-        tbody
-          tr
-            td.text-xs-center You have to select at least 1 column
+    no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
       v-model="selected",
@@ -32,24 +28,30 @@
       :total-items="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
+      ref="dataTable",
       item-key="_id",
-      select-all,
       hide-actions,
+      select-all,
+      expand
       )
+        template(slot="progress")
+          transition(name="fade")
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          td
-            v-checkbox(primary, hide-details, v-model="props.selected")
-          td(
-          v-for="column in columns",
-          @click="props.expanded = !props.expanded"
-          )
-            alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
-          td
-            actions-panel(:item="props.item", :widget="widget")
+          tr
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+            v-for="column in columns",
+            @click="props.expanded = !props.expanded"
+            )
+              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+            td
+              actions-panel(:item="props.item", :widget="widget")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+          time-line(:alarmProps="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(:meta="alarmsMeta", :query.sync="query")
@@ -60,6 +62,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, SIDE_BARS } from '@/constants';
 
@@ -69,6 +72,7 @@ import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
+import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -95,6 +99,7 @@ export default {
     MassActionsPanel,
     ActionsPanel,
     AlarmColumnValue,
+    NoColumnsTable,
   },
   mixins: [
     modalMixin,
@@ -152,11 +157,17 @@ export default {
       });
     },
 
-    fetchList() {
+    fetchList({ isPeriodicRefresh } = {}) {
       if (this.hasColumns) {
+        const query = this.getQuery();
+
+        if (isPeriodicRefresh && !isEmpty(this.$refs.dataTable.expanded)) {
+          query.with_steps = true;
+        }
+
         this.fetchAlarmsList({
           widgetId: this.widget.id,
-          params: this.getQuery(),
+          params: query,
         });
       }
     },

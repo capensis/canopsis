@@ -11,7 +11,8 @@
           v-icon settings
       v-flex(xs2)
         context-fab
-    div
+    no-columns-table(v-if="!hasColumns")
+    div(v-else)
       v-data-table(
       v-model="selected",
       :items="contextEntities",
@@ -23,6 +24,9 @@
       select-all,
       hide-actions,
       )
+        template(slot="progress")
+          transition(name="fade")
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
@@ -56,6 +60,7 @@ import omit from 'lodash/omit';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
@@ -85,6 +90,7 @@ export default {
     MoreInfos,
     Ellipsis,
     ContextFab,
+    NoColumnsTable,
   },
   mixins: [
     modalMixin,
@@ -188,6 +194,14 @@ export default {
           widget: this.widget,
         },
       });
+    },
+    fetchList() {
+      if (this.hasColumns) {
+        this.fetchContextEntitiesList({
+          widgetId: this.widget.id,
+          params: this.getQuery(),
+        });
+      }
     },
   },
 };
