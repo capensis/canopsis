@@ -35,7 +35,7 @@
       expand
       )
         template(slot="progress")
-          transition(name="fade")
+          v-fade-transition
             v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
@@ -174,24 +174,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  th {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  td {
-    overflow-wrap: break-word;
-  }
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-  }
-  .loader {
-    top: 15%;
-    position: absolute;
-  }
-</style>
