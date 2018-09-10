@@ -879,7 +879,8 @@ class Alerts(object):
                 new_value[AlarmField.last_update_date.value],
                 StatCounters.alarms_canceled,
                 entity,
-                new_value)
+                new_value,
+                event.get(self.AUTHOR))
 
         return alarm
 

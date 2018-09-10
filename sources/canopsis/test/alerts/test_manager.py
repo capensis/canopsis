@@ -458,7 +458,8 @@ class TestManager(BaseTest):
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_canceled,
             {},
-            alarm['value'])
+            alarm['value'],
+            None)
 
     def test_archive_state_nochange(self):
         alarm_id = 'ut-comp'
