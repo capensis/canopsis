@@ -67,7 +67,8 @@ def acknowledge(manager, alarm, author, message, event):
                 StatDurations.ack_time,
                 ack_time,
                 entity,
-                alarm)
+                alarm,
+                author)
 
     return alarm
 

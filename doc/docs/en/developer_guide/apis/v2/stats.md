@@ -464,6 +464,8 @@ These statistics take the following parameters (in the `parameters` field) :
    for the entity itself.
  - `states` (optional): Only the alarms whose state at the creation date is in
    this list will be taken into account.
+ - `authors` (optional): Only the events whose author is in this list will be
+   taken into account.
 
 #### Example
 
@@ -521,6 +523,8 @@ These statistics take the following parameters (in the `parameters` field):
    for the entity itself.
  - `states` (optional): Only the alarms whose state at the creation date is in
    this list will be taken into account.
+ - `authors` (optional): Only the events whose author is in this list will be
+   taken into account.
  - `sla`: the SLA as an inequality, for example `"<= 3600"`.
 
 #### Example
