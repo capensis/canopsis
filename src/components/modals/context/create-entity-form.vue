@@ -80,6 +80,10 @@ export default {
     EntitiesSelect,
   },
   mixins: [formMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -88,7 +92,6 @@ export default {
   },
   data() {
     return {
-      formKey: 'form',
       showValidationErrors: true,
       types: [
         {

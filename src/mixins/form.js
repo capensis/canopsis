@@ -1,38 +1,43 @@
-import uid from 'uid';
+import uid from '@/helpers/uid';
 
-const eventKeyComputed = uid();
+const eventKeyComputed = uid('eventKey');
+const formKeyComputed = uid('formKey');
 
 /**
  * @mixin Form mixin
  */
-export default {
-  data() {
-    return {
-      formKey: 'value',
-    };
-  },
+const formMixin = {
   computed: {
-    [eventKeyComputed]() {
-      if (this.formKey === 'value') {
-        return 'input';
+    [formKeyComputed]() {
+      if (this.$options.model && this.$options.model.prop) {
+        return this.$options.model.prop;
       }
 
-      return `update:${this.formKey}`;
+      return 'value';
+    },
+    [eventKeyComputed]() {
+      if (this.$options.model && this.$options.model.event) {
+        return this.$options.model.event;
+      }
+
+      return 'input';
     },
   },
   methods: {
     updateField(fieldName, value) {
-      this.$emit(this[eventKeyComputed], { ...this[this.formKey], [fieldName]: value });
+      this.$emit(this[eventKeyComputed], { ...this[this[formKeyComputed]], [fieldName]: value });
     },
     updateFieldInArrayItem(index, fieldName, value) {
-      const items = [...this.columns];
+      const items = [...this[this[formKeyComputed]]];
 
       items[index] = {
         ...items[index],
-        [fieldName]: this.prefixFormatter(value),
+        [fieldName]: value,
       };
 
       this.$emit(this[eventKeyComputed], items);
     },
   },
 };
+
+export default formMixin;

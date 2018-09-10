@@ -2,7 +2,7 @@
   v-list-group
     v-list-tile(slot="activator") {{$t('settings.columnNames')}}
     v-container
-      v-card.my-2(v-for="(column, index) in columns", :key="`alarm-settings-column-${index}`")
+      v-card.my-2(v-for="(column, index) in columns", :key="`settings-column-${index}`")
         v-layout.pt-2(justify-space-between)
           v-flex(xs3)
             v-layout.text-xs-center.pl-2(justify-space-between)
@@ -24,6 +24,7 @@
             @input="updateFieldInArrayItem(index, 'label', $event)"
             v-validate="'required'",
             :data-vv-name="`label[${index}]`",
+            :value="column.label"
             )
           v-flex(xs11)
             v-text-field(
@@ -32,32 +33,39 @@
             @input="updateFieldInArrayItem(index, 'value', $event)"
             v-validate="'required'",
             :data-vv-name="`value[${index}]`",
-            v-model="column.value"
+            :value="column.value"
             )
       v-btn(color="success", @click.prevent="add") Add
 </template>
 
 <script>
-import settingsColumnMixin from '@/mixins/settings-column';
 import formMixin from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
   mixins: [
-    settingsColumnMixin,
     formMixin,
   ],
-  data() {
-    return {
-      formKey: 'value',
-    };
+  model: {
+    prop: 'columns',
+    event: 'input',
+  },
+  props: {
+    prefixFormatter: {
+      type: Function,
+      default: value => value,
+    },
+    columns: {
+      type: [Array, Object],
+      default: () => [],
+    },
   },
   methods: {
     add() {
-      this.$emit('input', [...this.value, { label: '', value: '' }]);
+      this.$emit('input', [...this.columns, { label: '', value: '' }]);
     },
     remove(index) {
-      this.$emit('input', this.value.filter((v, i) => i !== index));
+      this.$emit('input', this.columns.filter((v, i) => i !== index));
     },
     up(index) {
       if (index > 0) {
@@ -66,7 +74,6 @@ export default {
 
         value[index] = value[index - 1];
         value[index - 1] = temp;
-        this.columns = value;
 
         this.$emit('input', value);
       }
@@ -78,7 +85,6 @@ export default {
 
         value[index] = value[index + 1];
         value[index + 1] = temp;
-        this.columns = value;
 
         this.$emit('input', value);
       }

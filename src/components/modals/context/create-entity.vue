@@ -10,7 +10,7 @@
       ) {{ tab.name }}
       v-tab-item
         keep-alive
-        create-form(:form.sync="form")
+        create-form(v-model="form")
       v-tab-item
         manage-infos(:infos.sync="form.infos")
     v-card-actions
