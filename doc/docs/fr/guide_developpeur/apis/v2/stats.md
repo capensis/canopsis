@@ -480,6 +480,8 @@ Ces statistiques acceptent les paramètres suivants (à indiquer dans le champ
    compte que les alarmes de l'entité.
  - `states` (optionnel) : Un tableau contenant les états des alarmes à prendre
    en compte (par exemple `[3]` pour ne compter que les alarmes critiques).
+ - `authors` (optionnel) : Un tableau contenant les auteurs des événements à
+   prendre en compte.
 
 #### Exemple
 
@@ -538,6 +540,8 @@ Ces statistiques acceptent les paramètres suivants (à indiquer dans le champ
  - `states` (optionnel) : Un tableau contenant les états des alarmes à prendre
    en compte (par exemple `[3]` pour ne prendre en compte que les alarmes
    critiques).
+ - `authors` (optionnel) : Un tableau contenant les auteurs des événements à
+   prendre en compte.
  - `sla` : le SLA, sous la forme d'une inégalité, par exemple `"<= 3600"`.
 
 #### Exemple
