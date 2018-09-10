@@ -29,7 +29,7 @@
         v-flex(xs11)
           v-combobox(
           v-model="form.tags",
-          label="$t('modals.createView.fields.groupIds')",
+          :label="$t('modals.createView.fields.groupTags')",
           tags,
           clearable,
           multiple,
@@ -106,19 +106,18 @@ export default {
         const isFormValid = await this.$validator.validateAll();
 
         if (isFormValid) {
-          let group = find(this.groups, { name: this.groupName })._id;
+          let group = find(this.groups, { name: this.groupName });
 
           if (!group) {
-            group = await this.createGroup({ name: this.groupName });
+            group = await this.createGroup({ data: { name: this.groupName } });
           }
 
           const data = {
             ...this.form,
             widgets: [],
-            group_id: group,
+            group_id: group._id,
           };
-
-          await this.createView(data);
+          await this.createView({ data });
           this.addSuccessPopup({ text: this.$t('modals.createView.success') });
           this.hideModal();
         }

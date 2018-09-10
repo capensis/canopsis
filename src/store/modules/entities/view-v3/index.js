@@ -18,7 +18,7 @@ export default {
   },
   getters: {
     item: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.viewV3.view, state.viewId),
+      rootGetters['entities/getItem'](ENTITIES_TYPES.viewV3, state.viewId),
   },
   mutations: {
     [types.FETCH_ITEM]: () => {
@@ -27,8 +27,8 @@ export default {
     },
   },
   actions: {
-    create(context, { params } = {}) {
-      return request.post(API_ROUTES.viewV3.view, params);
+    create(context, { data } = {}) {
+      return request.post(API_ROUTES.viewV3, data);
     },
 
     async fetchItem({ commit, dispatch }, { id }) {

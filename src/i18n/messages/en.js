@@ -142,7 +142,13 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     selectAFilter: 'Select a filter',
-    infoPopup: 'Info popup',
+    infoPopup: {
+      title: 'Info popup',
+      fields: {
+        column: 'Column',
+        template: 'Template',
+      },
+    },
     moreInfosModal: '"More Infos" Popup',
     weatherTemplate: 'Template - Weather item',
     modalTemplate: 'Template - Modal',
@@ -190,6 +196,7 @@ export default {
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         groupIds: 'Choose a group, or create a new one',
+        groupTags: 'Group tags',
       },
       success: 'New view created',
       fail: 'Fail in creation view',
@@ -356,6 +363,9 @@ export default {
         type: 'Type',
         _id: 'Id',
       },
+    },
+    noColumns: {
+      message: 'You have to select at least 1 column',
     },
   },
   rRule: {

@@ -23,7 +23,7 @@
             :error-messages="errors.collect(`label[${index}]`)",
             v-model="column.label",
             v-validate="'required'",
-            :data-vv-name="`label[${index}]`"
+            :data-vv-name="`label[${index}]`",
             )
           v-flex(xs11)
             v-text-field(
