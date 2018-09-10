@@ -635,7 +635,7 @@ class Alerts(object):
 
             if is_new_alarm:
                 self.check_alarm_filters()
-                self.publish_new_alarm_stats(alarm)
+                self.publish_new_alarm_stats(alarm, event.get(self.AUTHOR))
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
@@ -827,7 +827,8 @@ class Alerts(object):
                 now,
                 StatCounters.downtimes,
                 entity,
-                new_value)
+                new_value,
+                event.get(self.AUTHOR))
 
         # Update entity's last_state_change
         if entity:
@@ -1290,7 +1291,7 @@ class Alerts(object):
 
             self.update_current_alarm(docalarm, new_value)
 
-    def publish_new_alarm_stats(self, alarm):
+    def publish_new_alarm_stats(self, alarm, author):
         """
         Publish statistics events for a new alarm.
 
@@ -1311,4 +1312,5 @@ class Alerts(object):
             creation_date,
             StatCounters.alarms_created,
             entity,
-            alarm_value)
+            alarm_value,
+            author)

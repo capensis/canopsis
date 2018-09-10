@@ -494,7 +494,8 @@ class TestManager(BaseTest):
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
-            alarm['value'])
+            alarm['value'],
+            None)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         event1 = {
@@ -551,7 +552,8 @@ class TestManager(BaseTest):
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
-            alarm['value'])
+            alarm['value'],
+            None)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Testing state increase
@@ -672,7 +674,8 @@ class TestManager(BaseTest):
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
-            alarm['value'])
+            alarm['value'],
+            None)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Force status to stealthy
@@ -730,7 +733,8 @@ class TestManager(BaseTest):
             alarm['value'][AlarmField.last_update_date.value],
             StatCounters.alarms_created,
             {},
-            alarm['value'])
+            alarm['value'],
+            None)
         self.event_publisher.publish_statcounterinc_event.reset_mock()
 
         # Force status to stealthy
