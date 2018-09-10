@@ -1,3 +1,5 @@
+import omit from 'lodash/omit';
+
 import uid from '@/helpers/uid';
 
 const eventKeyComputed = uid('eventKey');
@@ -26,6 +28,9 @@ const formMixin = {
   methods: {
     updateField(fieldName, value) {
       this.$emit(this[eventKeyComputed], { ...this[this[formKeyComputed]], [fieldName]: value });
+    },
+    deleteField(fieldName) {
+      this.$emit(this[eventKeyComputed], omit(this[this[formKeyComputed]], [fieldName]));
     },
     updateFieldInArrayItem(index, fieldName, value) {
       const items = [...this[this[formKeyComputed]]];

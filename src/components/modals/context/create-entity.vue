@@ -12,7 +12,7 @@
         keep-alive
         create-form(v-model="form")
       v-tab-item
-        manage-infos(:infos.sync="form.infos", :modal="modal")
+        manage-infos(v-model="form.infos")
     v-card-actions
       v-btn.green.darken-3.white--text(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
