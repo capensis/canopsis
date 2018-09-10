@@ -1,24 +1,24 @@
 <template lang="pug">
   v-card
     v-card-text
-      .title.text-xs-center.my-2 Infos list
+      .title.text-xs-center.my-2 {{ $t('modals.createEntity.infosList') }}
       v-list(v-if="Object.keys(infos).length")
         v-list-group.my-1(
-        v-for="infoName in Object.keys(infos)",
-        :key="infoName"
+        v-for="infoName in infos",
+        :key="infoName.name"
         )
           v-list-tile(slot="activator")
             v-list-tile-content
-              v-list-tile-title {{ infoName }}
+              v-list-tile-title {{ infoName.name }}
             v-list-tile-action
               v-btn(icon, flat, @click.stop="deleteInfo(infoName)")
                 v-icon delete
           v-list-tile(@click="")
-            v-list-tile-content Description : {{ infos[infoName].description }}
-            v-list-tile-content Value : {{ infos[infoName].value }}
+            v-list-tile-content Description : {{ infoName.description }}
+            v-list-tile-content Value : {{ infoName.value }}
       v-card-text(v-else) No infos
       v-form(ref="infoForm")
-        .title.text-xs-center.my-2 Add info
+        .title.text-xs-center.my-2 {{ $t('modals.createEntity.addInfos') }}
         v-layout
           v-text-field(
           :label="$t('common.name')",

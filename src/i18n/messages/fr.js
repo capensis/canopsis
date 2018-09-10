@@ -173,6 +173,8 @@ export default {
     createEntity: {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
+      infosList: 'Infos',
+      addInfos: 'Ajouter un champ info',
       fields: {
         type: 'Type',
         manageInfos: 'Gérer Infos',
