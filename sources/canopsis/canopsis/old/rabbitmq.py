@@ -303,7 +303,9 @@ class Amqp(Thread):
                                     .format(__version__)
                                 )
 
-                if not qsettings['consumer'] or reconnect:
+                if qsettings['consumer'] and not reconnect:
+                    qsettings['consumer'].revive(self.chan)
+                elif not qsettings['consumer'] or reconnect:
                     self.logger.debug("   + Create Consumer")
                     qsettings['consumer'] = self.conn.Consumer(
                         qsettings['queue'], callbacks=[qsettings['callback']])
