@@ -74,10 +74,7 @@ export default {
 
 <style lang="scss" scoped>
   .badge {
-    min-width: 10px;
     padding: 3px 7px;
-    font-weight: 700;
-    line-height: 1;
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
