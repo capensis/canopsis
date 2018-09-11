@@ -8,7 +8,7 @@ const formKeyComputed = uid('formKey');
 /**
  * @mixin Form mixin
  */
-const formMixin = {
+export default {
   computed: {
     [formKeyComputed]() {
       if (this.$options.model && this.$options.model.prop) {
@@ -44,5 +44,3 @@ const formMixin = {
     },
   },
 };
-
-export default formMixin;

@@ -97,6 +97,22 @@ export default {
     prefixFormatter(value) {
       return value.replace('alarm.', 'v.');
     },
+
+    prepareSettingsWidget() {
+      const { widget } = this.settings;
+
+      return {
+        ...widget,
+        widget_columns: widget.widget_columns.map(v => ({
+          ...v,
+          value: this.prefixFormatter(v.value),
+        })),
+        popup: widget.popup.map(v => ({
+          ...v,
+          column: this.prefixFormatter(v.column),
+        })),
+      };
+    },
   },
 };
 </script>
