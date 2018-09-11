@@ -14,7 +14,7 @@
                   v-icon arrow_downward
           v-flex.d-flex(xs3)
             div.text-xs-right.pr-2
-              v-btn(icon, @click.prevent="remove(index)")
+              v-btn(icon, @click.prevent="removeItemFromArray(index)")
                 v-icon(color="red") close
         v-layout(justify-center wrap)
           v-flex(xs11)
@@ -62,10 +62,7 @@ export default {
   },
   methods: {
     add() {
-      this.$emit('input', [...this.columns, { label: '', value: '' }]);
-    },
-    remove(index) {
-      this.$emit('input', this.columns.filter((v, i) => i !== index));
+      this.addItemIntoArray({ label: '', value: '' });
     },
     up(index) {
       if (index > 0) {

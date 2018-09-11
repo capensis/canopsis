@@ -11,7 +11,7 @@
             v-list-tile-content
               v-list-tile-title {{ infoName }}
             v-list-tile-action
-              v-btn(icon, flat, @click.stop="deleteField(infoName)")
+              v-btn(icon, flat, @click.stop="removeField(infoName)")
                 v-icon delete
           v-list-tile(@click="")
             v-list-tile-content

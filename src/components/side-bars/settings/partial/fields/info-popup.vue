@@ -7,7 +7,7 @@
           v-flex(xs3)
           v-flex.d-flex(xs3)
             div.text-xs-right.pr-2
-              v-btn(icon, @click.prevent="remove(index)")
+              v-btn(icon, @click.prevent="removeItemFromArray(index)")
                 v-icon(color="red") close
         v-layout(justify-center wrap)
           v-flex(xs11)
@@ -44,10 +44,7 @@ export default {
   },
   methods: {
     add() {
-      this.$emit('input', [...this.popups, { column: '', template: '' }]);
-    },
-    remove(index) {
-      this.$emit('input', this.popups.filter((v, i) => i !== index));
+      this.addItemIntoArray({ column: '', template: '' });
     },
   },
 };
