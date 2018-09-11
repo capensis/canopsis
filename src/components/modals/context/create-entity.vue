@@ -22,12 +22,13 @@
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import CreateForm from './create-entity-form.vue';
-import ManageInfos from './manage-infos.vue';
+
+import CreateForm from './partial/create-entity-form.vue';
+import ManageInfos from './partial/manage-infos.vue';
 
 /**
-   * Modal to create an entity (watcher, resource, component, connector)
-   */
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {

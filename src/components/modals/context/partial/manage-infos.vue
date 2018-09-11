@@ -48,7 +48,6 @@
 
 <script>
 import formMixin from '@/mixins/form';
-import { MODALS } from '@/constants';
 
 const getDefaultFormData = () => ({
   name: '',
@@ -56,8 +55,12 @@ const getDefaultFormData = () => ({
   value: '',
 });
 
+/**
+ * Form to manipulation with infos
+ *
+ * @prop {Object} infos - infos from parent
+ */
 export default {
-  name: MODALS.contextInfos,
   $_veeValidate: {
     validator: 'new',
   },

@@ -51,10 +51,6 @@ export default {
     event: 'input',
   },
   props: {
-    prefixFormatter: {
-      type: Function,
-      default: value => value,
-    },
     columns: {
       type: [Array, Object],
       default: () => [],
