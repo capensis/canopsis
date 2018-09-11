@@ -7,6 +7,20 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 ### Experimental features
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+- [Go]: New Action engine (backend only for now)
+
+## Canopsis 3.2.1 - Due date : 2018-09-12
+
+- [CAT] Simplification of the statistics API (!74, !77, !78)
+- [CAT] Add trends, SLA, sorting, aggregations and filtering by author to the statistics API  (!75, !76, !80, !87)
+- [CAT] Add support for monthly periods to the statistics API (!79)
+- [CAT] Add statistics for ongoing alarms and current state of an entity (!81, 82)
+- [CAT] Fix an issue with the state of the alarms for statistics on resolved alarms (!83)
+- [CAT] Add API route to get the history of the state of an entity (!85)
+- [Python]: Fix error on /trap route
+- [Python]: Fix amqp driver to revive stucked Consumers
+- [Service weather]: Fix wrong pbehavior and maintenance icons used
+- [UI]: Fix role default view that cannot be modified
 
 ## Canopsis 3.2 - Due date : 2018-09-01
 
