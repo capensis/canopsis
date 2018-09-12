@@ -6,7 +6,7 @@
     v-card-text
       div(v-html="compiledTemplate")
       div(v-if="!watcherEntitiesPending")
-        div.mt-4(v-for="watcherEntity in watcherEntities")
+        div.mt-2(v-for="watcherEntity in watcherEntities")
           watcher-entity(:entity="watcherEntity", :template="config.entityTemplate")
 </template>
 

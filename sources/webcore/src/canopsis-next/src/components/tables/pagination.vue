@@ -1,14 +1,14 @@
 <template lang="pug">
   div.container.text-xs-center(v-if="meta.total")
-    ul.pagination(v-if="type === 'top'")
+    ul.v-pagination(v-if="type === 'top'")
       li
-        button.pagination__navigation(:disabled="currentPage <= 1", @click="previous")
+        button.v-pagination__navigation(:disabled="currentPage <= 1", @click="previous")
           v-icon chevron_left
       span {{ currentPage }}
       span /
       span {{ totalPages }}
       li
-        button.pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
+        button.v-pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
           v-icon chevron_right
     div(v-else)
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}

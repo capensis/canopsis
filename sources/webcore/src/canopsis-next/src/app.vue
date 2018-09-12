@@ -18,6 +18,8 @@ import Popups from '@/components/popups/index.vue';
 
 import authMixin from '@/mixins/auth';
 
+import '@/assets/styles/main.scss';
+
 export default {
   components: {
     Navigation,

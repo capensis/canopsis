@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.my-1.pa-2
     v-radio-group(
-    :input-value="group.condition",
+    :value="group.condition",
     @change="updateField('condition', $event)",
     hide-details,
     mandatory,

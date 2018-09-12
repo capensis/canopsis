@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    v-card-title
+    v-card-title.green.darken-3.white--text
       h2 {{ $t(config.title) }}
     v-tabs
       v-tab(
@@ -12,9 +12,9 @@
         keep-alive
         create-form(:form.sync="form")
       v-tab-item
-        manage-infos(:infos.sync="form.infos")
+        manage-infos(:infos.sync="form.infos", :modal="modal")
     v-card-actions
-      v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
+      v-btn.green.darken-3.white--text(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
