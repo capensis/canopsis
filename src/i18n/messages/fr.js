@@ -287,6 +287,17 @@ export default {
       noData: 'Pas de données',
       ticketing: 'Ticketing',
     },
+    filter: {
+      create: {
+        title: 'Créer un filtre',
+      },
+      edit: {
+        title: 'Editer',
+      },
+      fields: {
+        title: 'Nom',
+      },
+    },
   },
   tables: {
     contextList: {
