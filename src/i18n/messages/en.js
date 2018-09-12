@@ -309,6 +309,20 @@ export default {
         title: 'Title',
       },
     },
+    widgetCreation: {
+      title: 'Select a widget',
+      types: {
+        alarmList: {
+          title: 'Alarm list',
+        },
+        context: {
+          title: 'Context explorer',
+        },
+        weather: {
+          title: 'Service weather',
+        },
+      },
+    },
   },
   tables: {
     contextList: {
