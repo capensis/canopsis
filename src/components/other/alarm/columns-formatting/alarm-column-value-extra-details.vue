@@ -2,7 +2,7 @@
   v-layout
     div(v-if="alarm.v.ack")
       v-tooltip(top)
-        v-icon.badge.purple.white--text(small, slot="activator") check
+        v-icon.badge.purple.white--text(small, slot="activator") {{ eventStyles[eventTypes.ack].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.ack') }}
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
@@ -10,7 +10,7 @@
           div(v-if="alarm.v.ack.m") {{ $t('common.comment') }} : {{ alarm.v.ack.m }}
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
-        v-icon.badge.blue.white--text(small, slot="activator") local_play
+        v-icon.badge.blue.white--text(small, slot="activator") {{ eventStyles[eventTypes.declareTicket].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
           div {{ $t('common.by') }} : {{ alarm.v.ticket.a }}
@@ -20,7 +20,7 @@
           ) {{ $t('alarmList.actions.iconsFields.ticketNumber') }} : {{ alarm.v.ticket.val }}
     div(v-if="alarm.v.canceled")
       v-tooltip(top)
-        v-icon.badge.blue-grey.white--text(small, slot="activator") delete
+        v-icon.badge.blue-grey.white--text(small, slot="activator") {{ eventStyles[eventTypes.delete].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
           div {{ $t('common.by') }} : {{ alarm.v.canceled.a }}
@@ -28,7 +28,7 @@
           div(v-if="alarm.v.canceled.m") {{ $t('common.comment') }} : {{ alarm.v.canceled.m }}
     div(v-if="alarm.v.snooze")
       v-tooltip(top)
-        v-icon.badge.pink.white--text(small, slot="activator") alarm
+        v-icon.badge.pink.white--text(small, slot="activator") {{ eventStyles[eventTypes.snooze].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
@@ -36,7 +36,7 @@
           div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}
     div(v-if="pbehaviors.length")
       v-tooltip(top)
-        v-icon.badge.cyan.accent-2.white--text(small, slot="activator") event
+        v-icon.badge.cyan.accent-2.white--text(small, slot="activator") {{ eventStyles[eventTypes.pbehaviorAdd].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div(v-for="pbehavior in pbehaviors")
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+
 /**
  * Component for the 'extra-details' column of the alarms list
  *
@@ -59,6 +61,12 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      eventStyles: EVENT_ENTITY_STYLE,
+      eventTypes: EVENT_ENTITY_TYPES,
+    };
   },
   computed: {
     pbehaviors() {
@@ -74,10 +82,7 @@ export default {
 
 <style lang="scss" scoped>
   .badge {
-    min-width: 10px;
     padding: 3px 7px;
-    font-weight: 700;
-    line-height: 1;
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;

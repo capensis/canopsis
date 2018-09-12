@@ -14,39 +14,31 @@ export default {
   namespaced: true,
   state: {
     allIds: [],
-    pending: false,
   },
   getters: {
+    allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.group, state.allIds),
   },
   mutations: {
-    [types.FETCH_LIST](state) {
-      state.pending = true;
+    [types.FETCH_LIST]() {
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds }) {
       state.allIds = allIds;
-      state.pending = false;
     },
-    [types.FETCH_LIST_FAILED](state) {
-      state.pending = false;
+    [types.FETCH_LIST_FAILED]() {
     },
   },
   actions: {
     create(context, { data } = {}) {
       return request.post(API_ROUTES.viewV3Group, data);
     },
-    async fetchList({ commit, dispatch }, { id } = {}) {
+    async fetchList({ commit, dispatch }) {
       try {
-        let route = API_ROUTES.viewV3Group;
-        if (id) {
-          route += `/${id}`;
-        }
         const { normalizedData } = await dispatch('entities/fetch', {
-          route,
+          route: API_ROUTES.viewV3,
           schema: [groupSchema],
-          dataPreparer: d => d,
+          dataPreparer: d => d.groups,
         }, { root: true });
-
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
         });
