@@ -150,29 +150,24 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
 
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
-    color: 'purple',
-    text: 'Acknowledged',
+    color: '#9c27b0',
     icon: 'playlist_add_check',
   },
   [EVENT_ENTITY_TYPES.fastAck]: {
     icon: 'check',
   },
   [EVENT_ENTITY_TYPES.pbehaviorAdd]: {
-    text: 'Acknowledged',
     icon: 'pause',
   },
   [EVENT_ENTITY_TYPES.pbehaviorList]: {
-    text: 'Acknowledged',
     icon: 'list',
   },
   [EVENT_ENTITY_TYPES.ackRemove]: {
-    color: 'purple',
-    text: 'Ack removed',
+    color: '#9c27b0',
     icon: 'not_interested',
   },
   [EVENT_ENTITY_TYPES.declareTicket]: {
-    color: 'blue',
-    text: 'Ticket declared',
+    color: '#2196f3',
     icon: 'report_problem',
   },
   [EVENT_ENTITY_TYPES.assocTicket]: {
@@ -185,13 +180,11 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'thumbs_up_down',
   },
   [EVENT_ENTITY_TYPES.snooze]: {
-    color: 'pink',
-    text: 'Snoozed',
+    color: '#e91e63',
     icon: 'alarm',
   },
   [EVENT_ENTITY_TYPES.done]: {
     color: 'green',
-    text: 'Done',
     icon: 'assignment_turned_in',
   },
 };
