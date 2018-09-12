@@ -173,8 +173,10 @@ export default {
     createEntity: {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
+      infosList: 'Infos list',
+      addInfos: 'Add Infos',
       fields: {
-        type: 'Types',
+        type: 'Type',
         manageInfos: 'Manage Infos',
         form: 'Form',
         impact: 'Impact',
@@ -305,6 +307,20 @@ export default {
       },
       fields: {
         title: 'Title',
+      },
+    },
+    widgetCreation: {
+      title: 'Select a widget',
+      types: {
+        alarmList: {
+          title: 'Alarm list',
+        },
+        context: {
+          title: 'Context explorer',
+        },
+        weather: {
+          title: 'Service weather',
+        },
       },
     },
   },
