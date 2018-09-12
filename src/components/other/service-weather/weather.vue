@@ -3,15 +3,9 @@
     v-layout
       v-btn(icon, @click="showSettings")
         v-icon settings
-    v-fade-transition
-      v-layout(v-show="!watchersPending", wrap)
-        v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
-          weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
-    v-fade-transition
-      v-layout(v-show="watchersPending", column)
-        v-flex(xs12)
-          v-layout(justify-center)
-            v-progress-circular(indeterminate, color="primary")
+    v-layout(wrap)
+      v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
+        weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
 </template>
 
 <script>
@@ -28,12 +22,7 @@ export default {
   components: {
     WeatherItem,
   },
-  mixins: [
-    entitiesWatcherMixin,
-    entitiesUserPreferenceMixin,
-    widgetQueryMixin,
-    sideBarMixin,
-  ],
+  mixins: [entitiesWatcherMixin, entitiesUserPreferenceMixin, widgetQueryMixin, sideBarMixin],
   props: {
     widget: {
       type: Object,
@@ -69,3 +58,4 @@ export default {
   },
 };
 </script>
+

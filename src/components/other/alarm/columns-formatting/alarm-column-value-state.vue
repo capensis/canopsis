@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(align-center)
+  div
     alarm-chips(:type="ENTITY_INFOS_TYPE.state", :value="stateId")
     v-icon(v-if="showIcon", color="purple") account_circle
 </template>

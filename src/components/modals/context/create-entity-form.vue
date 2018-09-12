@@ -1,6 +1,6 @@
 <template lang="pug">
-div
-  v-container(fluid)
+v-card-text
+  v-container
     v-layout(row)
       v-text-field(
         :label="$t('common.name')",
@@ -11,16 +11,16 @@ div
         data-vv-name="name"
       )
     v-layout(row)
-      v-textarea(
+      v-text-field(
         :label="$t('common.description')",
         :value="form.description",
         @input="updateField('description', $event)",
         data-vv-name="description",
-        :error-messages="errors.collect('description')"
+        :error-messages="errors.collect('description')",
+        multi-line
       )
     v-layout(row)
       v-switch(
-        color="green darken-3"
         :label="$t('common.enabled')",
         :input-value="form.enabled",
         @change="updateField('enabled', $event)"
@@ -32,7 +32,7 @@ div
         v-validate="'required'",
         :error-messages="errors.collect('type')",
         @input="updateField('type', $event)",
-        :label="$t('modals.createEntity.fields.type')",
+        :label="$t('modals.createEntity.types')",
         single-line
       )
     v-layout(wrap)

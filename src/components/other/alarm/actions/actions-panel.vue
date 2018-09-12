@@ -1,40 +1,38 @@
 <template lang="pug">
   div
-      div(v-show="$options.filters.mq($mq, { l: true })")
-        v-layout
+    div(v-show="$options.filters.mq($mq, { l: true })")
+      actions-panel-item(
+      v-for="(action, index) in actions.main",
+      v-bind="action",
+      :key="`main-${index}`"
+      )
+      v-menu(v-show="actions.dropDown && actions.dropDown.length", bottom, left, @click.native.stop)
+        v-btn.mx-1(icon, slot="activator")
+          v-icon more_vert
+        v-list
+          actions-panel-item(
+          v-for="(action, index) in actions.dropDown",
+          v-bind="action",
+          isDropDown,
+          :key="`drop-down-${index}`"
+          )
+    div(v-show="$options.filters.mq($mq, { m: true, l: false })")
+      v-menu(bottom, left, @click.native.stop)
+        v-btn.mx-1(icon slot="activator")
+          v-icon more_vert
+        v-list
           actions-panel-item(
           v-for="(action, index) in actions.main",
           v-bind="action",
-          :key="`main-${index}`"
+          isDropDown,
+          :key="`mobile-main-${index}`"
           )
-          v-menu(v-show="actions.dropDown && actions.dropDown.length", bottom, left, @click.native.stop)
-            v-btn(icon, slot="activator")
-              v-icon more_vert
-            v-list
-              actions-panel-item(
-              v-for="(action, index) in actions.dropDown",
-              v-bind="action",
-              isDropDown,
-              :key="`drop-down-${index}`"
-              )
-      div(v-show="$options.filters.mq($mq, { m: true, l: false })")
-        v-layout
-          v-menu(bottom, left, @click.native.stop)
-            v-btn(icon slot="activator")
-              v-icon more_vert
-            v-list
-              actions-panel-item(
-              v-for="(action, index) in actions.main",
-              v-bind="action",
-              isDropDown,
-              :key="`mobile-main-${index}`"
-              )
-              actions-panel-item(
-              v-for="(action, index) in actions.dropDown",
-              v-bind="action",
-              isDropDown,
-              :key="`mobile-drop-down-${index}`"
-              )
+          actions-panel-item(
+          v-for="(action, index) in actions.dropDown",
+          v-bind="action",
+          isDropDown,
+          :key="`mobile-drop-down-${index}`"
+          )
 </template>
 
 <script>
