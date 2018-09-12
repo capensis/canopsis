@@ -292,15 +292,12 @@ export default {
       types: {
         alarmList: {
           title: 'Bac à alarmes',
-          description: '',
         },
         context: {
           title: 'Explorateur de contexte',
-          description: '',
         },
         weather: {
           title: 'Météo de services',
-          description: '',
         },
       },
     },

@@ -312,15 +312,12 @@ export default {
       types: {
         alarmList: {
           title: 'Alarm list',
-          description: '',
         },
         context: {
           title: 'Context explorer',
-          description: '',
         },
         weather: {
           title: 'Service weather',
-          description: '',
         },
       },
     },

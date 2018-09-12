@@ -11,7 +11,7 @@
         xs12,
         v-for="widgetType in widgetsTypes",
         :key="widgetType.value",
-        @click='selectWidgetType(widgetType.value)'
+        @click="selectWidgetType(widgetType.value)"
         )
           v-card.widgetType
             v-card-title(primary-title)
