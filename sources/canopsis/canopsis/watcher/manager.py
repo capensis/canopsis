@@ -5,6 +5,7 @@ Manager for watcher.
 """
 
 from __future__ import unicode_literals
+import time
 import json
 
 from canopsis.check import Check
@@ -212,11 +213,16 @@ class Watcher:
             ]
         }))
         states = []
+
         for alarm in alarm_list:
-            active_pb = self.pbehavior_manager.get_active_pbehaviors(
-                [alarm['d']]
-            )
-            if len(active_pb) == 0:
+            pbh_alarm = self.pbehavior_manager.get_pbehaviors_by_eid(alarm['d'])
+
+            active_pbh = []
+            now = int(time.time())
+            for pbh in pbh_alarm:
+                if self.pbehavior_manager.check_active_pbehavior(now, pbh):
+                    active_pbh.append(pbh)
+            if len(active_pbh) == 0:
                 states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)

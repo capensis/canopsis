@@ -611,7 +611,7 @@ class PBehaviorManager(object):
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
-
+        !!!! DEPRECATED !!!!
         :param str entity_id:
         :param list list_in: list of pbehavior names
         :param list list_out: list of pbehavior names
