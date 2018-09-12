@@ -9,6 +9,13 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 - [Go]: New Action engine (backend only for now)
 
+## Canopsis 3.2.2 - Due date : 2018-09-12
+
+- [Go]: Fix che event enrichment with new entities
+- [Go]: Fix unused debug flag
+- [Python]: Fix pbehavior based desynchronisation on weather route
+
+
 ## Canopsis 3.2.1 - Due date : 2018-09-12
 
 - [CAT] Simplification of the statistics API (!74, !77, !78)
