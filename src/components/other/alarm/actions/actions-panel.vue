@@ -116,7 +116,6 @@ export default {
     modalConfig() {
       return {
         itemsType: ENTITIES_TYPES.alarm,
-        item: this.item,
         widget: this.widget,
         itemsIds: [this.item._id],
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget.id }),

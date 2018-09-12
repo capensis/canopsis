@@ -12,7 +12,7 @@
 import HandleBars from 'handlebars';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import { MODALS } from '@/constants';
 
 /**
@@ -22,11 +22,11 @@ import { MODALS } from '@/constants';
  */
 export default {
   name: MODALS.moreInfos,
-  mixins: [modalInnerMixin, entitiesAlarmMixin],
+  mixins: [modalInnerMixin, modalInnerItemsMixin],
   computed: {
     output() {
       const output = HandleBars.compile(this.config.widget.more_infos_popup);
-      const context = { alarm: this.config.item, entity: this.config.item.entity };
+      const context = { alarm: this.items[0], entity: this.items[0].entity };
       return output(context);
     },
   },
