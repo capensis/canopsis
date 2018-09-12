@@ -14,7 +14,6 @@
             v-text-field(placeholder="Column", v-model="popup.column")
           v-flex(xs11)
             text-editor(v-model="popup.template", @update:value="updateTemplate($event, index)")
-            //v-text-field(placeholder="Template", :multi-line="true", v-model="popup.template")
       v-btn(color="success", @click="add") Add
 </template>
 
