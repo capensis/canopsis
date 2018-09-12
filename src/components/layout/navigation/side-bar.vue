@@ -34,7 +34,7 @@
 import { SIDE_BAR_WIDTH } from '@/config';
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
-import v3ViewsMixin from '@/mixins/entities/view-v3/group';
+import entitiesV3ViewsMixin from '@/mixins/entities/view-v3/group';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -44,7 +44,7 @@ import v3ViewsMixin from '@/mixins/entities/view-v3/group';
  * @event input#update
  */
 export default {
-  mixins: [modalMixin, v3ViewsMixin],
+  mixins: [modalMixin, entitiesV3ViewsMixin],
   props: {
     value: {
       type: Boolean,

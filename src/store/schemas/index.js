@@ -54,8 +54,6 @@ export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, { views: [vie
   idAttribute: 'name',
 });
 
-export const groupsSchema = new schema.Values(groupSchema);
-
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -66,7 +64,6 @@ export default {
   [ENTITIES_TYPES.view]: viewSchema,
   [ENTITIES_TYPES.viewV3]: viewV3Schema,
   [ENTITIES_TYPES.group]: groupSchema,
-  [ENTITIES_TYPES.groups]: groupsSchema,
   [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
 };

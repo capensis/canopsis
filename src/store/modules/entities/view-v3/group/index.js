@@ -14,24 +14,18 @@ export default {
   namespaced: true,
   state: {
     allIds: [],
-    pending: false,
   },
   getters: {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.group, state.allIds),
-    error: state => state.error,
-    pending: state => state.pending,
   },
   mutations: {
-    [types.FETCH_LIST](state) {
-      state.pending = true;
+    [types.FETCH_LIST]() {
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds }) {
       state.allIds = allIds;
-      state.pending = false;
     },
-    [types.FETCH_LIST_FAILED](state) {
-      state.pending = false;
+    [types.FETCH_LIST_FAILED]() {
     },
   },
   actions: {
