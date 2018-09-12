@@ -1,12 +1,12 @@
 <template lang="pug">
   v-container
+    v-btn(@click="refreshView") REFRESH
     div
-      div(v-for="widget in widgets", :key="widget._id")
+      div(v-for="widget in widgets", :key="`${widgetKeyPrefix}_${widget.id}`")
         h2 {{ widget.title }}
-        div(
+        component(
         :is="widgetsMap[widget.xtype]",
         :widget="widget",
-        @openSettings="openSettings(widget)"
         )
     v-speed-dial.fab(
     direction="top",
@@ -23,6 +23,7 @@
 
 <script>
 import { MODALS, WIDGET_TYPES } from '@/constants';
+import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
@@ -52,6 +53,7 @@ export default {
   data() {
     return {
       fab: false,
+      widgetKeyPrefix: uid(),
       widgetsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
@@ -69,6 +71,11 @@ export default {
       });
     },
 
+    async refreshView() {
+      await this.fetchView({ id: this.id });
+
+      this.widgetKeyPrefix = uid();
+    },
   },
 };
 </script>
