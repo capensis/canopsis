@@ -1,5 +1,5 @@
 <template lang="pug">
-  quill-editor(:value="value", @input="$emit('update:value', $event)")
+  quill-editor(:value="value", @input="$emit('input', $event)")
 </template>
 
 <script>

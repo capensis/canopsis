@@ -11,12 +11,11 @@
         )
     v-tab(@click="openAdvancedTab") {{$t('filterEditor.tabs.advancedEditor')}}
     v-tab-item
-      v-text-field(
+      v-textarea(
       v-model="requestString",
       :label="$t('filterEditor.tabs.advancedEditor')",
       @input="updateRequestString",
       rows="10",
-      textarea,
       )
       v-layout(justify-center)
         v-flex(xs10 md-6)

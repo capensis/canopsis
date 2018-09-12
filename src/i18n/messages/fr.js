@@ -142,7 +142,13 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     selectAFilter: 'Sélectionner un filtre',
-    infoPopup: 'Info popup',
+    infoPopup: {
+      title: 'Info popup',
+      fields: {
+        column: 'Column',
+        template: 'Template',
+      },
+    },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modal',
@@ -167,8 +173,10 @@ export default {
     createEntity: {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
+      infosList: 'Infos',
+      addInfos: 'Ajouter un champ info',
       fields: {
-        type: 'Types',
+        type: 'Type',
         manageInfos: 'Gérer Infos',
         form: 'Formulaire',
         impact: 'Impacts',
@@ -337,6 +345,9 @@ export default {
         type: 'Type',
         _id: 'Id',
       },
+    },
+    noColumns: {
+      message: 'Veuillez sélectionner au moins 1 colonne',
     },
   },
   rRule: {
