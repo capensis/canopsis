@@ -4,8 +4,8 @@
   )
     span(@click.stop="textClicked") {{ text }}
   div(v-else)
-    span {{ text.substr(0, maxLetters) }}
-    span(@click.stop="textClicked") ...
+    span(@click.stop="textClicked") {{ text.substr(0, maxLetters) }}
+    span ...
 </template>
 
 <script>
@@ -21,10 +21,6 @@ export default {
       type: String,
       required: true,
     },
-    hasInfoPopup: {
-      type: Boolean,
-      required: true,
-    },
   },
   data() {
     return {
@@ -33,11 +29,8 @@ export default {
   },
   methods: {
     textClicked() {
+      this.$emit('textClicked');
       this.expanded = !this.expanded;
-
-      if (this.hasInfoPopup) {
-        this.$emit('showPopup');
-      }
     },
   },
 };

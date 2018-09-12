@@ -1,14 +1,12 @@
 <template lang="pug">
   div
-    div.red(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
+    div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
     ellipsis(
     v-else,
     :text="alarm | get(column.value, columnFilter, '')",
     :column="column.value",
-    :alarm="alarm",
-    :widget="widget",
-    :hasInfoPopup="popupData ? true : false",
-    @showPopup="showPopup"
+    :hasInfoPopup="!!popupData",
+    @textClicked="showPopup"
     )
 </template>
 
@@ -91,9 +89,11 @@ export default {
   },
   methods: {
     showPopup() {
-      this.addInfoPopup({
-        text: this.popupTextContent,
-      });
+      if (this.popupData) {
+        this.addInfoPopup({
+          text: this.popupTextContent,
+        });
+      }
     },
   },
 };
