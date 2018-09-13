@@ -142,7 +142,13 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     selectAFilter: 'Sélectionner un filtre',
-    infoPopup: 'Info popup',
+    infoPopup: {
+      title: 'Info popup',
+      fields: {
+        column: 'Column',
+        template: 'Template',
+      },
+    },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modal',
@@ -167,8 +173,10 @@ export default {
     createEntity: {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
+      infosList: 'Infos',
+      addInfos: 'Ajouter un champ info',
       fields: {
-        type: 'Types',
+        type: 'Type',
         manageInfos: 'Gérer Infos',
         form: 'Formulaire',
         impact: 'Impacts',
@@ -281,6 +289,31 @@ export default {
       noData: 'Pas de données',
       ticketing: 'Ticketing',
     },
+    filter: {
+      create: {
+        title: 'Créer un filtre',
+      },
+      edit: {
+        title: 'Editer',
+      },
+      fields: {
+        title: 'Nom',
+      },
+    },
+    widgetCreation: {
+      title: 'Sélectionnez un widget',
+      types: {
+        alarmList: {
+          title: 'Bac à alarmes',
+        },
+        context: {
+          title: 'Explorateur de contexte',
+        },
+        weather: {
+          title: 'Météo de services',
+        },
+      },
+    },
   },
   tables: {
     contextList: {
@@ -337,6 +370,9 @@ export default {
         type: 'Type',
         _id: 'Id',
       },
+    },
+    noColumns: {
+      message: 'Veuillez sélectionner au moins 1 colonne',
     },
   },
   rRule: {

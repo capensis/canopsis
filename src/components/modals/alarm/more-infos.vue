@@ -11,7 +11,6 @@
 <script>
 import HandleBars from 'handlebars';
 
-import modalInnerMixin from '@/mixins/modal/modal-inner';
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import { MODALS } from '@/constants';
 
@@ -22,7 +21,7 @@ import { MODALS } from '@/constants';
  */
 export default {
   name: MODALS.moreInfos,
-  mixins: [modalInnerMixin, modalInnerItemsMixin],
+  mixins: [modalInnerItemsMixin],
   computed: {
     output() {
       const output = HandleBars.compile(this.config.widget.more_infos_popup);

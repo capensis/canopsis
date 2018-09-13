@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ title }}
-    text-editor(:value="value", @update:value="$emit('input', $event)")
+    text-editor(:value="value", @input="$emit('input', $event)")
 </template>
 
 <script>

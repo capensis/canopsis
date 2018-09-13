@@ -142,7 +142,13 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     selectAFilter: 'Select a filter',
-    infoPopup: 'Info popup',
+    infoPopup: {
+      title: 'Info popup',
+      fields: {
+        column: 'Column',
+        template: 'Template',
+      },
+    },
     moreInfosModal: '"More Infos" Popup',
     weatherTemplate: 'Template - Weather item',
     modalTemplate: 'Template - Modal',
@@ -167,8 +173,11 @@ export default {
     createEntity: {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
+      infosList: 'Infos list',
+      addInfos: 'Add Infos',
+      noInfos: 'No Infos',
       fields: {
-        type: 'Types',
+        type: 'Type',
         manageInfos: 'Manage Infos',
         form: 'Form',
         impact: 'Impact',
@@ -301,6 +310,20 @@ export default {
         title: 'Title',
       },
     },
+    widgetCreation: {
+      title: 'Select a widget',
+      types: {
+        alarmList: {
+          title: 'Alarm list',
+        },
+        context: {
+          title: 'Context explorer',
+        },
+        weather: {
+          title: 'Service weather',
+        },
+      },
+    },
   },
   tables: {
     contextList: {
@@ -357,6 +380,9 @@ export default {
         type: 'Type',
         _id: 'Id',
       },
+    },
+    noColumns: {
+      message: 'You have to select at least 1 column',
     },
   },
   rRule: {

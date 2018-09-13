@@ -1,28 +1,31 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="widget in widgets", :key="widget._id")
+      div(v-for="widget in widgets", :key="`${widgetKeyPrefix}_${widget.id}`")
         h2 {{ widget.title }}
-        div(
+        component(
         :is="widgetsMap[widget.xtype]",
         :widget="widget",
-        @openSettings="openSettings(widget)"
         )
-    v-speed-dial.fab(
-    direction="top",
-    :open-on-hover="true",
-    transition="scale-transition"
-    )
-      v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
-        v-icon add
-      v-tooltip(left)
-        v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
-          v-icon widgets
-        span {{ $t('common.widget') }}
+    .fab
+      v-btn(@click="refreshView", icon, color="info", dark, fab)
+        v-icon refresh
+      v-speed-dial(
+      :open-on-hover="true",
+      transition="scale-transition",
+      direction="left",
+      )
+        v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
+          v-icon add
+        v-tooltip(left)
+          v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
+            v-icon widgets
+          span {{ $t('common.widget') }}
 </template>
 
 <script>
 import { MODALS, WIDGET_TYPES } from '@/constants';
+import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
@@ -52,6 +55,7 @@ export default {
   data() {
     return {
       fab: false,
+      widgetKeyPrefix: uid(),
       widgetsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
@@ -69,6 +73,11 @@ export default {
       });
     },
 
+    async refreshView() {
+      await this.fetchView({ id: this.id });
+
+      this.widgetKeyPrefix = uid();
+    },
   },
 };
 </script>
