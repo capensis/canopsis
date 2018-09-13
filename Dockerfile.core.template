@@ -23,7 +23,6 @@ ENV https_proxy ${PROXY}
 ENV CPS_HOME /opt/canopsis
 
 ARG PROXY
-ARG TAG
 
 SHELL ["/bin/bash", "-c"]
 
@@ -94,8 +93,6 @@ RUN mkdir -p ./etc/init.d && \
 # CORE IMAGE #
 ##############
 FROM debian:stretch-slim as core
-
-ARG DISTRIBUTION
 
 ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis
