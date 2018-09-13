@@ -1,8 +1,5 @@
 <template lang="pug">
   v-container
-    .text-xs-right
-      v-btn(@click="refreshView", icon, color="info")
-        v-icon refresh
     div
       div(v-for="widget in widgets", :key="`${widgetKeyPrefix}_${widget.id}`")
         h2 {{ widget.title }}
