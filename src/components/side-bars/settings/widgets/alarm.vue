@@ -22,7 +22,7 @@
       v-divider
       field-more-info(v-model="settings.widget.more_infos_popup")
       v-divider
-    v-btn(@click="submit", color="green darken-4 white--text", depressed, fixed, right) {{ $t('common.save') }}
+    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
 <script>
@@ -93,6 +93,27 @@ export default {
       user_filters: this.userPreference.widget_preferences.user_filters,
       selected_filter: this.userPreference.widget_preferences.selected_filter,
     };
+  },
+  methods: {
+    prefixFormatter(value) {
+      return value.replace('alarm.', 'v.');
+    },
+
+    prepareSettingsWidget() {
+      const { widget } = this.settings;
+
+      return {
+        ...widget,
+        widget_columns: widget.widget_columns.map(v => ({
+          ...v,
+          value: this.prefixFormatter(v.value),
+        })),
+        popup: widget.popup.map(v => ({
+          ...v,
+          column: this.prefixFormatter(v.column),
+        })),
+      };
+    },
   },
 };
 </script>

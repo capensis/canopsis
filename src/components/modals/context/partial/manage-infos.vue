@@ -1,23 +1,25 @@
 <template lang="pug">
   v-card
     v-card-text
-      v-list(v-if="Object.keys(infos).length")
-        v-list-group.mt-2(
-        v-for="infoName in Object.keys(infos)",
+      .title.text-xs-center.my-2 {{ $t('modals.createEntity.infosList') }}
+      v-list(v-if="infosNames.length")
+        v-list-group.my-1(
+        v-for="(info, infoName) in infos",
         :key="infoName"
         )
           v-list-tile(slot="activator")
             v-list-tile-content
               v-list-tile-title {{ infoName }}
             v-list-tile-action
-              v-btn(icon, flat, @click.stop="deleteInfo(infoName)")
+              v-btn(icon, flat, @click.stop="removeField(infoName)")
                 v-icon delete
           v-list-tile(@click="")
             v-list-tile-content
-              v-list-tile-title Description : {{ infos[infoName].description }}
-              v-list-tile-title Value : {{ infos[infoName].value }}
-      v-card-text(v-else) No infos
-      v-form(ref="infoForm")
+              v-list-tile-title {{ $t('common.description') }} : {{ info.description }}
+              v-list-tile-title {{ $t('common.value') }} : {{ info.value }}
+      v-card-text(v-else) {{ $t('modals.createEntity.noInfos') }}
+      v-form
+        .title.text-xs-center.my-2 {{ $t('modals.createEntity.addInfos') }}
         v-layout
           v-text-field(
           :label="$t('common.name')",
@@ -41,69 +43,72 @@
           :error-messages="errors.collect('value')"
           )
           v-btn(icon, flat, @click="addInfo")
-            v-icon done
+            v-icon add
 </template>
 
 <script>
-import ModalInnerMixin from '@/mixins/modal/modal-inner';
-import { MODALS } from '@/constants';
+import formMixin from '@/mixins/form';
 
+const getDefaultFormData = () => ({
+  name: '',
+  description: '',
+  value: '',
+});
+
+/**
+ * Form to manipulation with infos
+ *
+ * @prop {Object} infos - infos from parent
+ */
 export default {
-  name: MODALS.contextInfos,
   $_veeValidate: {
     validator: 'new',
   },
   mixins: [
-    ModalInnerMixin,
+    formMixin,
   ],
+  model: {
+    prop: 'infos',
+    event: 'input',
+  },
   props: {
-    template: {
-      type: String,
+    infos: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
     return {
-      form: {
-        name: '',
-        description: '',
-        value: '',
-      },
-      infos: {},
+      form: getDefaultFormData(),
     };
   },
-  mounted() {
+  computed: {
+    infosNames() {
+      return Object.keys(this.infos);
+    },
+  },
+  created() {
     this.createUniqueValidationRule();
-    this.infos = this.config.item ? this.config.item.infos : {};
   },
   methods: {
     async addInfo() {
       const isFormValid = await this.$validator.validateAll();
+
       if (isFormValid) {
-        this.infos[this.form.name] = { ...this.form };
-        this.$refs.infoForm.reset();
-        this.$validator.reset();
-        this.$emit('update:infos', this.infos);
+        this.updateField(this.form.name, { ...this.form });
+        this.resetForm();
       }
     },
-    deleteInfo(name) {
-      delete this.infos[name];
-      this.$emit('update:infos', this.infos);
-      this.$validator.reset();
-      this.$forceUpdate();
-      this.$nextTick(() => {
-        if (this.form.name) {
-          this.$validator.validate();
-        }
-      });
-    },
+
     createUniqueValidationRule() {
       this.$validator.extend('unique-name', {
         getMessage: () => this.$t('validator.unique'),
-        validate: value => !this.forbiddenNames().includes(value),
+        validate: value => !this.infosNames.includes(value),
       });
     },
-    forbiddenNames() {
-      return Object.keys(this.infos);
+
+    resetForm() {
+      this.form = getDefaultFormData();
     },
   },
 };

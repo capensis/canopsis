@@ -11,11 +11,7 @@
           v-icon settings
       v-flex(xs2)
         context-fab
-    .table__overflow(v-if="!hasColumns")
-      table.datatable.table
-        tbody
-          tr
-            td.text-xs-center You have to select at least 1 column
+    no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
       v-model="selected",
@@ -28,6 +24,9 @@
       select-all,
       hide-actions,
       )
+        template(slot="progress")
+          v-fade-transition
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
@@ -61,6 +60,7 @@ import omit from 'lodash/omit';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
@@ -90,6 +90,7 @@ export default {
     MoreInfos,
     Ellipsis,
     ContextFab,
+    NoColumnsTable,
   },
   mixins: [
     modalMixin,
@@ -205,18 +206,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .fab {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-  }
-</style>
-

@@ -1,13 +1,24 @@
 <template lang="pug">
   v-container
     v-layout.white(wrap, justify-space-between, align-center)
-      v-flex(xs12, md3)
+      v-flex
         alarm-list-search(:query.sync="query")
-      v-flex(xs2)
+      v-flex
         pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
-      v-flex.ml-4(xs3)
+      v-flex.ml-4
         mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
-      v-flex(xs3)
+      v-flex
+        v-select(
+        :label="$t('settings.selectAFilter')",
+        :items="userPreference.widget_preferences.user_filters",
+        @input="updateSelectedFilter",
+        :value="userPreference.widget_preferences.selected_filter",
+        item-text="title",
+        item-value="filter",
+        return-object,
+        clearable
+        )
+      v-flex
         v-chip(
         v-if="query.interval",
         @input="removeHistoryFilter",
@@ -19,11 +30,7 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="showSettings")
           v-icon settings
-    .table__overflow(v-if="!hasColumns")
-      table.datatable.table
-        tbody
-          tr
-            td.text-xs-center You have to select at least 1 column
+    no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
       v-model="selected",
@@ -32,24 +39,30 @@
       :total-items="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
+      ref="dataTable",
       item-key="_id",
-      select-all,
       hide-actions,
+      select-all,
+      expand
       )
+        template(slot="progress")
+          v-fade-transition
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          td
-            v-checkbox(primary, hide-details, v-model="props.selected")
-          td(
-          v-for="column in columns",
-          @click="props.expanded = !props.expanded"
-          )
-            alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
-          td
-            actions-panel(:item="props.item", :widget="widget")
+          tr
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+            v-for="column in columns",
+            @click="props.expanded = !props.expanded"
+            )
+              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+            td
+              actions-panel(:item="props.item", :widget="widget")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item", @click="props.expanded = !props.expanded")
+          time-line(:alarmProps="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(:meta="alarmsMeta", :query.sync="query")
@@ -60,6 +73,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, SIDE_BARS } from '@/constants';
 
@@ -69,10 +83,12 @@ import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
+import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
+
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -95,6 +111,7 @@ export default {
     MassActionsPanel,
     ActionsPanel,
     AlarmColumnValue,
+    NoColumnsTable,
   },
   mixins: [
     modalMixin,
@@ -152,35 +169,38 @@ export default {
       });
     },
 
-    fetchList() {
+    fetchList({ isPeriodicRefresh } = {}) {
       if (this.hasColumns) {
+        const query = this.getQuery();
+
+        if (isPeriodicRefresh && !isEmpty(this.$refs.dataTable.expanded)) {
+          query.with_steps = true;
+        }
+
         this.fetchAlarmsList({
           widgetId: this.widget.id,
-          params: this.getQuery(),
+          params: query,
         });
+      }
+    },
+
+    updateSelectedFilter(event) {
+      this.createUserPreference({
+        userPreference: {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            selected_filter: event,
+          },
+        },
+      });
+
+      if (event && event.filter) {
+        this.query = { ...this.query, filter: event.filter };
+      } else {
+        this.query = { ...this.query, filter: undefined };
       }
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  th {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  td {
-    overflow-wrap: break-word;
-  }
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-  }
-  .loader {
-    top: 15%;
-    position: absolute;
-  }
-</style>

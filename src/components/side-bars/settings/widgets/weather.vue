@@ -9,7 +9,7 @@
       field-grid-size(v-model="settings.widget.columnSM", :title="$t('settings.columnSM')")
       field-grid-size(v-model="settings.widget.columnMD", :title="$t('settings.columnMD')")
       field-grid-size(v-model="settings.widget.columnLG", :title="$t('settings.columnLG')")
-    v-btn(@click="submit", color="green darken-4 white--text", depressed, fixed, right) {{ $t('common.save') }}
+    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
 <script>
