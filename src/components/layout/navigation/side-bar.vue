@@ -6,31 +6,17 @@
   absolute,
   app,
   )
-    v-card(flat)
     v-expansion-panel(
     class="panel",
     expand,
     focusable,
     dark
     )
-      v-expansion-panel-content.grey.darken-4.white--text
-        div(slot="header") View Group 1
-        v-card.grey.darken-3.white--text
-          v-card-text View 1
-        v-card.grey.darken-3.white--text
-          v-card-text View 2
-    v-expansion-panel(
-    class="panel",
-    expand,
-    focusable,
-    dark
-    )
-      v-expansion-panel-content.grey.darken-4.white--text
-        div(slot="header") View Group 2
-        v-card.grey.darken-3.white--text
-          v-card-text View 1
-        v-card.grey.darken-3.white--text
-          v-card-text View 2
+      v-expansion-panel-content(v-for="group in groups", :key="group._id").grey.darken-4.white--text
+        div(slot="header") {{ group.name }}
+        v-card.grey.darken-3.white--text(v-for="view in group.views", :key="view._id")
+          v-card-text
+            router-link(:to="{ name: 'viewV3', params: { id: view._id } }") {{ view.title }}
     v-divider
     v-btn.addBtn(
     fab,
@@ -48,6 +34,7 @@
 import { SIDE_BAR_WIDTH } from '@/config';
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import entitiesV3ViewsMixin from '@/mixins/entities/view-v3/group';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -57,7 +44,7 @@ import modalMixin from '@/mixins/modal/modal';
  * @event input#update
  */
 export default {
-  mixins: [modalMixin],
+  mixins: [modalMixin, entitiesV3ViewsMixin],
   props: {
     value: {
       type: Boolean,
@@ -80,6 +67,9 @@ export default {
         }
       },
     },
+  },
+  mounted() {
+    this.fetchGroupsList();
   },
   methods: {
     showCreateViewModal() {

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    v-card-title
+    v-card-title.green.darken-3.white--text
       h2 {{ $t(config.title) }}
     v-tabs
       v-tab(
@@ -10,11 +10,11 @@
       ) {{ tab.name }}
       v-tab-item
         keep-alive
-        create-form(:form.sync="form")
+        create-form(v-model="form")
       v-tab-item
-        manage-infos(:infos.sync="form.infos")
+        manage-infos(v-model="form.infos")
     v-card-actions
-      v-btn(@click.prevent="submit", color="blue darken-4 white--text") {{ $t('common.submit') }}
+      v-btn.green.darken-3.white--text(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -22,12 +22,13 @@
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import CreateForm from './create-entity-form.vue';
-import ManageInfos from './manage-infos.vue';
+
+import CreateForm from './partial/create-entity-form.vue';
+import ManageInfos from './partial/manage-infos.vue';
 
 /**
-   * Modal to create an entity (watcher, resource, component, connector)
-   */
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {

@@ -5,7 +5,6 @@
     v-else,
     :text="alarm | get(column.value, columnFilter, '')",
     :column="column.value",
-    :hasInfoPopup="!!popupData",
     @textClicked="showPopup"
     )
 </template>
