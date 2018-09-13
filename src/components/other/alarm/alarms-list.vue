@@ -32,7 +32,7 @@
           v-icon settings
     no-columns-table(v-if="!hasColumns")
     div(v-else)
-      v-data-table(
+      v-data-table.alarmList(
       v-model="selected",
       :items="alarms",
       :headers="headers",
