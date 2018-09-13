@@ -1,6 +1,8 @@
 <template lang="pug">
   v-container
-    v-btn(@click="refreshView") REFRESH
+    .text-xs-right
+      v-btn(@click="refreshView", icon, color="info")
+        v-icon refresh
     div
       div(v-for="widget in widgets", :key="`${widgetKeyPrefix}_${widget.id}`")
         h2 {{ widget.title }}
@@ -8,17 +10,20 @@
         :is="widgetsMap[widget.xtype]",
         :widget="widget",
         )
-    v-speed-dial.fab(
-    direction="top",
-    :open-on-hover="true",
-    transition="scale-transition"
-    )
-      v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
-        v-icon add
-      v-tooltip(left)
-        v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
-          v-icon widgets
-        span {{ $t('common.widget') }}
+    .fab
+      v-btn(@click="refreshView", icon, color="info", dark, fab)
+        v-icon refresh
+      v-speed-dial(
+      :open-on-hover="true",
+      transition="scale-transition",
+      direction="left",
+      )
+        v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
+          v-icon add
+        v-tooltip(left)
+          v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
+            v-icon widgets
+          span {{ $t('common.widget') }}
 </template>
 
 <script>
