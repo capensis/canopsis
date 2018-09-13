@@ -39,18 +39,18 @@
 
     div(v-for="(rule, ruleKey) in group.rules", :key="ruleKey")
       filter-rule(
-      @deleteRule="deleteRule(ruleKey)",
-      @update:rule="updateRule(ruleKey, $event)",
       :rule="rule",
       :possibleFields="possibleFields",
+      @deleteRule="deleteRule(ruleKey)",
+      @update:rule="updateRule(ruleKey, $event)",
       )
 
     div(v-for="(group, groupKey) in group.groups", :key="groupKey")
       filter-group.filterGroup(
-      @deleteGroup="deleteGroup(groupKey)",
-      @update:group="updateGroup(groupKey, $event)",
       :group="group",
       :possibleFields="possibleFields",
+      @deleteGroup="deleteGroup(groupKey)",
+      @update:group="updateGroup(groupKey, $event)",
       )
 </template>
 
@@ -80,6 +80,10 @@ export default {
     FilterRule,
   },
   mixins: [formMixin],
+  model: {
+    prop: 'group',
+    event: 'update:group',
+  },
   props: {
     possibleFields: {
       type: Array,
@@ -94,11 +98,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      formKey: 'group',
-    };
   },
   methods: {
     updateRule(key, value) {

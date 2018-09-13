@@ -51,10 +51,9 @@ div
 </template>
 
 <script>
-import { MODALS } from '@/constants';
 import formMixin from '@/mixins/form';
 
-import EntitiesSelect from './entities-select.vue';
+import EntitiesSelect from '../entities-select.vue';
 
 /**
  * Form to create a new entity
@@ -74,12 +73,15 @@ import EntitiesSelect from './entities-select.vue';
  * @module context
  */
 export default {
-  name: MODALS.createEntity,
   inject: ['$validator'],
   components: {
     EntitiesSelect,
   },
   mixins: [formMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,

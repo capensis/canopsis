@@ -175,6 +175,7 @@ export default {
       editTitle: 'Edit an entity',
       infosList: 'Infos list',
       addInfos: 'Add Infos',
+      noInfos: 'No Infos',
       fields: {
         type: 'Type',
         manageInfos: 'Manage Infos',

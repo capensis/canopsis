@@ -31,11 +31,18 @@ export default {
 
       return true;
     },
+
+    prepareSettingsWidget() {
+      return this.settings.widget;
+    },
+
     async submit() {
-      if (this.isFormValid) {
+      const isFormValid = await this.isFormValid();
+
+      if (isFormValid) {
         const widget = {
           ...this.widget,
-          ...this.settings.widget,
+          ...this.prepareSettingsWidget(),
         };
 
         const userPreference = {
