@@ -37,4 +37,5 @@ export const API_ROUTES = {
   view: '/rest/object/view',
   viewV3: '/api/v2/views',
   viewV3Group: '/api/v2/views/groups',
+  stats: '/api/v2/stats',
 };

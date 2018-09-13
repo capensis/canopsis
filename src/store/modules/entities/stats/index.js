@@ -5,7 +5,7 @@ export const types = {
 export default {
   namespaced: true,
   mutations: {
-    [types.FETCH_BY_WIDGET_ID]() {
+    [types.FETCH_STATS]() {
     },
   },
   actions: {

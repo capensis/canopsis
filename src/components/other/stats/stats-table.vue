@@ -4,7 +4,10 @@
 </template>
 
 <script>
+import entitiesStatsMixin from '@/mixins/entities/stats';
+
 export default {
+  mixins: [entitiesStatsMixin],
   data() {
     return {
       /*
