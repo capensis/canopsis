@@ -5,6 +5,7 @@ import pbehaviorModule from './pbehavior';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import viewV3Module from './view-v3';
+import statsModule from './stats';
 
 export default {
   alarm: alarmModule,
@@ -14,4 +15,5 @@ export default {
   userPreference: userPreferenceModule,
   view: viewModule,
   viewV3: viewV3Module,
+  stats: statsModule,
 };
