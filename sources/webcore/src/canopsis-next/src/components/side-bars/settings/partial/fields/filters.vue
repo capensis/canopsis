@@ -6,9 +6,10 @@
       :label="$t('settings.selectAFilter')",
       :items="filters",
       :value="value",
-      @change="updateSelectedField",
+      @change="$emit('input', $event)",
       item-text="title",
-      item-value="title",
+      item-value="filter",
+      return-object,
       clearable
       )
       v-list
@@ -40,10 +41,6 @@ export default {
     },
   },
   methods: {
-    updateSelectedField(title) {
-      this.$emit('input', this.filters.find(v => v.title === title));
-    },
-
     showCreateFilterModal() {
       this.showModal({
         name: MODALS.createFilter,

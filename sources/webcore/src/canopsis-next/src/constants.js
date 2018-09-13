@@ -36,9 +36,13 @@ export const MODALS = {
 
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
+  fastAck: 'fastAck',
   ackRemove: 'ackremove',
-  associateTicket: 'assocticket',
+  pbehaviorAdd: 'pbehaviorAdd',
+  pbehaviorList: 'pbehaviorList',
+  assocTicket: 'assocticket',
   cancel: 'cancel',
+  delete: 'delete',
   changeState: 'changestate',
   declareTicket: 'declareticket',
   snooze: 'snooze',
@@ -146,28 +150,41 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
 
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
-    color: 'purple',
-    text: 'Acknowledged',
-    icon: 'done',
+    color: '#9c27b0',
+    icon: 'playlist_add_check',
+  },
+  [EVENT_ENTITY_TYPES.fastAck]: {
+    icon: 'check',
+  },
+  [EVENT_ENTITY_TYPES.pbehaviorAdd]: {
+    icon: 'pause',
+  },
+  [EVENT_ENTITY_TYPES.pbehaviorList]: {
+    icon: 'list',
   },
   [EVENT_ENTITY_TYPES.ackRemove]: {
-    color: 'purple',
-    text: 'Ack removed',
+    color: '#9c27b0',
     icon: 'not_interested',
   },
   [EVENT_ENTITY_TYPES.declareTicket]: {
-    color: 'blue',
-    text: 'Ticket declared',
+    color: '#2196f3',
+    icon: 'report_problem',
+  },
+  [EVENT_ENTITY_TYPES.assocTicket]: {
     icon: 'local_play',
   },
+  [EVENT_ENTITY_TYPES.delete]: {
+    icon: 'delete',
+  },
+  [EVENT_ENTITY_TYPES.changeState]: {
+    icon: 'thumbs_up_down',
+  },
   [EVENT_ENTITY_TYPES.snooze]: {
-    color: 'pink',
-    text: 'Snoozed',
+    color: '#e91e63',
     icon: 'alarm',
   },
   [EVENT_ENTITY_TYPES.done]: {
     color: 'green',
-    text: 'Done',
     icon: 'assignment_turned_in',
   },
 };
