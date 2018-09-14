@@ -42,7 +42,7 @@ export default {
     },
     textContent() {
       const template = Handlebars.compile(this.popupData.template);
-      const context = { alarm: this.alarm };
+      const context = { alarm: this.alarm.v };
 
       return template(context);
     },
