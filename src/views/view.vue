@@ -15,7 +15,7 @@
       transition="scale-transition",
       direction="left",
       )
-        v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
+        v-btn(slot="activator", color="green darken-3", dark, fab)
           v-icon add
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
@@ -54,7 +54,6 @@ export default {
   },
   data() {
     return {
-      fab: false,
       widgetKeyPrefix: uid(),
       widgetsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
@@ -81,11 +80,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .fab {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-</style>

@@ -1,19 +1,18 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="widget in widgets", :key="widget._id")
-        h2 {{ widget.title }}
-        div(
-        :is="widgetsMap[widget.xtype]",
-        :widget="widget",
-        @openSettings="openSettings(widget)"
-        )
+      <!--div(v-for="widget in widgets", :key="widget._id")-->
+        <!--h2 {{ widget.title }}-->
+        <!--component(-->
+        <!--:is="widgetsMap[widget.xtype]",-->
+        <!--:widget="widget",-->
+        <!--)-->
     v-speed-dial.fab(
-    direction="top",
+    direction="left",
     :open-on-hover="true",
     transition="scale-transition"
     )
-      v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
+      v-btn(slot="activator", color="green darken-3", dark, fab)
         v-icon add
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
@@ -31,6 +30,15 @@ export default {
       type: [String, Number],
       required: true,
     },
+  },
+  data() {
+    return {
+      widgetsMap: {
+        /*        [WIDGET_TYPES.alarmList]: 'alarms-list',
+        [WIDGET_TYPES.context]: 'entities-list',
+        [WIDGET_TYPES.weather]: 'weather', */
+      },
+    };
   },
   mounted() {
     this.fetchView({ id: this.id });
