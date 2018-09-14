@@ -4,9 +4,9 @@
     v-tab-item
       v-container
         filter-group(
-        @update:group="updateFilter",
         :group="filter",
         :possibleFields="possibleFields",
+        @update:group="updateFilter",
         isInitial
         )
     v-tab(@click="openAdvancedTab") {{$t('filterEditor.tabs.advancedEditor')}}
