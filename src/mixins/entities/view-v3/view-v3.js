@@ -8,12 +8,12 @@ const { mapGetters, mapActions } = createNamespacedHelpers('viewV3');
 export default {
   computed: {
     ...mapGetters({
-      // view: 'item',
+      view: 'item',
     }),
   },
   methods: {
     ...mapActions({
-      // fetchView: 'fetchItem',
+      fetchView: 'fetchItem',
       createView: 'create',
     }),
   },

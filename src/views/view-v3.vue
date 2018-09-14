@@ -1,16 +1,39 @@
 <template lang="pug">
-  div#brand Canopsis Next
+  v-container
+    div
+      div(v-for="widget in widgets", :key="widget._id")
+        h2 {{ widget.title }}
+        div(
+        :is="widgetsMap[widget.xtype]",
+        :widget="widget",
+        @openSettings="openSettings(widget)"
+        )
+    v-speed-dial.fab(
+    direction="top",
+    :open-on-hover="true",
+    transition="scale-transition"
+    )
+      v-btn(slot="activator", v-model="fab", color="green darken-3", dark, fab)
+        v-icon add
+      v-tooltip(left)
+        v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
+          v-icon widgets
+        span {{ $t('common.widget') }}
 </template>
 
-<style lang="scss" scoped>
-  #brand {
-    text-align: center;
-    position: relative;
-    top: 25%;
-    max-width: 50%;
-    max-height: 5em;
-    margin: auto;
-    font-weight: bold;
-    font-size: 2em;
-  }
-</style>
+<script>
+import entitiesViewV3Mixin from '@/mixins/entities/view-v3/view-v3';
+
+export default {
+  mixins: [entitiesViewV3Mixin],
+  props: {
+    id: {
+      type: [String, Number],
+      required: true,
+    },
+  },
+  mounted() {
+    this.fetchView({ id: this.id });
+  },
+};
+</script>

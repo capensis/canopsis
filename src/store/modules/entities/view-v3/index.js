@@ -36,7 +36,7 @@ export default {
         commit(types.FETCH_ITEM);
 
         const normalizedData = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.viewV3.view}/${id}`,
+          route: `${API_ROUTES.viewV3}/${id}`,
           schema: viewV3Schema,
           dataPreparer: d => d,
         }, { root: true });
