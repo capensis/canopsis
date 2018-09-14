@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-text
-      div(v-if="!config.widget.more_infos_popup")
+      div(v-if="!config.template")
         v-layout(justify-center)
           v-icon(color="info") infos
           p(class="ma-0") {{ $t('modals.moreInfos.defineATemplate') }}
@@ -24,7 +24,7 @@ export default {
   mixins: [modalInnerItemsMixin],
   computed: {
     output() {
-      const output = HandleBars.compile(this.config.widget.more_infos_popup);
+      const output = HandleBars.compile(this.config.template);
       const context = { alarm: this.firstItem, entity: this.firstItem.entity };
       return output(context);
     },
