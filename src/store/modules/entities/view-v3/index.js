@@ -15,15 +15,19 @@ export default {
     group: groupModule,
   },
   state: {
+    viewId: null,
   },
   getters: {
     item: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.viewV3, state.viewId),
   },
   mutations: {
-    [types.FETCH_ITEM]: () => {
+    [types.FETCH_ITEM]: (state) => {
+      state.pending = true;
     },
-    [types.FETCH_ITEM_COMPLETED]: () => {
+    [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
+      state.viewId = viewId;
+      state.pending = false;
     },
   },
   actions: {
@@ -35,13 +39,13 @@ export default {
       try {
         commit(types.FETCH_ITEM);
 
-        const normalizedData = await dispatch('entities/fetch', {
+        const { normalizedData } = await dispatch('entities/fetch', {
           route: `${API_ROUTES.viewV3}/${id}`,
           schema: viewV3Schema,
           dataPreparer: d => d,
         }, { root: true });
 
-        commit(types.FETCH_ITEM_COMPLETED, normalizedData);
+        commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
       } catch (err) {
         console.error(err);
       }
