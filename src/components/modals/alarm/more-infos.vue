@@ -25,7 +25,7 @@ export default {
   computed: {
     output() {
       const output = HandleBars.compile(this.config.widget.more_infos_popup);
-      const context = { alarm: this.items[0], entity: this.items[0].entity };
+      const context = { alarm: this.firstItem, entity: this.firstItem.entity };
       return output(context);
     },
   },
