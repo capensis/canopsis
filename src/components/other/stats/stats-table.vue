@@ -1,6 +1,13 @@
 <template lang="pug">
   v-container(fluid)
-    div Stats table
+    v-data-table(
+      :items="statsList",
+      :headers="headers",
+    )
+      template(slot="items", slot-scope="props")
+          tr
+            td {{ props.item.entity.name }}
+            td {{ props.item["Durée d'indisponibilité"].value }}
 </template>
 
 <script>
@@ -10,61 +17,20 @@ export default {
   mixins: [entitiesStatsMixin],
   data() {
     return {
-      /*
-      stats: [
+      headers: [
         {
-          text: 'Alarms created',
-          value: 'alarms_created',
+          text: 'Entity',
+          value: 'entity',
         },
         {
-          text: 'Alarms resolved',
-          value: 'alarms_resolved',
-        },
-        {
-          text: 'Alarms canceled',
-          value: 'alarms_canceled',
+          text: 'Durée d\'indisponibilité',
+          value: 'Durée d\'indisponibilité',
         },
       ],
-      items: [
-        {
-          entity: {
-            _id: 'resource1/component1',
-            type: 'resource',
-            impact: [
-              'service',
-            ],
-          },
-          'Alarmes critiques': {
-            value: 117,
-            trend: 76,
-            sla: false,
-          },
-          'Alarmes majeures': {
-            value: 37,
-            trend: 10,
-          },
-        },
-        {
-          entity: {
-            _id: 'resource2/component1',
-            type: 'resource',
-            impact: [
-              'service',
-            ],
-          },
-          'Alarmes critiques': {
-            value: 2,
-            trend: -1,
-            sla: true,
-          },
-          'Alarmes majeures': {
-            value: 3,
-            trend: -1,
-          },
-        },
-      ],
-      */
     };
+  },
+  mounted() {
+    this.fetchStats();
   },
 };
 </script>

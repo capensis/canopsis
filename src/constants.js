@@ -12,6 +12,7 @@ export const ENTITIES_TYPES = {
   group: 'group',
   widgetWrapper: 'widgetWrapper',
   widget: 'widget',
+  stat: 'stat',
 };
 
 export const MODALS = {
