@@ -2,12 +2,18 @@
   v-container(fluid)
     v-data-table(
       :items="statsList",
-      :headers="headers",
+      :headers="columns",
     )
+      template(slot="headers", slot-scope="props")
+        tr
+          th(v-for="header in props.headers", :key="header.value") {{ header.value }}
       template(slot="items", slot-scope="props")
-          tr
-            td {{ props.item.entity.name }}
-            td {{ props.item["Durée d'indisponibilité"].value }}
+          tr.text-xs-center
+            td(v-for="(property, key) in props.item")
+              p(v-if="key === 'entity'") {{ property.name }}
+              template(v-else)
+                p(v-if="property.value !== null && property.value !== undefined") {{ property.value }}
+                p(v-else) No data
 </template>
 
 <script>
@@ -15,19 +21,14 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 
 export default {
   mixins: [entitiesStatsMixin],
-  data() {
-    return {
-      headers: [
-        {
-          text: 'Entity',
-          value: 'entity',
-        },
-        {
-          text: 'Durée d\'indisponibilité',
-          value: 'Durée d\'indisponibilité',
-        },
-      ],
-    };
+  computed: {
+    columns() {
+      const columnsList = [];
+
+      Object.keys(this.statsList[0]).map(item => columnsList.push({ value: item }));
+
+      return columnsList;
+    },
   },
   mounted() {
     this.fetchStats();
