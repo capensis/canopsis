@@ -131,8 +131,8 @@ export const ENTITY_STATUS_STYLES = {
 };
 
 export const WIDGET_TYPES = {
-  alarmList: 'listalarm',
-  context: 'crudcontext',
+  alarmList: 'AlarmsList',
+  context: 'Context',
   weather: 'serviceweather',
   widgetWrapper: 'widgetwrapper',
 };

@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 import Pagination from '@/components/tables/pagination.vue';
 import queryMixin from '@/mixins/query';
 import dateIntervals from '@/helpers/date-intervals';
-import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
+import { convertWidgetToQuery } from '@/helpers/query';
 
 /**
  * @mixin Add query logic
@@ -52,12 +52,9 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
-
     this.query = {
       ...this.query,
       ...convertWidgetToQuery(this.widget),
-      ...convertUserPreferenceToQuery(this.userPreference),
     };
 
     await this.fetchList(); // TODO: remove it when we will finish settings integration for weather

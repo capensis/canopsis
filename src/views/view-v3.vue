@@ -4,7 +4,11 @@
       div(v-for="row in rows", :key="row.title")
         h1 {{ row.title }}
         div(v-for="widget in row.widgets")
-
+          h2 {{ widget.type }}
+          component(
+          :is="widgetsMap[widget.type]",
+          :widget="widget",
+          )
     .fab
       v-btn(@click="refreshView", icon, color="info", dark, fab)
         v-icon refresh
@@ -24,11 +28,21 @@
 <script>
 import get from 'lodash/get';
 
+import { WIDGET_TYPES } from '@/constants';
 import uid from '@/helpers/uid';
+
+import AlarmsList from '@/components/other/alarm/alarms-list-new.vue';
+import EntitiesList from '@/components/other/context/entities-list.vue';
+import Weather from '@/components/other/service-weather/weather.vue';
 
 import entitiesViewV3Mixin from '@/mixins/entities/view-v3/view-v3';
 
 export default {
+  components: {
+    AlarmsList,
+    EntitiesList,
+    Weather,
+  },
   mixins: [entitiesViewV3Mixin],
   props: {
     id: {
@@ -39,9 +53,9 @@ export default {
   data() {
     return {
       widgetsMap: {
-        /* [WIDGET_TYPES.alarmList]: 'alarms-list',
+        [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
-        [WIDGET_TYPES.weather]: 'weather', */
+        [WIDGET_TYPES.weather]: 'weather',
       },
       widgetKeyPrefix: uid(),
     };
@@ -63,3 +77,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .fab {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+</style>

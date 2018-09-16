@@ -7,8 +7,10 @@ export default {
   },
   computed: {
     columns() {
-      if (this.widget.widget_columns) {
-        return this.widget.widget_columns.map(v => ({ text: v.label, value: v.value }));
+      if (this.widget.parameters.columnTranslations) {
+        return Object.keys(this.widget.parameters.columnTranslations).map(
+          v => ({ text: this.widget.parameters.columnTranslations[v], value: v }),
+        );
       }
 
       return [];

@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import isUndefined from 'lodash/isUndefined';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
@@ -14,10 +15,10 @@ import { WIDGET_TYPES } from '@/constants';
  * @returns {{}}
  */
 export function convertDefaultSortColumnToQuery(widget) {
-  const { default_sort_column: defaultSortColumn } = widget;
+  const { sortColumn, sortOrder } = widget.parameters;
 
-  if (defaultSortColumn && defaultSortColumn.property) {
-    return { sortKey: defaultSortColumn.property, sortDir: defaultSortColumn.direction };
+  if (sortColumn && sortOrder) {
+    return { sortKey: sortColumn, sortDir: sortOrder };
   }
 
   return { sortKey: null, sortDir: null };
@@ -30,24 +31,32 @@ export function convertDefaultSortColumnToQuery(widget) {
  * @returns {{}}
  */
 export function convertAlarmWidgetToQuery(widget) {
+  const {
+    displayOpenAlarms,
+    displayResolvedAlarms,
+    columnTranslations,
+    itemsPerPage,
+    mainFilter,
+  } = widget.parameters;
+
   const query = {
     page: 1,
+    limit: itemsPerPage || PAGINATION_LIMIT,
+    filter: mainFilter,
   };
-  const stateFilter = widget.alarms_state_filter;
 
-  if (stateFilter) {
-    if (stateFilter.state && (stateFilter.opened === undefined && stateFilter.resolved === undefined)) {
-      query.opened = stateFilter.state === 'opened';
-      query.resolved = stateFilter.state === 'resolved';
-    } else {
-      query.opened = Boolean(stateFilter.opened);
-      query.resolved = Boolean(stateFilter.resolved);
-    }
+  if (!isUndefined(displayOpenAlarms)) {
+    query.opened = displayOpenAlarms;
   }
 
-  if (widget.widget_columns) {
-    query.active_columns = widget.widget_columns.map(v => v.value);
+  if (!isUndefined(displayResolvedAlarms)) {
+    query.resolved = displayResolvedAlarms;
   }
+
+  if (columnTranslations) {
+    query.active_columns = Object.keys(columnTranslations);
+  }
+
   return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 
@@ -123,7 +132,7 @@ export function convertUserPreferenceToQuery(userPreference) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.xtype) {
+  switch (widget.type) {
     case WIDGET_TYPES.alarmList:
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
