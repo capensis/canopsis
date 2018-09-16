@@ -17,18 +17,18 @@
             @input="updateFieldInArrayItem(index, 'column', $event)"
             )
           v-flex(xs11)
-            v-textarea(
-            :placeholder="$t('settings.infoPopup.fields.template')",
-            :value="popup.template"
-            @input="updateFieldInArrayItem(index, 'template', $event)",
-            )
+            text-editor(:value="popup.template", @input="updateFieldInArrayItem(index, 'template', $event)")
       v-btn(color="success", @click="add") {{ $t('common.add') }}
 </template>
 
 <script>
+import TextEditor from '@/components/other/text-editor/text-editor.vue';
 import formMixin from '@/mixins/form';
 
 export default {
+  components: {
+    TextEditor,
+  },
   mixins: [
     formMixin,
   ],
