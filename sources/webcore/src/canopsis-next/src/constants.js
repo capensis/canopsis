@@ -7,10 +7,9 @@ export const ENTITIES_TYPES = {
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
-  view: 'view',
-  viewV3: 'viewV3',
   group: 'group',
-  widgetWrapper: 'widgetWrapper',
+  view: 'view',
+  viewRow: 'viewRow',
   widget: 'widget',
 };
 
@@ -131,10 +130,9 @@ export const ENTITY_STATUS_STYLES = {
 };
 
 export const WIDGET_TYPES = {
-  alarmList: 'listalarm',
-  context: 'crudcontext',
-  weather: 'serviceweather',
-  widgetWrapper: 'widgetwrapper',
+  alarmList: 'AlarmsList',
+  context: 'Context',
+  weather: 'ServiceWeather',
 };
 
 export const SIDE_BARS = {

@@ -10,9 +10,9 @@
       ) {{ tab.name }}
       v-tab-item
         keep-alive
-        create-form(:form.sync="form")
+        create-form(v-model="form")
       v-tab-item
-        manage-infos(:infos.sync="form.infos", :modal="modal")
+        manage-infos(v-model="form.infos")
     v-card-actions
       v-btn.green.darken-3.white--text(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
@@ -22,12 +22,13 @@
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import CreateForm from './create-entity-form.vue';
-import ManageInfos from './manage-infos.vue';
+
+import CreateForm from './partial/create-entity-form.vue';
+import ManageInfos from './partial/manage-infos.vue';
 
 /**
-   * Modal to create an entity (watcher, resource, component, connector)
-   */
+ * Modal to create an entity (watcher, resource, component, connector)
+ */
 export default {
   name: MODALS.createEntity,
   $_veeValidate: {

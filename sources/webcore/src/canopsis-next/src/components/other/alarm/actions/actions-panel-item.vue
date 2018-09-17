@@ -83,6 +83,10 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
           title: this.$t('alarmList.actions.titles.changeState'),
         },
+        moreInfos: {
+          icon: 'more_horiz',
+          title: this.$t('alarmList.actions.titles.moreInfos'),
+        },
       },
     };
   },

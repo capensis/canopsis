@@ -17,10 +17,10 @@ export default {
   computed: {
     query: {
       get() {
-        return this.getQueryById(this.widget.id);
+        return this.getQueryById(this.widget._id);
       },
       set(query) {
-        return this.updateQuery({ id: this.widget.id, query });
+        return this.updateQuery({ id: this.widget._id, query });
       },
     },
 
@@ -52,7 +52,7 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
+    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
 
     this.query = {
       ...this.query,

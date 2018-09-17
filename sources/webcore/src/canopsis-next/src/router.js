@@ -6,7 +6,6 @@ import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
-import ViewV3 from '@/views/view-v3.vue';
 
 Vue.use(Router);
 
@@ -31,13 +30,6 @@ const routes = [
   },
   {
     path: '/view/:id',
-    name: 'viewV3',
-    component: ViewV3,
-    meta: requiresLoginMeta,
-    props: route => ({ id: route.params.id }),
-  },
-  {
-    path: '/view/archive/:id',
     name: 'view',
     component: View,
     meta: requiresLoginMeta,

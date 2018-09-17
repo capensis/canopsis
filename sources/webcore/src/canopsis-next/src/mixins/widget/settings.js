@@ -1,6 +1,5 @@
 import queryMixin from '@/mixins/query';
 import sideBarMixins from '@/mixins/side-bar/side-bar';
-import entitiesWidgetMixin from '@/mixins/entities/widget';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
@@ -15,7 +14,6 @@ export default {
   mixins: [
     queryMixin,
     sideBarMixins,
-    entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
   ],
   computed: {
@@ -31,11 +29,18 @@ export default {
 
       return true;
     },
+
+    prepareSettingsWidget() {
+      return this.settings.widget;
+    },
+
     async submit() {
-      if (this.isFormValid) {
+      const isFormValid = await this.isFormValid();
+
+      if (isFormValid) {
         const widget = {
           ...this.widget,
-          ...this.settings.widget,
+          ...this.prepareSettingsWidget(),
         };
 
         const userPreference = {
@@ -57,7 +62,7 @@ export default {
         await Promise.all(actions);
 
         this.mergeQuery({
-          id: widget.id,
+          id: widget._id,
           query: {
             ...convertWidgetToQuery(widget),
             ...convertUserPreferenceToQuery(userPreference),

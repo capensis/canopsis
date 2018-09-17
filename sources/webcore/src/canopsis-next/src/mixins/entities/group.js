@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('view');
+const { mapGetters, mapActions } = createNamespacedHelpers('view/group');
 
 /**
  * @mixin Helpers for the view entity
@@ -8,13 +8,13 @@ const { mapGetters, mapActions } = createNamespacedHelpers('view');
 export default {
   computed: {
     ...mapGetters({
-      view: 'item',
+      groups: 'items',
     }),
   },
   methods: {
     ...mapActions({
-      fetchView: 'fetchItem',
-      createView: 'create',
+      fetchGroupsList: 'fetchList',
+      createGroup: 'create',
     }),
   },
 };

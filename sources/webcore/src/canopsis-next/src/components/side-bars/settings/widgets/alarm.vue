@@ -20,7 +20,7 @@
       v-divider
       field-info-popup(v-model="settings.widget.popup", :widget="widget")
       v-divider
-      field-more-info
+      field-more-info(v-model="settings.widget.more_infos_popup")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
@@ -77,6 +77,7 @@ export default {
             resolved: widget.alarms_state_filter.resolved || widget.alarms_state_filter.state === 'resolved',
           },
           popup: cloneDeep(widget.popup) || [],
+          more_infos_popup: widget.more_infos_popup || '',
         },
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,
@@ -92,6 +93,27 @@ export default {
       user_filters: this.userPreference.widget_preferences.user_filters,
       selected_filter: this.userPreference.widget_preferences.selected_filter,
     };
+  },
+  methods: {
+    prefixFormatter(value) {
+      return value.replace('alarm.', 'v.');
+    },
+
+    prepareSettingsWidget() {
+      const { widget } = this.settings;
+
+      return {
+        ...widget,
+        widget_columns: widget.widget_columns.map(v => ({
+          ...v,
+          value: this.prefixFormatter(v.value),
+        })),
+        popup: widget.popup.map(v => ({
+          ...v,
+          column: this.prefixFormatter(v.column),
+        })),
+      };
+    },
   },
 };
 </script>

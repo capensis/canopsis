@@ -16,7 +16,7 @@
         div(slot="header") {{ group.name }}
         v-card.grey.darken-3.white--text(v-for="view in group.views", :key="view._id")
           v-card-text
-            router-link(:to="{ name: 'viewV3', params: { id: view._id } }") {{ view.title }}
+            router-link(:to="{ name: 'view', params: { id: view._id } }") {{ view.title }}
     v-divider
     v-btn.addBtn(
     fab,
@@ -34,7 +34,7 @@
 import { SIDE_BAR_WIDTH } from '@/config';
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
-import entitiesV3ViewsMixin from '@/mixins/entities/view-v3/group';
+import entitiesGroupMixin from '@/mixins/entities/group';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -44,7 +44,7 @@ import entitiesV3ViewsMixin from '@/mixins/entities/view-v3/group';
  * @event input#update
  */
 export default {
-  mixins: [modalMixin, entitiesV3ViewsMixin],
+  mixins: [modalMixin, entitiesGroupMixin],
   props: {
     value: {
       type: Boolean,

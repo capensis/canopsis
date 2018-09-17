@@ -6,6 +6,8 @@ export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 1
 
 export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
+export const PAGINATION_TOTAL_VISIBLE = 7;
+
 export const DEFAULT_LOCALE = 'fr';
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
@@ -34,7 +36,6 @@ export const API_ROUTES = {
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
-  view: '/rest/object/view',
-  viewV3: '/api/v2/views',
-  viewV3Group: '/api/v2/views/groups',
+  view: '/api/v2/views',
+  viewGroup: '/api/v2/views/groups',
 };

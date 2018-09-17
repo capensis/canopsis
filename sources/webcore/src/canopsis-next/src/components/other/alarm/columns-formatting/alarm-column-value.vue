@@ -1,15 +1,21 @@
 <template lang="pug">
   div
     div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
-    ellipsis(v-else, :text="alarm | get(column.value, columnFilter, '')")
-    info-popup-button(v-if="columnName", :column="column.value", :alarm="alarm", :widget="widget")
+    ellipsis(
+    v-else,
+    :text="alarm | get(column.value, columnFilter, '')",
+    :column="column.value",
+    @textClicked="showPopup"
+    )
 </template>
 
 <script>
+import get from 'lodash/get';
+import Handlebars from 'handlebars';
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
 import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
-import InfoPopupButton from '@/components/other/info-popup/popup-button.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+import popupMixin from '@/mixins/popup';
 
 /**
  * Component to format alarms list columns
@@ -24,9 +30,11 @@ export default {
   components: {
     State,
     ExtraDetails,
-    InfoPopupButton,
     Ellipsis,
   },
+  mixins: [
+    popupMixin,
+  ],
   props: {
     alarm: {
       type: Object,
@@ -42,6 +50,17 @@ export default {
     },
   },
   computed: {
+    popupData() {
+      const popups = get(this.widget, 'popup', []);
+
+      return popups.find(popup => popup.column === this.column.value);
+    },
+    popupTextContent() {
+      const template = Handlebars.compile(this.popupData.template);
+      const context = { alarm: this.alarm.v };
+
+      return template(context);
+    },
     columnName() {
       return this.column.value.split('.')[1];
     },
@@ -65,6 +84,15 @@ export default {
       };
 
       return PROPERTIES_COMPONENTS_MAP[this.column.value];
+    },
+  },
+  methods: {
+    showPopup() {
+      if (this.popupData) {
+        this.addInfoPopup({
+          text: this.popupTextContent,
+        });
+      }
     },
   },
 };
