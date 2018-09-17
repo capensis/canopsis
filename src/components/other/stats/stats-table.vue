@@ -1,5 +1,7 @@
 <template lang="pug">
   v-container(fluid)
+    v-btn(icon, @click="showSettings")
+      v-icon settings
     v-data-table(
       :items="statsList",
       :headers="columns",
@@ -21,10 +23,12 @@
 </template>
 
 <script>
+import { SIDE_BARS } from '@/constants';
 import entitiesStatsMixin from '@/mixins/entities/stats';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
-  mixins: [entitiesStatsMixin],
+  mixins: [entitiesStatsMixin, sideBarMixin],
   props: {
     widget: {
       type: Object,
@@ -42,6 +46,16 @@ export default {
   },
   mounted() {
     this.fetchStats({ params: this.widget.parameters });
+  },
+  methods: {
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.statsTableSettings,
+        config: {
+          widget: this.widget,
+        },
+      });
+    },
   },
 };
 </script>
