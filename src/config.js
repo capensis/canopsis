@@ -34,7 +34,6 @@ export const API_ROUTES = {
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
-  view: '/rest/object/view',
-  viewV3: '/api/v2/views',
-  viewV3Group: '/api/v2/views/groups',
+  view: '/api/v2/views',
+  viewGroup: '/api/v2/views/groups',
 };

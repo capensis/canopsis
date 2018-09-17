@@ -5,14 +5,12 @@
         alarm-list-search(:query.sync="query")
       v-flex
         pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
-      v-flex.ml-4
-        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
       v-flex
         v-select(
         :label="$t('settings.selectAFilter')",
-        :items="userPreference.widget_preferences.user_filters",
+        :items="viewFilters",
         @input="updateSelectedFilter",
-        :value="userPreference.widget_preferences.selected_filter",
+        :value="mainFilter",
         item-text="title",
         item-value="filter",
         return-object,
@@ -30,9 +28,11 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="showSettings")
           v-icon settings
+      v-flex.px-3
+        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
-      v-data-table.alarmList(
+      v-data-table(
       v-model="selected",
       :items="alarms",
       :headers="headers",
@@ -145,6 +145,16 @@ export default {
 
       return [];
     },
+    mainFilter() {
+      const { mainFilter } = this.widget.parameters;
+
+      return isEmpty(mainFilter) ? null : mainFilter;
+    },
+    viewFilters() {
+      const { viewFilters } = this.widget.parameters;
+
+      return isEmpty(viewFilters) ? [] : viewFilters;
+    },
   },
   methods: {
     removeHistoryFilter() {
@@ -178,28 +188,14 @@ export default {
         }
 
         this.fetchAlarmsList({
-          widgetId: this.widget.id,
+          widgetId: this.widget._id,
           params: query,
         });
       }
     },
 
-    updateSelectedFilter(event) {
-      this.createUserPreference({
-        userPreference: {
-          ...this.userPreference,
-          widget_preferences: {
-            ...this.userPreference.widget_preferences,
-            selected_filter: event,
-          },
-        },
-      });
-
-      if (event && event.filter) {
-        this.query = { ...this.query, filter: event.filter };
-      } else {
-        this.query = { ...this.query, filter: undefined };
-      }
+    updateSelectedFilter() {
+      // todo: finish integration with settings
     },
   },
 };

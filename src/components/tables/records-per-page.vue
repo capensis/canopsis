@@ -31,7 +31,6 @@ export default {
   computed: {
     limit: {
       get() {
-        console.log(this.query);
         return this.query.limit || PAGINATION_LIMIT;
       },
       set(limit) {

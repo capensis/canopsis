@@ -63,7 +63,7 @@ export default {
       this.fetchWatchersList({
         filter: this.widget.filter,
         params: this.getQuery(),
-        widgetId: this.widget.id,
+        widgetId: this.widget._id,
       });
     },
   },

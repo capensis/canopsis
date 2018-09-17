@@ -1,19 +1,16 @@
 <template lang="pug">
-v-speed-dial(
+v-speed-dial.d-inline-block(
   direction="left",
   :open-on-hover="true",
-  transition="scale-transition")
-  v-btn(slot='activator', v-model="fab", color='green darken-3', dark, fab, small)
+  transition="scale-transition"
+  )
+  v-btn(slot="activator", color="green darken-3", dark, fab, small)
     v-icon add
     v-icon close
-  v-tooltip(left)
-    v-btn(slot="activator", fab, dark, small, color='indigo', @click.prevent="showCreateWatcherModal")
-      v-icon watch
-    span {{ $t(`entities.watcher`)}}
-  v-tooltip(left)
-    v-btn(slot="activator", fab, dark, small, color='red', @click.prevent="showCreateEntityModal")
-      v-icon perm_identity
-    span {{ $t(`entities.entities`)}}
+  v-tooltip(v-for="button in buttons", :key="button.label", top)
+    v-btn(slot="activator", :color="button.color", @click.prevent="button.action", fab, dark, small)
+      v-icon {{ button.icon }}
+    span {{ button.label }}
 </template>
 
 <script>
@@ -33,7 +30,20 @@ export default {
   ],
   data() {
     return {
-      fab: false,
+      buttons: [
+        {
+          label: this.$t('entities.watcher'),
+          icon: 'watch',
+          color: 'indigo',
+          action: this.showCreateWatcherModal,
+        },
+        {
+          label: this.$t('entities.entities'),
+          icon: 'perm_identity',
+          color: 'red',
+          action: this.showCreateEntityModal,
+        },
+      ],
     };
   },
   methods: {

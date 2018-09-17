@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
+import isEmpty from 'lodash/isEmpty';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
@@ -14,8 +15,8 @@ import { WIDGET_TYPES } from '@/constants';
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertDefaultSortColumnToQuery(widget) {
-  const { sortColumn, sortOrder } = widget.parameters;
+export function convertDefaultSortColumnToQuery({ parameters }) {
+  const { sortColumn, sortOrder } = parameters;
 
   if (sortColumn && sortOrder) {
     return { sortKey: sortColumn, sortDir: sortOrder };
@@ -25,7 +26,7 @@ export function convertDefaultSortColumnToQuery(widget) {
 }
 
 /**
- * This function converts widget with type 'listalarm' to query Object
+ * This function converts widget with type 'AlarmsList' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
@@ -42,8 +43,11 @@ export function convertAlarmWidgetToQuery(widget) {
   const query = {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
-    filter: mainFilter,
   };
+
+  if (!isEmpty(mainFilter)) {
+    query.filter = mainFilter.filter;
+  }
 
   if (!isUndefined(displayOpenAlarms)) {
     query.opened = displayOpenAlarms;
@@ -54,14 +58,14 @@ export function convertAlarmWidgetToQuery(widget) {
   }
 
   if (columnTranslations) {
-    query.active_columns = Object.keys(columnTranslations);
+    query.active_columns = columnTranslations.map(v => v.value);
   }
 
   return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 
 /**
- * This function converts widget with type 'crudcontext' to query Object
+ * This function converts widget with type 'Context' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
@@ -69,6 +73,8 @@ export function convertAlarmWidgetToQuery(widget) {
 export function convertContextWidgetToQuery(widget) {
   const query = {
     page: 1,
+    limit: get(widget, 'parameters.itemsPerPage', PAGINATION_LIMIT),
+    selectedTypes: get(widget, 'parameters.selectedTypes', []),
   };
 
   return { ...query, ...convertDefaultSortColumnToQuery(widget) };
@@ -79,20 +85,25 @@ export function convertContextWidgetToQuery(widget) {
  */
 
 /**
- * This function converts userPreference with widgetXtype 'listalarm' to query Object
+ * This function converts userPreference with widgetXtype 'AlarmsList' to query Object
  *
  * @param {Object} userPreference
  * @returns {{}}
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  return {
+  const query = {
     limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
-    filter: get(widgetPreferences, 'selected_filter.filter'),
   };
+
+  if (!isEmpty(widgetPreferences.mainFilter)) {
+    query.filter = widgetPreferences.mainFilter.filter;
+  }
+
+  return query;
 }
 
 /**
- * This function converts userPreference with widgetXtype 'crudcontext' to query Object
+ * This function converts userPreference with widgetXtype 'Context' to query Object
  *
  * @param {Object} userPreference
  * @returns {{}}

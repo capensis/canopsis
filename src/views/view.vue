@@ -1,19 +1,22 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="widget in widgets", :key="`${widgetKeyPrefix}_${widget.id}`")
-        h2 {{ widget.title }}
-        component(
-        :is="widgetsMap[widget.xtype]",
-        :widget="widget",
-        )
+      div(v-for="row in rows", :key="row._id")
+        h1 {{ row.title }}
+        div(v-for="widget in row.widgets")
+          h2 {{ widget.type }}
+          component(
+          :is="widgetsMap[widget.type]",
+          :widget="widget",
+          :key="`${widgetKeyPrefix}_${widget._id}`"
+          )
     .fab
       v-btn(@click="refreshView", icon, color="info", dark, fab)
         v-icon refresh
       v-speed-dial(
-      :open-on-hover="true",
-      transition="scale-transition",
       direction="left",
+      :open-on-hover="true",
+      transition="scale-transition"
       )
         v-btn(slot="activator", color="green darken-3", dark, fab)
           v-icon add
@@ -24,7 +27,9 @@
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES } from '@/constants';
+import get from 'lodash/get';
+
+import { WIDGET_TYPES, MODALS } from '@/constants';
 import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
@@ -33,7 +38,6 @@ import Weather from '@/components/other/service-weather/weather.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
-import entitiesWidgetMixin from '@/mixins/entities/widget';
 
 export default {
   components: {
@@ -44,7 +48,6 @@ export default {
   mixins: [
     modalMixin,
     entitiesViewMixin,
-    entitiesWidgetMixin,
   ],
   props: {
     id: {
@@ -54,28 +57,33 @@ export default {
   },
   data() {
     return {
-      widgetKeyPrefix: uid(),
       widgetsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
         [WIDGET_TYPES.weather]: 'weather',
       },
+      widgetKeyPrefix: uid(),
     };
+  },
+  computed: {
+    rows() {
+      return get(this.view, 'rows', []);
+    },
   },
   mounted() {
     this.fetchView({ id: this.id });
   },
   methods: {
-    showCreateWidgetModal() {
-      this.showModal({
-        name: MODALS.createWidget,
-      });
-    },
-
     async refreshView() {
       await this.fetchView({ id: this.id });
 
       this.widgetKeyPrefix = uid();
+    },
+
+    showCreateWidgetModal() {
+      this.showModal({
+        name: MODALS.createWidget,
+      });
     },
   },
 };
