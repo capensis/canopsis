@@ -38,7 +38,7 @@ export default {
       }
 
       if (this.widget) {
-        return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget.id });
+        return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
       }
 
       return undefined;

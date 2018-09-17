@@ -1,4 +1,6 @@
 import get from 'lodash/get';
+import isUndefined from 'lodash/isUndefined';
+import isEmpty from 'lodash/isEmpty';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
@@ -13,46 +15,57 @@ import { WIDGET_TYPES } from '@/constants';
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertDefaultSortColumnToQuery(widget) {
-  const { default_sort_column: defaultSortColumn } = widget;
+export function convertDefaultSortColumnToQuery({ parameters }) {
+  const { sortColumn, sortOrder } = parameters;
 
-  if (defaultSortColumn && defaultSortColumn.property) {
-    return { sortKey: defaultSortColumn.property, sortDir: defaultSortColumn.direction };
+  if (sortColumn && sortOrder) {
+    return { sortKey: sortColumn, sortDir: sortOrder };
   }
 
   return { sortKey: null, sortDir: null };
 }
 
 /**
- * This function converts widget with type 'listalarm' to query Object
+ * This function converts widget with type 'AlarmsList' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
  */
 export function convertAlarmWidgetToQuery(widget) {
+  const {
+    displayOpenAlarms,
+    displayResolvedAlarms,
+    columnTranslations,
+    itemsPerPage,
+    mainFilter,
+  } = widget.parameters;
+
   const query = {
     page: 1,
+    limit: itemsPerPage || PAGINATION_LIMIT,
   };
-  const stateFilter = widget.alarms_state_filter;
 
-  if (stateFilter) {
-    if (stateFilter.state && (stateFilter.opened === undefined && stateFilter.resolved === undefined)) {
-      query.opened = stateFilter.state === 'opened';
-      query.resolved = stateFilter.state === 'resolved';
-    } else {
-      query.opened = Boolean(stateFilter.opened);
-      query.resolved = Boolean(stateFilter.resolved);
-    }
+  if (!isEmpty(mainFilter)) {
+    query.filter = mainFilter.filter;
   }
 
-  if (widget.widget_columns) {
-    query.active_columns = widget.widget_columns.map(v => v.value);
+  if (!isUndefined(displayOpenAlarms)) {
+    query.opened = displayOpenAlarms;
   }
+
+  if (!isUndefined(displayResolvedAlarms)) {
+    query.resolved = displayResolvedAlarms;
+  }
+
+  if (columnTranslations) {
+    query.active_columns = columnTranslations.map(v => v.value);
+  }
+
   return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 
 /**
- * This function converts widget with type 'crudcontext' to query Object
+ * This function converts widget with type 'Context' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
@@ -60,6 +73,8 @@ export function convertAlarmWidgetToQuery(widget) {
 export function convertContextWidgetToQuery(widget) {
   const query = {
     page: 1,
+    limit: get(widget, 'parameters.itemsPerPage', PAGINATION_LIMIT),
+    selectedTypes: get(widget, 'parameters.selectedTypes', []),
   };
 
   return { ...query, ...convertDefaultSortColumnToQuery(widget) };
@@ -70,20 +85,25 @@ export function convertContextWidgetToQuery(widget) {
  */
 
 /**
- * This function converts userPreference with widgetXtype 'listalarm' to query Object
+ * This function converts userPreference with widgetXtype 'AlarmsList' to query Object
  *
  * @param {Object} userPreference
  * @returns {{}}
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  return {
+  const query = {
     limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
-    filter: get(widgetPreferences, 'selected_filter.filter'),
   };
+
+  if (!isEmpty(widgetPreferences.mainFilter)) {
+    query.filter = widgetPreferences.mainFilter.filter;
+  }
+
+  return query;
 }
 
 /**
- * This function converts userPreference with widgetXtype 'crudcontext' to query Object
+ * This function converts userPreference with widgetXtype 'Context' to query Object
  *
  * @param {Object} userPreference
  * @returns {{}}
@@ -123,7 +143,7 @@ export function convertUserPreferenceToQuery(userPreference) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.xtype) {
+  switch (widget.type) {
     case WIDGET_TYPES.alarmList:
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:

@@ -3,7 +3,7 @@
     v-layout
       navigation(v-if="$route.name !== 'login'")
       v-content(v-if="!currentUserPending")
-        router-view
+        router-view(:key="$route.fullPath")
     side-bars
     modals
     popups

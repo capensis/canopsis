@@ -60,8 +60,8 @@
 <script>
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import viewMixin from '@/mixins/entities/view-v3/view-v3';
-import groupMixin from '@/mixins/entities/view-v3/group';
+import viewMixin from '@/mixins/entities/view';
+import groupMixin from '@/mixins/entities/group';
 import popupMixin from '@/mixins/popup';
 import find from 'lodash/find';
 
