@@ -12,9 +12,11 @@
           tr.text-xs-center
             td {{ props.item.entity.name }}
             td(v-for="(property, key) in widget.parameters.stats")
-              div(
+              template(
               v-if="props.item[key].value !== undefined && props.item[key].value !== null"
-              ) {{ props.item[key].value }}
+              )
+                div {{ props.item[key].value }}
+                  sub {{ props.item[key].trend }}
               div(v-else) No data
 </template>
 
