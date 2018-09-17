@@ -132,8 +132,7 @@ export const ENTITY_STATUS_STYLES = {
 export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
   context: 'Context',
-  weather: 'serviceweather',
-  widgetWrapper: 'widgetwrapper',
+  weather: 'ServiceWeather',
 };
 
 export const SIDE_BARS = {
