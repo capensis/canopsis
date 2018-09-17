@@ -24,7 +24,6 @@ export default {
   computed: {
     columns() {
       const columnsList = [];
-
       Object.keys(this.statsList[0]).map(item => columnsList.push({ value: item }));
 
       return columnsList;

@@ -136,17 +136,20 @@ export const WIDGET_TYPES = {
   context: 'crudcontext',
   weather: 'serviceweather',
   widgetWrapper: 'widgetwrapper',
+  statsTable: 'statsTable',
 };
 
 export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
+  statsTableSettings: 'stats-table-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
   [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+  [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
