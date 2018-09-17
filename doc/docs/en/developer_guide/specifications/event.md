@@ -218,25 +218,14 @@ After defining the basic event structure, add the following fields :
 {
     'event_type': 'statcounterinc',
 
-    'counter_name':         // The name of the counter to increment
+    'stat_name':            // The name of the counter to increment
     'alarm':                // The alarm
     'entity':               // The entity which sent the event
 }
 ```
 
-The `alarm` field should contain the value of the alarm as a JSON object, for
-example:
-
-```javascript
-{
-    'resource': '...',
-    'component': '...',
-    'creation_date': // ...
-    // ...
-}
-```
-
-The `entity` field should contain the entity as a JSON object.
+The `alarm` field should contain the value of the alarm as a JSON object. The
+`entity` field should contain the entity as a JSON object.
 
 Event Statistics Duration Structure
 -----------------------------------
@@ -247,26 +236,15 @@ After defining the basic event structure, add the following fields :
 {
     'event_type': 'statduration',
 
-    'duration_name':        // The name of the duration
+    'stat_name':            // The name of the duration
     'duration':             // The value of the duration (in seconds)
-    'alarm':                // The alarm
-    'entity':               // The entity which sent the event
+    'current_alarm':        // The alarm
+    'current_entity':       // The entity which sent the event
 }
 ```
 
-The `alarm` field should contain the value of the alarm as a JSON object, for
-example:
-
-```javascript
-{
-    'resource': '...',
-    'component': '...',
-    'creation_date': // ...
-    // ...
-}
-```
-
-The `entity` field should contain the entity as a JSON object.
+The `alarm` field should contain the value of the alarm as a JSON object. The
+`entity` field should contain the entity as a JSON object.
 
 Event Statistics State Interval Structure
 -----------------------------------------
@@ -277,27 +255,16 @@ After defining the basic event structure, add the following fields :
 {
     'event_type': 'statstateinterval',
 
-    'state_name':           // The name of the state
-    'state_duration':       // The time spent in this state (in seconds)
-    'state_value':          // The value of the state
+    'stat_name':            // The name of the state
+    'duration':             // The time spent in this state (in seconds)
+    'state':                // The value of the state
     'alarm':                // The alarm
     'entity':               // The entity which sent the event
 }
 ```
 
-The `alarm` field should contain the value of the alarm as a JSON object, for
-example:
-
-```javascript
-{
-    'resource': '...',
-    'component': '...',
-    'creation_date': // ...
-    // ...
-}
-```
-
-The `entity` field should contain the entity as a JSON object.
+The `alarm` field should contain the value of the alarm as a JSON object. The
+`entity` field should contain the entity as a JSON object.
 
 ### Metrology
 
