@@ -169,6 +169,7 @@ class Amqp(Thread):
                             type(err)
                         ))
                         print_exc(file=stdout)
+                        reconnect = True
                         break
 
                 self.disconnect()
