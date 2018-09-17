@@ -117,9 +117,9 @@ class StatEventPublisher(object):
             resource=resource,
             timestamp=timestamp,
             author=author,
-            counter_name=counter_name,
-            alarm=full_alarm,
-            entity=entity)
+            stat_name=counter_name,
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)
 
@@ -174,10 +174,10 @@ class StatEventPublisher(object):
             resource=resource,
             timestamp=timestamp,
             author=author,
-            duration_name=duration_name,
+            stat_name=duration_name,
             duration=duration_value,
-            alarm=full_alarm,
-            entity=entity)
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)
 
@@ -230,10 +230,10 @@ class StatEventPublisher(object):
             component=component,
             resource=resource,
             timestamp=timestamp,
-            state_name=state_name,
-            state_duration=state_duration,
-            state_value=state_value,
-            alarm=full_alarm,
-            entity=entity)
+            stat_name=state_name,
+            duration=state_duration,
+            state=state_value,
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)
