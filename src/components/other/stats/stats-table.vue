@@ -6,14 +6,16 @@
     )
       template(slot="headers", slot-scope="props")
         tr
+          th Entity
           th(v-for="header in props.headers", :key="header.value") {{ header.value }}
       template(slot="items", slot-scope="props")
           tr.text-xs-center
-            td(v-for="(property, key) in props.item")
-              p(v-if="key === 'entity'") {{ property.name }}
-              template(v-else)
-                p(v-if="property.value !== null && property.value !== undefined") {{ property.value }}
-                p(v-else) No data
+            td {{ props.item.entity.name }}
+            td(v-for="(property, key) in widget.parameters.stats")
+              div(
+              v-if="props.item[key].value !== undefined && props.item[key].value !== null"
+              ) {{ props.item[key].value }}
+              div(v-else) No data
 </template>
 
 <script>
@@ -21,16 +23,23 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 
 export default {
   mixins: [entitiesStatsMixin],
+  props: {
+    widget: {
+      type: Object,
+      required: true,
+    },
+  },
   computed: {
     columns() {
       const columnsList = [];
-      Object.keys(this.statsList[0]).map(item => columnsList.push({ value: item }));
+      Object.keys(this.widget.parameters.stats).map(item => columnsList.push({ value: item }));
 
       return columnsList;
     },
+
   },
   mounted() {
-    this.fetchStats();
+    this.fetchStats({ params: this.widget.parameters });
   },
 };
 </script>
