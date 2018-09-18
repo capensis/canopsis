@@ -9,7 +9,7 @@
       v-divider
       field-stats-select
       v-divider
-      field-filter-editor
+      field-filter-editor(v-model="settings.widget.parameters.mfilter")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
@@ -47,6 +47,7 @@ export default {
           parameters: {
             duration: widget.parameters.duration,
             tstop: widget.parameters.tstop,
+            mfilter: widget.parameters.mfilter,
           },
         },
       },

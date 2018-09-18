@@ -11,6 +11,11 @@ import modalMixin from '@/mixins/modal/modal';
 
 export default {
   mixins: [modalMixin],
+  props: {
+    value: {
+      type: Object,
+    },
+  },
   data() {
     return {
       item: {},
@@ -22,8 +27,8 @@ export default {
         name: MODALS.createFilter,
         config: {
           title: 'modals.filter.create.title',
-          filter: {},
-          action: newFilter => this.$emit('update:filter', newFilter),
+          filter: this.value || {},
+          action: newFilter => this.$emit('input', newFilter),
         },
       });
     },
