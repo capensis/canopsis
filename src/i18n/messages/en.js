@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -142,6 +142,10 @@ export default {
     open: 'Open',
     resolved: 'Resolved',
     filters: 'Filters',
+    filterEditor: 'Filter editor',
+    duration: 'Duration',
+    tstop: 'End date',
+    statsSelect: 'Stats select',
     selectAFilter: 'Select a filter',
     infoPopup: {
       title: 'Info popup',
@@ -467,5 +471,20 @@ export default {
   },
   validator: {
     unique: 'Field must be unique',
+  },
+  stats: {
+    types: {
+      [STATS_TYPES.alarmsCreated]: 'Alarms created',
+      [STATS_TYPES.alarmsResolved]: 'Alarms resolved',
+      [STATS_TYPES.alarmsCanceled]: 'Alarms canceled',
+      [STATS_TYPES.ackTimeSla]: 'Ack time Sla',
+      [STATS_TYPES.resolveTimeSla]: 'Resolve time Sla',
+      [STATS_TYPES.timeInState]: 'Time in state',
+      [STATS_TYPES.stateRate]: 'State rate',
+      [STATS_TYPES.mtbf]: 'MTBF',
+      [STATS_TYPES.currentState]: 'Current state',
+      [STATS_TYPES.ongoingAlarms]: 'Ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarms]: 'Current ongoing alarms',
+    },
   },
 };

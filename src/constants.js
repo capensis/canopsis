@@ -235,3 +235,17 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
 };
+
+export const STATS_TYPES = {
+  alarmsCreated: 'alarms_created',
+  alarmsResolved: 'alarms_resolved',
+  alarmsCanceled: 'alarm_canceled',
+  ackTimeSla: 'ack_time_sla',
+  resolveTimeSla: 'resolve_time_sla',
+  timeInState: 'time_in_state',
+  stateRate: 'state_rate',
+  mtbf: 'mtbf',
+  currentState: 'current_state',
+  ongoingAlarms: 'ongoing_alarms',
+  currentOngoingAlarms: 'current_ongoing_alarms',
+};

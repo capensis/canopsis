@@ -1,8 +1,27 @@
 <template lang="pug">
-  div Duration
+  v-list-group
+    v-list-tile(slot="activator") {{ $t('settings.duration') }}
+    v-container
+      v-layout
+        v-flex
+          v-text-field.pt-0(
+          type="number",
+          :value="durationValue",
+          @input="updateDurationValue",
+          hide-details
+          )
+        v-flex
+          v-select.pt-0(
+            :items="units",
+            :value="durationUnit",
+            hide-details,
+            @input="updateDurationUnit"
+          )
 </template>
 
 <script>
+import find from 'lodash/find';
+
 export default {
   props: {
     value: {
@@ -11,34 +30,40 @@ export default {
   },
   data() {
     return {
-      units: {
-        hour: {
+      units: [
+        {
           text: 'Hour',
           value: 'h',
         },
-        day: {
+        {
           text: 'Day',
           value: 'd',
         },
-        week: {
+        {
           text: 'Week',
           value: 'w',
         },
-        month: {
+        {
           text: 'Month',
           value: 'm',
         },
-      },
+      ],
     };
   },
   computed: {
     durationValue() {
-      // TODO : Return duration value using the value's string
-      return null;
+      return this.value.slice(0, this.value.length - 1);
     },
     durationUnit() {
-      // TODO : Return duration unit using the value's string
-      return null;
+      return find(this.units, item => item.value === this.value.slice(-1));
+    },
+  },
+  methods: {
+    updateDurationValue(event) {
+      this.$emit('update:value', `${event}${this.durationUnit.value}`);
+    },
+    updateDurationUnit(event) {
+      this.$emit('update:value', `${this.durationValue}${event}`);
     },
   },
 };

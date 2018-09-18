@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -142,6 +142,10 @@ export default {
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
+    filterEditor: 'Editeur de filtre',
+    duration: 'Durée',
+    tstop: 'Date de fin',
+    statsSelect: 'Sélecteur de stats',
     selectAFilter: 'Sélectionner un filtre',
     infoPopup: {
       title: 'Info popup',
@@ -454,5 +458,20 @@ export default {
   },
   validator: {
     unique: 'Le champ doit être unique',
+  },
+  stats: {
+    types: {
+      [STATS_TYPES.alarmsCreated]: 'Alarmes créées',
+      [STATS_TYPES.alarmsResolved]: 'Alarmes résolues',
+      [STATS_TYPES.alarmsCanceled]: 'Alarmes annulées',
+      [STATS_TYPES.ackTimeSla]: 'Taux d\'Ack conforme Sla',
+      [STATS_TYPES.resolveTimeSla]: 'Taux de résolution conforme Sla',
+      [STATS_TYPES.timeInState]: 'Proportion du temps dans l\'état',
+      [STATS_TYPES.stateRate]: 'Taux à cet état',
+      [STATS_TYPES.mtbf]: 'Temps moyen entre pannes',
+      [STATS_TYPES.currentState]: 'Etat courant',
+      [STATS_TYPES.ongoingAlarms]: 'Nombre d\'alarmes en cours pendant la période',
+      [STATS_TYPES.currentOngoingAlarms]: 'Nombre d\'alarmes actuellement en cours',
+    },
   },
 };
