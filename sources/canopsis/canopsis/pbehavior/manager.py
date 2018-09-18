@@ -23,9 +23,9 @@ Managing PBehavior.
 """
 
 from calendar import timegm
-from datetime import datetime
+from datetime import datetime, timedelta
 from json import loads, dumps
-from time import time
+from time import time, gmtime, localtime
 from uuid import uuid4
 from six import string_types
 from dateutil.rrule import rrulestr
@@ -581,23 +581,19 @@ class PBehaviorManager(object):
                 )
             )
 
-            # compute the "missing dates": dates before the rrule started to
-            # generate dates so we can check for a pbehavior in the past.
-            if len(dt_list) >= 2:
-                multiply = 1
-                while True:
-                    missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
-                    dt_list.insert(0, missing_date)
-
-                    if missing_date < dtts:
-                        break
-
-                    multiply += 1
+            substract_day = False
+            delta = timedelta(hours=gmtime().tm_hour - localtime().tm_hour)
+            new_dtts = dtts + delta
+            if dtts.day != new_dtts.day:
+                substract_day = True
 
             delta = dttstop - dttstart
 
             for dt in sorted(dt_list):
-                if dtts >= dt and dtts <= dt + delta:
+                if substract_day:
+                    dt = dt.replace(day=dt.day - 1)
+
+                if dt <= dtts <= dt + delta:
                     return True
 
             return False
