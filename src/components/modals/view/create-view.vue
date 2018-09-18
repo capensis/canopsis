@@ -51,19 +51,20 @@
                 v-list-tile-content
                   v-list-tile-title(v-html="$t('modals.createView.noData')")
 
-          span {{ this.form.group_id }}
+          span {{ form.group_id }}
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
+import find from 'lodash/find';
+
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import viewMixin from '@/mixins/entities/view';
 import groupMixin from '@/mixins/entities/group';
 import popupMixin from '@/mixins/popup';
-import find from 'lodash/find';
 
 /**
  * Modal to create widget

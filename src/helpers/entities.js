@@ -1,28 +1,52 @@
+import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
 import uuid from './uuid';
 
 export function generateWidgetByType(type) {
-  const id = uuid(`widget_${type}`);
   const widget = {
-    id,
-    widgetId: id,
-    title: null,
-    preference_id: uuid(),
-    xtype: type,
-    tagName: null,
-    mixins: [],
-    default_sort_column: {
-      direction: 'ASC',
-    },
-    columns: [],
-    popup: [],
+    _id: uuid(`widget_${type}`),
+    title: '',
+    minColumns: 6,
+    maxColumns: 12,
+    parameters: {},
   };
 
-  if (type === WIDGET_TYPES.alarmList) {
-    widget.alarms_state_filter = {};
-    widget.widget_columns = [];
+  let specialParameters = {};
+
+  switch (type) {
+    case WIDGET_TYPES.alarmList:
+      specialParameters = {
+        itemsPerPage: PAGINATION_LIMIT,
+        moreInfoTemplate: '',
+        alarmsStateFilter: {},
+        widgetColumns: [],
+        viewFilters: [],
+        infoPopups: [],
+        periodicRefresh: {
+          enabled: false,
+        },
+        sort: {
+          order: 'ASC',
+        },
+      };
+      break;
+
+    case WIDGET_TYPES.context:
+      specialParameters = {
+        itemsPerPage: PAGINATION_LIMIT,
+        widgetColumns: [],
+        selectedTypes: [],
+        sort: {
+          order: 'ASC',
+        },
+      };
+      break;
+
+    default:
   }
+
+  widget.parameters = { ...widget.parameters, ...specialParameters };
 
   return widget;
 }

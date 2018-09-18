@@ -16,18 +16,18 @@ export default {
     group: groupModule,
   },
   state: {
-    viewId: null,
+    activeViewId: null,
   },
   getters: {
     item: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.viewId),
+      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
   },
   mutations: {
     [types.FETCH_ITEM]: (state) => {
       state.pending = true;
     },
     [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
-      state.viewId = viewId;
+      state.activeViewId = viewId;
       state.pending = false;
     },
   },
@@ -49,6 +49,21 @@ export default {
         commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
       } catch (err) {
         console.error(err);
+      }
+    },
+
+    async update({ dispatch, commit }, { view }) {
+      try {
+        const { normalizedData } = await dispatch('entities/update', {
+          route: `${API_ROUTES.view}/${view.id}`,
+          schema: viewSchema,
+          body: view,
+          dataPreparer: d => d.data[0],
+        }, { root: true });
+
+        commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
+      } catch (err) {
+        console.warn(err);
       }
     },
   },

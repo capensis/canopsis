@@ -70,7 +70,7 @@ export default {
       return get(this.view, 'rows', []);
     },
   },
-  mounted() {
+  created() {
     this.fetchView({ id: this.id });
   },
   methods: {

@@ -3,7 +3,7 @@
     v-list.pt-0(expand)
       field-title(v-model="settings.widget.title")
       v-divider
-      field-default-column-sort(v-model="settings.widget.default_sort_column")
+      field-default-sort-column(v-model="settings.widget.default_sort_column")
       v-divider
       field-columns(v-model="settings.widget.widget_columns")
       v-divider
@@ -20,7 +20,7 @@ import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldTitle from '../partial/fields/title.vue';
-import FieldDefaultColumnSort from '../partial/fields/default-column-sort.vue';
+import FieldDefaultSortColumn from '../partial/fields/default-sort-column.vue';
 import FieldColumns from '../partial/fields/columns.vue';
 import FieldContextEntitiesTypesFilter from '../partial/fields/context-entities-types-filter.vue';
 
@@ -31,7 +31,7 @@ export default {
   name: SIDE_BARS.contextSettings,
   components: {
     FieldTitle,
-    FieldDefaultColumnSort,
+    FieldDefaultSortColumn,
     FieldColumns,
     FieldContextEntitiesTypesFilter,
   },
