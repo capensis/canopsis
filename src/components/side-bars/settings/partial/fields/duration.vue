@@ -60,10 +60,10 @@ export default {
   },
   methods: {
     updateDurationValue(event) {
-      this.$emit('update:value', `${event}${this.durationUnit.value}`);
+      this.$emit('input', `${event}${this.durationUnit.value}`);
     },
     updateDurationUnit(event) {
-      this.$emit('update:value', `${this.durationValue}${event}`);
+      this.$emit('input', `${this.durationValue}${event}`);
     },
   },
 };

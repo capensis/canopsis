@@ -1,9 +1,9 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title
+      field-title(v-model="settings.widget.title")
       v-divider
-      field-duration(value="2m")
+      field-duration(v-model="settings.widget.parameters.duration")
       v-divider
       field-date-select(:title="$t('settings.tstop')")
       v-divider
@@ -11,7 +11,7 @@
       v-divider
       field-filter-editor
       v-divider
-    v-btn(@click="", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
 <script>
@@ -37,6 +37,20 @@ export default {
     FieldFilterEditor,
   },
   mixins: [widgetSettingsMixin],
+  data() {
+    const { widget } = this.config;
+
+    return {
+      settings: {
+        widget: {
+          title: widget.title,
+          parameters: {
+            duration: widget.parameters.duration,
+          },
+        },
+      },
+    };
+  },
 };
 
 </script>

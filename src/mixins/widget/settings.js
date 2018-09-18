@@ -54,7 +54,6 @@ export default {
         };
 
         const actions = [this.createUserPreference({ userPreference })];
-
         if (this.config.isNew) {
           actions.push(this.createWidget({ widget }));
         } else {
