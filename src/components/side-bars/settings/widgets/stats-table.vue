@@ -5,7 +5,7 @@
       v-divider
       field-duration(v-model="settings.widget.parameters.duration")
       v-divider
-      field-date-select(:title="$t('settings.tstop')")
+      field-date-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
       v-divider
       field-stats-select
       v-divider
@@ -46,6 +46,7 @@ export default {
           title: widget.title,
           parameters: {
             duration: widget.parameters.duration,
+            tstop: widget.parameters.tstop,
           },
         },
       },
