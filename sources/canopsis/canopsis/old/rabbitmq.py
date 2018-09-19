@@ -85,7 +85,7 @@ class Amqp(Thread):
 
         # Event sent try count before event drop in case of connection problem
         if max_retries != 5:
-            self.logger.info(u'Custom retries value : {} {}'.format(
+            self.logger.info('Custom retries value : {} {}'.format(
                 max_retries,
                 type(max_retries)
             ))
@@ -105,6 +105,7 @@ class Amqp(Thread):
         self.exchanges = {}
 
         self.queues = {}
+        self.producers = None
 
         self.paused = False
 
@@ -119,7 +120,7 @@ class Amqp(Thread):
         for exchange_name in [
                 self.exchange_name, self.exchange_name_events,
                 self.exchange_name_alerts, self.exchange_name_incidents]:
-            self.logger.debug(u' + {0}'.format(exchange_name))
+            self.logger.debug(' + {}'.format(exchange_name))
             self.get_exchange(exchange_name)
 
         if auto_connect:
@@ -155,28 +156,29 @@ class Amqp(Thread):
 
                     except KombuSerializationError as exc:
                         self.logger.error(
-                            u"Kombu serialization error: invalid message received: {}".format(exc))
+                            "Kombu serialization error: invalid message "
+                            "received: {}".format(exc))
 
                     except timeout:
                         pass
 
                     except self.connection_errors as err:
                         self.logger.error(
-                            u"Connection error ! ({})".format(err)
+                            "Connection error ! ({})".format(err)
                         )
                         break
 
                     except KombuSerializationError as exc:
                         self.logger.error(
-                            u"Kombu serialization error: invalid message received: {}".format(exc))
+                            "Kombu serialization error: invalid message "
+                            "received: {}".format(exc))
 
                     except Exception as err:
-                        self.logger.error(u"Error: {} ({})".format(
+                        self.logger.error("Error: {} ({})".format(
                             err,
                             type(err)
                         ))
                         print_exc(file=stdout)
-                        reconnect = True
                         break
 
                 self.disconnect()
@@ -215,25 +217,24 @@ class Amqp(Thread):
                 self.connected = True
             except Exception as err:
                 self.conn.release()
-                self.logger.error(u"Impossible to connect ({})".format(err))
+                self.logger.error("Impossible to connect ({})".format(err))
 
             if self.connected:
                 self.logger.debug(" + Open channel")
                 try:
                     self.chan = self.conn.channel()
 
-                    self.logger.debug(
-                        "Channel openned. Ready to send messages")
+                    self.logger.info("Channel openned. Ready to send messages")
 
                     try:
                         # Declare exchange
                         self.logger.debug("Declare exchanges")
                         for exchange_name in self.exchanges:
-                            self.logger.debug(u" + {}".format(exchange_name))
+                            self.logger.debug(" + {}".format(exchange_name))
                             self.exchanges[exchange_name](self.chan).declare()
                     except Exception as err:
                         self.logger.error(
-                            u"Impossible to declare exchange ({})".format(err))
+                            "Impossible to declare exchange ({})".format(err))
 
                 except Exception as err:
                     self.logger.error(err)
@@ -273,7 +274,7 @@ class Amqp(Thread):
         if self.queues:
             self.logger.debug("Init queues")
             for queue_name in self.queues.keys():
-                self.logger.debug(u" + {}".format(queue_name))
+                self.logger.debug(" + {}".format(queue_name))
                 qsettings = self.queues[queue_name]
 
                 if not qsettings['queue']:
@@ -294,7 +295,7 @@ class Amqp(Thread):
                         routing_key = queue_name
 
                     self.logger.debug(
-                        u"exchange: '{}', exclusive: {},"
+                        "exchange: '{}', exclusive: {},"
                         " auto_delete: {},no_ack: {}"
                         .format(
                             qsettings['exchange_name'],
@@ -327,7 +328,7 @@ class Amqp(Thread):
                                 )
                             except Exception:
                                 self.logger.error(
-                                    u"You need upgrade your Kombu version ({})"
+                                    "You need upgrade your Kombu version ({})"
                                     .format(__version__)
                                 )
 
@@ -343,6 +344,8 @@ class Amqp(Thread):
 
             if self.on_ready:
                 self.on_ready()
+        else:
+            self.logger.info('Queue already inited')
 
     def add_queue(
         
@@ -367,6 +370,7 @@ class Amqp(Thread):
                 c_routing_keys = [routing_keys]
         else:
             c_routing_keys = routing_keys
+        # aka if rk is nor a list nor a basetring, leave it empty
 
         if not exchange_name:
             exchange_name = self.exchange_name
@@ -416,15 +420,17 @@ class Amqp(Thread):
 
                         Amqp._clean_msg_for_serialization(_msg)
 
+                        exchange = self.get_exchange(
+                            exchange_name.encode('utf-8'))
                         producer.publish(
                             _msg,
                             serializer=serializer,
                             compression=compression,
                             routing_key=routing_key,
-                            exchange=self.get_exchange(exchange_name.encode('utf-8'))
+                            exchange=exchange
                         )
 
-                        self.logger.debug(u'publish {} in exchange {}'.format(
+                        self.logger.debug('publish {} in exchange {}'.format(
                             routing_key,
                             exchange_name
                         ))
@@ -432,28 +438,32 @@ class Amqp(Thread):
                         operation_success = True
 
                     except AmqpStructError:
-                        self.logger.warning(u'Malformed message: routing key is too long. Cancelling message')
+                        self.logger.warning(
+                            'Malformed message: routing key is too long. '
+                            'Cancelling message')
                         return False
 
                     except Exception:
                         self.logger.error(
-                            u' + Impossible to send {}'.format(traceback.format_exc())
+                            ' + Impossible to send {}'
+                            .format(traceback.format_exc())
                         )
                         self.disconnect()
                         self.connect()
+                        self.init_queue(reconnect=False)
             else:
-                self.logger.error(u'Not connected ... try reconnecting')
+                self.logger.error('Not connected ... try reconnecting')
                 self.connect()
 
             if not operation_success:
                 # Event and it's information are buffered until next send retry
-                self.logger.info(u'Retry count {}'.format(
+                self.logger.info('Retry count {}'.format(
                     retries
                 ))
 
         if not operation_success:
             # Event and it's information are buffered until next send retry
-            self.logger.error(u'Too much retries for event {}, give up'.format(
+            self.logger.error('Too much retries for event {}, give up'.format(
                 routing_key
             ))
 
@@ -471,7 +481,7 @@ class Amqp(Thread):
             for queue_name in self.queues.keys():
                 if self.queues[queue_name]['consumer']:
                     self.logger.debug(
-                        u" + Cancel consumer on {}".format(queue_name)
+                        " + Cancel consumer on {}".format(queue_name)
                     )
                     try:
                         self.queues[queue_name]['consumer'].cancel()
@@ -489,6 +499,8 @@ class Amqp(Thread):
 
             self.cancel_queues()
 
+            self.producers[self.conn].force_close_all()
+
             for exchange in self.exchanges:
                 del exchange
             self.exchanges = {}
@@ -497,7 +509,7 @@ class Amqp(Thread):
                 pools.reset()
             except Exception as err:
                 self.logger.error(
-                    u"Impossible to reset kombu pools: {} ({})".format(
+                    "Impossible to reset kombu pools: {} ({})".format(
                         err, type(err)))
 
             try:
@@ -505,7 +517,7 @@ class Amqp(Thread):
                 del self.conn
             except Exception as err:
                 self.logger.error(
-                    u"Impossible to release connection: {} ({})".format(
+                    "Impossible to release connection: {} ({})".format(
                         err, type(err)))
 
             self.connected = False
@@ -518,7 +530,7 @@ class Amqp(Thread):
 
     def read_config(self, name):
 
-        filename = join(root_path, 'etc', u'{0}.conf'.format(name))
+        filename = join(root_path, 'etc', '{0}.conf'.format(name))
 
         import ConfigParser
         self.config = ConfigParser.RawConfigParser()
@@ -537,7 +549,7 @@ class Amqp(Thread):
 
         except Exception as err:
             self.logger.error(
-                u"Can't to load configurations ({}), use default ...".format(
+                "Can't to load configurations ({}), use default ...".format(
                     err
                 ))
 
