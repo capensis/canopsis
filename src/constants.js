@@ -131,10 +131,10 @@ export const ENTITY_STATUS_STYLES = {
 };
 
 export const WIDGET_TYPES = {
-  alarmList: 'listalarm',
-  context: 'crudcontext',
-  weather: 'serviceweather',
-  statsTable: 'statsTable',
+  alarmList: 'AlarmsList',
+  context: 'Context',
+  weather: 'ServiceWeather',
+  statsTable: 'StatsTable',
 };
 
 export const SIDE_BARS = {
