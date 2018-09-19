@@ -465,6 +465,8 @@ class Amqp(Thread):
 
             self.cancel_queues()
 
+            # Force producers closing to permit a clean reconnect after
+            # ... especially on timeout errors
             self.producers[self.conn].force_close_all()
 
             for exchange in self.exchanges:
