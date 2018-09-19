@@ -129,6 +129,13 @@ class Amqp(Thread):
         self.logger.debug("Object canamqp initialized")
 
     def run(self):
+
+        """
+        main thread loop
+        - connects to rabbit
+        - calls drain_events
+        - disconnects on error
+        """
         self.logger.debug("Start thread ...")
         reconnect = False
 
@@ -190,6 +197,12 @@ class Amqp(Thread):
         self.RUN = False
 
     def connect(self):
+        """
+        Create the connection
+        Inits the producers
+        Init the only channel
+        Declares exchanges
+        """
         if not self.connected:
             self.logger.info(
                 "Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
@@ -229,6 +242,13 @@ class Amqp(Thread):
             self.logger.debug("Already connected")
 
     def get_exchange(self, name):
+        """ 
+        Returns an exchange if stored in self.exchanges.
+        Otherwise, creates it and returns it
+
+        :param string name:  name of the exchange to get/create
+        :rtype: Exchange|None
+        """
         if name:
             try:
                 return self.exchanges[name]
@@ -244,6 +264,13 @@ class Amqp(Thread):
             return None
 
     def init_queue(self, reconnect=False):
+        """
+        Loads queue settings
+        Creates queues and attaches the same channel to each of them
+        Binds queues to exchange
+        Revives or creates consumers
+        calls consume
+        """
         if self.queues:
             self.logger.debug("Init queues")
             for queue_name in self.queues.keys():
@@ -321,6 +348,7 @@ class Amqp(Thread):
             self.logger.info('Queue already inited')
 
     def add_queue(
+        
             self,
             queue_name,
             routing_keys,
@@ -330,6 +358,10 @@ class Amqp(Thread):
             exclusive=False,
             auto_delete=True
     ):
+        """
+        Initializes the queue configuration
+        maps the callback on the queue
+        """
 
         c_routing_keys = []
 
@@ -366,6 +398,8 @@ class Amqp(Thread):
             content_encoding=None
     ):
         """
+        Tries to publish an event
+        In case of failure, tries to reconnect and retry until (self.max_retries)
         :returns: operation success status
         :rtype: bool
         """
