@@ -9,12 +9,17 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 - [Go]: New Action engine (backend only for now)
 
+## Canopsis 3.2.3 - Due date : 2018-09-17
+
+- [Email Connector]: handle base64 encoded parts
+- [Email Connector]: option which use redis to resend last known event on run
+- [Service weather]: Fix icons consistency between a watcher and his modal
+
 ## Canopsis 3.2.2 - Due date : 2018-09-12
 
 - [Go]: Fix che event enrichment with new entities
 - [Go]: Fix unused debug flag
 - [Python]: Fix pbehavior based desynchronisation on weather route
-
 
 ## Canopsis 3.2.1 - Due date : 2018-09-12
 
