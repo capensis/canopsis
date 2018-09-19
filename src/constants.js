@@ -237,15 +237,48 @@ export const DATETIME_FORMATS = {
 };
 
 export const STATS_TYPES = {
-  alarmsCreated: 'alarms_created',
-  alarmsResolved: 'alarms_resolved',
-  alarmsCanceled: 'alarm_canceled',
-  ackTimeSla: 'ack_time_sla',
-  resolveTimeSla: 'resolve_time_sla',
-  timeInState: 'time_in_state',
-  stateRate: 'state_rate',
-  mtbf: 'mtbf',
-  currentState: 'current_state',
-  ongoingAlarms: 'ongoing_alarms',
-  currentOngoingAlarms: 'current_ongoing_alarms',
+  alarmsCreated: {
+    value: 'alarms_created',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsResolved: {
+    value: 'alarms_resolved',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsCanceled: {
+    value: 'alarm_canceled',
+    options: ['recursive', 'states', 'authors'],
+  },
+  ackTimeSla: {
+    value: 'ack_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  resolveTimeSla: {
+    value: 'resolve_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  timeInState: {
+    value: 'time_in_state',
+    options: ['states'],
+  },
+  stateRate: {
+    value: 'state_rate',
+    options: ['states'],
+  },
+  mtbf: {
+    value: 'mtbf',
+    options: [],
+  },
+  currentState: {
+    value: 'current_state',
+    options: [],
+  },
+  ongoingAlarms: {
+    value: 'ongoing_alarms',
+    options: ['states'],
+  },
+  currentOngoingAlarms: {
+    value: 'current_ongoing_alarms',
+    options: ['states'],
+  },
 };

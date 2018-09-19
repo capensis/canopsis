@@ -1,7 +1,8 @@
 <template lang="pug">
   v-container(fluid)
-    v-btn(icon, @click="showSettings")
-      v-icon settings
+    v-layout(justify-end)
+      v-btn(icon, @click="showSettings")
+        v-icon settings
     v-data-table(
       :items="statsList",
       :headers="columns",
