@@ -1,39 +1,71 @@
+import get from 'lodash/get';
+import isUndefined from 'lodash/isUndefined';
+import isEmpty from 'lodash/isEmpty';
+
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
 /**
- * This function converts widget with type 'listalarm' to query Object
+ * WIDGET CONVERTERS
+ */
+
+/**
+ * This function converts widget.default_sort_column to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertDefaultSortColumnToQuery({ parameters }) {
+  const { sortColumn, sortOrder } = parameters;
+
+  if (sortColumn && sortOrder) {
+    return { sortKey: sortColumn, sortDir: sortOrder };
+  }
+
+  return { sortKey: null, sortDir: null };
+}
+
+/**
+ * This function converts widget with type 'AlarmsList' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
  */
 export function convertAlarmWidgetToQuery(widget) {
+  const {
+    displayOpenAlarms,
+    displayResolvedAlarms,
+    columnTranslations,
+    itemsPerPage,
+    mainFilter,
+  } = widget.parameters;
+
   const query = {
     page: 1,
+    limit: itemsPerPage || PAGINATION_LIMIT,
   };
 
-  const { default_sort_column: defaultSortColumn } = widget;
-
-  if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortKey = defaultSortColumn.property.startsWith('v.') ?
-      defaultSortColumn.property : `v.${defaultSortColumn.property}`;
-
-    query.sortDir = defaultSortColumn.direction;
-  } else {
-    query.sortKey = null;
-    query.sortDir = null;
+  if (!isEmpty(mainFilter)) {
+    query.filter = mainFilter.filter;
   }
 
-  if (widget.alarms_state_filter) {
-    query.opened = Boolean(widget.alarms_state_filter.opened);
-    query.resolved = Boolean(widget.alarms_state_filter.resolved);
+  if (!isUndefined(displayOpenAlarms)) {
+    query.opened = displayOpenAlarms;
   }
 
-  return query;
+  if (!isUndefined(displayResolvedAlarms)) {
+    query.resolved = displayResolvedAlarms;
+  }
+
+  if (columnTranslations) {
+    query.active_columns = columnTranslations.map(v => v.value);
+  }
+
+  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
 }
 
 /**
- * This function converts widget with type 'crudcontext' to query Object
+ * This function converts widget with type 'Context' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
@@ -41,45 +73,51 @@ export function convertAlarmWidgetToQuery(widget) {
 export function convertContextWidgetToQuery(widget) {
   const query = {
     page: 1,
+    limit: get(widget, 'parameters.itemsPerPage', PAGINATION_LIMIT),
+    selectedTypes: get(widget, 'parameters.selectedTypes', []),
   };
 
-  const { default_sort_column: defaultSortColumn } = widget;
+  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
+}
 
-  if (defaultSortColumn && defaultSortColumn.property) {
-    query.sortKey = defaultSortColumn.property;
-    query.sortDir = defaultSortColumn.direction;
-  } else {
-    query.sortKey = null;
-    query.sortDir = null;
+/**
+ * USER_PREFERENCE CONVERTERS
+ */
+
+/**
+ * This function converts userPreference with widgetXtype 'AlarmsList' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{}}
+ */
+export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
+  const query = {
+    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
+  };
+
+  if (!isEmpty(widgetPreferences.mainFilter)) {
+    query.filter = widgetPreferences.mainFilter.filter;
   }
 
   return query;
 }
 
 /**
- * This function converts userPreference with widgetXtype 'listalarm' to query Object
+ * This function converts userPreference with widgetXtype 'Context' to query Object
  *
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertAlarmUserPreferenceToQuery(userPreference) {
+export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   return {
-    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
+    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
+    selectedTypes: get(widgetPreferences, 'selectedTypes', []),
   };
 }
 
 /**
- * This function converts userPreference with widgetXtype 'crudcontext' to query Object
- *
- * @param {Object} userPreference
- * @returns {{}}
+ * MAIN CONVERTERS
  */
-export function convertContextUserPreferenceToQuery(userPreference) {
-  return {
-    limit: userPreference.widget_preferences.itemsPerPage || PAGINATION_LIMIT,
-    selectedTypes: userPreference.widget_preferences.selectedTypes || [],
-  };
-}
 
 /**
  * This function converts userPreference to query Object
@@ -105,7 +143,7 @@ export function convertUserPreferenceToQuery(userPreference) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.xtype) {
+  switch (widget.type) {
     case WIDGET_TYPES.alarmList:
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:

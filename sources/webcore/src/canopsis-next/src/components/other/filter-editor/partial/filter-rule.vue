@@ -62,6 +62,10 @@ import formMixin from '@/mixins/form';
  */
 export default {
   mixins: [formMixin],
+  model: {
+    prop: 'rule',
+    event: 'update:rule',
+  },
   props: {
     rule: {
       type: Object,
@@ -77,11 +81,6 @@ export default {
         return Object.values(FILTER_OPERATORS);
       },
     },
-  },
-  data() {
-    return {
-      formKey: 'rule',
-    };
   },
   computed: {
     isShownTextField() {

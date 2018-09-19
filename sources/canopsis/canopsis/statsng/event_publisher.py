@@ -72,7 +72,8 @@ class StatEventPublisher(object):
                                      timestamp,
                                      counter_name,
                                      entity,
-                                     alarm):
+                                     alarm,
+                                     author=None):
         """
         Publish a statcounterinc event on amqp.
 
@@ -80,6 +81,8 @@ class StatEventPublisher(object):
         :param str counter_name: the name of the counter to increment
         :param dict entity: the entity
         :param dict alarm: the alarm
+        :param Optional[str] author: the author of the event that triggered the
+            statistic event.
         """
         if not self.send_events:
             return
@@ -106,6 +109,7 @@ class StatEventPublisher(object):
             component=component,
             resource=resource,
             timestamp=timestamp,
+            author=author,
             counter_name=counter_name,
             alarm=alarm,
             entity=entity)
@@ -117,7 +121,8 @@ class StatEventPublisher(object):
                                    duration_name,
                                    duration_value,
                                    entity,
-                                   alarm):
+                                   alarm,
+                                   author=None):
         """
         Publish a statduration event on amqp.
 
@@ -126,6 +131,8 @@ class StatEventPublisher(object):
         :param str duration_value: the value of the duration
         :param dict entity: the entity
         :param dict alarm: the alarm
+        :param Optional[str] author: the author of the event that triggered the
+            statistic event.
         """
         if not self.send_events:
             return
@@ -152,6 +159,7 @@ class StatEventPublisher(object):
             component=component,
             resource=resource,
             timestamp=timestamp,
+            author=author,
             duration_name=duration_name,
             duration=duration_value,
             alarm=alarm,

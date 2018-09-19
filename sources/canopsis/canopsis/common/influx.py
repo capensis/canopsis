@@ -21,7 +21,7 @@
 from __future__ import unicode_literals
 import os
 
-from influxdb import InfluxDBClient
+from influxdb import InfluxDBClient as Client
 from influxdb.exceptions import InfluxDBClientError
 
 from canopsis.common import root_path
@@ -32,6 +32,11 @@ INFLUXDB_CONF_PATH = 'etc/influx/storage.conf'
 INFLUXDB_CONF_SECTION = 'DATABASE'
 
 SECONDS = 1000000000
+
+# This string contains the special characters that need to be escaped in a go
+# regexp:
+# https://github.com/golang/go/blob/c5d38b896df504e3354d7a27f7ad86fa9661ce6b/src/regexp/regexp.go#L628
+REGEX_SPECIAL_CHARS = '\.+*?()|[]{}^$'
 
 
 class InfluxDBOptions(object):
@@ -56,84 +61,148 @@ class InfluxDBOptions(object):
     udp_port = 'port'
 
 
-def get_influxdb_client(conf_path=INFLUXDB_CONF_PATH,
-                        conf_section=INFLUXDB_CONF_SECTION):
+class InfluxDBClient(Client):
     """
-    Read the influxdb database's configuration from conf_path, and return an
-    InfluxDBClient for this database.
-
-    If a database name is specified in the configuration file and this database
-    does not exist, it will be automatically created.
-
-    :param str conf_path: the path of the file containing the database
-    configuration.
-    :param str conf_section: the section of the ini file containing the
-    database configuration.
-    :rtype: InfluxDBClient
+    This class is a wrapper around influxdb.InfluxDBClient that provides
+    additional functionalities (initialization from configuration, continuous
+    queries).
     """
-    influxdb_client_args = {}
+    def __init__(self, logger, **kwargs):
+        self.logger = logger
+        self.database = kwargs.get('database')
+        super(InfluxDBClient, self).__init__(**kwargs)
 
-    cfg = Configuration.load(
-        os.path.join(root_path, conf_path), Ini
-    ).get(conf_section, {})
+    @staticmethod
+    def from_configuration(logger,
+                           conf_path=INFLUXDB_CONF_PATH,
+                           conf_section=INFLUXDB_CONF_SECTION):
+        """
+        Read the influxdb database's configuration from conf_path, and return
+        an InfluxDBClient for this database.
 
-    if InfluxDBOptions.host in cfg:
-        influxdb_client_args['host'] = cfg[InfluxDBOptions.host]
+        If a database name is specified in the configuration file and this
+        database does not exist, it will be automatically created.
 
-    if InfluxDBOptions.port in cfg:
-        influxdb_client_args['port'] = int(cfg[InfluxDBOptions.port])
+        :param str conf_path: the path of the file containing the database
+            configuration.
+        :param str conf_section: the section of the ini file containing the
+            database configuration.
+        :rtype: InfluxDBClient
+        """
+        influxdb_client_args = {}
 
-    if InfluxDBOptions.username in cfg:
-        influxdb_client_args['username'] = cfg[InfluxDBOptions.username]
+        cfg = Configuration.load(
+            os.path.join(root_path, conf_path), Ini
+        ).get(conf_section, {})
 
-    if InfluxDBOptions.password in cfg:
-        influxdb_client_args['password'] = cfg[InfluxDBOptions.password]
+        if InfluxDBOptions.host in cfg:
+            influxdb_client_args['host'] = cfg[InfluxDBOptions.host]
 
-    if InfluxDBOptions.database in cfg:
-        influxdb_client_args['database'] = cfg[InfluxDBOptions.database]
-    else:
-        raise RuntimeError(
-            "The {} option is required.".format(InfluxDBOptions.database))
+        if InfluxDBOptions.port in cfg:
+            influxdb_client_args['port'] = int(cfg[InfluxDBOptions.port])
 
-    if InfluxDBOptions.ssl in cfg:
-        influxdb_client_args['ssl'] = cfg_to_bool(cfg[InfluxDBOptions.ssl])
+        if InfluxDBOptions.username in cfg:
+            influxdb_client_args['username'] = cfg[InfluxDBOptions.username]
 
-    if InfluxDBOptions.verify_ssl in cfg:
-        influxdb_client_args['verify_ssl'] = cfg_to_bool(
-            cfg[InfluxDBOptions.verify_ssl])
+        if InfluxDBOptions.password in cfg:
+            influxdb_client_args['password'] = cfg[InfluxDBOptions.password]
 
-    if InfluxDBOptions.timeout in cfg:
-        influxdb_client_args['timeout'] = int(cfg[InfluxDBOptions.timeout])
+        if InfluxDBOptions.database in cfg:
+            influxdb_client_args['database'] = cfg[InfluxDBOptions.database]
+        else:
+            raise RuntimeError(
+                "The {} option is required.".format(InfluxDBOptions.database))
 
-    if InfluxDBOptions.retries in cfg:
-        influxdb_client_args['retries'] = int(cfg[InfluxDBOptions.retries])
+        if InfluxDBOptions.ssl in cfg:
+            influxdb_client_args['ssl'] = cfg_to_bool(cfg[InfluxDBOptions.ssl])
 
-    if InfluxDBOptions.use_udp in cfg:
-        influxdb_client_args['use_udp'] = cfg_to_bool(
-            cfg[InfluxDBOptions.use_udp])
+        if InfluxDBOptions.verify_ssl in cfg:
+            influxdb_client_args['verify_ssl'] = cfg_to_bool(
+                cfg[InfluxDBOptions.verify_ssl])
 
-    if InfluxDBOptions.udp_port in cfg:
-        influxdb_client_args['udp_port'] = int(cfg[InfluxDBOptions.udp_port])
+        if InfluxDBOptions.timeout in cfg:
+            influxdb_client_args['timeout'] = int(cfg[InfluxDBOptions.timeout])
 
-    client = InfluxDBClient(**influxdb_client_args)
+        if InfluxDBOptions.retries in cfg:
+            influxdb_client_args['retries'] = int(cfg[InfluxDBOptions.retries])
 
-    return client
+        if InfluxDBOptions.use_udp in cfg:
+            influxdb_client_args['use_udp'] = cfg_to_bool(
+                cfg[InfluxDBOptions.use_udp])
 
+        if InfluxDBOptions.udp_port in cfg:
+            influxdb_client_args['udp_port'] = int(cfg[
+                InfluxDBOptions.udp_port])
 
-def encode_tags(tags):
-    """
-    Encode a point's tags in utf-8.
+        return InfluxDBClient(logger, **influxdb_client_args)
 
-    This is required because of a bug in influxdb-python<=2.12.0.
-    """
-    encoded_tags = {}
-    for key, value in tags.items():
-        key = key.encode('utf-8')
-        if value:
-            value = value.encode('utf-8')
-        encoded_tags[key] = value
+    def create_continuous_query(self,
+                                name,
+                                query,
+                                resample_every=None,
+                                resample_for=None,
+                                overwrite=False):
+        """
+        Create a continuous query.
 
-    return encoded_tags
+        See https://docs.influxdata.com/influxdb/v1.6/query_language/continuous_queries
+        for details on continuous queries.
+
+        :param str name: The name of the continous query
+        :param str query: The InfluxQL query
+        :param str resample_every:
+        :param str resample_for:
+        :param bool overwrite: True to overwrite the query if it already exists
+        :rtype: ResultSet
+        """
+        resample_statement = ''
+        if resample_every is not None and resample_for is not None:
+            resample_statement = 'RESAMPLE EVERY {} FOR {}'.format(
+                resample_every, resample_for)
+        elif resample_every is not None or resample_for is not None:
+            raise ValueError(
+                'resample_every and resample_for should either be both defined '
+                'or both undefined.')
+
+        creation_query = (
+            "CREATE CONTINUOUS QUERY {name} ON {database} "
+            "{resample_statement} "
+            "BEGIN "
+            "{query} "
+            "END"
+        ).format(
+            name=quote_ident(name),
+            database=quote_ident(self.database),
+            resample_statement=resample_statement,
+            query=query)
+
+        try:
+            return self.query(creation_query, epoch='s')
+        except InfluxDBClientError as error:
+            # I could not find a better way to catch this specific error
+            if (error.content == 'continuous query already exists'
+                and overwrite):
+                # The continuous query already exists, recreate it.
+                self.logger.info(
+                    'A different continuous query already exists with this '
+                    'name, overwriting it.')
+                self.drop_continuous_query(name)
+                return self.query(creation_query, epoch='s')
+            else:
+                # This is a different error, raise it.
+                raise
+
+    def drop_continuous_query(self, name):
+        """
+        Drop a continuous query.
+
+        :param str name: The name of the continuous query.
+        :rtype: ResultSet
+        """
+        query = 'DROP CONTINUOUS QUERY {name} ON {database}'.format(
+            name=quote_ident(name),
+            database=quote_ident(self.database))
+        return self.query(query)
 
 
 # The two following functions are defined in the influx.line_protocol module of
@@ -169,5 +238,17 @@ def quote_regex(value):
     :param str value: An influxdb regex.
     :rtype: str
     """
-    return "/{}/".format(value.replace("\\", "\\\\")
-                              .replace("/", "\\/"))
+    return "/{}/".format(value.replace("/", "\\/"))
+
+
+def escape_regex(pattern):
+    """
+    Escape the special characters in the pattern.
+
+    This function does the same thing as re.escape, but for go regexp.
+    """
+    s = list(pattern)
+    for i, c in enumerate(pattern):
+        if c in REGEX_SPECIAL_CHARS:
+            s[i] = "\\" + c
+    return pattern[:0].join(s)

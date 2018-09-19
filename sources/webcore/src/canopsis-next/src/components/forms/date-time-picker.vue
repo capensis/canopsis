@@ -20,11 +20,11 @@
       :data-vv-name="name",
       data-vv-validate-on="none",
       :append-icon="clearable ? 'close' : ''",
-      :append-icon-cb="clear"
+      @click:append="clear"
       )
-    .picker__title.primary.text-xs-center
+    .v-picker__title.primary.text-xs-center
       span.subheading {{ dateTimeString || '--/--/---- --:--' }}
-    v-tabs(v-model="activeTab", centered)
+    v-tabs(v-model="activeTab", centered, grow)
       v-tab(href="#date")
         v-icon date_range
       v-tab(href="#time")
@@ -44,7 +44,7 @@
         no-title
         )
     .text-xs-center.dropdown-footer
-      v-btn(depressed, color="primary", @click.prevent="submit") Ok
+      v-btn(@click.prevent="submit", color="primary", depressed) Ok
 </template>
 
 <script>
@@ -140,22 +140,26 @@ export default {
 
 <style lang="scss">
   .date-time-picker {
-    .tabs__container--centered .tabs__div,
-    .tabs__container--fixed-tabs .tabs__div,
-    .tabs__container--icons-and-text .tabs__div {
-      min-width: 140px;
+    .v-tabs__container--centered .v-tabs__div,
+    .v-tabs__container--fixed-tabs .v-tabs__div,
+    .v-tabs__container--icons-and-text .v-tabs__div {
+      min-width: 145px;
     }
 
-    .menu__content {
+    .v-menu__content {
       max-width: 100%;
     }
 
-    .dropdown-footer, &.menu__content {
+    .v-dropdown-footer, &.v-menu__content, .v-tabs__items {
       background-color: #fff;
     }
 
-    .date-picker-table {
+    .v-date-picker-table {
       height: 246px;
+    }
+
+    .v-card {
+      box-shadow: none;
     }
   }
 </style>

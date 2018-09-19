@@ -20,7 +20,8 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import SECONDS, quote_ident
+from canopsis.common.influx import SECONDS, quote_ident, quote_regex,\
+    escape_regex
 
 
 class SelectColumn(object):
@@ -61,13 +62,18 @@ class SelectQuery(object):
     >>> print(query.build())
     SELECT 'value' FROM 'measurement' WHERE type = "watcher" GROUP_BY 'id'
     ```
+
+    :param Union[str, SelectQuery] from_series: The name of a measurement or a
+        subquery.
     """
-    def __init__(self, measurement):
-        self.measurement = measurement
+    def __init__(self, from_series):
+        self.from_series = from_series
+        self.into_measurement = None
         self.select_columns = []
         self.group_by_tags = []
         self.group_by_time_interval = None
         self.group_by_time_offset = None
+        self.group_by_time_fill = None
         self.where_conditions = []
 
     def build(self):
@@ -84,6 +90,18 @@ class SelectQuery(object):
         select_columns = ', '.join(
             str(select_column)
             for select_column in self.select_columns)
+
+        # Generate from
+        if isinstance(self.from_series, SelectQuery):
+            from_series = '({})'.format(self.from_series.build())
+        else:
+            from_series = quote_ident(self.from_series)
+
+        # Generate into statement
+        into_statement = ''
+        if self.into_measurement is not None:
+            into_statement = 'INTO {}'.format(
+                quote_ident(self.into_measurement))
 
         # Generate where statement
         where_statement = ''
@@ -112,16 +130,25 @@ class SelectQuery(object):
             group_by_statement = 'GROUP BY {}'.format(
                 ', '.join(group_by_tags))
 
+        fill_statement = ''
+        if not (self.group_by_time_interval is None
+                or self.group_by_time_fill is None):
+            fill_statement = 'fill({})'.format(self.group_by_time_fill)
+
         return (
             "SELECT {select_columns} "
-            "FROM {measurement} "
+            "{into_statement} "
+            "FROM {from_series} "
             "{where_statement} "
             "{group_by_statement}"
+            "{fill_statement}"
         ).format(
             select_columns=select_columns,
-            measurement=quote_ident(self.measurement),
+            into_statement=into_statement,
+            from_series=from_series,
             where_statement=where_statement,
-            group_by_statement=group_by_statement)
+            group_by_statement=group_by_statement,
+            fill_statement=fill_statement)
 
     def select(self, key, function=None, alias=None):
         """
@@ -150,7 +177,16 @@ class SelectQuery(object):
         self.select_columns = ['*']
         return self
 
-    def group_by_time(self, interval, offset=None):
+    def into(self, measurement):
+        """
+        Add an INTO statement.
+
+        :param str measurement: The name of the measurement
+        """
+        self.into_measurement = measurement
+        return self
+
+    def group_by_time(self, interval, offset=None, fill=None):
         """
         Add a GROUP BY time(...) statement.
 
@@ -162,9 +198,12 @@ class SelectQuery(object):
             duration of the interval
         :param Optional[str] interval: An influxdb duration literal that shifts
             influxdb's time boundaries
+        :param Optional[str] fill: An influxdb fill option (linear, none, null,
+            previous or a number)
         """
         self.group_by_time_interval = interval
         self.group_by_time_offset = offset
+        self.group_by_time_fill = fill
         return self
 
     def group_by(self, *tags):
@@ -187,6 +226,30 @@ class SelectQuery(object):
                 self.where_conditions.append(condition)
         return self
 
+    def where_in(self, tag, values):
+        """
+        Add a condition to the WHERE statement checking that the value of a tag
+        is in a list of values.
+
+        :param str tag: The name of the tag
+        :param List[str] values: A list of values the tag should be in.
+        """
+        if not values:
+            # The list of values is empty. No value should match this
+            # condition.
+            return self.where('false')
+
+        # Build a regular expression checking that the tag matches one of the
+        # values.
+        regex = '^({})$'.format('|'.join(
+            escape_regex(value)
+            for value in values
+        ))
+        condition = '{} =~ {}'.format(
+            quote_ident(tag),
+            quote_regex(regex))
+        return self.where(condition)
+
     def after(self, timestamp):
         """
         Add a condition `time >= timestamp` to the WHERE statement.
@@ -208,3 +271,24 @@ class SelectQuery(object):
             return self.where('time < {:.0f}'.format(timestamp * SECONDS))
 
         return self
+
+    def copy(self):
+        """
+        Return a copy of the SelectQuery.
+
+        :rtype: SelectQuery
+        """
+        from_series = self.from_series
+        if isinstance(from_series, SelectQuery):
+            from_series = from_series.copy()
+
+        copy = SelectQuery(from_series)
+        copy.into_measurement = self.into_measurement
+        copy.select_columns = self.select_columns[:]
+        copy.group_by_tags = self.group_by_tags[:]
+        copy.group_by_time_interval = self.group_by_time_interval
+        copy.group_by_time_offset = self.group_by_time_offset
+        copy.group_by_time_fill = self.group_by_time_fill
+        copy.where_conditions = self.where_conditions[:]
+
+        return copy

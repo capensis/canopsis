@@ -548,9 +548,17 @@ class PBehaviorManager(object):
             return False
 
         tz = pytz.UTC
-        dtts = fromts(timestamp).replace(tzinfo=tz)
         dttstart = fromts(tstart).replace(tzinfo=tz)
         dttstop = fromts(tstop).replace(tzinfo=tz)
+
+        pbh_duration = tstop - tstart
+
+        dtts = fromts(timestamp).replace(tzinfo=tz)
+        # ddts_offset contains the current timestamp minus the duration of
+        # the pbhevior, so the computation of the rrules occurences
+        # will include the running occurence. Thus the current pbehavior
+        # will be detected.
+        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
 
         dt_list = [dttstart, dttstop]
         rrule = pbehavior['rrule']
@@ -560,7 +568,7 @@ class PBehaviorManager(object):
             # a complementary date (missing_date) is computed and added
             # at index 0 of the generated dt_list to ensure we manage
             # dates at boundaries.
-            dt_tstart_date = dtts.date()
+            dt_tstart_date = dtts_offset.date()
             dt_tstart_time = dttstart.time().replace(tzinfo=tz)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
 
@@ -573,18 +581,18 @@ class PBehaviorManager(object):
                 )
             )
 
-
             # compute the "missing dates": dates before the rrule started to
             # generate dates so we can check for a pbehavior in the past.
-            multiply = 1
-            while True:
-                missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
-                dt_list.insert(0, missing_date)
+            if len(dt_list) >= 2:
+                multiply = 1
+                while True:
+                    missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
+                    dt_list.insert(0, missing_date)
 
-                if missing_date < dtts:
-                    break
+                    if missing_date < dtts:
+                        break
 
-                multiply += 1
+                    multiply += 1
 
             delta = dttstop - dttstart
 
@@ -603,7 +611,7 @@ class PBehaviorManager(object):
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
-
+        !!!! DEPRECATED !!!!
         :param str entity_id:
         :param list list_in: list of pbehavior names
         :param list list_out: list of pbehavior names
@@ -853,7 +861,7 @@ class PBehaviorManager(object):
                     timegm(interval_end.timetuple())
                 )
 
-    def get_intervals_with_pbehaviors(self, after, before, entity_id):
+    def get_intervals_with_pbehaviors_by_eid(self, after, before, entity_id):
         """
         Yields intervals between after and before with a boolean indicating if
         a pbehavior affects the entity during this interval.
@@ -869,10 +877,28 @@ class PBehaviorManager(object):
         :param str entity_id: the id of the entity
         :rtype: Iterator[Tuple[int, int, bool]]
         """
+        return self.get_intervals_with_pbehaviors(
+            after, before, self.get_pbehaviors(entity_id))
+
+    def get_intervals_with_pbehaviors(self, after, before, pbehaviors):
+        """
+        Yields intervals between after and before with a boolean indicating if
+        one of the pbehaviors is active during this interval.
+
+        The intervals are returned as a list of tuples (start, end, pbehavior),
+        ordered chronologically. start and end are UTC timestamps, and are
+        always between after and before, pbehavior is a boolean indicating if a
+        pbehavior affects the entity during this interval. None of the
+        intervals overlap.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param List[Dict[str, Any]] pbehaviors: a list of pbehabiors
+        :rtype: Iterator[Tuple[int, int, bool]]
+        """
         intervals = []
 
         # Get all the intervals where a pbehavior is active
-        pbehaviors = self.get_pbehaviors(entity_id)
         for pbehavior in pbehaviors:
             for interval in self.get_active_intervals(after, before, pbehavior):
                 intervals.append(interval)
@@ -929,3 +955,13 @@ class PBehaviorManager(object):
             before,
             False
         )
+
+    def get_enabled_pbehaviors(self):
+        """
+        Yields all the enabled pbehaviors.
+
+        :rtype: Iterator[Dict[str, Any]]
+        """
+        return self.pb_storage._backend.find({
+            PBehavior.ENABLED: True
+        })

@@ -5,23 +5,23 @@
 
 <script>
 import Handlebars from 'handlebars';
-import getProp from 'lodash/get';
+import get from 'lodash/get';
 
-import popupComponentMixin from '@/mixins/popup';
+import popupMixin from '@/mixins/popup';
 
 /**
  * Button to display info popup
  *
- * @prop {String} columnName - Name of the column
+ * @prop {String} column - Name of the column
  * @prop {Object} alarm - Object representing the alarm
  * @prop {Object} widget - Object representing the widget
  */
 export default {
   mixins: [
-    popupComponentMixin,
+    popupMixin,
   ],
   props: {
-    columnName: {
+    column: {
       type: String,
       required: true,
     },
@@ -36,9 +36,9 @@ export default {
   },
   computed: {
     popupData() {
-      const popups = getProp(this.widget, 'popup', []);
+      const popups = get(this.widget, 'popup', []);
 
-      return popups.find(popup => popup.column === this.columnName);
+      return popups.find(popup => popup.column === this.column);
     },
     textContent() {
       const template = Handlebars.compile(this.popupData.template);

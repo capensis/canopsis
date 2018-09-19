@@ -58,7 +58,6 @@ class StatCounters(FastEnum):
     """
     alarms_created = 'alarms_created'
     alarms_canceled = 'alarms_canceled'
-    alarms_impacting = 'alarms_impacting'
     alarms_resolved = 'alarms_resolved'
     downtimes = 'downtimes'
 

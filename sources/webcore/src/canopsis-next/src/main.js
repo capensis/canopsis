@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import VueMoment from 'vue-moment';
 import VeeValidate from 'vee-validate';
 import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
@@ -17,7 +16,6 @@ import filters from '@/filters';
 
 Vue.use(filters);
 Vue.use(Vuetify);
-Vue.use(VueMoment);
 
 Vue.use(VueMq, {
   breakpoints: MEDIA_QUERIES_BREAKPOINTS,
@@ -33,8 +31,6 @@ Vue.use(VeeValidate, {
 });
 
 Vue.config.productionTip = false;
-
-Vue.prototype.$eventHub = new Vue();
 
 new Vue({
   router,

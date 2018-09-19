@@ -14,6 +14,8 @@
 
 
 <script>
+import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+
 /**
  * Component showing an action icon
  *
@@ -42,44 +44,48 @@ export default {
     return {
       actionsMap: {
         ack: {
-          icon: 'playlist_add_check',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
         },
         fastAck: {
-          icon: 'check',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
         },
         ackRemove: {
-          icon: 'block',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
           title: this.$t('alarmList.actions.titles.ackRemove'),
         },
         pbehavior: {
-          icon: 'pause',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
         },
         snooze: {
-          icon: 'alarm',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
           title: this.$t('alarmList.actions.titles.snooze'),
         },
         pbehaviorList: {
-          icon: 'list',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
           title: this.$t('alarmList.actions.titles.pbehaviorList'),
         },
         declareTicket: {
-          icon: 'local_play',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
           title: this.$t('alarmList.actions.titles.declareTicket'),
         },
         associateTicket: {
-          icon: 'pin_drop',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           title: this.$t('alarmList.actions.titles.associateTicket'),
         },
         cancel: {
-          icon: 'delete',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
         },
         changeState: {
-          icon: 'report_problem',
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
           title: this.$t('alarmList.actions.titles.changeState'),
+        },
+        moreInfos: {
+          icon: 'more_horiz',
+          title: this.$t('alarmList.actions.titles.moreInfos'),
         },
       },
     };

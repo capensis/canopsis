@@ -5,7 +5,6 @@ import Pagination from '@/components/tables/pagination.vue';
 import queryMixin from '@/mixins/query';
 import dateIntervals from '@/helpers/date-intervals';
 import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
-import { WIDGET_TYPES } from '@/constants';
 
 /**
  * @mixin Add query logic
@@ -18,10 +17,10 @@ export default {
   computed: {
     query: {
       get() {
-        return this.getQueryById(this.widget.id);
+        return this.getQueryById(this.widget._id);
       },
       set(query) {
-        return this.updateQuery({ id: this.widget.id, query });
+        return this.updateQuery({ id: this.widget._id, query });
       },
     },
 
@@ -53,7 +52,7 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget.id });
+    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
 
     this.query = {
       ...this.query,
@@ -94,17 +93,6 @@ export default {
       query.skip = ((page - 1) * this.query.limit) || 0;
 
       return query;
-    },
-    fetchList() {
-      const fetchListMethodsMap = {
-        [WIDGET_TYPES.context]: 'fetchContextEntitiesList',
-        [WIDGET_TYPES.alarmList]: 'fetchAlarmsList',
-      };
-
-      this[fetchListMethodsMap[this.widget.xtype]]({
-        widgetId: this.widget.id,
-        params: this.getQuery(),
-      });
     },
   },
 };

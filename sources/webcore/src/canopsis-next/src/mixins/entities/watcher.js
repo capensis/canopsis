@@ -13,10 +13,10 @@ export default {
       getWatcher: 'getItem',
     }),
     watchers() {
-      return this.getWatchersListByWidgetId(this.widget.id);
+      return this.getWatchersListByWidgetId(this.widget._id);
     },
     watchersPending() {
-      return this.getWatchersPendingByWidgetId(this.widget.id);
+      return this.getWatchersPendingByWidgetId(this.widget._id);
     },
   },
   methods: {
