@@ -48,4 +48,3 @@ The following software versions have been tested to play nice with Canopsis:
 |Gunicorn  | 19.7.1       | 19.7.1            |
 |HAProxy   | 1.5.18       | 1.5.18            |
 
-
