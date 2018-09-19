@@ -7,10 +7,9 @@ export const ENTITIES_TYPES = {
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
-  view: 'view',
-  viewV3: 'viewV3',
   group: 'group',
-  widgetWrapper: 'widgetWrapper',
+  view: 'view',
+  viewRow: 'viewRow',
   widget: 'widget',
   stat: 'stat',
 };
@@ -135,7 +134,6 @@ export const WIDGET_TYPES = {
   alarmList: 'listalarm',
   context: 'crudcontext',
   weather: 'serviceweather',
-  widgetWrapper: 'widgetwrapper',
   statsTable: 'statsTable',
 };
 

@@ -198,7 +198,7 @@ export default {
     fetchList() {
       if (this.hasColumns) {
         this.fetchContextEntitiesList({
-          widgetId: this.widget.id,
+          widgetId: this.widget._id,
           params: this.getQuery(),
         });
       }

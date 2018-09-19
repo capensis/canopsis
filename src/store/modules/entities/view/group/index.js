@@ -1,7 +1,7 @@
+import i18n from '@/i18n';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
-import i18n from '@/i18n';
 import { groupSchema } from '@/store/schemas';
 
 export const types = {
@@ -30,12 +30,12 @@ export default {
   },
   actions: {
     create(context, { data } = {}) {
-      return request.post(API_ROUTES.viewV3Group, data);
+      return request.post(API_ROUTES.viewGroup, data);
     },
     async fetchList({ commit, dispatch }) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
-          route: API_ROUTES.viewV3,
+          route: API_ROUTES.view,
           schema: [groupSchema],
           dataPreparer: d => d.groups,
         }, { root: true });

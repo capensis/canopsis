@@ -34,23 +34,17 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
   idAttribute: '_id',
 });
 
-export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget);
+export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, { idAttribute: '_id' });
 
-export const widgetWrapperSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper, {
-  widget: widgetSchema,
-});
-
-widgetSchema.define({ items: [widgetWrapperSchema] });
+export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
+  widgets: [widgetSchema],
+}, { idAttribute: '_id' });
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
-  containerwidget: {
-    items: [widgetWrapperSchema],
-  },
-});
+  rows: [viewRowSchema],
+}, { idAttribute: '_id' });
 
-export const viewV3Schema = new schema.Entity(ENTITIES_TYPES.viewV3, {}, { idAttribute: '_id' });
-
-export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, { views: [viewV3Schema] }, {
+export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, { views: [viewSchema] }, {
   idAttribute: 'name',
 });
 
@@ -63,10 +57,9 @@ export default {
   [ENTITIES_TYPES.watcherEntity]: watcherEntitySchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
-  [ENTITIES_TYPES.view]: viewSchema,
-  [ENTITIES_TYPES.viewV3]: viewV3Schema,
   [ENTITIES_TYPES.group]: groupSchema,
-  [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
+  [ENTITIES_TYPES.view]: viewSchema,
+  [ENTITIES_TYPES.viewRow]: viewRowSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.stat]: statSchema,
 };

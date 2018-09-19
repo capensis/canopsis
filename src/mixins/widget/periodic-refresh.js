@@ -5,7 +5,7 @@ export default {
     };
   },
   watch: {
-    'widget.periodicRefresh': {
+    'widget.parameters.periodicRefresh': {
       immediate: true,
       handler(value, oldValue) {
         const periodicRefresh = value || {};

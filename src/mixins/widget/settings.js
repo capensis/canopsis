@@ -1,6 +1,5 @@
 import queryMixin from '@/mixins/query';
 import sideBarMixins from '@/mixins/side-bar/side-bar';
-import entitiesWidgetMixin from '@/mixins/entities/widget';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
@@ -15,7 +14,6 @@ export default {
   mixins: [
     queryMixin,
     sideBarMixins,
-    entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
   ],
   computed: {
@@ -62,7 +60,7 @@ export default {
         await Promise.all(actions);
 
         this.mergeQuery({
-          id: widget.id,
+          id: widget._id,
           query: {
             ...convertWidgetToQuery(widget),
             ...convertUserPreferenceToQuery(userPreference),

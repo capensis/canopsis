@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('viewV3/group');
+const { mapGetters, mapActions } = createNamespacedHelpers('view/group');
 
 /**
  * @mixin Helpers for the view entity

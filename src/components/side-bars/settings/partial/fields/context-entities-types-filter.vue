@@ -1,6 +1,6 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{$t('settings.contextTypeOfEntities.title')}}
+    v-list-tile(slot="activator") {{ $t('settings.contextTypeOfEntities.title') }}
     v-container
       v-checkbox(
       v-for="(entitiesType, index) in entitiesTypes",
