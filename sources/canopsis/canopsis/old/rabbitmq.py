@@ -338,7 +338,7 @@ class Amqp(Thread):
                 c_routing_keys = [routing_keys]
         else:
             c_routing_keys = routing_keys
-        # aka if rk is nor a list nor a basetring, use it anyway !
+        # aka if rk is nor a list nor a basetring, leave it empty
 
         if not exchange_name:
             exchange_name = self.exchange_name
