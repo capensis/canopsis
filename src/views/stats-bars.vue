@@ -1,0 +1,52 @@
+<template lang="pug">
+  v-container
+    v-layout
+      v-flex(xs4)
+        h2 {{ widget.title }}
+        v-btn(icon, @click="showSettings")
+          v-icon settings
+        component(
+        is="statsBars",
+        :widget="widget",
+        )
+</template>
+
+<script>
+import StatsBars from '@/components/other/stats/stats-bars.vue';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
+import { SIDE_BARS } from '@/constants';
+
+export default {
+  components: {
+    StatsBars,
+  },
+  mixins: [sideBarMixin],
+  data() {
+    return {
+      widget: {
+        _id: 'testStatsBars',
+        title: 'Stats bars',
+        parameters: {
+          data: {
+            labels: ['CLI', 'Services', 'Hôtes'],
+            datasets: [{
+              label: 'alarms_created',
+              data: [12, 19, 3],
+            }],
+          },
+        },
+      },
+    };
+  },
+  methods: {
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.statsChartSettings,
+        config: {
+          widget: this.widget,
+        },
+      });
+    },
+  },
+};
+</script>

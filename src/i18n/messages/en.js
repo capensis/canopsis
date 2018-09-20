@@ -129,6 +129,7 @@ export default {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
+      statsChartSettings: 'Chart settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',

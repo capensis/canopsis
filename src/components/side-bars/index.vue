@@ -11,6 +11,7 @@ import SideBarWrapper from './side-bar-wrapper.vue';
 import AlarmSettings from './settings/widgets/alarm.vue';
 import ContextSettings from './settings/widgets/context.vue';
 import WeatherSettings from './settings/widgets/weather.vue';
+import StatsChartSettings from './settings/widgets/curves-histos-settings.vue';
 
 /**
  * Wrapper for all side-bars
@@ -21,6 +22,7 @@ export default {
     AlarmSettings,
     ContextSettings,
     WeatherSettings,
+    StatsChartSettings,
   },
   mixins: [sideBarInnerMixin],
   data() {

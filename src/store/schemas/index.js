@@ -48,6 +48,8 @@ export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, { views: [vie
   idAttribute: 'name',
 });
 
+export const statSchema = new schema.Entity(ENTITIES_TYPES.stat, {}, { idAttribute: value => value.entity._id });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -59,4 +61,5 @@ export default {
   [ENTITIES_TYPES.view]: viewSchema,
   [ENTITIES_TYPES.viewRow]: viewRowSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
+  [ENTITIES_TYPES.stat]: statSchema,
 };

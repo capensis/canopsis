@@ -11,6 +11,7 @@ export const ENTITIES_TYPES = {
   view: 'view',
   viewRow: 'viewRow',
   widget: 'widget',
+  stat: 'stat',
 };
 
 export const MODALS = {
@@ -139,6 +140,7 @@ export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
+  statsChartSettings: 'stats-chart-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -228,4 +230,51 @@ export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
+};
+
+export const STATS_TYPES = {
+  alarmsCreated: {
+    value: 'alarms_created',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsResolved: {
+    value: 'alarms_resolved',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsCanceled: {
+    value: 'alarm_canceled',
+    options: ['recursive', 'states', 'authors'],
+  },
+  ackTimeSla: {
+    value: 'ack_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  resolveTimeSla: {
+    value: 'resolve_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  timeInState: {
+    value: 'time_in_state',
+    options: ['states'],
+  },
+  stateRate: {
+    value: 'state_rate',
+    options: ['states'],
+  },
+  mtbf: {
+    value: 'mtbf',
+    options: [],
+  },
+  currentState: {
+    value: 'current_state',
+    options: [],
+  },
+  ongoingAlarms: {
+    value: 'ongoing_alarms',
+    options: ['states'],
+  },
+  currentOngoingAlarms: {
+    value: 'current_ongoing_alarms',
+    options: ['states'],
+  },
 };
