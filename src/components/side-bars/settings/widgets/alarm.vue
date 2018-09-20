@@ -1,51 +1,13 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      v-combobox(
-      :value="row",
-      @change="updateRow"
-      :items="availableRows",
-      label="test",
-      :search-input.sync="search"
-      :error-messages="errors.collect('group')",
-      item-text="title",
-      item-value="title"
+      field-row-columns(
+      :selectedRowId.sync="config.widget._embedded.parent",
+      :columnSM.sync="settings.widget.columnSM",
+      :columnMD.sync="settings.widget.columnMD",
+      :columnLG.sync="settings.widget.columnLG",
+      :availableRows="getWidgetAvailableRows(config.widget._id)"
       )
-        template(slot="no-data")
-          v-list-tile
-            v-list-tile-content
-              v-list-tile-title(v-html="$t('modals.createView.noData')")
-      v-container(v-if="row")
-        v-slider(
-        :value="3",
-        :max="row.availableColumns.sm"
-        :min="0"
-        ticks="always"
-        @input="$emit('input', $event)"
-        v-validate="'min_value:3'",
-        data-vv-name="row.sm",
-        :error-messages="errors.collect('row.sm')",
-        always-dirty,
-        thumb-label,
-        )
-        v-slider(
-        :value="3",
-        :max="row.availableColumns.md"
-        :min="0"
-        ticks="always"
-        @input="$emit('input', $event)"
-        always-dirty,
-        thumb-label,
-        )
-        v-slider(
-        :value="3",
-        :max="row.availableColumns.lg"
-        :min="0"
-        ticks="always"
-        @input="$emit('input', $event)"
-        always-dirty,
-        thumb-label,
-        )
       v-divider
       field-title(v-model="settings.widget.title")
       v-divider
@@ -79,7 +41,7 @@ import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import entitiesViewMixin from '@/mixins/entities/view';
 
-import FieldGridSize from '../partial/fields/grid-size.vue';
+import FieldRowColumns from '../partial/fields/row-columns.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldDefaultSortColumn from '../partial/fields/default-sort-column.vue';
 import FieldColumns from '../partial/fields/columns.vue';
@@ -99,7 +61,7 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldGridSize,
+    FieldRowColumns,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
@@ -137,22 +99,6 @@ export default {
     };
   },
   methods: {
-    updateRow(value) {
-      if (value !== this.row) {
-        if (typeof value === 'string') {
-          let newRow = this.availableRows.find(v => v.title === value);
-
-          if (!newRow) {
-            newRow = { title: value, _id: 'asdasd', availableColumns: { sm: 12, md: 12, lg: 12 } };
-          }
-
-          this.row = newRow;
-        } else {
-          this.row = value;
-        }
-      }
-    },
-
     prefixFormatter(value) {
       return value.replace('alarm.', 'v.');
     },

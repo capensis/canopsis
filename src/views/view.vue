@@ -1,14 +1,18 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="row in rows", :key="row._id")
-        h1 {{ row.title }}
-        div(v-for="widget in row.widgets")
+      v-layout(v-for="row in rows", :key="row._id", row, wrap)
+        v-flex(xs12)
+          h1 {{ row.title }}
+        v-flex(
+        v-for="widget in row.widgets",
+        v-bind="{ [`sm${widget.columnSM}`]: true, [`md${widget.columnMD}`]: true, [`lg${widget.columnLG}`]: true }",
+        :key="`${widgetKeyPrefix}_${widget._id}`"
+        )
           h2 {{ widget.type }}
           component(
           :is="widgetsMap[widget.type]",
           :widget="widget",
-          :key="`${widgetKeyPrefix}_${widget._id}`"
           )
     .fab
       v-btn(@click="refreshView", icon, color="info", dark, fab)

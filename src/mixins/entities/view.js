@@ -1,6 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view');
+const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 const MAX_COLUMNS = 12;
 
@@ -13,12 +14,18 @@ export default {
       view: 'item',
     }),
 
-    availableRows() {
-      return this.view.rows.map((row) => {
+    ...entitiesMapGetters([
+      'getItem',
+    ]),
+
+    getWidgetAvailableRows() {
+      return widgetId => this.view.rows.map((row) => {
         const availableColumns = row.widgets.reduce((acc, widget) => {
-          acc.sm -= widget.columnSM;
-          acc.md -= widget.columnMD;
-          acc.lg -= widget.columnLG;
+          if (widget._id !== widgetId) {
+            acc.sm -= widget.columnSM;
+            acc.md -= widget.columnMD;
+            acc.lg -= widget.columnLG;
+          }
 
           return acc;
         }, { sm: MAX_COLUMNS, md: MAX_COLUMNS, lg: MAX_COLUMNS });
@@ -30,7 +37,7 @@ export default {
           availableColumns,
         };
       }).filter(({ availableColumns }) =>
-        availableColumns.sm <= 9 && availableColumns.md <= 9 && availableColumns.lg <= 9);
+        availableColumns.sm >= 3 && availableColumns.md >= 3 && availableColumns.lg >= 3);
     },
   },
   methods: {
