@@ -1,11 +1,9 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-row-columns(
-      :selectedRowId.sync="config.widget._embedded.parent",
-      :columnSM.sync="settings.widget.columnSM",
-      :columnMD.sync="settings.widget.columnMD",
-      :columnLG.sync="settings.widget.columnLG",
+      field-row-grid-size(
+      :row.sync="row",
+      :size.sync="settings.widget.size",
       :availableRows="getWidgetAvailableRows(config.widget._id)"
       )
       v-divider
@@ -39,9 +37,9 @@ import cloneDeep from 'lodash/cloneDeep';
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
-import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesViewMixin from '@/mixins/entities/view/index';
 
-import FieldRowColumns from '../partial/fields/row-columns.vue';
+import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldDefaultSortColumn from '../partial/fields/default-sort-column.vue';
 import FieldColumns from '../partial/fields/columns.vue';
@@ -61,7 +59,7 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldRowColumns,
+    FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
@@ -89,6 +87,11 @@ export default {
       },
     };
   },
+  computed: {
+    availableRows() {
+      return this.getWidgetAvailableRows(this.config.widget._id);
+    },
+  },
   mounted() {
     const { itemsPerPage, viewFilters, mainFilter } = this.userPreference.widget_preferences;
 
@@ -97,6 +100,8 @@ export default {
       viewFilters,
       mainFilter,
     };
+
+    this.row = this.availableRows.find(({ _id }) => _id === this.config.widget._embedded.parent) || null;
   },
   methods: {
     prefixFormatter(value) {

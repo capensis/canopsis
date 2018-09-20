@@ -149,6 +149,10 @@ export default {
         template: 'Template',
       },
     },
+    rowGridSize: {
+      title: 'Row grid size',
+      noData: 'No row corresponding. Press <kbd>enter</kbd> to create a new one',
+    },
     moreInfosModal: '"More Infos" Popup',
     weatherTemplate: 'Template - Weather item',
     modalTemplate: 'Template - Modal',

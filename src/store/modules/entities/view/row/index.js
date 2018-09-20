@@ -1,8 +1,4 @@
-import { normalize } from 'normalizr';
-
 import { ENTITIES_TYPES } from '@/constants';
-import { viewRowSchema } from '@/store/schemas';
-import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export const types = {
   UPDATE_ROWS_IDS: 'UPDATE_ROWS_IDS',
@@ -39,12 +35,16 @@ export default {
       return dispatch('view/update', { view }, { root: true });
     },
 
-    update({ dispatch, commit, rootGetters }, { row }) {
-      const normalizedData = normalize(row, viewRowSchema);
-
-      commit(entitiesTypes.ENTITIES_UPDATE, normalizedData.entities, { root: true });
-
+    update({ dispatch, rootGetters }, { row }) {
       const view = rootGetters['view/item'];
+
+      view.rows = view.rows.map((v) => {
+        if (v._id === row._id) {
+          return row;
+        }
+
+        return v;
+      });
 
       return dispatch('view/update', { view }, { root: true });
     },

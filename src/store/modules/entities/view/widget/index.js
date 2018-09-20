@@ -1,8 +1,4 @@
-import { normalize } from 'normalizr';
-
 import { ENTITIES_TYPES } from '@/constants';
-import { widgetSchema } from '@/store/schemas';
-import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export default {
   namespaced: true,
@@ -20,21 +16,9 @@ export default {
      * @param {string} rowId
      */
     create({ dispatch, rootGetters }, { widget, rowId }) {
-      const view = rootGetters['view/item'];
-
-      view.rows = view.rows.map((row) => {
-        if (row._id === rowId) {
-          return { ...row, widgets: [...row.widgets, widget] };
-        }
-
-        return row;
-      });
-
       const row = rootGetters['view/row/getItem'](rowId);
 
-      if (row) {
-        row.widgets.push(widget);
-      }
+      row.widgets.push(widget);
 
       return dispatch('view/row/update', { row }, { root: true });
     },
@@ -42,30 +26,23 @@ export default {
     /**
      * This action does: update widget, put it into view and update view
      *
-     * @param {function} commit
      * @param {function} dispatch
-     * @param {Object} getters
      * @param {Object} rootGetters
      * @param {Object} widget
+     * @param {string} rowId
      */
-    async update({
-      commit, dispatch, getters, rootGetters,
-    }, { widget }) {
-      const cachedWidget = getters.getItem(widget._id);
+    async update({ dispatch, rootGetters }, { widget, rowId }) {
+      const row = rootGetters['view/row/getItem'](rowId);
 
-      try {
-        const normalizedData = normalize(widget, widgetSchema);
+      row.widgets = row.widgets.map((v) => {
+        if (v._id === widget._id) {
+          return widget;
+        }
 
-        commit(entitiesTypes.ENTITIES_UPDATE, normalizedData.entities, { root: true });
+        return v;
+      });
 
-        const view = rootGetters['view/item'];
-
-        await dispatch('view/update', { view }, { root: true });
-      } catch (err) {
-        const normalizedData = normalize(cachedWidget, widgetSchema);
-
-        commit(entitiesTypes.ENTITIES_UPDATE, normalizedData.entities, { root: true });
-      }
+      return dispatch('view/row/update', { row }, { root: true });
     },
   },
 };

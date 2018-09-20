@@ -62,9 +62,9 @@ import find from 'lodash/find';
 
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import viewMixin from '@/mixins/entities/view';
-import groupMixin from '@/mixins/entities/group';
 import popupMixin from '@/mixins/popup';
+import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 /**
  * Modal to create widget
@@ -76,8 +76,8 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    viewMixin,
-    groupMixin,
+    entitiesViewMixin,
+    entitiesViewGroupMixin,
     popupMixin,
   ],
   data() {

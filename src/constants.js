@@ -229,3 +229,7 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
 };
+
+export const WIDGET_MAX_SIZE = 12;
+
+export const WIDGET_MIN_SIZE = 3;

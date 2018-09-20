@@ -3,13 +3,13 @@
     div
       v-layout(v-for="row in rows", :key="row._id", row, wrap)
         v-flex(xs12)
-          h1 {{ row.title }}
+          h2 {{ row.title }}
         v-flex(
         v-for="widget in row.widgets",
-        v-bind="{ [`sm${widget.columnSM}`]: true, [`md${widget.columnMD}`]: true, [`lg${widget.columnLG}`]: true }",
-        :key="`${widgetKeyPrefix}_${widget._id}`"
+        :key="`${widgetKeyPrefix}_${widget._id}`",
+        :class="getWidgetFlexClass(widget)"
         )
-          h2 {{ widget.type }}
+          h3 {{ widget.type }}
           component(
           :is="widgetsMap[widget.type]",
           :widget="widget",
@@ -41,7 +41,7 @@ import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
 
 import modalMixin from '@/mixins/modal/modal';
-import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesViewMixin from '@/mixins/entities/view/index';
 
 export default {
   components: {
@@ -70,6 +70,13 @@ export default {
     };
   },
   computed: {
+    getWidgetFlexClass() {
+      return widget => [
+        `xs${widget.size.sm}`,
+        `md${widget.size.md}`,
+        `lg${widget.size.lg}`,
+      ];
+    },
     rows() {
       return get(this.view, 'rows', []);
     },
