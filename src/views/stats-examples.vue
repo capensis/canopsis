@@ -32,7 +32,7 @@ export default {
               parameters: {
                 states: [0, 1, 2],
               },
-              trend: false,
+              trend: true,
               sla: '>= 0.99',
             },
             'Taux de performance': {
@@ -40,7 +40,7 @@ export default {
               parameters: {
                 states: [0],
               },
-              trend: false,
+              trend: true,
               sla: '>= 0.95',
             },
             'Durée d\'indisponibilité': {
@@ -48,14 +48,14 @@ export default {
               parameters: {
                 states: [3],
               },
-              trend: false,
+              trend: true,
             },
             'Nombre d\'indisponibilités': {
               stat: 'alarms_created',
               parameters: {
                 states: [3],
               },
-              trend: false,
+              trend: true,
               sla: '<= 100',
             },
           },

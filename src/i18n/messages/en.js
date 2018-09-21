@@ -152,6 +152,10 @@ export default {
     tstop: 'End date',
     statsSelect: 'Stats select',
     selectAFilter: 'Select a filter',
+    statsNumbers: {
+      title: 'Stats numbers',
+      yesNoMode: 'Yes/No mode',
+    },
     infoPopup: {
       title: 'Info popup',
       fields: {

@@ -11,6 +11,7 @@
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter")
       v-divider
+      field-stats-number(:stats="settings.widget.parameters.stats")
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
@@ -23,6 +24,7 @@ import FieldDuration from '../partial/fields/duration.vue';
 import FieldDateSelect from '../partial/fields/date-select.vue';
 import FieldStatsSelect from '../partial/fields/stats-select.vue';
 import FieldFilterEditor from '../partial/fields/filter-editor.vue';
+import FieldStatsNumber from '../partial/fields/stats-number.vue';
 
 export default {
   name: SIDE_BARS.statsTableSettings,
@@ -35,6 +37,7 @@ export default {
     FieldDateSelect,
     FieldStatsSelect,
     FieldFilterEditor,
+    FieldStatsNumber,
   },
   mixins: [widgetSettingsMixin],
   data() {
