@@ -204,6 +204,31 @@ Créer et binder les queues suivantes :
  * `Engine_che` sur `canopsis.events` avec la rk `#`
  * `Engine_heartbeat` sur `canopsis.events` avec la rk `#`
  * `Engine_axe` sur `amq.direct` avec la rk `#`
+ * `Engine_stat` sur `canopsis.events` avec la rk `#`
+
+Après activation de rabbitmqadmin:
+
+```bash
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_alerts
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_cleaner_alerts
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_cleaner_events
+
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare queue name=Engine_che durable=true auto_delete=false
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare queue name=Engine_heartbeat durable=true auto_delete=false
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare queue name=Engine_axe durable=true auto_delete=false
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare queue name=Engine_stat durable=true auto_delete=false
+
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare binding source=canopsis.events destination=Engine_che routing_key="#"
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare binding source=canopsis.events destination=Engine_heartbeat routing_key="#"
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare binding source=amq.direct destination=Engine_axe routing_key="#"
+rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare binding source=canopsis.events destination=Engine_stat routing_key="#"
+```
+
+Relancer canopsis puis les engines go
+```bash
+/opt/canopsis/bin/canopsis-systemd restart
+```
+
 
 ## Paramétrage de lancement
 
