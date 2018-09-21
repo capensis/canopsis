@@ -42,14 +42,11 @@ class StatEventFields(FastEnum):
     The StatEventFields enumeration defines the names of the field of a stat*
     events.
     """
-    alarm = 'alarm'
-    entity = 'entity'
-    counter_name = 'counter_name'
-    duration_name = 'duration_name'
+    alarm = 'current_alarm'
+    entity = 'current_entity'
+    stat_name = 'stat_name'
     duration = 'duration'
-    state_name = 'state_name'
-    state_duration = 'state_duration'
-    state_value = 'state_value'
+    state = 'state'
 
 
 class StatCounters(FastEnum):
