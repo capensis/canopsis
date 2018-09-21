@@ -32,6 +32,7 @@ export const MODALS = {
   createWidget: 'create-widget',
   createView: 'create-view',
   createFilter: 'create-filter',
+  manageHistogramGroups: 'manage-histogram-groups',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -140,7 +141,7 @@ export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
-  statsChartSettings: 'stats-chart-settings',
+  statsHistogramSettings: 'stats-histogram-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {

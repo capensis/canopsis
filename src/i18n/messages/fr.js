@@ -129,7 +129,7 @@ export default {
       alarmListSettings: 'Paramètres du bac à alarmes',
       contextTableSettings: 'Paramètres de l\'explorateur de contexte',
       weatherSettings: 'Paramètres de la météo des services',
-      statsChartSettings: 'Paramètres du diagramme',
+      statsHistogramSettings: 'Paramètres de l\'histogramme',
     },
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',

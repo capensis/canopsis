@@ -29,10 +29,20 @@ export default {
         parameters: {
           data: {
             labels: ['CLI', 'Services', 'Hôtes'],
-            datasets: [{
-              label: 'alarms_created',
-              data: [12, 19, 3],
-            }],
+            datasets: [
+              {
+                label: 'alarms_created',
+                data: [12, 19, 3],
+              },
+              {
+                label: 'alarms_resolved',
+                data: [4, 7, 3],
+              },
+              {
+                label: 'alarms_canceled',
+                data: [1, 2, 4],
+              },
+            ],
           },
         },
       },
@@ -41,7 +51,7 @@ export default {
   methods: {
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.statsChartSettings,
+        name: SIDE_BARS.statsHistogramSettings,
         config: {
           widget: this.widget,
         },

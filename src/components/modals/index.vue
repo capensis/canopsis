@@ -33,6 +33,7 @@ import CreateEntity from './context/create-entity.vue';
 import CreateView from './view/create-view.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
+import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -59,6 +60,7 @@ export default {
     CreateView,
     CreateFilter,
     Watcher,
+    ManageHistogramGroups,
   },
   data() {
     return {
