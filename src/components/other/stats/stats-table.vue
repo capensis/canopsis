@@ -18,8 +18,7 @@
               template(
               v-if="props.item[key].value !== undefined && props.item[key].value !== null"
               )
-                div {{ props.item[key].value }}
-                  sub {{ props.item[key].trend }}
+                stats-number(:item="props.item[key]")
               div(v-else) No data
 </template>
 
@@ -28,7 +27,12 @@ import { SIDE_BARS } from '@/constants';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
+import StatsNumber from './stats-number.vue';
+
 export default {
+  components: {
+    StatsNumber,
+  },
   mixins: [entitiesStatsMixin, sideBarMixin],
   props: {
     widget: {
