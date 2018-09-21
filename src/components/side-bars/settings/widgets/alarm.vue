@@ -2,9 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :row.sync="row",
+      :rowId.sync="rowId",
       :size.sync="settings.widget.size",
-      :availableRows="getWidgetAvailableRows(config.widget._id)"
+      :availableRows="getWidgetAvailableRows(config.widget._id)",
+      :rowForCreation.sync="rowForCreation"
       )
       v-divider
       field-title(v-model="settings.widget.title")
@@ -32,6 +33,7 @@
 </template>
 
 <script>
+import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { PAGINATION_LIMIT } from '@/config';
@@ -70,13 +72,13 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: [widgetSettingsMixin, entitiesViewMixin],
+  mixins: [entitiesViewMixin, widgetSettingsMixin],
   data() {
     const { widget } = this.config;
 
     return {
-      row: null,
-      search: null,
+      rowId: get(widget, '_embedded.parentId', null),
+      rowForCreation: null,
       settings: {
         widget: cloneDeep(widget),
         widget_preferences: {
@@ -89,7 +91,7 @@ export default {
   },
   computed: {
     availableRows() {
-      return this.getWidgetAvailableRows(this.config.widget._id);
+      return this.getWidgetAvailableRows(this.widget._id);
     },
   },
   mounted() {
@@ -100,8 +102,6 @@ export default {
       viewFilters,
       mainFilter,
     };
-
-    this.row = this.availableRows.find(({ _id }) => _id === this.config.widget._embedded.parent) || null;
   },
   methods: {
     prefixFormatter(value) {

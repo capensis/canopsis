@@ -1,4 +1,5 @@
 import { ENTITIES_TYPES } from '@/constants';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export const types = {
   UPDATE_ROWS_IDS: 'UPDATE_ROWS_IDS',
@@ -27,6 +28,16 @@ export default {
     },
   },
   actions: {
+    createInStore({ commit, rootGetters }, { row }) {
+      const viewId = rootGetters['view/itemId'];
+
+      commit(entitiesTypes.ENTITIES_MERGE, { viewRow: { [row._id]: row } }, { root: true });
+      commit(entitiesTypes.ENTITIES_MERGE_CHILDREN, {
+        path: `view.${viewId}.rows`,
+        value: [row._id],
+      }, { root: true });
+    },
+
     create({ dispatch, rootGetters }, { row }) {
       const view = rootGetters['view/item'];
 

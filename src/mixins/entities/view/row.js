@@ -8,6 +8,7 @@ const { mapActions } = createNamespacedHelpers('view/row');
 export default {
   methods: {
     ...mapActions({
+      createRowInStore: 'createInStore',
       createRow: 'create',
       updateRow: 'update',
     }),

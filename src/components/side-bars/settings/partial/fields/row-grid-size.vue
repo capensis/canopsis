@@ -32,13 +32,19 @@
 </template>
 
 <script>
+import omit from 'lodash/omit';
+
 import { WIDGET_MAX_SIZE, WIDGET_MIN_SIZE } from '@/constants';
+import { generateRow } from '@/helpers/entities';
+
+import entitiesViewRowMixin from '@/mixins/entities/view/row';
 
 export default {
   inject: ['$validator'],
+  mixins: [entitiesViewRowMixin],
   props: {
-    row: {
-      type: Object,
+    rowId: {
+      type: String,
       default: null,
     },
     size: {
@@ -49,6 +55,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    rowForCreation: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
@@ -57,8 +67,11 @@ export default {
     };
   },
   computed: {
+    row() {
+      return this.availableRows.find(row => row._id === this.rowId) || null;
+    },
     sliders() {
-      const keys = Object.keys(this.size);
+      const keys = ['sm', 'md', 'lg'];
 
       if (!this.row) {
         return keys.map(key => ({
@@ -74,7 +87,7 @@ export default {
       return keys.map(key => ({
         bind: {
           label: key,
-          value: this[key],
+          value: this.size[key],
           max: this.row.availableSize[key],
           errorMessages: this.errors.first(key),
           'data-vv-name': key,
@@ -101,21 +114,24 @@ export default {
           let newRow = this.availableRows.find(v => v.title === value);
 
           if (!newRow) {
-            newRow = {
-              title: value,
-              _id: 'asdasd',
-              availableSize: {
-                sm: WIDGET_MAX_SIZE,
-                md: WIDGET_MAX_SIZE,
-                lg: WIDGET_MAX_SIZE,
-              },
+            newRow = generateRow();
+
+            newRow.title = value;
+            newRow.availableSize = {
+              sm: WIDGET_MAX_SIZE,
+              md: WIDGET_MAX_SIZE,
+              lg: WIDGET_MAX_SIZE,
             };
+
+            this.items.push(newRow);
+            this.createRowInStore({ row: omit(newRow, ['availableSize']) });
           }
 
-          this.items.push(newRow);
-          this.$emit('update:row', newRow);
+          this.$emit('update:rowId', newRow._id);
+        } else if (typeof value === 'object') {
+          this.$emit('update:rowId', value._id);
         } else {
-          this.$emit('update:row', value);
+          this.$emit('update:rowId', value);
         }
 
         this.$emit('update:size', { sm: WIDGET_MIN_SIZE, md: WIDGET_MIN_SIZE, lg: WIDGET_MIN_SIZE });

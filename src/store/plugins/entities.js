@@ -1,8 +1,8 @@
 import Vue from 'vue';
+import get from 'lodash/get';
 import omit from 'lodash/omit';
 import uniq from 'lodash/uniq';
 import mergeWith from 'lodash/mergeWith';
-import get from 'lodash/get';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
@@ -12,6 +12,7 @@ import { prepareEntitiesToDelete } from '@/helpers/store';
 const entitiesModuleName = 'entities';
 
 const internalTypes = {
+  ENTITIES_MERGE_CHILDREN: 'ENTITIES_MERGE_CHILDREN',
   ENTITIES_UPDATE: 'ENTITIES_UPDATE',
   ENTITIES_MERGE: 'ENTITIES_MERGE',
   ENTITIES_DELETE: 'ENTITIES_DELETE',
@@ -20,6 +21,19 @@ const internalTypes = {
 const entitiesModule = {
   namespaced: true,
   getters: {
+    getItemWithoutDenormalize(state) {
+      return (type, id) => {
+        if (typeof type !== 'string') {
+          throw new Error('[entities/getItem] Missing required argument.');
+        }
+
+        if (!state[type] || !id) {
+          return null;
+        }
+
+        return state[type][id];
+      };
+    },
     getItem(state) {
       return (type, id) => {
         if (typeof type !== 'string') {
@@ -50,6 +64,16 @@ const entitiesModule = {
     },
   },
   mutations: {
+    /**
+     * @param {Object} state - state of the module
+     * @param {Object.<string, Object>} entities - Object of entities
+     */
+    [internalTypes.ENTITIES_MERGE_CHILDREN](state, { path, value }) {
+      const oldValue = get(state, path, []);
+
+      Vue.set(state, path, [...oldValue, ...value]);
+    },
+
     /**
      * @param {Object} state - state of the module
      * @param {Object.<string, Object>} entities - Object of entities
@@ -177,6 +201,7 @@ const entitiesModule = {
 };
 
 export const types = {
+  ENTITIES_MERGE_CHILDREN: `${entitiesModuleName}/${internalTypes.ENTITIES_MERGE_CHILDREN}`,
   ENTITIES_UPDATE: `${entitiesModuleName}/${internalTypes.ENTITIES_UPDATE}`,
   ENTITIES_MERGE: `${entitiesModuleName}/${internalTypes.ENTITIES_MERGE}`,
   ENTITIES_DELETE: `${entitiesModuleName}/${internalTypes.ENTITIES_DELETE}`,

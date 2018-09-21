@@ -51,6 +51,15 @@ export function generateWidgetByType(type) {
   return widget;
 }
 
+export function generateRow() {
+  return {
+    _id: uuid('row'),
+    title: '',
+    widgets: [],
+  };
+}
+
 export default {
   generateWidgetByType,
+  generateRow,
 };

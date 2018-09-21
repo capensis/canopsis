@@ -41,7 +41,7 @@ export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
 
     if (parent) {
       result._embedded = {
-        parent: parent._id,
+        parentId: parent._id,
       };
     }
 
