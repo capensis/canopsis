@@ -1,3 +1,6 @@
+import get from 'lodash/get';
+import omit from 'lodash/omit';
+
 import { ENTITIES_TYPES } from '@/constants';
 
 export default {
@@ -18,7 +21,7 @@ export default {
     create({ dispatch, rootGetters }, { widget, rowId }) {
       const row = rootGetters['view/row/getItem'](rowId);
 
-      row.widgets.push(widget);
+      row.widgets.push(omit(widget, ['_embedded']));
 
       return dispatch('view/row/update', { row }, { root: true });
     },
@@ -31,18 +34,21 @@ export default {
      * @param {Object} widget
      * @param {string} rowId
      */
-    async update({ dispatch, rootGetters }, { widget, rowId }) {
-      const row = rootGetters['view/row/getItem'](rowId);
+    async update({ rootGetters }, { widget, rowId }) {
+      const oldRowId = get(widget, '_embedded.parentId');
+      const view = rootGetters['view/item'];
 
-      row.widgets = row.widgets.map((v) => {
-        if (v._id === widget._id) {
-          return widget;
+      view.rows = view.rows.map((row) => {
+        if (row === oldRowId && rowId !== oldRowId) {
+          return { ...row, widgets: row.widgets.filter(({ _id }) => _id !== widget._id) };
+        } else if (row === rowId) {
+          return { ...row, widgets: [...row.widgets, omit(widget, ['_embedded'])] };
         }
 
-        return v;
+        return row;
       });
 
-      return dispatch('view/row/update', { row }, { root: true });
+      // return dispatch('view/row/update', { row }, { root: true });
     },
   },
 };

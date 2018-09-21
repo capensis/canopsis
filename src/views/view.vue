@@ -41,7 +41,7 @@ import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
 
 import modalMixin from '@/mixins/modal/modal';
-import entitiesViewMixin from '@/mixins/entities/view/index';
+import entitiesViewMixin from '@/mixins/entities/view/view';
 
 export default {
   components: {

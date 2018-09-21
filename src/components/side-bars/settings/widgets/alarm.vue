@@ -39,7 +39,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
-import entitiesViewMixin from '@/mixins/entities/view/index';
+import entitiesViewMixin from '@/mixins/entities/view/view';
 
 import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';

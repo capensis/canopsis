@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     row() {
-      return this.availableRows.find(row => row._id === this.rowId) || null;
+      return this.items.find(row => row._id === this.rowId) || null;
     },
     sliders() {
       const keys = ['sm', 'md', 'lg'];
@@ -101,7 +101,7 @@ export default {
   },
   methods: {
     blurRow() {
-      this.search = this.row ? this.row.title : '';
+      // this.search = this.row ? this.row.title : '';
     },
 
     updateSizeField(key, value) {
@@ -111,7 +111,7 @@ export default {
     changeRow(value) {
       if (value !== '' && value !== this.row) {
         if (typeof value === 'string') {
-          let newRow = this.availableRows.find(v => v.title === value);
+          let newRow = this.items.find(v => v.title === value);
 
           if (!newRow) {
             newRow = generateRow();
@@ -124,7 +124,8 @@ export default {
             };
 
             this.items.push(newRow);
-            this.createRowInStore({ row: omit(newRow, ['availableSize']) });
+
+            this.$emit('update:rowForCreation', omit(newRow, ['availableSize']));
           }
 
           this.$emit('update:rowId', newRow._id);
