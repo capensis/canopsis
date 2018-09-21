@@ -71,6 +71,7 @@ export default {
       if (this.editing) {
         // Using Vue.set to be sure the groups list will be updated + provoke a re-render of the list
         Vue.set(this.groups, this.editingGroupIndex, { ...this.form });
+        this.editing = false;
       } else {
         this.groups.push({ ...this.form });
       }
