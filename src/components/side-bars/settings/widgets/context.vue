@@ -1,6 +1,13 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
+      field-row-grid-size(
+      :rowId.sync="settings.rowId",
+      :size.sync="settings.widget.size",
+      :availableRows="availableRows",
+      @createRow="createRow"
+      )
+      v-divider
       field-title(v-model="settings.widget.title")
       v-divider
       field-default-sort-column(v-model="settings.widget.default_sort_column")
@@ -13,12 +20,13 @@
 </template>
 
 <script>
-import pick from 'lodash/pick';
+import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
+import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldDefaultSortColumn from '../partial/fields/default-sort-column.vue';
 import FieldColumns from '../partial/fields/columns.vue';
@@ -29,7 +37,11 @@ import FieldContextEntitiesTypesFilter from '../partial/fields/context-entities-
  */
 export default {
   name: SIDE_BARS.contextSettings,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
+    FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
@@ -39,15 +51,12 @@ export default {
     widgetSettingsMixin,
   ],
   data() {
-    const { widget } = this.config;
+    const { widget, rowId } = this.config;
 
     return {
       settings: {
-        widget: {
-          title: widget.title,
-          default_sort_column: cloneDeep(widget.default_sort_column),
-          widget_columns: cloneDeep(widget.widget_columns),
-        },
+        rowId,
+        widget: cloneDeep(widget),
         widget_preferences: {
           selectedTypes: [],
         },
@@ -55,7 +64,11 @@ export default {
     };
   },
   created() {
-    this.settings.widget_preferences = pick(this.userPreference.widget_preferences, 'selectedTypes');
+    const { widget_preferences: widgetPreference } = this.userPreference.widget_preferences;
+
+    this.settings.widget_preferences = {
+      selectedTypes: get(widgetPreference, 'selectedTypes', []),
+    };
   },
 };
 </script>

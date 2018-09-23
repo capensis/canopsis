@@ -127,6 +127,10 @@ export default {
       type: Object,
       required: true,
     },
+    rowId: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -175,6 +179,7 @@ export default {
         name: SIDE_BARS.alarmSettings,
         config: {
           widget: this.widget,
+          rowId: this.rowId,
         },
       });
     },
@@ -194,8 +199,22 @@ export default {
       }
     },
 
-    updateSelectedFilter() {
-      // todo: finish integration with settings
+    updateSelectedFilter(value) {
+      this.createUserPreference({
+        userPreference: {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            selected_filter: value,
+          },
+        },
+      });
+
+      if (value && value.filter) {
+        this.query = { ...this.query, filter: value.filter };
+      } else {
+        this.query = { ...this.query, filter: undefined };
+      }
     },
   },
 };

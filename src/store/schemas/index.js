@@ -36,17 +36,6 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
 
 export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
   idAttribute: '_id',
-  processStrategy: (entity, parent) => {
-    const result = { ...entity };
-
-    if (parent) {
-      result._embedded = {
-        parentId: parent._id,
-      };
-    }
-
-    return result;
-  },
 });
 
 export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {

@@ -2,11 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="rowId",
+      :rowId.sync="settings.rowId",
       :size.sync="settings.widget.size",
-      :availableRows="getWidgetAvailableRows(config.widget._id)",
+      :availableRows="availableRows",
       @createRow="createRow"
-      :rowForCreation.sync="rowForCreation"
       )
       v-divider
       field-title(v-model="settings.widget.title")
@@ -36,12 +35,10 @@
 <script>
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
-import { normalize, denormalize } from 'normalizr';
-
-import { viewSchema } from '@/store/schemas';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
+
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import entitiesViewMixin from '@/mixins/entities/view/view';
 
@@ -78,17 +75,11 @@ export default {
   },
   mixins: [entitiesViewMixin, widgetSettingsMixin],
   data() {
-    const { widget } = this.config;
+    const { widget, rowId } = this.config;
 
     return {
-      entities: {
-        view: {},
-        viewRow: {},
-        widget: {},
-      },
-      rowId: get(widget, '_embedded.parentId', null),
-      rowForCreation: null,
       settings: {
+        rowId,
         widget: cloneDeep(widget),
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,
@@ -98,56 +89,16 @@ export default {
       },
     };
   },
-  computed: {
-    availableRows() {
-      return this.getWidgetAvailableRows(this.config.widget._id);
-    },
-    localView() {
-      return denormalize(this.view._id, viewSchema, this.entities) || { rows: [] };
-    },
-    getWidgetAvailableRows() {
-      return widgetId => this.localView.rows.map((row) => {
-        const availableSize = row.widgets.reduce((acc, widget) => {
-          if (widget._id !== widgetId) {
-            acc.sm -= widget.size.sm;
-            acc.md -= widget.size.md;
-            acc.lg -= widget.size.lg;
-          }
-
-          return acc;
-        }, { sm: 12, md: 12, lg: 12 });
-
-        return {
-          _id: row._id,
-          title: row.title,
-
-          availableSize,
-        };
-      }).filter(({ availableSize }) =>
-        availableSize.sm >= 3 &&
-        availableSize.md >= 3 &&
-        availableSize.lg >= 3);
-    },
-  },
   mounted() {
-    const { itemsPerPage, viewFilters, mainFilter } = this.userPreference.widget_preferences;
-    const { entities } = normalize(this.view, viewSchema);
+    const { widget_preferences: widgetPreference } = this.userPreference.widget_preferences;
 
     this.settings.widget_preferences = {
-      itemsPerPage,
-      viewFilters,
-      mainFilter,
+      itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
+      viewFilters: get(widgetPreference, 'viewFilters', []),
+      mainFilter: get(widgetPreference, 'mainFilter', {}),
     };
-    this.entities = entities;
   },
   methods: {
-    createRow(row) {
-      const { rows } = this.entities.view[this.view._id];
-
-      this.$set(this.entities.viewRow, row._id, row);
-      this.$set(this.entities.view[this.view._id], 'rows', [...rows, row._id]);
-    },
-
     prefixFormatter(value) {
       return value.replace('alarm.', 'v.');
     },

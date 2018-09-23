@@ -129,7 +129,7 @@ export function convertContextUserPreferenceToQuery({ widget_preferences: widget
  * @returns {{}}
  */
 export function convertUserPreferenceToQuery(userPreference) {
-  switch (userPreference.widgetXtype) {
+  switch (userPreference.widgetXType) {
     case WIDGET_TYPES.alarmList:
       return convertAlarmUserPreferenceToQuery(userPreference);
     case WIDGET_TYPES.context:

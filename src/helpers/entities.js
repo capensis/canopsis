@@ -5,6 +5,7 @@ import uuid from './uuid';
 
 export function generateWidgetByType(type) {
   const widget = {
+    type,
     _id: uuid(`widget_${type}`),
     title: '',
     minColumns: 6,
@@ -43,7 +44,17 @@ export function generateWidgetByType(type) {
       };
       break;
 
-    default:
+    case WIDGET_TYPES.weather:
+      specialParameters = {
+        block_template: '',
+        modal_template: '',
+        entity_template: '',
+        columnSM: 0,
+        columnMD: 0,
+        columnLG: 0,
+        columnHG: 0,
+      };
+      break;
   }
 
   widget.parameters = { ...widget.parameters, ...specialParameters };

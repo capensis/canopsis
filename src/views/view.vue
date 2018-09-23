@@ -13,6 +13,7 @@
           component(
           :is="widgetsMap[widget.type]",
           :widget="widget",
+          :rowId="row._id"
           )
     .fab
       v-btn(@click="refreshView", icon, color="info", dark, fab)

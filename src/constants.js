@@ -144,6 +144,7 @@ export const SIDE_BARS = {
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
   [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+  [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
