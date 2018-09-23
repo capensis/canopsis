@@ -119,8 +119,8 @@ const entitiesModule = {
       {
         route,
         schema,
-        dataPreparer,
         body,
+        dataPreparer = d => d,
         params = {},
         method = 'GET',
         mutationType = internalTypes.ENTITIES_UPDATE,

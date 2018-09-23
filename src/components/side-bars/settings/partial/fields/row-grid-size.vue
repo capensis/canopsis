@@ -3,10 +3,9 @@
     v-list-tile(slot="activator") {{ $t('settings.rowGridSize.title') }}
     v-container
       v-combobox(
-      :value="row",
-      @change="changeRow"
+      v-model="row",
       @blur="blurRow"
-      :items="items",
+      :items="availableRows",
       label="Row",
       :search-input.sync="search",
       data-vv-name="row",
@@ -32,8 +31,6 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-
 import { WIDGET_MAX_SIZE, WIDGET_MIN_SIZE } from '@/constants';
 import { generateRow } from '@/helpers/entities';
 
@@ -63,12 +60,36 @@ export default {
   data() {
     return {
       search: null,
-      items: [...this.availableRows],
     };
   },
   computed: {
-    row() {
-      return this.items.find(row => row._id === this.rowId) || null;
+    row: {
+      get() {
+        return this.availableRows.find(row => row._id === this.rowId) || null;
+      },
+      set(value) {
+        if (value !== '' && value !== this.row) {
+          if (typeof value === 'string') {
+            let newRow = this.availableRows.find(v => v.title === value);
+
+            if (!newRow) {
+              newRow = generateRow();
+
+              newRow.title = value;
+
+              this.$emit('createRow', newRow);
+            }
+
+            this.$emit('update:rowId', newRow._id);
+          } else if (typeof value === 'object') {
+            this.$emit('update:rowId', value._id);
+          } else {
+            this.$emit('update:rowId', value);
+          }
+
+          this.$emit('update:size', { sm: WIDGET_MIN_SIZE, md: WIDGET_MIN_SIZE, lg: WIDGET_MIN_SIZE });
+        }
+      },
     },
     sliders() {
       const keys = ['sm', 'md', 'lg'];
@@ -106,37 +127,6 @@ export default {
 
     updateSizeField(key, value) {
       this.$emit('update:size', { ...this.size, [key]: value });
-    },
-
-    changeRow(value) {
-      if (value !== '' && value !== this.row) {
-        if (typeof value === 'string') {
-          let newRow = this.items.find(v => v.title === value);
-
-          if (!newRow) {
-            newRow = generateRow();
-
-            newRow.title = value;
-            newRow.availableSize = {
-              sm: WIDGET_MAX_SIZE,
-              md: WIDGET_MAX_SIZE,
-              lg: WIDGET_MAX_SIZE,
-            };
-
-            this.items.push(newRow);
-
-            this.$emit('update:rowForCreation', omit(newRow, ['availableSize']));
-          }
-
-          this.$emit('update:rowId', newRow._id);
-        } else if (typeof value === 'object') {
-          this.$emit('update:rowId', value._id);
-        } else {
-          this.$emit('update:rowId', value);
-        }
-
-        this.$emit('update:size', { sm: WIDGET_MIN_SIZE, md: WIDGET_MIN_SIZE, lg: WIDGET_MIN_SIZE });
-      }
     },
   },
 };

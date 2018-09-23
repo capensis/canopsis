@@ -1,9 +1,8 @@
-import { normalize } from 'normalizr';
+import { denormalize } from 'normalizr';
 
 import queryMixin from '@/mixins/query';
 import sideBarMixins from '@/mixins/side-bar/side-bar';
-import entitiesViewRowMixin from '@/mixins/entities/view/row';
-import entitiesViewWidgetMixin from '@/mixins/entities/view/widget';
+import entitiesViewMixin from '@/mixins/entities/view/view';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import { viewSchema } from '@/store/schemas';
@@ -22,8 +21,7 @@ export default {
     queryMixin,
     sideBarMixins,
     entitiesUserPreferenceMixin,
-    entitiesViewRowMixin,
-    entitiesViewWidgetMixin,
+    entitiesViewMixin,
   ],
   data() {
     return {
@@ -70,52 +68,17 @@ export default {
         const oldRowId = get(widget, '_embedded.parentId');
         const newRowId = this.rowId;
 
-        if (this.rowForCreation && this.rowForCreation._id === this.rowId) {
-          this.view.rows.push(this.rowForCreation);
-        }
+        this.entities.widget[widget._id] = widget;
+        this.entities.viewRow[oldRowId].widgets = this.entities.viewRow[oldRowId].widgets.filter(v => v !== widget._id);
+        this.entities.viewRow[newRowId].widgets =
+          [...this.entities.viewRow[newRowId].widgets.filter(v => v !== widget._id), widget._id];
 
-        normalize(this.view, viewSchema); // TODO: DO IT
+        const view = denormalize(this.view._id, viewSchema, this.entities);
 
-        this.view.rows = this.view.rows.map((row) => {
-          if (newRowId !== oldRowId) {
-            if (oldRowId && oldRowId === row._id) {
-              return { ...row, widgets: row.widgets.filter(({ _id }) => _id !== widget._id) };
-            }
-
-            if (newRowId === row._id) {
-              return { ...row, widgets: [...row.widgets, widget] };
-            }
-          } else if (newRowId === row._id) {
-            return {
-              ...row,
-              widgets: row.widgets.map((oldWidget) => {
-                if (oldWidget._id === widget._id) {
-                  return widget;
-                }
-
-                return oldWidget;
-              }),
-            };
-          }
-
-          return row;
-        });
-
-        if (this.rowForCreation && this.rowForCreation === this.rowId) {
-          this.createRowInStore({
-            row: this.rowForCreation,
-          });
-        }
-
-        const actions = [this.createUserPreference({ userPreference })];
-
-        if (this.config.isNew) {
-          actions.push(this.createWidget({ widget }));
-        } else {
-          actions.push(this.updateWidget({ widget }));
-        }
-
-        await Promise.all(actions);
+        await Promise.all([
+          this.createUserPreference({ userPreference }),
+          this.updateView({ view }),
+        ]);
 
         this.mergeQuery({
           id: widget._id,
