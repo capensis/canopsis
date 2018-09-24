@@ -8,14 +8,18 @@
           type="number",
           :value="durationValue",
           @change="updateDurationValue",
-          hide-details
+          v-validate="'required|integer|min:1'",
+          data-vv-name="durationValue",
+          :error-messages="errors.collect('durationValue')",
           )
         v-flex
           v-select.pt-0(
             :items="units",
             :value="durationUnit",
-            hide-details,
             @input="updateDurationUnit"
+            v-validate="'required'",
+            data-vv-name="durationUnit",
+            :error-messages="errors.collect('durationUnit')"
           )
 </template>
 
@@ -23,6 +27,7 @@
 import find from 'lodash/find';
 
 export default {
+  inject: ['$validator'],
   props: {
     value: {
       type: String,

@@ -22,29 +22,33 @@
             v-model="form.trend",
             hide-details
             )
-            v-list-group.my-2
+            v-list-group(v-if="options.length > 0").my-2
               v-list-tile(slot="activator") Options
-              v-switch(
-              :label="$t('common.recursive')",
-              v-model="form.parameters.recursive",
-              hide-details
-              )
-              v-select(
-              :placeholder="$t('common.states')",
-              :items="stateTypes",
-              v-model="form.parameters.states",
-              multiple,
-              chips,
-              hide-details
-              )
-              v-combobox(
-              :placeholder="$t('common.authors')",
-              v-model="form.parameters.authors",
-              hide-details,
-              chips,
-              multiple
-              )
-              v-text-field(:placeholder="$t('common.sla')", v-model="form.sla", hide-details)
+              template(v-for="option in options")
+                v-switch(
+                v-if="option === 'recursive'"
+                :label="$t('common.recursive')",
+                v-model="form.parameters.recursive",
+                hide-details
+                )
+                v-select(
+                v-if="option === 'states'"
+                :placeholder="$t('common.states')",
+                :items="stateTypes",
+                v-model="form.parameters.states",
+                multiple,
+                chips,
+                hide-details
+                )
+                v-combobox(
+                v-if="option === 'authors'"
+                :placeholder="$t('common.authors')",
+                v-model="form.parameters.authors",
+                hide-details,
+                chips,
+                multiple
+                )
+                v-text-field(v-if="option === 'sla'", :placeholder="$t('common.sla')", v-model="form.sla", hide-details)
             v-btn.ma-0(@click="addStat") Add stat
 
       v-list-group(v-for="(stat, key) in value", :key="key")
@@ -56,6 +60,7 @@
 <script>
 import omit from 'lodash/omit';
 import set from 'lodash/set';
+import find from 'lodash/find';
 import { STATS_TYPES, ENTITIES_STATES } from '@/constants';
 
 export default {
@@ -93,6 +98,10 @@ export default {
     },
     stateTypes() {
       return Object.keys(ENTITIES_STATES).map(item => ({ value: ENTITIES_STATES[item], text: item }));
+    },
+    options() {
+      const stat = find(this.statsTypes, type => type.value === this.form.stat);
+      return stat.options;
     },
   },
   methods: {
