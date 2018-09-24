@@ -39,6 +39,10 @@ export default {
       type: Object,
       required: true,
     },
+    rowId: {
+      type: String,
+      required: true,
+    },
   },
   computed: {
     flexSize() {
@@ -55,6 +59,7 @@ export default {
         name: SIDE_BARS.weatherSettings,
         config: {
           widget: this.widget,
+          rowId: this.rowId,
         },
       });
     },

@@ -51,19 +51,21 @@
                 v-list-tile-content
                   v-list-tile-title(v-html="$t('modals.createView.noData')")
 
-          span {{ this.form.group_id }}
+          span {{ form.group_id }}
       v-layout
         v-flex(xs3)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
-import viewMixin from '@/mixins/entities/view';
-import groupMixin from '@/mixins/entities/group';
-import popupMixin from '@/mixins/popup';
 import find from 'lodash/find';
+
+import { MODALS } from '@/constants';
+import { generateView } from '@/helpers/entities';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
+import popupMixin from '@/mixins/popup';
+import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 /**
  * Modal to create widget
@@ -75,8 +77,8 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    viewMixin,
-    groupMixin,
+    entitiesViewMixin,
+    entitiesViewGroupMixin,
     popupMixin,
   ],
   data() {
@@ -113,12 +115,15 @@ export default {
           }
 
           const data = {
+            ...generateView(),
             ...this.form,
-            widgets: [],
             group_id: group._id,
           };
           await this.createView({ data });
+          await this.fetchGroupsList();
+
           this.addSuccessPopup({ text: this.$t('modals.createView.success') });
+
           this.hideModal();
         }
       } catch (err) {
