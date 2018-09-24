@@ -37,7 +37,7 @@ export default {
         const { normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.view,
           schema: [groupSchema],
-          dataPreparer: d => d.groups,
+          dataPreparer: d => Object.keys(d.groups).map(key => ({ _id: key, ...d.groups[key] })),
         }, { root: true });
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,

@@ -70,7 +70,20 @@ export function generateRow() {
   };
 }
 
+export function generateView() {
+  return {
+    title: '',
+    name: '',
+    description: '',
+    group_id: null,
+    rows: [],
+    tags: [],
+    enabled: true,
+  };
+}
+
 export default {
   generateWidgetByType,
   generateRow,
+  generateView,
 };

@@ -27,7 +27,9 @@ export default {
   data() {
     return {
       normalizedEntities: {
-        view: {},
+        [viewSchema.key]: {},
+        [rowSchema.key]: {},
+        [widgetSchema.key]: {},
       },
     };
   },
@@ -74,11 +76,22 @@ export default {
     this.normalizedEntities = entities;
   },
   methods: {
-    createRow(row) {
-      const { rows } = this.normalizedEntities.view[this.view._id];
+    updateNormalizedEntity(key, entity) {
+      this.$set(
+        this.normalizedEntities,
+        key,
+        { ...(this.normalizedEntities[key] || {}), [entity._id]: entity },
+      );
+    },
 
-      this.$set(this.normalizedEntities[rowSchema.key], row._id, row);
-      this.$set(this.normalizedEntities[viewSchema.key][this.view._id], 'rows', [...rows, row._id]);
+    createRow(row) {
+      const view = this.normalizedEntities.view[this.view._id];
+
+      this.updateNormalizedEntity(rowSchema.key, row);
+      this.updateNormalizedEntity(viewSchema.key, {
+        ...view,
+        rows: [...view.rows, row._id],
+      });
     },
 
     isFormValid() {
@@ -113,20 +126,36 @@ export default {
         const oldRowId = this.config.rowId;
         const newRowId = this.settings.rowId;
 
-        this.$set(this.normalizedEntities[widgetSchema.key], widget._id, widget);
+        /**
+         * Put widget into local normalized store
+         */
+        this.updateNormalizedEntity(widgetSchema.key, widget);
 
         if (oldRowId !== newRowId) {
           if (oldRowId) {
-            const oldRowWidgets = get(this.normalizedEntities, `${rowSchema.key}.${oldRowId}.widgets`, []);
-            const filteredOldRowWidgets = oldRowWidgets.filter(oldWidget => oldWidget !== widget._id);
+            const oldRow = get(this.normalizedEntities, `${rowSchema.key}.${oldRowId}`, { widgets: [] });
 
-            this.$set(this.normalizedEntities[rowSchema.key][oldRowId], 'widgets', filteredOldRowWidgets);
+            /**
+             * Remove widget from old row in local normalized store
+             */
+            this.updateNormalizedEntity(rowSchema.key, {
+              ...oldRow,
+              widgets: oldRow.widgets.filter(oldWidget => oldWidget !== widget._id),
+            });
           }
 
-          const newRowWidgets = get(this.normalizedEntities, `${rowSchema.key}.${newRowId}.widgets`, []);
-          const filteredNewRowWidgets = newRowWidgets.filter(v => v !== widget._id);
+          const newRow = get(this.normalizedEntities, `${rowSchema.key}.${newRowId}`, { widgets: [] });
 
-          this.$set(this.normalizedEntities[rowSchema.key][newRowId], 'widgets', [...filteredNewRowWidgets, widget._id]);
+          /**
+           * Put widget widget into new row in local normalized store
+           */
+          this.updateNormalizedEntity(rowSchema.key, {
+            ...newRow,
+            widgets: [
+              ...newRow.widgets.filter(oldWidget => oldWidget !== widget._id),
+              widget._id,
+            ],
+          });
         }
 
         const view = denormalize(this.view._id, viewSchema, this.normalizedEntities);

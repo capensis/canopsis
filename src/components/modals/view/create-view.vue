@@ -61,6 +61,7 @@
 import find from 'lodash/find';
 
 import { MODALS } from '@/constants';
+import { generateView } from '@/helpers/entities';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import popupMixin from '@/mixins/popup';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -114,12 +115,15 @@ export default {
           }
 
           const data = {
+            ...generateView(),
             ...this.form,
-            widgets: [],
             group_id: group._id,
           };
           await this.createView({ data });
+          await this.fetchGroupsList();
+
           this.addSuccessPopup({ text: this.$t('modals.createView.success') });
+
           this.hideModal();
         }
       } catch (err) {

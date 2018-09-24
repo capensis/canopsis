@@ -46,8 +46,10 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   rows: [rowSchema],
 }, { idAttribute: '_id' });
 
-export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, { views: [viewSchema] }, {
-  idAttribute: 'name',
+export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
+  views: [viewSchema],
+}, {
+  idAttribute: '_id',
 });
 
 export default {
