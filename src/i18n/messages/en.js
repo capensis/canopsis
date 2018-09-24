@@ -348,6 +348,9 @@ export default {
         weather: {
           title: 'Service weather',
         },
+        statsTable: {
+          title: 'Stats table',
+        },
       },
     },
   },

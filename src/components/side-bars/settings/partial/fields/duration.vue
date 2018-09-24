@@ -7,7 +7,7 @@
           v-text-field.pt-0(
           type="number",
           :value="durationValue",
-          @input="updateDurationValue",
+          @change="updateDurationValue",
           hide-details
           )
         v-flex
@@ -26,6 +26,7 @@ export default {
   props: {
     value: {
       type: String,
+      default: '',
     },
   },
   data() {

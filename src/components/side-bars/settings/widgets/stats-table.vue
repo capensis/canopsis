@@ -1,6 +1,13 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
+      field-row-grid-size(
+      :rowId.sync="settings.rowId",
+      :size.sync="settings.widget.size",
+      :availableRows="availableRows",
+      @createRow="createRow"
+      )
+      v-divider
       field-title(v-model="settings.widget.title")
       v-divider
       field-duration(v-model="settings.widget.parameters.duration")
@@ -14,9 +21,12 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
+import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldDuration from '../partial/fields/duration.vue';
 import FieldDateSelect from '../partial/fields/date-select.vue';
@@ -29,6 +39,7 @@ export default {
     validator: 'new',
   },
   components: {
+    FieldRowGridSize,
     FieldTitle,
     FieldDuration,
     FieldDateSelect,
@@ -37,18 +48,14 @@ export default {
   },
   mixins: [widgetSettingsMixin],
   data() {
-    const { widget } = this.config;
+    const { widget, rowId } = this.config;
 
     return {
       settings: {
-        widget: {
-          title: widget.title,
-          parameters: {
-            duration: widget.parameters.duration,
-            tstop: widget.parameters.tstop,
-            mfilter: widget.parameters.mfilter,
-            stats: widget.parameters.stats,
-          },
+        rowId,
+        widget: cloneDeep(widget),
+        widget_preferences: {
+          itemsPerPage: PAGINATION_LIMIT,
         },
       },
     };

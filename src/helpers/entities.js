@@ -55,6 +55,15 @@ export function generateWidgetByType(type) {
         columnHG: 0,
       };
       break;
+
+    case WIDGET_TYPES.statsTable:
+      specialParameters = {
+        duration: '',
+        tstop: Date.now() / 1000,
+        stats: {},
+        mfilter: {},
+      };
+      break;
   }
 
   widget.parameters = { ...widget.parameters, ...specialParameters };

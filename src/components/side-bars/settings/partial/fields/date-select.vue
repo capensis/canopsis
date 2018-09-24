@@ -16,6 +16,9 @@ export default {
   props: {
     value: {
       type: Number,
+      default() {
+        return new Date() / 1000;
+      },
     },
     title: {
       type: String,
