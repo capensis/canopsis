@@ -9,7 +9,7 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  viewRow: 'viewRow',
+  row: 'row',
   widget: 'widget',
 };
 
@@ -144,6 +144,7 @@ export const SIDE_BARS = {
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
   [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+  [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
@@ -229,3 +230,7 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
 };
+
+export const WIDGET_MAX_SIZE = 12;
+
+export const WIDGET_MIN_SIZE = 3;

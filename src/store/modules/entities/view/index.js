@@ -1,7 +1,10 @@
+import { normalize } from 'normalizr';
+
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { viewSchema } from '@/store/schemas';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
 import groupModule from './group';
 
@@ -16,18 +19,18 @@ export default {
     group: groupModule,
   },
   state: {
-    viewId: null,
+    activeViewId: null,
   },
   getters: {
     item: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.viewId),
+      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
   },
   mutations: {
     [types.FETCH_ITEM]: (state) => {
       state.pending = true;
     },
     [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
-      state.viewId = viewId;
+      state.activeViewId = viewId;
       state.pending = false;
     },
   },
@@ -43,12 +46,23 @@ export default {
         const { normalizedData } = await dispatch('entities/fetch', {
           route: `${API_ROUTES.view}/${id}`,
           schema: viewSchema,
-          dataPreparer: d => d,
         }, { root: true });
 
         commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
       } catch (err) {
         console.error(err);
+      }
+    },
+
+    async update({ commit }, { view }) {
+      try {
+        await request.put(`${API_ROUTES.view}/${view._id}`, view);
+
+        const { entities } = normalize(view, viewSchema);
+
+        commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
+      } catch (err) {
+        console.warn(err);
       }
     },
   },
