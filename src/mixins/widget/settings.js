@@ -2,11 +2,11 @@ import { normalize, denormalize } from 'normalizr';
 
 import queryMixin from '@/mixins/query';
 import sideBarMixins from '@/mixins/side-bar/side-bar';
-import entitiesViewMixin from '@/mixins/entities/view/view';
+import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
-import { viewSchema, viewRowSchema, widgetSchema } from '@/store/schemas';
+import { viewSchema, rowSchema, widgetSchema } from '@/store/schemas';
 
 import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
 
@@ -76,7 +76,7 @@ export default {
     createRow(row) {
       const { rows } = this.normalizedEntities.view[this.view._id];
 
-      this.$set(this.normalizedEntities[viewRowSchema.key], row._id, row);
+      this.$set(this.normalizedEntities[rowSchema.key], row._id, row);
       this.$set(this.normalizedEntities[viewSchema.key][this.view._id], 'rows', [...rows, row._id]);
     },
 
@@ -116,12 +116,12 @@ export default {
 
         if (oldRowId !== newRowId) {
           if (oldRowId) {
-            const oldRowWidgets = this.normalizedEntities.viewRow[oldRowId].widgets.filter(v => v !== widget._id);
-            this.$set(this.normalizedEntities[viewRowSchema.key][oldRowId], 'widgets', oldRowWidgets);
+            const oldRowWidgets = this.normalizedEntities.row[oldRowId].widgets.filter(v => v !== widget._id);
+            this.$set(this.normalizedEntities[rowSchema.key][oldRowId], 'widgets', oldRowWidgets);
           }
 
-          const newRowWidgets = this.normalizedEntities.viewRow[newRowId].widgets.filter(v => v !== widget._id);
-          this.$set(this.normalizedEntities[viewRowSchema.key][newRowId], 'widgets', [...newRowWidgets, widget._id]);
+          const newRowWidgets = this.normalizedEntities.row[newRowId].widgets.filter(v => v !== widget._id);
+          this.$set(this.normalizedEntities[rowSchema.key][newRowId], 'widgets', [...newRowWidgets, widget._id]);
         }
 
         const view = denormalize(this.view._id, viewSchema, this.normalizedEntities);

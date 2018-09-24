@@ -34,11 +34,8 @@
 import { WIDGET_MAX_SIZE, WIDGET_MIN_SIZE } from '@/constants';
 import { generateRow } from '@/helpers/entities';
 
-import entitiesViewRowMixin from '@/mixins/entities/view/row';
-
 export default {
   inject: ['$validator'],
-  mixins: [entitiesViewRowMixin],
   props: {
     rowId: {
       type: String,

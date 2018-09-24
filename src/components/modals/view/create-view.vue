@@ -63,7 +63,7 @@ import find from 'lodash/find';
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import popupMixin from '@/mixins/popup';
-import entitiesViewMixin from '@/mixins/entities/view/view';
+import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 /**

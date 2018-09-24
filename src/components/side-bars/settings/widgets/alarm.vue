@@ -40,7 +40,6 @@ import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
-import entitiesViewMixin from '@/mixins/entities/view/view';
 
 import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
@@ -73,7 +72,7 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: [entitiesViewMixin, widgetSettingsMixin],
+  mixins: [widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -90,7 +89,7 @@ export default {
     };
   },
   mounted() {
-    const { widget_preferences: widgetPreference } = this.userPreference.widget_preferences;
+    const { widget_preferences: widgetPreference } = this.userPreference;
 
     this.settings.widget_preferences = {
       itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),

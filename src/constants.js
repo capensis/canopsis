@@ -9,7 +9,7 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  viewRow: 'viewRow',
+  row: 'row',
   widget: 'widget',
 };
 

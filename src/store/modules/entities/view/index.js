@@ -7,8 +7,6 @@ import { viewSchema } from '@/store/schemas';
 import { types as entitiesTypes } from '@/store/plugins/entities';
 
 import groupModule from './group';
-import rowModule from './row';
-import widgetModule from './widget';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',
@@ -19,8 +17,6 @@ export default {
   namespaced: true,
   modules: {
     group: groupModule,
-    row: rowModule,
-    widget: widgetModule,
   },
   state: {
     activeViewId: null,
