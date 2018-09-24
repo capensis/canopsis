@@ -150,12 +150,12 @@ export default {
       return [];
     },
     mainFilter() {
-      const { mainFilter } = this.widget.parameters;
+      const { mainFilter } = this.userPreference.widget_preferences;
 
       return isEmpty(mainFilter) ? null : mainFilter;
     },
     viewFilters() {
-      const { viewFilters } = this.widget.parameters;
+      const { viewFilters } = this.userPreference.widget_preferences;
 
       return isEmpty(viewFilters) ? [] : viewFilters;
     },
@@ -205,7 +205,7 @@ export default {
           ...this.userPreference,
           widget_preferences: {
             ...this.userPreference.widget_preferences,
-            selected_filter: value,
+            mainFilter: value || {},
           },
         },
       });

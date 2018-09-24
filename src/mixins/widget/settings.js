@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import { normalize, denormalize } from 'normalizr';
 
 import queryMixin from '@/mixins/query';
@@ -116,12 +117,16 @@ export default {
 
         if (oldRowId !== newRowId) {
           if (oldRowId) {
-            const oldRowWidgets = this.normalizedEntities.row[oldRowId].widgets.filter(v => v !== widget._id);
-            this.$set(this.normalizedEntities[rowSchema.key][oldRowId], 'widgets', oldRowWidgets);
+            const oldRowWidgets = get(this.normalizedEntities, `${rowSchema.key}.${oldRowId}.widgets`, []);
+            const filteredOldRowWidgets = oldRowWidgets.filter(oldWidget => oldWidget !== widget._id);
+
+            this.$set(this.normalizedEntities[rowSchema.key][oldRowId], 'widgets', filteredOldRowWidgets);
           }
 
-          const newRowWidgets = this.normalizedEntities.row[newRowId].widgets.filter(v => v !== widget._id);
-          this.$set(this.normalizedEntities[rowSchema.key][newRowId], 'widgets', [...newRowWidgets, widget._id]);
+          const newRowWidgets = get(this.normalizedEntities, `${rowSchema.key}.${newRowId}.widgets`, []);
+          const filteredNewRowWidgets = newRowWidgets.filter(v => v !== widget._id);
+
+          this.$set(this.normalizedEntities[rowSchema.key][newRowId], 'widgets', [...filteredNewRowWidgets, widget._id]);
         }
 
         const view = denormalize(this.view._id, viewSchema, this.normalizedEntities);

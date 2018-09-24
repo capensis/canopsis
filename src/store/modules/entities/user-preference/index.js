@@ -25,7 +25,7 @@ export default {
           widget_preferences: {},
           crecord_name: currentUser.crecord_name,
           widget_id: widget._id,
-          widgetXType: widget.type,
+          widgetXtype: widget.type,
           crecord_type: 'userpreferences',
         };
       }

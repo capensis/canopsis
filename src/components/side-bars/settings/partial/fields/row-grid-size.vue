@@ -6,7 +6,7 @@
       v-model="row",
       @blur="blurRow"
       :items="availableRows",
-      label="Row",
+      :label="$t('settings.rowGridSize.fields.row')",
       :search-input.sync="search",
       data-vv-name="row",
       v-validate="'required'",
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import isEmpty from 'lodash/isEmpty';
+
 import { WIDGET_MAX_SIZE, WIDGET_MIN_SIZE } from '@/constants';
 import { generateRow } from '@/helpers/entities';
 
@@ -65,23 +67,23 @@ export default {
         return this.availableRows.find(row => row._id === this.rowId) || null;
       },
       set(value) {
-        if (value !== '' && value !== this.row) {
+        if (isEmpty(value)) {
+          this.$emit('update:rowId', null);
+        } else if (value !== '' && value !== this.row) {
           if (typeof value === 'string') {
-            let newRow = this.availableRows.find(v => v.title === value);
+            let selectedRow = this.availableRows.find(row => row.title === value);
 
-            if (!newRow) {
-              newRow = generateRow();
+            if (!selectedRow) {
+              selectedRow = generateRow();
 
-              newRow.title = value;
+              selectedRow.title = value;
 
-              this.$emit('createRow', newRow);
+              this.$emit('createRow', selectedRow);
             }
 
-            this.$emit('update:rowId', newRow._id);
+            this.$emit('update:rowId', selectedRow._id);
           } else if (typeof value === 'object') {
             this.$emit('update:rowId', value._id);
-          } else {
-            this.$emit('update:rowId', value);
           }
 
           this.$emit('update:size', { sm: WIDGET_MIN_SIZE, md: WIDGET_MIN_SIZE, lg: WIDGET_MIN_SIZE });
@@ -104,7 +106,7 @@ export default {
 
       return keys.map(key => ({
         bind: {
-          label: key,
+          label: this.$t(`settings.rowGridSize.fields.size.${key}`),
           value: this.size[key],
           max: this.row.availableSize[key],
           errorMessages: this.errors.first(key),
@@ -119,7 +121,7 @@ export default {
   },
   methods: {
     blurRow() {
-      // this.search = this.row ? this.row.title : '';
+      this.search = this.row ? this.row.title : '';
     },
 
     updateSizeField(key, value) {

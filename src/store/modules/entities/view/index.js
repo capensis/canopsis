@@ -22,7 +22,6 @@ export default {
     activeViewId: null,
   },
   getters: {
-    itemId: state => state.activeViewId,
     item: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
   },
