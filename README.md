@@ -207,6 +207,20 @@ Créer et binder les queues suivantes :
 
 Après activation de rabbitmqadmin:
 
+Stopper canopsis puis les engines go
+```bash
+/opt/canopsis/bin/canopsis-systemd stop
+```
+
+Disable les units des engines python:
+```bash
+systemctl disable canopsis-engine@cleaner-cleaner_alerts.service
+systemctl disable canopsis-engine@dynamic-alerts.service
+systemctl disable canopsis-engine@cleaner-cleaner_events.service
+```
+
+Faire les modifications sur les queues:
+
 ```bash
 rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_alerts
 rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_cleaner_alerts
