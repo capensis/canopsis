@@ -16,9 +16,6 @@ export default {
   props: {
     value: {
       type: Number,
-      default() {
-        return new Date() / 1000;
-      },
     },
     title: {
       type: String,
@@ -26,12 +23,15 @@ export default {
   },
   computed: {
     dateValue() {
-      return new Date(this.value * 1000);
+      if (this.value) {
+        return moment(this.value).toDate();
+      }
+      return moment().toDate();
     },
   },
   methods: {
     dateChange(event) {
-      this.$emit('input', moment(event).unix());
+      this.$emit('input', moment(event).valueOf());
     },
   },
 };

@@ -7,7 +7,7 @@
           v-text-field.pt-0(
           type="number",
           :value="durationValue",
-          @change="updateDurationValue",
+          @input="updateDurationValue",
           v-validate="'required|integer|min:1'",
           data-vv-name="durationValue",
           :error-messages="errors.collect('durationValue')",
@@ -31,7 +31,6 @@ export default {
   props: {
     value: {
       type: String,
-      default: '',
     },
   },
   data() {
@@ -58,10 +57,17 @@ export default {
   },
   computed: {
     durationValue() {
-      return this.value.slice(0, this.value.length - 1);
+      if (this.value) {
+        return parseInt(this.value.slice(0, this.value.length - 1), 10);
+      }
+
+      return 1;
     },
     durationUnit() {
-      return find(this.units, item => item.value === this.value.slice(-1));
+      if (this.value) {
+        return find(this.units, item => item.value === this.value.slice(-1));
+      }
+      return 'm';
     },
   },
   methods: {

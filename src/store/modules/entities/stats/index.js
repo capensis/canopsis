@@ -19,7 +19,7 @@ export default {
   },
   getters: {
     getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, get(state.widgets[widgetId], 'allIds', [])),
+      rootGetters['entities/getList'](ENTITIES_TYPES.stat, get(state.widgets[widgetId], 'allIds', [])),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
     getErrorByWidgetId: state => widgetId => get(state.widgets[widgetId], 'error'),
   },

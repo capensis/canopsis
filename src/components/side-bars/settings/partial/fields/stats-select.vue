@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.statsSelect') }}
-    v-form(ref="newStatForm")
+    v-form
       v-container
         v-card.mb-2
           v-container.pt-0(fluid)
@@ -26,13 +26,13 @@
               v-list-tile(slot="activator") Options
               template(v-for="option in options")
                 v-switch(
-                v-if="option === 'recursive'"
+                v-show="option === 'recursive'"
                 :label="$t('common.recursive')",
                 v-model="form.parameters.recursive",
                 hide-details
                 )
                 v-select(
-                v-if="option === 'states'"
+                v-show="option === 'states'"
                 :placeholder="$t('common.states')",
                 :items="stateTypes",
                 v-model="form.parameters.states",
@@ -41,14 +41,19 @@
                 hide-details
                 )
                 v-combobox(
-                v-if="option === 'authors'"
+                v-show="option === 'authors'"
                 :placeholder="$t('common.authors')",
                 v-model="form.parameters.authors",
                 hide-details,
                 chips,
                 multiple
                 )
-                v-text-field(v-if="option === 'sla'", :placeholder="$t('common.sla')", v-model="form.sla", hide-details)
+                v-text-field(
+                v-show="option === 'sla'",
+                :placeholder="$t('common.sla')",
+                v-model="form.parameters.sla",
+                hide-details
+                )
             v-btn.ma-0(@click="addStat") Add stat
 
       v-list-group(v-for="(stat, key) in value", :key="key")
@@ -77,9 +82,9 @@ export default {
       form: {
         stat: 'alarms_created',
         title: '',
-        sla: '',
         trend: true,
         parameters: {
+          sla: '',
           states: [],
           recursive: false,
           authors: [],
@@ -100,8 +105,11 @@ export default {
       return Object.keys(ENTITIES_STATES).map(item => ({ value: ENTITIES_STATES[item], text: item }));
     },
     options() {
-      const stat = find(this.statsTypes, type => type.value === this.form.stat);
-      return stat.options;
+      if (this.form.stat) {
+        const stat = find(this.statsTypes, type => type.value === this.form.stat);
+        return stat.options;
+      }
+      return [];
     },
   },
   methods: {
@@ -114,7 +122,6 @@ export default {
         if (isFormValid) {
           this.error = '';
           this.$emit('input', set(this.value, this.form.title, omit(this.form, ['title'])));
-          this.$refs.newStatForm.reset();
         }
       }
     },
