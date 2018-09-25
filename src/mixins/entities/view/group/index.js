@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapGetters, mapActions } = createNamespacedHelpers('view/group');
 
 /**
- * @mixin Helpers for the view entity
+ * @mixin Helpers for the view group entity
  */
 export default {
   computed: {

@@ -3,18 +3,19 @@
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
     v-container
       v-text-field(
-      :value="value.property",
-      @input="updateField('property', $event)",
+      :value="value.column",
+      @input="updateField('column', $event)",
       :placeholder="$t('settings.columnName')"
       )
       v-select(
-      :value="value.direction",
-      @input="updateField('direction', $event)",
-      :items="directions"
+      :value="value.order",
+      @input="updateField('order', $event)",
+      :items="orders"
       )
 </template>
 
 <script>
+import formMixin from '@/mixins/form';
 
 /**
 * Component to select the default column to sort on settings
@@ -24,24 +25,20 @@
 * @event value#input
 */
 export default {
+  mixins: [formMixin],
   props: {
     value: {
       type: Object,
       default: () => ({
-        property: '',
-        direction: 'ASC',
+        column: '',
+        order: 'ASC',
       }),
     },
   },
   data() {
     return {
-      directions: ['ASC', 'DESC'],
+      orders: ['ASC', 'DESC'],
     };
-  },
-  methods: {
-    updateField(key, value) {
-      this.$emit('input', { ...this.value, [key]: value });
-    },
   },
 };
 </script>

@@ -105,6 +105,10 @@ export default {
       type: Object,
       required: true,
     },
+    rowId: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -192,6 +196,7 @@ export default {
         name: SIDE_BARS.contextSettings,
         config: {
           widget: this.widget,
+          rowId: this.rowId,
         },
       });
     },
