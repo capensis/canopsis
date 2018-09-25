@@ -565,9 +565,6 @@ class ContextGraph(object):
         """Update the document corresponding to an entity.
         The fields impact/depends of the related entity will NOT be updated.
 
-        If the entity does not exist exist in database, a ValueError will be
-        raised.
-
         :param entity: the entity updated
         """
         self.ent_storage.put_elements([entity])
