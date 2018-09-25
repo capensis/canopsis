@@ -1,3 +1,7 @@
+import Vue from 'vue';
+import get from 'lodash/get';
+import i18n from '@/i18n';
+
 import { API_ROUTES } from '@/config';
 import { statSchema } from '@/store/schemas';
 import { ENTITIES_TYPES } from '@/constants';
@@ -11,33 +15,40 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    pending: false,
-    error: {},
+    widgets: {},
   },
   getters: {
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.stat, id),
-    getList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.stat, state.allIds),
-    getError: state => state.error,
-    getPending: state => state.pending,
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, get(state.widgets[widgetId], 'allIds', [])),
+    getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
+    getErrorByWidgetId: state => widgetId => get(state.widgets[widgetId], 'error'),
   },
   mutations: {
-    [types.FETCH_STATS](state) {
-      state.pending = true;
+    [types.FETCH_STATS](state, { widgetId, params }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: true,
+        fetchingParams: params,
+      });
     },
-    [types.FETCH_STATS_COMPLETED](state, { allIds }) {
-      state.allIds = allIds;
-      state.pending = false;
+    [types.FETCH_STATS_COMPLETED](state, { widgetId, allIds }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+        allIds,
+      });
     },
-    [types.FETCH_STATS_FAILED](state, error) {
-      state.error = error;
-      state.pending = false;
+    [types.FETCH_STATS_FAILED](state, { widgetId, err }) {
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+        error: err,
+      });
     },
   },
   actions: {
-    async fetchStats({ dispatch, commit }, { params } = {}) {
-      commit(types.FETCH_STATS);
-
+    async fetchStats({ commit, dispatch }, { widgetId, params } = {}) {
+      commit(types.FETCH_STATS, { widgetId, params });
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.stats,
@@ -47,12 +58,15 @@ export default {
           dataPreparer: d => d.values,
         }, { root: true });
 
+
         commit(types.FETCH_STATS_COMPLETED, {
+          widgetId,
           allIds: normalizedData.result,
         });
       } catch (err) {
-        commit(types.FETCH_STATS_FAILED, err);
-        console.warn(err);
+        await dispatch('popup/add', { type: 'error', text: `${i18n.t('errors.default')} : ${err.description}` }, { root: true });
+
+        commit(types.FETCH_STATS_FAILED, { widgetId, err });
       }
     },
   },

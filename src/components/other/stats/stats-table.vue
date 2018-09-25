@@ -4,9 +4,8 @@
       v-btn(icon, @click="showSettings")
         v-icon settings
     v-data-table(
-      :items="statsList",
+      :items="stats",
       :headers="columns",
-      :loading="pending",
     )
       template(slot="headers", slot-scope="props")
         tr
@@ -21,8 +20,6 @@
               )
                 stats-number(:item="props.item[key]")
               div(v-else) No data
-      template(slot="no-data")
-        v-alert(:value="error.description" color="error" icon="warning") {{ error.description }}
 </template>
 
 <script>
@@ -53,7 +50,7 @@ export default {
 
   },
   mounted() {
-    this.fetchStats({ params: this.widget.parameters });
+    this.fetchStats({ params: this.widget.parameters, widgetId: this.widget._id });
   },
   methods: {
     showSettings() {
