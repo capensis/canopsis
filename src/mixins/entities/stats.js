@@ -7,6 +7,8 @@ export default {
     ...mapGetters({
       statsList: 'getList',
       statItem: 'getItem',
+      error: 'getError',
+      pending: 'getPending',
     }),
   },
   methods: {

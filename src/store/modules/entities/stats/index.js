@@ -18,6 +18,8 @@ export default {
     getItem: (state, getters, rootState, rootGetters) => id =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.stat, id),
     getList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.stat, state.allIds),
+    getError: state => state.error,
+    getPending: state => state.pending,
   },
   mutations: {
     [types.FETCH_STATS](state) {
@@ -25,9 +27,11 @@ export default {
     },
     [types.FETCH_STATS_COMPLETED](state, { allIds }) {
       state.allIds = allIds;
+      state.pending = false;
     },
     [types.FETCH_STATS_FAILED](state, error) {
       state.error = error;
+      state.pending = false;
     },
   },
   actions: {
@@ -48,7 +52,7 @@ export default {
         });
       } catch (err) {
         commit(types.FETCH_STATS_FAILED, err);
-        console.error(err);
+        console.warn(err);
       }
     },
   },
