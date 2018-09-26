@@ -17,13 +17,15 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
-import DsDaysView from '@/components/day-span/days-view';
+import DsDaysView from '@/components/other/calendar/day-span/days-view';
 
 Vue.use(filters);
 Vue.use(Vuetify);
 Vue.use(DaySpanVuetify, {
   methods: {
     getDefaultEventColor: () => '#1976d2',
+    getPrefix: (calendarEvent, sameDay) =>
+      (sameDay.length === 1 ? sameDay[0].start.format('HH[h]') : `(${sameDay.length})`),
   },
   data: {
     defaults: {

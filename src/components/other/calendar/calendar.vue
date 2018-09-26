@@ -1,16 +1,16 @@
 <template lang="pug">
-  .ds-expand.ds-calendar-app
+  v-container.ds-expand.ds-calendar-app
     div
       v-btn.ds-skinny-button(
       depressed,
       @click="setToday"
       )
-        span {{ labels.today }}
+        span {{ $t('calendar.today') }}
       div
-        v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="prev")
+        v-btn.ds-light-forecolor.mx-5(icon, depressed, @click="prev")
           v-icon keyboard_arrow_left
         span.subheading {{ summary }}
-        v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="next")
+        v-btn.ds-light-forecolor.mx-1(icon, depressed, @click="next")
           v-icon keyboard_arrow_right
       div
         v-menu
@@ -136,7 +136,7 @@ export default {
           ...defaultTypeValues,
 
           id: 'M',
-          label: this.$t('common.month'),
+          label: this.$t('calendar.month'),
           shortcut: 'M',
           type: Units.MONTH,
           listTimes: false,
@@ -145,7 +145,7 @@ export default {
           ...defaultTypeValues,
 
           id: 'W',
-          label: this.$t('common.week'),
+          label: this.$t('calendar.week'),
           shortcut: 'W',
           type: Units.WEEK,
         },
@@ -153,7 +153,7 @@ export default {
           ...defaultTypeValues,
 
           id: 'D',
-          label: this.$t('common.day'),
+          label: this.$t('calendar.day'),
           shortcut: 'D',
           type: Units.DAY,
         },
@@ -275,17 +275,6 @@ export default {
 </script>
 
 <style lang="scss">
-  .ds-app-calendar-toolbar {
-    .v-toolbar__content {
-      border-bottom: 1px solid rgb(224, 224, 224);
-    }
-  }
-
-  .ds-skinny-button {
-    margin-left: 2px !important;
-    margin-right: 2px !important;
-  }
-
   .ds-expand {
     width: 100%;
     height: 100%;

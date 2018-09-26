@@ -15,6 +15,8 @@
           :widget="widget",
           :rowId="row._id"
           )
+        v-flex(xs12)
+          calendar
     .fab
       v-btn(@click="refreshView", icon, color="info", dark, fab)
         v-icon refresh
@@ -41,6 +43,8 @@ import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
 
+import Calendar from '@/components/other/calendar/calendar.vue';
+
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -49,6 +53,7 @@ export default {
     AlarmsList,
     EntitiesList,
     Weather,
+    Calendar,
   },
   mixins: [
     modalMixin,
