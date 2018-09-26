@@ -54,17 +54,30 @@
                 v-model="form.parameters.sla",
                 hide-details
                 )
-            v-btn.ma-0(@click="addStat") Add stat
+            v-alert.my-1(:value="error", type="error") {{ error }}
+            v-btn.ma-0(@click="submitClick") {{ editing ? $t('common.edit') : $t('common.add') }}
+            v-btn.ma-0(v-if="editing", @click="stopEditing") {{ $t('common.quitEditing') }}
 
-      v-list-group(v-for="(stat, key) in value", :key="key")
-        v-list-tile(slot="activator") {{ key }}
-        v-container(fluid) {{ stat }}
+      v-container
+        v-list(dark)
+          v-list-group.my-1.grey(v-for="(stat, key) in value", :key="key")
+            v-list-tile(slot="activator") {{ key }}
+              v-layout(justify-end)
+                v-btn.green.darken-4.white--text(@click.stop="e => editStat(key)", fab, small, depressed)
+                  v-icon edit
+                v-btn.red.darken-4.white--text(@click.stop="e => deleteStat(key)", fab, small, depressed)
+                  v-icon delete
+            v-container(fluid)
+              p Stat : {{ stat.stat }}
+              p Trend: {{ stat.trend}}
+              p Parameters: {{ stat.parameters }}
 
 </template>
 
 <script>
 import omit from 'lodash/omit';
 import set from 'lodash/set';
+import unset from 'lodash/unset';
 import find from 'lodash/find';
 import { STATS_TYPES, ENTITIES_STATES } from '@/constants';
 
@@ -79,6 +92,8 @@ export default {
   },
   data() {
     return {
+      editing: false,
+      editingStat: {},
       form: {
         stat: 'alarms_created',
         title: '',
@@ -115,14 +130,50 @@ export default {
   methods: {
     async addStat() {
       if (this.value[this.form.title]) {
-        this.error = 'Stat with this title already exists';
+        this.error = this.$t('settings.statSelector.error.alreadyExist');
       } else {
         const isFormValid = await this.$validator.validateAll();
 
         if (isFormValid) {
+          const newValue = { ...this.value };
           this.error = '';
-          this.$emit('input', set(this.value, this.form.title, omit(this.form, ['title'])));
+          const newStat = omit(this.form, ['title', 'parameters']);
+          newStat.parameters = {};
+          this.options.forEach((option) => {
+            newStat.parameters[option] = this.form.parameters[option];
+          });
+
+          this.$emit('input', set(newValue, this.form.title, newStat));
         }
+      }
+    },
+
+    deleteStat(stat) {
+      const newValue = { ...this.value };
+      unset(newValue, stat);
+      this.$emit('input', newValue);
+    },
+
+    editStat(key) {
+      this.editing = true;
+      this.editingStat = { ...this.value[key], title: key };
+      this.form = { ...this.value[key], title: key };
+    },
+
+    stopEditing() {
+      this.editing = false;
+      this.editingStat = {};
+    },
+
+    submitClick() {
+      if (this.editing) {
+        // Delete the stat that we want to edit
+        const newValue = { ...this.value };
+        unset(newValue, this.editingStat.title);
+        // Set the edited stat in newValue object, and send it to parent with input event
+        this.$emit('input', set(newValue, this.form.title, omit(this.form, ['title'])));
+      } else {
+        this.addStat();
       }
     },
   },

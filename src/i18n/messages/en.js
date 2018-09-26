@@ -8,6 +8,7 @@ export default {
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    quitEditing: 'Quit editing',
     enabled: 'Enabled',
     disabled: 'Disabled',
     login: 'Login',
@@ -189,6 +190,11 @@ export default {
         connector: 'Connector',
         resource: 'Resource',
         watcher: 'Watcher',
+      },
+    },
+    statSelector: {
+      error: {
+        alreadyExist: 'Stat with this name already exists',
       },
     },
   },

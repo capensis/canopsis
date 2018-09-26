@@ -57,17 +57,10 @@ export default {
   },
   computed: {
     durationValue() {
-      if (this.value) {
-        return parseInt(this.value.slice(0, this.value.length - 1), 10);
-      }
-
-      return 1;
+      return parseInt(this.value.slice(0, this.value.length - 1), 10);
     },
     durationUnit() {
-      if (this.value) {
-        return find(this.units, item => item.value === this.value.slice(-1));
-      }
-      return 'm';
+      return find(this.units, item => item.value === this.value.slice(-1));
     },
   },
   methods: {
