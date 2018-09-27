@@ -181,6 +181,7 @@ class PBehaviorManager(object):
 
         return config, logger, pb_storage
 
+    # FIXME : this is an ugly hack. This should not exist
     @staticmethod
     def parse_offset(offset):
         """
@@ -217,6 +218,7 @@ class PBehaviorManager(object):
         self.pb_storage = pb_storage
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
+        # FIXME : this is an ugly hack. This should not exist.
         str_offset = self.config_data.get("offset_from_utc", "+00:00")
         self.offset_from_utc = self.parse_offset(str_offset)
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
@@ -607,16 +609,17 @@ class PBehaviorManager(object):
 
             dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
 
+            # FIXME : this is an ugly hack. This should not exist
             substract_day = False
             new_dtts = dtts - self.offset_from_utc
 
             if dtts.day != new_dtts.day:
                 substract_day = True
 
-
             delta = dttstop - dttstart
 
             if substract_day:
+                # FIXME : this is an ugly hack. This should not exist
                 dt = dt.replace(day=dt.day - 1)
 
             if dt <= dtts <= dt + delta:
