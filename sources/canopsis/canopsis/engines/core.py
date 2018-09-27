@@ -18,14 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.init import Init
-from canopsis.old.rabbitmq import Amqp
-from canopsis.old.storage import get_storage
-from canopsis.old.account import Account
-from canopsis.event import forger, get_routingkey
-from canopsis.task.core import register_task
-from canopsis.tools import schema as cschema
-
 from traceback import format_exc, print_exc
 
 from itertools import cycle
@@ -36,7 +28,15 @@ from time import time, sleep
 from json import loads
 from os import getpid
 from os.path import join
+
 from canopsis.common import root_path
+from canopsis.common.init import Init
+from canopsis.old.rabbitmq import Amqp
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
+from canopsis.event import forger, get_routingkey
+from canopsis.task.core import register_task
+from canopsis.tools import schema as cschema
 
 DROP = -1
 
@@ -44,20 +44,17 @@ DROP = -1
 class Engine(object):
     etype = 'Engine'
 
-    def __init__(
-        self,
-        next_amqp_queues=[],
-        next_balanced=False,
-        name="worker1",
-        beat_interval=60,
-        logging_level=INFO,
-        exchange_name='amq.direct',
-        routing_keys=[],
-        camqp_custom=None,
-        max_retries=5,
-        *args, **kwargs
-    ):
-
+    def __init__(self,
+                 next_amqp_queues=[],
+                 next_balanced=False,
+                 name="worker1",
+                 beat_interval=60,
+                 logging_level=INFO,
+                 exchange_name='amq.direct',
+                 routing_keys=[],
+                 camqp_custom=None,
+                 max_retries=5,
+                 *args, **kwargs):
         super(Engine, self).__init__()
 
         self.logging_level = logging_level
@@ -72,6 +69,7 @@ class Engine(object):
             self.Amqp = Amqp
         else:
             self.Amqp = camqp_custom
+        self.amqp = None
 
         self.amqp_queue = "Engine_{0}".format(self.name)
         self.routing_keys = routing_keys
@@ -89,20 +87,20 @@ class Engine(object):
 
         self.logger = init.getLogger(name, logging_level=self.logging_level)
 
-        logHandler = FileHandler(
+        log_handler = FileHandler(
             filename=join(
                 root_path, 'var', 'log', 'engines', '{0}.log'.format(name)
             )
         )
 
-        logHandler.setFormatter(
+        log_handler.setFormatter(
             Formatter(
                 "%(asctime)s %(levelname)s %(name)s %(message)s"
             )
         )
 
         # Log in file
-        self.logger.addHandler(logHandler)
+        self.logger.addHandler(log_handler)
 
         self.max_retries = max_retries
 
@@ -126,9 +124,11 @@ class Engine(object):
 
         self.logger.info("Engine initialized")
 
-    def new_amqp_queue(
-        self, amqp_queue, routing_keys, on_amqp_event, exchange_name
-    ):
+    def new_amqp_queue(self,
+                       amqp_queue,
+                       routing_keys,
+                       on_amqp_event,
+                       exchange_name):
         self.amqp.add_queue(
             queue_name=amqp_queue,
             routing_keys=routing_keys,
@@ -274,11 +274,11 @@ class Engine(object):
 
             if self.counter_event:
                 evt_per_sec = float(self.counter_event) / self.beat_interval
-                self.logger.debug(" + %0.2f event(s)/seconds" % evt_per_sec)
+                self.logger.debug(" + %0.2f event(s)/seconds", evt_per_sec)
 
             if self.counter_worktime and self.counter_event:
                 sec_per_evt = self.counter_worktime / self.counter_event
-                self.logger.debug(" + %0.5f seconds/event" % sec_per_evt)
+                self.logger.debug(" + %0.5f seconds/event", sec_per_evt)
 
             # Submit event
             if self.send_stats_event and self.counter_event != 0:
@@ -294,13 +294,16 @@ class Engine(object):
                     {
                         'retention': self.perfdata_retention,
                         'metric': 'cps_evt_per_sec',
-                        'value': round(evt_per_sec, 2), 'unit': 'evt'},
-                    {
+                        'value': round(evt_per_sec, 2),
+                        'unit': 'evt'
+                    }, {
                         'retention': self.perfdata_retention,
                         'metric': 'cps_sec_per_evt',
-                        'value': round(sec_per_evt, 5), 'unit': 's',
+                        'value': round(sec_per_evt, 5),
+                        'unit': 's',
                         'warn': self.thd_warn_sec_per_evt,
-                        'crit': self.thd_crit_sec_per_evt}
+                        'crit': self.thd_crit_sec_per_evt
+                    }
                 ]
 
                 self.logger.debug(" + State: {0}".format(state))
@@ -330,9 +333,6 @@ class Engine(object):
         except Exception as err:
             self.logger.error("Beat raise exception: {0}".format(err))
             self.logger.error(print_exc())
-
-        finally:
-            self.beat_lock = False
 
     def beat(self):
         pass
