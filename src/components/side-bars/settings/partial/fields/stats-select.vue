@@ -168,7 +168,7 @@ export default {
       if (this.editing) {
         // Delete the stat that we want to edit
         const newValue = { ...this.value };
-        const editingStatTitle = { ...this };
+        const { editingStatTitle } = { ...this };
         unset(newValue, editingStatTitle);
         // Set the edited stat in newValue object, and send it to parent with input event
         this.$emit('input', set(newValue, this.form.title, omit(this.form, ['title'])));
