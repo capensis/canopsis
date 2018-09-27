@@ -15,6 +15,7 @@ export default {
     ...mapActions({
       fetchView: 'fetchItem',
       createView: 'create',
+      updateView: 'update',
     }),
   },
 };

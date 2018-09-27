@@ -150,6 +150,18 @@ export default {
         template: 'Template',
       },
     },
+    rowGridSize: {
+      title: 'Taille du widget',
+      noData: 'Aucune ligne correspondante. Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
+      fields: {
+        row: 'Ligne',
+        size: {
+          sm: 'Colonnes SM',
+          md: 'Colonnes MD',
+          lg: 'Colonnes LG',
+        },
+      },
+    },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modal',

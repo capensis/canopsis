@@ -1,14 +1,19 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="row in rows", :key="row._id")
-        h1 {{ row.title }}
-        div(v-for="widget in row.widgets")
-          h2 {{ widget.type }}
+      v-layout(v-for="row in rows", :key="row._id", row, wrap)
+        v-flex(xs12)
+          h2 {{ row.title }}
+        v-flex(
+        v-for="widget in row.widgets",
+        :key="`${widgetKeyPrefix}_${widget._id}`",
+        :class="getWidgetFlexClass(widget)"
+        )
+          h3 {{ widget.type }}
           component(
           :is="widgetsMap[widget.type]",
           :widget="widget",
-          :key="`${widgetKeyPrefix}_${widget._id}`"
+          :rowId="row._id"
           )
     .fab
       v-btn(@click="refreshView", icon, color="info", dark, fab)
@@ -66,11 +71,18 @@ export default {
     };
   },
   computed: {
+    getWidgetFlexClass() {
+      return widget => [
+        `xs${widget.size.sm}`,
+        `md${widget.size.md}`,
+        `lg${widget.size.lg}`,
+      ];
+    },
     rows() {
       return get(this.view, 'rows', []);
     },
   },
-  mounted() {
+  created() {
     this.fetchView({ id: this.id });
   },
   methods: {
