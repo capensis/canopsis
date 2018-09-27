@@ -44,8 +44,6 @@ DROP = -1
 class Engine(object):
     etype = 'Engine'
 
-    amqpcls = Amqp
-
     def __init__(
         self,
         next_amqp_queues=[],
@@ -153,7 +151,7 @@ class Engine(object):
 
         self.logger.info("Start Engine with pid {0}".format(getpid()))
 
-        self.amqp = self.amqpcls(
+        self.amqp = self.Amqp(
             logging_level=self.logging_level,
             logging_name="{0}-amqp".format(self.name),
             on_ready=ready,
