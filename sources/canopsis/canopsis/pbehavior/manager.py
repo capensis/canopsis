@@ -36,6 +36,7 @@ import pytz
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.common.utils import singleton_per_scope
+from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
@@ -157,6 +158,8 @@ class PBehaviorManager(object):
     PB_STORAGE_URI = 'mongodb-default-pbehavior://'
     LOG_PATH = 'var/log/pbehaviormanager.log'
     LOG_NAME = 'pbehaviormanager'
+    CONF_PATH = 'etc/pbehavior/manager.conf'
+    PBH_CAT = "PBEHAVIOR"
 
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
@@ -174,10 +177,35 @@ class PBehaviorManager(object):
         """
         logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
         pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
+        config = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
 
-        return logger, pb_storage
+        return config, logger, pb_storage
 
-    def __init__(self, logger, pb_storage):
+    @staticmethod
+    def parse_offset(offset):
+        """
+        Return a timedelta from a time offset from utc.
+        :param string offset: a string that respect the following format ±00:00
+        or ±0000.
+        :return timedelta: the offset from utc is a timedelta object
+        """
+        minus = offset[0] == "-"
+
+        if offset[3] == ":":
+            offset = offset[1:].split(":")
+        else:
+            offset = [offset[1:3], offset[3:5]]
+
+        hours = int(offset[0])
+        minutes = int(offset[1])
+
+        if minus:
+            hours = -hours
+            minutes = -minutes
+
+        return timedelta(hours=hours, minutes=minutes)
+
+    def __init__(self, config, logger, pb_storage):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -187,7 +215,10 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
-
+        self.config = config
+        self.config_data = self.config.get(self.PBH_CAT, {})
+        str_offset = self.config_data.get("offset_from_utc", "+00:00")
+        self.offset_from_utc = self.parse_offset(str_offset)
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
 
         self.currently_active_pb = set()
@@ -519,8 +550,7 @@ class PBehaviorManager(object):
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
 
-    @staticmethod
-    def check_active_pbehavior(timestamp, pbehavior):
+    def check_active_pbehavior(self, timestamp, pbehavior):
         """
         For a given pbehavior (as dict) check that the given timestamp is active
         using either:
@@ -560,7 +590,6 @@ class PBehaviorManager(object):
         # will be detected.
         dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
 
-        dt_list = [dttstart, dttstop]
         rrule = pbehavior['rrule']
         if rrule:
             # compute the minimal date from which to start generating
@@ -575,26 +604,23 @@ class PBehaviorManager(object):
             # dates in dt_list at 0 and 1 indexes can be equal, so we generate
             # three dates to ensure [1] - [2] will give a non-zero timedelta
             # object.
-            dt_list = list(
-                rrulestr(rrule, dtstart=dt_dtstart).xafter(
-                    dttstart, count=3, inc=True
-                )
-            )
+
+            dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
 
             substract_day = False
-            delta = timedelta(hours=gmtime().tm_hour - localtime().tm_hour)
-            new_dtts = dtts + delta
+            new_dtts = dtts - self.offset_from_utc
+
             if dtts.day != new_dtts.day:
                 substract_day = True
 
+
             delta = dttstop - dttstart
 
-            for dt in sorted(dt_list):
-                if substract_day:
-                    dt = dt.replace(day=dt.day - 1)
+            if substract_day:
+                dt = dt.replace(day=dt.day - 1)
 
-                if dt <= dtts <= dt + delta:
-                    return True
+            if dt <= dtts <= dt + delta:
+                return True
 
             return False
 
@@ -623,6 +649,7 @@ class PBehaviorManager(object):
         :param list pb_names: list of pbehavior names
         :returns: bool if the entity_id is currently in pb_names arg
         """
+        self.logger.critical("_check_pbehavior is DEPRECATED !!!!")
         try:
             entity = self.context.get_entities_by_id(entity_id)[0]
         except Exception:
