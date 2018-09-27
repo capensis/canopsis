@@ -35,7 +35,6 @@
         :locale="$i18n.locale",
         v-model="dateString",
         no-title,
-        data-vv-name="datePicker",
         )
       v-tab-item(id="time")
         v-time-picker(
@@ -43,7 +42,6 @@
         v-model="timeString",
         format="24hr"
         no-title,
-        data-vv-name="timePicker"
         )
     .text-xs-center.dropdown-footer
       v-btn(@click.prevent="submit", color="primary", depressed) Ok

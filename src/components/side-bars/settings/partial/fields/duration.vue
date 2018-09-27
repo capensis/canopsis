@@ -37,19 +37,19 @@ export default {
     return {
       units: [
         {
-          text: 'Hour',
+          text: this.$tc('common.times.hour'),
           value: 'h',
         },
         {
-          text: 'Day',
+          text: this.$tc('common.times.day'),
           value: 'd',
         },
         {
-          text: 'Week',
+          text: this.$tc('common.times.week'),
           value: 'w',
         },
         {
-          text: 'Month',
+          text: this.$tc('common.times.month'),
           value: 'm',
         },
       ],

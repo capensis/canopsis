@@ -6,20 +6,21 @@
     v-data-table(
       :items="stats",
       :headers="columns",
+      :loading="statsPending",
     )
-      template(slot="headers", slot-scope="props")
-        tr
-          th Entity
-          th(v-for="header in props.headers", :key="header.value") {{ header.value }}
-      template(slot="items", slot-scope="props")
-          tr.text-xs-center
-            td {{ props.item.entity.name }}
-            td(v-for="(property, key) in widget.parameters.stats")
-              template(
-              v-if="props.item[key].value !== undefined && props.item[key].value !== null"
-              )
-                stats-number(:item="props.item[key]")
-              div(v-else) No data
+      v-progress-linear(slot="progress", color="blue", indeterminate)
+      template(slot="headers", slot-scope="{ headers }")
+        th Entity
+        th(v-for="header in headers", :key="header.value") {{ header.value }}
+      template(slot="items", slot-scope="{ item }")
+        td {{ item.entity.name }}
+        td(v-for="(property, key) in widget.parameters.stats")
+          template(
+          v-if="item[key].value !== undefined && item[key].value !== null"
+          )
+            td
+              stats-number(:item="item[key]")
+          div(v-else) No data
 </template>
 
 <script>
@@ -42,10 +43,7 @@ export default {
   },
   computed: {
     columns() {
-      const columnsList = [];
-      Object.keys(this.widget.parameters.stats).map(item => columnsList.push({ value: item }));
-
-      return columnsList;
+      return Object.keys(this.widget.parameters.stats).map(item => ({ value: item }));
     },
 
   },
@@ -58,6 +56,7 @@ export default {
         name: SIDE_BARS.statsTableSettings,
         config: {
           widget: this.widget,
+          rowId: this.rowId,
         },
       });
     },

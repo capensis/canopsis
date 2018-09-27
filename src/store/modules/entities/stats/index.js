@@ -21,7 +21,6 @@ export default {
     getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
       rootGetters['entities/getList'](ENTITIES_TYPES.stat, get(state.widgets[widgetId], 'allIds', [])),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
-    getErrorByWidgetId: state => widgetId => get(state.widgets[widgetId], 'error'),
   },
   mutations: {
     [types.FETCH_STATS](state, { widgetId, params }) {
@@ -38,11 +37,10 @@ export default {
         allIds,
       });
     },
-    [types.FETCH_STATS_FAILED](state, { widgetId, err }) {
+    [types.FETCH_STATS_FAILED](state, { widgetId }) {
       Vue.set(state.widgets, widgetId, {
         ...state.widgets[widgetId],
         pending: false,
-        error: err,
       });
     },
   },
@@ -66,7 +64,7 @@ export default {
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: `${i18n.t('errors.default')} : ${err.description}` }, { root: true });
 
-        commit(types.FETCH_STATS_FAILED, { widgetId, err });
+        commit(types.FETCH_STATS_FAILED, { widgetId });
       }
     },
   },

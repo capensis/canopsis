@@ -68,9 +68,9 @@
                 v-btn.red.darken-4.white--text(@click.stop="e => deleteStat(key)", fab, small, depressed)
                   v-icon delete
             v-container(fluid)
-              p Stat : {{ stat.stat }}
-              p Trend: {{ stat.trend}}
-              p Parameters: {{ stat.parameters }}
+              p {{ $t('common.stat') }}: {{ stat.stat }}
+              p {{ $t('common.trend') }}: {{ stat.trend}}
+              p {{ $t('common.parameters') }}: {{ stat.parameters }}
 
 </template>
 
@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       editing: false,
-      editingStat: {},
+      editingStatTitle: '',
       form: {
         stat: 'alarms_created',
         title: '',
@@ -142,7 +142,6 @@ export default {
           this.options.forEach((option) => {
             newStat.parameters[option] = this.form.parameters[option];
           });
-
           this.$emit('input', set(newValue, this.form.title, newStat));
         }
       }
@@ -156,7 +155,7 @@ export default {
 
     editStat(key) {
       this.editing = true;
-      this.editingStat = { ...this.value[key], title: key };
+      this.editingStatTitle = key;
       this.form = { ...this.value[key], title: key };
     },
 
@@ -169,7 +168,8 @@ export default {
       if (this.editing) {
         // Delete the stat that we want to edit
         const newValue = { ...this.value };
-        unset(newValue, this.editingStat.title);
+        const editingStatTitle = { ...this };
+        unset(newValue, editingStatTitle);
         // Set the edited stat in newValue object, and send it to parent with input event
         this.$emit('input', set(newValue, this.form.title, omit(this.form, ['title'])));
       } else {

@@ -7,7 +7,6 @@ export default {
     ...mapGetters({
       getStatsListByWidgetId: 'getListByWidgetId',
       getStatsPendingByWidgetId: 'getPendingByWidgetId',
-      getStatsErrorByWidgetId: 'getErrorByWidgetId',
     }),
 
     stats() {
@@ -16,10 +15,6 @@ export default {
 
     statsPending() {
       return this.getStatsPendingByWidgetId(this.widget._id);
-    },
-
-    statsError() {
-      return this.getStatsErrorByWidgetId(this.widget._id);
     },
   },
   methods: {
