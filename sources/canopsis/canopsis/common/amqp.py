@@ -135,7 +135,7 @@ class AmqpPublisher(object):
 
         :param document Any: a JSON serializable object
         :param exchange_name str: the name of the exchange to publish to.
-        :param routing_key str: event's routing key
+        :param routing_key str: the event's routing key
         :param retries int: the number of times the publication should be
             retried in case of failure.
         :param wait float: the number of seconds to wait before retrying to
@@ -177,7 +177,7 @@ class AmqpPublisher(object):
         """
         Send an event to canopsis.
 
-        :param event dict: A canopsis event (as a dictionnary).
+        :param event dict: a canopsis event (as a dictionnary).
         :param exchange_name str: the name of the exchange to publish to.
         :param retries int: the number of times the publication should be
             retried in case of failure.
@@ -200,7 +200,7 @@ class AmqpPublisher(object):
         """
         Send an event directly to a queue.
 
-        :param event dict: A canopsis event (as a dictionnary).
+        :param event dict: a canopsis event (as a dictionnary).
         :param queue_name str: the name of the queue to publish to.
         :param exchange_name str: the name of the exchange to publish to.
         :param retries int: the number of times the publication should be
