@@ -334,6 +334,9 @@ export default {
         weather: {
           title: 'Service weather',
         },
+        statsCalendar: {
+          title: 'Stats calendar',
+        },
       },
     },
   },

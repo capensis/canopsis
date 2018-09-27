@@ -7,10 +7,10 @@
       )
         span {{ $t('calendar.today') }}
       div
-        v-btn.ds-light-forecolor.mx-5(icon, depressed, @click="prev")
+        v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="prev")
           v-icon keyboard_arrow_left
         span.subheading {{ summary }}
-        v-btn.ds-light-forecolor.mx-1(icon, depressed, @click="next")
+        v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="next")
           v-icon keyboard_arrow_right
       div
         v-menu
@@ -273,23 +273,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-  .ds-expand {
-    width: 100%;
-    height: 100%;
-  }
-
-  .ds-calendar-container {
-    padding: 0 !important;
-    position: relative;
-  }
-
-  .v-btn--floating.ds-add-event-today {
-    .v-icon {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-</style>
