@@ -6,7 +6,7 @@
     v-fade-transition
       v-layout(v-show="!watchersPending", wrap)
         v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
-          weather-item(:watcher="item", :widget="widget", :template="widget.block_template")
+          weather-item(:watcher="item", :widget="widget", :template="widget.parameters.blockTemplate")
     v-fade-transition
       v-layout(v-show="watchersPending", column)
         v-flex(xs12)
@@ -47,9 +47,9 @@ export default {
   computed: {
     flexSize() {
       return [
-        `xs${this.widget.columnSM}`,
-        `md${this.widget.columnMD}`,
-        `lg${this.widget.columnLG}`,
+        `xs${this.widget.parameters.columnSM}`,
+        `md${this.widget.parameters.columnMD}`,
+        `lg${this.widget.parameters.columnLG}`,
       ];
     },
   },
