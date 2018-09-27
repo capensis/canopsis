@@ -27,7 +27,7 @@ from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
-from canopsis.engines.core import Engine, DROP, publish
+from canopsis.engines.core import Engine, DROP
 from canopsis.event import forger, get_routingkey
 from canopsis.old.mfilter import check
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -244,12 +244,10 @@ class engine(Engine):
         for record in records:
             job = copy.deepcopy(record)
             job['context'] = event
-            publish(
-                publisher=self.amqp,
-                event=job,
-                rk='Engine_scheduler',
-                exchange='amq.direct'
-            )
+            try:
+                self.work_amqp_publisher.direct_event(job, 'Engine_scheduler')
+            except Exception as e:
+                self.logger.exception("Unable to send job")
             time.sleep(1)
         return True
 
@@ -301,12 +299,11 @@ class engine(Engine):
             if event.get('resource', ''):
                 snooze['resource'] = event['resource']
 
-            publish(
-                event=snooze,
-                publisher=self.amqp,
-                rk='Engine_event_filter',
-                exchange='amq.direct'
-            )
+            try:
+                self.work_amqp_publisher.direct_event(
+                    snooze, 'Engine_event_filter')
+            except Exception as e:
+                self.logger.exception("Unable to send snooze event")
 
             return True
 
@@ -322,8 +319,11 @@ class engine(Engine):
         event['baseline_name'] = actions['baseline_name']
         event['check_frequency'] = actions['check_frequency']
 
-        publish(event=event, publisher=self.amqp,
-                rk='Engine_baseline', exchange='amq.direct')
+        try:
+            self.work_amqp_publisher.direct_event(
+                event, 'Engine_baseline')
+        except Exception as e:
+            self.logger.exception("Unable to send baseline event")
 
     def apply_actions(self, event, actions):
         pass_event = False
@@ -510,7 +510,10 @@ class engine(Engine):
 
         self.logger.debug(message_dropped)
         self.logger.debug(message_passed)
-        publish(publisher=self.amqp, event=event)
+        try:
+            self.beat_amqp_publisher.canopsis_event(event)
+        except Exception as e:
+            self.logger.exception("Unable to send stat event")
         self.drop_event_count = 0
         self.pass_event_count = 0
 
