@@ -6,8 +6,6 @@ import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
-import StatsCurves from '@/views/stats-curves.vue';
-import StatsBars from '@/views/stats-bars.vue';
 
 Vue.use(Router);
 
@@ -36,18 +34,6 @@ const routes = [
     component: View,
     meta: requiresLoginMeta,
     props: route => ({ id: route.params.id }),
-  },
-  {
-    path: '/stats-curves',
-    name: 'statsCurves',
-    component: StatsCurves,
-    meta: requiresLoginMeta,
-  },
-  {
-    path: '/stats-bars',
-    name: 'statsBars',
-    component: StatsBars,
-    meta: requiresLoginMeta,
   },
 ];
 

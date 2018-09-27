@@ -55,6 +55,12 @@ export function generateWidgetByType(type) {
         columnHG: 0,
       };
       break;
+
+    case WIDGET_TYPES.statsHistogram:
+      specialParameters = {
+        groups: [],
+      };
+      break;
   }
 
   widget.parameters = { ...widget.parameters, ...specialParameters };

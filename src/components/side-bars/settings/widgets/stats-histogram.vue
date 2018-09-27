@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldTitle from '../partial/fields/title.vue';
@@ -20,15 +22,13 @@ export default {
   },
   mixins: [widgetSettingsMixin],
   data() {
-    const { widget } = this.config;
+    const { widget, rowId } = this.config;
 
     return {
       settings: {
-        widget: {
-          title: widget.title,
-          parameters: {
-            groups: widget.groups || [],
-          },
+        rowId,
+        widget: cloneDeep(widget),
+        widget_preferences: {
         },
       },
     };

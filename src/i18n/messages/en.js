@@ -335,6 +335,9 @@ export default {
         weather: {
           title: 'Service weather',
         },
+        statsHistogram: {
+          title: 'Stats histogram',
+        },
       },
     },
   },
