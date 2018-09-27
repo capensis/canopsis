@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 
-from canopsis.engines.core import Engine, publish
+from canopsis.engines.core import Engine
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 
@@ -81,10 +81,11 @@ class engine(Engine):
                 job['_id'] = self.config['_id']
                 job['context'] = refevt
 
-                publish(
-                    publisher=self.amqp, event=job, rk='Engine_scheduler',
-                    exchange='amq.direct'
-                )
+                try:
+                    self.work_amqp_publisher.direct_event(
+                        job, 'Engine_scheduler')
+                except Exception as e:
+                    self.logger.exception("Unable to send event to next queue")
 
                 self.logger.info(
                     'Setting ticked received for {}'
