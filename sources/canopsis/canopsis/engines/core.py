@@ -30,7 +30,7 @@ from os import getpid
 from os.path import join
 
 from canopsis.common import root_path
-from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import AmqpPublisher, DIRECT_EXCHANGE_NAME
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_connection
 from canopsis.common.init import Init
@@ -42,7 +42,6 @@ from canopsis.task.core import register_task
 from canopsis.tools import schema as cschema
 
 DROP = -1
-DIRECT_EXCHANGE_NAME = 'amq.direct'
 
 
 class Engine(object):
@@ -263,20 +262,14 @@ class Engine(object):
             queue_name = self.get_amqp_queue.next()
             if queue_name:
                 try:
-                    self.work_amqp_publisher.json_document(
-                        event,
-                        exchange_name=DIRECT_EXCHANGE_NAME,
-                        routing_key=queue_name)
+                    self.work_amqp_publisher.direct_event(event, queue_name)
                 except Exception as e:
                     self.logger.exception("Unable to send event to next queue")
 
         else:
             for queue_name in self.next_amqp_queues:
                 try:
-                    self.work_amqp_publisher.json_document(
-                        event,
-                        exchange_name=DIRECT_EXCHANGE_NAME,
-                        routing_key=queue_name)
+                    self.work_amqp_publisher.direct_event(event, queue_name)
                 except Exception as e:
                     self.logger.exception("Unable to send event to next queue")
 
