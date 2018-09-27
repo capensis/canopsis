@@ -59,6 +59,7 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsHistogram:
       specialParameters = {
         groups: [],
+        stats: {},
       };
       break;
   }

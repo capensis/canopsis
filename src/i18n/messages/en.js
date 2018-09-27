@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -8,16 +8,24 @@ export default {
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    quitEditing: 'Quit editing',
     enabled: 'Enabled',
     disabled: 'Disabled',
     login: 'Login',
     yes: 'Yes',
     no: 'No',
     confirmation: 'Are you sure ?',
+    parameters: 'Parameters',
     by: 'By',
     date: 'Date',
     comment: 'Comment',
     end: 'End',
+    recursive: 'Recursive',
+    states: 'States',
+    sla: 'Sla',
+    authors: 'Authors',
+    stat: 'Stat',
+    trend: 'Trend',
     username: 'Username',
     password: 'Password',
     logout: 'Logout',
@@ -142,6 +150,10 @@ export default {
     open: 'Open',
     resolved: 'Resolved',
     filters: 'Filters',
+    filterEditor: 'Filter editor',
+    duration: 'Duration',
+    tstop: 'End date',
+    statsSelect: 'Stats select',
     selectAFilter: 'Select a filter',
     infoPopup: {
       title: 'Info popup',
@@ -176,6 +188,11 @@ export default {
         connector: 'Connector',
         resource: 'Resource',
         watcher: 'Watcher',
+      },
+    },
+    statSelector: {
+      error: {
+        alreadyExist: 'Stat with this name already exists',
       },
     },
   },
@@ -482,5 +499,20 @@ export default {
   },
   validator: {
     unique: 'Field must be unique',
+  },
+  stats: {
+    types: {
+      [STATS_TYPES.alarmsCreated.value]: 'Alarms created',
+      [STATS_TYPES.alarmsResolved.value]: 'Alarms resolved',
+      [STATS_TYPES.alarmsCanceled.value]: 'Alarms canceled',
+      [STATS_TYPES.ackTimeSla.value]: 'Ack time Sla',
+      [STATS_TYPES.resolveTimeSla.value]: 'Resolve time Sla',
+      [STATS_TYPES.timeInState.value]: 'Time in state',
+      [STATS_TYPES.stateRate.value]: 'State rate',
+      [STATS_TYPES.mtbf.value]: 'MTBF',
+      [STATS_TYPES.currentState.value]: 'Current state',
+      [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+    },
   },
 };

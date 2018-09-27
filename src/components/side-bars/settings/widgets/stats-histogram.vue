@@ -1,10 +1,19 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
+      field-row-grid-size(
+      :rowId.sync="settings.rowId",
+      :size.sync="settings.widget.size",
+      :availableRows="availableRows",
+      @createRow="createRow"
+      )
+      v-divider
       field-title(v-model="settings.widget.title")
       v-divider
       field-stats-groups(:groups.sync="settings.widget.parameters.groups")
-    v-btn(@click="", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+      v-divider
+      field-stats-select(v-model="settings.widget.parameters.stats")
+    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
 <script>
@@ -12,13 +21,17 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
+import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldStatsGroups from '../partial/fields/stats-groups.vue';
+import FieldStatsSelect from '../partial/fields/stats-select.vue';
 
 export default {
   components: {
+    FieldRowGridSize,
     FieldTitle,
     FieldStatsGroups,
+    FieldStatsSelect,
   },
   mixins: [widgetSettingsMixin],
   data() {
