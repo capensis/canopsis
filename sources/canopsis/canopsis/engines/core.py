@@ -30,6 +30,9 @@ from os import getpid
 from os.path import join
 
 from canopsis.common import root_path
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_connection
 from canopsis.common.init import Init
 from canopsis.old.rabbitmq import Amqp
 from canopsis.old.storage import get_storage
@@ -39,6 +42,7 @@ from canopsis.task.core import register_task
 from canopsis.tools import schema as cschema
 
 DROP = -1
+DIRECT_EXCHANGE_NAME = 'amq.direct'
 
 
 class Engine(object):
@@ -50,7 +54,7 @@ class Engine(object):
                  name="worker1",
                  beat_interval=60,
                  logging_level=INFO,
-                 exchange_name='amq.direct',
+                 exchange_name=DIRECT_EXCHANGE_NAME,
                  routing_keys=[],
                  camqp_custom=None,
                  max_retries=5,
@@ -69,7 +73,15 @@ class Engine(object):
             self.Amqp = Amqp
         else:
             self.Amqp = camqp_custom
+
+        # self.amqp handles the consumption of events from rabbitmq. The
+        # publication of events from self.amqp is deprecated.
         self.amqp = None
+        # self.beat_amqp_publisher and self.work_amqp_publisher handles the
+        # publication of events (they are separated to prevent sharing a
+        # channel between two threads).
+        self.beat_amqp_publisher = AmqpPublisher(get_default_amqp_connection())
+        self.work_amqp_publisher = AmqpPublisher(get_default_amqp_connection())
 
         self.amqp_queue = "Engine_{0}".format(self.name)
         self.routing_keys = routing_keys
@@ -250,17 +262,23 @@ class Engine(object):
         if self.next_balanced:
             queue_name = self.get_amqp_queue.next()
             if queue_name:
-                publish(
-                    publisher=self.amqp, event=event, rk=queue_name,
-                    exchange='amq.direct'
-                )
+                try:
+                    self.work_amqp_publisher.json_document(
+                        event,
+                        exchange_name=DIRECT_EXCHANGE_NAME,
+                        routing_key=queue_name)
+                except Exception as e:
+                    self.logger.exception("Unable to send event to next queue")
 
         else:
             for queue_name in self.next_amqp_queues:
-                publish(
-                    publisher=self.amqp, event=event, rk=queue_name,
-                    exchange="amq.direct"
-                )
+                try:
+                    self.work_amqp_publisher.json_document(
+                        event,
+                        exchange_name=DIRECT_EXCHANGE_NAME,
+                        routing_key=queue_name)
+                except Exception as e:
+                    self.logger.exception("Unable to send event to next queue")
 
     def _beat(self):
         now = int(time())
@@ -321,7 +339,10 @@ class Engine(object):
                     perf_data_array=perf_data_array
                 )
 
-                publish(event=event, publisher=self.amqp)
+                try:
+                    self.beat_amqp_publisher.canopsis_event(event)
+                except Exception as e:
+                    self.logger.exception("Unable to send perfdata")
 
             self.counter_error = 0
             self.counter_event = 0
@@ -480,7 +501,10 @@ class TaskHandler(Engine):
             'execution_time': end - start
         }
 
-        publish(event=event, publisher=self.amqp, logger=self.logger)
+        try:
+            self.work_amqp_publisher.canopsis_event(event)
+        except Exception as e:
+            self.logger.exception("Unable to send event to next queue")
 
     def handle_task(self, job):
         """
