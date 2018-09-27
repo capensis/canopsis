@@ -26,8 +26,9 @@ export default {
       rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
   },
   mutations: {
-    [types.FETCH_ITEM]: (state) => {
+    [types.FETCH_ITEM]: (state, viewId) => {
       state.pending = true;
+      state.activeViewId = viewId;
     },
     [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
       state.activeViewId = viewId;
@@ -41,7 +42,7 @@ export default {
 
     async fetchItem({ commit, dispatch }, { id }) {
       try {
-        commit(types.FETCH_ITEM);
+        commit(types.FETCH_ITEM, id);
 
         const { normalizedData } = await dispatch('entities/fetch', {
           route: `${API_ROUTES.view}/${id}`,
