@@ -76,7 +76,7 @@ class Engine(object):
         # self.amqp handles the consumption of events from rabbitmq. The
         # publication of events from self.amqp is deprecated.
         self.amqp = None
-        # self.beat_amqp_publisher and self.work_amqp_publisher handles the
+        # self.beat_amqp_publisher and self.work_amqp_publisher handle the
         # publication of events (they are separated to prevent sharing a
         # channel between two threads).
         self.beat_amqp_publisher = AmqpPublisher(get_default_amqp_connection())
