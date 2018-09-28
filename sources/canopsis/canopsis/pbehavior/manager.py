@@ -25,7 +25,7 @@ Managing PBehavior.
 from calendar import timegm
 from datetime import datetime, timedelta
 from json import loads, dumps
-from time import time, gmtime, localtime
+from time import time
 from uuid import uuid4
 from six import string_types
 from dateutil.rrule import rrulestr
@@ -216,9 +216,9 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
+        # FIXME : this is an ugly hack. This should not exist.
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
-        # FIXME : this is an ugly hack. This should not exist.
         str_offset = self.config_data.get("offset_from_utc", "+00:00")
         self.offset_from_utc = self.parse_offset(str_offset)
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
