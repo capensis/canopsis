@@ -43,7 +43,7 @@ class BaseTest(unittest.TestCase):
         )
 
         logger = Logger.get('test_pb', None, output_cls=OutputNull)
-        conf = Configuration.load(Alerts.CONF_PATH, Ini)
+        conf = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
         self.pbm = PBehaviorManager(config=conf,
                                     logger=logger,
                                     pb_storage=pbehavior_storage)
