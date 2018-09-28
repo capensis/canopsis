@@ -16,7 +16,7 @@ from canopsis.common import root_path
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
-#from canopsis.context_graph.process import create_entity
+# from canopsis.context_graph.process import create_entity
 from canopsis.logger.logger import Logger, OutputNull
 from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -201,7 +201,10 @@ class ComputeState(BaseTest):
         )
         logger = Logger.get('test_pb', None, output_cls=OutputNull)
 
-        self.pbm = PBehaviorManager(logger=logger,
+        config = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
+
+        self.pbm = PBehaviorManager(config=config,
+                                    logger=logger,
                                     pb_storage=pbehavior_storage)
         self.pbm.context = self.context_graph_manager
         self.manager.pbehavior_manager = self.pbm
