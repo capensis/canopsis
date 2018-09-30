@@ -1,11 +1,11 @@
 <template lang="pug">
-  stats-calendar(calendar.sync="calendar")
+  stats-calendar(:calendar="calendar", :events="events", @change="change")
 </template>
 
 <script>
-// import moment from 'moment';
+import moment from 'moment';
 // import { rrulestr } from 'rrule';
-import { Calendar } from 'dayspan';
+import { Calendar, Schedule, Day } from 'dayspan';
 
 import StatsCalendar from '@/components/other/stats/calendar/calendar.vue';
 
@@ -20,17 +20,9 @@ export default {
       widget: {
         _id: 'asd',
       },
+      calendar: Calendar.months(),
+      events: [],
     };
-  },
-  computed: {
-    calendar: {
-      get() {
-        return Calendar.months();
-      },
-      set() {
-        // console.log(value);
-      },
-    },
   },
   async mounted() {
     await this.fetchContextEntitiesList({
@@ -65,6 +57,47 @@ export default {
         filter,
       },
     });
+
+    setTimeout(() => {
+      const dayObject = new Day(moment());
+
+      this.events.push({
+        data: {
+          title: 'PBEHAVIOR',
+          description: 'Something',
+          color: '#3F51B5',
+        },
+        schedule: new Schedule({
+          on: dayObject,
+          times: [dayObject.asTime()],
+        }),
+      });
+    }, 5000);
+  },
+  methods: {
+    change({ calendar }) {
+      this.events = [{
+        data: {
+          title: 'START',
+          description: 'Something',
+          color: '#3F51B5',
+        },
+        schedule: new Schedule({
+          on: calendar.start,
+          times: [calendar.start.asTime()],
+        }),
+      }, {
+        data: {
+          title: 'END',
+          description: 'Something',
+          color: '#3F51B5',
+        },
+        schedule: new Schedule({
+          on: calendar.end,
+          times: [calendar.end.asTime()],
+        }),
+      }];
+    },
   },
 };
 </script>
