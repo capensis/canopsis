@@ -10,7 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title")
       v-divider
-      field-date-select()
+      field-date-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
       v-divider
       field-stats-groups(:groups.sync="settings.widget.parameters.groups")
       v-divider
@@ -28,6 +28,7 @@ import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldStatsGroups from '../partial/fields/stats-groups.vue';
 import FieldStatsSelect from '../partial/fields/stats-select.vue';
+import FieldDateSelect from '../partial/fields/date-select.vue';
 
 export default {
   components: {
@@ -35,6 +36,7 @@ export default {
     FieldTitle,
     FieldStatsGroups,
     FieldStatsSelect,
+    FieldDateSelect,
   },
   mixins: [widgetSettingsMixin],
   data() {

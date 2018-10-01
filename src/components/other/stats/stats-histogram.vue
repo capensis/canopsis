@@ -6,6 +6,11 @@ export default {
   props: {
     widget: {
       type: Object,
+      required: true,
+    },
+    rowId: {
+      type: String,
+      required: true,
     },
   },
   mounted() {
