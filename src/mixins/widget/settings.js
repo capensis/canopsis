@@ -123,7 +123,6 @@ export default {
           },
         };
 
-
         const oldRowId = this.config.rowId;
         const newRowId = this.settings.rowId;
 

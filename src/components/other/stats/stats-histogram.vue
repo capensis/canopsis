@@ -1,3 +1,9 @@
+<template lang="pug">
+  v-btn
+    v-icon settings
+</template>
+
+
 <script>
 import { Bar } from 'vue-chartjs';
 

@@ -23,6 +23,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import { SIDE_BARS } from '@/constants';
 
 import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
@@ -31,6 +32,10 @@ import FieldStatsSelect from '../partial/fields/stats-select.vue';
 import FieldDateSelect from '../partial/fields/date-select.vue';
 
 export default {
+  name: SIDE_BARS.statsHistogramSettings,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     FieldRowGridSize,
     FieldTitle,
