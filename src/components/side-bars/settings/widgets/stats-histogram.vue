@@ -10,9 +10,12 @@
       v-divider
       field-title(v-model="settings.widget.title")
       v-divider
+      field-date-select()
+      v-divider
       field-stats-groups(:groups.sync="settings.widget.parameters.groups")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
+      v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
