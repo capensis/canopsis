@@ -24,7 +24,7 @@ export default {
   computed: {
     dateValue() {
       if (this.value) {
-        return moment(this.value).toDate();
+        return moment.unix(this.value).toDate();
       }
       return moment().toDate();
     },

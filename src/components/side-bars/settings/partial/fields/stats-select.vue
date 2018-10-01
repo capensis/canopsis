@@ -161,7 +161,7 @@ export default {
 
     stopEditing() {
       this.editing = false;
-      this.editingStat = {};
+      this.editingStatTitle = '';
     },
 
     submitClick() {

@@ -40,6 +40,10 @@ export default {
       type: Object,
       required: true,
     },
+    rowId: {
+      type: String,
+      required: true,
+    },
   },
   computed: {
     columns() {
