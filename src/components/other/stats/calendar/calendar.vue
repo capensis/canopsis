@@ -1,19 +1,19 @@
 <template lang="pug">
   v-container.ds-expand.ds-calendar-app
     v-layout(row)
-      v-flex(xs4)
+      v-flex(xs3)
         v-btn.ds-skinny-button(
         depressed,
         @click="setToday"
         )
           span {{ $t('calendar.today') }}
-      v-flex(xs4)
+      v-flex(xs6)
         v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="prev")
           v-icon keyboard_arrow_left
         span.subheading {{ summary }}
         v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="next")
           v-icon keyboard_arrow_right
-      v-flex(xs4)
+      v-flex(xs3)
         v-menu
           v-btn(slot="activator", flat)
             span {{ currentType.label }}
