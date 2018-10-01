@@ -60,7 +60,8 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.statsHistogram:
       specialParameters = {
-        tstop: moment().valueOf(),
+        duration: '1m',
+        tstop: moment().unix(),
         groups: [],
         stats: {},
       };
