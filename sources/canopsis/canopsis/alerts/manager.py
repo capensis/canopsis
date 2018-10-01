@@ -833,7 +833,7 @@ class Alerts(object):
         # Update entity's last_state_change
         if entity:
             entity[Entity.LAST_STATE_CHANGE] = now
-            self.context_manager.update_entity(entity)
+            self.context_manager.update_entity_body(entity)
 
         alarm[storage_value] = new_value
 
