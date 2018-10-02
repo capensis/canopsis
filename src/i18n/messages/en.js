@@ -2,6 +2,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
 
 export default {
   common: {
+    entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
     name: 'Name',
@@ -363,6 +364,7 @@ export default {
     },
   },
   tables: {
+    noData: 'No data',
     contextList: {
       title: 'Context List',
       name: 'Name',

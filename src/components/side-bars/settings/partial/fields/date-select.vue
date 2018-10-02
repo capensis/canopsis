@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     dateChange(event) {
-      this.$emit('input', moment(event).valueOf() / 1000);
+      this.$emit('input', moment(event).unix());
     },
   },
 };

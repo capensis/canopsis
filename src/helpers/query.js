@@ -82,6 +82,15 @@ export function convertContextWidgetToQuery(widget) {
 }
 
 /**
+ *
+ */
+export function convertStatsTableWidgetToQuery(widget) {
+  const query = { ...widget.parameters };
+
+  return query;
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -151,6 +160,8 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.statsTable:
+      return convertStatsTableWidgetToQuery(widget);
     default:
       return {};
   }

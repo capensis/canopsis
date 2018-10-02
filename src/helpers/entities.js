@@ -61,7 +61,7 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsTable:
       specialParameters = {
         duration: '1m',
-        tstop: moment().valueOf(),
+        tstop: moment().unix(),
         stats: {},
         mfilter: {},
       };
