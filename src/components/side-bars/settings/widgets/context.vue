@@ -10,9 +10,9 @@
       v-divider
       field-title(v-model="settings.widget.title")
       v-divider
-      field-default-sort-column(v-model="settings.widget.default_sort_column")
+      field-default-sort-column(v-model="settings.widget.parameters.sort")
       v-divider
-      field-columns(v-model="settings.widget.widget_columns")
+      field-columns(v-model="settings.widget.parameters.widgetColumns")
       v-divider
       field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
@@ -64,7 +64,7 @@ export default {
     };
   },
   created() {
-    const { widget_preferences: widgetPreference } = this.userPreference.widget_preferences;
+    const { widget_preferences: widgetPreference } = this.userPreference;
 
     this.settings.widget_preferences = {
       selectedTypes: get(widgetPreference, 'selectedTypes', []),

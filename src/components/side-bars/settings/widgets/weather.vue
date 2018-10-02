@@ -7,14 +7,32 @@
       :availableRows="availableRows",
       @createRow="createRow"
       )
+      v-divider
       field-title(v-model="settings.widget.title")
+      v-divider
       field-weather-data-set
-      field-weather-template(v-model="settings.widget.block_template", :title="$t('settings.weatherTemplate')")
-      field-weather-template(v-model="settings.widget.modal_template", :title="$t('settings.modalTemplate')")
-      field-weather-template(v-model="settings.widget.entity_template", :title="$t('settings.entityTemplate')")
-      field-grid-size(v-model="settings.widget.columnSM", :title="$t('settings.columnSM')")
-      field-grid-size(v-model="settings.widget.columnMD", :title="$t('settings.columnMD')")
-      field-grid-size(v-model="settings.widget.columnLG", :title="$t('settings.columnLG')")
+      v-divider
+      field-weather-template(
+      v-model="settings.widget.parameters.blockTemplate",
+      :title="$t('settings.weatherTemplate')"
+      )
+      v-divider
+      field-weather-template(
+      v-model="settings.widget.parameters.modalTemplate",
+      :title="$t('settings.modalTemplate')"
+      )
+      v-divider
+      field-weather-template(
+      v-model="settings.widget.parameters.entityTemplate",
+      :title="$t('settings.entityTemplate')"
+      )
+      v-divider
+      field-grid-size(v-model="settings.widget.parameters.columnSM", :title="$t('settings.columnSM')")
+      v-divider
+      field-grid-size(v-model="settings.widget.parameters.columnMD", :title="$t('settings.columnMD')")
+      v-divider
+      field-grid-size(v-model="settings.widget.parameters.columnLG", :title="$t('settings.columnLG')")
+      v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
@@ -53,9 +71,6 @@ export default {
         widget: cloneDeep(widget),
       },
     };
-  },
-  mounted() {
-    this.settings.widget = { ...this.widget };
   },
 };
 </script>

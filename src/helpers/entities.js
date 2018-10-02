@@ -46,9 +46,9 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.weather:
       specialParameters = {
-        block_template: '',
-        modal_template: '',
-        entity_template: '',
+        blockTemplate: '',
+        modalTemplate: '',
+        entityTemplate: '',
         columnSM: 0,
         columnMD: 0,
         columnLG: 0,
