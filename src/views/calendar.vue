@@ -1,11 +1,11 @@
 <template lang="pug">
-  stats-calendar(:calendar="calendar", :events="events", @change="change")
+  stats-calendar(:events="events")
 </template>
 
 <script>
 import moment from 'moment';
 // import { rrulestr } from 'rrule';
-import { Calendar, Schedule, Day, Time } from 'dayspan';
+import { Schedule, Day, Time } from 'dayspan';
 import { createNamespacedHelpers } from 'vuex';
 import randomColor from 'randomcolor';
 
@@ -26,7 +26,6 @@ export default {
       widget: {
         _id: 'asd',
       },
-      calendar: Calendar.months(),
       events: [],
     };
   },
@@ -129,30 +128,6 @@ export default {
     ...alarmMapActions({
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
-
-    change(/* { calendar } */) {
-      /* this.events = [{
-        data: {
-          title: 'START',
-          description: 'Something',
-          color: '#3F51B5',
-        },
-        schedule: new Schedule({
-          on: calendar.start,
-          times: [calendar.start.asTime()],
-        }),
-      }, {
-        data: {
-          title: 'END',
-          description: 'Something',
-          color: '#3F51B5',
-        },
-        schedule: new Schedule({
-          on: calendar.end,
-          times: [calendar.end.asTime()],
-        }),
-      }]; */
-    },
   },
 };
 </script>

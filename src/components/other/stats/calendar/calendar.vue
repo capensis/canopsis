@@ -101,7 +101,7 @@ export default {
     calendar: {
       type: Calendar,
       default() {
-        return c;
+        return Calendar.months();
       },
     },
     formats: {
@@ -192,7 +192,9 @@ export default {
     events: 'applyEvents',
     calendar: 'applyEvents',
   },
-
+  created() {
+    this.rebuild(undefined, true);
+  },
   methods: {
     setState(state) {
       state.eventSorter = state.listTimes
