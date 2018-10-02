@@ -76,8 +76,8 @@ export default {
         name: MODALS.watcher,
         config: {
           watcherId: this.watcher.entity_id,
-          entityTemplate: this.widget.entity_template,
-          modalTemplate: this.widget.modal_template,
+          entityTemplate: this.widget.parameters.entityTemplate,
+          modalTemplate: this.widget.parameters.modalTemplate,
         },
       });
     },

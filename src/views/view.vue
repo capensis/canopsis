@@ -9,9 +9,9 @@
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
-          h3 {{ widget.type }}
+          h3 {{ widget.title }}
           component(
-          :is="widgetsMap[widget.type]",
+          :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
           :rowId="row._id"
           )
@@ -62,7 +62,7 @@ export default {
   },
   data() {
     return {
-      widgetsMap: {
+      widgetsComponentsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
         [WIDGET_TYPES.weather]: 'weather',
