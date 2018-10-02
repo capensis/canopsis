@@ -16,7 +16,6 @@
 
 <script>
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetQueryMixin from '@/mixins/widget/query';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
@@ -30,7 +29,6 @@ export default {
   },
   mixins: [
     entitiesWatcherMixin,
-    entitiesUserPreferenceMixin,
     widgetQueryMixin,
     sideBarMixin,
   ],

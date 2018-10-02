@@ -276,3 +276,9 @@ export default {
   },
 };
 </script>
+
+<style>
+  .ds-day {
+    min-height: 10em;
+  }
+</style>

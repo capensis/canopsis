@@ -14,7 +14,7 @@ import StatsCalendar from '@/components/other/stats/calendar/calendar.vue';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
-const { mapActions: contextEntityMapActions } = createNamespacedHelpers('entity');
+const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 
@@ -36,11 +36,7 @@ export default {
         limit: 50,
         _filter: {
           $and: [
-            {
-              $or: [
-                { name: { $regex: 'engine', $options: 'i' } },
-              ],
-            },
+            { name: 'engine' },
           ],
         },
       },
@@ -122,7 +118,7 @@ export default {
     }, []);
   },
   methods: {
-    ...contextEntityMapActions({
+    ...entityMapActions({
       fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore',
     }),
     ...alarmMapActions({

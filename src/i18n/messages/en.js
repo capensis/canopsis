@@ -129,6 +129,7 @@ export default {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
+      statsCalendarSettings: 'Stats calendar settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -470,10 +471,17 @@ export default {
       deleteGroup: 'Delete group',
     },
     resultsTableHeaders: {
-      connector: 'Connector',
-      connectorName: 'Connector name',
-      component: 'Component',
-      resource: 'Resource',
+      alarm: {
+        connector: 'Connector',
+        connectorName: 'Connector name',
+        component: 'Component',
+        resource: 'Resource',
+      },
+      entity: {
+        id: 'ID',
+        name: 'Name',
+        type: 'Type',
+      },
     },
     errors: {
       invalidJSON: 'Invalid JSON',

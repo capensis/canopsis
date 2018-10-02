@@ -1,0 +1,61 @@
+<template lang="pug">
+  div
+    v-list.pt-0(expand)
+      field-row-grid-size(
+      :rowId.sync="settings.rowId",
+      :size.sync="settings.widget.size",
+      :availableRows="availableRows",
+      @createRow="createRow"
+      )
+      v-divider
+      field-title(v-model="settings.widget.title")
+      v-divider
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :entitiesType="entitiesType")
+      v-divider
+    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+</template>
+
+<script>
+import cloneDeep from 'lodash/cloneDeep';
+
+import { SIDE_BARS, ENTITIES_TYPES } from '@/constants';
+import widgetSettingsMixin from '@/mixins/widget/settings';
+
+import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
+import FieldTitle from '../partial/fields/title.vue';
+import FieldFilterEditor from '../partial/fields/filter-editor.vue';
+
+/**
+ * Component to regroup the entities list settings fields
+ */
+export default {
+  name: SIDE_BARS.statsCalendarSettings,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: {
+    FieldRowGridSize,
+    FieldTitle,
+    FieldFilterEditor,
+  },
+  mixins: [widgetSettingsMixin],
+  data() {
+    const { widget, rowId } = this.config;
+
+    return {
+      settings: {
+        rowId,
+        widget: cloneDeep(widget),
+        widget_preferences: {
+          selectedTypes: [],
+        },
+      },
+    };
+  },
+  computed: {
+    entitiesType() {
+      return ENTITIES_TYPES.entity;
+    },
+  },
+};
+</script>

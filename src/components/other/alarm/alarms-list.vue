@@ -92,7 +92,6 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
  * Alarm-list component
@@ -120,7 +119,6 @@ export default {
     widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    entitiesUserPreferenceMixin,
   ],
   props: {
     widget: {
