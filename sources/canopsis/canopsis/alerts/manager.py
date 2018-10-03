@@ -551,6 +551,14 @@ class Alerts(object):
             if AlarmField.long_output_history.value not in value:
                 value[AlarmField.long_output_history.value] = []
 
+            if len(value[AlarmField.long_output_history.value]) == 0:
+                message = "Initiale long_output set to {}.".format(
+                    event["long_output"])
+            else:
+                message = "Update long_output from {0} to {1}.".format(
+                    value[AlarmField.long_output.value],
+                    event["long_output"])
+
             value[AlarmField.long_output_history.value].append(
                 event[AlarmField.long_output.value]
             )
@@ -559,11 +567,10 @@ class Alerts(object):
                 new_hist = value[AlarmField.long_output_history.value][0:99]
                 value[AlarmField.long_output_history.value] = new_hist
 
-
             value[AlarmField.steps.value].append({
-                "a": value["state"]["a"],
+                "a": "system",
                 "_t": "long_output",
-                "m": "update long_output to {}.".format(event["long_output"]),
+                "m": message,
                 "t": int(time()),
                 "val": value["state"]["val"]
             })
