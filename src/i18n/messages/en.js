@@ -142,6 +142,7 @@ export default {
     open: 'Open',
     resolved: 'Resolved',
     filters: 'Filters',
+    filterEditor: 'Filter editor',
     selectAFilter: 'Select a filter',
     infoPopup: {
       title: 'Info popup',
