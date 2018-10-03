@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container.ds-expand.ds-calendar-app
+  .ds-expand.ds-calendar-app
     v-layout(row)
       v-flex(md3)
         v-btn.ds-skinny-button(
@@ -28,69 +28,18 @@
                 v-list-tile-title {{ type.label }}
     v-container.ds-calendar-container(fluid, fill-height)
       ds-gestures(@swipeleft="next", @swiperight="prev")
-        .ds-expand
-          ds-calendar(
-          ref="calendar",
-          v-bind="{$scopedSlots}",
-          v-on="$listeners",
-          :calendar="calendar",
-          @view-day="viewDay",
-          )
+        ds-calendar(
+        ref="calendar",
+        v-bind="{$scopedSlots}",
+        v-on="$listeners",
+        :calendar="calendar",
+        @view-day="viewDay",
+        )
 </template>
 
 <script>
-import moment from 'moment';
-import { rrulestr } from 'rrule';
-import { Units, Sorts, Calendar, Day, Schedule } from 'dayspan';
+import { Units, Sorts, Calendar } from 'dayspan';
 import dsDefaults from 'dayspan-vuetify/src/defaults';
-
-const c = Calendar.months();
-
-const pbehavior = {
-  _id: 'asd',
-  author: 'User',
-  comment: null,
-  connector: 'canopsis',
-  connector_name: 'canopsis',
-  eids: ['something'],
-  enabled: true,
-  filter: '{"infos.scenario_name.value": "Sc_gspfo_aude_p"}',
-  name: 'downtime',
-  reason: '',
-  rrule: 'FREQ=WEEKLY;COUNT=30;WKST=FR;BYDAY=MO,TU,WE;BYHOUR=15;BYMINUTE=12;BYSECOND=11',
-  tstart: 1537947053000,
-  tstop: 1539652000000,
-  type_: 'Hors plage horaire de surveillance',
-};
-
-if (pbehavior.rrule) {
-  const ruleSecond = rrulestr(pbehavior.rrule, {
-    dtstart: new Date(pbehavior.tstart),
-  });
-
-  if (!ruleSecond.options.until) {
-    ruleSecond.options.until = new Date(pbehavior.tstop);
-  }
-
-  const days = ruleSecond.all();
-
-  const daysObjects = days.map(day => new Day(moment(day)));
-
-  c.addEvents(daysObjects.map(dayObject => (
-    {
-      data: {
-        title: 'PBEHAVIOR',
-        description: 'Something',
-        color: '#3F51B5',
-        meta: pbehavior,
-      },
-      schedule: new Schedule({
-        on: dayObject,
-        times: [dayObject.asTime()],
-      }),
-    }
-  )));
-}
 
 export default {
   props: {
@@ -269,6 +218,10 @@ export default {
 </script>
 
 <style>
+  .ds-calendar {
+    min-height: 100vh;
+  }
+
   .ds-day {
     min-height: 10em;
   }

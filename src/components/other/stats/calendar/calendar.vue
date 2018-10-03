@@ -4,7 +4,7 @@
       v-flex
         v-btn(icon, @click="showSettings")
           v-icon settings
-    v-container.white
+    v-layout.white
       ds-calendar(:events="events")
 </template>
 
