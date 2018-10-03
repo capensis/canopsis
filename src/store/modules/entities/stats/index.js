@@ -1,55 +1,27 @@
-import { API_ROUTES } from '@/config';
-import { statSchema } from '@/store/schemas';
-import { ENTITIES_TYPES } from '@/constants';
+import i18n from '@/i18n';
+import set from 'lodash/set';
 
-export const types = {
-  FETCH_STATS: 'FETCH_STATS',
-  FETCH_STATS_COMPLETED: 'FETCH_STATS_COMPLETED',
-  FETCH_STATS_FAILED: 'FETCH_STATS_FAILED',
-};
+import request from '@/services/request';
+import { API_ROUTES } from '@/config';
 
 export default {
   namespaced: true,
-  state: {
-    pending: false,
-    error: {},
-  },
-  getters: {
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.stat, id),
-    getList: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.stat, state.allIds),
-  },
-  mutations: {
-    [types.FETCH_STATS](state) {
-      state.pending = true;
-    },
-    [types.FETCH_STATS_COMPLETED](state, { allIds }) {
-      state.allIds = allIds;
-    },
-    [types.FETCH_STATS_FAILED](state, error) {
-      state.error = error;
-    },
-  },
   actions: {
-    async fetchStats({ dispatch, commit }, { params } = {}) {
-      commit(types.FETCH_STATS);
-
+    async fetchListWithoutStore({ dispatch }, { params, aggregate }) {
       try {
-        const { normalizedData } = await dispatch('entities/fetch', {
-          route: API_ROUTES.stats,
-          schema: [statSchema],
-          body: params,
-          method: 'POST',
-          dataPreparer: d => d.values,
-        }, { root: true });
+        if (aggregate) {
+          Object.keys(params.stats).map(stat => set(params.stats[stat], 'aggregate', aggregate));
+        }
 
-        commit(types.FETCH_STATS_COMPLETED, {
-          allIds: normalizedData.result,
-        });
+        const data = await request.post(API_ROUTES.stats, { ...params });
+
+        return data;
       } catch (err) {
-        commit(types.FETCH_STATS_FAILED, err);
-        console.error(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+
+        return [];
       }
     },
   },
 };
+

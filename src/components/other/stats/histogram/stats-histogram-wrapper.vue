@@ -2,12 +2,16 @@
   v-container(fluid)
     v-btn(icon, @click="showSettings")
       v-icon settings
-    stats-histogram
+    stats-histogram(:labels="labels", :datasets="datasets")
 </template>
 
 <script>
+import Vue from 'vue';
+import omit from 'lodash/omit';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
+import widgetQueryMixin from '@/mixins/widget/query';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { SIDE_BARS } from '@/constants';
 import StatsHistogram from './stats-histogram.vue';
 
@@ -15,7 +19,7 @@ export default {
   components: {
     StatsHistogram,
   },
-  mixins: [entitiesStatsMixin, sideBarMixin],
+  mixins: [entitiesStatsMixin, sideBarMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
   props: {
     widget: {
       type: Object,
@@ -26,16 +30,29 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.widget.parameters.groups.map((group) => {
-      const params = {
-        mfilter: group.filter,
-        tstop: this.widget.parameters.tstop,
-        duration: this.widget.parameters.duration,
-        stats: this.widget.parameters.stats,
-      };
-      return this.fetchStats({ params });
-    });
+  data() {
+    return {
+      stats: {},
+    };
+  },
+  computed: {
+    labels() {
+      return Object.keys(this.stats);
+    },
+    datasets() {
+      const datasets = [];
+      Object.keys(this.widget.parameters.stats).map((stat) => {
+        const data = [];
+        Object.values(this.stats).map((group) => {
+          if (group.aggregations) {
+            data.push(group.aggregations[stat].sum);
+          }
+          return data;
+        });
+        return datasets.push({ label: stat, data });
+      });
+      return datasets;
+    },
   },
   methods: {
     showSettings() {
@@ -45,6 +62,12 @@ export default {
           widget: this.widget,
           rowId: this.rowId,
         },
+      });
+    },
+    fetchList() {
+      this.widget.parameters.groups.map(async (group) => {
+        const stat = await this.fetchStats({ params: { ...omit(this.widget.parameters, ['groups']), mfilter: group.filter || {} }, aggregate: ['sum'] });
+        Vue.set(this.stats, group.title, stat);
       });
     },
   },

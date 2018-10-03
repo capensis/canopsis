@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
@@ -81,6 +82,10 @@ export function convertContextWidgetToQuery(widget) {
   return { ...query, ...convertSortToQuery(widget) };
 }
 
+export function convertStatsHistogramToQuery(widget) {
+  return widget.parameters.groups.map(group => ({ ...omit(widget.parameters, ['groups']), mfilter: group.filter || {} }));
+}
+
 /**
  * USER_PREFERENCE CONVERTERS
  */
@@ -151,6 +156,8 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.statsHistogram:
+      return convertStatsHistogramToQuery(widget);
     default:
       return {};
   }
