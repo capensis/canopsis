@@ -41,9 +41,6 @@ export default {
         },
       });
     },
-    /* dateChange(event) {
-      this.$emit('input', moment(event).unix());
-    }, */
   },
 };
 </script>
