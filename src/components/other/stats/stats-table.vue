@@ -6,6 +6,7 @@
     v-data-table(
       :items="stats",
       :headers="columns",
+      :rows-per-page-items="rowsPerPageItems"
     )
       v-progress-linear(slot="progress", color="blue", indeterminate)
       template(slot="headers", slot-scope="{ headers }")
@@ -23,6 +24,7 @@
 </template>
 
 <script>
+import { PAGINATION_PER_PAGE_VALUES } from '@/config';
 import { SIDE_BARS } from '@/constants';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -54,6 +56,9 @@ export default {
   computed: {
     columns() {
       return Object.keys(this.widget.parameters.stats).map(item => ({ value: item }));
+    },
+    rowsPerPageItems() {
+      return PAGINATION_PER_PAGE_VALUES;
     },
   },
   methods: {
