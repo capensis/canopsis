@@ -17,7 +17,7 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
-import DsDaysView from '@/components/other/stats/calendar/day-span/days-view';
+import DsDaysView from '@/components/other/stats/calendar/day-span/partial/days-view.vue';
 
 Vue.use(filters);
 Vue.use(Vuetify);

@@ -17,13 +17,6 @@
                 @input="changeRRuleOption"
                 )
               div
-                date-time-picker(
-                :label="$t('rRule.fields.until')",
-                v-model="form.rRuleOptions.until",
-                @input="changeRRuleOption",
-                clearable,
-                )
-              div
                 v-select(
                 :label="$t('rRule.fields.byweekday')",
                 v-model="form.rRuleOptions.byweekday",

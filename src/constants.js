@@ -237,3 +237,8 @@ export const DATETIME_FORMATS = {
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
+
+export const STATS_CALENDAR_COLORS = {
+  alarm: '#ff0421',
+  pbehavior: '#6365c7',
+};

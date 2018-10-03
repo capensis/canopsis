@@ -1,3 +1,4 @@
+<script>
 import { DsDaysView } from 'dayspan-vuetify/src/components';
 
 export default {
@@ -10,7 +11,5 @@ export default {
       ],
     };
   },
-  render(...args) {
-    return DsDaysView.render.apply(this, args);
-  },
 };
+</script>

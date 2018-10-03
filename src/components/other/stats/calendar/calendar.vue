@@ -1,284 +1,109 @@
 <template lang="pug">
-  v-container.ds-expand.ds-calendar-app
-    v-layout(row)
-      v-flex(xs3)
-        v-btn.ds-skinny-button(
-        depressed,
-        @click="setToday"
-        )
-          span {{ $t('calendar.today') }}
-      v-flex(xs6)
-        v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="prev")
-          v-icon keyboard_arrow_left
-        span.subheading {{ summary }}
-        v-btn.ds-light-forecolor.mx-2(icon, depressed, @click="next")
-          v-icon keyboard_arrow_right
-      v-flex(xs3)
-        v-menu
-          v-btn(slot="activator", flat)
-            span {{ currentType.label }}
-            v-icon arrow_drop_down
-          v-list
-            v-list-tile(
-            v-for="type in types"
-            :key="type.id"
-            @click="currentType = type"
-            )
-              v-list-tile-content
-                v-list-tile-title {{ type.label }}
-    v-container.ds-calendar-container(fluid, fill-height)
-      ds-gestures(@swipeleft="next", @swiperight="prev")
-        .ds-expand
-          ds-calendar(
-          ref="calendar",
-          v-bind="{$scopedSlots}",
-          v-on="$listeners",
-          :calendar="calendar",
-          @edit="edit",
-          @view-day="viewDay",
-          )
+  v-container
+    v-layout.white(wrap, justify-space-between, align-center)
+      v-flex
+        v-btn(icon, @click="showSettings")
+          v-icon settings
+    v-container.white
+      ds-calendar(:events="events")
 </template>
 
 <script>
-import moment from 'moment';
-import { rrulestr } from 'rrule';
-import { Units, Sorts, Calendar, Day, Schedule } from 'dayspan';
-import dsDefaults from 'dayspan-vuetify/src/defaults';
+import get from 'lodash/get';
+import { createNamespacedHelpers } from 'vuex';
 
-const c = Calendar.months();
+import { SIDE_BARS } from '@/constants';
 
-const pbehavior = {
-  _id: 'asd',
-  author: 'User',
-  comment: null,
-  connector: 'canopsis',
-  connector_name: 'canopsis',
-  eids: ['something'],
-  enabled: true,
-  filter: '{"infos.scenario_name.value": "Sc_gspfo_aude_p"}',
-  name: 'downtime',
-  reason: '',
-  rrule: 'FREQ=WEEKLY;COUNT=30;WKST=FR;BYDAY=MO,TU,WE;BYHOUR=15;BYMINUTE=12;BYSECOND=11',
-  tstart: 1537947053000,
-  tstop: 1539652000000,
-  type_: 'Hors plage horaire de surveillance',
-};
+import sideBarMixin from '@/mixins/side-bar/side-bar';
+import widgetQueryMixin from '@/mixins/widget/query';
+import { convertAlarmsToCalendarEvents, convertPbehaviorsToCalendarEvents } from '@/helpers/stats/calendar';
 
-if (pbehavior.rrule) {
-  const ruleSecond = rrulestr(pbehavior.rrule, {
-    dtstart: new Date(pbehavior.tstart),
-  });
+import DsCalendar from './day-span/calendar.vue';
 
-  if (!ruleSecond.options.until) {
-    ruleSecond.options.until = new Date(pbehavior.tstop);
-  }
-
-  const days = ruleSecond.all();
-
-  const daysObjects = days.map(day => new Day(moment(day)));
-
-  c.addEvents(daysObjects.map(dayObject => (
-    {
-      data: {
-        title: 'PBEHAVIOR',
-        description: 'Something',
-        color: '#3F51B5',
-        meta: pbehavior,
-      },
-      schedule: new Schedule({
-        on: dayObject,
-        times: [dayObject.asTime()],
-      }),
-    }
-  )));
-}
+const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
+const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
+  components: { DsCalendar },
+  mixins: [sideBarMixin, widgetQueryMixin],
   props: {
-    events: {
-      type: Array,
+    widget: {
+      type: Object,
+      required: true,
     },
-    calendar: {
-      type: Calendar,
-      default() {
-        return Calendar.months();
-      },
-    },
-    formats: {
-      validate(x) {
-        return this.$dsValidate(x, 'formats');
-      },
-      default() {
-        return dsDefaults.dsCalendarApp.formats;
-      },
-    },
-    labels: {
-      validate(x) {
-        return this.$dsValidate(x, 'labels');
-      },
-      default() {
-        return dsDefaults.dsCalendarApp.labels;
-      },
+    rowId: {
+      type: String,
+      required: true,
     },
   },
-  computed: {
-    types() {
-      const defaultTypeValues = {
-        size: 1,
-        focus: 0.4999,
-        repeat: true,
-        listTimes: true,
-        updateRows: true,
-        schedule: false,
-      };
-
-      return [
-        {
-          ...defaultTypeValues,
-
-          id: 'M',
-          label: this.$t('calendar.month'),
-          shortcut: 'M',
-          type: Units.MONTH,
-          listTimes: false,
-        },
-        {
-          ...defaultTypeValues,
-
-          id: 'W',
-          label: this.$t('calendar.week'),
-          shortcut: 'W',
-          type: Units.WEEK,
-        },
-        {
-          ...defaultTypeValues,
-
-          id: 'D',
-          label: this.$t('calendar.day'),
-          shortcut: 'D',
-          type: Units.DAY,
-        },
-      ];
-    },
-    currentType: {
-      get() {
-        return this.types.find(type =>
-          type.type === this.calendar.type &&
-          type.size === this.calendar.size) || this.types[0];
-      },
-      set(type) {
-        this.rebuild(undefined, true, type);
-      },
-    },
-
-    summary() {
-      const small = this.$vuetify.breakpoint.xs;
-
-      if (small) {
-        return this.calendar.start.format(this.formats.xs);
-      }
-
-      const large = this.$vuetify.breakpoint.mdAndUp;
-
-      return this.calendar.summary(false, !large, false, !large);
-    },
-
-    todayDate() {
-      return this.$dayspan.today.format(this.formats.today);
-    },
-  },
-
-  watch: {
-    events: 'applyEvents',
-    calendar: 'applyEvents',
-  },
-  created() {
-    this.rebuild(undefined, true);
+  data() {
+    return {
+      events: [],
+    };
   },
   methods: {
-    setState(state) {
-      state.eventSorter = state.listTimes
-        ? Sorts.List([Sorts.FullDay, Sorts.Start])
-        : Sorts.Start;
+    ...entityMapActions({
+      fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore',
+    }),
 
-      this.calendar.set(state);
+    ...alarmMapActions({
+      fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
+    }),
 
-      this.triggerChange();
-    },
+    ...pbehaviorMapActions({
+      fetchPbehaviorsListByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
+    }),
 
-    applyEvents() {
-      if (this.events) {
-        this.calendar.removeEvents();
-        this.calendar.addEvents(this.events);
-      }
-    },
-
-    isType(type, aroundDay) {
-      const cal = this.calendar;
-
-      return (cal.type === type.type && cal.size === type.size &&
-        (!aroundDay || cal.span.matchesDay(aroundDay)));
-    },
-
-    rebuild(aroundDay, force, forceType) {
-      const type = forceType || this.currentType || this.types[0];
-
-      if (this.isType(type, aroundDay) && !force) {
-        return;
-      }
-
-      const input = {
-        type: type.type,
-        size: type.size,
-        around: aroundDay,
-        eventsOutside: true,
-        preferToday: false,
-        listTimes: type.listTimes,
-        updateRows: type.updateRows,
-        updateColumns: type.listTimes,
-        fill: !type.listTimes,
-        otherwiseFocus: type.focus,
-        repeatCovers: type.repeat,
-      };
-
-      this.setState(input);
-    },
-
-    next() {
-      this.calendar.unselect().next();
-
-      this.triggerChange();
-    },
-
-    prev() {
-      this.calendar.unselect().prev();
-
-      this.triggerChange();
-    },
-
-    setToday() {
-      this.rebuild(this.$dayspan.today);
-    },
-
-    viewDay(day) {
-      this.rebuild(day, false, this.types[2]);
-    },
-
-    edit() {
-      // console.log(calendarEvent);
-    },
-
-    triggerChange() {
-      this.$emit('change', {
-        calendar: this.calendar,
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.statsCalendarSettings,
+        config: {
+          widget: this.widget,
+          rowId: this.rowId,
+        },
       });
+    },
+
+    async fetchList() {
+      const widgetFilter = get(this.widget, 'parameters.mfilter.filter');
+
+      if (widgetFilter) {
+        const { entities } = await this.fetchContextEntitiesListWithoutStore({
+          params: {
+            start: 0,
+            limit: 50,
+            _filter: widgetFilter,
+          },
+        });
+
+        const alarmsFilter = {
+          $or: [{
+            connector_name: {
+              $in: entities.map(v => v.name),
+            },
+          }],
+        };
+
+        const { alarms } = await this.fetchAlarmsListWithoutStore({
+          params: {
+            filter: alarmsFilter,
+            skip: 0,
+            limit: 15,
+          },
+        });
+
+        const pbehaviorsCollections = await Promise.all(entities.map(({ _id }) =>
+          this.fetchPbehaviorsListByEntityIdWithoutStore({ id: _id })));
+
+        const pbehaviors = [].concat(...pbehaviorsCollections);
+
+        this.events = [
+          ...convertAlarmsToCalendarEvents(alarms),
+          ...convertPbehaviorsToCalendarEvents(pbehaviors),
+        ];
+      }
     },
   },
 };
 </script>
-
-<style>
-  .ds-day {
-    min-height: 10em;
-  }
-</style>

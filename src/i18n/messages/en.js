@@ -453,6 +453,12 @@ export default {
   errors: {
     default: 'Something went wrong...',
   },
+  calendar: {
+    today: 'Today',
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
+  },
   success: {
     default: 'Done !',
     createEntity: 'Entity successfully created',

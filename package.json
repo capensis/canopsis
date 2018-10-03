@@ -20,7 +20,6 @@
     "normalizr": "^3.2.4",
     "pug-plain-loader": "^1.0.0",
     "qs": "^6.5.2",
-    "randomcolor": "^0.5.3",
     "rrule": "^2.2.9",
     "uid": "^0.0.2",
     "uuid": "^3.3.2",
