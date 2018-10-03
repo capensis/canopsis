@@ -30,6 +30,7 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  dateSelect: 'date-select',
   createView: 'create-view',
   createFilter: 'create-filter',
 };
@@ -245,7 +246,7 @@ export const STATS_TYPES = {
     options: ['recursive', 'states', 'authors'],
   },
   alarmsCanceled: {
-    value: 'alarm_canceled',
+    value: 'alarms_canceled',
     options: ['recursive', 'states', 'authors'],
   },
   ackTimeSla: {

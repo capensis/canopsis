@@ -9,6 +9,7 @@ export default {
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    options: 'Options',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
     disabled: 'Disabled',

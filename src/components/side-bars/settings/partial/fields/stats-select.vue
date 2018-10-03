@@ -23,8 +23,8 @@
             v-model="form.trend",
             hide-details
             )
-            v-list-group(v-if="options.length > 0").my-2
-              v-list-tile(slot="activator") Options
+            v-list-group.my-2(v-if="options.length > 0")
+              v-list-tile(slot="activator") {{ $t('common.options') }}
               template(v-for="option in options")
                 v-switch(
                 v-show="option === 'recursive'"
