@@ -9,6 +9,7 @@
             v-model="form.stat",
             hide-details,
             :items="statsTypes",
+            return-object,
             )
             v-text-field(
             :placeholder="$t('common.title')",
@@ -22,8 +23,8 @@
             v-model="form.trend",
             hide-details
             )
-            v-list-group(v-if="options.length > 0").my-2
-              v-list-tile(slot="activator") Options
+            v-list-group.my-2(v-if="options.length > 0")
+              v-list-tile(slot="activator") {{ $t('common.options') }}
               template(v-for="option in options")
                 v-switch(
                 v-show="option === 'recursive'"
@@ -69,7 +70,7 @@
                   v-icon delete
             v-container(fluid)
               p {{ $t('common.stat') }}: {{ stat.stat }}
-              p {{ $t('common.trend') }}: {{ stat.trend}}
+              p {{ $t('common.trend') }}: {{ stat.trend }}
               p {{ $t('common.parameters') }}: {{ stat.parameters }}
 
 </template>
@@ -78,7 +79,6 @@
 import omit from 'lodash/omit';
 import set from 'lodash/set';
 import unset from 'lodash/unset';
-import find from 'lodash/find';
 import { STATS_TYPES, ENTITIES_STATES } from '@/constants';
 
 export default {
@@ -95,7 +95,7 @@ export default {
       editing: false,
       editingStatTitle: '',
       form: {
-        stat: 'alarms_created',
+        stat: STATS_TYPES.alarmsCreated,
         title: '',
         trend: true,
         parameters: {
@@ -121,8 +121,7 @@ export default {
     },
     options() {
       if (this.form.stat) {
-        const stat = find(this.statsTypes, type => type.value === this.form.stat);
-        return stat.options;
+        return this.form.stat.options;
       }
       return [];
     },
@@ -137,7 +136,8 @@ export default {
         if (isFormValid) {
           const newValue = { ...this.value };
           this.error = '';
-          const newStat = omit(this.form, ['title', 'parameters']);
+          const newStat = omit(this.form, ['title', 'parameters', 'stat']);
+          newStat.stat = this.form.stat.value;
           newStat.parameters = {};
           this.options.forEach((option) => {
             newStat.parameters[option] = this.form.parameters[option];
@@ -161,7 +161,7 @@ export default {
 
     stopEditing() {
       this.editing = false;
-      this.editingStat = {};
+      this.editingStatTitle = '';
     },
 
     submitClick() {

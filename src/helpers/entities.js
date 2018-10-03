@@ -48,16 +48,15 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.weather:
       specialParameters = {
-        block_template: '',
-        modal_template: '',
-        entity_template: '',
+        blockTemplate: '',
+        modalTemplate: '',
+        entityTemplate: '',
         columnSM: 0,
         columnMD: 0,
         columnLG: 0,
         columnHG: 0,
       };
       break;
-
     case WIDGET_TYPES.statsHistogram:
       specialParameters = {
         mfilter: {},
@@ -65,6 +64,14 @@ export function generateWidgetByType(type) {
         tstop: moment().unix(),
         groups: [],
         stats: {},
+      };
+      break;
+    case WIDGET_TYPES.statsTable:
+      specialParameters = {
+        duration: '1m',
+        tstop: moment().unix(),
+        stats: {},
+        mfilter: {},
       };
       break;
   }

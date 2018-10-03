@@ -87,6 +87,15 @@ export function convertStatsHistogramToQuery(widget) {
 }
 
 /**
+ *
+ */
+export function convertStatsTableWidgetToQuery(widget) {
+  const query = { ...widget.parameters };
+
+  return query;
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -158,6 +167,8 @@ export function convertWidgetToQuery(widget) {
       return convertContextWidgetToQuery(widget);
     case WIDGET_TYPES.statsHistogram:
       return convertStatsHistogramToQuery(widget);
+    case WIDGET_TYPES.statsTable:
+      return convertStatsTableWidgetToQuery(widget);
     default:
       return {};
   }

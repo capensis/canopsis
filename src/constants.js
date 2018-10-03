@@ -30,6 +30,7 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  dateSelect: 'date-select',
   createView: 'create-view',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
@@ -136,6 +137,7 @@ export const WIDGET_TYPES = {
   context: 'Context',
   weather: 'ServiceWeather',
   statsHistogram: 'StatsHistogram',
+  statsTable: 'StatsTable',
 };
 
 export const SIDE_BARS = {
@@ -143,11 +145,13 @@ export const SIDE_BARS = {
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
   statsHistogramSettings: 'stats-histogram-settings',
+  statsTableSettings: 'stats-table-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
   [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+  [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
   [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
 };
@@ -246,7 +250,7 @@ export const STATS_TYPES = {
     options: ['recursive', 'states', 'authors'],
   },
   alarmsCanceled: {
-    value: 'alarm_canceled',
+    value: 'alarms_canceled',
     options: ['recursive', 'states', 'authors'],
   },
   ackTimeSla: {

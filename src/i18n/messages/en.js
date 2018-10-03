@@ -2,12 +2,14 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
 
 export default {
   common: {
+    entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
     name: 'Name',
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    options: 'Options',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
     disabled: 'Disabled',
@@ -138,6 +140,7 @@ export default {
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
       statsHistogramSettings: 'Histogram settings',
+      statsTableSettings: 'Stats table settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -155,6 +158,10 @@ export default {
     tstop: 'End date',
     statsSelect: 'Stats select',
     selectAFilter: 'Select a filter',
+    statsNumbers: {
+      title: 'Stats numbers',
+      yesNoMode: 'Yes/No mode',
+    },
     infoPopup: {
       title: 'Info popup',
       fields: {
@@ -355,10 +362,14 @@ export default {
         statsHistogram: {
           title: 'Stats histogram',
         },
+        statsTable: {
+          title: 'Stats table',
+        },
       },
     },
   },
   tables: {
+    noData: 'No data',
     contextList: {
       title: 'Context List',
       name: 'Name',

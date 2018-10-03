@@ -9,9 +9,9 @@
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
-          h3 {{ widget.type }}
+          h3 {{ widget.title }}
           component(
-          :is="widgetsMap[widget.type]",
+          :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
           :rowId="row._id"
           )
@@ -41,6 +41,7 @@ import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
 import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
+import StatsTable from '@/components/other/stats/stats-table.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -51,6 +52,7 @@ export default {
     EntitiesList,
     Weather,
     StatsHistogram,
+    StatsTable,
   },
   mixins: [
     modalMixin,
@@ -64,11 +66,12 @@ export default {
   },
   data() {
     return {
-      widgetsMap: {
+      widgetsComponentsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
         [WIDGET_TYPES.weather]: 'weather',
         [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
+        [WIDGET_TYPES.statsTable]: 'stats-table',
       },
       widgetKeyPrefix: uid(),
     };

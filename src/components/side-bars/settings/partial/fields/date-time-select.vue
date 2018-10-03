@@ -1,18 +1,20 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ title }}
-    v-container
-      date-time-picker(:value="dateValue", @input="dateChange")
+    v-btn(@click="click") Select a date
 </template>
 
 <script>
 import moment from 'moment';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
+import modalMixin from '@/mixins/modal/modal';
+import { MODALS } from '@/constants';
 
 export default {
   components: {
     DateTimePicker,
   },
+  mixins: [modalMixin],
   props: {
     value: {
       type: Number,
@@ -30,9 +32,16 @@ export default {
     },
   },
   methods: {
-    dateChange(event) {
-      this.$emit('input', moment(event).unix());
+    click() {
+      this.showModal({
+        name: MODALS.dateSelect,
+        config: {
+          value: this.dateValue,
+          action: newDate => this.$emit('input', moment(newDate).unix()),
+        },
+      });
     },
   },
 };
 </script>
+
