@@ -11,7 +11,9 @@
               v-icon close
             v-form
               v-text-field(:placeholder="$t('common.title')", v-model="form.title")
-              v-btn(@click="showFilterModal") Filter editor
+              v-layout(wrap, column)
+                v-flex(xs6)
+                  v-btn(@click="showFilterModal", small) Filter editor
               v-btn(@click="addGroup").green.darken-4.white--text.mt-3 {{ $t('common.save') }}
       v-flex(xs8)
         v-container.pt-0
@@ -23,7 +25,7 @@
                 v-layout
                   v-btn(@click="editGroup(group, index)", fab, small, depressed)
                     v-icon edit
-                  v-btn(fab, small, depressed)
+                  v-btn(@click="deleteGroup(group, index)", fab, small, depressed)
                     v-icon delete
     v-layout(justify-end)
       v-btn(@click="save").green.darken-4.white--text.mt-3 {{ $t('common.save') }}
@@ -31,6 +33,7 @@
 
 <script>
 import Vue from 'vue';
+import pullAt from 'lodash/pullAt';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
@@ -66,6 +69,11 @@ export default {
       this.editing = true;
       this.editingGroupIndex = index;
       this.form = { ...group };
+    },
+    deleteGroup(group, index) {
+      const groups = [...this.groups];
+      pullAt(groups, index);
+      this.groups = groups;
     },
     addGroup() {
       if (this.editing) {

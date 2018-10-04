@@ -34,6 +34,7 @@ export const MODALS = {
   createView: 'create-view',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
+  colorPicker: 'color-picker',
 };
 
 export const EVENT_ENTITY_TYPES = {

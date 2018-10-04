@@ -28,6 +28,7 @@ import PbehaviorList from './pbehavior/pbehavior-list.vue';
 import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
+import ColorPicker from './common/color-picker.vue';
 import DateSelect from './common/date-select.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
@@ -58,6 +59,7 @@ export default {
     CreateEntity,
     CreateWatcher,
     CreateWidget,
+    ColorPicker,
     DateSelect,
     CreateView,
     CreateFilter,

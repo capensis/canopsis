@@ -347,6 +347,9 @@ export default {
         title: 'Title',
       },
     },
+    colorPicker: {
+      title: 'Color picker',
+    },
     widgetCreation: {
       title: 'Select a widget',
       types: {

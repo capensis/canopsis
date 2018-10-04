@@ -45,11 +45,11 @@ export default {
         const data = [];
         Object.values(this.stats).map((group) => {
           if (group.aggregations) {
-            data.push(group.aggregations[stat].sum);
+            data.push(group.aggregations[stat].sum + 10);
           }
           return data;
         });
-        return datasets.push({ label: stat, data });
+        return datasets.push({ label: stat, data, backgroundColor: this.widget.parameters.statsColors[stat] });
       });
       return datasets;
     },
@@ -66,7 +66,7 @@ export default {
     },
     fetchList() {
       this.widget.parameters.groups.map(async (group) => {
-        const stat = await this.fetchStats({ params: { ...omit(this.widget.parameters, ['groups']), mfilter: group.filter || {} }, aggregate: ['sum'] });
+        const stat = await this.fetchStats({ params: { ...omit(this.widget.parameters, ['groups', 'statsColors']), mfilter: group.filter || {} }, aggregate: ['sum'] });
         Vue.set(this.stats, group.title, stat);
       });
     },

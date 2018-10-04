@@ -18,6 +18,8 @@
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
+      field-stats-colors(:stats="settings.widget.parameters.stats", v-model="settings.widget.parameters.statsColors")
+      v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
@@ -32,6 +34,7 @@ import FieldTitle from '../partial/fields/title.vue';
 import FieldDuration from '../partial/fields/duration.vue';
 import FieldStatsGroups from '../partial/fields/stats-groups.vue';
 import FieldStatsSelect from '../partial/fields/stats-select.vue';
+import FieldStatsColors from '../partial/fields/stats-colors.vue';
 import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
 
 export default {
@@ -45,6 +48,7 @@ export default {
     FieldDuration,
     FieldStatsGroups,
     FieldStatsSelect,
+    FieldStatsColors,
     FieldDateTimeSelect,
   },
   mixins: [widgetSettingsMixin],
