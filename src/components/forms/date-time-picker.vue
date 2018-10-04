@@ -1,13 +1,13 @@
 <template lang="pug">
   v-menu(
+  ref="menu",
+  v-model="opened",
   content-class="date-time-picker",
   transition="slide-y-transition",
-  v-model="opened",
-  ref="menu",
-  max-width="290px"
+  max-width="290px",
   :close-on-content-click="false",
   right,
-  lazy,
+  lazy
   )
     div(slot="activator")
       v-text-field(
