@@ -2,7 +2,7 @@
   v-list-group
     v-list-tile(slot="activator") {{ title }}
     v-container
-      date-time-picker(:value="dateObject", @input="updateValue")
+      date-time-picker(name="dateTime", :value="dateObject", @input="updateValue")
 </template>
 
 <script>
