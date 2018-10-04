@@ -40,7 +40,8 @@ import uid from '@/helpers/uid';
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
-import StatsCalendar from '@/components/other/stats/calendar/calendar.vue';
+import StatsTable from '@/components/other/stats/stats-table.vue';
+import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -50,6 +51,7 @@ export default {
     AlarmsList,
     EntitiesList,
     Weather,
+    StatsTable,
     StatsCalendar,
   },
   mixins: [
@@ -68,6 +70,7 @@ export default {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
         [WIDGET_TYPES.weather]: 'weather',
+        [WIDGET_TYPES.statsTable]: 'stats-table',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
       },
       widgetKeyPrefix: uid(),

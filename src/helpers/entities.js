@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
@@ -53,6 +55,15 @@ export function generateWidgetByType(type) {
         columnMD: 0,
         columnLG: 0,
         columnHG: 0,
+      };
+      break;
+
+    case WIDGET_TYPES.statsTable:
+      specialParameters = {
+        duration: '1m',
+        tstop: moment().unix(),
+        stats: {},
+        mfilter: {},
       };
       break;
   }

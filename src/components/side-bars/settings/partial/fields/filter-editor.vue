@@ -3,6 +3,8 @@
     v-list-tile(slot="activator") {{ $t('settings.filterEditor') }}
     div.text-xs-center
       v-btn(@click="openFilterModal") {{ $t('modals.filter.create.title') }}
+      v-btn(@click="deleteFilter", icon)
+        v-icon delete
 </template>
 
 <script>
@@ -21,11 +23,6 @@ export default {
       validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
-  data() {
-    return {
-      item: {},
-    };
-  },
   methods: {
     openFilterModal() {
       this.showModal({
@@ -35,6 +32,14 @@ export default {
           filter: this.value || {},
           entitiesType: this.entitiesType,
           action: newFilter => this.$emit('input', newFilter),
+        },
+      });
+    },
+    deleteFilter() {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.$emit('input', {}),
         },
       });
     },

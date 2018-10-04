@@ -34,14 +34,14 @@
         @input="updateDateTimeObject",
         :locale="$i18n.locale",
         v-model="dateString",
-        no-title
+        no-title,
         )
       v-tab-item(id="time")
         v-time-picker(
         @input="updateDateTimeObject",
         v-model="timeString",
         format="24hr"
-        no-title
+        no-title,
         )
     .text-xs-center.dropdown-footer
       v-btn(@click.prevent="submit", color="primary", depressed) Ok
