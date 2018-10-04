@@ -53,8 +53,10 @@ def init_managers():
     """
     Init managers [sic].
     """
-    pb_logger, pb_storage = PBehaviorManager.provide_default_basics()
-    pb_kwargs = {'logger': pb_logger, 'pb_storage': pb_storage}
+    config, pb_logger, pb_storage = PBehaviorManager.provide_default_basics()
+    pb_kwargs = {'config': config,
+                 'logger': pb_logger,
+                 'pb_storage': pb_storage}
     pb_manager = singleton_per_scope(PBehaviorManager, kwargs=pb_kwargs)
 
     return pb_manager
