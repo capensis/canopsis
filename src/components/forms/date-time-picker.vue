@@ -46,14 +46,14 @@
         v-date-picker(
         :locale="$i18n.locale",
         v-model="dateString",
-        @input="updateDateTimeObject",
+        @change="updateDateTimeObject",
         no-title,
         )
       v-tab-item(id="time")
         v-time-picker(
         ref="timePicker"
         v-model="timeString",
-        @input="updateDateTimeObject",
+        @change="updateDateTimeObject",
         format="24hr"
         no-title,
         )
@@ -194,6 +194,10 @@ export default {
 
     .v-card {
       box-shadow: none;
+    }
+    .v-date-picker-table--date .v-btn {
+      height: 35px;
+      width: 35px;
     }
   }
 </style>
