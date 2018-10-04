@@ -15,7 +15,7 @@ import { SIDE_BARS } from '@/constants';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
-import { convertAlarmsToCalendarEvents, convertPbehaviorsToCalendarEvents } from '@/helpers/stats/calendar';
+import { convertAlarmsToCalendarEvents, convertPbehaviorsToCalendarEvents } from '@/helpers/day-span';
 
 import DsCalendar from './day-span/calendar.vue';
 
