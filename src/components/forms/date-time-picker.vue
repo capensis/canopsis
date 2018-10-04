@@ -25,35 +25,35 @@
       span.v-date-time-picker-title
         span.v-picker__title__btn(
         @click="showDateTab",
-        :class="{ active: activeTab === 'date' }"
+        :class="{ active: isActiveDateTab }"
         ) {{ dateTimeObject | date('DD/MM/YYYY', true, '--/--/----') }}
         span &nbsp;
         span.v-picker__title__btn(
         @click="showHourTab",
-        :class="{ active: activeTab === 'time' && $refs.timePicker.selectingHour }"
+        :class="{ active: isActiveHourTab }"
         ) {{ dateTimeObject | date('HH', true, '--') }}
         span :
         span.v-picker__title__btn(
         @click="showMinuteTab",
-        :class="{ active: activeTab === 'time' && !$refs.timePicker.selectingHour }"
+        :class="{ active: isActiveMinuteTab }"
         ) {{ dateTimeObject | date('mm', true, '--') }}
-    v-tabs(v-model="activeTab", centered, grow)
-      v-tab(href="#date")
-        v-icon date_range
-      v-tab(href="#time")
-        v-icon access_time
-      v-tab-item(id="date")
+    div.date-time-picker__body
+      v-fade-transition
         v-date-picker(
+        v-if="isActiveDateTab",
         :locale="$i18n.locale",
         v-model="dateString",
-        @change="updateDateTimeObject",
+        @input="updateDateTimeObject",
+        @change="showHourTab"
         no-title,
         )
-      v-tab-item(id="time")
+      v-fade-transition
         v-time-picker(
+        v-show="isActiveTimeTab",
         ref="timePicker"
         v-model="timeString",
-        @change="updateDateTimeObject",
+        @input="updateDateTimeObject",
+        @change="showDateTab"
         format="24hr"
         no-title,
         )
@@ -65,6 +65,11 @@
 import moment from 'moment';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
+const TABS = {
+  date: 'date',
+  time: 'time',
+};
 
 /**
  * Date time picker component
@@ -93,11 +98,25 @@ export default {
 
     return {
       opened: false,
-      activeTab: 'date',
+      activeTab: TABS.date,
       dateTimeObject: value,
       dateString: value ? value.format('YYYY-MM-DD') : null,
       timeString: value ? value.format('HH:mm') : null,
     };
+  },
+  computed: {
+    isActiveDateTab() {
+      return this.activeTab === TABS.date;
+    },
+    isActiveTimeTab() {
+      return this.activeTab === TABS.time;
+    },
+    isActiveHourTab() {
+      return this.isActiveTimeTab && this.$refs.timePicker.selectingHour;
+    },
+    isActiveMinuteTab() {
+      return this.isActiveTimeTab && !this.$refs.timePicker.selectingHour;
+    },
   },
   watch: {
     opened(value) {
@@ -110,21 +129,21 @@ export default {
   },
   methods: {
     showDateTab() {
-      this.activeTab = 'date';
+      this.activeTab = TABS.date;
+    },
 
-      setTimeout(() => {
-        this.$refs.timePicker.selectingHour = true;
-      }, VUETIFY_ANIMATION_DELAY);
+    showTimeTab() {
+      this.activeTab = TABS.time;
     },
 
     showHourTab() {
       this.$refs.timePicker.selectingHour = true;
-      this.activeTab = 'time';
+      this.showTimeTab();
     },
 
     showMinuteTab() {
       this.$refs.timePicker.selectingHour = false;
-      this.activeTab = 'time';
+      this.showTimeTab();
     },
 
     updateDateTimeObject() {
@@ -168,6 +187,18 @@ export default {
 
 <style lang="scss">
   .date-time-picker {
+    .date-time-picker__body {
+      position: relative;
+      width: 290px;
+      height: 290px;
+
+      .v-picker {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+
     .v-date-time-picker-title {
       line-height: 50px;
       font-size: 30px;
