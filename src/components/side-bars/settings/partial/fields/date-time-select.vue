@@ -20,6 +20,10 @@ export default {
     title: {
       type: String,
     },
+    name: {
+      type: String,
+      default: 'date',
+    },
   },
   computed: {
     dateObject() {
