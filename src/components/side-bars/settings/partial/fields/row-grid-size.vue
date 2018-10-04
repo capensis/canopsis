@@ -110,8 +110,8 @@ export default {
           value: this.size[key],
           max: this.row.availableSize[key],
           errorMessages: this.errors.first(key),
-          name: key,
-          vValidate: 'min_value:3',
+          'data-vv-name': key,
+          'v-validate': 'min_value:3',
         },
         on: {
           input: value => this.updateSizeField(key, value),
