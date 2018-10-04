@@ -33,11 +33,15 @@ class RedisSentinelStore(object):
         self._connect()
 
     def parse_hosts(self):
+        """
+        :rtype: list
+        """
         hosts_ports = self.db_hosts.split(';')
         ret_val = []
         for host_port in hosts_ports:
             split_host = host_port.split(':')
-            ret_val.append((split_host[0],int(split_host[1])))
+            ret_val.append((split_host[0], int(split_host[1])))
+
         return ret_val
 
     def _connect(self):
@@ -68,6 +72,11 @@ class RedisSentinelStore(object):
         """
         Set the key name to given value. See redis.StrictRedis.set for other
         parameters.
+
+        :param int ex: expire time in seconds
+        :param int px: expire time in milliseconds
+        :param bool nx: only set if not already exist
+        :param bool xx: only set if already exist
         """
         return self.conn.set(name, value, ex=ex, px=px, nx=nx, xx=xx)
 
