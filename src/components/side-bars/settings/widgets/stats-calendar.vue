@@ -46,9 +46,6 @@ export default {
       settings: {
         rowId,
         widget: cloneDeep(widget),
-        widget_preferences: {
-          selectedTypes: [],
-        },
       },
     };
   },
