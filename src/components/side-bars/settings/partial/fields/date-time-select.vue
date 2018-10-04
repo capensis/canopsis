@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ title }}
-    v-btn(@click="click") Select a date
+    date-time-picker(:value="dateValue")
 </template>
 
 <script>

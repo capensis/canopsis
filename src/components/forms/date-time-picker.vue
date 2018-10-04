@@ -4,18 +4,17 @@
   transition="slide-y-transition",
   v-model="opened",
   ref="menu",
-  :close-on-content-click="false",
-  left,
-  right,
-  lazy
   max-width="290px"
+  :close-on-content-click="false",
+  right,
+  lazy,
   )
     div(slot="activator")
       v-text-field(
       readonly,
       :label="label",
       :error-messages="name ? errors.collect(name) : []",
-      :value="dateTimeString",
+      :value="dateTimeObject | date('DD/MM/YYYY HH:mm', true)",
       v-validate="rules",
       :data-vv-name="name",
       data-vv-validate-on="none",
@@ -23,7 +22,21 @@
       @click:append="clear"
       )
     .v-picker__title.primary.text-xs-center
-      span.subheading {{ dateTimeString || '--/--/---- --:--' }}
+      span.v-date-time-picker-title
+        span.v-picker__title__btn(
+        @click="showDateTab",
+        :class="{ active: activeTab === 'date' }"
+        ) {{ dateTimeObject | date('DD/MM/YYYY', true, '--/--/----') }}
+        span &nbsp;
+        span.v-picker__title__btn(
+        @click="showHourTab",
+        :class="{ active: activeTab === 'time' && $refs.timePicker.selectingHour }"
+        ) {{ dateTimeObject | date('HH', true, '--') }}
+        span :
+        span.v-picker__title__btn(
+        @click="showMinuteTab",
+        :class="{ active: activeTab === 'time' && !$refs.timePicker.selectingHour }"
+        ) {{ dateTimeObject | date('mm', true, '--') }}
     v-tabs(v-model="activeTab", centered, grow)
       v-tab(href="#date")
         v-icon date_range
@@ -31,15 +44,16 @@
         v-icon access_time
       v-tab-item(id="date")
         v-date-picker(
-        @input="updateDateTimeObject",
         :locale="$i18n.locale",
         v-model="dateString",
+        @input="updateDateTimeObject",
         no-title,
         )
       v-tab-item(id="time")
         v-time-picker(
-        @input="updateDateTimeObject",
+        ref="timePicker"
         v-model="timeString",
+        @input="updateDateTimeObject",
         format="24hr"
         no-title,
         )
@@ -49,6 +63,8 @@
 
 <script>
 import moment from 'moment';
+
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 /**
  * Date time picker component
@@ -71,10 +87,6 @@ export default {
     label: String,
     name: String,
     rules: [String, Object],
-    format: {
-      type: String,
-      default: 'DD/MM/YYYY HH:mm',
-    },
   },
   data() {
     const value = this.value ? moment(this.value) : null;
@@ -83,25 +95,38 @@ export default {
       opened: false,
       activeTab: 'date',
       dateTimeObject: value,
-      dateString: value ? value.format('YYYY-MM-DD') : '',
-      timeString: value ? value.format('HH:mm') : '',
+      dateString: value ? value.format('YYYY-MM-DD') : null,
+      timeString: value ? value.format('HH:mm') : null,
     };
-  },
-  computed: {
-    dateTimeString() {
-      return this.dateTimeObject ? this.dateTimeObject.format(this.format) : this.dateTimeObject;
-    },
   },
   watch: {
     opened(value) {
       if (!value) {
         setTimeout(() => {
           this.activeTab = 'date';
-        }, 300);
+        }, VUETIFY_ANIMATION_DELAY);
       }
     },
   },
   methods: {
+    showDateTab() {
+      this.activeTab = 'date';
+
+      setTimeout(() => {
+        this.$refs.timePicker.selectingHour = true;
+      }, VUETIFY_ANIMATION_DELAY);
+    },
+
+    showHourTab() {
+      this.$refs.timePicker.selectingHour = true;
+      this.activeTab = 'time';
+    },
+
+    showMinuteTab() {
+      this.$refs.timePicker.selectingHour = false;
+      this.activeTab = 'time';
+    },
+
     updateDateTimeObject() {
       if (!this.timeString) {
         this.timeString = '00:00';
@@ -113,6 +138,7 @@ export default {
 
       this.validate();
     },
+
     clear() {
       this.dateTimeObject = null;
       this.dateString = '';
@@ -122,11 +148,13 @@ export default {
 
       this.validate();
     },
+
     submit() {
       this.validate();
 
       this.$refs.menu.save();
     },
+
     validate() {
       if (this.name && this.rules) {
         this.$nextTick(async () => {
@@ -140,6 +168,12 @@ export default {
 
 <style lang="scss">
   .date-time-picker {
+    .v-date-time-picker-title {
+      line-height: 50px;
+      font-size: 30px;
+      font-weight: 500;
+    }
+
     .v-tabs__container--centered .v-tabs__div,
     .v-tabs__container--fixed-tabs .v-tabs__div,
     .v-tabs__container--icons-and-text .v-tabs__div {

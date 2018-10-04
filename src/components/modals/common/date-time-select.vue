@@ -2,7 +2,7 @@
   v-card
     v-card-title.green.darken-4.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ $t('modals.dateSelect.title') }}
+        h2 {{ $t('modals.dateTimeSelect.title') }}
         v-btn(@click='hideModal', icon, small)
           v-icon.white--text close
     v-card-text

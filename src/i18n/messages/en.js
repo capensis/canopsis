@@ -363,6 +363,9 @@ export default {
         },
       },
     },
+    dateTimeSelect: {
+      title: 'Date time select',
+    },
   },
   tables: {
     noData: 'No data',
