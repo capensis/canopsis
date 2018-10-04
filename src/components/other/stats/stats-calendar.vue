@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import get from 'lodash/get';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SIDE_BARS } from '@/constants';
@@ -66,43 +65,37 @@ export default {
     },
 
     async fetchList() {
-      const widgetFilter = get(this.widget, 'parameters.mfilter.filter');
+      const query = { ...this.query };
 
-      if (widgetFilter) {
-        const { entities } = await this.fetchContextEntitiesListWithoutStore({
-          params: {
-            start: 0,
-            limit: 50,
-            _filter: widgetFilter,
+      const { entities } = await this.fetchContextEntitiesListWithoutStore({
+        params: query,
+      });
+
+      const alarmsFilter = {
+        $or: [{
+          connector_name: {
+            $in: entities.map(v => v.name),
           },
-        });
+        }],
+      };
 
-        const alarmsFilter = {
-          $or: [{
-            connector_name: {
-              $in: entities.map(v => v.name),
-            },
-          }],
-        };
+      const { alarms } = await this.fetchAlarmsListWithoutStore({
+        params: {
+          filter: alarmsFilter,
+          skip: 0,
+          limit: 10,
+        },
+      });
 
-        const { alarms } = await this.fetchAlarmsListWithoutStore({
-          params: {
-            filter: alarmsFilter,
-            skip: 0,
-            limit: 15,
-          },
-        });
+      const pbehaviorsCollections = await Promise.all(entities.map(({ _id }) =>
+        this.fetchPbehaviorsListByEntityIdWithoutStore({ id: _id })));
 
-        const pbehaviorsCollections = await Promise.all(entities.map(({ _id }) =>
-          this.fetchPbehaviorsListByEntityIdWithoutStore({ id: _id })));
+      const pbehaviors = [].concat(...pbehaviorsCollections);
 
-        const pbehaviors = [].concat(...pbehaviorsCollections);
-
-        this.events = [
-          ...convertAlarmsToCalendarEvents(alarms),
-          ...convertPbehaviorsToCalendarEvents(pbehaviors),
-        ];
-      }
+      this.events = [
+        ...convertAlarmsToCalendarEvents(alarms),
+        ...convertPbehaviorsToCalendarEvents(pbehaviors),
+      ];
     },
   },
 };

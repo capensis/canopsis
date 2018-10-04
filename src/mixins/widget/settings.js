@@ -165,7 +165,7 @@ export default {
           this.updateView({ view }),
         ]);
 
-        this.mergeQuery({
+        this.updateQuery({
           id: widget._id,
           query: {
             ...convertWidgetToQuery(widget),

@@ -23,7 +23,6 @@ Vue.use(filters);
 Vue.use(Vuetify);
 Vue.use(DaySpanVuetify, {
   methods: {
-    getDefaultEventColor: () => '#1976d2',
     getPrefix: (calendarEvent, sameDay) =>
       (sameDay.length === 1 ? sameDay[0].start.format('HH[h]') : `(${sameDay.length})`),
   },

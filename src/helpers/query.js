@@ -82,10 +82,32 @@ export function convertContextWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts widget with type 'StatsTable' to query Object
  *
+ * @param {Object} widget
+ * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
-  const query = { ...widget.parameters };
+  return { ...widget.parameters };
+}
+
+/**
+ * This function converts widget with type 'StatsCalendar' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsCalendarWidgetToQuery(widget) {
+  const query = {
+    start: 0,
+    limit: 50,
+  };
+
+  const filter = get(widget, 'parameters.mfilter.filter');
+
+  if (filter) {
+    query._filter = filter;
+  }
 
   return query;
 }
@@ -162,6 +184,8 @@ export function convertWidgetToQuery(widget) {
       return convertContextWidgetToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCalendar:
+      return convertStatsCalendarWidgetToQuery(widget);
     default:
       return {};
   }
