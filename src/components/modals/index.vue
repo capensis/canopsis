@@ -28,7 +28,6 @@ import PbehaviorList from './pbehavior/pbehavior-list.vue';
 import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
-import DateSelect from './common/date-select.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import CreateView from './view/create-view.vue';
@@ -57,7 +56,6 @@ export default {
     CreateEntity,
     CreateWatcher,
     CreateWidget,
-    DateSelect,
     CreateView,
     CreateFilter,
     Watcher,
