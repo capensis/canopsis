@@ -45,7 +45,7 @@ export default {
         const data = [];
         Object.values(this.stats).map((group) => {
           if (group.aggregations) {
-            data.push(group.aggregations[stat].sum + 10);
+            data.push(group.aggregations[stat].sum);
           }
           return data;
         });
