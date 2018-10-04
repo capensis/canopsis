@@ -608,6 +608,8 @@ class PBehaviorManager(object):
             # object.
 
             dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
+            if dt is None:
+                return False
 
             # FIXME : this is an ugly hack. This should not exist
             substract_day = False
