@@ -6,14 +6,14 @@
       v-flex(xs4)
         v-card.my-1
           v-card-title
-            h2 {{ editing ? 'Edit' : 'Create' }}
+            h2 {{ editing ? $t('common.edit') : $t('common.add') }}
             v-btn(v-if="editing", @click="editing = false")
               v-icon close
             v-form
               v-text-field(:placeholder="$t('common.title')", v-model="form.title")
               v-layout(wrap, column)
                 v-flex(xs6)
-                  v-btn(@click="showFilterModal", small) Filter editor
+                  v-btn(@click="showFilterModal", small) {{ $t('settings.filterEditor') }}
               v-btn(@click="addGroup").green.darken-4.white--text.mt-3 {{ $t('common.save') }}
       v-flex(xs8)
         v-container.pt-0
@@ -25,15 +25,13 @@
                 v-layout
                   v-btn(@click="editGroup(group, index)", fab, small, depressed)
                     v-icon edit
-                  v-btn(@click="deleteGroup(group, index)", fab, small, depressed)
+                  v-btn(@click="deleteGroup(index)", fab, small, depressed)
                     v-icon delete
     v-layout(justify-end)
       v-btn(@click="save").green.darken-4.white--text.mt-3 {{ $t('common.save') }}
 </template>
 
 <script>
-import Vue from 'vue';
-import pullAt from 'lodash/pullAt';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 
@@ -70,22 +68,20 @@ export default {
       this.editingGroupIndex = index;
       this.form = { ...group };
     },
-    deleteGroup(group, index) {
-      const groups = [...this.groups];
-      pullAt(groups, index);
-      this.groups = groups;
+    deleteGroup(index) {
+      this.$delete(this.groups, index);
     },
     addGroup() {
       if (this.editing) {
         // Using Vue.set to be sure the groups list will be updated + provoke a re-render of the list
-        Vue.set(this.groups, this.editingGroupIndex, { ...this.form });
+        this.$set(this.groups, this.editingGroupIndex, { ...this.form });
         this.editing = false;
       } else {
         this.groups.push({ ...this.form });
       }
     },
-    save() {
-      this.config.action(this.groups);
+    async save() {
+      await this.config.action(this.groups);
       this.hideModal();
     },
   },

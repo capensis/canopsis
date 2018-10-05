@@ -83,7 +83,11 @@ export function convertContextWidgetToQuery(widget) {
 }
 
 export function convertStatsHistogramToQuery(widget) {
-  return widget.parameters.groups.map(group => ({ ...omit(widget.parameters, ['groups', 'statsColors']), mfilter: group.filter || {} }));
+  return widget.parameters.groups.map(group =>
+    ({
+      ...omit(widget.parameters, ['groups', 'statsColors']),
+      mfilter: group.filter || {},
+    }));
 }
 
 /**

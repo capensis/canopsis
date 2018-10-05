@@ -1,12 +1,12 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") Stats colors
+    v-list-tile(slot="activator") {{ $t('settings.statsColor.title') }}
     v-container(fluid)
       v-layout(v-for="(stat, key) in stats", align-center, :key="key")
         v-flex
           div {{ key }}:
         v-flex
-          v-btn(@click="e => showColorPickerModal(key)") Pick color
+          v-btn(@click="showColorPickerModal(key)") {{ $t('settings.statsColor.pickColor') }}
         v-flex
           div.py-2.text-xs-center(:style="{ backgroundColor: value[key] }") {{ value[key] }}
 </template>

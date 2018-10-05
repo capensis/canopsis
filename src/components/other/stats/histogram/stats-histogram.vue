@@ -12,7 +12,7 @@ export default {
     },
   },
   computed: {
-    chartDatas() {
+    chartData() {
       return {
         labels: this.labels,
         datasets: this.datasets,
@@ -20,14 +20,16 @@ export default {
     },
   },
   watch: {
-    chartDatas(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.renderChart(newVal);
-      }
+    chartData: {
+      handler(value, oldValue) {
+        if (value !== oldValue) {
+          this.renderChart(value);
+        }
+      },
     },
   },
   mounted() {
-    this.renderChart(this.chartDatas);
+    this.renderChart(this.chartData);
   },
 };
 </script>

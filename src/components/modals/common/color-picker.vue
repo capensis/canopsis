@@ -3,7 +3,7 @@
     v-card-title.green.darken-4.white--text
       v-layout(justify-space-between, align-center)
         h2 {{ $t(config.title) }}
-        v-btn(@click='hideModal', icon, small)
+        v-btn(@click="hideModal", icon, small)
           v-icon.white--text close
     v-card-text
       v-layout
@@ -15,9 +15,9 @@
 </template>
 
 <script>
+import { Chrome, Compact } from 'vue-color';
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import { Chrome, Compact } from 'vue-color';
 
 export default {
   name: MODALS.colorPicker,
@@ -30,7 +30,7 @@ export default {
   ],
   data() {
     return {
-      color: '',
+      color: {},
     };
   },
   methods: {

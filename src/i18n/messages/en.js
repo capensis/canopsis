@@ -202,6 +202,14 @@ export default {
         alreadyExist: 'Stat with this name already exists',
       },
     },
+    statsGroups: {
+      title: 'Stats groups',
+      manageGroups: 'Manage groups',
+    },
+    statsColor: {
+      title: 'Stats color',
+      pickColor: 'Pick a color',
+    },
   },
   modals: {
     contextInfos: {

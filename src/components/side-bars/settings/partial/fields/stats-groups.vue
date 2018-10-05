@@ -1,8 +1,8 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") Stats groups
+    v-list-tile(slot="activator") {{ $t('settings.statsGroups.title') }}
     v-container.pt-0
-      v-btn.ma-0(@click="showGroupsModal") Manage stats groups
+      v-btn.ma-0(@click="showGroupsModal") {{ $t('settings.statsGroups.manageGroups') }}
 </template>
 
 <script>

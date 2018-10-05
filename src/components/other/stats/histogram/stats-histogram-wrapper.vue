@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import omit from 'lodash/omit';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -67,7 +66,7 @@ export default {
     fetchList() {
       this.widget.parameters.groups.map(async (group) => {
         const stat = await this.fetchStats({ params: { ...omit(this.widget.parameters, ['groups', 'statsColors']), mfilter: group.filter || {} }, aggregate: ['sum'] });
-        Vue.set(this.stats, group.title, stat);
+        this.$set(this.stats, group.title, stat);
       });
     },
   },
