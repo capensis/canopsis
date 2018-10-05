@@ -23,7 +23,7 @@
             v-model="form.trend",
             hide-details
             )
-            v-list-group.my-2(v-if="options.length > 0")
+            v-list-group.my-2
               v-list-tile(slot="activator") {{ $t('common.options') }}
               template(v-for="option in options")
                 v-switch(
@@ -64,12 +64,12 @@
           v-list-group.my-1.grey(v-for="(stat, key) in value", :key="key")
             v-list-tile(slot="activator") {{ key }}
               v-layout(justify-end)
-                v-btn.green.darken-4.white--text(@click.stop="e => editStat(key)", fab, small, depressed)
+                v-btn.green.darken-4.white--text(@click.stop="editStat(key)", fab, small, depressed)
                   v-icon edit
-                v-btn.red.darken-4.white--text(@click.stop="e => deleteStat(key)", fab, small, depressed)
+                v-btn.red.darken-4.white--text(@click.stop="deleteStat(key)", fab, small, depressed)
                   v-icon delete
             v-container(fluid)
-              p {{ $t('common.stat') }}: {{ stat.stat }}
+              p {{ $t('common.stat') }}: {{ stat.stat.value }}
               p {{ $t('common.trend') }}: {{ stat.trend }}
               p {{ $t('common.parameters') }}: {{ stat.parameters }}
 
