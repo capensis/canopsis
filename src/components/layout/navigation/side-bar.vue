@@ -6,28 +6,72 @@
   absolute,
   app,
   )
-    v-expansion-panel(
-    class="panel",
+    v-expansion-panel.panel(
     expand,
     focusable,
     dark
     )
       v-expansion-panel-content(v-for="group in groups", :key="group._id").grey.darken-4.white--text
-        div(slot="header") {{ group.name }}
+        div(slot="header")
+          span {{ group.name }}
+          v-btn(
+          v-show="editing",
+          depressed,
+          small,
+          icon,
+          color="grey darken-3",
+          @click.stop="showEditGroupModal(group._id)"
+          )
+            v-icon(small) edit
         v-card.grey.darken-3.white--text(v-for="view in group.views", :key="view._id")
           v-card-text
-            router-link(:to="{ name: 'view', params: { id: view._id } }") {{ view.title }}
+            router-link(:to="{ name: 'view', params: { id: view._id } }")
+              span {{ view.title }}
+              v-btn(
+              v-show="editing",
+              depressed,
+              small,
+              icon,
+              color="grey darken-2",
+              @click.prevent="showEditViewModal(view)"
+              )
+                v-icon(small) edit
     v-divider
-    v-btn.addBtn(
-    fab,
-    dark,
-    fixed,
-    bottom,
-    right,
-    color="green darken-4",
-    @click="showCreateViewModal"
-    )
-      v-icon(dark) add
+    div
+      v-speed-dial(
+      v-model="fab"
+      bottom,
+      right,
+      direction="top"
+      transition="slide-y-reverse-transition"
+      )
+        v-btn(
+        slot="activator",
+        v-model="fab"
+        color="blue darken-2",
+        dark,
+        fab
+        )
+          v-icon settings
+          v-icon close
+        v-btn(
+        v-model="editing"
+        small,
+        fab,
+        dark,
+        color="blue darken-4",
+        @click.stop="editModeToggle"
+        )
+          v-icon(dark) edit
+          v-icon(dark) done
+        v-btn(
+        small,
+        fab,
+        dark,
+        color="green darken-4",
+        @click="showCreateViewModal"
+        )
+          v-icon(dark) add
 </template>
 
 <script>
@@ -57,6 +101,8 @@ export default {
   },
   data() {
     return {
+      fab: false,
+      editing: false,
       width: SIDE_BAR_WIDTH,
     };
   },
@@ -76,6 +122,25 @@ export default {
     this.fetchGroupsList();
   },
   methods: {
+    editModeToggle() {
+      this.editing = !this.editing;
+    },
+
+    showEditGroupModal() {
+      this.showModal({
+        name: MODALS.createView,
+      });
+    },
+
+    showEditViewModal(view) {
+      this.showModal({
+        name: MODALS.createView,
+        config: {
+          view,
+        },
+      });
+    },
+
     showCreateViewModal() {
       this.showModal({
         name: MODALS.createView,
@@ -86,6 +151,10 @@ export default {
 </script>
 
 <style scoped>
+  .v-speed-dial {
+    position: fixed;
+  }
+
   a {
     color: inherit;
     text-decoration: none;

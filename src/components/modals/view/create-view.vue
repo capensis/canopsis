@@ -100,7 +100,23 @@ export default {
     },
   },
   mounted() {
-    this.fetchGroupsList();
+    const { view } = this.config;
+
+    if (view) {
+      const group = find(this.groups, { _id: view.group_id });
+
+      if (group) {
+        this.groupName = group.name;
+      }
+
+      this.form = {
+        name: view.name,
+        title: view.title,
+        description: view.description,
+        enabled: view.enabled,
+        tags: [...view.tags || []],
+      };
+    }
   },
   methods: {
     async submit() {
