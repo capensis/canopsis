@@ -5,7 +5,7 @@ const { mapActions } = createNamespacedHelpers('stats');
 export default {
   methods: {
     ...mapActions({
-      fetchStats: 'fetchListWithoutStore',
+      fetchStatsListWithoutStore: 'fetchListWithoutStore',
     }),
   },
 };

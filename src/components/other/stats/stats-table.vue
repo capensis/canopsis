@@ -74,7 +74,7 @@ export default {
     async fetchList() {
       const query = { ...this.query };
 
-      const stats = await this.fetchStats({
+      const stats = await this.fetchStatsListWithoutStore({
         params: query,
       });
 

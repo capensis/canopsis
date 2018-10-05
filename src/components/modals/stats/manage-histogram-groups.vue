@@ -9,7 +9,7 @@
             h2 {{ editing ? $t('common.edit') : $t('common.add') }}
             v-btn(v-if="editing", @click="editing = false")
               v-icon close
-            v-form
+            v-form(ref="form")
               v-text-field(:placeholder="$t('common.title')", v-model="form.title")
               v-layout(wrap, column)
                 v-flex(xs6)
@@ -46,11 +46,8 @@ export default {
         title: '',
         filter: '',
       },
-      groups: [],
+      groups: this.modal.config.groups,
     };
-  },
-  mounted() {
-    this.groups = [...this.config.groups];
   },
   methods: {
     showFilterModal() {
@@ -78,6 +75,7 @@ export default {
         this.editing = false;
       } else {
         this.groups.push({ ...this.form });
+        this.$refs.form.reset();
       }
     },
     async save() {

@@ -39,19 +39,23 @@ export default {
       return Object.keys(this.stats);
     },
     datasets() {
-      const datasets = [];
-      Object.keys(this.widget.parameters.stats).map((stat) => {
-        const data = [];
-        Object.values(this.stats).map((group) => {
+      return Object.keys(this.widget.parameters.stats).map((stat) => {
+        const data = Object.values(this.stats).reduce((acc, group) => {
           if (group.aggregations) {
-            data.push(group.aggregations[stat].sum);
+            acc.push(group.aggregations[stat].sum);
           }
-          return data;
-        });
-        return datasets.push({ label: stat, data, backgroundColor: this.widget.parameters.statsColors[stat] });
+
+          return acc;
+        }, []);
+
+        return {
+          data,
+          label: stat,
+          backgroundColor: this.widget.parameters.statsColors[stat],
+        };
       });
-      return datasets;
     },
+
   },
   methods: {
     showSettings() {
@@ -65,7 +69,13 @@ export default {
     },
     fetchList() {
       this.widget.parameters.groups.map(async (group) => {
-        const stat = await this.fetchStats({ params: { ...omit(this.widget.parameters, ['groups', 'statsColors']), mfilter: group.filter || {} }, aggregate: ['sum'] });
+        const stat = await this.fetchStatsListWithoutStore({
+          params: {
+            ...omit(this.widget.parameters, ['groups', 'statsColors']),
+            mfilter: group.filter || {},
+          },
+          aggregate: ['sum'],
+        });
         this.$set(this.stats, group.title, stat);
       });
     },
