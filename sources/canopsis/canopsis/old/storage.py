@@ -23,24 +23,15 @@ import time
 import os
 import ConfigParser
 
-import gridfs
-
-from bson import objectid
 from uuid import uuid1
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from pymongo.errors import PyMongoError
-from pymongo import ASCENDING
-from pymongo import DESCENDING
 
 from canopsis.common import root_path
 from canopsis.old.account import Account
 from canopsis.old.record import Record
-
-from operator import itemgetter
-
-from urlparse import urlparse
 
 CONFIG = ConfigParser.RawConfigParser()
 CONFIG.read(os.path.join(root_path, 'etc', 'cstorage.conf'))
@@ -140,24 +131,55 @@ class Storage(object):
         Read_mfilter = {}
         Write_mfilter = {}
 
-        if account._id != "account.root" and account.group != "group.CPS_root" and not 'group.CPS_root' in account.groups:
-            Read_mfilter = { '$or': [
-                {'aaa_owner': account._id, 'aaa_access_owner': 'r'},
-                {'aaa_group': account.group, 'aaa_access_group': 'r'},
-                {'aaa_group': {'$in': account.groups}, 'aaa_access_group': 'r'},
-                {'aaa_admin_group':account.group},
-                {'aaa_admin_group':{'$in': account.groups}},
-                {'aaa_access_unauth': 'r'}
-            ] }
+        if account._id != "account.root" and \
+           account.group != "group.CPS_root" and \
+           'group.CPS_root' not in account.groups:
+            Read_mfilter = {'$or': [
+                {
+                    'aaa_owner': account._id,
+                    'aaa_access_owner': 'r'
+                },
+                {
+                    'aaa_group': account.group,
+                    'aaa_access_group': 'r'
+                },
+                {
+                    'aaa_group': {'$in': account.groups},
+                    'aaa_access_group': 'r'
+                },
+                {
+                    'aaa_admin_group': account.group
+                },
+                {
+                    'aaa_admin_group': {'$in': account.groups}
+                },
+                {
+                    'aaa_access_unauth': 'r'
+                }
+            ]}
 
-            Write_mfilter = { '$or': [
-                {'aaa_owner': account._id, 'aaa_access_owner': 'w'},
-                {'aaa_group': account.group, 'aaa_access_group': 'w'},
-                {'aaa_group': {'$in': account.groups}, 'aaa_access_group': 'w'},
-                {'aaa_admin_group':account.group},
-                {'aaa_admin_group':{'$in': account.groups}},
-                {'aaa_access_unauth': 'w'}
-            ] }
+            Write_mfilter = {'$or': [
+                {
+                    'aaa_owner': account._id,
+                    'aaa_access_owner': 'w'
+                },
+                {
+                    'aaa_group': account.group,
+                    'aaa_access_group': 'w'
+                },
+                {
+                    'aaa_group': {'$in': account.groups},
+                    'aaa_access_group': 'w'},
+                {
+                    'aaa_admin_group': account.group
+                },
+                {
+                    'aaa_admin_group': {'$in': account.groups}
+                },
+                {
+                    'aaa_access_unauth': 'w'
+                }
+            ]}
 
             if account.user != "anonymous":
                 Read_mfilter['$or'].append({'aaa_access_other': 'r'})
@@ -178,7 +200,8 @@ class Storage(object):
                     uri = '%s@%s' % (self.mongo_userid, uri)
 
                 else:
-                    uri = '%s:%s@%s' % (self.mongo_userid, self.mongo_password, uri)
+                    uri = '%s:%s@%s' % (self.mongo_userid,
+                                        self.mongo_password, uri)
 
                 uri = '%s/%s' % (uri, self.mongo_db)
 
@@ -232,7 +255,9 @@ class Storage(object):
 
             return backend
         except Exception:
-            self.backend[namespace] = MongoCollection(self.conn.get_collection(namespace))
+            self.backend[namespace] = MongoCollection(
+                self.conn.get_collection(namespace)
+            )
             self.logger.debug("Connected to %s collection." % namespace)
             return self.backend[namespace]
 
@@ -245,14 +270,21 @@ class Storage(object):
         data['crecord_write_time'] = int(time.time())
 
         # Check if record exist
-        count = self.count({'_id': _id}, namespace=namespace, account=account, for_write=True)
+        count = self.count({'_id': _id},
+                           namespace=namespace,
+                           account=account,
+                           for_write=True)
         if count:
             backend = self.get_backend(namespace)
             backend.update({'_id': self.clean_id(_id)}, {"$set": data})
         else:
             raise KeyError("'%s' not found ..." % _id)
 
-    def put(self, _record_or_records, account=None, namespace=None, mset=False):
+    def put(self,
+            _record_or_records,
+            account=None,
+            namespace=None,
+            mset=False):
         self.check_connected()
 
         if not account:
@@ -420,7 +452,19 @@ class Storage(object):
     def count(self, *args, **kargs):
         return self.find(count=True, *args, **kargs)
 
-    def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False, ignore_bin=True, raw=False, with_total=False):
+    def find(self, mfilter={},
+             mfields=None,
+             account=None,
+             namespace=None,
+             one=False,
+             count=False,
+             sort=None,
+             limit=0,
+             offset=0,
+             for_write=False,
+             ignore_bin=True,
+             raw=False,
+             with_total=False):
         self.check_connected()
 
         if not account:
@@ -436,16 +480,16 @@ class Storage(object):
         if one:
             sort = [('timestamp', -1)]
 
-        self.logger.debug("Find records from mfilter" )
+        self.logger.debug("Find records from mfilter")
 
         (Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 
         if for_write:
             if Write_mfilter:
-                mfilter = { '$and': [ mfilter, Write_mfilter ] }
+                mfilter = {'$and': [mfilter, Write_mfilter]}
         else:
             if Read_mfilter:
-                mfilter = { '$and': [ mfilter, Read_mfilter ] }
+                mfilter = {'$and': [mfilter, Read_mfilter]}
 
         self.logger.debug(" + fields : %s" % mfields)
         self.logger.debug(" + mfilter: %s" % mfilter)
@@ -455,7 +499,7 @@ class Storage(object):
         if one:
             raw_records = backend.find_one(mfilter, projection=mfields)
             if raw_records:
-                raw_records = [ raw_records ]
+                raw_records = [raw_records]
             else:
                 raw_records = []
         else:
@@ -468,44 +512,49 @@ class Storage(object):
                     limit = self.fetch_limit
 
                 if limit > 1:
-                    #change limit artificially to fetch one more result if possible
+                    # change limit artificially to fetch one more result if
+                    # possible
                     limit += 1
 
             if sort is None:
-                raw_records = backend.find(mfilter, projection=mfields, skip=offset, limit=limit)
+                raw_records = backend.find(mfilter,
+                                           projection=mfields,
+                                           skip=offset,
+                                           limit=limit)
             else:
-                raw_records = backend.find(mfilter, projection=mfields, skip=offset, limit=limit, sort=sort)
+                raw_records = backend.find(mfilter,
+                                           projection=mfields,
+                                           skip=offset,
+                                           limit=limit,
+                                           sort=sort)
 
-
-
-            """
-                Because mongo counts computation time is not acceptable, total is equal
-                to the element fetched count (can be limit or less before it is artificially changed) OR
-                total is offset + limit events and possibly + 1 if limit is reached
-                (when +1 , this means some other records are availables)
-            """
+            # Because mongo counts computation time is not acceptable, total is
+            # equal to the element fetched count (can be limit or less before
+            # it is artificially changed) OR total is offset + limit events and
+            # possibly + 1 if limit is reached (when +1 , this means some other
+            # records are availables)
 
             if count_limit_reached:
-                #When count limit reached, then count is done as described upper
+                # When count limit reached, then count is done as described
+                # upper
                 raw_records = list(raw_records)
 
                 total = len(raw_records) + offset
 
                 if limit > 1:
-                    raw_records = raw_records[:limit -1]
+                    raw_records = raw_records[:limit - 1]
 
             else:
-                #Otherwise, count is done on the collection with given filter.
+                # Otherwise, count is done on the collection with given filter.
                 total = raw_records.count()
                 raw_records = list(raw_records)
 
-            # process limit, offset and sort independently of pymongo because sort does not use index
+            # process limit, offset and sort independently of pymongo because
+            # sort does not use index
             if count:
                 return total
 
-
-
-        records=[]
+        records = []
 
         if not mfields:
             for raw_record in raw_records:
@@ -520,7 +569,7 @@ class Storage(object):
                         records.append(raw_record)
 
                 except Exception as err:
-                    ## Not record format ..
+                    # Not record format ..
                     self.logger.error("Impossible parse record ('%s') !" % err)
         else:
             records = raw_records
@@ -533,12 +582,17 @@ class Storage(object):
             else:
                 return None
         else:
-            if with_total: # returns the couple of records, total
+            if with_total:  # returns the couple of records, total
                 return records, total
 
             return records
 
-    def get(self, _id_or_ids, account=None, namespace=None, mfields=None, ignore_bin=True):
+    def get(self,
+            _id_or_ids,
+            account=None,
+            namespace=None,
+            mfields=None,
+            ignore_bin=True):
         self.check_connected()
 
         if not account:
@@ -549,7 +603,7 @@ class Storage(object):
             _ids = _id_or_ids
             dolist = True
         else:
-            _ids = [ _id_or_ids ]
+            _ids = [_id_or_ids]
 
         backend = self.get_backend(namespace)
 
@@ -563,24 +617,26 @@ class Storage(object):
         self.logger.debug("   + Clean ids")
         _ids = [self.clean_id(_id) for _id in _ids]
 
-        #Build basic filter
+        # Build basic filter
         (Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 
         if len(_ids) == 1:
             mfilter = {'_id': _ids[0]}
         else:
-            mfilter = {'_id': {'$in': _ids }}
+            mfilter = {'_id': {'$in': _ids}}
 
-        mfilter = { '$and': [ mfilter, Read_mfilter ] }
+        mfilter = {'$and': [mfilter, Read_mfilter]}
 
-        #self.logger.debug("   + mfilter: %s" % mfilter)
+        # self.logger.debug("   + mfilter: %s" % mfilter)
         records = []
         try:
             if len(_ids) == 1:
                 raw_record = backend.find_one(mfilter, projection=mfields)
 
                 # Remove binary (base64)
-                if ignore_bin and raw_record and raw_record.get('media_bin', None):
+                if ignore_bin and \
+                   raw_record and \
+                   raw_record.get('media_bin', None):
                     del raw_record['media_bin']
 
                 if raw_record and mfields:
@@ -601,7 +657,8 @@ class Storage(object):
                         records.append(Record(raw_record=raw_record))
 
         except Exception as err:
-            self.logger.error("Impossible get record '%s' !\nReason: %s" % (_ids, err))
+            self.logger.error("Impossible get record '%s' !\nReason: %s" %
+                              (_ids, err))
 
         self.logger.debug(" + Found %s records" % len(records))
         if not len(records):
@@ -621,7 +678,7 @@ class Storage(object):
         _ids = []
 
         if isinstance(_id_or_ids, Record):
-            _ids = [ _id_or_ids._id ]
+            _ids = [_id_or_ids._id]
         elif isinstance(_id_or_ids, list):
             if len(_id_or_ids) > 0:
                 if isinstance(_id_or_ids[0], Record):
@@ -630,7 +687,7 @@ class Storage(object):
                 else:
                     _ids = _id_or_ids
         else:
-            _ids = [ _id_or_ids ]
+            _ids = [_id_or_ids]
 
         backend = self.get_backend(namespace)
 
@@ -653,39 +710,48 @@ class Storage(object):
                 try:
                     backend.remove({'_id': oid})
                 except Exception as err:
-                    self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
+                    self.logger.error("Impossible remove record '%s'"
+                                      " !\nReason: %s" % (_id, err))
 
                 self.logger.debug(" + Success removed")
             else:
                 self.logger.error("Remove: Access denied ...")
                 raise ValueError("Access denied ...")
 
-    def map_reduce(self, mfilter_or_ids, mmap, mreduce, account=None, namespace=None):
+    def map_reduce(self,
+                   mfilter_or_ids,
+                   mmap,
+                   mreduce,
+                   account=None,
+                   namespace=None):
         self.check_connected()
 
         if not account:
             account = self.account
 
-        if   isinstance(mfilter_or_ids, dict):
+        if isinstance(mfilter_or_ids, dict):
             # mfilter
             mfilter = mfilter_or_ids
         elif isinstance(mfilter_or_ids, list):
-            #ids
-            mfilter = {'_id': {'$in': mfilter_or_ids }}
+            # ids
+            mfilter = {'_id': {'$in': mfilter_or_ids}}
         else:
                 self.logger.error("Invalid filter")
                 raise ValueError("Invalid filter")
 
         backend = self.get_backend(namespace)
 
-        (Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
-        #mfilter = dict(mfilter.items() + Read_mfilter.items())
+        Read_mfilter, Write_mfilter = self.make_mongofilter(account)
+        # mfilter = dict(mfilter.items() + Read_mfilter.items())
         if Read_mfilter != {}:
-            mfilter = { '$and': [ mfilter, Read_mfilter ] }
+            mfilter = {'$and': [mfilter, Read_mfilter]}
 
         output = {}
         if backend.find(mfilter).count() > 0:
-            result = backend.map_reduce(mmap, mreduce, "mapreduce", query=mfilter)
+            result = backend.map_reduce(mmap,
+                                        mreduce,
+                                        "mapreduce",
+                                        query=mfilter)
             for doc in result.find():
                 output[doc['_id']] = doc['value']
         else:
@@ -709,7 +775,7 @@ class Storage(object):
         except Exception:
             return 0
 
-    def recursive_get(self, record, depth=0,account=None, namespace=None):
+    def recursive_get(self, record, depth=0, account=None, namespace=None):
         self.check_connected()
 
         depth += 1
@@ -723,7 +789,10 @@ class Storage(object):
             # HACK: fix root_directory in UI !!!
             try:
                 rec = self.get(child, account=account, namespace=namespace)
-                self.recursive_get(rec, depth, account=account, namespace=namespace)
+                self.recursive_get(rec,
+                                   depth,
+                                   account=account,
+                                   namespace=namespace)
                 record.children.append(rec)
             except Exception as err:
                 self.logger.debug(err)
@@ -737,7 +806,9 @@ class Storage(object):
 
         records = []
         for _id in child_ids:
-            records.append(self.get(str(_id), account=account, namespace=namespace))
+            records.append(self.get(str(_id),
+                                    account=account,
+                                    namespace=namespace))
 
         return records
 
@@ -806,14 +877,19 @@ class Storage(object):
     def __del__(self):
         self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
 
-## Cache storage
+
+# Cache storage
 STORAGES = {}
+
+
 def get_storage(namespace='object', account=None, logging_level=logging.INFO):
     global STORAGES
     if namespace not in STORAGES:
         if not account:
             account = Account()
 
-        STORAGES[namespace] = Storage(account, namespace=namespace, logging_level=logging_level)
+        STORAGES[namespace] = Storage(account,
+                                      namespace=namespace,
+                                      logging_level=logging_level)
 
     return STORAGES[namespace]
