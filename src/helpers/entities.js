@@ -66,6 +66,15 @@ export function generateWidgetByType(type) {
         mfilter: {},
       };
       break;
+
+    case WIDGET_TYPES.statsNumber:
+      specialParameters = {
+        duration: '1d',
+        tstop: moment().unix(),
+        mfilter: {},
+        stat: {},
+      };
+      break;
   }
 
   widget.parameters = { ...widget.parameters, ...specialParameters };

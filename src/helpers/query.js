@@ -82,9 +82,24 @@ export function convertContextWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts widget with type 'Stats table' to query Object
  *
+ * @param {Object} widget
+ * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
+  const query = { ...widget.parameters };
+
+  return query;
+}
+
+/**
+ * This function converts widget with type 'Stats number' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsNumberWidgetToQuery(widget) {
   const query = { ...widget.parameters };
 
   return query;
@@ -162,6 +177,8 @@ export function convertWidgetToQuery(widget) {
       return convertContextWidgetToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
+    case WIDGET_TYPES.statsNumber:
+      return convertStatsNumberWidgetToQuery(widget);
     default:
       return {};
   }

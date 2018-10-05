@@ -41,6 +41,7 @@ import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
+import StatsNumber from '@/components/other/stats/stats-number.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -51,6 +52,7 @@ export default {
     EntitiesList,
     Weather,
     StatsTable,
+    StatsNumber,
   },
   mixins: [
     modalMixin,
@@ -69,6 +71,7 @@ export default {
         [WIDGET_TYPES.context]: 'entities-list',
         [WIDGET_TYPES.weather]: 'weather',
         [WIDGET_TYPES.statsTable]: 'stats-table',
+        [WIDGET_TYPES.statsNumber]: 'stats-number',
       },
       widgetKeyPrefix: uid(),
     };

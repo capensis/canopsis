@@ -39,6 +39,7 @@ export default {
         { title: this.$t('modals.widgetCreation.types.context.title'), value: WIDGET_TYPES.context },
         { title: this.$t('modals.widgetCreation.types.weather.title'), value: WIDGET_TYPES.weather },
         { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: WIDGET_TYPES.statsTable },
+        { title: this.$t('modals.widgetCreation.types.statsNumber.title'), value: WIDGET_TYPES.statsNumber },
       ],
     };
   },

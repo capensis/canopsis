@@ -140,6 +140,7 @@ export default {
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
       statsTableSettings: 'Stats table settings',
+      statsNumberSettings: 'Stats number settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -360,6 +361,9 @@ export default {
         },
         statsTable: {
           title: 'Stats table',
+        },
+        statsNumber: {
+          title: 'Stats number',
         },
       },
     },
