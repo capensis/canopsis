@@ -479,12 +479,16 @@ class AlertsReader(object):
                 "$project": {
                     "pbehaviors": {
                         "$filter": {
-                            "input": "$pbehaviors",
                             "as": "pbh",
-                            "cond": [
-                                {"$gte": ["$pbehaviors.tstop", tnow]},
-                                {"$lte": ["$pbehaviors.tstart", tnow]}
-                            ]
+                            "input": "$pbehaviors",
+                            "cond":
+                            {
+                                "$and":
+                                [
+                                    {"$lte": ["$$pbh.tstart", tnow]},
+                                    {"$gte": ["$$pbh.tstop", tnow]}
+                                ]
+                            }
                         }
                     },
                     "_id": 1,
@@ -495,6 +499,7 @@ class AlertsReader(object):
                 }
             }
             pipeline.append(stage)
+
             pbh_filter = {"$match": {"pbehaviors": None}}
 
             if self.has_active_pbh is True:
