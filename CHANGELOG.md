@@ -9,6 +9,16 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 - [Go]: New Action engine (backend only for now)
 
+## Canopsis 3.2.4 - Due date : 2018-10-05
+
+- [Chore]: add some system dependencies to ansible installation
+- [Go]: fix bagoting alarms never closed if cropped
+- [Go]: send axe statistics to stasng engine
+- [Python]: change some amqp publishers to pika to prevent odd reconnections
+- [Python]: fix has_active_pb flag no corretly show all linked pbehaviors
+- [Python]: fix pbehavior not corretly handle timezone change (one day gap)
+- [Python]: fix performance concern on alert consultation
+
 ## Canopsis 3.2.3 - Due date : 2018-09-17
 
 - [Email Connector]: handle base64 encoded parts
