@@ -84,6 +84,7 @@ class AmqpConnection(object):
         """
         self.disconnect()
         parameters = pika.URLParameters(self._url)
+        parameters.heartbeat = 3600
         self._connection = pika.BlockingConnection(parameters)
         self._channel = self._connection.channel()
 
