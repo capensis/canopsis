@@ -79,10 +79,10 @@ export function generateWidgetByType(type) {
           critical: 40,
         },
         statColors: {
-          ok: '',
-          minor: '',
-          major: '',
-          critical: '',
+          ok: '#66BB6A',
+          minor: '#FFEE58',
+          major: '#FFA726',
+          critical: '#FF7043',
         },
       };
       break;

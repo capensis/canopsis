@@ -21,13 +21,17 @@
           )
             v-list(dense)
               v-list-tile
-                v-list-tile-content {{ props.item.entity.name }}
+                v-list-tile-content
+                  ellipsis(:text="props.item.entity.name")
                 v-list-tile-content.align-end
-                  p {{ props.item.value }}
-                    sub {{ props.item.trend }}
+                  v-layout(align-center)
+                    v-chip(:style="{ backgroundColor: getCriticity(props.item.value) }", small)
+                      div.body-1() {{ props.item.value }}
+                    div.caption {{ props.item.trend }}
 </template>
 
 <script>
+import Ellipsis from '@/components/tables/ellipsis.vue';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -35,6 +39,9 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { SIDE_BARS } from '@/constants';
 
 export default {
+  components: {
+    Ellipsis,
+  },
   mixins: [
     entitiesStatsMixin,
     sideBarMixin,
@@ -72,6 +79,16 @@ export default {
       this.stats = await this.fetchStatValuesWithoutStore({
         params: query,
       });
+    },
+    getCriticity(value) {
+      if (value > this.widget.parameters.criticityLevels.minor) {
+        return this.widget.parameters.statColors.minor;
+      } else if (value > this.widget.parameters.criticityLevels.major) {
+        return this.widget.parameters.statColors.major;
+      } else if (value > this.widget.parameters.criticityLevels.critical) {
+        return this.widget.parameters.statColors.critical;
+      }
+      return this.widget.parameters.statColors.ok;
     },
   },
 };
