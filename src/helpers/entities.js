@@ -73,6 +73,12 @@ export function generateWidgetByType(type) {
         tstop: moment().unix(),
         mfilter: {},
         stat: {},
+        criticityLevels: {
+          ok: {},
+          minor: {},
+          major: {},
+          critical: {},
+        },
         statColors: {
           ok: '',
           minor: '',
