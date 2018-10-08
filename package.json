@@ -23,6 +23,7 @@
     "uuid": "^3.3.2",
     "vee-validate": "^2.0.6",
     "vue": "^2.5.13",
+    "vue-color": "^2.6.0",
     "vue-content-loading": "^1.4.0",
     "vue-i18n": "^7.6.0",
     "vue-mq": "^0.2.1",

@@ -22,7 +22,9 @@
             v-list(dense)
               v-list-tile
                 v-list-tile-content {{ props.item.entity.name }}
-                v-list-tile-content.align-end {{ props.item.value }}
+                v-list-tile-content.align-end
+                  p {{ props.item.value }}
+                    sub {{ props.item.trend }}
 </template>
 
 <script>
@@ -40,6 +42,10 @@ export default {
     entitiesUserPreferenceMixin,
   ],
   props: {
+    rowId: {
+      type: String,
+      required: true,
+    },
     widget: {
       type: Object,
       required: true,

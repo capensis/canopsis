@@ -33,6 +33,7 @@ export const MODALS = {
   dateSelect: 'date-select',
   createView: 'create-view',
   createFilter: 'create-filter',
+  colorPicker: 'color-picker',
 };
 
 export const EVENT_ENTITY_TYPES = {

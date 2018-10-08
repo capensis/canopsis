@@ -158,6 +158,7 @@ export default {
     tstop: 'End date',
     statsSelect: 'Stats select',
     selectAFilter: 'Select a filter',
+    colorsSelector: 'Colors selector',
     statsNumbers: {
       title: 'Stats numbers',
       yesNoMode: 'Yes/No mode',
@@ -346,6 +347,9 @@ export default {
       fields: {
         title: 'Title',
       },
+    },
+    colorPicker: {
+      title: 'Color picker',
     },
     widgetCreation: {
       title: 'Select a widget',

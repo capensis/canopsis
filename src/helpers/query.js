@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import omit from 'lodash/omit';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
 
@@ -100,8 +101,8 @@ export function convertStatsTableWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsNumberWidgetToQuery(widget) {
-  const query = { ...widget.parameters };
-
+  const query = omit(widget.parameters, ['statColors']);
+  query.trend = true;
   return query;
 }
 

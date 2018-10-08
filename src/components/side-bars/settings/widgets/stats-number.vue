@@ -7,11 +7,18 @@
       :availableRows="availableRows",
       @createRow="createRow"
       )
+      v-divider
       field-title(v-model="settings.widget.title")
+      v-divider
       field-duration(v-model="settings.widget.parameters.duration")
+      v-divider
       field-date-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
+      v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter")
+      v-divider
       field-stat-selector(v-model="settings.widget.parameters.stat")
+      v-divider
+      field-colors-selector(v-model="settings.widget.parameters.statColors")
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
@@ -26,6 +33,7 @@ import FieldDuration from '../partial/fields/duration.vue';
 import FieldDateSelect from '../partial/fields/date-time-select.vue';
 import FieldFilterEditor from '../partial/fields/filter-editor.vue';
 import FieldStatSelector from '../partial/fields/stat-selector.vue';
+import FieldColorsSelector from '../partial/fields/stats-number-colors.vue';
 
 export default {
   name: SIDE_BARS.statsNumberSettings,
@@ -36,6 +44,7 @@ export default {
     FieldDateSelect,
     FieldFilterEditor,
     FieldStatSelector,
+    FieldColorsSelector,
   },
   mixins: [widgetSettingsMixin],
   data() {
