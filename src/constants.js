@@ -32,6 +32,7 @@ export const MODALS = {
   createWidget: 'create-widget',
   createView: 'create-view',
   createFilter: 'create-filter',
+  group: 'group',
 };
 
 export const EVENT_ENTITY_TYPES = {

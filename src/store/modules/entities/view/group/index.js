@@ -1,13 +1,15 @@
+import { normalize } from 'normalizr';
+
+
 import i18n from '@/i18n';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { groupSchema } from '@/store/schemas';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export const types = {
-  FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
-  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
 export default {
@@ -20,18 +22,11 @@ export default {
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.group, state.allIds),
   },
   mutations: {
-    [types.FETCH_LIST]() {
-    },
     [types.FETCH_LIST_COMPLETED](state, { allIds }) {
       state.allIds = allIds;
     },
-    [types.FETCH_LIST_FAILED]() {
-    },
   },
   actions: {
-    create(context, { data } = {}) {
-      return request.post(API_ROUTES.viewGroup, data);
-    },
     async fetchList({ commit, dispatch }) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
@@ -44,8 +39,23 @@ export default {
         });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-        commit(types.FETCH_LIST_FAILED);
       }
+    },
+
+    create(context, { data } = {}) {
+      return request.post(API_ROUTES.viewGroup, data);
+    },
+
+    async update({ commit }, { id, data } = {}) {
+      await request.put(`${API_ROUTES.viewGroup}/${id}`, data);
+
+      const { entities } = normalize({ ...data, _id: id }, groupSchema);
+
+      commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
+    },
+
+    remove(context, { id }) {
+      return request.delete(`${API_ROUTES.viewGroup}/${id}`);
     },
   },
 };

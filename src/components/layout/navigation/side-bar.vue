@@ -20,7 +20,7 @@
           small,
           icon,
           color="grey darken-3",
-          @click.stop="showEditGroupModal(group._id)"
+          @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
         v-card.grey.darken-3.white--text(v-for="view in group.views", :key="view._id")
@@ -126,18 +126,17 @@ export default {
       this.editing = !this.editing;
     },
 
-    showEditGroupModal() {
+    showEditGroupModal(group) {
       this.showModal({
-        name: MODALS.createView,
+        name: MODALS.group,
+        config: { group },
       });
     },
 
     showEditViewModal(view) {
       this.showModal({
         name: MODALS.createView,
-        config: {
-          view,
-        },
+        config: { view },
       });
     },
 
