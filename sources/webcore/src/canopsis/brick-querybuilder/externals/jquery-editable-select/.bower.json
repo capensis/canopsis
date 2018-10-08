@@ -1,0 +1,12 @@
+{
+  "name": "jquery-editable-select",
+  "_release": "ce89dd913b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "ce89dd913bf37f2508b884adb9207f7b2367c3c8"
+  },
+  "_source": "https://git.canopsis.net/gpluchon/jquery-editable-select.git",
+  "_target": "*",
+  "_originalSource": "https://git.canopsis.net/gpluchon/jquery-editable-select.git"
+}

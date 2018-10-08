@@ -1,0 +1,33 @@
+<button class="btn btn-warning btn-reset" data-target="plugins" style="float:right">
+    {{tr "Reset"}}
+</button>
+
+{{#component-tabs}}
+    {{#component-tabsheadergroup}}
+        {{component-tabheader ref="filter" label="Filter" active=true}}
+        {{component-tabheader ref="output" label="Generated filter"}}
+        {{component-tabheader ref="result" label="Result"}}
+    {{/component-tabsheadergroup}}
+    {{#component-tabscontentgroup}}
+        {{#component-tabcontent ref="filter" active=true}}
+            <div class="builder"></div>
+        {{/component-tabcontent}}
+        {{#component-tabcontent ref="output"}}
+            <pre style="overflow:scroll; width:490px">{{filterValue}}</pre>
+        {{/component-tabcontent}}
+        {{#component-tabcontent ref="result"}}
+            {{component-table model="event" modelfilter=filterValue columns=viewTabColumns targetObject=this}}
+            <div style="float: right;" class="searchField">
+                {{#component-tooltip content=helpModal.content htmlEnabled=true noTranslation=true}}
+                    <i class="fa fa-info-circle"></i>
+                {{/component-tooltip}}
+                {{tr 'Search'}}: {{input action="search"}}
+            </div>
+            {{selectionTabFilter}}
+            <b>{{tr 'Available'}}:</b>
+            <div class="available_results">
+                {{component-table items=metrics model="event" modelfilter=selectionTabFilter columns=selectionTabColumns targetObject=this}}
+            </div>
+        {{/component-tabcontent}}
+    {{/component-tabscontentgroup}}
+{{/component-tabs}}
