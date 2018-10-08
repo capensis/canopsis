@@ -1,0 +1,11 @@
+{
+  "name": "brick-timeline",
+  "description": "brick timeline",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://git.canopsis.net/canopsis-ui-bricks/brick-timeline.git"
+  },
+  "author": "Team Canopsis <maintainers@canopsis.org>",
+  "license": "AGPL-3.0"
+}
