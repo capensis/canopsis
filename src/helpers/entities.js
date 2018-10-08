@@ -74,10 +74,9 @@ export function generateWidgetByType(type) {
         mfilter: {},
         stat: {},
         criticityLevels: {
-          ok: {},
-          minor: {},
-          major: {},
-          critical: {},
+          minor: 20,
+          major: 30,
+          critical: 40,
         },
         statColors: {
           ok: '',
