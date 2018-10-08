@@ -30,7 +30,6 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
-  dateSelect: 'date-select',
   createView: 'create-view',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
