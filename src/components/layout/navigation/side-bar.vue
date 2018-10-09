@@ -128,7 +128,7 @@ export default {
 
     showEditGroupModal(group) {
       this.showModal({
-        name: MODALS.group,
+        name: MODALS.createGroup,
         config: { group },
       });
     },

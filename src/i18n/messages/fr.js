@@ -219,7 +219,7 @@ export default {
       editTitle: 'Editer un observateur',
       displayName: 'Nom',
     },
-    createView: {
+    view: {
       title: 'Créer une vue',
       noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
       fields: {

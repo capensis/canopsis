@@ -31,9 +31,9 @@ import CreateWidget from './common/create-widget.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import CreateView from './view/create-view.vue';
+import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
-import Group from './view/group.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -59,8 +59,8 @@ export default {
     CreateWidget,
     CreateView,
     CreateFilter,
+    CreateGroup,
     Watcher,
-    Group,
   },
   data() {
     return {

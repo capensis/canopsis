@@ -26,19 +26,20 @@ import popupMixin from '@/mixins/popup';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 export default {
-  name: MODALS.group,
+  name: MODALS.createGroup,
   $_veeValidate: {
     validator: 'new',
   },
   mixins: [modalInnerMixin, popupMixin, entitiesViewGroupMixin],
   data() {
-    const { config } = this.modal;
-
     return {
       form: {
-        name: get(config, 'group.name', ''),
+        name: '',
       },
     };
+  },
+  mounted() {
+    this.form.name = get(this.config, 'group.name', '');
   },
   methods: {
     remove() {
@@ -66,6 +67,7 @@ export default {
           id: this.modal.config.group._id,
           data: { ...this.form },
         });
+
         await this.fetchGroupsList();
 
         this.hideModal();

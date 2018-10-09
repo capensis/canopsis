@@ -29,7 +29,7 @@
         v-flex(xs11)
           v-combobox(
           v-model="form.tags",
-          :label="$t('modals.createView.fields.groupTags')",
+          :label="$t('modals.view.fields.groupTags')",
           tags,
           clearable,
           multiple,
@@ -40,7 +40,7 @@
           v-combobox(
           v-model="groupName",
           :items="groupNames",
-          :label="$t('modals.createView.fields.groupIds')",
+          :label="$t('modals.view.fields.groupIds')",
           :search-input.sync="search"
           data-vv-name="group",
           v-validate="'required'",
@@ -49,7 +49,7 @@
             template(slot="no-data")
               v-list-tile
                 v-list-tile-content
-                  v-list-tile-title(v-html="$t('modals.createView.noData')")
+                  v-list-tile-title(v-html="$t('modals.view.noData')")
 
           span {{ form.group_id }}
       v-layout
@@ -102,10 +102,10 @@ export default {
     },
     title() {
       if (this.config.view) {
-        return this.$t('modals.editView.title');
+        return this.$t('modals.view.edit.title');
       }
 
-      return this.$t('modals.createView.title');
+      return this.$t('modals.view.create.title');
     },
   },
   mounted() {
@@ -166,11 +166,11 @@ export default {
 
           await this.fetchGroupsList();
 
-          this.addSuccessPopup({ text: this.$t('modals.createView.success') });
+          this.addSuccessPopup({ text: this.$t('modals.view.success') });
           this.hideModal();
         }
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('modals.createView.fail') });
+        this.addErrorPopup({ text: this.$t('modals.view.fail') });
         console.error(err.description);
       }
     },

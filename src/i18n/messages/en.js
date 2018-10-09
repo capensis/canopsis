@@ -230,7 +230,7 @@ export default {
       editTitle: 'Edit a watcher',
       displayName: 'Name',
     },
-    createView: {
+    view: {
       create: {
         title: 'Create a view',
       },
