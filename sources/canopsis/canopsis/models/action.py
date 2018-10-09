@@ -21,7 +21,8 @@ class Action(object):
     REGEX = 'regex'
     PARAMETERS = 'parameters'
 
-    def __init__(self, _id, type_, fields, regex, parameters=None, *args, **kwargs):
+    def __init__(self, _id, type_, fields, regex, parameters=None,
+                 *args, **kwargs):
         """
         :param str _id: action id
         :param str type_: type of the action (pbehavior, ...)
@@ -48,6 +49,22 @@ class Action(object):
 
     def __repr__(self):
         return '<Action {}>'.format(self.__str__())
+
+    @staticmethod
+    def convert_keys(action_dict):
+        """
+        Convert keys from mongo action dict, to Action attribute names.
+
+        :param dict action_dict: a raw action dict from mongo
+        :rtype: dict
+        """
+        new_action_dict = action_dict.copy()
+
+        if Action.TYPE in new_action_dict:
+            new_action_dict['type_'] = new_action_dict[Action.TYPE]
+            del new_action_dict[Action.TYPE]
+
+        return new_action_dict
 
     def to_dict(self):
         """

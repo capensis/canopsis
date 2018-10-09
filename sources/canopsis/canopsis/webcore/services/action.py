@@ -73,10 +73,8 @@ def exports(ws):
         if element is None or not isinstance(element, dict):
             return gen_json_error(
                 {'description': 'nothing to insert'}, HTTP_ERROR)
-        if Action.TYPE in element:
-            element['type_'] = element[Action.TYPE]
         try:
-            Action(**element)
+            Action(**Action.convert_keys(element))
         except TypeError:
             return gen_json_error(
                 {'description': 'invalid action format'}, HTTP_ERROR)
@@ -118,10 +116,8 @@ def exports(ws):
         if element is None or not isinstance(element, dict) or len(element) <= 0:
             return gen_json_error(
                 {'description': 'wrong update dict'}, HTTP_ERROR)
-        if Action.TYPE in element:
-            element['type_'] = element[Action.TYPE]
         try:
-            Action(**element)
+            Action(**Action.convert_keys(element))
         except TypeError:
             return gen_json_error(
                 {'description': 'invalid action format'}, HTTP_ERROR)
