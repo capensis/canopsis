@@ -1,0 +1,16 @@
+<div class="form-group">
+    <div class="radio">
+        <label>
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="opened" checked=CheckBoxAlarmStateOpen}}
+            {{/component-radio}}
+            opened
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="resolved" checked=CheckBoxAlarmStatusResolved}}
+            {{/component-radio}}
+            resolved
+        </label>
+    </div>
+</div>
