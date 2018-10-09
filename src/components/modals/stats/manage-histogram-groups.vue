@@ -4,7 +4,13 @@
       h2 {{ $t(config.title) }}
     v-container
       v-form(ref="form")
-        v-text-field(:placeholder="$t('common.title')", v-model="form.title")
+        v-text-field(
+        :placeholder="$t('common.title')",
+        v-model="form.title", name="title",
+        v-validate="'required'",
+        required,
+        :error-messages="errors.collect('title')"
+        )
         v-btn(@click="showFilterModal", small) {{ $t('settings.filterEditor') }}
     v-layout(justify-end)
       v-btn(@click="save").green.darken-4.white--text.mt-3 {{ $t('common.save') }}
@@ -16,6 +22,9 @@ import { MODALS } from '@/constants';
 
 export default {
   name: MODALS.manageHistogramGroups,
+  $_veeValidate: {
+    validator: 'new',
+  },
   mixins: [modalInnerMixin],
   data() {
     return {
@@ -40,10 +49,14 @@ export default {
       });
     },
     async save() {
-      if (this.config.action) {
-        await this.config.action(this.form);
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.form);
+        }
+        this.hideModal();
       }
-      this.hideModal();
     },
   },
 };
