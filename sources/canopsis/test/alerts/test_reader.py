@@ -59,8 +59,9 @@ class TestReader(BaseTest):
         )
 
         self.logger = Logger.get('alertsreader', '/tmp/null')
-        conf = Configuration.load(Alerts.CONF_PATH, Ini)
-        self.pbehavior_manager = PBehaviorManager(logger=self.logger,
+        conf = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
+        self.pbehavior_manager = PBehaviorManager(config=conf,
+                                                  logger=self.logger,
                                                   pb_storage=self.pb_storage)
 
         self.reader = AlertsReader(config=conf,

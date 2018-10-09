@@ -176,7 +176,7 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
-        amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
         event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
@@ -833,7 +833,7 @@ class Alerts(object):
         # Update entity's last_state_change
         if entity:
             entity[Entity.LAST_STATE_CHANGE] = now
-            self.context_manager.update_entity(entity)
+            self.context_manager.update_entity_body(entity)
 
         alarm[storage_value] = new_value
 

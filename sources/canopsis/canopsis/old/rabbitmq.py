@@ -242,7 +242,7 @@ class Amqp(Thread):
             self.logger.debug("Already connected")
 
     def get_exchange(self, name):
-        """ 
+        """
         Returns an exchange if stored in self.exchanges.
         Otherwise, creates it and returns it
 
@@ -348,7 +348,6 @@ class Amqp(Thread):
             self.logger.info('Queue already inited')
 
     def add_queue(
-        
             self,
             queue_name,
             routing_keys,
@@ -403,6 +402,7 @@ class Amqp(Thread):
         :returns: operation success status
         :rtype: bool
         """
+        self.logger.warning("Publishing from old.rabbitmq.Amqp is deprecated")
         operation_success = False
         retries = 0
 

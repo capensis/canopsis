@@ -3,3 +3,5 @@ canopsis_deps:
   - vim
   - htop
   - sudo
+  - curl
+  - python-urllib3

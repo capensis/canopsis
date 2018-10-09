@@ -71,7 +71,6 @@ export default {
       return dispatch('entities/fetch', {
         route: `${API_ROUTES.pbehaviorById}/${id}`,
         schema: [schemas.pbehavior],
-        dataPreparer: d => d,
       }, { root: true });
     },
     async fetchListByEntityId({ commit, dispatch }, { id }) {

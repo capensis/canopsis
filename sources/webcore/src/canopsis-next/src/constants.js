@@ -9,8 +9,9 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  viewRow: 'viewRow',
+  row: 'row',
   widget: 'widget',
+  stat: 'stat',
 };
 
 export const MODALS = {
@@ -133,17 +134,21 @@ export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
   context: 'Context',
   weather: 'ServiceWeather',
+  statsTable: 'StatsTable',
 };
 
 export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
+  statsTableSettings: 'stats-table-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
   [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+  [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
+  [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
@@ -229,3 +234,54 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
 };
+
+export const STATS_TYPES = {
+  alarmsCreated: {
+    value: 'alarms_created',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsResolved: {
+    value: 'alarms_resolved',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsCanceled: {
+    value: 'alarms_canceled',
+    options: ['recursive', 'states', 'authors'],
+  },
+  ackTimeSla: {
+    value: 'ack_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  resolveTimeSla: {
+    value: 'resolve_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  timeInState: {
+    value: 'time_in_state',
+    options: ['states'],
+  },
+  stateRate: {
+    value: 'state_rate',
+    options: ['states'],
+  },
+  mtbf: {
+    value: 'mtbf',
+    options: [],
+  },
+  currentState: {
+    value: 'current_state',
+    options: [],
+  },
+  ongoingAlarms: {
+    value: 'ongoing_alarms',
+    options: ['states'],
+  },
+  currentOngoingAlarms: {
+    value: 'current_ongoing_alarms',
+    options: ['states'],
+  },
+};
+
+export const WIDGET_MAX_SIZE = 12;
+
+export const WIDGET_MIN_SIZE = 3;

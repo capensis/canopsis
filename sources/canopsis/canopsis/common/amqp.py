@@ -1,4 +1,25 @@
 # -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2018 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from __future__ import unicode_literals
+
 import json
 import os
 import time
@@ -7,6 +28,8 @@ import pika
 
 from canopsis.confng import Configuration, Ini
 from canopsis.event import get_routingkey
+
+DIRECT_EXCHANGE_NAME = 'amq.direct'
 
 
 class AmqpPublishError(Exception):
@@ -61,6 +84,7 @@ class AmqpConnection(object):
         """
         self.disconnect()
         parameters = pika.URLParameters(self._url)
+        parameters.heartbeat = 3600
         self._connection = pika.BlockingConnection(parameters)
         self._channel = self._connection.channel()
 
@@ -99,7 +123,7 @@ class AmqpPublisher(object):
 
     evt = {...}
     with AmqpConnection(url) as apc:
-        pub = AmqpPublisher(apc)
+        pub = AmqpPublisher(apc, logger)
         pub.canopsis_event(evt)
 
     or:
@@ -107,35 +131,41 @@ class AmqpPublisher(object):
     apc = AmqpConnection(url)
     apc.connect()
 
-    pub = AmqpPublisher(apc)
+    pub = AmqpPublisher(apc, logger)
     pub.canopsis_event(evt)
 
     apc.disconnect()
 
     """
 
-    def __init__(self, connection):
+    def __init__(self, connection, logger):
         """
-        :type connection: AmqpConnection
+        :param connection AmqpConnection:
+        :param logger Logger:
         """
         self.connection = connection
+        self.logger = logger
         self._json_props = pika.BasicProperties(
             content_type='application/json')
 
-    def json_document(
-        self, document, exchange_name, routing_key, retries=3, wait=1
-    ):
+    def json_document(self,
+                      document,
+                      exchange_name,
+                      routing_key,
+                      retries=3,
+                      wait=1):
         """
         Sends a JSON document with AMQP content_type application/json
 
-        :param retries: if the first try doesn't suceed, retry X times.
-        :param document: valid JSON document
-        :type document: dict
-        :param exchange_name: exchange to publish to
-        :type exchange_name: str
-        :param routing_key: event's routing key
-        :type routing_key: str
+        :param document Any: a JSON serializable object
+        :param exchange_name str: the name of the exchange to publish to.
+        :param routing_key str: the event's routing key
+        :param retries int: the number of times the publication should be
+            retried in case of failure.
+        :param wait float: the number of seconds to wait before retrying to
+            publish the event.
         :raises AmqpPublishError: when all retries failed, raise this error.
+        :raises TypeError: when the document cannot be serialized
         """
         # just ensure the connection is alive, if not, reconnect
         jdoc = json.dumps(document)
@@ -152,6 +182,9 @@ class AmqpPublisher(object):
                 pika.exceptions.ConnectionClosed,
                 pika.exceptions.ChannelClosed
             ):
+                self.logger.exception(
+                    "Failed to publish the following event ({}/{} retries)\n"
+                    "{}".format(retry, retries, jdoc))
                 try:
                     self.connection.connect()
                 except pika.exceptions.ConnectionClosed:
@@ -163,28 +196,48 @@ class AmqpPublisher(object):
         raise AmqpPublishError(
             'cannot publish ({} times): cannot connect'.format(retry))
 
-    def canopsis_event(
-        self, event, exchange_name='canopsis.events', retries=3, wait=1
-    ):
+    def canopsis_event(self,
+                       event,
+                       exchange_name='canopsis.events',
+                       retries=3,
+                       wait=1):
         """
-        Shortcut to self.json_document, builds the routing key
-        for you from the event.
+        Send an event to canopsis.
 
-        Event required keys:
-
-            connector
-            connector_name
-            event_type
-            source_type
-            component
-            resource if source_type == 'resource'
-
-        :param event: valid Canopsis event.
+        :param event dict: a canopsis event (as a dictionnary).
+        :param exchange_name str: the name of the exchange to publish to.
+        :param retries int: the number of times the publication should be
+            retried in case of failure.
+        :param wait float: the number of seconds to wait before retrying to
         :raises KeyError: on invalid event, if routing key cannot be built.
-        :param canopsis_exchange: exchange to publish to
+        :raises AmqpPublishError: when all retries failed, raise this error.
+        :raises TypeError: when the document cannot be serialized
         """
         return self.json_document(
             event, exchange_name, get_routingkey(event),
+            retries=retries, wait=wait
+        )
+
+    def direct_event(self,
+                     event,
+                     queue_name,
+                     exchange_name=DIRECT_EXCHANGE_NAME,
+                     retries=3,
+                     wait=1):
+        """
+        Send an event directly to a queue.
+
+        :param event dict: a canopsis event (as a dictionnary).
+        :param queue_name str: the name of the queue to publish to.
+        :param exchange_name str: the name of the exchange to publish to.
+        :param retries int: the number of times the publication should be
+            retried in case of failure.
+        :param wait float: the number of seconds to wait before retrying to
+        :raises AmqpPublishError: when all retries failed, raise this error.
+        :raises TypeError: when the document cannot be serialized
+        """
+        return self.json_document(
+            event, exchange_name, queue_name,
             retries=retries, wait=wait
         )
 

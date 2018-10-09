@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 
-from canopsis.engines.core import Engine, publish
+from canopsis.engines.core import Engine
 from canopsis.check.archiver import Archiver, BAGOT, STEALTHY
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -75,10 +75,13 @@ class engine(Engine):
             event['_id'] = _id
             event['event_id'] = event['rk']
             # Event to Alert
-            publish(
-                publisher=self.amqp, event=event, rk=event['rk'],
-                exchange=self.amqp.exchange_name_alerts
-            )
+            try:
+                self.work_amqp_publisher.json_document(
+                    event,
+                    exchange_name=self.amqp.exchange_name_alerts,
+                    routing_key=event['rk'])
+            except Exception as e:
+                self.logger.exception("Unable to send event")
 
     def store_log(self, event, store_new_event=True):
         """
@@ -108,10 +111,13 @@ class engine(Engine):
 
         # Event to Alert
         event['event_id'] = event['rk']
-        publish(
-            publisher=self.amqp, event=event, rk=event['rk'],
-            exchange=self.amqp.exchange_name_alerts
-        )
+        try:
+            self.work_amqp_publisher.json_document(
+                event,
+                exchange_name=self.amqp.exchange_name_alerts,
+                routing_key=event['rk'])
+        except Exception as e:
+            self.logger.exception("Unable to send event")
 
     def work(self, event, *args, **kargs):
 

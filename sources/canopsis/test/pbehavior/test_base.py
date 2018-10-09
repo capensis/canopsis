@@ -22,6 +22,7 @@
 import unittest
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.middleware import Middleware
+from canopsis.confng import Configuration, Ini
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.logger.logger import Logger, OutputNull
 
@@ -42,8 +43,10 @@ class BaseTest(unittest.TestCase):
         )
 
         logger = Logger.get('test_pb', None, output_cls=OutputNull)
-
-        self.pbm = PBehaviorManager(logger=logger, pb_storage=pbehavior_storage)
+        conf = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
+        self.pbm = PBehaviorManager(config=conf,
+                                    logger=logger,
+                                    pb_storage=pbehavior_storage)
         self.context = ContextGraph(logger)
         self.context.ent_storage = entities_storage
         self.pbm.context = self.context

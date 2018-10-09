@@ -101,6 +101,13 @@ class StatEventPublisher(object):
         except (UnicodeError, AttributeError):
             pass
 
+        # Although only the alarm's value is needed by statsng, the alarm needs
+        # to have the same structure as a full alarm for compatibility with the
+        # go engines.
+        full_alarm = {
+            'v': alarm
+        }
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
@@ -110,9 +117,9 @@ class StatEventPublisher(object):
             resource=resource,
             timestamp=timestamp,
             author=author,
-            counter_name=counter_name,
-            alarm=alarm,
-            entity=entity)
+            stat_name=counter_name,
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)
 
@@ -151,6 +158,13 @@ class StatEventPublisher(object):
         except (UnicodeError, AttributeError):
             pass
 
+        # Although only the alarm's value is needed by statsng, the alarm needs
+        # to have the same structure as a full alarm for compatibility with the
+        # go engines.
+        full_alarm = {
+            'v': alarm
+        }
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
@@ -160,10 +174,10 @@ class StatEventPublisher(object):
             resource=resource,
             timestamp=timestamp,
             author=author,
-            duration_name=duration_name,
+            stat_name=duration_name,
             duration=duration_value,
-            alarm=alarm,
-            entity=entity)
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)
 
@@ -201,6 +215,13 @@ class StatEventPublisher(object):
         except (UnicodeError, AttributeError):
             pass
 
+        # Although only the alarm's value is needed by statsng, the alarm needs
+        # to have the same structure as a full alarm for compatibility with the
+        # go engines.
+        full_alarm = {
+            'v': alarm
+        }
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
@@ -209,10 +230,10 @@ class StatEventPublisher(object):
             component=component,
             resource=resource,
             timestamp=timestamp,
-            state_name=state_name,
-            state_duration=state_duration,
-            state_value=state_value,
-            alarm=alarm,
-            entity=entity)
+            stat_name=state_name,
+            duration=state_duration,
+            state=state_value,
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)

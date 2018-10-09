@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine, publish
+from canopsis.engines.core import Engine
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
 from canopsis import schema
@@ -96,10 +96,12 @@ class engine(Engine):
         job['params']['jobid'] = job['_id']
         job['params']['jobctx'] = job.get('context', {})
 
-        publish(
-            publisher=self.amqp, event=job['params'],
-            rk='task_{0}'.format(job['task'][4:]), exchange='amq.direct'
-        )
+        try:
+            self.work_amqp_publisher.direct_event(
+                job['params'],
+                'task_{0}'.format(job['task'][4:]))
+        except Exception as e:
+            self.logger.exception("Unable to send event to next queue")
 
         now = int(time())
 

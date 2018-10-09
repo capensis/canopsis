@@ -1,0 +1,17 @@
+{
+  "name": "brick-querybuilder",
+  "description": "Query builder editor",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://git.canopsis.net/canopsis/canopsis-webcore.git"
+  },
+  "author": "Team Canopsis <maintainers@canopsis.org>",
+  "license": "AGPL-3.0",
+  "bowerDependencies": {
+    "jQuery-QueryBuilder": "https://github.com/mistic100/jQuery-QueryBuilder.git#~2.3.0",
+    "jquery-editable-select": "https://git.canopsis.net/gpluchon/jquery-editable-select.git",
+    "querybuilder-editablekey": "https://git.canopsis.net/gpluchon/querybuilder-editablekey.git"
+  },
+  "envMode": "production"
+}
