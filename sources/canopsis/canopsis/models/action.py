@@ -16,13 +16,15 @@ class Action(object):
 
     # Keys as seen in db
     _ID = '_id'
+    TYPE = 'type'
     FIELDS = 'fields'
     REGEX = 'regex'
     PARAMETERS = 'parameters'
 
-    def __init__(self, _id, fields, regex, parameters=None, *args, **kwargs):
+    def __init__(self, _id, type_, fields, regex, parameters=None, *args, **kwargs):
         """
         :param str _id: action id
+        :param str type_: type of the action (pbehavior, ...)
         :param list fields: targeted fields
         :param str regex: regex matcher on the fields
         :param dict parameters: variable parameters to apply
@@ -33,6 +35,7 @@ class Action(object):
             parameters = {}
 
         self._id = _id
+        self.type_ = type_
         self.fields = fields
         self.regex = regex
         self.parameters = parameters
@@ -54,6 +57,7 @@ class Action(object):
         """
         dictionnary = {
             self._ID: self._id,
+            self.TYPE: self.type_,
             self.FIELDS: self.fields,
             self.REGEX: self.regex,
             self.PARAMETERS: self.parameters,
