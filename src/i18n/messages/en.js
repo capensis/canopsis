@@ -541,4 +541,13 @@ export default {
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
     },
   },
+  layout: {
+    sideBar: {
+      buttons: {
+        edit: 'Toggle editing mode',
+        create: 'Create view',
+        settings: 'Settings',
+      },
+    },
+  },
 };

@@ -37,41 +37,42 @@
               )
                 v-icon(small) edit
     v-divider
-    div
-      v-speed-dial(
-      v-model="fab"
-      bottom,
-      right,
-      direction="top"
-      transition="slide-y-reverse-transition"
-      )
-        v-btn(
-        slot="activator",
-        v-model="fab"
-        color="blue darken-2",
-        dark,
-        fab
-        )
+    v-speed-dial(
+    v-model="fab"
+    bottom,
+    right,
+    direction="top"
+    transition="slide-y-reverse-transition"
+    )
+      v-tooltip(slot="activator", left)
+        v-btn(slot="activator", v-model="fab", fab, dark, color="blue darken-2")
           v-icon settings
           v-icon close
+        span {{ $t('layout.sideBar.buttons.settings') }}
+      v-tooltip(left)
         v-btn(
-        v-model="editing"
-        small,
+        slot="activator",
+        v-model="editing",
         fab,
         dark,
+        small,
         color="blue darken-4",
         @click.stop="editModeToggle"
         )
           v-icon(dark) edit
           v-icon(dark) done
+        span {{ $t('layout.sideBar.buttons.edit') }}
+      v-tooltip(left)
         v-btn(
-        small,
+        slot="activator",
         fab,
         dark,
+        small,
         color="green darken-4",
-        @click="showCreateViewModal"
+        @click.stop="showCreateViewModal"
         )
           v-icon(dark) add
+        span {{ $t('layout.sideBar.buttons.create') }}
 </template>
 
 <script>
