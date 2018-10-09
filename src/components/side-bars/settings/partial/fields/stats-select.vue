@@ -4,17 +4,22 @@
     v-container
       v-btn(@click="openAddStatModal") {{ $t('modals.addStat.title.add') }}
       v-list(dark)
-        v-list-group.my-1.grey(v-for="(stat, key) in value", :key="key")
-          v-list-tile(slot="activator") {{ key }}
-            v-layout(justify-end)
-              v-btn.green.darken-4.white--text(@click.stop="editStat(key, stat)", fab, small, depressed)
-                v-icon edit
-              v-btn.red.darken-4.white--text(@click.stop="deleteStat(key)", fab, small, depressed)
-                v-icon delete
-          v-container(fluid)
-            p {{ $t('common.stat') }}: {{ stat.stat.value }}
-            p {{ $t('common.trend') }}: {{ stat.trend }}
-            p {{ $t('common.parameters') }}: {{ stat.parameters }}
+        v-list-group(v-for="(stat, key) in value", :key="key")
+          v-list-tile(slot="activator")
+            v-list-tile-content
+              v-list-tile-title {{ key }}
+            v-list-tile-action
+              v-layout
+                v-btn.green.darken-4.white--text.mx-1(@click.stop="editStat(key, stat)", fab, small, depressed)
+                  v-icon edit
+                v-btn.red.darken-4.white--text.mx-1(@click.stop="deleteStat(key)", fab, small, depressed)
+                  v-icon delete
+          v-list-tile
+            v-list-tile-title {{ $t('common.stat') }}: {{ stat.stat }}
+          v-list-tile
+            v-list-tile-title {{ $t('common.trend') }}: {{ stat.trend }}
+          v-list-tile
+            v-list-tile-title {{ $t('common.parameters') }}: {{ stat.parameters }}
 </template>
 
 <script>
@@ -30,12 +35,6 @@ export default {
     value: {
       type: Object,
     },
-  },
-  data() {
-    return {
-      editing: false,
-      editingStatTitle: '',
-    };
   },
   methods: {
     openAddStatModal() {

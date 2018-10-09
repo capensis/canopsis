@@ -1,28 +1,68 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.statsGroups.title') }}
-    v-container.pt-0
-      v-btn.ma-0(@click="showGroupsModal") {{ $t('settings.statsGroups.manageGroups') }}
+    v-container
+      v-btn(@click="addGroup") {{ $t('settings.statsGroups.manageGroups') }}
+      v-list(dark)
+        v-list-tile(v-for="(group, index) in value", :key="index")
+          v-list-tile-content {{ group.title }}
+          v-list-tile-action
+            v-layout
+              v-btn.green.darken-4.white--text.mx-1(@click="editGroup(group, index)", fab, small, depressed)
+                v-icon edit
+              v-btn.red.darken-4.white--text.mx-1(@click.stop="deleteGroup(index)", fab, small, depressed)
+                v-icon delete
 </template>
 
 <script>
+import pullAt from 'lodash/pullAt';
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
 export default {
   mixins: [modalMixin],
   props: {
-    groups: {
+    value: {
       type: Array,
     },
   },
   methods: {
-    showGroupsModal() {
+    addGroup() {
       this.showModal({
         name: MODALS.manageHistogramGroups,
         config: {
-          groups: this.groups,
-          action: newGroups => this.$emit('update:groups', newGroups),
+          title: 'modals.manageHistogramGroups.title.add',
+          action: (newGroup) => {
+            const groups = [...this.value];
+            groups.push(newGroup);
+            this.$emit('input', groups);
+          },
+        },
+      });
+    },
+    editGroup(group, index) {
+      this.showModal({
+        name: MODALS.manageHistogramGroups,
+        config: {
+          title: 'modals.manageHistogramGroups.title.edit',
+          group,
+          action: (newGroup) => {
+            const groups = [...this.value];
+            groups[index] = newGroup;
+            this.$emit('input', groups);
+          },
+        },
+      });
+    },
+    deleteGroup(index) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => {
+            const groups = [...this.value];
+            pullAt(groups, index);
+            this.$emit('input', groups);
+          },
         },
       });
     },

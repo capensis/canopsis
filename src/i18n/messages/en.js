@@ -204,7 +204,7 @@ export default {
     },
     statsGroups: {
       title: 'Stats groups',
-      manageGroups: 'Manage groups',
+      manageGroups: 'Add a group',
     },
     statsColor: {
       title: 'Stats color',
@@ -376,6 +376,12 @@ export default {
         statsTable: {
           title: 'Stats table',
         },
+      },
+    },
+    manageHistogramGroups: {
+      title: {
+        add: 'Add a group',
+        edit: 'Edit a group',
       },
     },
     addStat: {

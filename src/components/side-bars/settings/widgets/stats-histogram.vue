@@ -14,7 +14,7 @@
       v-divider
       field-date-time-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
       v-divider
-      field-stats-groups(:groups.sync="settings.widget.parameters.groups")
+      field-stats-groups(v-model="settings.widget.parameters.groups")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
