@@ -33,6 +33,7 @@ export const MODALS = {
   createView: 'create-view',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
+  addStat: 'add-stat',
   colorPicker: 'color-picker',
 };
 

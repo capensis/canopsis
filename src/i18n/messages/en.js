@@ -378,6 +378,12 @@ export default {
         },
       },
     },
+    addStat: {
+      title: {
+        add: 'Add a stat',
+        edit: 'Edit a stat',
+      },
+    },
   },
   tables: {
     noData: 'No data',

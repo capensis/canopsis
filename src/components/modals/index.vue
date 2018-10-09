@@ -35,6 +35,7 @@ import CreateView from './view/create-view.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
+import AddStat from './stats/add-stat.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -63,6 +64,7 @@ export default {
     CreateFilter,
     Watcher,
     ManageHistogramGroups,
+    AddStat,
   },
   data() {
     return {
