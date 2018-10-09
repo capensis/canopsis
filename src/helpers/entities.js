@@ -72,7 +72,11 @@ export function generateWidgetByType(type) {
         duration: '1d',
         tstop: moment().unix(),
         mfilter: {},
-        stat: {},
+        stat: {
+          stat: 'alarms_created',
+          trend: true,
+        },
+        yesNoMode: false,
         criticityLevels: {
           minor: 20,
           major: 30,

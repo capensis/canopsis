@@ -5,19 +5,22 @@
       v-layout(wrap)
         v-flex(xs12)
           v-layout(align-center)
-            v-btn(@click="showColorPickerModal('ok')", small) Ok
+            v-btn(@click="showColorPickerModal('ok')", small) {{ $t('tables.alarmStates.0') }} / {{ $t('common.yes') }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: value['ok'] }") {{ value['ok'] }}
         v-flex(xs12)
           v-layout(align-center)
-            v-btn(@click="showColorPickerModal('minor')", small) Minor
+            v-btn(@click="showColorPickerModal('minor')", small) {{ $t('tables.alarmStates.1') }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: value['minor'] }") {{ value['minor'] }}
         v-flex(xs12)
           v-layout(align-center)
-            v-btn(@click="showColorPickerModal('major')", small) Major
+            v-btn(@click="showColorPickerModal('major')", small) {{ $t('tables.alarmStates.2') }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: value['major'] }") {{ value['major'] }}
         v-flex(xs12)
           v-layout(align-center)
-            v-btn(@click="showColorPickerModal('critical')", small) Critical
+            v-btn(
+            @click="showColorPickerModal('critical')",
+            small
+            ) {{ $t('tables.alarmStates.3') }} / {{ $t('common.no') }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: value['critical'] }") {{ value['critical'] }}
 </template>
 

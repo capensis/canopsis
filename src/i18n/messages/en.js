@@ -157,6 +157,7 @@ export default {
     duration: 'Duration',
     tstop: 'End date',
     statsSelect: 'Stats select',
+    yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
     criticityLevels: 'Criticity levels',
     colorsSelector: 'Colors selector',

@@ -1,33 +1,34 @@
 <template lang="pug">
-  v-layout
-    v-flex(xs2)
-      v-btn(icon, @click="showSettings")
-        v-icon settings
-      v-card
-        v-card-title
-          v-layout(justify-center)
-            h2 {{ statName }}
-        v-data-iterator(
-          :items="stats",
-          content-tag="v-layout",
-          rows-per-page-text="",
-          row,
-          wrap,
+  v-container(fluid)
+    v-btn(icon, @click="showSettings")
+      v-icon settings
+    v-card
+      v-card-title
+        v-layout(justify-center)
+          h2 {{ statName }}
+      v-data-iterator(
+        :items="stats",
+        content-tag="v-layout",
+        rows-per-page-text="",
+        row,
+        wrap,
+      )
+        v-flex(
+          slot="item",
+          slot-scope="props",
+          xs12,
         )
-          v-flex(
-            slot="item",
-            slot-scope="props",
-            xs12,
-          )
-            v-list(dense)
-              v-list-tile
-                v-list-tile-content
-                  ellipsis(:text="props.item.entity.name")
-                v-list-tile-content.align-end
-                  v-layout(align-center)
-                    v-chip(:style="{ backgroundColor: getCriticity(props.item.value) }", small)
-                      div.body-1() {{ props.item.value }}
-                    div.caption {{ props.item.trend }}
+          v-list(dense)
+            v-list-tile
+              v-list-tile-content
+                ellipsis(:text="props.item.entity.name")
+              v-list-tile-content.align-end
+                v-layout(align-center)
+                  v-chip(:style="{ backgroundColor: getCriticity(props.item.value) }", small)
+                    div.body-1() {{ props.item.value }}
+                  div.caption
+                    template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
+                    template(v-else) - {{ props.item.trend }}
 </template>
 
 <script>
@@ -70,6 +71,7 @@ export default {
         name: SIDE_BARS.statsNumberSettings,
         config: {
           widget: this.widget,
+          rowId: this.rowId,
         },
       });
     },
