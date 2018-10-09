@@ -29,10 +29,10 @@ import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
 import ColorPicker from './common/color-picker.vue';
-import DateSelect from './common/date-select.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import CreateView from './view/create-view.vue';
+import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 
@@ -59,9 +59,9 @@ export default {
     CreateWatcher,
     CreateWidget,
     ColorPicker,
-    DateSelect,
     CreateView,
     CreateFilter,
+    CreateGroup,
     Watcher,
   },
   data() {

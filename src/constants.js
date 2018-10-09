@@ -30,10 +30,10 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
-  dateSelect: 'date-select',
-  createView: 'create-view',
   createFilter: 'create-filter',
   colorPicker: 'color-picker',
+  createView: 'create-view',
+  createGroup: 'create-group',
 };
 
 export const EVENT_ENTITY_TYPES = {
