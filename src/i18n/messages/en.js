@@ -369,7 +369,12 @@ export default {
       },
     },
     group: {
-      title: 'Edit group',
+      create: {
+        title: 'Create group',
+      },
+      edit: {
+        title: 'Edit group',
+      },
       fields: {
         name: 'Name',
       },
