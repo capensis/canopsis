@@ -66,6 +66,13 @@ export function generateWidgetByType(type) {
         mfilter: {},
       };
       break;
+
+    case WIDGET_TYPES.statsCalendar:
+      specialParameters = {
+        filters: [],
+        alarmsStateFilter: {},
+      };
+      break;
   }
 
   widget.parameters = { ...widget.parameters, ...specialParameters };

@@ -98,15 +98,21 @@ export function convertStatsTableWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsCalendarWidgetToQuery(widget) {
+  const { alarmsStateFilter, filters } = widget.parameters;
   const query = {
     start: 0,
     limit: 50,
+    filters: filters || [],
   };
 
-  const filter = get(widget, 'parameters.mfilter.filter');
+  if (alarmsStateFilter) {
+    if (!isUndefined(alarmsStateFilter.opened)) {
+      query.opened = alarmsStateFilter.opened;
+    }
 
-  if (filter) {
-    query._filter = filter;
+    if (!isUndefined(alarmsStateFilter.resolved)) {
+      query.resolved = alarmsStateFilter.resolved;
+    }
   }
 
   return query;

@@ -10,6 +10,10 @@
       v-divider
       field-title(v-model="settings.widget.title")
       v-divider
+      field-filters(:filters.sync="settings.widget.parameters.filters")
+      v-divider
+      field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
+      v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :entitiesType="entitiesType")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
@@ -23,6 +27,8 @@ import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
+import FieldOpenedResolvedFilter from '../partial/fields/opened-resolved-filter.vue';
+import FieldFilters from '../partial/fields/filters.vue';
 import FieldFilterEditor from '../partial/fields/filter-editor.vue';
 
 /**
@@ -36,6 +42,8 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
+    FieldOpenedResolvedFilter,
+    FieldFilters,
     FieldFilterEditor,
   },
   mixins: [widgetSettingsMixin],

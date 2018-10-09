@@ -15,7 +15,7 @@ import { SIDE_BARS } from '@/constants';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
-import { convertAlarmsToCalendarEvents, convertPbehaviorsToCalendarEvents } from '@/helpers/day-span';
+// import { convertAlarmsToCalendarEvents, convertPbehaviorsToCalendarEvents } from '@/helpers/day-span';
 
 import DsCalendar from './day-span/calendar.vue';
 
@@ -65,12 +65,27 @@ export default {
     },
 
     async fetchList() {
-      const query = { ...this.query };
+      const { filters, opened, resolved } = this.query;
 
-      const { entities } = await this.fetchContextEntitiesListWithoutStore({
-        params: query,
+      const results = await Promise.all(filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
+        params: {
+          filter,
+          opened,
+          resolved,
+          skip: 0,
+          limit: 10,
+        },
+      })));
+
+      // this.widget.parameters.filters.map();
+
+      const events = [];
+
+      filters.forEach((filterObject, index) => {
+        events.push(results[index]);
       });
 
+      /*
       const alarmsFilter = {
         $or: [{
           connector_name: {
@@ -96,6 +111,7 @@ export default {
         ...convertAlarmsToCalendarEvents(alarms),
         ...convertPbehaviorsToCalendarEvents(pbehaviors),
       ];
+*/
     },
   },
 };
