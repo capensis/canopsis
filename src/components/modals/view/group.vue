@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline Title
+      span.headline {{ $t('modals.group.title') }}
     v-card-text
       v-text-field(
       :label="$t('modals.group.fields.name')",
@@ -52,9 +52,7 @@ export default {
 
               this.hideModal();
             } catch (err) {
-              this.addPopup({
-                text: 'The group is not empty', // TODO: translate
-              });
+              this.addErrorPopup({ text: this.$t('modals.group.errors.isNotEmpty') });
             }
           },
         },
@@ -68,6 +66,7 @@ export default {
           id: this.modal.config.group._id,
           data: { ...this.form },
         });
+        await this.fetchGroupsList();
 
         this.hideModal();
       }

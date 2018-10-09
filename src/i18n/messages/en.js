@@ -231,7 +231,12 @@ export default {
       displayName: 'Name',
     },
     createView: {
-      title: 'Create a view',
+      create: {
+        title: 'Create a view',
+      },
+      edit: {
+        title: 'Edit the view',
+      },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         groupIds: 'Choose a group, or create a new one',
@@ -361,6 +366,15 @@ export default {
         statsTable: {
           title: 'Stats table',
         },
+      },
+    },
+    group: {
+      title: 'Edit group',
+      fields: {
+        name: 'Name',
+      },
+      errors: {
+        isNotEmpty: 'The group is not empty',
       },
     },
   },

@@ -1,12 +1,8 @@
-import { normalize } from 'normalizr';
-
-
 import i18n from '@/i18n';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { groupSchema } from '@/store/schemas';
-import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export const types = {
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
@@ -46,12 +42,8 @@ export default {
       return request.post(API_ROUTES.viewGroup, data);
     },
 
-    async update({ commit }, { id, data } = {}) {
-      await request.put(`${API_ROUTES.viewGroup}/${id}`, data);
-
-      const { entities } = normalize({ ...data, _id: id }, groupSchema);
-
-      commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
+    update(context, { id, data } = {}) {
+      return request.put(`${API_ROUTES.viewGroup}/${id}`, data);
     },
 
     remove(context, { id }) {

@@ -167,7 +167,6 @@ export default {
           await this.fetchGroupsList();
 
           this.addSuccessPopup({ text: this.$t('modals.createView.success') });
-
           this.hideModal();
         }
       } catch (err) {
