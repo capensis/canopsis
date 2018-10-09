@@ -1,1 +1,1 @@
-["core","monitoring","uiv1_themes","charts","canopsis-ui","canopsis-backend-ui-connector","uibase","userpreferences","canopsis-rights","canopsis-vevent","canopsis-pbehavior", "brick-listalarm"]
+["core","monitoring","uiv1_themes","charts","canopsis-ui","canopsis-backend-ui-connector","uibase","userpreferences","canopsis-rights","canopsis-vevent","canopsis-pbehavior", "brick-listalarm", "brick-timeline", "brick-querybuilder"]

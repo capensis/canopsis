@@ -58,9 +58,8 @@ function build_for_distribution() {
 }
 
 function build() {
-    cd ${workdir}
 
-    ./docker/build/bricks.sh
+    cd ${workdir}
 
     if [ "${CANOPSIS_DISTRIBUTION}" = "all" ]; then
         build_for_distribution "debian-9"

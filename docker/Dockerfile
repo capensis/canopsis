@@ -78,13 +78,6 @@ RUN mkdir -p ./etc/init.d && \
     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
     chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
-# Copy UI bricks as root
-COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
-RUN . ${CPS_HOME}/bin/activate && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-timeline
-
 # Ansible
 COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
 
