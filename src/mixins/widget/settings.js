@@ -163,7 +163,7 @@ export default {
 
         await Promise.all([
           this.createUserPreference({ userPreference }),
-          this.updateView({ view }),
+          this.updateView({ id: this.view._id, data: view }),
         ]);
 
         this.mergeQuery({

@@ -32,6 +32,7 @@ import ColorPicker from './common/color-picker.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import CreateView from './view/create-view.vue';
+import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
@@ -62,6 +63,7 @@ export default {
     ColorPicker,
     CreateView,
     CreateFilter,
+    CreateGroup,
     Watcher,
     ManageHistogramGroups,
     AddStat,
