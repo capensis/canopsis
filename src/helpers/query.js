@@ -82,6 +82,14 @@ export function convertContextWidgetToQuery(widget) {
   return { ...query, ...convertSortToQuery(widget) };
 }
 
+export function convertStatsHistogramToQuery(widget) {
+  return widget.parameters.groups.map(group =>
+    ({
+      ...omit(widget.parameters, ['groups', 'statsColors']),
+      mfilter: group.filter || {},
+    }));
+}
+
 /**
  * This function converts widget with type 'Stats table' to query Object
  *
@@ -176,6 +184,8 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.statsHistogram:
+      return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
     case WIDGET_TYPES.statsNumber:

@@ -31,6 +31,8 @@ export const MODALS = {
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
+  manageHistogramGroups: 'manage-histogram-groups',
+  addStat: 'add-stat',
   colorPicker: 'color-picker',
   createView: 'create-view',
   createGroup: 'create-group',
@@ -136,6 +138,7 @@ export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
   context: 'Context',
   weather: 'ServiceWeather',
+  statsHistogram: 'StatsHistogram',
   statsTable: 'StatsTable',
   statsNumber: 'StatsNumber',
 };
@@ -144,6 +147,7 @@ export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
+  statsHistogramSettings: 'stats-histogram-settings',
   statsTableSettings: 'stats-table-settings',
   statsNumberSettings: 'stats-number-settings',
 };
@@ -154,6 +158,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
   [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
   [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
+  [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {

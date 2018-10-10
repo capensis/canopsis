@@ -57,7 +57,15 @@ export function generateWidgetByType(type) {
         columnHG: 0,
       };
       break;
-
+    case WIDGET_TYPES.statsHistogram:
+      specialParameters = {
+        mfilter: {},
+        duration: '1m',
+        tstop: moment().unix(),
+        groups: [],
+        stats: {},
+      };
+      break;
     case WIDGET_TYPES.statsTable:
       specialParameters = {
         duration: '1m',
