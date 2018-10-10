@@ -10,46 +10,48 @@
       v-divider
       field-title(v-model="settings.widget.title")
       v-divider
-      field-default-sort-column(v-model="settings.widget.parameters.sort")
+      field-duration(v-model="settings.widget.parameters.duration")
       v-divider
-      field-columns(v-model="settings.widget.parameters.widgetColumns")
+      field-date-time-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
       v-divider
-      field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
+      field-stats-groups(v-model="settings.widget.parameters.groups")
+      v-divider
+      field-stats-select(v-model="settings.widget.parameters.stats")
+      v-divider
+      field-stats-colors(:stats="settings.widget.parameters.stats", v-model="settings.widget.parameters.statsColors")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
 <script>
-import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import { SIDE_BARS } from '@/constants';
 
 import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
-import FieldDefaultSortColumn from '../partial/fields/default-sort-column.vue';
-import FieldColumns from '../partial/fields/columns.vue';
-import FieldContextEntitiesTypesFilter from '../partial/fields/context-entities-types-filter.vue';
+import FieldDuration from '../partial/fields/duration.vue';
+import FieldStatsGroups from '../partial/fields/stats-groups.vue';
+import FieldStatsSelect from '../partial/fields/stats-select.vue';
+import FieldStatsColors from '../partial/fields/stats-colors.vue';
+import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
 
-/**
- * Component to regroup the entities list settings fields
- */
 export default {
-  name: SIDE_BARS.contextSettings,
+  name: SIDE_BARS.statsHistogramSettings,
   $_veeValidate: {
     validator: 'new',
   },
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldDefaultSortColumn,
-    FieldColumns,
-    FieldContextEntitiesTypesFilter,
+    FieldDuration,
+    FieldStatsGroups,
+    FieldStatsSelect,
+    FieldStatsColors,
+    FieldDateTimeSelect,
   },
-  mixins: [
-    widgetSettingsMixin,
-  ],
+  mixins: [widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -58,17 +60,10 @@ export default {
         rowId,
         widget: cloneDeep(widget),
         widget_preferences: {
-          selectedTypes: [],
         },
       },
     };
   },
-  created() {
-    const { widget_preferences: widgetPreference } = this.userPreference;
-
-    this.settings.widget_preferences = {
-      selectedTypes: get(widgetPreference, 'selectedTypes', []),
-    };
-  },
 };
 </script>
+
