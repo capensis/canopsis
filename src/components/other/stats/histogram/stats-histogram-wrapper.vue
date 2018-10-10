@@ -51,7 +51,7 @@ export default {
         return {
           data,
           label: stat,
-          backgroundColor: this.widget.parameters.statsColors[stat],
+          backgroundColor: this.widget.parameters.statsColors ? this.widget.parameters.statsColors[stat] : '#DDDDDD',
         };
       });
     },
