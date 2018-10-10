@@ -129,6 +129,7 @@ export default {
         /**
          * Put widget into local normalized store
          */
+
         this.updateNormalizedEntity(widgetSchema.key, widget);
 
         if (oldRowId !== newRowId) {

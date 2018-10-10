@@ -28,12 +28,15 @@ import PbehaviorList from './pbehavior/pbehavior-list.vue';
 import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
+import ColorPicker from './common/color-picker.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import CreateView from './view/create-view.vue';
 import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
+import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
+import AddStat from './stats/add-stat.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -57,10 +60,13 @@ export default {
     CreateEntity,
     CreateWatcher,
     CreateWidget,
+    ColorPicker,
     CreateView,
     CreateFilter,
     CreateGroup,
     Watcher,
+    ManageHistogramGroups,
+    AddStat,
   },
   data() {
     return {

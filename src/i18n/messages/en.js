@@ -139,6 +139,7 @@ export default {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
+      statsHistogramSettings: 'Histogram settings',
       statsTableSettings: 'Stats table settings',
     },
     widgetTitle: 'Widget title',
@@ -200,6 +201,14 @@ export default {
       error: {
         alreadyExist: 'Stat with this name already exists',
       },
+    },
+    statsGroups: {
+      title: 'Stats groups',
+      manageGroups: 'Add a group',
+    },
+    statsColor: {
+      title: 'Stats color',
+      pickColor: 'Pick a color',
     },
   },
   modals: {
@@ -351,6 +360,9 @@ export default {
         title: 'Title',
       },
     },
+    colorPicker: {
+      title: 'Color picker',
+    },
     widgetCreation: {
       title: 'Select a widget',
       types: {
@@ -363,9 +375,24 @@ export default {
         weather: {
           title: 'Service weather',
         },
+        statsHistogram: {
+          title: 'Stats histogram',
+        },
         statsTable: {
           title: 'Stats table',
         },
+      },
+    },
+    manageHistogramGroups: {
+      title: {
+        add: 'Add a group',
+        edit: 'Edit a group',
+      },
+    },
+    addStat: {
+      title: {
+        add: 'Add a stat',
+        edit: 'Edit a stat',
       },
     },
     group: {
