@@ -207,7 +207,11 @@ Ember.Application.initializer({
                             }
 
 							if((step.state === undefined) && (step.status === undefined)) {
-								step.name = __("update_output")
+								author = step.a
+								if(author === null || author === undefined || author === "") {
+									author = DEFAULT_AUTHOR
+								}
+								step.name = __("update_output") + " " + __("by") + " " +  author
 								step.icon = "fa-pencil"
 								step.color = 'bg-grey'
 							}
