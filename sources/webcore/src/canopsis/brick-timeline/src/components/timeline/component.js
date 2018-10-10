@@ -29,7 +29,7 @@ Ember.Application.initializer({
             moment = window.moment;
             __ = Ember.String.loc;
 
-        var DEFAULT_AUTHOR = __('system');
+        var DEFAULT_AUTHOR = __('unknown');
 
         var component = Ember.Component.extend({
                         timelineData: undefined,
