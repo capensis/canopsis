@@ -1,11 +1,11 @@
 <template lang="pug">
   v-container(fluid)
-    v-btn(icon, @click="showSettings")
-      v-icon settings
     v-card
       v-card-title
         v-layout(justify-center)
           h2 {{ statName }}
+        v-btn(icon, @click="showSettings")
+          v-icon settings
       v-data-iterator(
         :items="stats",
         content-tag="v-layout",
