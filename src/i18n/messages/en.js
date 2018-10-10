@@ -231,8 +231,13 @@ export default {
       editTitle: 'Edit a watcher',
       displayName: 'Name',
     },
-    createView: {
-      title: 'Create a view',
+    view: {
+      create: {
+        title: 'Create a view',
+      },
+      edit: {
+        title: 'Edit the view',
+      },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         groupIds: 'Choose a group, or create a new one',
@@ -365,6 +370,20 @@ export default {
         statsCalendar: {
           title: 'Stats calendar',
         },
+      },
+    },
+    group: {
+      create: {
+        title: 'Create group',
+      },
+      edit: {
+        title: 'Edit group',
+      },
+      fields: {
+        name: 'Name',
+      },
+      errors: {
+        isNotEmpty: 'The group is not empty',
       },
     },
   },
@@ -537,6 +556,15 @@ export default {
       [STATS_TYPES.currentState.value]: 'Current state',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+    },
+  },
+  layout: {
+    sideBar: {
+      buttons: {
+        edit: 'Toggle editing mode',
+        create: 'Create view',
+        settings: 'Settings',
+      },
     },
   },
 };
