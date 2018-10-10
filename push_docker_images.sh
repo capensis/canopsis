@@ -17,14 +17,13 @@ fi
 for engine in {"core","cat","prov","cat-prov"}; do
     docker push canopsis/canopsis-$engine:${CANOPSIS_TAG}
 done
-# Other engines
-for engine in {"init"}; do
-    docker push canopsis/$engine:${CANOPSIS_TAG}
-done
 # Go engines
 if [ "${push_go}" = "Y" ]||[ "${push_go}" = "y" ]; then
     for engine in {"axe","che","heartbeat","stat","watcher"}; do
         docker push canopsis/engine-$engine:${CANOPSIS_TAG}
+    done
+    for engine in {"init"}; do
+        docker push canopsis/$engine:${CANOPSIS_TAG}
     done
 fi
 
