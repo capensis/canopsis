@@ -1,0 +1,33 @@
+{
+  "name": "brick-timeline",
+  "description": "brick timeline",
+  "version": "0.0.1",
+  "main": "init.js",
+  "scripts": {
+    "compile": "rm -Rf tmp/build && broccoli build tmp/build && cp tmp/build . -RT",
+    "full-compile": "node node_modules/canopsis-ui-toolbelt/scripts/minify.js && rm -Rf tmp/build && broccoli build tmp/build full-build && cp tmp/build . -RT",
+    "lint": "eslint src",
+    "doc": "./node_modules/canopsis-ui-toolbelt/scripts/buildDoc",
+    "minify": "node node_modules/canopsis-ui-toolbelt/scripts/minify.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.canopsis.net/canopsis-ui-bricks/brick-timeline.git"
+  },
+  "author": "Team Canopsis <maintainers@canopsis.org>",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "broccoli": "^0.16.9",
+    "broccoli-funnel": "^1.0.1",
+    "broccoli-merge-trees": "^1.0.0",
+    "broccoli-sourcemap-concat": "^1.1.6",
+    "broccoli-template": "^0.1.1",
+    "broccoli-uglify-js": "^0.1.3",
+    "canopsis-ui-toolbelt": "https://git.canopsis.net/canopsis/canopsis-ui-toolbelt/repository/archive.tar.gz",
+    "jsdoc": "^3.3.0"
+  },
+   "dependencies": {
+    "broccoli-cli": "^1.0.0",
+    "fs": "0.0.1-security"
+  }
+}

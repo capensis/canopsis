@@ -1,0 +1,45 @@
+{{#each tmpl in Ember.columnTemplates}}
+  {{#component-popupinfo columnName=tmpl.columnName clickedField=clickedField clickedAlarm=clickedAlarm updater=updater}}
+  {{/component-popupinfo}}
+{{/each}}
+
+<div class="box-body" style='overflow-x: scroll;'>
+    <div class="table-responsive">
+        <table class="table no-margin">
+            <thead>
+                <tr>
+                    <th style='padding-left: 0;'>
+                        {{component-checkbox checked=isAllChecked class="toggle"}}
+                    </th>
+
+                    <th>
+                        {{!--timeline--}}
+                    </th>
+                    {{#each field in fields}}
+                        {{#if field.isSortable}}
+                            <th {{action 'click' field}}>{{field.humanName}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
+                        {{else}}
+                            <th {{action 'click' field}}>{{field.humanName}}</th>
+                        {{/if}}
+                    {{/each}}
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each alarm in alarms}}
+                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
+                    {{/component-alarmraw}}
+
+                    {{#if alarm.isExpanded}}
+                        <tr>
+                            <td {{bind-attr colspan=columnsAmount}}>
+                                {{#component-timeline timelineData=alarm}}
+                                {{/component-timeline}}
+                            </td>
+                        </tr>
+                    {{/if}}
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
