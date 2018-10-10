@@ -18,6 +18,8 @@ import i18n from '@/i18n';
 import filters from '@/filters';
 
 import DsDaysView from '@/components/other/stats/day-span/partial/days-view.vue';
+import DsDay from '@/components/other/stats/day-span/partial/day.vue';
+import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-event.vue';
 
 Vue.use(filters);
 Vue.use(Vuetify);
@@ -35,6 +37,8 @@ Vue.use(DaySpanVuetify, {
   },
 });
 Vue.component('dsDaysView', DsDaysView);
+Vue.component('dsDay', DsDay);
+Vue.component('dsCalendarEvent', DsCalendarEvent);
 
 Vue.use(VueMq, {
   breakpoints: MEDIA_QUERIES_BREAKPOINTS,

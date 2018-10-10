@@ -4,18 +4,25 @@
       v-flex
         v-btn(icon, @click="showSettings")
           v-icon settings
-    v-layout.white
-      ds-calendar(:events="events")
+    v-layout.white.calender-wrapper
+      v-fade-transition
+        v-layout.white.progress(v-show="pending", column)
+          v-progress-circular(indeterminate, color="primary")
+      ds-calendar(:events="events", @change="changeCalendar")
 </template>
 
 <script>
+import moment from 'moment';
+import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
+import groupBy from 'lodash/groupBy';
 import { createNamespacedHelpers } from 'vuex';
+import { Calendar, Day, Schedule, Units } from 'dayspan';
 
-import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS, STATS_CALENDAR_COLORS } from '@/constants';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
-// import { convertAlarmsToCalendarEvents, convertPbehaviorsToCalendarEvents } from '@/helpers/day-span';
 
 import DsCalendar from './day-span/calendar.vue';
 
@@ -38,7 +45,9 @@ export default {
   },
   data() {
     return {
+      pending: true,
       events: [],
+      calendar: Calendar.months(),
     };
   },
   methods: {
@@ -64,55 +73,80 @@ export default {
       });
     },
 
-    async fetchList() {
-      const { filters, opened, resolved } = this.query;
-
-      const results = await Promise.all(filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
-        params: {
-          filter,
-          opened,
-          resolved,
-          skip: 0,
-          limit: 10,
-        },
-      })));
-
-      // this.widget.parameters.filters.map();
-
-      const events = [];
-
-      filters.forEach((filterObject, index) => {
-        events.push(results[index]);
-      });
-
-      /*
-      const alarmsFilter = {
-        $or: [{
-          connector_name: {
-            $in: entities.map(v => v.name),
-          },
-        }],
+    changeCalendar({ calendar }) {
+      this.calendar = calendar;
+      this.query = {
+        ...this.query,
+        tstart: calendar.start.date.unix(),
+        tstop: calendar.end.date.unix(),
       };
+    },
 
-      const { alarms } = await this.fetchAlarmsListWithoutStore({
-        params: {
-          filter: alarmsFilter,
-          skip: 0,
-          limit: 10,
-        },
+    async fetchList() {
+      const query = omit(this.query, ['filters']);
+      let results = [];
+
+      this.pending = true;
+
+      if (isEmpty(this.query.filters)) {
+        results = await this.fetchAlarmsListWithoutStore({
+          params: query,
+        });
+      } else {
+        results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
+          params: {
+            ...query,
+            filter,
+          },
+        })));
+      }
+
+      const startOfBy = this.calendar.type === Units.MONTH ? 'day' : 'hour';
+
+      const groupedAlarms = groupBy(results.alarms, alarm => moment.unix(alarm.t).startOf(startOfBy).format());
+
+      this.events = Object.keys(groupedAlarms).map((dateString) => {
+        const startDay = new Day(moment(dateString));
+
+        return {
+          data: {
+            title: groupedAlarms[dateString].length,
+            color: STATS_CALENDAR_COLORS.alarm,
+          },
+          schedule: new Schedule({
+            on: startDay,
+            times: [startDay.asTime()],
+            duration: 1,
+            durationUnit: 'hours',
+          }),
+        };
       });
 
-      const pbehaviorsCollections = await Promise.all(entities.map(({ _id }) =>
-        this.fetchPbehaviorsListByEntityIdWithoutStore({ id: _id })));
-
-      const pbehaviors = [].concat(...pbehaviorsCollections);
-
-      this.events = [
-        ...convertAlarmsToCalendarEvents(alarms),
-        ...convertPbehaviorsToCalendarEvents(pbehaviors),
-      ];
-*/
+      this.pending = false;
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .calender-wrapper {
+    position: relative;
+
+    .progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      opacity: .4;
+      z-index: 10;
+
+      & /deep/ .v-progress-circular {
+        top: 50%;
+        left: 50%;
+        margin-top: -16px;
+        margin-left: -16px;
+      }
+    }
+  }
+</style>

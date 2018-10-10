@@ -100,8 +100,6 @@ export function convertStatsTableWidgetToQuery(widget) {
 export function convertStatsCalendarWidgetToQuery(widget) {
   const { alarmsStateFilter, filters } = widget.parameters;
   const query = {
-    start: 0,
-    limit: 50,
     filters: filters || [],
   };
 
