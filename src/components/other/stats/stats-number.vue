@@ -24,8 +24,13 @@
                 ellipsis(:text="props.item.entity.name")
               v-list-tile-content.align-end
                 v-layout(align-center)
-                  v-chip(:style="{ backgroundColor: getCriticity(props.item.value) }", small)
-                    div.body-1() {{ props.item.value }}
+                  template(v-if="widget.parameters.yesNoMode")
+                    v-chip(v-if="props.item.value === 0", :style="{ backgroundColor: widget.parameters.statColors.ok }")
+                      div.body-1 {{ $t('common.no') }}
+                    v-chip(v-else, :style="{ backgroundColor: widget.parameters.statColors.critical }")
+                      div.body-1 {{ $t('common.yes') }}
+                  v-chip(v-else, :style="{ backgroundColor: getCriticity(props.item.value) }", small)
+                    div.body-1 {{ props.item.value }}
                   div.caption
                     template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
                     template(v-else) - {{ props.item.trend }}
