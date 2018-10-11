@@ -9,6 +9,8 @@
         v-layout.white.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
       ds-calendar(:events="events", @change="changeCalendar")
+        template(slot="eventPopover", slot-scope="props")
+          h1 dsadsadas
 </template>
 
 <script>
@@ -92,6 +94,8 @@ export default {
         results = await this.fetchAlarmsListWithoutStore({
           params: query,
         });
+
+        this.events = this.prepareAlarms(results.alarms);
       } else {
         results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
           params: {
@@ -99,19 +103,32 @@ export default {
             filter,
           },
         })));
+
+
+        this.events = results.reduce((acc, result, index) =>
+          acc.concat(this.prepareAlarms(result.alarms, this.query.filters[index].title)), []);
       }
 
+      this.pending = false;
+    },
+
+    prepareAlarms(alarms, prefix) {
       const startOfBy = this.calendar.type === Units.MONTH ? 'day' : 'hour';
 
-      const groupedAlarms = groupBy(results.alarms, alarm => moment.unix(alarm.t).startOf(startOfBy).format());
+      const groupedAlarms = groupBy(alarms, alarm => moment.unix(alarm.t).startOf(startOfBy).format());
 
-      this.events = Object.keys(groupedAlarms).map((dateString) => {
+      return Object.keys(groupedAlarms).map((dateString) => {
         const startDay = new Day(moment(dateString));
 
         return {
           data: {
             title: groupedAlarms[dateString].length,
+            description: prefix,
             color: STATS_CALENDAR_COLORS.alarm,
+            meta: {
+              type: prefix ? 'multiple' : 'single',
+              hasPopover: !!prefix && this.calendar.type === 1,
+            },
           },
           schedule: new Schedule({
             on: startDay,
@@ -121,8 +138,6 @@ export default {
           }),
         };
       });
-
-      this.pending = false;
     },
   },
 };

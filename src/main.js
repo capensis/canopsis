@@ -17,9 +17,9 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
-import DsDaysView from '@/components/other/stats/day-span/partial/days-view.vue';
 import DsDay from '@/components/other/stats/day-span/partial/day.vue';
 import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-event.vue';
+import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
 
 Vue.use(filters);
 Vue.use(Vuetify);
@@ -29,16 +29,30 @@ Vue.use(DaySpanVuetify, {
       (sameDay.length === 1 ? sameDay[0].start.format('HH[h]') : `(${sameDay.length})`),
   },
   data: {
+    hourHeight: 80,
     defaults: {
       dsWeeksView: {
         weekdays: moment.weekdaysShort(true),
       },
+      dsCalendarEventTime: {
+        placeholderStyle: false,
+        disabled: false,
+        popoverProps: {
+          nudgeWidth: 200,
+          closeOnContentClick: false,
+          offsetOverflow: true,
+          offsetX: true,
+          maxWidth: 500,
+          openOnHover: true,
+        },
+      },
     },
   },
 });
-Vue.component('dsDaysView', DsDaysView);
+
 Vue.component('dsDay', DsDay);
 Vue.component('dsCalendarEvent', DsCalendarEvent);
+Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.use(VueMq, {
   breakpoints: MEDIA_QUERIES_BREAKPOINTS,

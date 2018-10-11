@@ -30,11 +30,12 @@
       ds-gestures(@swipeleft="next", @swiperight="prev")
         ds-calendar(
         ref="calendar",
-        v-bind="{$scopedSlots}",
         v-on="$listeners",
         :calendar="calendar",
         @view-day="viewDay",
         )
+          template(slot="eventPopover", slot-scope="props")
+            h1 dsadsadas
 </template>
 
 <script>
