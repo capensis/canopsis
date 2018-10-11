@@ -64,6 +64,7 @@ export function generateWidgetByType(type) {
         tstop: moment().unix(),
         groups: [],
         stats: {},
+        statsColors: {},
       };
       break;
     case WIDGET_TYPES.statsCurves:

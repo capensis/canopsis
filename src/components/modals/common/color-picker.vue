@@ -36,7 +36,9 @@ export default {
   methods: {
     submit() {
       if (this.config.action) {
-        this.config.action(this.color.hex);
+        this.config.action(`
+          rgba(${this.color.rgba.r}, ${this.color.rgba.g}, ${this.color.rgba.b}, ${this.color.rgba.a})
+        `);
       }
       this.hideModal();
     },
