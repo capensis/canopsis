@@ -35,10 +35,22 @@ export default {
   },
   computed: {
     labels() {
+      if (this.stats.aggregations) {
+        return Object.keys(this.stats.aggregations);
+      }
       return [];
     },
     datasets() {
-      return [];
+      return Object.keys(this.widget.parameters.stats).map((stat) => {
+        let data = [];
+        if (this.stats.aggregations) {
+          data = this.stats.aggregations[stat].sum.map(value => value.value);
+        }
+        return {
+          data,
+          label: stat,
+        };
+      });
     },
   },
   methods: {
@@ -56,7 +68,7 @@ export default {
         params: { ...this.widget.parameters },
         aggregate: ['sum'],
       });
-      this.stats = stats.aggregations;
+      this.stats = stats;
     },
   },
 };
