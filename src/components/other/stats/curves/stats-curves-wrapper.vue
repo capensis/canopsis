@@ -40,7 +40,12 @@ export default {
       if (this.stats.aggregations) {
         const stats = Object.keys(this.stats.aggregations);
         const values = { ...this.stats.aggregations };
-        values[stats[0]].sum.map(value => labels.push(value.start));
+        /*
+        'start' correspond to the beginning timestamp.
+        It's the same for all stats, that's why we can just take the first.
+        We then give it to the date filter, to display it with a date format
+        */
+        values[stats[0]].sum.map(value => labels.push(this.$options.filters.date(value.start, 'long')));
         return labels;
       }
       return labels;
@@ -49,7 +54,7 @@ export default {
       return Object.keys(this.widget.parameters.stats).map((stat) => {
         let data = [];
         if (this.stats.aggregations) {
-          data = this.stats.aggregations[stat].sum.map(value => value.value + ((Math.random() * 10) + 1));
+          data = this.stats.aggregations[stat].sum.map(value => value.value);
         }
 
         return {
