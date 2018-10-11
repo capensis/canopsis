@@ -29,7 +29,13 @@ export default {
     },
   },
   mounted() {
-    this.renderChart(this.chartData);
+    const data = {
+      datasets: [{
+        data: [15, 20, 26, 33, 34, 35, 26],
+      }],
+      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    };
+    this.renderChart(data);
   },
 };
 </script>

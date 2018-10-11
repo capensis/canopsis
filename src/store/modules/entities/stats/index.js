@@ -22,5 +22,21 @@ export default {
         return [];
       }
     },
+
+    async fetchEvolutionWithoutStore({ dispatch }, { params, aggregate }) {
+      try {
+        if (aggregate) {
+          Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
+        }
+
+        const data = await request.post(`${API_ROUTES.stats}/evolution`, { ...params });
+
+        return data;
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+
+        return [];
+      }
+    },
   },
 };

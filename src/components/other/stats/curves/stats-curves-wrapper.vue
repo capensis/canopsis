@@ -2,7 +2,7 @@
   v-container(fluid)
     v-btn(icon, @click="showSettings")
       v-icon settings
-    stats-curves()
+    stats-curves(:labels="labels", :datasets="datasets")
 </template>
 
 <script>
@@ -28,6 +28,19 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      stats: {},
+    };
+  },
+  computed: {
+    labels() {
+      return [];
+    },
+    datasets() {
+      return [];
+    },
+  },
   methods: {
     showSettings() {
       this.showSideBar({
@@ -37,6 +50,13 @@ export default {
           rowId: this.rowId,
         },
       });
+    },
+    async fetchList() {
+      const stats = await this.fetchStatsEvolutionWithoutStore({
+        params: { ...this.widget.parameters },
+        aggregate: ['sum'],
+      });
+      this.stats = stats.aggregations;
     },
   },
 };

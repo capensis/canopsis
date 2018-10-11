@@ -15,12 +15,16 @@
       field-date-time-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
       v-divider
       field-periods-number(v-model="settings.widget.parameters.periods")
+      v-divider
+      field-stats-select(v-model="settings.widget.parameters.stats")
+      v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 
+import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
 
@@ -29,6 +33,7 @@ import FieldTitle from '../partial/fields/title.vue';
 import FieldDuration from '../partial/fields/duration.vue';
 import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
 import FieldPeriodsNumber from '../partial/fields/periods-number.vue';
+import FieldStatsSelect from '../partial/fields/stats-select.vue';
 
 export default {
   name: SIDE_BARS.statsCurvesSettings,
@@ -41,8 +46,9 @@ export default {
     FieldDuration,
     FieldDateTimeSelect,
     FieldPeriodsNumber,
+    FieldStatsSelect,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [entitiesStatsMixin, widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 
