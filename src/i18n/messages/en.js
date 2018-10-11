@@ -140,6 +140,7 @@ export default {
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
       statsHistogramSettings: 'Histogram settings',
+      statsCurvesSettings: 'Curve settings',
       statsTableSettings: 'Stats table settings',
     },
     widgetTitle: 'Widget title',
@@ -156,6 +157,7 @@ export default {
     filterEditor: 'Filter editor',
     duration: 'Duration',
     tstop: 'End date',
+    periodsNumber: 'Number of periods',
     statsSelect: 'Stats select',
     selectAFilter: 'Select a filter',
     statsNumbers: {
@@ -377,6 +379,9 @@ export default {
         },
         statsHistogram: {
           title: 'Stats histogram',
+        },
+        statsCurves: {
+          title: 'Stats curves',
         },
         statsTable: {
           title: 'Stats table',
