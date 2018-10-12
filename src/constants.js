@@ -292,6 +292,13 @@ export const STATS_TYPES = {
   },
 };
 
+export const STATS_CRITICITY = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
