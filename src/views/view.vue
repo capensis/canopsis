@@ -9,7 +9,12 @@
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
-          h3 {{ widget.title }}
+          v-layout(justify-space-between)
+            h3 {{ widget.title }}
+            v-tooltip(left, v-if="isEditModeEnable")
+              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+                v-icon delete
+              span {{ $t('common.delete') }}
           component(
           :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
@@ -24,7 +29,7 @@
         v-btn(slot="activator", color="green darken-3", dark, fab)
           v-icon menu
         v-tooltip(left)
-          v-btn(slot="activator", @click="refreshView", color="info", dark, fab, small)
+          v-btn(slot="activator", fab, dark, small, color="info", @click.prevent="refreshView")
             v-icon refresh
           span {{ $t('common.refresh') }}
         v-tooltip(left)
@@ -32,7 +37,7 @@
             v-icon widgets
           span {{ $t('common.addWidget') }}
         v-tooltip(left)
-          v-btn(slot="activator", color="", dark, fab, small)
+          v-btn(slot="activator", fab, dark, small, @click.prevent="toggleViewEditMode")
             v-icon edit
           span {{ $t('common.toggleEditView') }}
 </template>
@@ -80,6 +85,7 @@ export default {
         [WIDGET_TYPES.statsTable]: 'stats-table',
       },
       widgetKeyPrefix: uid(),
+      isEditModeEnable: false,
     };
   },
   computed: {
@@ -108,6 +114,9 @@ export default {
       this.showModal({
         name: MODALS.createWidget,
       });
+    },
+    toggleViewEditMode() {
+      this.isEditModeEnable = !this.isEditModeEnable;
     },
   },
 };
