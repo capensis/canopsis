@@ -24,13 +24,8 @@
                 ellipsis(:text="props.item.entity.name")
               v-list-tile-content.align-end
                 v-layout(align-center)
-                  template(v-if="widget.parameters.yesNoMode")
-                    v-chip(v-if="props.item.value === 0", :style="{ backgroundColor: widget.parameters.statColors.ok }")
-                      div.body-1 {{ $t('common.no') }}
-                    v-chip(v-else, :style="{ backgroundColor: widget.parameters.statColors.critical }")
-                      div.body-1 {{ $t('common.yes') }}
-                  v-chip(v-else, :style="{ backgroundColor: getCriticity(props.item.value) }", small)
-                    div.body-1 {{ props.item.value }}
+                  v-chip(:style="{ backgroundColor: chipColorAndText(props.item.value).color }")
+                    div.body-1 {{ chipColorAndText(props.item.value).text }}
                   div.caption
                     template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
                     template(v-else) - {{ props.item.trend }}
@@ -87,15 +82,29 @@ export default {
         params: query,
       });
     },
-    getCriticity(value) {
-      if (value > this.widget.parameters.criticityLevels.minor) {
-        return this.widget.parameters.statColors.minor;
-      } else if (value > this.widget.parameters.criticityLevels.major) {
-        return this.widget.parameters.statColors.major;
-      } else if (value > this.widget.parameters.criticityLevels.critical) {
-        return this.widget.parameters.statColors.critical;
+    chipColorAndText(value) {
+      if (this.widget.parameters.yesNoMode) {
+        return {
+          text: value === 0 ? this.$t('common.no') : this.$t('common.yes'),
+          color: value === 0 ? this.widget.parameters.statColors.ok : this.widget.parameters.statColors.critical,
+        };
       }
-      return this.widget.parameters.statColors.ok;
+
+      let color;
+      if (value < this.widget.parameters.criticityLevels.minor) {
+        color = this.widget.parameters.statColors.ok;
+      } else if (value < this.widget.parameters.criticityLevels.major) {
+        color = this.widget.parameters.statColors.minor;
+      } else if (value < this.widget.parameters.criticityLevels.critical) {
+        color = this.widget.parameters.statColors.major;
+      } else {
+        color = this.widget.parameters.statColors.critical;
+      }
+
+      return {
+        text: value,
+        color,
+      };
     },
   },
 };
