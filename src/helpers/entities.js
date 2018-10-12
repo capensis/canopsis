@@ -26,11 +26,23 @@ export function generateWidgetByType(type) {
         widgetColumns: [
           {
             label: 'Connector',
-            value: 'v.connector_name',
+            value: 'alarm.connector',
+          },
+          {
+            label: 'Connector name',
+            value: 'alarm.connector_name',
           },
           {
             label: 'Component',
-            value: 'v.component',
+            value: 'alarm.component',
+          },
+          {
+            label: 'Resource',
+            value: 'alarm.resource',
+          },
+          {
+            label: 'Output',
+            value: 'alarm.output',
           },
           {
             label: 'Extra details',
@@ -38,11 +50,11 @@ export function generateWidgetByType(type) {
           },
           {
             label: 'State',
-            value: 'v.state.val',
+            value: 'alarm.state.val',
           },
           {
             label: 'Status',
-            value: 'v.status.val',
+            value: 'alarm.status.val',
           },
         ],
         viewFilters: [],
