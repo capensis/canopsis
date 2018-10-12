@@ -9,8 +9,17 @@
         v-layout.white.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
       ds-calendar(:events="events", @change="changeCalendar")
-        template(slot="eventPopover", slot-scope="props")
-          h1 dsadsadas
+        v-card(slot="eventPopover", slot-scope="{ calendarEvent }")
+          v-card-text
+            v-layout(
+            v-for="(event, index) in calendarEvent.data.meta.events",
+            :key="`popover-event-${index}`",
+            row,
+            wrap
+            )
+              v-flex(xs12)
+                strong {{ event.data.title }}
+                p {{ event.data.description }}
 </template>
 
 <script>
@@ -105,11 +114,53 @@ export default {
         })));
 
 
-        this.events = results.reduce((acc, result, index) =>
+        let events = results.reduce((acc, result, index) =>
           acc.concat(this.prepareAlarms(result.alarms, this.query.filters[index].title)), []);
+
+        if (this.calendar.type === Units.WEEK) {
+          const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf('hour').format());
+
+          events = Object.keys(groupedEvents).map((dateString) => {
+            const groupedEvent = groupedEvents[dateString];
+
+            if (groupedEvent.length > 1) {
+              const sum = groupedEvent.reduce((acc, event) => acc + event.data.meta.sum, 0);
+
+              return {
+                ...groupedEvent[0],
+
+                data: {
+                  title: sum,
+                  color: this.getColor(sum),
+                  meta: {
+                    type: 'single',
+                    hasPopover: true,
+                    events: groupedEvent,
+                  },
+                },
+              };
+            }
+
+            return groupedEvent[0];
+          });
+        }
+
+        this.events = events;
       }
 
       this.pending = false;
+    },
+
+    getColor(count) {
+      if (count > 50) {
+        return STATS_CALENDAR_COLORS.alarm.large;
+      }
+
+      if (count > 30) {
+        return STATS_CALENDAR_COLORS.alarm.medium;
+      }
+
+      return STATS_CALENDAR_COLORS.alarm.small;
     },
 
     prepareAlarms(alarms, prefix) {
@@ -119,15 +170,16 @@ export default {
 
       return Object.keys(groupedAlarms).map((dateString) => {
         const startDay = new Day(moment(dateString));
+        const sum = groupedAlarms[dateString].length;
 
         return {
           data: {
-            title: groupedAlarms[dateString].length,
+            title: sum,
             description: prefix,
-            color: STATS_CALENDAR_COLORS.alarm,
+            color: this.getColor(sum),
             meta: {
+              sum,
               type: prefix ? 'multiple' : 'single',
-              hasPopover: !!prefix && this.calendar.type === 1,
             },
           },
           schedule: new Schedule({

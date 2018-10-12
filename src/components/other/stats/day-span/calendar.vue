@@ -31,11 +31,10 @@
         ds-calendar(
         ref="calendar",
         v-on="$listeners",
+        v-bind="{$scopedSlots}",
         :calendar="calendar",
         @view-day="viewDay",
         )
-          template(slot="eventPopover", slot-scope="props")
-            h1 dsadsadas
 </template>
 
 <script>
