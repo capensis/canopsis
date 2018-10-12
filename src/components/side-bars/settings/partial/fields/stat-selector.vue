@@ -19,6 +19,7 @@ export default {
   props: {
     value: {
       type: Object,
+      required: true,
     },
   },
   data() {
@@ -37,6 +38,9 @@ export default {
       return Object.values(STATS_TYPES)
         .map(item => ({ value: item.value, text: this.$t(`stats.types.${item.value}`), options: item.options }));
     },
+  },
+  mounted() {
+    this.form = { ...this.value };
   },
   methods: {
     statChange(event) {

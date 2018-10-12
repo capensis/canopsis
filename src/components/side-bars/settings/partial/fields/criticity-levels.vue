@@ -7,31 +7,39 @@
           v-layout(align-center, justify-space-around)
             div Minor :
             v-flex(xs3)
-              v-text-field(type="number", :value="value.minor", @input="e => updateValue(e, 'minor')")
+              v-text-field(
+                type="number",
+                :value="value.minor",
+                @input="updateField('minor', parseInt($event, 10))"
+                )
         v-flex(xs12)
           v-layout(align-center, justify-space-around)
             div Major :
             v-flex(xs3)
-              v-text-field(type="number", :value="value.major", @input="e => updateValue(e, 'major')")
+              v-text-field(
+              type="number",
+              :value="value.major",
+              @input="updateField('major', parseInt($event, 10))"
+              )
         v-flex(xs12)
           v-layout(align-center, justify-space-around)
             div Critical :
             v-flex(xs3)
-              v-text-field(type="number", :value="value.critical", @input="e => updateValue(e, 'critical')")
+              v-text-field(
+              type="number",
+              :value="value.critical",
+              @input="updateField('critical', parseInt($event, 10))"
+              )
 </template>
 
 <script>
+import formMixin from '@/mixins/form';
+
 export default {
+  mixins: [formMixin],
   props: {
     value: {
       type: Object,
-    },
-  },
-  methods: {
-    updateValue(event, key) {
-      const newValue = { ...this.value };
-      newValue[key] = parseInt(event, 10);
-      this.$emit('input', newValue);
     },
   },
 };

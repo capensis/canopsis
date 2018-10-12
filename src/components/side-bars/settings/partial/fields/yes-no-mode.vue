@@ -2,7 +2,7 @@
   v-list-group
     v-list-tile(slot="activator") {{$t('settings.yesNoMode')}}
     v-container
-      v-switch(:label="$t('settings.yesNoMode')", :input-value="value", @change="valueChange")
+      v-switch(:label="$t('settings.yesNoMode')", :input-value="value", @change="$emit('input', $event)")
 </template>
 
 <script>
@@ -11,11 +11,6 @@ export default {
     value: {
       type: Boolean,
       required: true,
-    },
-  },
-  methods: {
-    async valueChange(event) {
-      this.$emit('input', event);
     },
   },
 };
