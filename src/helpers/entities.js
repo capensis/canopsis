@@ -23,7 +23,28 @@ export function generateWidgetByType(type) {
         itemsPerPage: PAGINATION_LIMIT,
         moreInfoTemplate: '',
         alarmsStateFilter: {},
-        widgetColumns: [],
+        widgetColumns: [
+          {
+            label: 'Connector',
+            value: 'v.connector_name',
+          },
+          {
+            label: 'Component',
+            value: 'v.component',
+          },
+          {
+            label: 'Extra details',
+            value: 'extra_details',
+          },
+          {
+            label: 'State',
+            value: 'v.state.val',
+          },
+          {
+            label: 'Status',
+            value: 'v.status.val',
+          },
+        ],
         viewFilters: [],
         infoPopups: [],
         periodicRefresh: {
