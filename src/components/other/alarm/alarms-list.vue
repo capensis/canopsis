@@ -1,10 +1,8 @@
 <template lang="pug">
   v-container
-    v-layout.white(wrap, justify-space-between, align-center)
+    v-layout.white(v-if="type === 'full'", row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query")
-      v-flex
-        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
       v-flex
         v-select(
         :label="$t('settings.selectAFilter')",
@@ -28,8 +26,11 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(icon, @click="showSettings")
           v-icon settings
-      v-flex.px-3
-        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
+    v-layout.white(row, wrap)
+      v-flex(xs12)
+        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
+      v-flex.px-3(v-show="selected.length", xs12)
+        mass-actions-panel(:itemsIds="selectedIds")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -121,13 +122,17 @@ export default {
     entitiesAlarmMixin,
   ],
   props: {
+    type: {
+      type: String,
+      validator: value => ['full', 'short'].indexOf(value) !== -1,
+      default: 'full',
+    },
     widget: {
       type: Object,
       required: true,
     },
     rowId: {
       type: String,
-      required: true,
     },
   },
   data() {

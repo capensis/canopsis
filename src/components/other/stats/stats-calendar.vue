@@ -8,7 +8,7 @@
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
-      ds-calendar(:events="events", @change="changeCalendar")
+      ds-calendar(:events="events", @change="changeCalendar", @edit="editEvent")
         v-card(slot="eventPopover", slot-scope="{ calendarEvent }")
           v-card-text
             v-layout(
@@ -74,6 +74,12 @@ export default {
       fetchPbehaviorsListByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
     }),
 
+    editEvent(event) {
+      const routeData = this.$router.resolve({ name: 'alarms', query: { query: JSON.stringify(event.data.meta.query) } });
+
+      window.open(routeData.href, '_blank');
+    },
+
     showSettings() {
       this.showSideBar({
         name: SIDE_BARS.statsCalendarSettings,
@@ -94,19 +100,22 @@ export default {
     },
 
     async fetchList() {
-      const query = omit(this.query, ['filters']);
-      let results = [];
+      const query = omit(this.query, ['filters', 'considerPbehaviors']);
 
       this.pending = true;
 
       if (isEmpty(this.query.filters)) {
-        results = await this.fetchAlarmsListWithoutStore({
+        let { alarms } = await this.fetchAlarmsListWithoutStore({
           params: query,
         });
 
-        this.events = this.prepareAlarms(results.alarms);
+        if (this.query.considerPbehaviors) {
+          alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
+        }
+
+        this.events = this.prepareAlarms(alarms, query);
       } else {
-        results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
+        const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
           params: {
             ...query,
             filter,
@@ -114,10 +123,17 @@ export default {
         })));
 
 
-        let events = results.reduce((acc, result, index) =>
-          acc.concat(this.prepareAlarms(result.alarms, this.query.filters[index].title)), []);
+        let events = results.reduce((acc, result, index) => {
+          let { alarms } = result;
 
-        if (this.calendar.type === Units.WEEK) {
+          if (this.query.considerPbehaviors) {
+            alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
+          }
+
+          return acc.concat(this.prepareAlarms(alarms, query, this.query.filters[index]));
+        }, []);
+
+        if (this.calendar.type !== Units.MONTH) {
           const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf('hour').format());
 
           events = Object.keys(groupedEvents).map((dateString) => {
@@ -163,23 +179,32 @@ export default {
       return STATS_CALENDAR_COLORS.alarm.small;
     },
 
-    prepareAlarms(alarms, prefix) {
+    prepareAlarms(alarms, query, filterObject = {}) {
       const startOfBy = this.calendar.type === Units.MONTH ? 'day' : 'hour';
+      const endOfBy = this.calendar.type === Units.MONTH ? 'day' : 'hour';
 
       const groupedAlarms = groupBy(alarms, alarm => moment.unix(alarm.t).startOf(startOfBy).format());
 
       return Object.keys(groupedAlarms).map((dateString) => {
-        const startDay = new Day(moment(dateString));
+        const dateObject = moment(dateString);
+        const startDay = new Day(dateObject);
         const sum = groupedAlarms[dateString].length;
 
         return {
           data: {
             title: sum,
-            description: prefix,
+            description: filterObject.title,
             color: this.getColor(sum),
             meta: {
               sum,
-              type: prefix ? 'multiple' : 'single',
+              query: {
+                ...query,
+
+                filter: filterObject.filter,
+                tstart: dateObject.unix(),
+                tstop: dateObject.clone().endOf(endOfBy).unix(),
+              },
+              type: filterObject.title ? 'multiple' : 'single',
             },
           },
           schedule: new Schedule({

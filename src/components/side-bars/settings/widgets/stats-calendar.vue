@@ -14,7 +14,7 @@
       v-divider
       field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter", :entitiesType="entitiesType")
+      field-switcher(v-model="settings.widget.parameters.considerPbehaviors", title="Consider pbehaviors")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
@@ -29,7 +29,7 @@ import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldOpenedResolvedFilter from '../partial/fields/opened-resolved-filter.vue';
 import FieldFilters from '../partial/fields/filters.vue';
-import FieldFilterEditor from '../partial/fields/filter-editor.vue';
+import FieldSwitcher from '../partial/fields/switcher.vue';
 
 /**
  * Component to regroup the entities list settings fields
@@ -44,7 +44,7 @@ export default {
     FieldTitle,
     FieldOpenedResolvedFilter,
     FieldFilters,
-    FieldFilterEditor,
+    FieldSwitcher,
   },
   mixins: [widgetSettingsMixin],
   data() {

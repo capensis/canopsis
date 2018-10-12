@@ -30,13 +30,12 @@
       </span>
 
     </div>
-
     <slot name="eventPopover" v-bind="{calendarEvent, calendar, edit, details, close}"></slot>
-
   </v-menu>
 </template>
 
 <script>
+import get from 'lodash/get';
 import { DsCalendarEvent } from 'dayspan-vuetify/src/components';
 
 export default {
@@ -46,13 +45,12 @@ export default {
       return false;
     },
 
+    hasPopover() {
+      return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.meta.hasPopover');
+    },
+
     menuClass() {
       return this.calendarEvent.data.meta.type;
-    },
-  },
-  methods: {
-    editCheck() {
-
     },
   },
 };

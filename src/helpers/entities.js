@@ -71,6 +71,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         filters: [],
         alarmsStateFilter: {},
+        considerPbehaviors: false,
       };
       break;
   }

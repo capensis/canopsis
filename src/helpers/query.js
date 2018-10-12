@@ -98,8 +98,9 @@ export function convertStatsTableWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsCalendarWidgetToQuery(widget) {
-  const { alarmsStateFilter, filters } = widget.parameters;
+  const { alarmsStateFilter, filters, considerPbehaviors } = widget.parameters;
   const query = {
+    considerPbehaviors,
     filters: filters || [],
   };
 
