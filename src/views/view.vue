@@ -16,19 +16,25 @@
           :rowId="row._id"
           )
     .fab
-      v-btn(@click="refreshView", icon, color="info", dark, fab)
-        v-icon refresh
       v-speed-dial(
-      direction="left",
+      direction="top",
       :open-on-hover="true",
       transition="scale-transition"
       )
         v-btn(slot="activator", color="green darken-3", dark, fab)
-          v-icon add
+          v-icon menu
+        v-tooltip(left)
+          v-btn(slot="activator", @click="refreshView", color="info", dark, fab, small)
+            v-icon refresh
+          span {{ $t('common.refresh') }}
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
             v-icon widgets
-          span {{ $t('common.widget') }}
+          span {{ $t('common.addWidget') }}
+        v-tooltip(left)
+          v-btn(slot="activator", color="", dark, fab, small)
+            v-icon edit
+          span {{ $t('common.toggleEditView') }}
 </template>
 
 <script>
