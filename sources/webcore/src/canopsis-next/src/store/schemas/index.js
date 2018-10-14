@@ -34,18 +34,22 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
   idAttribute: '_id',
 });
 
-export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget);
-
-export const widgetWrapperSchema = new schema.Entity(ENTITIES_TYPES.widgetWrapper, {
-  widget: widgetSchema,
+export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
+  idAttribute: '_id',
 });
 
-widgetSchema.define({ items: [widgetWrapperSchema] });
+export const rowSchema = new schema.Entity(ENTITIES_TYPES.row, {
+  widgets: [widgetSchema],
+}, { idAttribute: '_id' });
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
-  containerwidget: {
-    items: [widgetWrapperSchema],
-  },
+  rows: [rowSchema],
+}, { idAttribute: '_id' });
+
+export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
+  views: [viewSchema],
+}, {
+  idAttribute: '_id',
 });
 
 export default {
@@ -55,7 +59,8 @@ export default {
   [ENTITIES_TYPES.watcherEntity]: watcherEntitySchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
+  [ENTITIES_TYPES.group]: groupSchema,
   [ENTITIES_TYPES.view]: viewSchema,
-  [ENTITIES_TYPES.widgetWrapper]: widgetWrapperSchema,
+  [ENTITIES_TYPES.row]: rowSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
 };

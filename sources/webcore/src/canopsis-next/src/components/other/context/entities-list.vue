@@ -7,11 +7,12 @@
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
       v-flex(xs2)
-        v-btn(icon, @click.prevent="$emit('openSettings')")
+        v-btn(icon, @click.prevent="showSettings")
           v-icon settings
       v-flex(xs2)
         context-fab
-    div
+    no-columns-table(v-if="!hasColumns")
+    div(v-else)
       v-data-table(
       v-model="selected",
       :items="contextEntities",
@@ -23,18 +24,21 @@
       select-all,
       hide-actions,
       )
+        template(slot="progress")
+          v-fade-transition
+            v-progress-linear(height="2", indeterminate)
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
           td
             v-checkbox(primary, hide-details, v-model="props.selected")
           td(
-          v-for="prop in properties",
+          v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
             ellipsis(
-            :text="$options.filters.get(props.item,prop.value) || ''",
-            :maxLetters="prop.maxLetters"
+            :text="props.item | get(column.value, null, '')",
+            :maxLetters="column.maxLetters"
             )
           td
             v-btn(@click.stop="editEntity(props.item)", icon, small)
@@ -56,10 +60,13 @@ import omit from 'lodash/omit';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+import NoColumnsTable from '@/components/tables/no-columns.vue';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -72,7 +79,7 @@ import MoreInfos from './more-infos.vue';
  * @module context
  *
  * @prop {Object} widget - Object representing the widget
- * @prop {Array} properties - List of entities properties
+ * @prop {Array} columns - List of entities columns
  *
  * @event openSettings#click
  */
@@ -83,10 +90,13 @@ export default {
     MoreInfos,
     Ellipsis,
     ContextFab,
+    NoColumnsTable,
   },
   mixins: [
     modalMixin,
+    sideBarMixin,
     widgetQueryMixin,
+    widgetColumnsMixin,
     entitiesContextEntityMixin,
     entitiesUserPreferenceMixin,
   ],
@@ -95,11 +105,9 @@ export default {
       type: Object,
       required: true,
     },
-    properties: {
-      type: Array,
-      default() {
-        return [];
-      },
+    rowId: {
+      type: String,
+      required: true,
     },
   },
   data() {
@@ -109,7 +117,11 @@ export default {
   },
   computed: {
     headers() {
-      return [...this.properties, { text: '', sortable: false }];
+      if (this.hasColumns) {
+        return [...this.columns, { text: '', sortable: false }];
+      }
+
+      return [];
     },
   },
   methods: {
@@ -179,21 +191,23 @@ export default {
         },
       });
     },
+    showSettings() {
+      this.showSideBar({
+        name: SIDE_BARS.contextSettings,
+        config: {
+          widget: this.widget,
+          rowId: this.rowId,
+        },
+      });
+    },
+    fetchList() {
+      if (this.hasColumns) {
+        this.fetchContextEntitiesList({
+          widgetId: this.widget._id,
+          params: this.getQuery(),
+        });
+      }
+    },
   },
 };
 </script>
-
-<style scoped>
-  .fab {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-  }
-</style>
-

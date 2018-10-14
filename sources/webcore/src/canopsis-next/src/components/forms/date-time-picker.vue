@@ -1,54 +1,75 @@
 <template lang="pug">
   v-menu(
+  ref="menu",
+  v-model="opened",
   content-class="date-time-picker",
   transition="slide-y-transition",
-  v-model="opened",
-  ref="menu",
+  max-width="290px",
   :close-on-content-click="false",
-  left,
   right,
   lazy
-  max-width="290px"
   )
     div(slot="activator")
       v-text-field(
       readonly,
       :label="label",
       :error-messages="name ? errors.collect(name) : []",
-      :value="dateTimeString",
+      :value="dateTimeObject | date('DD/MM/YYYY HH:mm', true)",
       v-validate="rules",
       :data-vv-name="name",
       data-vv-validate-on="none",
       :append-icon="clearable ? 'close' : ''",
-      :append-icon-cb="clear"
+      @click:append="clear"
       )
-    .picker__title.primary.text-xs-center
-      span.subheading {{ dateTimeString || '--/--/---- --:--' }}
-    v-tabs(v-model="activeTab", centered)
-      v-tab(href="#date")
-        v-icon date_range
-      v-tab(href="#time")
-        v-icon access_time
-      v-tab-item(id="date")
+    .v-picker__title.primary.text-xs-center
+      span.v-date-time-picker-title
+        span.v-picker__title__btn(
+        @click="showDateTab",
+        :class="{ active: isActiveDateTab }"
+        ) {{ dateTimeObject | date('DD/MM/YYYY', true, '--/--/----') }}
+        span &nbsp;
+        span.v-picker__title__btn(
+        @click="showHourTab",
+        :class="{ active: isActiveHourTab }"
+        ) {{ dateTimeObject | date('HH', true, '--') }}
+        span :
+        span.v-picker__title__btn(
+        @click="showMinuteTab",
+        :class="{ active: isActiveMinuteTab }"
+        ) {{ dateTimeObject | date('mm', true, '--') }}
+    div.date-time-picker__body
+      v-fade-transition
         v-date-picker(
-        @input="updateDateTimeObject",
+        v-if="isActiveDateTab",
         :locale="$i18n.locale",
         v-model="dateString",
-        no-title
-        )
-      v-tab-item(id="time")
-        v-time-picker(
         @input="updateDateTimeObject",
+        @change="showHourTab"
+        no-title,
+        )
+      v-fade-transition
+        v-time-picker(
+        v-show="isActiveTimeTab",
+        ref="timePicker"
         v-model="timeString",
+        @input="updateDateTimeObject",
+        @change="showDateTab"
         format="24hr"
-        no-title
+        no-title,
         )
     .text-xs-center.dropdown-footer
-      v-btn(depressed, color="primary", @click.prevent="submit") Ok
+      v-btn(@click.prevent="submit", color="primary", depressed) Ok
 </template>
 
 <script>
 import moment from 'moment';
+
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
+const TABS = {
+  date: 'date',
+  time: 'time',
+};
 
 /**
  * Date time picker component
@@ -71,25 +92,30 @@ export default {
     label: String,
     name: String,
     rules: [String, Object],
-    format: {
-      type: String,
-      default: 'DD/MM/YYYY HH:mm',
-    },
   },
   data() {
     const value = this.value ? moment(this.value) : null;
 
     return {
       opened: false,
-      activeTab: 'date',
+      activeTab: TABS.date,
       dateTimeObject: value,
-      dateString: value ? value.format('YYYY-MM-DD') : '',
-      timeString: value ? value.format('HH:mm') : '',
+      dateString: value ? value.format('YYYY-MM-DD') : null,
+      timeString: value ? value.format('HH:mm') : null,
     };
   },
   computed: {
-    dateTimeString() {
-      return this.dateTimeObject ? this.dateTimeObject.format(this.format) : this.dateTimeObject;
+    isActiveDateTab() {
+      return this.activeTab === TABS.date;
+    },
+    isActiveTimeTab() {
+      return this.activeTab === TABS.time;
+    },
+    isActiveHourTab() {
+      return this.isActiveTimeTab && this.$refs.timePicker.selectingHour;
+    },
+    isActiveMinuteTab() {
+      return this.isActiveTimeTab && !this.$refs.timePicker.selectingHour;
     },
   },
   watch: {
@@ -97,11 +123,29 @@ export default {
       if (!value) {
         setTimeout(() => {
           this.activeTab = 'date';
-        }, 300);
+        }, VUETIFY_ANIMATION_DELAY);
       }
     },
   },
   methods: {
+    showDateTab() {
+      this.activeTab = TABS.date;
+    },
+
+    showTimeTab() {
+      this.activeTab = TABS.time;
+    },
+
+    showHourTab() {
+      this.$refs.timePicker.selectingHour = true;
+      this.showTimeTab();
+    },
+
+    showMinuteTab() {
+      this.$refs.timePicker.selectingHour = false;
+      this.showTimeTab();
+    },
+
     updateDateTimeObject() {
       if (!this.timeString) {
         this.timeString = '00:00';
@@ -113,6 +157,7 @@ export default {
 
       this.validate();
     },
+
     clear() {
       this.dateTimeObject = null;
       this.dateString = '';
@@ -122,11 +167,13 @@ export default {
 
       this.validate();
     },
+
     submit() {
       this.validate();
 
       this.$refs.menu.save();
     },
+
     validate() {
       if (this.name && this.rules) {
         this.$nextTick(async () => {
@@ -140,22 +187,48 @@ export default {
 
 <style lang="scss">
   .date-time-picker {
-    .tabs__container--centered .tabs__div,
-    .tabs__container--fixed-tabs .tabs__div,
-    .tabs__container--icons-and-text .tabs__div {
-      min-width: 140px;
+    .date-time-picker__body {
+      position: relative;
+      width: 290px;
+      height: 290px;
+
+      .v-picker {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
     }
 
-    .menu__content {
+    .v-date-time-picker-title {
+      line-height: 50px;
+      font-size: 30px;
+      font-weight: 500;
+    }
+
+    .v-tabs__container--centered .v-tabs__div,
+    .v-tabs__container--fixed-tabs .v-tabs__div,
+    .v-tabs__container--icons-and-text .v-tabs__div {
+      min-width: 145px;
+    }
+
+    .v-menu__content {
       max-width: 100%;
     }
 
-    .dropdown-footer, &.menu__content {
+    .v-dropdown-footer, &.v-menu__content, .v-tabs__items {
       background-color: #fff;
     }
 
-    .date-picker-table {
+    .v-date-picker-table {
       height: 246px;
+    }
+
+    .v-card {
+      box-shadow: none;
+    }
+    .v-date-picker-table--date .v-btn {
+      height: 35px;
+      width: 35px;
     }
   }
 </style>

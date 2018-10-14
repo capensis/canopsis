@@ -176,7 +176,7 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
-        amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
         event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
@@ -635,7 +635,7 @@ class Alerts(object):
 
             if is_new_alarm:
                 self.check_alarm_filters()
-                self.publish_new_alarm_stats(alarm)
+                self.publish_new_alarm_stats(alarm, event.get(self.AUTHOR))
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
@@ -827,12 +827,13 @@ class Alerts(object):
                 now,
                 StatCounters.downtimes,
                 entity,
-                new_value)
+                new_value,
+                event.get(self.AUTHOR))
 
         # Update entity's last_state_change
         if entity:
             entity[Entity.LAST_STATE_CHANGE] = now
-            self.context_manager.update_entity(entity)
+            self.context_manager.update_entity_body(entity)
 
         alarm[storage_value] = new_value
 
@@ -879,7 +880,8 @@ class Alerts(object):
                 new_value[AlarmField.last_update_date.value],
                 StatCounters.alarms_canceled,
                 entity,
-                new_value)
+                new_value,
+                event.get(self.AUTHOR))
 
         return alarm
 
@@ -1289,7 +1291,7 @@ class Alerts(object):
 
             self.update_current_alarm(docalarm, new_value)
 
-    def publish_new_alarm_stats(self, alarm):
+    def publish_new_alarm_stats(self, alarm, author):
         """
         Publish statistics events for a new alarm.
 
@@ -1310,21 +1312,5 @@ class Alerts(object):
             creation_date,
             StatCounters.alarms_created,
             entity,
-            alarm_value)
-
-        # Increment alarms_impacting counter for each impacted entity
-        # (as well as the entity that created the alarm)
-        self.event_publisher.publish_statcounterinc_event(
-            creation_date,
-            StatCounters.alarms_impacting,
-            entity,
-            alarm_value)
-
-        impacted_entities = self.context_manager.get_entities_by_id(
-            entity.get(Entity.IMPACTS))
-        for impacted_entity in impacted_entities:
-            self.event_publisher.publish_statcounterinc_event(
-                creation_date,
-                StatCounters.alarms_impacting,
-                impacted_entity,
-                alarm_value)
+            alarm_value,
+            author)

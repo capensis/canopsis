@@ -18,8 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from bottle import HTTPError, request
 import json
+from bottle import HTTPError, request
 
 from canopsis.organisation.rights import Rights
 from canopsis.common.ws import route
@@ -75,14 +75,22 @@ def save_role(ws, role):
     rprofile = role.get('profile', None)
 
     defaultview = role.get('defaultview', None)
+    description = role.get('description', None)
 
     role = rights.get_role(rid)
 
-    if defaultview is not None:
-        rights.update_fields(rid, 'role', {'defaultview': defaultview})
+    fields = {}
 
     if not role and not rights.create_role(rid, rprofile):
         raise ws.Error('Impossible to create role')
+
+    if defaultview is not None:
+        fields["defaultview"] = defaultview
+
+    if description is not None:
+        fields["description"] = description
+
+    rights.update_fields(rid, 'role', fields)
 
     if rprofile:
         rights.update_profile(rid, 'role', rgroup, role)

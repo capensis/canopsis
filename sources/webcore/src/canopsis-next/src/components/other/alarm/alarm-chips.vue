@@ -37,17 +37,10 @@ export default {
 </script>
 <style scoped>
   .badge {
-    display: inline-block;
-    min-width: 10px;
     padding: 3px 7px;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
+    font-size: 14px;
     color: #fff;
-    text-align: center;
     white-space: nowrap;
-    vertical-align: baseline;
-    background-color: #777;
     border-radius: 10px;
   }
 

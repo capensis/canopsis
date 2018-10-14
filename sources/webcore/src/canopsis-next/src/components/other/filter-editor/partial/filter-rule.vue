@@ -12,13 +12,12 @@
         v-icon close
     v-layout(row, wrap, justify-space-around)
       v-flex(xs10, md3)
-        v-select.my-2(
+        v-combobox.my-2(
         :items="possibleFields",
         :value="rule.field",
         @input="updateField('field', $event)",
         solo-inverted,
         hide-details,
-        combobox,
         dense,
         flat
         )
@@ -62,6 +61,10 @@ import formMixin from '@/mixins/form';
  */
 export default {
   mixins: [formMixin],
+  model: {
+    prop: 'rule',
+    event: 'update:rule',
+  },
   props: {
     rule: {
       type: Object,
@@ -77,11 +80,6 @@ export default {
         return Object.values(FILTER_OPERATORS);
       },
     },
-  },
-  data() {
-    return {
-      formKey: 'rule',
-    };
   },
   computed: {
     isShownTextField() {

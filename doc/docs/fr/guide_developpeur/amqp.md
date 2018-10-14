@@ -35,9 +35,11 @@ from canopsis.common.amqp import AmqpPublisher
 
 url = 'amqp://cpsrabbit:canopsis@localhost/canopsis'
 
+logger = logging.getLogger("...")
+
 evt = {...}
 with AmqpConnection(url) as apc:
-    pub = AmqpPublisher(apc)
+    pub = AmqpPublisher(apc, logger)
     pub.canopsis_event(evt, 'canopsis.events')
 ```
 

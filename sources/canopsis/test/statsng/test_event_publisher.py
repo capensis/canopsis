@@ -58,7 +58,7 @@ class StatEventPublisherTest(TestCase):
 
         event = self.amqp_pub.canopsis_event.call_args[0][0]
         self.assertEqual(event[Event.EVENT_TYPE], StatEvents.statcounterinc)
-        self.assertEqual(event[StatEventFields.counter_name], 'counter_name')
+        self.assertEqual(event[StatEventFields.stat_name], 'counter_name')
         self.assertEqual(event['timestamp'], 1)
 
     def test_publish_statduration_event(self):
@@ -72,7 +72,7 @@ class StatEventPublisherTest(TestCase):
 
         event = self.amqp_pub.canopsis_event.call_args[0][0]
         self.assertEqual(event[Event.EVENT_TYPE], StatEvents.statduration)
-        self.assertEqual(event[StatEventFields.duration_name], 'duration_name')
+        self.assertEqual(event[StatEventFields.stat_name], 'duration_name')
         self.assertEqual(event['timestamp'], 3)
         self.assertEqual(event[StatEventFields.duration], 2)
 

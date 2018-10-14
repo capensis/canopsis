@@ -6,7 +6,7 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
     v-flex(xs2)
       component.ma-2(:is="format.icon")
     v-flex(xs10)
-      p.watcherName {{ watcher.display_name }}
+      div.watcherName.pt-2(v-html="compiledTemplate")
   v-layout
     v-flex(xs12)
       div.moreInfos.py-1(@click="showWatcherModal")
@@ -18,6 +18,7 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 <script>
 import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
+import compile from '@/helpers/handlebars';
 
 import SunIcon from './icons/sun.vue';
 import CloudySunIcon from './icons/cloudy-sun.vue';
@@ -39,6 +40,12 @@ export default {
       type: Object,
       required: true,
     },
+    template: {
+      type: String,
+    },
+    widget: {
+      type: Object,
+    },
   },
   computed: {
     format() {
@@ -59,6 +66,9 @@ export default {
         color: WATCHER_STATES_COLORS[this.watcher.state.val],
       };
     },
+    compiledTemplate() {
+      return compile(this.template, { watcher: this.watcher });
+    },
   },
   methods: {
     showWatcherModal() {
@@ -66,6 +76,8 @@ export default {
         name: MODALS.watcher,
         config: {
           watcherId: this.watcher.entity_id,
+          entityTemplate: this.widget.parameters.entityTemplate,
+          modalTemplate: this.widget.parameters.modalTemplate,
         },
       });
     },

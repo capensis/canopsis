@@ -23,7 +23,7 @@ Managing PBehavior.
 """
 
 from calendar import timegm
-from datetime import datetime
+from datetime import datetime, timedelta
 from json import loads, dumps
 from time import time
 from uuid import uuid4
@@ -36,6 +36,7 @@ import pytz
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.common.utils import singleton_per_scope
+from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
@@ -157,6 +158,8 @@ class PBehaviorManager(object):
     PB_STORAGE_URI = 'mongodb-default-pbehavior://'
     LOG_PATH = 'var/log/pbehaviormanager.log'
     LOG_NAME = 'pbehaviormanager'
+    CONF_PATH = 'etc/pbehavior/manager.conf'
+    PBH_CAT = "PBEHAVIOR"
 
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
@@ -174,10 +177,36 @@ class PBehaviorManager(object):
         """
         logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
         pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
+        config = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
 
-        return logger, pb_storage
+        return config, logger, pb_storage
 
-    def __init__(self, logger, pb_storage):
+    # FIXME : this is an ugly hack. This should not exist
+    @staticmethod
+    def parse_offset(offset):
+        """
+        Return a timedelta from a time offset from utc.
+        :param string offset: a string that respect the following format ±00:00
+        or ±0000.
+        :return timedelta: the offset from utc is a timedelta object
+        """
+        minus = offset[0] == "-"
+
+        if offset[3] == ":":
+            offset = offset[1:].split(":")
+        else:
+            offset = [offset[1:3], offset[3:5]]
+
+        hours = int(offset[0])
+        minutes = int(offset[1])
+
+        if minus:
+            hours = -hours
+            minutes = -minutes
+
+        return timedelta(hours=hours, minutes=minutes)
+
+    def __init__(self, config, logger, pb_storage):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -187,7 +216,11 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
-
+        # FIXME : this is an ugly hack. This should not exist.
+        self.config = config
+        self.config_data = self.config.get(self.PBH_CAT, {})
+        str_offset = self.config_data.get("offset_from_utc", "+00:00")
+        self.offset_from_utc = self.parse_offset(str_offset)
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
 
         self.currently_active_pb = set()
@@ -519,8 +552,7 @@ class PBehaviorManager(object):
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
 
-    @staticmethod
-    def check_active_pbehavior(timestamp, pbehavior):
+    def check_active_pbehavior(self, timestamp, pbehavior):
         """
         For a given pbehavior (as dict) check that the given timestamp is active
         using either:
@@ -548,11 +580,18 @@ class PBehaviorManager(object):
             return False
 
         tz = pytz.UTC
-        dtts = fromts(timestamp).replace(tzinfo=tz)
         dttstart = fromts(tstart).replace(tzinfo=tz)
         dttstop = fromts(tstop).replace(tzinfo=tz)
 
-        dt_list = [dttstart, dttstop]
+        pbh_duration = tstop - tstart
+
+        dtts = fromts(timestamp).replace(tzinfo=tz)
+        # ddts_offset contains the current timestamp minus the duration of
+        # the pbhevior, so the computation of the rrules occurences
+        # will include the running occurence. Thus the current pbehavior
+        # will be detected.
+        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
+
         rrule = pbehavior['rrule']
         if rrule:
             # compute the minimal date from which to start generating
@@ -560,37 +599,33 @@ class PBehaviorManager(object):
             # a complementary date (missing_date) is computed and added
             # at index 0 of the generated dt_list to ensure we manage
             # dates at boundaries.
-            dt_tstart_date = dtts.date()
+            dt_tstart_date = dtts_offset.date()
             dt_tstart_time = dttstart.time().replace(tzinfo=tz)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
 
             # dates in dt_list at 0 and 1 indexes can be equal, so we generate
             # three dates to ensure [1] - [2] will give a non-zero timedelta
             # object.
-            dt_list = list(
-                rrulestr(rrule, dtstart=dt_dtstart).xafter(
-                    dttstart, count=3, inc=True
-                )
-            )
 
+            dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
+            if dt is None:
+                return False
 
-            # compute the "missing dates": dates before the rrule started to
-            # generate dates so we can check for a pbehavior in the past.
-            multiply = 1
-            while True:
-                missing_date = dt_list[0] - multiply * (dt_list[-1] - dt_list[-2])
-                dt_list.insert(0, missing_date)
+            # FIXME : this is an ugly hack. This should not exist
+            substract_day = False
+            new_dtts = dtts - self.offset_from_utc
 
-                if missing_date < dtts:
-                    break
-
-                multiply += 1
+            if dtts.day != new_dtts.day:
+                substract_day = True
 
             delta = dttstop - dttstart
 
-            for dt in sorted(dt_list):
-                if dtts >= dt and dtts <= dt + delta:
-                    return True
+            if substract_day:
+                # FIXME : this is an ugly hack. This should not exist
+                dt = dt.replace(day=dt.day - 1)
+
+            if dt <= dtts <= dt + delta:
+                return True
 
             return False
 
@@ -603,7 +638,7 @@ class PBehaviorManager(object):
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
-
+        !!!! DEPRECATED !!!!
         :param str entity_id:
         :param list list_in: list of pbehavior names
         :param list list_out: list of pbehavior names
@@ -619,6 +654,7 @@ class PBehaviorManager(object):
         :param list pb_names: list of pbehavior names
         :returns: bool if the entity_id is currently in pb_names arg
         """
+        self.logger.critical("_check_pbehavior is DEPRECATED !!!!")
         try:
             entity = self.context.get_entities_by_id(entity_id)[0]
         except Exception:
@@ -853,7 +889,7 @@ class PBehaviorManager(object):
                     timegm(interval_end.timetuple())
                 )
 
-    def get_intervals_with_pbehaviors(self, after, before, entity_id):
+    def get_intervals_with_pbehaviors_by_eid(self, after, before, entity_id):
         """
         Yields intervals between after and before with a boolean indicating if
         a pbehavior affects the entity during this interval.
@@ -869,10 +905,28 @@ class PBehaviorManager(object):
         :param str entity_id: the id of the entity
         :rtype: Iterator[Tuple[int, int, bool]]
         """
+        return self.get_intervals_with_pbehaviors(
+            after, before, self.get_pbehaviors(entity_id))
+
+    def get_intervals_with_pbehaviors(self, after, before, pbehaviors):
+        """
+        Yields intervals between after and before with a boolean indicating if
+        one of the pbehaviors is active during this interval.
+
+        The intervals are returned as a list of tuples (start, end, pbehavior),
+        ordered chronologically. start and end are UTC timestamps, and are
+        always between after and before, pbehavior is a boolean indicating if a
+        pbehavior affects the entity during this interval. None of the
+        intervals overlap.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param List[Dict[str, Any]] pbehaviors: a list of pbehabiors
+        :rtype: Iterator[Tuple[int, int, bool]]
+        """
         intervals = []
 
         # Get all the intervals where a pbehavior is active
-        pbehaviors = self.get_pbehaviors(entity_id)
         for pbehavior in pbehaviors:
             for interval in self.get_active_intervals(after, before, pbehavior):
                 intervals.append(interval)
@@ -929,3 +983,13 @@ class PBehaviorManager(object):
             before,
             False
         )
+
+    def get_enabled_pbehaviors(self):
+        """
+        Yields all the enabled pbehaviors.
+
+        :rtype: Iterator[Dict[str, Any]]
+        """
+        return self.pb_storage._backend.find({
+            PBehavior.ENABLED: True
+        })

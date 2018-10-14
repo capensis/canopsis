@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine, publish
+from canopsis.engines.core import Engine
 from canopsis.event import forger, is_host_acknowledged
 from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
@@ -160,10 +160,12 @@ class engine(Engine):
                     if "ticket" in event:
                         sub_ack_event["ticket"] = event.get("ticket")
 
-                    publish(
-                        publisher=self.amqp, event=sub_ack_event,
-                        exchange=self.acknowledge_on
-                    )
+                    try:
+                        self.work_amqp_publisher.canopsis_event(
+                            sub_ack_event,
+                            exchange_name=self.acknowledge_on)
+                    except Exception as e:
+                        self.logger.exception("Unable to send ack event")
 
             author = event['author']
 
@@ -292,10 +294,12 @@ class engine(Engine):
                     }
                 ]
 
-                publish(
-                    publisher=self.amqp, event=ack_event,
-                    exchange=self.acknowledge_on
-                )
+                try:
+                    self.work_amqp_publisher.canopsis_event(
+                        ack_event,
+                        exchange_name=self.acknowledge_on)
+                except Exception as e:
+                    self.logger.exception("Unable to send ack event")
 
                 self.logger.debug(u'Ack internal metric sent. {}'.format(
                     dumps(ack_event['perf_data_array'], indent=2)
@@ -311,10 +315,12 @@ class engine(Engine):
                     }
                 ]
 
-                publish(
-                    publisher=self.amqp, event=ack_event,
-                    exchange=self.acknowledge_on
-                )
+                try:
+                    self.work_amqp_publisher.canopsis_event(
+                        ack_event,
+                        exchange_name=self.acknowledge_on)
+                except Exception as e:
+                    self.logger.exception("Unable to send ack event")
 
             self.logger.debug(u'Reloading ack cache')
             self.reload_ack_cache()
@@ -391,10 +397,12 @@ class engine(Engine):
                         }
                     ]
 
-                    publish(
-                        publisher=self.amqp, event=ack_event,
-                        exchange=self.acknowledge_on
-                    )
+                    try:
+                        self.work_amqp_publisher.canopsis_event(
+                            ack_event,
+                            exchange_name=self.acknowledge_on)
+                    except Exception as e:
+                        self.logger.exception("Unable to send ack event")
 
 
         # If the event is in problem state,
@@ -418,9 +426,12 @@ class engine(Engine):
             self.logger.debug(u'publishing log event {}'.format(
                 dumps(logevent, indent=2)
             ))
-            publish(
-                publisher=self.amqp, event=logevent,
-                exchange=self.acknowledge_on
-            )
+
+            try:
+                self.work_amqp_publisher.canopsis_event(
+                    logevent,
+                    exchange_name=self.acknowledge_on)
+            except Exception as e:
+                self.logger.exception("Unable to send log event")
 
         return event

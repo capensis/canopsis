@@ -1,0 +1,27 @@
+
+{
+  "Fast Ack": "Acquittement rapide",
+  "Ack": "Acquittement",
+  "Cancel ack": "Annuler acquittement",
+  "Restore alarm": "Restaurer alarme",
+  "ack": "Acquittement",
+  "fastack": "Acquittement rapide",
+  "cancelack": "Annuler un acquittement",
+  "declareanincident": "Declarer un incident",
+  "assignticketnumber": "Assigner un numéro de ticket",
+  "pbehavior": "Comportement périodique",
+  "removealarm": "Annuler une alarme",
+  "changecriticity": "Changer la criticité",
+  "restorealarm": "Restaurer une alarme",
+  "snoozealarm": "Reporter l'alarme",
+  "donealarm": "Marquer comme Fait",
+  "Since": "Depuis",
+  "To": "Jusque",
+  "Snooze": "Reporté",
+  "Ticket declared": "Ticket déclaré",
+  "Periodic behavior": "Comportement périodique",
+  "List periodic behaviors": "Lister les comportements périodiques",
+  "Apply PBehavior": "Appliquer un comportement périodique",
+  "No reccurence": "Pas de récurrence",
+  "Done": "Fait"
+}
