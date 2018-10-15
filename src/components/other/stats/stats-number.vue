@@ -24,8 +24,8 @@
                 ellipsis(:text="props.item.entity.name")
               v-list-tile-content.align-end
                 v-layout(align-center)
-                  v-chip(:style="{ backgroundColor: chipColorAndText(props.item.value).color }")
-                    div.body-1 {{ chipColorAndText(props.item.value).text }}
+                  v-chip(:style="{ backgroundColor: getChipColor(props.item.value) }")
+                    div.body-1 {{ getChipText(props.item.value) }}
                   div.caption
                     template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
                     template(v-else) - {{ props.item.trend }}
@@ -65,6 +65,38 @@ export default {
       statName: 'Test',
     };
   },
+  computed: {
+    getChipColor() {
+      return (value) => {
+        const { yesNoMode, criticityLevels, statColors } = this.widget.parameters;
+
+        if (yesNoMode) {
+          return value === 0 ? statColors.ok : statColors.critical;
+        }
+
+        if (value < criticityLevels.minor) {
+          return statColors.ok;
+        } else if (value < criticityLevels.major) {
+          return statColors.minor;
+        } else if (value < criticityLevels.critical) {
+          return statColors.major;
+        }
+
+        return statColors.critical;
+      };
+    },
+    getChipText() {
+      return (value) => {
+        const { yesNoMode } = this.widget.parameters;
+
+        if (yesNoMode) {
+          return value === 0 ? this.$t('common.no') : this.$t('common.yes');
+        }
+
+        return value;
+      };
+    },
+  },
   methods: {
     showSettings() {
       this.showSideBar({
@@ -81,30 +113,6 @@ export default {
       this.stats = await this.fetchStatValuesWithoutStore({
         params: query,
       });
-    },
-    chipColorAndText(value) {
-      if (this.widget.parameters.yesNoMode) {
-        return {
-          text: value === 0 ? this.$t('common.no') : this.$t('common.yes'),
-          color: value === 0 ? this.widget.parameters.statColors.ok : this.widget.parameters.statColors.critical,
-        };
-      }
-
-      let color;
-      if (value < this.widget.parameters.criticityLevels.minor) {
-        color = this.widget.parameters.statColors.ok;
-      } else if (value < this.widget.parameters.criticityLevels.major) {
-        color = this.widget.parameters.statColors.minor;
-      } else if (value < this.widget.parameters.criticityLevels.critical) {
-        color = this.widget.parameters.statColors.major;
-      } else {
-        color = this.widget.parameters.statColors.critical;
-      }
-
-      return {
-        text: value,
-        color,
-      };
     },
   },
 };

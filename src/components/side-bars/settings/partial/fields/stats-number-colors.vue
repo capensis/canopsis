@@ -5,10 +5,7 @@
       v-layout(wrap)
         v-flex(xs12, v-for="(value, key) in value", :key="key")
           v-layout(align-center)
-            v-btn(@click="showColorPickerModal(key)", small)
-              template {{ $t('settings.colorsSelector.statsCriticity.' + key) }}
-              template(v-if="key === statsCriticity.ok") / {{ $t('common.yes') }}
-              template(v-if="key === statsCriticity.critical") / {{ $t('common.no') }}
+            v-btn(@click="showColorPickerModal(key)", small) {{ getButtonText(key) }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: value }") {{ value }}
 </template>
 
@@ -30,6 +27,18 @@ export default {
   computed: {
     statsCriticity() {
       return { ...STATS_CRITICITY };
+    },
+    getButtonText() {
+      return (key) => {
+        let suffix = '';
+        if (key === this.statsCriticity.ok) {
+          suffix = ` / ${this.$t('common.yes')}`;
+        } else if (key === this.statsCriticity.critical) {
+          suffix = ` / ${this.$t('common.no')}`;
+        }
+
+        return this.$t(`settings.colorsSelector.statsCriticity.${key}`) + suffix;
+      };
     },
   },
   methods: {
