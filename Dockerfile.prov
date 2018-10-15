@@ -2,10 +2,10 @@ ARG CANOPSIS_TAG
 ARG CANOPSIS_DISTRIBUTION
 
 # FROM canopsis/canopsis-core:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
-FROM canopsis/canopsis-core:latest
-ADD docker/files/entrypoint-prov-sync.sh /
+FROM canopsis/canopsis-core:develop
+# COPY docker/files/entrypoint-prov-sync.sh /
 ADD docker/files/entrypoint-prov.sh /
-
+COPY sources/db-conf/ /opt/canopsis/
 VOLUME /provisioning
 
 ENTRYPOINT /entrypoint-prov.sh
