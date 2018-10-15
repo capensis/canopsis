@@ -27,23 +27,25 @@
           )
     .fab
       v-speed-dial(
+      v-model="fab",
       direction="top",
-      :open-on-hover="true",
-      transition="scale-transition"
+      transition="slide-y-reverse-transition"
       )
-        v-btn(slot="activator", color="green darken-3", dark, fab)
+        v-btn(slot="activator", color="green darken-3", dark, fab, v-model="fab")
           v-icon menu
+          v-icon close
         v-tooltip(left)
-          v-btn(slot="activator", fab, dark, small, color="info", @click.prevent="refreshView")
+          v-btn(slot="activator", fab, dark, small, color="info", @click.stop="refreshView")
             v-icon refresh
           span {{ $t('common.refresh') }}
         v-tooltip(left)
-          v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
+          v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
             v-icon widgets
           span {{ $t('common.addWidget') }}
         v-tooltip(left)
-          v-btn(slot="activator", fab, dark, small, @click.prevent="toggleViewEditMode")
+          v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
             v-icon edit
+            v-icon done
           span {{ $t('common.toggleEditView') }}
 </template>
 
@@ -91,6 +93,7 @@ export default {
       },
       widgetKeyPrefix: uid(),
       isEditModeEnable: false,
+      fab: false,
     };
   },
   computed: {
