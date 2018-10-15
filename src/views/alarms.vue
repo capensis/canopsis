@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import isEmpty from 'lodash/isEmpty';
+
 import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
 import { generateWidgetByType } from '@/helpers/entities';
 import AlarmList from '@/components/other/alarm/alarms-list.vue';
@@ -17,19 +19,27 @@ export default {
   components: { AlarmList },
   mixins: [authMixin, queryMixin],
   data() {
+    const { filter, alarmsStateFilter } = this.$route.query;
     const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
-    const filter = this.$route.query.filter ? JSON.parse(this.$route.query.filter) : null;
+    const filterObject = filter ? JSON.parse(filter) : null;
+
+    const widgetParameters = {
+      alarmsStateFilter,
+      widgetColumns: widget.parameters.widgetColumns.map(column =>
+        ({ label: column.label, value: column.value.replace('alarm.', 'v.') })),
+    };
+
+    if (!isEmpty(filterObject)) {
+      widgetParameters.mainFilter = filterObject;
+      widgetParameters.viewFilters = [filterObject];
+    }
 
     return {
       widget: {
         ...widget,
         parameters: {
           ...widget.parameters,
-          mainFilter: filter,
-          viewFilters: filter ? [filter] : [],
-          widgetColumns: [
-            { label: 'Connector name', value: 'v.connector_name' },
-          ],
+          ...widgetParameters,
         },
       },
     };

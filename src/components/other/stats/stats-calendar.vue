@@ -228,7 +228,7 @@ export default {
       }
     }
 
-    & /deep/ .ds-week {
+    & /deep/ .ds-week-view {
       .ds-ev-title {
         display: block;
       }

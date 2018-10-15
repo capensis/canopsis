@@ -27,7 +27,6 @@ Vue.use(DaySpanVuetify, {
     getPrefix: () => '',
   },
   data: {
-    hourHeight: 80,
     defaults: {
       dsWeeksView: {
         weekdays: moment.weekdaysShort(true),
