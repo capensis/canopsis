@@ -3,7 +3,12 @@
     div
       v-layout(v-for="row in rows", :key="row._id", row, wrap)
         v-flex(xs12)
-          h2 {{ row.title }}
+          v-layout(align-center)
+            h2 {{ row.title }}
+            v-tooltip.ml-2(left, v-if="isEditModeEnable")
+              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+                v-icon delete
+              span {{ $t('common.delete') }}
         v-flex(
         v-for="widget in row.widgets",
         :key="`${widgetKeyPrefix}_${widget._id}`",
