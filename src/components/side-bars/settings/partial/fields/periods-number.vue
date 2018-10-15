@@ -4,7 +4,7 @@
     v-container
       v-text-field(
       :value="value",
-      @input="updatePeriodsNumber",
+      @input="$emit('input', parseInt(event, 10))",
       v-validate="'required|integer|min:1'",
       data-vv-name="periodsNumber",
       :error-messages="errors.collect('periodsNumber')",

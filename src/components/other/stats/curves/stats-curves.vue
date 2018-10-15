@@ -20,12 +20,10 @@ export default {
     },
   },
   watch: {
-    chartData: {
-      handler(value, oldValue) {
-        if (value !== oldValue) {
-          this.renderChart(value);
-        }
-      },
+    chartData(value, oldValue) {
+      if (value !== oldValue) {
+        this.renderChart(value);
+      }
     },
   },
   mounted() {
