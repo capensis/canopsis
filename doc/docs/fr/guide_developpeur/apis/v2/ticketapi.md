@@ -1,6 +1,6 @@
-# API Action
+# API TicketApiConfig
 
-## Action
+## TicketApiConfig
 
 ### Récupérer une ticketapi
 
@@ -8,18 +8,21 @@
 GET /api/v2/ticketapi/<ticketapi_id>
 ```
 
-Renvoie l'ticketapi demandée.
+Renvoie la config ticket api demandée.
 
 ```json
 {
     "_id": "ticketapi_id",
-    "type": "pbehavior",
+    "type": "snow",
     "fields": ["Resource", "Component"],
     "regex": ".*",
     "api": {
         "base_url": "https://example.com/rest",
         "username": "",
         "password": "",
+    },
+    "parameters":{
+        "Source": "Canopsis"
     }
 }
 ```
@@ -30,13 +33,16 @@ Renvoie l'ticketapi demandée.
 POST /api/v2/ticketapi
 {
     "_id": "ticketapi_id",
-    "type": "pbehavior",
+    "type": "snow",
     "fields": ["Resource", "Component"],
     "regex": ".*",
     "api": {
         "base_url": "https://example.com/rest",
         "username": "",
         "password": "",
+    },
+    "parameters":{
+        "Source": "Canopsis"
     }
 }
 ```
@@ -49,13 +55,16 @@ Renvoie un dictionnaire vide en cas de réussite.
 PUT /api/v2/ticketapi/<ticketapi_id>
 {
     "_id": "ticketapi_id",
-    "type": "pbehavior",
+    "type": "snow",
     "fields": ["Resource", "Component"],
     "regex": ".*",
     "api": {
         "base_url": "https://example.com/rest",
         "username": "",
         "password": "",
+    },
+    "parameters":{
+        "Source": "Canopsis"
     }
 }
 ```

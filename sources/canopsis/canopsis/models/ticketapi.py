@@ -20,22 +20,27 @@ class TicketApi(object):
     FIELDS = 'fields'
     REGEX = 'regex'
     API = 'api'
+    PARAMETERS = 'parameters'
     API_URL = 'base_url'
     API_USER = 'username'
     API_PWD = 'password'
 
-    def __init__(self, _id, type_, fields, regex, api=None, *args, **kwargs):
+    def __init__(self, _id, type_, fields, regex, api=None, parameters=None,
+                 *args, **kwargs):
         """
         :param str _id: ticketapi id
         :param str type_: type of api (snom, ...)
         :param list fields: targeted fields
         :param str regex: regex matcher on the field
         :param dict api: api base configuration
+        :param dict parameters: other parameters (for ex, static values)
         """
         if fields is None or not isinstance(fields, list):
             fields = []
         if api is None or not isinstance(api, dict):
             api = {}
+        if parameters is None or not isinstance(parameters, dict):
+            parameters = {}
 
         for key in [self.API_URL, self.API_USER, self.API_PWD]:
             if key not in api:
@@ -46,6 +51,7 @@ class TicketApi(object):
         self.fields = fields
         self.regex = regex
         self.api = api
+        self.parameters = parameters
 
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
@@ -59,7 +65,8 @@ class TicketApi(object):
     @staticmethod
     def convert_keys(ticketapi_dict):
         """
-        Convert keys from mongo ticketapi config dict, to TicketApi attribute names.
+        Convert keys from mongo ticketapi config dict, to TicketApi
+        attribute names.
 
         :param dict ticketapi_dict: a raw ticketapi config dict from mongo
         :rtype: dict
@@ -84,6 +91,7 @@ class TicketApi(object):
             self.FIELDS: self.fields,
             self.REGEX: self.regex,
             self.API: self.api,
+            self.PARAMETERS: self.parameters,
         }
 
         return dictionnary
