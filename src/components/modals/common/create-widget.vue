@@ -38,6 +38,7 @@ export default {
         { title: this.$t('modals.widgetCreation.types.alarmList.title'), value: WIDGET_TYPES.alarmList },
         { title: this.$t('modals.widgetCreation.types.context.title'), value: WIDGET_TYPES.context },
         { title: this.$t('modals.widgetCreation.types.weather.title'), value: WIDGET_TYPES.weather },
+        { title: this.$t('modals.widgetCreation.types.statsHistogram.title'), value: WIDGET_TYPES.statsHistogram },
         { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: WIDGET_TYPES.statsTable },
         { title: this.$t('modals.widgetCreation.types.statsCalendar.title'), value: WIDGET_TYPES.statsCalendar },
       ],

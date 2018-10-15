@@ -1,4 +1,5 @@
 import i18n from '@/i18n';
+import set from 'lodash/set';
 
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
@@ -6,11 +7,13 @@ import { API_ROUTES } from '@/config';
 export default {
   namespaced: true,
   actions: {
-    async fetchListWithoutStore({ dispatch }, { params }) {
+    async fetchListWithoutStore({ dispatch }, { params, aggregate }) {
       try {
-        const { values } = await request.post(API_ROUTES.stats, { ...params });
+        if (aggregate) {
+          Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
+        }
 
-        return values;
+        return await request.post(API_ROUTES.stats, { ...params });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
