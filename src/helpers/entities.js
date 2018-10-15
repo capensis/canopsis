@@ -1,5 +1,5 @@
 import moment from 'moment';
-
+import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
@@ -25,35 +25,35 @@ export function generateWidgetByType(type) {
         alarmsStateFilter: {},
         widgetColumns: [
           {
-            label: 'Connector',
+            label: i18n.t('tables.alarmGeneral.connector'),
             value: 'alarm.connector',
           },
           {
-            label: 'Connector name',
+            label: i18n.t('tables.alarmGeneral.connectorName'),
             value: 'alarm.connector_name',
           },
           {
-            label: 'Component',
+            label: i18n.t('tables.alarmGeneral.component'),
             value: 'alarm.component',
           },
           {
-            label: 'Resource',
+            label: i18n.t('tables.alarmGeneral.resource'),
             value: 'alarm.resource',
           },
           {
-            label: 'Output',
+            label: i18n.t('tables.alarmGeneral.output'),
             value: 'alarm.output',
           },
           {
-            label: 'Extra details',
+            label: i18n.t('tables.alarmGeneral.extraDetails'),
             value: 'extra_details',
           },
           {
-            label: 'State',
+            label: i18n.t('tables.alarmGeneral.state'),
             value: 'alarm.state.val',
           },
           {
-            label: 'Status',
+            label: i18n.t('tables.alarmGeneral.status'),
             value: 'alarm.status.val',
           },
         ],
