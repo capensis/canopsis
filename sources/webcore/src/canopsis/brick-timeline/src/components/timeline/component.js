@@ -145,6 +145,8 @@ Ember.Application.initializer({
 
                             step.time = moment(date).format('HH:mm:ss');
 
+							step.a = __(step.a)
+
                             if (!(step._t in get(component, 'iconsAndColors'))) {
                                 console.warn('Unknown step "' + step._t + '" : skipping');
                                 continue;
