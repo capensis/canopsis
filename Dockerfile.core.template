@@ -86,9 +86,12 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
     mkdir -p tmp && \
-    sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
-    chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
+    sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf
 
+RUN mkdir -p ${CPS_HOME}/var/www
+COPY sources/webcore/src ${CPS_HOME}/var/www/src
+COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/canopsis-next
+RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp -R
 
 ##############
 # CORE IMAGE #
@@ -112,7 +115,6 @@ ADD docker/files/entrypoint.sh /
 
 # Configure OS
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
-RUN cat /etc/sudoers.d/canopsis
 
 # Template here
 # Check if every dependencies are required by canopsis-core
@@ -172,29 +174,7 @@ RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main contrib non-free" > 
 	apt-get clean
 
 
-RUN mkdir -p ${CPS_HOME}/var/www
-COPY sources/webcore/src ${CPS_HOME}/var/www/src
 COPY --from=canopsis_build /${CPS_HOME} /${CPS_HOME}
-COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/canopsis-next
-
-RUN echo "coucou"
-# Install required bricks
-## Delele it if #932 is closed
-RUN ls ./var/www
-RUN ls ./var/www/src/
-RUN ls ./var/www/src/canopsis
-RUN cd ./var/www/src/canopsis; \
-	curl -LsS https://git.canopsis.net/canopsis-ui-bricks/brick-timeline/-/archive/${TAG}/brick-timeline-${TAG}.tar.gz | tar zx; \
-	curl -LsS https://git.canopsis.net/canopsis-ui-bricks/brick-listalarm/-/archive/${TAG}/brick-listalarm-${TAG}.tar.gz | tar zx; \
-	curl -LsS https://git.canopsis.net/canopsis-ui-bricks/brick-querybuilder/-/archive/${TAG}/brick-querybuilder-${TAG}.tar.gz | tar zx; \
-	mv ./brick-timeline-${TAG} ./brick-timeline; \
-	mv ./brick-listalarm-${TAG} ./brick-listalarm; \
-	mv ./brick-querybuilder-${TAG} ./brick-querybuilder
-RUN ls ./var/www/src/canopsis
-
-
-
-RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R
 USER ${CPS_USER}:${CPS_GROUP}
 
 EXPOSE 8082
