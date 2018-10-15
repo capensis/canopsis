@@ -74,7 +74,7 @@ DEFAULT_RECORD_LAST_EVENT_DATE = False
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_FLAPPING_FREQ = 0
 DEFAULT_PERSISTANT_STEPS = 10
-DEFAULT_HARD_LIMIT = 2000
+DEFAULT_HARD_LIMIT = 2
 DEFAULT_STEALTHY_INTERVAL = 0
 DEFAULT_STEALTHY_SHOW_DURATION = 0
 DEFAULT_RESTORE_EVENT = False
@@ -552,7 +552,7 @@ class Alerts(object):
                 value[AlarmField.long_output_history.value] = []
 
             if len(value[AlarmField.long_output_history.value]) == 0:
-                message = "Initiale long_output set to {}.".format(
+                message = "Initial long_output set to {}.".format(
                     event["long_output"])
             else:
                 message = "Update long_output from {0} to {1}.".format(
