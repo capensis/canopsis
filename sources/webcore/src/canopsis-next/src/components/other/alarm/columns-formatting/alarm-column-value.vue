@@ -6,7 +6,7 @@
     :text="alarm | get(column.value, columnFilter, '')",
     :column="column.value",
     @textClicked="showPopup"
-    )
+    ) {{ popupData }}
 </template>
 
 <script>
@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     popupData() {
-      const popups = get(this.widget, 'popup', []);
+      const popups = get(this.widget.parameters, 'infoPopups', []);
 
       return popups.find(popup => popup.column === this.column.value);
     },

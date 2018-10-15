@@ -16,6 +16,7 @@ export default {
       fetchView: 'fetchItem',
       createView: 'create',
       updateView: 'update',
+      removeView: 'remove',
     }),
   },
 };

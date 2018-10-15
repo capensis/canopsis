@@ -1,5 +1,5 @@
 import moment from 'moment';
-
+import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
@@ -23,7 +23,40 @@ export function generateWidgetByType(type) {
         itemsPerPage: PAGINATION_LIMIT,
         moreInfoTemplate: '',
         alarmsStateFilter: {},
-        widgetColumns: [],
+        widgetColumns: [
+          {
+            label: i18n.t('tables.alarmGeneral.connector'),
+            value: 'alarm.connector',
+          },
+          {
+            label: i18n.t('tables.alarmGeneral.connectorName'),
+            value: 'alarm.connector_name',
+          },
+          {
+            label: i18n.t('tables.alarmGeneral.component'),
+            value: 'alarm.component',
+          },
+          {
+            label: i18n.t('tables.alarmGeneral.resource'),
+            value: 'alarm.resource',
+          },
+          {
+            label: i18n.t('tables.alarmGeneral.output'),
+            value: 'alarm.output',
+          },
+          {
+            label: i18n.t('tables.alarmGeneral.extraDetails'),
+            value: 'extra_details',
+          },
+          {
+            label: i18n.t('tables.alarmGeneral.state'),
+            value: 'alarm.state.val',
+          },
+          {
+            label: i18n.t('tables.alarmGeneral.status'),
+            value: 'alarm.status.val',
+          },
+        ],
         viewFilters: [],
         infoPopups: [],
         periodicRefresh: {
@@ -57,7 +90,15 @@ export function generateWidgetByType(type) {
         columnHG: 0,
       };
       break;
-
+    case WIDGET_TYPES.statsHistogram:
+      specialParameters = {
+        mfilter: {},
+        duration: '1m',
+        tstop: moment().unix(),
+        groups: [],
+        stats: {},
+      };
+      break;
     case WIDGET_TYPES.statsTable:
       specialParameters = {
         duration: '1m',
