@@ -18,5 +18,7 @@
   "system": "system",
   "Mark as done by ": "Mark as done by ",
   "update_output" : "Update output",
-  "unknown": "unknown"
+  "unknown": "unknown",
+  "assoc_ticket": "Assign ticket ",
+  "snooze_until": "Snoozed until "
 }
