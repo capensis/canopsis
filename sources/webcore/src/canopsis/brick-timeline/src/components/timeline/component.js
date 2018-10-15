@@ -169,7 +169,7 @@ Ember.Application.initializer({
 
                             if (step._t === 'snooze') {
                                 var message = new Date(step.val * 1000);
-                                step.m = __("snooze_until") + moment(message).format('HH:mm:ss');
+                                step.m = __("snooze_until") + moment(message).format('D MMM YYYY HH:mm:ss');
                             }
 
                             if (step._t === 'statecounter') {
