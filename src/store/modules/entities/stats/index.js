@@ -13,9 +13,7 @@ export default {
           Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
         }
 
-        const data = await request.post(API_ROUTES.stats, { ...params });
-
-        return data;
+        return await request.post(API_ROUTES.stats, { ...params });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
@@ -29,9 +27,7 @@ export default {
           Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
         }
 
-        const data = await request.post(`${API_ROUTES.stats}/evolution`, { ...params });
-
-        return data;
+        return await request.post(`${API_ROUTES.stats}/evolution`, { ...params });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
