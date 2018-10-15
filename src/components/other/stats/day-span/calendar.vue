@@ -1,6 +1,6 @@
 <template lang="pug">
   .ds-expand.ds-calendar-app
-    v-layout(row)
+    v-layout.pa-3(row)
       v-flex(md3)
         v-btn.ds-skinny-button(
         depressed,

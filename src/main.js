@@ -17,7 +17,6 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
-import DsDay from '@/components/other/stats/day-span/partial/day.vue';
 import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
 
@@ -25,8 +24,7 @@ Vue.use(filters);
 Vue.use(Vuetify);
 Vue.use(DaySpanVuetify, {
   methods: {
-    getPrefix: (calendarEvent, sameDay) =>
-      (sameDay.length === 1 ? sameDay[0].start.format('HH[h]') : `(${sameDay.length})`),
+    getPrefix: () => '',
   },
   data: {
     hourHeight: 80,
@@ -50,7 +48,6 @@ Vue.use(DaySpanVuetify, {
   },
 });
 
-Vue.component('dsDay', DsDay);
 Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 

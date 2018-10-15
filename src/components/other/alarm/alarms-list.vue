@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    v-layout.white(v-if="type === 'full'", row, wrap, justify-space-between, align-center)
+    v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
@@ -24,7 +24,7 @@
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
-        v-btn(icon, @click="showSettings")
+        v-btn(v-if="rowId", icon, @click="showSettings")
           v-icon settings
     v-layout.white(row, wrap)
       v-flex(xs12)
@@ -74,6 +74,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, SIDE_BARS } from '@/constants';
@@ -122,11 +123,6 @@ export default {
     entitiesAlarmMixin,
   ],
   props: {
-    type: {
-      type: String,
-      validator: value => ['full', 'short'].indexOf(value) !== -1,
-      default: 'full',
-    },
     widget: {
       type: Object,
       required: true,
@@ -153,12 +149,12 @@ export default {
       return [];
     },
     mainFilter() {
-      const { mainFilter } = this.userPreference.widget_preferences;
+      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
 
       return isEmpty(mainFilter) ? null : mainFilter;
     },
     viewFilters() {
-      const { viewFilters } = this.userPreference.widget_preferences;
+      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
 
       return isEmpty(viewFilters) ? [] : viewFilters;
     },
@@ -172,7 +168,8 @@ export default {
       this.showModal({
         name: MODALS.editLiveReporting,
         config: {
-          updateQuery: params => this.query = { ...this.query, ...params },
+          ...pick(this.query, ['interval', 'tstart', 'tstop']),
+          action: params => this.query = { ...this.query, ...params },
         },
       });
     },

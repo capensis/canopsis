@@ -8,8 +8,13 @@
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
-      ds-calendar(:events="events", @change="changeCalendar", @edit="editEvent")
-        v-card(slot="eventPopover", slot-scope="{ calendarEvent }")
+      ds-calendar(
+      :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
+      :events="events",
+      @change="changeCalendar",
+      @edit="editEvent"
+      )
+        v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
           v-card-text
             v-layout(
             v-for="(event, index) in calendarEvent.data.meta.events",
@@ -18,28 +23,31 @@
             wrap
             )
               v-flex(xs12)
-                strong {{ event.data.title }}
-                p {{ event.data.description }}
+                div.ds-calendar-event(
+                :style="{ backgroundColor: getStyleColor(details, event) }",
+                @click="editEvent(event)"
+                )
+                  strong {{ event.data.title }}
+                  p {{ event.data.description }}
 </template>
 
 <script>
-import moment from 'moment';
+import get from 'lodash/get';
 import omit from 'lodash/omit';
+import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
-import groupBy from 'lodash/groupBy';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Day, Schedule, Units } from 'dayspan';
+import { Calendar, Units } from 'dayspan';
 
-import { SIDE_BARS, STATS_CALENDAR_COLORS } from '@/constants';
+import { SIDE_BARS } from '@/constants';
+import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 
 import DsCalendar from './day-span/calendar.vue';
 
-const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
   components: { DsCalendar },
@@ -61,24 +69,22 @@ export default {
       calendar: Calendar.months(),
     };
   },
-  methods: {
-    ...entityMapActions({
-      fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore',
-    }),
+  computed: {
+    getStyleColor() {
+      return (details, calendarEvent) => {
+        const past = calendarEvent.schedule.end.isBefore(new Date());
 
+        return this.$dayspan.getStyleColor(details, calendarEvent, past);
+      };
+    },
+    hasMultipleFilters() {
+      return get(this.query, 'filters.length', 0) > 1;
+    },
+  },
+  methods: {
     ...alarmMapActions({
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
-
-    ...pbehaviorMapActions({
-      fetchPbehaviorsListByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
-    }),
-
-    editEvent(event) {
-      const routeData = this.$router.resolve({ name: 'alarms', query: { query: JSON.stringify(event.data.meta.query) } });
-
-      window.open(routeData.href, '_blank');
-    },
 
     showSettings() {
       this.showSideBar({
@@ -88,6 +94,21 @@ export default {
           rowId: this.rowId,
         },
       });
+    },
+
+    editEvent(event) {
+      const { alarmsStateFilter } = this.query;
+      const routeData = this.$router.resolve({
+        name: 'alarms',
+        query: {
+          ...pick(event.data.meta, ['tstart', 'tstop']),
+
+          alarmsStateFilter,
+          filter: JSON.stringify(event.data.meta.filter),
+        },
+      });
+
+      window.open(routeData.href, '_blank');
     },
 
     changeCalendar({ calendar }) {
@@ -101,6 +122,9 @@ export default {
 
     async fetchList() {
       const query = omit(this.query, ['filters', 'considerPbehaviors']);
+      const groupByValue = this.calendar.type === Units.MONTH ? 'day' : 'hour';
+
+      let events = [];
 
       this.pending = true;
 
@@ -113,7 +137,7 @@ export default {
           alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
         }
 
-        this.events = this.prepareAlarms(alarms, query);
+        events = convertAlarmsToEvents({ alarms, groupByValue });
       } else {
         const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
           params: {
@@ -123,98 +147,23 @@ export default {
         })));
 
 
-        let events = results.reduce((acc, result, index) => {
+        events = results.reduce((acc, result, index) => {
           let { alarms } = result;
 
           if (this.query.considerPbehaviors) {
             alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
           }
 
-          return acc.concat(this.prepareAlarms(alarms, query, this.query.filters[index]));
+          return acc.concat(convertAlarmsToEvents({ alarms, groupByValue, filter: this.query.filters[index] }));
         }, []);
 
         if (this.calendar.type !== Units.MONTH) {
-          const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf('hour').format());
-
-          events = Object.keys(groupedEvents).map((dateString) => {
-            const groupedEvent = groupedEvents[dateString];
-
-            if (groupedEvent.length > 1) {
-              const sum = groupedEvent.reduce((acc, event) => acc + event.data.meta.sum, 0);
-
-              return {
-                ...groupedEvent[0],
-
-                data: {
-                  title: sum,
-                  color: this.getColor(sum),
-                  meta: {
-                    type: 'single',
-                    hasPopover: true,
-                    events: groupedEvent,
-                  },
-                },
-              };
-            }
-
-            return groupedEvent[0];
-          });
+          events = convertEventsToGroupedEvents({ events });
         }
-
-        this.events = events;
       }
 
+      this.events = events;
       this.pending = false;
-    },
-
-    getColor(count) {
-      if (count > 50) {
-        return STATS_CALENDAR_COLORS.alarm.large;
-      }
-
-      if (count > 30) {
-        return STATS_CALENDAR_COLORS.alarm.medium;
-      }
-
-      return STATS_CALENDAR_COLORS.alarm.small;
-    },
-
-    prepareAlarms(alarms, query, filterObject = {}) {
-      const startOfBy = this.calendar.type === Units.MONTH ? 'day' : 'hour';
-      const endOfBy = this.calendar.type === Units.MONTH ? 'day' : 'hour';
-
-      const groupedAlarms = groupBy(alarms, alarm => moment.unix(alarm.t).startOf(startOfBy).format());
-
-      return Object.keys(groupedAlarms).map((dateString) => {
-        const dateObject = moment(dateString);
-        const startDay = new Day(dateObject);
-        const sum = groupedAlarms[dateString].length;
-
-        return {
-          data: {
-            title: sum,
-            description: filterObject.title,
-            color: this.getColor(sum),
-            meta: {
-              sum,
-              query: {
-                ...query,
-
-                filter: filterObject.filter,
-                tstart: dateObject.unix(),
-                tstop: dateObject.clone().endOf(endOfBy).unix(),
-              },
-              type: filterObject.title ? 'multiple' : 'single',
-            },
-          },
-          schedule: new Schedule({
-            on: startDay,
-            times: [startDay.asTime()],
-            duration: 1,
-            durationUnit: 'hours',
-          }),
-        };
-      });
     },
   },
 };
@@ -240,5 +189,81 @@ export default {
         margin-left: -16px;
       }
     }
+    .single {
+      & /deep/ .ds-calendar-event-menu {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%!important;
+        padding: 4px;
+
+        .ds-calendar-event {
+          padding-left: 0;
+          display: flex;
+          height: 100%;
+          width: 100%;
+          & > span {
+            margin: auto;
+            text-align: center;
+          }
+          .ds-ev-description {
+            display: none;
+          }
+        }
+      }
+
+      & /deep/ .ds-week {
+        .ds-ev-description {
+          display: none;
+        }
+      }
+    }
+
+    .multiple {
+      & /deep/ .ds-calendar-event-menu {
+        .ds-ev-title {
+          margin-right: 10px;
+        }
+      }
+    }
+
+    & /deep/ .ds-week {
+      .ds-ev-title {
+        display: block;
+      }
+    }
+
+    & /deep/ .ds-day {
+      position: relative;
+
+      .ds-dom {
+        border-radius: 12px;
+        background-color: white;
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+
+        &.ds-today-dom {
+          background-color: #4285f4;
+        }
+      }
+
+      .ds-day-header {
+        z-index: 10;
+      }
+    }
+  }
+
+  .ds-calendar-event {
+    color: white;
+    margin: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 0.5em;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 2px;
   }
 </style>

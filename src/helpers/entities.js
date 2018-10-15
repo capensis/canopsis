@@ -101,6 +101,17 @@ export function generateView() {
   };
 }
 
+export function generateUserPreferenceByWidgetAndUser(widget, user) {
+  return {
+    _id: `${widget._id}_${user.crecord_name}`,
+    widget_preferences: {},
+    crecord_name: user.crecord_name,
+    widget_id: widget._id,
+    widgetXtype: widget.type,
+    crecord_type: 'userpreferences',
+  };
+}
+
 export default {
   generateWidgetByType,
   generateRow,

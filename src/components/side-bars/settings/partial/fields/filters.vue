@@ -88,7 +88,7 @@ export default {
               this.$emit('input', {});
             }
 
-            this.$emit('update:filters', ...this.filters.filter((v, i) => index !== i));
+            this.$emit('update:filters', this.filters.filter((v, i) => index !== i));
           },
         },
       });

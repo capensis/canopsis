@@ -1,6 +1,5 @@
 import { normalize } from 'normalizr';
 
-import i18n from '@/i18n';
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
@@ -81,15 +80,6 @@ export default {
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
         console.warn(err);
-      }
-    },
-    async fetchListByEntityIdWithoutStore({ dispatch }, { id }) {
-      try {
-        return await request.get(`${API_ROUTES.pbehaviorById}/${id}`);
-      } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-
-        return [];
       }
     },
   },

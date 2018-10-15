@@ -297,3 +297,13 @@ export const STATS_CALENDAR_COLORS = {
     large: '#ff4344',
   },
 };
+
+export const LIVE_REPORTING_INTERVALS = {
+  today: 'today',
+  yesterday: 'yesterday',
+  last7Days: 'last7Days',
+  last30Days: 'last30Days',
+  thisMonth: 'thisMonth',
+  lastMonth: 'lastMonth',
+  custom: 'custom',
+};
