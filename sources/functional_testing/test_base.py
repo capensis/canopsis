@@ -25,6 +25,7 @@ import os
 
 import requests
 import unittest
+import logging
 
 from enum import Enum
 
@@ -91,8 +92,9 @@ class BaseApiTest(unittest.TestCase):
     """
 
     def _amqp_setup(self):
+        logger = logging.getLogger("test_base")
         self.amqp_conn = AmqpConnection(self.AMQP_URL)
-        self.amqp_pub = AmqpPublisher(self.amqp_conn)
+        self.amqp_pub = AmqpPublisher(self.amqp_conn, logger)
 
     def _authent_plain(self):
         """

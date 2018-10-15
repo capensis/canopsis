@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    modal(
+    modal-wrapper(
     v-for="(modal, key, index) in modals",
     :key="key",
     :modal="modal",
@@ -15,21 +15,23 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import Modal from './layouts/modal.vue';
+import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
 import CreateCancelEvent from './alarm/create-cancel-event.vue';
 import CreateChangeStateEvent from './alarm/create-change-state-event.vue';
 import CreateDeclareTicketEvent from './alarm/create-declare-ticket-event.vue';
 import CreateSnoozeEvent from './alarm/create-snooze-event.vue';
-import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import MoreInfos from './alarm/more-infos.vue';
 import CreatePbehavior from './pbehavior/create-pbehavior.vue';
 import PbehaviorList from './pbehavior/pbehavior-list.vue';
+import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
+import CreateView from './view/create-view.vue';
+import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
@@ -39,7 +41,7 @@ const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
  */
 export default {
   components: {
-    Modal,
+    ModalWrapper,
     CreateAckEvent,
     CreateAssociateTicketEvent,
     CreateCancelEvent,
@@ -54,6 +56,8 @@ export default {
     CreateEntity,
     CreateWatcher,
     CreateWidget,
+    CreateView,
+    CreateFilter,
     Watcher,
   },
   data() {

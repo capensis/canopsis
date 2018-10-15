@@ -1,27 +1,29 @@
 <template lang="pug">
   v-app#app
     v-layout
-      template(v-if="$route.name !== 'login'")
-        side-bar
-        top-bar
+      navigation(v-if="$route.name !== 'login'")
       v-content(v-if="!currentUserPending")
-        router-view
+        router-view(:key="$route.fullPath")
+    side-bars
     modals
     popups
 </template>
 
 
 <script>
-import TopBar from '@/components/layout/top-bar.vue';
-import SideBar from '@/components/layout/side-bar.vue';
+import Navigation from '@/components/layout/navigation/index.vue';
+import SideBars from '@/components/side-bars/index.vue';
 import Modals from '@/components/modals/index.vue';
 import Popups from '@/components/popups/index.vue';
+
 import authMixin from '@/mixins/auth';
+
+import '@/assets/styles/main.scss';
 
 export default {
   components: {
-    TopBar,
-    SideBar,
+    Navigation,
+    SideBars,
     Modals,
     Popups,
   },

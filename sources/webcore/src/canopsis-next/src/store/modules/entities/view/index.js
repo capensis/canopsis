@@ -1,8 +1,12 @@
-import { viewSchema } from '@/store/schemas';
+import { normalize } from 'normalizr';
+
+import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+import { viewSchema } from '@/store/schemas';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
-import widgetModule, { types as widgetTypes } from './widget';
+import groupModule from './group';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',
@@ -12,86 +16,52 @@ export const types = {
 export default {
   namespaced: true,
   modules: {
-    widget: widgetModule,
+    group: groupModule,
   },
   state: {
-    viewId: null,
-    pending: false,
+    activeViewId: null,
   },
   getters: {
     item: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.viewId),
+      rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
   },
   mutations: {
-    [types.FETCH_ITEM]: (state) => {
+    [types.FETCH_ITEM]: (state, viewId) => {
       state.pending = true;
+      state.activeViewId = viewId;
     },
     [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
-      state.viewId = viewId;
+      state.activeViewId = viewId;
       state.pending = false;
     },
   },
   actions: {
-    /**
-     * This action updates view id and updates widgets ids in the store
-     *
-     * @param {function} commit
-     * @param {Object} normalizedData
-     */
-    fetchedItem({ commit }, { normalizedData }) {
-      try {
-        commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
-
-        if (normalizedData.entities.widget) {
-          commit(
-            `view/widget/${widgetTypes.UPDATE_WIDGETS_IDS}`,
-            Object.keys(normalizedData.entities.widget),
-            { root: true },
-          );
-        }
-      } catch (err) {
-        console.error(err);
-      }
+    create(context, { data } = {}) {
+      return request.post(API_ROUTES.view, data);
     },
 
-    /**
-     * This action fetches view by id
-     *
-     * @param {function} commit
-     * @param {function} dispatch
-     * @param {string|number} id
-     */
     async fetchItem({ commit, dispatch }, { id }) {
       try {
-        commit(types.FETCH_ITEM);
-        const result = await dispatch('entities/fetch', {
+        commit(types.FETCH_ITEM, id);
+
+        const { normalizedData } = await dispatch('entities/fetch', {
           route: `${API_ROUTES.view}/${id}`,
           schema: viewSchema,
-          dataPreparer: d => d.data[0],
         }, { root: true });
 
-        await dispatch('fetchedItem', result);
+        commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
       } catch (err) {
         console.error(err);
       }
     },
 
-    /**
-     * This action updates view
-     *
-     * @param {function} dispatch
-     * @param {Object} view
-     */
-    async update({ dispatch }, { view }) {
+    async update({ commit }, { view }) {
       try {
-        const result = await dispatch('entities/update', {
-          route: `${API_ROUTES.view}/${view.id}`,
-          schema: viewSchema,
-          body: view,
-          dataPreparer: d => d.data[0],
-        }, { root: true });
+        await request.put(`${API_ROUTES.view}/${view._id}`, view);
 
-        await dispatch('fetchedItem', result);
+        const { entities } = normalize(view, viewSchema);
+
+        commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
       } catch (err) {
         console.warn(err);
       }

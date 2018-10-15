@@ -280,7 +280,7 @@ def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
         amqp_conn = get_default_amqp_connection()
 
     if amqp_pub is None:
-        amqp_pub = AmqpPublisher(amqp_conn)
+        amqp_pub = AmqpPublisher(amqp_conn, logger)
 
     # Declare WSGI application
     ws = WebServer(config=webconf, logger=logger, amqp_pub=amqp_pub).init_app()

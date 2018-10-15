@@ -15,13 +15,13 @@ export default {
     }),
 
     alarms() {
-      return this.getAlarmsListByWidgetId(this.widget.id);
+      return this.getAlarmsListByWidgetId(this.widget._id);
     },
     alarmsMeta() {
-      return this.getAlarmsMetaByWidgetId(this.widget.id);
+      return this.getAlarmsMetaByWidgetId(this.widget._id);
     },
     alarmsPending() {
-      return this.getAlarmsPendingByWidgetId(this.widget.id);
+      return this.getAlarmsPendingByWidgetId(this.widget._id);
     },
   },
   methods: {

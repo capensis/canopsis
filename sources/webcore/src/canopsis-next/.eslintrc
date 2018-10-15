@@ -8,6 +8,7 @@
     "vue"
   ],
   "rules": {
+    "default-case": "off",
     "max-len": ["error", { "code": 120, "ignoreStrings": true }],
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config", "acc"] }],
     "no-console": ["error", { "allow": ["warn", "error"] }],

@@ -4,19 +4,18 @@
     v-tab-item
       v-container
         filter-group(
-        @update:group="updateFilter",
         :group="filter",
         :possibleFields="possibleFields",
+        @update:group="updateFilter",
         isInitial
         )
     v-tab(@click="openAdvancedTab") {{$t('filterEditor.tabs.advancedEditor')}}
     v-tab-item
-      v-text-field(
+      v-textarea(
       v-model="requestString",
       :label="$t('filterEditor.tabs.advancedEditor')",
       @input="updateRequestString",
       rows="10",
-      textarea,
       )
       v-layout(justify-center)
         v-flex(xs10 md-6)
@@ -66,7 +65,11 @@ export default {
       const valueObject = JSON.parse(this.value);
 
       if (!isEmpty(valueObject)) {
-        filter = parseGroupToFilter(valueObject);
+        try {
+          filter = parseGroupToFilter(valueObject);
+        } catch (err) {
+          console.warn(err);
+        }
       }
     }
 
@@ -84,7 +87,9 @@ export default {
       try {
         return parseFilterToRequest(this.filter);
       } catch (err) {
-        return err.message;
+        console.error(err);
+
+        return {};
       }
     },
   },

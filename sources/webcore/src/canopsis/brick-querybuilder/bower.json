@@ -1,0 +1,27 @@
+{
+  "name": "brick-querybuilder",
+  "description": "Query builder editor",
+  "version": "0.0.1",
+  "authors": [
+	"Team Canopsis <maintainers@canopsis.org>"
+  ],
+  "main": "init.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "canopsis"
+  ],
+  "license": "AGPL-3.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    ".",
+    "test",
+    "tests"
+  ],
+  "envMode": "production",
+  "devDependencies": {"jQuery-QueryBuilder":"https://github.com/mistic100/jQuery-QueryBuilder.git#~2.3.0","jquery-editable-select":"https://git.canopsis.net/gpluchon/jquery-editable-select.git","querybuilder-editablekey":"https://git.canopsis.net/gpluchon/querybuilder-editablekey.git"}
+
+}

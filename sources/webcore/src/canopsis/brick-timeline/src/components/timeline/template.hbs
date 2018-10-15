@@ -1,0 +1,61 @@
+<div class="row" style="max-width:800px;">
+  <div class="col-md-12">
+    <!-- The time line -->
+    <ul class="timeline">
+
+      {{#each steps as |step|}}
+        {{#if step.showDate}}
+          <li class="time-label">
+
+            <span class="bg-red">
+              {{step.date}}
+            </span>
+          </li>
+        {{/if}}
+        <!-- /.timeline-label -->
+        <!-- timeline item -->
+        <li>
+          <i {{bind-attr class=":fa step.icon step.color"}}></i>
+
+          <div class="timeline-item">
+            <span class="time">
+              <i class="fa fa-clock-o"></i> {{step.time}}
+            </span>
+
+            <h3 class="timeline-header">
+              {{#if step.update_output}}
+              {{/if}}
+              {{#if step.state}}
+                <span {{bind-attr class=":brick-timeline-badge step.color"}}>  {{step.state}}
+                </span>
+              {{/if}}
+              {{#if step.status}}
+                <span class="brick-timeline-badge">  {{step.status}}
+                </span>
+              {{/if}}
+              <span ></span>
+              <span class="brick-timeline-title">{{step.name}}</span>
+              {{#if step.until}}
+                (until {{step.until}})
+              {{/if}}
+            </h3>
+
+            <div class="timeline-body">
+              {{{step.m}}}
+            </div>
+{{!--             <div class="timeline-footer">
+              <a class="btn btn-primary btn-xs">Read more</a>
+              <a class="btn btn-danger btn-xs">Delete</a>
+            </div> --}}
+          </div>
+        </li>
+        <!-- END timeline item -->
+      {{/each}}
+
+      <li>
+        <i class="fa fa-circle-o bg-gray"></i>
+      </li>
+    </ul>
+  </div>
+  <!-- /.col -->
+</div>

@@ -1,59 +1,180 @@
+import get from 'lodash/get';
+import { normalize, denormalize } from 'normalizr';
+
 import queryMixin from '@/mixins/query';
-import entitiesWidgetMixin from '@/mixins/entities/widget';
+import sideBarMixins from '@/mixins/side-bar/side-bar';
+import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+
+import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
+import { viewSchema, rowSchema, widgetSchema } from '@/store/schemas';
 
 import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
 
 export default {
   props: {
-    widget: {
+    config: {
       type: Object,
       required: true,
-    },
-    isNew: {
-      type: Boolean,
-      default: false,
     },
   },
   mixins: [
     queryMixin,
-    entitiesWidgetMixin,
+    sideBarMixins,
+    entitiesViewMixin,
     entitiesUserPreferenceMixin,
   ],
-  methods: {
-    async submit() {
-      const widget = {
-        ...this.widget,
-        ...this.settings.widget,
-      };
+  data() {
+    return {
+      normalizedEntities: {
+        [viewSchema.key]: {},
+        [rowSchema.key]: {},
+        [widgetSchema.key]: {},
+      },
+    };
+  },
+  computed: {
+    widget() {
+      return this.config.widget;
+    },
 
-      const userPreference = {
-        ...this.userPreference,
-        widget_preferences: {
-          ...this.userPreference.widget_preferences,
-          ...this.settings.widget_preferences,
-        },
-      };
+    localView() {
+      return denormalize(this.view._id, viewSchema, this.normalizedEntities);
+    },
 
-      const actions = [this.createUserPreference({ userPreference })];
-
-      if (this.isNew) {
-        actions.push(this.createWidget({ widget }));
-      } else {
-        actions.push(this.updateWidget({ widget }));
+    availableRows() {
+      if (!this.localView) {
+        return [];
       }
 
-      await Promise.all(actions);
+      return this.localView.rows.map((row) => {
+        const availableSize = row.widgets.reduce((acc, widget) => {
+          if (widget._id !== this.widget._id) {
+            acc.sm -= widget.size.sm;
+            acc.md -= widget.size.md;
+            acc.lg -= widget.size.lg;
+          }
 
-      await this.mergeQuery({
-        id: widget.id,
-        query: {
-          ...convertWidgetToQuery(widget),
-          ...convertUserPreferenceToQuery(userPreference),
-        },
+          return acc;
+        }, { sm: WIDGET_MAX_SIZE, md: WIDGET_MAX_SIZE, lg: WIDGET_MAX_SIZE });
+
+        return {
+          _id: row._id,
+          title: row.title,
+
+          availableSize,
+        };
+      }).filter(({ availableSize }) =>
+        availableSize.sm >= WIDGET_MIN_SIZE &&
+        availableSize.md >= WIDGET_MIN_SIZE &&
+        availableSize.lg >= WIDGET_MIN_SIZE);
+    },
+  },
+  mounted() {
+    const { entities } = normalize(this.view, viewSchema);
+
+    this.normalizedEntities = entities;
+  },
+  methods: {
+    updateNormalizedEntity(key, entity) {
+      this.$set(
+        this.normalizedEntities,
+        key,
+        { ...(this.normalizedEntities[key] || {}), [entity._id]: entity },
+      );
+    },
+
+    createRow(row) {
+      const view = this.normalizedEntities.view[this.view._id];
+
+      this.updateNormalizedEntity(rowSchema.key, row);
+      this.updateNormalizedEntity(viewSchema.key, {
+        ...view,
+        rows: [...view.rows, row._id],
       });
+    },
 
-      this.$emit('closeSettings');
+    isFormValid() {
+      if (this.$validator) {
+        return this.$validator.validateAll();
+      }
+
+      return true;
+    },
+
+    prepareSettingsWidget() {
+      return this.settings.widget;
+    },
+
+    async submit() {
+      const isFormValid = await this.isFormValid();
+
+      if (isFormValid) {
+        const widget = {
+          ...this.widget,
+          ...this.prepareSettingsWidget(),
+        };
+
+        const userPreference = {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            ...this.settings.widget_preferences,
+          },
+        };
+
+        const oldRowId = this.config.rowId;
+        const newRowId = this.settings.rowId;
+
+        /**
+         * Put widget into local normalized store
+         */
+        this.updateNormalizedEntity(widgetSchema.key, widget);
+
+        if (oldRowId !== newRowId) {
+          if (oldRowId) {
+            const oldRow = get(this.normalizedEntities, `${rowSchema.key}.${oldRowId}`, { widgets: [] });
+
+            /**
+             * Remove widget from old row in local normalized store
+             */
+            this.updateNormalizedEntity(rowSchema.key, {
+              ...oldRow,
+              widgets: oldRow.widgets.filter(oldWidget => oldWidget !== widget._id),
+            });
+          }
+
+          const newRow = get(this.normalizedEntities, `${rowSchema.key}.${newRowId}`, { widgets: [] });
+
+          /**
+           * Put widget widget into new row in local normalized store
+           */
+          this.updateNormalizedEntity(rowSchema.key, {
+            ...newRow,
+            widgets: [
+              ...newRow.widgets.filter(oldWidget => oldWidget !== widget._id),
+              widget._id,
+            ],
+          });
+        }
+
+        const view = denormalize(this.view._id, viewSchema, this.normalizedEntities);
+
+        await Promise.all([
+          this.createUserPreference({ userPreference }),
+          this.updateView({ view }),
+        ]);
+
+        this.mergeQuery({
+          id: widget._id,
+          query: {
+            ...convertWidgetToQuery(widget),
+            ...convertUserPreferenceToQuery(userPreference),
+          },
+        });
+
+        this.hideSideBar();
+      }
     },
   },
 };

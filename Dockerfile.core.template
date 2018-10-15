@@ -23,7 +23,6 @@ ENV https_proxy ${PROXY}
 ENV CPS_HOME /opt/canopsis
 
 ARG PROXY
-ARG TAG
 
 SHELL ["/bin/bash", "-c"]
 
@@ -91,14 +90,15 @@ RUN mkdir -p ./etc/init.d && \
 RUN mkdir -p ${CPS_HOME}/var/www
 COPY sources/webcore/src ${CPS_HOME}/var/www/src
 COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/canopsis-next
-RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp -R
+RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache -R ;\
+    chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/tmp -R ;\
 
 ##############
 # CORE IMAGE #
 ##############
 FROM debian:stretch-slim as core
-
-ARG TAG
 
 ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis

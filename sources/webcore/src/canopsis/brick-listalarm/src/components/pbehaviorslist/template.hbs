@@ -1,0 +1,46 @@
+<table class="table">
+    <thead>
+      <tr>
+        <th>name</th>
+        <th>author</th>
+        <th>connector</th>
+        <th>connector_name</th>
+        <th>isEnabled</th>
+        <th>begins</th>
+        <th>ends</th>
+        <th>type</th>
+        <th>reason</th>
+        <th>rrule</th>
+        <th>actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {{#each pbehavior in pbehaviors}}
+        <tr>
+          <td>{{pbehavior.name}}</td>
+          <td>{{pbehavior.author}}</td>
+          <td>{{pbehavior.connector}}</td>
+          <td>{{pbehavior.connector_name}}</td>
+          <td>{{pbehavior.enabled}}</td>
+          <td>{{dateFormat pbehavior.tstart}}</td>
+          <td>{{dateFormat pbehavior.tstop}}</td>
+          <td>{{pbehavior.type_}}</td>
+          <td>{{pbehavior.reason}}</td>
+          <td>{{pbehavior.rrule}}</td>
+          <td>
+              <div class="actions-parent" style="display:flex">
+                  <button {{action 'deletePbehavior' pbehavior}} type="button" class="btn btn-xs btn-default">
+                    <i class='fa fa-trash'></i>
+                  </button>  
+              </div>
+          </td>
+          
+        </tr>
+      {{/each}}
+
+    </tbody>
+  </table>
+
+
+

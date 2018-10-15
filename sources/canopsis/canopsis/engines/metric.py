@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 import os
 
 from canopsis.common import root_path
-from canopsis.common.influx import SECONDS, get_influxdb_client
+from canopsis.common.influx import SECONDS, InfluxDBClient
 from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array
 from canopsis.context_graph.manager import ContextGraph
@@ -41,7 +41,7 @@ class engine(Engine):
         super(engine, self).__init__(*args, **kwargs)
 
         self.context_manager = ContextGraph(self.logger)
-        self.influxdb_client = get_influxdb_client()
+        self.influxdb_client = InfluxDBClient.from_configuration(self.logger)
 
         cfg = Configuration.load(
             os.path.join(root_path, self.CONF_PATH), Ini

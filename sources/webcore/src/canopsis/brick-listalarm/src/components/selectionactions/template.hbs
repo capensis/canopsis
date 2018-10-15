@@ -1,0 +1,11 @@
+<div class="pull-left">
+	 {{#if availableAction}}
+	     {{tr 'Selection'}} :
+		 {{/if}}
+    {{#each action in availableAction}}
+      <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
+          <span {{bind-attr class=action.class}}></span>
+          {{tr action.caption}}
+      </button>
+    {{/each}}
+</div>
