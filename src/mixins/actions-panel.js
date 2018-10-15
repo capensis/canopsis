@@ -20,7 +20,7 @@ export default {
         name: MODALS.moreInfos,
         config: {
           ...this.modalConfig,
-          template: this.widget.more_infos_popup,
+          template: this.widget.parameters.moreInfoTemplate,
         },
       });
     },
