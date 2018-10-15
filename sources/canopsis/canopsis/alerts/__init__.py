@@ -1,0 +1,1 @@
+DEFAULT_FILTER_AUTHOR = 'system'

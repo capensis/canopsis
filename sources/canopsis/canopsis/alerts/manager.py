@@ -32,6 +32,7 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
+from canopsis.alerts import DEFAULT_FILTER_AUTHOR
 from canopsis.alarms.models import AlarmState
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
@@ -69,7 +70,6 @@ DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
 # if set to True, the last_event_date will be updated on each event that
 # triggers the alarm
 DEFAULT_RECORD_LAST_EVENT_DATE = False
-DEFAULT_FILTER_AUTHOR = 'system'
 
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_FLAPPING_FREQ = 0
@@ -637,7 +637,6 @@ class Alerts(object):
 
             value = self.check_hard_limit(value)
 
-
             self.update_current_alarm(alarm, value)
 
             if is_new_alarm:
@@ -647,7 +646,7 @@ class Alerts(object):
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
                               event=event,
-                              author=event.get(self.AUTHOR, None),
+                              author=event.get(self.AUTHOR, self.filter_author),
                               entity_id=entity_id)
         self.lock_manager.unlock(lock_id)
 
@@ -702,7 +701,7 @@ class Alerts(object):
         elif '.crop' in name:
             new_value = task(self, value, diff_counter)
         else:
-            self.logger.warning('Unkown task type for {}'.format(name))
+            self.logger.warning('Unknown task type for {}'.format(name))
             return
 
         # Some tasks return two values (a value and a status)
