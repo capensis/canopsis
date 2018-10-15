@@ -90,10 +90,7 @@ RUN mkdir -p ./etc/init.d && \
 RUN mkdir -p ${CPS_HOME}/var/www
 COPY sources/webcore/src ${CPS_HOME}/var/www/src
 COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/canopsis-next
-RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
-	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache -R ;\
-    chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
-	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/tmp -R ;\
+
 
 ##############
 # CORE IMAGE #
@@ -175,6 +172,10 @@ RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main contrib non-free" > 
 
 
 COPY --from=canopsis_build /${CPS_HOME} /${CPS_HOME}
+RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache -R ;\
+    chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/tmp -R
 USER ${CPS_USER}:${CPS_GROUP}
 
 EXPOSE 8082
