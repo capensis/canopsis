@@ -134,6 +134,7 @@ export default {
       alarmListSettings: 'Paramètres du bac à alarmes',
       contextTableSettings: 'Paramètres de l\'explorateur de contexte',
       weatherSettings: 'Paramètres de la météo des services',
+      statsHistogramSettings: 'Paramètres de l\'histogramme',
       statsTableSettings: 'Paramètres du tableau de stats',
     },
     widgetTitle: 'Titre du widget',
@@ -219,7 +220,7 @@ export default {
       editTitle: 'Editer un observateur',
       displayName: 'Nom',
     },
-    createView: {
+    view: {
       title: 'Créer une vue',
       noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
       fields: {
