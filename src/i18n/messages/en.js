@@ -426,6 +426,7 @@ export default {
       title: 'General',
       author: 'Author',
       connector: 'Connector',
+      connectorName: 'Connector name',
       component: 'Component',
       resource: 'Resource',
       output: 'Output',
