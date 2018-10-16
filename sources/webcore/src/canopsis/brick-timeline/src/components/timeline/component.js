@@ -145,11 +145,11 @@ Ember.Application.initializer({
 
                             step.time = moment(date).format('HH:mm:ss');
 
-							step.a = __(step.a)
+                            step.a = __(step.a)
 
-							if((step.m === null) || (step.m === "") || (step.m === undefined)) {
-								step.m = __("no_message")
-							}
+                            if((step.m === null) || (step.m === "") || (step.m === undefined)) {
+                                step.m = __("no_message")
+                            }
 
                             if (!(step._t in get(component, 'iconsAndColors'))) {
                                 console.warn('Unknown step "' + step._t + '" : skipping');
@@ -210,7 +210,7 @@ Ember.Application.initializer({
 
                             // add value to a ticket's message
                             if (step._t === 'assocticket') {
-								step.m = __("assoc_ticket") + step.val
+                                step.m = __("assoc_ticket") + step.val
                             }
 
                             steps.push(step);
