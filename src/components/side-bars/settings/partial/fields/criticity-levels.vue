@@ -5,7 +5,7 @@
       v-layout(wrap)
         v-flex(xs12)
           v-layout(align-center, justify-space-around)
-            div Minor :
+            div {{ $t('settings.colorsSelector.statsCriticity.minor') }} :
             v-flex(xs3)
               v-text-field(
                 type="number",
@@ -14,7 +14,7 @@
                 )
         v-flex(xs12)
           v-layout(align-center, justify-space-around)
-            div Major :
+            div {{ $t('settings.colorsSelector.statsCriticity.major') }} :
             v-flex(xs3)
               v-text-field(
               type="number",
@@ -23,7 +23,7 @@
               )
         v-flex(xs12)
           v-layout(align-center, justify-space-around)
-            div Critical :
+            div {{ $t('settings.colorsSelector.statsCriticity.critical') }} :
             v-flex(xs3)
               v-text-field(
               type="number",
