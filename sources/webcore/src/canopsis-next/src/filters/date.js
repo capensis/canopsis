@@ -2,12 +2,16 @@ import moment from 'moment';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-export default function (date, format, ignoreTodayChecker) {
+export default function (date, format, ignoreTodayChecker, defaultValue) {
   let momentFormat = format;
   let dateObject;
 
   if (DATETIME_FORMATS[format]) {
     momentFormat = DATETIME_FORMATS[format];
+  }
+
+  if (!date) {
+    return defaultValue || date;
   }
 
   // If it's unix timestamp in seconds

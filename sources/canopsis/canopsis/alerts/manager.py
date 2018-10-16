@@ -176,7 +176,7 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
-        amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
         event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,

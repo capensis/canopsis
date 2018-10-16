@@ -1,0 +1,68 @@
+{
+	"type": "object",
+	"metadata": {
+        "icon": "fa fa-bar-chart"
+    },
+	"categories": [{
+		"title": "General",
+		"keys":["title", "default_sort_column", "alarms_state_filter", "hide_resources"]
+	},{
+		"title": "Widget columns",
+		"keys":["widget_columns"]
+	},{
+		"title": "Info popup",
+		"keys":["popup"]
+	},{
+		"title": "Mixins",
+		"keys":["mixins"]
+	}],
+	"properties": {
+		"title":{
+			"type": "string"
+		},
+		"default_sort_column": {
+			"type": "object",
+			"role": "sortable"
+    	},
+		"alarms_state_filter": {
+			"type": "object",
+			"role": "radio",
+            "default": "opened"
+		},
+		"hide_resources": {
+			"type": "boolean",
+            "default": false
+		},
+		"user_filters": {
+			"type": "boolean",
+			"isUserPreference": true
+		},
+		"itemsPerPage": {
+			"type": "integer",
+			"isUserPreference": true
+		},
+    	"columns": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"reorderable": true,
+			"default": ["connector_name","component","resource","state","status","last_update_date", "extra_details"]
+    	},
+    	"widget_columns": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "stringpair"
+			},
+			"reorderable": true
+		},
+		"popup": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"role": "pair"
+			}
+		}
+	}
+}

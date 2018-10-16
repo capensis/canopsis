@@ -6,35 +6,81 @@
   absolute,
   app,
   )
-    v-expansion-panel(
-    class="panel",
+    v-expansion-panel.panel(
     expand,
     focusable,
     dark
     )
       v-expansion-panel-content(v-for="group in groups", :key="group._id").grey.darken-4.white--text
-        div(slot="header") {{ group.name }}
+        div(slot="header")
+          span {{ group.name }}
+          v-btn(
+          v-show="editing",
+          depressed,
+          small,
+          icon,
+          color="grey darken-3",
+          @click.stop="showEditGroupModal(group)"
+          )
+            v-icon(small) edit
         v-card.grey.darken-3.white--text(v-for="view in group.views", :key="view._id")
           v-card-text
-            router-link(:to="{ name: 'view', params: { id: view._id } }") {{ view.title }}
+            router-link(:to="{ name: 'view', params: { id: view._id } }")
+              span {{ view.title }}
+              v-btn(
+              v-show="editing",
+              depressed,
+              small,
+              icon,
+              color="grey darken-2",
+              @click.prevent="showEditViewModal(view)"
+              )
+                v-icon(small) edit
     v-divider
-    v-btn.addBtn(
-    fab,
-    dark,
-    fixed,
+    v-speed-dial(
+    v-model="fab"
     bottom,
     right,
-    color="green darken-4",
-    @click="showCreateViewModal"
+    direction="top"
+    transition="slide-y-reverse-transition"
     )
-      v-icon(dark) add
+      v-tooltip(slot="activator", left)
+        v-btn(slot="activator", v-model="fab", fab, dark, color="blue darken-2")
+          v-icon settings
+          v-icon close
+        span {{ $t('layout.sideBar.buttons.settings') }}
+      v-tooltip(left)
+        v-btn(
+        slot="activator",
+        v-model="editing",
+        fab,
+        dark,
+        small,
+        color="blue darken-4",
+        @click.stop="editModeToggle"
+        )
+          v-icon(dark) edit
+          v-icon(dark) done
+        span {{ $t('layout.sideBar.buttons.edit') }}
+      v-tooltip(left)
+        v-btn(
+        slot="activator",
+        fab,
+        dark,
+        small,
+        color="green darken-4",
+        @click.stop="showCreateViewModal"
+        )
+          v-icon(dark) add
+        span {{ $t('layout.sideBar.buttons.create') }}
 </template>
 
 <script>
 import { SIDE_BAR_WIDTH } from '@/config';
 import { MODALS } from '@/constants';
+
 import modalMixin from '@/mixins/modal/modal';
-import entitiesGroupMixin from '@/mixins/entities/group';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -44,7 +90,10 @@ import entitiesGroupMixin from '@/mixins/entities/group';
  * @event input#update
  */
 export default {
-  mixins: [modalMixin, entitiesGroupMixin],
+  mixins: [
+    modalMixin,
+    entitiesViewGroupMixin,
+  ],
   props: {
     value: {
       type: Boolean,
@@ -53,6 +102,8 @@ export default {
   },
   data() {
     return {
+      fab: false,
+      editing: false,
       width: SIDE_BAR_WIDTH,
     };
   },
@@ -72,6 +123,24 @@ export default {
     this.fetchGroupsList();
   },
   methods: {
+    editModeToggle() {
+      this.editing = !this.editing;
+    },
+
+    showEditGroupModal(group) {
+      this.showModal({
+        name: MODALS.createGroup,
+        config: { group },
+      });
+    },
+
+    showEditViewModal(view) {
+      this.showModal({
+        name: MODALS.createView,
+        config: { view },
+      });
+    },
+
     showCreateViewModal() {
       this.showModal({
         name: MODALS.createView,
@@ -82,6 +151,10 @@ export default {
 </script>
 
 <style scoped>
+  .v-speed-dial {
+    position: fixed;
+  }
+
   a {
     color: inherit;
     text-decoration: none;

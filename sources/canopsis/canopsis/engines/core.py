@@ -63,37 +63,6 @@ class Engine(object):
         self.logging_level = logging_level
         self.debug = logging_level == DEBUG
 
-        self.RUN = True
-
-        self.name = name
-
-        # Set parametrized Amqp for testing purposes
-        if camqp_custom is None:
-            self.Amqp = Amqp
-        else:
-            self.Amqp = camqp_custom
-
-        # self.amqp handles the consumption of events from rabbitmq. The
-        # publication of events from self.amqp is deprecated.
-        self.amqp = None
-        # self.beat_amqp_publisher and self.work_amqp_publisher handle the
-        # publication of events (they are separated to prevent sharing a
-        # channel between two threads).
-        self.beat_amqp_publisher = AmqpPublisher(get_default_amqp_connection())
-        self.work_amqp_publisher = AmqpPublisher(get_default_amqp_connection())
-
-        self.amqp_queue = "Engine_{0}".format(self.name)
-        self.routing_keys = routing_keys
-        self.exchange_name = exchange_name
-
-        self.perfdata_retention = 3600
-
-        self.next_amqp_queues = next_amqp_queues
-        self.get_amqp_queue = cycle(self.next_amqp_queues)
-
-        # Get from internal or external queue
-        self.next_balanced = next_balanced
-
         init = Init()
 
         self.logger = init.getLogger(name, logging_level=self.logging_level)
@@ -112,6 +81,39 @@ class Engine(object):
 
         # Log in file
         self.logger.addHandler(log_handler)
+
+        self.RUN = True
+
+        self.name = name
+
+        # Set parametrized Amqp for testing purposes
+        if camqp_custom is None:
+            self.Amqp = Amqp
+        else:
+            self.Amqp = camqp_custom
+
+        # self.amqp handles the consumption of events from rabbitmq. The
+        # publication of events from self.amqp is deprecated.
+        self.amqp = None
+        # self.beat_amqp_publisher and self.work_amqp_publisher handle the
+        # publication of events (they are separated to prevent sharing a
+        # channel between two threads).
+        self.beat_amqp_publisher = AmqpPublisher(
+            get_default_amqp_connection(), self.logger)
+        self.work_amqp_publisher = AmqpPublisher(
+            get_default_amqp_connection(), self.logger)
+
+        self.amqp_queue = "Engine_{0}".format(self.name)
+        self.routing_keys = routing_keys
+        self.exchange_name = exchange_name
+
+        self.perfdata_retention = 3600
+
+        self.next_amqp_queues = next_amqp_queues
+        self.get_amqp_queue = cycle(self.next_amqp_queues)
+
+        # Get from internal or external queue
+        self.next_balanced = next_balanced
 
         self.max_retries = max_retries
 

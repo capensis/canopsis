@@ -503,7 +503,7 @@ class TestManager(BaseTest):
         }
 
         for i, ts in enumerate(timestamps):
-            res = PBehaviorManager.check_active_pbehavior(ts[1], pbehavior)
+            res = self.pbm.check_active_pbehavior(ts[1], pbehavior)
             self.assertEqual(res, ts[0])
 
     def test_get_active_intervals(self):

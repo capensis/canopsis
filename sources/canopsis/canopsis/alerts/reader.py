@@ -118,11 +118,8 @@ class AlertsReader(object):
         alerts_storage = Middleware.get_middleware_by_uri(
             Alerts.ALERTS_STORAGE_URI
         )
-        pb_storage = Middleware.get_middleware_by_uri(
-            PBehaviorManager.PB_STORAGE_URI
-        )
 
-        pbm = PBehaviorManager(logger=logger, pb_storage=pb_storage)
+        pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
         return (logger, conf, alerts_storage, pbm)
 
@@ -482,12 +479,16 @@ class AlertsReader(object):
                 "$project": {
                     "pbehaviors": {
                         "$filter": {
-                            "input": "$pbehaviors",
                             "as": "pbh",
-                            "cond": [
-                                {"$gte": ["$pbehaviors.tstop", tnow]},
-                                {"$lte": ["$pbehaviors.tstart", tnow]}
-                            ]
+                            "input": "$pbehaviors",
+                            "cond":
+                            {
+                                "$and":
+                                [
+                                    {"$lte": ["$$pbh.tstart", tnow]},
+                                    {"$gte": ["$$pbh.tstop", tnow]}
+                                ]
+                            }
                         }
                     },
                     "_id": 1,
@@ -498,6 +499,7 @@ class AlertsReader(object):
                 }
             }
             pipeline.append(stage)
+
             pbh_filter = {"$match": {"pbehaviors": None}}
 
             if self.has_active_pbh is True:

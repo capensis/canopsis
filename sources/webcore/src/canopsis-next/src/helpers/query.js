@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
@@ -15,11 +16,11 @@ import { WIDGET_TYPES } from '@/constants';
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertDefaultSortColumnToQuery({ parameters }) {
-  const { sortColumn, sortOrder } = parameters;
+export function convertSortToQuery({ parameters }) {
+  const { sort } = parameters;
 
-  if (sortColumn && sortOrder) {
-    return { sortKey: sortColumn, sortDir: sortOrder };
+  if (sort && sort.column && sort.order) {
+    return { sortKey: sort.column, sortDir: sort.order };
   }
 
   return { sortKey: null, sortDir: null };
@@ -33,9 +34,8 @@ export function convertDefaultSortColumnToQuery({ parameters }) {
  */
 export function convertAlarmWidgetToQuery(widget) {
   const {
-    displayOpenAlarms,
-    displayResolvedAlarms,
-    columnTranslations,
+    alarmsStateFilter,
+    widgetColumns,
     itemsPerPage,
     mainFilter,
   } = widget.parameters;
@@ -49,19 +49,21 @@ export function convertAlarmWidgetToQuery(widget) {
     query.filter = mainFilter.filter;
   }
 
-  if (!isUndefined(displayOpenAlarms)) {
-    query.opened = displayOpenAlarms;
+  if (alarmsStateFilter) {
+    if (!isUndefined(alarmsStateFilter.opened)) {
+      query.opened = alarmsStateFilter.opened;
+    }
+
+    if (!isUndefined(alarmsStateFilter.resolved)) {
+      query.resolved = alarmsStateFilter.resolved;
+    }
   }
 
-  if (!isUndefined(displayResolvedAlarms)) {
-    query.resolved = displayResolvedAlarms;
+  if (widgetColumns) {
+    query.active_columns = widgetColumns.map(v => v.value);
   }
 
-  if (columnTranslations) {
-    query.active_columns = columnTranslations.map(v => v.value);
-  }
-
-  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
+  return { ...query, ...convertSortToQuery(widget) };
 }
 
 /**
@@ -77,7 +79,24 @@ export function convertContextWidgetToQuery(widget) {
     selectedTypes: get(widget, 'parameters.selectedTypes', []),
   };
 
-  return { ...query, ...convertDefaultSortColumnToQuery(widget) };
+  return { ...query, ...convertSortToQuery(widget) };
+}
+
+export function convertStatsHistogramToQuery(widget) {
+  return widget.parameters.groups.map(group =>
+    ({
+      ...omit(widget.parameters, ['groups', 'statsColors']),
+      mfilter: group.filter || {},
+    }));
+}
+
+/**
+ *
+ */
+export function convertStatsTableWidgetToQuery(widget) {
+  const query = { ...widget.parameters };
+
+  return query;
 }
 
 /**
@@ -91,9 +110,11 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const query = {
-    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
-  };
+  const query = {};
+
+  if (widgetPreferences.itemsPerPage) {
+    query.limit = widgetPreferences.itemsPerPage;
+  }
 
   if (!isEmpty(widgetPreferences.mainFilter)) {
     query.filter = widgetPreferences.mainFilter.filter;
@@ -148,6 +169,10 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.statsHistogram:
+      return convertStatsHistogramToQuery(widget);
+    case WIDGET_TYPES.statsTable:
+      return convertStatsTableWidgetToQuery(widget);
     default:
       return {};
   }

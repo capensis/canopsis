@@ -85,7 +85,6 @@ export default {
           route: `${API_ROUTES.weatherWatcher}/${requestFilter}`,
           schema: [watcherSchema],
           params,
-          dataPreparer: d => d,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {

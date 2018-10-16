@@ -31,7 +31,8 @@ from canopsis.common.mongo_store import MongoStore
 # import this module so tasks are registered in canopsis.tasks.core
 import canopsis.alerts.tasks as __alerts_tasks
 
-alerts_manager = Alerts(*Alerts.provide_default_basics())
+work_alerts_manager = Alerts(*Alerts.provide_default_basics())
+beat_alerts_manager = Alerts(*Alerts.provide_default_basics())
 alertsreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 
 mongo_store = MongoStore.get_default()
@@ -42,7 +43,7 @@ def event_processing(engine, event, alertsmgr=None, **kwargs):
     AMQP Event processing.
     """
     if alertsmgr is None:
-        alertsmgr = alerts_manager
+        alertsmgr = work_alerts_manager
 
     encoded_event = {}
 
@@ -71,7 +72,7 @@ def beat_processing(engine, alertsmgr=None, **kwargs):
     Scheduled process.
     """
     if alertsmgr is None:
-        alertsmgr = alerts_manager
+        alertsmgr = beat_alerts_manager
 
     alarms_service = AlarmService(
         alarms_adapter=AlarmAdapter(mongo_store),

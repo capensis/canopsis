@@ -1,14 +1,19 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="row in rows", :key="row._id")
-        h1 {{ row.title }}
-        div(v-for="widget in row.widgets")
-          h2 {{ widget.type }}
+      v-layout(v-for="row in rows", :key="row._id", row, wrap)
+        v-flex(xs12)
+          h2 {{ row.title }}
+        v-flex(
+        v-for="widget in row.widgets",
+        :key="`${widgetKeyPrefix}_${widget._id}`",
+        :class="getWidgetFlexClass(widget)"
+        )
+          h3 {{ widget.title }}
           component(
-          :is="widgetsMap[widget.type]",
+          :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
-          :key="`${widgetKeyPrefix}_${widget._id}`"
+          :rowId="row._id"
           )
     .fab
       v-btn(@click="refreshView", icon, color="info", dark, fab)
@@ -35,6 +40,8 @@ import uid from '@/helpers/uid';
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
+import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
+import StatsTable from '@/components/other/stats/stats-table.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -44,6 +51,8 @@ export default {
     AlarmsList,
     EntitiesList,
     Weather,
+    StatsHistogram,
+    StatsTable,
   },
   mixins: [
     modalMixin,
@@ -57,20 +66,29 @@ export default {
   },
   data() {
     return {
-      widgetsMap: {
+      widgetsComponentsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
         [WIDGET_TYPES.weather]: 'weather',
+        [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
+        [WIDGET_TYPES.statsTable]: 'stats-table',
       },
       widgetKeyPrefix: uid(),
     };
   },
   computed: {
+    getWidgetFlexClass() {
+      return widget => [
+        `xs${widget.size.sm}`,
+        `md${widget.size.md}`,
+        `lg${widget.size.lg}`,
+      ];
+    },
     rows() {
       return get(this.view, 'rows', []);
     },
   },
-  mounted() {
+  created() {
     this.fetchView({ id: this.id });
   },
   methods: {

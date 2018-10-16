@@ -8,7 +8,7 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
-export const DEFAULT_LOCALE = 'fr';
+export const DEFAULT_LOCALE = 'en';
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
@@ -38,4 +38,5 @@ export const API_ROUTES = {
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/api/v2/views',
   viewGroup: '/api/v2/views/groups',
+  stats: '/api/v2/stats',
 };

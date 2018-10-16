@@ -1,0 +1,24 @@
+
+.rule-operator-container .form-control {
+    width: 100px!important;
+}
+
+.rule-filter-container {
+    margin:0!important;
+}
+
+.rule-operator-container {
+    margin:0!important;
+}
+
+.es-list {
+    z-index:10000!important;
+}
+
+.es-list li.es-label{
+    font-weight: bold;
+}
+
+.es-list li.es-clickable {
+    padding-left: 16px;
+}

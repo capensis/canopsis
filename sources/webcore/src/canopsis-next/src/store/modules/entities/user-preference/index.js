@@ -21,12 +21,11 @@ export default {
 
       if (!userPreference) {
         return {
-          id,
           _id: id,
           widget_preferences: {},
           crecord_name: currentUser.crecord_name,
           widget_id: widget._id,
-          widgetXtype: widget.xtype,
+          widgetXtype: widget.type,
           crecord_type: 'userpreferences',
         };
       }

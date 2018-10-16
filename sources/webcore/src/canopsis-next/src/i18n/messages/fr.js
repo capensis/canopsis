@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -18,6 +18,11 @@ export default {
     date: 'Date',
     comment: 'Commentaire',
     end: 'Fin',
+    recursive: 'Recursif',
+    states: 'Etats',
+    sla: 'Sla',
+    authors: 'Auteurs',
+    trend: 'Tendance',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     logout: 'Se déconnecter',
@@ -129,6 +134,8 @@ export default {
       alarmListSettings: 'Paramètres du bac à alarmes',
       contextTableSettings: 'Paramètres de l\'explorateur de contexte',
       weatherSettings: 'Paramètres de la météo des services',
+      statsHistogramSettings: 'Paramètres de l\'histogramme',
+      statsTableSettings: 'Paramètres du tableau de stats',
     },
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
@@ -141,12 +148,32 @@ export default {
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
+    filterEditor: 'Editeur de filtre',
+    duration: 'Durée',
+    tstop: 'Date de fin',
+    statsSelect: 'Sélecteur de stats',
     selectAFilter: 'Sélectionner un filtre',
+    statsNumbers: {
+      title: 'Cellule de stats',
+      yesNoMode: 'Mode Oui/Non',
+    },
     infoPopup: {
       title: 'Info popup',
       fields: {
         column: 'Column',
         template: 'Template',
+      },
+    },
+    rowGridSize: {
+      title: 'Taille du widget',
+      noData: 'Aucune ligne correspondante. Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
+      fields: {
+        row: 'Ligne',
+        size: {
+          sm: 'Colonnes SM',
+          md: 'Colonnes MD',
+          lg: 'Colonnes LG',
+        },
       },
     },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
@@ -193,7 +220,7 @@ export default {
       editTitle: 'Editer un observateur',
       displayName: 'Nom',
     },
-    createView: {
+    view: {
       title: 'Créer une vue',
       noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
       fields: {
@@ -453,5 +480,20 @@ export default {
   },
   validator: {
     unique: 'Le champ doit être unique',
+  },
+  stats: {
+    types: {
+      [STATS_TYPES.alarmsCreated.value]: 'Alarmes créées',
+      [STATS_TYPES.alarmsResolved.value]: 'Alarmes résolues',
+      [STATS_TYPES.alarmsCanceled.value]: 'Alarmes annulées',
+      [STATS_TYPES.ackTimeSla.value]: 'Taux d\'Ack conforme Sla',
+      [STATS_TYPES.resolveTimeSla.value]: 'Taux de résolution conforme Sla',
+      [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
+      [STATS_TYPES.stateRate.value]: 'Taux à cet état',
+      [STATS_TYPES.mtbf.value]: 'Temps moyen entre pannes',
+      [STATS_TYPES.currentState.value]: 'Etat courant',
+      [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
+      [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
+    },
   },
 };

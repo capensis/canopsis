@@ -4,10 +4,12 @@
     v-container
       v-slider(
       :value="value",
-      max=12,
+      :max="max"
+      :min="min"
+      ticks="always"
+      @input="$emit('input', $event)"
       always-dirty,
       thumb-label,
-      @input="$emit('input', $event)"
       )
 </template>
 
@@ -20,6 +22,14 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    max: {
+      type: Number,
+      default: 12,
+    },
+    min: {
+      type: Number,
+      default: 0,
     },
   },
 };

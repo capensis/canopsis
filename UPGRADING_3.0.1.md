@@ -1,23 +1,20 @@
-# Mise à jour Canopsis 3.0.1
+# Upgrading to Canopsis 3.0.1
 
-## Mongo
+## Removed engines
 
-Avec le retrait de l'ancien code lié au linklist, il faut supprimer toutes les tâches de ce type qui ont paramétrées.
+The following Canopsis engines need to be removed (through systemd or Docker):
+- `linklist`
+- `selector`
+- `perfdata`
+- `context`
 
-Dans la console mongo, fait un :
+*Warning:* `context` is removed, but `context-graph` MUST be kept.
+
+You also need to remove any existing `linklist` task from MongoDB:
 ```bash
-db.getCollection('object').remove({'task':'tasklinklist'})
+mongodb:PRIMARY> db.getCollection('object').remove({'task':'tasklinklist'})
 ```
 
+## Added engines
 
-## Changements dans les moteurs
-
-Les moteurs suivants ont été supprimés et doivent être désactivés via systemd ou docker après la mise à jour : 
-
-- linklist
-- selector
-- perfdata
-- context (attention, context-graph est maintenu)
-
-Le moteur `metric` remplace le moteur perfdata.
-
+`perfdata` MUST be replaced by the `metric` engine. Enable it through systemd or Docker.

@@ -21,7 +21,10 @@
 </template>
 
 <script>
+import formMixin from '@/mixins/form';
+
 export default {
+  mixins: [formMixin],
   props: {
     value: {
       type: Object,
@@ -32,11 +35,6 @@ export default {
     return {
       isEnabled: false,
     };
-  },
-  methods: {
-    updateField(fieldKey, value) {
-      this.$emit('input', { ...this.value, [fieldKey]: value });
-    },
   },
 };
 </script>

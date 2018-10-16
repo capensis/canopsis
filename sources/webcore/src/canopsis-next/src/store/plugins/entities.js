@@ -1,8 +1,8 @@
 import Vue from 'vue';
+import get from 'lodash/get';
 import omit from 'lodash/omit';
 import uniq from 'lodash/uniq';
 import mergeWith from 'lodash/mergeWith';
-import get from 'lodash/get';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
@@ -95,8 +95,8 @@ const entitiesModule = {
       {
         route,
         schema,
-        dataPreparer,
         body,
+        dataPreparer = d => d,
         params = {},
         method = 'GET',
         mutationType = internalTypes.ENTITIES_UPDATE,
