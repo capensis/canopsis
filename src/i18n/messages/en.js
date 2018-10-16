@@ -157,6 +157,7 @@ export default {
     filterEditor: 'Filter editor',
     duration: 'Duration',
     tstop: 'End date',
+    statName: 'Stat name',
     statsSelect: 'Stats select',
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',

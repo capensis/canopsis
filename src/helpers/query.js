@@ -109,7 +109,7 @@ export function convertStatsTableWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsNumberWidgetToQuery(widget) {
-  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode']);
+  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']);
   query.trend = true;
   return query;
 }

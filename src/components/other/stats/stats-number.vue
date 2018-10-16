@@ -3,7 +3,7 @@
     v-card
       v-card-title
         v-layout(justify-center)
-          h2 {{ statName }}
+          h2 {{ widget.parameters.stat.title }}
         v-btn(icon, @click="showSettings")
           v-icon settings
       v-data-iterator(
@@ -62,7 +62,6 @@ export default {
   data() {
     return {
       stats: [],
-      statName: 'Test',
     };
   },
   computed: {

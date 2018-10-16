@@ -2,33 +2,23 @@
   v-list-group
     v-list-tile(slot="activator") {{$t('settings.statsSelect')}}
     v-container
-      v-card.mb-2
-        v-container.pt-0(fluid)
-          v-select(
-            v-model="form.stat"
-            :items="statsTypes",
-            @change="statChange",
-          )
-          v-switch(:label="$t('common.trend')", v-model="form.trend", @change="trendChange")
+      v-btn(@click="openAddStatModal") Stat selector modal
+      v-card(v-if="value.stat")
+        v-card-title.green.darken-4.white--text {{ value.title }}
+        v-card-text {{ value.stat.value }}
 </template>
 
 <script>
-import { STATS_TYPES } from '@/constants';
+import modalMixin from '@/mixins/modal/modal';
+import { STATS_TYPES, MODALS } from '@/constants';
 
 export default {
+  mixins: [modalMixin],
   props: {
     value: {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      form: {
-        stat: 'alarms_created',
-        trend: 'true',
-      },
-    };
   },
   computed: {
     /**
@@ -39,15 +29,14 @@ export default {
         .map(item => ({ value: item.value, text: this.$t(`stats.types.${item.value}`), options: item.options }));
     },
   },
-  mounted() {
-    this.form = { ...this.value };
-  },
   methods: {
-    statChange(event) {
-      this.$emit('input', { ...this.form, stat: event });
-    },
-    trendChange(event) {
-      this.$emit('input', { ...this.form, trend: event });
+    openAddStatModal() {
+      this.showModal({
+        name: MODALS.addStat,
+        config: {
+          action: stat => this.$emit('input', stat),
+        },
+      });
     },
   },
 };

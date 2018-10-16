@@ -6,7 +6,7 @@ export default {
   methods: {
     ...mapActions({
       fetchStatsListWithoutStore: 'fetchListWithoutStore',
-      fetchStatValuesWithoutStore: 'fetchStatValuesWithoutStore',
+      fetchStatValuesWithoutStore: 'fetchItemValuesWithoutStore',
     }),
   },
 };

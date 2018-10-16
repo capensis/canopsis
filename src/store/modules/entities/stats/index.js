@@ -8,9 +8,9 @@ import { API_ROUTES } from '@/config';
 export default {
   namespaced: true,
   actions: {
-    async fetchStatValuesWithoutStore({ dispatch }, { params }) {
+    async fetchItemValuesWithoutStore({ dispatch }, { params }) {
       try {
-        const data = await request.post(`${API_ROUTES.stats}/${params.stat.stat}`, omit(params, ['stat']));
+        const data = await request.post(`${API_ROUTES.stats}/${params.stat.stat.value}`, { ...omit(params, ['stat']), parameters: params.stat.parameters });
 
         return data.values;
       } catch (err) {
