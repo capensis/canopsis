@@ -113,8 +113,6 @@ class Env2Cfg(object):
         if pu.query != '':
             replica_set = parse_qs(pu.query).get("replicaSet", '')[0]
 
-
-        print("replica_set {}".format(replica_set))
         pms = pjoin(root_path, 'etc', 'common', 'mongo_store.conf')
         pcs = pjoin(root_path, 'etc', 'cstorage.conf')
         ps = pjoin(root_path, 'etc', 'mongo', 'storage.conf')
