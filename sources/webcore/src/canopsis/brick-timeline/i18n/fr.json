@@ -20,5 +20,6 @@
   "update_output" : "Sortie mise à jour",
   "unknown": "inconnu",
   "assoc_ticket": "Assignation du ticket ",
-  "snooze_until": "Reportée jusque "
+  "snooze_until": "Reportée jusque ",
+  "no_message": "Pas de message saisie"
 }

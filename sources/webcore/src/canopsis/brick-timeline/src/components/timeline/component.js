@@ -147,6 +147,10 @@ Ember.Application.initializer({
 
 							step.a = __(step.a)
 
+							if((step.m === null) || (step.m === "") || (step.m === undefined)) {
+								step.m = __("no_message")
+							}
+
                             if (!(step._t in get(component, 'iconsAndColors'))) {
                                 console.warn('Unknown step "' + step._t + '" : skipping');
                                 continue;

@@ -20,5 +20,6 @@
   "update_output" : "Update output",
   "unknown": "unknown",
   "assoc_ticket": "Assign ticket ",
-  "snooze_until": "Snoozed until "
+  "snooze_until": "Snoozed until ",
+  "no_message": "No message "
 }
