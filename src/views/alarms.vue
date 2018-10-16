@@ -47,7 +47,7 @@ export default {
   },
 
   created() {
-    const query = pick(['tstart', 'tstop', 'opened', 'resolved']);
+    const query = pick(['tstart', 'tstop']);
 
     if (query.tstart || query.tstop) {
       query.interval = LIVE_REPORTING_INTERVALS.custom;
