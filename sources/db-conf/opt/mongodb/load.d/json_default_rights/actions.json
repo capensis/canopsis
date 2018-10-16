@@ -557,5 +557,5 @@
         "crecord_name": "showview_view_notifications",
         "crecord_type" : "action",
         "desc": "Access to view.notifications menu"
-    },
+    }
 ]
