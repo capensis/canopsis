@@ -8,7 +8,9 @@ arch="amd64"
 deb_version="${CANOPSIS_PACKAGE_TAG}"
 deb_release="${CANOPSIS_PACKAGE_REL}"
 deb_name="canopsis-core"
-deb_path="/root/${deb_name}-${CANOPSIS_PACKAGE_TAG}"
+deb_path="/tmp/${deb_name}-${CANOPSIS_PACKAGE_TAG}"
+
+mkdir ${deb_path}/DEBIAN -p
 
 cat > ${deb_path}/DEBIAN/control << EOF
 Package: ${deb_name}
@@ -35,11 +37,10 @@ chown -R canopsis:canopsis /opt/canopsis/var/cache
 chown -R canopsis:canopsis /opt/canopsis/tmp
 EOF
 
-find /opt/canopsis/etc/ -type f > ${deb_path}/DEBIAN/conffiles
-find /opt/canopsis/opt/ -type f >> ${deb_path}/DEBIAN/conffiles
+find /opt/canopsis/{etc/,opt/} -type f > ${deb_path}/DEBIAN/conffile
 
 chmod +x ${deb_path}/DEBIAN/*inst
 
-dpkg-deb -b ${deb_path}/ /packages/${deb_name}-${deb_version}-${deb_release}.${arch}.stretch.deb
+dpkg-deb --verbose -b ${deb_path}/ /build/${deb_name}-${deb_version}-${deb_release}.${arch}.stretch.deb
 
 chown -R ${FIX_OWNERSHIP} /packages/*

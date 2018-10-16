@@ -30,3 +30,5 @@ packages
 sources/webcore/src/canopsis-next/dist
 
 env-release.sh
+
+*.deb
