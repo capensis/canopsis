@@ -1,0 +1,61 @@
+<template lang="pug">
+  v-list-group
+    v-list-tile(slot="activator") {{$t('settings.criticityLevels')}}
+    v-container
+      v-layout(wrap)
+        v-flex(xs12)
+          v-layout(align-center, justify-space-around)
+            div Minor :
+            v-flex(xs3)
+              v-text-field(
+              type="number",
+              :value="value.minor",
+              data-vv-name="minor",
+              v-validate="'required|min_value:0'",
+              :error-messages="errors.collect('minor')",
+              @input="updateField('minor', parseInt($event, 10))",
+              )
+        v-flex(xs12)
+          v-layout(align-center, justify-space-around)
+            div Major :
+            v-flex(xs3)
+              v-text-field(
+              type="number",
+              :value="value.major",
+              data-vv-name="major",
+              v-validate="`required|min_value:${value.minor + 1}`",
+              :error-messages="errors.collect('major')",
+              @input="updateField('major', parseInt($event, 10))"
+              )
+        v-flex(xs12)
+          v-layout(align-center, justify-space-around)
+            div Critical :
+            v-flex(xs3)
+              v-text-field(
+              type="number",
+              :value="value.critical",
+              data-vv-name="critical",
+              v-validate="`required|min_value:${value.major + 1}`",
+              :error-messages="errors.collect('critical')",
+              @input="updateField('critical', parseInt($event, 10))"
+              )
+</template>
+
+<script>
+import formMixin from '@/mixins/form';
+
+export default {
+  inject: ['$validator'],
+  mixins: [formMixin],
+  props: {
+    value: {
+      type: Object,
+      default: () => ({
+        minor: 20,
+        major: 30,
+        critical: 40,
+      }),
+    },
+  },
+};
+</script>

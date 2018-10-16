@@ -113,6 +113,11 @@ export function generateWidgetByType(type) {
         filters: [],
         alarmsStateFilter: {},
         considerPbehaviors: false,
+        criticityLevels: {
+          minor: 20,
+          major: 30,
+          critical: 40,
+        },
       };
       break;
   }
