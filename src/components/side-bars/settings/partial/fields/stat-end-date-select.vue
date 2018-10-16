@@ -11,7 +11,7 @@
           v-text-field(slot="activator", :value="dateObject | date('MM/YYYY', true)", readonly)
           v-date-picker(@input="updateValue", :allowed-dates="allowedDates")
       template(v-else)
-        date-time-picker(:value="dateObject", @input="updateValue")
+        date-time-picker(:value="dateObject", @input="updateValue", roundHours)
 </template>
 
 <script>
