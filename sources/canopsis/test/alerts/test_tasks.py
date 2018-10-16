@@ -304,7 +304,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.state.value] is not None)
         self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.state.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.state.value]['a'], DEFAULT_FILTER_AUTHOR)
         self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.state.value]['val'], state)
         self.assertTrue(
@@ -346,7 +346,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.status.value] is not None)
         self.assertEqual(alarm[AlarmField.status.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.status.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.status.value]['a'], DEFAULT_FILTER_AUTHOR)
         self.assertEqual(alarm[AlarmField.status.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.status.value]['val'], statusval)
         self.assertTrue(
