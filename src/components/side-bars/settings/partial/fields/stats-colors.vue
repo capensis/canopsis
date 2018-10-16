@@ -35,7 +35,7 @@ export default {
       this.showModal({
         name: MODALS.colorPicker,
         config: {
-          title: 'modals.colorPicker.title',
+          title: this.$t('modals.colorPicker.title'),
           action: color => this.$emit('input', set(newVal, key, color)),
         },
       });

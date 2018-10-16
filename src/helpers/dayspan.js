@@ -2,38 +2,20 @@ import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import { Day, Schedule } from 'dayspan';
 
-import { STATS_CALENDAR_COLORS } from '@/constants';
-
-/**
- * Get calendar event color by alarms count
- *
- * @param count
- * @returns {string}
- */
-export function getEventColor(count) {
-  if (count > 50) {
-    return STATS_CALENDAR_COLORS.alarm.large;
-  }
-
-  if (count > 30) {
-    return STATS_CALENDAR_COLORS.alarm.medium;
-  }
-
-  return STATS_CALENDAR_COLORS.alarm.small;
-}
-
 /**
  * Convert alarms to calendar events
  *
- * @param alarms
- * @param groupByValue
- * @param [filter={}]
+ * @param {Array} alarms
+ * @param {string} groupByValue
+ * @param {Object} [filter={}]
+ * @param {Function} [getColor=() => {}]
  * @returns []
  */
 export function convertAlarmsToEvents({
   alarms,
   groupByValue,
   filter = {},
+  getColor = () => '#fff',
 }) {
   const groupedAlarms = groupBy(alarms, alarm => moment.unix(alarm.t).startOf(groupByValue).format());
 
@@ -46,7 +28,7 @@ export function convertAlarmsToEvents({
       data: {
         title: sum,
         description: filter.title,
-        color: getEventColor(sum),
+        color: getColor(sum),
         meta: {
           sum,
           filter,
@@ -67,11 +49,12 @@ export function convertAlarmsToEvents({
 /**
  * Convert calendar events to grouped calendar events
  *
- * @param alarms
- * @param [groupByValue='hour']
+ * @param {Array} alarms
+ * @param {string} [groupByValue='hour']
+ * @param {Function} [getColor=() => {}]
  * @returns []
  */
-export function convertEventsToGroupedEvents({ events, groupByValue = 'hour' }) {
+export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', getColor = () => '#fff' }) {
   const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf(groupByValue).format());
 
   return Object.keys(groupedEvents).map((dateString) => {
@@ -85,7 +68,7 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour' }) 
 
         data: {
           title: sum,
-          color: getEventColor(sum),
+          color: getColor(sum),
           meta: {
             sum,
             hasPopover: true,
@@ -100,7 +83,6 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour' }) 
 }
 
 export default {
-  getEventColor,
   convertAlarmsToEvents,
   convertEventsToGroupedEvents,
 };

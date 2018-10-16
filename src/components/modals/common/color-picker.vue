@@ -2,7 +2,7 @@
   v-card
     v-card-title.green.darken-4.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ $t(config.title) }}
+        h2 {{ config.title }}
         v-btn(@click="hideModal", icon, small)
           v-icon.white--text close
     v-card-text
@@ -29,9 +29,14 @@ export default {
     modalInnerMixin,
   ],
   data() {
-    return {
-      color: {},
-    };
+    const { config } = this.modal;
+    const data = { color: {} };
+
+    if (config.color) {
+      data.color = { hex: config.color };
+    }
+
+    return data;
   },
   methods: {
     submit() {

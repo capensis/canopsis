@@ -14,9 +14,14 @@
       v-divider
       field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
       v-divider
-      field-switcher(v-model="settings.widget.parameters.considerPbehaviors", title="Consider pbehaviors")
+      field-switcher(
+      v-model="settings.widget.parameters.considerPbehaviors",
+      :title="$t('settings.considerPbehaviors.title')"
+      )
       v-divider
       field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
+      v-divider
+      field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
@@ -33,6 +38,7 @@ import FieldOpenedResolvedFilter from '../partial/fields/opened-resolved-filter.
 import FieldFilters from '../partial/fields/filters.vue';
 import FieldSwitcher from '../partial/fields/switcher.vue';
 import FieldCriticityLevels from '../partial/fields/criticity-levels.vue';
+import FieldLevelsColorsSelector from '../partial/fields/levels-colors-selector.vue';
 
 /**
  * Component to regroup the entities list settings fields
@@ -49,6 +55,7 @@ export default {
     FieldFilters,
     FieldSwitcher,
     FieldCriticityLevels,
+    FieldLevelsColorsSelector,
   },
   mixins: [widgetSettingsMixin],
   data() {

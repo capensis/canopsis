@@ -65,7 +65,8 @@ export default {
   data() {
     return {
       pending: true,
-      events: [],
+      alarms: [],
+      alarmsCollections: [],
       calendar: Calendar.months(),
     };
   },
@@ -77,8 +78,61 @@ export default {
         return this.$dayspan.getStyleColor(details, calendarEvent, past);
       };
     },
+
+    getCalendarEventColor() {
+      return (count) => {
+        const { criticityLevels, criticityLevelsColors } = this.widget.parameters;
+
+        if (count >= criticityLevels.critical) {
+          return criticityLevelsColors.critical;
+        }
+
+        if (count >= criticityLevels.major) {
+          return criticityLevelsColors.major;
+        }
+
+        if (count >= criticityLevels.minor) {
+          return criticityLevelsColors.minor;
+        }
+
+        return criticityLevelsColors.ok;
+      };
+    },
+
+    events() {
+      const groupByValue = this.calendar.type === Units.MONTH ? 'day' : 'hour';
+
+      if (!this.hasFilters) {
+        return convertAlarmsToEvents({
+          groupByValue,
+          alarms: this.alarms,
+          getColor: this.getCalendarEventColor,
+        });
+      }
+
+      const events = this.alarmsCollections.reduce((acc, alarms, index) => acc.concat(convertAlarmsToEvents({
+        alarms,
+        groupByValue,
+        filter: this.query.filters[index],
+        getColor: this.getCalendarEventColor,
+      })), []);
+
+      if (this.calendar.type !== Units.MONTH) {
+        return convertEventsToGroupedEvents({
+          events,
+          getColor: this.getCalendarEventColor,
+        });
+      }
+
+      return events;
+    },
+
     hasMultipleFilters() {
       return get(this.query, 'filters.length', 0) > 1;
+    },
+
+    hasFilters() {
+      return get(this.query, 'filters.length') > 0;
     },
   },
   methods: {
@@ -121,9 +175,6 @@ export default {
 
     async fetchList() {
       const query = omit(this.query, ['filters', 'considerPbehaviors']);
-      const groupByValue = this.calendar.type === Units.MONTH ? 'day' : 'hour';
-
-      let events = [];
 
       this.pending = true;
 
@@ -136,7 +187,8 @@ export default {
           alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
         }
 
-        events = convertAlarmsToEvents({ alarms, groupByValue });
+        this.alarms = alarms;
+        this.alarmsCollections = [];
       } else {
         const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
           params: {
@@ -146,22 +198,17 @@ export default {
         })));
 
 
-        events = results.reduce((acc, result, index) => {
-          let { alarms } = result;
-
+        this.alarmsCollections = results.map(({ alarms }) => {
           if (this.query.considerPbehaviors) {
-            alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
+            return alarms.filter(alarm => isEmpty(alarm.pbehaviors));
           }
 
-          return acc.concat(convertAlarmsToEvents({ alarms, groupByValue, filter: this.query.filters[index] }));
-        }, []);
+          return alarms;
+        });
 
-        if (this.calendar.type !== Units.MONTH) {
-          events = convertEventsToGroupedEvents({ events });
-        }
+        this.alarms = [];
       }
 
-      this.events = events;
       this.pending = false;
     },
   },

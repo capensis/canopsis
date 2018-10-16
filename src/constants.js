@@ -292,15 +292,23 @@ export const STATS_TYPES = {
   },
 };
 
+export const STATS_CRITICITY = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
 
 export const STATS_CALENDAR_COLORS = {
   alarm: {
-    small: '#68cf58',
-    medium: '#ff9132',
-    large: '#ff4344',
+    ok: '#66BB6A',
+    minor: '#FFEE58',
+    major: '#FFA726',
+    critical: '#FF7043',
   },
 };
 

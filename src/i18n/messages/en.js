@@ -211,6 +211,9 @@ export default {
       title: 'Stats color',
       pickColor: 'Pick a color',
     },
+    considerPbehaviors: {
+      title: 'Consider pbehaviors',
+    },
   },
   modals: {
     contextInfos: {

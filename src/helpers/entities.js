@@ -1,7 +1,7 @@
 import moment from 'moment';
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES, STATS_CALENDAR_COLORS } from '@/constants';
 
 import uuid from './uuid';
 
@@ -118,6 +118,7 @@ export function generateWidgetByType(type) {
           major: 30,
           critical: 40,
         },
+        criticityLevelsColors: { ...STATS_CALENDAR_COLORS.alarm },
       };
       break;
   }
