@@ -19,7 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.alerts import DEFAULT_FILTER_AUTHOR
+from canopsis.alerts import DEFAULT_AUTHOR
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
 from canopsis.task.core import get_task
@@ -304,7 +304,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.state.value] is not None)
         self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.state.value]['a'], DEFAULT_FILTER_AUTHOR)
+        self.assertEqual(alarm[AlarmField.state.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.state.value]['val'], state)
         self.assertTrue(
@@ -325,7 +325,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.state.value] is not None)
         self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.state.value]['a'], DEFAULT_FILTER_AUTHOR)
+        self.assertEqual(alarm[AlarmField.state.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.state.value]['val'], state)
         self.assertTrue(
@@ -346,7 +346,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.status.value] is not None)
         self.assertEqual(alarm[AlarmField.status.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.status.value]['a'], DEFAULT_FILTER_AUTHOR)
+        self.assertEqual(alarm[AlarmField.status.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.status.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.status.value]['val'], statusval)
         self.assertTrue(
@@ -367,7 +367,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.status.value] is not None)
         self.assertEqual(alarm[AlarmField.status.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.status.value]['a'], DEFAULT_FILTER_AUTHOR)
+        self.assertEqual(alarm[AlarmField.status.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.status.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.status.value]['val'], statusval)
         self.assertTrue(

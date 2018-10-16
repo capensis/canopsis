@@ -32,7 +32,7 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
-from canopsis.alerts import DEFAULT_FILTER_AUTHOR
+from canopsis.alerts import DEFAULT_AUTHOR
 from canopsis.alarms.models import AlarmState
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
@@ -139,7 +139,7 @@ class Alerts(object):
         self.update_longoutput_fields = alerts_.get("update_long_output",
                                                           False)
         filter_ = self.config.get(self.FILTER_CAT, {})
-        self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
+        self.filter_author = filter_.get('author', DEFAULT_AUTHOR)
         self.lock_manager = AlertLockRedis(*AlertLockRedis.provide_default_basics())
 
     @classmethod
@@ -568,7 +568,7 @@ class Alerts(object):
                 value[AlarmField.long_output_history.value] = new_hist
 
             value[AlarmField.steps.value].append({
-                "a": DEFAULT_FILTER_AUTHOR,
+                "a": DEFAULT_AUTHOR,
                 "_t": "long_output",
                 "m": message,
                 "t": int(time()),

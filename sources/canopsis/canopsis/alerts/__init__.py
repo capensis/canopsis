@@ -1,1 +1,1 @@
-DEFAULT_FILTER_AUTHOR = 'system'
+DEFAULT_AUTHOR = 'system'
