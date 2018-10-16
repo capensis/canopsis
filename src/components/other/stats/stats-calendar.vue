@@ -97,13 +97,12 @@ export default {
     },
 
     editEvent(event) {
-      const { alarmsStateFilter } = this.query;
       const routeData = this.$router.resolve({
         name: 'alarms',
         query: {
           ...pick(event.data.meta, ['tstart', 'tstop']),
+          ...pick(this.query, ['opened', 'resolved']),
 
-          alarmsStateFilter,
           filter: JSON.stringify(event.data.meta.filter),
         },
       });
