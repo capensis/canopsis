@@ -6,12 +6,20 @@
         v-menu(
         ref="menu"
         :close-on-content-click="false",
+        v-model="menu",
+        lazy,
         transition="scale-transition",
         )
           v-text-field(slot="activator", :value="dateObject | date('MM/YYYY', true)", readonly)
-          v-date-picker(@input="updateValue", :allowed-dates="allowedDates")
+          v-date-picker(
+          ref="picker",
+          :value="dateString",
+          @input="updateValue",
+          :allowed-dates="allowedDates",
+          @change="save"
+          )
       template(v-else)
-        date-time-picker(:value="dateObject", @input="updateValue", roundHours)
+        date-time-picker(, @input="updateValue", roundHours)
 </template>
 
 <script>
@@ -32,22 +40,35 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      menu: false,
+    };
+  },
   computed: {
     dateObject() {
       return moment.unix(this.value).toDate();
+    },
+    dateString() {
+      return moment.unix(this.value).format('YYYY-MM-DD');
     },
     durationUnit() {
       return this.duration.slice(-1);
     },
   },
   watch: {
-    // Each time the duration change on settings, we need to check if the duration unit is 'm' (for 'Month')
-    // If it's 'm', we need to put the date on the 1st day of the month, at 00:00 (UTC)
+    /**
+     * Each time the duration change on settings, we need to check if the duration unit is 'm' (for 'Month')
+     * If it's 'm', we need to put the date on the 1st day of the month, at 00:00 (UTC)
+    */
     durationUnit(value, oldValue) {
       if (value !== oldValue && value === 'm') {
         const date = moment.tz(this.value * 1000, moment.tz.guess()).startOf('month');
         this.$emit('input', date.add(date.utcOffset(), 'm').unix());
       }
+    },
+    menu(value) {
+      return value && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'));
     },
   },
   methods: {
@@ -66,6 +87,9 @@ export default {
       }
     },
     allowedDates: val => parseInt(val.split('-')[2], 10) === 1,
+    save(date) {
+      this.$refs.menu.save(date);
+    },
   },
 };
 </script>
