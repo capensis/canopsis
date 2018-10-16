@@ -26,6 +26,7 @@ from operator import itemgetter
 from time import time, mktime, sleep
 from unittest import main
 
+from canopsis.alerts import DEFAULT_FILTER_AUTHOR
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.status import OFF, STEALTHY, CANCELED, is_keeped_state
@@ -351,7 +352,7 @@ class TestManager(BaseTest):
         }
 
         expected_status = {
-            'a': 'ut-connector.ut-connector0',
+            'a': DEFAULT_FILTER_AUTHOR,
             '_t': 'statusinc',
             'm': 'UT message',
             't': 0,
@@ -405,7 +406,7 @@ class TestManager(BaseTest):
         alarm = self.manager.change_of_status(alarm, 0, 1, event)
 
         expected_status = {
-            'a': 'ut-connector.ut-connector0',
+            'a': DEFAULT_FILTER_AUTHOR,
             '_t': 'statusinc',
             'm': 'UT message',
             't': 0,
@@ -442,7 +443,7 @@ class TestManager(BaseTest):
         alarm = self.manager.change_of_status(alarm, 0, CANCELED, event)
 
         expected_status = {
-            'a': 'ut-connector.ut-connector0',
+            'a': DEFAULT_FILTER_AUTHOR,
             '_t': 'statusinc',
             'm': 'UT message',
             't': 0,
@@ -479,7 +480,7 @@ class TestManager(BaseTest):
         alarm = self.manager.get_current_alarm(alarm_id)
 
         expected_state = {
-            'a': 'test.test0',
+            'a': DEFAULT_FILTER_AUTHOR,
             '_t': 'stateinc',
             'm': 'test message',
             't': 0,
@@ -538,7 +539,7 @@ class TestManager(BaseTest):
 
         expected_state = {
             'a': 'test.test0',
-            '_t': 'stateinc',
+            '_t': DEFAULT_FILTER_AUTHOR,
             'm': 'test message',
             't': 0,
             'val': 1,
@@ -659,7 +660,7 @@ class TestManager(BaseTest):
         alarm = self.manager.get_current_alarm(alarm_id)
 
         expected_status = {
-            'a': 'test.test0',
+            'a': DEFAULT_FILTER_AUTHOR,
             '_t': 'statusinc',
             'm': 'test message',
             't': 0,
@@ -718,7 +719,7 @@ class TestManager(BaseTest):
         alarm = self.manager.get_current_alarm(alarm_id)
 
         expected_status = {
-            'a': 'test.test0',
+            'a': DEFAULT_FILTER_AUTHOR,
             '_t': 'statusinc',
             'm': 'test message',
             't': 0,
