@@ -238,11 +238,47 @@ systemctl daemon-reload
 
 Activation des moteurs Go (attention à désactiver les moteurs Python qui rentreraient en conflit auparavant, à l'aide de `systemctl disable` et en les supprimant de `amqp2engines.conf`) :
 
+Mémo:
+
 ```bash
-systemctl enable canopsis-engine-go\@engine-che
-systemctl enable canopsis-engine-go\@engine-axe
-systemctl enable canopsis-engine-go\@engine-stat
-systemctl enable canopsis-engine-go\@engine-heartbeat
+systemctl disable canopsis-engine@cleaner-cleaner_alerts.service
+systemctl disable canopsis-engine@dynamic-alerts.service
+systemctl disable canopsis-engine@cleaner-cleaner_events.service
+```
+
+```bash
+systemctl enable canopsis-engine-go@engine-che
+systemctl enable canopsis-engine-go@engine-axe
+systemctl enable canopsis-engine-go@engine-stat
+systemctl enable canopsis-engine-go@engine-heartbeat
+```
+
+Modification de la conf: /opt/canopsis/etc/amqp2engines.conf
+```diff
+-[engine:cleaner_events]
+-routing_keys = #
+-exchange_name = canopsis.events
+-next = event_filter
+
+[engine:event_filter]
+- next = pbehavior,[...]
++ next = axe,pbehavior,[...]
+
+- [engine:alerts]
+- event_processing = canopsis.alerts.process.event_processing
+- beat_processing = canopsis.alerts.process.beat_processing
+
+- [engine:cleaner_alerts]
+- routing_keys = #
+- exchange_name = canopsis.alerts
+
+```
+
+Arrêt des moteurs python
+```bash
+systemctl stop canopsis-engine@cleaner-cleaner_alerts.service
+systemctl stop canopsis-engine@dynamic-alerts.service
+systemctl stop canopsis-engine@cleaner-cleaner_events.service
 ```
 
 Lancement des moteurs Go :

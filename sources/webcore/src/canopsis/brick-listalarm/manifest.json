@@ -1,0 +1,11 @@
+{
+  "name": "brick-listalarm",
+  "description": "Alarms widget for Canopsis",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git@git.canopsis.net:canopsis-ui-bricks/brick-calendar.git"
+  },
+  "author": "Team Canopsis <maintainers@canopsis.org>",
+  "license": "AGPL-3.0"
+}

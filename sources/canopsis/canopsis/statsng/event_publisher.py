@@ -72,7 +72,8 @@ class StatEventPublisher(object):
                                      timestamp,
                                      counter_name,
                                      entity,
-                                     alarm):
+                                     alarm,
+                                     author=None):
         """
         Publish a statcounterinc event on amqp.
 
@@ -80,6 +81,8 @@ class StatEventPublisher(object):
         :param str counter_name: the name of the counter to increment
         :param dict entity: the entity
         :param dict alarm: the alarm
+        :param Optional[str] author: the author of the event that triggered the
+            statistic event.
         """
         if not self.send_events:
             return
@@ -97,6 +100,13 @@ class StatEventPublisher(object):
             resource = resource.decode('utf-8')
         except (UnicodeError, AttributeError):
             pass
+
+        # Although only the alarm's value is needed by statsng, the alarm needs
+        # to have the same structure as a full alarm for compatibility with the
+        # go engines.
+        full_alarm = {
+            'v': alarm
+        }
 
         event = forger(
             connector="canopsis",
@@ -106,9 +116,10 @@ class StatEventPublisher(object):
             component=component,
             resource=resource,
             timestamp=timestamp,
-            counter_name=counter_name,
-            alarm=alarm,
-            entity=entity)
+            author=author,
+            stat_name=counter_name,
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)
 
@@ -117,7 +128,8 @@ class StatEventPublisher(object):
                                    duration_name,
                                    duration_value,
                                    entity,
-                                   alarm):
+                                   alarm,
+                                   author=None):
         """
         Publish a statduration event on amqp.
 
@@ -126,6 +138,8 @@ class StatEventPublisher(object):
         :param str duration_value: the value of the duration
         :param dict entity: the entity
         :param dict alarm: the alarm
+        :param Optional[str] author: the author of the event that triggered the
+            statistic event.
         """
         if not self.send_events:
             return
@@ -144,6 +158,13 @@ class StatEventPublisher(object):
         except (UnicodeError, AttributeError):
             pass
 
+        # Although only the alarm's value is needed by statsng, the alarm needs
+        # to have the same structure as a full alarm for compatibility with the
+        # go engines.
+        full_alarm = {
+            'v': alarm
+        }
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
@@ -152,10 +173,11 @@ class StatEventPublisher(object):
             component=component,
             resource=resource,
             timestamp=timestamp,
-            duration_name=duration_name,
+            author=author,
+            stat_name=duration_name,
             duration=duration_value,
-            alarm=alarm,
-            entity=entity)
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)
 
@@ -193,6 +215,13 @@ class StatEventPublisher(object):
         except (UnicodeError, AttributeError):
             pass
 
+        # Although only the alarm's value is needed by statsng, the alarm needs
+        # to have the same structure as a full alarm for compatibility with the
+        # go engines.
+        full_alarm = {
+            'v': alarm
+        }
+
         event = forger(
             connector="canopsis",
             connector_name="engine",
@@ -201,10 +230,10 @@ class StatEventPublisher(object):
             component=component,
             resource=resource,
             timestamp=timestamp,
-            state_name=state_name,
-            state_duration=state_duration,
-            state_value=state_value,
-            alarm=alarm,
-            entity=entity)
+            stat_name=state_name,
+            duration=state_duration,
+            state=state_value,
+            current_alarm=full_alarm,
+            current_entity=entity)
 
         self.amqp_pub.canopsis_event(event)

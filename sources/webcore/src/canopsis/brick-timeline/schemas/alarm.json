@@ -1,0 +1,102 @@
+{
+    "title": "Alarm",
+    "description": "Alarm document as stored in storage-periodical-alarm://",
+
+    "type": "object",
+    "properties": {
+        "v": {
+            "title": "Values",
+            "description": "Values for this periodical entry",
+
+            "type": "object",
+            "properties": {
+                "state": {
+                    "title": "Current state",
+                    "description": "Last state step",
+
+                    "type": "alarmstep",
+                    "required": false
+                },
+                "status": {
+                    "title": "Current status",
+                    "description": "Last status step",
+
+                    "type": "alarmstep",
+                    "required": false
+                },
+                "ack": {
+                    "title": "Current acknowledgment",
+                    "description": "Last ack step (is null if ack was removed)",
+
+                    "type": "alarmstep",
+                    "required": false
+                },
+                "canceled": {
+                    "title": "Cancel step",
+                    "description": "Is null if alarm is restored",
+
+                    "type": "alarmstep",
+                    "required": false
+                },
+                "ticket": {
+                    "title": "Ticket step",
+                    "description": "Is null if no ticket was declared/associated",
+
+                    "type": "alarmstep",
+                    "required": false
+                },
+                "resolved": {
+                    "title": "Resolution timestamp",
+                    "description": "Is null if alarm is not yet resolved",
+
+                    "type": "integer",
+                    "required": false
+                },
+                "steps": {
+                    "title": "Alarm history",
+                    "description": "Full list of steps",
+
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "alarmstep"
+                    },
+                    "required": false
+                },
+                "tags": {
+                    "title": "Alarm tags",
+                    "description": "Tags used for alarm filtering",
+
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "required": false
+                },
+                "extra": {
+                    "title": "Alarm extra fields",
+                    "description": "Fields fetched from first event as listed in etc/alerts/manager.conf",
+
+                    "type": "object",
+                    "required": false
+                }
+            },
+
+            "required": true
+        },
+        "t":  {
+            "title": "Timestamp",
+            "description": "Timestamp for this periodical entry",
+
+            "type": "integer",
+            "required": true
+        },
+        "d": {
+            "title": "Data ID",
+            "description": "Contextual entity identifier associated to this periodical entry",
+
+            "type": "string",
+            "required": true
+        }
+    }
+}

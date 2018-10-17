@@ -1,8 +1,8 @@
 import Vue from 'vue';
-
-import uid from '@/helpers/uid';
+import isEmpty from 'lodash/isEmpty';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import uid from '@/helpers/uid';
 
 export const types = {
   SHOW: 'SHOW',
@@ -17,6 +17,7 @@ export default {
   },
   getters: {
     modals: state => state.modals,
+    hasModals: state => !isEmpty(state.modals),
   },
   mutations: {
     [types.SHOW](state, { id, name, config = {} }) {
@@ -24,13 +25,13 @@ export default {
         id,
         name,
         config,
-        hideAnimationPending: false,
+        hidden: false,
       });
     },
     [types.HIDE](state, { id }) {
       Vue.set(state.modals, id, {
         ...state.modals[id],
-        hideAnimationPending: true,
+        hidden: true,
       });
     },
     [types.HIDE_COMPLETED](state, { id }) {

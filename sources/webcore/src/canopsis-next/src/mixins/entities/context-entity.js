@@ -15,13 +15,13 @@ export default {
     }),
 
     contextEntities() {
-      return this.getContextEntitiesListByWidgetId(this.widget.id);
+      return this.getContextEntitiesListByWidgetId(this.widget._id);
     },
     contextEntitiesMeta() {
-      return this.getContextEntitiesMetaByWidgetId(this.widget.id);
+      return this.getContextEntitiesMetaByWidgetId(this.widget._id);
     },
     contextEntitiesPending() {
-      return this.getContextEntitiesPendingByWidgetId(this.widget.id);
+      return this.getContextEntitiesPendingByWidgetId(this.widget._id);
     },
   },
   methods: {

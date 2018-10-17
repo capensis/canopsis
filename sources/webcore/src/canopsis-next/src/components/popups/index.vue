@@ -24,7 +24,7 @@ export default {
 <style lang="scss">
   .popups {
     position: fixed;
-    z-index: 2;
+    z-index: 1000;
     right: 2rem;
     top: 75px;
   }

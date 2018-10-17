@@ -164,6 +164,18 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_listFilters": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_editFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_addFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
         "listalarm_done": {
             "checksum": 1,
             "desc": ""
@@ -251,9 +263,21 @@
         "serviceweather_invalidate": {
             "checksum": 1,
             "desc": ""
+        },
+        "listalarm_listFilters": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_editFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_addFilter": {
+            "checksum": 1,
+            "desc": ""
         }
     },
-	"defaultview": "view.current_alarms"
+    "defaultview": "view.current_alarms"
 },{
     "_id": "Support",
     "rights": {
@@ -294,6 +318,10 @@
         },
         "view_current_alarms": {
             "checksum": 5,
+            "desc": ""
+        },
+        "listalarm_listFilters": {
+            "checksum": 1,
             "desc": ""
         }
     },
@@ -375,6 +403,18 @@
         "serviceweather_pause" : {
             "checksum": 1,
             "desc": ""
+        },
+        "listalarm_listFilters": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_editFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_addFilter": {
+            "checksum": 1,
+            "desc": ""
         }
     },
 	"defaultview": "view.current_alarms"
@@ -387,6 +427,10 @@
         },
         "view_current_alarms": {
             "checksum": 5,
+            "desc": ""
+        },
+        "listalarm_listFilters": {
+            "checksum": 1,
             "desc": ""
         }
     },

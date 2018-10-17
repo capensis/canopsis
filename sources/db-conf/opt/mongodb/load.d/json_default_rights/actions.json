@@ -437,6 +437,27 @@
         "desc": "Rights on listalarm: done"
     },
     {
+        "_id" : "listalarm_listFilters",
+        "loader_id" : "listalarm_listFilters",
+        "crecord_name" : "listalarm_listFilters",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: list filters"
+    },
+    {
+        "_id" : "listalarm_editFilter",
+        "loader_id" : "listalarm_editFilter",
+        "crecord_name" : "listalarm_editFilter",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: edit filters"
+    },
+    {
+        "_id" : "listalarm_addFilter",
+        "loader_id" : "listalarm_addFilter",
+        "crecord_name" : "listalarm_addFilter",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: add filter"
+    },
+    {
         "_id" : "view_current_alarms",
         "loader_id" : "view_current_alarms",
         "crecord_type" : "action",
@@ -494,5 +515,47 @@
         "crecord_type" : "action",
         "desc": "Rights on view: no rights",
         "type": "RW"
+    },
+    {
+        "_id" : "showview_view_filters",
+        "loader_id" : "showview_view_filters",
+        "crecord_name": "showview_view_filters",
+        "crecord_type" : "action",
+        "desc": "Access to view.filters menu"
+    },
+    {
+        "_id" : "showview_view_context",
+        "loader_id" : "showview_view_context",
+        "crecord_name": "showview_view_context",
+        "crecord_type" : "action",
+        "desc": "Access to view.context menu"
+    },
+    {
+        "_id" : "showview_view_selectors",
+        "loader_id" : "showview_view_selectors",
+        "crecord_name": "showview_view_selectors",
+        "crecord_type" : "action",
+        "desc": "Access to view.selectors menu"
+    },
+    {
+        "_id" : "showview_view_series",
+        "loader_id" : "showview_view_series",
+        "crecord_name": "showview_view_series",
+        "crecord_type" : "action",
+        "desc": "Access to view.series menu"
+    },
+    {
+        "_id" : "showview_view_jobs",
+        "loader_id" : "showview_view_jobs",
+        "crecord_name": "showview_view_jobs",
+        "crecord_type" : "action",
+        "desc": "Access to view.jobs menu"
+    },
+    {
+        "_id" : "showview_view_notifications",
+        "loader_id" : "showview_view_notifications",
+        "crecord_name": "showview_view_notifications",
+        "crecord_type" : "action",
+        "desc": "Access to view.notifications menu"
     }
 ]

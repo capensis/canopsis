@@ -1,30 +1,26 @@
 <template lang="pug">
-  v-tabs(v-model="activeTab" slider-color="blue darken-4" centered)
+  v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
     v-tab(:disabled="isRequestStringChanged") {{$t('filterEditor.tabs.visualEditor')}}
     v-tab-item
       v-container
         filter-group(
-        @update:group="updateFilter",
         :group="filter",
         :possibleFields="possibleFields",
+        @update:group="updateFilter",
         isInitial
         )
     v-tab(@click="openAdvancedTab") {{$t('filterEditor.tabs.advancedEditor')}}
     v-tab-item
-      v-text-field(
+      v-textarea(
       v-model="requestString",
       :label="$t('filterEditor.tabs.advancedEditor')",
       @input="updateRequestString",
       rows="10",
-      textarea,
       )
       v-layout(justify-center)
         v-flex(xs10 md-6)
           v-alert(:value="parseError", type="error") {{ parseError }}
       v-btn(@click="parse", :disabled="!isRequestStringChanged") {{$t('common.parse')}}
-    v-tab(@click="openResultsTab", :disabled="isRequestStringChanged") {{$t('filterEditor.tabs.results')}}
-    v-tab-item
-      filter-results(:filter="request")
 </template>
 
 
@@ -32,7 +28,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
-import EventBus from '@/event-bus';
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
@@ -66,7 +61,11 @@ export default {
       const valueObject = JSON.parse(this.value);
 
       if (!isEmpty(valueObject)) {
-        filter = parseGroupToFilter(valueObject);
+        try {
+          filter = parseGroupToFilter(valueObject);
+        } catch (err) {
+          console.warn(err);
+        }
       }
     }
 
@@ -76,7 +75,7 @@ export default {
       requestString: '',
       parseError: '',
       isRequestStringChanged: false,
-      possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
+      possibleFields: ['connector', 'connector_name', 'component', 'resource'],
     };
   },
   computed: {
@@ -84,7 +83,9 @@ export default {
       try {
         return parseFilterToRequest(this.filter);
       } catch (err) {
-        return err.message;
+        console.error(err);
+
+        return {};
       }
     },
   },
@@ -102,10 +103,6 @@ export default {
       if (!this.isRequestStringChanged) {
         this.requestString = JSON.stringify(this.request, undefined, 4);
       }
-    },
-
-    openResultsTab() {
-      EventBus.$emit('filter-editor:results:fetch');
     },
 
     parse() {
@@ -126,3 +123,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .filter-editor {
+    .v-card {
+      box-shadow: 0 0 0 -1px rgba(0, 0, 0, 0.5), 0 1px 5px 0 rgba(0, 0, 0, 0.44), 0 1px 3px 0 rgba(0, 0, 0, 0.42);
+    }
+  }
+</style>

@@ -366,11 +366,17 @@ class TestManager(BaseTest):
         pbehavior_2 = deepcopy(self.pbehavior)
         pb_name1, pb_name2, = 'cheerfull', 'blue'
 
+        now = int(time.time())
+        hour = 3600
+
         pbehavior_1.update(
             {
                 'name': pb_name1,
                 'eids': [self.entity_id_1, self.entity_id_2],
-                PBehavior.TYPE: 'maintenance'
+                PBehavior.TYPE: 'maintenance',
+                "rrule": 'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
+                'tstart': now - hour,
+                'tstop': now + hour
             }
         )
 
@@ -497,7 +503,7 @@ class TestManager(BaseTest):
         }
 
         for i, ts in enumerate(timestamps):
-            res = PBehaviorManager.check_active_pbehavior(ts[1], pbehavior)
+            res = self.pbm.check_active_pbehavior(ts[1], pbehavior)
             self.assertEqual(res, ts[0])
 
     def test_get_active_intervals(self):
@@ -553,7 +559,7 @@ class TestManager(BaseTest):
         expected_intervals = []
         self.assertEqual(intervals, expected_intervals)
 
-    def test_get_intervals_with_pbehaviors(self):
+    def test_get_intervals_with_pbehaviors_by_eid(self):
         day = 24 * 3600
 
         tstart1 = 1530288000  # 2018/06/29 18:00:00
@@ -594,7 +600,7 @@ class TestManager(BaseTest):
             (tstart1 + 4 * day, tstop2 + 4 * day, True),
             (tstop2 + 4 * day, tstart1 + 5 * day, False),
         ]
-        intervals = list(self.pbm.get_intervals_with_pbehaviors(
+        intervals = list(self.pbm.get_intervals_with_pbehaviors_by_eid(
             tstart1, tstart1 + 5 * day, 1))
         self.assertEqual(intervals, expected_intervals)
 
@@ -602,7 +608,7 @@ class TestManager(BaseTest):
         expected_intervals = [
             (tstart1, tstart1 + 5 * day, False),
         ]
-        intervals = list(self.pbm.get_intervals_with_pbehaviors(
+        intervals = list(self.pbm.get_intervals_with_pbehaviors_by_eid(
             tstart1, tstart1 + 5 * day, 2))
         self.assertEqual(intervals, expected_intervals)
 

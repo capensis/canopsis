@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.engines.core import Engine, publish
+from canopsis.engines.core import Engine
 
 from time import time
 
@@ -75,4 +75,7 @@ class engine(Engine):
                 ]
             }
 
-            publish(publisher=self.amqp, event=event)
+            try:
+                self.beat_amqp_publisher.canopsis_event(event)
+            except Exception as e:
+                self.logger.exception("Unable to send event")

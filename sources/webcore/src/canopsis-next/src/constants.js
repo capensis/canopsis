@@ -7,9 +7,11 @@ export const ENTITIES_TYPES = {
   pbehavior: 'pbehavior',
   event: 'event',
   userPreference: 'userPreference',
+  group: 'group',
   view: 'view',
-  widgetWrapper: 'widgetWrapper',
+  row: 'row',
   widget: 'widget',
+  stat: 'stat',
 };
 
 export const MODALS = {
@@ -28,13 +30,23 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
+  createFilter: 'create-filter',
+  manageHistogramGroups: 'manage-histogram-groups',
+  addStat: 'add-stat',
+  colorPicker: 'color-picker',
+  createView: 'create-view',
+  createGroup: 'create-group',
 };
 
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
+  fastAck: 'fastAck',
   ackRemove: 'ackremove',
-  associateTicket: 'assocticket',
+  pbehaviorAdd: 'pbehaviorAdd',
+  pbehaviorList: 'pbehaviorList',
+  assocTicket: 'assocticket',
   cancel: 'cancel',
+  delete: 'delete',
   changeState: 'changestate',
   declareTicket: 'declareticket',
   snooze: 'snooze',
@@ -123,36 +135,72 @@ export const ENTITY_STATUS_STYLES = {
 };
 
 export const WIDGET_TYPES = {
-  alarmList: 'listalarm',
-  context: 'crudcontext',
-  weather: 'serviceweather',
-  widgetWrapper: 'widgetwrapper',
+  alarmList: 'AlarmsList',
+  context: 'Context',
+  weather: 'ServiceWeather',
+  statsHistogram: 'StatsHistogram',
+  statsCurves: 'StatsCurves',
+  statsTable: 'StatsTable',
+  statsNumber: 'StatsNumber',
+};
+
+export const SIDE_BARS = {
+  alarmSettings: 'alarm-settings',
+  contextSettings: 'context-settings',
+  weatherSettings: 'weather-settings',
+  statsHistogramSettings: 'stats-histogram-settings',
+  statsCurvesSettings: 'stats-curves-settings',
+  statsTableSettings: 'stats-table-settings',
+  statsNumberSettings: 'stats-number-settings',
+};
+
+export const SIDE_BARS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
+  [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
+  [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
+  [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
+  [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
+  [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
+  [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
-    color: 'purple',
-    text: 'Acknowledged',
-    icon: 'done',
+    color: '#9c27b0',
+    icon: 'playlist_add_check',
+  },
+  [EVENT_ENTITY_TYPES.fastAck]: {
+    icon: 'check',
+  },
+  [EVENT_ENTITY_TYPES.pbehaviorAdd]: {
+    icon: 'pause',
+  },
+  [EVENT_ENTITY_TYPES.pbehaviorList]: {
+    icon: 'list',
   },
   [EVENT_ENTITY_TYPES.ackRemove]: {
-    color: 'purple',
-    text: 'Ack removed',
+    color: '#9c27b0',
     icon: 'not_interested',
   },
   [EVENT_ENTITY_TYPES.declareTicket]: {
-    color: 'blue',
-    text: 'Ticket declared',
+    color: '#2196f3',
+    icon: 'report_problem',
+  },
+  [EVENT_ENTITY_TYPES.assocTicket]: {
     icon: 'local_play',
   },
+  [EVENT_ENTITY_TYPES.delete]: {
+    icon: 'delete',
+  },
+  [EVENT_ENTITY_TYPES.changeState]: {
+    icon: 'thumbs_up_down',
+  },
   [EVENT_ENTITY_TYPES.snooze]: {
-    color: 'pink',
-    text: 'Snoozed',
+    color: '#e91e63',
     icon: 'alarm',
   },
   [EVENT_ENTITY_TYPES.done]: {
     color: 'green',
-    text: 'Done',
     icon: 'assignment_turned_in',
   },
 };
@@ -193,3 +241,67 @@ export const FILTER_DEFAULT_VALUES = {
     rules: {},
   },
 };
+
+export const DATETIME_FORMATS = {
+  long: 'DD/MM/YYYY H:mm:ss',
+  short: 'DD/MM/YYYY',
+  time: 'H:mm:ss',
+};
+
+export const STATS_TYPES = {
+  alarmsCreated: {
+    value: 'alarms_created',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsResolved: {
+    value: 'alarms_resolved',
+    options: ['recursive', 'states', 'authors'],
+  },
+  alarmsCanceled: {
+    value: 'alarms_canceled',
+    options: ['recursive', 'states', 'authors'],
+  },
+  ackTimeSla: {
+    value: 'ack_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  resolveTimeSla: {
+    value: 'resolve_time_sla',
+    options: ['recursive', 'states', 'authors', 'sla'],
+  },
+  timeInState: {
+    value: 'time_in_state',
+    options: ['states'],
+  },
+  stateRate: {
+    value: 'state_rate',
+    options: ['states'],
+  },
+  mtbf: {
+    value: 'mtbf',
+    options: [],
+  },
+  currentState: {
+    value: 'current_state',
+    options: [],
+  },
+  ongoingAlarms: {
+    value: 'ongoing_alarms',
+    options: ['states'],
+  },
+  currentOngoingAlarms: {
+    value: 'current_ongoing_alarms',
+    options: ['states'],
+  },
+};
+
+export const STATS_CRITICITY = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+};
+
+export const WIDGET_MAX_SIZE = 12;
+
+export const WIDGET_MIN_SIZE = 3;

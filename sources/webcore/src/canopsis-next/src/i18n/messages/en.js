@@ -1,23 +1,36 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
+    entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
+    addWidget: 'Add widget',
+    refresh: 'Refresh',
+    toggleEditView: 'Toggle view edition mode',
     name: 'Name',
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    options: 'Options',
+    quitEditing: 'Quit editing',
     enabled: 'Enabled',
     disabled: 'Disabled',
     login: 'Login',
     yes: 'Yes',
     no: 'No',
     confirmation: 'Are you sure ?',
+    parameters: 'Parameters',
     by: 'By',
     date: 'Date',
     comment: 'Comment',
     end: 'End',
+    recursive: 'Recursive',
+    states: 'States',
+    sla: 'Sla',
+    authors: 'Authors',
+    stat: 'Stat',
+    trend: 'Trend',
     username: 'Username',
     password: 'Password',
     logout: 'Logout',
@@ -35,6 +48,7 @@ export default {
     apply: 'Apply',
     to: 'to',
     of: 'of',
+    tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
     actions: {
@@ -128,6 +142,10 @@ export default {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
+      statsHistogramSettings: 'Histogram settings',
+      statsCurvesSettings: 'Curve settings',
+      statsTableSettings: 'Stats table settings',
+      statsNumberSettings: 'Stats number settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -140,9 +158,54 @@ export default {
     open: 'Open',
     resolved: 'Resolved',
     filters: 'Filters',
+    filterEditor: 'Filter editor',
+    duration: 'Duration',
+    tstop: 'End date',
+    periodsNumber: 'Number of periods',
+    statName: 'Stat name',
+    statsSelect: 'Stats select',
+    yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
-    infoPopup: 'Info popup',
+    criticityLevels: 'Criticity levels',
+    colorsSelector: {
+      title: 'Colors selector',
+      statsCriticity: {
+        [STATS_CRITICITY.ok]: 'ok',
+        [STATS_CRITICITY.minor]: 'minor',
+        [STATS_CRITICITY.major]: 'major',
+        [STATS_CRITICITY.critical]: 'critical',
+      },
+    },
+    statsNumbers: {
+      title: 'Stats numbers',
+      yesNoMode: 'Yes/No mode',
+    },
+    infoPopup: {
+      title: 'Info popup',
+      fields: {
+        column: 'Column',
+        template: 'Template',
+      },
+    },
+    rowGridSize: {
+      title: 'Row grid size',
+      noData: 'No row corresponding. Press <kbd>enter</kbd> to create a new one',
+      fields: {
+        row: 'Row',
+        size: {
+          sm: 'Column SM',
+          md: 'Column MD',
+          lg: 'Column LG',
+        },
+      },
+    },
     moreInfosModal: '"More Infos" Popup',
+    weatherTemplate: 'Template - Weather item',
+    modalTemplate: 'Template - Modal',
+    entityTemplate: 'Template - Entities',
+    columnSM: 'Columns - Small',
+    columnMD: 'Columns - Medium',
+    columnLG: 'Columns - Large',
     contextTypeOfEntities: {
       title: 'Type of entities',
       fields: {
@@ -152,6 +215,19 @@ export default {
         watcher: 'Watcher',
       },
     },
+    statSelector: {
+      error: {
+        alreadyExist: 'Stat with this name already exists',
+      },
+    },
+    statsGroups: {
+      title: 'Stats groups',
+      manageGroups: 'Add a group',
+    },
+    statsColor: {
+      title: 'Stats color',
+      pickColor: 'Pick a color',
+    },
   },
   modals: {
     contextInfos: {
@@ -160,8 +236,11 @@ export default {
     createEntity: {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
+      infosList: 'Infos list',
+      addInfos: 'Add Infos',
+      noInfos: 'No Infos',
       fields: {
-        type: 'Types',
+        type: 'Type',
         manageInfos: 'Manage Infos',
         form: 'Form',
         impact: 'Impact',
@@ -177,6 +256,21 @@ export default {
       createTitle: 'Create a watcher',
       editTitle: 'Edit a watcher',
       displayName: 'Name',
+    },
+    view: {
+      create: {
+        title: 'Create a view',
+      },
+      edit: {
+        title: 'Edit the view',
+      },
+      noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
+      fields: {
+        groupIds: 'Choose a group, or create a new one',
+        groupTags: 'Group tags',
+      },
+      success: 'New view created',
+      fail: 'Fail in creation view',
     },
     createAckEvent: {
       title: 'Add event: Ack',
@@ -273,8 +367,75 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
     },
+    filter: {
+      create: {
+        title: 'Create filter',
+      },
+      edit: {
+        title: 'Edit filter',
+      },
+      fields: {
+        title: 'Title',
+      },
+    },
+    colorPicker: {
+      title: 'Color picker',
+    },
+    widgetCreation: {
+      title: 'Select a widget',
+      types: {
+        alarmList: {
+          title: 'Alarm list',
+        },
+        context: {
+          title: 'Context explorer',
+        },
+        weather: {
+          title: 'Service weather',
+        },
+        statsHistogram: {
+          title: 'Stats histogram',
+        },
+        statsCurves: {
+          title: 'Stats curves',
+        },
+        statsTable: {
+          title: 'Stats table',
+        },
+        statsNumber: {
+          title: 'Stats number',
+        },
+      },
+    },
+    manageHistogramGroups: {
+      title: {
+        add: 'Add a group',
+        edit: 'Edit a group',
+      },
+    },
+    addStat: {
+      title: {
+        add: 'Add a stat',
+        edit: 'Edit a stat',
+      },
+    },
+    group: {
+      create: {
+        title: 'Create group',
+      },
+      edit: {
+        title: 'Edit group',
+      },
+      fields: {
+        name: 'Name',
+      },
+      errors: {
+        isNotEmpty: 'The group is not empty',
+      },
+    },
   },
   tables: {
+    noData: 'No data',
     contextList: {
       title: 'Context List',
       name: 'Name',
@@ -285,6 +446,7 @@ export default {
       title: 'General',
       author: 'Author',
       connector: 'Connector',
+      connectorName: 'Connector name',
       component: 'Component',
       resource: 'Resource',
       output: 'Output',
@@ -329,6 +491,9 @@ export default {
         type: 'Type',
         _id: 'Id',
       },
+    },
+    noColumns: {
+      message: 'You have to select at least 1 column',
     },
   },
   rRule: {
@@ -412,5 +577,29 @@ export default {
   },
   validator: {
     unique: 'Field must be unique',
+  },
+  stats: {
+    types: {
+      [STATS_TYPES.alarmsCreated.value]: 'Alarms created',
+      [STATS_TYPES.alarmsResolved.value]: 'Alarms resolved',
+      [STATS_TYPES.alarmsCanceled.value]: 'Alarms canceled',
+      [STATS_TYPES.ackTimeSla.value]: 'Ack time Sla',
+      [STATS_TYPES.resolveTimeSla.value]: 'Resolve time Sla',
+      [STATS_TYPES.timeInState.value]: 'Time in state',
+      [STATS_TYPES.stateRate.value]: 'State rate',
+      [STATS_TYPES.mtbf.value]: 'MTBF',
+      [STATS_TYPES.currentState.value]: 'Current state',
+      [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+    },
+  },
+  layout: {
+    sideBar: {
+      buttons: {
+        edit: 'Toggle editing mode',
+        create: 'Create view',
+        settings: 'Settings',
+      },
+    },
   },
 };
