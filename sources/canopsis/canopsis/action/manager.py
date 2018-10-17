@@ -77,7 +77,7 @@ class ActionManager(object):
         if not record:
             return
 
-        action = Action(**record)
+        action = Action(**Action.convert_keys(record))
         return action
 
     def create(self, action):
