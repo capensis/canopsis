@@ -96,6 +96,16 @@ export function generateWidgetByType(type) {
         tstop: moment().unix(),
         groups: [],
         stats: {},
+        statsColors: {},
+      };
+      break;
+    case WIDGET_TYPES.statsCurves:
+      specialParameters = {
+        mfilter: {},
+        duration: '1m',
+        tstop: moment().unix(),
+        periods: 1,
+        stats: {},
       };
       break;
     case WIDGET_TYPES.statsTable:

@@ -140,6 +140,7 @@ export const WIDGET_TYPES = {
   context: 'Context',
   weather: 'ServiceWeather',
   statsHistogram: 'StatsHistogram',
+  statsCurves: 'StatsCurves',
   statsTable: 'StatsTable',
   statsCalendar: 'StatsCalendar',
   statsNumber: 'StatsNumber',
@@ -150,6 +151,7 @@ export const SIDE_BARS = {
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
   statsHistogramSettings: 'stats-histogram-settings',
+  statsCurvesSettings: 'stats-curves-settings',
   statsTableSettings: 'stats-table-settings',
   statsCalendarSettings: 'stats-calendar-settings',
   statsNumberSettings: 'stats-number-settings',
@@ -163,6 +165,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCalendar]: SIDE_BARS.statsCalendarSettings,
   [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
+  [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
