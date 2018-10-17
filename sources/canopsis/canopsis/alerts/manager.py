@@ -546,18 +546,19 @@ class Alerts(object):
         value[AlarmField.output.value] = event["output"]
 
         if value.get(AlarmField.long_output.value, "") != event["long_output"]:
-            value[AlarmField.long_output.value] = event["long_output"]
 
             if AlarmField.long_output_history.value not in value:
                 value[AlarmField.long_output_history.value] = []
 
             if len(value[AlarmField.long_output_history.value]) == 0:
-                message = "Initial long_output set to {}.".format(
+                message = "Initial long_output set to \"{}\".".format(
                     event["long_output"])
             else:
-                message = "Update long_output from {0} to {1}.".format(
+                message = "Update long_output from \"{0}\" to \"{1}\".".format(
                     value[AlarmField.long_output.value],
                     event["long_output"])
+
+            value[AlarmField.long_output.value] = event["long_output"]
 
             value[AlarmField.long_output_history.value].append(
                 event[AlarmField.long_output.value]
