@@ -28,7 +28,7 @@ import os
 import sys
 from configparser import ConfigParser
 from os.path import join as pjoin
-from urlparse import urlparse
+from urlparse import urlparse, parse_qs
 
 from canopsis.common import root_path
 
@@ -109,6 +109,10 @@ class Env2Cfg(object):
     def _update_mongo(self):
         pu = urlparse(os.environ.get(self.CPS_MONGO_URL))
 
+        replica_set = ''
+        if pu.query != '':
+            replica_set = parse_qs(pu.query).get("replicaSet", '')[0]
+
         pms = pjoin(root_path, 'etc', 'common', 'mongo_store.conf')
         pcs = pjoin(root_path, 'etc', 'cstorage.conf')
         ps = pjoin(root_path, 'etc', 'mongo', 'storage.conf')
@@ -133,6 +137,7 @@ class Env2Cfg(object):
         mongo_store.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
         mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)
         mongo_store.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
+        mongo_store.set('DATABASE', 'replica_set', replica_set)
 
         if 'master' not in cstorage.sections():
             cstorage.add_section('master')
@@ -142,6 +147,7 @@ class Env2Cfg(object):
         cstorage['master']['userid'] = mongo_store['DATABASE']['user']
         cstorage['master']['password'] = mongo_store['DATABASE']['pwd']
         cstorage['master']['db'] = mongo_store['DATABASE']['db']
+        cstorage['master']['replica_set'] = mongo_store['DATABASE']['replica_set']
 
         if 'DATABASE' not in storage.sections():
             storage.add_section('DATABASE')
@@ -151,6 +157,7 @@ class Env2Cfg(object):
         storage['DATABASE']['db'] = mongo_store['DATABASE']['db']
         storage['DATABASE']['user'] = mongo_store['DATABASE']['user']
         storage['DATABASE']['pwd'] = mongo_store['DATABASE']['pwd']
+        storage['DATABASE']['replica_set'] = mongo_store['DATABASE']['replica_set']
 
         with open(pms, 'w') as fh:
             mongo_store.write(fh)
