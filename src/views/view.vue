@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container
     div
-      v-layout(v-for="row in rows", :key="row._id", row, wrap)
+      v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)
           v-layout(align-center)
             h2 {{ row.title }}
@@ -10,14 +10,21 @@
                 v-icon delete
               span {{ $t('common.delete') }}
         v-flex(
-        v-for="widget in row.widgets",
+        v-for="(widget, widgetKey) in row.widgets",
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
           v-layout(justify-space-between)
             h3 {{ widget.title }}
             v-tooltip(left, v-if="isEditModeEnable")
-              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+              v-btn.ma-0(
+              slot="activator",
+              fab,
+              small,
+              dark,
+              color="red darken-3",
+              @click="deleteWidget(widgetKey, rowKey)"
+              )
                 v-icon delete
               span {{ $t('common.delete') }}
           component(
@@ -51,6 +58,7 @@
 
 <script>
 import get from 'lodash/get';
+import pullAt from 'lodash/pullAt';
 
 import { WIDGET_TYPES, MODALS } from '@/constants';
 import uid from '@/helpers/uid';
@@ -125,6 +133,11 @@ export default {
     },
     toggleViewEditMode() {
       this.isEditModeEnable = !this.isEditModeEnable;
+    },
+    deleteWidget(widgetKey, rowKey) {
+      const view = { ...this.view };
+      pullAt(view.rows[rowKey].widgets, widgetKey);
+      this.updateView({ id: this.id, data: view });
     },
   },
 };
