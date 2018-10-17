@@ -569,7 +569,7 @@ class Alerts(object):
                 value[AlarmField.long_output_history.value] = new_hist
 
             value[AlarmField.steps.value].append({
-                "a": DEFAULT_AUTHOR,
+                "a": event.get(self.AUTHOR, self.filter_author),
                 "_t": "long_output",
                 "m": message,
                 "t": int(time()),
