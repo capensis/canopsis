@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       v-select(
-      v-show="showSelect",
+      v-show="!hideSelect",
       :label="$t('settings.selectAFilter')",
       :items="filters",
       :value="value",
@@ -40,7 +40,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    showSelect: {
+    hideSelect: {
       type: Boolean,
       default: false,
     },

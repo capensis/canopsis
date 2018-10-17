@@ -2,7 +2,7 @@
   v-list-group
     v-list-tile(slot="activator") {{ title }}
     v-container
-      v-switch(:input-value="value", @change="$emit('input', $event)")
+      v-switch(:input-value="value", @change="$emit('input', $event)", :label="title")
 </template>
 
 <script>

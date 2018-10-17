@@ -23,7 +23,6 @@
       field-filters(
       v-model="settings.widget_preferences.mainFilter",
       :filters.sync="settings.widget_preferences.viewFilters"
-      show-select
       )
       v-divider
       field-info-popup(v-model="settings.widget.parameters.infoPopups")
