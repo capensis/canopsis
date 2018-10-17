@@ -29,7 +29,7 @@ Ember.Application.initializer({
             moment = window.moment;
             __ = Ember.String.loc;
 
-        var DEFAULT_AUTHOR = __('system');
+        var DEFAULT_AUTHOR = __('unknown');
 
         var component = Ember.Component.extend({
                         timelineData: undefined,
@@ -50,7 +50,8 @@ Ember.Application.initializer({
                 'snooze': __('Snoozed by '),
                 'statecounter': __('Cropped states (since last change of status)'),
                 'done': __('Mark as done by '),
-                'hardlimit': __('Hard limit reached !')
+                'hardlimit': __('Hard limit reached !'),
+                'long_output': __("update_output")
             },
 
             authoredName: [
@@ -104,10 +105,10 @@ Ember.Application.initializer({
                 'statecounter': {'icon': 'fa-scissors', 'color': 'bg-black'},
                 'done': {'icon': 'fa-check-square', 'color': 'bg-olive'},
                 'hardlimit': {'icon': 'fa-warning', 'color': 'bg-red'},
-                'long_output': {'icon': 'fa-warning', 'color': 'bg-red'}
+                'long_output': {'icon': 'fa-pencil', 'color': 'bg-grey'}
             },
 
-            addAuthor: ['stateinc', 'statedec', 'changestate', 'statusinc', 'statusdec'],
+            addAuthor: ['stateinc', 'statedec', 'changestate', 'statusinc', 'statusdec', 'long_output'],
 
             /**
              * @method didInsertElement
@@ -144,6 +145,12 @@ Ember.Application.initializer({
 
                             step.time = moment(date).format('HH:mm:ss');
 
+                            step.a = __(step.a)
+
+                            if((step.m === null) || (step.m === "") || (step.m === undefined)) {
+                                step.m = __("no_message")
+                            }
+
                             if (!(step._t in get(component, 'iconsAndColors'))) {
                                 console.warn('Unknown step "' + step._t + '" : skipping');
                                 continue;
@@ -165,8 +172,8 @@ Ember.Application.initializer({
                                 step.status = get(component,'statusArray')[step.val];
 
                             if (step._t === 'snooze') {
-                                var until = new Date(step.val * 1000);
-                                step.until = moment(until).format('HH:mm:ss');
+                                var message = new Date(step.val * 1000);
+                                step.m = __("snooze_until") + moment(message).format('D MMM YYYY HH:mm:ss');
                             }
 
                             if (step._t === 'statecounter') {
@@ -203,14 +210,8 @@ Ember.Application.initializer({
 
                             // add value to a ticket's message
                             if (step._t === 'assocticket') {
-                                step.m += ' ' + step.val;
+                                step.m = __("assoc_ticket") + step.val
                             }
-
-							if((step.state === undefined) && (step.status === undefined)) {
-								step.name = __("update_output")
-								step.icon = "fa-pencil"
-								step.color = 'bg-grey'
-							}
 
                             steps.push(step);
 
