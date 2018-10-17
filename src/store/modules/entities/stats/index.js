@@ -26,9 +26,21 @@ export default {
           Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
         }
 
-        const data = await request.post(API_ROUTES.stats, { ...params });
+        return await request.post(API_ROUTES.stats, { ...params });
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
-        return data;
+        return [];
+      }
+    },
+
+    async fetchEvolutionWithoutStore({ dispatch }, { params, aggregate }) {
+      try {
+        if (aggregate) {
+          Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
+        }
+
+        return await request.post(`${API_ROUTES.stats}/evolution`, { ...params });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 

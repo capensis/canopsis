@@ -143,6 +143,7 @@ export default {
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
       statsHistogramSettings: 'Histogram settings',
+      statsCurvesSettings: 'Curve settings',
       statsTableSettings: 'Stats table settings',
       statsNumberSettings: 'Stats number settings',
     },
@@ -160,6 +161,7 @@ export default {
     filterEditor: 'Filter editor',
     duration: 'Duration',
     tstop: 'End date',
+    periodsNumber: 'Number of periods',
     statName: 'Stat name',
     statsSelect: 'Stats select',
     yesNoMode: 'Yes/No mode',
@@ -393,6 +395,9 @@ export default {
         },
         statsHistogram: {
           title: 'Stats histogram',
+        },
+        statsCurves: {
+          title: 'Stats curves',
         },
         statsTable: {
           title: 'Stats table',
