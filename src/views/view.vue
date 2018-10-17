@@ -1,12 +1,12 @@
 <template lang="pug">
   v-container
     div
-      v-layout(v-for="row in rows", :key="row._id", row, wrap)
+      v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)
           v-layout(align-center)
             h2 {{ row.title }}
             v-tooltip.ml-2(left, v-if="isEditModeEnable")
-              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
                 v-icon delete
               span {{ $t('common.delete') }}
         v-flex(
@@ -51,6 +51,7 @@
 
 <script>
 import get from 'lodash/get';
+import pullAt from 'lodash/pullAt';
 
 import { WIDGET_TYPES, MODALS } from '@/constants';
 import uid from '@/helpers/uid';
@@ -62,6 +63,7 @@ import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-w
 import StatsTable from '@/components/other/stats/stats-table.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
 
+import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -75,6 +77,7 @@ export default {
     StatsNumber,
   },
   mixins: [
+    popupMixin,
     modalMixin,
     entitiesViewMixin,
   ],
@@ -128,6 +131,22 @@ export default {
     },
     toggleViewEditMode() {
       this.isEditModeEnable = !this.isEditModeEnable;
+    },
+    deleteRow(rowKey) {
+      if (this.view.rows[rowKey].widgets.length > 0) {
+        this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
+      } else {
+        this.showModal({
+          name: MODALS.confirmation,
+          config: {
+            action: () => {
+              const view = { ...this.view };
+              pullAt(view.rows, rowKey);
+              this.updateView({ id: this.id, data: view });
+            },
+          },
+        });
+      }
     },
   },
 };
