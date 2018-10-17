@@ -41,6 +41,15 @@ find /opt/canopsis/{etc/,opt/} -type f > ${deb_path}/DEBIAN/conffile
 
 chmod +x ${deb_path}/DEBIAN/*inst
 
+cp -rp /opt/canopsis  ${deb_path}/opt/
+ls ${deb_path}/opt/
+mkdir -p ${deb_path}/lib/systemd/system/
+mkdir -p ${deb_path}/usr/bin
+ln -sf /opt/canopsis/bin/canoctl ${deb_path}/usr/bin/canoctl
+# cp -ar /lib/systemd/system/canopsis-* ${deb_path}/lib/systemd/system/
+
+
+
 dpkg-deb --verbose -b ${deb_path}/ /build/${deb_name}-${deb_version}-${deb_release}.${arch}.stretch.deb
 
 chown -R ${FIX_OWNERSHIP} /packages/*
