@@ -97,6 +97,16 @@ export function generateWidgetByType(type) {
         tstop: moment().unix(),
         groups: [],
         stats: {},
+        statsColors: {},
+      };
+      break;
+    case WIDGET_TYPES.statsCurves:
+      specialParameters = {
+        mfilter: {},
+        duration: '1m',
+        tstop: moment().unix(),
+        periods: 1,
+        stats: {},
       };
       break;
     case WIDGET_TYPES.statsTable:
@@ -105,6 +115,27 @@ export function generateWidgetByType(type) {
         tstop: moment().unix(),
         stats: {},
         mfilter: {},
+      };
+      break;
+
+    case WIDGET_TYPES.statsNumber:
+      specialParameters = {
+        duration: '1d',
+        tstop: moment().unix(),
+        mfilter: {},
+        stat: {},
+        yesNoMode: false,
+        criticityLevels: {
+          minor: 20,
+          major: 30,
+          critical: 40,
+        },
+        statColors: {
+          ok: '#66BB6A',
+          minor: '#FFEE58',
+          major: '#FFA726',
+          critical: '#FF7043',
+        },
       };
       break;
   }

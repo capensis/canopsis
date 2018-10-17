@@ -8,13 +8,13 @@
       @createRow="createRow"
       )
       v-divider
-      field-title(v-model="settings.widget.title", :title="$t('common.title')")
+      field-title(v-model="settings.widget.title")
       v-divider
       field-duration(v-model="settings.widget.parameters.duration")
       v-divider
       field-date-time-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
       v-divider
-      field-stats-groups(v-model="settings.widget.parameters.groups")
+      field-periods-number(v-model="settings.widget.parameters.periods")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
@@ -26,19 +26,20 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 
+import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
 
 import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldDuration from '../partial/fields/duration.vue';
-import FieldStatsGroups from '../partial/fields/stats-groups.vue';
+import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
+import FieldPeriodsNumber from '../partial/fields/periods-number.vue';
 import FieldStatsSelect from '../partial/fields/stats-select.vue';
 import FieldStatsColors from '../partial/fields/stats-colors.vue';
-import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
 
 export default {
-  name: SIDE_BARS.statsHistogramSettings,
+  name: SIDE_BARS.statsCurvesSettings,
   $_veeValidate: {
     validator: 'new',
   },
@@ -46,12 +47,12 @@ export default {
     FieldRowGridSize,
     FieldTitle,
     FieldDuration,
-    FieldStatsGroups,
+    FieldDateTimeSelect,
+    FieldPeriodsNumber,
     FieldStatsSelect,
     FieldStatsColors,
-    FieldDateTimeSelect,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [entitiesStatsMixin, widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -59,8 +60,6 @@ export default {
       settings: {
         rowId,
         widget: cloneDeep(widget),
-        widget_preferences: {
-        },
       },
     };
   },
