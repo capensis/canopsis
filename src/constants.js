@@ -141,6 +141,7 @@ export const WIDGET_TYPES = {
   statsHistogram: 'StatsHistogram',
   statsTable: 'StatsTable',
   statsCalendar: 'StatsCalendar',
+  statsNumber: 'StatsNumber',
 };
 
 export const SIDE_BARS = {
@@ -150,6 +151,7 @@ export const SIDE_BARS = {
   statsHistogramSettings: 'stats-histogram-settings',
   statsTableSettings: 'stats-table-settings',
   statsCalendarSettings: 'stats-calendar-settings',
+  statsNumberSettings: 'stats-number-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -158,6 +160,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
   [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
   [WIDGET_TYPES.statsCalendar]: SIDE_BARS.statsCalendarSettings,
+  [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
 };
 

@@ -54,7 +54,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(EVENT_ENTITY_TYPES.associateTicket, this.items, this.form);
+        await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
 
         this.hideModal();
       }

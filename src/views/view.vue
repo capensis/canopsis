@@ -3,32 +3,50 @@
     div
       v-layout(v-for="row in rows", :key="row._id", row, wrap)
         v-flex(xs12)
-          h2 {{ row.title }}
+          v-layout(align-center)
+            h2 {{ row.title }}
+            v-tooltip.ml-2(left, v-if="isEditModeEnable")
+              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+                v-icon delete
+              span {{ $t('common.delete') }}
         v-flex(
         v-for="widget in row.widgets",
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
-          h3 {{ widget.title }}
+          v-layout(justify-space-between)
+            h3 {{ widget.title }}
+            v-tooltip(left, v-if="isEditModeEnable")
+              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+                v-icon delete
+              span {{ $t('common.delete') }}
           component(
           :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
           :rowId="row._id"
           )
     .fab
-      v-btn(@click="refreshView", icon, color="info", dark, fab)
-        v-icon refresh
       v-speed-dial(
-      direction="left",
-      :open-on-hover="true",
-      transition="scale-transition"
+      v-model="fab",
+      direction="top",
+      transition="slide-y-reverse-transition"
       )
-        v-btn(slot="activator", color="green darken-3", dark, fab)
-          v-icon add
+        v-btn(slot="activator", color="green darken-3", dark, fab, v-model="fab")
+          v-icon menu
+          v-icon close
         v-tooltip(left)
-          v-btn(slot="activator", fab, dark, small, color="indigo", @click.prevent="showCreateWidgetModal")
+          v-btn(slot="activator", fab, dark, small, color="info", @click.stop="refreshView")
+            v-icon refresh
+          span {{ $t('common.refresh') }}
+        v-tooltip(left)
+          v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
             v-icon widgets
-          span {{ $t('common.widget') }}
+          span {{ $t('common.addWidget') }}
+        v-tooltip(left)
+          v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
+            v-icon edit
+            v-icon done
+          span {{ $t('common.toggleEditView') }}
 </template>
 
 <script>
@@ -43,6 +61,7 @@ import Weather from '@/components/other/service-weather/weather.vue';
 import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
 import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
+import StatsNumber from '@/components/other/stats/stats-number.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -55,6 +74,7 @@ export default {
     StatsHistogram,
     StatsTable,
     StatsCalendar,
+    StatsNumber,
   },
   mixins: [
     modalMixin,
@@ -75,8 +95,11 @@ export default {
         [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
         [WIDGET_TYPES.statsTable]: 'stats-table',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
+        [WIDGET_TYPES.statsNumber]: 'stats-number',
       },
       widgetKeyPrefix: uid(),
+      isEditModeEnable: false,
+      fab: false,
     };
   },
   computed: {
@@ -105,6 +128,9 @@ export default {
       this.showModal({
         name: MODALS.createWidget,
       });
+    },
+    toggleViewEditMode() {
+      this.isEditModeEnable = !this.isEditModeEnable;
     },
   },
 };

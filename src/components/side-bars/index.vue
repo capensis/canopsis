@@ -14,6 +14,7 @@ import WeatherSettings from './settings/widgets/weather.vue';
 import StatsHistogramSettings from './settings/widgets/stats-histogram.vue';
 import StatsTableSettings from './settings/widgets/stats-table.vue';
 import StatsCalendarSettings from './settings/widgets/stats-calendar.vue';
+import StatsNumberSettings from './settings/widgets/stats-number.vue';
 
 /**
  * Wrapper for all side-bars
@@ -27,6 +28,7 @@ export default {
     StatsHistogramSettings,
     StatsTableSettings,
     StatsCalendarSettings,
+    StatsNumberSettings,
   },
   mixins: [sideBarInnerMixin],
   data() {

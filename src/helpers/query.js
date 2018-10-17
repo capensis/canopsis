@@ -1,7 +1,7 @@
 import get from 'lodash/get';
+import omit from 'lodash/omit';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
@@ -132,6 +132,18 @@ export function convertStatsCalendarWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts widget with type 'Stats number' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsNumberWidgetToQuery(widget) {
+  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']);
+  query.trend = true;
+  return query;
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -207,6 +219,8 @@ export function convertWidgetToQuery(widget) {
       return convertStatsTableWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
       return convertStatsCalendarWidgetToQuery(widget);
+    case WIDGET_TYPES.statsNumber:
+      return convertStatsNumberWidgetToQuery(widget);
     default:
       return {};
   }

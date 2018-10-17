@@ -1,10 +1,13 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
     entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
+    addWidget: 'Add widget',
+    refresh: 'Refresh',
+    toggleEditView: 'Toggle view edition mode',
     name: 'Name',
     description: 'Description',
     author: 'Author',
@@ -142,6 +145,7 @@ export default {
       statsHistogramSettings: 'Histogram settings',
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
+      statsNumberSettings: 'Stats number settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -157,8 +161,20 @@ export default {
     filterEditor: 'Filter editor',
     duration: 'Duration',
     tstop: 'End date',
+    statName: 'Stat name',
     statsSelect: 'Stats select',
+    yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
+    criticityLevels: 'Criticity levels',
+    colorsSelector: {
+      title: 'Colors selector',
+      statsCriticity: {
+        [STATS_CRITICITY.ok]: 'ok',
+        [STATS_CRITICITY.minor]: 'minor',
+        [STATS_CRITICITY.major]: 'major',
+        [STATS_CRITICITY.critical]: 'critical',
+      },
+    },
     statsNumbers: {
       title: 'Stats numbers',
       yesNoMode: 'Yes/No mode',
@@ -387,6 +403,9 @@ export default {
         },
         statsCalendar: {
           title: 'Stats calendar',
+        },
+        statsNumber: {
+          title: 'Stats number',
         },
       },
     },

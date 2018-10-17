@@ -7,7 +7,6 @@ import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
 import Alarms from '@/views/alarms.vue';
-import StatsExamples from '@/views/stats-examples.vue';
 
 Vue.use(Router);
 
@@ -36,12 +35,6 @@ const routes = [
     component: View,
     meta: requiresLoginMeta,
     props: route => ({ id: route.params.id }),
-  },
-  {
-    path: '/stats',
-    name: 'stats-examples',
-    component: StatsExamples,
-    meta: requiresLoginMeta,
   },
   {
     path: '/alarms',

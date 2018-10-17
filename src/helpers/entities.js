@@ -108,17 +108,39 @@ export function generateWidgetByType(type) {
       };
       break;
 
+
     case WIDGET_TYPES.statsCalendar:
       specialParameters = {
         filters: [],
         alarmsStateFilter: {},
         considerPbehaviors: false,
+        criticityLevelsColors: { ...STATS_CALENDAR_COLORS.alarm },
         criticityLevels: {
           minor: 20,
           major: 30,
           critical: 40,
         },
-        criticityLevelsColors: { ...STATS_CALENDAR_COLORS.alarm },
+      };
+      break;
+
+    case WIDGET_TYPES.statsNumber:
+      specialParameters = {
+        duration: '1d',
+        tstop: moment().unix(),
+        mfilter: {},
+        stat: {},
+        yesNoMode: false,
+        criticityLevels: {
+          minor: 20,
+          major: 30,
+          critical: 40,
+        },
+        statColors: {
+          ok: '#66BB6A',
+          minor: '#FFEE58',
+          major: '#FFA726',
+          critical: '#FF7043',
+        },
       };
       break;
   }
