@@ -289,6 +289,13 @@ export const STATS_TYPES = {
   },
 };
 
+export const STATS_DURATION_UNITS = {
+  hour: 'h',
+  day: 'd',
+  week: 'w',
+  month: 'm',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
