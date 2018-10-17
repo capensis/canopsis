@@ -13,6 +13,7 @@ import ContextSettings from './settings/widgets/context.vue';
 import WeatherSettings from './settings/widgets/weather.vue';
 import StatsHistogramSettings from './settings/widgets/stats-histogram.vue';
 import StatsTableSettings from './settings/widgets/stats-table.vue';
+import StatsNumberSettings from './settings/widgets/stats-number.vue';
 
 /**
  * Wrapper for all side-bars
@@ -25,6 +26,7 @@ export default {
     WeatherSettings,
     StatsHistogramSettings,
     StatsTableSettings,
+    StatsNumberSettings,
   },
   mixins: [sideBarInnerMixin],
   data() {

@@ -60,6 +60,7 @@ import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
 import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
+import StatsNumber from '@/components/other/stats/stats-number.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -71,6 +72,7 @@ export default {
     Weather,
     StatsHistogram,
     StatsTable,
+    StatsNumber,
   },
   mixins: [
     modalMixin,
@@ -90,6 +92,7 @@ export default {
         [WIDGET_TYPES.weather]: 'weather',
         [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
         [WIDGET_TYPES.statsTable]: 'stats-table',
+        [WIDGET_TYPES.statsNumber]: 'stats-number',
       },
       widgetKeyPrefix: uid(),
       isEditModeEnable: false,

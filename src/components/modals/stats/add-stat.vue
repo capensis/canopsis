@@ -76,10 +76,6 @@ export default {
         title: '',
         trend: true,
         parameters: {
-          sla: '',
-          states: [],
-          recursive: false,
-          authors: [],
         },
       },
       error: '',
