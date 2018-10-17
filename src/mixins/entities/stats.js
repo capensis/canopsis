@@ -7,6 +7,7 @@ export default {
     ...mapActions({
       fetchStatsListWithoutStore: 'fetchListWithoutStore',
       fetchStatsEvolutionWithoutStore: 'fetchEvolutionWithoutStore',
+      fetchStatValuesWithoutStore: 'fetchItemValuesWithoutStore',
     }),
   },
 };

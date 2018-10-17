@@ -1,7 +1,7 @@
 import get from 'lodash/get';
+import omit from 'lodash/omit';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
@@ -91,11 +91,26 @@ export function convertStatsHistogramToQuery(widget) {
 }
 
 /**
+ * This function converts widget with type 'Stats table' to query Object
  *
+ * @param {Object} widget
+ * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
   const query = { ...widget.parameters };
 
+  return query;
+}
+
+/**
+ * This function converts widget with type 'Stats number' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsNumberWidgetToQuery(widget) {
+  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']);
+  query.trend = true;
   return query;
 }
 
@@ -173,6 +188,8 @@ export function convertWidgetToQuery(widget) {
       return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
+    case WIDGET_TYPES.statsNumber:
+      return convertStatsNumberWidgetToQuery(widget);
     default:
       return {};
   }

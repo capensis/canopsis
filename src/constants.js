@@ -141,6 +141,7 @@ export const WIDGET_TYPES = {
   statsHistogram: 'StatsHistogram',
   statsCurves: 'StatsCurves',
   statsTable: 'StatsTable',
+  statsNumber: 'StatsNumber',
 };
 
 export const SIDE_BARS = {
@@ -150,6 +151,7 @@ export const SIDE_BARS = {
   statsHistogramSettings: 'stats-histogram-settings',
   statsCurvesSettings: 'stats-curves-settings',
   statsTableSettings: 'stats-table-settings',
+  statsNumberSettings: 'stats-number-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -157,6 +159,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
   [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
   [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
+  [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
 };
@@ -290,6 +293,13 @@ export const STATS_TYPES = {
     value: 'current_ongoing_alarms',
     options: ['states'],
   },
+};
+
+export const STATS_CRITICITY = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
 };
 
 export const WIDGET_MAX_SIZE = 12;
