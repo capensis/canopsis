@@ -13,14 +13,17 @@ Renvoie l'action demandée.
 ```json
 {
     "_id": "action_id",
+    "type": "pbehavior",
+    "fields": ["Resource", "Component"],
     "regex": ".*",
-    "field": "Resource",
     "parameters": {
         "name": "pbehavior_name",
         "author": "System",
         "type": "Pause",
         "rrule": "",
-        "reason": ""
+        "reason": "",
+        "tstart": 0,
+        "tstop": 253402297199
     }
 }
 ```
@@ -31,14 +34,17 @@ Renvoie l'action demandée.
 POST /api/v2/actions
 {
     "_id": "action_id",
+    "type": "pbehavior",
+    "fields": ["Resource", "Component"],
     "regex": ".*",
-    "field": "Resource",
     "parameters": {
         "name": "pbehavior_name",
         "author": "System",
         "type": "Pause",
         "rrule": "",
-        "reason": ""
+        "reason": "",
+        "tstart": 0,
+        "tstop": 253402297199
     }
 }
 ```
@@ -51,14 +57,17 @@ Renvoie un dictionnaire vide en cas de réussite.
 PUT /api/v2/actions/<action_id>
 {
     "_id": "action_id",
+    "type": "pbehavior",
+    "fields": ["Resource", "Component"],
     "regex": ".*",
-    "field": "Resource",
     "parameters": {
         "name": "pbehavior_name",
         "author": "Myself",
         "type": "Pause",
         "rrule": "",
-        "reason": ""
+        "reason": "",
+        "tstart": 0,
+        "tstop": 253402297199
     }
 }
 ```

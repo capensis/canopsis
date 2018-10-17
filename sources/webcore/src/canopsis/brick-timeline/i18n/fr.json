@@ -17,5 +17,9 @@
   "by ": "par ",
   "system": "système",
   "Mark as done by ": "Marqué comme fait par ",
-  "update_output" : "Sortie mise à jour"
+  "update_output" : "Sortie mise à jour",
+  "unknown": "inconnu",
+  "assoc_ticket": "Assignation du ticket ",
+  "snooze_until": "Reportée jusque ",
+  "no_message": "Pas de message"
 }

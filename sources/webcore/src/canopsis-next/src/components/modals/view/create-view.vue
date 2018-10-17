@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-title
-      span.headline {{ $t('modals.createView.title') }}
+      span.headline {{ title }}
     v-form
       v-layout(wrap, justify-center)
         v-flex(xs11)
@@ -29,7 +29,7 @@
         v-flex(xs11)
           v-combobox(
           v-model="form.tags",
-          :label="$t('modals.createView.fields.groupTags')",
+          :label="$t('modals.view.fields.groupTags')",
           tags,
           clearable,
           multiple,
@@ -40,7 +40,7 @@
           v-combobox(
           v-model="groupName",
           :items="groupNames",
-          :label="$t('modals.createView.fields.groupIds')",
+          :label="$t('modals.view.fields.groupIds')",
           :search-input.sync="search"
           data-vv-name="group",
           v-validate="'required'",
@@ -49,12 +49,14 @@
             template(slot="no-data")
               v-list-tile
                 v-list-tile-content
-                  v-list-tile-title(v-html="$t('modals.createView.noData')")
+                  v-list-tile-title(v-html="$t('modals.view.noData')")
 
           span {{ form.group_id }}
       v-layout
-        v-flex(xs3)
+        v-flex(xs6)
           v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
+        v-flex.text-xs-right(v-show="config.view", xs6)
+          v-btn.red.darken-4.white--text(@click="remove") {{ $t('common.delete') }}
 </template>
 
 <script>
@@ -98,11 +100,47 @@ export default {
     groupNames() {
       return this.groups.map(group => group.name);
     },
+    title() {
+      if (this.config.view) {
+        return this.$t('modals.view.edit.title');
+      }
+
+      return this.$t('modals.view.create.title');
+    },
   },
   mounted() {
-    this.fetchGroupsList();
+    const { view } = this.config;
+
+    if (view) {
+      const group = find(this.groups, { _id: view.group_id });
+
+      if (group) {
+        this.groupName = group.name;
+      }
+
+      this.form = {
+        name: view.name,
+        title: view.title,
+        description: view.description,
+        enabled: view.enabled,
+        tags: [...view.tags || []],
+      };
+    }
   },
   methods: {
+    remove() {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removeView({ id: this.config.view._id });
+            await this.fetchGroupsList();
+
+            this.hideModal();
+          },
+        },
+      });
+    },
     async submit() {
       try {
         const isFormValid = await this.$validator.validateAll();
@@ -119,15 +157,20 @@ export default {
             ...this.form,
             group_id: group._id,
           };
-          await this.createView({ data });
+
+          if (this.config.view) {
+            await this.updateView({ id: this.config.view._id, data });
+          } else {
+            await this.createView({ data });
+          }
+
           await this.fetchGroupsList();
 
-          this.addSuccessPopup({ text: this.$t('modals.createView.success') });
-
+          this.addSuccessPopup({ text: this.$t('modals.view.success') });
           this.hideModal();
         }
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('modals.createView.fail') });
+        this.addErrorPopup({ text: this.$t('modals.view.fail') });
         console.error(err.description);
       }
     },

@@ -1,10 +1,13 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
     entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
+    addWidget: 'Add widget',
+    refresh: 'Refresh',
+    toggleEditView: 'Toggle view edition mode',
     name: 'Name',
     description: 'Description',
     author: 'Author',
@@ -139,7 +142,10 @@ export default {
       alarmListSettings: 'Alarm list settings',
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
+      statsHistogramSettings: 'Histogram settings',
+      statsCurvesSettings: 'Curve settings',
       statsTableSettings: 'Stats table settings',
+      statsNumberSettings: 'Stats number settings',
     },
     widgetTitle: 'Widget title',
     columnName: 'Column name',
@@ -155,8 +161,21 @@ export default {
     filterEditor: 'Filter editor',
     duration: 'Duration',
     tstop: 'End date',
+    periodsNumber: 'Number of periods',
+    statName: 'Stat name',
     statsSelect: 'Stats select',
+    yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
+    criticityLevels: 'Criticity levels',
+    colorsSelector: {
+      title: 'Colors selector',
+      statsCriticity: {
+        [STATS_CRITICITY.ok]: 'ok',
+        [STATS_CRITICITY.minor]: 'minor',
+        [STATS_CRITICITY.major]: 'major',
+        [STATS_CRITICITY.critical]: 'critical',
+      },
+    },
     statsNumbers: {
       title: 'Stats numbers',
       yesNoMode: 'Yes/No mode',
@@ -201,6 +220,14 @@ export default {
         alreadyExist: 'Stat with this name already exists',
       },
     },
+    statsGroups: {
+      title: 'Stats groups',
+      manageGroups: 'Add a group',
+    },
+    statsColor: {
+      title: 'Stats color',
+      pickColor: 'Pick a color',
+    },
   },
   modals: {
     contextInfos: {
@@ -230,8 +257,13 @@ export default {
       editTitle: 'Edit a watcher',
       displayName: 'Name',
     },
-    createView: {
-      title: 'Create a view',
+    view: {
+      create: {
+        title: 'Create a view',
+      },
+      edit: {
+        title: 'Edit the view',
+      },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         groupIds: 'Choose a group, or create a new one',
@@ -346,6 +378,9 @@ export default {
         title: 'Title',
       },
     },
+    colorPicker: {
+      title: 'Color picker',
+    },
     widgetCreation: {
       title: 'Select a widget',
       types: {
@@ -358,9 +393,44 @@ export default {
         weather: {
           title: 'Service weather',
         },
+        statsHistogram: {
+          title: 'Stats histogram',
+        },
+        statsCurves: {
+          title: 'Stats curves',
+        },
         statsTable: {
           title: 'Stats table',
         },
+        statsNumber: {
+          title: 'Stats number',
+        },
+      },
+    },
+    manageHistogramGroups: {
+      title: {
+        add: 'Add a group',
+        edit: 'Edit a group',
+      },
+    },
+    addStat: {
+      title: {
+        add: 'Add a stat',
+        edit: 'Edit a stat',
+      },
+    },
+    group: {
+      create: {
+        title: 'Create group',
+      },
+      edit: {
+        title: 'Edit group',
+      },
+      fields: {
+        name: 'Name',
+      },
+      errors: {
+        isNotEmpty: 'The group is not empty',
       },
     },
   },
@@ -376,6 +446,7 @@ export default {
       title: 'General',
       author: 'Author',
       connector: 'Connector',
+      connectorName: 'Connector name',
       component: 'Component',
       resource: 'Resource',
       output: 'Output',
@@ -520,6 +591,15 @@ export default {
       [STATS_TYPES.currentState.value]: 'Current state',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+    },
+  },
+  layout: {
+    sideBar: {
+      buttons: {
+        edit: 'Toggle editing mode',
+        create: 'Create view',
+        settings: 'Settings',
+      },
     },
   },
 };
