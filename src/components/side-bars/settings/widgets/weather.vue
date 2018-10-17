@@ -43,11 +43,11 @@ import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldWeatherDataSet from '../partial/fields/weather-data-set.vue';
-import FieldWeatherTemplate from '../partial/fields/weather-template.vue';
-import FieldGridSize from '../partial/fields/grid-size.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldWeatherDataSet from './fields/weather/weather-data-set.vue';
+import FieldWeatherTemplate from './fields/weather/weather-template.vue';
+import FieldGridSize from './fields/common/grid-size.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
