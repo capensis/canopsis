@@ -18,13 +18,17 @@ services:
     ports:
       - 6379:6379
   rabbitmq:
-    image: canopsis/canopsis-rabbitmq-server:${RABBIT_TAG}
+    image: rabbitmq:${RABBITMQ_TAG}
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
     restart: unless-stopped
     mem_limit: 2g
     mem_reservation: 2g
     oom_score_adj: -1000
+    environment:
+      - RABBITMQ_DEFAULT_USER=cpsrabbit
+      - RABBITMQ_DEFAULT_PASS=canopsis
+      - RABBITMQ_DEFAULT_VHOST=canopsis
   mongodb:
     image: mongo:3.6-jessie
     env_file: compose.mongo.env
