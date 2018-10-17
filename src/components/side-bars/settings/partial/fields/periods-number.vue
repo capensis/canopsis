@@ -4,8 +4,8 @@
     v-container
       v-text-field(
       :value="value",
-      @input="$emit('input', parseInt(event, 10))",
-      v-validate="'required|integer|min:1'",
+      @input="updatePeriodsNumber",
+      v-validate="'required|integer|min_value:2'",
       data-vv-name="periodsNumber",
       :error-messages="errors.collect('periodsNumber')",
       )
@@ -17,11 +17,14 @@ export default {
   props: {
     value: {
       type: Number,
+      default: 2,
     },
   },
   methods: {
     updatePeriodsNumber(event) {
-      this.$emit('input', parseInt(event, 10));
+      if (event) {
+        this.$emit('input', parseInt(event, 10));
+      }
     },
   },
 };
