@@ -20,6 +20,7 @@ canopsis | canopsis.alerts | fanout | durable    | no          | no
 
 Exchange        | Queue            | Routing key
 --------------- | ---------------- | -----------
+                | Engine_action    | #
 canopsis.alerts | Engine_axe       | #
 canopsis.events | Engine_che       | #
 canopsis.events | Engine_heartbeat | #
@@ -257,6 +258,7 @@ Les binaires suivants permettent de lancer un *profiling* Go :
  * `engine-axe`
  * `engine-heartbeat`
  * `engine-stat`
+ * `engine-action`
 
 Pour l’activer/désactiver globalement :
 
