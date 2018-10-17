@@ -435,6 +435,9 @@ export default {
         isNotEmpty: 'The group is not empty',
       },
     },
+    calendarAlarmsList: {
+      title: 'Calendar alarms list',
+    },
   },
   tables: {
     noData: 'No data',

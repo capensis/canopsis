@@ -32,6 +32,7 @@ export const MODALS = {
   createWidget: 'create-widget',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
+  calendarAlarmsList: 'calendar-alarms-list',
   addStat: 'add-stat',
   colorPicker: 'color-picker',
   createView: 'create-view',

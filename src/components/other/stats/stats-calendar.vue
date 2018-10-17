@@ -39,9 +39,11 @@ import isEmpty from 'lodash/isEmpty';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS, MODALS, WIDGET_TYPES } from '@/constants';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
+import { generateWidgetByType } from '@/helpers/entities';
 
+import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 
@@ -51,7 +53,7 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: { DsCalendar },
-  mixins: [sideBarMixin, widgetQueryMixin],
+  mixins: [modalMixin, sideBarMixin, widgetQueryMixin],
   props: {
     widget: {
       type: Object,
@@ -151,17 +153,33 @@ export default {
     },
 
     editEvent(event) {
-      const routeData = this.$router.resolve({
-        name: 'alarms',
-        query: {
-          ...pick(event.data.meta, ['tstart', 'tstop']),
-          ...pick(this.query, ['opened', 'resolved']),
+      const { meta } = event.data;
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widgetParameters = {
+        ...this.widget.parameters.alarmsList,
 
-          filter: JSON.stringify(event.data.meta.filter),
+        alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+      };
+
+      if (!isEmpty(event.data.meta.filter)) {
+        widgetParameters.viewFilter = meta.filter;
+        widgetParameters.mainFilters = [meta.filter];
+      }
+
+      this.showModal({
+        name: MODALS.calendarAlarmsList,
+        config: {
+          query: pick(meta, ['tstart', 'tstop']),
+          widget: {
+            ...widget,
+
+            parameters: {
+              ...widget.parameters,
+              ...widgetParameters,
+            },
+          },
         },
       });
-
-      window.open(routeData.href, '_blank');
     },
 
     changeCalendar({ calendar }) {

@@ -10,9 +10,8 @@ export function generateWidgetByType(type) {
     type,
     _id: uuid(`widget_${type}`),
     title: '',
-    minColumns: 6,
-    maxColumns: 12,
     parameters: {},
+    size: { sm: 3, md: 3, lg: 3 },
   };
 
   let specialParameters = {};
@@ -119,6 +118,45 @@ export function generateWidgetByType(type) {
           minor: 20,
           major: 30,
           critical: 40,
+        },
+        alarmsList: {
+          itemsPerPage: PAGINATION_LIMIT,
+          infoPopups: [],
+          moreInfoTemplate: '',
+          widgetColumns: [
+            {
+              label: i18n.t('tables.alarmGeneral.connector'),
+              value: 'alarm.connector',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.connectorName'),
+              value: 'alarm.connector_name',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.component'),
+              value: 'alarm.component',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.resource'),
+              value: 'alarm.resource',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.output'),
+              value: 'alarm.output',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.extraDetails'),
+              value: 'extra_details',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.state'),
+              value: 'alarm.state.val',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.status'),
+              value: 'alarm.status.val',
+            },
+          ],
         },
       };
       break;

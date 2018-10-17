@@ -8,7 +8,7 @@
       @createRow="createRow"
       )
       v-divider
-      field-title(v-model="settings.widget.title")
+      field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-filters(:filters.sync="settings.widget.parameters.filters", hideSelect)
       v-divider
@@ -23,15 +23,16 @@
       v-divider
       field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors")
       v-divider
-      field-columns(v-model="settings.widget.parameters.widgetColumns")
-      v-divider
-      field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
-      v-divider
-      field-default-elements-per-page(v-model="settings.widget.parameters.itemsPerPage")
-      v-divider
-      field-info-popup(v-model="settings.widget.parameters.infoPopups")
-      v-divider
-      field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns")
+          v-divider
+          field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
+          v-divider
+          field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
+          v-divider
+          field-more-info(v-model="settings.widget.parameters.alarmsList.moreInfoTemplate")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
@@ -50,7 +51,6 @@ import FieldSwitcher from '../partial/fields/switcher.vue';
 import FieldCriticityLevels from '../partial/fields/criticity-levels.vue';
 import FieldLevelsColorsSelector from '../partial/fields/levels-colors-selector.vue';
 import FieldColumns from '../partial/fields/columns.vue';
-import FieldPeriodicRefresh from '../partial/fields/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from '../partial/fields/default-elements-per-page.vue';
 import FieldInfoPopup from '../partial/fields/info-popup.vue';
 import FieldMoreInfo from '../partial/fields/more-info.vue';
@@ -72,7 +72,6 @@ export default {
     FieldCriticityLevels,
     FieldLevelsColorsSelector,
     FieldColumns,
-    FieldPeriodicRefresh,
     FieldDefaultElementsPerPage,
     FieldInfoPopup,
     FieldMoreInfo,
@@ -91,6 +90,37 @@ export default {
   computed: {
     entitiesType() {
       return ENTITIES_TYPES.entity;
+    },
+  },
+  methods: {
+    prefixFormatter(value) {
+      return value.replace('alarm.', 'v.');
+    },
+
+    prepareSettingsWidget() {
+      const { widget } = this.settings;
+
+      return {
+        ...widget,
+
+        parameters: {
+          ...widget.parameters,
+
+          alarmsList: {
+            ...widget.parameters.alarmsList,
+
+            widgetColumns: widget.parameters.alarmsList.widgetColumns.map(v => ({
+              ...v,
+              value: this.prefixFormatter(v.value),
+            })),
+
+            infoPopups: widget.parameters.alarmsList.infoPopups.map(v => ({
+              ...v,
+              column: this.prefixFormatter(v.column),
+            })),
+          },
+        },
+      };
     },
   },
 };

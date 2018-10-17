@@ -6,7 +6,6 @@ import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
-import Alarms from '@/views/alarms.vue';
 
 Vue.use(Router);
 
@@ -35,12 +34,6 @@ const routes = [
     component: View,
     meta: requiresLoginMeta,
     props: route => ({ id: route.params.id }),
-  },
-  {
-    path: '/alarms',
-    name: 'alarms',
-    component: Alarms,
-    meta: requiresLoginMeta,
   },
 ];
 
