@@ -192,11 +192,6 @@ export default {
       noData: 'No row corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         row: 'Row',
-        size: {
-          sm: 'Column SM',
-          md: 'Column MD',
-          lg: 'Column LG',
-        },
       },
     },
     moreInfosModal: '"More Infos" Popup',
