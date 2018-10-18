@@ -142,7 +142,7 @@ export default {
 
         return {
           main: [actionsMap.ack, actionsMap.fastAck],
-          dropDown: [],
+          dropDown: [actionsMap.moreInfos],
         };
       } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
         return {

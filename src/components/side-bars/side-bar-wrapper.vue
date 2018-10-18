@@ -45,7 +45,9 @@ export default {
         [SIDE_BARS.contextSettings]: this.$t('settings.titles.contextTableSettings'),
         [SIDE_BARS.weatherSettings]: this.$t('settings.titles.weatherSettings'),
         [SIDE_BARS.statsHistogramSettings]: this.$t('settings.titles.statsHistogramSettings'),
+        [SIDE_BARS.statsCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
         [SIDE_BARS.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
+        [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
       };
 
       return this.sideBarConfig.sideBarTitle || TITLES_MAP[this.sideBarName];
