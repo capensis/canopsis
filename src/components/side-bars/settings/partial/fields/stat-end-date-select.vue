@@ -15,7 +15,7 @@
           ref="picker",
           :value="dateString",
           @input="updateValue",
-          :allowed-dates="val => parseInt(val.split('-')[2], 10) === 1",
+          :allowed-dates="allowedDates()",
           @change="save"
           )
       template(v-else)
@@ -89,6 +89,18 @@ export default {
     },
     save(date) {
       this.$refs.menu.save(date);
+    },
+    /**
+     * Function used by Vuetify date-picker to determine which dates are allowed.
+     * Returns a function that filter values
+     */
+    allowedDates() {
+      /**
+       * Values are type 'YYYY-MM-DD'
+       * We keep only the 'DD' part (with v.split()), parse it to an Int, and keep it only if it's 1
+       * Result -> The only available day is the first day of the month
+       */
+      return v => parseInt(v.split('-')[2], 10) === 1;
     },
   },
 };
