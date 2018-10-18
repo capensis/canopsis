@@ -1,7 +1,7 @@
 import moment from 'moment';
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES, STATS_DURATION_UNITS } from '@/constants';
 
 import uuid from './uuid';
 
@@ -93,7 +93,7 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsHistogram:
       specialParameters = {
         mfilter: {},
-        duration: '1m',
+        duration: `1${STATS_DURATION_UNITS.day}`,
         tstop: moment().unix(),
         groups: [],
         stats: {},
@@ -111,7 +111,7 @@ export function generateWidgetByType(type) {
       break;
     case WIDGET_TYPES.statsTable:
       specialParameters = {
-        duration: '1m',
+        duration: `1${STATS_DURATION_UNITS.day}`,
         tstop: moment().unix(),
         stats: {},
         mfilter: {},

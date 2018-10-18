@@ -12,7 +12,10 @@
       v-divider
       field-duration(v-model="settings.widget.parameters.duration")
       v-divider
-      field-date-time-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
+      field-stat-end-date-select(
+      v-model="settings.widget.parameters.tstop",
+      :duration="settings.widget.parameters.duration"
+      )
       v-divider
       field-stats-groups(v-model="settings.widget.parameters.groups")
       v-divider
@@ -32,10 +35,10 @@ import { SIDE_BARS } from '@/constants';
 import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
 import FieldTitle from '../partial/fields/title.vue';
 import FieldDuration from '../partial/fields/duration.vue';
+import FieldStatEndDateSelect from '../partial/fields/stat-end-date-select.vue';
 import FieldStatsGroups from '../partial/fields/stats-groups.vue';
 import FieldStatsSelect from '../partial/fields/stats-select.vue';
 import FieldStatsColors from '../partial/fields/stats-colors.vue';
-import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
 
 export default {
   name: SIDE_BARS.statsHistogramSettings,
@@ -49,7 +52,7 @@ export default {
     FieldStatsGroups,
     FieldStatsSelect,
     FieldStatsColors,
-    FieldDateTimeSelect,
+    FieldStatEndDateSelect,
   },
   mixins: [widgetSettingsMixin],
   data() {
@@ -59,8 +62,6 @@ export default {
       settings: {
         rowId,
         widget: cloneDeep(widget),
-        widget_preferences: {
-        },
       },
     };
   },

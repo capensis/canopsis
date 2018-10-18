@@ -295,6 +295,13 @@ export const STATS_TYPES = {
   },
 };
 
+export const STATS_DURATION_UNITS = {
+  hour: 'h',
+  day: 'd',
+  week: 'w',
+  month: 'm',
+};
+
 export const STATS_CRITICITY = {
   ok: 'ok',
   minor: 'minor',
