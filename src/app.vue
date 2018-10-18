@@ -2,7 +2,7 @@
   v-app#app
     v-layout
       navigation(v-if="$route.name !== 'login'")
-      v-content(v-if="!currentUserPending")
+      v-content#main-content(v-if="!currentUserPending")
         router-view(:key="$route.fullPath")
     side-bars
     modals
@@ -33,3 +33,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  #main-content {
+    &.-fullscreen {
+      background: #fafafa;
+      padding: 0!important;
+    }
+  }
+</style>
