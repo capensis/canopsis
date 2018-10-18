@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{$t('settings.periodicRefresh')}}
+      .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
     v-container
       v-layout
         v-flex

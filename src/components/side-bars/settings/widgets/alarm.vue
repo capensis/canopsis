@@ -10,24 +10,27 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-default-sort-column(v-model="settings.widget.parameters.sort")
-      v-divider
-      field-columns(v-model="settings.widget.parameters.widgetColumns")
-      v-divider
       field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
       v-divider
-      field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
-      v-divider
-      field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
-      v-divider
-      field-filters(
-      v-model="settings.widget_preferences.mainFilter",
-      :filters.sync="settings.widget_preferences.viewFilters"
-      )
-      v-divider
-      field-info-popup(v-model="settings.widget.parameters.infoPopups")
-      v-divider
-      field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-default-sort-column(v-model="settings.widget.parameters.sort")
+          v-divider
+          field-columns(v-model="settings.widget.parameters.widgetColumns")
+          v-divider
+          field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
+          v-divider
+          field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
+          v-divider
+          field-filters(
+          v-model="settings.widget_preferences.mainFilter",
+          :filters.sync="settings.widget_preferences.viewFilters"
+          )
+          v-divider
+          field-info-popup(v-model="settings.widget.parameters.infoPopups")
+          v-divider
+          field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
       v-divider
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
