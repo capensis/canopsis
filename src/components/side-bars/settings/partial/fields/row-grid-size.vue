@@ -4,7 +4,7 @@
     v-container
       v-combobox(
       v-model="row",
-      @blur="blurRow"
+      @blur="blurRow",
       :items="availableRows",
       :label="$t('settings.rowGridSize.fields.row')",
       :search-input.sync="search",
@@ -20,8 +20,8 @@
               v-list-tile-title(v-html="$t('settings.rowGridSize.noData')")
       div
         v-slider(
-        v-for="(slider, key) in sliders"
-        :key="`slider-${key}`"
+        v-for="(slider, key) in sliders",
+        :key="`slider-${key}`",
         v-bind="slider.bind",
         v-on="slider.on",
         ticks="always"
@@ -92,6 +92,11 @@ export default {
     },
     sliders() {
       const keys = ['sm', 'md', 'lg'];
+      const icons = {
+        sm: 'smartphone',
+        md: 'tablet',
+        lg: 'desktop_windows',
+      };
 
       if (!this.row) {
         return keys.map(key => ({
@@ -106,7 +111,7 @@ export default {
 
       return keys.map(key => ({
         bind: {
-          label: this.$t(`settings.rowGridSize.fields.size.${key}`),
+          prependIcon: icons[key],
           value: this.size[key],
           max: this.row.availableSize[key],
           errorMessages: this.errors.first(key),
