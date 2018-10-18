@@ -8,11 +8,15 @@
       @createRow="createRow"
       )
       v-divider
-      field-title(v-model="settings.widget.title")
+      field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-duration(v-model="settings.widget.parameters.duration")
       v-divider
-      field-date-time-select(:title="$t('settings.tstop')", name="tstop", v-model="settings.widget.parameters.tstop")
+      field-stat-end-date-select(
+      name="tstop",
+      v-model="settings.widget.parameters.tstop",
+      :duration="settings.widget.parameters.duration"
+      )
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
@@ -29,7 +33,7 @@ import widgetSettingsMixin from '@/mixins/widget/settings';
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDuration from './fields/common/duration.vue';
-import FieldDateTimeSelect from './fields/common/date-time-select.vue';
+import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
 import FieldStatsSelect from './fields/stats/stats-select.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 
@@ -42,7 +46,7 @@ export default {
     FieldRowGridSize,
     FieldTitle,
     FieldDuration,
-    FieldDateTimeSelect,
+    FieldStatEndDateSelect,
     FieldStatsSelect,
     FieldFilterEditor,
   },

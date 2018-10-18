@@ -19,7 +19,8 @@
           v-if="item[key] && item[key].value !== undefined && item[key].value !== null"
           )
             td
-              stats-number(:item="item[key]")
+              div {{ item[key].value }}
+                sub {{ item[key].trend }}
           div(v-else) {{ $t('tables.noData') }}
 </template>
 

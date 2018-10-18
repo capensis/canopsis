@@ -34,10 +34,13 @@ export default {
     };
   },
   methods: {
-    submit() {
+    async submit() {
+      const { rgba } = this.color;
+
       if (this.config.action) {
-        this.config.action(this.color.hex);
+        await this.config.action(`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`);
       }
+
       this.hideModal();
     },
   },

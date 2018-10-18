@@ -8,7 +8,7 @@
       @createRow="createRow"
       )
       v-divider
-      field-title(v-model="settings.widget.title")
+      field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-default-sort-column(v-model="settings.widget.parameters.sort")
       v-divider
