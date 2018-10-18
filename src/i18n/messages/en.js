@@ -547,6 +547,7 @@ export default {
   },
   errors: {
     default: 'Something went wrong...',
+    lineNotEmpty: 'This line is not empty',
   },
   success: {
     default: 'Done !',
