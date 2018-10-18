@@ -19,7 +19,7 @@
           @change="save"
           )
       template(v-else)
-        date-time-picker(@input="updateValue", roundHours)
+        date-time-picker(@input="updateValue", :value="dateObject", roundHours)
 </template>
 
 <script>
@@ -62,10 +62,12 @@ export default {
      * Each time the duration change on settings, we need to check if the duration unit is 'm' (for 'Month')
      * If it's 'm', we need to put the date on the 1st day of the month, at 00:00 (UTC)
     */
-    durationUnit(value, oldValue) {
-      if (value !== oldValue && value === STATS_DURATION_UNITS.month) {
+    durationUnit(value) {
+      if (value && value === STATS_DURATION_UNITS.month) {
         const date = moment.tz(this.value * 1000, moment.tz.guess()).startOf('month');
         this.$emit('input', date.add(date.utcOffset(), 'm').unix());
+      } else {
+        this.$emit('input', moment().startOf('hour').unix());
       }
     },
     menu(value) {
