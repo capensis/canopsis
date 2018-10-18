@@ -37,11 +37,6 @@ import authMixin from '@/mixins/auth';
  */
 export default {
   mixins: [authMixin],
-  data() {
-    return {
-      hasFullScreen: false,
-    };
-  },
   methods: {
     fullScreenToggle() {
       const element = document.getElementById('main-content');
