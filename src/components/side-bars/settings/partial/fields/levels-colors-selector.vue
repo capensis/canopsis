@@ -25,6 +25,10 @@ export default {
       type: Object,
       default: () => ({ ...STATS_CALENDAR_COLORS.alarm }),
     },
+    hideSuffix: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     statsCriticity() {
@@ -34,10 +38,12 @@ export default {
       return (key) => {
         let suffix = '';
 
-        if (key === STATS_CRITICITY.ok) {
-          suffix = ` / ${this.$t('common.yes')}`;
-        } else if (key === STATS_CRITICITY.critical) {
-          suffix = ` / ${this.$t('common.no')}`;
+        if (!this.hideSuffix) {
+          if (key === STATS_CRITICITY.ok) {
+            suffix = ` / ${this.$t('common.yes')}`;
+          } else if (key === STATS_CRITICITY.critical) {
+            suffix = ` / ${this.$t('common.no')}`;
+          }
         }
 
         return this.$t(`settings.colorsSelector.statsCriticity.${key}`) + suffix;

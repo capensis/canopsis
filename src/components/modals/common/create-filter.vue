@@ -12,7 +12,7 @@
       required,
       name="title",
       )
-      filter-editor(v-model="form.filter", :entitiesType="modal.config.entitiesType")
+      filter-editor(v-model="form.filter")
       v-btn(@click="submit") {{ $t('common.submit') }}
 </template>
 

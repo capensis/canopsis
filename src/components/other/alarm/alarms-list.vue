@@ -4,6 +4,8 @@
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
+        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
+      v-flex
         v-select(
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
@@ -26,9 +28,6 @@
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
         v-btn(v-if="rowId", icon, @click="showSettings")
           v-icon settings
-    v-layout.white(row, wrap)
-      v-flex(xs12)
-        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds")
     no-columns-table(v-if="!hasColumns")

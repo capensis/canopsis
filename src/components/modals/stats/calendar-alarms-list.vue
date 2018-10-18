@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-title.blue.darken-4.white--text
-      v-btn(icon dark @click.native="hideModal")
+      v-btn(icon, dark, @click.native="hideModal")
         v-icon close
       h2 {{ $t('modals.calendarAlarmsList.title') }}
     v-card-text

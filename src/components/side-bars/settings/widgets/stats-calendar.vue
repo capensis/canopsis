@@ -21,7 +21,7 @@
       v-divider
       field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
       v-divider
-      field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors")
+      field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors", hideSuffix)
       v-divider
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}

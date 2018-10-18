@@ -10,7 +10,7 @@
 <script>
 import isEmpty from 'lodash/isEmpty';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
 export default {
@@ -18,11 +18,6 @@ export default {
   props: {
     value: {
       type: Object,
-    },
-    entitiesType: {
-      type: String,
-      default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
   computed: {
@@ -41,7 +36,6 @@ export default {
         config: {
           title: 'modals.filter.create.title',
           filter: this.value || {},
-          entitiesType: this.entitiesType,
           action: newFilter => this.$emit('input', newFilter),
         },
       });

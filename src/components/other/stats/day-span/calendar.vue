@@ -41,16 +41,23 @@
 import { Units, Sorts, Calendar } from 'dayspan';
 import dsDefaults from 'dayspan-vuetify/src/defaults';
 
+/**
+ * Dayspan Vuetify calendar wrapper
+ *
+ * @see https://github.com/ClickerMonkey/dayspan-vuetify/tree/master/docs
+ *
+ * @prop {Array} events
+ * @prop {Object} widget
+ */
 export default {
   props: {
     events: {
       type: Array,
+      default: () => [],
     },
     calendar: {
       type: Calendar,
-      default() {
-        return Calendar.months();
-      },
+      default: () => Calendar.months(),
     },
     formats: {
       validate(x) {
