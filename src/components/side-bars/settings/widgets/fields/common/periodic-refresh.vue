@@ -28,7 +28,7 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => ({ enabled: false, interval: '' }),
+      required: true,
     },
   },
   data() {
