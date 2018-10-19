@@ -10,19 +10,6 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-filters(:filters.sync="settings.widget.parameters.filters", hideSelect)
-      v-divider
-      field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
-      v-divider
-      field-switcher(
-      v-model="settings.widget.parameters.considerPbehaviors",
-      :title="$t('settings.considerPbehaviors.title')"
-      )
-      v-divider
-      field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
-      v-divider
-      field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors", hideSuffix)
-      v-divider
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
@@ -34,6 +21,21 @@
           v-divider
           field-more-info(v-model="settings.widget.parameters.alarmsList.moreInfoTemplate")
       v-divider
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-filters(:filters.sync="settings.widget.parameters.filters", hideSelect)
+          v-divider
+          field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
+          v-divider
+          field-switcher(
+          v-model="settings.widget.parameters.considerPbehaviors",
+          :title="$t('settings.considerPbehaviors.title')"
+          )
+          v-divider
+          field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
+          v-divider
+          field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors", hideSuffix)
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
