@@ -30,13 +30,13 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldDuration from '../partial/fields/duration.vue';
-import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
-import FieldPeriodsNumber from '../partial/fields/periods-number.vue';
-import FieldStatsSelect from '../partial/fields/stats-select.vue';
-import FieldStatsColors from '../partial/fields/stats-colors.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDuration from './fields/common/duration.vue';
+import FieldDateTimeSelect from './fields/common/date-time-select.vue';
+import FieldPeriodsNumber from './fields/common/periods-number.vue';
+import FieldStatsSelect from './fields/stats/stats-select.vue';
+import FieldStatsColors from './fields/stats/stats-colors.vue';
 
 export default {
   name: SIDE_BARS.statsCurvesSettings,
