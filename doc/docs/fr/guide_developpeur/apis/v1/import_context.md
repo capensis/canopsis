@@ -243,7 +243,7 @@ d'entité supprimées dans *stats.deleted*, le nombres d'entité mises à jour o
   "status": "done",
   "exec_time": "00:03:58",
   "_id": "6ac1deb9-1049-41f3-9e85-48d694deaab3",
-  "creation": "Mon Aug 28 17:41:27 2017"
+  "creation": "Mon Aug 28 17:41:27 2017",
   "stats": {
     "deleted": 0,
     "updated": 20000
@@ -264,6 +264,17 @@ temps d'exécution total de l'import dans **exec_time**.
   "exec_time": "00:02:55"
 }
 ```
+
+### Relancer manuellement un import
+
+Lorsqu'un job est bloqué en pending, il est possible de relancer manuellement la tâche d'importation en publiant un event forgé dans la queue `task_importctx` :
+```json
+{
+  "jobid": "importctx_2c0c0b49-129a-41aa-bccd-cc23de478bbc",
+  "jobs_uuid": "2c0c0b49-129a-41aa-bccd-cc23de478bbc"
+}
+```
+(remplacer par l'id de votre job ; voir par exemple dans `/opt/canopsis/tmp` le nom du fichier json en attente d'importation ou dans la collection `default_importctx`)
 
 
 # Exemple d'utilisation de l'import
