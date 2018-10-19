@@ -43,17 +43,17 @@ import cloneDeep from 'lodash/cloneDeep';
 import { SIDE_BARS, ENTITIES_TYPES } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldOpenedResolvedFilter from '../partial/fields/opened-resolved-filter.vue';
-import FieldFilters from '../partial/fields/filters.vue';
-import FieldSwitcher from '../partial/fields/switcher.vue';
-import FieldCriticityLevels from '../partial/fields/criticity-levels.vue';
-import FieldLevelsColorsSelector from '../partial/fields/levels-colors-selector.vue';
-import FieldColumns from '../partial/fields/columns.vue';
-import FieldDefaultElementsPerPage from '../partial/fields/default-elements-per-page.vue';
-import FieldInfoPopup from '../partial/fields/info-popup.vue';
-import FieldMoreInfo from '../partial/fields/more-info.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
+import FieldFilters from './fields/common/filters.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
+import FieldCriticityLevels from './fields/stats/criticity-levels.vue';
+import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue';
+import FieldColumns from './fields/common/columns.vue';
+import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
+import FieldInfoPopup from './fields/common/info-popup.vue';
+import FieldMoreInfo from './fields/common/more-info.vue';
 
 /**
  * Component to regroup the entities list settings fields

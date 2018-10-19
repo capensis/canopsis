@@ -26,11 +26,11 @@ import cloneDeep from 'lodash/cloneDeep';
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldDefaultSortColumn from '../partial/fields/default-sort-column.vue';
-import FieldColumns from '../partial/fields/columns.vue';
-import FieldContextEntitiesTypesFilter from '../partial/fields/context-entities-types-filter.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
+import FieldColumns from './fields/common/columns.vue';
+import FieldContextEntitiesTypesFilter from './fields/context/context-entities-types-filter.vue';
 
 /**
  * Component to regroup the entities list settings fields

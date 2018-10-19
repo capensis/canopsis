@@ -237,6 +237,10 @@ export default {
   .calender-wrapper {
     position: relative;
 
+    & /deep/ .ds-calendar-event {
+      font-size: 14px;
+    }
+
     .progress {
       position: absolute;
       top: 0;
@@ -286,6 +290,8 @@ export default {
 
     .multiple {
       & /deep/ .ds-calendar-event-menu {
+        height: 20px;
+
         .ds-ev-title {
           margin-right: 10px;
         }
@@ -326,7 +332,6 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-left: 0.5em;
-    font-size: 12px;
     cursor: pointer;
     border-radius: 2px;
   }

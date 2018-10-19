@@ -6,7 +6,7 @@
           v-layout(align-center)
             h2 {{ row.title }}
             v-tooltip.ml-2(left, v-if="isEditModeEnable")
-              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
                 v-icon delete
               span {{ $t('common.delete') }}
         v-flex(
@@ -72,6 +72,7 @@ import StatsTable from '@/components/other/stats/stats-table.vue';
 import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
 
+import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -87,6 +88,7 @@ export default {
     StatsNumber,
   },
   mixins: [
+    popupMixin,
     modalMixin,
     entitiesViewMixin,
   ],
@@ -143,10 +145,33 @@ export default {
     toggleViewEditMode() {
       this.isEditModeEnable = !this.isEditModeEnable;
     },
+    deleteRow(rowKey) {
+      if (this.view.rows[rowKey].widgets.length > 0) {
+        this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
+      } else {
+        this.showModal({
+          name: MODALS.confirmation,
+          config: {
+            action: () => {
+              const view = { ...this.view };
+              pullAt(view.rows, rowKey);
+              this.updateView({ id: this.id, data: view });
+            },
+          },
+        });
+      }
+    },
     deleteWidget(widgetKey, rowKey) {
-      const view = { ...this.view };
-      pullAt(view.rows[rowKey].widgets, widgetKey);
-      this.updateView({ id: this.id, data: view });
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => {
+            const view = { ...this.view };
+            pullAt(view.rows[rowKey].widgets, widgetKey);
+            this.updateView({ id: this.id, data: view });
+          },
+        },
+      });
     },
   },
 };
