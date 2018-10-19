@@ -10,16 +10,6 @@
     v-toolbar-side-icon(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
-      v-tooltip(bottom)
-        v-btn(
-        slot="activator",
-        icon,
-        @click="fullScreenToggle",
-        v-shortkey="['alt', 'enter']",
-        @shortkey="fullScreenToggle"
-        )
-          v-icon fullscreen
-        span alt + enter / command + enter
       v-menu(offset-y, bottom)
         v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
         v-list
@@ -37,18 +27,6 @@ import authMixin from '@/mixins/auth';
  */
 export default {
   mixins: [authMixin],
-  methods: {
-    fullScreenToggle() {
-      const element = document.getElementById('main-content');
-
-      if (element) {
-        this.$fullscreen.toggle(element, {
-          wrap: false,
-          fullscreenClass: '-fullscreen',
-        });
-      }
-    },
-  },
 };
 </script>
 

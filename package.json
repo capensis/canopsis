@@ -33,7 +33,6 @@
     "vue-mq": "^0.2.1",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.1",
-    "vue-shortkey": "^3.1.6",
     "vuetify": "1.1.14",
     "vuex": "^3.0.1"
   },

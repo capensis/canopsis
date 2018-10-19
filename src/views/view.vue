@@ -41,13 +41,25 @@
         v-btn(slot="activator", color="green darken-3", dark, fab, v-model="fab")
           v-icon menu
           v-icon close
+        v-tooltip(bottom)
+          v-btn(
+          slot="activator",
+          v-model="isFullScreenModeEnable"
+          fab,
+          dark,
+          small,
+          @click="fullScreenToggle",
+          )
+            v-icon fullscreen
+            v-icon fullscreen_exit
+          span alt + enter / command + enter
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, color="info", @click.stop="refreshView")
             v-icon refresh
           span {{ $t('common.refresh') }}
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
-            v-icon widgets
+            v-icon add
           span {{ $t('common.addWidget') }}
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
@@ -109,6 +121,7 @@ export default {
       },
       widgetKeyPrefix: uid(),
       isEditModeEnable: false,
+      isFullScreenModeEnable: false,
       fab: false,
     };
   },
@@ -125,9 +138,32 @@ export default {
     },
   },
   created() {
+    document.addEventListener('keydown', this.keyDownListener);
     this.fetchView({ id: this.id });
   },
+  beforeDestroy() {
+    this.$fullscreen.exit();
+    document.removeEventListener('keydown', this.keyDownListener);
+  },
   methods: {
+    keyDownListener({ keyCode, altKey }) {
+      if (keyCode === 13 && altKey) {
+        this.fullScreenToggle();
+      }
+    },
+
+    fullScreenToggle() {
+      const element = document.getElementById('app');
+
+      if (element) {
+        this.$fullscreen.toggle(element, {
+          wrap: false,
+          fullscreenClass: '-fullscreen',
+          callback: value => this.isFullScreenModeEnable = value,
+        });
+      }
+    },
+
     async refreshView() {
       await this.fetchView({ id: this.id });
 

@@ -5,7 +5,6 @@ import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
-import VueShortKey from 'vue-shortkey';
 
 import 'vuetify/dist/vuetify.min.css';
 
@@ -19,7 +18,6 @@ import filters from '@/filters';
 Vue.use(filters);
 Vue.use(Vuetify);
 Vue.use(VueFullScreen);
-Vue.use(VueShortKey);
 
 Vue.use(VueMq, {
   breakpoints: MEDIA_QUERIES_BREAKPOINTS,
