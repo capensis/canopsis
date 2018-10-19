@@ -22,7 +22,7 @@
       v-divider
       field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
       v-divider
-      field-colors-selector(v-model="settings.widget.parameters.statColors")
+      field-levels-colors-selector(v-model="settings.widget.parameters.statColors")
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
@@ -39,7 +39,7 @@ import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';
 import FieldYesNoMode from './fields/stats/yes-no-mode.vue';
 import FieldCriticityLevels from './fields/stats/criticity-levels.vue';
-import FieldColorsSelector from './fields/stats/stats-number-colors.vue';
+import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue';
 
 export default {
   name: SIDE_BARS.statsNumberSettings,
@@ -55,7 +55,7 @@ export default {
     FieldStatSelector,
     FieldYesNoMode,
     FieldCriticityLevels,
-    FieldColorsSelector,
+    FieldLevelsColorsSelector,
   },
   mixins: [widgetSettingsMixin],
   data() {

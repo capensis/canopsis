@@ -2,12 +2,14 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.filterEditor') }}
     div.text-xs-center
-      v-btn(@click="openFilterModal") {{ $t('modals.filter.create.title') }}
+      v-btn(@click="openFilterModal") {{ openFilterButtonText }}
       v-btn(@click="deleteFilter", icon)
         v-icon delete
 </template>
 
 <script>
+import isEmpty from 'lodash/isEmpty';
+
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
@@ -18,10 +20,14 @@ export default {
       type: Object,
     },
   },
-  data() {
-    return {
-      item: {},
-    };
+  computed: {
+    openFilterButtonText() {
+      if (isEmpty(this.value)) {
+        return this.$t('modals.filter.create.title');
+      }
+
+      return this.$t('modals.filter.edit.title');
+    },
   },
   methods: {
     openFilterModal() {

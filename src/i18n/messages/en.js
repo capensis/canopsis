@@ -145,6 +145,7 @@ export default {
       statsHistogramSettings: 'Histogram settings',
       statsCurvesSettings: 'Curve settings',
       statsTableSettings: 'Stats table settings',
+      statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
     },
     widgetTitle: 'Widget title',
@@ -222,6 +223,9 @@ export default {
     statsColor: {
       title: 'Stats color',
       pickColor: 'Pick a color',
+    },
+    considerPbehaviors: {
+      title: 'Consider pbehaviors',
     },
   },
   modals: {
@@ -397,6 +401,9 @@ export default {
         statsTable: {
           title: 'Stats table',
         },
+        statsCalendar: {
+          title: 'Stats calendar',
+        },
         statsNumber: {
           title: 'Stats number',
         },
@@ -427,6 +434,9 @@ export default {
       errors: {
         isNotEmpty: 'The group is not empty',
       },
+    },
+    calendarAlarmsList: {
+      title: 'Calendar alarms list',
     },
   },
   tables: {
@@ -544,6 +554,12 @@ export default {
     default: 'Something went wrong...',
     lineNotEmpty: 'This line is not empty',
   },
+  calendar: {
+    today: 'Today',
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
+  },
   success: {
     default: 'Done !',
     createEntity: 'Entity successfully created',
@@ -562,10 +578,17 @@ export default {
       deleteGroup: 'Delete group',
     },
     resultsTableHeaders: {
-      connector: 'Connector',
-      connectorName: 'Connector name',
-      component: 'Component',
-      resource: 'Resource',
+      alarm: {
+        connector: 'Connector',
+        connectorName: 'Connector name',
+        component: 'Component',
+        resource: 'Resource',
+      },
+      entity: {
+        id: 'ID',
+        name: 'Name',
+        type: 'Type',
+      },
     },
     errors: {
       invalidJSON: 'Invalid JSON',

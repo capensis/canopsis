@@ -20,13 +20,15 @@
               v-list-tile-title(v-html="$t('settings.rowGridSize.noData')")
       div
         v-slider(
-        v-for="(slider, key) in sliders",
-        :key="`slider-${key}`",
+        v-for="slider in sliders",
+        :key="`slider-${slider.key}`",
         v-bind="slider.bind",
         v-on="slider.on",
         ticks="always"
         always-dirty,
-        thumb-label
+        thumb-label,
+        :data-vv-name="slider.key"
+        v-validate="'min_value:3'"
         )
 </template>
 
@@ -100,8 +102,9 @@ export default {
 
       if (!this.row) {
         return keys.map(key => ({
+          key,
           bind: {
-            label: key,
+            label: this.$t(`settings.rowGridSize.fields.size.${key}`),
             value: 0,
             max: WIDGET_MAX_SIZE,
             disabled: true,
@@ -110,13 +113,12 @@ export default {
       }
 
       return keys.map(key => ({
+        key,
         bind: {
           prependIcon: icons[key],
           value: this.size[key],
           max: this.row.availableSize[key],
           errorMessages: this.errors.first(key),
-          'data-vv-name': key,
-          'v-validate': 'min_value:3',
         },
         on: {
           input: value => this.updateSizeField(key, value),
