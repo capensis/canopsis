@@ -104,7 +104,7 @@ export default {
         return keys.map(key => ({
           key,
           bind: {
-            label: this.$t(`settings.rowGridSize.fields.size.${key}`),
+            prependIcon: icons[key],
             value: 0,
             max: WIDGET_MAX_SIZE,
             disabled: true,
