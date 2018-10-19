@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.statsGroups.title') }}
+      .font-italic.caption.ml-1 ({{ $t('settings.statsGroups.required') }})
     v-container
       v-btn(@click="addGroup") {{ $t('settings.statsGroups.manageGroups') }}
       v-list(dark)

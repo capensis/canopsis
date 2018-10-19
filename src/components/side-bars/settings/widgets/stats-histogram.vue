@@ -10,19 +10,24 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-duration(v-model="settings.widget.parameters.duration")
-      v-divider
       field-stat-end-date-select(
       v-model="settings.widget.parameters.tstop",
       :duration="settings.widget.parameters.duration"
       )
       v-divider
+      field-duration(v-model="settings.widget.parameters.duration", :title="$t('settings.duration')")
+      v-divider
       field-stats-groups(v-model="settings.widget.parameters.groups")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
-      field-stats-colors(:stats="settings.widget.parameters.stats", v-model="settings.widget.parameters.statsColors")
-      v-divider
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-stats-colors(
+          :stats="settings.widget.parameters.stats",
+          v-model="settings.widget.parameters.statsColors"
+          )
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
@@ -34,7 +39,7 @@ import { SIDE_BARS } from '@/constants';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/common/duration.vue';
+import FieldDuration from './fields/stats/duration.vue';
 import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
 import FieldStatsGroups from './fields/stats/stats-groups.vue';
 import FieldStatsSelect from './fields/stats/stats-select.vue';

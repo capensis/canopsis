@@ -33,7 +33,7 @@ import { SIDE_BARS } from '@/constants';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/common/duration.vue';
+import FieldDuration from './fields/stats/duration.vue';
 import FieldDateSelect from './fields/common/date-time-select.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';

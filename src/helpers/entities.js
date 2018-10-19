@@ -94,7 +94,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         mfilter: {},
         duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment().unix(),
+        tstop: moment().startOf('hour').unix(),
         groups: [],
         stats: {},
         statsColors: {},
@@ -103,16 +103,16 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsCurves:
       specialParameters = {
         mfilter: {},
-        duration: '1m',
-        tstop: moment().unix(),
-        periods: 1,
+        duration: `1${STATS_DURATION_UNITS.day}`,
+        tstop: moment().startOf('hour').unix(),
+        periods: 2,
         stats: {},
       };
       break;
     case WIDGET_TYPES.statsTable:
       specialParameters = {
         duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment().unix(),
+        tstop: moment().startOf('hour').unix(),
         stats: {},
         mfilter: {},
       };
@@ -120,8 +120,8 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.statsNumber:
       specialParameters = {
-        duration: '1d',
-        tstop: moment().unix(),
+        duration: `1${STATS_DURATION_UNITS.day}`,
+        tstop: moment().startOf('hour').unix(),
         mfilter: {},
         stat: {},
         yesNoMode: false,

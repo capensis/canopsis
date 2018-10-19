@@ -19,6 +19,7 @@ export default {
     login: 'Login',
     yes: 'Yes',
     no: 'No',
+    default: 'Default',
     confirmation: 'Are you sure ?',
     parameters: 'Parameters',
     by: 'By',
@@ -44,6 +45,7 @@ export default {
     edit: 'Edit',
     parse: 'Parse',
     home: 'Home',
+    step: 'Step',
     entries: 'entries',
     showing: 'showing',
     apply: 'Apply',
@@ -163,9 +165,12 @@ export default {
     filterEditor: 'Filter editor',
     duration: 'Duration',
     tstop: 'End date',
-    periodsNumber: 'Number of periods',
+    periodsNumber: 'Number of steps',
     statName: 'Stat name',
-    statsSelect: 'Stats select',
+    statsSelect: {
+      title: 'Stats select',
+      required: 'Select at least 1 stat',
+    },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
     criticityLevels: 'Criticity levels',
@@ -220,6 +225,7 @@ export default {
     statsGroups: {
       title: 'Stats groups',
       manageGroups: 'Add a group',
+      required: 'Create at least 1 group',
     },
     statsColor: {
       title: 'Stats color',

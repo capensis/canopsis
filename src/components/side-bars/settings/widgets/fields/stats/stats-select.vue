@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.statsSelect') }}
+    v-list-tile(slot="activator") {{ $t('settings.statsSelect.title') }}
+      .font-italic.caption.ml-1 ({{ $t('settings.statsSelect.required') }})
     v-container
       v-btn(@click="openAddStatModal") {{ $t('modals.addStat.title.add') }}
       v-list(dark)
