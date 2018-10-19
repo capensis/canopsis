@@ -35,7 +35,7 @@
             :data-vv-name="`value[${index}]`",
             :value="column.value"
             )
-      v-btn(color="success", @click.prevent="add") Add
+      v-btn(color="success", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>
@@ -62,24 +62,24 @@ export default {
     },
     up(index) {
       if (index > 0) {
-        const value = [...this.columns];
-        const temp = value[index];
+        const columns = [...this.columns];
+        const temp = columns[index];
 
-        value[index] = value[index - 1];
-        value[index - 1] = temp;
+        columns[index] = columns[index - 1];
+        columns[index - 1] = temp;
 
-        this.$emit('input', value);
+        this.$emit('input', columns);
       }
     },
     down(index) {
       if (index < this.columns.length - 1) {
-        const value = [...this.columns];
-        const temp = value[index];
+        const columns = [...this.columns];
+        const temp = columns[index];
 
-        value[index] = value[index + 1];
-        value[index + 1] = temp;
+        columns[index] = columns[index + 1];
+        columns[index + 1] = temp;
 
-        this.$emit('input', value);
+        this.$emit('input', columns);
       }
     },
   },

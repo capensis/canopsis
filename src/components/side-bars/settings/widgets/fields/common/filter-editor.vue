@@ -13,6 +13,8 @@ v-container.pa-3(fluid)
 </template>
 
 <script>
+import isEmpty from 'lodash/isEmpty';
+
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
@@ -23,10 +25,14 @@ export default {
       type: Object,
     },
   },
-  data() {
-    return {
-      item: {},
-    };
+  computed: {
+    openFilterButtonText() {
+      if (isEmpty(this.value)) {
+        return this.$t('modals.filter.create.title');
+      }
+
+      return this.$t('modals.filter.edit.title');
+    },
   },
   methods: {
     openFilterModal() {

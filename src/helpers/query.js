@@ -91,13 +91,42 @@ export function convertStatsHistogramToQuery(widget) {
 }
 
 /**
- * This function converts widget with type 'Stats table' to query Object
+ * This function converts widget with type 'StatsTable' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
-  const query = { ...widget.parameters };
+  return { ...widget.parameters };
+}
+
+/**
+ * This function converts widget with type 'StatsCalendar' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsCalendarWidgetToQuery(widget) {
+  const {
+    filters,
+    alarmsStateFilter,
+    considerPbehaviors,
+  } = widget.parameters;
+
+  const query = {
+    considerPbehaviors,
+    filters: filters || [],
+  };
+
+  if (alarmsStateFilter) {
+    if (!isUndefined(alarmsStateFilter.opened)) {
+      query.opened = alarmsStateFilter.opened;
+    }
+
+    if (!isUndefined(alarmsStateFilter.resolved)) {
+      query.resolved = alarmsStateFilter.resolved;
+    }
+  }
 
   return query;
 }
@@ -188,6 +217,8 @@ export function convertWidgetToQuery(widget) {
       return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCalendar:
+      return convertStatsCalendarWidgetToQuery(widget);
     case WIDGET_TYPES.statsNumber:
       return convertStatsNumberWidgetToQuery(widget);
     default:
