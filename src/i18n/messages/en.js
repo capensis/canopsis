@@ -190,7 +190,7 @@ export default {
       },
     },
     rowGridSize: {
-      title: 'Row grid size',
+      title: 'Widget\'s size',
       noData: 'No row corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         row: 'Row',
