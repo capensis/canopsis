@@ -29,6 +29,7 @@ import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import Confirmation from './common/confirmation.vue';
 import CreateWidget from './common/create-widget.vue';
 import ColorPicker from './common/color-picker.vue';
+import TextEditor from './common/text-editor.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import CreateView from './view/create-view.vue';
@@ -61,6 +62,7 @@ export default {
     CreateWatcher,
     CreateWidget,
     ColorPicker,
+    TextEditor,
     CreateView,
     CreateFilter,
     CreateGroup,

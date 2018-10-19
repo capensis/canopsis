@@ -23,7 +23,7 @@
       field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
       v-divider
       field-colors-selector(v-model="settings.widget.parameters.statColors")
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
 </template>
 
 <script>

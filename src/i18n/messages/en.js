@@ -41,7 +41,9 @@ export default {
     label: 'Label',
     value: 'Value',
     add: 'Add',
+    create: 'Create',
     delete: 'Delete',
+    show: 'Show',
     edit: 'Edit',
     parse: 'Parse',
     home: 'Home',
@@ -162,7 +164,7 @@ export default {
     open: 'Open',
     resolved: 'Resolved',
     filters: 'Filters',
-    filterEditor: 'Filter editor',
+    filterEditor: 'Filter',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -383,6 +385,9 @@ export default {
     },
     colorPicker: {
       title: 'Color picker',
+    },
+    textEditor: {
+      title: 'Text editor',
     },
     widgetCreation: {
       title: 'Select a widget',

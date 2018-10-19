@@ -19,7 +19,7 @@
           v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
 </template>
 
 <script>

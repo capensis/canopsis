@@ -10,30 +10,32 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-weather-data-set
+      field-filter-editor(v-model="settings.widget.parameters.mfilter")
       v-divider
-      field-weather-template(
-      v-model="settings.widget.parameters.blockTemplate",
-      :title="$t('settings.weatherTemplate')"
-      )
-      v-divider
-      field-weather-template(
-      v-model="settings.widget.parameters.modalTemplate",
-      :title="$t('settings.modalTemplate')"
-      )
-      v-divider
-      field-weather-template(
-      v-model="settings.widget.parameters.entityTemplate",
-      :title="$t('settings.entityTemplate')"
-      )
-      v-divider
-      field-grid-size(v-model="settings.widget.parameters.columnSM", :title="$t('settings.columnSM')")
-      v-divider
-      field-grid-size(v-model="settings.widget.parameters.columnMD", :title="$t('settings.columnMD')")
-      v-divider
-      field-grid-size(v-model="settings.widget.parameters.columnLG", :title="$t('settings.columnLG')")
-      v-divider
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-weather-template(
+          v-model="settings.widget.parameters.blockTemplate",
+          :title="$t('settings.weatherTemplate')"
+          )
+          v-divider
+          field-weather-template(
+          v-model="settings.widget.parameters.modalTemplate",
+          :title="$t('settings.modalTemplate')"
+          )
+          v-divider
+          field-weather-template(
+          v-model="settings.widget.parameters.entityTemplate",
+          :title="$t('settings.entityTemplate')"
+          )
+          v-divider
+          field-grid-size(v-model="settings.widget.parameters.columnSM", :title="$t('settings.columnSM')")
+          v-divider
+          field-grid-size(v-model="settings.widget.parameters.columnMD", :title="$t('settings.columnMD')")
+          v-divider
+          field-grid-size(v-model="settings.widget.parameters.columnLG", :title="$t('settings.columnLG')")
+    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -45,7 +47,7 @@ import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldWeatherDataSet from './fields/weather/weather-data-set.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 
@@ -57,7 +59,7 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldWeatherDataSet,
+    FieldFilterEditor,
     FieldWeatherTemplate,
     FieldGridSize,
   },

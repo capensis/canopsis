@@ -81,13 +81,13 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.weather:
       specialParameters = {
+        mfilter: {},
         blockTemplate: '',
         modalTemplate: '',
         entityTemplate: '',
-        columnSM: 0,
-        columnMD: 0,
-        columnLG: 0,
-        columnHG: 0,
+        columnSM: 6,
+        columnMD: 4,
+        columnLG: 3,
       };
       break;
     case WIDGET_TYPES.statsHistogram:

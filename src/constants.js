@@ -34,6 +34,7 @@ export const MODALS = {
   manageHistogramGroups: 'manage-histogram-groups',
   addStat: 'add-stat',
   colorPicker: 'color-picker',
+  textEditor: 'text-editor',
   createView: 'create-view',
   createGroup: 'create-group',
 };
