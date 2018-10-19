@@ -274,6 +274,19 @@ Ember.Application.initializer({
                         set(this, 'model.selected_filter', filter);
                         //user filter for list be able to reload properly
                         set(this, 'model.userFilter', query);
+                        var attributesList = get(this, "userPreferencesModel.attributes.list")
+                        // I do not know where and how to add the 'selected_filter'
+                        // in order to no be filtered by the mixin UserConfigurationMixin
+                        // So I add it in the model here.
+                        attributesList.push({
+                            isAttribute: true,
+                            name: "selected_filter",
+                            options: {
+                                isUserPreference: true,
+                                type: "boolean",
+                            },
+                            type: "boolean"
+                        })
                         //push userparams to db
                         this.saveUserConfiguration();
 

@@ -480,6 +480,7 @@
     'ehbs!widgetslot-grey',
     'ehbs!widgetslot-light',
     'ehbs!widgettitlebar',
+    'canopsis/uibase/src/widgets/crudcontext/#controller.',
     'canopsis/uibase/src/widgets/crudcontext/controller',
     'ehbs!crudcontext',
     'canopsis/uibase/src/widgets/list/controller',
