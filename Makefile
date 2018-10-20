@@ -1,6 +1,7 @@
 TAG:=develop
 
-DISTRIB=debian8,debian9,centos7
+DISTRIBUTIONS=debian8,debian9,centos7
+comma:=,
 
 ifndef VERBOSE
 .SILENT:
@@ -15,3 +16,11 @@ packages: docker_images
 
 # Command to run inside the docker image
 # cd /packages/ && FIX_OWNERSHIP=1000 CANOPSIS_PACKAGE_TAG=1.2 CANOPSIS_PACKAGE_REL=1 ./package-debian-9.sh
+
+docker:
+	@./debian9.sed Dockerfile.core.template | docker build -f - . -t canopsis
+
+test:
+	for distrib in $(subst ${comma}, ,${DISTRIBUTIONS})  ; do \
+		sh $$distrib.sed Dockerfile.core.template ; \
+	done

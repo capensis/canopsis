@@ -11,12 +11,13 @@ RUN npm install
 RUN NODE_ENV=production npm run build
 
 
-###########
-# SYSBASE #
-###########
+#########
+# BUILD #
+#########
 
 # Template here
-FROM debian:stretch as canopsis_build
+# FROM debian:stretch as canopsis_build
+FROM {{BASE_DOCKER_IMAGE}} as canopsis_build
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
@@ -27,29 +28,32 @@ ARG PROXY
 SHELL ["/bin/bash", "-c"]
 
 # Template here
-RUN apt-get update; \
-	apt-get -y --no-install-recommends install \
-		build-essential \
-		curl \
-		libcurl4-openssl-dev \
-		libsasl2-dev \
-		libxml2-dev \
-		libxslt1-dev \
-		libssl-dev \
-		libffi-dev \
-		libxmlsec1-dev \
-		libxmlsec1-openssl \
-		libldap2-dev \
-		pkg-config \
-		python2.7-dev \
-		python-pip \
-		python-pkg-resources \
-		python-virtualenv \
-		python-wheel \
-		virtualenv \
-		net-tools \
-		procps; \
-	apt-get clean
+# RUN apt-get update; \
+# 	apt-get -y --no-install-recommends install \
+# 		build-essential \
+# 		curl \
+# 		libcurl4-openssl-dev \
+# 		libsasl2-dev \
+# 		libxml2-dev \
+# 		libxslt1-dev \
+# 		libssl-dev \
+# 		libffi-dev \
+# 		libxmlsec1-dev \
+# 		libxmlsec1-openssl \
+# 		libldap2-dev \
+# 		pkg-config \
+# 		python2.7-dev \
+# 		python-pip \
+# 		python-pkg-resources \
+# 		python-virtualenv \
+# 		python-wheel \
+# 		virtualenv \
+# 		net-tools \
+# 		procps; \
+# 	apt-get clean
+RUN {{BUILD_SETUP}}
+
+# RUN {{BUILD_IMAGE_SETUP}}
 
 RUN mkdir ${CPS_HOME}
 WORKDIR ${CPS_HOME}
@@ -95,7 +99,9 @@ COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/cano
 ##############
 # CORE IMAGE #
 ##############
-FROM debian:stretch-slim as core
+#FROM debian:stretch-slim as core
+FROM {{BASE_DOCKER_IMAGE}} as core
+#Todo : add label and description to the final image
 
 ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis
@@ -115,60 +121,7 @@ COPY docker/files/sudoers /etc/sudoers.d/canopsis
 
 # Template here
 # Check if every dependencies are required by canopsis-core
-RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list ;\
-	echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list; \
-	#
-	# Keep the blank comments. It's used to make the file more readable and
-	# it prevent docker to complain about an empty line.
-	#
-	rm -f /etc/localtime; \
-	ln -s /usr/share/zoneinfo/UTC /etc/localtime; \
-	#
-	apt-get update; \
-	apt-get dist-upgrade -y; \
-	apt-get -y --no-install-recommends install locales; \
-	#
-	export LANG="en_US.UTF-8"; \
-	echo "LANG=${LANG}" > /etc/locale.conf; \
-	echo "${LANG} UTF-8" > /etc/locale.gen; \
-	locale-gen; \
-	#
-	apt-get -y --no-install-recommends install \
-		apt-transport-https \
-		base-files \
-		bash \
-		ca-certificates \
-		curl \
-		dnsutils \
-		iputils-ping \
-		libsasl2-2 \
-		libxml2 \
-		libxslt1.1 \
-		lsb-base \
-		libffi6 \
-		libgmp10 \
-		libgnutls30 \
-		libgnutlsxx28 \
-		libgnutls-openssl27 \
-		libhogweed4 \
-		libicu57 \
-		libidn11 \
-		libnettle6 \
-		libp11-kit0 \
-		libpsl5 \
-		libssl1.1 \
-		libtasn1-6 \
-		libxmlsec1 \
-		libxmlsec1-openssl \
-		libldap-2.4-2 \
-		# python \
-		python2.7 \
-		# snmp \
-		smitools \
-		sudo \
-		# tmux \
-		vim; \
-	apt-get clean
+RUN {{FINAL_IMAGE_SETUP}}
 
 
 COPY --from=canopsis_build /${CPS_HOME} /${CPS_HOME}
