@@ -10,34 +10,35 @@
     v-toolbar-side-icon(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
-      v-menu(offset-y, bottom, allow-overflow)
+      v-menu(bottom, offset-y)
         v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
         v-list.pb-0
           v-list-tile
             v-list-tile-title
               v-layout
-                div First name :
+                div {{ $t('user.firstName') }} :
                 div.px-1(v-if="currentUser.firstname") {{ currentUser.firstname }}
                 div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
           v-divider
           v-list-tile
             v-list-tile-title
               v-layout
-                div Last name :
+                div {{ $t('user.lastName') }} :
                 div.px-1(v-if="currentUser.lastname") {{ currentUser.lasttname }}
                 div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
           v-divider
           v-list-tile
             v-list-tile-title
               v-layout
-                div Role :
+                div {{ $t('user.role') }} :
                 div.px-1 {{ currentUser.role }}
           v-divider
           v-list-tile
             v-list-tile-title
               v-layout
-                div Default view :
-                div.px-1 {{ currentUser.defaultview }}
+                div {{ $t('user.defaultView') }} :
+                div.px-1(v-if="defaultViewTitle") {{ defaultViewTitle }}
+                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
           v-divider
           v-list-tile.red.darken-4.white--text(@click.prevent="logout")
             v-list-tile-title
@@ -47,7 +48,10 @@
 </template>
 
 <script>
+import find from 'lodash/find';
+import forEach from 'lodash/forEach';
 import authMixin from '@/mixins/auth';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 /**
  * Component for the top bar of the application
@@ -55,7 +59,19 @@ import authMixin from '@/mixins/auth';
  * @event toggleSideBar#click
  */
 export default {
-  mixins: [authMixin],
+  mixins: [authMixin, entitiesViewGroupMixin],
+  computed: {
+    defaultViewTitle() {
+      let defaultView = {};
+      forEach(this.groups, (group) => {
+        defaultView = find(group.views, view => view._id === this.currentUser.defaultview);
+        // Return false to exit the loop if view was found
+        return !defaultView;
+      });
+
+      return defaultView ? defaultView.title : null;
+    },
+  },
 };
 </script>
 

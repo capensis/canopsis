@@ -74,6 +74,12 @@ export default {
       year: 'year | years',
     },
   },
+  user: {
+    firstName: 'First name',
+    lastName: 'Last name',
+    role: 'Role',
+    defaultView: 'Default view',
+  },
   context: {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
