@@ -32,6 +32,7 @@ import ColorPicker from './common/color-picker.vue';
 import TextEditor from './common/text-editor.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
+import SelectView from './view/select-view.vue';
 import CreateView from './view/create-view.vue';
 import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
@@ -64,6 +65,7 @@ export default {
     CreateWidget,
     ColorPicker,
     TextEditor,
+    SelectView,
     CreateView,
     CreateFilter,
     CreateGroup,

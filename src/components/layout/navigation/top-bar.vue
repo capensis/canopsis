@@ -33,12 +33,17 @@
                 div {{ $t('user.role') }} :
                 div.px-1 {{ currentUser.role }}
           v-divider
-          v-list-tile
-            v-list-tile-title
-              v-layout
-                div {{ $t('user.defaultView') }} :
-                div.px-1(v-if="defaultViewTitle") {{ defaultViewTitle }}
-                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
+          v-list-tile(two-line)
+            v-list-tile-content
+              v-layout(align-center)
+                v-flex
+                  div {{ $t('user.defaultView') }} :
+                v-flex(v-if="defaultViewTitle")
+                  div.px-1 {{ defaultViewTitle }}
+                v-flex(v-else)
+                  div.px-1.font-italic {{ $t('common.undefined') }}
+                v-btn.green.darken-4.white--text(@click.stop="editDefaultView", small, fab, depressed)
+                  v-icon edit
           v-divider
           v-list-tile.red.darken-4.white--text(@click.prevent="logout")
             v-list-tile-title
@@ -52,6 +57,9 @@ import find from 'lodash/find';
 import forEach from 'lodash/forEach';
 import authMixin from '@/mixins/auth';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import entitiesUserMixin from '@/mixins/entities/user';
+import modalMixin from '@/mixins/modal/modal';
+import { MODALS } from '@/constants';
 
 /**
  * Component for the top bar of the application
@@ -59,7 +67,7 @@ import entitiesViewGroupMixin from '@/mixins/entities/view/group';
  * @event toggleSideBar#click
  */
 export default {
-  mixins: [authMixin, entitiesViewGroupMixin],
+  mixins: [authMixin, entitiesViewGroupMixin, entitiesUserMixin, modalMixin],
   computed: {
     defaultViewTitle() {
       let defaultView = {};
@@ -70,6 +78,23 @@ export default {
       });
 
       return defaultView ? defaultView.title : null;
+    },
+  },
+  methods: {
+    editDefaultView() {
+      this.showModal({
+        name: MODALS.selectView,
+        config: {
+          action: (viewId) => {
+            const user = { ...this.currentUser, defaultview: viewId };
+            this.editUserAccount(user);
+          },
+        },
+      });
+    },
+    async editUserAccount(user) {
+      await this.editUser({ user });
+      await this.fetchCurrentUser();
     },
   },
 };

@@ -274,6 +274,9 @@ export default {
       displayName: 'Name',
     },
     view: {
+      select: {
+        title: 'Select a view',
+      },
       create: {
         title: 'Create a view',
       },
