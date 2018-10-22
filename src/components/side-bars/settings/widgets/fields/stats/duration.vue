@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.duration') }}
+    v-list-tile(slot="activator") {{ title }}
+      .font-italic.caption.ml-1 ({{ $t('common.default') }}: 1 {{ $tc('common.times.day') }})
     v-container
       v-layout
         v-flex
@@ -31,6 +32,11 @@ export default {
   props: {
     value: {
       type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
     },
   },
   data() {

@@ -10,7 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-duration(v-model="settings.widget.parameters.duration")
+      field-duration(v-model="settings.widget.parameters.duration", :title="$t('settings.duration')")
       v-divider
       field-stat-end-date-select(
       name="tstop",
@@ -20,8 +20,11 @@
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter")
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-filter-editor(v-model="settings.widget.parameters.mfilter")
+    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -32,7 +35,7 @@ import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/common/duration.vue';
+import FieldDuration from './fields/stats/duration.vue';
 import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
 import FieldStatsSelect from './fields/stats/stats-select.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';

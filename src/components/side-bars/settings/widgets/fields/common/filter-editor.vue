@@ -1,9 +1,14 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.filterEditor') }}
-    div.text-xs-center
-      v-btn(@click="openFilterModal") {{ openFilterButtonText }}
-      v-btn(@click="deleteFilter", icon)
+v-container.pa-3(fluid)
+  v-layout(align-center, justify-space-between)
+    div.subheading {{ $t('settings.filterEditor') }}
+      .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
+    div
+      v-btn.green.darken-4.white--text.caption.my-0.mx-1(
+      small,
+      @click="openFilterModal"
+      ) {{ $t('common.create') }}/{{ $t('common.edit') }}
+      v-btn.red.darken-4.white--text.caption.my-0.mx-1(small, @click="deleteFilter")
         v-icon delete
 </template>
 

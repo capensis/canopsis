@@ -35,6 +35,7 @@ export const MODALS = {
   calendarAlarmsList: 'calendar-alarms-list',
   addStat: 'add-stat',
   colorPicker: 'color-picker',
+  textEditor: 'text-editor',
   createView: 'create-view',
   createGroup: 'create-group',
 };
