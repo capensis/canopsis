@@ -5,6 +5,7 @@ import VeeValidate from 'vee-validate';
 import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
 import VueMq from 'vue-mq';
+import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 
 import 'vuetify/dist/vuetify.min.css';
@@ -22,6 +23,7 @@ import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calen
 
 Vue.use(filters);
 Vue.use(Vuetify);
+Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {
     getPrefix: () => '',
