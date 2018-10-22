@@ -2,21 +2,21 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.tstop') }}
     v-container
-      template(v-if="durationUnit === 'm'")
+      template(v-if="isDurationUnitEqualMonth")
         v-menu(
         ref="menu"
         :close-on-content-click="false",
         v-model="menu",
-        lazy,
         transition="scale-transition",
         )
           v-text-field(slot="activator", :value="dateObject | date('MM/YYYY', true)", readonly)
-          v-date-picker(
+          date-picker(
           ref="picker",
           :value="dateString",
           @input="updateValue",
-          :allowed-dates="allowedDates()",
-          @change="save"
+          @change="save",
+          type="month",
+          year-first,
           )
       template(v-else)
         date-time-picker(@input="updateValue", :value="dateObject", roundHours)
@@ -25,10 +25,13 @@
 <script>
 import moment from 'moment-timezone';
 import { STATS_DURATION_UNITS } from '@/constants';
+
+import DatePicker from '@/components/forms/date-picker/date-picker.vue';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 
 export default {
   components: {
+    DatePicker,
     DateTimePicker,
   },
   props: {
@@ -56,6 +59,9 @@ export default {
     durationUnit() {
       return this.duration.slice(-1);
     },
+    isDurationUnitEqualMonth() {
+      return this.durationUnit === STATS_DURATION_UNITS.month;
+    },
   },
   watch: {
     /**
@@ -71,7 +77,11 @@ export default {
       }
     },
     menu(value) {
-      return value && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'));
+      if (value) {
+        setTimeout(() => {
+          this.$refs.picker.$refs.years.scrollToActive();
+        }, 50);
+      }
     },
   },
   methods: {
@@ -91,18 +101,6 @@ export default {
     },
     save(date) {
       this.$refs.menu.save(date);
-    },
-    /**
-     * Function used by Vuetify date-picker to determine which dates are allowed.
-     * Returns a function that filter values
-     */
-    allowedDates() {
-      /**
-       * Values are type 'YYYY-MM-DD'
-       * We keep only the 'DD' part (with v.split()), parse it to an Int, and keep it only if it's 1
-       * Result -> The only available day is the first day of the month
-       */
-      return v => parseInt(v.split('-')[2], 10) === 1;
     },
   },
 };
