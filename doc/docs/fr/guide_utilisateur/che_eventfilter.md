@@ -24,7 +24,7 @@ Par exemple, la règle suivante supprime les événements dont la ressource vaut
 {
     "type": "drop",
     "pattern": {
-        "Resource": "invalid_resource"
+        "resource": "invalid_resource"
     },
     "priority": 10
 }
@@ -51,13 +51,13 @@ règle de type `drop` est toujours `drop`. Le résultat des règles de type
 Si l'événement est invalide à la fin de l'exécution des règles, il est
 supprimé. Ces événements sont loggés. Un événement est valide si :
 
- - son champ `SourceType` vaut `component`, et son champ `Component` est
+ - son champ `source_type` vaut `component`, et son champ `component` est
    défini; *ou*
- - son champ `SourceType` vaut `resource`, et ses champs `Component` et
-   `Resource` sont définis.
+ - son champ `source_type` vaut `resource`, et ses champs `component` et
+   `resource` sont définis.
 
-Si le champ `Debug` d'un événement vaut `true`, le passage de l'événement dans
-les règles est loggé. Ce champ peut-être défini avec un règle d'enrichissement.
+Si le champ `debug` d'un événement vaut `true`, le passage de l'événement dans
+les règles est loggé. Ce champ peut être défini avec une règle d'enrichissement.
 
 ### Patterns
 
@@ -67,8 +67,8 @@ clés d'un événement. Par exemple :
 
 ```json
 "pattern": {
-    "Component": "component_name",
-    "Resource": "resource_name"
+    "component": "component_name",
+    "resource": "resource_name"
 }
 ```
 
@@ -78,20 +78,34 @@ vaut `component_name` et la ressource vaut `resource_name`.
 Pour plus d'expressivité, il est possible d'associer à une clé un dictionnaire
 contenant des couples `operateur: valeur`. Les opérateurs disponibles sont :
 
- - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une valeur.
+ - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
  - `regex_match` : filtre la valeur d'une clé selon une expression régulière.
-
-Si la règle est appliquée après l'enrichissement avec l'entité, l'entité
-correspondant à l'événement est disponible dans le champ `Entity`. On peut par
-exemple utiliser la clé `Entity.Enabled` pour filtrer les entités (in)actives.
 
 Par exemple, le pattern suivant sélectionne les événements dont l'état est
 compris entre 1 et 3 et dont l'output vérifie une expression régulière :
 
 ```json
 "pattern": {
-    "State": {">=": 1, "<=": 3},
-    "Output": {"regex_match": "Warning: CPU Load is critical (.*)"}
+    "state": {">=": 1, "<=": 3},
+    "output": {"regex_match": "Warning: CPU Load is critical \(.*\)"}
+}
+```
+
+Si la règle est appliquée après l'enrichissement avec l'entité, l'entité
+correspondant à l'événement est disponible dans le champ `current_entity`. On
+peut alors ajouter un dictionnaire dans `current_entity` pour filtrer sur les
+champs de l'entité. Par exemple, le pattern suivant sélectionne les
+événements dont l'entité est active et n'a pas d'information
+`service_description` définie.
+
+```json
+"pattern": {
+    "current_entity": {
+        "enabled": true,
+        "infos": {
+            "service_description": null
+        }
+    }
 }
 ```
 
@@ -107,7 +121,7 @@ La règle suivante supprime les événements dont la ressource vaut
 {
     "type": "drop",
     "pattern": {
-        "Resource": "invalid_resource"
+        "resource": "invalid_resource"
     },
     "priority": 10
 }
@@ -120,8 +134,8 @@ resources dont le nom commence par "cpu-" :
 {
     "type": "drop",
     "pattern": {
-        "State": {">=": 2},
-        "Resource": {"regex_match": "cpu-.*"}
+        "state": {">=": 2},
+        "resource": {"regex_match": "cpu-.*"}
     },
     "priority": 10
 }
@@ -136,7 +150,7 @@ l'eventfilter :
 {
     "type": "break",
     "pattern": {
-        "Type": "pbehavior"
+        "event_type": "pbehavior"
     },
     "priority": 0
 }

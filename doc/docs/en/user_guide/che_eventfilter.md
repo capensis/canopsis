@@ -24,7 +24,7 @@ For example, the following rule drops the events whose resource is
 {
     "type": "drop",
     "pattern": {
-        "Resource": "invalid_resource"
+        "resource": "invalid_resource"
     },
     "priority": 10
 }
@@ -49,12 +49,12 @@ rule of type `drop` is always `drop`.
 If the event is invalid at the end of the execution of the rules, it is
 deleted. These events are logged. An event is valid if:
 
- - its `SourceType` field is `component`, and its `Component` field is defined;
+ - its `source_type` field is `component`, and its `component` field is defined;
    *or*
- - ts `SourceType` field is `resource`, and its `Component` and `Resource`
+ - ts `source_type` field is `resource`, and its `component` and `resource`
    fields are defined.
 
-If the `Debug` field of an event is `true`, the processing of the event by the
+If the `debug` field of an event is `true`, the processing of the event by the
 event filter is traced. This field can be set with an enrichment rule.
 
 ### Patterns
@@ -65,8 +65,8 @@ event. For example:
 
 ```json
 "pattern": {
-    "Component": "component_name",
-    "Resource": "resource_name"
+    "component": "component_name",
+    "resource": "resource_name"
 }
 ```
 
@@ -79,20 +79,34 @@ instead of a value. The available operators are:
  - `>=`, `>`, `<`, `<=`: compare the value of a field to a numerical value.
  - `regex_match`: match the value of a field with a regular expression.
 
-If a rule is applied after the enrichment with the entity corresponding to the
-event, the entity corresponding to the event is available in the `Entity`
-field. It is for example possible to use the `Entity.Enabled` field to match
-the enabled entities.
-
 For example, the following pattern matches the events whose state is between 1
 and 3 and whose output is matched by a regular expression.
 
 ```json
 "pattern": {
-    "State": {">=": 1, "<=": 3},
-    "Output": {"regex_match": "Warning: CPU Load is critical (.*)"}
+    "state": {">=": 1, "<=": 3},
+    "output": {"regex_match": "Warning: CPU Load is critical (.*)"}
 }
 ```
+
+If a rule is applied after the enrichment with the entity corresponding to the
+event, the entity corresponding to the event is available in the
+`current_entity` field. It is the possible to define a dictionnary in
+`current_entity` to filter on the entity's fields. For example, the following
+pattern selects events whose entity is enabled and does not have a
+`service_description` information:
+
+```json
+"pattern": {
+    "current_entity": {
+        "enabled": true,
+        "infos": {
+            "service_description": null
+        }
+    }
+}
+```
+
 
 ## Examples
 
@@ -104,7 +118,7 @@ The following rule drops the event whose resource is `invalid_resource`:
 {
     "type": "drop",
     "pattern": {
-        "Resource": "invalid_resource"
+        "resource": "invalid_resource"
     },
     "priority": 10
 }
@@ -117,8 +131,8 @@ resources whose name starts with "cpu-":
 {
     "type": "drop",
     "pattern": {
-        "State": {">=": 2},
-        "Resource": {"regex_match": "cpu-.*"}
+        "state": {">=": 2},
+        "resource": {"regex_match": "cpu-.*"}
     },
     "priority": 10
 }
@@ -133,7 +147,7 @@ filter:
 {
     "type": "break",
     "pattern": {
-        "Type": "pbehavior"
+        "event_type": "pbehavior"
     },
     "priority": 0
 }
