@@ -71,7 +71,16 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.context:
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
-        widgetColumns: [],
+        widgetColumns: [
+          {
+            label: i18n.t('tables.contextList.name'),
+            value: 'name',
+          },
+          {
+            label: i18n.t('tables.contextList.type'),
+            value: 'type',
+          },
+        ],
         selectedTypes: [],
         sort: {
           order: 'ASC',

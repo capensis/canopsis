@@ -444,6 +444,7 @@ export default {
     contextList: {
       title: 'Context List',
       name: 'Name',
+      type: 'Type',
       id: 'Id',
       noDataText: 'Make a research',
     },
