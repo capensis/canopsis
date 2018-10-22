@@ -60,6 +60,7 @@ export function generateWidgetByType(type) {
         infoPopups: [],
         periodicRefresh: {
           enabled: false,
+          interval: 60,
         },
         sort: {
           order: 'ASC',
