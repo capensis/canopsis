@@ -81,6 +81,7 @@ import Weather from '@/components/other/service-weather/weather.vue';
 import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
 import StatsCurves from '@/components/other/stats/curves/stats-curves-wrapper.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
+import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
 
 import popupMixin from '@/mixins/popup';
@@ -95,6 +96,7 @@ export default {
     StatsHistogram,
     StatsCurves,
     StatsTable,
+    StatsCalendar,
     StatsNumber,
   },
   mixins: [
@@ -117,6 +119,7 @@ export default {
         [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
         [WIDGET_TYPES.statsCurves]: 'stats-curves',
         [WIDGET_TYPES.statsTable]: 'stats-table',
+        [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
         [WIDGET_TYPES.statsNumber]: 'stats-number',
       },
       widgetKeyPrefix: uid(),

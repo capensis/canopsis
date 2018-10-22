@@ -12,7 +12,7 @@
           v-radio(
           v-for="interval in dateIntervals",
           :label="interval.text",
-          :value="interval",
+          :value="interval.value",
           :key="interval.value"
           )
       v-layout(wrap, v-if="isCustomRangeEnabled")
@@ -34,9 +34,11 @@
 
 <script>
 import moment from 'moment';
+
+import { MODALS, LIVE_REPORTING_INTERVALS } from '@/constants';
+
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import { MODALS } from '@/constants';
 
 /**
    * Modal to add a time filter on alarm-list
@@ -51,45 +53,21 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
+    const { config } = this.modal;
+
     return {
-      selectedInterval: '',
-      dateIntervals: [
-        {
-          text: this.$t('modals.liveReporting.today'),
-          value: 'today',
-        },
-        {
-          text: this.$t('modals.liveReporting.yesterday'),
-          value: 'yesterday',
-        },
-        {
-          text: this.$t('modals.liveReporting.last7Days'),
-          value: 'last7Days',
-        },
-        {
-          text: this.$t('modals.liveReporting.last30Days'),
-          value: 'last30Days',
-        },
-        {
-          text: this.$t('modals.liveReporting.thisMonth'),
-          value: 'thisMonth',
-        },
-        {
-          text: this.$t('modals.liveReporting.lastMonth'),
-          value: 'lastMonth',
-        },
-        {
-          text: this.$t('modals.liveReporting.custom'),
-          value: 'custom',
-        },
-      ],
-      tstart: new Date(),
-      tstop: new Date(),
+      selectedInterval: config.interval || '',
+      dateIntervals: Object.values(LIVE_REPORTING_INTERVALS).map(value => ({
+        value,
+        text: this.$t(`modals.liveReporting.${value}`),
+      })),
+      tstart: config.tstart ? moment.unix(config.tstart).toDate() : new Date(),
+      tstop: config.tstop ? moment.unix(config.tstop).toDate() : new Date(),
     };
   },
   computed: {
     isCustomRangeEnabled() {
-      return this.selectedInterval.value === 'custom';
+      return this.selectedInterval === LIVE_REPORTING_INTERVALS.custom;
     },
     tstopRules() {
       return {
@@ -103,17 +81,20 @@ export default {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid && this.config.updateQuery) {
-        const params = {
-          interval: this.selectedInterval.value,
-        };
+      if (isFormValid) {
+        if (this.config.action) {
+          const params = {
+            interval: this.selectedInterval,
+          };
 
-        if (this.isCustomRangeEnabled) {
-          params.tstart = this.tstart.getTime() / 1000;
-          params.tstop = this.tstop.getTime() / 1000;
+          if (this.isCustomRangeEnabled) {
+            params.tstart = this.tstart.getTime() / 1000;
+            params.tstop = this.tstop.getTime() / 1000;
+          }
+
+          await this.config.action(params);
         }
 
-        this.config.updateQuery(params);
         this.hideModal();
       }
     },

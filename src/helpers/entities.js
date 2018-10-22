@@ -1,7 +1,7 @@
 import moment from 'moment';
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_DURATION_UNITS } from '@/constants';
+import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS } from '@/constants';
 
 import uuid from './uuid';
 
@@ -10,9 +10,8 @@ export function generateWidgetByType(type) {
     type,
     _id: uuid(`widget_${type}`),
     title: '',
-    minColumns: 6,
-    maxColumns: 12,
     parameters: {},
+    size: { sm: 3, md: 3, lg: 3 },
   };
 
   let specialParameters = {};
@@ -61,6 +60,7 @@ export function generateWidgetByType(type) {
         infoPopups: [],
         periodicRefresh: {
           enabled: false,
+          interval: 60,
         },
         sort: {
           order: 'ASC',
@@ -71,7 +71,16 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.context:
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
-        widgetColumns: [],
+        widgetColumns: [
+          {
+            label: i18n.t('tables.contextList.name'),
+            value: 'name',
+          },
+          {
+            label: i18n.t('tables.contextList.type'),
+            value: 'type',
+          },
+        ],
         selectedTypes: [],
         sort: {
           order: 'ASC',
@@ -115,6 +124,60 @@ export function generateWidgetByType(type) {
         tstop: moment().unix(),
         stats: {},
         mfilter: {},
+      };
+      break;
+
+
+    case WIDGET_TYPES.statsCalendar:
+      specialParameters = {
+        filters: [],
+        alarmsStateFilter: {},
+        considerPbehaviors: false,
+        criticityLevelsColors: { ...STATS_CALENDAR_COLORS.alarm },
+        criticityLevels: {
+          minor: 20,
+          major: 30,
+          critical: 40,
+        },
+        alarmsList: {
+          itemsPerPage: PAGINATION_LIMIT,
+          infoPopups: [],
+          moreInfoTemplate: '',
+          widgetColumns: [
+            {
+              label: i18n.t('tables.alarmGeneral.connector'),
+              value: 'alarm.connector',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.connectorName'),
+              value: 'alarm.connector_name',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.component'),
+              value: 'alarm.component',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.resource'),
+              value: 'alarm.resource',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.output'),
+              value: 'alarm.output',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.extraDetails'),
+              value: 'extra_details',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.state'),
+              value: 'alarm.state.val',
+            },
+            {
+              label: i18n.t('tables.alarmGeneral.status'),
+              value: 'alarm.status.val',
+            },
+          ],
+        },
       };
       break;
 
@@ -162,6 +225,17 @@ export function generateView() {
     rows: [],
     tags: [],
     enabled: true,
+  };
+}
+
+export function generateUserPreferenceByWidgetAndUser(widget, user) {
+  return {
+    _id: `${widget._id}_${user.crecord_name}`,
+    widget_preferences: {},
+    crecord_name: user.crecord_name,
+    widget_id: widget._id,
+    widgetXtype: widget.type,
+    crecord_type: 'userpreferences',
   };
 }
 

@@ -37,6 +37,7 @@ import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
+import CalendarAlarmsList from './stats/calendar-alarms-list.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -67,12 +68,14 @@ export default {
     Watcher,
     ManageHistogramGroups,
     AddStat,
+    CalendarAlarmsList,
   },
   data() {
     return {
       dialogPropsMap: {
         [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
         [MODALS.createWidget]: { maxWidth: 500, lazy: true },
+        [MODALS.calendarAlarmsList]: { fullscreen: true, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

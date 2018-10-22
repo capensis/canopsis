@@ -37,6 +37,8 @@ export default {
 <style lang="scss">
   #app {
     &.-fullscreen {
+      width: 100%;
+
       #main-navigation {
         display: none;
       }

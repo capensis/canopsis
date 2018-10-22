@@ -22,7 +22,7 @@
       v-divider
       field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
       v-divider
-      field-colors-selector(v-model="settings.widget.parameters.statColors")
+      field-levels-colors-selector(v-model="settings.widget.parameters.statColors")
     v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
 </template>
 
@@ -31,15 +31,15 @@ import cloneDeep from 'lodash/cloneDeep';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldDuration from '../partial/fields/duration.vue';
-import FieldDateSelect from '../partial/fields/date-time-select.vue';
-import FieldFilterEditor from '../partial/fields/filter-editor.vue';
-import FieldStatSelector from '../partial/fields/stat-selector.vue';
-import FieldYesNoMode from '../partial/fields/yes-no-mode.vue';
-import FieldCriticityLevels from '../partial/fields/criticity-levels.vue';
-import FieldColorsSelector from '../partial/fields/stats-number-colors.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDuration from './fields/common/duration.vue';
+import FieldDateSelect from './fields/common/date-time-select.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldStatSelector from './fields/stats/stat-selector.vue';
+import FieldYesNoMode from './fields/stats/yes-no-mode.vue';
+import FieldCriticityLevels from './fields/stats/criticity-levels.vue';
+import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue';
 
 export default {
   name: SIDE_BARS.statsNumberSettings,
@@ -55,7 +55,7 @@ export default {
     FieldStatSelector,
     FieldYesNoMode,
     FieldCriticityLevels,
-    FieldColorsSelector,
+    FieldLevelsColorsSelector,
   },
   mixins: [widgetSettingsMixin],
   data() {
