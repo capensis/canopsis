@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{$t('settings.periodsNumber')}}
+      .font-italic.caption.ml-1 ({{ $t('common.default') }}: 2)
     v-container
       v-text-field(
       :value="value",
