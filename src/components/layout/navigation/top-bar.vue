@@ -10,11 +10,40 @@
     v-toolbar-side-icon(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
-      v-menu(offset-y, bottom)
+      v-menu(offset-y, bottom, allow-overflow)
         v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
-        v-list
-          v-list-tile(@click.prevent="logout")
-            v-list-tile-title {{ $t('common.logout') }}
+        v-list.pb-0
+          v-list-tile
+            v-list-tile-title
+              v-layout
+                div First name :
+                div.px-1(v-if="currentUser.firstname") {{ currentUser.firstname }}
+                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
+          v-divider
+          v-list-tile
+            v-list-tile-title
+              v-layout
+                div Last name :
+                div.px-1(v-if="currentUser.lastname") {{ currentUser.lasttname }}
+                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
+          v-divider
+          v-list-tile
+            v-list-tile-title
+              v-layout
+                div Role :
+                div.px-1 {{ currentUser.role }}
+          v-divider
+          v-list-tile
+            v-list-tile-title
+              v-layout
+                div Default view :
+                div.px-1 {{ currentUser.defaultview }}
+          v-divider
+          v-list-tile.red.darken-4.white--text(@click.prevent="logout")
+            v-list-tile-title
+              v-layout(align-center)
+                div {{ $t('common.logout') }}
+                v-icon.pl-1.white--text exit_to_app
 </template>
 
 <script>

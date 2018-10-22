@@ -2,6 +2,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from
 
 export default {
   common: {
+    undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
