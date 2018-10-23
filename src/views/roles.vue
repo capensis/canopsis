@@ -15,7 +15,7 @@
         td.text-xs-center
           v-btn(icon)
             v-icon edit
-          v-btn(icon)
+          v-btn(@click="deleteAction(props.item._id)", icon)
             v-icon(color="red darken-4") delete
 </template>
 
@@ -49,6 +49,14 @@ export default {
         name: MODALS.createRole,
         config: {
           title: 'modals.createRole.title',
+        },
+      });
+    },
+    deleteAction(id) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.deleteRole({ id }),
         },
       });
     },

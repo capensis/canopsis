@@ -12,6 +12,7 @@ export default {
   methods: {
     ...mapActions({
       fetchRolesList: 'fetchList',
+      deleteRole: 'remove',
     }),
   },
 };

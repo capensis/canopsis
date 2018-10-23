@@ -3,6 +3,7 @@ import i18n from '@/i18n';
 import { roleSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -38,7 +39,7 @@ export default {
       try {
         commit(types.FETCH_LIST);
         const { normalizedData, data } = await dispatch('entities/fetch', {
-          route: API_ROUTES.roleList,
+          route: API_ROUTES.role.list,
           schema: [roleSchema],
           params,
           dataPreparer: d => d.data,
@@ -56,6 +57,10 @@ export default {
 
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
+    },
+
+    remove(context, { id }) {
+      return request.delete(`${API_ROUTES.role.remove}/${id}`);
     },
   },
 };

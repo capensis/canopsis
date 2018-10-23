@@ -16,25 +16,29 @@ v-card
         :error-messages="errors.collect('name')"
         )
         v-text-field(v-model="form.description", :label="$t('common.description')")
-    v-btn(@click="submit") {{ $t('common.submit') }}
+        v-layout
+          v-btn.mx-0(@click.stop="showViewSelectModal", depressed) Select default view
+          div {{ form.defaultView }}
+    v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import pick from 'lodash/pick';
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 export default {
   name: MODALS.createRole,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin],
+  mixins: [modalInnerMixin, entitiesViewGroupMixin],
   data() {
-    const group = this.modal.config.group || { name: '', description: '' };
+    const group = this.modal.config.group || { name: '', description: '', defaultView: '' };
 
     return {
-      form: pick(group, ['name', 'description']),
+      form: pick(group, ['name', 'description', 'defaultview']),
     };
   },
   methods: {
@@ -47,6 +51,14 @@ export default {
         }
         this.hideModal();
       }
+    },
+    showViewSelectModal() {
+      this.showModal({
+        name: MODALS.viewSelect,
+        config: {
+          action: view => this.form.defaultView = view,
+        },
+      });
     },
   },
 };
