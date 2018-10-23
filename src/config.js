@@ -39,4 +39,6 @@ export const API_ROUTES = {
   view: '/api/v2/views',
   viewGroup: '/api/v2/views/groups',
   stats: '/api/v2/stats',
+  user: '/rest/default_rights/user',
+  createUser: '/account/user',
 };
