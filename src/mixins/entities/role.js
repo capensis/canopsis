@@ -6,6 +6,7 @@ export default {
   computed: {
     ...mapGetters({
       roles: 'items',
+      pending: 'pending',
     }),
   },
   methods: {

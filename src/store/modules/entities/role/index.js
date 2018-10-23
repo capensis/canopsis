@@ -12,9 +12,12 @@ export const types = {
 
 export default {
   namespaced: true,
-  state: {},
+  state: {
+    pending: false,
+  },
   getters: {
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.role, state.allIds),
+    pending: state => state.pending,
   },
   mutations: {
     [types.FETCH_LIST](state) {
