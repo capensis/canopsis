@@ -18,6 +18,7 @@
 
 <script>
 import pullAt from 'lodash/pullAt';
+
 import modalMixin from '@/mixins/modal/modal';
 import formMixin from '@/mixins/form';
 import { MODALS } from '@/constants';
