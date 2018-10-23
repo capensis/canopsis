@@ -12,6 +12,7 @@ export const ENTITIES_TYPES = {
   row: 'row',
   widget: 'widget',
   stat: 'stat',
+  role: 'role',
 };
 
 export const MODALS = {
