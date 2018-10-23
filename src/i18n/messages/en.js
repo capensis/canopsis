@@ -451,6 +451,9 @@ export default {
     calendarAlarmsList: {
       title: 'Calendar alarms list',
     },
+    createRole: {
+      title: 'Create role',
+    },
   },
   tables: {
     noData: 'No data',

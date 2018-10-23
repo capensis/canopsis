@@ -36,8 +36,8 @@ export default {
     async fetchList({ commit, dispatch }, { params } = {}) {
       try {
         commit(types.FETCH_LIST);
-        const { data, normalizedData } = await dispatch('entities/fetch', {
-          route: API_ROUTES.role,
+        const { normalizedData, data } = await dispatch('entities/fetch', {
+          route: API_ROUTES.roleList,
           schema: [roleSchema],
           params,
           dataPreparer: d => d.data,

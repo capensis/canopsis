@@ -39,6 +39,7 @@ export const MODALS = {
   textEditor: 'text-editor',
   createView: 'create-view',
   createGroup: 'create-group',
+  createRole: 'create-role',
 };
 
 export const EVENT_ENTITY_TYPES = {
