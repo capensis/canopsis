@@ -5,7 +5,7 @@ const { mapActions } = createNamespacedHelpers('user');
 export default {
   methods: {
     ...mapActions({
-      editUser: 'editUser',
+      editUser: 'edit',
     }),
   },
 };

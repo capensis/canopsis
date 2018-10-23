@@ -24,7 +24,7 @@
             v-list-tile-title
               v-layout
                 div {{ $t('user.lastName') }} :
-                div.px-1(v-if="currentUser.lastname") {{ currentUser.lasttname }}
+                div.px-1(v-if="currentUser.lastname") {{ currentUser.lastname }}
                 div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
           v-divider
           v-list-tile

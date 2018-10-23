@@ -6,7 +6,7 @@ import { API_ROUTES } from '@/config';
 export default {
   namespaced: true,
   actions: {
-    async editUser({ dispatch }, { user } = {}) {
+    async edit({ dispatch }, { user } = {}) {
       const editedUser = new FormData();
       editedUser.append('user', JSON.stringify(user));
       try {
