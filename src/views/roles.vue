@@ -1,9 +1,22 @@
 <template lang="pug">
   v-container
-    div
-      div(v-for="role in roles", :key="role._id")
-        strong {{ role.crecord_name }}
-    v-btn(@click="showCreateRoleModal") Add role
+    v-layout(justify-end)
+      v-btn(@click="showCreateRoleModal", icon, fab)
+        v-icon(color="green darken-4") add
+    v-data-table(
+    :items="roles",
+    :headers="headers"
+    )
+      template(slot="headers", slot-scope="props")
+        tr
+          th(v-for="header in headers", :key="header.value") {{ header.text }}
+      template(slot="items", slot-scope="props")
+        td.text-xs-center {{ props.item.crecord_name }}
+        td.text-xs-center
+          v-btn(icon)
+            v-icon edit
+          v-btn(icon)
+            v-icon(color="red darken-4") delete
 </template>
 
 <script>
@@ -19,6 +32,10 @@ export default {
         {
           text: 'Name',
           value: 'crecord_name',
+        },
+        {
+          text: 'Actions',
+          value: 'actions',
         },
       ],
     };

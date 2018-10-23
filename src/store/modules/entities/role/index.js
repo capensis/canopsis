@@ -13,6 +13,7 @@ export const types = {
 export default {
   namespaced: true,
   state: {
+    allIds: [],
     pending: false,
   },
   getters: {
