@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.statsSelect.title') }}
       .font-italic.caption.ml-1 ({{ $t('settings.statsSelect.required') }})
     v-container
-      v-alert(:value="errors.has('stats')", type="error") You should put least 1 stat
+      v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-btn(@click="openAddStatModal") {{ $t('modals.addStat.title.add') }}
       v-list(dark)
         v-list-group(v-for="(stat, key) in stats", :key="key")

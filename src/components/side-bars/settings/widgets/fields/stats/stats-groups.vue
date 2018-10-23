@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.statsGroups.title') }}
       .font-italic.caption.ml-1 ({{ $t('settings.statsGroups.required') }})
     v-container
-      v-alert(:value="errors.has('groups')", type="error") You should put least 1 group
+      v-alert(:value="errors.has('groups')", type="error") {{ $t('settings.statsGroups.required') }}
       v-btn(@click="addGroup") {{ $t('settings.statsGroups.manageGroups') }}
       v-list(dark)
         v-list-tile(v-for="(group, index) in groups", :key="index")
