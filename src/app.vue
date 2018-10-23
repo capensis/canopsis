@@ -1,8 +1,8 @@
 <template lang="pug">
   v-app#app
     v-layout
-      navigation(v-if="$route.name !== 'login'")
-      v-content(v-if="!currentUserPending")
+      navigation#main-navigation(v-if="$route.name !== 'login'")
+      v-content#main-content(v-if="!currentUserPending")
         router-view(:key="$route.fullPath")
     side-bars
     modals
@@ -33,3 +33,19 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  #app {
+    &.-fullscreen {
+      width: 100%;
+
+      #main-navigation {
+        display: none;
+      }
+
+      #main-content {
+        padding: 0!important;
+      }
+    }
+  }
+</style>
