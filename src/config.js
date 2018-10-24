@@ -41,4 +41,5 @@ export const API_ROUTES = {
   stats: '/api/v2/stats',
   user: '/rest/default_rights/user',
   createUser: '/account/user',
+  deleteUser: '/account/delete/user',
 };

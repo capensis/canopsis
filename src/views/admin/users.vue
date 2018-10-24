@@ -1,35 +1,127 @@
 <template lang="pug">
   v-container
     div
-      div(v-for="user in users", :key="user.id")
-        strong {{ user.mail }}
-    .fab
-      v-speed-dial(
-      v-model="fab",
-      direction="top",
-      transition="slide-y-reverse-transition"
+      div(v-show="selected.length")
+        v-btn(@click="showRemoveSelectedUsersModal", icon)
+          v-icon delete
+      v-data-table(
+      v-model="selected",
+      :headers="headers",
+      :items="users",
+      :pagination.sync="pagination",
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
+      :total-items="usersMeta.total",
+      item-key="id"
+      select-all,
       )
-        v-btn(slot="activator", color="green darken-3", dark, fab, v-model="fab")
-          v-icon menu
-          v-icon close
-        v-tooltip(left)
-          v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
-            v-icon add
-          span Add user
+        template(slot="items", slot-scope="props")
+          tr
+            td
+              v-checkbox(v-model="props.selected", primary, hide-details)
+            td {{ props.item.id }}
+            td {{ props.item.role }}
+            td
+              v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
+            td
+              div
+                v-btn(@click="showEditUserModal(props.item)", icon)
+                  v-icon edit
+                v-btn(@click="showRemoveUserModal(props.item)", icon)
+                  v-icon delete
+    .fab
+      v-tooltip(left)
+        v-btn(slot="activator", fab, dark, color="indigo", @click.stop="showCreateUserModal")
+          v-icon add
+        span Add user
 </template>
 
 <script>
+import isEmpty from 'lodash/isEmpty';
+
+import { MODALS } from '@/constants';
+
+import modalMixin from '@/mixins/modal/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
 
 export default {
-  mixins: [entitiesUserMixin],
+  mixins: [modalMixin, entitiesUserMixin],
   data() {
     return {
-      fab: false,
+      pagination: null,
+      headers: [
+        { text: 'ID', value: 'id' },
+        { text: 'Role', value: 'role' },
+        { text: 'Enabled', value: 'enable' },
+        { text: '', sortable: false },
+      ],
+      selected: [],
     };
   },
+  watch: {
+    pagination(value, oldValue) {
+      if (!isEmpty(oldValue) && value !== oldValue) {
+        this.fetchList();
+      }
+    },
+  },
   mounted() {
-    this.fetchUsersList();
+    this.fetchList();
+  },
+  methods: {
+    showRemoveUserModal(id) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.removeUser({ id }),
+        },
+      });
+    },
+
+    showRemoveSelectedUsersModal() {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await Promise.all(this.selected.map(id => this.removeUser({ id })));
+
+            this.selected = [];
+          },
+        },
+      });
+    },
+
+    showEditUserModal(user) {
+      this.showModal({
+        name: MODALS.createUser,
+        config: {
+          title: this.$t('modals.editUser.title'),
+          item: user,
+        },
+      });
+    },
+
+    showCreateUserModal() {
+      this.showModal({
+        name: MODALS.createUser,
+        config: {
+          title: this.$t('modals.createUser.title'),
+        },
+      });
+    },
+
+    fetchList() {
+      const {
+        rowsPerPage, page, sortBy, descending,
+      } = this.pagination;
+
+      this.fetchUsersList({
+        params: {
+          limit: rowsPerPage,
+          start: (page - 1) * rowsPerPage,
+          sort: [{ property: sortBy, direction: descending ? 'DESC' : 'ASC' }],
+        },
+      });
+    },
   },
 };
 </script>

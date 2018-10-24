@@ -451,6 +451,21 @@ export default {
     calendarAlarmsList: {
       title: 'Calendar alarms list',
     },
+    createUser: {
+      title: 'Create user',
+      fields: {
+        username: 'Username',
+        firstName: 'First name',
+        lastName: 'Last name',
+        email: 'Email',
+        password: 'Password',
+        language: 'User interface language',
+        enabled: 'Enabled',
+      },
+    },
+    editUser: {
+      title: 'Edit user',
+    },
   },
   tables: {
     noData: 'No data',
