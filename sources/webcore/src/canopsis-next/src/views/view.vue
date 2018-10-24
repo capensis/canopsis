@@ -6,7 +6,7 @@
           v-layout(align-center)
             h2 {{ row.title }}
             v-tooltip.ml-2(left, v-if="isEditModeEnable")
-              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3")
+              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
                 v-icon delete
               span {{ $t('common.delete') }}
         v-flex(
@@ -33,6 +33,10 @@
           :rowId="row._id"
           )
     .fab
+      v-tooltip(left)
+        v-btn(slot="activator", fab, dark, color="info", @click.stop="refreshView")
+          v-icon refresh
+        span {{ $t('common.refresh') }}
       v-speed-dial(
       v-model="fab",
       direction="top",
@@ -41,13 +45,21 @@
         v-btn(slot="activator", color="green darken-3", dark, fab, v-model="fab")
           v-icon menu
           v-icon close
-        v-tooltip(left)
-          v-btn(slot="activator", fab, dark, small, color="info", @click.stop="refreshView")
-            v-icon refresh
-          span {{ $t('common.refresh') }}
+        v-tooltip(bottom)
+          v-btn(
+          slot="activator",
+          v-model="isFullScreenModeEnable"
+          fab,
+          dark,
+          small,
+          @click="fullScreenToggle",
+          )
+            v-icon fullscreen
+            v-icon fullscreen_exit
+          span alt + enter / command + enter
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
-            v-icon widgets
+            v-icon add
           span {{ $t('common.addWidget') }}
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
@@ -69,8 +81,10 @@ import Weather from '@/components/other/service-weather/weather.vue';
 import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
 import StatsCurves from '@/components/other/stats/curves/stats-curves-wrapper.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
+import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
 
+import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -82,9 +96,11 @@ export default {
     StatsHistogram,
     StatsCurves,
     StatsTable,
+    StatsCalendar,
     StatsNumber,
   },
   mixins: [
+    popupMixin,
     modalMixin,
     entitiesViewMixin,
   ],
@@ -103,10 +119,12 @@ export default {
         [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
         [WIDGET_TYPES.statsCurves]: 'stats-curves',
         [WIDGET_TYPES.statsTable]: 'stats-table',
+        [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
         [WIDGET_TYPES.statsNumber]: 'stats-number',
       },
       widgetKeyPrefix: uid(),
       isEditModeEnable: false,
+      isFullScreenModeEnable: false,
       fab: false,
     };
   },
@@ -123,9 +141,32 @@ export default {
     },
   },
   created() {
+    document.addEventListener('keydown', this.keyDownListener);
     this.fetchView({ id: this.id });
   },
+  beforeDestroy() {
+    this.$fullscreen.exit();
+    document.removeEventListener('keydown', this.keyDownListener);
+  },
   methods: {
+    keyDownListener({ keyCode, altKey }) {
+      if (keyCode === 13 && altKey) {
+        this.fullScreenToggle();
+      }
+    },
+
+    fullScreenToggle() {
+      const element = document.getElementById('app');
+
+      if (element) {
+        this.$fullscreen.toggle(element, {
+          wrap: false,
+          fullscreenClass: '-fullscreen',
+          callback: value => this.isFullScreenModeEnable = value,
+        });
+      }
+    },
+
     async refreshView() {
       await this.fetchView({ id: this.id });
 
@@ -140,10 +181,33 @@ export default {
     toggleViewEditMode() {
       this.isEditModeEnable = !this.isEditModeEnable;
     },
+    deleteRow(rowKey) {
+      if (this.view.rows[rowKey].widgets.length > 0) {
+        this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
+      } else {
+        this.showModal({
+          name: MODALS.confirmation,
+          config: {
+            action: () => {
+              const view = { ...this.view };
+              pullAt(view.rows, rowKey);
+              this.updateView({ id: this.id, data: view });
+            },
+          },
+        });
+      }
+    },
     deleteWidget(widgetKey, rowKey) {
-      const view = { ...this.view };
-      pullAt(view.rows[rowKey].widgets, widgetKey);
-      this.updateView({ id: this.id, data: view });
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => {
+            const view = { ...this.view };
+            pullAt(view.rows[rowKey].widgets, widgetKey);
+            this.updateView({ id: this.id, data: view });
+          },
+        },
+      });
     },
   },
 };

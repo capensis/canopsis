@@ -68,7 +68,6 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -98,7 +97,6 @@ export default {
     widgetQueryMixin,
     widgetColumnsMixin,
     entitiesContextEntityMixin,
-    entitiesUserPreferenceMixin,
   ],
   props: {
     widget: {

@@ -19,6 +19,7 @@ export default {
     login: 'Login',
     yes: 'Yes',
     no: 'No',
+    default: 'Default',
     confirmation: 'Are you sure ?',
     parameters: 'Parameters',
     by: 'By',
@@ -33,16 +34,20 @@ export default {
     trend: 'Trend',
     username: 'Username',
     password: 'Password',
+    optionnal: 'optionnal',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
     label: 'Label',
     value: 'Value',
     add: 'Add',
+    create: 'Create',
     delete: 'Delete',
+    show: 'Show',
     edit: 'Edit',
     parse: 'Parse',
     home: 'Home',
+    step: 'Step',
     entries: 'entries',
     showing: 'showing',
     apply: 'Apply',
@@ -145,8 +150,10 @@ export default {
       statsHistogramSettings: 'Histogram settings',
       statsCurvesSettings: 'Curve settings',
       statsTableSettings: 'Stats table settings',
+      statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
     },
+    advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default Sort Column',
@@ -158,12 +165,15 @@ export default {
     open: 'Open',
     resolved: 'Resolved',
     filters: 'Filters',
-    filterEditor: 'Filter editor',
+    filterEditor: 'Filter',
     duration: 'Duration',
     tstop: 'End date',
-    periodsNumber: 'Number of periods',
+    periodsNumber: 'Number of steps',
     statName: 'Stat name',
-    statsSelect: 'Stats select',
+    statsSelect: {
+      title: 'Stats select',
+      required: 'Select at least 1 stat',
+    },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
     criticityLevels: 'Criticity levels',
@@ -188,15 +198,10 @@ export default {
       },
     },
     rowGridSize: {
-      title: 'Row grid size',
+      title: 'Widget\'s size',
       noData: 'No row corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         row: 'Row',
-        size: {
-          sm: 'Column SM',
-          md: 'Column MD',
-          lg: 'Column LG',
-        },
       },
     },
     moreInfosModal: '"More Infos" Popup',
@@ -223,10 +228,14 @@ export default {
     statsGroups: {
       title: 'Stats groups',
       manageGroups: 'Add a group',
+      required: 'Create at least 1 group',
     },
     statsColor: {
       title: 'Stats color',
       pickColor: 'Pick a color',
+    },
+    considerPbehaviors: {
+      title: 'Consider pbehaviors',
     },
   },
   modals: {
@@ -381,6 +390,9 @@ export default {
     colorPicker: {
       title: 'Color picker',
     },
+    textEditor: {
+      title: 'Text editor',
+    },
     widgetCreation: {
       title: 'Select a widget',
       types: {
@@ -401,6 +413,9 @@ export default {
         },
         statsTable: {
           title: 'Stats table',
+        },
+        statsCalendar: {
+          title: 'Stats calendar',
         },
         statsNumber: {
           title: 'Stats number',
@@ -433,12 +448,16 @@ export default {
         isNotEmpty: 'The group is not empty',
       },
     },
+    calendarAlarmsList: {
+      title: 'Calendar alarms list',
+    },
   },
   tables: {
     noData: 'No data',
     contextList: {
       title: 'Context List',
       name: 'Name',
+      type: 'Type',
       id: 'Id',
       noDataText: 'Make a research',
     },
@@ -547,6 +566,13 @@ export default {
   },
   errors: {
     default: 'Something went wrong...',
+    lineNotEmpty: 'This line is not empty',
+  },
+  calendar: {
+    today: 'Today',
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
   },
   success: {
     default: 'Done !',
@@ -566,10 +592,17 @@ export default {
       deleteGroup: 'Delete group',
     },
     resultsTableHeaders: {
-      connector: 'Connector',
-      connectorName: 'Connector name',
-      component: 'Component',
-      resource: 'Resource',
+      alarm: {
+        connector: 'Connector',
+        connectorName: 'Connector name',
+        component: 'Component',
+        resource: 'Resource',
+      },
+      entity: {
+        id: 'ID',
+        name: 'Name',
+        type: 'Type',
+      },
     },
     errors: {
       invalidJSON: 'Invalid JSON',

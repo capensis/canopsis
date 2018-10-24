@@ -8,19 +8,29 @@
       @createRow="createRow"
       )
       v-divider
-      field-title(v-model="settings.widget.title")
+      field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-duration(v-model="settings.widget.parameters.duration")
+      field-stat-end-date-select(
+      :title="$t('settings.tstop')",
+      v-model="settings.widget.parameters.tstop",
+      :duration="settings.widget.parameters.duration"
+      )
       v-divider
-      field-date-time-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
+      field-duration(v-model="settings.widget.parameters.duration", :title="$t('common.step')")
       v-divider
       field-periods-number(v-model="settings.widget.parameters.periods")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
-      field-stats-colors(:stats="settings.widget.parameters.stats", v-model="settings.widget.parameters.statsColors")
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-stats-colors(
+          :stats="settings.widget.parameters.stats",
+          v-model="settings.widget.parameters.statsColors"
+          )
       v-divider
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -30,13 +40,13 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldDuration from '../partial/fields/duration.vue';
-import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
-import FieldPeriodsNumber from '../partial/fields/periods-number.vue';
-import FieldStatsSelect from '../partial/fields/stats-select.vue';
-import FieldStatsColors from '../partial/fields/stats-colors.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDuration from './fields/stats/duration.vue';
+import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
+import FieldPeriodsNumber from './fields/stats/periods-number.vue';
+import FieldStatsSelect from './fields/stats/stats-select.vue';
+import FieldStatsColors from './fields/stats/stats-colors.vue';
 
 export default {
   name: SIDE_BARS.statsCurvesSettings,
@@ -47,7 +57,7 @@ export default {
     FieldRowGridSize,
     FieldTitle,
     FieldDuration,
-    FieldDateTimeSelect,
+    FieldStatEndDateSelect,
     FieldPeriodsNumber,
     FieldStatsSelect,
     FieldStatsColors,

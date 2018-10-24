@@ -19,7 +19,7 @@ export default {
   state: {
     isLoggedIn: !!Cookies.get(COOKIE_SESSION_KEY),
     currentUser: {},
-    pending: false,
+    pending: true,
   },
   getters: {
     isLoggedIn: state => state.isLoggedIn,

@@ -28,13 +28,14 @@
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
 
 import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter-editor/parse-filter-to-request';
 
-import FilterGroup from '@/components/other/filter-editor/partial/filter-group.vue';
-import FilterResults from '@/components/other/filter-editor/partial/filter-results.vue';
+import FilterGroup from './partial/filter-group.vue';
+import FilterResultsAlarm from './partial/results/alarm.vue';
+import FilterResultsEntity from './partial/results/entity.vue';
 
 /**
  * Component to create new MongoDB filter
@@ -46,12 +47,18 @@ import FilterResults from '@/components/other/filter-editor/partial/filter-resul
 export default {
   components: {
     FilterGroup,
-    FilterResults,
+    FilterResultsAlarm,
+    FilterResultsEntity,
   },
   props: {
     value: {
       type: String,
       default: '',
+    },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
   data() {
@@ -75,10 +82,12 @@ export default {
       requestString: '',
       parseError: '',
       isRequestStringChanged: false,
-      possibleFields: ['connector', 'connector_name', 'component', 'resource'],
     };
   },
   computed: {
+    resultsComponent() {
+      return `filter-results-${this.entitiesType}`;
+    },
     request() {
       try {
         return parseFilterToRequest(this.filter);
@@ -86,6 +95,18 @@ export default {
         console.error(err);
 
         return {};
+      }
+    },
+    possibleFields() {
+      switch (this.entitiesType) {
+        case ENTITIES_TYPES.alarm:
+          return ['connector', 'connector_name', 'component', 'resource'];
+
+        case ENTITIES_TYPES.entity:
+          return ['name', 'type'];
+
+        default:
+          return [];
       }
     },
   },
