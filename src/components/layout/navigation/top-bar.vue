@@ -54,9 +54,8 @@
 
 <script>
 import find from 'lodash/find';
-import forEach from 'lodash/forEach';
 import authMixin from '@/mixins/auth';
-import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserMixin from '@/mixins/entities/user';
 import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
@@ -67,16 +66,10 @@ import { MODALS } from '@/constants';
  * @event toggleSideBar#click
  */
 export default {
-  mixins: [authMixin, entitiesViewGroupMixin, entitiesUserMixin, modalMixin],
+  mixins: [authMixin, entitiesViewMixin, entitiesUserMixin, modalMixin],
   computed: {
     defaultViewTitle() {
-      let defaultView = {};
-      forEach(this.groups, (group) => {
-        defaultView = find(group.views, view => view._id === this.currentUser.defaultview);
-        // Return false to exit the loop if view was found
-        return !defaultView;
-      });
-
+      const defaultView = find(this.views, view => view._id === this.currentUser.defaultview);
       return defaultView ? defaultView.title : null;
     },
   },

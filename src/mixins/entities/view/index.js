@@ -9,6 +9,7 @@ export default {
   computed: {
     ...mapGetters({
       view: 'item',
+      views: 'items',
     }),
   },
   methods: {
