@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import find from 'lodash/find';
 import authMixin from '@/mixins/auth';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -69,8 +68,8 @@ export default {
   mixins: [authMixin, entitiesViewMixin, entitiesUserMixin, modalMixin],
   computed: {
     defaultViewTitle() {
-      const defaultView = find(this.views, view => view._id === this.currentUser.defaultview);
-      return defaultView ? defaultView.title : null;
+      const userDefaultView = this.getViewById(this.currentUser.defaultview);
+      return userDefaultView ? userDefaultView.title : null;
     },
   },
   methods: {

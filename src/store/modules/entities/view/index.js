@@ -25,7 +25,7 @@ export default {
   getters: {
     item: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
-    items: (state, getters, rootState) => rootState.entities.view,
+    getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](ENTITIES_TYPES.view, id),
   },
   mutations: {
     [types.FETCH_ITEM]: (state, viewId) => {
