@@ -21,8 +21,14 @@ Renvoie la config ticket api demandée.
         "username": "",
         "password": "",
     },
-    "parameters":{
-        "Source": "Canopsis"
+    "parameters": {
+        "ticket_path": "table/incident",
+        "result_key": "result",
+        "number_key": "number"
+    },
+    "payload": {
+        "Source": "Club jdg",
+        "Name": "{{ .Alarm.Value.Resource }}"
     }
 }
 ```
@@ -42,7 +48,13 @@ POST /api/v2/ticketapi
         "password": "",
     },
     "parameters":{
-        "Source": "Canopsis"
+        "ticket_path": "table/incident",
+        "result_key": "result",
+        "number_key": "number"
+    },
+    "payload":{
+        "Source": "Canopsis",
+        "Name": "{{ .Alarm.Value.Resource }}"
     }
 }
 ```
@@ -60,11 +72,17 @@ PUT /api/v2/ticketapi/<ticketapi_id>
     "regex": ".*",
     "api": {
         "base_url": "https://example.com/rest",
-        "username": "",
-        "password": "",
+        "username": "david",
+        "password": "goodenough"
     },
-    "parameters":{
-        "Source": "Canopsis"
+    "parameters": {
+        "result_key": "result",
+        "ticket_path": "table/incident",
+        "number_key": "number"
+    },
+    "payload":{
+        "Source": "Canopsis NG",
+        "Name": "{{ .Alarm.Value.Component }}"
     }
 }
 ```
