@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import os
 import time
 
-from canopsis.engines.core import TaskHandler, publish
+from canopsis.engines.core import TaskHandler
 from canopsis.event import forger
 from canopsis.context_graph.import_ctx import ImportKey as Keys,\
     ContextGraphImport, Manager
@@ -118,7 +118,10 @@ class engine(TaskHandler):
             perf_data_array=perf_data_array
         )
 
-        publish(event, self.amqp)
+        try:
+            self.work_amqp_publisher.canopsis_event(event)
+        except Exception as e:
+            self.logger.exception("Unable to send event")
 
     def handle_task(self, job):
         """

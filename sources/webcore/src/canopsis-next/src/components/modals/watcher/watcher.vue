@@ -4,14 +4,10 @@
       span.headline {{ watcher.display_name }}
     v-divider
     v-card-text
-      v-layout(v-for="(attribute, attributeKey) in attributes", :key="attributeKey", row, wrap)
-        v-flex.text-md-right(xs3)
-          b {{ $t(`modals.watcher.${attributeKey}`) }}:
-        v-flex.pl-2(xs9)
-          span {{ attribute }}
+      div(v-html="compiledTemplate")
       div(v-if="!watcherEntitiesPending")
-        div.mt-4(v-for="watcherEntity in watcherEntities")
-          watcher-entity(:entity="watcherEntity")
+        div.mt-2(v-for="watcherEntity in watcherEntities")
+          watcher-entity(:entity="watcherEntity", :template="config.entityTemplate")
 </template>
 
 <script>
@@ -19,6 +15,7 @@ import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
 import { MODALS } from '@/constants';
+import compile from '@/helpers/handlebars';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -44,6 +41,9 @@ export default {
   computed: {
     watcher() {
       return this.getWatcher(this.config.watcherId);
+    },
+    compiledTemplate() {
+      return compile(this.config.modalTemplate, { watcher: this.watcher });
     },
   },
   mounted() {

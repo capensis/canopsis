@@ -1,7 +1,7 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     v-card
-      v-card-title
+      v-card-title.green.darken-3.white--text
         span.headline {{ $t('modals.createChangeStateEvent.title') }}
       v-card-text
         v-container
@@ -18,7 +18,7 @@
               :color="colorsMap[states[button]]",
               depressed
               ) {{ $t(`modals.createChangeStateEvent.states.${button}`) }}
-          v-layout(row)
+          v-layout.mt-4(row)
             v-text-field(
             :label="$t('modals.createChangeStateEvent.fields.output')",
             :error-messages="errors.collect('output')",
@@ -27,7 +27,7 @@
             data-vv-name="output"
             )
       v-card-actions
-        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
+        v-btn.green.darken-3.white--text(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -62,7 +62,7 @@ export default {
     },
     colorsMap() {
       return {
-        [ENTITIES_STATES.ok]: 'info',
+        [ENTITIES_STATES.ok]: 'green',
         [ENTITIES_STATES.minor]: 'yellow',
         [ENTITIES_STATES.major]: 'orange',
         [ENTITIES_STATES.critical]: 'error',

@@ -4,12 +4,60 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Unreleased
 
+### Experimental features
+
+- [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+- [Go]: New Action engine (backend only for now)
+
+## Canopsis 3.2.4 - Due date : 2018-10-05
+
+- [Chore]: add some system dependencies to ansible installation
+- [Go]: fix bagoting alarms never closed if cropped
+- [Go]: send axe statistics to stasng engine
+- [Python]: change some amqp publishers to pika to prevent odd reconnections
+- [Python]: fix has_active_pb flag no corretly show all linked pbehaviors
+- [Python]: fix pbehavior not corretly handle timezone change (one day gap)
+- [Python]: fix performance concern on alert consultation
+
+## Canopsis 3.2.3 - Due date : 2018-09-17
+
+- [Email Connector]: handle base64 encoded parts
+- [Email Connector]: option which use redis to resend last known event on run
+- [Service weather]: Fix icons consistency between a watcher and his modal
+
+## Canopsis 3.2.2 - Due date : 2018-09-12
+
+- [Go]: Fix che event enrichment with new entities
+- [Go]: Fix unused debug flag
+- [Python]: Fix pbehavior based desynchronisation on weather route
+
+## Canopsis 3.2.1 - Due date : 2018-09-12
+
+- [CAT] Simplification of the statistics API (!74, !77, !78)
+- [CAT] Add trends, SLA, sorting, aggregations and filtering by author to the statistics API  (!75, !76, !80, !87)
+- [CAT] Add support for monthly periods to the statistics API (!79)
+- [CAT] Add statistics for ongoing alarms and current state of an entity (!81, 82)
+- [CAT] Fix an issue with the state of the alarms for statistics on resolved alarms (!83)
+- [CAT] Add API route to get the history of the state of an entity (!85)
+- [Python]: Fix error on /trap route
+- [Python]: Fix amqp driver to revive stucked Consumers
+- [Service weather]: Fix wrong pbehavior and maintenance icons used
+- [UI]: Fix role default view that cannot be modified
+
+## Canopsis 3.2 - Due date : 2018-09-01
+
+- [Python]: fix rruled pbehavior computation
+- [Python]: two bugfix on /get-entities route
+- [Service weather]: fix unfoldable item when it contains a %
+- [UI]: add ellipsis on hostgroups field
+- [UI]: add rights on filters (create, list, modify)
+- [UI]: hide "Restore alarm" button on open alarm list
+
 ## Canopsis 3.1 - Due date : 2018-08-17
 - [Python]: add a feature that track the change of the longoutput field and alter the behavior of the output field of an alarm.
 - [Python]: fix a bug that duplicate an alarm.
 - [Build]: fix an error during the compilation of canopsis-next.
 - [UI]: fix a right issue in the listalarm brick that allow the done button to be displayed without any right.
-
 
 ## Canopsis 3.0.1 - Due date : 2018-08-03
 
@@ -18,16 +66,12 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [CAT]: New stats in statsng: most_alarms_created, alarms_impacting, state_list (!71)
 - [CAT]: send stats with alarm duration
 - [CAT]: default sats value
-- [snooze]: faster snooze application
-- [perriodic refresh]: fix infinite loop with periodic refresh
-- [link list]: remove linklist
-- [links]: fix links in service weather
+- [Snooze]: faster snooze application
+- [Periodic refresh]: fix infinite loop with periodic refresh
+- [Link list]: remove linklist
+- [Links]: fix links in service weather
 - [UI]: views in canopsis-next
 - [UI]: alarms in canopsis-next
-
-### Experimental features
-
-- [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
 ## Canopsis 3.0.0 - Due date : 2018-07-20
 

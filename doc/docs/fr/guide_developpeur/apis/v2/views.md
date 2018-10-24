@@ -12,7 +12,7 @@ GET /api/v2/views?title=...
 
 Renvoie toutes les vues, optionnellement filtrées par nom ou par titre.
 
-```
+```json
 {
     "groups": {
         "group1": {
@@ -28,7 +28,7 @@ Renvoie toutes les vues, optionnellement filtrées par nom ou par titre.
 
 ### Créer une vue
 
-```
+```json
 POST /api/v2/views
 {
     "group_id": "<group_id>",
@@ -49,7 +49,7 @@ GET /api/v2/views/<view_id>
 
 ### Modifier une vue
 
-```
+```json
 PUT /api/v2/views/<view_id>
 {
     "group_id": "<group_id>",
@@ -80,7 +80,7 @@ Renvoie la liste des groupes, optionnellement filtrées par nom.
 
 ### Créer un groupe
 
-```
+```json
 POST /api/v2/views/groups
 {
     "name": "..."
@@ -100,19 +100,19 @@ GET /api/v2/views/groups/<group_id>?title=...
 Renvoie une liste des vues d'un groupe, optionnellement filtrées par nom ou par
 titre.
 
-```
+```json
 {
     "_id": "...",
     "name": "...",
     "views": [
-        ...
+        // ...
     ]
 }
 ```
 
 ### Modifier un groupe
 
-```
+```json
 PUT /api/v2/views/groups/<group_id>
 {
     "name": "..."

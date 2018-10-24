@@ -16,7 +16,7 @@
               data-vv-name="duration"
               )
             v-flex(xs4)
-              v-select(:items="availableTypes", v-model="form.durationType")
+              v-select(:items="availableTypes", v-model="form.durationType", item-value="key")
                 template(slot="selection" slot-scope="data")
                   div.input-group__selections__comma {{ $tc(data.item.text, 2) }}
                 template(slot="item" slot-scope="data")
@@ -44,7 +44,6 @@ export default {
   mixins: [modalInnerItemsMixin, eventActionsMixin],
   data() {
     const availableTypes = [
-      { key: 'seconds', text: 'common.times.second' },
       { key: 'minutes', text: 'common.times.minute' },
       { key: 'hours', text: 'common.times.hour' },
       { key: 'days', text: 'common.times.day' },
@@ -56,7 +55,7 @@ export default {
     return {
       form: {
         duration: 1,
-        durationType: availableTypes[0],
+        durationType: availableTypes[0].key,
       },
       availableTypes,
     };
@@ -68,8 +67,8 @@ export default {
       if (isFormValid) {
         const duration = moment.duration(
           parseInt(this.form.duration, 10),
-          this.form.durationType.key,
-        ).asMilliseconds();
+          this.form.durationType,
+        ).asSeconds();
 
         await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
 
