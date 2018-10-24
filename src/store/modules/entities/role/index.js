@@ -15,10 +15,12 @@ export default {
   namespaced: true,
   state: {
     allIds: [],
+    meta: {},
     pending: false,
   },
   getters: {
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.role, state.allIds),
+    meta: state => state.meta,
     pending: state => state.pending,
   },
   mutations: {
@@ -59,8 +61,13 @@ export default {
       }
     },
 
-    remove(context, { id }) {
-      return request.delete(`${API_ROUTES.role.remove}/${id}`);
+    async remove({ dispatch }, { id }) {
+      try {
+        await request.delete(`${API_ROUTES.role.remove}/${id}`);
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+      }
     },
   },
 };

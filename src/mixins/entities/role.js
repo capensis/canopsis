@@ -6,13 +6,14 @@ export default {
   computed: {
     ...mapGetters({
       roles: 'items',
-      pending: 'pending',
+      rolesPending: 'pending',
+      rolesMeta: 'meta',
     }),
   },
   methods: {
     ...mapActions({
       fetchRolesList: 'fetchList',
-      deleteRole: 'remove',
+      removeRole: 'remove',
     }),
   },
 };

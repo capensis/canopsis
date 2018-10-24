@@ -454,6 +454,9 @@ export default {
     createRole: {
       title: 'Create role',
     },
+    editRole: {
+      title: 'Edit role',
+    },
   },
   tables: {
     noData: 'No data',
