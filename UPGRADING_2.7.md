@@ -1,10 +1,10 @@
-# Mise à jour Canopsis 2.7
+# Upgrading to Canopsis 2.7
 
 ## Redis
 
-Canopsis nécessite maintenant l'installation d'un serveur redis pour pouvoir fonctionner.
+Canopsis now requires a Redis server.
 
-Une fois installé, il faut exporter la variable d'environnement suivante dans les conteneurs docker :
+You now need to export the following environment variable:
 ```bash
-CPS_REDIS_URL=redis://adresse_de_redis:6379/0
+CPS_REDIS_URL=redis://REDIS_SERVER_ADDRESS:6379/0
 ```

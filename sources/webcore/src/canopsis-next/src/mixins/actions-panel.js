@@ -15,6 +15,16 @@ export default {
       });
     },
 
+    showMoreInfosModal() {
+      return () => this.showModal({
+        name: MODALS.moreInfos,
+        config: {
+          ...this.modalConfig,
+          template: this.widget.parameters.moreInfoTemplate,
+        },
+      });
+    },
+
     showAckRemoveModal() {
       this.showModal({
         name: MODALS.createCancelEvent,

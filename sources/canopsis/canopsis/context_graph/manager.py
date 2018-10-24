@@ -561,6 +561,14 @@ class ContextGraph(object):
         if entity['type'] != 'watcher':
             build_all_links(self)
 
+    def update_entity_body(self, entity):
+        """Update the document corresponding to an entity.
+        The fields impact/depends of the related entity will NOT be updated.
+
+        :param entity: the entity updated
+        """
+        self.ent_storage.put_elements([entity])
+
     def delete_entity(self, id_):
         """Delete an entity identified by id_ from the context.
 

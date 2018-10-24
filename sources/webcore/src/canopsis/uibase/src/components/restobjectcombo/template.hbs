@@ -10,7 +10,7 @@
     <select class="form-control">
         {{#each category in filteredElements}}
             <optgroup {{bind-attr label=category.name}}>
-                <option selected="selected" value="">--</option>
+                <option value="">--</option>
                 {{#each item in category.content}}
                     {{#if item.selected}}
                         <option selected="selected" {{bind-attr value=item.value}}>{{item.label}}</option>

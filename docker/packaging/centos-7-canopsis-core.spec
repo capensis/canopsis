@@ -1,7 +1,7 @@
 Name:		canopsis-core
 Version:	CANOPSIS_PACKAGE_TAG
 Release:	CANOPSIS_PACKAGE_REL%{?dist}
-Summary:	Canopsis with CAT package
+Summary:	Canopsis
 
 Group:		Canopsis
 License:	AGPLv3 (Canopsis Core), Capensis, all rights reserved (CAT)

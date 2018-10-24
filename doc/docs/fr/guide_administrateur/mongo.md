@@ -32,3 +32,12 @@ Voici l’extrait de la doc :
  * `SECONDARY`: Queries are distributed among shard secondaries. An error is raised if no secondaries are available.
  * `SECONDARY_PREFERRED`: Queries are distributed among shard secondaries, or the primary if no secondary is available.
  * `NEAREST`: Queries are distributed among all members of a shard.
+
+### ReplicaSet As ENVVAR
+
+ReplicaSet is handled by env2cfg script.
+
+The replicaSet url format is as following :
+```
+mongodb://[username:password@]host[:port]/canopsis?replicaSet=[replicaset_name]
+```

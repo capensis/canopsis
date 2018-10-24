@@ -69,7 +69,6 @@ DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
 # if set to True, the last_event_date will be updated on each event that
 # triggers the alarm
 DEFAULT_RECORD_LAST_EVENT_DATE = False
-DEFAULT_FILTER_AUTHOR = 'system'
 
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_FLAPPING_FREQ = 0
@@ -141,7 +140,7 @@ class Alerts(object):
         self.update_longoutput_fields = alerts_.get("update_long_output",
                                                     False)
         filter_ = self.config.get(self.FILTER_CAT, {})
-        self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
+        self.filter_author = filter_.get('author', DEFAULT_AUTHOR)
         self.lock_manager = AlertLockRedisSentinel(
             *AlertLockRedisSentinel.provide_default_basics()
         )
@@ -180,7 +179,7 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
-        amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
         event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
@@ -550,10 +549,19 @@ class Alerts(object):
         value[AlarmField.output.value] = event["output"]
 
         if value.get(AlarmField.long_output.value, "") != event["long_output"]:
-            value[AlarmField.long_output.value] = event["long_output"]
 
             if AlarmField.long_output_history.value not in value:
                 value[AlarmField.long_output_history.value] = []
+
+            if len(value[AlarmField.long_output_history.value]) == 0:
+                message = "Initial long_output set to \"{}\".".format(
+                    event["long_output"])
+            else:
+                message = "Update long_output from \"{0}\" to \"{1}\".".format(
+                    value[AlarmField.long_output.value],
+                    event["long_output"])
+
+            value[AlarmField.long_output.value] = event["long_output"]
 
             value[AlarmField.long_output_history.value].append(
                 event[AlarmField.long_output.value]
@@ -564,9 +572,9 @@ class Alerts(object):
                 value[AlarmField.long_output_history.value] = new_hist
 
             value[AlarmField.steps.value].append({
-                "a": value["state"]["a"],
+                "a": event.get(self.AUTHOR, self.filter_author),
                 "_t": "long_output",
-                "m": "update long_output to {}.".format(event["long_output"]),
+                "m": message,
                 "t": int(time()),
                 "val": value["state"]["val"]
             })
@@ -633,17 +641,16 @@ class Alerts(object):
 
             value = self.check_hard_limit(value)
 
-
             self.update_current_alarm(alarm, value)
 
             if is_new_alarm:
                 self.check_alarm_filters()
-                self.publish_new_alarm_stats(alarm)
+                self.publish_new_alarm_stats(alarm, event.get(self.AUTHOR))
 
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
                               event=event,
-                              author=event.get(self.AUTHOR, None),
+                              author=event.get(self.AUTHOR, self.filter_author),
                               entity_id=entity_id)
         self.lock_manager.unlock(entity_id)
 
@@ -698,7 +705,7 @@ class Alerts(object):
         elif '.crop' in name:
             new_value = task(self, value, diff_counter)
         else:
-            self.logger.warning('Unkown task type for {}'.format(name))
+            self.logger.warning('Unknown task type for {}'.format(name))
             return
 
         # Some tasks return two values (a value and a status)
@@ -830,12 +837,13 @@ class Alerts(object):
                 now,
                 StatCounters.downtimes,
                 entity,
-                new_value)
+                new_value,
+                event.get(self.AUTHOR))
 
         # Update entity's last_state_change
         if entity:
             entity[Entity.LAST_STATE_CHANGE] = now
-            self.context_manager.update_entity(entity)
+            self.context_manager.update_entity_body(entity)
 
         alarm[storage_value] = new_value
 
@@ -882,7 +890,8 @@ class Alerts(object):
                 new_value[AlarmField.last_update_date.value],
                 StatCounters.alarms_canceled,
                 entity,
-                new_value)
+                new_value,
+                event.get(self.AUTHOR))
 
         return alarm
 
@@ -1292,7 +1301,7 @@ class Alerts(object):
 
             self.update_current_alarm(docalarm, new_value)
 
-    def publish_new_alarm_stats(self, alarm):
+    def publish_new_alarm_stats(self, alarm, author):
         """
         Publish statistics events for a new alarm.
 
@@ -1313,21 +1322,5 @@ class Alerts(object):
             creation_date,
             StatCounters.alarms_created,
             entity,
-            alarm_value)
-
-        # Increment alarms_impacting counter for each impacted entity
-        # (as well as the entity that created the alarm)
-        self.event_publisher.publish_statcounterinc_event(
-            creation_date,
-            StatCounters.alarms_impacting,
-            entity,
-            alarm_value)
-
-        impacted_entities = self.context_manager.get_entities_by_id(
-            entity.get(Entity.IMPACTS))
-        for impacted_entity in impacted_entities:
-            self.event_publisher.publish_statcounterinc_event(
-                creation_date,
-                StatCounters.alarms_impacting,
-                impacted_entity,
-                alarm_value)
+            alarm_value,
+            author)

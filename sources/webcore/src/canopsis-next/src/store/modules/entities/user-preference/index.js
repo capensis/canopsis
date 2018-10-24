@@ -16,17 +16,16 @@ export default {
   getters: {
     getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
       const currentUser = rootGetters['auth/currentUser'];
-      const id = `${widget.id}_${currentUser.crecord_name}`;
+      const id = `${widget._id}_${currentUser.crecord_name}`;
       const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, id);
 
       if (!userPreference) {
         return {
-          id,
           _id: id,
           widget_preferences: {},
           crecord_name: currentUser.crecord_name,
-          widget_id: widget.id,
-          widgetXtype: widget.xtype,
+          widget_id: widget._id,
+          widgetXtype: widget.type,
           crecord_type: 'userpreferences',
         };
       }

@@ -58,7 +58,6 @@ export default {
         { _id: data._id, mfilter: data.mfilter, display_name: data.display_name },
       );
     },
-
     edit(context, { data }) {
       return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
     },
@@ -86,7 +85,6 @@ export default {
           route: `${API_ROUTES.weatherWatcher}/${requestFilter}`,
           schema: [watcherSchema],
           params,
-          dataPreparer: d => d,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {

@@ -76,13 +76,15 @@ export default {
           dataPreparer: d => d.data[0].alarms,
         }, { root: true });
 
+        const total = data.data[0].total ? data.data[0].total : normalizedData.result.length;
+
         commit(types.FETCH_LIST_COMPLETED, {
           widgetId,
           allIds: normalizedData.result,
           meta: {
+            total,
             first: data.data[0].first,
             last: data.data[0].last,
-            total: data.data[0].total,
           },
         });
       } catch (err) {

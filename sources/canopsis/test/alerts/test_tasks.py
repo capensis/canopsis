@@ -19,8 +19,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from unittest import main
-
+from canopsis.alerts import DEFAULT_AUTHOR
 from canopsis.alerts.enums import AlarmField, States
 from canopsis.alerts.status import get_previous_step, CANCELED, is_keeped_state
 from canopsis.task.core import get_task
@@ -75,7 +74,7 @@ class TestTasks(BaseTest):
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
         self.event_publisher.publish_statduration_event.assert_called_once_with(
-            0, StatDurations.ack_time, 0, {}, alarm)
+            0, StatDurations.ack_time, 0, {}, alarm, 'testauthor')
 
     def test_unacknowledge(self):
         event = {'timestamp': 0}
@@ -127,7 +126,7 @@ class TestTasks(BaseTest):
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
         self.event_publisher.publish_statduration_event.assert_called_once_with(
-            0, StatDurations.ack_time, 0, {}, alarm)
+            0, StatDurations.ack_time, 0, {}, alarm, 'testauthor')
 
     def test_cancel(self):
         event = {'timestamp': 0}
@@ -305,7 +304,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.state.value] is not None)
         self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.state.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.state.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.state.value]['val'], state)
         self.assertTrue(
@@ -326,7 +325,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.state.value] is not None)
         self.assertEqual(alarm[AlarmField.state.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.state.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.state.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.state.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.state.value]['val'], state)
         self.assertTrue(
@@ -347,7 +346,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.status.value] is not None)
         self.assertEqual(alarm[AlarmField.status.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.status.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.status.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.status.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.status.value]['val'], statusval)
         self.assertTrue(
@@ -368,7 +367,7 @@ class TestTasks(BaseTest):
 
         self.assertTrue(alarm[AlarmField.status.value] is not None)
         self.assertEqual(alarm[AlarmField.status.value]['t'], 0)
-        self.assertEqual(alarm[AlarmField.status.value]['a'], 'test.test0')
+        self.assertEqual(alarm[AlarmField.status.value]['a'], DEFAULT_AUTHOR)
         self.assertEqual(alarm[AlarmField.status.value]['m'], 'test message')
         self.assertEqual(alarm[AlarmField.status.value]['val'], statusval)
         self.assertTrue(
