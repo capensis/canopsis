@@ -33,6 +33,10 @@
           :rowId="row._id"
           )
     .fab
+      v-tooltip(left)
+        v-btn(slot="activator", fab, dark, color="info", @click.stop="refreshView")
+          v-icon refresh
+        span {{ $t('common.refresh') }}
       v-speed-dial(
       v-model="fab",
       direction="top",
@@ -53,10 +57,6 @@
             v-icon fullscreen
             v-icon fullscreen_exit
           span alt + enter / command + enter
-        v-tooltip(left)
-          v-btn(slot="activator", fab, dark, small, color="info", @click.stop="refreshView")
-            v-icon refresh
-          span {{ $t('common.refresh') }}
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
             v-icon add
