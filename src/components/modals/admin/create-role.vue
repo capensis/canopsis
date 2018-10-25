@@ -9,16 +9,31 @@ v-card
     v-container
       v-form
         v-text-field(
-        v-model="form.name",
+        v-model="form._id",
         :label="$t('common.name')",
         name="name",
         v-validate="'required'",
         :error-messages="errors.collect('name')"
         )
         v-text-field(v-model="form.description", :label="$t('common.description')")
-        v-layout
-          v-btn.mx-0(@click.stop="showViewSelectModal", depressed) Select default view
-          div {{ form.defaultView }}
+        v-layout(align-center)
+          div Default view:
+          div.pl-2 {{ getViewTitle(this.form.defaultview) }}
+          v-menu(
+          offset-y,
+          :close-on-content-click="false",
+          v-model="defaultViewMenu"
+          )
+            v-btn(slot="activator", fab, small, depressed)
+              v-icon edit
+            v-list.py-0
+              v-list-group(v-for="group in groups", :key="group._id")
+                v-list-tile(slot="activator")
+                  v-list-tile-content
+                    v-list-tile-title {{ group.name }}
+                v-list-tile(v-for="view in group.views", :key="view._id", @click="updateDefaultView(view)")
+                  v-list-tile-content
+                    v-list-tile-title {{ view.name }}
     v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -27,38 +42,77 @@ import pick from 'lodash/pick';
 import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesRoleMixin from '@/mixins/entities/role';
 
 export default {
   name: MODALS.createRole,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin, entitiesViewGroupMixin],
+  mixins: [modalInnerMixin, entitiesViewGroupMixin, entitiesViewMixin, entitiesRoleMixin],
   data() {
     const group = this.modal.config.group || { name: '', description: '', defaultView: '' };
 
     return {
-      form: pick(group, ['name', 'description', 'defaultview']),
+      form: pick(group, ['_id', 'description', 'defaultview']),
+      defaultViewMenu: false,
     };
+  },
+  computed: {
+    role() {
+      return this.config.item || null;
+    },
+    isNew() {
+      return !this.role;
+    },
+  },
+  mounted() {
+    if (!this.isNew) {
+      this.form = pick(this.role, [
+        '_id',
+        'description',
+        'defaultview',
+      ]);
+    }
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
+      const defaultRoleData = {
+        crecord_write_time: null,
+        enable: true,
+        crecord_type: 'role',
+        crecord_creation_time: null,
+        crecord_name: null,
+        rights: null,
+        id: null,
+        _id: this.form.name,
+      };
+
       if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action({ ...this.form });
-        }
+        const formData = {
+          ...defaultRoleData,
+          ...this.form,
+        };
+
+        await this.createRole({ data: formData });
+        await this.fetchRolesListWithPreviousParams();
+
         this.hideModal();
       }
     },
-    showViewSelectModal() {
-      this.showModal({
-        name: MODALS.viewSelect,
-        config: {
-          action: view => this.form.defaultView = view,
-        },
-      });
+    updateDefaultView(view) {
+      this.form.defaultview = view._id;
+      this.defaultViewMenu = false;
+    },
+    getViewTitle(viewId) {
+      const view = this.getViewById(viewId);
+      if (view) {
+        return view.title;
+      }
+      return null;
     },
   },
 };

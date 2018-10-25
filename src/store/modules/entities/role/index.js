@@ -1,4 +1,5 @@
 import i18n from '@/i18n';
+import qs from 'qs';
 
 import { roleSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
@@ -17,6 +18,7 @@ export default {
     allIds: [],
     meta: {},
     pending: false,
+    fetchingParams: {},
   },
   getters: {
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.role, state.allIds),
@@ -24,8 +26,9 @@ export default {
     pending: state => state.pending,
   },
   mutations: {
-    [types.FETCH_LIST](state) {
+    [types.FETCH_LIST](state, { params }) {
       state.pending = true;
+      state.fetchingParams = params;
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.pending = false;
@@ -39,7 +42,7 @@ export default {
   actions: {
     async fetchList({ commit, dispatch }, { params } = {}) {
       try {
-        commit(types.FETCH_LIST);
+        commit(types.FETCH_LIST, { params });
         const { normalizedData, data } = await dispatch('entities/fetch', {
           route: API_ROUTES.role.list,
           schema: [roleSchema],
@@ -54,9 +57,32 @@ export default {
           },
         });
       } catch (err) {
-        console.error(err);
         commit(types.FETCH_LIST_FAILED);
 
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+      }
+    },
+
+    /**
+   * Fetch roles list with previous params
+   *
+   * @param {Function} dispatch
+   * @param {Object} state
+   * @returns {*}
+   */
+    fetchListWithPreviousParams({ dispatch, state }) {
+      return dispatch('fetchList', {
+        params: state.fetchingParams,
+      });
+    },
+
+    async create({ dispatch }, { data }) {
+      try {
+        await request.post(API_ROUTES.role.createAndEdit, qs.stringify({ role: JSON.stringify(data) }), {
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
+      } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },

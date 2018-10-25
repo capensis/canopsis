@@ -72,7 +72,10 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.removeRole({ id }),
+          action: async () => {
+            await this.removeRole({ id });
+            await this.fetchRolesListWithPreviousParams();
+          },
         },
       });
     },

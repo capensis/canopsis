@@ -13,7 +13,9 @@ export default {
   methods: {
     ...mapActions({
       fetchRolesList: 'fetchList',
+      fetchRolesListWithPreviousParams: 'fetchListWithPreviousParams',
       removeRole: 'remove',
+      createRole: 'create',
     }),
   },
 };
