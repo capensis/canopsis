@@ -40,4 +40,5 @@ export const API_ROUTES = {
   view: '/api/v2/views',
   viewGroup: '/api/v2/views/groups',
   stats: '/api/v2/stats',
+  action: '/rest/default_rights/action',
 };
