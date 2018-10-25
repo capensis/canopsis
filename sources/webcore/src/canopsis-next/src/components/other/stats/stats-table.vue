@@ -19,7 +19,8 @@
           v-if="item[key] && item[key].value !== undefined && item[key].value !== null"
           )
             td
-              stats-number(:item="item[key]")
+              div {{ item[key].value }}
+                sub {{ item[key].trend }}
           div(v-else) {{ $t('tables.noData') }}
 </template>
 
@@ -74,9 +75,11 @@ export default {
     async fetchList() {
       const query = { ...this.query };
 
-      this.stats = await this.fetchStatsListWithoutStore({
+      const stats = await this.fetchStatsListWithoutStore({
         params: query,
       });
+
+      this.stats = stats.values;
     },
   },
 };

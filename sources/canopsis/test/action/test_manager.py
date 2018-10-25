@@ -39,7 +39,8 @@ class TestActionManager(unittest.TestCase):
         self.id_ = 'testid'
         self.action = {
             "_id": self.id_,
-            "field": "resource",
+            "type": "pbehavior",
+            "fields": ["Resource"],
             "regex": ".*wine.*",
             "parameters": {
                 "author": "Matho",
@@ -63,7 +64,7 @@ class TestActionManager(unittest.TestCase):
         self.assertDictEqual(res.to_dict(), self.action)
 
         action2 = self.action.copy()
-        action2[Action.FIELD] = 'component'
+        action2[Action.FIELDS] = ['Component']
         res = self.manager.update_id(id_=self.id_, action=action2)
         self.assertTrue(res)
 

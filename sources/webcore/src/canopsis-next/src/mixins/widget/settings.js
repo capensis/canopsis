@@ -129,6 +129,7 @@ export default {
         /**
          * Put widget into local normalized store
          */
+
         this.updateNormalizedEntity(widgetSchema.key, widget);
 
         if (oldRowId !== newRowId) {
@@ -162,10 +163,10 @@ export default {
 
         await Promise.all([
           this.createUserPreference({ userPreference }),
-          this.updateView({ view }),
+          this.updateView({ id: this.view._id, data: view }),
         ]);
 
-        this.mergeQuery({
+        this.updateQuery({
           id: widget._id,
           query: {
             ...convertWidgetToQuery(widget),

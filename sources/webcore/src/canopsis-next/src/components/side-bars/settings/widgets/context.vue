@@ -8,15 +8,18 @@
       @createRow="createRow"
       )
       v-divider
-      field-title(v-model="settings.widget.title")
+      field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-default-sort-column(v-model="settings.widget.parameters.sort")
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-default-sort-column(v-model="settings.widget.parameters.sort")
+          v-divider
+          field-columns(v-model="settings.widget.parameters.widgetColumns")
+          v-divider
+          field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
-      field-columns(v-model="settings.widget.parameters.widgetColumns")
-      v-divider
-      field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
-      v-divider
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -26,11 +29,11 @@ import cloneDeep from 'lodash/cloneDeep';
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldDefaultSortColumn from '../partial/fields/default-sort-column.vue';
-import FieldColumns from '../partial/fields/columns.vue';
-import FieldContextEntitiesTypesFilter from '../partial/fields/context-entities-types-filter.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
+import FieldColumns from './fields/common/columns.vue';
+import FieldContextEntitiesTypesFilter from './fields/context/context-entities-types-filter.vue';
 
 /**
  * Component to regroup the entities list settings fields

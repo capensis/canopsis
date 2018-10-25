@@ -16,22 +16,28 @@ class Action(object):
 
     # Keys as seen in db
     _ID = '_id'
-    FIELD = 'field'
+    TYPE = 'type'
+    FIELDS = 'fields'
     REGEX = 'regex'
     PARAMETERS = 'parameters'
 
-    def __init__(self, _id, field, regex, parameters=None, *args, **kwargs):
+    def __init__(self, _id, type_, fields, regex, parameters=None,
+                 *args, **kwargs):
         """
         :param str _id: action id
-        :param str field: targeted field
-        :param str regex: regex matcher on the field
+        :param str type_: type of the action (pbehavior, ...)
+        :param list fields: targeted fields
+        :param str regex: regex matcher on the fields
         :param dict parameters: variable parameters to apply
         """
+        if fields is None or not isinstance(fields, list):
+            fields = []
         if parameters is None or not isinstance(parameters, dict):
             parameters = {}
 
         self._id = _id
-        self.field = field
+        self.type_ = type_
+        self.fields = fields
         self.regex = regex
         self.parameters = parameters
 
@@ -44,6 +50,22 @@ class Action(object):
     def __repr__(self):
         return '<Action {}>'.format(self.__str__())
 
+    @staticmethod
+    def convert_keys(action_dict):
+        """
+        Convert keys from mongo action dict, to Action attribute names.
+
+        :param dict action_dict: a raw action dict from mongo
+        :rtype: dict
+        """
+        new_action_dict = action_dict.copy()
+
+        if Action.TYPE in new_action_dict:
+            new_action_dict['type_'] = new_action_dict[Action.TYPE]
+            del new_action_dict[Action.TYPE]
+
+        return new_action_dict
+
     def to_dict(self):
         """
         Give a dict representation of the object.
@@ -52,7 +74,8 @@ class Action(object):
         """
         dictionnary = {
             self._ID: self._id,
-            self.FIELD: self.field,
+            self.TYPE: self.type_,
+            self.FIELDS: self.fields,
             self.REGEX: self.regex,
             self.PARAMETERS: self.parameters,
         }

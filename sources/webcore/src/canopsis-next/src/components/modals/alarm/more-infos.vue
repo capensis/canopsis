@@ -26,6 +26,7 @@ export default {
     output() {
       const output = HandleBars.compile(this.config.template);
       const context = { alarm: this.firstItem, entity: this.firstItem.entity };
+
       return output(context);
     },
   },

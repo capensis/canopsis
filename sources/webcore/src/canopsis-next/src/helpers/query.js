@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import omit from 'lodash/omit';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
 
@@ -81,12 +82,64 @@ export function convertContextWidgetToQuery(widget) {
   return { ...query, ...convertSortToQuery(widget) };
 }
 
+export function convertStatsHistogramToQuery(widget) {
+  return widget.parameters.groups.map(group =>
+    ({
+      ...omit(widget.parameters, ['groups', 'statsColors']),
+      mfilter: group.filter || {},
+    }));
+}
+
 /**
+ * This function converts widget with type 'StatsTable' to query Object
  *
+ * @param {Object} widget
+ * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
-  const query = { ...widget.parameters };
+  return { ...widget.parameters };
+}
 
+/**
+ * This function converts widget with type 'StatsCalendar' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsCalendarWidgetToQuery(widget) {
+  const {
+    filters,
+    alarmsStateFilter,
+    considerPbehaviors,
+  } = widget.parameters;
+
+  const query = {
+    considerPbehaviors,
+    filters: filters || [],
+  };
+
+  if (alarmsStateFilter) {
+    if (!isUndefined(alarmsStateFilter.opened)) {
+      query.opened = alarmsStateFilter.opened;
+    }
+
+    if (!isUndefined(alarmsStateFilter.resolved)) {
+      query.resolved = alarmsStateFilter.resolved;
+    }
+  }
+
+  return query;
+}
+
+/**
+ * This function converts widget with type 'Stats number' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsNumberWidgetToQuery(widget) {
+  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']);
+  query.trend = true;
   return query;
 }
 
@@ -160,8 +213,14 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.statsHistogram:
+      return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCalendar:
+      return convertStatsCalendarWidgetToQuery(widget);
+    case WIDGET_TYPES.statsNumber:
+      return convertStatsNumberWidgetToQuery(widget);
     default:
       return {};
   }

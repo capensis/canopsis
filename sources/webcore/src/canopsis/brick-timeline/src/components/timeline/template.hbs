@@ -23,8 +23,6 @@
             </span>
 
             <h3 class="timeline-header">
-              {{#if step.update_output}}
-              {{/if}}
               {{#if step.state}}
                 <span {{bind-attr class=":brick-timeline-badge step.color"}}>  {{step.state}}
                 </span>
@@ -35,9 +33,6 @@
               {{/if}}
               <span ></span>
               <span class="brick-timeline-title">{{step.name}}</span>
-              {{#if step.until}}
-                (until {{step.until}})
-              {{/if}}
             </h3>
 
             <div class="timeline-body">

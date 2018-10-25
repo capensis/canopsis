@@ -7,7 +7,20 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 ### Experimental features
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
-- [Go]: New Action engine (backend only for now)
+
+## Canopsis 3.2.5 - Due date : 2018-10-17
+
+- [Doc]: translating recent Upgrade documentations to english
+- [Docker] : new CPS_LOGGING_LEVEL envvar to change loglevel in dockerized engines
+- [email2canopsis] : now decode encoded subject line
+- [Go]: new Action engine (especially pbehaviors from regex)
+- [Go]: send alarm resolution informations to stats engine
+- [Python] : fix « Socket Error 104 » while engines communicate with rabbitmq
+- [Tool] : env2cfg can now handle mongo replicaset option
+- [UI] : add rights for items in engine menu
+- [UI] : fix `has_active_pb` flag not correctly calculated
+- [UI] : fix timeline not correctly showing all informations (especially on ack, ticket and canceled events)
+- [UI] : integrate listalarm, timeline and querybuilder bricks in central repo
 
 ## Canopsis 3.2.4 - Due date : 2018-10-05
 

@@ -30,8 +30,14 @@ export const MODALS = {
   moreInfos: 'more-infos',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
-  createView: 'create-view',
   createFilter: 'create-filter',
+  manageHistogramGroups: 'manage-histogram-groups',
+  calendarAlarmsList: 'calendar-alarms-list',
+  addStat: 'add-stat',
+  colorPicker: 'color-picker',
+  textEditor: 'text-editor',
+  createView: 'create-view',
+  createGroup: 'create-group',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -134,21 +140,33 @@ export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
   context: 'Context',
   weather: 'ServiceWeather',
+  statsHistogram: 'StatsHistogram',
+  statsCurves: 'StatsCurves',
   statsTable: 'StatsTable',
+  statsCalendar: 'StatsCalendar',
+  statsNumber: 'StatsNumber',
 };
 
 export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
   weatherSettings: 'weather-settings',
+  statsHistogramSettings: 'stats-histogram-settings',
+  statsCurvesSettings: 'stats-curves-settings',
   statsTableSettings: 'stats-table-settings',
+  statsCalendarSettings: 'stats-calendar-settings',
+  statsNumberSettings: 'stats-number-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: SIDE_BARS.alarmSettings,
   [WIDGET_TYPES.context]: SIDE_BARS.contextSettings,
-  [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
   [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
+  [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
+  [WIDGET_TYPES.statsCalendar]: SIDE_BARS.statsCalendarSettings,
+  [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
+  [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
+  [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
@@ -282,6 +300,39 @@ export const STATS_TYPES = {
   },
 };
 
+export const STATS_DURATION_UNITS = {
+  hour: 'h',
+  day: 'd',
+  week: 'w',
+  month: 'm',
+};
+
+export const STATS_CRITICITY = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
+
+export const STATS_CALENDAR_COLORS = {
+  alarm: {
+    ok: '#66BB6A',
+    minor: '#FFEE58',
+    major: '#FFA726',
+    critical: '#FF7043',
+  },
+};
+
+export const LIVE_REPORTING_INTERVALS = {
+  today: 'today',
+  yesterday: 'yesterday',
+  last7Days: 'last7Days',
+  last30Days: 'last30Days',
+  thisMonth: 'thisMonth',
+  lastMonth: 'lastMonth',
+  custom: 'custom',
+};
