@@ -3,7 +3,6 @@ import omit from 'lodash/omit';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { userPreferenceSchema } from '@/store/schemas';
-import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -21,7 +20,14 @@ export default {
       const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, id);
 
       if (!userPreference) {
-        return generateUserPreferenceByWidgetAndUser(widget, currentUser);
+        return {
+          _id: id,
+          widget_preferences: {},
+          crecord_name: currentUser.crecord_name,
+          widget_id: widget._id,
+          widgetXtype: widget.type,
+          crecord_type: 'userpreferences',
+        };
       }
 
       return userPreference;

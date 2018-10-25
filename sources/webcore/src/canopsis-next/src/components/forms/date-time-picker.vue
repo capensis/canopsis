@@ -53,9 +53,8 @@
         ref="timePicker"
         v-model="timeString",
         @input="updateDateTimeObject",
-        @change="showDateTab",
-        format="24hr",
-        :allowed-minutes="allowedMinutes"
+        @change="showDateTab"
+        format="24hr"
         no-title,
         )
     .text-xs-center.dropdown-footer
@@ -93,7 +92,6 @@ export default {
     label: String,
     name: String,
     rules: [String, Object],
-    roundHours: Boolean,
   },
   data() {
     const value = this.value ? moment(this.value) : null;
@@ -118,12 +116,6 @@ export default {
     },
     isActiveMinuteTab() {
       return this.isActiveTimeTab && !this.$refs.timePicker.selectingHour;
-    },
-    allowedMinutes() {
-      if (this.roundHours) {
-        return v => v === 0;
-      }
-      return null;
     },
   },
   watch: {

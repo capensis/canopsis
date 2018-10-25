@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    v-layout.white(row, wrap, justify-space-between, align-center)
+    v-layout.white(wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
@@ -26,10 +26,10 @@
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'blue' : 'black'") schedule
-        v-btn(v-if="rowId", icon, @click="showSettings")
+        v-btn(icon, @click="showSettings")
           v-icon settings
-      v-flex.px-3(v-show="selected.length", xs12)
-        mass-actions-panel(:itemsIds="selectedIds")
+      v-flex.px-3
+        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -73,7 +73,6 @@
 
 <script>
 import omit from 'lodash/omit';
-import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, SIDE_BARS } from '@/constants';
@@ -93,6 +92,7 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
  * Alarm-list component
@@ -120,6 +120,7 @@ export default {
     widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
+    entitiesUserPreferenceMixin,
   ],
   props: {
     widget: {
@@ -128,6 +129,7 @@ export default {
     },
     rowId: {
       type: String,
+      required: true,
     },
   },
   data() {
@@ -148,12 +150,12 @@ export default {
       return [];
     },
     mainFilter() {
-      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
+      const { mainFilter } = this.userPreference.widget_preferences;
 
       return isEmpty(mainFilter) ? null : mainFilter;
     },
     viewFilters() {
-      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
+      const { viewFilters } = this.userPreference.widget_preferences;
 
       return isEmpty(viewFilters) ? [] : viewFilters;
     },
@@ -167,8 +169,7 @@ export default {
       this.showModal({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['interval', 'tstart', 'tstop']),
-          action: params => this.query = { ...this.query, ...params },
+          updateQuery: params => this.query = { ...this.query, ...params },
         },
       });
     },

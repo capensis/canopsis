@@ -3,7 +3,6 @@ import isEqual from 'lodash/isEqual';
 
 import Pagination from '@/components/tables/pagination.vue';
 import queryMixin from '@/mixins/query';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import dateIntervals from '@/helpers/date-intervals';
 import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
 
@@ -14,7 +13,7 @@ export default {
   components: {
     Pagination,
   },
-  mixins: [queryMixin, entitiesUserPreferenceMixin],
+  mixins: [queryMixin],
   computed: {
     query: {
       get() {

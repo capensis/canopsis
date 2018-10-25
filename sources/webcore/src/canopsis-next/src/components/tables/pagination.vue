@@ -2,21 +2,13 @@
   div.container.text-xs-center(v-if="meta.total")
     ul.v-pagination(v-if="type === 'top'")
       li
-        button.v-pagination__navigation(
-        :disabled="isPreviousPageDisabled",
-        :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }",
-        @click="previous"
-        )
+        button.v-pagination__navigation(:disabled="currentPage <= 1", @click="previous")
           v-icon chevron_left
       span {{ currentPage }}
       span /
       span {{ totalPages }}
       li
-        button.v-pagination__navigation(
-        :disabled="currentPage >= totalPages",
-        :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
-        @click="next"
-        )
+        button.v-pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
           v-icon chevron_right
     div(v-else)
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
@@ -102,14 +94,6 @@ export default {
       const calculatedLast = this.query.page * this.query.limit;
 
       return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
-    },
-
-    isPreviousPageDisabled() {
-      return this.currentPage <= 1;
-    },
-
-    isNextPageDisabled() {
-      return this.currentPage >= this.totalPages;
     },
   },
   methods: {

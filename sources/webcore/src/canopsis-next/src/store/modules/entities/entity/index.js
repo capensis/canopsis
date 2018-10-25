@@ -73,18 +73,6 @@ export default {
     },
   },
   actions: {
-    async fetchListWithoutStore({ dispatch }, { params } = {}) {
-      try {
-        const { total, data } = await request.post(API_ROUTES.context, {}, { params });
-
-        return { total, entities: data };
-      } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-
-        return { total: 0, entities: [] };
-      }
-    },
-
     fetch({ dispatch }, { params } = {}) {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,

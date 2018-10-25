@@ -2,7 +2,7 @@
   v-navigation-drawer(
   v-model="isOpen",
   :stateless="hasModals",
-  v-bind="navigationDrawerProps",
+  v-bind="navigationDrawerProps"
   )
     div(v-if="title")
       v-toolbar(color="blue darken-4")
@@ -47,7 +47,6 @@ export default {
         [SIDE_BARS.statsHistogramSettings]: this.$t('settings.titles.statsHistogramSettings'),
         [SIDE_BARS.statsCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
         [SIDE_BARS.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
-        [SIDE_BARS.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
         [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
       };
 
