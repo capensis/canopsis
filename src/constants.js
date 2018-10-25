@@ -36,6 +36,7 @@ export const MODALS = {
   addStat: 'add-stat',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
+  selectView: 'select-view',
   createView: 'create-view',
   createGroup: 'create-group',
 };
