@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-card-title.green.darken-3.white--text
-      h2 {{ $t(config.title) }}
+      h2 {{ config.title }}
     v-card-text
       v-form
         v-layout(row)

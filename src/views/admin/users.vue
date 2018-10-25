@@ -11,6 +11,7 @@
       :pagination.sync="pagination",
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
       :total-items="usersMeta.total",
+      :loading="usersPending",
       item-key="id"
       select-all,
       )
