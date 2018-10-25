@@ -57,9 +57,10 @@
 <script>
 import sha1 from 'sha1';
 import omit from 'lodash/omit';
-import cloneDeep from 'lodash/cloneDeep';
+import pick from 'lodash/pick';
 
 import { MODALS } from '@/constants';
+import { generateUser } from '@/helpers/entities';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesUserMixin from '@/mixins/entities/user';
 
@@ -90,55 +91,47 @@ export default {
     };
   },
   computed: {
+    user() {
+      return this.config.userId ? this.getUserById(this.config.userId) : null;
+    },
+
     passwordRules() {
-      if (this.config.item) {
-        return null;
+      if (this.isNew) {
+        return 'required';
       }
 
-      return 'required';
+      return null;
+    },
+    isNew() {
+      return !this.user;
     },
   },
   mounted() {
-    if (this.config.item) {
-      this.form = cloneDeep(this.config.item);
+    if (!this.isNew) {
+      this.form = pick(this.user, [
+        '_id',
+        'firstname',
+        'lastname',
+        'password',
+        'mail',
+        'enable',
+        'ui_language',
+      ]);
     }
   },
   methods: {
-    updateImpact(entities) {
-      this.form.impacts = entities.map(entity => entity._id);
-    },
-    updateDependencies(entities) {
-      this.form.dependencies = entities.map(entity => entity._id);
-    },
     async submit() {
       const isFormValid = await this.$validator.validateAll();
-      const defaultUserData = {
-        crecord_write_time: null,
-        crecord_type: 'user',
-        crecord_creation_time: null,
-        crecord_name: null,
-        user_contact: null,
-        rights: null,
-        user_role: null,
-        user_groups: null,
-        authkey: null,
-        role: null,
-        external: false,
-        defaultview: null,
-        id: null,
-      };
 
       if (isFormValid) {
-        const formData = {
-          ...defaultUserData,
-          ...omit(this.form, ['password']),
-        };
+        const formData = this.isNew ? { ...generateUser() } : { ...this.user };
 
-        if (this.form.password !== '') {
+        if (this.form.password && this.form.password !== '') {
           formData.shadowpasswd = sha1(this.form.password);
         }
 
-        await this.createUser({ data: formData });
+        await this.createUser({ data: { ...formData, ...omit(this.form, ['password']) } });
+        await this.fetchUsersListWithPreviousParams();
 
         this.hideModal();
       }

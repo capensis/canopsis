@@ -24,9 +24,9 @@
               v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
             td
               div
-                v-btn(@click="showEditUserModal(props.item)", icon)
+                v-btn(@click="showEditUserModal(props.item.id)", icon)
                   v-icon edit
-                v-btn(@click="showRemoveUserModal(props.item)", icon)
+                v-btn(@click="showRemoveUserModal(props.item.id)", icon)
                   v-icon delete
     .fab
       v-tooltip(left)
@@ -49,10 +49,22 @@ export default {
     return {
       pagination: null,
       headers: [
-        { text: 'ID', value: 'id' },
-        { text: 'Role', value: 'role' },
-        { text: 'Enabled', value: 'enable' },
-        { text: '', sortable: false },
+        {
+          text: 'ID',
+          value: 'id',
+        },
+        {
+          text: 'Role',
+          value: 'role',
+        },
+        {
+          text: 'Enabled',
+          value: 'enable',
+        },
+        {
+          text: '',
+          sortable: false,
+        },
       ],
       selected: [],
     };
@@ -72,7 +84,10 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.removeUser({ id }),
+          action: async () => {
+            await this.removeUser({ id });
+            await this.fetchUsersListWithPreviousParams();
+          },
         },
       });
     },
@@ -82,7 +97,8 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(this.selected.map(id => this.removeUser({ id })));
+            await Promise.all(this.selected.map(({ id }) => this.removeUser({ id })));
+            await this.fetchUsersListWithPreviousParams();
 
             this.selected = [];
           },
@@ -90,12 +106,12 @@ export default {
       });
     },
 
-    showEditUserModal(user) {
+    showEditUserModal(id) {
       this.showModal({
         name: MODALS.createUser,
         config: {
           title: this.$t('modals.editUser.title'),
-          item: user,
+          userId: id,
         },
       });
     },
@@ -118,7 +134,10 @@ export default {
         params: {
           limit: rowsPerPage,
           start: (page - 1) * rowsPerPage,
-          sort: [{ property: sortBy, direction: descending ? 'DESC' : 'ASC' }],
+          sort: [{
+            property: sortBy,
+            direction: descending ? 'DESC' : 'ASC',
+          }],
         },
       });
     },

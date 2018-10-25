@@ -11,11 +11,13 @@ export default {
       users: 'items',
       usersPending: 'pending',
       usersMeta: 'meta',
+      getUserById: 'getItemById',
     }),
   },
   methods: {
     ...mapActions({
       fetchUsersList: 'fetchList',
+      fetchUsersListWithPreviousParams: 'fetchListWithPreviousParams',
       createUser: 'create',
       removeUser: 'remove',
     }),

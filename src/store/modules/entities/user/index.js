@@ -1,10 +1,10 @@
 import qs from 'qs';
 
 import i18n from '@/i18n';
+import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { userSchema } from '@/store/schemas';
-import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -18,8 +18,12 @@ export default {
     allIds: [],
     meta: {},
     pending: false,
+    fetchingParams: {},
   },
   getters: {
+    getItemById: (state, getters, rootState, rootGetters) => id =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.user, id),
+
     items: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getList'](ENTITIES_TYPES.user, state.allIds),
 
@@ -27,8 +31,9 @@ export default {
     pending: state => state.pending,
   },
   mutations: {
-    [types.FETCH_LIST](state) {
+    [types.FETCH_LIST](state, { params }) {
       state.pending = true;
+      state.fetchingParams = params;
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.pending = false;
@@ -40,6 +45,13 @@ export default {
     },
   },
   actions: {
+    /**
+     * Action for user creating/editing
+     *
+     * @param {Function} dispatch
+     * @param {Object} data
+     * @returns {Promise<void>}
+     */
     async create({ dispatch }, { data }) {
       try {
         await request.post(API_ROUTES.createUser, qs.stringify({ user: JSON.stringify(data) }), {
@@ -51,18 +63,33 @@ export default {
       }
     },
 
+    /**
+     * Action for user removing
+     *
+     * @param {Function} dispatch
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async remove({ dispatch }, { id }) {
       try {
-        await request.post(`${API_ROUTES.deleteUser}/${id}`);
+        await request.delete(`${API_ROUTES.deleteUser}/${id}`);
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
 
+    /**
+     * Fetch users list by parans
+     *
+     * @param {Function} commit
+     * @param {Function} dispatch
+     * @param {Object} params
+     * @returns {Promise<void>}
+     */
     async fetchList({ commit, dispatch }, { params } = {}) {
       try {
-        commit(types.FETCH_LIST);
+        commit(types.FETCH_LIST, { params });
 
         const { normalizedData, data } = await dispatch('entities/fetch', {
           route: API_ROUTES.user,
@@ -82,6 +109,19 @@ export default {
 
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
+    },
+
+    /**
+     * Fetch users list with previous params
+     *
+     * @param {Function} dispatch
+     * @param {Object} state
+     * @returns {*}
+     */
+    fetchListWithPreviousParams({ dispatch, state }) {
+      return dispatch('fetchList', {
+        params: state.fetchingParams,
+      });
     },
   },
 };
