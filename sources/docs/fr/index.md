@@ -1,6 +1,6 @@
 # DOC-CE CORE
 
-- [Guide Administrateur](/doc-ce/Guide Administrateur)
-- [Guide Connecteur](/doc-ce/Guide Connecteur)
-- [Guide Utilisateur](/doc-ce/Guide Utilisateur) **(DWU) => besoin d'une démo utilisateur UIv3 complète avec Mika ?**
-- [Guide Développeur](/doc-ce/Guide Développeur) **(DWU) => à faire compléter par les dévs**
+- [Guide Administrateur](guide-administration)
+- [Guide Connecteur](guide-connecteurs)
+- [Guide Utilisateur](guide-utilisation) **(DWU) => besoin d'une démo utilisateur UIv3 complète avec Mika ?**
+- [Guide Développeur](guide-developpement) **(DWU) => à faire compléter par les dévs**
