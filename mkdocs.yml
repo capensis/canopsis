@@ -3,7 +3,7 @@ site_url: https://doc.canopsis.net
 
 repo_url: https://git.canopsis.net/canopsis/canopsis
 
-docs_dir: mkdocs
+docs_dir: sources/docs
 copyright: Documentation © Canopsis 2018 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
 theme:
