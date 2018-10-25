@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import sha1 from 'sha1';
 import omit from 'lodash/omit';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -134,7 +135,7 @@ export default {
         };
 
         if (this.form.password !== '') {
-          formData.shadowpasswd = this.form.password;
+          formData.shadowpasswd = sha1(this.form.password);
         }
 
         await this.createUser({ data: formData });
@@ -145,13 +146,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .tooltip {
-    flex: 1 1 auto;
-  }
-
-  .impact {
-    background-color: grey;
-  }
-</style>
