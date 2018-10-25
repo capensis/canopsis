@@ -2,6 +2,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from
 
 export default {
   common: {
+    undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
@@ -72,6 +73,12 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+  },
+  user: {
+    firstName: 'First name',
+    lastName: 'Last name',
+    role: 'Role',
+    defaultView: 'Default view',
   },
   context: {
     impacts: 'Impacts',
@@ -267,6 +274,9 @@ export default {
       displayName: 'Name',
     },
     view: {
+      select: {
+        title: 'Select a view',
+      },
       create: {
         title: 'Create a view',
       },

@@ -9,6 +9,7 @@ export default {
   computed: {
     ...mapGetters({
       view: 'item',
+      getItemById: 'getItemById',
     }),
   },
   methods: {
@@ -18,5 +19,9 @@ export default {
       updateView: 'update',
       removeView: 'remove',
     }),
+
+    getViewById(id) {
+      return this.getItemById(id);
+    },
   },
 };
