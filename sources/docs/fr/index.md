@@ -1,4 +1,4 @@
-# DOC-CE CORE
+# SOMMAIRE
 
 - [Guide Administrateur](guide-administration)
 - [Guide Connecteur](guide-connecteurs)
