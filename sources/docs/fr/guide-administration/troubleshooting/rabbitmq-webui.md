@@ -12,7 +12,7 @@ Afin d’éviter de remplir inutilement les queues de RabbitMQ, il est possible 
 
 La procédure est la suivante :
 
-![img1](/doc-ce/Guide Administrateur/Troubleshooting/images/rabbitmq_policy.png)
+![img1](img/rabbitmq_policy.png)
 
 Ensuite, vous devez voir apparaître votre policy sur les queues dans l’onglet Queues.
 
