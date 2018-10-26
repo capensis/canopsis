@@ -22,7 +22,7 @@ L'image ci-dessous affiche toutes les actions possibles sur les événements. Le
 2. Evénement annulé, actions possibles: déclarer un billet, un billet associé et annuler l'annulation
 3. Alerte acquittée: actions possibles: supprimer un accusé de réception, annuler un accusé de réception, déclarer un ticket, modifier la criticité et associer un ticket
 
-![img1](/doc-ce/Guide%20Utilisateur/Cycle%20de%20vie/Images/event_workflow_1.png)
+![img1](img/event_workflow_1.png)
 
 La première étape consiste à accuser réception de l'alerte pour indiquer à canopsis que l'événement est géré.
 Les informations d'annulation sont alors disponibles dans la colonne d'accusé de réception.
@@ -43,11 +43,11 @@ Ci-dessous le workflow d'action que les utilisateurs peuvent déclencher pour la
 
 ## Ticketing et incident
 
-![img2](/doc-ce/Guide%20Utilisateur/Cycle%20de%20vie/Images/img2_ticket_incident_workflow.png)
+![img2](img/img2_ticket_incident_workflow.png)
 
 ## Acknowledgement et annulation 
 
-![img3](/doc-ce/Guide%20Utilisateur/Cycle%20de%20vie/Images/img3_ack_cancel_workflow.png)
+![img3](img/img3_ack_cancel_workflow.png)
 
 - Toutes les actions de l'interface utilisateur sont déclenchées par des boutons d'action qui envoient l'événement approprié à canopsis. Les événements envoyés sont traités par les moteurs et permettent la gestion des accusés de réception et des annulations.
 - Lorsqu'un événement se transforme en une alerte, il est possible de l'acquitter. Le moteur d'accusé de réception est chargé de définir les informations d'accusé de réception appropriées pour l'événement référencé dans le **champ d'ack**, telles que le nom de qui, le pourquoi et le moment de l'accusé de réception.
