@@ -54,4 +54,4 @@ Cette action permet à l'utilisateur d'avoir un contrôle complet sur la chaîne
    
 Ci-dessous est un schéma simple d'une chaîne de traitement de base.    
 
-![img1](/doc-ce/Guide Administrateur/Moteurs/images/schema-event_filter.png)
+![img1](img/schema-event_filter.png)
