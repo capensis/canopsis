@@ -8,13 +8,13 @@ Cette section va vous accompagner dans la mise en place des différents service 
 
 #### Installations
   
-- [Installation avec un paquets Deb/Rpm](/doc-ce/Guide Administrateur/Installation/Packages.md)
-- [Installation avec un conteneurs Docker](/doc-ce/Guide Administrateur/Installation/Conteneurs.md)  
+- [Installation avec un paquets Deb/Rpm](installation-paquets.md)
+- [Installation avec un conteneurs Docker](installation-conteneurs.md)  
 
 #### Sécurité 
 
-- [Configuration des ports réseau à partir de la matrice des flux](/doc-ce/Guide Administrateur/Installation/Firewall%20et%20SeLinux.md)  
+- [Configuration des ports réseau à partir de la matrice des flux](pre-requis-parefeu-et-selinux.md)  
 
 #### Premier login
 
-- [Crédentials](/doc-ce/Guide Administrateur/Installation/Premier%20login.md)
+- [Crédentials](premiere-connexion.md)
