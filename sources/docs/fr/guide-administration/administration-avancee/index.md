@@ -6,8 +6,8 @@ Cette section va vous accompagner dans l'administration avancée de Canopsis. El
 
 ## Sommaire
 
-- [Authentification avancée](/doc-ce/Guide Administrateur/Administration%20avanc%C3%A9e/Authentification.md)  
-- [Backup & Restore BDD](/doc-ce/Guide Administrateur/Administration%20avanc%C3%A9e/Backup%20&%20Restore.md)  
-- [Sécuritée avancée](/doc-ce/Guide Administrateur/Administration%20avanc%C3%A9e/Firewall%20&%20SeLinux%20avanc%C3%A9.md)  
-- [Reverse Proxy](/doc-ce/Guide Administrateur/Administration%20avanc%C3%A9e/Reverse%20Proxy.md)   
-- [Provisioning Custom](/doc-ce/Guide%20Administrateur/Administration%20avanc%C3%A9e/Provisioning%20custom.md)  
+- [Authentification avancée](authentification.md)  
+- [Backup & Restore BDD](sauvegarde-et-restauration.md)  
+- [Sécuritée avancée](configuration-parefeu-et-selinux.md)  
+- [Reverse Proxy](reverse-proxy.md)   
+- [Provisioning Custom](Provisioning-custom.md)  
