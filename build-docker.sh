@@ -28,13 +28,20 @@ function build_for_distribution() {
 
     if [ "${CANOPSIS_BUILD_NEXT}" = "1" ]; then
         echo "BUILDING CORE NEXT"
+        cd ${workdir}/sources/webcore/src/
+		rm canopsis-next/ -rf
+        git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${tag}
+		rm canopsis-next/.git -rf
+
+		cd ${workdir}
         docker build ${docker_args} -f docker/Dockerfile.canopsis-next -t canopsis/canopsis-next:${full_tag} .
 
         next_dist="${workdir}/sources/webcore/src/canopsis-next/dist"
         if [ ! -d ${next_dist} ]; then
             mkdir -p ${next_dist}
         fi
-        docker run -v ${next_dist}:/dist/ canopsis/canopsis-next:${full_tag}
+        docker run -v ${next_dist}:/dist/ -e FIX_OWNER=${fix_ownership} canopsis/canopsis-next:${full_tag}
+		rm ${workdir}/sources/webcore/src/canopsis-next/.git -rf
     fi
 
     echo "BUILDING CORE ${distribution}"
@@ -71,3 +78,5 @@ function build() {
 }
 
 build
+cd ${workdir}
+rm -r "${workdir}/sources/webcore/src/canopsis-next"
