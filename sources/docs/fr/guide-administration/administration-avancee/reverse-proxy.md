@@ -1,8 +1,6 @@
-# Guide Administrateur
+# Reverse Proxy
 
 **TODO (DWU) :** normalement `canoctl` livre un HAproxy/Nginx par défaut. Donc plus besoin de décrire cette manip.
-
-## Section : Administration avancée / Reverse Proxy
 
 ## Reverse proxy avec Apache2
 
