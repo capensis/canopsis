@@ -51,15 +51,15 @@ export default {
       pagination: null,
       headers: [
         {
-          text: 'ID',
+          text: this.$t('tables.admin.users.columns.username'),
           value: 'id',
         },
         {
-          text: 'Role',
+          text: this.$t('tables.admin.users.columns.role'),
           value: 'role',
         },
         {
-          text: 'Enabled',
+          text: this.$t('tables.admin.users.columns.enabled'),
           value: 'enable',
         },
         {

@@ -539,6 +539,15 @@ export default {
     noColumns: {
       message: 'You have to select at least 1 column',
     },
+    admin: {
+      users: {
+        columns: {
+          username: 'Username',
+          role: 'Role',
+          enabled: 'Enabled',
+        },
+      },
+    },
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
