@@ -1,17 +1,14 @@
 <template lang="pug">
-  v-toolbar.top-bar.white(
+  v-toolbar.top-bar.primary(
     dense,
     fixed,
-    clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4(v-show="$options.filters.mq($mq, { t: true })")
-      img(src="@/assets/canopsis.png")
-    v-toolbar-side-icon(@click="$emit('toggleSideBar')")
+    v-toolbar-side-icon.ml-2.white--text(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
       v-menu(bottom, offset-y)
-        v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
+        v-btn.white--text(slot="activator", flat) {{ currentUser.crecord_name }}
         v-list.pb-0
           v-list-tile
             v-list-tile-title
