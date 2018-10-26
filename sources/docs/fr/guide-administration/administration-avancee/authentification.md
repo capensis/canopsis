@@ -1,6 +1,7 @@
 # Guide Administrateur
 
 **TODO (DWU) :** à migrer dans la doc EE ?
+**TODO (MG) :** Sommaire
 
 ## Section : Administration avancée / Authentification
 
@@ -22,7 +23,7 @@ L’IdP doit impérativement fournir dans les réponses d’authentification une
 
 Exemple de configuration OneLogin :
 
-![saml2_onelogin_conf](/doc-ce/Guide Administrateur/Administration%20avanc%C3%A9e/images/saml2_onelogin_conf.png)
+![saml2_onelogin_conf](img/saml2_onelogin_conf.png)
 
 ### Création du paramétrage - Côté Canopsis
 
@@ -74,7 +75,7 @@ openssl req -new -x509 -days 3652 -nodes -out certs/sp.crt -keyout certs/sp.key
 
 En prenant ici pour exemple la configuration OneLogin :
 
-![saml2_onelogin_settings](/doc-ce/Guide Administrateur/Administration%20avanc%C3%A9e/images/saml2_onelogin_settings.png)
+![saml2_onelogin_settings](img/saml2_onelogin_settings.png)
 
 Remplacer les occurrences des paramètres suivants :
 
@@ -84,7 +85,7 @@ Remplacer les occurrences des paramètres suivants :
 
 Exemple de certificat fourni par l’IdP OneLogin :
 
-![saml2_onelogin_x509_pem](/doc-ce/Guide Administrateur/Administration%20avanc%C3%A9e/images/saml2_onelogin_x509_pem.png)
+![saml2_onelogin_x509_pem](img/saml2_onelogin_x509_pem.png)
 
 Pour le certificat de l’IdP, télécharger le, puis :
 
