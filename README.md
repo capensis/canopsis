@@ -141,6 +141,17 @@ export CPS_INFLUX_URL="http://cpsinflux:canopsis@host:8086"
 export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/default_configuration.toml"
 ```
 
+#### Paramètres spécifiques au développement
+```bash
+export CPS_TEST_SKIP_LONG=1
+export CPS_DEBUG_PPROF_ENABLE=0
+export CPS_DEBUG_PPROF_CPU=trace.cpu.out
+export CPS_DEBUG_PPROF_MEMORY=trace.mem.out
+```
+
+*CPS_TEST_SKIP_LONG* permet de passer les tests marqués comme long à s'exécuter.
+Les variables *CPS_DEBUG_PPROF_X* permettent de activer/désactiver et gérer le profiler de code (sur les engines qui implémentent la fonctionnalité), pour voir notament le gain de perf associé à un développement.
+
 
 ## Compat - Python + Go Engines
 
