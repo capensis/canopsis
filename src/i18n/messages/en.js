@@ -461,6 +461,12 @@ export default {
     calendarAlarmsList: {
       title: 'Calendar alarms list',
     },
+    createRole: {
+      title: 'Create role',
+    },
+    editRole: {
+      title: 'Edit role',
+    },
   },
   tables: {
     noData: 'No data',
@@ -500,6 +506,10 @@ export default {
       type_: 'Type',
       reason: 'Reason',
       rrule: 'Rrule',
+    },
+    rolesList: {
+      name: 'Name',
+      actions: 'Actions',
     },
     alarmStatus: {
       [ENTITIES_STATUSES.off]: 'Off',

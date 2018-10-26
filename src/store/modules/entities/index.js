@@ -5,6 +5,7 @@ import pbehaviorModule from './pbehavior';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
+import roleModule from './role';
 import userModule from './user';
 import actionModule from './action';
 
@@ -16,6 +17,7 @@ export default {
   userPreference: userPreferenceModule,
   view: viewModule,
   stats: statsModule,
+  role: roleModule,
   user: userModule,
   action: actionModule,
 };
