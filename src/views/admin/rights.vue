@@ -401,7 +401,31 @@
 </template>
 
 <script>
+import entitiesActionMixin from '@/mixins/entities/action';
 
+export default {
+  mixins: [entitiesActionMixin],
+  computed: {
+    groupedActions() {
+      return this.actions.reduce((acc, action) => {
+        if (action.id.startsWith('view') || action.id.startsWith('userview')) {
+          acc.view.push(action);
+        } else if (action.id.startsWith('models')) {
+          acc.technical.push(action);
+        } else {
+          acc.business.push(action);
+        }
+
+        return acc;
+      }, { business: [], view: [], technical: [] });
+    },
+  },
+  mounted() {
+    this.fetchActionsList({
+      params: { limit: 10000 },
+    });
+  },
+};
 </script>
 
 <style lang="scss" scoped>
