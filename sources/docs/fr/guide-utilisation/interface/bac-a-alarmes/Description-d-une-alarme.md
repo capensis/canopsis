@@ -1,6 +1,4 @@
-# Guide Utilisateur
-
-## Section : Gestion des alarmes / Description d'une alarme
+# Description d'une alarme
 
 Une alarme résume l'état d'un élément du SI sur lequel nous avons effectué des actions de l'apparition du problème à sa résolution.  
 
@@ -19,7 +17,7 @@ un ou plusieurs **événements de reconnaissance**
 
 Cet ensemble d'événements s'appelle, dans Canopsis, un *cycle d'alarme* et est associé à une entité contextuelle.
 
-### Etapes d'Alarmes
+## Etapes d'Alarmes
 
 Le cycle d'alarme ne peut être terminé qu'après un statut défini sur 0 si la période de battement potentiel s'est écoulée.   
 À chaque étape de l'alarme , le cycle d'alarme peut transporter une information parmi celles ci-dessous:  
@@ -40,7 +38,7 @@ l'alarme a été commentée
 
 Chaque étape **DOIT** être historisée dans son cycle d'alarme correspondant. Et une fois l'alarme terminée, le cycle **DOIT** être fermé et archivé.
 
-### Les différents états
+## Les différents états
 
 Les différents états que peut avoir une alarme sont :  
 
@@ -51,7 +49,7 @@ Les différents états que peut avoir une alarme sont :
 
 Ces états sont **variables** et **visibles** dans le [bac à alarme](/doc-ce/Guide%20Utilisateur/Gestion%20des%20alarmes/Les%20actions%20du%20bac%20%C3%A0%20alarmes.md).  
 
-### Les différents status
+## Les différents status
 
 Les différents status que peut avoir une alarme sont :
 
@@ -61,31 +59,31 @@ Les différents status que peut avoir une alarme sont :
 - 3 - Bagot
 - 4 - Cancel
 
-#### Off
+### Off
 
 Un événement est considéré **Off** s'il est stable. (c'est-à-dire que _Criticity_ est stable à 0).
 
-#### On going
+### On going
 
 Un événement est considéré **On going** si sa _criticité_ est dans un état d'alerte. (> 0).
 
-#### Stealthy
+### Stealthy
 
 Un événement est considéré **Stealthy** si sa _criticité_ est passée d'alerte à stable dans un délai spécifié.  
 Si la _criticité_ de cet événement est modifiée à nouveau dans le délai spécifié, il est toujours considéré **Stealthy**.  
 Un événement restera **Stealthy** pendant une durée spécifiée et passera à **Off** si le dernier état était 0, **On Going** s'il s'agissait d'une alerte ou **Bagot** s'il se qualifie en tant que tel.
 
-#### Bagot
+### Bagot
 
 Un événement est considéré Bagot s'il est passé d'un état d'alerte à un état stable un nombre spécifique de fois sur une période donnée.
 
-#### Cancel
+### Cancel
 
 Un événement est considéré **cancel** si l'utilisateur l'a signalé comme tel à partir de l'interface utilisateur.  
 Un événement marqué comme **cancel** changera d'état s'il passe d'un état d'alerte à un état stable.  
 De plus, l'utilisateur peut spécifier si l'événement doit changer d'état si sa _criticité_ change dans les différents états d'alerte ou uniquement entre les états d'alerte et les états stables.  
 
-### Timeline
+## Timeline
 
 La timeline représente tous les changements qui ont été fait sur l'alarme ; c'est à dire ses changments d'état, de statut, d'output, ...  
 Cette timeline est limitée en taille : s'il y a trop d'états, un "crop state" sera généré ; c'est un bloc résumant combien de changements ont été effectué.  

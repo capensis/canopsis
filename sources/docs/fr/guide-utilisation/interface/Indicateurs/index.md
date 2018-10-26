@@ -1,9 +1,6 @@
-# Guide Utilisateur
+# Présentation
 
-## Section : Indicateurs
-
-
-### Présentation des stats calculées et mises à disposition
+## Stats calculées et mises à disposition
 
 Canopsis vous propose d'afficher des statistiques détaillées sur vos alarmes sous différentes formes : Tableau ou Histogramme. 
 
@@ -18,4 +15,4 @@ Les données pouvant être calculées sont :
 - Les alarmes en cours : Ongoing alarms
 - Les alarmes actuellement en cours : Current Ongoing alarms
 
-Pour plus de détails sur les indicateurs, [rendez-vous ici !](https://gitlab.capensis.fr/capensis/sortiecanopsisv3/blob/master/doc-ce/Guide%20Utilisateur/Indicateurs/Utilisation%20du%20widget.md)
+Pour plus de détails sur les indicateurs, [rendez-vous ici !](Utilisation-du-widget.md)

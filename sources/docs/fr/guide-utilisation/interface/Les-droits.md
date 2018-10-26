@@ -1,3 +1,1 @@
-# Guide Utilisateur
-
-## Section : Interface / Les droits
+# Les droits

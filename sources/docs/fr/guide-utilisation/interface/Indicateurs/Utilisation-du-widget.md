@@ -1,6 +1,4 @@
-# Guide Utilisateur
-
-## Section : Indicateurs / Utilisation du widget
+# Utilisation du widget
 
 ## Création du widget
 
