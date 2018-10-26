@@ -1,8 +1,6 @@
-# Guide Utilisateur
+# Cycle de vie / De l'événement à l'alarme
 
 **TODO (DWU) :** voir avec Mika ou les devs si c'est encore à jour (BàA par défaut, fonctionnement Go…).
-
-## Section : Cycle de vie / De l'événement à l'alarme
 
 ### WorkFlow
 
