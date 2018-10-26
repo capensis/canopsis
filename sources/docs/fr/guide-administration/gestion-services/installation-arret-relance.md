@@ -69,4 +69,4 @@ systemctl restart redis
 
 ## Aller plus loin 
 
-Pour connaître l'état de votre service, [rendez-vous ici](/doc-ce/Guide Administrateur/Troubleshooting/HealthCheck.md)
+Pour connaître l'état de votre service, [rendez-vous ici](../troubleshooting/etat-des-services.md)
