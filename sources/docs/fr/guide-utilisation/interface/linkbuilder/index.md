@@ -1,8 +1,6 @@
-# Guide Utilisateur
+# Présentation
 
-## Section : Focus LinkBuilder
-
-### Objectif
+## Objectif
 
 Présenter des URLs sur un bac à alarmes pour par exemple :
 

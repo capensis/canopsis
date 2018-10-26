@@ -1,8 +1,6 @@
-# Guide Utilisateur
+# Utilisation
 
 **TODO (DWU) :** très bas niveau mais c'est la manip officielle.
-
-## Section : Focus LinkBuilder / Utilisation
 
 ## Objectif
 

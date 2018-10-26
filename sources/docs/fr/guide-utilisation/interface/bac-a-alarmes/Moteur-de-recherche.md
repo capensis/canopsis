@@ -1,12 +1,10 @@
-# Guide Utilisateur
-
-## Section : Gestion des alarmes / Moteur de recherche
+# Moteur de recherche
 
 Actullement, il y a deux type de recherches disponible dans le bac à alarmes :
   * la recherche naturelle
   * la recherche avancée
 
-![img_search](/doc-ce/Guide%20Utilisateur/Gestion%20des%20alarmes/Images/img_search.png)  
+![img_search](img/img_search.png)  
 
 ## La recherche naturelle
 

@@ -1,6 +1,4 @@
-# Guide Utilisateur
-
-## Section : Météo des services / Les observateurs
+# Les observateurs
 
 ## Watcher
 

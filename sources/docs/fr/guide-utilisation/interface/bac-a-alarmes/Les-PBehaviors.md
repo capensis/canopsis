@@ -1,11 +1,8 @@
-# Guide Utilisateur
+#  Les PBehaviors
 
 **TODO (DWU) :** à éclaircir.
 
-## Section : Gestion des alarmes / Les PBehaviors
-
 Pbehaviors sont des événements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
-Pour plus de renseignements, [rendez-vous ici](https://gitlab.capensis.fr/capensis/sortiecanopsisv3/blob/master/doc-ce/Guide%20Utilisateur/Focus%20PBehavior/Utilisation.md)
 
 # Utiliser la vue Context
 
@@ -38,7 +35,7 @@ Ainsi, le sélecteur ne sera pas influencé par les faux états erronés de l'en
 
 Pour instaurer un Pbehavior il vous suffit de selectionner un événement, un boutton pause va alors apparaître :
 
-![menu](/doc-ce/Guide%20Utilisateur/Gestion%20des%20alarmes/Images/menu.png)  
+![menu](img/menu.png)  
 
 Cliquez dessus, plusieur configuration sont disponibles :
 
@@ -53,7 +50,7 @@ Cliquez dessus, plusieur configuration sont disponibles :
 Je veux un PBehavior nommé "Mon premier PBehavior !", qui s'étend du 12/10/2018 à 18h00 au 14/10/2018 à 9h00 dont la raison est "autre" et dont le type est "hors plage horraire de surveillance".  
 Dans ce cas, notre fenêtre sera la suivante : 
 
-![fen1](/doc-ce/Guide%20Utilisateur/Gestion%20des%20alarmes/Images/fen1.png)  
+![fen1](img/fen1.png)  
 
 ### Récursivitée
 
