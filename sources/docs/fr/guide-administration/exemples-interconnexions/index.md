@@ -7,11 +7,11 @@ Il existe une grande liste d'interconnecteurs, cette documentation va les prése
 
 ## Quelques Interconnecteurs
 
-- [Nagios & Icinga](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Supervision/Nagios%20et%20Icinga.md)    
-- [Centreon](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Supervision/Centreon.md)  
-- [Logstash](doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Logstash.md)  
-- [Send_event](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/send_event.md)  
+- [Nagios & Icinga](../../guide-connecteurs/Supervision/Nagios-et-Icinga.md)    
+- [Centreon](../../guide-connecteurs/Supervision/Centreon.md)  
+- [Logstash](../../guide-connecteurs/Infrastructure/Logstash.md)  
+- [Send_event](../../guide-connecteurs/Infrastructure/send_event.md)  
 
 ## Voir tous les connecteurs disponibles
 
-- [cliquez ici](/doc-ce/Guide Connecteur)  
+- [cliquez ici](../../guide-connecteurs)  
