@@ -1,8 +1,6 @@
-# Guide Administrateur
+# Backup & Restore
 
 **TODO (DWU) :** regénéraliser cette doc (qui était prévue dans le cas particulier d'un fulldisk).
-
-# Section : Administration avancée / Backup & Restore
 
 # Gestion d'un cas de disque plein sur Mongo 2
 
