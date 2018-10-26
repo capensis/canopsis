@@ -22,6 +22,7 @@ export default {
   },
   getters: {
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.role, state.allIds),
+    getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](ENTITIES_TYPES.role, id),
     meta: state => state.meta,
     pending: state => state.pending,
   },

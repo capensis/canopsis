@@ -8,6 +8,7 @@
       v-model="selected",
       :headers="headers",
       :items="roles",
+      :loading="rolesPending",
       :pagination.sync="pagination",
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
       :total-items="rolesMeta.total",
@@ -18,11 +19,11 @@
           tr
             td
               v-checkbox(v-model="props.selected", primary, hide-details)
-            td.text-xs-center {{ props.item.crecord_name }}
-            td.text-xs-center
-              v-btn(@click="showEditRoleModal(props.item)", icon)
+            td {{ props.item.crecord_name }}
+            td
+              v-btn.ma-0(@click="showEditRoleModal(props.item._id)", icon)
                 v-icon edit
-              v-btn(@click="showRemoveRoleModal(props.item._id)", icon)
+              v-btn.ma-0(@click="showRemoveRoleModal(props.item._id)", icon)
                 v-icon(color="red darken-4") delete
     .fab
       v-tooltip(left)
@@ -46,11 +47,11 @@ export default {
       pagination: null,
       headers: [
         {
-          text: 'Name',
+          text: this.$t('tables.rolesList.name'),
           value: 'crecord_name',
         },
         {
-          text: 'Actions',
+          text: this.$t('tables.rolesList.actions'),
           value: 'actions',
         },
       ],
@@ -91,12 +92,12 @@ export default {
         },
       });
     },
-    showEditRoleModal(role) {
+    showEditRoleModal(roleId) {
       this.showModal({
         name: MODALS.createRole,
         config: {
           title: this.$t('modals.editRole.title'),
-          item: role,
+          roleId,
         },
       });
     },

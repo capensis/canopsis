@@ -40,6 +40,7 @@ v-card
 <script>
 import pick from 'lodash/pick';
 import { MODALS } from '@/constants';
+import { generateRole } from '@/helpers/entities';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -61,7 +62,7 @@ export default {
   },
   computed: {
     role() {
-      return this.config.item || null;
+      return this.config.roleId ? this.getRoleById(this.config.roleId) : null;
     },
     isNew() {
       return !this.role;
@@ -80,24 +81,11 @@ export default {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
-      const defaultRoleData = {
-        crecord_write_time: null,
-        enable: true,
-        crecord_type: 'role',
-        crecord_creation_time: null,
-        crecord_name: null,
-        rights: null,
-        id: null,
-        _id: this.form.name,
-      };
-
       if (isFormValid) {
-        const formData = {
-          ...defaultRoleData,
-          ...this.form,
-        };
+        const formData = this.isNew ? { ...generateRole() } : { ...this.role };
+        formData._id = this.form._id;
 
-        await this.createRole({ data: formData });
+        await this.createRole({ data: { ...formData, ...this.form } });
         await this.fetchRolesListWithPreviousParams();
 
         this.hideModal();

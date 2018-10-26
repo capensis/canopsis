@@ -6,6 +6,7 @@ export default {
   computed: {
     ...mapGetters({
       roles: 'items',
+      getRoleById: 'getItemById',
       rolesPending: 'pending',
       rolesMeta: 'meta',
     }),

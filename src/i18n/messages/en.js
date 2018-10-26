@@ -507,6 +507,10 @@ export default {
       reason: 'Reason',
       rrule: 'Rrule',
     },
+    rolesList: {
+      name: 'Name',
+      actions: 'Actions',
+    },
     alarmStatus: {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
