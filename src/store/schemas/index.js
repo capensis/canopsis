@@ -52,7 +52,11 @@ export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   idAttribute: '_id',
 });
 
+
 export const userSchema = new schema.Entity(ENTITIES_TYPES.user);
+
+export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
+
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -66,4 +70,5 @@ export default {
   [ENTITIES_TYPES.row]: rowSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,
+  [ENTITIES_TYPES.role]: roleSchema,
 };

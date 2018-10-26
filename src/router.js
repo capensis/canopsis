@@ -7,6 +7,7 @@ import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
 import AdminUsers from '@/views/admin/users.vue';
+import AdminRoles from '@/views/admin/roles.vue';
 
 Vue.use(Router);
 
@@ -40,6 +41,11 @@ const routes = [
     path: '/admin/users',
     name: 'admin-users',
     component: AdminUsers,
+  },
+  {
+    path: '/admin/roles',
+    name: 'admin-roles',
+    component: AdminRoles,
     meta: requiresLoginMeta,
   },
 ];

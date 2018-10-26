@@ -54,7 +54,7 @@ export default {
      */
     async create({ dispatch }, { data }) {
       try {
-        await request.post(API_ROUTES.createUser, qs.stringify({ user: JSON.stringify(data) }), {
+        await request.post(API_ROUTES.user.create, qs.stringify({ user: JSON.stringify(data) }), {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
@@ -72,7 +72,7 @@ export default {
      */
     async remove({ dispatch }, { id }) {
       try {
-        await request.delete(`${API_ROUTES.deleteUser}/${id}`);
+        await request.delete(`${API_ROUTES.user.remove}/${id}`);
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
@@ -92,7 +92,7 @@ export default {
         commit(types.FETCH_LIST, { params });
 
         const { normalizedData, data } = await dispatch('entities/fetch', {
-          route: API_ROUTES.user,
+          route: API_ROUTES.user.list,
           schema: [userSchema],
           params,
           dataPreparer: d => d.data,

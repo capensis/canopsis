@@ -13,6 +13,7 @@ export const ENTITIES_TYPES = {
   widget: 'widget',
   stat: 'stat',
   user: 'user',
+  role: 'role',
 };
 
 export const MODALS = {
@@ -41,6 +42,7 @@ export const MODALS = {
   createView: 'create-view',
   createGroup: 'create-group',
   createUser: 'create-user',
+  createRole: 'create-role',
 };
 
 export const EVENT_ENTITY_TYPES = {

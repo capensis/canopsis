@@ -39,7 +39,14 @@ export const API_ROUTES = {
   view: '/api/v2/views',
   viewGroup: '/api/v2/views/groups',
   stats: '/api/v2/stats',
-  user: '/rest/default_rights/user',
-  createUser: '/account/user',
-  deleteUser: '/account/delete/user',
+  user: {
+    list: '/rest/default_rights/user',
+    create: '/account/user',
+    remove: '/account/delete/user',
+  },
+  role: {
+    list: '/rest/default_rights/role',
+    create: '/account/role',
+    remove: '/account/delete/role',
+  },
 };
