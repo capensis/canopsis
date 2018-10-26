@@ -43,7 +43,7 @@ systemctl status redis
 
 ## Gestion des services avancé
 
-[Install, arrêt et relance](/doc-ce/Guide Administrateur/Gestion%20des%20services/Install,Arret%20et%20Relance.md)
+[Install, arrêt et relance](../gestion-services/installation-arret-relance.md)
 
 ## A venir
 
