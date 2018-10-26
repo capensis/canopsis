@@ -1,5 +1,3 @@
-# Guide Utilisateur
-
-## Section : Workflow
+# Sommaire
 
 - [cycle de vie](cycle-de-vie.md)  
