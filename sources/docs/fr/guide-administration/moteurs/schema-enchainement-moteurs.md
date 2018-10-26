@@ -22,6 +22,6 @@ Lorsqu'un évènement entre dans le processus de traitement, il passe par la pre
 
 Le schéma suivant représente un *exemple* de configuration d'enchaînement de moteurs dans Canopsis.
 
-![schema_moteurs](/doc-ce/Guide Administrateur/Moteurs/images/schema_moteurs_V3.png)
+![schema_moteurs](img/schema_moteurs_V3.png)
 
-Le détail du rôle des différents moteurs est dans [la liste des moteurs](/doc-ce/Guide%20Administrateur/Moteurs#liste-des-moteurs).  
+Le détail du rôle des différents moteurs est dans [la liste des moteurs](../moteurs#liste-des-moteurs).  
