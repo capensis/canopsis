@@ -5,7 +5,6 @@
 
 <script>
 import { formatState, formatStatus } from '@/helpers/state-and-status-formatting';
-import { ENTITY_INFOS_TYPE } from '@/constants';
 
 /**
  * Chips for the state/status of the alarm on timeline
@@ -27,7 +26,7 @@ export default {
   },
   computed: {
     style() {
-      if (this.type === ENTITY_INFOS_TYPE.status) {
+      if (this.type === this.$constants.ENTITY_INFOS_TYPE.status) {
         return formatStatus(this.value);
       }
       return formatState(this.value);

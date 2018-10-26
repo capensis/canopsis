@@ -15,7 +15,6 @@ v-container.pa-3(fluid)
 <script>
 import isEmpty from 'lodash/isEmpty';
 
-import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
 export default {
@@ -37,7 +36,7 @@ export default {
   methods: {
     openFilterModal() {
       this.showModal({
-        name: MODALS.createFilter,
+        name: this.$constants.MODALS.createFilter,
         config: {
           title: 'modals.filter.create.title',
           filter: this.value || {},
@@ -47,7 +46,7 @@ export default {
     },
     deleteFilter() {
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: () => this.$emit('input', {}),
         },

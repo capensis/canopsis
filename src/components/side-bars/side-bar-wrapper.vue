@@ -18,7 +18,6 @@
 
 <script>
 import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
-import { SIDE_BARS } from '@/constants';
 
 /**
  * Wrapper for each modal window
@@ -40,15 +39,16 @@ export default {
   },
   computed: {
     title() {
+      const sideBars = { ...this.$constants.SIDE_BARS };
       const TITLES_MAP = {
-        [SIDE_BARS.alarmSettings]: this.$t('settings.titles.alarmListSettings'),
-        [SIDE_BARS.contextSettings]: this.$t('settings.titles.contextTableSettings'),
-        [SIDE_BARS.weatherSettings]: this.$t('settings.titles.weatherSettings'),
-        [SIDE_BARS.statsHistogramSettings]: this.$t('settings.titles.statsHistogramSettings'),
-        [SIDE_BARS.statsCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
-        [SIDE_BARS.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
-        [SIDE_BARS.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
-        [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
+        [sideBars.alarmSettings]: this.$t('settings.titles.alarmListSettings'),
+        [sideBars.contextSettings]: this.$t('settings.titles.contextTableSettings'),
+        [sideBars.weatherSettings]: this.$t('settings.titles.weatherSettings'),
+        [sideBars.statsHistogramSettings]: this.$t('settings.titles.statsHistogramSettings'),
+        [sideBars.statsCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
+        [sideBars.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
+        [sideBars.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
+        [sideBars.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
       };
 
       return this.sideBarConfig.sideBarTitle || TITLES_MAP[this.sideBarName];

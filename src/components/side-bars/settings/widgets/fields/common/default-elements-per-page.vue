@@ -4,7 +4,7 @@
     v-container
       v-select.select(
       :label="$t('settings.elementsPerPage')",
-      :items="items",
+      :items="$config.PAGINATION_PER_PAGE_VALUES",
       :value="value",
       @change="$emit('input', $event)",
       hide-details,
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
+import { PAGINATION_LIMIT } from '@/config';
 
 export default {
   props: {
@@ -22,11 +22,6 @@ export default {
       type: Number,
       default: PAGINATION_LIMIT,
     },
-  },
-  data() {
-    return {
-      items: PAGINATION_PER_PAGE_VALUES,
-    };
   },
 };
 </script>

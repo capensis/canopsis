@@ -1,6 +1,6 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{$t('settings.statsSelect')}}
+    v-list-tile(slot="activator") {{$t('settings.statsSelect.title')}}
     v-container
       v-btn(@click="openAddStatModal") Stat selector modal
       v-card(v-if="value.stat")

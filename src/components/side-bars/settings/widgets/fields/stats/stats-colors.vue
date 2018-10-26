@@ -14,7 +14,6 @@
 <script>
 import set from 'lodash/set';
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS } from '@/constants';
 
 export default {
   mixins: [modalMixin],
@@ -33,7 +32,7 @@ export default {
     showColorPickerModal(key) {
       const newVal = { ...this.value };
       this.showModal({
-        name: MODALS.colorPicker,
+        name: this.$constants.MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
           action: color => this.$emit('input', set(newVal, key, color)),

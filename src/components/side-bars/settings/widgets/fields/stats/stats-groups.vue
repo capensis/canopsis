@@ -21,7 +21,6 @@ import pullAt from 'lodash/pullAt';
 
 import modalMixin from '@/mixins/modal/modal';
 import formMixin from '@/mixins/form';
-import { MODALS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -50,7 +49,7 @@ export default {
   methods: {
     addGroup() {
       this.showModal({
-        name: MODALS.manageHistogramGroups,
+        name: this.$constants.MODALS.manageHistogramGroups,
         config: {
           title: 'modals.manageHistogramGroups.title.add',
           action: (newGroup) => {
@@ -61,7 +60,7 @@ export default {
     },
     editGroup(group, index) {
       this.showModal({
-        name: MODALS.manageHistogramGroups,
+        name: this.$constants.MODALS.manageHistogramGroups,
         config: {
           title: 'modals.manageHistogramGroups.title.edit',
           group,
@@ -75,7 +74,7 @@ export default {
     },
     deleteGroup(index) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: () => {
             const groups = [...this.groups];
