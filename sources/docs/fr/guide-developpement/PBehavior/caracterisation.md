@@ -1,4 +1,3 @@
-
 ## Caractérisation
 
 Un pbehavior se caractérise par les informations suivantes.

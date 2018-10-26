@@ -1,5 +1,3 @@
-# Guide Développeur
+# API / Description des routes disponibles
 
-## Section : API
-
-### Description des routes disponibles
+## Routes disponibles

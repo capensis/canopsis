@@ -1,8 +1,6 @@
-# Guide Utilisateur
+# Utilisation
 
 **TODO (DWU) :** à déplacer dans le Guide de dév, si pas d'erreur de ma part (pas de l'inté ici, mais du dév interne Canopsis).
-
-## Section : Focus PBehavior / Utilisation
 
 # API PBehaviors
 

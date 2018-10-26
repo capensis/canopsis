@@ -1,6 +1,4 @@
-# Guide Développeur
-
-## Section : Python
+# Sources Python
 
 ## Source : https://git.canopsis.net/canopsis/canopsis/tree/master/doc/docs/fr/guide_developpeur
 
