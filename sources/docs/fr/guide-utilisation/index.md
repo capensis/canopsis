@@ -1,8 +1,8 @@
-# Guide Utilisateur
+# Présentation
 
 Guide destinée à l'utilisateur final, il va vous accompagner dans la prise en main de Canopsis en vous présentant ces principales fonctionnalitées.  
 
-## Sommaire
+# Sommaire
 
 - [Cylcle de vie](/doc-ce/Guide%20Utilisateur/Cycle%20de%20vie)  
 - [Focus LinkBuilder](/doc-ce/Guide%20Utilisateur/Focus%20LinkBuilder)  

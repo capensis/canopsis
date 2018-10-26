@@ -1,8 +1,6 @@
-# Guide Administrateur
+# Logstash vers canopsis
 
 **TODO (DWU) :** faire valider par quelqu'un qui l'a mis en prod ?
-
-## Section : Connecteurs / Logstash vers canopsis
 
 ## Sommaire
 

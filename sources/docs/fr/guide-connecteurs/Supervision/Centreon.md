@@ -1,8 +1,6 @@
-# Guide Administrateur
+# connector-centreon-engine : module (Event Broker) Centreon pour Canopsis
 
 **TODO (DWU) :** ouvrir ce connecteur en open-source (voir avec Mika).
-
-## Section : Connecteurs / connector-centreon-engine : module (Event Broker) Centreon pour Canopsis
 
 ## Description
 

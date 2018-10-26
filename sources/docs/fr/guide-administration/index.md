@@ -1,4 +1,8 @@
+# Présentation
+
 Ce guide va vous accompagner dans vos tâches d'administration de Canopsis. Vous y trouverez plusieurs documents portant sur :
+
+# Sommaire
 
 - [Architecture Interne](architecture-interne)  
 - [Installation](installation)  

@@ -1,6 +1,4 @@
-# Guide Administrateur
-
-## Section : Interconnexion / Python send_event connector to Canopsis / AMQP
+# Python send_event connector to Canopsis / AMQP
 
 ## Pré requis
 

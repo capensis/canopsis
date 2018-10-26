@@ -1,6 +1,4 @@
-# Guide Connecteur 
-
-## Section : Supervision / LibreNMS, rules, alerts and transport
+# LibreNMS, rules, alerts and transport
 
 # Installation & Configuration
 

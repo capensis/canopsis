@@ -1,10 +1,6 @@
-# Guide Connecteurs
+# Zabbix
 
 **TODO (DWU) :** remettre au propre cette doc.
-
-SOURCE : https://canopsis.readthedocs.io/en/readthedocs/canopsis-connectors/connector-zabbix2canopsis/setup.html  
-
-## Section : Supervision / Zabbix
 
 `connector-zabbix2canopsis` est basée sur le toolkit sqlalchemy (http://www.sqlalchemy.org/) pour interroger la base de donée et sur la librairie kombu pour publier des messages dans RabbitMQ.
 

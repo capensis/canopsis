@@ -1,8 +1,4 @@
-# Guide Connecteurs
-
-SOURCE : https://canopsis.readthedocs.io/en/readthedocs/_sources/canopsis-connectors/connector-shinken2canopsis/setup.txt
-
-## Section : Supervision / Shinken
+# Shinken
 
 ### Configuration
 

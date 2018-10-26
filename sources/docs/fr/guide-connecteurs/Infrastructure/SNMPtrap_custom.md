@@ -1,6 +1,6 @@
-# /!\ Documentation CAT /!\
-
 # Trap Snmp Custom
+
+# /!\ Documentation CAT /!\
 
 L'engine SNMP permet le traitement des traps SNMP (par le biais du connecteur
 snmp2canopsis). En l'abscence de MIB, il est désormais possible d'effectuer un

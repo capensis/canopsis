@@ -1,6 +1,4 @@
-# Guide Administrateur
-
-## sql2canopsis : connecteur de base de données SQL vers Canopsis / AMQP
+# connecteur de base de données SQL vers Canopsis / AMQP
 
 ## Sommaire 
 

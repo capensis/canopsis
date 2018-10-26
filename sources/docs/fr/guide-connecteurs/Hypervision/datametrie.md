@@ -1,6 +1,6 @@
-# /!\ Documentation CAT /!\
+# DatametrieManager
 
-## DatametrieManager
+# /!\ Documentation CAT /!\
 
  * Project : `canopsis/canopsis` -> `sources/canopsis/datametrie/manager.py`
 

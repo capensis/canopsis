@@ -1,6 +1,4 @@
-# Guide Connecteurs
-
-## Section : Infrastructure / snmpTrap
+# snmpTrap
 
 ## Introduction
 

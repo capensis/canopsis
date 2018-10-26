@@ -1,8 +1,6 @@
-# Guide Connecteurs
+# neb2canopsis : module (Event Broker) Nagios/Nagios-like pour Canopsis
 
 **TODO (DWU) :** enlever les manips avancées.
-
-## Section : Guide Connecteurs / neb2canopsis : module (Event Broker) Nagios/Nagios-like pour Canopsis
 
 ## Description
 

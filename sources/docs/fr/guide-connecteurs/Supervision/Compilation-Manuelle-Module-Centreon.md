@@ -1,6 +1,4 @@
-# Guide Administrateur
-
-## Section : Quelques interconnexions / Compilation manuelle du module connector-centreon-engine
+# Compilation manuelle du module connector-centreon-engine
 
 Cette procédure décrit les étapes nécessaires à la compilation de connector-centreon-engine sur CentOS 6 et CentOS 7.
 
