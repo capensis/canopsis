@@ -188,4 +188,4 @@ Redémarrer le cache :
 
 ### Status de service
 
-[Rendez-vous ici](/doc-ce/Guide Administrateur/Troubleshooting/HealthCheck.md)
+[Rendez-vous ici](etat-des-services.md)
