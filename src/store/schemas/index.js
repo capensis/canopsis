@@ -53,7 +53,7 @@ export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
 });
 
 
-export const userSchema = new schema.Entity(ENTITIES_TYPES.user);
+export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribute: '_id' });
 
 export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
 

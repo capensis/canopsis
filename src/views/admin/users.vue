@@ -12,7 +12,7 @@
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
       :total-items="usersMeta.total",
       :loading="usersPending",
-      item-key="id"
+      item-key="_id"
       select-all,
       )
         template(slot="items", slot-scope="props")
@@ -25,9 +25,9 @@
               v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
             td
               div
-                v-btn(@click="showEditUserModal(props.item.id)", icon)
+                v-btn(@click="showEditUserModal(props.item._id)", icon)
                   v-icon edit
-                v-btn(@click="showRemoveUserModal(props.item.id)", icon)
+                v-btn(@click="showRemoveUserModal(props.item._id)", icon)
                   v-icon delete
     .fab
       v-tooltip(left)
@@ -52,7 +52,7 @@ export default {
       headers: [
         {
           text: this.$t('tables.admin.users.columns.username'),
-          value: 'id',
+          value: '_id',
         },
         {
           text: this.$t('tables.admin.users.columns.role'),
@@ -98,7 +98,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(this.selected.map(({ id }) => this.removeUser({ id })));
+            await Promise.all(this.selected.map(({ _id }) => this.removeUser({ id: _id })));
             await this.fetchUsersListWithPreviousParams();
 
             this.selected = [];
