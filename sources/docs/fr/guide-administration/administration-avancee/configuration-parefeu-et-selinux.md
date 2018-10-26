@@ -2,7 +2,7 @@
   
 Ce document décrit les ports utilisés par Canopsis qui doivent être autorisés.
 
-Une matrice des flux entre les services est disponible [ici](/doc-ce/Guide Administrateur/Installation/Firewall%20et%20SeLinux.md).  
+Une matrice des flux entre les services est [disponible ici](../installation/pre-requis-parefeu-et-selinux.md).  
   
 ## Liste des ports
 
