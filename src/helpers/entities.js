@@ -239,6 +239,18 @@ export function generateUserPreferenceByWidgetAndUser(widget, user) {
   };
 }
 
+export function generateRole() {
+  return {
+    crecord_write_time: null,
+    enable: true,
+    crecord_type: 'role',
+    crecord_creation_time: null,
+    crecord_name: null,
+    rights: null,
+    id: null,
+  };
+}
+
 export default {
   generateWidgetByType,
   generateRow,
