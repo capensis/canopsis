@@ -6,8 +6,8 @@ Cette section présente le fonctionnement des services.
 
 ## Sommaire 
 
-- [Listing des services](doc-ce/Guide Administrateur/Gestion%20des%20services/Listing.md)  
-- [Arrêt / Relance des services](/doc-ce/Guide Administrateur/Gestion%20des%20services/Install,Arret%20et%20Relance.md)  
+- [Listing des services](liste-des-services.md)  
+- [Arrêt / Relance des services](installation-arret-relance.md)  
 
 ## Liste des services
 
