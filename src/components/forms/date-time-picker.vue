@@ -65,8 +65,6 @@
 <script>
 import moment from 'moment';
 
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
 const TABS = {
   date: 'date',
   time: 'time',
@@ -131,7 +129,7 @@ export default {
       if (!value) {
         setTimeout(() => {
           this.activeTab = 'date';
-        }, VUETIFY_ANIMATION_DELAY);
+        }, this.$config.VUETIFY_ANIMATION_DELAY);
       }
     },
   },

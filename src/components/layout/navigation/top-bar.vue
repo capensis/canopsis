@@ -57,7 +57,6 @@ import authMixin from '@/mixins/auth';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserMixin from '@/mixins/entities/user';
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS } from '@/constants';
 
 /**
  * Component for the top bar of the application
@@ -75,7 +74,7 @@ export default {
   methods: {
     editDefaultView() {
       this.showModal({
-        name: MODALS.selectView,
+        name: this.$constants.MODALS.selectView,
         config: {
           action: (viewId) => {
             const user = { ...this.currentUser, defaultview: viewId };
