@@ -18,11 +18,11 @@ Il n'y a aucune information requise à remplir pour la météo. Cependant, ce wi
 
 La configuration principale du widget météo est constituée des paramètres suivants :
 
-![img1](/doc-ce/Guide Administrateur/Moteurs/images/weather_configuration_1.png)
+![img1](img/weather_configuration_1.png)
 
 La météo configurée avec les informations ci-dessus sera rendue comme suit :
 
-![img2](/doc-ce/Guide Administrateur/Moteurs/images/weather_renderer_1.png)
+![img2](img/weather_renderer_1.png)
 
 Nous avons d’abord donné un titre météo qui est affiché directement dans le rendu. Ensuite, nous avons choisi d’actualiser le widget toutes les minutes. Cela déclenchera l'actualisation de l'interface utilisateur avec les informations d'évènements à jour.
 
@@ -40,7 +40,7 @@ Le statuts de ces évènements sera affiché dans le rendu. Le rendu affiche tou
 
 ## Configuration du rendu
 
-![img4](/doc-ce/Guide Administrateur/Moteurs/images/weather_configuration_2.png)
+![img4](img/weather_configuration_2.png)
 
 Dans ce panneau de configuration, « *is refreshable widget* » permet de choisir si le widget sera actualisé ou non dans le temps.
 
@@ -50,7 +50,7 @@ L'option « *show output* » permet de choisir si la sortie d'événement sera
 
 ## Configuration de l'évènement au clic
 
-![img3](/doc-ce/Guide Administrateur/Moteurs/images/weather_configuration_3.png)
+![img3](img/weather_configuration_3.png)
 
 Cette configuration permet une interaction avec la météo, chaque évènement représenté pouvant être cliqué, il redirige l'utilisateur vers l'évènement correspondant dans la vue sélectionnée avec le filtre généré.
 
