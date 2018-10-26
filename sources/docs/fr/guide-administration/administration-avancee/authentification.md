@@ -1,9 +1,7 @@
-# Guide Administrateur
+# Authentification
 
 **TODO (DWU) :** à migrer dans la doc EE ?
 **TODO (MG) :** Sommaire
-
-## Section : Administration avancée / Authentification
 
 ## SAML2
 
