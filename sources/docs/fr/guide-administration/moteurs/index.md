@@ -31,8 +31,8 @@ Le listing des moteur peut être réalisé grace à cette commande : `ps -aux | 
 
 ## Sommaire
 
-- [L'arrêt et la relance des moteurs](/doc-ce/Guide Administrateur/Moteurs/Activation%20D%C3%A9sactivation%20Moteurs.md)  
-- [Schéma d'enchainement](/doc-ce/Guide Administrateur/Moteurs/Schéma%20enchainement.md)  
+- [L'arrêt et la relance des moteurs](activation-desactivation-moteurs.md)  
+- [Schéma d'enchainement](schema-enchainement-moteurs.md)  
 
 ## Liste des moteurs
 
