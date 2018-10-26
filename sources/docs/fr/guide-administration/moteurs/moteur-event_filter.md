@@ -13,6 +13,7 @@ L'utilisateur peut créer un filtre et déclarer des actions à appliquer à tou
 ## Actions
 
 Les actions suivantes sont disponibles pour l'utilisateur :
+
 *  `pass` (passer)
 *  `drop` (laissez tomber)
 *  `override` (passer outre)
@@ -38,6 +39,7 @@ Selon un ensemble de règles, les évènements seront transférés au moteur sui
 Actions de substitution et de suppression.
 
 Les évènements peuvent avoir des champs :
+
 *  ajoutés au moment de l'exécution (périmètre, domaine…) ;
 *  modifiés (statut, criticité…) ;
 *  ou supprimés (champs entiers, balise simple, perfdata…).

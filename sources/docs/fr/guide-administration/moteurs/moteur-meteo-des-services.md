@@ -27,11 +27,13 @@ La météo configurée avec les informations ci-dessus sera rendue comme suit :
 Nous avons d’abord donné un titre météo qui est affiché directement dans le rendu. Ensuite, nous avons choisi d’actualiser le widget toutes les minutes. Cela déclenchera l'actualisation de l'interface utilisateur avec les informations d'évènements à jour.
 
 Le sélecteur d'évènements du formulaire permet de sélectionner les évènements à surveiller dans la base de données. Ces évènements peuvent être :
+
 *  des évènements normaux ;
 *  des événements de sélection ;
 *  ou des évènements de topologie.
 
 Le statuts de ces évènements sera affiché dans le rendu. Le rendu affiche tous les évènements sélectionnés avec des couleurs spécifiques. Le jeu de couleurs dépend de l'état de l'évènement, comme suit :
+
 *  vert : **éteint** ;
 *  jaune : **mineur** ;
 *  orange : **majeur** ;

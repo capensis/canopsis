@@ -3,6 +3,7 @@
 ## Pré-requis
 
 Canopsis doit être installé sur l'un des environnements Linux suivants :
+
 *  CentOS 7 ;
 *  Debian 8 (« *jessie* ») ;
 *  ou Debian 9 (« *stretch* »).

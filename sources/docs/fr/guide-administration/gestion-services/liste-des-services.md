@@ -9,6 +9,7 @@
 |Canopsis      |Hyperviseur          | |
 
 **TODO (DWU) :** Pas sûr du contenu :
+
 *  Redis : uniquement une variable d'environnement ?
 *  MongoDB : OK.
 *  RabbitMQ : OK.
