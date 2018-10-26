@@ -47,7 +47,7 @@ Les différents états que peut avoir une alarme sont :
 - 2 - Major
 - 3 - Critical
 
-Ces états sont **variables** et **visibles** dans le [bac à alarme](/doc-ce/Guide%20Utilisateur/Gestion%20des%20alarmes/Les%20actions%20du%20bac%20%C3%A0%20alarmes.md).  
+Ces états sont **variables** et **visibles** dans le [bac à alarme](Les-actions-du-bac-a-alarmes.md).  
 
 ## Les différents status
 

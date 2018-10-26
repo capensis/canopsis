@@ -100,4 +100,4 @@ make -j3 85-amqp
 
 Le fichier final à récupérer est `$HOME/cbd/centreon-broker-$CBVER/build/amqp/85-amqp.so`.
 
-Utiliser le [guide d'installation du module connector-centreon-engine](doc-ce/Guide Administrateur/Quelques%20interconnexions/Centreon.md) afin de valider son bon fonctionnement.
+Utiliser le [guide d'installation du module connector-centreon-engine](Centreon.md) afin de valider son bon fonctionnement.

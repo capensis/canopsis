@@ -6,7 +6,7 @@
 
 Ce dépôt contient un module (Broker) Nagios/Nagios-like pour l'envoi d'évènements à Canopsis. Il est écrit en C.
 
-**Note :** certains modules Nagios-like étaient parfois compatibles avec Centreon, mais ce n'est plus le cas dans ses dernières versions. Centreon nécessite dorénavant un module dédié, [connector-centreon-engine](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Supervision/Centreon.md).
+**Note :** certains modules Nagios-like étaient parfois compatibles avec Centreon, mais ce n'est plus le cas dans ses dernières versions. Centreon nécessite dorénavant un module dédié, [connector-centreon-engine](Centreon.md).
 
 ## Installation
 

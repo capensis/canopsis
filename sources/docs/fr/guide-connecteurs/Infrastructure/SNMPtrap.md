@@ -17,7 +17,7 @@ Ce document vous guide pas à pas dans cette mise en oeuvre.
 Ce schéma vous présente le cycle de vie d'un Trap SNMP depuis son émission jusqu'à sa conversion en Alarmes Canopsis.
 
 
-![img1](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Images/Cycle_vie_trap_snmp.png)
+![img1](img/Cycle_vie_trap_snmp.png)
 
 Les points ci-après vous écrivent chacune des étapes de ce chemin.
 
@@ -180,7 +180,7 @@ Pour générer le trap adéquat, voici la ligne de commande utilisée :
 Une fois exécutée, le connecteur recevra le trap, le convertira en JSON et le transmettra à Canopsis dans l'exchange `canopsis.snmp`.
 Etant donné que le moteur ne possède pour le moment pas de règle de transformation, le trap brut sera affiché.
 
-![img9](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Images/trap_brut.png)
+![img9](img/trap_brut.png)
 
 ### Règle de transformation
 
@@ -209,17 +209,15 @@ Pour cela, nous devons :
 
 On sélectionne les fichiers.
 
-![img2](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Images/scenario_e1.png)
-
-![img3](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Images/scenario_e2.png)
+![img2](img/scenario_e1.png)
 
 On vérifie que le traducteur ait bien trouvé des objets de type **notification**
 
-![img4](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Images/scenario_e3.png)
+![img4](img/scenario_e3.png)
 
 **Création de la règle**
 
-![img5](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Images/scenario_e4.png)
+![img5](img/scenario_e4.png)
 
 **Vérification**
 
@@ -231,7 +229,7 @@ On ré exécute l'émisson du trap SNMP
 
 On contrôle le bac à événements
 
-![img6](/doc-ce/Guide Connecteur/Documentation%20connecteurs/Infrastructure/Images/scenario_e5.png)
+![img6](img/scenario_e5.png)
 
 ## Informations complémentaires
 

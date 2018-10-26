@@ -2,7 +2,7 @@
 
 ## Création du widget
 
-Pour créer ces derniers, il vous suffit de vous rendre dans "widget", juste ici : ![g1](/doc-ce/Guide%20Utilisateur/Interface/images/gif_3_widget.gif).  
+Pour créer ces derniers, il vous suffit de vous rendre dans "widget", juste ici : ![g1](../img/gif_3_widget.gif).  
 
 Puis choisir entre les deux dernières propositions. La première correspond à l'histogramme, la seconde au tableur.  
 
@@ -15,7 +15,7 @@ Aprés cela vous pouvez **choisir la durée de l'élément** ainsi que la **date
 
 ## Configuration propre à l'histogramme
 
-Vous pourrez **ajouter un groupe** ainsi qu'un **filtre** (vous retrouverez l'[éditeur de filtre ici](https://gitlab.capensis.fr/capensis/sortiecanopsisv3/blob/master/doc-ce/Guide%20Utilisateur/Gestion%20des%20alarmes/Les%20filtres.md) !).  
+Vous pourrez **ajouter un groupe** ainsi qu'un **filtre** (vous retrouverez l'[éditeur de filtre ici](../bac-a-alarmes/Les-filtres.md) !).  
 Ensuite, il faut **ajouter une statistique** parmi celles-ci :  
 
 - Les alarmes crées, résolues et annulées.
@@ -49,4 +49,4 @@ Pour **ajouter une statistique** parmi celles-ci :
 Il est necessaire de **donner un titre** à cette statistique.  
 L'option "Trend" est une option de l'API stats. Si elle est activée, vous recevez en même temps que vos données de Stats, une tendance par rapport à la période précédente.  
 
-Vous pourrez, comme sur l'histogramme, **ajouter un filtre** (vous retrouverez l'[éditeur de filtre ici](https://gitlab.capensis.fr/capensis/sortiecanopsisv3/blob/master/doc-ce/Guide%20Utilisateur/Gestion%20des%20alarmes/Les%20filtres.md) !).  
+Vous pourrez, comme sur l'histogramme, **ajouter un filtre** (vous retrouverez l'[éditeur de filtre ici](../bac-a-alarmes/Les-filtres.md) !).  
