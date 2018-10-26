@@ -1,10 +1,6 @@
-# Guide administrateur
+# Sommaire
 
-## Section : Geston des services
-
-Cette section présente le fonctionnement des services.
-
-## Sommaire 
+Cette section présente le fonctionnement des services. 
 
 - [Listing des services](liste-des-services.md)  
 - [Arrêt / Relance des services](installation-arret-relance.md)  

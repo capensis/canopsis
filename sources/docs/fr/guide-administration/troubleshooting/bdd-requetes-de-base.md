@@ -1,10 +1,8 @@
-# Guide Administrateur  
+# Requêtes en base
 
-## Section : Troubleshooting / Requêtes en base
+## Healthcheck
 
-### Healthcheck
-
-#### 1) Connexion à la BDD
+### 1) Connexion à la BDD
 
 Connexion en ligne de commande :
 ```
@@ -19,7 +17,7 @@ Dans Robo3T, les requêtes doivent être validées avec Ctrl + Entrée afin d'
 
 **Attention :** MongoDB, et plus particulièrement Robo3T, sont sensibles à la véritable casse du hostname des nœuds MongoDB.
 
-#### 2) Identifier un évènement suivant le nom de son composant, sa ressource et son statut.
+### 2) Identifier un évènement suivant le nom de son composant, sa ressource et son statut.
 
 **Rappels**
 
@@ -186,6 +184,6 @@ Redémarrer le cache :
 ```
 
 
-### Status de service
+## Status de service
 
 [Rendez-vous ici](etat-des-services.md)

@@ -1,17 +1,15 @@
-# Guide Administrateur
-
-## Section : Administration avancée / Healthcheck
+# Healthcheck
 
 Voici les commandes afin de connaître l'état des services autour de Canopsis.
 
-### MongoDB
+## MongoDB
 
 ```bash
 #connaître l'état du service
 systemctl status mongod
 ```
 
-### RabbitMQ
+## RabbitMQ
 
 ```bash
 #connaître l'état du service
@@ -25,7 +23,7 @@ systemctl status rabbitmq-server
 systemctl status influxdb
 ```
 
-### Redis
+## Redis
 
 ```bash
 #connaître l'état du service

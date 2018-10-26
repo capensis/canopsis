@@ -1,18 +1,19 @@
-# Guide Administrateur
+# Sommaire et présentation
+
+- [L'arrêt et la relance des moteurs](activation-desactivation-moteurs.md)  
+- [Schéma d'enchainement](schema-enchainement-moteurs.md)  
 
 **TODO (DWU) :** doublons sur certains moteurs, entre cette partie du Guide Administrateur et le Guide Utilisateur ! Exemple : pbehaviors, météo… Ne pas documenter la même chose à 2 endroits !
 
 **(MG) :** Moteur présent dans schéma d'enchaînements non présent dans liste des moteurs et inversement, normal ?
 **(MG)/amélioration :** Mettre liens clicables dans tableau moteurs vers les docs.
 
-## Section : Moteurs
-
 **TODO (DWU) :** schéma, etc. Plus de détails sur les champs obligatoires aujourd'hui ?   
 **TODO :** les différents flags (ex : printEventOnError, publishQueue) ne sont pas du tout documentés.
 
 Les événements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.  
   
-Un moteur a plusieurs rôles:  
+Un moteur a **plusieurs rôles**:  
 
 - consommation d'un événement: pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).  
 - Effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.  
@@ -20,7 +21,7 @@ Un moteur a plusieurs rôles:
 
 Chaque moteur est défini par un ensemble de procédures, utilisé pour effectuer les tâches énumérées ci-dessus.  
 
-Un moteur peut avoir les propiètées suivantes :
+Un moteur peut avoir les **propiètées** suivantes :
 
 - un type (the python module to load)  
 - un nom (must be unique)  
@@ -28,11 +29,6 @@ Un moteur peut avoir les propiètées suivantes :
 - Un niveau de log (debug, info, warning, or error)  
 
 Le listing des moteur peut être réalisé grace à cette commande : `ps -aux | grep canopsis`
-
-## Sommaire
-
-- [L'arrêt et la relance des moteurs](activation-desactivation-moteurs.md)  
-- [Schéma d'enchainement](schema-enchainement-moteurs.md)  
 
 ## Liste des moteurs
 

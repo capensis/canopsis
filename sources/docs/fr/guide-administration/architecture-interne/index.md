@@ -1,6 +1,4 @@
-# Guide Administrateur
-
-## Section : Architecture Interne
+# Présentation
 
 **TODO ?** Liste à puce pour la brique cache / SGBD (ce qu'elle contient, etc, ...)
 

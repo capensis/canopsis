@@ -1,8 +1,6 @@
-# Guide Administrateur
+# UI RabbitMQ
 
 **TODO (DWU) :** aller plus loin avec DWU.
-
-## Section : Troubleshooting / UI RabbitMQ
 
 L'interface de RabbitMQ est accessible via l'URL ```http://localhost:15672/```
 

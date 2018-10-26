@@ -1,6 +1,4 @@
-# Guide Administrateur
-
-## Section : Quelques Interconnexions
+# Quelques Interconnexions
 
 Comme son nom l'indique, les interconnecteurs vont servir à relier une entité à Canopsis, que ce soit un outil de ticketing ou encore un superviseur.
 Il existe une grande liste d'interconnecteurs, cette documentation va les présenter et vous montrer comment les installer et configurer.

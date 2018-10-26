@@ -1,6 +1,4 @@
-# Guide Administrateur
-
-## Section : TroubleShooting
+# Sommaire
 
 Ce guide va vous accompagner dans le débogage de Canopsis et son environnement.
 

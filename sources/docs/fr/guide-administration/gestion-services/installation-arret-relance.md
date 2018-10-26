@@ -1,8 +1,6 @@
-# Guide Administrateur
+# Installation, arrêt et relance
 
-## Section : Gestion des services / Install, arrêt et relance
-
-### MongoDB
+## MongoDB
 
 [Installer MongDB](https://docs.mongodb.com/manual/installation/#tutorials) 
 
@@ -15,7 +13,7 @@ systemctl stop mongod
 systemctl restart mongod
 ```
 
-### RabbitMQ
+## RabbitMQ
 
 [Installer RabbitMQ](https://www.rabbitmq.com/download.html)
 
@@ -41,7 +39,7 @@ systemctl stop influxdb
 systemctl restart influxdb
 ```
 
-### Redis
+## Redis
 
 [Installer Redis](https://redis.io/topics/quickstart) 
 

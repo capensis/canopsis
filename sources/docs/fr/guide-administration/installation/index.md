@@ -1,20 +1,16 @@
-# Guide Administrateur
-
-## Section Installation
+# Sommaire
 
 Cette section va vous accompagner dans la mise en place des différents service necessaire au bon focntionnenement de Canopsis.
 
-### Sommaire 
-
-#### Installations
+## Installations
   
 - [Installation avec un paquets Deb/Rpm](installation-paquets.md)
 - [Installation avec un conteneurs Docker](installation-conteneurs.md)  
 
-#### Sécurité 
+## Sécurité 
 
 - [Configuration des ports réseau à partir de la matrice des flux](pre-requis-parefeu-et-selinux.md)  
 
-#### Premier login
+## Premier login
 
 - [Crédentials](premiere-connexion.md)

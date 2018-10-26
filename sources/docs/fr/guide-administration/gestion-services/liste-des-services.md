@@ -1,6 +1,4 @@
-# Guide Administrateur
-
-## Secion : Gestion des service / Listing
+# Listing
 
 |Nom du service|catégorie du service |fichier de configuration du service|
 |--------------|---------------------|-----------------------------------|
