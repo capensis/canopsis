@@ -10,4 +10,4 @@ Présenter des URLs sur un bac à alarmes pour par exemple :
 * Visualiser une consigne/procédure
 * Rediriger vers un screenshot
 
-Pour en savoir plus, [rendez-vous ici](/doc-ce/Guide%20Utilisateur/Focus%20LinkBuilder/Utilisation.md)
+Pour en savoir plus, [rendez-vous ici](../linkbuilder/Utilisation.md)  
