@@ -30,7 +30,11 @@ function build_for_distribution() {
         echo "BUILDING CORE NEXT"
         cd ${workdir}/sources/webcore/src/
 		rm canopsis-next/ -rf
-        git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${tag}
+		next_tag=${tag}
+		if [ "${tag}" = "ci" ]; then
+			next_tag="develop"
+		fi
+        git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${next_tag}
 		rm canopsis-next/.git -rf
 
 		cd ${workdir}
