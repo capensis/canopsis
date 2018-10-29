@@ -41,6 +41,7 @@ const routes = [
     path: '/admin/users',
     name: 'admin-users',
     component: AdminUsers,
+    meta: requiresLoginMeta,
   },
   {
     path: '/admin/roles',
