@@ -13,7 +13,7 @@ volumes:
 
 services:
   redis:
-    image: redis:4.0
+    image: redis:${REDIS_TAG}
     restart: unless-stopped
     ports:
       - 6379:6379
@@ -30,7 +30,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=canopsis
       - RABBITMQ_DEFAULT_VHOST=canopsis
   mongodb:
-    image: mongo:3.6-jessie
+    image: mongo:${MONGODB_TAG}
     env_file: compose.mongo.env
     volumes:
       - mongodbdata:/data/db
@@ -42,7 +42,7 @@ services:
     oom_score_adj: -1000
     command: '--wiredTigerCacheSizeGB 2560'
   influxdb:
-    image: influxdb:1.5-alpine
+    image: influxdb:${INFLUX_TAG}
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 1g
