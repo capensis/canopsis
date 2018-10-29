@@ -3,6 +3,10 @@
 **TODO (DWU) :** à migrer dans la doc EE ?
 **TODO (MG) :** Sommaire
 
+- [SAML2](#saml2)
+	- [Paramétrage ldP](#paramétrage-idp)
+	
+
 ## SAML2
 
 Intégration de l’authentification avec SAML2
