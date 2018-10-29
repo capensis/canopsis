@@ -83,4 +83,4 @@ function build() {
 
 build
 cd ${workdir}
-rm -r "${workdir}/sources/webcore/src/canopsis-next"
+rm -rf "${workdir}/sources/webcore/src/canopsis-next"
