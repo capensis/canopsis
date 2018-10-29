@@ -7,7 +7,7 @@ docs_dir: sources/docs/fr
 copyright: Documentation © Canopsis 2018 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
 theme:
-  name: readthedocs
+  name: readthedocs 
   language: fr
 
 markdown_extensions:
