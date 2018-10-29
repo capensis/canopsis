@@ -95,18 +95,6 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  ticket:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=ticket
-      - ENGINE_MODULE=canopsis.engines.ticket
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   eventstore:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
