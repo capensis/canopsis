@@ -20,7 +20,7 @@
 # ---------------------------------
 
 """
-Adapter for event filter rules.
+Manager for event filter rules.
 """
 
 from __future__ import unicode_literals
@@ -44,9 +44,9 @@ class InvalidRuleError(Exception):
         self.message = message
 
 
-class RuleAdapter(object):
+class RuleManager(object):
     """
-    Adapter for event filter rules.
+    Manager for event filter rules.
     """
     def __init__(self, logger):
         self.logger = logger
