@@ -29,11 +29,12 @@ import { createNamespacedHelpers } from 'vuex';
 
 import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import { ENTITIES_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
 const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
 
 export default {
+  name: MODALS.createWatcher,
   $_veeValidate: {
     validator: 'new',
   },
@@ -68,7 +69,7 @@ export default {
           ...this.form,
           _id: this.config.item ? this.config.item._id : this.form.name,
           display_name: this.form.name,
-          type: ENTITIES_TYPES.watcher,
+          type: this.$constants.ENTITIES_TYPES.watcher,
           mfilter: this.form.mfilter,
         };
 

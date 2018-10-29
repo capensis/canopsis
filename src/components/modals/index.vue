@@ -13,8 +13,6 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS } from '@/constants';
-
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
@@ -79,9 +77,9 @@ export default {
   data() {
     return {
       dialogPropsMap: {
-        [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
-        [MODALS.createWidget]: { maxWidth: 500, lazy: true },
-        [MODALS.calendarAlarmsList]: { fullscreen: true, lazy: true },
+        [this.$constants.MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
+        [this.$constants.MODALS.createWidget]: { maxWidth: 500, lazy: true },
+        [this.$constants.MODALS.calendarAlarmsList]: { fullscreen: true, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

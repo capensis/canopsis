@@ -29,7 +29,7 @@
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 /**
  * Modal to associate a ticket to an alarm
@@ -57,7 +57,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
+        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
 
         this.hideModal();
       }

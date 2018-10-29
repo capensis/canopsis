@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 import { generateWidgetByType } from '@/helpers/entities';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -38,14 +38,14 @@ export default {
   data() {
     return {
       widgetsTypes: [
-        { title: this.$t('modals.widgetCreation.types.alarmList.title'), value: WIDGET_TYPES.alarmList, icon: 'view_list' },
-        { title: this.$t('modals.widgetCreation.types.context.title'), value: WIDGET_TYPES.context, icon: 'view_list' },
-        { title: this.$t('modals.widgetCreation.types.weather.title'), value: WIDGET_TYPES.weather, icon: 'view_module' },
-        { title: this.$t('modals.widgetCreation.types.statsHistogram.title'), value: WIDGET_TYPES.statsHistogram, icon: 'bar_chart' },
-        { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: WIDGET_TYPES.statsTable, icon: 'table_chart' },
-        { title: this.$t('modals.widgetCreation.types.statsCalendar.title'), value: WIDGET_TYPES.statsCalendar, icon: 'calendar_today' },
-        { title: this.$t('modals.widgetCreation.types.statsCurves.title'), value: WIDGET_TYPES.statsCurves, icon: 'show_chart' },
-        { title: this.$t('modals.widgetCreation.types.statsNumber.title'), value: WIDGET_TYPES.statsNumber, icon: 'table_chart' },
+        { title: this.$t('modals.widgetCreation.types.alarmList.title'), value: this.$constants.WIDGET_TYPES.alarmList, icon: 'view_list' },
+        { title: this.$t('modals.widgetCreation.types.context.title'), value: this.$constants.WIDGET_TYPES.context, icon: 'view_list' },
+        { title: this.$t('modals.widgetCreation.types.weather.title'), value: this.$constants.WIDGET_TYPES.weather, icon: 'view_module' },
+        { title: this.$t('modals.widgetCreation.types.statsHistogram.title'), value: this.$constants.WIDGET_TYPES.statsHistogram, icon: 'bar_chart' },
+        { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: this.$constants.WIDGET_TYPES.statsTable, icon: 'table_chart' },
+        { title: this.$t('modals.widgetCreation.types.statsCalendar.title'), value: this.$constants.WIDGET_TYPES.statsCalendar, icon: 'calendar_today' },
+        { title: this.$t('modals.widgetCreation.types.statsCurves.title'), value: this.$constants.WIDGET_TYPES.statsCurves, icon: 'show_chart' },
+        { title: this.$t('modals.widgetCreation.types.statsNumber.title'), value: this.$constants.WIDGET_TYPES.statsNumber, icon: 'table_chart' },
       ],
     };
   },
@@ -54,7 +54,7 @@ export default {
       const widget = generateWidgetByType(type);
 
       this.showSideBar({
-        name: SIDE_BARS_BY_WIDGET_TYPES[type],
+        name: this.$constants.SIDE_BARS_BY_WIDGET_TYPES[type],
         config: {
           widget,
           isNew: true,

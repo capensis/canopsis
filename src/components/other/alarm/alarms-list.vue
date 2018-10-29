@@ -75,8 +75,6 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 
-import { MODALS, SIDE_BARS } from '@/constants';
-
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
@@ -164,7 +162,7 @@ export default {
 
     showEditLiveReportModal() {
       this.showModal({
-        name: MODALS.editLiveReporting,
+        name: this.$constants.MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['interval', 'tstart', 'tstop']),
           action: params => this.query = { ...this.query, ...params },
@@ -174,7 +172,7 @@ export default {
 
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.alarmSettings,
+        name: this.$constants.SIDE_BARS.alarmSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,

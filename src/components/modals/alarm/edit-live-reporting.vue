@@ -36,7 +36,7 @@
 <script>
 import moment from 'moment';
 
-import { MODALS, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -58,7 +58,7 @@ export default {
 
     return {
       selectedInterval: config.interval || '',
-      dateIntervals: Object.values(LIVE_REPORTING_INTERVALS).map(value => ({
+      dateIntervals: Object.values(this.$constants.LIVE_REPORTING_INTERVALS).map(value => ({
         value,
         text: this.$t(`modals.liveReporting.${value}`),
       })),
@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     isCustomRangeEnabled() {
-      return this.selectedInterval === LIVE_REPORTING_INTERVALS.custom;
+      return this.selectedInterval === this.$constants.LIVE_REPORTING_INTERVALS.custom;
     },
     tstopRules() {
       return {

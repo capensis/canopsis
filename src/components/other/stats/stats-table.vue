@@ -6,7 +6,7 @@
     v-data-table(
       :items="stats",
       :headers="columns",
-      :rows-per-page-items="rowsPerPageItems"
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     )
       v-progress-linear(slot="progress", color="primary", indeterminate)
       template(slot="headers", slot-scope="{ headers }")
@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import { PAGINATION_PER_PAGE_VALUES } from '@/config';
-import { SIDE_BARS } from '@/constants';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -58,14 +56,11 @@ export default {
     columns() {
       return Object.keys(this.widget.parameters.stats).map(item => ({ value: item }));
     },
-    rowsPerPageItems() {
-      return PAGINATION_PER_PAGE_VALUES;
-    },
   },
   methods: {
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.statsTableSettings,
+        name: this.$constants.SIDE_BARS.statsTableSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,

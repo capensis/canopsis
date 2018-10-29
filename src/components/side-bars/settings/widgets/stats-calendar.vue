@@ -42,7 +42,7 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 
-import { SIDE_BARS, ENTITIES_TYPES } from '@/constants';
+import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     entitiesType() {
-      return ENTITIES_TYPES.entity;
+      return this.$constants.ENTITIES_TYPES.entity;
     },
   },
   methods: {

@@ -33,7 +33,7 @@ import moment from 'moment';
 
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 /**
  * Modal to put a snooze on an alarm
@@ -73,7 +73,7 @@ export default {
           this.form.durationType,
         ).asSeconds();
 
-        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
+        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.snooze, this.items, { duration });
 
         this.hideModal();
       }

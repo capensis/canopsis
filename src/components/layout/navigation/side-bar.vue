@@ -76,9 +76,6 @@
 </template>
 
 <script>
-import { SIDE_BAR_WIDTH } from '@/config';
-import { MODALS } from '@/constants';
-
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
@@ -104,7 +101,7 @@ export default {
     return {
       fab: false,
       editing: false,
-      width: SIDE_BAR_WIDTH,
+      width: this.$config.SIDE_BAR_WIDTH,
     };
   },
   computed: {
@@ -129,21 +126,21 @@ export default {
 
     showEditGroupModal(group) {
       this.showModal({
-        name: MODALS.createGroup,
+        name: this.$constants.MODALS.createGroup,
         config: { group },
       });
     },
 
     showEditViewModal(view) {
       this.showModal({
-        name: MODALS.createView,
+        name: this.$constants.MODALS.createView,
         config: { view },
       });
     },
 
     showCreateViewModal() {
       this.showModal({
-        name: MODALS.createView,
+        name: this.$constants.MODALS.createView,
       });
     },
   },

@@ -37,7 +37,6 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import { SIDE_BARS } from '@/constants';
 
 export default {
   components: {
@@ -99,7 +98,7 @@ export default {
   methods: {
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.statsNumberSettings,
+        name: this.$constants.SIDE_BARS.statsNumberSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,

@@ -21,12 +21,10 @@
     div(v-else)
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
       |  {{ last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
-      v-pagination(v-model="currentPage", :total-visible="totalVisible", :length="totalPages")
+      v-pagination(v-model="currentPage", :total-visible="$config.PAGINATION_TOTAL_VISIBLE" :length="totalPages")
 </template>
 
 <script>
-import { PAGINATION_TOTAL_VISIBLE } from '@/config';
-
 /**
  * Pagination component
  *
@@ -56,11 +54,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      totalVisible: PAGINATION_TOTAL_VISIBLE,
-    };
   },
   computed: {
     currentPage: {

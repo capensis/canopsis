@@ -30,7 +30,6 @@ import set from 'lodash/set';
 import unset from 'lodash/unset';
 
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -59,7 +58,7 @@ export default {
   methods: {
     openAddStatModal() {
       this.showModal({
-        name: MODALS.addStat,
+        name: this.$constants.MODALS.addStat,
         config: {
           title: 'modals.addStat.title.add',
           action: (stat) => {
@@ -84,7 +83,7 @@ export default {
 
     editStat(statTitle, stat) {
       this.showModal({
-        name: MODALS.addStat,
+        name: this.$constants.MODALS.addStat,
         config: {
           title: 'modals.addStat.title.edit',
           stat,

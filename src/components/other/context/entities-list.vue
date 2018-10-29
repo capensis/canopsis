@@ -62,7 +62,6 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 
-import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -155,9 +154,9 @@ export default {
       return query;
     },
     editEntity(item) {
-      if (item.type === ENTITIES_TYPES.watcher) {
+      if (item.type === this.$constants.ENTITIES_TYPES.watcher) {
         this.showModal({
-          name: MODALS.createWatcher,
+          name: this.$constants.MODALS.createWatcher,
           config: {
             title: 'modals.createWatcher.editTitle',
             item,
@@ -165,7 +164,7 @@ export default {
         });
       } else {
         this.showModal({
-          name: MODALS.createEntity,
+          name: this.$constants.MODALS.createEntity,
           config: {
             title: 'modals.createEntity.editTitle',
             item,
@@ -175,7 +174,7 @@ export default {
     },
     deleteEntity(item) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: () => this.removeContextEntity({ id: item._id }),
         },
@@ -183,7 +182,7 @@ export default {
     },
     deleteEntities() {
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
         },
@@ -191,7 +190,7 @@ export default {
     },
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.contextSettings,
+        name: this.$constants.SIDE_BARS.contextSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,
