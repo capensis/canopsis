@@ -346,4 +346,6 @@ export const ACTIONS_RIGHTS_TYPES = {
   read: 4,
   update: 2,
   delete: 1,
+
+  all: 15,
 };

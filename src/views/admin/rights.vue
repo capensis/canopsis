@@ -12,10 +12,40 @@
           v-flex(v-for="role in roles", :key="`role-${role._id}`")
             div {{ role._id }}
             div(v-for="action in actions", :key="`checkboxes-${action._id}`")
-              v-checkbox(
-              :input-value="getCheckboxValue(role, action._id)",
-              @change="changeCheckboxValue($event, role, action)"
-              )
+              div(v-if="key === 'technical'")
+                v-tooltip
+                  v-checkbox(
+                  slot="activator",
+                  :input-value="getCheckboxValue(role, action._id, $constants.ACTIONS_RIGHTS_TYPES.create)",
+                  @change="changeCheckboxValue($event, role, action, $constants.ACTIONS_RIGHTS_TYPES.create)"
+                  )
+                  span Create
+                v-tooltip
+                  v-checkbox(
+                  slot="activator",
+                  :input-value="getCheckboxValue(role, action._id, $constants.ACTIONS_RIGHTS_TYPES.read)",
+                  @change="changeCheckboxValue($event, role, action, $constants.ACTIONS_RIGHTS_TYPES.read)"
+                  )
+                  span Read
+                v-tooltip
+                  v-checkbox(
+                  slot="activator",
+                  :input-value="getCheckboxValue(role, action._id, $constants.ACTIONS_RIGHTS_TYPES.update)",
+                  @change="changeCheckboxValue($event, role, action, $constants.ACTIONS_RIGHTS_TYPES.update)"
+                  )
+                  span Update
+                v-tooltip
+                  v-checkbox(
+                  slot="activator",
+                  :input-value="getCheckboxValue(role, action._id, $constants.ACTIONS_RIGHTS_TYPES.delete)",
+                  @change="changeCheckboxValue($event, role, action, $constants.ACTIONS_RIGHTS_TYPES.delete)"
+                  )
+                  span Delete
+              div(v-else)
+                v-checkbox(
+                :input-value="getCheckboxValue(role, action._id)",
+                @change="changeCheckboxValue($event, role, action)"
+                )
     v-btn(@click="submit") Submit
 </template>
 
@@ -51,7 +81,7 @@ export default {
     },
 
     getCheckboxValue() {
-      return (role, actionId, rightType = 15) => {
+      return (role, actionId, rightType = this.$constants.ACTIONS_RIGHTS_TYPES.all) => {
         const checkSum = get(role, `rights.${actionId}.checksum`, 0);
         const changedCheckSum = get(this.changedRoles, `${role._id}.${actionId}`);
 
@@ -64,7 +94,7 @@ export default {
   },
   mounted() {
     this.fetchActionsList({
-      params: { limit: 10 },
+      params: { limit: 70 },
     });
 
     this.fetchRolesList({
@@ -76,7 +106,8 @@ export default {
       // console.log(this.changedRoles);
     },
 
-    changeCheckboxValue(value, role, action, rightType = 15) {
+    changeCheckboxValue(value, role, action, rightType = this.$constants.ACTIONS_RIGHTS_TYPES.all) {
+      const currentCheckSum = get(role.rights, `${action._id}.checksum`, 0);
       const factor = value ? 1 : -1;
 
       if (!this.changedRoles[role._id]) {
@@ -86,7 +117,7 @@ export default {
       if (!isUndefined(this.changedRoles[role._id][action._id])) {
         const nextCheckSum = this.changedRoles[role._id][action._id] + (factor * rightType);
 
-        if (!nextCheckSum) {
+        if (currentCheckSum === nextCheckSum) {
           this.$delete(this.changedRoles[role._id], action._id);
         } else {
           this.$set(this.changedRoles[role._id], action._id, nextCheckSum);
@@ -96,7 +127,6 @@ export default {
           this.$delete(this.changedRoles, role._id);
         }
       } else {
-        const currentCheckSum = get(role.rights, `${action._id}.checksum`, 0);
         const nextCheckSum = currentCheckSum + (factor * rightType);
 
         this.$set(this.changedRoles[role._id], action._id, nextCheckSum);
