@@ -34,6 +34,7 @@ class HeartBeatService:
     ID = "_id"
     GLOBAL_CONF_ID = "global_config"
     HEARTBEAT_SECTION = "heartbeat"
+    MAPPINGS_KEY = "MAPPINGS"
 
     @classmethod
     def provide_default_basics(cls):
@@ -56,6 +57,13 @@ class HeartBeatService:
         self.logger = logger
         self.collection = mongo_collection
 
+    def __get_conf(self):
+        return self.collection.find_one({self.ID: self.GLOBAL_CONF_ID})
+
     def get_heartbeats(self):
-        global_config = self.collection.find_one({self.ID: self.GLOBAL_CONF_ID})
+        global_config = self.__get_conf()
         return global_config[self.HEARTBEAT_SECTION]
+
+    def create(self, heartbeat):
+        global_config = self.__get_conf()
+        heartBeatSection = global_config[self.HEARTBEAT_SECTION]

@@ -19,8 +19,11 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+from bottle import request
 from canopsis.heartbeat.manager import HeartBeatService
+from canopsis.heartbeat.manager import HeartBeatServiceException
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.models.heartBeat import HeartBeat
 
 hb_service = HeartBeatService(*HeartBeatService.provide_default_basics())
 
@@ -33,7 +36,32 @@ def exports(ws):
     def create_heartbeat():
         """Create a new heartbeat.
         """
-        pass
+        try:
+            json = request.json
+        except ValueError:
+            return gen_json_error({'description': "invalid json."},
+                                  HTTP_ERROR)
+
+        isValid, error = HeartBeat.isValid(json)
+        if isValid:
+            try:
+                hb_service.create(HeartBeat(**json))
+                return gen_json({"name": "heartbeat created"})
+
+            except HeartBeatServiceException as exc:
+                ws.logger.exception("Can not create heartbeat.")
+                return gen_json_error({"name": "Can not create heartbeat",
+                                       "description": exc.message},
+                                      HTTP_ERROR)
+            except Exception:
+                ws.logger.exception("Can not create heartbeat.")
+                return gen_json_error(
+                    {"name": "Can not create heartbeat",
+                     "description": "Contact the administrator."},
+                    HTTP_ERROR)
+        else:
+            return gen_json_error({"name": "Can not create heartbeat",
+                                   "description": error}, HTTP_ERROR)
 
     @ws.application.put(
         "/api/v2/heartbeat/"
