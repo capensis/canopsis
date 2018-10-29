@@ -6,7 +6,8 @@ import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
-import Roles from '@/views/roles.vue';
+import AdminUsers from '@/views/admin/users.vue';
+import AdminRoles from '@/views/admin/roles.vue';
 
 Vue.use(Router);
 
@@ -37,9 +38,15 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: AdminUsers,
+    meta: requiresLoginMeta,
+  },
+  {
     path: '/admin/roles',
-    name: 'roles',
-    component: Roles,
+    name: 'admin-roles',
+    component: AdminRoles,
     meta: requiresLoginMeta,
   },
 ];

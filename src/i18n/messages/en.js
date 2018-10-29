@@ -461,6 +461,21 @@ export default {
     calendarAlarmsList: {
       title: 'Calendar alarms list',
     },
+    createUser: {
+      title: 'Create user',
+      fields: {
+        username: 'Username',
+        firstName: 'First name',
+        lastName: 'Last name',
+        email: 'Email',
+        password: 'Password',
+        language: 'User interface language',
+        enabled: 'Enabled',
+      },
+    },
+    editUser: {
+      title: 'Edit user',
+    },
     createRole: {
       title: 'Create role',
     },
@@ -533,6 +548,15 @@ export default {
     },
     noColumns: {
       message: 'You have to select at least 1 column',
+    },
+    admin: {
+      users: {
+        columns: {
+          username: 'Username',
+          role: 'Role',
+          enabled: 'Enabled',
+        },
+      },
     },
   },
   rRule: {
