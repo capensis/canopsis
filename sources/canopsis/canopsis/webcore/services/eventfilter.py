@@ -22,7 +22,9 @@
 from __future__ import unicode_literals
 
 from bottle import request
+from pymongo.errors import AutoReconnect
 
+from canopsis.common.collection import CollectionError
 from canopsis.eventfilter.enums import RuleField
 from canopsis.eventfilter.manager import RuleManager, InvalidRuleError
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, \
@@ -43,7 +45,12 @@ def exports(ws):
         '/api/v2/eventfilter/rules/<rule_id>'
     )
     def get_rule(rule_id):
-        rule = rule_manager.get_by_id(rule_id)
+        try:
+            rule = rule_manager.get_by_id(rule_id)
+        except AutoReconnect as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
 
         if rule:
             return gen_json(rule)
@@ -70,7 +77,7 @@ def exports(ws):
 
         try:
             rule_id = rule_manager.create(request_body)
-        except InvalidRuleError as e:
+        except (InvalidRuleError, CollectionError) as e:
             return gen_json_error({
                 'description': e.message
             }, HTTP_ERROR)
@@ -83,12 +90,24 @@ def exports(ws):
         '/api/v2/eventfilter/rules/<rule_id>'
     )
     def remove_rule(rule_id):
-        if not rule_manager.get_by_id(rule_id):
+        try:
+            rule = rule_manager.get_by_id(rule_id)
+        except AutoReconnect as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
+
+        if not rule:
             return gen_json_error({
                 'description': 'No rule with id: {0}'.format(rule_id)
             }, HTTP_NOT_FOUND)
 
-        rule_manager.remove_with_id(rule_id)
+        try:
+            rule_manager.remove_with_id(rule_id)
+        except CollectionError as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
 
         return gen_json({})
 
@@ -96,7 +115,14 @@ def exports(ws):
         '/api/v2/eventfilter/rules/<rule_id>'
     )
     def update_rule(rule_id):
-        if not rule_manager.get_by_id(rule_id):
+        try:
+            rule = rule_manager.get_by_id(rule_id)
+        except AutoReconnect as e:
+            return gen_json_error({
+                'description': e.message
+            }, HTTP_ERROR)
+
+        if not rule:
             return gen_json_error({
                 'description': 'No rule with id: {0}'.format(rule_id)
             }, HTTP_NOT_FOUND)
@@ -115,7 +141,7 @@ def exports(ws):
 
         try:
             rule_manager.update(rule_id, request_body)
-        except InvalidRuleError as e:
+        except (InvalidRuleError, CollectionError) as e:
             return gen_json_error({
                 'description': e.message
             }, HTTP_ERROR)

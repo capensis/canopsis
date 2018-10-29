@@ -70,7 +70,8 @@ class RuleManager(object):
 
         :param Dict[str, Any] rule:
         :rtype: str
-        :raises: InvalidRuleError if the rule is invalid.
+        :raises: InvalidRuleError if the rule is invalid. CollectionError if
+        the creation fails.
         """
         rule_id = str(uuid4())
 
@@ -84,7 +85,8 @@ class RuleManager(object):
         """
         Remove a rule given its id.
 
-        :param str rule_id: the id of the rule.
+        :param str rule_id: the id of the rule. CollectionError if the
+        creation fails.
         """
         self.rule_collection.remove({
             RuleField.id: rule_id
@@ -104,7 +106,8 @@ class RuleManager(object):
 
         :param str rule_id: the id of the rule.
         :param Dict[str, Any] rule:
-        :raises: InvalidRuleError if the rule is invalid.
+        :raises: InvalidRuleError if the rule is invalid. CollectionError if
+        the creation fails.
         """
         self.validate(rule_id, rule)
 
