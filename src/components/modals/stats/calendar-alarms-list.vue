@@ -11,7 +11,7 @@
 <script>
 import pick from 'lodash/pick';
 
-import { MODALS, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { MODALS } from '@/constants';
 import AlarmList from '@/components/other/alarm/alarms-list.vue';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import queryMixin from '@/mixins/query';
@@ -24,7 +24,7 @@ export default {
     const query = pick(this.config.query, ['tstart', 'tstop']);
 
     if (query.tstart || query.tstop) {
-      query.interval = LIVE_REPORTING_INTERVALS.custom;
+      query.interval = this.$constants.LIVE_REPORTING_INTERVALS.custom;
     }
 
     this.mergeQuery({

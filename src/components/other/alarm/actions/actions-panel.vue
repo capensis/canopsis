@@ -40,7 +40,6 @@
 <script>
 import actionsPanelMixin from '@/mixins/actions-panel';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
@@ -69,7 +68,7 @@ export default {
       actionsMap: {
         ack: {
           type: 'ack',
-          method: this.showActionModal(MODALS.createAckEvent),
+          method: this.showActionModal(this.$constants.MODALS.createAckEvent),
         },
         fastAck: {
           type: 'fastAck',
@@ -81,31 +80,31 @@ export default {
         },
         pbehavior: {
           type: 'pbehavior',
-          method: this.showActionModal(MODALS.createPbehavior),
+          method: this.showActionModal(this.$constants.MODALS.createPbehavior),
         },
         snooze: {
           type: 'snooze',
-          method: this.showActionModal(MODALS.createSnoozeEvent),
+          method: this.showActionModal(this.$constants.MODALS.createSnoozeEvent),
         },
         pbehaviorList: {
           type: 'pbehaviorList',
-          method: this.showActionModal(MODALS.pbehaviorList),
+          method: this.showActionModal(this.$constants.MODALS.pbehaviorList),
         },
         declareTicket: {
           type: 'declareTicket',
-          method: this.showActionModal(MODALS.createDeclareTicketEvent),
+          method: this.showActionModal(this.$constants.MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
           type: 'associateTicket',
-          method: this.showActionModal(MODALS.createAssociateTicketEvent),
+          method: this.showActionModal(this.$constants.MODALS.createAssociateTicketEvent),
         },
         cancel: {
           type: 'cancel',
-          method: this.showActionModal(MODALS.createCancelEvent),
+          method: this.showActionModal(this.$constants.MODALS.createCancelEvent),
         },
         changeState: {
           type: 'changeState',
-          method: this.showActionModal(MODALS.createChangeStateEvent),
+          method: this.showActionModal(this.$constants.MODALS.createChangeStateEvent),
         },
         moreInfos: {
           type: 'moreInfos',
@@ -117,7 +116,7 @@ export default {
   computed: {
     modalConfig() {
       return {
-        itemsType: ENTITIES_TYPES.alarm,
+        itemsType: this.$constants.ENTITIES_TYPES.alarm,
         itemsIds: [this.item._id],
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
@@ -125,7 +124,8 @@ export default {
     actions() {
       const { actionsMap } = this;
 
-      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
+      if ([this.$constants.ENTITIES_STATUSES.ongoing, this.$constants.ENTITIES_STATUSES.flapping]
+        .includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
             main: [actionsMap.declareTicket, actionsMap.associateTicket, actionsMap.cancel],
@@ -144,7 +144,7 @@ export default {
           main: [actionsMap.ack, actionsMap.fastAck],
           dropDown: [actionsMap.moreInfos],
         };
-      } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
+      } else if (this.item.v.status.val === this.$constants.ENTITIES_STATUSES.cancelled) {
         return {
           main: [actionsMap.pbehaviorList],
           dropDown: [],
@@ -159,7 +159,7 @@ export default {
   },
   methods: {
     createAckEvent() {
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
+      return this.createEvent(this.$constants.EVENT_ENTITY_TYPES.ack, this.item);
     },
   },
 };

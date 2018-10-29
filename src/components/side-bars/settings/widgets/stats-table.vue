@@ -29,7 +29,6 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
-import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
@@ -62,7 +61,7 @@ export default {
         rowId,
         widget: cloneDeep(widget),
         widget_preferences: {
-          itemsPerPage: PAGINATION_LIMIT,
+          itemsPerPage: this.$config.PAGINATION_LIMIT,
         },
       },
     };

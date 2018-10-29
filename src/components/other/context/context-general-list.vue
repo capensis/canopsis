@@ -42,6 +42,7 @@ div
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entity');
+
 export default {
   data() {
     return {

@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
 export default {
@@ -48,7 +47,7 @@ export default {
   methods: {
     showCreateFilterModal() {
       this.showModal({
-        name: MODALS.createFilter,
+        name: this.$constants.MODALS.createFilter,
         config: {
           title: 'modals.filter.create.title',
           action: newFilter => this.$emit('update:filters', [...this.filters, newFilter]),
@@ -60,7 +59,7 @@ export default {
       const filter = this.filters[index];
 
       this.showModal({
-        name: MODALS.createFilter,
+        name: this.$constants.MODALS.createFilter,
         config: {
           title: 'modals.filter.edit.title',
           filter,
@@ -81,7 +80,7 @@ export default {
       const filter = this.filters[index];
 
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: () => {
             if (this.value.title === filter.title) {

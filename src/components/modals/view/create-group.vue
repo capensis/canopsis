@@ -53,7 +53,7 @@ export default {
   methods: {
     remove() {
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: async () => {
             try {

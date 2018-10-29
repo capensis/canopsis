@@ -33,7 +33,7 @@
 <script>
 import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
 import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, ENTITIES_STATES, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 /**
  * Modal to create a 'change-state' event
@@ -49,23 +49,23 @@ export default {
     return {
       form: {
         output: '',
-        state: ENTITIES_STATES.ok,
+        state: this.$constants.ENTITIES_STATES.ok,
       },
     };
   },
   computed: {
     buttons() {
-      return Object.keys(ENTITIES_STATES);
+      return Object.keys(this.$constants.ENTITIES_STATES);
     },
     states() {
-      return ENTITIES_STATES;
+      return this.$constants.ENTITIES_STATES;
     },
     colorsMap() {
       return {
-        [ENTITIES_STATES.ok]: 'green',
-        [ENTITIES_STATES.minor]: 'yellow',
-        [ENTITIES_STATES.major]: 'orange',
-        [ENTITIES_STATES.critical]: 'error',
+        [this.$constants.ENTITIES_STATES.ok]: 'green',
+        [this.$constants.ENTITIES_STATES.minor]: 'yellow',
+        [this.$constants.ENTITIES_STATES.major]: 'orange',
+        [this.$constants.ENTITIES_STATES.critical]: 'error',
       };
     },
   },
@@ -77,7 +77,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
+        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.changeState, this.items, this.form);
 
         this.hideModal();
       }
