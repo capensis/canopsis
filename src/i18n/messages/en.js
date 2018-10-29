@@ -36,6 +36,7 @@ export default {
     trend: 'Trend',
     username: 'Username',
     password: 'Password',
+    connect: 'Connect',
     optionnal: 'optionnal',
     logout: 'Logout',
     title: 'Title',

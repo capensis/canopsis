@@ -25,6 +25,7 @@ export default {
     trend: 'Tendance',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
+    connect: 'Connexion',
     logout: 'Se déconnecter',
     title: 'Titre',
     save: 'Sauvegarder',

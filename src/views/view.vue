@@ -34,7 +34,7 @@
           )
     .fab
       v-tooltip(left)
-        v-btn(slot="activator", fab, dark, color="info", @click.stop="refreshView")
+        v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
           v-icon refresh
         span {{ $t('common.refresh') }}
       v-speed-dial(
@@ -42,7 +42,7 @@
       direction="top",
       transition="slide-y-reverse-transition"
       )
-        v-btn(slot="activator", color="green darken-3", dark, fab, v-model="fab")
+        v-btn(slot="activator", color="primary", dark, fab, v-model="fab")
           v-icon menu
           v-icon close
         v-tooltip(bottom)
