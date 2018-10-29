@@ -1,13 +1,14 @@
 <template lang="pug">
   v-card
-    v-card-title.green.darken-4.white--text
+    v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ $t('modals.textEditor.title') }}
-        v-btn(@click='hideModal', icon, small)
-          v-icon.white--text close
+        span.headline {{ $t('modals.textEditor.title') }}
     v-card-text
       quill-editor(v-model="text")
-    v-btn(@click="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

@@ -1,8 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     v-card
-      v-card-title
-        span.headline {{ $t('modals.createAssociateTicket.title') }}
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ $t('modals.createAssociateTicket.title') }}
       v-card-text
         v-container
           v-layout(row)
@@ -18,8 +19,10 @@
             v-validate="'required'",
             data-vv-name="ticket"
             )
-      v-card-actions
-        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>

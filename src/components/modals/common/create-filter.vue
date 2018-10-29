@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title(primary-title)
-      h2 {{ $t(config.title) }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t(config.title) }}
     v-divider
     v-card-text
       v-text-field(
@@ -13,7 +14,10 @@
       name="title",
       )
       filter-editor(v-model="form.filter")
-      v-btn(@click="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

@@ -1,8 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     v-card
-      v-card-title
-        span.headline {{ $t('modals.createSnoozeEvent.title') }}
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ $t('modals.createSnoozeEvent.title') }}
       v-card-text
         v-container
           v-layout(row)
@@ -21,7 +22,9 @@
                   div.input-group__selections__comma {{ $tc(data.item.text, 2) }}
                 template(slot="item" slot-scope="data")
                   div.list__tile__title {{ $tc(data.item.text, 2) }}
-      v-card-actions
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
         v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
 </template>
 
