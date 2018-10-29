@@ -8,7 +8,7 @@
     v-spacer
     v-toolbar-items
       v-menu(bottom, offset-y)
-        v-btn.white--text(slot="activator", flat) {{ currentUser.crecord_name }}
+        v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
         v-list.pb-0
           v-list-tile
             v-list-tile-title
