@@ -49,19 +49,16 @@ export default {
         return acc;
       }, { business: [], view: [], technical: [] });
     },
+
     getCheckboxValue() {
-      return (role, actionId) => {
-        const changedValue = get(this.changedRoles, `${role._id}.${actionId}`);
+      return (role, actionId, rightType = 15) => {
+        const checkSum = get(role, `rights.${actionId}.checksum`, 0);
+        const changedCheckSum = get(this.changedRoles, `${role._id}.${actionId}`);
 
-        if (!isUndefined(changedValue)) {
-          return changedValue;
-        }
+        const currentCheckSum = isUndefined(changedCheckSum) ? checkSum : changedCheckSum;
+        const actionRightType = currentCheckSum & rightType;
 
-        if (role.rights[actionId]) {
-          return Boolean(role.rights[actionId].checksum);
-        }
-
-        return false;
+        return actionRightType === rightType;
       };
     },
   },
@@ -76,21 +73,33 @@ export default {
   },
   methods: {
     submit() {
+      // console.log(this.changedRoles);
     },
 
-    changeCheckboxValue(event, role, action) {
+    changeCheckboxValue(value, role, action, rightType = 15) {
+      const factor = value ? 1 : -1;
+
       if (!this.changedRoles[role._id]) {
         this.changedRoles[role._id] = {};
       }
 
       if (!isUndefined(this.changedRoles[role._id][action._id])) {
-        this.$delete(this.changedRoles[role._id], action._id);
+        const nextCheckSum = this.changedRoles[role._id][action._id] + (factor * rightType);
+
+        if (!nextCheckSum) {
+          this.$delete(this.changedRoles[role._id], action._id);
+        } else {
+          this.$set(this.changedRoles[role._id], action._id, nextCheckSum);
+        }
 
         if (isEmpty(this.changedRoles[role._id])) {
           this.$delete(this.changedRoles, role._id);
         }
       } else {
-        this.$set(this.changedRoles[role._id], action._id, Number(event));
+        const currentCheckSum = get(role.rights, `${action._id}.checksum`, 0);
+        const nextCheckSum = currentCheckSum + (factor * rightType);
+
+        this.$set(this.changedRoles[role._id], action._id, nextCheckSum);
       }
     },
   },

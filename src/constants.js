@@ -340,3 +340,10 @@ export const LIVE_REPORTING_INTERVALS = {
   lastMonth: 'lastMonth',
   custom: 'custom',
 };
+
+export const ACTIONS_RIGHTS_TYPES = {
+  create: 8,
+  read: 4,
+  update: 2,
+  delete: 1,
+};
