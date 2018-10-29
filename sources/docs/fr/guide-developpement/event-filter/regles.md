@@ -1,8 +1,6 @@
 # Filtre à événement
 
-Cette page décrit le filtre à événement implémenté dans le moteur go `che`. Le
-moteur python `event-filter` est documenté
-[ici](../../en/user_guide/event_filter.md).
+Cette page décrit le filtre à événement implémenté dans le moteur go `che`.
 
 
 ## Règles
