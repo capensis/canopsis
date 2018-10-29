@@ -5,10 +5,10 @@
   v-bind="navigationDrawerProps",
   )
     div(v-if="title")
-      v-toolbar(color="blue darken-4")
+      v-toolbar(color="secondary")
         v-list
           v-list-tile
-            v-list-tile-title.white--text.text-xs-center {{ title }}
+            v-list-tile-title.white--text {{ title }}
         v-btn(@click.stop="hideSideBar", icon)
           v-icon(color="white") close
       v-divider

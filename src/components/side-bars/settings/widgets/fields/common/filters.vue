@@ -22,7 +22,7 @@
                 v-icon settings
               v-btn.ma-1(icon, @click="showDeleteFilterModal(index)")
                 v-icon delete
-      v-btn(color="success", @click.prevent="showCreateFilterModal") {{ $t('common.add') }}
+      v-btn(color="primary", @click.prevent="showCreateFilterModal") {{ $t('common.add') }}
 </template>
 
 <script>

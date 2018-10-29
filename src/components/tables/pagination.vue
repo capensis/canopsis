@@ -21,7 +21,7 @@
     div(v-else)
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
       |  {{ last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
-      v-pagination(v-model="currentPage", :total-visible="totalVisible" :length="totalPages")
+      v-pagination(v-model="currentPage", :total-visible="totalVisible", :length="totalPages")
 </template>
 
 <script>

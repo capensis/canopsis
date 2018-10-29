@@ -17,15 +17,14 @@
         clearable
         )
       v-flex
-        v-chip(
+        v-chip.primary.white--text(
         v-if="query.interval",
         @input="removeHistoryFilter",
         close,
         label,
-        color="blue darken-4 white--text"
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
-          v-icon(:color="query.interval ? 'blue' : 'black'") schedule
+          v-icon(:color="query.interval ? 'primary' : 'black'") schedule
         v-btn(v-if="rowId", icon, @click="showSettings")
           v-icon settings
       v-flex.px-3(v-show="selected.length", xs12)
@@ -47,7 +46,7 @@
       )
         template(slot="progress")
           v-fade-transition
-            v-progress-linear(height="2", indeterminate)
+            v-progress-linear(height="2", indeterminate, color="primary")
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")

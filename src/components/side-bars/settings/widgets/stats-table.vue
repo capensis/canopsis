@@ -24,7 +24,7 @@
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-filter-editor(v-model="settings.widget.parameters.mfilter")
-    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

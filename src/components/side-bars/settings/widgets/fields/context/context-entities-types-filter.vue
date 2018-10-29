@@ -8,6 +8,7 @@
       :key="`entities-type-${index}`",
       :input-value="value",
       @change="$emit('input', $event)",
+      color="primary",
       hide-details
       )
 </template>

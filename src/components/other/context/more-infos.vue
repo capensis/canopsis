@@ -8,7 +8,7 @@
             p.text-xs-center {{ item.type }}
           v-flex(xs4, md2)
             template(v-if="item.enabled")
-              v-chip.green.white--text {{ $t('common.enabled') }}
+              v-chip.primary.darken-1.white--text {{ $t('common.enabled') }}
             template(v-else)
               v-chip.red.white--text.title {{ $t('common.disabled') }}
           v-flex(xs4, md2)

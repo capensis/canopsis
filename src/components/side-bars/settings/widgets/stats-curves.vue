@@ -30,7 +30,7 @@
           v-model="settings.widget.parameters.statsColors"
           )
       v-divider
-    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
