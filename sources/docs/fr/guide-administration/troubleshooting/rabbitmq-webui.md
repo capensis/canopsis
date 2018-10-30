@@ -1,8 +1,16 @@
 # UI RabbitMQ
 
+Dans le contexte d'une utilisation de Canopsis, RabbitMQ va vous servir à avoir une vision globale sur le bon fonctionnement de vos moteurs.
+Vous pourrez y voir plusieurs informations utiles mais nous allons nous concentrer dans cette documentation à la section "Queues" qui nous montre le nombre de messages
+en cours de traitement sur les diférents moteurs de Canopsis.
+
 **TODO (DWU) :** aller plus loin avec DWU.
 
 L'interface de RabbitMQ est accessible via l'URL ```http://localhost:15672/```
+
+## Queues
+
+
 
 ## Policy
 
