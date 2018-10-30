@@ -341,11 +341,14 @@ export const LIVE_REPORTING_INTERVALS = {
   custom: 'custom',
 };
 
-export const ACTIONS_RIGHTS_TYPES = {
+export const USERS_RIGHTS_MASKS = {
   create: 8,
   read: 4,
   update: 2,
   delete: 1,
+};
 
-  all: 15,
+export const USERS_ACTIONS_TYPES = {
+  crud: 'CRUD',
+  rw: 'RW',
 };

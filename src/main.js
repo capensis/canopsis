@@ -69,6 +69,11 @@ Vue.use(VeeValidate, {
 
 Vue.config.productionTip = false;
 
+if (process.env.NODE_ENV === 'development') {
+  Vue.config.devtools = true;
+  Vue.config.performance = true;
+}
+
 Vue.prototype.$constants = deepFreeze(constants);
 Vue.prototype.$config = deepFreeze(config);
 
