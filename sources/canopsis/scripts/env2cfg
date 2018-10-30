@@ -138,12 +138,12 @@ class Env2Cfg(object):
         try:
             parsed_uri = uri_parser.parse_uri(os.environ[self.CPS_MONGO_URL])
         except ConfigurationError:
-            hoststring = MongoClient.HOST
+            nodelist = MongoClient.HOST
         else:
-            nodelist = parsed_uri['nodelist']
-            hoststring = ','.join(':'.join((host, str(port))) for host, port in nodelist)
+            nodelist = ','.join(':'.join((host, str(port))) for host, port in parsed_uri['nodelist'])
 
-        mongo_store.set('DATABASE', 'host', hoststring)
+        mongo_store.set('DATABASE', 'nodelist', nodelist)
+        mongo_store.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
         mongo_store.set('DATABASE', 'port', str(MongoClient.PORT) if pu.port is None else str(pu.port))
         mongo_store.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
         mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)

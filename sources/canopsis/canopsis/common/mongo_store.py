@@ -64,6 +64,7 @@ class MongoStore(object):
         conf = self.config.get(self.CONF_CAT, {})
         self.db_name = conf.get('db', DEFAULT_DB_NAME)
         self.host = conf.get('host', DEFAULT_HOST)
+        self.nodelist = conf.get('nodelist')
         try:
             self.port = int(conf.get('port', DEFAULT_PORT))
         except ValueError:
@@ -101,8 +102,8 @@ class MongoStore(object):
 
         else:
             self.conn = MongoClient(
-                'mongodb://{}:{}/?replicaSet={}'.format(
-                    self.host, self.port, self.replicaset
+                'mongodb://{}/?replicaSet={}'.format(
+                    self.nodelist, self.replicaset
                 ), w=1, j=True, read_preference=self.read_preference
             )
 
