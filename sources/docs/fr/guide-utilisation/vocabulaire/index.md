@@ -1,5 +1,7 @@
 # Guide Utilisateur
 
+TODO : Compléter les définitions.  
+
 ## Section Vocabulaire
 
 **Evénement :**  
@@ -21,3 +23,23 @@ Une *entité* est une abstraction utilisée, entre autre, pour conserver des don
 **Enrichissement :**
 
 L'*enrichissement* est l'action de récupérer des informations supplémentaires dans un évènement pour vernir compléter le contexte (càd l'ensemble des entités).
+
+**entité**  
+
+**alarme**  
+
+**ressource**  
+
+**service**  
+
+**composant**  
+
+**bagot**  
+
+**connecteur**  
+
+**nom de connecteur**  
+
+**état**  
+
+**statut**  
