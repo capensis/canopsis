@@ -36,6 +36,7 @@ n'existe pas.
 
 ```json
 POST /api/v2/eventfilter/rules
+Content-Type: "application/json"
 {
     "type": "drop",
     "pattern": {...},
@@ -56,9 +57,10 @@ Supprime la règle dont l'id vaut `<rule_id>`, ou renvoie une erreur si
 celle-ci n'existe pas.
 
 ## Modifier une règle
-
+Content-Type:·"application/json"
 ```json
 PUT /api/v2/eventfilter/rules/<rule_id>
+Content-Type: "application/json"
 {
     "type": "drop",
     "pattern": {...},
@@ -68,4 +70,3 @@ PUT /api/v2/eventfilter/rules/<rule_id>
 
 Modifie la règle dont l'id vaut `<rule_id>`, ou renvoie une erreur si la
 règle est invalide, ou si son id a été modifié.
-
