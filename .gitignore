@@ -30,6 +30,7 @@ tools/catag/vendor
 
 packages
 
+sources/webcore/src/canopsis-next/
 sources/webcore/src/canopsis-next/dist
 
 env-release.sh
