@@ -24,22 +24,22 @@ Une *entité* est une abstraction utilisée, entre autre, pour conserver des don
 
 L'*enrichissement* est l'action de récupérer des informations supplémentaires dans un évènement pour vernir compléter le contexte (càd l'ensemble des entités).
 
-**entité**  
+**Entité :**  
 
-**alarme**  
+**Alarme :**  
 
-**ressource**  
+**Ressource :**  
 
-**service**  
+**Service :**  
 
-**composant**  
+**Composant :**  
 
-**bagot**  
+**Bagot :**  
 
-**connecteur**  
+**Connecteur :**  
 
-**nom de connecteur**  
+**Nom de connecteur :**  
 
-**état**  
+**Etat :**  
 
-**statut**  
+**Statut :**  
