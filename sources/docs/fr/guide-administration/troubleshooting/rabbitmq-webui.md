@@ -40,9 +40,24 @@ La troisème, *Message rates* permet d'avoir une idée sur les performances du m
 - **ack :**
 
 Le but étant d'avoir une section "Messages" remplie de 0. Si ce n'est pas le cas, cela veut dire qu'un des moteurs de Canopsis est dans un état dégradé et n'assure plus sa gestion de files.  
-Dans ce cas plusieurs piste de résolutions sont possibles : 
+Dans ce cas plusieurs pistes de résolutions sont possibles : 
 
 **TODO**
+
+## Plus de détails
+
+Pour en savoir plus sur la configuration et l'état de santé d'un moteur, il vous suffit de cliquer sur le nom du moteur concerné.  
+   
+Vous pourrez y retrouver l'*Overview* des **messages en files** ainsi que le **taux de messages** par secondes que le moteur traite sous forme de tableau.  
+  
+Les *Consumers* montrent les canaux connectés à la file d'attente, les *Bindings*, quant à eux, montrent les liaisons entre les exchanges et une file d'attente, vous avez aussi la possibilitée d'ajouter des *bindings*.  
+  
+*Publish message* permet de publier manuellement un message dans la file d'attente.  
+  
+Afin de recevoir un message l'option *get messages* permet  d'inspecter manuellement un message situé dans la file d'attente. Il est possible de le réintégrer dans la file d'attente.  
+  
+*Delete* permet de supprimer la file d'attente, *Purge* permet de la vider.  
+
 
 ## Policy
 
