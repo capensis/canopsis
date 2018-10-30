@@ -30,6 +30,9 @@ from configparser import ConfigParser
 from os.path import join as pjoin
 from urlparse import urlparse, parse_qs
 
+from pymongo import uri_parser, MongoClient
+from pymongo.errors import ConfigurationError
+
 from canopsis.common import root_path
 
 
@@ -132,8 +135,16 @@ class Env2Cfg(object):
         if 'DATABASE' not in mongo_store.sections():
             mongo_store.add_section('DATABASE')
 
-        mongo_store.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        mongo_store.set('DATABASE', 'port', '27017' if pu.port is None else str(pu.port))
+        try:
+            parsed_uri = uri_parser.parse_uri(os.environ[self.CPS_MONGO_URL])
+        except ConfigurationError:
+            hoststring = MongoClient.HOST
+        else:
+            nodelist = parsed_uri['nodelist']
+            hoststring = ','.join(':'.join((host, str(port))) for host, port in nodelist)
+
+        mongo_store.set('DATABASE', 'host', hoststring)
+        mongo_store.set('DATABASE', 'port', str(MongoClient.PORT) if pu.port is None else str(pu.port))
         mongo_store.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
         mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)
         mongo_store.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
