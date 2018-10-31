@@ -6,7 +6,6 @@ import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
-import Admin from '@/views/admin.vue';
 import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
 
@@ -39,9 +38,9 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
-    path: '/admin',
-    name: 'admin',
-    component: Admin,
+    path: '/admin/rights',
+    name: 'admin-rights',
+    // TODO: Add component to the Rights view
     meta: requiresLoginMeta,
   },
   {
@@ -54,6 +53,12 @@ const routes = [
     path: '/admin/roles',
     name: 'admin-roles',
     component: AdminRoles,
+    meta: requiresLoginMeta,
+  },
+  {
+    path: '/admin/parameters',
+    name: 'admin-parameters',
+    // TODO: Add component to the Parameters view
     meta: requiresLoginMeta,
   },
 ];
