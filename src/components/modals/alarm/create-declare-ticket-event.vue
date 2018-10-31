@@ -1,8 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     v-card
-      v-card-title
-        span.headline {{ $t('modals.createDeclareTicket.title') }}
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ $t('modals.createDeclareTicket.title') }}
       v-card-text
         v-container
           v-layout(row)
@@ -10,8 +11,10 @@
               alarm-general-table(:items="items")
           v-layout(row)
             v-divider.my-3
-      v-card-actions
-        v-btn(type="submit", color="warning") {{ $t('common.actions.reportIncident') }}
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(type="submit") {{ $t('common.actions.reportIncident') }}
 </template>
 
 <script>

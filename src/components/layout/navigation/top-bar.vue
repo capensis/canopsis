@@ -1,17 +1,14 @@
 <template lang="pug">
-  v-toolbar.top-bar.white(
+  v-toolbar.top-bar.primary(
     dense,
     fixed,
-    clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4(v-show="$options.filters.mq($mq, { t: true })")
-      img(src="@/assets/canopsis.png")
-    v-toolbar-side-icon(@click="$emit('toggleSideBar')")
+    v-toolbar-side-icon.ml-2.white--text(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
       v-menu(bottom, offset-y)
-        v-btn(slot="activator", flat) {{ currentUser._id }}
+        v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
         v-list.pb-0
           v-list-tile
             v-list-tile-title
@@ -42,10 +39,10 @@
                   div.px-1 {{ defaultViewTitle }}
                 v-flex(v-else)
                   div.px-1.font-italic {{ $t('common.undefined') }}
-                v-btn.green.darken-4.white--text(@click.stop="editDefaultView", small, fab, depressed)
+                v-btn.primary(@click.stop="editDefaultView", small, fab, depressed)
                   v-icon edit
           v-divider
-          v-list-tile.red.darken-4.white--text(@click.prevent="logout")
+          v-list-tile.error.white--text(@click.prevent="logout")
             v-list-tile-title
               v-layout(align-center)
                 div {{ $t('common.logout') }}

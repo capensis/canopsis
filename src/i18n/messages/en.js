@@ -13,6 +13,7 @@ export default {
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    cancel: 'Cancel',
     options: 'Options',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
@@ -35,6 +36,7 @@ export default {
     trend: 'Trend',
     username: 'Username',
     password: 'Password',
+    connect: 'Connect',
     optionnal: 'optionnal',
     logout: 'Logout',
     title: 'Title',
@@ -327,7 +329,7 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Put a pbehavior on these elements ?',
+      title: 'Create periodical behavior',
       fields: {
         name: 'Name',
         start: 'Start',

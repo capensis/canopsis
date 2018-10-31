@@ -1,8 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title.green.darken-4.white--text
+    v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ $t('modals.view.select.title') }}
+        span.headline {{ $t('modals.view.select.title') }}
     v-card-text
       v-list.py-0(dark)
         v-list-group(v-for="group in groups", :key="group._id")

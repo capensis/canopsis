@@ -1,10 +1,8 @@
 <template lang='pug'>
   v-card
-    v-card-title.green.darken-4.white--text
+    v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ $t('modals.widgetCreation.title') }}
-        v-btn(@click='hideModal', icon, small)
-          v-icon.white--text close
+        span.headline {{ $t('modals.widgetCreation.title') }}
     v-card-text
       v-layout(row, wrap)
         v-flex.my-1(
@@ -15,9 +13,14 @@
         )
           v-card.widgetType
             v-card-title(primary-title)
-              v-layout(wrap)
-                v-flex(xs12)
+              v-layout(wrap, justify-between)
+                v-flex(xs11)
                   div.subheading {{ widgetType.title }}
+                v-flex
+                  v-icon {{ widgetType.icon }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
 </template>
 
 <script>
@@ -35,14 +38,14 @@ export default {
   data() {
     return {
       widgetsTypes: [
-        { title: this.$t('modals.widgetCreation.types.alarmList.title'), value: this.$constants.WIDGET_TYPES.alarmList },
-        { title: this.$t('modals.widgetCreation.types.context.title'), value: this.$constants.WIDGET_TYPES.context },
-        { title: this.$t('modals.widgetCreation.types.weather.title'), value: this.$constants.WIDGET_TYPES.weather },
-        { title: this.$t('modals.widgetCreation.types.statsHistogram.title'), value: this.$constants.WIDGET_TYPES.statsHistogram },
-        { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: this.$constants.WIDGET_TYPES.statsTable },
-        { title: this.$t('modals.widgetCreation.types.statsCalendar.title'), value: this.$constants.WIDGET_TYPES.statsCalendar },
-        { title: this.$t('modals.widgetCreation.types.statsCurves.title'), value: this.$constants.WIDGET_TYPES.statsCurves },
-        { title: this.$t('modals.widgetCreation.types.statsNumber.title'), value: this.$constants.WIDGET_TYPES.statsNumber },
+        { title: this.$t('modals.widgetCreation.types.alarmList.title'), value: this.$constants.WIDGET_TYPES.alarmList, icon: 'view_list' },
+        { title: this.$t('modals.widgetCreation.types.context.title'), value: this.$constants.WIDGET_TYPES.context, icon: 'view_list' },
+        { title: this.$t('modals.widgetCreation.types.weather.title'), value: this.$constants.WIDGET_TYPES.weather, icon: 'view_module' },
+        { title: this.$t('modals.widgetCreation.types.statsHistogram.title'), value: this.$constants.WIDGET_TYPES.statsHistogram, icon: 'bar_chart' },
+        { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: this.$constants.WIDGET_TYPES.statsTable, icon: 'table_chart' },
+        { title: this.$t('modals.widgetCreation.types.statsCalendar.title'), value: this.$constants.WIDGET_TYPES.statsCalendar, icon: 'calendar_today' },
+        { title: this.$t('modals.widgetCreation.types.statsCurves.title'), value: this.$constants.WIDGET_TYPES.statsCurves, icon: 'show_chart' },
+        { title: this.$t('modals.widgetCreation.types.statsNumber.title'), value: this.$constants.WIDGET_TYPES.statsNumber, icon: 'table_chart' },
       ],
     };
   },

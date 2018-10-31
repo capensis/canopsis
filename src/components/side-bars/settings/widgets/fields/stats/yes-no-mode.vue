@@ -2,7 +2,12 @@
   v-list-group
     v-list-tile(slot="activator") {{$t('settings.yesNoMode')}}
     v-container
-      v-switch(:label="$t('settings.yesNoMode')", :input-value="value", @change="$emit('input', $event)")
+      v-switch(
+      :label="$t('settings.yesNoMode')",
+      :input-value="value",
+      @change="$emit('input', $event)",
+      color="primary"
+      )
 </template>
 
 <script>

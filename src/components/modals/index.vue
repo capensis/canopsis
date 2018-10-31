@@ -38,7 +38,7 @@ import Watcher from './watcher/watcher.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
 import CalendarAlarmsList from './stats/calendar-alarms-list.vue';
-import CreateUser from './user/create-user.vue';
+import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');

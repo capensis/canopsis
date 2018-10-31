@@ -4,11 +4,11 @@ v-container.pa-3(fluid)
     div.subheading {{ $t('settings.filterEditor') }}
       .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
     div
-      v-btn.green.darken-4.white--text.caption.my-0.mx-1(
+      v-btn.primary(
       small,
       @click="openFilterModal"
       ) {{ $t('common.create') }}/{{ $t('common.edit') }}
-      v-btn.red.darken-4.white--text.caption.my-0.mx-1(small, @click="deleteFilter")
+      v-btn.error(small, @click="deleteFilter")
         v-icon delete
 </template>
 

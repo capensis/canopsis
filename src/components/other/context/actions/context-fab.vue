@@ -4,7 +4,7 @@ v-speed-dial.d-inline-block(
   :open-on-hover="true",
   transition="scale-transition"
   )
-  v-btn(slot="activator", color="green darken-3", dark, fab, small)
+  v-btn.primary(slot="activator", dark, fab, small)
     v-icon add
     v-icon close
   v-tooltip(v-for="button in buttons", :key="button.label", top)

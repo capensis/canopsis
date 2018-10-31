@@ -1,9 +1,10 @@
 <template lang="pug">
   v-card
-    v-card-title.blue.darken-4.white--text
-      v-btn(icon, dark, @click.native="hideModal")
-        v-icon close
-      h2 {{ $t('modals.calendarAlarmsList.title') }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t('modals.calendarAlarmsList.title') }}
+        v-btn(icon, dark, @click.native="hideModal")
+          v-icon close
     v-card-text
       alarm-list(:widget="config.widget")
 </template>

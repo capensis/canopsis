@@ -1,17 +1,18 @@
 <template lang="pug">
-  v-navigation-drawer.side-bar.grey.darken-4(
+  v-navigation-drawer.side-bar.secondary(
   v-model="isOpen",
-  :clipped="$mq | mq({ m: false, l: true })",
   :width="width",
-  absolute,
   app,
   )
+    div.brand.ma-0.secondary.lighten-1
+      v-layout(justify-center, align-center)
+        img.my-1(src="@/assets/canopsis.png")
     v-expansion-panel.panel(
     expand,
     focusable,
     dark
     )
-      v-expansion-panel-content(v-for="group in groups", :key="group._id").grey.darken-4.white--text
+      v-expansion-panel-content(v-for="group in groups", :key="group._id").secondary.white--text
         div(slot="header")
           span {{ group.name }}
           v-btn(
@@ -19,14 +20,13 @@
           depressed,
           small,
           icon,
-          color="grey darken-3",
           @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
-        v-card.grey.darken-3.white--text(v-for="view in group.views", :key="view._id")
+        v-card.secondary.white--text(v-for="view in group.views", :key="view._id")
           v-card-text
             router-link(:to="{ name: 'view', params: { id: view._id } }")
-              span {{ view.title }}
+              span.pl-3 {{ view.title }}
               v-btn(
               v-show="editing",
               depressed,
@@ -45,7 +45,7 @@
     transition="slide-y-reverse-transition"
     )
       v-tooltip(slot="activator", left)
-        v-btn(slot="activator", v-model="fab", fab, dark, color="blue darken-2")
+        v-btn.primary(slot="activator", v-model="fab", fab, dark)
           v-icon settings
           v-icon close
         span {{ $t('layout.sideBar.buttons.settings') }}

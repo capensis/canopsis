@@ -31,7 +31,7 @@
                   v-icon delete
     .fab
       v-tooltip(left)
-        v-btn(slot="activator", fab, dark, color="indigo", @click.stop="showCreateUserModal")
+        v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateUserModal")
           v-icon add
         span Add user
 </template>

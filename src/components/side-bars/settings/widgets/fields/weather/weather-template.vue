@@ -2,7 +2,7 @@
   v-container(fluid).pa-3
     v-layout(align-center, justify-space-between)
       div.subheading {{ title }}
-      v-btn.green.darken-4.white--text(
+      v-btn.primary(
       small,
       @click="showtextEditorModal"
       ) {{ $t('common.show') }}/{{ $t('common.edit') }}

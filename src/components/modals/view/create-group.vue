@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title
-      span.headline {{ title }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ title }}
     v-card-text
       v-text-field(
       :label="$t('modals.group.fields.name')",
@@ -10,11 +11,11 @@
       v-validate="'required'",
       name="name",
       )
-    v-card-actions
-      v-flex(xs6)
-        v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
-      v-flex.text-xs-right(v-show="config.group", xs6)
-        v-btn.red.darken-4.white--text(@click="remove") {{ $t('common.delete') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+      v-btn.error(@click="remove", v-show="config.group") {{ $t('common.delete') }}
 </template>
 
 <script>

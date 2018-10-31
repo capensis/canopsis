@@ -32,7 +32,7 @@
           v-divider
           field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
       v-divider
-    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title.green.darken-3.white--text
-      h2 {{ config.title }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ config.title }}
     v-card-text
       v-form
         v-layout(row)
@@ -47,11 +48,14 @@
           )
         v-layout(row)
           v-switch(
+            color="primary",
           :label="$t('modals.createUser.fields.enabled')",
           v-model="form.enable",
           )
-    v-card-actions
-      v-btn.green.darken-3.white--text(@click.prevent="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

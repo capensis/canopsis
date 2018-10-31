@@ -4,7 +4,7 @@
     v-container
       v-btn(@click="openAddStatModal") Stat selector modal
       v-card(v-if="value.stat")
-        v-card-title.green.darken-4.white--text {{ value.title }}
+        v-card-title.primary.darken-1.white--text {{ value.title }}
         v-card-text {{ value.stat.value }}
 </template>
 

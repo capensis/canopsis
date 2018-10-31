@@ -8,7 +8,7 @@
       :headers="columns",
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     )
-      v-progress-linear(slot="progress", color="blue", indeterminate)
+      v-progress-linear(slot="progress", color="primary", indeterminate)
       template(slot="headers", slot-scope="{ headers }")
         th {{ $t('common.entity') }}
         th(v-for="header in headers", :key="header.value") {{ header.value }}

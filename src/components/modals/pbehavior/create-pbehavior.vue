@@ -1,8 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit", slot-scope="slotProps")
     v-card
-      v-card-title
-        span.headline {{ $t('modals.createPbehavior.title') }}
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ $t('modals.createPbehavior.title') }}
       v-card-text
         v-layout(row)
           v-text-field(
@@ -42,8 +43,10 @@
         v-layout(row)
           v-alert(:value="serverError", type="error")
             span {{ serverError }}
-      v-card-actions
-        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>

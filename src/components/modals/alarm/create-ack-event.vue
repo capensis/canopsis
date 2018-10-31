@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title
-      span.headline {{ $t('modals.createAckEvent.title') }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t('modals.createAckEvent.title') }}
     v-card-text
       v-container
         v-layout(row align-center)
@@ -18,13 +19,12 @@
           data-vv-name="ticket"
           )
         v-layout(row)
-          v-text-field(
+          v-textarea(
           :label="$t('modals.createAckEvent.fields.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
           v-validate="rules",
           data-vv-name="output",
-          multi-line
           )
         v-layout(row)
           v-tooltip(top)
@@ -35,11 +35,12 @@
             )
               span(slot-name="label") {{  }}
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
-    v-card-actions
-      v-btn(@click.prevent="submit", color="primary") {{ $t('common.actions.acknowledge') }}
-      v-btn(
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit", :disabled="errors.any()") {{ $t('common.actions.acknowledge') }}
+      v-btn.warning(
       @click.prevent="submitWithDeclare",
-      color="warning"
       ) {{ $t('common.actions.acknowledgeAndReport') }}
 </template>
 

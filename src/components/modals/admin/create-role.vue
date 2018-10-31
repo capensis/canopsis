@@ -1,11 +1,9 @@
 <template lang="pug">
 v-card
-  v-card-title.green.darken-4.white--text
+  v-card-title.primary.white--text
     v-layout(justify-space-between, align-center)
       h2 {{ config.title }}
-      v-btn(@click="hideModal", icon, small)
-        v-icon.white--text close
-  v-card-text
+  v-card-text.py-0
     v-container
       v-form
         v-text-field(
@@ -34,7 +32,10 @@ v-card
                 v-list-tile(v-for="view in group.views", :key="view._id", @click="updateDefaultView(view)")
                   v-list-tile-content
                     v-list-tile-title {{ view.name }}
-    v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary.white--text(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

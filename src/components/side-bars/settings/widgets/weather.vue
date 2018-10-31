@@ -35,7 +35,7 @@
           field-grid-size(v-model="settings.widget.parameters.columnMD", :title="$t('settings.columnMD')")
           v-divider
           field-grid-size(v-model="settings.widget.parameters.columnLG", :title="$t('settings.columnLG')")
-    v-btn(@click="submit", color="green darken-4 white--text") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

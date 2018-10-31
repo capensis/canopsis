@@ -35,7 +35,7 @@
             :data-vv-name="`value[${index}]`",
             :value="column.value"
             )
-      v-btn(color="success", @click.prevent="add") {{ $t('common.add') }}
+      v-btn(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>
