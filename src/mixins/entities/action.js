@@ -12,6 +12,7 @@ export default {
   methods: {
     ...mapActions({
       fetchActionsList: 'fetchList',
+      fetchActionsListWithoutStore: 'fetchListWithoutStore',
     }),
   },
 };
