@@ -77,7 +77,8 @@ Pour plus d'expressivité, il est possible d'associer à une clé un dictionnair
 contenant des couples `operateur: valeur`. Les opérateurs disponibles sont :
 
  - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
- - `regex_match` : filtre la valeur d'une clé selon une expression régulière.
+ - `regex_match` : filtre la valeur d'une clé selon une [expression
+   régulière](https://golang.org/pkg/regexp/syntax/).
 
 Par exemple, le pattern suivant sélectionne les événements dont l'état est
 compris entre 1 et 3 et dont l'output vérifie une expression régulière :
