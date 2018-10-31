@@ -15,8 +15,7 @@
                   tr(v-for="action in actions", :key="`action-title-${action._id}`")
                     td.action-title {{ action._id }}
                     td.action-value(v-for="role in roles", :key="`role-action-${role._id}`")
-                      input(
-                      type="checkbox",
+                      v-checkbox-functional(
                       v-for="(checkbox, index) in getCheckboxes(role, action)",
                       :key="`role-${role._id}-action-${action._id}-checkbox-${index}`",
                       v-bind="checkbox.bind",
@@ -85,7 +84,7 @@ export default {
 
             return {
               bind: {
-                checked: this.getCheckboxValue(role, action, userRightMask),
+                inputValue: this.getCheckboxValue(role, action, userRightMask),
               },
               on: {
                 change: value => this.changeCheckboxValue(value, role, action, userRightMask),
@@ -97,7 +96,7 @@ export default {
         return [
           {
             bind: {
-              checked: this.getCheckboxValue(role, action),
+              inputValue: this.getCheckboxValue(role, action),
             },
             on: {
               change: value => this.changeCheckboxValue(value, role, action),
@@ -130,9 +129,8 @@ export default {
       //       console.log(this.changedRoles);
     },
 
-    changeCheckboxValue(event, role, action, rightType) {
+    changeCheckboxValue(value, role, action, rightType) {
       const currentCheckSum = get(role, ['rights', action._id, 'checksum'], 0);
-      const { checked: value } = event.target;
       const factor = value ? 1 : -1;
 
       /**

@@ -23,6 +23,8 @@ import filters from '@/filters';
 import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
 
+import VCheckboxFunctional from '@/components/forms/v-checkbox-functional.vue';
+
 Vue.use(filters);
 Vue.use(Vuetify, {
   theme: {
@@ -58,6 +60,7 @@ Vue.use(DaySpanVuetify, {
 
 Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
+Vue.component('vCheckboxFunctional', VCheckboxFunctional);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
