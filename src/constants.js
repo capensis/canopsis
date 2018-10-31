@@ -12,6 +12,8 @@ export const ENTITIES_TYPES = {
   row: 'row',
   widget: 'widget',
   stat: 'stat',
+  user: 'user',
+  role: 'role',
 };
 
 export const MODALS = {
@@ -36,8 +38,11 @@ export const MODALS = {
   addStat: 'add-stat',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
+  selectView: 'select-view',
   createView: 'create-view',
   createGroup: 'create-group',
+  createUser: 'create-user',
+  createRole: 'create-role',
 };
 
 export const EVENT_ENTITY_TYPES = {

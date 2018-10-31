@@ -1,7 +1,10 @@
 <template lang="pug">
   v-card
-    v-card-title
-      span.headline {{ watcher.display_name }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ watcher.display_name }}
+        v-btn(icon, dark, @click.native="hideModal")
+          v-icon close
     v-divider
     v-card-text
       div(v-html="compiledTemplate")

@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title.blue.darken-4.white--text
-      h2 {{ $t(config.title) }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t(config.title) }}
     v-container
       v-form(ref="form")
         v-text-field(
@@ -11,9 +12,11 @@
         required,
         :error-messages="errors.collect('title')"
         )
-        v-btn(@click="showFilterModal", small) {{ $t('settings.filterEditor') }}
-    v-layout(justify-end)
-      v-btn(@click="save").green.darken-4.white--text.mt-3 {{ $t('common.save') }}
+        v-btn(@click="showFilterModal") {{ $t('settings.filterEditor') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click="save") {{ $t('common.save') }}
 </template>
 
 <script>

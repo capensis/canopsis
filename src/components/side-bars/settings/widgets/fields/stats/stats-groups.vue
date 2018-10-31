@@ -3,52 +3,69 @@
     v-list-tile(slot="activator") {{ $t('settings.statsGroups.title') }}
       .font-italic.caption.ml-1 ({{ $t('settings.statsGroups.required') }})
     v-container
+      v-alert(:value="errors.has('groups')", type="error") {{ $t('settings.statsGroups.required') }}
       v-btn(@click="addGroup") {{ $t('settings.statsGroups.manageGroups') }}
-      v-list(dark)
-        v-list-tile(v-for="(group, index) in value", :key="index")
+      v-list.secondary(dark)
+        v-list-tile(v-for="(group, index) in groups", :key="index")
           v-list-tile-content {{ group.title }}
           v-list-tile-action
             v-layout
-              v-btn.green.darken-4.white--text.mx-1(@click="editGroup(group, index)", fab, small, depressed)
+              v-btn.primary.mx-1(@click="editGroup(group, index)", fab, small, depressed)
                 v-icon edit
-              v-btn.red.darken-4.white--text.mx-1(@click.stop="deleteGroup(index)", fab, small, depressed)
+              v-btn.error(@click.stop="deleteGroup(index)", fab, small, depressed)
                 v-icon delete
 </template>
 
 <script>
 import pullAt from 'lodash/pullAt';
+
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS } from '@/constants';
+import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [modalMixin],
+  inject: ['$validator'],
+  mixins: [modalMixin, formMixin],
+  model: {
+    prop: 'groups',
+    event: 'input',
+  },
   props: {
-    value: {
+    groups: {
       type: Array,
+      default: () => [],
     },
+  },
+  watch: {
+    groups(value) {
+      this.$validator.validate('groups', value);
+    },
+  },
+  created() {
+    this.$validator.attach('groups', 'required', {
+      getter: () => this.groups,
+      context: () => this,
+    });
   },
   methods: {
     addGroup() {
       this.showModal({
-        name: MODALS.manageHistogramGroups,
+        name: this.$constants.MODALS.manageHistogramGroups,
         config: {
           title: 'modals.manageHistogramGroups.title.add',
           action: (newGroup) => {
-            const groups = [...this.value];
-            groups.push(newGroup);
-            this.$emit('input', groups);
+            this.$emit('input', [...this.groups, newGroup]);
           },
         },
       });
     },
     editGroup(group, index) {
       this.showModal({
-        name: MODALS.manageHistogramGroups,
+        name: this.$constants.MODALS.manageHistogramGroups,
         config: {
           title: 'modals.manageHistogramGroups.title.edit',
           group,
           action: (newGroup) => {
-            const groups = [...this.value];
+            const groups = [...this.groups];
             groups[index] = newGroup;
             this.$emit('input', groups);
           },
@@ -57,10 +74,10 @@ export default {
     },
     deleteGroup(index) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: () => {
-            const groups = [...this.value];
+            const groups = [...this.groups];
             pullAt(groups, index);
             this.$emit('input', groups);
           },

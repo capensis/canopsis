@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "chart.js": "^2.7.2",
     "dayspan": "^0.12.4",
     "dayspan-vuetify": "^0.2.6",
-    "chart.js": "^2.7.2",
+    "deep-freeze": "^0.0.1",
     "handlebars": "^4.0.11",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.5",
@@ -23,6 +24,7 @@
     "pug-plain-loader": "^1.0.0",
     "qs": "^6.5.2",
     "rrule": "^2.2.9",
+    "sha1": "^1.1.1",
     "uid": "^0.0.2",
     "uuid": "^3.3.2",
     "vee-validate": "^2.0.6",
@@ -55,6 +57,8 @@
     "pug-loader": "^2.4.0",
     "pug-plain-loader": "^1.0.0",
     "sass-loader": "^6.0.6",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "vue-template-compiler": "^2.5.13"
   },
   "browserslist": [

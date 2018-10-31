@@ -2,6 +2,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from
 
 export default {
   common: {
+    undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
@@ -12,6 +13,7 @@ export default {
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    cancel: 'Cancel',
     options: 'Options',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
@@ -34,6 +36,7 @@ export default {
     trend: 'Trend',
     username: 'Username',
     password: 'Password',
+    connect: 'Connect',
     optionnal: 'optionnal',
     logout: 'Logout',
     title: 'Title',
@@ -72,6 +75,12 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+  },
+  user: {
+    firstName: 'First name',
+    lastName: 'Last name',
+    role: 'Role',
+    defaultView: 'Default view',
   },
   context: {
     impacts: 'Impacts',
@@ -267,6 +276,9 @@ export default {
       displayName: 'Name',
     },
     view: {
+      select: {
+        title: 'Select a view',
+      },
       create: {
         title: 'Create a view',
       },
@@ -317,7 +329,7 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Put a pbehavior on these elements ?',
+      title: 'Create periodical behavior',
       fields: {
         name: 'Name',
         start: 'Start',
@@ -451,6 +463,27 @@ export default {
     calendarAlarmsList: {
       title: 'Calendar alarms list',
     },
+    createUser: {
+      title: 'Create user',
+      fields: {
+        username: 'Username',
+        firstName: 'First name',
+        lastName: 'Last name',
+        email: 'Email',
+        password: 'Password',
+        language: 'User interface language',
+        enabled: 'Enabled',
+      },
+    },
+    editUser: {
+      title: 'Edit user',
+    },
+    createRole: {
+      title: 'Create role',
+    },
+    editRole: {
+      title: 'Edit role',
+    },
   },
   tables: {
     noData: 'No data',
@@ -491,6 +524,10 @@ export default {
       reason: 'Reason',
       rrule: 'Rrule',
     },
+    rolesList: {
+      name: 'Name',
+      actions: 'Actions',
+    },
     alarmStatus: {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
@@ -513,6 +550,15 @@ export default {
     },
     noColumns: {
       message: 'You have to select at least 1 column',
+    },
+    admin: {
+      users: {
+        columns: {
+          username: 'Username',
+          role: 'Role',
+          enabled: 'Enabled',
+        },
+      },
     },
   },
   rRule: {

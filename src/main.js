@@ -1,4 +1,5 @@
 import moment from 'moment';
+import deepFreeze from 'deep-freeze';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
@@ -11,7 +12,8 @@ import DaySpanVuetify from 'dayspan-vuetify';
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
-import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+import * as config from '@/config';
+import * as constants from '@/constants';
 import App from '@/app.vue';
 import router from '@/router';
 import store from '@/store';
@@ -22,7 +24,12 @@ import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-
 import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
 
 Vue.use(filters);
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#2fab63',
+    secondary: '#2b3e4f',
+  },
+});
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {
@@ -53,7 +60,7 @@ Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.use(VueMq, {
-  breakpoints: MEDIA_QUERIES_BREAKPOINTS,
+  breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
 
 Vue.use(VeeValidate, {
@@ -66,6 +73,9 @@ Vue.use(VeeValidate, {
 });
 
 Vue.config.productionTip = false;
+
+Vue.prototype.$constants = deepFreeze(constants);
+Vue.prototype.$config = deepFreeze(config);
 
 new Vue({
   router,

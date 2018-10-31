@@ -4,18 +4,17 @@ v-container.pa-3(fluid)
     div.subheading {{ $t('settings.filterEditor') }}
       .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
     div
-      v-btn.green.darken-4.white--text.caption.my-0.mx-1(
+      v-btn.primary(
       small,
       @click="openFilterModal"
       ) {{ $t('common.create') }}/{{ $t('common.edit') }}
-      v-btn.red.darken-4.white--text.caption.my-0.mx-1(small, @click="deleteFilter")
+      v-btn.error(small, @click="deleteFilter")
         v-icon delete
 </template>
 
 <script>
 import isEmpty from 'lodash/isEmpty';
 
-import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 
 export default {
@@ -37,7 +36,7 @@ export default {
   methods: {
     openFilterModal() {
       this.showModal({
-        name: MODALS.createFilter,
+        name: this.$constants.MODALS.createFilter,
         config: {
           title: 'modals.filter.create.title',
           filter: this.value || {},
@@ -47,7 +46,7 @@ export default {
     },
     deleteFilter() {
       this.showModal({
-        name: MODALS.confirmation,
+        name: this.$constants.MODALS.confirmation,
         config: {
           action: () => this.$emit('input', {}),
         },

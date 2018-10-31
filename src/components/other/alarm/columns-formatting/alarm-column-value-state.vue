@@ -1,13 +1,11 @@
 <template lang="pug">
   v-layout(align-center)
-    alarm-chips(:type="ENTITY_INFOS_TYPE.state", :value="stateId")
+    alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="stateId")
     v-icon(v-if="showIcon", color="purple") account_circle
 </template>
 
 <script>
 import get from 'lodash/get';
-
-import { ENTITY_INFOS_TYPE, EVENT_ENTITY_TYPES } from '@/constants';
 
 import AlarmChips from '../alarm-chips.vue';
 
@@ -29,17 +27,12 @@ export default {
       default: 'v.state.val',
     },
   },
-  data() {
-    return {
-      ENTITY_INFOS_TYPE,
-    };
-  },
   computed: {
     stateId() {
       return get(this.alarm, this.propertyKey);
     },
     showIcon() {
-      return get(this.alarm, 'v.state._t') === EVENT_ENTITY_TYPES.changeState;
+      return get(this.alarm, 'v.state._t') === this.$constants.EVENT_ENTITY_TYPES.changeState;
     },
   },
 };

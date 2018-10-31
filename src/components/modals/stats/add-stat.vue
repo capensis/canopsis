@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title.blue.darken-4.white--text
-      h2 {{ $t(config.title) }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t(config.title) }}
     v-form
       v-container
         v-card.mb-2
@@ -57,14 +58,18 @@
                   v-model="form.parameters.sla",
                   hide-details
                   )
-      v-btn(@click="submit").green.darken-4.white--text.mt-3 {{ $t('common.submit') }}
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import { STATS_TYPES, ENTITIES_STATES } from '@/constants';
+import { MODALS } from '@/constants';
 
 export default {
+  name: MODALS.addStat,
   $_veeValidate: {
     validator: 'new',
   },
@@ -72,7 +77,7 @@ export default {
   data() {
     return {
       form: {
-        stat: STATS_TYPES.alarmsCreated,
+        stat: this.$constants.STATS_TYPES.alarmsCreated,
         title: '',
         trend: true,
         parameters: {
@@ -86,11 +91,12 @@ export default {
      * Get stats different types from constant, and return an object with stat's value and stat's translated title
      */
     statsTypes() {
-      return Object.values(STATS_TYPES)
+      return Object.values(this.$constants.STATS_TYPES)
         .map(item => ({ value: item.value, text: this.$t(`stats.types.${item.value}`), options: item.options }));
     },
     stateTypes() {
-      return Object.keys(ENTITIES_STATES).map(item => ({ value: ENTITIES_STATES[item], text: item }));
+      return Object.keys(this.$constants.ENTITIES_STATES)
+        .map(item => ({ value: this.$constants.ENTITIES_STATES[item], text: item }));
     },
     options() {
       if (this.form.stat) {

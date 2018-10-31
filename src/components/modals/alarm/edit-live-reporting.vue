@@ -1,10 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title
+    v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ $t('modals.liveReporting.editLiveReporting') }}
-        v-btn(@click="hideModal", icon, small)
-          v-icon close
+        span.headline {{ $t('modals.liveReporting.editLiveReporting') }}
     v-card-text
       h3 {{ $t('modals.liveReporting.dateInterval') }}
       v-layout(wrap)
@@ -29,13 +27,16 @@
           :label="$t('modals.liveReporting.tstop')",
           name="tstop",
           :rules="tstopRules")
-      v-btn(@click="submit", color="green darken-4 white--text", small) {{ $t('common.apply') }}
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(@click="submit", :disabled="errors.any()") {{ $t('common.apply') }}
 </template>
 
 <script>
 import moment from 'moment';
 
-import { MODALS, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -57,7 +58,7 @@ export default {
 
     return {
       selectedInterval: config.interval || '',
-      dateIntervals: Object.values(LIVE_REPORTING_INTERVALS).map(value => ({
+      dateIntervals: Object.values(this.$constants.LIVE_REPORTING_INTERVALS).map(value => ({
         value,
         text: this.$t(`modals.liveReporting.${value}`),
       })),
@@ -67,7 +68,7 @@ export default {
   },
   computed: {
     isCustomRangeEnabled() {
-      return this.selectedInterval === LIVE_REPORTING_INTERVALS.custom;
+      return this.selectedInterval === this.$constants.LIVE_REPORTING_INTERVALS.custom;
     },
     tstopRules() {
       return {

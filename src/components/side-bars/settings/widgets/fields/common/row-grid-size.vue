@@ -35,7 +35,6 @@
 <script>
 import isEmpty from 'lodash/isEmpty';
 
-import { WIDGET_MAX_SIZE, WIDGET_MIN_SIZE } from '@/constants';
 import { generateRow } from '@/helpers/entities';
 
 export default {
@@ -88,7 +87,14 @@ export default {
             this.$emit('update:rowId', value._id);
           }
 
-          this.$emit('update:size', { sm: WIDGET_MIN_SIZE, md: WIDGET_MIN_SIZE, lg: WIDGET_MIN_SIZE });
+          this.$emit(
+            'update:size',
+            {
+              sm: this.$constants.WIDGET_MIN_SIZE,
+              md: this.$constants.WIDGET_MIN_SIZE,
+              lg: this.$constants.WIDGET_MIN_SIZE,
+            },
+          );
         }
       },
     },
@@ -106,7 +112,7 @@ export default {
           bind: {
             prependIcon: icons[key],
             value: 0,
-            max: WIDGET_MAX_SIZE,
+            max: this.$constants.WIDGET_MAX_SIZE,
             disabled: true,
           },
         }));

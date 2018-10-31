@@ -16,7 +16,6 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 </template>
 
 <script>
-import { MODALS, ENTITIES_STATES, WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import compile from '@/helpers/handlebars';
 
@@ -51,19 +50,19 @@ export default {
     format() {
       const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
       const iconsMap = {
-        [ENTITIES_STATES.ok]: SunIcon,
-        [ENTITIES_STATES.minor]: CloudySunIcon,
-        [ENTITIES_STATES.major]: CloudIcon,
-        [ENTITIES_STATES.critical]: RainingCloudIcon,
+        [this.$constants.ENTITIES_STATES.ok]: SunIcon,
+        [this.$constants.ENTITIES_STATES.minor]: CloudySunIcon,
+        [this.$constants.ENTITIES_STATES.major]: CloudIcon,
+        [this.$constants.ENTITIES_STATES.critical]: RainingCloudIcon,
       };
 
       if (hasActivePb) {
-        return { icon: PauseIcon, color: WATCHER_PBEHAVIOR_COLOR };
+        return { icon: PauseIcon, color: this.$constants.WATCHER_PBEHAVIOR_COLOR };
       }
 
       return {
         icon: iconsMap[this.watcher.state.val],
-        color: WATCHER_STATES_COLORS[this.watcher.state.val],
+        color: this.$constants.WATCHER_STATES_COLORS[this.watcher.state.val],
       };
     },
     compiledTemplate() {
@@ -73,7 +72,7 @@ export default {
   methods: {
     showWatcherModal() {
       this.showModal({
-        name: MODALS.watcher,
+        name: this.$constants.MODALS.watcher,
         config: {
           watcherId: this.watcher.entity_id,
           entityTemplate: this.widget.parameters.entityTemplate,

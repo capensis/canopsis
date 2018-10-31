@@ -19,8 +19,6 @@ import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import widgetQueryMixin from '@/mixins/widget/query';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
-import { SIDE_BARS } from '@/constants';
-
 import WeatherItem from './weather-item.vue';
 
 export default {
@@ -54,7 +52,7 @@ export default {
   methods: {
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.weatherSettings,
+        name: this.$constants.SIDE_BARS.weatherSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,

@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title.green.darken-3.white--text
-      h2 {{ $t(config.title) }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t(config.title) }}
     v-tabs
       v-tab(
       v-for="tab in tabs",
@@ -13,8 +14,10 @@
         create-form(v-model="form")
       v-tab-item
         manage-infos(v-model="form.infos")
-    v-card-actions
-      v-btn.green.darken-3.white--text(@click.prevent="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

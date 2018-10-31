@@ -239,8 +239,48 @@ export function generateUserPreferenceByWidgetAndUser(widget, user) {
   };
 }
 
+export function generateUser() {
+  return {
+    crecord_write_time: null,
+    crecord_type: 'user',
+    crecord_creation_time: null,
+    crecord_name: null,
+    user_contact: null,
+    rights: null,
+    user_role: null,
+    user_groups: null,
+    authkey: null,
+    role: null,
+    external: false,
+    defaultview: null,
+    id: null,
+    _id: null,
+    firstname: '',
+    lastname: '',
+    password: '',
+    mail: '',
+    enable: true,
+    ui_language: 'fr',
+  };
+}
+
+export function generateRole() {
+  return {
+    crecord_write_time: null,
+    enable: true,
+    crecord_type: 'role',
+    crecord_creation_time: null,
+    crecord_name: null,
+    rights: null,
+    id: null,
+  };
+}
+
 export default {
   generateWidgetByType,
   generateRow,
   generateView,
+  generateUserPreferenceByWidgetAndUser,
+  generateUser,
+  generateRole,
 };

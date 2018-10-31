@@ -8,7 +8,7 @@
           v-switch(
           v-model="value.enabled",
           @change="updateField('enabled', $event)",
-          color="green darken-3",
+          color="primary",
           hide-details
           )
         v-flex

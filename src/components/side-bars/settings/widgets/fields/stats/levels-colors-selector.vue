@@ -3,14 +3,13 @@
     v-list-tile(slot="activator") {{$t('settings.colorsSelector.title')}}
     v-container
       v-layout(wrap)
-        v-flex(xs12, v-for="level in statsCriticity", :key="level")
+        v-flex(xs12, v-for="level in $constants.STATS_CRITICITY", :key="level")
           v-layout(align-center)
             v-btn(@click="showColorPickerModal(level)", small) {{ getButtonText(level) }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: levelsColors[level] }") {{ levelsColors[level] }}
 </template>
 
 <script>
-import { MODALS, STATS_CRITICITY, STATS_CALENDAR_COLORS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import formMixin from '@/mixins/form';
 
@@ -23,7 +22,7 @@ export default {
   props: {
     levelsColors: {
       type: Object,
-      default: () => ({ ...STATS_CALENDAR_COLORS.alarm }),
+      default: () => ({ ...this.$constants.STATS_CALENDAR_COLORS.alarm }),
     },
     hideSuffix: {
       type: Boolean,
@@ -31,17 +30,14 @@ export default {
     },
   },
   computed: {
-    statsCriticity() {
-      return { ...STATS_CRITICITY };
-    },
     getButtonText() {
       return (key) => {
         let suffix = '';
 
         if (!this.hideSuffix) {
-          if (key === STATS_CRITICITY.ok) {
+          if (key === this.$constants.STATS_CRITICITY.ok) {
             suffix = ` / ${this.$t('common.yes')}`;
-          } else if (key === STATS_CRITICITY.critical) {
+          } else if (key === this.$constants.STATS_CRITICITY.critical) {
             suffix = ` / ${this.$t('common.no')}`;
           }
         }
@@ -53,7 +49,7 @@ export default {
   methods: {
     showColorPickerModal(level) {
       this.showModal({
-        name: MODALS.colorPicker,
+        name: this.$constants.MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
           color: this.levelsColors[level],
