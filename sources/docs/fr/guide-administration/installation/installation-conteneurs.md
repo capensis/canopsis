@@ -16,7 +16,7 @@ Pour l'installation dockerisé de Canopsis, le porcédure est la suivante :
     - Rappel : [Intallation de Docker compose](https://docs.docker.com/compose/install/#install-compose)  
   
     - Troubleshotting : Si vous rencontrez une erreur de ce type lors d'un `docker-compose up -d` ou un `docker-compose --version`  
-    ```
+    ```bash
     bash: /usr/bin/docker-compose: Aucun fichier ou dossier de ce type
     ```
 
@@ -25,7 +25,7 @@ Pour l'installation dockerisé de Canopsis, le porcédure est la suivante :
 - faire la commande suivante : `docker-compose up -d`
 
     - Troubleshotting :
-    ```
+    ```bash
     docker-compose up -d
     ERROR: Couldn't connect to Docker daemon at http+docker://localhost - is it running?
     If it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.
@@ -36,7 +36,7 @@ Pour l'installation dockerisé de Canopsis, le porcédure est la suivante :
 
 La vérification va passer par la commande `sudo docker-compose ps` :
 
-```
+```bash
 sudo docker-compose ps
           Name                         Command               State                          Ports                      
 -----------------------------------------------------------------------------------------------------------------------
@@ -67,3 +67,42 @@ canopsis_webserver_1        /bin/sh -c /entrypoint.sh        Up       0.0.0.0:28
 - Command : Commandes en rapport avec la CLI Docker.
 - State : Etat du conteneur.
 - Ports : Ports utilisé par le conteneur.
+
+## Arrêt et suppression du docker-compose
+```bash
+sudo docker-compose down
+Stopping canopsis_webserver_1      ... done
+Stopping canopsis_metric_1         ... done
+Stopping canopsis_event_filter_1   ... done
+Stopping canopsis_task_importctx_1 ... done
+Stopping canopsis_eventstore_1     ... done
+Stopping canopsis_alerts_1         ... done
+Stopping canopsis_scheduler_1      ... done
+Stopping canopsis_pbehavior_1      ... done
+Stopping canopsis_context-graph_1  ... done
+Stopping canopsis_cleaner_events_1 ... done
+Stopping canopsis_ticket_1         ... done
+Stopping canopsis_task_mail_1      ... done
+Stopping canopsis_rabbitmq_1       ... done
+Stopping canopsis_influxdb_1       ... done
+Stopping canopsis_mongodb_1        ... done
+Stopping canopsis_redis_1          ... done
+Removing canopsis_webserver_1      ... done
+Removing canopsis_metric_1         ... done
+Removing canopsis_event_filter_1   ... done
+Removing canopsis_task_importctx_1 ... done
+Removing canopsis_eventstore_1     ... done
+Removing canopsis_alerts_1         ... done
+Removing canopsis_provisionning_1  ... done
+Removing canopsis_scheduler_1      ... done
+Removing canopsis_pbehavior_1      ... done
+Removing canopsis_context-graph_1  ... done
+Removing canopsis_cleaner_events_1 ... done
+Removing canopsis_ticket_1         ... done
+Removing canopsis_task_mail_1      ... done
+Removing canopsis_rabbitmq_1       ... done
+Removing canopsis_influxdb_1       ... done
+Removing canopsis_mongodb_1        ... done
+Removing canopsis_redis_1          ... done
+Removing network canopsis_default
+```
