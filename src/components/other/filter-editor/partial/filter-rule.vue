@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import { FILTER_OPERATORS } from '@/constants';
 import formMixin from '@/mixins/form';
 
 /**
@@ -77,17 +76,17 @@ export default {
     operators: {
       type: Array,
       default() {
-        return Object.values(FILTER_OPERATORS);
+        return Object.values(this.$constants.FILTER_OPERATORS);
       },
     },
   },
   computed: {
     isShownTextField() {
       return ![
-        FILTER_OPERATORS.isEmpty,
-        FILTER_OPERATORS.isNotEmpty,
-        FILTER_OPERATORS.isNull,
-        FILTER_OPERATORS.isNotNull,
+        this.$constants.FILTER_OPERATORS.isEmpty,
+        this.$constants.FILTER_OPERATORS.isNotEmpty,
+        this.$constants.FILTER_OPERATORS.isNull,
+        this.$constants.FILTER_OPERATORS.isNotNull,
       ].includes(this.rule.operator);
     },
   },

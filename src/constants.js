@@ -13,6 +13,7 @@ export const ENTITIES_TYPES = {
   widget: 'widget',
   stat: 'stat',
   action: 'action',
+  user: 'user',
   role: 'role',
 };
 
@@ -41,6 +42,7 @@ export const MODALS = {
   selectView: 'select-view',
   createView: 'create-view',
   createGroup: 'create-group',
+  createUser: 'create-user',
   createRole: 'create-role',
 };
 

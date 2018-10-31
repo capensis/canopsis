@@ -13,8 +13,6 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS } from '@/constants';
-
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
@@ -40,6 +38,7 @@ import Watcher from './watcher/watcher.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
 import CalendarAlarmsList from './stats/calendar-alarms-list.vue';
+import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
@@ -74,14 +73,15 @@ export default {
     ManageHistogramGroups,
     AddStat,
     CalendarAlarmsList,
+    CreateUser,
     CreateRole,
   },
   data() {
     return {
       dialogPropsMap: {
-        [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
-        [MODALS.createWidget]: { maxWidth: 500, lazy: true },
-        [MODALS.calendarAlarmsList]: { fullscreen: true, lazy: true },
+        [this.$constants.MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
+        [this.$constants.MODALS.createWidget]: { maxWidth: 500, lazy: true },
+        [this.$constants.MODALS.calendarAlarmsList]: { fullscreen: true, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

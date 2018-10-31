@@ -13,6 +13,7 @@ export default {
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    cancel: 'Cancel',
     options: 'Options',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
@@ -35,6 +36,7 @@ export default {
     trend: 'Trend',
     username: 'Username',
     password: 'Password',
+    connect: 'Connect',
     optionnal: 'optionnal',
     logout: 'Logout',
     title: 'Title',
@@ -327,7 +329,7 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Put a pbehavior on these elements ?',
+      title: 'Create periodical behavior',
       fields: {
         name: 'Name',
         start: 'Start',
@@ -461,6 +463,21 @@ export default {
     calendarAlarmsList: {
       title: 'Calendar alarms list',
     },
+    createUser: {
+      title: 'Create user',
+      fields: {
+        username: 'Username',
+        firstName: 'First name',
+        lastName: 'Last name',
+        email: 'Email',
+        password: 'Password',
+        language: 'User interface language',
+        enabled: 'Enabled',
+      },
+    },
+    editUser: {
+      title: 'Edit user',
+    },
     createRole: {
       title: 'Create role',
     },
@@ -533,6 +550,15 @@ export default {
     },
     noColumns: {
       message: 'You have to select at least 1 column',
+    },
+    admin: {
+      users: {
+        columns: {
+          username: 'Username',
+          role: 'Role',
+          enabled: 'Enabled',
+        },
+      },
     },
   },
   rRule: {

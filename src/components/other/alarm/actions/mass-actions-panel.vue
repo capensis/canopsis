@@ -23,7 +23,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import actionsPanelMixin from '@/mixins/actions-panel';
-import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, MODALS } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
@@ -50,7 +49,7 @@ export default {
       actions: [
         {
           type: 'pbehavior',
-          method: this.showActionModal(MODALS.createPbehavior),
+          method: this.showActionModal(this.$constants.MODALS.createPbehavior),
         },
         {
           type: 'fastAck',
@@ -58,7 +57,7 @@ export default {
         },
         {
           type: 'ack',
-          method: this.showActionModal(MODALS.createAckEvent),
+          method: this.showActionModal(this.$constants.MODALS.createAckEvent),
         },
         {
           type: 'ackRemove',
@@ -71,19 +70,19 @@ export default {
     ...entitiesMapGetters(['getList']),
 
     items() {
-      return this.getList(ENTITIES_TYPES.alarm, this.itemsIds);
+      return this.getList(this.$constants.ENTITIES_TYPES.alarm, this.itemsIds);
     },
 
     modalConfig() {
       return {
-        itemsType: ENTITIES_TYPES.alarm,
+        itemsType: this.$constants.ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
       };
     },
   },
   methods: {
     createAckEvent() {
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
+      return this.createEvent(this.$constants.EVENT_ENTITY_TYPES.ack, this.items);
     },
   },
 };

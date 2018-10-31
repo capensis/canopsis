@@ -24,7 +24,12 @@ import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-
 import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
 
 Vue.use(filters);
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#2fab63',
+    secondary: '#2b3e4f',
+  },
+});
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {

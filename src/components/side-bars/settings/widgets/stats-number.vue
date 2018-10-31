@@ -10,9 +10,12 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-duration(v-model="settings.widget.parameters.duration")
+      field-duration(v-model="settings.widget.parameters.duration", :title="$t('settings.duration')")
       v-divider
-      field-date-select(:title="$t('settings.tstop')", v-model="settings.widget.parameters.tstop")
+      field-stat-end-date-select(
+      v-model="settings.widget.parameters.tstop",
+      :duration="settings.widget.parameters.duration"
+      )
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter")
       v-divider
@@ -23,7 +26,7 @@
       field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
       v-divider
       field-levels-colors-selector(v-model="settings.widget.parameters.statColors")
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -34,7 +37,7 @@ import { SIDE_BARS } from '@/constants';
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDuration from './fields/stats/duration.vue';
-import FieldDateSelect from './fields/common/date-time-select.vue';
+import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';
 import FieldYesNoMode from './fields/stats/yes-no-mode.vue';
@@ -50,7 +53,7 @@ export default {
     FieldRowGridSize,
     FieldTitle,
     FieldDuration,
-    FieldDateSelect,
+    FieldStatEndDateSelect,
     FieldFilterEditor,
     FieldStatSelector,
     FieldYesNoMode,

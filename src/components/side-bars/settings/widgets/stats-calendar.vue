@@ -36,13 +36,13 @@
           field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
           v-divider
           field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors", hideSuffix)
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 
-import { SIDE_BARS, ENTITIES_TYPES } from '@/constants';
+import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     entitiesType() {
-      return ENTITIES_TYPES.entity;
+      return this.$constants.ENTITIES_TYPES.entity;
     },
   },
   methods: {

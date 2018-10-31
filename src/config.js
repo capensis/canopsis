@@ -27,7 +27,6 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 export const API_ROUTES = {
   auth: '/auth',
   currentUser: '/account/me',
-  user: '/account/user',
   alarmList: '/alerts/get-alarms',
   context: '/context',
   createEntity: '/put-entities',
@@ -41,9 +40,14 @@ export const API_ROUTES = {
   viewGroup: '/api/v2/views/groups',
   stats: '/api/v2/stats',
   action: '/rest/default_rights/action',
+  user: {
+    list: '/rest/default_rights/user',
+    create: '/account/user',
+    remove: '/account/delete/user',
+  },
   role: {
     list: '/rest/default_rights/role',
-    createAndEdit: '/account/role',
+    create: '/account/role',
     remove: '/account/delete/role',
   },
 };

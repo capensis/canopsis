@@ -58,7 +58,6 @@
 import omit from 'lodash/omit';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { FILTER_DEFAULT_VALUES } from '@/constants';
 import uid from '@/helpers/uid';
 import formMixin from '@/mixins/form';
 
@@ -112,14 +111,14 @@ export default {
      * @description Invoked on a click on 'Add Rule' button. Add an empty object to the 'rules' array
      */
     addRule() {
-      this.updateRule(uid('rule'), cloneDeep(FILTER_DEFAULT_VALUES.rule));
+      this.updateRule(uid('rule'), cloneDeep(this.$constants.FILTER_DEFAULT_VALUES.rule));
     },
 
     /**
      * @description Invoked on a click on 'Add Group' button. Add a Group to the 'groups' array
      */
     addGroup() {
-      this.updateGroup(uid('group'), cloneDeep(FILTER_DEFAULT_VALUES.group));
+      this.updateGroup(uid('group'), cloneDeep(this.$constants.FILTER_DEFAULT_VALUES.group));
     },
 
     /**

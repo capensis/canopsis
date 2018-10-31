@@ -79,7 +79,7 @@ export default {
 
     async create({ dispatch }, { data }) {
       try {
-        await request.post(API_ROUTES.role.createAndEdit, qs.stringify({ role: JSON.stringify(data) }), {
+        await request.post(API_ROUTES.role.create, qs.stringify({ role: JSON.stringify(data) }), {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });

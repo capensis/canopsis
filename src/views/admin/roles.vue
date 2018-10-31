@@ -27,7 +27,7 @@
                 v-icon(color="red darken-4") delete
     .fab
       v-tooltip(left)
-        v-btn(slot="activator", fab, dark, color="indigo", @click.stop="showCreateRoleModal")
+        v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateRoleModal")
           v-icon add
         span Add role
 

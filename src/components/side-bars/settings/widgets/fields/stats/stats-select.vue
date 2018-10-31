@@ -5,16 +5,16 @@
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-btn(@click="openAddStatModal") {{ $t('modals.addStat.title.add') }}
-      v-list(dark)
+      v-list.secondary(dark)
         v-list-group(v-for="(stat, key) in stats", :key="key")
           v-list-tile(slot="activator")
             v-list-tile-content
               v-list-tile-title {{ key }}
             v-list-tile-action
               v-layout
-                v-btn.green.darken-4.white--text.mx-1(@click.stop="editStat(key, stat)", fab, small, depressed)
+                v-btn.primary.mx-1(@click.stop="editStat(key, stat)", fab, small, depressed)
                   v-icon edit
-                v-btn.red.darken-4.white--text.mx-1(@click.stop="deleteStat(key)", fab, small, depressed)
+                v-btn.error(@click.stop="deleteStat(key)", fab, small, depressed)
                   v-icon delete
           v-list-tile
             v-list-tile-title {{ $t('common.stat') }}: {{ stat.stat }}
@@ -30,7 +30,6 @@ import set from 'lodash/set';
 import unset from 'lodash/unset';
 
 import modalMixin from '@/mixins/modal/modal';
-import { MODALS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -59,7 +58,7 @@ export default {
   methods: {
     openAddStatModal() {
       this.showModal({
-        name: MODALS.addStat,
+        name: this.$constants.MODALS.addStat,
         config: {
           title: 'modals.addStat.title.add',
           action: (stat) => {
@@ -84,7 +83,7 @@ export default {
 
     editStat(statTitle, stat) {
       this.showModal({
-        name: MODALS.addStat,
+        name: this.$constants.MODALS.addStat,
         config: {
           title: 'modals.addStat.title.edit',
           stat,

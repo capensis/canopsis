@@ -24,7 +24,6 @@
 
 <script>
 import moment from 'moment-timezone';
-import { STATS_DURATION_UNITS } from '@/constants';
 
 import DatePicker from '@/components/forms/date-picker/date-picker.vue';
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
@@ -60,7 +59,7 @@ export default {
       return this.duration.slice(-1);
     },
     isDurationUnitEqualMonth() {
-      return this.durationUnit === STATS_DURATION_UNITS.month;
+      return this.durationUnit === this.$constants.STATS_DURATION_UNITS.month;
     },
   },
   watch: {
@@ -69,7 +68,7 @@ export default {
      * If it's 'm', we need to put the date on the 1st day of the month, at 00:00 (UTC)
     */
     durationUnit(value) {
-      if (value && value === STATS_DURATION_UNITS.month) {
+      if (value && value === this.$constants.STATS_DURATION_UNITS.month) {
         const date = moment.tz(this.value * 1000, moment.tz.guess()).startOf('month');
         this.$emit('input', date.add(date.utcOffset(), 'm').unix());
       } else {
@@ -90,7 +89,7 @@ export default {
        * If the duration is 'm' (for 'Month'), we need to put the date on the first day of the month,
        * at 00:00 (UTC)
        */
-      if (this.durationUnit === STATS_DURATION_UNITS.month) {
+      if (this.durationUnit === this.$constants.STATS_DURATION_UNITS.month) {
         // Get the value's date object, and put it on the first day of the month, at 00:00 (local date)
         const date = moment.tz(value, moment.tz.guess()).startOf('month');
         // Add the difference between the local date, and the UTC one.

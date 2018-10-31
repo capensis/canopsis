@@ -6,7 +6,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { POPUP_AUTO_CLOSE_DELAY, VUETIFY_ANIMATION_DELAY } from '@/config';
+import { POPUP_AUTO_CLOSE_DELAY } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('popup');
 
@@ -72,7 +72,7 @@ export default {
   methods: {
     ...mapActions(['remove']),
     removeWithTimeout() {
-      this.timeouts.push(setTimeout(() => this.remove({ id: this.id }), VUETIFY_ANIMATION_DELAY));
+      this.timeouts.push(setTimeout(() => this.remove({ id: this.id }), this.$config.VUETIFY_ANIMATION_DELAY));
     },
   },
 };

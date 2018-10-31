@@ -1,17 +1,18 @@
 <template lang="pug">
   v-card
-    v-card-title.green.darken-4.white--text
+    v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ config.title }}
-        v-btn(@click="hideModal", icon, small)
-          v-icon.white--text close
+        span.headline {{ config.title }}
     v-card-text
       v-layout
         v-flex
           chrome(v-model="color")
         v-flex
           compact(v-model="color")
-    v-btn(@click="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
