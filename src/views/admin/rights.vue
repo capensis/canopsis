@@ -1,32 +1,36 @@
 <template lang="pug">
   v-container.admin-rights
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.rights') }}
-    v-expansion-panel
-      v-expansion-panel-content(
-      v-for="(actions, groupKey) in groupedActions",
-      :key="groupKey",
-      lazy,
-      lazyWithUnmount,
-      ripple
-      )
-        div(slot="header") {{ groupKey }}
-        v-card
-          v-card-text
-            table.table
-              thead
-                tr
-                  th
-                  th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
-              tbody
-                tr(v-for="action in actions", :key="`action-title-${action._id}`")
-                  td.action-title {{ action._id }}
-                  td.action-value(v-for="role in roles", :key="`role-action-${role._id}`")
-                    v-checkbox-functional(
-                    v-for="(checkbox, index) in getCheckboxes(role, action)",
-                    :key="`role-${role._id}-action-${action._id}-checkbox-${index}`",
-                    v-bind="checkbox.bind",
-                    v-on="checkbox.on"
-                    )
+    div.progress-wrapper
+      v-fade-transition
+        v-layout.white.progress(v-show="pending", column)
+          v-progress-circular(indeterminate, color="primary")
+      v-expansion-panel
+        v-expansion-panel-content(
+        v-for="(actions, groupKey) in groupedActions",
+        :key="groupKey",
+        lazy,
+        lazyWithUnmount,
+        ripple
+        )
+          div(slot="header") {{ groupKey }}
+          v-card
+            v-card-text
+              table.table
+                thead
+                  tr
+                    th
+                    th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
+                tbody
+                  tr(v-for="action in actions", :key="`action-title-${action._id}`")
+                    td.action-title {{ action._id }}
+                    td.action-value(v-for="role in roles", :key="`role-action-${role._id}`")
+                      v-checkbox-functional(
+                      v-for="(checkbox, index) in getCheckboxes(role, action)",
+                      :key="`role-${role._id}-action-${action._id}-checkbox-${index}`",
+                      v-bind="checkbox.bind",
+                      v-on="checkbox.on"
+                      )
     v-layout(v-show="hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
@@ -48,9 +52,8 @@ export default {
   mixins: [modalMixin, entitiesActionMixin, entitiesRoleMixin],
   data() {
     return {
-      pending: true,
+      pending: false,
       groupedActions: { business: [], view: [], technical: [] },
-      models: {},
       changedRoles: {},
     };
   },
@@ -114,22 +117,11 @@ export default {
     },
   },
   async mounted() {
-    const [{ data: actions }] = await Promise.all([
-      this.fetchActionsListWithoutStore({ params: { limit: 10000 } }),
-      this.fetchRolesList({ params: { limit: 10000 } }),
-    ]);
+    this.pending = true;
 
-    this.groupedActions = actions.reduce((acc, action) => {
-      if (action.id.startsWith('view') || action.id.startsWith('userview')) {
-        acc.view.push(action);
-      } else if (action.id.startsWith('models')) {
-        acc.technical.push(action);
-      } else {
-        acc.business.push(action);
-      }
+    await this.fetchList();
 
-      return acc;
-    }, { business: [], view: [], technical: [] });
+    this.pending = false;
   },
   methods: {
     clearChangedRoles() {
@@ -155,6 +147,8 @@ export default {
     },
 
     async updateRoles() {
+      this.pending = true;
+
       await Promise.all(Object.keys(this.changedRoles).map((roleId) => {
         const changedRoleActions = this.changedRoles[roleId];
         const role = this.getRoleById(roleId);
@@ -167,7 +161,10 @@ export default {
         return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
       }));
 
+      await this.fetchList();
+
       this.clearChangedRoles();
+      this.pending = false;
     },
 
     changeCheckboxValue(value, role, action, rightType) {
@@ -214,6 +211,25 @@ export default {
         }
       }
     },
+
+    async fetchList() {
+      const [{ data: actions }] = await Promise.all([
+        this.fetchActionsListWithoutStore({ params: { limit: 10000 } }),
+        this.fetchRolesList({ params: { limit: 10000 } }),
+      ]);
+
+      this.groupedActions = actions.reduce((acc, action) => {
+        if (action.id.startsWith('view') || action.id.startsWith('userview')) {
+          acc.view.push(action);
+        } else if (action.id.startsWith('models')) {
+          acc.technical.push(action);
+        } else {
+          acc.business.push(action);
+        }
+
+        return acc;
+      }, { business: [], view: [], technical: [] });
+    },
   },
 };
 </script>
@@ -250,5 +266,26 @@ export default {
         }
       }
     }
+  }
+
+  .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: .4;
+    z-index: 10;
+
+    & /deep/ .v-progress-circular {
+      top: 50%;
+      left: 50%;
+      margin-top: -16px;
+      margin-left: -16px;
+    }
+  }
+
+  .progress-wrapper {
+    position: relative;
   }
 </style>

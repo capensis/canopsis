@@ -12,7 +12,6 @@ export const ENTITIES_TYPES = {
   row: 'row',
   widget: 'widget',
   stat: 'stat',
-  action: 'action',
   user: 'user',
   role: 'role',
 };
