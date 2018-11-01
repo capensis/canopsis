@@ -70,11 +70,14 @@ function ruleOperatorAndInput(rule) {
         /**
          * Throw an error if the operator was not found.
          */
-        throw new Error(`Operator not found: ${operator}`); // TODO: translate
+        const [inputObject] = Object.values(rule);
+        const [input] = Object.values(inputObject);
+
+        parsedRule.input = input;
+        parsedRule.operator = operator;
       }
     }
   }
-
   return parsedRule;
 }
 

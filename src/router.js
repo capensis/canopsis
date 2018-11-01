@@ -56,6 +56,12 @@ const routes = [
     component: AdminRoles,
     meta: requiresLoginMeta,
   },
+  {
+    path: '/admin/parameters',
+    name: 'admin-parameters',
+    // TODO: Add component to the Parameters view
+    meta: requiresLoginMeta,
+  },
 ];
 
 const router = new Router({
