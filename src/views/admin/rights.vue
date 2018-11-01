@@ -27,7 +27,9 @@
                     v-bind="checkbox.bind",
                     v-on="checkbox.on"
                     )
-    v-btn(v-show="hasChanges", @click="submit") {{ $t('common.submit') }}
+    v-layout(v-show="hasChanges")
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+      v-btn(@click="cancel") {{ $t('common.cancel') }}
 </template>
 
 <script>
@@ -54,7 +56,7 @@ export default {
   },
   computed: {
     hasChanges() {
-      return Object.keys(this.changedRoles).length;
+      return !isEmpty(this.changedRoles);
     },
 
     getCheckboxValue() {
@@ -130,6 +132,19 @@ export default {
     }, { business: [], view: [], technical: [] });
   },
   methods: {
+    clearChangedRoles() {
+      this.changedRoles = {};
+    },
+
+    cancel() {
+      this.showModal({
+        name: this.$constants.MODALS.confirmation,
+        config: {
+          action: this.clearChangedRoles,
+        },
+      });
+    },
+
     submit() {
       this.showModal({
         name: this.$constants.MODALS.confirmation,
@@ -151,6 +166,8 @@ export default {
 
         return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
       }));
+
+      this.clearChangedRoles();
     },
 
     changeCheckboxValue(value, role, action, rightType) {
