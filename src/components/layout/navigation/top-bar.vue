@@ -8,6 +8,33 @@
     v-spacer
     v-toolbar-items
       v-menu(bottom, offset-y)
+        v-btn.white--text(slot="activator", flat) Administration
+        v-list.pb-0
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-rights' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.rights') }}
+                  v-icon verified_user
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-users' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.users') }}
+                  v-icon people
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-roles' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.roles') }}
+                  v-icon supervised_user_circle
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-parameters' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.parameters') }}
+                  v-icon settings
+      v-menu(bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
         v-list.pb-0
           v-list-tile
@@ -89,6 +116,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
   .brand {
     display: flex;
     align-items: center;

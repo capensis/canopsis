@@ -38,6 +38,12 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
+    path: '/admin/rights',
+    name: 'admin-rights',
+    // TODO: Add component to the Rights view
+    meta: requiresLoginMeta,
+  },
+  {
     path: '/admin/users',
     name: 'admin-users',
     component: AdminUsers,
@@ -47,6 +53,12 @@ const routes = [
     path: '/admin/roles',
     name: 'admin-roles',
     component: AdminRoles,
+    meta: requiresLoginMeta,
+  },
+  {
+    path: '/admin/parameters',
+    name: 'admin-parameters',
+    // TODO: Add component to the Parameters view
     meta: requiresLoginMeta,
   },
 ];
