@@ -1,27 +1,32 @@
 <template lang="pug">
-  v-container
+  v-container.admin-rights
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.rights') }}
     v-expansion-panel
-      expansion-panel-content(v-for="(actions, groupKey) in groupedActions", :key="groupKey", lazy, ripple)
+      v-expansion-panel-content(
+      v-for="(actions, groupKey) in groupedActions",
+      :key="groupKey",
+      lazy,
+      lazyWithUnmount,
+      ripple
+      )
         div(slot="header") {{ groupKey }}
         v-card
           v-card-text
-            .fixedTable
-              table.table
-                thead
-                  tr
-                    th
-                    th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
-                tbody
-                  tr(v-for="action in actions", :key="`action-title-${action._id}`")
-                    td.action-title {{ action._id }}
-                    td.action-value(v-for="role in roles", :key="`role-action-${role._id}`")
-                      v-checkbox-functional(
-                      v-for="(checkbox, index) in getCheckboxes(role, action)",
-                      :key="`role-${role._id}-action-${action._id}-checkbox-${index}`",
-                      v-bind="checkbox.bind",
-                      v-on="checkbox.on"
-                      )
+            table.table
+              thead
+                tr
+                  th
+                  th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
+              tbody
+                tr(v-for="action in actions", :key="`action-title-${action._id}`")
+                  td.action-title {{ action._id }}
+                  td.action-value(v-for="role in roles", :key="`role-action-${role._id}`")
+                    v-checkbox-functional(
+                    v-for="(checkbox, index) in getCheckboxes(role, action)",
+                    :key="`role-${role._id}-action-${action._id}-checkbox-${index}`",
+                    v-bind="checkbox.bind",
+                    v-on="checkbox.on"
+                    )
     v-btn(v-show="hasChanges", @click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -29,17 +34,16 @@
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import transform from 'lodash/transform';
 
-import VirtualList from 'vue-virtual-scroll-list';
+import { generateRoleRightByChecksum } from '@/helpers/entities';
 
+import modalMixin from '@/mixins/modal/modal';
 import entitiesActionMixin from '@/mixins/entities/action';
 import entitiesRoleMixin from '@/mixins/entities/role';
 
-import ExpansionPanelContent from './expansion-panel.vue';
-
 export default {
-  components: { VirtualList, ExpansionPanelContent },
-  mixins: [entitiesActionMixin, entitiesRoleMixin],
+  mixins: [modalMixin, entitiesActionMixin, entitiesRoleMixin],
   data() {
     return {
       pending: true,
@@ -127,7 +131,26 @@ export default {
   },
   methods: {
     submit() {
-      //       console.log(this.changedRoles);
+      this.showModal({
+        name: this.$constants.MODALS.confirmation,
+        config: {
+          action: this.updateRoles,
+        },
+      });
+    },
+
+    async updateRoles() {
+      await Promise.all(Object.keys(this.changedRoles).map((roleId) => {
+        const changedRoleActions = this.changedRoles[roleId];
+        const role = this.getRoleById(roleId);
+
+        const newRights = transform(
+          changedRoleActions,
+          (acc, value, key) => acc[key] = generateRoleRightByChecksum(value),
+        );
+
+        return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
+      }));
     },
 
     changeCheckboxValue(value, role, action, rightType) {
@@ -179,40 +202,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  $cellWidth: 100px;
+  .admin-rights {
+    & /deep/ .v-expansion-panel__body {
+      overflow: auto;
+    }
+  }
 
-  .fixedTable {
-    .table {
-      background-color: white;
-      width: 100%;
+  .table {
+    background-color: white;
+    width: 100%;
 
-      tr {
-        td, th {
-          vertical-align: top;
-          min-width: $cellWidth;
-        }
-
-        .group-title {
-          width: 100px;
-        }
-
-        .action-title {
-          width: 200px;
-        }
-
-        .action-value {
-          text-align: center;
-        }
+    tr {
+      td, th {
+        vertical-align: top;
+        padding: 5px;
       }
 
-      & /deep/ {
-        .v-input {
-          margin: 0;
+      .action-value {
+        text-align: center;
+      }
+    }
 
-          .v-input--selection-controls__input {
-            display: block;
-            margin: auto;
-          }
+    & /deep/ {
+      .v-input {
+        margin: 0;
+
+        .v-input--selection-controls__input {
+          display: block;
+          margin: auto;
         }
       }
     }

@@ -1990,7 +1990,6 @@ chardet@^0.4.0:
 "charenc@>= 0.0.1":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
-  integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
 
 chart.js@^2.7.2:
   version "2.7.3"
@@ -2475,7 +2474,6 @@ cross-spawn@^6.0.0:
 "crypt@>= 0.0.1":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
-  integrity sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=
 
 crypto-browserify@^3.11.0:
   version "3.12.0"
@@ -8463,7 +8461,6 @@ sha.js@^2.4.0, sha.js@^2.4.8:
 sha1@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/sha1/-/sha1-1.1.1.tgz#addaa7a93168f393f19eb2b15091618e2700f848"
-  integrity sha1-rdqnqTFo85PxnrKxUJFhjicA+Eg=
   dependencies:
     charenc ">= 0.0.1"
     crypt ">= 0.0.1"
@@ -9553,10 +9550,6 @@ vue-template-compiler@^2.5.13:
 vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
-
-vue-virtual-scroll-list@^1.2.8:
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/vue-virtual-scroll-list/-/vue-virtual-scroll-list-1.2.8.tgz#893fba84a982bc06c9c7a2c7f71e4d437c2e82f4"
 
 vue@^2.3.3, vue@^2.5.13:
   version "2.5.17"

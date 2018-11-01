@@ -3,14 +3,25 @@ import VExpansionPanelContent from 'vuetify/es5/components/VExpansionPanel/VExpa
 
 export default {
   extends: VExpansionPanelContent,
+  props: {
+    ...VExpansionPanelContent.props,
+
+    lazyWithUnmount: {
+      type: Boolean,
+      default: false,
+    },
+  },
   watch: {
     isActive(value) {
-      if (!value) {
+      if (this.lazyWithUnmount && !value) {
+        /**
+         * Animation waiting and after that unmounting component content
+         */
         setTimeout(() => {
           if (!this.isActive) {
             this.isBooted = false;
           }
-        }, this.$config.VUETIFY_ANIMATION_DELAY);
+        }, this.$config.VUETIFY_ANIMATION_DELAY * 2);
       }
     },
   },

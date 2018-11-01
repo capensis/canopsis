@@ -276,6 +276,13 @@ export function generateRole() {
   };
 }
 
+export function generateRoleRightByChecksum(checksum) {
+  return {
+    checksum,
+    crecord_type: 'right',
+  };
+}
+
 export default {
   generateWidgetByType,
   generateRow,
@@ -283,4 +290,5 @@ export default {
   generateUserPreferenceByWidgetAndUser,
   generateUser,
   generateRole,
+  generateRoleRightByChecksum,
 };
