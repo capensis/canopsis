@@ -128,7 +128,6 @@ export default {
 
     parse() {
       this.parseError = '';
-
       try {
         if (this.requestString !== '') {
           this.updateFilter(parseGroupToFilter(JSON.parse(this.requestString)));

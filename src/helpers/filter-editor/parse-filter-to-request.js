@@ -93,6 +93,8 @@ function parseFilterRuleToRequest(rule) {
       break;
     }
     default: {
+      parsedRule[rule.field] = {};
+      parsedRule[rule.field][rule.operator] = rule.input;
       break;
     }
   }

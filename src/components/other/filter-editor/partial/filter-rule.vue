@@ -22,10 +22,10 @@
         flat
         )
       v-flex(xs10, md3)
-        v-select.my-2(
+        v-combobox.my-2(
         :value="rule.operator",
         :items="operators",
-        @change="updateField('operator', $event)",
+        @input="updateField('operator', $event)",
         solo-inverted,
         hide-details,
         dense,
