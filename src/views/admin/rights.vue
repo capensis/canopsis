@@ -1,5 +1,6 @@
 <template lang="pug">
   v-container
+    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.rights') }}
     v-expansion-panel
       expansion-panel-content(v-for="(actions, groupKey) in groupedActions", :key="groupKey", lazy, ripple)
         div(slot="header") {{ groupKey }}
