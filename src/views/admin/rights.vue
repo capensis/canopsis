@@ -250,20 +250,11 @@ export default {
         vertical-align: top;
         padding: 5px;
       }
-
-      .action-value {
-        text-align: center;
-      }
     }
 
     & /deep/ {
       .v-input {
         margin: 0;
-
-        .v-input--selection-controls__input {
-          display: block;
-          margin: auto;
-        }
       }
     }
   }
