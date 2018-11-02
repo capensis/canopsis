@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    v-layout.white(wrap, justify-space-between, align-center)
+    v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
@@ -17,19 +17,18 @@
         clearable
         )
       v-flex
-        v-chip(
+        v-chip.primary.white--text(
         v-if="query.interval",
         @input="removeHistoryFilter",
         close,
         label,
-        color="blue darken-4 white--text"
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
-          v-icon(:color="query.interval ? 'blue' : 'black'") schedule
-        v-btn(icon, @click="showSettings")
+          v-icon(:color="query.interval ? 'primary' : 'black'") schedule
+        v-btn(v-if="rowId", icon, @click="showSettings")
           v-icon settings
-      v-flex.px-3
-        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
+      v-flex.px-3(v-show="selected.length", xs12)
+        mass-actions-panel(:itemsIds="selectedIds")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -47,7 +46,7 @@
       )
         template(slot="progress")
           v-fade-transition
-            v-progress-linear(height="2", indeterminate)
+            v-progress-linear(height="2", indeterminate, color="primary")
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
@@ -73,9 +72,8 @@
 
 <script>
 import omit from 'lodash/omit';
+import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
-
-import { MODALS, SIDE_BARS } from '@/constants';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -92,7 +90,6 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
  * Alarm-list component
@@ -120,7 +117,6 @@ export default {
     widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    entitiesUserPreferenceMixin,
   ],
   props: {
     widget: {
@@ -129,7 +125,6 @@ export default {
     },
     rowId: {
       type: String,
-      required: true,
     },
   },
   data() {
@@ -150,12 +145,12 @@ export default {
       return [];
     },
     mainFilter() {
-      const { mainFilter } = this.userPreference.widget_preferences;
+      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
 
       return isEmpty(mainFilter) ? null : mainFilter;
     },
     viewFilters() {
-      const { viewFilters } = this.userPreference.widget_preferences;
+      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
 
       return isEmpty(viewFilters) ? [] : viewFilters;
     },
@@ -167,16 +162,17 @@ export default {
 
     showEditLiveReportModal() {
       this.showModal({
-        name: MODALS.editLiveReporting,
+        name: this.$constants.MODALS.editLiveReporting,
         config: {
-          updateQuery: params => this.query = { ...this.query, ...params },
+          ...pick(this.query, ['interval', 'tstart', 'tstop']),
+          action: params => this.query = { ...this.query, ...params },
         },
       });
     },
 
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.alarmSettings,
+        name: this.$constants.SIDE_BARS.alarmSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,

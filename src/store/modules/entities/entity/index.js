@@ -73,6 +73,18 @@ export default {
     },
   },
   actions: {
+    async fetchListWithoutStore({ dispatch }, { params } = {}) {
+      try {
+        const { total, data } = await request.post(API_ROUTES.context, {}, { params });
+
+        return { total, entities: data };
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+
+        return { total: 0, entities: [] };
+      }
+    },
+
     fetch({ dispatch }, { params } = {}) {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,
@@ -108,7 +120,6 @@ export default {
         // Need this special syntax for request params for the backend to handle it
         await request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.createEntity') }, { root: true });
-        // dispatch('fetchList', { params: state.fetchingParams });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }

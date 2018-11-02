@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs(v-model="activeTab" slider-color="blue darken-4" centered)
+  v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
     v-tab(:disabled="isRequestStringChanged") {{$t('filterEditor.tabs.visualEditor')}}
     v-tab-item
       v-container
@@ -21,9 +21,6 @@
         v-flex(xs10 md-6)
           v-alert(:value="parseError", type="error") {{ parseError }}
       v-btn(@click="parse", :disabled="!isRequestStringChanged") {{$t('common.parse')}}
-    v-tab(@click="openResultsTab", :disabled="isRequestStringChanged") {{$t('filterEditor.tabs.results')}}
-    v-tab-item
-      filter-results(:filter="request")
 </template>
 
 
@@ -31,14 +28,14 @@
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
-import EventBus from '@/event-bus';
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { ENTITIES_TYPES } from '@/constants';
 
 import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter-editor/parse-filter-to-request';
 
-import FilterGroup from '@/components/other/filter-editor/partial/filter-group.vue';
-import FilterResults from '@/components/other/filter-editor/partial/filter-results.vue';
+import FilterGroup from './partial/filter-group.vue';
+import FilterResultsAlarm from './partial/results/alarm.vue';
+import FilterResultsEntity from './partial/results/entity.vue';
 
 /**
  * Component to create new MongoDB filter
@@ -50,16 +47,22 @@ import FilterResults from '@/components/other/filter-editor/partial/filter-resul
 export default {
   components: {
     FilterGroup,
-    FilterResults,
+    FilterResultsAlarm,
+    FilterResultsEntity,
   },
   props: {
     value: {
       type: String,
       default: '',
     },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
+    },
   },
   data() {
-    let filter = cloneDeep(FILTER_DEFAULT_VALUES.group);
+    let filter = cloneDeep(this.$constants.FILTER_DEFAULT_VALUES.group);
 
     if (this.value !== '') {
       const valueObject = JSON.parse(this.value);
@@ -79,10 +82,12 @@ export default {
       requestString: '',
       parseError: '',
       isRequestStringChanged: false,
-      possibleFields: ['component_name', 'connector_name', 'connector', 'resource'],
     };
   },
   computed: {
+    resultsComponent() {
+      return `filter-results-${this.entitiesType}`;
+    },
     request() {
       try {
         return parseFilterToRequest(this.filter);
@@ -90,6 +95,18 @@ export default {
         console.error(err);
 
         return {};
+      }
+    },
+    possibleFields() {
+      switch (this.entitiesType) {
+        case this.$constants.ENTITIES_TYPES.alarm:
+          return ['connector', 'connector_name', 'component', 'resource'];
+
+        case this.$constants.ENTITIES_TYPES.entity:
+          return ['name', 'type'];
+
+        default:
+          return [];
       }
     },
   },
@@ -109,13 +126,8 @@ export default {
       }
     },
 
-    openResultsTab() {
-      EventBus.$emit('filter-editor:results:fetch');
-    },
-
     parse() {
       this.parseError = '';
-
       try {
         if (this.requestString !== '') {
           this.updateFilter(parseGroupToFilter(JSON.parse(this.requestString)));
@@ -131,3 +143,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .filter-editor {
+    .v-card {
+      box-shadow: 0 0 0 -1px rgba(0, 0, 0, 0.5), 0 1px 5px 0 rgba(0, 0, 0, 0.44), 0 1px 3px 0 rgba(0, 0, 0, 0.42);
+    }
+  }
+</style>

@@ -43,7 +43,6 @@ import pickBy from 'lodash/pickBy';
 
 import actionsPanelMixin from '@/mixins/actions-panel';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
@@ -133,7 +132,7 @@ export default {
     },
     modalConfig() {
       return {
-        itemsType: ENTITIES_TYPES.alarm,
+        itemsType: this.$constants.ENTITIES_TYPES.alarm,
         itemsIds: [this.item._id],
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
@@ -141,7 +140,8 @@ export default {
     actions() {
       const { actionsMap } = this;
 
-      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
+      if ([this.$constants.ENTITIES_STATUSES.ongoing, this.$constants.ENTITIES_STATUSES.flapping]
+        .includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
             main: pick(actionsMap, ['declareTicket', 'associateTicket', 'cancel']),
@@ -160,7 +160,7 @@ export default {
           main: pick(actionsMap, ['ack', 'fastAck']),
           dropDown: pick(actionsMap, ['moreInfos']),
         };
-      } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
+      } else if (this.item.v.status.val === this.$constants.ENTITIES_STATUSES.cancelled) {
         return {
           main: pick(actionsMap, ['pbehaviorList']),
           dropDown: [],
@@ -175,7 +175,7 @@ export default {
   },
   methods: {
     createAckEvent() {
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
+      return this.createEvent(this.$constants.EVENT_ENTITY_TYPES.ack, this.item);
     },
   },
 };

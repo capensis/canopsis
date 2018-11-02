@@ -1,4 +1,5 @@
 import { normalize } from 'normalizr';
+import i18n from '@/i18n';
 
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';
@@ -24,6 +25,7 @@ export default {
   getters: {
     item: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
+    getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](ENTITIES_TYPES.view, id),
   },
   mutations: {
     [types.FETCH_ITEM]: (state, viewId) => {
@@ -55,7 +57,7 @@ export default {
       return request.post(API_ROUTES.view, data);
     },
 
-    async update({ commit }, { id, data }) {
+    async update({ commit, dispatch }, { id, data }) {
       try {
         await request.put(`${API_ROUTES.view}/${id}`, data);
 
@@ -63,6 +65,7 @@ export default {
 
         commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
       } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
         console.warn(err);
       }
     },

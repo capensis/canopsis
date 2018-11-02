@@ -53,8 +53,9 @@
         ref="timePicker"
         v-model="timeString",
         @input="updateDateTimeObject",
-        @change="showDateTab"
-        format="24hr"
+        @change="showDateTab",
+        format="24hr",
+        :allowed-minutes="allowedMinutes"
         no-title,
         )
     .text-xs-center.dropdown-footer
@@ -63,8 +64,6 @@
 
 <script>
 import moment from 'moment';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 const TABS = {
   date: 'date',
@@ -92,6 +91,7 @@ export default {
     label: String,
     name: String,
     rules: [String, Object],
+    roundHours: Boolean,
   },
   data() {
     const value = this.value ? moment(this.value) : null;
@@ -117,13 +117,19 @@ export default {
     isActiveMinuteTab() {
       return this.isActiveTimeTab && !this.$refs.timePicker.selectingHour;
     },
+    allowedMinutes() {
+      if (this.roundHours) {
+        return v => v === 0;
+      }
+      return null;
+    },
   },
   watch: {
     opened(value) {
       if (!value) {
         setTimeout(() => {
           this.activeTab = 'date';
-        }, VUETIFY_ANIMATION_DELAY);
+        }, this.$config.VUETIFY_ANIMATION_DELAY);
       }
     },
   },

@@ -1,28 +1,29 @@
 <template lang="pug">
-  v-container.blue.darken-4(
+  v-container.secondary(
   fill-height,
   fluid,
   d-flex,
   align-center
   )
     v-layout(justify-center, align-center, row)
-      v-flex(xs11, md6, lg5)
+      v-flex(xs11, md6, lg4)
         v-card
           v-layout(row, wrap)
             v-flex(xs12)
-              v-toolbar.green.darken-2.white--text
+              v-toolbar.primary.white--text
                 v-toolbar-title {{ $t('common.login') }}
-            v-flex(xs12, py-2)
-              v-form(@submit.prevent="submit")
-                v-flex(px-3)
-                  v-alert(:value="hasServerError", type="error")
-                    span {{ $t('login.errors.incorrectEmailOrPassword') }}
+            v-flex(xs12)
+              v-layout(justify-center)
+                img.my-4(src="@/assets/canopsis-green.png")
+            v-flex(xs12)
+              v-form.py-2(@submit.prevent="submit")
                 v-flex(px-3)
                   v-text-field(
                   :label="$t('common.username')"
                   autofocus,
                   clearable,
-                  color="blue darken-4",
+                  outline,
+                  color="primary",
                   v-model="form.username",
                   name="username",
                   v-validate="'required'",
@@ -33,7 +34,8 @@
                   v-text-field(
                   :label="$t('common.password')"
                   clearable,
-                  color="blue darken-4",
+                  outline,
+                  color="primary",
                   v-model="form.password",
                   type="password",
                   name="password",
@@ -41,11 +43,14 @@
                   data-vv-name="password",
                   :error-messages="errors.collect('password')",
                   )
-                v-flex(xs2 px-2)
-                  v-btn(
-                  type="submit",
-                  color="blue darken-4 white--text"
-                  ) {{ $t('common.submit') }}
+              v-flex.px-3.py-2
+                v-alert(:value="hasServerError", type="error")
+                  span {{ $t('login.errors.incorrectEmailOrPassword') }}
+              v-flex(xs2 px-2)
+                v-btn.primary(
+                @click="submit",
+                type="submit",
+                ) {{ $t('common.connect') }}
 </template>
 
 <script>

@@ -1,8 +1,9 @@
 <template lang="pug">
   div
     v-card
-      v-card-title
-        span.headline {{ $t('modals.createPbehavior.title') }}
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ $t('modals.createPbehavior.title') }}
       v-card-text
         v-data-table(:headers="headers", :items="firstItem.pbehaviors", disable-initial-sort, hide-actions)
           template(slot="items", slot-scope="props")
@@ -15,6 +16,9 @@
             td
               v-btn.mx-0(@click="removePbehavior({ id: props.item._id })", icon)
                 v-icon delete
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
 </template>
 
 <script>

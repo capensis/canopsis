@@ -1,24 +1,86 @@
 <template lang="pug">
-  v-toolbar.top-bar.white(
+  v-toolbar.top-bar.primary(
     dense,
     fixed,
-    clipped-left,
     app,
   )
-    div.brand.ma-0.green.darken-4(v-show="$options.filters.mq($mq, { t: true })")
-      img(src="@/assets/canopsis.png")
-    v-toolbar-side-icon(@click="$emit('toggleSideBar')")
+    v-toolbar-side-icon.ml-2.white--text(@click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
-      v-menu(offset-y, bottom)
-        v-btn(slot="activator", flat) {{ currentUser.crecord_name }}
-        v-list
-          v-list-tile(@click.prevent="logout")
-            v-list-tile-title {{ $t('common.logout') }}
+      v-menu(bottom, offset-y)
+        v-btn.white--text(slot="activator", flat) Administration
+        v-list.pb-0
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-rights' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.rights') }}
+                  v-icon verified_user
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-users' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.users') }}
+                  v-icon people
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-roles' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.roles') }}
+                  v-icon supervised_user_circle
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'admin-parameters' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.parameters') }}
+                  v-icon settings
+      v-menu(bottom, offset-y)
+        v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
+        v-list.pb-0
+          v-list-tile
+            v-list-tile-title
+              v-layout
+                div {{ $t('user.firstName') }} :
+                div.px-1(v-if="currentUser.firstname") {{ currentUser.firstname }}
+                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
+          v-divider
+          v-list-tile
+            v-list-tile-title
+              v-layout
+                div {{ $t('user.lastName') }} :
+                div.px-1(v-if="currentUser.lastname") {{ currentUser.lastname }}
+                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
+          v-divider
+          v-list-tile
+            v-list-tile-title
+              v-layout
+                div {{ $t('user.role') }} :
+                div.px-1 {{ currentUser.role }}
+          v-divider
+          v-list-tile(two-line)
+            v-list-tile-content
+              v-layout(align-center)
+                v-flex
+                  div {{ $t('user.defaultView') }} :
+                v-flex(v-if="defaultViewTitle")
+                  div.px-1 {{ defaultViewTitle }}
+                v-flex(v-else)
+                  div.px-1.font-italic {{ $t('common.undefined') }}
+                v-btn.primary(@click.stop="editDefaultView", small, fab, depressed)
+                  v-icon edit
+          v-divider
+          v-list-tile.error.white--text(@click.prevent="logout")
+            v-list-tile-title
+              v-layout(align-center)
+                div {{ $t('common.logout') }}
+                v-icon.pl-1.white--text exit_to_app
 </template>
 
 <script>
 import authMixin from '@/mixins/auth';
+import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesUserMixin from '@/mixins/entities/user';
+import modalMixin from '@/mixins/modal/modal';
 
 /**
  * Component for the top bar of the application
@@ -26,11 +88,39 @@ import authMixin from '@/mixins/auth';
  * @event toggleSideBar#click
  */
 export default {
-  mixins: [authMixin],
+  mixins: [authMixin, entitiesViewMixin, entitiesUserMixin, modalMixin],
+  computed: {
+    defaultViewTitle() {
+      const userDefaultView = this.getViewById(this.currentUser.defaultview);
+      return userDefaultView ? userDefaultView.title : null;
+    },
+  },
+  methods: {
+    editDefaultView() {
+      this.showModal({
+        name: this.$constants.MODALS.selectView,
+        config: {
+          action: (viewId) => {
+            const user = { ...this.currentUser, defaultview: viewId };
+            this.editUserAccount(user);
+          },
+        },
+      });
+    },
+    async editUserAccount(user) {
+      await this.editUser({ user });
+      await this.fetchCurrentUser();
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
   .brand {
     display: flex;
     align-items: center;

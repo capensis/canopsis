@@ -14,7 +14,6 @@
 
 
 <script>
-import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
 
 /**
  * Component showing an action icon
@@ -41,46 +40,49 @@ export default {
     },
   },
   data() {
+    const eventStyles = { ...this.$constants.EVENT_ENTITY_STYLE };
+    const eventTypes = { ...this.$constants.EVENT_ENTITY_TYPES };
+
     return {
       actionsMap: {
         ack: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
+          icon: eventStyles[eventTypes.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
         },
         fastAck: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          icon: eventStyles[eventTypes.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
         },
         ackRemove: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
+          icon: eventStyles[eventTypes.ackRemove].icon,
           title: this.$t('alarmList.actions.titles.ackRemove'),
         },
         pbehavior: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
+          icon: eventStyles[eventTypes.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
         },
         snooze: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
+          icon: eventStyles[eventTypes.snooze].icon,
           title: this.$t('alarmList.actions.titles.snooze'),
         },
         pbehaviorList: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
+          icon: eventStyles[eventTypes.pbehaviorList].icon,
           title: this.$t('alarmList.actions.titles.pbehaviorList'),
         },
         declareTicket: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
+          icon: eventStyles[eventTypes.declareTicket].icon,
           title: this.$t('alarmList.actions.titles.declareTicket'),
         },
         associateTicket: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          icon: eventStyles[eventTypes.assocTicket].icon,
           title: this.$t('alarmList.actions.titles.associateTicket'),
         },
         cancel: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          icon: eventStyles[eventTypes.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
         },
         changeState: {
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
+          icon: eventStyles[eventTypes.changeState].icon,
           title: this.$t('alarmList.actions.titles.changeState'),
         },
         moreInfos: {

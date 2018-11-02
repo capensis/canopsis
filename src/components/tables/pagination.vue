@@ -2,23 +2,29 @@
   div.container.text-xs-center(v-if="meta.total")
     ul.v-pagination(v-if="type === 'top'")
       li
-        button.v-pagination__navigation(:disabled="currentPage <= 1", @click="previous")
+        button.v-pagination__navigation(
+        :disabled="isPreviousPageDisabled",
+        :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }",
+        @click="previous"
+        )
           v-icon chevron_left
       span {{ currentPage }}
       span /
       span {{ totalPages }}
       li
-        button.v-pagination__navigation(:disabled="currentPage >= totalPages", @click="next")
+        button.v-pagination__navigation(
+        :disabled="currentPage >= totalPages",
+        :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
+        @click="next"
+        )
           v-icon chevron_right
     div(v-else)
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
       |  {{ last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
-      v-pagination(v-model="currentPage", :total-visible="totalVisible" :length="totalPages")
+      v-pagination(v-model="currentPage", :total-visible="$config.PAGINATION_TOTAL_VISIBLE" :length="totalPages")
 </template>
 
 <script>
-import { PAGINATION_TOTAL_VISIBLE } from '@/config';
-
 /**
  * Pagination component
  *
@@ -48,11 +54,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      totalVisible: PAGINATION_TOTAL_VISIBLE,
-    };
   },
   computed: {
     currentPage: {
@@ -94,6 +95,14 @@ export default {
       const calculatedLast = this.query.page * this.query.limit;
 
       return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
+    },
+
+    isPreviousPageDisabled() {
+      return this.currentPage <= 1;
+    },
+
+    isNextPageDisabled() {
+      return this.currentPage >= this.totalPages;
     },
   },
   methods: {

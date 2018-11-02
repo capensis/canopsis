@@ -16,11 +16,8 @@
 
 <script>
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetQueryMixin from '@/mixins/widget/query';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
-
-import { SIDE_BARS } from '@/constants';
 
 import WeatherItem from './weather-item.vue';
 
@@ -30,7 +27,6 @@ export default {
   },
   mixins: [
     entitiesWatcherMixin,
-    entitiesUserPreferenceMixin,
     widgetQueryMixin,
     sideBarMixin,
   ],
@@ -56,7 +52,7 @@ export default {
   methods: {
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.weatherSettings,
+        name: this.$constants.SIDE_BARS.weatherSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,
@@ -66,7 +62,7 @@ export default {
 
     fetchList() {
       this.fetchWatchersList({
-        filter: this.widget.filter,
+        filter: this.widget.parameters.mfilter.filter,
         params: this.getQuery(),
         widgetId: this.widget._id,
       });

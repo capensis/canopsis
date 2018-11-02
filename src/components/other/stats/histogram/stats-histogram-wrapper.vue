@@ -11,7 +11,6 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import { SIDE_BARS } from '@/constants';
 import StatsHistogram from './stats-histogram.vue';
 
 export default {
@@ -60,7 +59,7 @@ export default {
   methods: {
     showSettings() {
       this.showSideBar({
-        name: SIDE_BARS.statsHistogramSettings,
+        name: this.$constants.SIDE_BARS.statsHistogramSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,

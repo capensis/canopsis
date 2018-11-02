@@ -1,14 +1,19 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
+    undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
     widget: 'Widget',
+    addWidget: 'Add widget',
+    refresh: 'Refresh',
+    toggleEditView: 'Toggle view edition mode',
     name: 'Name',
     description: 'Description',
     author: 'Author',
     submit: 'Submit',
+    cancel: 'Cancel',
     options: 'Options',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
@@ -16,6 +21,7 @@ export default {
     login: 'Login',
     yes: 'Yes',
     no: 'No',
+    default: 'Default',
     confirmation: 'Are you sure ?',
     parameters: 'Parameters',
     by: 'By',
@@ -28,18 +34,26 @@ export default {
     authors: 'Authors',
     stat: 'Stat',
     trend: 'Trend',
+    users: 'Users',
+    roles: 'Roles',
+    rights: 'Rights',
     username: 'Username',
     password: 'Password',
+    connect: 'Connect',
+    optionnal: 'optionnal',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
     label: 'Label',
     value: 'Value',
     add: 'Add',
+    create: 'Create',
     delete: 'Delete',
+    show: 'Show',
     edit: 'Edit',
     parse: 'Parse',
     home: 'Home',
+    step: 'Step',
     entries: 'entries',
     showing: 'showing',
     apply: 'Apply',
@@ -64,6 +78,12 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+  },
+  user: {
+    firstName: 'First name',
+    lastName: 'Last name',
+    role: 'Role',
+    defaultView: 'Default view',
   },
   context: {
     impacts: 'Impacts',
@@ -140,8 +160,12 @@ export default {
       contextTableSettings: 'Context table settings',
       weatherSettings: 'Service weather settings',
       statsHistogramSettings: 'Histogram settings',
+      statsCurvesSettings: 'Curve settings',
       statsTableSettings: 'Stats table settings',
+      statsCalendarSettings: 'Stats calendar settings',
+      statsNumberSettings: 'Stats number settings',
     },
+    advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default Sort Column',
@@ -153,11 +177,27 @@ export default {
     open: 'Open',
     resolved: 'Resolved',
     filters: 'Filters',
-    filterEditor: 'Filter editor',
+    filterEditor: 'Filter',
     duration: 'Duration',
     tstop: 'End date',
-    statsSelect: 'Stats select',
+    periodsNumber: 'Number of steps',
+    statName: 'Stat name',
+    statsSelect: {
+      title: 'Stats select',
+      required: 'Select at least 1 stat',
+    },
+    yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
+    criticityLevels: 'Criticity levels',
+    colorsSelector: {
+      title: 'Colors selector',
+      statsCriticity: {
+        [STATS_CRITICITY.ok]: 'ok',
+        [STATS_CRITICITY.minor]: 'minor',
+        [STATS_CRITICITY.major]: 'major',
+        [STATS_CRITICITY.critical]: 'critical',
+      },
+    },
     statsNumbers: {
       title: 'Stats numbers',
       yesNoMode: 'Yes/No mode',
@@ -170,15 +210,10 @@ export default {
       },
     },
     rowGridSize: {
-      title: 'Row grid size',
+      title: 'Widget\'s size',
       noData: 'No row corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         row: 'Row',
-        size: {
-          sm: 'Column SM',
-          md: 'Column MD',
-          lg: 'Column LG',
-        },
       },
     },
     moreInfosModal: '"More Infos" Popup',
@@ -205,10 +240,14 @@ export default {
     statsGroups: {
       title: 'Stats groups',
       manageGroups: 'Add a group',
+      required: 'Create at least 1 group',
     },
     statsColor: {
       title: 'Stats color',
       pickColor: 'Pick a color',
+    },
+    considerPbehaviors: {
+      title: 'Consider pbehaviors',
     },
   },
   modals: {
@@ -240,6 +279,9 @@ export default {
       displayName: 'Name',
     },
     view: {
+      select: {
+        title: 'Select a view',
+      },
       create: {
         title: 'Create a view',
       },
@@ -290,7 +332,7 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Put a pbehavior on these elements ?',
+      title: 'Create periodical behavior',
       fields: {
         name: 'Name',
         start: 'Start',
@@ -363,6 +405,9 @@ export default {
     colorPicker: {
       title: 'Color picker',
     },
+    textEditor: {
+      title: 'Text editor',
+    },
     widgetCreation: {
       title: 'Select a widget',
       types: {
@@ -378,8 +423,17 @@ export default {
         statsHistogram: {
           title: 'Stats histogram',
         },
+        statsCurves: {
+          title: 'Stats curves',
+        },
         statsTable: {
           title: 'Stats table',
+        },
+        statsCalendar: {
+          title: 'Stats calendar',
+        },
+        statsNumber: {
+          title: 'Stats number',
         },
       },
     },
@@ -409,12 +463,37 @@ export default {
         isNotEmpty: 'The group is not empty',
       },
     },
+    calendarAlarmsList: {
+      title: 'Calendar alarms list',
+    },
+    createUser: {
+      title: 'Create user',
+      fields: {
+        username: 'Username',
+        firstName: 'First name',
+        lastName: 'Last name',
+        email: 'Email',
+        password: 'Password',
+        language: 'User interface language',
+        enabled: 'Enabled',
+      },
+    },
+    editUser: {
+      title: 'Edit user',
+    },
+    createRole: {
+      title: 'Create role',
+    },
+    editRole: {
+      title: 'Edit role',
+    },
   },
   tables: {
     noData: 'No data',
     contextList: {
       title: 'Context List',
       name: 'Name',
+      type: 'Type',
       id: 'Id',
       noDataText: 'Make a research',
     },
@@ -448,6 +527,10 @@ export default {
       reason: 'Reason',
       rrule: 'Rrule',
     },
+    rolesList: {
+      name: 'Name',
+      actions: 'Actions',
+    },
     alarmStatus: {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
@@ -470,6 +553,15 @@ export default {
     },
     noColumns: {
       message: 'You have to select at least 1 column',
+    },
+    admin: {
+      users: {
+        columns: {
+          username: 'Username',
+          role: 'Role',
+          enabled: 'Enabled',
+        },
+      },
     },
   },
   rRule: {
@@ -523,6 +615,13 @@ export default {
   },
   errors: {
     default: 'Something went wrong...',
+    lineNotEmpty: 'This line is not empty',
+  },
+  calendar: {
+    today: 'Today',
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
   },
   success: {
     default: 'Done !',
@@ -542,10 +641,17 @@ export default {
       deleteGroup: 'Delete group',
     },
     resultsTableHeaders: {
-      connector: 'Connector',
-      connectorName: 'Connector name',
-      component: 'Component',
-      resource: 'Resource',
+      alarm: {
+        connector: 'Connector',
+        connectorName: 'Connector name',
+        component: 'Component',
+        resource: 'Resource',
+      },
+      entity: {
+        id: 'ID',
+        name: 'Name',
+        type: 'Type',
+      },
     },
     errors: {
       invalidJSON: 'Invalid JSON',

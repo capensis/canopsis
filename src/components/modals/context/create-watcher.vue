@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title
-      span.headline {{ $t(config.title) }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t(config.title) }}
     v-form
       v-layout(wrap, justify-center)
         v-flex(xs11)
@@ -17,9 +18,10 @@
           h3.text-xs-center {{ $t('filterEditor.title') }}
           v-divider
           filter-editor(v-model="form.mfilter")
-      v-layout
-        v-flex(xs3)
-          v-btn.green.darken-4.white--text(@click="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -27,11 +29,12 @@ import { createNamespacedHelpers } from 'vuex';
 
 import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import { ENTITIES_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
 const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
 
 export default {
+  name: MODALS.createWatcher,
   $_veeValidate: {
     validator: 'new',
   },
@@ -66,7 +69,7 @@ export default {
           ...this.form,
           _id: this.config.item ? this.config.item._id : this.form.name,
           display_name: this.form.name,
-          type: ENTITIES_TYPES.watcher,
+          type: this.$constants.ENTITIES_TYPES.watcher,
           mfilter: this.form.mfilter,
         };
 

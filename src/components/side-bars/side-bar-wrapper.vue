@@ -2,13 +2,13 @@
   v-navigation-drawer(
   v-model="isOpen",
   :stateless="hasModals",
-  v-bind="navigationDrawerProps"
+  v-bind="navigationDrawerProps",
   )
     div(v-if="title")
-      v-toolbar(color="blue darken-4")
+      v-toolbar(color="secondary")
         v-list
           v-list-tile
-            v-list-tile-title.white--text.text-xs-center {{ title }}
+            v-list-tile-title.white--text {{ title }}
         v-btn(@click.stop="hideSideBar", icon)
           v-icon(color="white") close
       v-divider
@@ -18,7 +18,6 @@
 
 <script>
 import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
-import { SIDE_BARS } from '@/constants';
 
 /**
  * Wrapper for each modal window
@@ -40,12 +39,16 @@ export default {
   },
   computed: {
     title() {
+      const sideBars = { ...this.$constants.SIDE_BARS };
       const TITLES_MAP = {
-        [SIDE_BARS.alarmSettings]: this.$t('settings.titles.alarmListSettings'),
-        [SIDE_BARS.contextSettings]: this.$t('settings.titles.contextTableSettings'),
-        [SIDE_BARS.weatherSettings]: this.$t('settings.titles.weatherSettings'),
-        [SIDE_BARS.statsHistogramSettings]: this.$t('settings.titles.statsHistogramSettings'),
-        [SIDE_BARS.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
+        [sideBars.alarmSettings]: this.$t('settings.titles.alarmListSettings'),
+        [sideBars.contextSettings]: this.$t('settings.titles.contextTableSettings'),
+        [sideBars.weatherSettings]: this.$t('settings.titles.weatherSettings'),
+        [sideBars.statsHistogramSettings]: this.$t('settings.titles.statsHistogramSettings'),
+        [sideBars.statsCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
+        [sideBars.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
+        [sideBars.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
+        [sideBars.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
       };
 
       return this.sideBarConfig.sideBarTitle || TITLES_MAP[this.sideBarName];
