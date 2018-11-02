@@ -266,7 +266,7 @@ export default {
     bottom: 0;
     right: 0;
     opacity: .4;
-    z-index: 10;
+    z-index: 1;
 
     & /deep/ .v-progress-circular {
       top: 50%;
