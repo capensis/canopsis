@@ -43,6 +43,8 @@ import Weather from '@/components/other/service-weather/weather.vue';
 import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
 
+import authMixin from '@/mixins/auth';
+import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -55,6 +57,8 @@ export default {
     StatsTable,
   },
   mixins: [
+    authMixin,
+    popupMixin,
     modalMixin,
     entitiesViewMixin,
   ],
@@ -89,7 +93,17 @@ export default {
     },
   },
   created() {
-    this.fetchView({ id: this.id });
+    /**
+     * TODO: We can move check access into beforeRouteEnter but we will should use store from imports
+     * because there isn't this context in the beforeRouteEnter
+     */
+    if (!this.hasAccess(this.id, this.$constants.USERS_RIGHTS_MASKS.read, true)) {
+      this.addErrorPopup({ text: 'Forbidden' });
+      this.$router.back();
+    } else {
+      document.addEventListener('keydown', this.keyDownListener);
+      this.fetchView({ id: this.id });
+    }
   },
   methods: {
     async refreshView() {

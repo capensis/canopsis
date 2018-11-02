@@ -38,9 +38,12 @@
 </template>
 
 <script>
+import pick from 'lodash/pick';
+import pickBy from 'lodash/pickBy';
+
 import actionsPanelMixin from '@/mixins/actions-panel';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES, MODALS } from '@/constants';
+import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, ENTITIES_STATUSES } from '@/constants';
 
 import ActionsPanelItem from './actions-panel-item.vue';
 
@@ -66,46 +69,56 @@ export default {
   },
   data() {
     return {
-      actionsMap: {
+      allActionsMap: {
         ack: {
           type: 'ack',
-          method: this.showActionModal(MODALS.createAckEvent),
+          right: 'listalarm_ack',
+          method: this.showActionModal(this.$constants.MODALS.createAckEvent),
         },
         fastAck: {
           type: 'fastAck',
+          right: 'listalarm_fastAck',
           method: this.createAckEvent,
         },
         ackRemove: {
           type: 'ackRemove',
+          right: 'listalarm_cancelAck',
           method: this.showAckRemoveModal,
         },
         pbehavior: {
           type: 'pbehavior',
-          method: this.showActionModal(MODALS.createPbehavior),
+          right: 'listalarm_pbehavior',
+          method: this.showActionModal(this.$constants.MODALS.createPbehavior),
         },
         snooze: {
           type: 'snooze',
-          method: this.showActionModal(MODALS.createSnoozeEvent),
+          right: 'listalarm_snoozeAlarm',
+          method: this.showActionModal(this.$constants.MODALS.createSnoozeEvent),
         },
         pbehaviorList: {
           type: 'pbehaviorList',
-          method: this.showActionModal(MODALS.pbehaviorList),
+          right: 'listalarm_listPbehavior',
+          method: this.showActionModal(this.$constants.MODALS.pbehaviorList),
         },
         declareTicket: {
           type: 'declareTicket',
-          method: this.showActionModal(MODALS.createDeclareTicketEvent),
+          right: 'listalarm_declareanIncident',
+          method: this.showActionModal(this.$constants.MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
           type: 'associateTicket',
-          method: this.showActionModal(MODALS.createAssociateTicketEvent),
+          right: 'listalarm_assignTicketNumber',
+          method: this.showActionModal(this.$constants.MODALS.createAssociateTicketEvent),
         },
         cancel: {
           type: 'cancel',
-          method: this.showActionModal(MODALS.createCancelEvent),
+          right: 'listalarm_removeAlarm',
+          method: this.showActionModal(this.$constants.MODALS.createCancelEvent),
         },
         changeState: {
           type: 'changeState',
-          method: this.showActionModal(MODALS.createChangeStateEvent),
+          right: 'listalarm_changeState',
+          method: this.showActionModal(this.$constants.MODALS.createChangeStateEvent),
         },
         moreInfos: {
           type: 'moreInfos',
@@ -115,6 +128,9 @@ export default {
     };
   },
   computed: {
+    actionsMap() {
+      return pickBy(this.allActionsMap, value => this.hasAccess(value.right));
+    },
     modalConfig() {
       return {
         itemsType: ENTITIES_TYPES.alarm,
@@ -128,31 +144,31 @@ export default {
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
-            main: [actionsMap.declareTicket, actionsMap.associateTicket, actionsMap.cancel],
-            dropDown: [
-              actionsMap.ackRemove,
-              actionsMap.snooze,
-              actionsMap.changeState,
-              actionsMap.pbehavior,
-              actionsMap.pbehaviorList,
-              actionsMap.moreInfos,
-            ],
+            main: pick(actionsMap, ['declareTicket', 'associateTicket', 'cancel']),
+            dropDown: pick(actionsMap, [
+              'ackRemove',
+              'snooze',
+              'changeState',
+              'pbehavior',
+              'pbehaviorList',
+              'moreInfos',
+            ]),
           };
         }
 
         return {
-          main: [actionsMap.ack, actionsMap.fastAck],
-          dropDown: [actionsMap.moreInfos],
+          main: pick(actionsMap, ['ack', 'fastAck']),
+          dropDown: pick(actionsMap, ['moreInfos']),
         };
       } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
         return {
-          main: [actionsMap.pbehaviorList],
+          main: pick(actionsMap, ['pbehaviorList']),
           dropDown: [],
         };
       }
 
       return {
-        main: [actionsMap.pbehaviorList],
+        main: pick(actionsMap, ['pbehaviorList']),
         dropDown: [],
       };
     },
