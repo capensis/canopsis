@@ -96,6 +96,7 @@ const entitiesModule = {
         route,
         schema,
         body,
+        headers = {},
         dataPreparer = d => d,
         params = {},
         method = 'GET',
@@ -106,16 +107,16 @@ const entitiesModule = {
 
       switch (method) {
         case 'GET':
-          data = await request.get(route, { params });
+          data = await request.get(route, { params, headers });
           break;
         case 'POST':
-          data = await request.post(route, body, { params });
+          data = await request.post(route, body, { params, headers });
           break;
         case 'PUT':
-          data = await request.put(route, body, { params });
+          data = await request.put(route, body, { params, headers });
           break;
         case 'DELETE':
-          data = await request.delete(route, { params });
+          data = await request.delete(route, { params, headers });
           break;
         default:
           throw new Error(`Invalid method: ${method}`);

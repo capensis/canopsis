@@ -44,12 +44,13 @@ import transform from 'lodash/transform';
 
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesActionMixin from '@/mixins/entities/action';
 import entitiesRoleMixin from '@/mixins/entities/role';
 
 export default {
-  mixins: [modalMixin, entitiesActionMixin, entitiesRoleMixin],
+  mixins: [authMixin, modalMixin, entitiesActionMixin, entitiesRoleMixin],
   data() {
     return {
       pending: false,
@@ -161,9 +162,15 @@ export default {
         return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
       }));
 
-      await this.fetchList();
+      /**
+       * If current user role changed
+       */
+      if (this.changedRoles[this.currentUser.role]) {
+        await this.fetchCurrentUser();
+      }
 
       this.clearChangedRoles();
+
       this.pending = false;
     },
 
