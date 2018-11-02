@@ -5,9 +5,7 @@
         v-btn(icon, @click="showSettings")
           v-icon settings
     v-layout.white.calender-wrapper
-      v-fade-transition
-        v-layout.white.progress(v-show="pending", column)
-          v-progress-circular(indeterminate, color="primary")
+      progress-overlay(:pending="pending")
       ds-calendar(
       :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
       :events="events",
@@ -46,12 +44,14 @@ import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
 import DsCalendar from './day-span/calendar.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { DsCalendar },
+  components: { ProgressOverlay, DsCalendar },
   mixins: [modalMixin, sideBarMixin, widgetQueryMixin],
   props: {
     widget: {
@@ -240,22 +240,6 @@ export default {
       font-size: 14px;
     }
 
-    .progress {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      opacity: .4;
-      z-index: 10;
-
-      & /deep/ .v-progress-circular {
-        top: 50%;
-        left: 50%;
-        margin-top: -16px;
-        margin-left: -16px;
-      }
-    }
     .single {
       & /deep/ .ds-calendar-event-menu {
         position: absolute;
