@@ -1,7 +1,5 @@
 # Structure d'un évènement
 
-**TODO :** à continuer avec cette doc https://git.canopsis.net/canopsis/old-deprecated-doc/blob/master/old_doc/en/developer_guide/specifications/event.md  
-
 ## Focus AMQP
 
 -   Vhost: canopsis  
@@ -229,3 +227,141 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
 Le champ `entity` devrait contenir l'entité sous forme d'objet JSON. 
 
+## Metrology
+
+Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'un des champs suivant :
+
+```javascript
+{
+    'perf_data':        // Performance data ("Nagios format":http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN201)
+    'perf_data_array':  // Array of performance data with metric's type ('GAUGE', 'DERIVE', 'COUNTER', 'ABSOLUTE'), Ex:
+    [
+        {'metric': 'shortterm', 'value': 0.25, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+        {'metric': 'midterm',   'value': 0.16, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
+        {'metric': 'longterm',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
+    ]
+}
+```
+
+### Basic Alert Structure
+
+Un alarme est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).  
+Dans MongoDB, il contient les champs suivant.
+
+```javascript
+{
+    '_id':          // MongoDB document ID
+    'event_id':     // Event identifier (the routing key)
+}
+```
+
+### Integration with Nagios/Icinga or Shinken
+
+L'event broker Nagios va envoyer, vers Canopsis, les événements avec les informations suivante.
+
+```javascript
+{
+    'connector': 'nagios' or 'shinken'
+    'event_type': 'check' or 'ack' or 'downtime'
+}
+```
+
+### Integration with Graylog
+
+Les connecteru GELF va envoyer, vers Canopsis, les événements avec les informations suivante.
+
+informations :
+
+```javascript
+{
+    'connector': 'gelf',
+    'event_type': 'log'
+}
+```
+
+### Integration with Cucumber (EUE)
+
+Aprés avoir définit la structure de base de l'événement, configurez les champs suivant comme décrit
+
+
+```javascript
+{
+    'event_type': 'eue',
+    'connector': 'cucumber',
+    'source_type': 'resource',
+
+    'connector_name':           // Name of the bot
+    'component':                // Name of the application
+
+    'media_bin':                // Base64 encoded binary content of associated media
+    'media_type':               // Media mime-type
+    'media_name':               // Media name
+}
+```
+
+For the EUE stack, three types of messages will be published:
+Pour l'EUE (End User Experience), trois type de message vont être publiées.  
+
+-   Concernant la feature
+-   Concernant le scenario
+-   Concernant l'étape
+
+According to the message\'s type, the resource\'s name will be :
+Selon le type de message(s) ou le nom de la ressource(s) nous aurons.
+
+-   Pour la feature : `` `'resource': feature_name ``\`
+-   Pour le scenario:
+    `` `'resource': feature_name.scenario_name.localization.OS.browser ``\`
+-   Pour l'étape :
+    `` `'resource': feature_name.scenario_name.step_name.localization.OS.browser ``\`
+
+### Message Feature structure
+
+Ajouter les champs suivant à votre écènement : 
+
+```javascript
+{
+    'type_message': 'feature',
+    'description':              // Feature's description
+}
+```
+
+### Message Scenario structure
+
+Ajouter les champs suivant à votre écènement : 
+
+```javascript
+{
+    'type_message': 'scenario',
+    'child':                    // Routing Key of feature event
+    'cntxt_env':                // Environment identifier (prod, test, ...)
+    'cntxt_os':                 // Environment OS
+    'cntxt_browser':            // Browser type
+    'cntxt_localization':       // Bot's localization
+}
+```
+
+## List of event types
+
+Type | Description |
+-----|-------------|
+calendar | Used to send ICS events to Canopsis |
+check | Used to send the result of a check (from Nagios, Icinga, Shinken, \...) |
+comment |  Used to send a comment|
+consolidation | Sent by the consolidation engine|
+eue | Used to send Cucumber informations|
+log | Used to log informations|
+perf | Used to send perfdata only|
+selector | Sent by the selector engine|
+sla | Sent by the sla engine|
+statcounterinc | Used to increment a counter in the statistics engine|
+statduration | Used to add a duration in the statistics engine|
+statstateinterval | Used to add a state interval in the statistics engine|
+topology | Sent by the topology engine|
+trap | Used to send SNMP traps|
+user | Used by user to send informations|
+ack | Used to acknowledge an alert|
+downtime |  Used to schedule a downtime|
+cancel | Used to cancel an event and put it\'s status in cancel state. removes also referer event\'s ack if any. |
+uncancel | Used to uncancel an event. previous status is restored and ack too if any. |
+ackremove | Used to remove an ack from an event. (ack field removed and ack collection updated) |
