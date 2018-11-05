@@ -294,7 +294,7 @@ export default {
       fail: 'Fail in creation view',
     },
     createAckEvent: {
-      title: 'Add event: Ack',
+      title: 'Ack',
       tooltips: {
         ackResources: 'Do you want to ack linked resources ?',
       },
@@ -305,19 +305,19 @@ export default {
       },
     },
     createSnoozeEvent: {
-      title: 'Add event: Snooze',
+      title: 'Snooze',
       fields: {
         duration: 'Duration',
       },
     },
     createCancelEvent: {
-      title: 'Add event: Cancel',
+      title: 'Cancel',
       fields: {
         output: 'Note',
       },
     },
     createChangeStateEvent: {
-      title: 'Add event: Change state',
+      title: 'Change state',
       states: {
         ok: 'Info',
         minor: 'Minor',
@@ -340,13 +340,13 @@ export default {
       },
     },
     createAckRemove: {
-      title: 'Add event: Remove ack',
+      title: 'Remove ack',
     },
     createDeclareTicket: {
-      title: 'Add event: Declare ticket',
+      title: 'Declare ticket',
     },
     createAssociateTicket: {
-      title: 'Add event: Associate ticket number',
+      title: 'Associate ticket number',
       fields: {
         ticket: 'Number of the ticket',
       },
@@ -492,7 +492,6 @@ export default {
       name: 'Name',
       type: 'Type',
       id: 'Id',
-      noDataText: 'Make a research',
     },
     alarmGeneral: {
       title: 'General',
@@ -516,7 +515,7 @@ export default {
       name: 'Name',
       author: 'Author',
       connector: 'Connector',
-      connector_name: 'Connector name',
+      connectorName: 'Connector name',
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
