@@ -8,6 +8,21 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.3.0 - Due date : 2018-10-31
+
+- [Alarm List]: Fix bug where selected filter is not saved in userpreferences
+- [Chore]: Some configuration cleanup in sources, configs and docker files
+- [Docker]: Change rabbitmq base image and add some new envvars for image version selection
+- [email2canopsis]: Converter now invalidate a translation if there is not match
+- [Go]: Change build dir (from /tmp to ./build)
+- [Go]: New event-filter engine ! (to filter/translate events based on some rules)
+- [Go]: New ticket engine ! (to create tickets through external APIs)
+- [Go]: Standardization of heartbeat ids generation
+- [Python]: Add new event-filter and ticket API (for new engines)
+- [ServiceWeather]: Add default message on Validate and Ack actions
+- [snow2canopsis]: New connector which read Service Now API to import informations into Canopsis context
+- [UI]: Fix canopsis-next not correctly builded with docker
+
 ## Canopsis 3.2.5 - Due date : 2018-10-17
 
 - [Doc]: translating recent Upgrade documentations to english
