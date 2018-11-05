@@ -246,18 +246,18 @@ Dans MongoDB, il contient les champs suivant.
 
 Type | Description |
 -----|-------------|
-check | Used to send the result of a check (from Nagios, Icinga, Shinken, \...) |
-comment |  Used to send a comment|
-perf | Used to send perfdata only|
-selector | Sent by the selector engine|
-sla | Sent by the sla engine|
-statcounterinc | Used to increment a counter in the statistics engine|
-statduration | Used to add a duration in the statistics engine|
-statstateinterval | Used to add a state interval in the statistics engine|
-trap | Used to send SNMP traps|
-user | Used by user to send informations|
-ack | Used to acknowledge an alert|
-downtime |  Used to schedule a downtime|
-cancel | Used to cancel an event and put it\'s status in cancel state. removes also referer event\'s ack if any. |
-uncancel | Used to uncancel an event. previous status is restored and ack too if any. |
-ackremove | Used to remove an ack from an event. (ack field removed and ack collection updated) |
+check | Utilisé pour envoyer le résultat d'un check (depuis Nagios, Icinga,...)  |
+comment | Utilisé pour envoyer un commentaire |
+perf | Utilisé pour envoyer seulement des perfdata |
+selector | Envoyé par l'engine selector |
+sla |  Envoyé par l'engine selector sla |
+statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |
+statduration | Utilisé pour ajouter une durée dans l'engine statistics |
+statstateinterval | Utilisé pour ajouter une état d'intervale dans l'engine statistics |
+trap | Utilisé pour envoyer des traps SNMP|
+user | Utilisé par l'utilisateur pour evoyer des informations |
+ack | Utilisé pour acquitter une alerte |
+downtime | Utilisé pour programmer un downtime |
+cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'événement référent, le cas échéant.  |
+uncancel | Utilisé pour annuler un événement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
+ackremove | Utilisé pour supprimer un accusé de réception d'un événement. (champ ack supprimé et collection ack mise à jour) |
