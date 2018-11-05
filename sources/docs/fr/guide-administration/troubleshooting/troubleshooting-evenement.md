@@ -7,8 +7,10 @@ Voici un scénario de vérification d'événements avec les différentes command
 Il faut dans un premier temps vérifier que la communication entre l'instance concernée et Rabbitmq est établie, cela ce fait grace à la commande suivante :
 
 ```
-sudo tcpdump -vvv dst IP_OU_FQDN_CANO and port PORT
+sudo tcpdump -vvv -A -i any -s 0 dst IP_OU_FQDN_CANO and port PORT
 ```
+
+Rappel : le port d'écoute de Rabbitmq est `5672`. Son API est sur le port `15672`.
 
 Si le traffic est bon de ce côté et que le port reçoit bien des informations vous pouvez passer l'étape suivante.
 Sinon c'est qu'il y a une problème au niveau de ce dernier que vous pourrez diagnostiquer avec quelques commandes telles que **netstat** ou encore **ps**.
