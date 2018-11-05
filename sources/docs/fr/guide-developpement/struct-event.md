@@ -21,7 +21,8 @@ Voici la structure de base d'un événement, commune à tous les type d'événem
     'component':        // Component's name
     'resource':         // Resource's name (only if source_type is 'resource')
 
-    // The following is optional
+    // /!\ The following is optional /!\
+    
     'hostgroups':       // Nagios hostgroups for component, default []
     'servicegroups':    // Nagios servicegroups for resource, default []
     'timestamp':        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
@@ -48,7 +49,9 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
     'state':                // Check state (0 - OK, 1 - WARNING, 2 - CRITICAL, 3 - UNKNOWN), default is 0
     'state_type':           // Check state type (0 - SOFT, 1 - HARD), default is 1
     'status':               // 0 == Ok | 1 == En cours | 2 == Furtif | 3 == Bagot | 4 == Annule
-    // The following is optional
+    
+    // /!\ The following is optional /!\
+    
     'scheduled':            // True if the check was scheduled, False otherwise
 
     'check_type':           // Nagios Check Type (host or service)
@@ -79,23 +82,23 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
 
 ```javascript
 {
-    'event_type': 'ack',
+    'event_type': 'ack',    // mandatory
 
-    'ref_rk':               // Routing Key of acknowledged event
-    'author':               // Acknowledgment author
-    'output':               // Acknowledgment comment
-}
+    'ref_rk':               // Routing Key of acknowledged event, mandatory
+    'author':               // Acknowledgment author, mandatory
+    'output':               // Acknowledgment comment, mandatory
+ 
 ```
 
 ### Event Cancel Structure
 
 ```javascript
 {
-    'event_type': 'cancel',
+    'event_type': 'cancel',     // mandatory
 
-    'ref_rk':               // Routing Key of event
-    'author':               // author
-    'output':               // comment
+    'ref_rk':               // Routing Key of event, mandatory
+    'author':               // author, mandatory
+    'output':               // comment, mandatory
 }
 ```
 
@@ -103,11 +106,11 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
 
 ```javascript
 {
-    'event_type': 'uncancel',
+    'event_type': 'uncancel',   // mandatory
 
-    'ref_rk':               // Routing Key of event
-    'author':               // author
-    'output':               // comment
+    'ref_rk':               // Routing Key of event, mandatory
+    'author':               // author, mandatory
+    'output':               // comment, mandatory
 }
 ```
 
@@ -115,11 +118,11 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
 
 ```javascript
 {
-    'event_type': 'ackremove',
+    'event_type': 'ackremove',  // mandatory
 
-    'ref_rk':               // Routing Key of event
-    'author':               // author
-    'output':               // comment
+    'ref_rk':               // Routing Key of event, mandatory
+    'author':               // author, mandatory
+    'output':               // comment, mandatory
 }
 ```
 
@@ -127,16 +130,16 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
 
 ```javascript
 {
-    'event_type': 'downtime',
+    'event_type': 'downtime',   // mandatory
 
-    'author':               // Downtime author
-    'output':               // Downtime comment
-    'start':                // UNIX timestamp for downtime's start
-    'end':                  // UNIX timestamp for downtime's end
-    'duration':             // Downtime's duration
-    'entry':                // Downtime's schedule date/time (as a UNIX timestamp)
-    'fixed':                // Does the downtime starts at 'start' or at next check after 'start' ?
-    'downtime_id':          // Downtime's identifier
+    'author':               // Downtime author, mandatory
+    'output':               // Downtime comment, mandatory
+    'start':                // UNIX timestamp for downtime's start, mandatory
+    'end':                  // UNIX timestamp for downtime's end, mandatory
+    'duration':             // Downtime's duration, mandatory
+    'entry':                // Downtime's schedule date/time (as a UNIX timestamp), mandatory
+    'fixed':                // Does the downtime starts at 'start' or at next check after 'start' ?, mandatory
+    'downtime_id':          // Downtime's identifier, mandatory
 }
 ```
 
@@ -145,9 +148,9 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
 ```javascript
 {
     'event_type': 'trap',
-    'snmp_severity':        // SNMP severity
-    'snmp_state':           // SNMP state
-    'snmp_oid':             // SNMP oid
+    'snmp_severity':        // SNMP severity, mandatory
+    'snmp_state':           // SNMP state, mandatory
+    'snmp_oid':             // SNMP oid, mandatory
 }
 ```
 
@@ -157,10 +160,10 @@ Un évènement de type \'perf\' ne sera jamais sauvegarder dans une base de donn
 
 ```javascript
 {
-    'event_type': 'perf',
+    'event_type': 'perf',   // mandatory
 
-    'perf_data':
-    'perf_data_array':
+    'perf_data':            // mandatory
+    'perf_data_array':      // mandatory
 }
 ```
 
@@ -170,11 +173,11 @@ See bellow for more informations about those fields.
 
 ```javascript
 {
-    'event_type': 'statcounterinc',
+    'event_type': 'statcounterinc',     // mandatory
 
-    'stat_name':            // The name of the counter to increment
-    'alarm':                // The alarm
-    'entity':               // The entity which sent the event
+    'stat_name':            // The name of the counter to increment, mandatory
+    'alarm':                // The alarm, mandatory
+    'entity':               // The entity which sent the event, mandatory
 }
 ```
 Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
@@ -184,12 +187,12 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ```javascript
 {
-    'event_type': 'statduration',
+    'event_type': 'statduration',   // mandatory
 
-    'stat_name':            // The name of the duration
-    'duration':             // The value of the duration (in seconds)
-    'current_alarm':        // The alarm
-    'current_entity':       // The entity which sent the event
+    'stat_name':            // The name of the duration, mandatory
+    'duration':             // The value of the duration (in seconds), mandatory
+    'current_alarm':        // The alarm, mandatory
+    'current_entity':       // The entity which sent the event, mandatory
 }
 ```
 
@@ -200,13 +203,13 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ```javascript
 {
-    'event_type': 'statstateinterval',
+    'event_type': 'statstateinterval',      // mandatory
 
-    'stat_name':            // The name of the state
-    'duration':             // The time spent in this state (in seconds)
-    'state':                // The value of the state
-    'alarm':                // The alarm
-    'entity':               // The entity which sent the event
+    'stat_name':            // The name of the state, mandatory
+    'duration':             // The time spent in this state (in seconds), mandatory
+    'state':                // The value of the state, mandatory
+    'alarm':                // The alarm, mandatory
+    'entity':               // The entity which sent the event, mandatory
 }
 ```
 
