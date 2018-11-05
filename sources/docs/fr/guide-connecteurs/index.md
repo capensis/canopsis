@@ -1,7 +1,5 @@
 # Présentation
 
-**TODO : Faire doc Canopsis**
-
 Dans ce guide connecteur vous trouverez plusieur liens renvoyant vers la documentation officielle des conteneur. 
 
 # Sommaire
