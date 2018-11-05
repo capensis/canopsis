@@ -44,8 +44,5 @@ Dans ce guide connecteur vous trouverez plusieur liens renvoyant vers la documen
 
 ## Hypervision
 
-### Canopsis /!\ Documentation CAT /!\
-[connector-canopsis](Hypervision/canopsis.md)  
-
 ### Datametrie /!\ Documentation CAT /!\
 [connector-datametrie](Hypervision/datametrie.md)  
