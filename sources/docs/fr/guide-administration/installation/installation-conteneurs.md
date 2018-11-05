@@ -11,9 +11,10 @@ Il faut vérifier les ports utilisés par `docker-compose.yml`, si certains port
 Pour l'installation dockerisé de Canopsis, le porcédure est la suivante :
 
 - clôner le dépôt Canopsis : https://git.canopsis.net/canopsis/canopsis
+- Actuellement les conteneurs sont gérer dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
 - Dans ce dépot un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisé.
   
-    - Rappel : [Intallation de Docker compose](https://docs.docker.com/compose/install/#install-compose)  
+    - Rappel : [Installation de Docker compose](https://docs.docker.com/compose/install/#install-compose)  
   
     - Troubleshotting : Si vous rencontrez une erreur de ce type lors d'un `docker-compose up -d` ou un `docker-compose --version`  
     ```bash
