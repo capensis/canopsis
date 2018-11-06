@@ -34,7 +34,10 @@ def exports(ws):
         "/api/v2/heartbeat/"
     )
     def create_heartbeat():
-        """Create a new heartbeat.
+        """Create a new heartbeat. Read the body of the request to extract
+        the heartbeat as a json.
+        :rtype: a dict with the status (name) of the request and if needed a
+        description.
         """
         try:
             json = request.json
@@ -63,23 +66,18 @@ def exports(ws):
             return gen_json_error({"name": "Can not create heartbeat",
                                    "description": error}, HTTP_ERROR)
 
-    @ws.application.put(
-        "/api/v2/heartbeat/"
-    )
-    def update_heartbeat():
-        """Update a heartbeat
-        """
-        pass
-
     @ws.application.get(
         "/api/v2/heartbeat/"
     )
     def get_heartbeats():
-        """ Return every heartbeats stored in database
+        """ Return every heartbeats stored in database.
+        :rtype: a json representation as a dict of every heartbeats stored in
+        or a dict with the status (name) and the description of the issue
+        encountered.
         """
         try:
             return hb_service.get_heartbeats()
-        except Exception as exc:
+        except Exception:
             ws.logger.exception("Can not retreive hearbeats from database.")
             return gen_json_error({'description': 'something went wrong.'},
                                   HTTP_ERROR)

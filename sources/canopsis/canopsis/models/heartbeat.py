@@ -25,6 +25,9 @@ class HeartBeat:
         An `item` is an ojects with at least one key. The key and the
         associated value are both string
         `maxduration` is a string that match the follow pattern: [0-9]*(s|m|h).
+
+        :param dict heartBeat: a dict.
+        :rtype: (bool, str).
         """
         it = 0
         try:
@@ -57,7 +60,7 @@ class HeartBeat:
     def to_dict(self):
         """
         Return the representation of the current instance as a dict.
-
+        :rtype: dict
         """
         return {self.MAPPINGS_KEY: self.mappings,
                 self.MAX_DUR_KEY: self.max_duration}
