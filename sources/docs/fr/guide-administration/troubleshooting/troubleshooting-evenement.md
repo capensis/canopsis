@@ -22,14 +22,14 @@ Dans un second temps, la vérification va passer par `amqp2tty`, une documentati
 
 ## Vérification du JSON et de son contenu
 
-### JSON 
+### Syntaxe JSON 
 
 Il se peut que votre JSON ne soit pas bien formaté. Pensez à vérifier celui-ci à l'aide, par exemple, d'un outil en ligne.
 
-### Vérification du contenu de l'évènement
+### Contenu de l'évènement
 
 > Un évènement est un message arrivant dans Canopsis. Il est formatté en JSON et provient généralement d'une source externe ou d'un connecteur (email, SNMP, etc.).
-Lorsqu'un évènement arrive, il est envoyé vers le bac à événement puis traité, il devient donc un alarme.
+Lorsqu'un évènement arrive, il est envoyé vers le bac à évènement puis traité, il devient donc un alarme.
 
 Cf: [Vocabulaire](../../guide-utilisation/vocabulaire/index.md)  
 
