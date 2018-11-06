@@ -1,16 +1,27 @@
 <template lang="pug">
   v-container
     v-layout.white(justify-space-between, align-center)
-      v-flex(xs12, md4)
+      v-flex
         context-search(:query.sync="query")
-      v-flex.ml-4(xs4)
+      v-flex
+        pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
+      v-flex
+        v-select(
+        :label="$t('settings.selectAFilter')",
+        :items="viewFilters",
+        @input="updateSelectedFilter",
+        :value="mainFilter",
+        item-text="title",
+        item-value="filter",
+        return-object,
+        clearable
+        )
+      v-flex
+        context-fab
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
-      v-flex(xs2)
         v-btn(icon, @click.prevent="showSettings")
           v-icon settings
-      v-flex(xs2)
-        context-fab
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -56,6 +67,7 @@
 
 <script>
 import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -119,6 +131,16 @@ export default {
       }
 
       return [];
+    },
+    mainFilter() {
+      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
+
+      return isEmpty(mainFilter) ? null : mainFilter;
+    },
+    viewFilters() {
+      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
+
+      return isEmpty(viewFilters) ? [] : viewFilters;
     },
   },
   methods: {
@@ -203,6 +225,23 @@ export default {
           widgetId: this.widget._id,
           params: this.getQuery(),
         });
+      }
+    },
+    updateSelectedFilter(value) {
+      this.createUserPreference({
+        userPreference: {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            mainFilter: value || {},
+          },
+        },
+      });
+
+      if (value && value.filter) {
+        this.query = { ...this.query, _filter: value.filter };
+      } else {
+        this.query = { ...this.query, _filter: undefined };
       }
     },
   },
