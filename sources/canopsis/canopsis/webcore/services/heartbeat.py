@@ -23,7 +23,7 @@ from bottle import request
 from canopsis.heartbeat.manager import HeartBeatService
 from canopsis.heartbeat.manager import HeartBeatServiceException
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
-from canopsis.models.heartBeat import HeartBeat
+from canopsis.models.heartbeat import HeartBeat
 
 hb_service = HeartBeatService(*HeartBeatService.provide_default_basics())
 
