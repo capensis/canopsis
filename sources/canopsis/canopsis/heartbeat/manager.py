@@ -25,6 +25,10 @@ from canopsis.common.collection import MongoCollection
 from canopsis.logger import Logger
 
 
+class HeartBeatServiceException(Exception):
+    pass
+
+
 class HeartBeatService:
     """HeartBeat mapping management."""
 
@@ -35,6 +39,7 @@ class HeartBeatService:
     GLOBAL_CONF_ID = "global_config"
     HEARTBEAT_SECTION = "heartbeat"
     MAPPINGS_KEY = "MAPPINGS"
+    ITEMS_KEY = "items"
 
     @classmethod
     def provide_default_basics(cls):
@@ -65,5 +70,11 @@ class HeartBeatService:
         return global_config[self.HEARTBEAT_SECTION]
 
     def create(self, heartbeat):
+        """
+        """
         global_config = self.__get_conf()
-        heartBeatSection = global_config[self.HEARTBEAT_SECTION]
+        hb_Section = global_config[self.HEARTBEAT_SECTION]
+        hb_Section[self.ITEMS_KEY].append(heartbeat.to_dict())
+
+        self.collection.update({"_id": self.GLOBAL_CONF_ID},
+                               {"$set": {self.HEARTBEAT_SECTION: hb_Section}})
