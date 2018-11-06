@@ -475,6 +475,7 @@ export default {
         email: 'Email',
         password: 'Password',
         language: 'User interface language',
+        role: 'Role',
         enabled: 'Enabled',
       },
     },
