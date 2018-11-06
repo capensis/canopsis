@@ -3,7 +3,7 @@
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t(config.title) }}
-    v-tabs
+    v-tabs(slider-color="primary")
       v-tab(
       v-for="tab in tabs",
       :key="tab.name",
