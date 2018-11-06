@@ -28,9 +28,9 @@ import os
 import sys
 from configparser import ConfigParser
 from os.path import join as pjoin
-from urlparse import urlparse, parse_qs
+from urlparse import urlparse
 
-from pymongo import uri_parser, MongoClient
+from pymongo import uri_parser
 from pymongo.errors import ConfigurationError
 
 from canopsis.common import root_path
@@ -42,21 +42,38 @@ class Env2Cfg(object):
     CPS_REDIS_URL = 'CPS_REDIS_URL'
     CPS_MONGO_URL = 'CPS_MONGO_URL'
     CPS_INFLUX_URL = 'CPS_INFLUX_URL'
+    CPS_MONGO_REPLICASET_URL = 'CPS_MONGO_REPLICASET_URL'
 
-    def _check(self, varname):
+    __mongo_replicaset_url_config_key = 'mongo_replicaset_url'
+
+    @staticmethod
+    def _check_empty(varname):
         varval = os.environ.get(varname, '')
         if varval is '':
             raise ValueError('env var {} is empty'.format(varname))
 
+    def __check_mongo_dsn(self):
+        mongo_url = os.environ.get(self.CPS_MONGO_URL)
+        mongo_replicaset_url = os.environ.get(self.CPS_MONGO_REPLICASET_URL)
+        if not (mongo_url or mongo_replicaset_url):
+            raise ValueError('Env vars {}, {} are both empty. '
+                             'You need to set at least one of them.'.format(self.CPS_MONGO_URL,
+                                                                            self.CPS_MONGO_REPLICASET_URL))
+        if mongo_replicaset_url:
+            try:
+                uri_parser.parse_uri(mongo_replicaset_url)
+            except ConfigurationError:
+                raise ValueError('Env var {} has invalid format'.format(self.CPS_MONGO_REPLICASET_URL))
+
     def check(self):
-        self._check(self.CPS_AMQP_URL)
-        self._check(self.CPS_MONGO_URL)
-        self._check(self.CPS_REDIS_URL)
-        self._check(self.CPS_INFLUX_URL)
+        self._check_empty(self.CPS_AMQP_URL)
+        self._check_empty(self.CPS_REDIS_URL)
+        self._check_empty(self.CPS_INFLUX_URL)
+        self.__check_mongo_dsn()
 
-    def _makedirs(self, fpath):
+    @staticmethod
+    def _makedirs(fpath):
         dirs = os.path.dirname(fpath)
-
         if not os.path.isdir(dirs):
             os.makedirs(dirs)
 
@@ -109,12 +126,32 @@ class Env2Cfg(object):
         with open(p, 'w') as fh:
             amqp.write(fh)
 
-    def _update_mongo(self):
-        pu = urlparse(os.environ.get(self.CPS_MONGO_URL))
+    class __DatabaseConf(object):
+        def __init__(self, host, port, db, user, pwd):
+            self.__host = host
+            self.__port = port
+            self.__db = db
+            self.__user = user
+            self.__pwd = pwd
 
-        replica_set = ''
-        if pu.query != '':
-            replica_set = parse_qs(pu.query).get("replicaSet", '')[0]
+        def update_database_conf(self, conf_store, section='DATABASE', user_key='user', password_key='pwd'):
+            conf_store.set(section, 'host', self.__host)
+            conf_store.set(section, 'port', self.__port)
+            conf_store.set(section, 'db', self.__db)
+            conf_store.set(section, user_key, self.__user)
+            conf_store.set(section, password_key, self.__pwd)
+
+    def __parse_mongo_url(self):
+        pu = urlparse(os.environ.get(self.CPS_MONGO_URL))
+        return self.__DatabaseConf(
+            host='localhost' if pu.hostname is None else pu.hostname,
+            port='27017' if pu.port is None else str(pu.port),
+            db='canopsis' if pu.path is '' else pu.path[1:],
+            user='cpsmongo' if pu.username is None else pu.username,
+            pwd='canopsis' if pu.password is None else pu.password
+        )
+
+    def _update_mongo(self):
 
         pms = pjoin(root_path, 'etc', 'common', 'mongo_store.conf')
         pcs = pjoin(root_path, 'etc', 'cstorage.conf')
@@ -128,56 +165,31 @@ class Env2Cfg(object):
         cstorage = ConfigParser()
         storage = ConfigParser()
 
-        mongo_store.read(pms)
-        cstorage.read(pcs)
-        storage.read(ps)
+        def _zip_configs_metadata():
+            return zip([mongo_store, cstorage, storage],
+                       [pms, pcs, ps],
+                       ['DATABASE', 'master', 'DATABASE'],
+                       ['user', 'userid', 'user'],
+                       ['pwd', 'password', 'pwd'])
 
-        if 'DATABASE' not in mongo_store.sections():
-            mongo_store.add_section('DATABASE')
+        for conf, fpath, section, _, _ in _zip_configs_metadata():
+            conf.read(fpath)
+            if section not in conf.sections():
+                conf.add_section(section)
 
-        try:
-            parsed_uri = uri_parser.parse_uri(os.environ[self.CPS_MONGO_URL])
-        except ConfigurationError:
-            nodelist = MongoClient.HOST
-        else:
-            nodelist = ','.join(':'.join((host, str(port))) for host, port in parsed_uri['nodelist'])
+        if os.environ.get(self.CPS_MONGO_URL):
+            database_conf = self.__parse_mongo_url()
+            for conf, _, section, user_key, password_key in _zip_configs_metadata():
+                database_conf.update_database_conf(conf, section, user_key, password_key)
 
-        mongo_store.set('DATABASE', 'nodelist', nodelist)
-        mongo_store.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        mongo_store.set('DATABASE', 'port', str(MongoClient.PORT) if pu.port is None else str(pu.port))
-        mongo_store.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
-        mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)
-        mongo_store.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
-        mongo_store.set('DATABASE', 'replica_set', replica_set)
+        if os.environ.get(self.CPS_MONGO_REPLICASET_URL):
+            for conf, _, section, _, _ in _zip_configs_metadata():
+                conf[section][self.__mongo_replicaset_url_config_key] = \
+                    os.environ[self.CPS_MONGO_REPLICASET_URL]
 
-        if 'master' not in cstorage.sections():
-            cstorage.add_section('master')
-
-        cstorage['master']['host'] = mongo_store['DATABASE']['host']
-        cstorage['master']['port'] = mongo_store['DATABASE']['port']
-        cstorage['master']['userid'] = mongo_store['DATABASE']['user']
-        cstorage['master']['password'] = mongo_store['DATABASE']['pwd']
-        cstorage['master']['db'] = mongo_store['DATABASE']['db']
-        cstorage['master']['replica_set'] = mongo_store['DATABASE']['replica_set']
-
-        if 'DATABASE' not in storage.sections():
-            storage.add_section('DATABASE')
-
-        storage['DATABASE']['host'] = mongo_store['DATABASE']['host']
-        storage['DATABASE']['port'] = mongo_store['DATABASE']['port']
-        storage['DATABASE']['db'] = mongo_store['DATABASE']['db']
-        storage['DATABASE']['user'] = mongo_store['DATABASE']['user']
-        storage['DATABASE']['pwd'] = mongo_store['DATABASE']['pwd']
-        storage['DATABASE']['replica_set'] = mongo_store['DATABASE']['replica_set']
-
-        with open(pms, 'w') as fh:
-            mongo_store.write(fh)
-
-        with open(pcs, 'w') as fh:
-            cstorage.write(fh)
-
-        with open(ps, 'w') as fh:
-            storage.write(fh)
+        for conf, fpath, _, _, _ in _zip_configs_metadata():
+            with open(fpath, 'w') as fh:
+                conf.write(fh)
 
     def _update_redis(self):
         pu = urlparse(os.environ.get(self.CPS_REDIS_URL))
@@ -219,6 +231,7 @@ class Env2Cfg(object):
 
         app.update()
         return 0
+
 
 if __name__ == '__main__':
     rc = Env2Cfg.main()

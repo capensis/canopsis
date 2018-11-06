@@ -64,13 +64,13 @@ class MongoStore(object):
         conf = self.config.get(self.CONF_CAT, {})
         self.db_name = conf.get('db', DEFAULT_DB_NAME)
         self.host = conf.get('host', DEFAULT_HOST)
-        self.nodelist = conf.get('nodelist')
         try:
             self.port = int(conf.get('port', DEFAULT_PORT))
         except ValueError:
             self.port = DEFAULT_PORT
 
-        self.replicaset = conf.get('replicaset')
+        self._mongo_replicaset_url = conf.get('mongo_replicaset_url')
+
         self.read_preference = getattr(
             ReadPreference,
             conf.get('read_preference', 'SECONDARY_PREFERRED'),
@@ -95,16 +95,16 @@ class MongoStore(object):
         Connect to the desired database.
         """
         self._authenticated = False
-        if self.replicaset is None:
+        if self._mongo_replicaset_url:
             self.conn = MongoClient(
-                'mongodb://{}:{}'.format(self.host, self.port), w=1, j=True
+                self._mongo_replicaset_url,
+                w=1, j=True, read_preference=self.read_preference
             )
 
         else:
             self.conn = MongoClient(
-                'mongodb://{}/?replicaSet={}'.format(
-                    self.nodelist, self.replicaset
-                ), w=1, j=True, read_preference=self.read_preference
+                'mongodb://{}:{}'.format(self.host, self.port)
+                , w=1, j=True
             )
 
         self.client = self.get_database(self.db_name)
