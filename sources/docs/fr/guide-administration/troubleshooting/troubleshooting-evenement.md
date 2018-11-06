@@ -1,8 +1,8 @@
-# Vérification d'événements
+# Vérification d'évènements
 
 Voici un scénario de vérification d'évènements avec les différentes commandes associées pour valider l'envoi.
 
-## Communication avec Rabbitmq
+## Communication avec RabbitMQ
 
 Il faut dans un premier temps vérifier que la communication entre l'instance concernée et RabbitMQ est établie. Cela se fait grâce à la commande suivante :
 
