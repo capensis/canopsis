@@ -4,7 +4,7 @@ Voici un scénario de vérification d'événements avec les différentes command
 
 ## Communication avec Rabbitmq
 
-Il faut dans un premier temps vérifier que la communication entre l'instance concernée et Rabbitmq est établie, cela ce fait grace à la commande suivante :
+Il faut dans un premier temps vérifier que la communication entre l'instance concernée et Rabbitmq est établie, cela ce fait grâce à la commande suivante :
 
 ```
 sudo tcpdump -vvv -A -i any -s 0 dst IP_OU_FQDN_CANO and port PORT
@@ -12,8 +12,8 @@ sudo tcpdump -vvv -A -i any -s 0 dst IP_OU_FQDN_CANO and port PORT
 
 Rappel : le port d'écoute de Rabbitmq est `5672`. Son API est sur le port `15672`.
 
-Si le traffic est bon de ce côté et que le port reçoit bien des informations vous pouvez passer l'étape suivante.
-Sinon c'est qu'il y a une problème au niveau de ce dernier que vous pourrez diagnostiquer avec quelques commandes telles que **netstat** ou encore **ps**.
+Si le trafic est bon de ce côté et que le port reçoit bien des informations vous pouvez passer l'étape suivante.  
+Sinon, c'est qu'il y a un problème au niveau de ce dernier que vous pourrez diagnostiquer avec quelques commandes telles que **netstat** ou encore **ps**.
 
 ## amqp2tty
 
@@ -23,7 +23,7 @@ Dans un second temps, la vérification va passer par amqp2tty, une documentation
 
 ### JSON 
 
-Il se peut que votre JSON ne soit pas bien formatté. Pensez à vérifier celui-ci à laide, par exemple, d'un outil en ligne.
+Il se peut que votre JSON ne soit pas bien formaté. Pensez à vérifier celui-ci à l'aide, par exemple, d'un outil en ligne.
 
 ### Vérification du contenu de l'évènement
 
