@@ -114,7 +114,7 @@ class MongoCollection(object):
         :param dict query: a mongo search query
         :param dict document: the document to update
         :param bool upsert: do insert if the document does not already exist
-        :raises: BSONError, PyMongoError, OperationFailure, TypeError
+        :raises: CollectionError
         :rtype: dict
         """
         try:
