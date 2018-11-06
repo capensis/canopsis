@@ -34,25 +34,7 @@ Le listing des moteur peut être réalisé grace à cette commande : `ps -aux | 
 
 Ce document rassemble les informations sur les moteurs Canopsis.  
 
-**TODO (DWU) :** noms complets :
-
-* `canopsis-engine@dynamic-alerts.service`
-* `canopsis-engine@cleaner-cleaner_alerts.service`
-* `canopsis-engine@cleaner-cleaner_events.service`
-* `canopsis-engine@dynamic-context-graph.service`
-* `canopsis-engine@event_filter-event_filter.service`
-* `canopsis-engine@linklist-linklist.service` **existe plus**
-* `canopsis-engine@dynamic-pbehavior.service`
-* `canopsis-engine@scheduler-scheduler.service`
-* `canopsis-engine@selector-selector.service`
-* `canopsis-engine@task_dataclean-task_dataclean.service`
-* `canopsis-engine@task_importctx-task_importctx.service`
-* `canopsis-engine@task_linklist-task_linklist.service` **existe plus**
-* `canopsis-engine@task_mail-task_mail.service`
-* `canopsis-engine@ticket-ticket.service`
-* `canopsis-engine@dynamic-watcher.service`
-* `canopsis-engine-cat@task_blabla.service`
-
+définition moteur go `canopsis-engine-cat@task_blabla.service`
 
 ### Moteurs NG
 
