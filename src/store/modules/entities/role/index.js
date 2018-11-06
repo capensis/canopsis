@@ -79,9 +79,14 @@ export default {
 
     async create({ dispatch }, { data }) {
       try {
-        await request.post(API_ROUTES.role.create, qs.stringify({ role: JSON.stringify(data) }), {
+        await dispatch('entities/create', {
+          route: API_ROUTES.role.create,
+          schema: roleSchema,
+          body: qs.stringify({ role: JSON.stringify(data) }),
+          dataPreparer: d => d.data[0],
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        });
+        }, { root: true });
+
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });

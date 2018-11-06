@@ -487,6 +487,14 @@ export default {
     editRole: {
       title: 'Edit role',
     },
+    createRight: {
+      title: 'Create right',
+      fields: {
+        id: 'ID',
+        description: 'Description',
+        type: 'Type',
+      },
+    },
   },
   tables: {
     noData: 'No data',

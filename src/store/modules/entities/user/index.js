@@ -80,7 +80,7 @@ export default {
     },
 
     /**
-     * Fetch users list by parans
+     * Fetch users list by params
      *
      * @param {Function} commit
      * @param {Function} dispatch

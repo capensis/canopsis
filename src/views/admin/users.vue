@@ -34,7 +34,7 @@
       v-tooltip(left)
         v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateUserModal")
           v-icon add
-        span Add user
+        span {{ $t('modals.createUser.title') }}
 </template>
 
 <script>
@@ -121,9 +121,6 @@ export default {
     showCreateUserModal() {
       this.showModal({
         name: MODALS.createUser,
-        config: {
-          title: this.$t('modals.createUser.title'),
-        },
       });
     },
 
@@ -146,11 +143,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .fab {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-</style>
