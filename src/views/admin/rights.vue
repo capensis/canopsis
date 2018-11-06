@@ -7,7 +7,7 @@
           v-progress-circular(indeterminate, color="primary")
       v-expansion-panel
         v-expansion-panel-content(
-        v-for="(actions, groupKey) in groupedActions",
+        v-for="(rights, groupKey) in groupedRights",
         :key="groupKey",
         lazy,
         lazyWithUnmount,
@@ -22,18 +22,39 @@
                     th
                     th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
                 tbody
-                  tr(v-for="action in actions", :key="`action-title-${action._id}`")
-                    td.action-title {{ action._id }}
-                    td.action-value(v-for="role in roles", :key="`role-action-${role._id}`")
+                  tr(v-for="right in rights", :key="`right-title-${right._id}`")
+                    td {{ right.desc }}
+                    td(v-for="role in roles", :key="`role-right-${role._id}`")
                       v-checkbox-functional(
-                      v-for="(checkbox, index) in getCheckboxes(role, action)",
-                      :key="`role-${role._id}-action-${action._id}-checkbox-${index}`",
+                      v-for="(checkbox, index) in getCheckboxes(role, right)",
+                      :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
                       v-bind="checkbox.bind",
                       v-on="checkbox.on"
                       )
     v-layout(v-show="hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
+    .fab
+      v-speed-dial(
+      v-model="fab",
+      direction="left",
+      transition="slide-y-reverse-transition"
+      )
+        v-btn.secondary(slot="activator", color="primary", dark, fab, v-model="fab")
+          v-icon add
+          v-icon close
+        v-tooltip(top)
+          v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateUserModal")
+            v-icon people
+          span {{ $t('modals.createUser.title') }}
+        v-tooltip(top)
+          v-btn(slot="activator", fab, dark, small, color="deep-purple ", @click.stop="showCreateRoleModal")
+            v-icon supervised_user_circle
+          span {{ $t('modals.createRole.title') }}
+        v-tooltip(top)
+          v-btn(slot="activator", fab, dark, small, color="teal", @click.stop="showCreateRightModal")
+            v-icon verified_user
+          span {{ $t('modals.createRight.title') }}
 </template>
 
 <script>
@@ -42,19 +63,21 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import transform from 'lodash/transform';
 
+import { MODALS } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
-import entitiesActionMixin from '@/mixins/entities/action';
+import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
 
 export default {
-  mixins: [authMixin, modalMixin, entitiesActionMixin, entitiesRoleMixin],
+  mixins: [authMixin, modalMixin, entitiesRightMixin, entitiesRoleMixin],
   data() {
     return {
+      fab: false,
       pending: false,
-      groupedActions: { business: [], view: [], technical: [] },
+      groupedRights: { business: [], view: [], technical: [] },
       changedRoles: {},
     };
   },
@@ -64,29 +87,29 @@ export default {
     },
 
     getCheckboxValue() {
-      return (role, action, rightMask = 1) => {
-        const checkSum = get(role, ['rights', action._id, 'checksum'], 0);
-        const changedCheckSum = get(this.changedRoles, [role._id, action._id]);
+      return (role, right, rightMask = 1) => {
+        const checkSum = get(role, ['rights', right._id, 'checksum'], 0);
+        const changedCheckSum = get(this.changedRoles, [role._id, right._id]);
 
         const currentCheckSum = isUndefined(changedCheckSum) ? checkSum : changedCheckSum;
-        const actionRightType = currentCheckSum & rightMask;
+        const rightType = currentCheckSum & rightMask;
 
-        return actionRightType === rightMask;
+        return rightType === rightMask;
       };
     },
 
     getCheckboxes() {
-      const { USERS_RIGHTS_MASKS, USERS_ACTIONS_TYPES } = this.$constants;
+      const { USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } = this.$constants;
 
-      return (role, action) => {
-        if (action.type) {
+      return (role, right) => {
+        if (right.type) {
           let masks = [];
 
-          if (action.type === USERS_ACTIONS_TYPES.crud) {
+          if (right.type === USERS_RIGHTS_TYPES.crud) {
             masks = ['create', 'read', 'update', 'delete'];
           }
 
-          if (action.type === USERS_ACTIONS_TYPES.rw) {
+          if (right.type === USERS_RIGHTS_TYPES.rw) {
             masks = ['read', 'update', 'delete'];
           }
 
@@ -95,10 +118,11 @@ export default {
 
             return {
               bind: {
-                inputValue: this.getCheckboxValue(role, action, userRightMask),
+                inputValue: this.getCheckboxValue(role, right, userRightMask),
+                label: userRightMaskKey,
               },
               on: {
-                change: value => this.changeCheckboxValue(value, role, action, userRightMask),
+                change: value => this.changeCheckboxValue(value, role, right, userRightMask),
               },
             };
           });
@@ -107,10 +131,10 @@ export default {
         return [
           {
             bind: {
-              inputValue: this.getCheckboxValue(role, action),
+              inputValue: this.getCheckboxValue(role, right),
             },
             on: {
-              change: value => this.changeCheckboxValue(value, role, action),
+              change: value => this.changeCheckboxValue(value, role, right),
             },
           },
         ];
@@ -125,13 +149,31 @@ export default {
     this.pending = false;
   },
   methods: {
+    showCreateUserModal() {
+      this.showModal({
+        name: MODALS.createUser,
+      });
+    },
+
+    showCreateRoleModal() {
+      this.showModal({
+        name: MODALS.createRole,
+      });
+    },
+
+    showCreateRightModal() {
+      this.showModal({
+        name: MODALS.createRight,
+      });
+    },
+
     clearChangedRoles() {
       this.changedRoles = {};
     },
 
     cancel() {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: this.clearChangedRoles,
         },
@@ -140,7 +182,7 @@ export default {
 
     submit() {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: this.updateRoles,
         },
@@ -151,11 +193,11 @@ export default {
       this.pending = true;
 
       await Promise.all(Object.keys(this.changedRoles).map((roleId) => {
-        const changedRoleActions = this.changedRoles[roleId];
+        const changedRoleRights = this.changedRoles[roleId];
         const role = this.getRoleById(roleId);
 
         const newRights = transform(
-          changedRoleActions,
+          changedRoleRights,
           (acc, value, key) => acc[key] = generateRoleRightByChecksum(value),
         );
 
@@ -174,8 +216,16 @@ export default {
       this.pending = false;
     },
 
-    changeCheckboxValue(value, role, action, rightType) {
-      const currentCheckSum = get(role, ['rights', action._id, 'checksum'], 0);
+    /**
+     * Change checkbox value
+     *
+     * @param {boolean} value
+     * @param {Object} role
+     * @param {Object} right
+     * @param {number} rightType
+     */
+    changeCheckboxValue(value, role, right, rightType) {
+      const currentCheckSum = get(role, ['rights', right._id, 'checksum'], 0);
       const factor = value ? 1 : -1;
 
       /**
@@ -185,32 +235,32 @@ export default {
         const nextCheckSum = !rightType ?
           Number(value) : currentCheckSum + (factor * rightType);
 
-        this.$set(this.changedRoles, role._id, { [action._id]: nextCheckSum });
+        this.$set(this.changedRoles, role._id, { [right._id]: nextCheckSum });
 
         /**
-         * If we have changes for role but we don't have changes for action
+         * If we have changes for role but we don't have changes for right
          */
-      } else if (isUndefined(this.changedRoles[role._id][action._id])) {
+      } else if (isUndefined(this.changedRoles[role._id][right._id])) {
         const nextCheckSum = !rightType ?
           Number(value) : currentCheckSum + (factor * rightType);
 
-        this.$set(this.changedRoles[role._id], action._id, nextCheckSum);
+        this.$set(this.changedRoles[role._id], right._id, nextCheckSum);
 
         /**
-         * If we have changes for role and for action
+         * If we have changes for role and for right
          */
       } else {
         const nextCheckSum = !rightType ?
-          Number(value) : this.changedRoles[role._id][action._id] + (factor * rightType);
+          Number(value) : this.changedRoles[role._id][right._id] + (factor * rightType);
 
         if (currentCheckSum === nextCheckSum) {
           if (Object.keys(this.changedRoles[role._id]).length === 1) {
             this.$delete(this.changedRoles, role._id);
           } else {
-            this.$delete(this.changedRoles[role._id], action._id);
+            this.$delete(this.changedRoles[role._id], right._id);
           }
         } else {
-          this.$set(this.changedRoles[role._id], action._id, nextCheckSum);
+          this.$set(this.changedRoles[role._id], right._id, nextCheckSum);
         }
 
         if (isEmpty(this.changedRoles[role._id])) {
@@ -219,19 +269,24 @@ export default {
       }
     },
 
+    /**
+     * Fetch rights and roles lists
+     *
+     * @returns void
+     */
     async fetchList() {
-      const [{ data: actions }] = await Promise.all([
-        this.fetchActionsListWithoutStore({ params: { limit: 10000 } }),
+      const [{ data: rights }] = await Promise.all([
+        this.fetchRightsListWithoutStore({ params: { limit: 10000 } }),
         this.fetchRolesList({ params: { limit: 10000 } }),
       ]);
 
-      this.groupedActions = actions.reduce((acc, action) => {
-        if (action.id.startsWith('view') || action.id.startsWith('userview')) {
-          acc.view.push(action);
-        } else if (action.id.startsWith('models')) {
-          acc.technical.push(action);
+      this.groupedRights = rights.reduce((acc, right) => {
+        if (right._id.startsWith('view') || right._id.startsWith('userview')) {
+          acc.view.push(right);
+        } else if (right._id.startsWith('models')) {
+          acc.technical.push(right);
         } else {
-          acc.business.push(action);
+          acc.business.push(right);
         }
 
         return acc;

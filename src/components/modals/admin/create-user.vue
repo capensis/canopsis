@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
+        span.headline {{ title }}
     v-card-text
       v-form
         v-layout(row)
@@ -95,6 +95,10 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.config.title || this.$t('modals.createUser.title');
+    },
+
     user() {
       return this.config.userId ? this.getUserById(this.config.userId) : null;
     },

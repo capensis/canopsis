@@ -7,7 +7,7 @@ import viewModule from './view';
 import statsModule from './stats';
 import roleModule from './role';
 import userModule from './user';
-import actionModule from './action';
+import rightModule from './right';
 
 export default {
   alarm: alarmModule,
@@ -19,5 +19,5 @@ export default {
   stats: statsModule,
   role: roleModule,
   user: userModule,
-  action: actionModule,
+  right: rightModule,
 };

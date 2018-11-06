@@ -30,7 +30,7 @@
       v-tooltip(left)
         v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateRoleModal")
           v-icon add
-        span Add role
+        span {{ $t('modals.createRole.title') }}
 
 </template>
 
@@ -105,9 +105,6 @@ export default {
     showCreateRoleModal() {
       this.showModal({
         name: MODALS.createRole,
-        config: {
-          title: this.$t('modals.createRole.title'),
-        },
       });
     },
     fetchList() {
@@ -127,11 +124,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .fab {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-</style>

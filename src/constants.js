@@ -43,6 +43,7 @@ export const MODALS = {
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
+  createRight: 'create-right',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -349,7 +350,7 @@ export const USERS_RIGHTS_MASKS = {
   delete: 1,
 };
 
-export const USERS_ACTIONS_TYPES = {
+export const USERS_RIGHTS_TYPES = {
   crud: 'CRUD',
   rw: 'RW',
 };
