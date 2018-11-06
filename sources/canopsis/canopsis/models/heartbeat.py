@@ -27,7 +27,16 @@ class HeartBeat:
         `maxduration` is a string that match the follow pattern: [0-9]*(s|m|h).
         """
         it = 0
-        mappings = heartBeat[cls.MAPPINGS_KEY]
+        try:
+            mappings = heartBeat[cls.MAPPINGS_KEY]
+        except KeyError:
+            return False, "The `mappings` field is missing."
+
+        try:
+            max_duration = heartBeat[cls.MAX_DUR_KEY]
+        except KeyError:
+            return False, "The `maxduration` field is missing."
+
         for mapping in mappings:
             for key in mapping:
                 if not isinstance(key, basestring):
@@ -39,7 +48,7 @@ class HeartBeat:
 
                 it += 1
 
-        if re.match(cls.MAX_DUR_REGEXP, heartBeat[cls.MAX_DUR_KEY]) is not None:
+        if re.match(cls.MAX_DUR_REGEXP, max_duration) is not None:
             return True, ""
 
         return False, "The maxDuration fields does not match the" \
