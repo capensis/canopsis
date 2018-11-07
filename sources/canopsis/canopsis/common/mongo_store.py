@@ -73,8 +73,8 @@ class MongoStore(object):
 
         self.read_preference = getattr(
             ReadPreference,
-            conf.get('read_preference', 'SECONDARY_PREFERRED'),
-            ReadPreference.SECONDARY_PREFERRED
+            conf.get('read_preference', 'PRIMARY_PREFERRED'),
+            ReadPreference.PRIMARY_PREFERRED
         )
 
         # missing from storage: journaling, sharding, retention ;;
