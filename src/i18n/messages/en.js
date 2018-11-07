@@ -475,6 +475,7 @@ export default {
         email: 'Email',
         password: 'Password',
         language: 'User interface language',
+        role: 'Role',
         enabled: 'Enabled',
       },
     },
@@ -486,6 +487,14 @@ export default {
     },
     editRole: {
       title: 'Edit role',
+    },
+    createRight: {
+      title: 'Create right',
+      fields: {
+        id: 'ID',
+        description: 'Description',
+        type: 'Type',
+      },
     },
   },
   tables: {

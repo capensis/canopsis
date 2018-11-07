@@ -2,7 +2,7 @@
 v-card
   v-card-title.primary.white--text
     v-layout(justify-space-between, align-center)
-      h2 {{ config.title }}
+      h2 {{ title }}
   v-card-text.py-0
     v-container
       v-form
@@ -62,9 +62,14 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.config.title || this.$t('modals.createRole.title');
+    },
+
     role() {
       return this.config.roleId ? this.getRoleById(this.config.roleId) : null;
     },
+
     isNew() {
       return !this.role;
     },

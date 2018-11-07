@@ -11,7 +11,11 @@ export function generateWidgetByType(type) {
     _id: uuid(`widget_${type}`),
     title: '',
     parameters: {},
-    size: { sm: 3, md: 3, lg: 3 },
+    size: {
+      sm: 3,
+      md: 3,
+      lg: 3,
+    },
   };
 
   let specialParameters = {};
@@ -103,7 +107,9 @@ export function generateWidgetByType(type) {
       specialParameters = {
         mfilter: {},
         duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment().startOf('hour').unix(),
+        tstop: moment()
+          .startOf('hour')
+          .unix(),
         groups: [],
         stats: {},
         statsColors: {},
@@ -113,7 +119,9 @@ export function generateWidgetByType(type) {
       specialParameters = {
         mfilter: {},
         duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment().startOf('hour').unix(),
+        tstop: moment()
+          .startOf('hour')
+          .unix(),
         periods: 2,
         stats: {},
       };
@@ -121,7 +129,9 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsTable:
       specialParameters = {
         duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment().startOf('hour').unix(),
+        tstop: moment()
+          .startOf('hour')
+          .unix(),
         stats: {},
         mfilter: {},
       };
@@ -184,7 +194,9 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsNumber:
       specialParameters = {
         duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment().startOf('hour').unix(),
+        tstop: moment()
+          .startOf('hour')
+          .unix(),
         mfilter: {},
         stat: {},
         yesNoMode: false,
@@ -276,6 +288,27 @@ export function generateRole() {
   };
 }
 
+export function generateRight() {
+  return {
+    crecord_creation_time: null,
+    crecord_name: null,
+    crecord_type: 'action',
+    crecord_write_time: null,
+    desc: '',
+    enable: true,
+    id: null,
+    type: '',
+    _id: '',
+  };
+}
+
+export function generateRoleRightByChecksum(checksum) {
+  return {
+    checksum,
+    crecord_type: 'right',
+  };
+}
+
 export default {
   generateWidgetByType,
   generateRow,
@@ -283,4 +316,6 @@ export default {
   generateUserPreferenceByWidgetAndUser,
   generateUser,
   generateRole,
+  generateRight,
+  generateRoleRightByChecksum,
 };

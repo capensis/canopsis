@@ -40,6 +40,7 @@ import AddStat from './stats/add-stat.vue';
 import CalendarAlarmsList from './stats/calendar-alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
+import CreateRight from './admin/create-right.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -75,6 +76,7 @@ export default {
     CalendarAlarmsList,
     CreateUser,
     CreateRole,
+    CreateRight,
   },
   data() {
     return {

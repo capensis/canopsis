@@ -43,6 +43,7 @@ export const MODALS = {
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
+  createRight: 'create-right',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -340,4 +341,16 @@ export const LIVE_REPORTING_INTERVALS = {
   thisMonth: 'thisMonth',
   lastMonth: 'lastMonth',
   custom: 'custom',
+};
+
+export const USERS_RIGHTS_MASKS = {
+  create: 8,
+  read: 4,
+  update: 2,
+  delete: 1,
+};
+
+export const USERS_RIGHTS_TYPES = {
+  crud: 'CRUD',
+  rw: 'RW',
 };

@@ -2,8 +2,9 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
+        span.headline {{ title }}
     v-card-text
+      progress-overlay(:pending="pending")
       v-form
         v-layout(row)
           v-text-field(
@@ -42,6 +43,17 @@
           )
         v-layout(row)
           v-select(
+          :label="$t('modals.createUser.fields.role')",
+          v-model="form.role",
+          :items="roles",
+          item-text="_id",
+          item-value="_id",
+          data-vv-name="role",
+          v-validate="'required'",
+          :error-messages="errors.collect('role')",
+          )
+        v-layout(row)
+          v-select(
           :label="$t('modals.createUser.fields.language')",
           v-model="form.ui_language",
           :items="languages"
@@ -66,7 +78,10 @@ import pick from 'lodash/pick';
 import { MODALS } from '@/constants';
 import { generateUser } from '@/helpers/entities';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
+import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
+
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 /**
  * Modal to create an entity (watcher, resource, component, connector)
@@ -76,25 +91,33 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  components: { ProgressOverlay },
   mixins: [
     modalInnerMixin,
+    entitiesRoleMixin,
     entitiesUserMixin,
   ],
   data() {
     return {
+      pending: true,
       languages: ['fr', 'en'],
       form: {
         _id: '',
         firstname: '',
         lastname: '',
-        password: '',
         mail: '',
-        enable: true,
+        password: '',
+        role: null,
         ui_language: 'fr',
+        enable: true,
       },
     };
   },
   computed: {
+    title() {
+      return this.config.title || this.$t('modals.createUser.title');
+    },
+
     user() {
       return this.config.userId ? this.getUserById(this.config.userId) : null;
     },
@@ -110,18 +133,23 @@ export default {
       return !this.user;
     },
   },
-  mounted() {
+  async mounted() {
+    await this.fetchRolesList({ params: { limit: 0 } });
+
     if (!this.isNew) {
       this.form = pick(this.user, [
         '_id',
         'firstname',
         'lastname',
-        'password',
         'mail',
-        'enable',
+        'password',
+        'role',
         'ui_language',
+        'enable',
       ]);
     }
+
+    this.pending = false;
   },
   methods: {
     async submit() {
