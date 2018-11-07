@@ -147,7 +147,7 @@ export default {
      * TODO: We can move check access into beforeRouteEnter but we will should use store from imports
      * because there isn't this context in the beforeRouteEnter
      */
-    if (!this.hasAccess(this.id, this.$constants.USERS_RIGHTS_MASKS.read, true)) {
+    if (!this.hasAccess(this.id, this.$constants.USERS_RIGHTS_MASKS.read)) {
       this.addErrorPopup({ text: 'Forbidden' });
       this.$router.back();
     } else {
