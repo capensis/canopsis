@@ -1,19 +1,29 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
+    undefined: 'Non définie',
+    entity: 'Entitée',
     watcher: 'Observateur',
     widget: 'Widget',
+    addWidget: 'Ajouter un widget',
+    refresh: 'Rafraîchir',
+    toggleEditView: 'Activer/Désactiver le mode édition',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
+    submit: 'Envoyer',
+    cancel: 'Annuler',
+    options: 'Options',
+    quitEditing: 'Quitter le mode d\'édition',
+    enabled: 'Activé(e)',
+    disabled: 'Désactivé(e)',
+    login: 'Connection',
     yes: 'Oui',
     no: 'Non',
+    default: 'Défaut',
     confirmation: 'Etes-vous sûr(e) ?',
-    submit: 'Soumettre',
-    enabled: 'Activé',
-    disabled: 'Désactivée',
-    login: 'Connexion',
+    parameters: 'Paramètres',
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire',
@@ -22,20 +32,25 @@ export default {
     states: 'Etats',
     sla: 'Sla',
     authors: 'Auteurs',
+    stat: 'Statistique',
     trend: 'Tendance',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     connect: 'Connexion',
+    optionnal: 'Optionnel',
     logout: 'Se déconnecter',
     title: 'Titre',
     save: 'Sauvegarder',
     label: 'Label',
     value: 'Valeur',
     add: 'Ajouter',
+    create: 'Créer',
     delete: 'Supprimer',
+    show: 'Afficher',
     edit: 'Éditer',
     parse: 'Compiler',
     home: 'Accueil',
+    step: 'Etape',
     entries: 'entrées',
     showing: 'Affiche',
     apply: 'Appliquer',
@@ -60,6 +75,12 @@ export default {
       month: 'mois | mois',
       year: 'année | années',
     },
+  },
+  user: {
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    role: 'Role',
+    defaultView: 'Vue par défaut',
   },
   context: {
     impacts: 'Impacts',
@@ -136,8 +157,12 @@ export default {
       contextTableSettings: 'Paramètres de l\'explorateur de contexte',
       weatherSettings: 'Paramètres de la météo des services',
       statsHistogramSettings: 'Paramètres de l\'histogramme',
+      statsCurvesSettings: 'Paramètres de courbes de stats',
       statsTableSettings: 'Paramètres du tableau de stats',
+      statsCalendarSettings: 'Paramètres du calendrier',
+      statsNumberSettings: 'Paramètres du compteur de stat',
     },
+    advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
@@ -149,11 +174,27 @@ export default {
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
-    filterEditor: 'Editeur de filtre',
+    filterEditor: 'Ésditeur de filtre',
     duration: 'Durée',
     tstop: 'Date de fin',
-    statsSelect: 'Sélecteur de stats',
-    selectAFilter: 'Sélectionner un filtre',
+    periodsNumber: 'Nombre d\'étapes',
+    statName: 'Nom de la statistique',
+    statsSelect: {
+      title: 'Sélecteur de statistique',
+      required: 'Veuillez sélectionner au moins une statistique',
+    },
+    yesNoMode: 'Mode Oui/Non',
+    selectAFilter: 'Selectionner un filtre',
+    criticityLevels: 'Niveaux de criticité',
+    colorsSelector: {
+      title: 'Sélecteur de couleur',
+      statsCriticity: {
+        [STATS_CRITICITY.ok]: 'ok',
+        [STATS_CRITICITY.minor]: 'minor',
+        [STATS_CRITICITY.major]: 'major',
+        [STATS_CRITICITY.critical]: 'critical',
+      },
+    },
     statsNumbers: {
       title: 'Cellule de stats',
       yesNoMode: 'Mode Oui/Non',
@@ -170,11 +211,6 @@ export default {
       noData: 'Aucune ligne correspondante. Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
       fields: {
         row: 'Ligne',
-        size: {
-          sm: 'Colonnes SM',
-          md: 'Colonnes MD',
-          lg: 'Colonnes LG',
-        },
       },
     },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
@@ -193,6 +229,23 @@ export default {
         watcher: 'Observateur',
       },
     },
+    statSelector: {
+      error: {
+        alreadyExist: 'Une statistique avec ce nom existe déjà.',
+      },
+    },
+    statsGroups: {
+      title: 'Groupes de statistiques',
+      manageGroups: 'Ajouter un groupe',
+      required: 'Veuillez créer au moins un groupe',
+    },
+    statsColor: {
+      title: 'Couleurs des statistiques',
+      pickColor: 'Sélectionner une couleur',
+    },
+    considerPbehaviors: {
+      title: 'Prendre en compte les comportements périodiques ?',
+    },
   },
   modals: {
     contextInfos: {
@@ -203,6 +256,7 @@ export default {
       editTitle: 'Editer une entitée',
       infosList: 'Infos',
       addInfos: 'Ajouter un champ info',
+      noInfos: 'No infos',
       fields: {
         type: 'Type',
         manageInfos: 'Gérer Infos',
@@ -222,17 +276,25 @@ export default {
       displayName: 'Nom',
     },
     view: {
-      title: 'Créer une vue',
-      noData: 'Pas de groupe correspondant. Presser <kbd>Enter</kbd> pour en créer un nouveau',
-      fields: {
-        groupIds: 'Choisir un groupe, ou en créer un nouveau',
-        groupTags: 'Tags du groupe',
+      select: {
+        title: 'Sélectionner une vue',
       },
-      success: 'Nouvelle vue crée',
-      fail: 'Erreur dans la création de vue',
+      create: {
+        title: 'Créer une vue',
+      },
+      edit: {
+        title: 'Éditer une vue',
+      },
+      noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
+      fields: {
+        groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
+        groupTags: 'Labels de groupes',
+      },
+      success: 'Nouvelle vue créée !',
+      fail: 'Erreur lors de la création de la vue',
     },
     createAckEvent: {
-      title: 'Ajouter un événement: Ack',
+      title: 'Acquitter',
       tooltips: {
         ackResources: 'Voulez-vous acquitter les ressources liées ?',
       },
@@ -243,19 +305,19 @@ export default {
       },
     },
     createSnoozeEvent: {
-      title: 'Ajouter un événement: Snooze',
+      title: 'Snooze',
       fields: {
         duration: 'Durée',
       },
     },
     createCancelEvent: {
-      title: 'Ajouter un événement: Annuler',
+      title: 'Annuler',
       fields: {
         output: 'Note',
       },
     },
     createChangeStateEvent: {
-      title: 'Ajouter un événement: Changer l\'état',
+      title: 'Changer l\'état',
       states: {
         ok: 'Info',
         minor: 'Mineur',
@@ -267,7 +329,7 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Ajoute run comportement périodique à ces éléments ?',
+      title: 'Ajouter un comportement périodique à ces éléments ?',
       fields: {
         name: 'Nom',
         start: 'Début',
@@ -278,13 +340,13 @@ export default {
       },
     },
     createAckRemove: {
-      title: 'Ajouter un événement: Annuler Ack',
+      title: 'Annuler l\'acquittement',
     },
     createDeclareTicket: {
-      title: 'Ajouter un événement: Déclarer un incident',
+      title: 'Déclarer un incident',
     },
     createAssociateTicket: {
-      title: 'Ajouter un événement: Associer un numéro de ticket',
+      title: 'Associer un numéro de ticket',
       fields: {
         ticket: 'Numéro du ticket',
       },
@@ -316,6 +378,15 @@ export default {
       org: 'Org',
       noData: 'Pas de données',
       ticketing: 'Ticketing',
+      application_crit_label: 'Criticité',
+      product_line: 'Ligne produit',
+      service_period: 'Plage de surveillance',
+      isInCarat: 'Cartographic repository',
+      application_label: 'Description',
+      target_platform: 'Environnement',
+      scenario_label: 'Label',
+      scenario_probe_name: 'Sonde',
+      scenario_calendar: 'Intervals d\'éxécution',
     },
     filter: {
       create: {
@@ -327,6 +398,12 @@ export default {
       fields: {
         title: 'Nom',
       },
+    },
+    colorPicker: {
+      title: 'Sélecteur de couleur',
+    },
+    textEditor: {
+      title: 'Éditeur de texte',
     },
     widgetCreation: {
       title: 'Sélectionnez un widget',
@@ -340,20 +417,87 @@ export default {
         weather: {
           title: 'Météo de services',
         },
+        statsHistogram: {
+          title: 'Histogramme de statistiques',
+        },
+        statsCurves: {
+          title: 'Courbes de statistiques',
+        },
+        statsTable: {
+          title: 'Tableau de statistiques',
+        },
+        statsCalendar: {
+          title: 'Calendrier',
+        },
+        statsNumber: {
+          title: 'Compteur de statistiques',
+        },
       },
+    },
+    manageHistogramGroups: {
+      title: {
+        add: 'Ajouter un groupe',
+        edit: 'Editer un groupe',
+      },
+    },
+    addStat: {
+      title: {
+        add: 'Ajouter une statistique',
+        edit: 'Editer une statistique',
+      },
+    },
+    group: {
+      create: {
+        title: 'Créer un groupe',
+      },
+      edit: {
+        title: 'Editer un groupe',
+      },
+      fields: {
+        name: 'Nom',
+      },
+      errors: {
+        isNotEmpty: 'Ce groupe n\'est pas vide',
+      },
+    },
+    calendarAlarmsList: {
+      title: 'Bac à alarmes',
+    },
+    createUser: {
+      title: 'Créer un utilisateur',
+      fields: {
+        username: 'Nom d\'utilisateur',
+        firstName: 'Prénom',
+        lastName: 'Nom',
+        email: 'Email',
+        password: 'Mot de passe',
+        language: 'Langue de l\'interface par défaut',
+        enabled: 'Actif',
+      },
+    },
+    editUser: {
+      title: 'Editer un utilisateur',
+    },
+    createRole: {
+      title: 'Créer un role',
+    },
+    editRole: {
+      title: 'Editer un role',
     },
   },
   tables: {
+    noData: 'Aucune donnée',
     contextList: {
       title: 'Liste Context',
       name: 'Nom',
+      type: 'Type',
       id: 'Id',
-      noDataText: 'Faites une recherche',
     },
     alarmGeneral: {
       title: 'Generale',
       author: 'Auteur',
       connector: 'Connecteur',
+      connectorName: 'Nom du connecteur',
       component: 'Composant',
       resource: 'Ressource',
       output: 'Output',
@@ -371,13 +515,17 @@ export default {
       name: 'Nom',
       author: 'Auteur',
       connector: 'Connecteur',
-      connector_name: 'Nom du connecteur',
+      connectorName: 'Nom du connecteur',
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finis',
       type_: 'Type',
       reason: 'Raison',
       rrule: 'Rrule',
+    },
+    rolesList: {
+      name: 'Nom',
+      actions: 'Actions',
     },
     alarmStatus: {
       [ENTITIES_STATUSES.off]: 'Fermée',
@@ -401,6 +549,15 @@ export default {
     },
     noColumns: {
       message: 'Veuillez sélectionner au moins 1 colonne',
+    },
+    admin: {
+      users: {
+        columns: {
+          username: 'Nom d\'utilisateur',
+          role: 'Role',
+          enabled: 'Actif',
+        },
+      },
     },
   },
   rRule: {
@@ -454,6 +611,13 @@ export default {
   },
   errors: {
     default: 'Une erreur s\'est produite...',
+    lineNotEmpty: 'Cette ligne n\'est pas vide',
+  },
+  calendar: {
+    today: 'Aujourd\'hui',
+    month: 'Mois',
+    week: 'Semaine',
+    day: 'Jour',
   },
   success: {
     default: 'Action effectuée avec succès',
@@ -461,7 +625,7 @@ export default {
     editEntity: 'Entité éditée avec succès',
   },
   filterEditor: {
-    title: 'Editeur de filtre',
+    title: 'Éditeur de filtre',
     tabs: {
       visualEditor: 'Éditeur visuel',
       advancedEditor: 'Éditeur avancé',
@@ -473,10 +637,20 @@ export default {
       deleteGroup: 'Supprimer un groupe',
     },
     resultsTableHeaders: {
-      connector: 'Connecteur',
-      connectorName: 'Nom du connecteur',
-      component: 'Composant',
-      resource: 'Ressource',
+      alarm: {
+        connector: 'Connecteur',
+        connectorName: 'Nom du connecteur',
+        component: 'Composant',
+        resource: 'Ressource',
+      },
+      entity: {
+        id: 'ID',
+        name: 'Nom',
+        type: 'Type',
+      },
+      errors: {
+        invalidJSON: 'JSON non valide',
+      },
     },
   },
   validator: {
@@ -495,6 +669,15 @@ export default {
       [STATS_TYPES.currentState.value]: 'Etat courant',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
+    },
+  },
+  layout: {
+    sideBar: {
+      buttons: {
+        edit: 'Activer/Désactiver le mode d\'édition',
+        create: 'Créer une vue',
+        settings: 'Paramètres',
+      },
     },
   },
 };
