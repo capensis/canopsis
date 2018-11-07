@@ -594,8 +594,11 @@ class AlertsReader(object):
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
-        if limit is None or limit > 50:
-            limit = 50
+
+        total = self.alarm_collection.find(final_filter).count()
+
+        if limit is None:
+            limit = total
 
         # truncate results if more than required
         api_limit = limit
@@ -606,7 +609,6 @@ class AlertsReader(object):
             limit = limit * 2
             hide_resources &= rconn.exists('featureflag:hide_resources')
 
-        total = self.alarm_collection.find(final_filter).count()
 
         def search_aggregate(skip, limit):
             pipeline = [
@@ -677,13 +679,20 @@ class AlertsReader(object):
             if tmp_res['alarms']:
                 results['truncated'] |= tmp_res['truncated']
 
-                skip += limit
-
                 # filter useless data
                 for filter_ in filters:
                     tmp_res['alarms'] = filter_(tmp_res['alarms'])
 
                 results['alarms'].extend(tmp_res['alarms'])
+
+                if skip < total:
+                    results['first'] = 1+skip
+                    results['last'] = skip+min(len(tmp_res['alarms']), limit)
+                else:
+                    results['first'] = skip
+                    results['last'] = skip
+
+                skip += limit
 
             truncated_by = pre_filter_len - len(tmp_res['alarms'])
 
@@ -702,9 +711,13 @@ class AlertsReader(object):
                 'alarms': [],
                 'total': total,
                 'truncated': False,
-                'first': 0,
-                'last': 0
+                'first': max(1, 1+skip),
+                'last': min(limit, total)
             }
+            if skip > total:
+                results['first'] = skip
+                results['last'] = skip
+
             while len(results['alarms']) < api_limit:
                 results, skip, truncated_by = offset_aggregate(
                     results,
@@ -734,6 +747,9 @@ class AlertsReader(object):
 
             if len_alarms > api_limit:
                 results['alarms'] = results['alarms'][0:api_limit]
+
+            if limit == total:
+                results['total'] = len(results['alarms'])
 
             return results
 
