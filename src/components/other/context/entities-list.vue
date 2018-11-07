@@ -4,8 +4,11 @@
       v-flex(xs12, md4)
         context-search(:query.sync="query")
       v-flex.ml-4(xs4)
-        v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
-          v-icon delete
+        template(v-if="selected.length")
+          v-btn(@click.stop="deleteEntities", icon, small)
+            v-icon delete
+          v-btn(@click.stop="addPbehavior", icon, small)
+            v-icon pause
       v-flex(xs2)
         v-btn(icon, @click.prevent="showSettings")
           v-icon settings
@@ -185,6 +188,15 @@ export default {
         name: this.$constants.MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
+        },
+      });
+    },
+    addPbehavior() {
+      this.showModal({
+        name: this.$constants.MODALS.createPbehavior,
+        config: {
+          itemsType: this.$constants.ENTITIES_TYPES.entity,
+          itemIds: this.selected,
         },
       });
     },
