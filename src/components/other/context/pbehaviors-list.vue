@@ -11,14 +11,18 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
     td {{ props.item.type_ }}
     td {{ props.item.reason }}
     td {{ props.item.rrule }}
+    td
+      v-btn(icon, small)
+        v-icon edit
+      v-btn.error--text(@click="deletePbehavior(props.item._id)", icon, small)
+        v-icon delete
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapGetters } = createNamespacedHelpers('pbehavior');
+import pbehaviorEntityMixin from '@/mixins/entities/pbehavior';
 
 export default {
+  mixins: [pbehaviorEntityMixin],
   props: {
     itemId: {
       type: String,
@@ -69,24 +73,24 @@ export default {
           text: this.$t('pbehaviors.rrule'),
           sortable: false,
         },
+        {
+          text: this.$t('common.actionsLabel'),
+          sortable: false,
+        },
       ],
     };
-  },
-  computed: {
-    ...pbehaviorMapGetters({
-      pbehaviorsList: 'items',
-    }),
   },
   mounted() {
     this.fetchItems();
   },
   methods: {
-    ...pbehaviorMapAction({
-      fetchPbehaviorsList: 'fetchListByEntityId',
-    }),
+    async deletePbehavior(itemId) {
+      await this.removePbehavior({ id: itemId });
+      await this.fetchItems();
+    },
     async fetchItems() {
-      await this.fetchPbehaviorsList({ id: this.itemId });
-      this.items = [...this.pbehaviorsList];
+      await this.fetchPbehaviorsByEntityId({ id: this.itemId });
+      this.items = [...this.pbehaviorItems];
     },
   },
 };
