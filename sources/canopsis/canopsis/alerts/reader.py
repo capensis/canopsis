@@ -707,6 +707,7 @@ class AlertsReader(object):
             :param bool post_sort: post filtering sort with sort_key
                 and sort_dir on alarms.
             """
+            len_alarms = 0
             results = {
                 'alarms': [],
                 'total': total,
