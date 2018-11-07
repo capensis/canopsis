@@ -174,14 +174,14 @@ export default {
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
-    filterEditor: 'Editeur de filtre',
+    filterEditor: 'Ésditeur de filtre',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
     statName: 'Nom de la statistique',
     statsSelect: {
       title: 'Sélecteur de statistique',
-      required: 'Veuillez sélectionner au moins 1 statistique',
+      required: 'Veuillez sélectionner au moins une statistique',
     },
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Selectionner un filtre',
@@ -237,7 +237,7 @@ export default {
     statsGroups: {
       title: 'Groupes de statistiques',
       manageGroups: 'Ajouter un groupe',
-      required: 'Veuillez créer au moins 1 groupe',
+      required: 'Veuillez créer au moins un groupe',
     },
     statsColor: {
       title: 'Couleurs des statistiques',
@@ -283,7 +283,7 @@ export default {
         title: 'Créer une vue',
       },
       edit: {
-        title: 'Editer une vue',
+        title: 'Éditer une vue',
       },
       noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
       fields: {
@@ -403,7 +403,7 @@ export default {
       title: 'Sélecteur de couleur',
     },
     textEditor: {
-      title: 'Editeur de texte',
+      title: 'Éditeur de texte',
     },
     widgetCreation: {
       title: 'Sélectionnez un widget',
@@ -461,7 +461,7 @@ export default {
       },
     },
     calendarAlarmsList: {
-      title: 'Bac à alarme',
+      title: 'Bac à alarmes',
     },
     createUser: {
       title: 'Créer un utilisateur',
@@ -625,7 +625,7 @@ export default {
     editEntity: 'Entité éditée avec succès',
   },
   filterEditor: {
-    title: 'Editeur de filtre',
+    title: 'Éditeur de filtre',
     tabs: {
       visualEditor: 'Éditeur visuel',
       advancedEditor: 'Éditeur avancé',
