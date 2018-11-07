@@ -126,31 +126,6 @@ class Env2Cfg(object):
         with open(p, 'w') as fh:
             amqp.write(fh)
 
-    class __DatabaseConf(object):
-        def __init__(self, host, port, db, user, pwd):
-            self.__host = host
-            self.__port = port
-            self.__db = db
-            self.__user = user
-            self.__pwd = pwd
-
-        def update_database_conf(self, conf_store, section='DATABASE', user_key='user', password_key='pwd'):
-            conf_store.set(section, 'host', self.__host)
-            conf_store.set(section, 'port', self.__port)
-            conf_store.set(section, 'db', self.__db)
-            conf_store.set(section, user_key, self.__user)
-            conf_store.set(section, password_key, self.__pwd)
-
-    def __parse_mongo_url(self):
-        pu = urlparse(os.environ.get(self.CPS_MONGO_URL))
-        return self.__DatabaseConf(
-            host='localhost' if pu.hostname is None else pu.hostname,
-            port='27017' if pu.port is None else str(pu.port),
-            db='canopsis' if pu.path is '' else pu.path[1:],
-            user='cpsmongo' if pu.username is None else pu.username,
-            pwd='canopsis' if pu.password is None else pu.password
-        )
-
     def _update_mongo(self):
 
         pms = pjoin(root_path, 'etc', 'common', 'mongo_store.conf')
@@ -165,31 +140,57 @@ class Env2Cfg(object):
         cstorage = ConfigParser()
         storage = ConfigParser()
 
-        def _zip_configs_metadata():
-            return zip([mongo_store, cstorage, storage],
-                       [pms, pcs, ps],
-                       ['DATABASE', 'master', 'DATABASE'],
-                       ['user', 'userid', 'user'],
-                       ['pwd', 'password', 'pwd'])
+        mongo_store.read(pms)
+        cstorage.read(pcs)
+        storage.read(ps)
 
-        for conf, fpath, section, _, _ in _zip_configs_metadata():
-            conf.read(fpath)
-            if section not in conf.sections():
-                conf.add_section(section)
+        if 'DATABASE' not in mongo_store.sections():
+            mongo_store.add_section('DATABASE')
+
+        if 'master' not in cstorage.sections():
+            cstorage.add_section('master')
+
+        if 'DATABASE' not in storage.sections():
+            storage.add_section('DATABASE')
 
         if os.environ.get(self.CPS_MONGO_URL):
-            database_conf = self.__parse_mongo_url()
-            for conf, _, section, user_key, password_key in _zip_configs_metadata():
-                database_conf.update_database_conf(conf, section, user_key, password_key)
+            pu = urlparse(os.environ[self.CPS_MONGO_URL])
+
+            mongo_store.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
+            mongo_store.set('DATABASE', 'port', '27017' if pu.port is None else str(pu.port))
+            mongo_store.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
+            mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)
+            mongo_store.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
+
+            cstorage['master']['host'] = mongo_store['DATABASE']['host']
+            cstorage['master']['port'] = mongo_store['DATABASE']['port']
+            cstorage['master']['userid'] = mongo_store['DATABASE']['user']
+            cstorage['master']['password'] = mongo_store['DATABASE']['pwd']
+            cstorage['master']['db'] = mongo_store['DATABASE']['db']
+
+            storage['DATABASE']['host'] = mongo_store['DATABASE']['host']
+            storage['DATABASE']['port'] = mongo_store['DATABASE']['port']
+            storage['DATABASE']['db'] = mongo_store['DATABASE']['db']
+            storage['DATABASE']['user'] = mongo_store['DATABASE']['user']
+            storage['DATABASE']['pwd'] = mongo_store['DATABASE']['pwd']
 
         if os.environ.get(self.CPS_MONGO_REPLICASET_URL):
-            for conf, _, section, _, _ in _zip_configs_metadata():
-                conf[section][self.__mongo_replicaset_url_config_key] = \
-                    os.environ[self.CPS_MONGO_REPLICASET_URL]
+            mongo_replicaset_url = os.environ[self.CPS_MONGO_REPLICASET_URL]
 
-        for conf, fpath, _, _, _ in _zip_configs_metadata():
-            with open(fpath, 'w') as fh:
-                conf.write(fh)
+            mongo_store['DATABASE'][self.__mongo_replicaset_url_config_key] = mongo_replicaset_url
+
+            cstorage['master'][self.__mongo_replicaset_url_config_key] = mongo_replicaset_url
+
+            storage['DATABASE'][self.__mongo_replicaset_url_config_key] = mongo_replicaset_url
+
+        with open(pms, 'w') as fh:
+            mongo_store.write(fh)
+
+        with open(pcs, 'w') as fh:
+            cstorage.write(fh)
+
+        with open(ps, 'w') as fh:
+            storage.write(fh)
 
     def _update_redis(self):
         pu = urlparse(os.environ.get(self.CPS_REDIS_URL))
