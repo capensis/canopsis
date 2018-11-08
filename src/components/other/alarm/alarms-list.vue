@@ -86,10 +86,10 @@ import NoColumnsTable from '@/components/tables/no-columns.vue';
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
-
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import filterSelectMixin from '@/mixins/filter-select';
 
 /**
  * Alarm-list component
@@ -117,6 +117,7 @@ export default {
     widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
+    filterSelectMixin,
   ],
   props: {
     widget: {
@@ -143,16 +144,6 @@ export default {
       }
 
       return [];
-    },
-    mainFilter() {
-      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
-
-      return isEmpty(mainFilter) ? null : mainFilter;
-    },
-    viewFilters() {
-      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
-
-      return isEmpty(viewFilters) ? [] : viewFilters;
     },
   },
   methods: {
@@ -192,24 +183,6 @@ export default {
           widgetId: this.widget._id,
           params: query,
         });
-      }
-    },
-
-    updateSelectedFilter(value) {
-      this.createUserPreference({
-        userPreference: {
-          ...this.userPreference,
-          widget_preferences: {
-            ...this.userPreference.widget_preferences,
-            mainFilter: value || {},
-          },
-        },
-      });
-
-      if (value && value.filter) {
-        this.query = { ...this.query, filter: value.filter };
-      } else {
-        this.query = { ...this.query, filter: undefined };
       }
     },
   },
