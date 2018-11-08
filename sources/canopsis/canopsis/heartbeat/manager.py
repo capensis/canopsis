@@ -71,7 +71,17 @@ class HeartBeatService:
 
     def create(self, heartbeat):
         """
+        Create a new heartbeat in the database from a heartbeat model instance.
+
+        :param heartbeat: a heartbeat model instance.
+        :raises: CollectionError if an error occured while the heartBeat is
+        stored into the database, HeartBeatServiceException if the given
+        heartbeat is not valid.
         """
+        valid, error_message = heartbeat.isValid()
+        if not valid:
+            raise HeartBeatServiceException(error_message)
+
         global_config = self.__get_conf()
         hb_Section = global_config[self.HEARTBEAT_SECTION]
         hb_Section[self.ITEMS_KEY].append(heartbeat.to_dict())
