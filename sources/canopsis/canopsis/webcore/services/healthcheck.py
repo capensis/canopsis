@@ -10,7 +10,9 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 def exports(ws):
 
-    healthcheckManager = HealthcheckManager(*HealthcheckManager.provide_default_basics())
+    healthcheckManager = HealthcheckManager(
+        *HealthcheckManager.provide_default_basics()
+    )
 
     @ws.application.get(
         '/api/v2/healthcheck/'

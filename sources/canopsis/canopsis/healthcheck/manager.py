@@ -39,10 +39,27 @@ class HealthcheckManager(object):
 
         return (logger,)
 
+    def check_amqp(self):
+        """
+        Check if amqp service is available.
+
+        :rtype: ServiceState
+        """
+        return ServiceState()
+
+    def check_cache(self):
+        """
+        Check if cache service is available.
+
+        :rtype: ServiceState
+        """
+        return ServiceState()
+
     def check_db(self):
         """
-        :returns: a working/not working status and a message string
-        :rtype: bool, string
+        Check if database service is available.
+
+        :rtype: ServiceState
         """
         existing_cols = self.db_store.client.collection_names()
         for collection_name in self.CHECK_COLLECTIONS:
@@ -61,7 +78,23 @@ class HealthcheckManager(object):
 
         return ServiceState()
 
-    def check(self, criticals):
+    def check_engines(self):
+        """
+        Check if engines are available.
+
+        :rtype: ServiceState
+        """
+        return ServiceState()
+
+    def check_time_series(self):
+        """
+        Check if time_series service is available.
+
+        :rtype: ServiceState
+        """
+        return ServiceState()
+
+    def check(self, criticals=None):
         """
         Check all services.
 
@@ -70,10 +103,10 @@ class HealthcheckManager(object):
         """
         # TODO: implements criticals
         check = Healthcheck(
-            amqp=self.check_db(),
-            cache=ServiceState(),  # TODO
-            database=ServiceState(),  # TODO
-            engines=ServiceState(),  # TODO
-            time_series=ServiceState()  # TODO
+            amqp=self.check_amqp(),
+            cache=self.check_cache(),
+            database=self.check_db(),
+            engines=self.check_engines(),
+            time_series=self.check_time_series()
         )
         return check.to_dict()

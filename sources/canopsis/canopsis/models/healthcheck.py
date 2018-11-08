@@ -29,7 +29,8 @@ class ServiceState(object):
     @property
     def value(self):
         """
-        Return value for the service. '' if it works, the error message if not.
+        Return a message for the service.
+        '' if it works, the error message if not.
 
         :rtype: string
         """
@@ -83,6 +84,7 @@ class Healthcheck(object):
 
         :rtype: bool
         """
+        # TODO : use criticals list
         return all([
             self.amqp.state,
             self.cache.state,
