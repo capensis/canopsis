@@ -43,21 +43,16 @@
         v-textarea(
         :label="$t('common.value')",
         v-model="form.value",
-        v-validate="'required'",
+        v-validate,
+        data-vv-rule="'required'",
         data-vv-name="value",
         :error-messages="errors.collect('value')"
         )
-        v-btn(@click="addInfo", depressed) {{ $t('common.add') }}
+        v-btn(@click="submit", depressed) {{ $t('common.add') }}
 </template>
 
 <script>
 import formMixin from '@/mixins/form';
-
-const getDefaultFormData = () => ({
-  name: '',
-  description: '',
-  value: '',
-});
 
 /**
  * Form to manipulation with infos
@@ -83,7 +78,11 @@ export default {
   },
   data() {
     return {
-      form: getDefaultFormData(),
+      form: {
+        name: '',
+        description: '',
+        value: '',
+      },
       isEditing: false,
       editingInfoName: '',
     };
@@ -102,14 +101,19 @@ export default {
 
       if (isFormValid) {
         if (this.isEditing) {
-          this.updateField(this.form.name, { ...this.form });
+          await this.updateField(this.form.name, { ...this.form });
           this.isEditing = false;
-          this.resetForm();
+          this.$refs.form.reset();
         } else {
-          this.updateField(this.form.name, { ...this.form });
-          this.resetForm();
+          await this.updateField(this.form.name, { ...this.form });
+          this.$refs.form.reset();
         }
       }
+    },
+
+    async submit() {
+      await this.addInfo();
+      this.$validator.errors.clear();
     },
 
     editInfo(info) {
@@ -123,10 +127,6 @@ export default {
         getMessage: () => this.$t('validator.unique'),
         validate: value => !this.infosNames.includes(value),
       });
-    },
-
-    resetForm() {
-      this.form = getDefaultFormData();
     },
   },
 };
