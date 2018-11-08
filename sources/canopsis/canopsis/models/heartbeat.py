@@ -42,7 +42,6 @@ class HeartBeat:
         :param dict heartBeat: a dict.
         :rtype: (bool, str).
         """
-        it = 0
         try:
             mappings = heartBeat.mappings
         except KeyError:
@@ -61,7 +60,6 @@ class HeartBeat:
                 if not isinstance(mapping[key], basestring):
                     return False, "The value of `{0}` of the mapping object"\
                         " at index {1} must be a string.".format(key, it)
-
 
         if re.match(cls.MAX_DUR_REGEXP, max_duration) is not None:
             return True, ""
