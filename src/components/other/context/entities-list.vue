@@ -7,7 +7,7 @@
         template(v-if="selected.length")
           v-btn(@click.stop="deleteEntities", icon, small)
             v-icon delete
-          v-btn(@click.stop="addPbehavior", icon, small)
+          v-btn(@click.stop="addPbehaviors()", icon, small)
             v-icon pause
       v-flex(xs2)
         v-btn(icon, @click.prevent="showSettings")
@@ -48,6 +48,8 @@
               v-icon edit
             v-btn(@click.stop="deleteEntity(props.item)", icon, small)
               v-icon delete
+            v-btn(@click.stop="addPbehaviors(props.item._id)", icon, small)
+              v-icon pause
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item")
       v-layout.white(align-center)
@@ -196,12 +198,12 @@ export default {
         },
       });
     },
-    addPbehavior() {
+    addPbehaviors(itemId = '') {
       this.showModal({
         name: this.$constants.MODALS.createPbehavior,
         config: {
           itemsType: this.$constants.ENTITIES_TYPES.entity,
-          itemsIds: this.selected,
+          itemsIds: [itemId] || this.selected,
         },
       });
     },

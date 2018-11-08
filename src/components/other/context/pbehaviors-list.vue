@@ -12,8 +12,6 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
     td {{ props.item.reason }}
     td {{ props.item.rrule }}
     td
-      v-btn(icon, small)
-        v-icon edit
       v-btn.error--text(@click="deletePbehavior(props.item._id)", icon, small)
         v-icon delete
 </template>
