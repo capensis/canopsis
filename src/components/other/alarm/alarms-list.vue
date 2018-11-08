@@ -5,7 +5,7 @@
         alarm-list-search(:query.sync="query")
       v-flex
         pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
-      v-flex
+      v-flex(v-if="hasAccessToListFilters")
         v-select(
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
@@ -75,6 +75,8 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 
+import { MODALS, SIDE_BARS, USERS_RIGHTS } from '@/constants';
+
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
@@ -83,6 +85,7 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -111,6 +114,7 @@ export default {
     NoColumnsTable,
   },
   mixins: [
+    authMixin,
     modalMixin,
     sideBarMixin,
     widgetQueryMixin,
@@ -148,11 +152,21 @@ export default {
 
       return [];
     },
+
+    hasAccessToListFilters() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
+    },
+
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+    },
+
     mainFilter() {
       const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
 
       return isEmpty(mainFilter) ? null : mainFilter;
     },
+
     viewFilters() {
       const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
 
@@ -166,7 +180,7 @@ export default {
 
     showEditLiveReportModal() {
       this.showModal({
-        name: this.$constants.MODALS.editLiveReporting,
+        name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['interval', 'tstart', 'tstop']),
           action: params => this.query = { ...this.query, ...params },
@@ -176,7 +190,7 @@ export default {
 
     showSettings() {
       this.showSideBar({
-        name: this.$constants.SIDE_BARS.alarmSettings,
+        name: SIDE_BARS.alarmSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,
@@ -200,15 +214,17 @@ export default {
     },
 
     updateSelectedFilter(value) {
-      this.createUserPreference({
-        userPreference: {
-          ...this.userPreference,
-          widget_preferences: {
-            ...this.userPreference.widget_preferences,
-            mainFilter: value || {},
+      if (this.hasAccessToEditFilter) {
+        this.createUserPreference({
+          userPreference: {
+            ...this.userPreference,
+            widget_preferences: {
+              ...this.userPreference.widget_preferences,
+              mainFilter: value || {},
+            },
           },
-        },
-      });
+        });
+      }
 
       if (value && value.filter) {
         this.query = { ...this.query, filter: value.filter };
