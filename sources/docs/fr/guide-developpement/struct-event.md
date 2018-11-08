@@ -47,8 +47,6 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
     'event_type': 'check',
 
     'state':                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
-    'state_type':           // Check state type (0 - SOFT, 1 - HARD), default is 1
-    'status':               // 0 == Ok | 1 == En cours | 2 == Furtif | 3 == Bagot | 4 == Annule
     
     // /!\ The following is optional /!\
     
@@ -60,6 +58,10 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
     'execution_time':       // Check duration
     'latency':              // Check latency (time between schedule and execution)
     'command_name':         // Check command
+
+    'state_type':           // ONLY FOR INFO, USED ONLY INTERNALLY BY CANOPSIS, DO NOT TRY TO FEED AN EVENT WITH THIS : Check state type (0 - SOFT, 1 - HARD), default is 1
+    'status':               // ONLY FOR INFO, USED ONLY INTERNALLY BY CANOPSIS, DO NOT TRY TO FEED AN EVENT WITH THIS : 0 == Ok | 1 == En cours | 2 == Furtif | 3 == Bagot | 4 == Annule
+
 }
 ```
 
