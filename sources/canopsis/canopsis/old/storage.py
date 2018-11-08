@@ -219,7 +219,7 @@ class Storage(object):
             self.logger.error('Old storage connection failure: {}'.format(exc))
             return False
 
-        self.db = self.conn.get_database(self.mongo_db)
+        self.db = self.conn.client
 
         try:
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")

@@ -107,7 +107,7 @@ class MongoStore(object):
                 , w=1, j=True
             )
 
-        self.client = self.get_database(self.db_name)
+        self.client = self.get_database()
         self.authenticate()
 
     def get_collection(self, name):
@@ -123,13 +123,13 @@ class MongoStore(object):
         """
         return MongoStore.hr(getattr, self.client, name)
 
-    def get_database(self, name):
+    def get_database(self):
         """
         Returns a raw pymongo Database object.
 
         :rtype: pymongo.database.Database
         """
-        return MongoStore.hr(getattr, self.conn, name)
+        return MongoStore.hr(self.conn.get_database)
 
     def alive(self):
         return self.conn is not None
@@ -137,8 +137,10 @@ class MongoStore(object):
     def authenticate(self):
         """
         Authenticate against the requested database.
+
+        WARNING: this method does nothing and is deprecated because corresponding MongoClient Api is deprecated too.
+
         """
-        MongoStore.hr(self.client.authenticate, self._user, self._pwd)
         self._authenticated = True
 
     @property
