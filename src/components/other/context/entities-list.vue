@@ -67,7 +67,6 @@
 
 <script>
 import omit from 'lodash/omit';
-import isEmpty from 'lodash/isEmpty';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -79,6 +78,7 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import filterSelectMixin from '@/mixins/filter-select';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -108,6 +108,7 @@ export default {
     widgetQueryMixin,
     widgetColumnsMixin,
     entitiesContextEntityMixin,
+    filterSelectMixin,
   ],
   props: {
     widget: {
@@ -131,16 +132,6 @@ export default {
       }
 
       return [];
-    },
-    mainFilter() {
-      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
-
-      return isEmpty(mainFilter) ? null : mainFilter;
-    },
-    viewFilters() {
-      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
-
-      return isEmpty(viewFilters) ? [] : viewFilters;
     },
   },
   methods: {
@@ -227,6 +218,10 @@ export default {
         });
       }
     },
+    /**
+     * Surcharge updateSelectedFilter method from filterSelectMixin
+     * to adapt it to context API specification ('_filter' instead of 'filter')
+     */
     updateSelectedFilter(value) {
       this.createUserPreference({
         userPreference: {
