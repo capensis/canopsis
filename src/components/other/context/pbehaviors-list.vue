@@ -17,10 +17,12 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
 </template>
 
 <script>
+import modalMixin from '@/mixins/modal/modal';
 import pbehaviorEntityMixin from '@/mixins/entities/pbehavior';
+import { MODALS } from '@/constants';
 
 export default {
-  mixins: [pbehaviorEntityMixin],
+  mixins: [modalMixin, pbehaviorEntityMixin],
   props: {
     itemId: {
       type: String,
@@ -83,8 +85,15 @@ export default {
   },
   methods: {
     async deletePbehavior(itemId) {
-      await this.removePbehavior({ id: itemId });
-      await this.fetchItems();
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removePbehavior({ id: itemId });
+            await this.fetchItems();
+          },
+        },
+      });
     },
     async fetchItems() {
       await this.fetchPbehaviorsByEntityId({ id: this.itemId });

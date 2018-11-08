@@ -4,7 +4,7 @@
       v-flex(xs12, md4)
         context-search(:query.sync="query")
       v-flex.ml-4(xs4)
-        template(v-if="selected.length")
+        div(v-show="selected.length")
           v-btn(@click.stop="deleteEntities", icon, small)
             v-icon delete
           v-btn(@click.stop="addPbehaviors()", icon, small)
@@ -60,7 +60,6 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import omit from 'lodash/omit';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -76,8 +75,6 @@ import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
-
-const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 /**
  * Entities list
@@ -121,8 +118,6 @@ export default {
     };
   },
   computed: {
-    ...entitiesMapGetters(['getList']),
-
     headers() {
       if (this.hasColumns) {
         return [...this.columns, { text: '', sortable: false }];
