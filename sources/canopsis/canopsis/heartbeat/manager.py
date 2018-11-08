@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.logger import Logger
+from canopsis.models.heartbeat import HeartBeat
 
 
 class HeartBeatServiceException(Exception):
@@ -78,7 +79,7 @@ class HeartBeatService:
         stored into the database, HeartBeatServiceException if the given
         heartbeat is not valid.
         """
-        valid, error_message = heartbeat.isValid()
+        valid, error_message = HeartBeat.isValid(heartbeat)
         if not valid:
             raise HeartBeatServiceException(error_message)
 
