@@ -58,22 +58,6 @@ class MongoDataBase(DataBase):
         pass
 
     def _connect(self, *args, **kwargs):
-
-        from canopsis.confng import Configuration, Ini
-        mongo_cfg = Configuration.load(MongoStore.CONF_PATH, Ini)[MongoStore.CONF_CAT]
-
-        self._user = mongo_cfg['user']
-        self._pwd = mongo_cfg['pwd']
-        self._host = mongo_cfg['host']
-        self._db = mongo_cfg['db']
-        self._port = int(mongo_cfg['port'])
-        self._replicaset = mongo_cfg.get('replicaset')
-        self._read_preference = getattr(
-            ReadPreference,
-            mongo_cfg.get('read_preference', 'SECONDARY_PREFERRED'),
-            ReadPreference.SECONDARY_PREFERRED
-        )
-
         result = MongoStore.get_default()
         self._database = result.client
         self._conn = result

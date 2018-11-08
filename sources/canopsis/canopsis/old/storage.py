@@ -209,6 +209,14 @@ class Storage(object):
 
         return uri
 
+    @property
+    def beaker_uri(self):
+        if '?' in self.uri:
+            url, params = self.uri.split('?')
+            return '{}.beaker?{}'.format(url, params)
+
+        return '{}.beaker'.format(self.uri)
+
     def connect(self):
         if self.connected:
             return True
