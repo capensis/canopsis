@@ -380,4 +380,20 @@ export const USERS_RIGHTS = {
     taskackcentreon: 'models_taskackcentreon',
     taskreporting: 'models_taskreporting',
   },
+  business: {
+    alarmList: {
+      actions: {
+        ack: 'listalarm_ack',
+        fastAck: 'listalarm_fastAck',
+        ackRemove: 'listalarm_cancelAck',
+        pbehavior: 'listalarm_pbehavior',
+        snooze: 'listalarm_snoozeAlarm',
+        pbehaviorList: 'listalarm_listPbehavior',
+        declareTicket: 'listalarm_declareanIncident',
+        associateTicket: 'listalarm_assignTicketNumber',
+        cancel: 'listalarm_removeAlarm',
+        changeState: 'listalarm_changeState',
+      },
+    },
+  },
 };
