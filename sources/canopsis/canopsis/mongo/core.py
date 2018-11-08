@@ -46,6 +46,7 @@ class MongoDataBase(DataBase):
             port=port, host=host, *args, **kwargs
         )
 
+        self._read_preference = None
         self.read_preference = read_preference
 
     @property
@@ -57,9 +58,8 @@ class MongoDataBase(DataBase):
         pass
 
     def _connect(self, *args, **kwargs):
-        result = None
-        from canopsis.confng import Configuration, Ini
 
+        from canopsis.confng import Configuration, Ini
         mongo_cfg = Configuration.load(MongoStore.CONF_PATH, Ini)[MongoStore.CONF_CAT]
 
         self._user = mongo_cfg['user']
@@ -75,31 +75,7 @@ class MongoDataBase(DataBase):
         )
 
         result = MongoStore.get_default()
-        if True:
-            self._database = result.client
-
-            if result.authenticated:
-                self.logger.debug('Already connected and authenticated on {}:{} /rs:{}'.format(
-                    self._host, self._port, self._replicaset
-                ))
-
-            else:
-                try:
-                    result.authenticate()
-                    self.logger.info(
-                        "Connected on {}:{} /rs:{}".format(
-                            self._host, self._port, self._replicaset
-                        )
-                    )
-                except PyMongoError as ex:
-                    self.logger.error(
-                        'Impossible to authenticate {} on {}:{} /rs:{}'.format(
-                            self._user, self._host, self._port, self._replicaset
-                        )
-                    )
-                    self.disconnect()
-                    result = None
-
+        self._database = result.client
         self._conn = result
         return result
 

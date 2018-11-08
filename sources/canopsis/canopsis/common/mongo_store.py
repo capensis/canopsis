@@ -62,14 +62,14 @@ class MongoStore(object):
         """
         self.config = config
         conf = self.config.get(self.CONF_CAT, {})
-        self.db_name = conf.get('db', DEFAULT_DB_NAME)
-        self.host = conf.get('host', DEFAULT_HOST)
+        self.db_name = conf.get('db')
+        self.host = conf.get('host')
         try:
-            self.port = int(conf.get('port', DEFAULT_PORT))
+            self.port = int(conf.get('port'))
         except ValueError:
             self.port = DEFAULT_PORT
 
-        self._mongo_replicaset_url = conf.get('mongo_replicaset_url')
+        self._db_uri = conf.get('db_uri')
 
         self.read_preference = getattr(
             ReadPreference,
@@ -95,17 +95,19 @@ class MongoStore(object):
         Connect to the desired database.
         """
         self._authenticated = False
-        if self._mongo_replicaset_url:
+        if self._db_uri:
             self.conn = MongoClient(
-                self._mongo_replicaset_url,
+                self._db_uri,
                 w=1, j=True, read_preference=self.read_preference
             )
 
-        else:
+        elif self._user and self._pwd and self.host and self.port and self.db_name:
             self.conn = MongoClient(
-                'mongodb://{}:{}'.format(self.host, self.port)
+                'mongodb://{}:{}@{}:{}/{}'.format(self._user, self._pwd, self.host, self.port, self.db_name)
                 , w=1, j=True
             )
+        else:
+            raise ValueError('Database is not properly configured')
 
         self.client = self.get_database()
         self.authenticate()
