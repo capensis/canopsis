@@ -54,7 +54,7 @@ class HeartBeat:
             return False, "The `maxduration` field is missing."
 
         for mapping in mappings:
-            for key in mapping:
+            for it, key in enumerate(mapping):
                 if not isinstance(key, basestring):
                     return False, "{} must be a string.".format(key)
 
@@ -62,7 +62,6 @@ class HeartBeat:
                     return False, "The value of `{0}` of the mapping object"\
                         " at index {1} must be a string.".format(key, it)
 
-                it += 1
 
         if re.match(cls.MAX_DUR_REGEXP, max_duration) is not None:
             return True, ""
