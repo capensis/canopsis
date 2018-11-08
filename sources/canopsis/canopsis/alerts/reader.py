@@ -656,7 +656,7 @@ class AlertsReader(object):
 
             alarms = list(result)
             # Manual count is much faster than mongo's
-            truncated = len(alarms)
+            truncated = len(alarms) >= limit
 
             res = {
                 'alarms': alarms,
