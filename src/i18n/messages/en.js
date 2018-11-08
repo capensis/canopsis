@@ -62,6 +62,7 @@ export default {
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    forbidden: 'Forbidden',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',

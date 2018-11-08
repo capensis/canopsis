@@ -25,7 +25,7 @@
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'primary' : 'black'") schedule
-        v-btn(v-if="rowId", icon, @click="showSettings")
+        v-btn(v-if="rowId && hasUpdateAccess", @click="showSettings", icon)
           v-icon settings
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds")
@@ -125,6 +125,10 @@ export default {
     },
     rowId: {
       type: String,
+    },
+    hasUpdateAccess: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

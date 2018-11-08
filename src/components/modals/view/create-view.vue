@@ -3,8 +3,8 @@
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
-    v-container
-      v-form
+    v-card-text
+      v-form(v-if="hasUpdateViewAccess")
         v-layout(wrap, justify-center)
           v-flex(xs11)
             v-text-field(
@@ -57,8 +57,8 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
-      v-btn.error(@click="remove", v-show="config.view") {{ $t('common.delete') }}
+      v-btn.primary(v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
+      v-btn.error(v-if="config.view && hasDeleteViewAccess", @click="remove") {{ $t('common.delete') }}
 </template>
 
 <script>
@@ -66,10 +66,12 @@ import find from 'lodash/find';
 
 import { MODALS } from '@/constants';
 import { generateView } from '@/helpers/entities';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+
 import popupMixin from '@/mixins/popup';
+import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
 /**
  * Modal to create widget
@@ -80,10 +82,11 @@ export default {
     validator: 'new',
   },
   mixins: [
+    popupMixin,
     modalInnerMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
-    popupMixin,
+    rightsTechnicalViewMixin,
   ],
   data() {
     return {
@@ -102,12 +105,29 @@ export default {
     groupNames() {
       return this.groups.map(group => group.name);
     },
+
     title() {
       if (this.config.view) {
         return this.$t('modals.view.edit.title');
       }
 
       return this.$t('modals.view.create.title');
+    },
+
+    hasUpdateViewAccess() {
+      if (this.config.view) {
+        return this.checkUpdateAccess(this.config.view._id) && this.hasUpdateAnyViewAccess;
+      }
+
+      return this.hasUpdateAnyViewAccess;
+    },
+
+    hasDeleteViewAccess() {
+      if (this.config.view) {
+        return this.checkDeleteAccess(this.config.view._id) && this.hasDeleteAnyViewAccess;
+      }
+
+      return this.hasDeleteAnyViewAccess;
     },
   },
   mounted() {
@@ -132,7 +152,7 @@ export default {
   methods: {
     remove() {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: async () => {
             await this.removeView({ id: this.config.view._id });

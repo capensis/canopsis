@@ -23,7 +23,7 @@
                     th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
                 tbody
                   tr(v-for="right in rights", :key="`right-title-${right._id}`")
-                    td {{ right.desc }}
+                    td {{ right._id }}
                     td(v-for="role in roles", :key="`role-right-${role._id}`")
                       v-checkbox-functional(
                       v-for="(checkbox, index) in getCheckboxes(role, right)",

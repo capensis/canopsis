@@ -354,3 +354,30 @@ export const USERS_RIGHTS_TYPES = {
   crud: 'CRUD',
   rw: 'RW',
 };
+
+export const USERS_RIGHTS = {
+  technical: {
+    view: 'models_userview',
+    selector: 'models_selector',
+    role: 'models_role',
+    action: 'models_action',
+    filter: 'models_filter',
+    curve: 'models_curve',
+    account: 'models_account',
+    user: 'models_user',
+    serie: 'models_serie',
+    topology: 'models_topology',
+    profile: 'models_profile',
+    derogation: 'models_derogation',
+    event: 'models_event',
+    eventlog: 'models_eventlog',
+    job: 'models_job',
+    taskmail: 'models_taskmail',
+    taskdataclean: 'models_taskdataclean',
+    tasklinklist: 'models_tasklinklist',
+    taskfile: 'models_taskfile',
+    taskshell: 'models_taskshell',
+    taskackcentreon: 'models_taskackcentreon',
+    taskreporting: 'models_taskreporting',
+  },
+};

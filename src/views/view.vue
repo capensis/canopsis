@@ -30,7 +30,8 @@
           component(
           :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
-          :rowId="row._id"
+          :rowId="row._id",
+          :hasUpdateAccess="hasUpdateAccess"
           )
     .fab
       v-tooltip(left)
@@ -61,7 +62,7 @@
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
             v-icon add
           span {{ $t('common.addWidget') }}
-        v-tooltip(top)
+        v-tooltip(v-if="hasUpdateAccess", top)
           v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
             v-icon edit
             v-icon done
@@ -72,7 +73,7 @@
 import get from 'lodash/get';
 import pullAt from 'lodash/pullAt';
 
-import { WIDGET_TYPES, MODALS } from '@/constants';
+import { WIDGET_TYPES, MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
@@ -131,6 +132,9 @@ export default {
     };
   },
   computed: {
+    hasUpdateAccess() {
+      return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
+    },
     getWidgetFlexClass() {
       return widget => [
         `xs${widget.size.sm}`,
@@ -147,8 +151,8 @@ export default {
      * TODO: We can move check access into beforeRouteEnter but we will should use store from imports
      * because there isn't this context in the beforeRouteEnter
      */
-    if (!this.hasAccess(this.id, this.$constants.USERS_RIGHTS_MASKS.read)) {
-      this.addErrorPopup({ text: 'Forbidden' });
+    if (!this.checkReadAccess(this.id)) {
+      this.addErrorPopup({ text: this.$t('common.forbidden') });
       this.$router.back();
     } else {
       document.addEventListener('keydown', this.keyDownListener);

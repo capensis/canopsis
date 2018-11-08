@@ -128,7 +128,7 @@ export default {
   },
   computed: {
     actionsMap() {
-      return pickBy(this.allActionsMap, value => this.hasAccess(value.right));
+      return pickBy(this.allActionsMap, value => this.checkAccess(value.right));
     },
     modalConfig() {
       return {
