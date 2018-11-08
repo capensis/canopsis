@@ -510,6 +510,233 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
+    
+    def _build_aggregate_pipeline(self,
+                                  final_filter,
+                                  sort_key,
+                                  sort_dir,
+                                  with_steps,
+                                  filter_):
+        """
+        :param dict final_filter: the filter sent by the front page
+        :param str sort_key: Name of the column to sort. If the value ends with
+                a dot '.', sort_key is replaced with 'v.last_update_date'.
+        :param str sort_dir: Either "ASC" or "DESC"
+        :param bool with_steps: True if you want alarm steps in your alarm.
+        :param dict filter_: Mongo filter
+
+        :returns List of steps used in mongo aggregation
+        :rtype list
+        """
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "default_entities",
+                    "localField": "d",
+                    "foreignField": "_id",
+                    "as": "entity"
+                }
+            }, {
+                "$unwind": {
+                    "path": "$entity",
+                    "preserveNullAndEmptyArrays": True,
+                }
+            }, {
+                "$match": {"$or": [
+                    {"entity.enabled": True}, {
+                        "entity": {"$exists": False}}
+                ]}
+            }, {
+                "$match": final_filter
+            }, {
+                "$sort": {
+                    sort_key: sort_dir
+                }
+            }
+        ]
+
+        if not with_steps:
+            pipeline.insert(0, {"$project": {"v.steps": False}})
+
+        self.add_pbh_filter(pipeline, filter_)
+        return pipeline
+
+    def _search_aggregate(self,
+                          skip,
+                          limit,
+                          final_filter,
+                          sort_key,
+                          sort_dir,
+                          with_steps,
+                          filter_):
+        """
+        :param int skip: Number of alarms to skip (pagination)
+        :param int limit: Maximum number of alarms to return    
+        :param dict final_filter: the filter sent by the front page
+        :param str sort_key: Name of the column to sort. If the value ends with
+                a dot '.', sort_key is replaced with 'v.last_update_date'.
+        :param str sort_dir: Either "ASC" or "DESC"
+        :param bool with_steps: True if you want alarm steps in your alarm.
+        :param dict filter_: Mongo filter
+
+        :returns Dict containing alarms, the list of alarms returned by mongo
+                  and truncated, a boolean true when there's still paginated data
+                  after these
+        :rtype dict
+        """
+        pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
+                                                  sort_dir, with_steps, filter_)
+
+        pipeline.append({
+            "$skip": skip
+        })
+
+        if limit is not None:
+            pipeline.append({"$limit": limit})
+
+        result = self.alarm_collection.aggregate(
+            pipeline, allowDiskUse=True, cursor={}
+        )
+
+        alarms = list(result)
+        truncated = len(alarms) >= limit
+
+        res = {
+            'alarms': alarms,
+            'truncated': truncated,
+        }
+
+        return res
+
+    def _offset_aggregate(self,
+                          results,
+                          skip,
+                          limit,
+                          filters,
+                          total,
+                          final_filter,
+                          sort_key,
+                          sort_dir,
+                          with_steps,
+                          filter_):
+        """
+        :param dict results: the results from previous sets
+        :param int skip: Number of alarms to skip (pagination)
+        :param int limit: Maximum number of alarms to return
+        :param list filters: list of functions to apply on alarms
+        :param int total: Total numer of alarms
+        :param dict final_filter: the filter sent by the front page
+        :param str sort_key: Name of the column to sort. If the value ends with
+                a dot '.', sort_key is replaced with 'v.last_update_date'.
+        :param str sort_dir: Either "ASC" or "DESC"
+        :param bool with_steps: True if you want alarm steps in your alarm.
+        :param dict filter_: Mongo filter
+
+        :returns Three values:
+                 - results is the dict containing alarms, truncated, first and
+                    last
+                 - skip is the updated (next) value of skip, depending on limit
+                 - truncated_by is the number of useless data removed depending
+                    on the filters
+        :rtype dict, int, int
+        """
+        tmp_res = self._search_aggregate(skip, limit, final_filter, sort_key,
+                                         sort_dir, with_steps, filter_)
+        pre_filter_len = len(tmp_res['alarms'])
+
+        # no results, all good
+        if tmp_res['alarms']:
+            results['truncated'] |= tmp_res['truncated']
+
+            # filter useless data
+            for afilter in filters:
+                tmp_res['alarms'] = afilter(tmp_res['alarms'])
+
+            results['alarms'].extend(tmp_res['alarms'])
+
+            if skip < total:
+                results['first'] = 1+skip
+                results['last'] = skip+min(len(tmp_res['alarms']), limit)
+            else:
+                results['first'] = skip
+                results['last'] = skip
+
+            skip += limit
+
+        truncated_by = pre_filter_len - len(tmp_res['alarms'])
+
+        return results, skip, truncated_by
+
+
+    def _loop_aggregate(self,
+                        skip,
+                        limit,
+                        filters,
+                        post_sort,
+                        total,
+                        final_filter,
+                        sort_key,
+                        sort_dir,
+                        with_steps,
+                        filter_,
+                        api_limit):
+        """
+        :param int skip: Number of alarms to skip (pagination)
+        :param int limit: Maximum number of alarms to return
+        :param list filters: list of functions to apply on alarms
+        :param int total: Total numer of alarms
+        :param dict final_filter: the filter sent by the front page
+        :param str sort_key: Name of the column to sort. If the value ends with
+                a dot '.', sort_key is replaced with 'v.last_update_date'.
+        :param str sort_dir: Either "ASC" or "DESC"
+        :param bool with_steps: True if you want alarm steps in your alarm.
+        :param dict filter_: Mongo filter
+        :param int apt_limit: A hard limit for when hide_resources is active
+
+        :returns Dict containing alarms, truncated, first and last
+        :rtype dict
+        """
+        len_alarms = 0
+        results = {
+            'alarms': [],
+            'total': total,
+            'truncated': False,
+            'first': max(1, 1+skip),
+            'last': min(limit, total)
+        }
+        if skip > total:
+            results['first'] = skip
+            results['last'] = skip
+
+        while len(results['alarms']) < api_limit:
+            results, skip, truncated_by = self._offset_aggregate(results, skip, limit, filters,
+                                                                 total, final_filter, sort_key,
+                                                                 sort_dir, with_steps, filter_)
+
+            len_alarms = len(results['alarms'])
+
+            # premature break in case we do not have any filter that could
+            # modify the real count.
+            # this condition cannot be embedded in while <cond> because the
+            # loop needs to be ran at least one time.
+            if not filters:
+                break
+
+            # filters did not filtered any thing: we don't need to loop
+            # again, even if we don't have enough results.
+            elif filters and truncated_by == 0:
+                break
+
+        if post_sort:
+            results['alarms'] = self._aggregate_post_sort(
+                results['alarms'], sort_key, sort_dir
+            )
+
+        if len_alarms > api_limit:
+            results['alarms'] = results['alarms'][0:api_limit]
+
+        return results
+
     def get(
             self,
             tstart=None,
@@ -565,6 +792,7 @@ class AlertsReader(object):
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
+
         if sort_key == 'v.duration':
             sort_key = 'v.creation_date'
         elif sort_key == 'v.current_state_duration':
@@ -594,8 +822,13 @@ class AlertsReader(object):
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
+        pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
+                                                  sort_dir, with_steps, filter_)
+        pipeline.append({
+            "$count": "count"
+        })
 
-        total = self.alarm_collection.find(final_filter).count()
+        total = list(self.alarm_collection.aggregate(pipeline, cursor={}))[0]['count']
 
         if limit is None:
             limit = total
@@ -609,158 +842,17 @@ class AlertsReader(object):
             limit = limit * 2
             hide_resources &= rconn.exists('featureflag:hide_resources')
 
-
-        def search_aggregate(skip, limit):
-            pipeline = [
-                {
-                    "$lookup": {
-                        "from": "default_entities",
-                        "localField": "d",
-                        "foreignField": "_id",
-                        "as": "entity"
-                    }
-                }, {
-                    "$unwind": {
-                        "path": "$entity",
-                        "preserveNullAndEmptyArrays": True,
-                    }
-                }, {
-                    "$match": {"$or": [
-                        {"entity.enabled": True}, {
-                            "entity": {"$exists": False}}
-                    ]}
-                }, {
-                    "$match": final_filter
-                }, {
-                    "$sort": {
-                        sort_key: sort_dir
-                    }
-                }
-            ]
-
-            if not with_steps:
-                pipeline.insert(0, {"$project": {"v.steps": False}})
-
-            self.add_pbh_filter(pipeline, filter_)
-
-            pipeline.append({
-                "$skip": skip
-            })
-
-            if limit is not None:
-                pipeline.append({"$limit": limit})
-
-            result = self.alarm_collection.aggregate(
-                pipeline, allowDiskUse=True, cursor={}
-            )
-
-            alarms = list(result)
-            # Manual count is much faster than mongo's
-            truncated = len(alarms) >= limit
-
-            res = {
-                'alarms': alarms,
-                'truncated': truncated,
-            }
-
-            return res
-
-        def offset_aggregate(results, skip, limit, filters):
-            """
-            :param dict results:
-            :param int skip:
-            :param int limit:
-            :param list filters: list of functions to apply on alarms
-            """
-            tmp_res = search_aggregate(skip, limit)
-            pre_filter_len = len(tmp_res['alarms'])
-
-            # no results, all good
-            if tmp_res['alarms']:
-                results['truncated'] |= tmp_res['truncated']
-
-                # filter useless data
-                for filter_ in filters:
-                    tmp_res['alarms'] = filter_(tmp_res['alarms'])
-
-                results['alarms'].extend(tmp_res['alarms'])
-
-                if skip < total:
-                    results['first'] = 1+skip
-                    results['last'] = skip+min(len(tmp_res['alarms']), limit)
-                else:
-                    results['first'] = skip
-                    results['last'] = skip
-
-                skip += limit
-
-            truncated_by = pre_filter_len - len(tmp_res['alarms'])
-
-            return results, skip, truncated_by
-
-        def loop_aggregate(skip, limit, filters, post_sort):
-            """
-            :param int skip:
-            :param int limit:
-            :param list filters: list of functions to apply on alarms. Called
-                only in offset_aggregate
-            :param bool post_sort: post filtering sort with sort_key
-                and sort_dir on alarms.
-            """
-            len_alarms = 0
-            results = {
-                'alarms': [],
-                'total': total,
-                'truncated': False,
-                'first': max(1, 1+skip),
-                'last': min(limit, total)
-            }
-            if skip > total:
-                results['first'] = skip
-                results['last'] = skip
-
-            while len(results['alarms']) < api_limit:
-                results, skip, truncated_by = offset_aggregate(
-                    results,
-                    skip,
-                    limit,
-                    filters,
-                )
-
-                len_alarms = len(results['alarms'])
-
-                # premature break in case we do not have any filter that could
-                # modify the real count.
-                # this condition cannot be embedded in while <cond> because the
-                # loop needs to be ran at least one time.
-                if not filters:
-                    break
-
-                # filters did not filtered any thing: we don't need to loop
-                # again, even if we don't have enough results.
-                elif filters and truncated_by == 0:
-                    break
-
-            if post_sort:
-                results['alarms'] = self._aggregate_post_sort(
-                    results['alarms'], sort_key, sort_dir
-                )
-
-            if len_alarms > api_limit:
-                results['alarms'] = results['alarms'][0:api_limit]
-
-            if limit == total:
-                results['total'] = len(results['alarms'])
-
-            return results
-
         filters = []
         post_sort = False
         if hide_resources:
             post_sort = True
             filters.append(self._hide_resources)
 
-        return loop_aggregate(skip, limit, filters, post_sort=post_sort)
+        result = self._loop_aggregate(skip, limit, filters, post_sort, total,
+                                      final_filter, sort_key, sort_dir,
+                                      with_steps, filter_, api_limit)
+
+        return result
 
     @staticmethod
     def _aggregate_post_sort(alarms, sort_key, sort_dir):
