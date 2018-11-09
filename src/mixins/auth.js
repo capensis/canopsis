@@ -1,7 +1,7 @@
-import get from 'lodash/get';
 import { createNamespacedHelpers } from 'vuex';
 
 import { USERS_RIGHTS_MASKS } from '@/constants';
+import { checkUserAccess } from '@/helpers/right';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('auth');
 
@@ -13,11 +13,7 @@ export default {
     }),
 
     checkAccess() {
-      return (rightId, rightMask = 1) => {
-        const checksum = get(this.currentUser.rights, [rightId, 'checksum'], 0);
-
-        return (checksum & rightMask) === rightMask;
-      };
+      return (rightId, rightMask = 1) => checkUserAccess(this.currentUser, rightId, rightMask);
     },
 
     checkCreateAccess() {

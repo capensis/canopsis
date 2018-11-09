@@ -147,17 +147,8 @@ export default {
     },
   },
   created() {
-    /**
-     * TODO: We can move check access into beforeRouteEnter but we will should use store from imports
-     * because there isn't this context in the beforeRouteEnter
-     */
-    if (!this.checkReadAccess(this.id)) {
-      this.addErrorPopup({ text: this.$t('common.forbidden') });
-      this.$router.back();
-    } else {
-      document.addEventListener('keydown', this.keyDownListener);
-      this.fetchView({ id: this.id });
-    }
+    document.addEventListener('keydown', this.keyDownListener);
+    this.fetchView({ id: this.id });
   },
   beforeDestroy() {
     this.$fullscreen.exit();

@@ -2,7 +2,7 @@
   v-container
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.roles') }}
     div
-      div(v-show="selected.length")
+      div(v-show="hasDeleteAnyRoleAccess && selected.length")
         v-btn(@click="showRemoveSelectedRolesModal", icon)
           v-icon delete
       v-data-table(
@@ -22,11 +22,11 @@
               v-checkbox(v-model="props.selected", primary, hide-details)
             td {{ props.item.crecord_name }}
             td
-              v-btn.ma-0(@click="showEditRoleModal(props.item._id)", icon)
+              v-btn.ma-0(v-if="hasUpdateAnyRoleAccess", @click="showEditRoleModal(props.item._id)", icon)
                 v-icon edit
-              v-btn.ma-0(@click="showRemoveRoleModal(props.item._id)", icon)
+              v-btn.ma-0(v-if="hasDeleteAnyRoleAccess", @click="showRemoveRoleModal(props.item._id)", icon)
                 v-icon(color="red darken-4") delete
-    .fab
+    .fab(v-if="hasCreateAnyRoleAccess")
       v-tooltip(left)
         v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateRoleModal")
           v-icon add
@@ -37,12 +37,14 @@
 <script>
 import isEmpty from 'lodash/isEmpty';
 
-import entitiesRoleMixins from '@/mixins/entities/role';
-import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal/modal';
+import entitiesRoleMixins from '@/mixins/entities/role';
+import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
+
 export default {
-  mixins: [modalMixin, entitiesRoleMixins],
+  mixins: [modalMixin, entitiesRoleMixins, rightsTechnicalRoleMixin],
   data() {
     return {
       pagination: null,
