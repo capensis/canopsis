@@ -40,19 +40,27 @@ v-card
 
 <script>
 import pick from 'lodash/pick';
+
 import { MODALS } from '@/constants';
+
 import { generateRole } from '@/helpers/entities';
+
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 export default {
   name: MODALS.createRole,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin, entitiesViewGroupMixin, entitiesViewMixin, entitiesRoleMixin],
+  mixins: [
+    modalInnerMixin,
+    entitiesViewMixin,
+    entitiesRoleMixin,
+    entitiesViewGroupMixin,
+  ],
   data() {
     const group = this.modal.config.group || { name: '', description: '', defaultView: '' };
 
