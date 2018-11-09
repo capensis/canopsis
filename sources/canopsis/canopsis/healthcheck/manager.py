@@ -6,6 +6,7 @@ Healthcheck manager.
 """
 
 from __future__ import unicode_literals
+import os
 
 from canopsis.common.amqp import AmqpConnection
 from canopsis.common.collection import MongoCollection
@@ -15,6 +16,27 @@ from canopsis.logger import Logger
 from canopsis.models.healthcheck import Healthcheck, ServiceState
 
 
+def check_engine_status(name):
+    """
+    Check if an engine is running
+
+    :param string name: name of an engine
+    :rtype: bool
+    """
+    return check_process_status('canopsis-engine@{}'.format(name))
+
+
+def check_process_status(name):
+    """
+    Check if a service is running, through systemctl
+
+    :param string name: name of a service
+    :rtype: bool
+    """
+    status = os.system('systemctl status {}.service'.format(name))
+    return status == 0
+
+
 class HealthcheckManager(object):
     """
     Action managment.
@@ -22,6 +44,16 @@ class HealthcheckManager(object):
     LOG_PATH = 'var/log/healthcheck.log'
 
     CHECK_COLLECTIONS = ['default_entities', 'periodical_alarm']
+    CHECK_ENGINES = [
+        'cleaner-cleaner_events',
+        'dynamic-alerts',
+        'dynamic-context-graph',
+        'dynamic-pbehavior',
+        'dynamic-watcher',
+        'event_filter-event_filter',
+        'task_importctx-task_importctx'
+    ]
+    CHECK_WEBSERVER = 'canopsis-webserver'
 
     def __init__(self, logger):
         self.logger = logger
@@ -114,6 +146,14 @@ class HealthcheckManager(object):
 
         :rtype: ServiceState
         """
+        if not check_process_status(name=self.CHECK_WEBSERVER):
+            return ServiceState(message='Webserver is not running')  # Derp
+
+        for engine in self.CHECK_ENGINES:
+            if not check_engine_status(name=engine):
+                msg = 'Engine {} is not running'.format(engine)  # f-strings
+                return ServiceState(message=msg)
+
         return ServiceState()
 
     def check_time_series(self):
@@ -128,7 +168,7 @@ class HealthcheckManager(object):
         """
         Check all services.
 
-        :param list criticals: service names considered as critical (for overall)
+        :param list criticals: service considered as critical (for overall)
         :rtype: dict
         """
         check = Healthcheck(
