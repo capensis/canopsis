@@ -89,10 +89,10 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
-
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import filterSelectMixin from '@/mixins/filter-select';
 
 /**
  * Alarm-list component
@@ -121,6 +121,7 @@ export default {
     widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
+    filterSelectMixin,
   ],
   props: {
     widget: {
@@ -159,18 +160,6 @@ export default {
 
     hasAccessToEditFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
-    },
-
-    mainFilter() {
-      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
-
-      return isEmpty(mainFilter) ? null : mainFilter;
-    },
-
-    viewFilters() {
-      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
-
-      return isEmpty(viewFilters) ? [] : viewFilters;
     },
   },
   methods: {

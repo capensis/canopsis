@@ -1,16 +1,27 @@
 <template lang="pug">
   v-container
     v-layout.white(justify-space-between, align-center)
-      v-flex(xs12, md4)
+      v-flex
         context-search(:query.sync="query")
-      v-flex.ml-4(xs4)
+      v-flex
+        pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
+      v-flex
+        v-select(
+        :label="$t('settings.selectAFilter')",
+        :items="viewFilters",
+        @input="updateSelectedFilter",
+        :value="mainFilter",
+        item-text="title",
+        item-value="filter",
+        return-object,
+        clearable
+        )
+      v-flex
+        context-fab
         v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
           v-icon delete
-      v-flex(xs2)
         v-btn(icon, @click.prevent="showSettings")
           v-icon settings
-      v-flex(xs2)
-        context-fab
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -67,6 +78,7 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import filterSelectMixin from '@/mixins/filter-select';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -96,6 +108,7 @@ export default {
     widgetQueryMixin,
     widgetColumnsMixin,
     entitiesContextEntityMixin,
+    filterSelectMixin,
   ],
   props: {
     widget: {
@@ -203,6 +216,27 @@ export default {
           widgetId: this.widget._id,
           params: this.getQuery(),
         });
+      }
+    },
+    /**
+     * Surcharge updateSelectedFilter method from filterSelectMixin
+     * to adapt it to context API specification ('_filter' instead of 'filter')
+     */
+    updateSelectedFilter(value) {
+      this.createUserPreference({
+        userPreference: {
+          ...this.userPreference,
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+            mainFilter: value || {},
+          },
+        },
+      });
+
+      if (value && value.filter) {
+        this.query = { ...this.query, _filter: value.filter };
+      } else {
+        this.query = { ...this.query, _filter: undefined };
       }
     },
   },

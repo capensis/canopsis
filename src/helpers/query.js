@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import omit from 'lodash/omit';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
@@ -73,12 +72,21 @@ export function convertAlarmWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertContextWidgetToQuery(widget) {
+  const {
+    itemsPerPage,
+    mainFilter,
+    selectedTypes,
+  } = widget.parameters;
+
   const query = {
     page: 1,
-    limit: get(widget, 'parameters.itemsPerPage', PAGINATION_LIMIT),
-    selectedTypes: get(widget, 'parameters.selectedTypes', []),
+    limit: itemsPerPage || PAGINATION_LIMIT,
+    selectedTypes,
   };
 
+  if (!isEmpty(mainFilter)) {
+    query._filter = mainFilter.filter;
+  }
   return { ...query, ...convertSortToQuery(widget) };
 }
 
@@ -174,10 +182,20 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  * @returns {{}}
  */
 export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  return {
-    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
-    selectedTypes: get(widgetPreferences, 'selectedTypes', []),
-  };
+  const query = {};
+
+  if (widgetPreferences.itemsPerPage) {
+    query.limit = widgetPreferences.itemsPerPage;
+  }
+
+  if (!isEmpty(widgetPreferences.mainFilter)) {
+    query._filter = widgetPreferences.mainFilter.filter;
+  }
+  if (!isEmpty(widgetPreferences.selectedTypes)) {
+    query.selectedTypes = widgetPreferences.selectedTypes;
+  }
+
+  return query;
 }
 
 /**

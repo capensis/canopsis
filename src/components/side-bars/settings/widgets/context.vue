@@ -17,6 +17,11 @@
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
           v-divider
+          field-filters(
+          v-model="settings.widget_preferences.mainFilter",
+          :filters.sync="settings.widget_preferences.viewFilters"
+          )
+          v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
@@ -33,6 +38,7 @@ import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
+import FieldFilters from './fields/common/filters.vue';
 import FieldContextEntitiesTypesFilter from './fields/context/context-entities-types-filter.vue';
 
 /**
@@ -48,6 +54,7 @@ export default {
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
+    FieldFilters,
     FieldContextEntitiesTypesFilter,
   },
   mixins: [
@@ -62,6 +69,8 @@ export default {
         widget: cloneDeep(widget),
         widget_preferences: {
           selectedTypes: [],
+          viewFilters: [],
+          mainFilter: {},
         },
       },
     };
@@ -71,6 +80,8 @@ export default {
 
     this.settings.widget_preferences = {
       selectedTypes: get(widgetPreference, 'selectedTypes', []),
+      viewFilters: get(widgetPreference, 'viewFilters', []),
+      mainFilter: get(widgetPreference, 'mainFilter', {}),
     };
   },
 };
