@@ -24,6 +24,7 @@ class HealthcheckTest(unittest.TestCase):
         for service in Healthcheck.SERVICES:
             self.assertTrue(service in check)
             self.assertEqual(check[service], OK_MSG)
+        self.assertTrue(Healthcheck.TIME in check)
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

@@ -56,16 +56,30 @@ class Healthcheck(object):
     OVERALL = 'overall'
     TIME = 'timestamp'
 
-    def __init__(self, amqp, cache, database, engines, time_series):
+    def __init__(self, amqp, cache, database, engines, time_series,
+                 criticals=None):
         """
         :param ServiceState amqp: state of amqp service
-        :raises: TypeError if ServiceState is not used for parameters
+        :param ServiceState cache: state of cache service
+        :param ServiceState db: state of db service
+        :param ServiceState engines: state of engines
+        :param ServiceState time_series: state of time_series service
+        :param list criticals: a list of service names considered as critical
+        :raises: TypeError if parameters are in a wrong type
         """
         self.amqp = amqp
         self.cache = cache
         self.database = database
         self.engines = engines
         self.time_series = time_series
+
+        if criticals is None:
+            self.criticals = self.SERVICES  # default all
+        else:
+            if not isinstance(criticals, list):
+                raise TypeError('criticals must be a list: {}'
+                                .format(criticals))
+            self.criticals = criticals
 
         for service in self.SERVICES:
             if not isinstance(getattr(self, service), ServiceState):
@@ -80,18 +94,17 @@ class Healthcheck(object):
     @property
     def overall(self):
         """
-        Check all service state.
+        Check critical service states (all by default).
 
         :rtype: bool
         """
-        # TODO : use criticals list
-        return all([
-            self.amqp.state,
-            self.cache.state,
-            self.database.state,
-            self.engines.state,
-            self.time_series.state
-        ])
+        services = []
+        for service in self.criticals:
+            attr = getattr(self, service)
+            if isinstance(attr, ServiceState):
+                services.append(attr.state)
+
+        return all(services)
 
     def to_dict(self):
         """

@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.redis_store import RedisStore
 from canopsis.logger import Logger
 from canopsis.models.healthcheck import Healthcheck, ServiceState
 
@@ -25,6 +26,7 @@ class HealthcheckManager(object):
         self.logger = logger
 
         self.db_store = MongoStore.get_default()
+        self.cache_store = RedisStore.get_default()
 
     @classmethod
     def provide_default_basics(cls):
@@ -53,6 +55,15 @@ class HealthcheckManager(object):
 
         :rtype: ServiceState
         """
+        message = "import this"
+        try:
+            response = self.cache_store.echo(message)
+        except Exception as exc:
+            return ServiceState(message='Cache crash on echo: {}'.format(exc))
+
+        if response != message:
+            return ServiceState(message='Failed to validate echo')
+
         return ServiceState()
 
     def check_db(self):
@@ -98,15 +109,15 @@ class HealthcheckManager(object):
         """
         Check all services.
 
-        :param list criticals:
+        :param list criticals: service names considered as critical (for overall)
         :rtype: dict
         """
-        # TODO: implements criticals
         check = Healthcheck(
             amqp=self.check_amqp(),
             cache=self.check_cache(),
             database=self.check_db(),
             engines=self.check_engines(),
-            time_series=self.check_time_series()
+            time_series=self.check_time_series(),
+            criticals=criticals
         )
         return check.to_dict()
