@@ -110,7 +110,6 @@ class MongoStore(object):
             raise ValueError('Database is not properly configured')
 
         self.client = self.get_database()
-        self.authenticate()
 
     def get_collection(self, name):
         """
@@ -140,15 +139,19 @@ class MongoStore(object):
         """
         Authenticate against the requested database.
 
-        WARNING: this method does nothing and is deprecated because corresponding MongoClient Api is deprecated too.
-
+        .. deprecated:: 3.3.1
+           The authentication check is already done in the get_database method.
         """
+        self.get_database()
         self._authenticated = True
 
     @property
     def authenticated(self):
         """
         :rtype: bool
+
+        .. deprecated:: 3.3.1
+           This is set by the authenticate method, which is deprecated.
         """
         return self._authenticated
 
