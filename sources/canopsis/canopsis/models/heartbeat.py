@@ -52,7 +52,13 @@ class HeartBeat:
         except KeyError:
             return False, "The `maxduration` field is missing."
 
+        if len(mappings) == 0:
+            return False, "The mappings array must not be empty."
+
         for mapping in mappings:
+            if len(mapping) == 0:
+                return False, "The mapping object must not be empty."
+
             for it, key in enumerate(mapping):
                 if not isinstance(key, basestring):
                     return False, "{} must be a string.".format(key)
