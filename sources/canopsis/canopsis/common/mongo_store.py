@@ -62,10 +62,10 @@ class MongoStore(object):
         """
         self.config = config
         conf = self.config.get(self.CONF_CAT, {})
-        self.db_name = conf.get('db')
-        self.host = conf.get('host')
+        self.db_name = conf.get('db', DEFAULT_DB_NAME)
+        self.host = conf.get('host', DEFAULT_HOST)
         try:
-            self.port = int(conf.get('port'))
+            self.port = int(conf.get('port', DEFAULT_PORT))
         except ValueError:
             self.port = DEFAULT_PORT
 
