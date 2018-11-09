@@ -53,9 +53,10 @@ class HealthcheckManager(object):
             with AmqpConnection(self.amqp_url) as amqp_conn:
                 channel = amqp_conn._channel
                 try:
-                    channel.basic_publish(self.amqp_exchange, '', 'test message')
+                    channel.basic_publish(self.amqp_exchange, '', 'test')
                 except Exception as exc:
-                    return ServiceState(message='Failed to publish: {}'.format(exc))
+                    msg = 'Failed to publish: {}'.format(exc)
+                    return ServiceState(message=msg)
 
                 if not amqp_conn._connection.is_open:
                     return ServiceState(message='Connection is not opened')
