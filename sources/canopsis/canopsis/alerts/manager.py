@@ -44,6 +44,7 @@ from canopsis.check import Check
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
+from canopsis.common.collection import MongoCollection
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import ensure_iterable, gen_id
@@ -161,7 +162,8 @@ class Alerts(object):
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
 
         mongo = MongoStore(config=conf_store)
-        config_collection = mongo.get_collection(name=cls.CONFIG_COLLECTION)
+        config_collection = MongoCollection(
+            mongo.get_collection(name=cls.CONFIG_COLLECTION))
         filter_ = {'crecord_type': 'statusmanagement'}
         config_data = EtherealData(collection=config_collection,
                                    filter_=filter_)
