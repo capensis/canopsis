@@ -1,35 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import canopsis.common
 import unittest
-import configparser
 from canopsis.common import root_path
 from canopsis.common.amqp import AmqpPublisher, AmqpConnection
 import xmlrunner
 from mock import Mock
 
 
-DEFAULT_AMQP_URL = 'amqp://guest:guest@localhost/'
-DEFAULT_AMQP_EXCHANGE = 'test'
-DEFAULT_CONF_FILE = "etc/amqp.conf"
-
-
 class TestAmqp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config = configparser.RawConfigParser()
-        config.read(os.path.join(canopsis.common.root_path, DEFAULT_CONF_FILE))
-
-        cls.amqp_url = "amqp://{0}:{1}@{2}:{3}/{4}".format(
-            config["master"]["userid"],
-            config["master"]["password"],
-            config["master"]["host"],
-            config["master"]["port"],
-            config["master"]["virtual_host"])
-        cls.amqp_exname = config["master"]["exchange_name"]
+        cls.amqp_url, cls.amqp_exname = AmqpConnection.parse_conf()
 
         cls.event = {
             'connector': 'test_amqp',
