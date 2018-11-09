@@ -5,7 +5,7 @@ import re
 
 class HeartBeat:
 
-    MAX_DUR_REGEXP = "[0-9]*(s|m|h)"
+    MAX_DUR_REGEXP = "^[0-9]*(s|m|h)$"
     MAPPINGS_KEY = "mappings"
     MAX_DUR_KEY = "maxduration"
 
