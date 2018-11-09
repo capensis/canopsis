@@ -828,7 +828,10 @@ class AlertsReader(object):
             "$count": "count"
         })
 
-        total = list(self.alarm_collection.aggregate(pipeline, cursor={}))[0]['count']
+        try:
+            total = list(self.alarm_collection.aggregate(pipeline, cursor={}))[0]['count']
+        except IndexError:
+            total = 0
 
         if limit is None:
             limit = total
