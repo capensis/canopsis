@@ -7,6 +7,7 @@ Healthcheck manager.
 
 from __future__ import unicode_literals
 
+from canopsis.common.amqp import AmqpConnection
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.redis_store import RedisStore
@@ -27,6 +28,7 @@ class HealthcheckManager(object):
 
         self.db_store = MongoStore.get_default()
         self.cache_store = RedisStore.get_default()
+        self.amqp_url, self.amqp_exchange = AmqpConnection.parse_conf()
 
     @classmethod
     def provide_default_basics(cls):
@@ -47,6 +49,21 @@ class HealthcheckManager(object):
 
         :rtype: ServiceState
         """
+        try:
+            with AmqpConnection(self.amqp_url) as amqp_conn:
+                channel = amqp_conn._channel
+                try:
+                    channel.basic_publish(self.amqp_exchange, '', 'test message')
+                except Exception as exc:
+                    return ServiceState(message='Failed to publish: {}'.format(exc))
+
+                if not amqp_conn._connection.is_open:
+                    return ServiceState(message='Connection is not opened')
+                if not channel.is_open:
+                    return ServiceState(message='Channel is not opened')
+        except Exception as exc:
+            return ServiceState(message='Failed to connect: {}'.format(exc))
+
         return ServiceState()
 
     def check_cache(self):
@@ -59,7 +76,8 @@ class HealthcheckManager(object):
         try:
             response = self.cache_store.echo(message)
         except Exception as exc:
-            return ServiceState(message='Cache crash on echo: {}'.format(exc))
+            msg = 'Cache service crash on echo: {}'.format(exc)
+            return ServiceState(message=msg)
 
         if response != message:
             return ServiceState(message='Failed to validate echo')
