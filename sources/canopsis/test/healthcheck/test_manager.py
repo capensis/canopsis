@@ -22,11 +22,11 @@ class HealthcheckTest(unittest.TestCase):
         check = self.manager.check()
         self.assertEqual(check["overall"], True)
         for service in Healthcheck.SERVICES:
-            self.assertTrue(service in check)
+            self.assertIn(service, check)
             if service != 'engines':
                 # No engine test on dockerised env
                 self.assertEqual(check[service], OK_MSG)
-        self.assertTrue(Healthcheck.TIME in check)
+        self.assertIn(Healthcheck.TIME, check)
 
     def test_check_checkable(self):
         #check = check_checkable("canopsis-engine@")

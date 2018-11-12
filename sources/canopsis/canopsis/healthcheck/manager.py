@@ -12,6 +12,7 @@ import subprocess
 
 from canopsis.common.amqp import AmqpConnection
 from canopsis.common.collection import MongoCollection
+from canopsis.common.influx import InfluxDBClient
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.redis_store import RedisStore
 from canopsis.logger import Logger
@@ -77,6 +78,7 @@ class HealthcheckManager(object):
         'event_filter-event_filter',
         'task_importctx-task_importctx'
     ]
+    CHECK_TS_DB = 'canopsis'
     CHECK_WEBSERVER = 'canopsis-webserver'
     SYSTEMCTL_ENGINE_PREFIX = 'canopsis-engine@'
 
@@ -86,6 +88,7 @@ class HealthcheckManager(object):
         self.db_store = MongoStore.get_default()
         self.cache_store = RedisStore.get_default()
         self.amqp_url, self.amqp_exchange = AmqpConnection.parse_conf()
+        self.ts_client = InfluxDBClient.from_configuration(self.logger)
 
     @classmethod
     def provide_default_basics(cls):
@@ -193,6 +196,16 @@ class HealthcheckManager(object):
 
         :rtype: ServiceState
         """
+        dbs = [d['name'] for d in self.ts_client.get_list_database()]
+        if self.CHECK_TS_DB not in dbs:
+            msg = 'Missing database {}'.format(self.CHECK_TS_DB)
+            return ServiceState(message=msg)
+
+        measurements = self.ts_client.get_list_measurements()
+        if measurements is None:
+            msg = 'Cannot read measurements'
+            return ServiceState(message=msg)
+
         return ServiceState()
 
     def check(self, criticals=None):
