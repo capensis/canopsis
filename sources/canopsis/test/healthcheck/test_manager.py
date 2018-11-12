@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import unittest
 
 from canopsis.common import root_path
-from canopsis.healthcheck.manager import HealthcheckManager
+from canopsis.healthcheck.manager import HealthcheckManager, check_checkable
 from canopsis.logger.logger import Logger, OutputNull
 from canopsis.models.healthcheck import Healthcheck, OK_MSG
 import xmlrunner
@@ -25,6 +25,12 @@ class HealthcheckTest(unittest.TestCase):
             self.assertTrue(service in check)
             self.assertEqual(check[service], OK_MSG)
         self.assertTrue(Healthcheck.TIME in check)
+
+    def test_check_checkable(self):
+        #check = check_checkable("canopsis-engine@")
+        #self.assertEqual(check, True)
+        check = check_checkable("Shinmen Takezō")
+        self.assertEqual(check, False)
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

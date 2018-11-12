@@ -7,6 +7,8 @@ Healthcheck manager.
 
 from __future__ import unicode_literals
 import os
+import re
+import subprocess
 
 from canopsis.common.amqp import AmqpConnection
 from canopsis.common.collection import MongoCollection
@@ -37,6 +39,27 @@ def check_process_status(name):
     return status == 0
 
 
+def check_checkable(name):
+    """
+    Check if there is any spawned service with systemctl with a particular
+    parttern.
+
+    :param string name: reg that match service names
+    :rtype: bool
+    """
+    # Check is systemctl is available
+    try:
+        with open(os.devnull, 'w') as devnull:
+            procs = subprocess.check_output(['systemctl'], stderr=devnull).splitlines()
+    except (subprocess.CalledProcessError, OSError):
+        return False
+
+    # Check if any searched service exist
+    reg = re.compile('{}'.format(name))
+    engines = [p for p in procs if re.search(reg, p)]
+    return len(engines) > 0
+
+
 class HealthcheckManager(object):
     """
     Action managment.
@@ -54,6 +77,7 @@ class HealthcheckManager(object):
         'task_importctx-task_importctx'
     ]
     CHECK_WEBSERVER = 'canopsis-webserver'
+    SYSTEMCTL_ENGINE = 'canopsis-engine@'
 
     def __init__(self, logger):
         self.logger = logger
@@ -146,6 +170,12 @@ class HealthcheckManager(object):
 
         :rtype: ServiceState
         """
+        if not check_checkable(name=self.SYSTEMCTL_ENGINE):
+            msg = 'Dockerised environment. Engines Not Checked.'
+            ss = ServiceState(message=msg)
+            ss.state = True
+            return ss
+
         if not check_process_status(name=self.CHECK_WEBSERVER):
             return ServiceState(message='Webserver is not running')  # Derp
 
