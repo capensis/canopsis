@@ -34,7 +34,7 @@ class HeartBeat:
         `Mappings` is a list of item.
         An `item` is an ojects with at least one key. The key and the
         associated value are both string
-        `maxduration` is a string that match the follow pattern: [0-9]*(s|m|h).
+        `maxduration` is a string that match the follow pattern: ^[0-9]*(s|m|h)$.
         `s` means waiting XX seconds
         `m` means waiting XX minutes
         `h` means waiting XX hours
