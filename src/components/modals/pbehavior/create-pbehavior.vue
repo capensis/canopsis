@@ -109,7 +109,7 @@ export default {
 
           author: this.currentUser.crecord_name,
           filter: {
-            _id: { $in: this.items.map(v => v.d) },
+            _id: { $in: this.items.map(v => v._id) },
           },
           tstart: this.form.tstart.getTime(),
           tstop: this.form.tstop.getTime(),

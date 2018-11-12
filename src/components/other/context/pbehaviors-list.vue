@@ -11,14 +11,18 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
     td {{ props.item.type_ }}
     td {{ props.item.reason }}
     td {{ props.item.rrule }}
+    td
+      v-btn.error--text(@click="deletePbehavior(props.item._id)", icon, small)
+        v-icon delete
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions: pbehaviorMapAction, mapGetters: pbehaviorMapGetters } = createNamespacedHelpers('pbehavior');
+import modalMixin from '@/mixins/modal/modal';
+import pbehaviorEntityMixin from '@/mixins/entities/pbehavior';
+import { MODALS } from '@/constants';
 
 export default {
+  mixins: [modalMixin, pbehaviorEntityMixin],
   props: {
     itemId: {
       type: String,
@@ -69,24 +73,31 @@ export default {
           text: this.$t('pbehaviors.rrule'),
           sortable: false,
         },
+        {
+          text: this.$t('common.actionsLabel'),
+          sortable: false,
+        },
       ],
     };
-  },
-  computed: {
-    ...pbehaviorMapGetters({
-      pbehaviorsList: 'items',
-    }),
   },
   mounted() {
     this.fetchItems();
   },
   methods: {
-    ...pbehaviorMapAction({
-      fetchPbehaviorsList: 'fetchListByEntityId',
-    }),
+    async deletePbehavior(itemId) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removePbehavior({ id: itemId });
+            await this.fetchItems();
+          },
+        },
+      });
+    },
     async fetchItems() {
-      await this.fetchPbehaviorsList({ id: this.itemId });
-      this.items = [...this.pbehaviorsList];
+      await this.fetchPbehaviorsByEntityId({ id: this.itemId });
+      this.items = [...this.pbehaviorItems];
     },
   },
 };

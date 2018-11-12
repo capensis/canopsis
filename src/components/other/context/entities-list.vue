@@ -16,10 +16,15 @@
         return-object,
         clearable
         )
+      v-flex.ml-4
+        div(v-show="selected.length")
+          v-btn(@click.stop="deleteEntities", icon, small)
+            v-icon delete
+          v-btn(@click.stop="addPbehaviors()", icon, small)
+            v-icon pause
       v-flex
         context-fab
-        v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
-          v-icon delete
+      v-flex(xs2)
         v-btn(icon, @click.prevent="showSettings")
           v-icon settings
     no-columns-table(v-if="!hasColumns")
@@ -56,6 +61,8 @@
               v-icon edit
             v-btn(@click.stop="deleteEntity(props.item)", icon, small)
               v-icon delete
+            v-btn(@click.stop="addPbehaviors(props.item._id)", icon, small)
+              v-icon pause
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item")
       v-layout.white(align-center)
@@ -198,6 +205,15 @@ export default {
         name: this.$constants.MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
+        },
+      });
+    },
+    addPbehaviors(itemId) {
+      this.showModal({
+        name: this.$constants.MODALS.createPbehavior,
+        config: {
+          itemsType: this.$constants.ENTITIES_TYPES.entity,
+          itemsIds: itemId ? [itemId] : this.selected,
         },
       });
     },
