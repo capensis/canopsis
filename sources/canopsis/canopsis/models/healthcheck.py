@@ -34,9 +34,7 @@ class ServiceState(object):
 
         :rtype: string
         """
-        if not self.state:
-            return self.message
-        return OK_MSG
+        return self.message
 
 
 class Healthcheck(object):

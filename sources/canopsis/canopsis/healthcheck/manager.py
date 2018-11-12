@@ -50,7 +50,8 @@ def check_checkable(name):
     # Check is systemctl is available
     try:
         with open(os.devnull, 'w') as devnull:
-            procs = subprocess.check_output(['systemctl'], stderr=devnull).splitlines()
+            procs = subprocess.check_output(['systemctl'],
+                                            stderr=devnull).splitlines()
     except (subprocess.CalledProcessError, OSError):
         return False
 
@@ -77,7 +78,7 @@ class HealthcheckManager(object):
         'task_importctx-task_importctx'
     ]
     CHECK_WEBSERVER = 'canopsis-webserver'
-    SYSTEMCTL_ENGINE = 'canopsis-engine@'
+    SYSTEMCTL_ENGINE_PREFIX = 'canopsis-engine@'
 
     def __init__(self, logger):
         self.logger = logger
@@ -170,7 +171,7 @@ class HealthcheckManager(object):
 
         :rtype: ServiceState
         """
-        if not check_checkable(name=self.SYSTEMCTL_ENGINE):
+        if not check_checkable(name=self.SYSTEMCTL_ENGINE_PREFIX):
             msg = 'Dockerised environment. Engines Not Checked.'
             ss = ServiceState(message=msg)
             ss.state = True

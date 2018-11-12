@@ -29,6 +29,8 @@ class HealthcheckTest(unittest.TestCase):
     def test_check_checkable(self):
         #check = check_checkable("canopsis-engine@")
         #self.assertEqual(check, True)
+        # ^ cannot do that on dockerized env
+
         check = check_checkable("Shinmen Takezō")
         self.assertEqual(check, False)
 
