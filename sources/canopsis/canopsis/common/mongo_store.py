@@ -102,10 +102,9 @@ class MongoStore(object):
             )
 
         elif self._user and self._pwd and self.host and self.port and self.db_name:
-            self.conn = MongoClient(
-                'mongodb://{}:{}@{}:{}/{}'.format(self._user, self._pwd, self.host, self.port, self.db_name)
-                , w=1, j=True
-            )
+            db_uri = 'mongodb://{}:{}@{}:{}/{}'.format(
+                self._user, self._pwd, self.host, self.port, self.db_name)
+            self.conn = MongoClient(db_uri, w=1, j=True)
         else:
             raise ValueError('Database is not properly configured')
 

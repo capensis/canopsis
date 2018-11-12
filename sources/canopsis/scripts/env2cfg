@@ -43,7 +43,7 @@ class Env2Cfg(object):
     CPS_MONGO_URL = 'CPS_MONGO_URL'
     CPS_INFLUX_URL = 'CPS_INFLUX_URL'
 
-    __db_uri_config_key = 'db_uri'
+    MONGO_URI_KEY = 'db_uri'
 
     @staticmethod
     def _check_empty(varname):
@@ -146,11 +146,12 @@ class Env2Cfg(object):
         if 'DATABASE' not in storage.sections():
             storage.add_section('DATABASE')
 
-        mongo_store.set('DATABASE', self.__db_uri_config_key, os.environ[self.CPS_MONGO_URL])
-
-        cstorage['master'][self.__db_uri_config_key] = mongo_store['DATABASE'][self.__db_uri_config_key]
-
-        storage['DATABASE'][self.__db_uri_config_key] = mongo_store['DATABASE'][self.__db_uri_config_key]
+        mongo_store.set('DATABASE', self.MONGO_URI_KEY,
+                        os.environ[self.CPS_MONGO_URL])
+        cstorage['master'][self.MONGO_URI_KEY] = \
+            mongo_store['DATABASE'][self.MONGO_URI_KEY]
+        storage['DATABASE'][self.MONGO_URI_KEY] = \
+            mongo_store['DATABASE'][self.MONGO_URI_KEY]
 
         with open(pms, 'w') as fh:
             mongo_store.write(fh)
