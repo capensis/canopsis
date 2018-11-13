@@ -712,8 +712,8 @@ class AlertsReader(object):
                 'alarms': [],
                 'total': total,
                 'truncated': False,
-                'first': max(1, 1+skip),
-                'last': min(limit, total)
+                'first': 1+skip,
+                'last': skip+min(api_limit, total)
             }
             if skip > total:
                 results['first'] = skip
@@ -749,7 +749,7 @@ class AlertsReader(object):
             if len_alarms > api_limit:
                 results['alarms'] = results['alarms'][0:api_limit]
 
-            if limit == total:
+            if limit >= total:
                 results['total'] = len(results['alarms'])
 
             return results
