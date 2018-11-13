@@ -8,7 +8,12 @@ Healthcheck manager.
 from __future__ import unicode_literals
 import os
 import re
+import requests
 import subprocess
+
+from pika.exceptions import ConnectionClosed
+from requests.auth import HTTPBasicAuth
+from urlparse import urlparse
 
 from canopsis.common.amqp import AmqpConnection
 from canopsis.common.collection import MongoCollection
@@ -68,6 +73,17 @@ class HealthcheckManager(object):
     """
     LOG_PATH = 'var/log/healthcheck.log'
 
+    CHECK_AMQP_LIMIT_SIZE = 100000
+    CHECK_AMQP_QUEUES = [
+        'Engine_alerts',
+        'Engine_cleaner_events',
+        'Engine_context-graph',
+        'Engine_event_filter',
+        'Engine_pbehavior',
+        'Engine_watcher',
+        'task_importctx',
+    ]
+    # TODO: check Go queues too
     CHECK_COLLECTIONS = ['default_entities', 'periodical_alarm']
     CHECK_ENGINES = [
         'cleaner-cleaner_events',
@@ -78,6 +94,7 @@ class HealthcheckManager(object):
         'event_filter-event_filter',
         'task_importctx-task_importctx'
     ]
+    # TODO: check Go engines too
     CHECK_TS_DB = 'canopsis'
     CHECK_WEBSERVER = 'canopsis-webserver'
     SYSTEMCTL_ENGINE_PREFIX = 'canopsis-engine@'
@@ -103,6 +120,62 @@ class HealthcheckManager(object):
 
         return (logger,)
 
+    def _check_rabbitmq_api(self, verb):
+        """
+        Retries informations from amqp API.
+        See https://cdn.rawgit.com/rabbitmq/rabbitmq-management/v3.7.8/priv/www/api/index.html
+
+        :param string verb: the needed path
+        :rtype: Response
+        """
+        parse = urlparse(self.amqp_url)
+        loc = parse.netloc.replace(':5672', ':15672', 1)
+
+        url = 'http://{}/api/{}{}'.format(loc, verb, parse.path)
+        auth = HTTPBasicAuth(parse.username, parse.password)
+
+        return requests.get(url, auth=auth)
+
+    def _check_rabbitmq_state(self):
+        """
+        Check amqp service state (consumers, queues).
+
+        :rtype: ServiceState
+        """
+        # Check consumer presence on amqp queues
+        r = self._check_rabbitmq_api('consumers')
+        if r.status_code != requests.codes.ok:
+            return ServiceState(message='Cannot read consumers on API')
+
+        consumed_queues = [q['queue']['name'] for q in r.json()]
+        for queue in self.CHECK_AMQP_QUEUES:
+            if queue not in consumed_queues:
+                msg = 'No consumer for queue {}'.format(queue)
+                return ServiceState(message=msg)
+
+        # Check queues state
+        r = self._check_rabbitmq_api('queues')
+        if r.status_code != requests.codes.ok:
+            return ServiceState(message='Cannot read queues on API')
+
+        queues = {q['name']: q for q in r.json()}
+        for queue in self.CHECK_AMQP_QUEUES:
+            if queue not in queues.keys():
+                msg = 'Missing queue {}'.format(queue)
+                return ServiceState(message=msg)
+
+            if queues[queue]['state'] != 'running':
+                msg = 'Queue {} is not running'.format(queue)
+                return ServiceState(message=msg)
+
+            length = queues[queue]['backing_queue_status']['len']
+            if length > self.CHECK_AMQP_LIMIT_SIZE:
+                msg = ('Queue {} is overloaded ({} ready messages)'
+                       .format(queue, length))
+                return ServiceState(message=msg)
+
+        return ServiceState()
+
     def check_amqp(self):
         """
         Check if amqp service is available.
@@ -122,10 +195,11 @@ class HealthcheckManager(object):
                     return ServiceState(message='Connection is not opened')
                 if not channel.is_open:
                     return ServiceState(message='Channel is not opened')
-        except Exception as exc:
+
+        except ConnectionClosed as exc:
             return ServiceState(message='Failed to connect: {}'.format(exc))
 
-        return ServiceState()
+        return self._check_rabbitmq_state()
 
     def check_cache(self):
         """

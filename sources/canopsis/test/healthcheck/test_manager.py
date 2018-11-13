@@ -30,11 +30,15 @@ class HealthcheckTest(unittest.TestCase):
 
     def test_check_checkable(self):
         #check = check_checkable("canopsis-engine@")
-        #self.assertEqual(check, True)
+        #self.assertTrue(check)
         # ^ cannot do that on dockerized env
 
         check = check_checkable("Shinmen Takezō")
-        self.assertEqual(check, False)
+        self.assertFalse(check)
+
+    def test_check_rabbitmq_state(self):
+        check = self.manager._check_rabbitmq_state()
+        self.assertTrue(check.state)
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"
