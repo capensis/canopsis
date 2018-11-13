@@ -80,7 +80,6 @@ class HealthcheckManager(object):
         'Engine_context-graph',
         'Engine_event_filter',
         'Engine_pbehavior',
-        'Engine_watcher',
         'task_importctx',
     ]
     # TODO: check Go queues too
