@@ -12,11 +12,6 @@ volumes:
     driver: local
 
 services:
-  redis:
-    image: redis:${REDIS_TAG}
-    restart: unless-stopped
-    ports:
-      - 6379:6379
   rabbitmq:
     image: rabbitmq:${RABBITMQ_TAG}
     volumes:
@@ -55,6 +50,11 @@ services:
       - INFLUXDB_USER_PASSWORD=canopsis
     volumes:
       - influxdbdata:/var/lib/influxdb
+  redis:
+    image: redis:${REDIS_TAG}
+    restart: unless-stopped
+    ports:
+      - 6379:6379
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -170,6 +170,18 @@ services:
       - ENGINE_MODULE=canopsis.engines.task_importctx
     volumes:
       - importctxdata:/opt/canopsis/tmp
+    restart: unless-stopped
+    mem_limit: 200m
+    mem_reservation: 200m
+  metric:
+    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    depends_on:
+      - "influxdb"
+    environment:
+      - ENGINE_NAME=metric
+      - ENGINE_MODULE=canopsis.engines.metric
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
