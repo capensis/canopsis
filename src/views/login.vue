@@ -81,10 +81,17 @@ export default {
           await this.login(this.form);
 
           if (this.$route.query.redirect) {
+            if (this.$route.query.redirect === '/') {
+              this.$router.push({
+                name: 'view',
+                params: { id: this.currentUser.defaultview },
+              });
+            }
             this.$router.push(this.$route.query.redirect);
           } else {
             this.$router.push({
-              name: 'home',
+              name: 'view',
+              params: { id: this.currentUser.defaultview },
             });
           }
         }
