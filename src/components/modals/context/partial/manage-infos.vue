@@ -102,6 +102,7 @@ export default {
       if (isFormValid) {
         if (this.isEditing) {
           await this.updateField(this.form.name, { ...this.form });
+          this.removeField(this.editingInfoName);
           this.isEditing = false;
           this.$refs.form.reset();
         } else {
@@ -117,8 +118,8 @@ export default {
     },
 
     editInfo(info) {
-      this.removeField(info.name);
       this.isEditing = true;
+      this.editingInfoName = info.name;
       this.form = { ...info };
     },
 
