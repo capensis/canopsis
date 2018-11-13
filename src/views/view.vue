@@ -9,7 +9,7 @@
               v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
                 v-icon delete
               span {{ $t('common.delete') }}
-        v-flex(
+        v-flex#view(
         v-for="(widget, widgetKey) in row.widgets",
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
@@ -156,12 +156,11 @@ export default {
     },
 
     fullScreenToggle() {
-      const element = document.getElementById('app');
+      const element = document.getElementById('view');
 
       if (element) {
         this.$fullscreen.toggle(element, {
-          wrap: false,
-          fullscreenClass: '-fullscreen',
+          background: 'white',
           callback: value => this.isFullScreenModeEnable = value,
         });
       }
