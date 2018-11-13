@@ -4,35 +4,23 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
     v-icon.pauseIcon pause
   v-layout(justify-start, align-center)
     v-flex(xs2)
-      component.ma-2(:is="format.icon")
+      v-icon.px-3.py-2.white--text(size="5em") {{ format.icon }}
     v-flex(xs10)
       div.watcherName.pt-2(v-html="compiledTemplate")
   v-layout
     v-flex(xs12)
       div.moreInfos.py-1(@click="showWatcherModal")
         v-layout(justify-center)
-          div More infos
+          div {{ $t('weather.moreInfos') }}
           v-icon.pl-1(color="white", small) arrow_forward
 </template>
 
 <script>
+import concat from 'lodash/concat';
 import modalMixin from '@/mixins/modal/modal';
 import compile from '@/helpers/handlebars';
 
-import SunIcon from './icons/sun.vue';
-import CloudySunIcon from './icons/cloudy-sun.vue';
-import CloudIcon from './icons/cloud.vue';
-import RainingCloudIcon from './icons/raining-cloud.vue';
-import PauseIcon from './icons/pause.vue';
-
 export default {
-  components: {
-    SunIcon,
-    CloudySunIcon,
-    CloudIcon,
-    RainingCloudIcon,
-    PauseIcon,
-  },
   mixins: [modalMixin],
   props: {
     watcher: {
@@ -50,14 +38,33 @@ export default {
     format() {
       const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
       const iconsMap = {
-        [this.$constants.ENTITIES_STATES.ok]: SunIcon,
-        [this.$constants.ENTITIES_STATES.minor]: CloudySunIcon,
-        [this.$constants.ENTITIES_STATES.major]: CloudIcon,
-        [this.$constants.ENTITIES_STATES.critical]: RainingCloudIcon,
+        [this.$constants.ENTITIES_STATES.ok]: 'wb_sunny',
+        [this.$constants.ENTITIES_STATES.minor]: 'person',
+        [this.$constants.ENTITIES_STATES.major]: 'person',
+        [this.$constants.ENTITIES_STATES.critical]: 'wb_cloudy',
       };
 
       if (hasActivePb) {
-        return { icon: PauseIcon, color: this.$constants.WATCHER_PBEHAVIOR_COLOR };
+        let icon = 'pause';
+        const pbehaviors = concat(this.watcher.pbehavior, this.watcher.watcher_pbehavior);
+
+        pbehaviors.forEach((pbehavior) => {
+          if (pbehavior.isActive) {
+            /**
+             * Need to disable eslint for this line to enable the underscore
+             * after "pbehavior.type" the we need to recognize the field from the API
+            */
+            /* eslint-disable */
+            if (pbehavior.type_ === 'Maintenance') {
+            /* eslint-enable */
+              icon = 'build';
+            } else {
+              icon = 'brightness_3';
+            }
+          }
+        });
+
+        return { icon, color: this.$constants.WATCHER_PBEHAVIOR_COLOR };
       }
 
       return {
