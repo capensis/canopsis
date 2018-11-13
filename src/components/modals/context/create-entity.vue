@@ -15,9 +15,11 @@
       v-tab-item
         manage-infos(v-model="form.infos")
     v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+    v-layout.pa-2(justify-end)
+      template(v-if="!isSubmitButtonEnable")
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+      v-progress-circular(indeterminate, v-else, color="primary")
 </template>
 
 <script>
@@ -66,7 +68,6 @@ export default {
         { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
       ],
       showValidationErrors: true,
-      enabled: true,
       form: {
         name: '',
         description: '',
@@ -76,6 +77,7 @@ export default {
         impact: [],
         infos: {},
       },
+      isSubmitButtonEnable: false,
     };
   },
   mounted() {
@@ -91,6 +93,7 @@ export default {
       this.form.dependencies = entities.map(entity => entity._id);
     },
     async submit() {
+      this.isSubmitButtonEnable = true;
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
         if (this.config.item) {
