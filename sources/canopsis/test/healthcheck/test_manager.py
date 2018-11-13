@@ -20,13 +20,13 @@ class HealthcheckTest(unittest.TestCase):
 
     def test_healthcheck(self):
         check = self.manager.check()
-        self.assertEqual(check["overall"], True)
         for service in Healthcheck.SERVICES:
             self.assertIn(service, check)
             if service != 'engines':
                 # No engine test on dockerised env
                 self.assertEqual(check[service], OK_MSG)
         self.assertIn(Healthcheck.TIME, check)
+        self.assertTrue(check['overall'])
 
     def test_check_checkable(self):
         #check = check_checkable("canopsis-engine@")
@@ -38,6 +38,7 @@ class HealthcheckTest(unittest.TestCase):
 
     def test_check_rabbitmq_state(self):
         check = self.manager._check_rabbitmq_state()
+        self.assertEqual(check.message, OK_MSG)
         self.assertTrue(check.state)
 
 if __name__ == '__main__':
