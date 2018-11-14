@@ -745,7 +745,7 @@ class AlertsReader(object):
             if limit >= total:
                 results['total'] = len(results['alarms'])
 
-            results['last'] = results['first']+len(results['alarms'])
+            results['last'] = results['first']-1+len(results['alarms'])
 
             return results
 
