@@ -465,7 +465,7 @@ class AlertsReader(object):
         """Add to the aggregation pipeline the stages to filter the alarm
         with their pbehavior.
         :param list pipeline: the aggregation pipeline
-        :param filter_ the filter received from the front."""
+        :param dict filter_: the filter received from the front."""
         self.parse_filter(filter_)
         pipeline.append({"$lookup": {
             "from": "default_pbehavior",
@@ -525,8 +525,8 @@ class AlertsReader(object):
         :param bool with_steps: True if you want alarm steps in your alarm.
         :param dict filter_: Mongo filter
 
-        :returns List of steps used in mongo aggregation
-        :rtype list
+        :returns: List of steps used in mongo aggregation
+        :rtype: list
         """
         pipeline = [
             {
@@ -564,28 +564,17 @@ class AlertsReader(object):
     def _search_aggregate(self,
                           skip,
                           limit,
-                          final_filter,
-                          sort_key,
-                          sort_dir,
-                          with_steps,
-                          filter_):
+                          pipeline):
         """
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return    
-        :param dict final_filter: the filter sent by the front page
-        :param str sort_key: Name of the column to sort. If the value ends with
-                a dot '.', sort_key is replaced with 'v.last_update_date'.
-        :param str sort_dir: Either "ASC" or "DESC"
-        :param bool with_steps: True if you want alarm steps in your alarm.
-        :param dict filter_: Mongo filter
+        :param list pipeline: list of steps in mongo aggregate command
 
-        :returns Dict containing alarms, the list of alarms returned by mongo
+        :returns: Dict containing alarms, the list of alarms returned by mongo
                   and truncated, a boolean true when there's still paginated data
                   after these
-        :rtype dict
+        :rtype: dict
         """
-        pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
-                                                  sort_dir, with_steps, filter_)
 
         pipeline.append({
             "$skip": skip
@@ -613,35 +602,23 @@ class AlertsReader(object):
                           skip,
                           limit,
                           filters,
-                          total,
-                          final_filter,
-                          sort_key,
-                          sort_dir,
-                          with_steps,
-                          filter_):
+                          pipeline):
         """
         :param dict results: the results from previous sets
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return
         :param list filters: list of functions to apply on alarms
-        :param int total: Total numer of alarms
-        :param dict final_filter: the filter sent by the front page
-        :param str sort_key: Name of the column to sort. If the value ends with
-                a dot '.', sort_key is replaced with 'v.last_update_date'.
-        :param str sort_dir: Either "ASC" or "DESC"
-        :param bool with_steps: True if you want alarm steps in your alarm.
-        :param dict filter_: Mongo filter
+        :param list pipeline: list of steps in mongo aggregate command
 
-        :returns Three values:
+        :returns: Three values:
                  - results is the dict containing alarms, truncated, first and
                     last
                  - skip is the updated (next) value of skip, depending on limit
                  - truncated_by is the number of useless data removed depending
                     on the filters
-        :rtype dict, int, int
+        :rtype: dict, int, int
         """
-        tmp_res = self._search_aggregate(skip, limit, final_filter, sort_key,
-                                         sort_dir, with_steps, filter_)
+        tmp_res = self._search_aggregate(skip, limit, pipeline)
         pre_filter_len = len(tmp_res['alarms'])
 
         # no results, all good
@@ -667,12 +644,10 @@ class AlertsReader(object):
                         filters,
                         post_sort,
                         total,
-                        final_filter,
                         sort_key,
                         sort_dir,
-                        with_steps,
-                        filter_,
-                        api_limit):
+                        api_limit,
+                        pipeline):
         """
         :param int skip: Number of alarms to skip (pagination)
         :param int limit: Maximum number of alarms to return
@@ -685,9 +660,10 @@ class AlertsReader(object):
         :param bool with_steps: True if you want alarm steps in your alarm.
         :param dict filter_: Mongo filter
         :param int apt_limit: A hard limit for when hide_resources is active
+        :param list pipeline: list of steps in mongo aggregate command
 
-        :returns Dict containing alarms, truncated, first and last
-        :rtype dict
+        :returns: Dict containing alarms, truncated, first and last
+        :rtype: dict
         """
         len_alarms = 0
         results = {
@@ -699,9 +675,9 @@ class AlertsReader(object):
         }
 
         while len(results['alarms']) < api_limit:
-            results, skip, truncated_by = self._offset_aggregate(results, skip, limit, filters,
-                                                                 total, final_filter, sort_key,
-                                                                 sort_dir, with_steps, filter_)
+            results, skip, truncated_by = self._offset_aggregate(results, skip,
+                                                                 limit, filters,
+                                                                 pipeline)
 
             len_alarms = len(results['alarms'])
 
@@ -816,12 +792,15 @@ class AlertsReader(object):
 
         pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
                                                   sort_dir, with_steps, filter_)
-        pipeline.append({
+        count_pipeline = pipeline[:]
+        count_pipeline.append({
             "$count": "count"
         })
 
         try:
-            total = list(self.alarm_collection.aggregate(pipeline, cursor={}))[0]['count']
+            total = list(self.alarm_collection.aggregate(count_pipeline,
+                                                         allowDiskUse=True,
+                                                         cursor={}))[0]['count']
         except IndexError:
             total = 0
 
@@ -843,9 +822,10 @@ class AlertsReader(object):
             post_sort = True
             filters.append(self._hide_resources)
 
-        result = self._loop_aggregate(skip, limit, filters, post_sort, total,
-                                      final_filter, sort_key, sort_dir,
-                                      with_steps, filter_, api_limit)
+        result = self._loop_aggregate(skip, limit, filters,
+                                      post_sort, total,
+                                      sort_key, sort_dir,
+                                      api_limit, pipeline)
 
         return result
 
