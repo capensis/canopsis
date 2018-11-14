@@ -596,8 +596,12 @@ client et le responsable d'un composant dans une collection MongoDB
 {
     "type" : "enrichment",
     "pattern" : {
-        "current_entity.infos.customer": null,
-        "current_entity.infos.manager": null
+        "current_entity": {
+            "infos": {
+                "customer": null,
+                "manager": null
+            }
+        }
     },
     "external_data" : {
         "component" : {
