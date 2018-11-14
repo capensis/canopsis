@@ -525,7 +525,7 @@ class ContextGraphImport(ContextGraph):
         if ci[self.K_ID] in self.entities_to_update:
             desc = ("The ci of id {} match an existing entity. Updating it."
                     .format(ci["_id"]))
-            self.logger.warning(desc)
+            self.logger.info(desc)
             dict_merge(ci, self.entities_to_update[ci[self.K_ID]])
 
         # set default value for required fields

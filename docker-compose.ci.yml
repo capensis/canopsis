@@ -13,20 +13,24 @@ volumes:
 
 services:
   redis:
-    image: redis:4.0
+    image: redis:${REDIS_TAG}
     restart: unless-stopped
     ports:
       - 6379:6379
   rabbitmq:
-    image: canopsis/canopsis-rabbitmq-server:${RABBIT_TAG}
+    image: rabbitmq:${RABBITMQ_TAG}
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
     restart: unless-stopped
     mem_limit: 2g
     mem_reservation: 2g
     oom_score_adj: -1000
+    environment:
+      - RABBITMQ_DEFAULT_USER=cpsrabbit
+      - RABBITMQ_DEFAULT_PASS=canopsis
+      - RABBITMQ_DEFAULT_VHOST=canopsis
   mongodb:
-    image: mongo:3.6-jessie
+    image: mongo:${MONGODB_TAG}
     env_file: compose.mongo.env
     volumes:
       - mongodbdata:/data/db
@@ -38,7 +42,7 @@ services:
     oom_score_adj: -1000
     command: '--wiredTigerCacheSizeGB 2560'
   influxdb:
-    image: influxdb:1.5-alpine
+    image: influxdb:${INFLUX_TAG}
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 1g
@@ -92,18 +96,6 @@ services:
     environment:
       - ENGINE_NAME=pbehavior
       - ENGINE_MODULE=canopsis.engines.dynamic
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
-  ticket:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=ticket
-      - ENGINE_MODULE=canopsis.engines.ticket
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
