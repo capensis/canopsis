@@ -16,10 +16,8 @@
         manage-infos(v-model="form.infos")
     v-divider
     v-layout.pa-2(justify-end)
-      template(v-if="!isSubmitButtonEnable")
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
-      v-progress-circular(indeterminate, v-else, color="primary")
+      v-btn(@click="hideModal", depressed, flat, v-if="!submitting") {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -77,7 +75,7 @@ export default {
         impact: [],
         infos: {},
       },
-      isSubmitButtonEnable: false,
+      submitting: false,
     };
   },
   mounted() {
@@ -93,7 +91,7 @@ export default {
       this.form.dependencies = entities.map(entity => entity._id);
     },
     async submit() {
-      this.isSubmitButtonEnable = true;
+      this.submitting = true;
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
         if (this.config.item) {
