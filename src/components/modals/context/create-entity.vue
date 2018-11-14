@@ -3,7 +3,7 @@
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t(config.title) }}
-    v-tabs
+    v-tabs(slider-color="primary")
       v-tab(
       v-for="tab in tabs",
       :key="tab.name",
@@ -15,9 +15,9 @@
       v-tab-item
         manage-infos(v-model="form.infos")
     v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+    v-layout.pa-2(justify-end)
+      v-btn(@click="hideModal", depressed, flat, v-if="!submitting") {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -66,7 +66,6 @@ export default {
         { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
       ],
       showValidationErrors: true,
-      enabled: true,
       form: {
         name: '',
         description: '',
@@ -76,6 +75,7 @@ export default {
         impact: [],
         infos: {},
       },
+      submitting: false,
     };
   },
   mounted() {
@@ -91,6 +91,7 @@ export default {
       this.form.dependencies = entities.map(entity => entity._id);
     },
     async submit() {
+      this.submitting = true;
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
         if (this.config.item) {
