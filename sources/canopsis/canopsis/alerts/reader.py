@@ -654,13 +654,6 @@ class AlertsReader(object):
 
             results['alarms'].extend(tmp_res['alarms'])
 
-            if skip < total:
-                results['first'] = 1+skip
-                results['last'] = skip+min(len(tmp_res['alarms']), limit)
-            else:
-                results['first'] = skip
-                results['last'] = skip
-
             skip += limit
 
         truncated_by = pre_filter_len - len(tmp_res['alarms'])
@@ -701,12 +694,9 @@ class AlertsReader(object):
             'alarms': [],
             'total': total,
             'truncated': False,
-            'first': max(1, 1+skip),
-            'last': min(limit, total)
+            'first': 1+skip,
+            'last': 0 # To be changed
         }
-        if skip > total:
-            results['first'] = skip
-            results['last'] = skip
 
         while len(results['alarms']) < api_limit:
             results, skip, truncated_by = self._offset_aggregate(results, skip, limit, filters,
@@ -734,6 +724,8 @@ class AlertsReader(object):
 
         if len_alarms > api_limit:
             results['alarms'] = results['alarms'][0:api_limit]
+
+        results['last'] = results['first']-1+len(results['alarms'])
 
         return results
 
