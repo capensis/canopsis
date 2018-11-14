@@ -17,6 +17,9 @@ docker/files/bricks/brick-*
 docker/bricks
 tools/catag/catag
 tools/catag/vendor
+.DS_Store
+.Spotlight-V100
+.Trashes
 .vscode
 
 # python wheels
@@ -27,6 +30,7 @@ tools/catag/vendor
 
 packages
 
+sources/webcore/src/canopsis-next/
 sources/webcore/src/canopsis-next/dist
 
 env-release.sh

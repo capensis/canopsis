@@ -30,24 +30,5 @@ function run_catag() {
     ./tools/catag/catag -ini tools/catag/catag.ini -tag ${CANOPSIS_TAG} -token ${CANOPSIS_CATAG_TOKEN}
 }
 
-function bump_canopsis_next() {
-    cd ${workdir}
-
-    rm -rf tmp-canopsis-next
-    git clone ssh://git@git.canopsis.net/canopsis/canopsis-next -b ${CANOPSIS_TAG} tmp-canopsis-next
-
-    rm -rf tmp-canopsis-next/.git
-
-    rsync -avKSH tmp-canopsis-next/ sources/webcore/src/canopsis-next/
-
-    rm -rf tmp-canopsis-next
-
-    git add sources/webcore/src/canopsis-next
-    git commit --allow-empty --author="build-release.sh <canopsis@canopsis.fr>" -m "auto: bump canopsis-next ${CANOPSIS_TAG}"
-    git push $(git remote) $(git rev-parse --abbrev-ref HEAD)
-}
-
 deploy_catag
-run_catag
-bump_canopsis_next
 run_catag
