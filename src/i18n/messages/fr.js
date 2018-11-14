@@ -18,7 +18,7 @@ export default {
     quitEditing: 'Quitter le mode d\'édition',
     enabled: 'Activé(e)',
     disabled: 'Désactivé(e)',
-    login: 'Connection',
+    login: 'Connexion',
     yes: 'Oui',
     no: 'Non',
     default: 'Défaut',
