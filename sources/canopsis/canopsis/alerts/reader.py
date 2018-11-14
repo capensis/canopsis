@@ -588,7 +588,7 @@ class AlertsReader(object):
         )
 
         alarms = list(result)
-        truncated = len(alarms) >= limit
+        truncated = len(alarms) > limit
 
         res = {
             'alarms': alarms,
