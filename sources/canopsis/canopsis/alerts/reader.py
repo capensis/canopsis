@@ -575,16 +575,16 @@ class AlertsReader(object):
                   after these
         :rtype: dict
         """
-
-        pipeline.append({
+        aggregate_pipeline = pipeline[:]
+        aggregate_pipeline.append({
             "$skip": skip
         })
 
         if limit is not None:
-            pipeline.append({"$limit": limit})
+            aggregate_pipeline.append({"$limit": limit})
 
         result = self.alarm_collection.aggregate(
-            pipeline, allowDiskUse=True, cursor={}
+            aggregate_pipeline, allowDiskUse=True, cursor={}
         )
 
         alarms = list(result)
