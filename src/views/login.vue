@@ -79,20 +79,15 @@ export default {
 
         if (formIsValid) {
           await this.login(this.form);
-
-          if (this.$route.query.redirect) {
-            if (this.$route.query.redirect === '/') {
-              this.$router.push({
-                name: 'view',
-                params: { id: this.currentUser.defaultview },
-              });
-            }
+          if (this.$route.query.redirect && this.$route.query.redirect !== '/') {
             this.$router.push(this.$route.query.redirect);
-          } else {
+          } else if (this.currentUser.defaultview) {
             this.$router.push({
               name: 'view',
               params: { id: this.currentUser.defaultview },
             });
+          } else {
+            this.$router.push({ name: 'home' });
           }
         }
       } catch (err) {
