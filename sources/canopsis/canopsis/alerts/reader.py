@@ -685,13 +685,6 @@ class AlertsReader(object):
 
                 results['alarms'].extend(tmp_res['alarms'])
 
-                if skip < total:
-                    results['first'] = 1+skip
-                    results['last'] = skip+min(len(tmp_res['alarms']), limit)
-                else:
-                    results['first'] = skip
-                    results['last'] = skip
-
                 skip += limit
 
             truncated_by = pre_filter_len - len(tmp_res['alarms'])
