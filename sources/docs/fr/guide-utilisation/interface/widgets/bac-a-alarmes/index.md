@@ -52,4 +52,11 @@ Celui-ci est visible en haut du Bac à alarmes.
 Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le filtre (*Cf Image ci-dessus*)
 
 ## Actions
+
+Pour chaque alarme, des actions sont disponibles.
+
+Pour le détail de chacune des actions, voir la [liste des actions du Bac à alarmes](./actions.md).
+
 ## Eléments par pages
+
+Le sélecteur du nombre d'éléments par page permet de configurer le nombre d'alarmes à afficher par page (5, 10, 20, 50 ou 100 alarmes). 
