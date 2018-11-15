@@ -68,6 +68,6 @@ A l'intérieur de cette fenêtre se trouve un bouton 'Supprimer'. Cliquez sur ce
 
 ## La suite...
 
-Une fois votre vue créée, il vous ai possible d'y ajouter des widgets afin de commencer à utiliser l'application.
+Une fois votre vue créée, il vous est possible d'y ajouter des widgets afin de commencer à utiliser l'application.
 
 Voir : [Widgets](../index.md)
