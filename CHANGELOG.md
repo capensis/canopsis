@@ -8,6 +8,17 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.4.0 - Due date : 2018-11-15
+
+- [Go]: Fix make release command
+- [Go]: IncidentKey in Service Ticket API is now optional
+- [Go]: Introducing new Observer API driver for ticket creation
+- [Go]: New actions for event-filter engine (copy and set_entity_info_from_template)
+- [Python]: Fix /get-alarms route which was limited to 50 elements, and returned an overestimation of total
+- [Python]: New Healthcheck API to check Canopsis status (service connexions, engine statues...)
+- [Python]: Update Heartbeat engine docstring
+- [ServiceWeather]: Fix paused pbehavior icon not always correctly display
+
 ## Canopsis 3.3.0 - Due date : 2018-10-31
 
 - [Alarm List]: Fix bug where selected filter is not saved in userpreferences
