@@ -20,16 +20,19 @@
 
 from __future__ import unicode_literals
 
+import configparser
 import json
 import os
 import time
 
 import pika
 
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.event import get_routingkey
 
 DIRECT_EXCHANGE_NAME = 'amq.direct'
+DEFAULT_CONF_FILE = "etc/amqp.conf"
 
 
 class AmqpPublishError(Exception):
@@ -71,6 +74,28 @@ class AmqpConnection(object):
             self.connect()
 
         return self._connection
+
+    @classmethod
+    def parse_conf(self):
+        """
+        Read config file and return parsed informations.
+
+        :returns: amqp url and the exchange name
+        :rtype: string, string
+        """
+        config = configparser.RawConfigParser()
+        config.read(os.path.join(root_path, DEFAULT_CONF_FILE))
+
+        url = "amqp://{0}:{1}@{2}:{3}/{4}".format(
+            config["master"]["userid"],
+            config["master"]["password"],
+            config["master"]["host"],
+            config["master"]["port"],
+            config["master"]["virtual_host"]
+        )
+        exname = config["master"]["exchange_name"]
+
+        return url, exname
 
     def connect(self):
         """

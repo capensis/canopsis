@@ -39,6 +39,13 @@ class RedisStore(object):
             password=self.db_pass,
         )
 
+    def echo(self, message):
+        """
+        :returns: the echo-ed essage
+        :rtype: string
+        """
+        return self.conn.echo(message)
+
     def exists(self, name):
         """
         :returns: True if key name exists, False otherwise
