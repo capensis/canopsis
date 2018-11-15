@@ -24,6 +24,8 @@ def exports(ws):
         :returns: <Healthcheck>
         """
         criticals = request.query.criticals.split(',') or None
+        if len(criticals) == 0:
+            criticals = None
         health_obj = healthcheckManager.check(criticals=criticals)
         if health_obj is None:
             return gen_json_error({'description': 'Healthcheck is empty !'},
