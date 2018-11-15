@@ -77,7 +77,10 @@ class Healthcheck(object):
             if not isinstance(criticals, list):
                 raise TypeError('criticals must be a list: {}'
                                 .format(criticals))
-            self.criticals = criticals
+            self.criticals = []
+            for critical in criticals:
+                if critical in self.SERVICES:
+                    self.criticals.append(critical)
 
         for service in self.SERVICES:
             if not isinstance(getattr(self, service), ServiceState):
