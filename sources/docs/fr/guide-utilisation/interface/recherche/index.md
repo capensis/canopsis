@@ -4,7 +4,7 @@ Actullement, il y a deux type de recherches disponible dans le bac à alarmes :
   * la recherche naturelle
   * la recherche avancée
 
-![img_search](img/img_search.png)  
+![Champ de recherche](./img/champ-recherche.png "Champ de recherche")  
 
 ## La recherche naturelle
 

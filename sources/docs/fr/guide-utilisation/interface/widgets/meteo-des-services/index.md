@@ -4,6 +4,3 @@ La météo des services permet d'avoir une vue globale de plusieurs alarmes, par
 
 ### Sommaire
 
-- [Les observateurs](les-observateurs.md)  
-- [Présentation des tuiles](presentation-tuiles.md)  
-- [Utilisation du widget](utilisation-du-widget.md)  
