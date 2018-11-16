@@ -39,7 +39,7 @@ Le filtre par période permet de filtre les alarmes en ne conservant que les ala
 
 Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/filtre-periode.png "Filtre par période") présent à droite du sélecteur de filtre. Une fenêtre apparaît.
 
-![Modal filtre par période](./img/modal-filtre-periode.png "Modal filtre par période").
+![Modal filtre par période](./img/modal-filtre-periode.png "Modal filtre par période")
 
 Il suffit alors de sélectionner la période souhaitée parmis les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
 Cliquez ensuite sur 'Appliquer'.
@@ -47,7 +47,7 @@ Cliquez ensuite sur 'Appliquer'.
 La fenêtre se ferme, le bac à alarme se rafraichit. Votre filtre par période est appliqué.
 Celui-ci est visible en haut du Bac à alarmes.
 
-![Filtre par période selectionné](./img/filtre-periode-en-cours.png "Filtre par période selectionné").
+![Filtre par période selectionné](./img/filtre-periode-en-cours.png "Filtre par période selectionné")
 
 Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le filtre (*Cf Image ci-dessus*)
 
@@ -59,4 +59,4 @@ Pour le détail de chacune des actions, voir la [liste des actions du Bac à ala
 
 ## Eléments par pages
 
-Le sélecteur du nombre d'éléments par page permet de configurer le nombre d'alarmes à afficher par page (5, 10, 20, 50 ou 100 alarmes). 
+Le sélecteur du nombre d'éléments par page permet de configurer le nombre d'alarmes à afficher par page (5, 10, 20, 50 ou 100 alarmes).
