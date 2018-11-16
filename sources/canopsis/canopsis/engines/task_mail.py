@@ -47,6 +47,21 @@ else:
     from HTMLParser import HTMLParser
 
 
+class SMPTAuth(object):
+
+    def __init__(self, user, password):
+        self.__user = user
+        self.__password = password
+
+    def server_login(self, server):
+        """
+
+        :param server: `smtplib.SMTP` object.
+        :return:
+        """
+        return server.login(self.__user, self.__password)
+
+
 class engine(TaskHandler):
     etype = 'taskmail'
 
@@ -65,6 +80,15 @@ class engine(TaskHandler):
         smtp_port = job.get('smtp_port', 25)
         html = job.get('html', False)
 
+        tls_on = job.get('tls_on', False)
+        smtp_auth_on = job.get('smtp_auth_on', False)
+        smtp_user = job.get('smtp_user', None)
+        smtp_pass = job.get('smtp_pass', None)
+
+        smtp_auth = None
+        if smtp_auth_on and smtp_user and smtp_pass:
+            smtp_auth = SMPTAuth(smtp_user, smtp_pass)
+
         template_data = job.get('jobctx', {})
         body = Template(body)(template_data)
         subject = Template(subject)(template_data)
@@ -77,11 +101,11 @@ class engine(TaskHandler):
         # Execute the task
         return self.sendmail(
             account, recipients, subject, body, attachments, smtp_host,
-            smtp_port, html)
+            smtp_port, html, tls_on, smtp_auth)
 
     def sendmail(
             self, account, recipients, subject, body, attachments, smtp_host,
-            smtp_port, html
+            smtp_port, html, tls_on, smtp_auth=None
     ):
         """
         :param account: Account or nothing for anon.
@@ -93,6 +117,8 @@ class engine(TaskHandler):
         :param smtp_host: str("localhost").
         :param smtp_port: int(25).
         :param html: allow html into mail body (booleen).
+        :param tls_on: bool flag.
+        :param smtp_auth: `SMTPAuth` object.
         """
 
         charset.add_charset('utf-8', charset.SHORTEST, charset.QP)
@@ -207,6 +233,10 @@ class engine(TaskHandler):
 
         try:
             server = smtplib.SMTP(smtp_host, smtp_port)
+            if tls_on:
+                server.starttls()
+            if smtp_auth:
+                smtp_auth.server_login(server)
             server.sendmail(account_full_mail, dests, msg.as_string())
             server.quit()
 
