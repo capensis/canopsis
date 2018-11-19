@@ -356,6 +356,11 @@ class ContextGraph(object):
 
         return ret_val
 
+    def get_all_entities(self,q):
+        entities = list(
+            self.ent_storage.get_elements(query=q))
+        return entities
+
     @classmethod
     def _enable_entity(cls, entity, timestamp=None):
         """Enable an entity. If the given entity does not have an infos.enabled

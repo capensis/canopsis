@@ -380,3 +380,14 @@ function dragended(d) {
                                   HTTP_ERROR)
 
         return gen_json(ContextGraph.get_id(event))
+
+    @ws.application.get('/api/v2/entities/<query:id_filter>')
+    def get_entities_(query):
+        try:
+            q = j.loads(query)
+            res = manager.get_all_entities(q)
+            return gen_json(res)
+        except Exception as err:
+            return gen_json_error({'description': str(err)}, HTTP_ERROR)
+
+
