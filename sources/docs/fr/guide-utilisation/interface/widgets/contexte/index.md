@@ -17,6 +17,15 @@
 
 ## Guide utilisateur
 ### Entités
+
+Le tableau d'entités présente la liste de toutes les entités. Une ligne correspond à une entité.
+Les colonnes affichées sont personnalisables (*Cf: [Guide exploitant](#guide-exploitant)*).
+En plus de détails de l'entité, chaque ligne expose une liste d'actions opérables sur l'entité (*Cf: [Actions](#actions)*).
+
+Au clique sur une entité (en dehors du texte des colonnes), des détails supplémentaires concernant l'entité s'affichent (comportements périodiques, informations, impacts et dépendances, etc)
+
+![Plus d'infos entités](./img/context-entity-more-infos.png "Plus d'infos entités").
+
 ### Recherche
 
 Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
@@ -50,7 +59,7 @@ Le premier icone à gauche permet de créer une entité, le deuxième permet de 
 
 #### Création d'entité
 
-Au clic sur l'icone de création d'entité, une fenêtre s'ouvre.
+Au clique sur l'icone de création d'entité, une fenêtre s'ouvre.
 
 ![Formulaire création Entité](./img/entity-creation-form.png "Formulaire création Entité")
 
@@ -64,7 +73,28 @@ Le 1er onglet, 'Formulaire', vous demande de renseigner les informations princip
 Le 2ème onglet permet de gérer les infos contenues dans le champs 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
 Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
 
+![Formulaire Gérer infos](./img/manage-infos.png "Formulaire Gérer infos")
+
+Au clique sur une information dans la liste des infos, les détails de cette information apparaissent.
+Deux actions sont disponibles pour chaque information.
+
+- Editer : Permet d'éditer une information. Au clique sur l'icone ![Icone Editer infos](./img/edit-info-icon.png "Icone Editer infos"), le formulaire situé en dessous s'auto-complète avec les détails de l'information à éditer. Editez les informations, puis cliquez sur le bouton 'Ajouter'. Votre information est éditée.
+- Supprimer : Permet de supprimer une information. Il vous suffit de cliquer sur l'icone ![Icone Suppression info](./img/delete-info-icon.png "Icone Suppression infos"). Votre information a été supprimée !
+
+Cliquez ensuite sur le bouton 'Envoyer' pour sauvegarder votre entité !
+
 #### Création d'observateur
+
+Au clique sur l'icône de création d'observateurs, une fenêtre s'ouvre.
+
+![Formulaire création Observateurs](./img/watcher-creation-form.png "Formulaire création Observateurs")
+
+Pour créer un observateur, il vous suffit d'entrer deux informations : 
+
+- Nom (*requis*)
+- Filtre : Pour plus de détails sur les filtres et leur création, voir : [Les filtres](../../filtres/index.md)
+
+Cliquez ensuite sur le bouton 'Envoyer'. Votre observateur est créé !
 
 ### Actions
 

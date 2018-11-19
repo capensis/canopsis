@@ -33,7 +33,7 @@ Le widget **Explorateur de contexte** permet de lister les entités (composants,
 Il permet de visualiser les informations concernant chaque entité, de créer de nouvelles entités, d'en supprimer, ainsi que de les éditer.
 Il permet également d'accéder à la liste des comportements périodiques de chaque entité, d'en ajouter, et d'en supprimer.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./explorateur-contexte/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./contexte/index.md)
 
 ### Météo de services
 
