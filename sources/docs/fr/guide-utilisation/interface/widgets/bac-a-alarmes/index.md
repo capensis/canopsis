@@ -36,17 +36,17 @@ Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
 
 ![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](./img/search-icon.png "Icone recherche")
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
 
 Dans le bac à alarmes, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cette aspect [ici](../../recherche/index.md) !
 
-Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](./img/delete-search-icon.png "Icone suppression recherche")
+Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche")
  
 ### Filtres
 
 Le sélecteur de filtre permet d'appliquer un filtre sur le Bac à alarmes. Seuls les alarmes correspondant aux critères du filtres seront affichées.
 
-![Sélecteur de filtre](./img/filter-selector.png "Sélecteur de filtre")
+![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
 
 Pour sélectionner un filtre, il suffit de cliquer sur le champs 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
 Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
@@ -88,7 +88,7 @@ Le choix par défaut est réglables dans les paramètres du bac à alarmes (*Cf:
 1. Taille du widget
 2. Titre
 3. Paramètres avancés
-    1. Colonne de trie par défaut
+    1. Colonne de tri par défaut
     2. Nom des colonnes
     3. Nombre d'éléments par page par défaut
     4. Filtre sur open/resolved
@@ -117,7 +117,7 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
-![Paramètre colonne de tri par défaut](./img/default-column-sort.png "Paramètre colonne de tri par défaut")
+![Paramètre colonne de tri par défaut](../img/settings/default-column-sort.png "Paramètre colonne de tri par défaut")
 
 Un champs de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom.
 Example : pour trier sur la base de la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
@@ -131,7 +131,7 @@ Une sélecteur vous permet ensuite de définir le sens de tri :
 
 Ce paramètre permet de définir quels colonnes seront affichées dans le bac à alarmes.
 
-![Paramètre Nom des colonnes](./img/column-names.png "Paramètre Nom des colonnes")
+![Paramètre Nom des colonnes](../img/settings/column-names.png "Paramètre Nom des colonnes")
 
 Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.

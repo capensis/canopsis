@@ -1,19 +1,161 @@
 # Explorateur de contexte
 
-// AJOUTER IMAGE EXPLORATEUR DE CONTEXTE
+![Explorateur de contexte](./img/context-explorer.png  "Explorateur de contexte")
 
 ## Sommaire
 
-1. Entités
-2. Recherche
-3. Filtres
-4. Création d'entités et d'observateurs
-5. Actions
-6. Comportements périodiques
+### Guide utilisateur
+1. [Entités](#entites)
+2. [Recherche](#recherche)
+3. [Filtres](#filtres)
+4. [Création d'entités et d'observateurs](#creation-dentites-et-dobservateurs)
+5. [Actions](#actions)
+6. [Comportements périodiques](#comportements-periodiques)
 
-## Entités
-## Recherche
-## Filtres
-## Création d'entités et d'observateurs
-## Actions
-## Comportements périodiques
+### Guide exploitant
+1. [Paramètres du widget](#parametres-du-widget)
+
+## Guide utilisateur
+### Entités
+### Recherche
+
+Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
+
+![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
+
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche").
+
+Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche").
+
+### Filtres
+
+Le sélecteur de filtre permet d'appliquer un filtre sur l'Explorateur de contexte. Seuls les entités correspondant aux critères du filtres seront affichées.
+
+![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
+
+Pour sélectionner un filtre, il suffit de cliquer sur le champs 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
+Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
+Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au bout du champ de sélection de filtre. L'explorateur de contexte se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
+
+### Création d'entités et d'observateurs
+
+Depuis l'explorateur de contexte, il vous est possible de créer des entités et des observateurs.
+
+Pour accéder aux fenêtre de création, survoler le bouton ![Icone Création Entité / Observateur](./img/add-entity-button.png "Icone Création Entité / Observateur").
+Au survol de ce bouton, un menu s'ouvre avec deux boutons disponibles.
+
+![Icones Création Entité / Observateur](./img/add-entity-button-hover.png "Icones Création Entité / Observateur").
+
+Le premier icone à gauche permet de créer une entité, le deuxième permet de créer un observateur.
+
+#### Création d'entité
+
+Au clic sur l'icone de création d'entité, une fenêtre s'ouvre.
+
+![Formulaire création Entité](./img/entity-creation-form.png "Formulaire création Entité")
+
+Le 1er onglet, 'Formulaire', vous demande de renseigner les informations principales de l'entité :
+- Nom (*requis*)
+- Description
+- Activé(e) : Définit si l'entité est activée, ou non.
+- Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
+- Impacts et Dépendances : Permet de définir les entités que l'entités que vous êtes en train de créer impactes, et celles dont elle dépend. Pour ajouter des entités dans une de ces liste, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icone ![Icone Ajout impact/dépendance](./img/add-impact-depends.png "Icone Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
+
+Le 2ème onglet permet de gérer les infos contenues dans le champs 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
+Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
+
+#### Création d'observateur
+
+### Actions
+
+Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles :
+
+- Editer : Au clic sur l'icone d'édition ![Icone Editer entité](./img/edit-entity-icon.png "Icone Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
+- Supprimer : Permet de supprimer une entité/un observateur. Au clique sur l'icone de suppression ![Icone Supprimer entité](./img/delete-entity-icon.png "Icone Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur. 
+- Ajouter un comportement périodique : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clique sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+
+### Comportements périodiques
+
+Depuis l'explorateur de contexte, il est possible d'ajouter un comportement périodique directement sur une entité, ou sur un sélection d'entités.
+
+Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+
+Pour ajouter un comportement périodique sur un entité, cliquez sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
+
+Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. Le premier icone permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"). Une fenêtre de création de comportement périodique apparaît alors.
+
+## Guide exploitant
+### Paramètres du widget
+1. Taille du widget
+2. Titre
+3. Paramètres avancés
+  1. Colonne de tri par défaut
+  2. Nom des colonnes
+  3. Filtres
+  4. Types d'entités
+
+#### Taille du widget (*requis*)
+
+Ce paramètre permet de régler la taille du widget.
+
+![Paramètre Taille du widget](../img/settings/widget-size.png "Paramètre Taille du widget")
+
+La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmis les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
+
+Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
+La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
+
+#### Titre (*optionnel*)
+
+Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus de celui-ci.
+
+Un champ de texte vous permet de définir ce titre.
+
+#### Paramètres avancés
+##### Colonne de tri par défaut
+
+Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
+
+![Paramètre colonne de tri par défaut](../img/settings/default-column-sort.png "Paramètre colonne de tri par défaut")
+
+Un champs de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*).
+
+Une sélecteur vous permet ensuite de définir le sens de tri :
+
+- "ASC" = Ascendant
+- "DESC" = Descendant
+
+##### Nom des colonnes
+
+Ce paramètre permet de définir quels colonnes seront affichées dans l'explorateur de contexte.
+
+![Paramètre Nom des colonnes](../img/settings/column-names.png "Paramètre Nom des colonnes")
+
+Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
+Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
+Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tout les champs de l'entités sont directement disponibles. 
+
+Exemple: "name", qui contient le nom de l'entité, ou encore "type", qui contient le type  de l'entité.
+
+Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
+
+Dans la liste des colonnes sont égalements présentes, pour chaque colonne, des flèches permettant de modifier l'ordre des colonnes. Les colonnes sont présentées dans l'ordre de haut en bas. Pour modifier la place d'une colonne, cliquez sur une des flèches. Pour faire monter/descendre une colonne dans la liste.
+
+##### Filtres
+
+Ce paramètre permet de sélectionner un filtre à appliquer à l'explorateur de contexte, et d'en créer de nouveaux.
+
+Un champ de sélection permet d'abord de choisir un filtre à appliquer à l'explorateur de contexte parmis les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmis les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer à l'explorateur de contexte (*Cf: [filtres](#filtres)*).
+
+Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
+Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.
+
+#### Types d'entités
+
+Ce paramètre permet de sélectionner les différents types d'entités que vous souhaitez voir apparaître dans l'explorateur de contexte.
+
+![Paramètre Types d'entités](../img/settings/entities-types.png "Paramètre Types d'entités")
+
+Les types d'entités sont : Composant, Connecteur, Ressource et Observateurs.
+
+Il vous suffit de cocher les cases correspondantes aux types d'entités que vous souhaitez voir apparaître.
