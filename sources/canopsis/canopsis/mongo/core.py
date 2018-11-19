@@ -46,17 +46,6 @@ class MongoDataBase(DataBase):
             port=port, host=host, *args, **kwargs
         )
 
-        self._read_preference = None
-        self.read_preference = read_preference
-
-    @property
-    def read_preference(self):
-        return self._read_preference
-
-    @read_preference.setter
-    def read_preference(self, value):
-        pass
-
     def _connect(self, *args, **kwargs):
         result = MongoStore.get_default()
         self._database = result.client
