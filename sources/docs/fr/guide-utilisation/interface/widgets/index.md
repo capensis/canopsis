@@ -24,6 +24,8 @@ Pour plus d'information sur ce qu'est une alarme, ainsi que sur les champs prés
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du bac à alarmes](./bac-a-alarmes/index.md)
 
+Pour les informations concernant le paramètrage du Bac à alarmes, voir la partie : [Guide de l'exploitant du bac à alarmes](./bac-a-alarmes/index.md#guide-exploitant)
+
 ### Explorateur de contexte
 
 Le widget **Explorateur de contexte** permet de lister les entités (composants, connecteurs, ressources et observateurs).

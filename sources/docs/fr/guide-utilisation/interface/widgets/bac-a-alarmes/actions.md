@@ -166,4 +166,4 @@ Pour fermer la fenêtre, cliquez en dehors de celle-ci, ou sur le bouton 'Annule
 
 ### Obtenir plus d'infos 
 
-L'action 'Obtenir plus d'infos' permet d'ouvrir la fenêtre 'Plus d'infos'. Cette fenêtre personnalisable (voir guide administrateur) permet d'afficher toutes les informations souhaitées concernant l'alarme, ou l'entité associée à cette alarme.
+L'action 'Obtenir plus d'infos' permet d'ouvrir la fenêtre 'Plus d'infos'. Cette fenêtre personnalisable permet d'afficher toutes les informations souhaitées concernant l'alarme, ou l'entité associée à cette alarme.

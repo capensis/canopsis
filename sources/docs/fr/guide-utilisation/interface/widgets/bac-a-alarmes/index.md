@@ -17,7 +17,7 @@
 
 ### Alarmes
 
-// TODO EXPLICATION TABLEAU ALARMES + PAGINATION + ELEMENTS PAR PAGE + TIMELINE
+// TODO EXPLICATION TABLEAU ALARMES + PAGINATION + ELEMENTS PAR PAGE + TIMELINE + INFO POPUP
 
 ### Recherche
 
@@ -65,7 +65,8 @@ Pour chaque alarme, des actions sont disponibles.
 
 Pour le détail de chacune des actions, voir la [liste des actions du Bac à alarmes](./actions.md).
 
-## Paramètres du widget
+## Guide exploitant
+### Paramètres du widget
 
 1. Taille du widget
 2. Titre
@@ -77,7 +78,7 @@ Pour le détail de chacune des actions, voir la [liste des actions du Bac à ala
     5. Filtres
 
 
-### Taille du widget (*requis*)
+#### Taille du widget (*requis*)
 
 Ce paramètre permet de régler la taille du widget.
 
@@ -88,20 +89,20 @@ La première information à renseigner est la ligne dans laquelle le widget doit
 Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
 La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
 
-### Titre (*optionnel*)
+#### Titre (*optionnel*)
 
 Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus de celui-ci.
 
 Un champ de texte vous permet de définir ce titre.
 
-### Paramètres avancés
-#### Colonne de tri par défaut
+#### Paramètres avancés
+##### Colonne de tri par défaut
 
 Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
 // INSERER IMAGE SETTING COLONNE TRIE PAR DEFAUT
 
-Un champs de texte vous permet d'abord de définir la colonne à utiliser. Il ici entrer la **valeur** de la colonne, et non son nom.
+Un champs de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom.
 Example : pour trier sur la base de la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
 
 Une sélecteur vous permet ensuite de définir le sens de tri :
@@ -109,7 +110,7 @@ Une sélecteur vous permet ensuite de définir le sens de tri :
 - "ASC" = Ascendant
 - "DESC" = Descendant
 
-#### Nom des colonnes
+##### Nom des colonnes
 
 Ce paramètre permet de définir quels colonnes seront affichées dans le bac à alarmes.
 
@@ -117,7 +118,7 @@ Ce paramètre permet de définir quels colonnes seront affichées dans le bac à
 
 Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
-Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champs. Tout les champs de l'alarmes, et de l'entité concernée par l'alarme peuvent être utilisés, en préfixant le nom du champs de "alarm", ou de "entity".
+Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tout les champs de l'alarme, et de l'entité concernée par l'alarme, peuvent être utilisés, en préfixant le nom du champs de "alarm", ou de "entity".
 
 Example: Pour ajouter une colonne ayant pour label "Composant" et pour valeur le nom du composant, renseignez les champs comme suit :
 
@@ -128,8 +129,66 @@ Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix roug
 
 Dans la liste des colonnes sont égalements présentes, pour chaque colonne, des flèches permettant de modifier l'ordre des colonnes. Les colonnes sont présentées dans l'ordre de haut en bas. Pour modifier la place d'une colonne, cliquez sur une des flèches. Pour faire monter/descendre une colonne dans la liste.
 
-#### Nombre d'éléments par page par défaut
-#### Filtre sur Open/Resolved
-#### Filtres
-#### Info popup
-#### Fenetre Plus d'infos
+##### Nombre d'éléments par page par défaut
+
+Ce paramètre permet de définir combien d'éléments seront affichés, par défaut, pour chaque page du bac à alarme.
+
+// INSERER IMAGE SETTING ELEMENT PAR PAGE
+
+Pour modifier ce paramètre, sélectionnez simplement la valeur souhaitée.
+
+Les valeurs disponibles sont : 5, 10, 20, 50 et 100.
+
+##### Filtre sur Open/Resolved
+
+Ce paramètre permet de filtrer les alarmes en fonction de leur état.
+
+- Open => Alarmes "Ouvertes"
+- Resolved => Alarmes "Résolues"
+
+// INSERER IMAGE SETTING FILTER OPEN/RESOLVED
+
+Pour modifier ce paramètre, sélectionnez les types d'alarmes que vous souhaitez afficher en cochant la case correspondante.
+Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée), une des deux cases, ou les deux cases (les alarmes ouvertes ET résolues seront alors affichées).
+
+##### Filtres
+
+Ce paramètre permet de sélectionner un filtre à appliquer au bac à alarme, et d'en créer de nouveaux.
+
+// INSERER IMAGE SETTING FILTRES
+
+Un champ de sélection permet d'abord de choisir un filtre à appliquer au bac à alarmes parmis les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmis les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer au bac à alarmes (*Cf: [filtres](#filtres)*).
+
+Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
+Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.
+
+##### Info popup
+
+Ce paramètre permet d'ajouter un info popup sur une des colonnes du Bac à alarmes (*Cf: [Infos popup - Guide utilisateur Bac à alarmes](#alarmes)*).
+
+Pour ajouter une info popup, cliquez sur le bouton 'Ajouter'.
+
+Une case info popup vide apparaît.
+Cette case comporte deux champs : 
+
+- Colonne : Ce champ permet de définir sur quelle colonne l'info popup sera disponible. Il faut ici entrer la **valeur** de la colonne, et non son nom.
+Example : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
+- Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template l'état de l'alarme, ajoutez au template {{ alarm.state.val }}.
+
+Vous pouvez ajouter autant d'info popup que vous le souhaitez.
+
+Pour supprimer une info popup, cliquez sur la croix rouge, en haut à droite de la case de l'info popup que vous souhaitez supprimer.
+
+##### Fenetre Plus d'infos
+
+Ce paramètre permet de définir le contenu de la fenêtre plus d'infos. Le bouton permettant d'ouvrir cette fenêtre se trouve dans les actions de chaque alarmes du bac à alarmes.
+
+// INSERER IMAGE SETTING MORE INFO POPUP
+
+Ce champ se présente sous forme d'un éditeur de texte.
+Le langage utilisé dans cet éditeur est le Handlebars.
+Deux variables sont disponibles ici, 'alarm' et 'entity'.
+
+En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme, ou de l'entité concerné par cette alarme.
+
+Exemple: Pour afficher l'état de l'alarme, ajoutez {{ alarm.state.val }}.
