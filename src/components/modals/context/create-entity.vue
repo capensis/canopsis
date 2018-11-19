@@ -105,6 +105,8 @@ export default {
 
         this.hideModal();
       }
+
+      this.submitting = false;
     },
 
   },

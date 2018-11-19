@@ -51,7 +51,8 @@ export default {
   methods: {
     updateEntities(entities) {
       const entitiesIds = entities.map(entity => entity._id);
-      const selectedEntities = union(entitiesIds, ...this.entities);
+      const selectedEntities = union(entitiesIds, this.entities);
+
       this.$emit('updateEntities', selectedEntities);
     },
     clear() {
