@@ -33,6 +33,10 @@ class CanopsisVersionManager(object):
         collection = store.get_collection(name=self.__COLLECTION)
         self.__collection = MongoCollection(collection)
 
+    @property
+    def version_field(self):
+        return self.__VERSION_FIELD
+
     def find_canopsis_version_document(self):
         return self.__collection.find_one({
             '_id': self.__DOCUMENT_ID
