@@ -1,34 +1,33 @@
 <template lang="pug">
-  v-container(fluid)
-    v-card
-      v-card-title
-        v-layout(justify-center)
-          h2 {{ widget.parameters.stat.title }}
-        v-btn(icon, @click="showSettings")
-          v-icon settings
-      v-data-iterator(
-        :items="stats",
-        content-tag="v-layout",
-        rows-per-page-text="",
-        row,
-        wrap,
+  v-card
+    v-card-title
+      v-layout(justify-center)
+        h2 {{ widget.parameters.stat.title }}
+      v-btn(icon, @click="showSettings")
+        v-icon settings
+    v-data-iterator(
+      :items="stats",
+      content-tag="v-layout",
+      rows-per-page-text="",
+      row,
+      wrap,
+    )
+      v-flex(
+        slot="item",
+        slot-scope="props",
+        xs12,
       )
-        v-flex(
-          slot="item",
-          slot-scope="props",
-          xs12,
-        )
-          v-list(dense)
-            v-list-tile
-              v-list-tile-content
-                ellipsis(:text="props.item.entity.name")
-              v-list-tile-content.align-end
-                v-layout(align-center)
-                  v-chip(:style="{ backgroundColor: getChipColor(props.item.value) }")
-                    div.body-1 {{ getChipText(props.item.value) }}
-                  div.caption
-                    template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
-                    template(v-else) - {{ props.item.trend }}
+        v-list(dense)
+          v-list-tile
+            v-list-tile-content
+              ellipsis(:text="props.item.entity.name")
+            v-list-tile-content.align-end
+              v-layout(align-center)
+                v-chip(:style="{ backgroundColor: getChipColor(props.item.value) }")
+                  div.body-1 {{ getChipText(props.item.value) }}
+                div.caption
+                  template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
+                  template(v-else) - {{ props.item.trend }}
 </template>
 
 <script>

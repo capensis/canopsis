@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  div
     v-layout.white(justify-space-between, align-center)
       v-flex
         context-search(:query.sync="query")

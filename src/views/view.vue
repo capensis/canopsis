@@ -1,10 +1,10 @@
 <template lang="pug">
-  v-container
+  div
     div
       v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)
           v-layout(align-center)
-            h2 {{ row.title }}
+            h2.my-2.ml-1 {{ row.title }}
             v-tooltip.ml-2(left, v-if="isEditModeEnable")
               v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
                 v-icon delete
