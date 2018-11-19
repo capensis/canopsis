@@ -136,6 +136,11 @@ class MongoStore(object):
         """
         Authenticate against the requested database.
 
+        This method used to use MongoClient.authenticate, which is now
+        deprecated. Some parts of the code still need authenticate to raise an
+        exception when the authentication fails, so it now calls get_database,
+        which also raises an exception when the authentication fails.
+
         .. deprecated:: 3.3.1
            The authentication check is already done in the get_database method.
         """
