@@ -14,7 +14,7 @@
               ) {{ props.item[key] | date('long') }}
               span(v-else) {{ props.item[key] }}
             td
-              v-btn.mx-0(@click="removePbehavior({ id: props.item._id })", icon)
+              v-btn.mx-0(@click="deletePbehavior(props.item._id)", icon)
                 v-icon delete
       v-divider
       v-layout.py-1(justify-end)
@@ -61,6 +61,15 @@ export default {
     ...pbehaviorMapActions({
       removePbehavior: 'remove',
     }),
+
+    deletePbehavior(pbehaviorId) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.removePbehavior({ id: pbehaviorId }),
+        },
+      });
+    },
   },
 };
 </script>
