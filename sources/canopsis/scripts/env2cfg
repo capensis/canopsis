@@ -47,11 +47,25 @@ class Env2Cfg(object):
 
     @staticmethod
     def _check_empty(varname):
+        """
+        Check that an environment variable is defined.
+
+        :param str varname: an environment variable
+        :raises: ValueError when the environment variable is empty or
+        undefined.
+        """
         varval = os.environ.get(varname, '')
         if varval is '':
             raise ValueError('env var {} is empty'.format(varname))
 
     def __check_mongo_dsn(self):
+        """
+        Check that the CPS_MONGO_URL environment variable is a valid MongoDB
+        uri.
+
+        :raises: ValueError when the environment variable is undefined, or when
+        it is not a valid MongoDB uri.
+        """
         self._check_empty(self.CPS_MONGO_URL)
         try:
             uri_parser.parse_uri(os.environ[self.CPS_MONGO_URL])
@@ -59,6 +73,11 @@ class Env2Cfg(object):
             raise ValueError('Env var {} has invalid format'.format(self.CPS_MONGO_URL))
 
     def check(self):
+        """
+        Check the values of the environment variables.
+
+        :raises: ValueError if one of the values is invalid.
+        """
         self._check_empty(self.CPS_AMQP_URL)
         self._check_empty(self.CPS_REDIS_URL)
         self._check_empty(self.CPS_INFLUX_URL)
@@ -66,11 +85,19 @@ class Env2Cfg(object):
 
     @staticmethod
     def _makedirs(fpath):
+        """
+        Given a file's path, create the directory containing this file.
+
+        :param str fpath: A path to a file.
+        """
         dirs = os.path.dirname(fpath)
         if not os.path.isdir(dirs):
             os.makedirs(dirs)
 
     def _update_influx(self):
+        """
+        Write the InfluxDB configuration.
+        """
         pu = urlparse(os.environ.get(self.CPS_INFLUX_URL))
 
         p = pjoin(root_path, 'etc', 'influx', 'storage.conf')
@@ -94,6 +121,9 @@ class Env2Cfg(object):
             influx.write(fh)
 
     def _update_amqp(self):
+        """
+        Write the RabbitMQ configuration.
+        """
         pu = urlparse(os.environ.get(self.CPS_AMQP_URL))
 
         p = pjoin(root_path, 'etc', 'amqp.conf')
@@ -120,7 +150,9 @@ class Env2Cfg(object):
             amqp.write(fh)
 
     def _update_mongo(self):
-
+        """
+        Write the MongoDB configuration.
+        """
         pms = pjoin(root_path, 'etc', 'common', 'mongo_store.conf')
         pcs = pjoin(root_path, 'etc', 'cstorage.conf')
         ps = pjoin(root_path, 'etc', 'mongo', 'storage.conf')
@@ -163,6 +195,9 @@ class Env2Cfg(object):
             storage.write(fh)
 
     def _update_redis(self):
+        """
+        Write the Redis configuration.
+        """
         pu = urlparse(os.environ.get(self.CPS_REDIS_URL))
 
         p = pjoin(root_path, 'etc', 'common', 'redis_store.conf')
@@ -186,6 +221,9 @@ class Env2Cfg(object):
             redis.write(fh)
 
     def update(self):
+        """
+        Write the configuration files.
+        """
         self._update_amqp()
         self._update_mongo()
         self._update_redis()
@@ -193,6 +231,9 @@ class Env2Cfg(object):
 
     @staticmethod
     def main():
+        """
+        Runs env2cfg.
+        """
         app = Env2Cfg()
         try:
             app.check()
