@@ -1,20 +1,20 @@
 <template lang="pug">
   v-container
-    div
+    div#view
       v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)
-          v-layout(align-center)
+          v-layout.notDisplayedFullScreen(align-center)
             h2 {{ row.title }}
             v-tooltip.ml-2(left, v-if="isEditModeEnable")
               v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
                 v-icon delete
               span {{ $t('common.delete') }}
-        v-flex#view(
+        v-flex(
         v-for="(widget, widgetKey) in row.widgets",
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
-          v-layout(justify-space-between)
+          v-layout.notDisplayedFullScreen(justify-space-between)
             h3 {{ widget.title }}
             v-tooltip(left, v-if="isEditModeEnable")
               v-btn.ma-0(
@@ -160,6 +160,7 @@ export default {
 
       if (element) {
         this.$fullscreen.toggle(element, {
+          fullscreenClass: 'fullscreen',
           background: 'white',
           callback: value => this.isFullScreenModeEnable = value,
         });
@@ -211,3 +212,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.fullscreen {
+  .notDisplayedFullScreen {
+    display: none;
+  }
+}
+</style>
