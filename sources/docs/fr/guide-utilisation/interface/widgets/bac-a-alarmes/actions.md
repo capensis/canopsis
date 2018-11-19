@@ -17,15 +17,13 @@ Les différentes actions possibles sur cette alarme sont :
 
 ## Accuser réception (Ack)
 
-![ack](img/ack.png)  
-
 Deux choix possibles : ACK et Ack rapide
 
 L'Ack permet de voir les détails généraux de l'événement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
 
 L'Ack rapide, lui, permet d'accuser réception sans pour autant remplir ces informations.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Ack Extra details](./img/icone-ack-extra-details.png  "Icone Ack Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Ack Extra details](./img/ack-extra-details-icon.png  "Icone Ack Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ## Gérer l'incident
 
@@ -44,11 +42,11 @@ Il permet de :
 
 Les actions 'Déclarer un ticket', 'Associer un ticket' et 'Annuler l'alarme' sont disponibles immédiatement sur chaque ligne d'alarme, dans le Bac à alarme
 
-![menu2](img/menu2.png)
+![Menu actions bac à alarmes](./img/menu-actions.png "Menu actions bac à alarmes")
 
 Les autres actions sont disponibles en cliquant sur les 3 points situés à droite de actions citées précedemment
 
-![menu3](img/menu3.png)
+![Menu plus d'actions bac à alarmes](./img/menu-more-actions.png "Menu actions bac à alarmes")
 
 ### Déclarer un ticket
 
@@ -78,7 +76,7 @@ En dessous des détails de l'évènement, un champs de texte vous demande rensei
 Après avoir renseigner le numéro de ticket, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Assoc ticket Extra details](./img/icone-assoc-ticket-extra-details.png  "Icone Assoc ticket Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc)
+Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Assoc ticket Extra details](./img/assoc-ticket-extra-details-icon.png  "Icone Assoc ticket Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc)
 
 ### Annuler l'alarme
 
@@ -95,7 +93,7 @@ En dessous des détails de l'évènement, un champs de texte vous demande rensei
 Après avoir renseigner cette note, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Cancel Extra details](./img/icone-cancel-extra-details.png  "Icone Cancel Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Cancel Extra details](./img/cancel-extra-details-icon.png  "Icone Cancel Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ### Annuler l'Ack
 
@@ -127,7 +125,7 @@ Cette fenêtre vous demande de renseigner la durée souhaitée.
 Une fois la durée renseignée, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Snooze Extra details](./img/icone-snooze-extra-details.png  "Icone Snooze Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Snooze Extra details](./img/snooze-extra-details-icon.png  "Icone Snooze Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ### Changer la criticité
 
