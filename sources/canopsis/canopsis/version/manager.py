@@ -22,6 +22,10 @@ from canopsis.common.collection import MongoCollection
 
 
 class CanopsisVersionManager(object):
+    """
+    Canopsis version manager abstraction.
+
+    """
 
     COLLECTION = "configuration"
     VERSION_FIELD = "version"
@@ -35,14 +39,24 @@ class CanopsisVersionManager(object):
         self.__collection = MongoCollection(collection)
 
     def find_canopsis_version_document(self):
+        """
+        Find Canopsis version document.
+
+        :returns: Canopsis version document or None if not found.
+
+        :raises: (`pymongo.errors.PyMongoError`, ).
+        """
         return self.__collection.find_one({
             '_id': self.__DOCUMENT_ID
         })
 
     def put_canopsis_version_document(self, version):
         """
+        Put Canopsis version document (upsert).
 
         :param version: `str` Canopsis version.
+
+        :raises: (`canopsis.common.collection.CollectionError`, ).
         """
         self.__collection.update(
             {

@@ -31,7 +31,12 @@ def exports(ws):
         '/api/v2/version'
     )
     def get_canopsis_version():
+        """
+        Get Canopsis version.
 
+        :returns: ``200 OK`` if success or ``404 Not Found``
+                  if Canopsis version info not found.
+        """
         try:
             store = MongoStore.get_default()
             collection = store.get_collection(name=CanopsisVersionManager.COLLECTION)
