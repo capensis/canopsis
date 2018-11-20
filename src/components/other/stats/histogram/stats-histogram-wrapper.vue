@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container(fluid)
+  div
     v-btn(icon, @click="showSettings")
       v-icon settings
     stats-histogram(:labels="labels", :datasets="datasets")

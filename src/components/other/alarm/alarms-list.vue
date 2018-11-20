@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query")

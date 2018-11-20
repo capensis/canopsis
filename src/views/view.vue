@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  div
     div#view
       v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)

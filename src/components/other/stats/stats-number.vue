@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container(fluid)
+  div
     v-card
       v-card-title
         v-layout(justify-center)
