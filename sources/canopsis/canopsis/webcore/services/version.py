@@ -22,7 +22,8 @@ from pymongo.errors import PyMongoError
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.version import CanopsisVersionManager
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
+from canopsis.webcore.utils import (gen_json, gen_json_error,
+                                    HTTP_NOT_FOUND, HTTP_ERROR)
 
 
 def exports(ws):
@@ -35,18 +36,25 @@ def exports(ws):
         Get Canopsis version.
 
         :returns: ``200 OK`` if success or ``404 Not Found``
-                  if Canopsis version info not found.
+                  if Canopsis version info not found or
+                  ``400 Bad Request`` if database error.
         """
         try:
             store = MongoStore.get_default()
-            collection = store.get_collection(name=CanopsisVersionManager.COLLECTION)
-            document = CanopsisVersionManager(collection).find_canopsis_version_document()
+            collection = \
+                store.get_collection(name=CanopsisVersionManager.COLLECTION)
+            document = CanopsisVersionManager(collection).\
+                find_canopsis_version_document()
         except PyMongoError:
-            document = None
+            return gen_json_error(
+                {"description": "can not retrieve the canopsis version from "
+                                "database, contact your administrator."},
+                HTTP_ERROR)
 
         if not document:
             return gen_json_error(
-                {"description": "canopsis version info not found"},
+                {"description": "canopsis version info not found."},
                 HTTP_NOT_FOUND)
 
-        return gen_json(document, allowed_keys=[CanopsisVersionManager.VERSION_FIELD])
+        return gen_json(
+            document, allowed_keys=[CanopsisVersionManager.VERSION_FIELD])
