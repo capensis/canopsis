@@ -5,11 +5,14 @@
       v-list-tile
         v-list-tile-title {{ $t('parameters.interfaceLanguage') }}
         v-list-tile-content
-          v-select(:items="languageOptions", v-model="selectedLanguage", @input="updateLocale")
+          v-select(:items="languageOptions", v-model="selectedLanguage", @input="setLocale($event)")
 </template>
 
 <script>
+import i18nMixin from '@/mixins/i18n';
+
 export default {
+  mixins: [i18nMixin],
   data() {
     return {
       selectedLanguage: this.$i18n.locale,
@@ -24,11 +27,6 @@ export default {
         },
       ],
     };
-  },
-  methods: {
-    updateLocale(event) {
-      this.$i18n.locale = event;
-    },
   },
 };
 </script>
