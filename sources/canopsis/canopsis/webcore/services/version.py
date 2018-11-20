@@ -18,6 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from pymongo.errors import PyMongoError
+
+from canopsis.common.mongo_store import MongoStore
 from canopsis.version import CanopsisVersionManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
@@ -28,11 +31,17 @@ def exports(ws):
         '/api/v2/version'
     )
     def get_canopsis_version():
-        manager = CanopsisVersionManager()
-        document = manager.find_canopsis_version_document()
+
+        try:
+            store = MongoStore.get_default()
+            collection = store.get_collection(name=CanopsisVersionManager.COLLECTION)
+            document = CanopsisVersionManager(collection).find_canopsis_version_document()
+        except PyMongoError:
+            document = None
+
         if not document:
             return gen_json_error(
                 {"description": "canopsis version info not found"},
                 HTTP_NOT_FOUND)
 
-        return gen_json(document, allowed_keys=[manager.version_field])
+        return gen_json(document, allowed_keys=[CanopsisVersionManager.VERSION_FIELD])

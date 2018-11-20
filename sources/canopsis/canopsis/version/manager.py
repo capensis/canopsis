@@ -18,24 +18,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 
 
 class CanopsisVersionManager(object):
 
-    __COLLECTION = "configuration"
-    __VERSION_FIELD = "version"
+    COLLECTION = "configuration"
+    VERSION_FIELD = "version"
     __DOCUMENT_ID = "canopsis_version"
 
-    def __init__(self):
-        store = MongoStore.get_default()
-        collection = store.get_collection(name=self.__COLLECTION)
-        self.__collection = MongoCollection(collection)
+    def __init__(self, collection):
+        """
 
-    @property
-    def version_field(self):
-        return self.__VERSION_FIELD
+        :param collection: `pymongo.collection.Collection` object.
+        """
+        self.__collection = MongoCollection(collection)
 
     def find_canopsis_version_document(self):
         return self.__collection.find_one({
@@ -53,7 +50,7 @@ class CanopsisVersionManager(object):
             },
             {
                 '_id': self.__DOCUMENT_ID,
-                self.__VERSION_FIELD: version
+                self.VERSION_FIELD: version
             },
             upsert=True
         )
