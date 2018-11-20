@@ -385,7 +385,7 @@ function dragended(d) {
     def get_entities_(query):
         try:
             q = j.loads(query)
-            res = manager.get_all_entities(q)
+            res = manager.get_entities_with_alarms(q)
             return gen_json(res)
         except Exception as err:
             return gen_json_error({'description': str(err)}, HTTP_ERROR)

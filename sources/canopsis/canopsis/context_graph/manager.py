@@ -356,10 +356,48 @@ class ContextGraph(object):
 
         return ret_val
 
-    def get_all_entities(self,q):
-        entities = list(
-            self.ent_storage.get_elements(query=q))
-        return entities
+    def get_entities_with_alarms(self,query):
+        """
+        Get a list of entities enhaced with live alarms data found with
+        a given mongo filter.
+
+        :param query: Custom mongodb filter for entities
+        :type query: dict
+
+        :return type: an array of entities including the live alarms.
+        """
+        match_query = {
+            '$match': query
+        }
+
+        join_alarms = {
+            '$lookup': {
+                'from':'periodical_alarm',
+                'localField':'_id',
+                'foreignField':'d',
+                'as':'alarms'
+            }
+        }
+
+        ignore_terminated_alarms = {
+            '$addFields': {
+                'alarms' : {
+                    '$filter' : {
+                        'input': '$alarms',
+                        'as': 'alarm',
+                        'cond': {
+                            "$eq": ["$$alarm.t", None]
+                        }
+                    }
+                }
+            }
+        }
+
+        pipeline = [match_query, join_alarms, ignore_terminated_alarms]
+
+        col = self.ent_storage._backend
+
+        return list(col.aggregate(pipeline))
 
     @classmethod
     def _enable_entity(cls, entity, timestamp=None):
