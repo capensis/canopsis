@@ -8,7 +8,7 @@
 		"keys": ["subject", "body", "recipients", "html"]
 	},{
 		"title": "SMTP",
-		"keys": ["smtp_host", "smtp_port"]
+		"keys": ["smtp_host", "smtp_port", "smtp_auth_on", "smtp_user", "smtp_pass", "tls_on"]
 	},{
 		"title": "User Informations",
 		"keys": ["user", "group", "sender"]
@@ -36,6 +36,10 @@
 		},
 		"smtp_host": {"type": "string", "required": true, "default": "localhost"},
 		"smtp_port": {"type": "integer", "required": true, "default": 25},
+		"smtp_auth_on": {"type": "boolean", "required": true, "default": false},
+		"tls_on": {"type": "boolean", "required": true, "default": false},
+		"smtp_user": {"type": "string", "required": false},
+		"smtp_pass": {"type": "string", "required": false, "role": "password"},
 		"html": {"type": "boolean", "required": true, "default": false}
 	}
 }
