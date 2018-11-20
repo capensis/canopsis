@@ -5,7 +5,7 @@
       v-list-tile
         v-list-tile-title {{ $t('parameters.interfaceLanguage') }}
         v-list-tile-content
-          v-select(:items="languageOptions", v-model="selectedLanguage", @input="setLocale($event)")
+          v-select(:items="languageOptions", v-model="selectedLanguage", @input="setLocale")
 </template>
 
 <script>
