@@ -23,7 +23,7 @@
                     th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
                 tbody
                   tr(v-for="right in rights", :key="`right-title-${right._id}`")
-                    td {{ right._id }}
+                    td {{ right.desc }}
                     td(v-for="role in roles", :key="`role-right-${role._id}`")
                       v-checkbox-functional(
                       v-for="(checkbox, index) in getCheckboxes(role, right)",
@@ -68,6 +68,7 @@ import { MODALS } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
+import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
@@ -79,6 +80,7 @@ import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 export default {
   mixins: [
     authMixin,
+    popupMixin,
     modalMixin,
     entitiesRightMixin,
     entitiesRoleMixin,
@@ -203,30 +205,35 @@ export default {
     },
 
     async updateRoles() {
-      this.pending = true;
+      try {
+        this.pending = true;
 
-      await Promise.all(Object.keys(this.changedRoles).map((roleId) => {
-        const changedRoleRights = this.changedRoles[roleId];
-        const role = this.getRoleById(roleId);
+        await Promise.all(Object.keys(this.changedRoles).map((roleId) => {
+          const changedRoleRights = this.changedRoles[roleId];
+          const role = this.getRoleById(roleId);
 
-        const newRights = transform(
-          changedRoleRights,
-          (acc, value, key) => acc[key] = generateRoleRightByChecksum(value),
-        );
+          const newRights = transform(
+            changedRoleRights,
+            (acc, value, key) => acc[key] = generateRoleRightByChecksum(value),
+          );
 
-        return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
-      }));
+          return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
+        }));
 
-      /**
-       * If current user role changed
-       */
-      if (this.changedRoles[this.currentUser.role]) {
-        await this.fetchCurrentUser();
+        /**
+         * If current user role changed
+         */
+        if (this.changedRoles[this.currentUser.role]) {
+          await this.fetchCurrentUser();
+        }
+
+        this.addSuccessPopup({ text: this.$t('successes.default') });
+        this.clearChangedRoles();
+
+        this.pending = false;
+      } catch (err) {
+        this.addErrorPopup({ text: this.$t('errors.default') });
       }
-
-      this.clearChangedRoles();
-
-      this.pending = false;
     },
 
     /**
@@ -294,9 +301,11 @@ export default {
       ]);
 
       this.groupedRights = rights.reduce((acc, right) => {
-        if (right._id.startsWith('view') || right._id.startsWith('userview')) {
+        const rightId = String(right._id);
+
+        if (rightId.startsWith('view') || rightId.startsWith('userview')) {
           acc.view.push(right);
-        } else if (right._id.startsWith('models')) {
+        } else if (rightId.startsWith('models')) {
           acc.technical.push(right);
         } else {
           acc.business.push(right);

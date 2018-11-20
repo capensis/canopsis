@@ -296,6 +296,10 @@ export default {
       },
       success: 'New view created',
       fail: 'Fail in creation view',
+      errors: {
+        rightCreating: 'Error on right creating',
+        rightRemoving: 'Error on right removing',
+      },
     },
     createAckEvent: {
       title: 'Ack',

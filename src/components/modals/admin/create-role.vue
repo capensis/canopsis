@@ -45,6 +45,7 @@ import { MODALS } from '@/constants';
 
 import { generateRole } from '@/helpers/entities';
 
+import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
@@ -56,6 +57,7 @@ export default {
     validator: 'new',
   },
   mixins: [
+    popupMixin,
     modalInnerMixin,
     entitiesViewMixin,
     entitiesRoleMixin,
@@ -93,22 +95,29 @@ export default {
   },
   methods: {
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid) {
-        const formData = this.isNew ? { ...generateRole() } : { ...this.role };
-        formData._id = this.form._id;
+        if (isFormValid) {
+          const formData = this.isNew ? { ...generateRole() } : { ...this.role };
+          formData._id = this.form._id;
 
-        await this.createRole({ data: { ...formData, ...this.form } });
-        await this.fetchRolesListWithPreviousParams();
+          await this.createRole({ data: { ...formData, ...this.form } });
+          await this.fetchRolesListWithPreviousParams();
 
-        this.hideModal();
+          this.addSuccessPopup({ text: this.$t('successes.default') });
+          this.hideModal();
+        }
+      } catch (err) {
+        this.addErrorPopup({ text: this.$t('errors.default') });
       }
     },
+
     updateDefaultView(view) {
       this.form.defaultview = view._id;
       this.defaultViewMenu = false;
     },
+
     getViewTitle(viewId) {
       const view = this.getViewById(viewId);
       if (view) {

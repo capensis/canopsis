@@ -39,12 +39,18 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MODALS } from '@/constants';
 
+import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
 export default {
-  mixins: [modalMixin, entitiesRoleMixins, rightsTechnicalRoleMixin],
+  mixins: [
+    popupMixin,
+    modalMixin,
+    entitiesRoleMixins,
+    rightsTechnicalRoleMixin,
+  ],
   data() {
     return {
       pagination: null,
@@ -77,8 +83,14 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await this.removeRole({ id });
-            await this.fetchRolesListWithPreviousParams();
+            try {
+              await this.removeRole({ id });
+              await this.fetchRolesListWithPreviousParams();
+
+              this.addSuccessPopup({ text: this.$t('successes.default') });
+            } catch (err) {
+              this.addErrorPopup({ text: this.$t('errors.default') });
+            }
           },
         },
       });
@@ -88,9 +100,15 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(this.selected.map(id => this.removeRole({ id })));
+            try {
+              await Promise.all(this.selected.map(id => this.removeRole({ id })));
 
-            this.selected = [];
+              this.selected = [];
+
+              this.addSuccessPopup({ text: this.$t('successes.default') });
+            } catch (err) {
+              this.addErrorPopup({ text: this.$t('errors.default') });
+            }
           },
         },
       });

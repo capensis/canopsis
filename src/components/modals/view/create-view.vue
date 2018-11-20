@@ -63,13 +63,17 @@
 
 <script>
 import find from 'lodash/find';
+import omit from 'lodash/omit';
 
-import { MODALS } from '@/constants';
-import { generateView } from '@/helpers/entities';
+import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
+import { generateView, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
 
+import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesRoleMixin from '@/mixins/entities/role';
+import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
@@ -82,9 +86,12 @@ export default {
     validator: 'new',
   },
   mixins: [
+    authMixin,
     popupMixin,
     modalInnerMixin,
     entitiesViewMixin,
+    entitiesRoleMixin,
+    entitiesRightMixin,
     entitiesViewGroupMixin,
     rightsTechnicalViewMixin,
   ],
@@ -150,19 +157,82 @@ export default {
     }
   },
   methods: {
+    async createRightByViewId(viewId) {
+      try {
+        const checksum = USERS_RIGHTS_MASKS.read + USERS_RIGHTS_MASKS.update + USERS_RIGHTS_MASKS.delete;
+        const role = await this.fetchRoleWithoutStore({ id: this.currentUser.role });
+
+        const right = {
+          ...generateRight(),
+
+          _id: viewId,
+          type: USERS_RIGHTS_TYPES.rw,
+          desc: `Rights on view: ${viewId}`,
+        };
+
+        await this.createRight({ data: right });
+        await this.createRole({
+          data: {
+            ...role,
+            rights: {
+              ...role.rights,
+
+              [right._id]: generateRoleRightByChecksum(checksum),
+            },
+          },
+        });
+
+        return this.fetchCurrentUser();
+      } catch (err) {
+        this.addErrorPopup({ text: this.$t('modals.view.errors.rightCreating') });
+
+        return Promise.resolve();
+      }
+    },
+
+    async removeRightByViewId(viewId) {
+      try {
+        const { data: roles } = await this.fetchRolesListWithoutStore({ params: { limit: 10000 } });
+
+        return Promise.all([
+          this.removeRight({ id: viewId }),
+
+          ...roles.map(role => this.createRole({
+            data: {
+              ...role,
+              rights: omit(role.rights, [viewId]),
+            },
+          })),
+        ]);
+      } catch (err) {
+        this.addErrorPopup({ text: this.$t('modals.view.errors.rightRemoving') });
+
+        return Promise.resolve();
+      }
+    },
+
     remove() {
       this.showModal({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await this.removeView({ id: this.config.view._id });
-            await this.fetchGroupsList();
+            try {
+              await this.removeView({ id: this.config.view._id });
+              await Promise.all([
+                this.removeRightByViewId(this.config.view._id),
+                this.fetchGroupsList(),
+              ]);
 
-            this.hideModal();
+              this.addSuccessPopup({ text: this.$t('modals.view.success') });
+              this.hideModal();
+            } catch (err) {
+              this.addErrorPopup({ text: this.$t('modals.view.fail') });
+            }
           },
         },
       });
     },
+
     async submit() {
       try {
         const isFormValid = await this.$validator.validateAll();
@@ -183,7 +253,8 @@ export default {
           if (this.config.view) {
             await this.updateView({ id: this.config.view._id, data });
           } else {
-            await this.createView({ data });
+            const response = await this.createView({ data });
+            await this.createRightByViewId(response._id);
           }
 
           await this.fetchGroupsList();
@@ -193,7 +264,7 @@ export default {
         }
       } catch (err) {
         this.addErrorPopup({ text: this.$t('modals.view.fail') });
-        console.error(err.description);
+        console.error(err);
       }
     },
   },
