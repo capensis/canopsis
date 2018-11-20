@@ -45,10 +45,7 @@
                   v-alert(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
                 v-flex(xs2 px-2)
-                  v-btn.primary(
-                  @click="submit",
-                  type="submit",
-                  ) {{ $t('common.connect') }}
+                  v-btn.primary(type="submit") {{ $t('common.connect') }}
 </template>
 
 <script>
