@@ -9,6 +9,7 @@ import View from '@/views/view.vue';
 import AdminRights from '@/views/admin/rights.vue';
 import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
+import AdminParameters from '@/views/admin/parameters.vue';
 
 Vue.use(Router);
 
@@ -59,7 +60,7 @@ const routes = [
   {
     path: '/admin/parameters',
     name: 'admin-parameters',
-    // TODO: Add component to the Parameters view
+    component: AdminParameters,
     meta: requiresLoginMeta,
   },
 ];

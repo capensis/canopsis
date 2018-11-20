@@ -683,4 +683,7 @@ export default {
       },
     },
   },
+  parameters: {
+    interfaceLanguage: 'Langage de l\'interface',
+  },
 };
