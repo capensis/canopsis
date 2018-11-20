@@ -28,6 +28,8 @@ import time
 from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
 from canopsis.common import root_path
+from canopsis.version import (get_version_file_path, parse_version,
+                              CANOPSIS_VERSION_ARG)
 
 COMMANDS = [root_path + "/bin/schema2db",
             [root_path + "/bin/canopsis-filldb", "--yes"]]
@@ -41,6 +43,21 @@ DFT_RETRY_DELAY = 30
 DFT_WAIT_FIRST_ATTEMPT = 0
 AUTH_REINIT = '--authorize-reinit'
 
+
+def read_version_file(version_file_path):
+    """
+    Read text file contents and parse Canopsis version from it.
+
+    :param version_file_path: `str` version file path.
+    :return: `str` Canopsis version or None if failed.
+    """
+    try:
+        with open(version_file_path, 'r') as fp:
+            return parse_version(fp.read())
+    except (OSError, IOError):
+        pass
+
+
 if __name__ == "__main__":
     parser = ArgumentParser(description='Canopsinit')
     parser.add_argument(AUTH_REINIT, dest='reinit', action='store_true')
@@ -48,6 +65,12 @@ if __name__ == "__main__":
 
     if args.reinit is True:
         COMMANDS[1].append(AUTH_REINIT)
+
+    canopsis_version = read_version_file(get_version_file_path(root_path))
+
+    if canopsis_version:
+        COMMANDS[1].append(CANOPSIS_VERSION_ARG)
+        COMMANDS[1].append(canopsis_version)
 
     max_retry = int(os.getenv(ENV_MAX_RETRY, DFT_MAX_RETRY))
     retry_delay = int(os.getenv(ENV_RETRY_DELAY, DFT_RETRY_DELAY))
