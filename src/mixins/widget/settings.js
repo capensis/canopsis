@@ -103,7 +103,11 @@ export default {
     },
 
     prepareSettingsWidget() {
-      return this.settings.widget;
+      return this.widget;
+    },
+
+    prepareWidgetQuery(newQuery) {
+      return newQuery;
     },
 
     async submit() {
@@ -166,12 +170,15 @@ export default {
           this.updateView({ id: this.view._id, data: view }),
         ]);
 
+        const oldQuery = this.getQueryById(this.widget._id);
+        const newQuery = {
+          ...convertWidgetToQuery(widget),
+          ...convertUserPreferenceToQuery(userPreference),
+        };
+
         this.updateQuery({
           id: widget._id,
-          query: {
-            ...convertWidgetToQuery(widget),
-            ...convertUserPreferenceToQuery(userPreference),
-          },
+          query: this.prepareWidgetQuery(newQuery, oldQuery),
         });
 
         this.hideSideBar();

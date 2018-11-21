@@ -84,5 +84,14 @@ export default {
       mainFilter: get(widgetPreference, 'mainFilter', {}),
     };
   },
+  methods: {
+    prepareWidgetQuery(newQuery, oldQuery) {
+      return {
+        searchFilter: oldQuery.searchFilter,
+
+        ...newQuery,
+      };
+    },
+  },
 };
 </script>
