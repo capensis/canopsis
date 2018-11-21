@@ -164,7 +164,7 @@ export default {
         }];
       }
 
-      const filter = ['mainFilter', 'searchFilter', 'typesFilter'].reduce((acc, filterKey) => {
+      const filters = ['mainFilter', 'searchFilter', 'typesFilter'].reduce((acc, filterKey) => {
         const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
 
         if (queryFilter) {
@@ -174,9 +174,9 @@ export default {
         return acc;
       }, []);
 
-      if (filter) {
+      if (filters.length) {
         query._filter = {
-          $and: filter,
+          $and: filters,
         };
       }
 
