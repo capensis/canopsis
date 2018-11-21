@@ -42,7 +42,7 @@
               small,
               icon,
               color="grey darken-2",
-              @click.prevent="duplicateView(view)"
+              @click.prevent="showDuplicateViewModal(view)"
               )
                 v-icon(small) file_copy
     v-divider
@@ -153,7 +153,7 @@ export default {
         name: MODALS.createView,
       });
     },
-    duplicateView(view) {
+    showDuplicateViewModal(view) {
       this.showModal({
         name: MODALS.createView,
         config: {
