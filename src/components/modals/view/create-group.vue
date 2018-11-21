@@ -15,23 +15,30 @@
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
-      v-btn.error(@click="remove", v-show="config.group") {{ $t('common.delete') }}
+      v-btn.error(v-if="config.group && hasDeleteAnyViewAccess", @click="remove") {{ $t('common.delete') }}
 </template>
 
 <script>
 import get from 'lodash/get';
 
 import { MODALS } from '@/constants';
+
+import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
-import popupMixin from '@/mixins/popup';
+import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
 export default {
   name: MODALS.createGroup,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin, entitiesViewGroupMixin, popupMixin],
+  mixins: [
+    popupMixin,
+    modalInnerMixin,
+    entitiesViewGroupMixin,
+    rightsTechnicalViewMixin,
+  ],
   data() {
     return {
       form: {

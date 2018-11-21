@@ -64,6 +64,16 @@ export default {
       }
     },
 
+    fetchListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.role.list, { params });
+    },
+
+    async fetchItemWithoutStore(context, { id } = {}) {
+      const { data: [role] } = await request.get(`${API_ROUTES.role.list}/${id}`);
+
+      return role;
+    },
+
     /**
    * Fetch roles list with previous params
    *
@@ -77,29 +87,18 @@ export default {
       });
     },
 
-    async create({ dispatch }, { data }) {
-      try {
-        await dispatch('entities/create', {
-          route: API_ROUTES.role.create,
-          schema: roleSchema,
-          body: qs.stringify({ role: JSON.stringify(data) }),
-          dataPreparer: d => d.data[0],
-          headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        }, { root: true });
-
-        await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
-      } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-      }
+    create({ dispatch }, { data }) {
+      return dispatch('entities/create', {
+        route: API_ROUTES.role.create,
+        schema: roleSchema,
+        body: qs.stringify({ role: JSON.stringify(data) }),
+        dataPreparer: d => d.data[0],
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      }, { root: true });
     },
 
-    async remove({ dispatch }, { id }) {
-      try {
-        await request.delete(`${API_ROUTES.role.remove}/${id}`);
-        await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
-      } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-      }
+    remove(context, { id }) {
+      return request.delete(`${API_ROUTES.role.remove}/${id}`);
     },
   },
 };

@@ -33,6 +33,7 @@
 <script>
 import { MODALS, USERS_RIGHTS_TYPES } from '@/constants';
 
+import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 import { generateRight } from '@/helpers/entities';
@@ -42,13 +43,13 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin, entitiesRightMixin],
+  mixins: [popupMixin, modalInnerMixin, entitiesRightMixin],
   data() {
     return {
       types: [
         { value: '', text: 'Default' },
-        { value: 'RW', text: USERS_RIGHTS_TYPES.rw },
-        { value: 'CRUD', text: USERS_RIGHTS_TYPES.crud },
+        { value: USERS_RIGHTS_TYPES.rw, text: USERS_RIGHTS_TYPES.rw },
+        { value: USERS_RIGHTS_TYPES.crud, text: USERS_RIGHTS_TYPES.crud },
       ],
       form: {
         _id: '',
@@ -59,14 +60,19 @@ export default {
   },
   methods: {
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid) {
-        const data = { ...generateRight(), ...this.form };
+        if (isFormValid) {
+          const data = { ...generateRight(), ...this.form };
 
-        await this.createRight({ data });
+          await this.createRight({ data });
 
-        this.hideModal();
+          this.addSuccessPopup({ text: this.$t('successes.default') });
+          this.hideModal();
+        }
+      } catch (err) {
+        this.addErrorPopup({ text: this.$t('errors.default') });
       }
     },
   },

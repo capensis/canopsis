@@ -1,8 +1,15 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Cookies from 'js-cookie';
+import isEmpty from 'lodash/isEmpty';
+import isFunction from 'lodash/isFunction';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
+import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
+import store from '@/store';
+import i18n from '@/i18n';
+import { checkUserAccess } from '@/helpers/right';
+
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
@@ -36,26 +43,46 @@ const routes = [
     path: '/view/:id',
     name: 'view',
     component: View,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: route => route.params.id,
+      },
+    },
     props: route => ({ id: route.params.id }),
   },
   {
     path: '/admin/rights',
     name: 'admin-rights',
     component: AdminRights,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.action,
+      },
+    },
   },
   {
     path: '/admin/users',
     name: 'admin-users',
     component: AdminUsers,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.user,
+      },
+    },
   },
   {
     path: '/admin/roles',
     name: 'admin-roles',
     component: AdminRoles,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.role,
+      },
+    },
   },
   {
     path: '/admin/parameters',
@@ -92,6 +119,41 @@ router.beforeEach((to, from, next) => {
   }
 
   return next();
+});
+
+/**
+ * if route has requiresRight we will wait currentUser object and check right
+ */
+router.beforeResolve((to, from, next) => {
+  if (to.meta.requiresLogin && to.meta.requiresRight) {
+    const { requiresRight } = to.meta;
+    const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
+    const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
+    const checkProcess = (user) => {
+      if (checkUserAccess(user, rightId, rightMask)) {
+        next();
+      } else {
+        store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
+        next(false);
+      }
+    };
+
+    if (isEmpty(store.getters['auth/currentUser'])) {
+      const unwatch = store.watch(
+        state => state.auth.currentUser,
+        (currentUser) => {
+          if (!isEmpty(currentUser)) {
+            unwatch();
+            checkProcess(currentUser);
+          }
+        },
+      );
+    } else {
+      checkProcess(store.getters['auth/currentUser']);
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
