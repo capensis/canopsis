@@ -66,7 +66,8 @@
 import find from 'lodash/find';
 
 import { MODALS } from '@/constants';
-import { generateView } from '@/helpers/entities';
+import { generateView, generateRow } from '@/helpers/entities';
+import uuid from '@/helpers/uid';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import popupMixin from '@/mixins/popup';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -168,10 +169,26 @@ export default {
           };
 
           // If we got a view in modal's config, we need to keep view's information on editing/duplicating
-          if (this.config.view) {
+          if (this.config.view && !this.config.isDuplicating) {
             data = {
               ...this.config.view,
               ...this.form,
+              group_id: group._id,
+            };
+          }
+
+          // If we're duplicating a view, generate a new vie with different ids for rows and widgets
+          if (this.config.isDuplicating) {
+            const rows = this.config.view.rows.map((row) => {
+              const newRow = { ...generateRow(), title: row.title };
+              newRow.widgets = row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) }));
+              return newRow;
+            });
+
+            data = {
+              ...this.config.view,
+              ...this.form,
+              rows,
               group_id: group._id,
             };
           }
