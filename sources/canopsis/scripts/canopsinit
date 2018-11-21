@@ -28,8 +28,8 @@ import time
 from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
 from canopsis.common import root_path
-from canopsis.version import (get_version_file_path, parse_version,
-                              CANOPSIS_VERSION_ARG)
+from canopsis.version import (get_version_file_path, CANOPSIS_VERSION_ARG,
+                              read_version_file)
 
 COMMANDS = [root_path + "/bin/schema2db",
             [root_path + "/bin/canopsis-filldb", "--yes"]]
@@ -42,20 +42,6 @@ DFT_MAX_RETRY = 10
 DFT_RETRY_DELAY = 30
 DFT_WAIT_FIRST_ATTEMPT = 0
 AUTH_REINIT = '--authorize-reinit'
-
-
-def read_version_file(version_file_path):
-    """
-    Read text file contents and parse Canopsis version from it.
-
-    :param version_file_path: `str` version file path.
-    :return: `str` Canopsis version or None if failed.
-    """
-    try:
-        with open(version_file_path, 'r') as fp:
-            return parse_version(fp.read())
-    except (OSError, IOError):
-        pass
 
 
 if __name__ == "__main__":

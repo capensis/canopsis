@@ -51,3 +51,17 @@ def parse_version(version_string):
     matched = __VERSION_PATTERN.findall(version_string)
     if matched:
         return matched[0]
+
+
+def read_version_file(version_file_path):
+    """
+    Read text file contents and parse Canopsis version from it.
+
+    :param version_file_path: `str` version file path.
+    :return: `str` Canopsis version or None if failed.
+    """
+    try:
+        with open(version_file_path, 'r') as fp:
+            return parse_version(fp.read())
+    except (OSError, IOError):
+        pass
