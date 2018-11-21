@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { getContextSearchByText } from '@/helpers/widget-search';
 import searchMixin from '@/mixins/search';
 
 /**
@@ -26,12 +27,22 @@ export default {
   data() {
     return {
       searchingText: '',
-      requestParam: '_filter',
+      requestParam: 'searchFilter',
     };
   },
   computed: {
     requestData() {
-      return this.$options.filters.formatContextSearch(this.searchingText);
+      return getContextSearchByText(this.searchingText);
+    },
+  },
+  methods: {
+    submit() {
+      this.$emit('update:query', {
+        ...this.query,
+
+        page: 1,
+        [this.requestParam]: getContextSearchByText(this.searchingText),
+      });
     },
   },
 };

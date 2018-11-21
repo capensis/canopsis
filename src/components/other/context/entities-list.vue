@@ -74,6 +74,9 @@
 
 <script>
 import omit from 'lodash/omit';
+import isString from 'lodash/isString';
+
+import { MODALS, SIDE_BARS, ENTITIES_TYPES } from '@/constants';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -147,7 +150,9 @@ export default {
         'page',
         'sortKey',
         'sortDir',
-        'selectedTypes',
+        'mainFilter',
+        'searchFilter',
+        'typesFilter',
       ]);
 
       query.start = ((this.query.page - 1) * this.query.limit) || 0;
@@ -159,24 +164,28 @@ export default {
         }];
       }
 
-      if (!query._filter) {
-        const selectedTypes = this.userPreference.widget_preferences.selectedTypes || [];
+      const filter = ['mainFilter', 'searchFilter', 'typesFilter'].reduce((acc, filterKey) => {
+        const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
 
-        if (selectedTypes.length) {
-          query._filter = JSON.stringify({
-            $or: selectedTypes.map(type => ({ type })),
-          });
-        } else {
-          delete query._filter;
+        if (queryFilter) {
+          acc.push(queryFilter);
         }
+
+        return acc;
+      }, []);
+
+      if (filter) {
+        query._filter = {
+          $and: filter,
+        };
       }
 
       return query;
     },
     editEntity(item) {
-      if (item.type === this.$constants.ENTITIES_TYPES.watcher) {
+      if (item.type === ENTITIES_TYPES.watcher) {
         this.showModal({
-          name: this.$constants.MODALS.createWatcher,
+          name: MODALS.createWatcher,
           config: {
             title: 'modals.createWatcher.editTitle',
             item,
@@ -184,7 +193,7 @@ export default {
         });
       } else {
         this.showModal({
-          name: this.$constants.MODALS.createEntity,
+          name: MODALS.createEntity,
           config: {
             title: 'modals.createEntity.editTitle',
             item,
@@ -194,7 +203,7 @@ export default {
     },
     deleteEntity(item) {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: () => this.removeContextEntity({ id: item._id }),
         },
@@ -202,7 +211,7 @@ export default {
     },
     deleteEntities() {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
         },
@@ -210,16 +219,16 @@ export default {
     },
     addPbehaviors(itemId) {
       this.showModal({
-        name: this.$constants.MODALS.createPbehavior,
+        name: MODALS.createPbehavior,
         config: {
-          itemsType: this.$constants.ENTITIES_TYPES.entity,
+          itemsType: ENTITIES_TYPES.entity,
           itemsIds: itemId ? [itemId] : this.selected,
         },
       });
     },
     showSettings() {
       this.showSideBar({
-        name: this.$constants.SIDE_BARS.contextSettings,
+        name: SIDE_BARS.contextSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,
@@ -236,24 +245,26 @@ export default {
     },
     /**
      * Surcharge updateSelectedFilter method from filterSelectMixin
-     * to adapt it to context API specification ('_filter' instead of 'filter')
+     * to adapt it to context API specification
      */
-    updateSelectedFilter(value) {
+    async updateSelectedFilter(value = {}) {
       this.createUserPreference({
         userPreference: {
           ...this.userPreference,
+
           widget_preferences: {
             ...this.userPreference.widget_preferences,
-            mainFilter: value || {},
+
+            mainFilter: value,
           },
         },
       });
 
-      if (value && value.filter) {
-        this.query = { ...this.query, _filter: value.filter };
-      } else {
-        this.query = { ...this.query, _filter: undefined };
-      }
+      this.query = {
+        ...this.query,
+
+        mainFilter: value.filter,
+      };
     },
   },
 };
