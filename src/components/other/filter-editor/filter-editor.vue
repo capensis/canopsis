@@ -28,7 +28,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
-import { ENTITIES_TYPES } from '@/constants';
+import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter-editor/parse-filter-to-request';
@@ -62,7 +62,7 @@ export default {
     },
   },
   data() {
-    let filter = cloneDeep(this.$constants.FILTER_DEFAULT_VALUES.group);
+    let filter = cloneDeep(FILTER_DEFAULT_VALUES.group);
 
     if (this.value !== '') {
       const valueObject = JSON.parse(this.value);
