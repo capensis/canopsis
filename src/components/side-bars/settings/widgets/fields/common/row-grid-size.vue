@@ -3,6 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.rowGridSize.title') }}
     v-container
       v-combobox(
+      ref="combobox",
       v-model="row",
       @blur="blurRow",
       :items="availableRows",
@@ -36,9 +37,11 @@
 import isEmpty from 'lodash/isEmpty';
 
 import { generateRow } from '@/helpers/entities';
+import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
 export default {
   inject: ['$validator'],
+  mixins: [vuetifyComboboxMixin],
   props: {
     rowId: {
       type: String,
@@ -96,6 +99,8 @@ export default {
             },
           );
         }
+
+        this.closeComboboxMenuOnChange();
       },
     },
     sliders() {

@@ -40,6 +40,7 @@
             deletable-chips,
             )
             v-combobox(
+            ref="combobox",
             v-model="groupName",
             :items="groupNames",
             :label="$t('modals.view.fields.groupIds')",
@@ -47,6 +48,7 @@
             data-vv-name="group",
             v-validate="'required'",
             :error-messages="errors.collect('group')",
+            @change="closeComboboxMenuOnChange()"
             )
               template(slot="no-data")
                 v-list-tile
@@ -66,10 +68,12 @@ import find from 'lodash/find';
 
 import { MODALS } from '@/constants';
 import { generateView } from '@/helpers/entities';
+
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import popupMixin from '@/mixins/popup';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
 /**
  * Modal to create widget
@@ -80,10 +84,11 @@ export default {
     validator: 'new',
   },
   mixins: [
+    popupMixin,
     modalInnerMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
-    popupMixin,
+    vuetifyComboboxMixin,
   ],
   data() {
     return {
@@ -143,6 +148,7 @@ export default {
         },
       });
     },
+
     async submit() {
       try {
         const isFormValid = await this.$validator.validateAll();
