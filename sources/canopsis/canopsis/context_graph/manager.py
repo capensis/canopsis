@@ -356,15 +356,15 @@ class ContextGraph(object):
 
         return ret_val
 
-    def get_entities_with_alarms(self,query):
+    def get_entities_with_open_alarms(self, query):
         """
-        Get a list of entities enhaced with live alarms data found with
+        Get a list of entities enhaced with open alarms data found with
         a given mongo filter.
 
         :param query: Custom mongodb filter for entities
         :type query: dict
 
-        :return type: an array of entities including the live alarms.
+        :return type: an array of entities including the open alarms.
         """
         match_query = {
             '$match': query
@@ -372,17 +372,17 @@ class ContextGraph(object):
 
         join_alarms = {
             '$lookup': {
-                'from':'periodical_alarm',
-                'localField':'_id',
-                'foreignField':'d',
-                'as':'alarms'
+                'from': 'periodical_alarm',
+                'localField': '_id',
+                'foreignField': 'd',
+                'as': 'alarms'
             }
         }
 
         ignore_terminated_alarms = {
             '$addFields': {
-                'alarms' : {
-                    '$filter' : {
+                'alarms': {
+                    '$filter': {
                         'input': '$alarms',
                         'as': 'alarm',
                         'cond': {
