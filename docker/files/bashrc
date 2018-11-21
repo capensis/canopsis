@@ -13,3 +13,7 @@ fi
 
 alias ls="ls --color=auto"
 alias ll="ls -l"
+
+if [ -x "$(command -v canopsversion)" ]; then
+     export PS1='(\u `canopsversion`)[\u@\h \W]\$ '
+fi
