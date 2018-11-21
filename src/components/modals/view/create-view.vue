@@ -40,6 +40,7 @@
             deletable-chips,
             )
             v-combobox(
+            ref="combobox",
             v-model="groupName",
             :items="groupNames",
             :label="$t('modals.view.fields.groupIds')",
@@ -47,6 +48,7 @@
             data-vv-name="group",
             v-validate="'required'",
             :error-messages="errors.collect('group')",
+            @change="closeComboboxMenuOnChange()"
             )
               template(slot="no-data")
                 v-list-tile
@@ -76,6 +78,7 @@ import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
+import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
 /**
  * Modal to create widget
@@ -94,6 +97,7 @@ export default {
     entitiesRightMixin,
     entitiesViewGroupMixin,
     rightsTechnicalViewMixin,
+    vuetifyComboboxMixin,
   ],
   data() {
     return {
