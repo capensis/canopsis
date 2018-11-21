@@ -23,11 +23,12 @@
           v-divider
           field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
           v-divider
-          field-filters(
-          v-model="settings.widget_preferences.mainFilter",
-          :filters.sync="settings.widget_preferences.viewFilters"
-          )
-          v-divider
+          template(v-if="hasAccessToListFilters")
+            field-filters(
+            v-model="settings.widget_preferences.mainFilter",
+            :filters.sync="settings.widget_preferences.viewFilters"
+            )
+            v-divider
           field-info-popup(v-model="settings.widget.parameters.infoPopups")
           v-divider
           field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
@@ -39,8 +40,10 @@
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { SIDE_BARS } from '@/constants';
+import { PAGINATION_LIMIT } from '@/config';
+import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
 
+import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -74,7 +77,7 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [authMixin, widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -83,18 +86,23 @@ export default {
         rowId,
         widget: cloneDeep(widget),
         widget_preferences: {
-          itemsPerPage: this.$config.PAGINATION_LIMIT,
+          itemsPerPage: PAGINATION_LIMIT,
           viewFilters: [],
           mainFilter: {},
         },
       },
     };
   },
+  computed: {
+    hasAccessToListFilters() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
+    },
+  },
   mounted() {
     const { widget_preferences: widgetPreference } = this.userPreference;
 
     this.settings.widget_preferences = {
-      itemsPerPage: get(widgetPreference, 'itemsPerPage', this.$config.PAGINATION_LIMIT),
+      itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
       viewFilters: get(widgetPreference, 'viewFilters', []),
       mainFilter: get(widgetPreference, 'mainFilter', {}),
     };

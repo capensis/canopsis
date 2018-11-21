@@ -22,6 +22,9 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 import actionsPanelMixin from '@/mixins/actions-panel';
 
 import ActionsPanelItem from './actions-panel-item.vue';
@@ -37,7 +40,7 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  */
 export default {
   components: { ActionsPanelItem },
-  mixins: [actionsPanelMixin],
+  mixins: [authMixin, actionsPanelMixin],
   props: {
     itemsIds: {
       type: Array,
@@ -46,10 +49,10 @@ export default {
   },
   data() {
     return {
-      actions: [
+      allActions: [
         {
           type: 'pbehavior',
-          method: this.showActionModal(this.$constants.MODALS.createPbehavior),
+          method: this.showActionModal(MODALS.createPbehavior),
         },
         {
           type: 'fastAck',
@@ -57,7 +60,7 @@ export default {
         },
         {
           type: 'ack',
-          method: this.showActionModal(this.$constants.MODALS.createAckEvent),
+          method: this.showActionModal(MODALS.createAckEvent),
         },
         {
           type: 'ackRemove',
@@ -69,20 +72,24 @@ export default {
   computed: {
     ...entitiesMapGetters(['getList']),
 
+    actions() {
+      return this.allActions.filter(this.actionsAccessFilterHandler);
+    },
+
     items() {
-      return this.getList(this.$constants.ENTITIES_TYPES.alarm, this.itemsIds);
+      return this.getList(ENTITIES_TYPES.alarm, this.itemsIds);
     },
 
     modalConfig() {
       return {
-        itemsType: this.$constants.ENTITIES_TYPES.alarm,
+        itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
       };
     },
   },
   methods: {
     createAckEvent() {
-      return this.createEvent(this.$constants.EVENT_ENTITY_TYPES.ack, this.items);
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
     },
   },
 };
