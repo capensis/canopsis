@@ -5,6 +5,7 @@ before_script:
   - uname -a
   - docker -v
   - git --no-pager show
+  - docker login -u "$HUBDOCKERUSER" -p "$HUBDOCKERPASSWORD" $HUBDOCKERREGISTRY
 
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
@@ -18,6 +19,7 @@ stage_test:
   tags: ["canopsis-next"]
   script:
     - docker build -t canopsis/uiv3:develop -f docker/Dockerfile .
+    - docker push canopsis/uiv3:develop
 
   artifacts:
     paths:
