@@ -5,7 +5,7 @@ before_script:
   - uname -a
   - docker -v
   - git --no-pager show
-  - docker login -u "$HUBDOCKERUSER" -p "$HUBDOCKERPASSWORD" $HUBDOCKERREGISTRY
+  - docker login -u $HUBDOCKERUSER -p $HUBDOCKERPASSWORD $HUBDOCKERREGISTRY
 
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
