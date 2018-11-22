@@ -52,12 +52,6 @@ if __name__ == "__main__":
     if args.reinit is True:
         COMMANDS[1].append(AUTH_REINIT)
 
-    canopsis_version = read_version_file(get_version_file_path(root_path))
-
-    if canopsis_version:
-        COMMANDS[1].append(CANOPSIS_VERSION_ARG)
-        COMMANDS[1].append(canopsis_version)
-
     max_retry = int(os.getenv(ENV_MAX_RETRY, DFT_MAX_RETRY))
     retry_delay = int(os.getenv(ENV_RETRY_DELAY, DFT_RETRY_DELAY))
     wait_first_time = int(os.getenv(ENV_WAIT_FIRST_ATTEMPT,
@@ -82,6 +76,13 @@ if __name__ == "__main__":
             started = True
 
     sys.stdout.flush()
+
+    canopsis_version = read_version_file(get_version_file_path(root_path))
+    if not canopsis_version:
+        exit(3)
+    else:
+        COMMANDS[1].append(CANOPSIS_VERSION_ARG)
+        COMMANDS[1].append(canopsis_version)
 
     if started is True:
         for cmd in COMMANDS:
