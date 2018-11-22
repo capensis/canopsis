@@ -133,8 +133,6 @@ export default {
         enabled: view.enabled,
         tags: [...view.tags || []],
       };
-
-      this.isDuplicating = isDuplicating;
     }
   },
   methods: {
@@ -162,48 +160,37 @@ export default {
             group = await this.createGroup({ data: { name: this.groupName } });
           }
 
-          let data = {
-            ...generateView(),
-            ...this.form,
-            group_id: group._id,
-          };
-
-          // If we got a view in modal's config, we need to keep view's information on editing/duplicating
-          if (this.config.view && !this.config.isDuplicating) {
-            data = {
-              ...this.config.view,
-              ...this.form,
-              group_id: group._id,
-            };
-          }
-
-          // If we're duplicating a view, generate a new vie with different ids for rows and widgets
-          if (this.config.isDuplicating) {
-            const rows = this.config.view.rows.map((row) => {
-              const newRow = { ...generateRow(), title: row.title };
-              newRow.widgets = row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) }));
-              return newRow;
-            });
-
-            data = {
-              ...this.config.view,
-              ...this.form,
-              rows,
-              group_id: group._id,
-            };
-          }
-
           /**
-           * If we got a view in modal's config, and if we're not duplicating a view, that
-           * means we're editing a view
-           * Else, we're creating, or duplicating
+           * If we're creating a new view, or duplicating an existing one.
+           * Generate a new view. Then copy rows and widgets if we're duplicating a view
            */
-          if (this.config.view && !this.isDuplicating) {
-            await this.updateView({ id: this.config.view._id, data });
-            this.addSuccessPopup({ text: this.$t('modals.view.success.edit') });
-          } else {
+          if (!this.config.view || this.config.isDuplicating) {
+            const data = {
+              ...generateView(),
+              ...this.form,
+              group_id: group._id,
+            };
+
+            if (this.config.isDuplicating) {
+              data.rows = this.config.view.rows.map(row => ({
+                ...generateRow(),
+
+                title: row.title,
+                widgets: row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) })),
+              }));
+            }
+
             await this.createView({ data });
             this.addSuccessPopup({ text: this.$t('modals.view.success.create') });
+          } else {
+            const data = {
+              ...this.config.view,
+              ...this.form,
+              group_id: group._id,
+            };
+
+            await this.updateView({ id: this.config.view._id, data });
+            this.addSuccessPopup({ text: this.$t('modals.view.success.edit') });
           }
 
           await this.fetchGroupsList();
@@ -214,7 +201,7 @@ export default {
          * If we got a view in modal's config, and if we're not duplicating a view, that
          * means we're editing a view
         */
-        if (!this.isDuplicating && this.config.view) {
+        if (!this.config.isDuplicating && this.config.view) {
           this.addErrorPopup({ text: this.$t('modals.view.fail.edit') });
         }
         this.addErrorPopup({ text: this.$t('modals.view.fail.create') });
