@@ -62,6 +62,7 @@ export default {
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    forbidden: 'Forbidden',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -304,6 +305,10 @@ export default {
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+      },
+      errors: {
+        rightCreating: 'Error on right creating',
+        rightRemoving: 'Error on right removing',
       },
     },
     createAckEvent: {
@@ -701,5 +706,8 @@ export default {
         settings: 'Settings',
       },
     },
+  },
+  parameters: {
+    interfaceLanguage: 'Interface language',
   },
 };

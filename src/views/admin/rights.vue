@@ -14,7 +14,7 @@
         ripple
         )
           div(slot="header") {{ groupKey }}
-          v-card
+          v-card(v-if="hasReadAnyRoleAccess")
             v-card-text
               table.table
                 thead
@@ -29,12 +29,13 @@
                       v-for="(checkbox, index) in getCheckboxes(role, right)",
                       :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
                       v-bind="checkbox.bind",
-                      v-on="checkbox.on"
+                      v-on="checkbox.on",
+                      :disabled="!hasUpdateAnyActionAccess"
                       )
-    v-layout(v-show="hasChanges")
+    v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
-    .fab
+    .fab(v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess")
       v-speed-dial(
       v-model="fab",
       direction="left",
@@ -43,15 +44,15 @@
         v-btn.secondary(slot="activator", color="primary", dark, fab, v-model="fab")
           v-icon add
           v-icon close
-        v-tooltip(top)
+        v-tooltip(v-if="hasCreateAnyUserAccess", top)
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateUserModal")
             v-icon people
           span {{ $t('modals.createUser.title') }}
-        v-tooltip(top)
+        v-tooltip(v-if="hasCreateAnyRoleAccess", top)
           v-btn(slot="activator", fab, dark, small, color="deep-purple ", @click.stop="showCreateRoleModal")
             v-icon supervised_user_circle
           span {{ $t('modals.createRole.title') }}
-        v-tooltip(top)
+        v-tooltip(v-if="hasCreateAnyActionAccess", top)
           v-btn(slot="activator", fab, dark, small, color="teal", @click.stop="showCreateRightModal")
             v-icon verified_user
           span {{ $t('modals.createRight.title') }}
@@ -67,12 +68,26 @@ import { MODALS } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
+import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
+import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
+import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
+import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
+
 
 export default {
-  mixins: [authMixin, modalMixin, entitiesRightMixin, entitiesRoleMixin],
+  mixins: [
+    authMixin,
+    popupMixin,
+    modalMixin,
+    entitiesRightMixin,
+    entitiesRoleMixin,
+    rightsTechnicalUserMixin,
+    rightsTechnicalRoleMixin,
+    rightsTechnicalActionMixin,
+  ],
   data() {
     return {
       fab: false,
@@ -190,30 +205,35 @@ export default {
     },
 
     async updateRoles() {
-      this.pending = true;
+      try {
+        this.pending = true;
 
-      await Promise.all(Object.keys(this.changedRoles).map((roleId) => {
-        const changedRoleRights = this.changedRoles[roleId];
-        const role = this.getRoleById(roleId);
+        await Promise.all(Object.keys(this.changedRoles).map((roleId) => {
+          const changedRoleRights = this.changedRoles[roleId];
+          const role = this.getRoleById(roleId);
 
-        const newRights = transform(
-          changedRoleRights,
-          (acc, value, key) => acc[key] = generateRoleRightByChecksum(value),
-        );
+          const newRights = transform(
+            changedRoleRights,
+            (acc, value, key) => acc[key] = generateRoleRightByChecksum(value),
+          );
 
-        return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
-      }));
+          return this.createRole({ data: { ...role, rights: { ...role.rights, ...newRights } } });
+        }));
 
-      /**
-       * If current user role changed
-       */
-      if (this.changedRoles[this.currentUser.role]) {
-        await this.fetchCurrentUser();
+        /**
+         * If current user role changed
+         */
+        if (this.changedRoles[this.currentUser.role]) {
+          await this.fetchCurrentUser();
+        }
+
+        this.addSuccessPopup({ text: this.$t('successes.default') });
+        this.clearChangedRoles();
+
+        this.pending = false;
+      } catch (err) {
+        this.addErrorPopup({ text: this.$t('errors.default') });
       }
-
-      this.clearChangedRoles();
-
-      this.pending = false;
     },
 
     /**
@@ -281,9 +301,11 @@ export default {
       ]);
 
       this.groupedRights = rights.reduce((acc, right) => {
-        if (right._id.startsWith('view') || right._id.startsWith('userview')) {
+        const rightId = String(right._id);
+
+        if (rightId.startsWith('view') || rightId.startsWith('userview')) {
           acc.view.push(right);
-        } else if (right._id.startsWith('models')) {
+        } else if (rightId.startsWith('models')) {
           acc.technical.push(right);
         } else {
           acc.business.push(right);

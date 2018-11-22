@@ -2,7 +2,7 @@
   v-container
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.users') }}
     div
-      div(v-show="selected.length")
+      div(v-show="hasDeleteAnyUserAccess && selected.length")
         v-btn(@click="showRemoveSelectedUsersModal", icon)
           v-icon delete
       v-data-table(
@@ -26,11 +26,11 @@
               v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
             td
               div
-                v-btn(@click="showEditUserModal(props.item._id)", icon)
+                v-btn(v-if="hasUpdateAnyUserAccess", @click="showEditUserModal(props.item._id)", icon)
                   v-icon edit
-                v-btn(@click="showRemoveUserModal(props.item._id)", icon)
-                  v-icon delete
-    .fab
+                v-btn(v-if="hasDeleteAnyUserAccess", @click="showRemoveUserModal(props.item._id)", icon)
+                  v-icon(color="red darken-4") delete
+    .fab(v-if="hasCreateAnyUserAccess")
       v-tooltip(left)
         v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateUserModal")
           v-icon add
@@ -44,9 +44,10 @@ import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
+import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 export default {
-  mixins: [modalMixin, entitiesUserMixin],
+  mixins: [modalMixin, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {
     return {
       pagination: null,

@@ -8,6 +8,7 @@
       v-layout(justify-center, align-center)
         img.my-1(src="@/assets/canopsis.png")
     v-expansion-panel.panel(
+    v-if="hasReadAnyViewAccess",
     expand,
     focusable,
     dark
@@ -23,12 +24,12 @@
           @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
-        v-card.secondary.white--text(v-for="view in group.views", :key="view._id")
+        v-card.secondary.white--text(v-for="view in getAvailableViewsForGroup(group)", :key="view._id")
           v-card-text
             router-link(:to="{ name: 'view', params: { id: view._id } }")
               span.pl-3 {{ view.title }}
               v-btn(
-              v-show="editing",
+              v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && editing",
               depressed,
               small,
               icon,
@@ -47,6 +48,7 @@
                 v-icon(small) file_copy
     v-divider
     v-speed-dial(
+    v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
     v-model="fab"
     bottom,
     right,
@@ -58,7 +60,7 @@
           v-icon settings
           v-icon close
         span {{ $t('layout.sideBar.buttons.settings') }}
-      v-tooltip(right)
+      v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", right)
         v-btn(
         slot="activator",
         v-model="editing",
@@ -71,7 +73,7 @@
           v-icon(dark) edit
           v-icon(dark) done
         span {{ $t('layout.sideBar.buttons.edit') }}
-      v-tooltip(right)
+      v-tooltip(v-if="hasCreateAnyViewAccess", right)
         v-btn(
         slot="activator",
         fab,
@@ -88,6 +90,7 @@
 import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -100,6 +103,7 @@ export default {
   mixins: [
     modalMixin,
     entitiesViewGroupMixin,
+    rightsTechnicalViewMixin,
   ],
   props: {
     value: {
@@ -124,6 +128,18 @@ export default {
           this.$emit('input', value);
         }
       },
+    },
+
+    checkUpdateViewAccessById() {
+      return viewId => this.checkUpdateAccess(viewId) && this.hasUpdateAnyViewAccess;
+    },
+
+    checkDeleteViewAccessById() {
+      return viewId => this.checkDeleteAccess(viewId) && this.hasDeleteAnyViewAccess;
+    },
+
+    getAvailableViewsForGroup() {
+      return group => group.views.filter(view => this.checkReadAccess(view._id));
     },
   },
   mounted() {

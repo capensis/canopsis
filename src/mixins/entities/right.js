@@ -6,6 +6,7 @@ export default {
   methods: {
     ...mapActions({
       createRight: 'create',
+      removeRight: 'remove',
       fetchRightsListWithoutStore: 'fetchListWithoutStore',
     }),
   },

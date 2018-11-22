@@ -74,7 +74,6 @@ export function convertAlarmWidgetToQuery(widget) {
 export function convertContextWidgetToQuery(widget) {
   const {
     itemsPerPage,
-    mainFilter,
     selectedTypes,
   } = widget.parameters;
 
@@ -84,9 +83,6 @@ export function convertContextWidgetToQuery(widget) {
     selectedTypes,
   };
 
-  if (!isEmpty(mainFilter)) {
-    query._filter = mainFilter.filter;
-  }
   return { ...query, ...convertSortToQuery(widget) };
 }
 
@@ -181,18 +177,22 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
+export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences = {} }) {
+  const { itemsPerPage, mainFilter, selectedTypes } = widgetPreferences;
   const query = {};
 
-  if (widgetPreferences.itemsPerPage) {
-    query.limit = widgetPreferences.itemsPerPage;
+  if (itemsPerPage) {
+    query.limit = itemsPerPage;
   }
 
-  if (!isEmpty(widgetPreferences.mainFilter)) {
-    query._filter = widgetPreferences.mainFilter.filter;
+  if (!isEmpty(mainFilter)) {
+    query.mainFilter = mainFilter.filter;
   }
-  if (!isEmpty(widgetPreferences.selectedTypes)) {
-    query.selectedTypes = widgetPreferences.selectedTypes;
+
+  if (!isEmpty(selectedTypes)) {
+    query.typesFilter = {
+      $or: selectedTypes.map(type => ({ type })),
+    };
   }
 
   return query;
