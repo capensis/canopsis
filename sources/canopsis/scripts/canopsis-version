@@ -23,8 +23,8 @@
 # Append the following triple-quoted code to your .bashrc to see
 # the Canopsis version in your shell prompt.
 """
-if [ -x "$(command -v canopsversion)" ]; then
-     export PS1='(\u `canopsversion`)[\u@\h \W]\$ '
+if [ -x "$(command -v canopsis-version)" ]; then
+     export PS1='(\u `canopsis-version`)[\u@\h \W]\$ '
 fi
 """
 
