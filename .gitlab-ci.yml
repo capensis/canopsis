@@ -15,7 +15,7 @@ variables:
 
 stage_test:
   stage: test
-  tags: ["canopsis"]
+  tags: ["canopsis-next"]
   script:
     - docker build -t canopsis/uiv3:develop -f docker/Dockerfile .
 
