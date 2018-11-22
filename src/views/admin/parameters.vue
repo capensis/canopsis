@@ -6,6 +6,10 @@
         v-list-tile-title {{ $t('parameters.interfaceLanguage') }}
         v-list-tile-content
           v-select(:items="languageOptions", :value="$i18n.locale", @input="setLocale")
+      v-list-tile
+        v-list-tile-title Interfce navigation type
+        v-list-tile-content
+          v-select(:items="navigationOptions", :value="navigationType")
 </template>
 
 <script>
@@ -25,6 +29,18 @@ export default {
           value: 'en',
         },
       ],
+      navigationOptions: [
+        {
+          text: 'Side bar',
+          value: 'side-bar',
+        },
+        {
+          text: 'Top bar',
+          value: 'top-bar',
+        },
+      ],
+
+      navigationType: 'side-bar',
     };
   },
 };

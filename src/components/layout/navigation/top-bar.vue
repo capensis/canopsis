@@ -74,6 +74,10 @@
               v-layout(align-center)
                 div {{ $t('common.logout') }}
                 v-icon.pl-1.white--text exit_to_app
+    template(slot="extension")
+      top-bar-groups
+    v-btn(color="pink", dark, small, absolute, bottom, right, fab)
+      v-icon add
 </template>
 
 <script>
@@ -82,12 +86,15 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserMixin from '@/mixins/entities/user';
 import modalMixin from '@/mixins/modal/modal';
 
+import TopBarGroups from './top-bar-groups.vue';
+
 /**
  * Component for the top bar of the application
  *
  * @event toggleSideBar#click
  */
 export default {
+  components: { TopBarGroups },
   mixins: [authMixin, entitiesViewMixin, entitiesUserMixin, modalMixin],
   computed: {
     defaultViewTitle() {
@@ -133,7 +140,13 @@ export default {
     }
   }
 
-  .top-bar /deep/ .v-toolbar__content {
-    padding: 0;
+  .top-bar {
+    & /deep/ .v-toolbar__content {
+      padding: 0;
+    }
+
+    & /deep/ .v-toolbar__extension {
+      padding: 0;
+    }
   }
 </style>
