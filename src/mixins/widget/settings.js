@@ -103,7 +103,7 @@ export default {
     },
 
     prepareSettingsWidget() {
-      return this.widget;
+      return this.settings.widget;
     },
 
     prepareWidgetQuery(newQuery) {
@@ -115,7 +115,7 @@ export default {
 
       if (isFormValid) {
         const widget = {
-          ...this.widget,
+          ...this.settings.widget,
           ...this.prepareSettingsWidget(),
         };
 
