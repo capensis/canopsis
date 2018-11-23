@@ -1,7 +1,5 @@
 #  Présentation
 
-La nouvelle interface V3 de Canopsis vous offre une nouvelle vision de l'Hyperviseur. Vous avez maintenant la possibilité de gérer vos événements et alertes dans une interface moderne et intuitive.  
-
 ## Les vues
 
 Canopsis fonctionne avec un système de vues, personnalisables, regroupées dans des groupes de vues.

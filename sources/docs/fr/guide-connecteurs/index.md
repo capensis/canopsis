@@ -1,6 +1,6 @@
 # Présentation
 
-Dans ce guide connecteur vous trouverez plusieur liens renvoyant vers la documentation officielle des conteneur. 
+Voici le listing des connecteurs qui peuvent fournir des événements entrants à Canopsis.
 
 # Sommaire
 
