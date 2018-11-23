@@ -117,6 +117,16 @@ export const PBEHAVIOR_TYPES = {
   outOfSurveillance: 'Hors plage de surveillance',
 };
 
+export const WEATHER_ICONS = {
+  [ENTITIES_STATES.ok]: 'wb_sunny',
+  [ENTITIES_STATES.minor]: 'person',
+  [ENTITIES_STATES.major]: 'person',
+  [ENTITIES_STATES.critical]: 'wb_cloudy',
+  maintenance: 'build',
+  outOfSurveillance: 'brightness_3',
+  pause: 'pause',
+};
+
 export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
 
 export const ENTITY_STATUS_STYLES = {

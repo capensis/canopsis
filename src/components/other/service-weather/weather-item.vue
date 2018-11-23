@@ -19,7 +19,7 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 import find from 'lodash/find';
 import modalMixin from '@/mixins/modal/modal';
 import compile from '@/helpers/handlebars';
-import { WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES } from '@/constants';
+import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES, WEATHER_ICONS } from '@/constants';
 
 export default {
   mixins: [modalMixin],
@@ -39,51 +39,37 @@ export default {
     isPaused() {
       return this.watcher.active_pb_all;
     },
-    isPbehavior() {
+    hasWatcherPbehavior() {
       return this.watcher.active_pb_watcher;
     },
     format() {
-      const iconsMap = {
-        [this.$constants.ENTITIES_STATES.ok]: 'wb_sunny',
-        [this.$constants.ENTITIES_STATES.minor]: 'person',
-        [this.$constants.ENTITIES_STATES.major]: 'person',
-        [this.$constants.ENTITIES_STATES.critical]: 'wb_cloudy',
-      };
-
-      if (!this.isPaused) {
-        if (this.isPbehavior) {
-          /* eslint-disable */
-          const maintenancePbehavior =
-            find(this.watcher.watcher_pbehavior, pbehavior => pbehavior.type_ === PBEHAVIOR_TYPES.maintenance);
-          const outOfSurveillancePbehavior =
-            find(this.watcher.watcher_pbehavior, pbehavior => pbehavior.type_ === PBEHAVIOR_TYPES.maintenance);
-          /* eslint-enable */
-          if (maintenancePbehavior) {
-            return {
-              icon: 'build',
-              color: WATCHER_PBEHAVIOR_COLOR,
-            };
-          } else if (outOfSurveillancePbehavior) {
-            return {
-              icon: 'brightness_3',
-              color: WATCHER_PBEHAVIOR_COLOR,
-            };
-          }
-
-          return {
-            icon: 'pause',
-            color: WATCHER_PBEHAVIOR_COLOR,
-          };
-        }
+      if (!this.isPaused && !this.hasWatcherPbehavior) {
+        const state = this.watcher.state.val;
 
         return {
-          icon: iconsMap[this.watcher.state.val],
-          color: this.$constants.WATCHER_STATES_COLORS[this.watcher.state.val],
+          icon: WEATHER_ICONS[state],
+          color: WATCHER_STATES_COLORS[state],
         };
       }
+
+      const pbehaviors = this.hasWatcherPbehavior ? this.watcher.watcher_pbehavior : this.watcher.pbehavior;
+
+      /* eslint-disable */
+      const maintenancePbehavior = find(pbehaviors, pbehavior => pbehavior.type_ === PBEHAVIOR_TYPES.maintenance);
+      const outOfSurveillancePbehavior = find(pbehaviors, pbehavior => pbehavior.type_ === PBEHAVIOR_TYPES.outOfSurveillance);
+      /* eslint-enable */
+
+      let icon = WEATHER_ICONS.pause;
+
+      if (maintenancePbehavior) {
+        icon = WEATHER_ICONS.maintenance;
+      } else if (outOfSurveillancePbehavior) {
+        icon = WEATHER_ICONS.outOfSurveillance;
+      }
+
       return {
-        icon: 'pause',
         color: WATCHER_PBEHAVIOR_COLOR,
+        icon: this.isPaused ? WEATHER_ICONS.pause : icon,
       };
     },
     compiledTemplate() {
