@@ -62,6 +62,7 @@ export default {
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    forbidden: 'Forbidden',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -291,13 +292,27 @@ export default {
       edit: {
         title: 'Edit the view',
       },
+      duplicate: {
+        title: 'Duplicate the view',
+        infoMessage: 'You\'re duplicating a view. All duplicated view\'s rows/widgets will be copied on the new view.',
+      },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         groupIds: 'Choose a group, or create a new one',
         groupTags: 'Group tags',
       },
-      success: 'New view created',
-      fail: 'Fail in creation view',
+      success: {
+        create: 'New view created !',
+        edit: 'View successfully edited !',
+      },
+      fail: {
+        create: 'View creation failed...',
+        edit: 'View edition failed...',
+      },
+      errors: {
+        rightCreating: 'Error on right creating',
+        rightRemoving: 'Error on right removing',
+      },
     },
     createAckEvent: {
       title: 'Ack',
@@ -694,5 +709,8 @@ export default {
         settings: 'Settings',
       },
     },
+  },
+  parameters: {
+    interfaceLanguage: 'Interface language',
   },
 };

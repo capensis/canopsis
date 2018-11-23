@@ -22,7 +22,20 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
     }),
 });
 
-export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAttribute: '_id' });
+export const entitySchema = new schema.Entity(
+  ENTITIES_TYPES.entity,
+  {},
+  {
+    idAttribute: '_id',
+    processStrategy: entity =>
+      ({
+        ...entity,
+        _embedded: {
+          type: ENTITIES_TYPES.entity,
+        },
+      }),
+  },
+);
 
 export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
 

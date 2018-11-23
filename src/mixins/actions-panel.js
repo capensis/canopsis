@@ -1,6 +1,6 @@
 import modalMixin from '@/mixins/modal/modal';
 import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
+import { EVENT_ENTITY_TYPES, MODALS, USERS_RIGHTS } from '@/constants';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -34,6 +34,16 @@ export default {
           eventType: EVENT_ENTITY_TYPES.ackRemove,
         },
       });
+    },
+
+    actionsAccessFilterHandler({ type }) {
+      const right = USERS_RIGHTS.business.alarmList.actions[type];
+
+      if (!right) {
+        return true;
+      }
+
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions[type]);
     },
   },
 };

@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-container
-    div
+  div
+    div#view
       v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)
-          v-layout(align-center)
+          v-layout.notDisplayedFullScreen(align-center)
             h2 {{ row.title }}
             v-tooltip.ml-2(left, v-if="isEditModeEnable")
               v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
@@ -14,7 +14,7 @@
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
-          v-layout(justify-space-between)
+          v-layout.notDisplayedFullScreen(justify-space-between)
             h3 {{ widget.title }}
             v-tooltip(left, v-if="isEditModeEnable")
               v-btn.ma-0(
@@ -30,7 +30,8 @@
           component(
           :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
-          :rowId="row._id"
+          :rowId="row._id",
+          :hasUpdateAccess="hasUpdateAccess"
           )
     .fab
       v-tooltip(left)
@@ -61,7 +62,7 @@
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
             v-icon add
           span {{ $t('common.addWidget') }}
-        v-tooltip(top)
+        v-tooltip(v-if="hasUpdateAccess", top)
           v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
             v-icon edit
             v-icon done
@@ -72,7 +73,7 @@
 import get from 'lodash/get';
 import pullAt from 'lodash/pullAt';
 
-import { WIDGET_TYPES, MODALS } from '@/constants';
+import { WIDGET_TYPES, MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
@@ -84,6 +85,7 @@ import StatsTable from '@/components/other/stats/stats-table.vue';
 import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
 
+import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
@@ -100,6 +102,7 @@ export default {
     StatsNumber,
   },
   mixins: [
+    authMixin,
     popupMixin,
     modalMixin,
     entitiesViewMixin,
@@ -129,6 +132,9 @@ export default {
     };
   },
   computed: {
+    hasUpdateAccess() {
+      return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
+    },
     getWidgetFlexClass() {
       return widget => [
         `xs${widget.size.sm}`,
@@ -156,12 +162,12 @@ export default {
     },
 
     fullScreenToggle() {
-      const element = document.getElementById('app');
+      const element = document.getElementById('view');
 
       if (element) {
         this.$fullscreen.toggle(element, {
-          wrap: false,
-          fullscreenClass: '-fullscreen',
+          fullscreenClass: 'fullscreen',
+          background: 'white',
           callback: value => this.isFullScreenModeEnable = value,
         });
       }
@@ -212,3 +218,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.fullscreen {
+  .notDisplayedFullScreen {
+    display: none;
+  }
+}
+</style>

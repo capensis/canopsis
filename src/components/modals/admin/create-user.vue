@@ -76,7 +76,10 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 
 import { MODALS } from '@/constants';
+
 import { generateUser } from '@/helpers/entities';
+
+import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -93,6 +96,7 @@ export default {
   },
   components: { ProgressOverlay },
   mixins: [
+    authMixin,
     modalInnerMixin,
     entitiesRoleMixin,
     entitiesUserMixin,
@@ -163,7 +167,14 @@ export default {
         }
 
         await this.createUser({ data: { ...formData, ...omit(this.form, ['password']) } });
-        await this.fetchUsersListWithPreviousParams();
+
+        const requests = [this.fetchUsersListWithPreviousParams()];
+
+        if (formData._id === this.currentUser._id) {
+          requests.push(this.fetchCurrentUser());
+        }
+
+        await Promise.all(requests);
 
         this.hideModal();
       }

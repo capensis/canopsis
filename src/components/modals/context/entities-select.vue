@@ -16,9 +16,10 @@
 </template>
 
 <script>
-import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 import union from 'lodash/union';
 import filter from 'lodash/filter';
+
+import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 
 /**
  * Component to select entities for impact/dependencies
@@ -51,7 +52,8 @@ export default {
   methods: {
     updateEntities(entities) {
       const entitiesIds = entities.map(entity => entity._id);
-      const selectedEntities = union(entitiesIds, ...this.entities);
+      const selectedEntities = union(entitiesIds, this.entities);
+
       this.$emit('updateEntities', selectedEntities);
     },
     clear() {

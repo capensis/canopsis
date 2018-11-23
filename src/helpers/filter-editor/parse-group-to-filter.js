@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+import isObject from 'lodash/isObject';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
@@ -101,14 +102,18 @@ function parseRuleToFilter(rule) {
 
 export default function parseGroupToFilter(group) {
   const parsedGroup = cloneDeep(FILTER_DEFAULT_VALUES.group);
-  const groupContent = Object.values(group)[0];
+  let groupContent = Object.values(group)[0];
+
+  if (!isObject(groupContent)) {
+    groupContent = [{ ...group }];
+  } else {
+    const [condition] = Object.keys(group);
+    parsedGroup.condition = condition;
+  }
 
   if (isEmpty(groupContent)) {
     return parsedGroup;
   }
-
-  const [condition] = Object.keys(group);
-  parsedGroup.condition = condition;
 
   /**
   * Map over the items of a group.

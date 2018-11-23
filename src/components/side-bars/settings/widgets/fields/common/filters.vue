@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       v-select(
-      v-show="!hideSelect",
+      v-show="hasAccessToEditFilter && !hideSelect",
       :label="$t('settings.selectAFilter')",
       :items="filters",
       :value="value",
@@ -16,20 +16,27 @@
       v-list
         v-list-tile(v-for="(filter, index) in filters", :key="filter.title", @click="")
           v-list-tile-content {{ filter.title }}
-          v-list-tile-action
+          v-list-tile-action(v-if="hasAccessToEditFilter")
             div
               v-btn.ma-1(icon, @click="showEditFilterModal(index)")
-                v-icon settings
+                v-icon edit
               v-btn.ma-1(icon, @click="showDeleteFilterModal(index)")
                 v-icon delete
-      v-btn(color="primary", @click.prevent="showCreateFilterModal") {{ $t('common.add') }}
+      v-btn(
+      v-if="hasAccessToAddFilter",
+      color="primary",
+      @click.prevent="showCreateFilterModal"
+      ) {{ $t('common.add') }}
 </template>
 
 <script>
+import { MODALS, USERS_RIGHTS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
 
 export default {
-  mixins: [modalMixin],
+  mixins: [authMixin, modalMixin],
   props: {
     filters: {
       type: Array,
@@ -44,10 +51,18 @@ export default {
       default: false,
     },
   },
+  computed: {
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+    },
+    hasAccessToAddFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.addFilter);
+    },
+  },
   methods: {
     showCreateFilterModal() {
       this.showModal({
-        name: this.$constants.MODALS.createFilter,
+        name: MODALS.createFilter,
         config: {
           title: 'modals.filter.create.title',
           action: newFilter => this.$emit('update:filters', [...this.filters, newFilter]),
@@ -80,7 +95,7 @@ export default {
       const filter = this.filters[index];
 
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: () => {
             if (this.value.title === filter.title) {

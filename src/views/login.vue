@@ -19,38 +19,33 @@
               v-form.py-2(@submit.prevent="submit")
                 v-flex(px-3)
                   v-text-field(
-                  :label="$t('common.username')"
+                  :label="$t('common.username')",
+                  :error-messages="errors.collect('username')",
+                  v-model="form.username",
+                  v-validate="'required'",
+                  color="primary",
+                  name="username",
                   autofocus,
                   clearable,
-                  outline,
-                  color="primary",
-                  v-model="form.username",
-                  name="username",
-                  v-validate="'required'",
-                  data-vv-name="username",
-                  :error-messages="errors.collect('username')",
+                  outline
                   )
                 v-flex(px-3)
                   v-text-field(
-                  :label="$t('common.password')"
-                  clearable,
-                  outline,
-                  color="primary",
-                  v-model="form.password",
-                  type="password",
-                  name="password",
-                  v-validate="'required'",
-                  data-vv-name="password",
+                  :label="$t('common.password')",
                   :error-messages="errors.collect('password')",
+                  v-model="form.password",
+                  v-validate="'required'",
+                  color="primary",
+                  name="password",
+                  type="password",
+                  clearable,
+                  outline
                   )
-              v-flex.px-3.py-2
-                v-alert(:value="hasServerError", type="error")
-                  span {{ $t('login.errors.incorrectEmailOrPassword') }}
-              v-flex(xs2 px-2)
-                v-btn.primary(
-                @click="submit",
-                type="submit",
-                ) {{ $t('common.connect') }}
+                v-flex.px-3.py-2
+                  v-alert(:value="hasServerError", type="error")
+                    span {{ $t('login.errors.incorrectEmailOrPassword') }}
+                v-flex(xs2 px-2)
+                  v-btn.primary(type="submit") {{ $t('common.connect') }}
 </template>
 
 <script>
@@ -80,12 +75,15 @@ export default {
         if (formIsValid) {
           await this.login(this.form);
 
-          if (this.$route.query.redirect) {
+          if (this.$route.query.redirect && this.$route.query.redirect !== '/') {
             this.$router.push(this.$route.query.redirect);
-          } else {
+          } else if (this.currentUser.defaultview) {
             this.$router.push({
-              name: 'home',
+              name: 'view',
+              params: { id: this.currentUser.defaultview },
             });
+          } else {
+            this.$router.push({ name: 'home' });
           }
         }
       } catch (err) {

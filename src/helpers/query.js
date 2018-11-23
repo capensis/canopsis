@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import omit from 'lodash/omit';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
@@ -73,10 +72,15 @@ export function convertAlarmWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertContextWidgetToQuery(widget) {
+  const {
+    itemsPerPage,
+    selectedTypes,
+  } = widget.parameters;
+
   const query = {
     page: 1,
-    limit: get(widget, 'parameters.itemsPerPage', PAGINATION_LIMIT),
-    selectedTypes: get(widget, 'parameters.selectedTypes', []),
+    limit: itemsPerPage || PAGINATION_LIMIT,
+    selectedTypes,
   };
 
   return { ...query, ...convertSortToQuery(widget) };
@@ -173,11 +177,25 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  return {
-    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
-    selectedTypes: get(widgetPreferences, 'selectedTypes', []),
-  };
+export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences = {} }) {
+  const { itemsPerPage, mainFilter, selectedTypes } = widgetPreferences;
+  const query = {};
+
+  if (itemsPerPage) {
+    query.limit = itemsPerPage;
+  }
+
+  if (!isEmpty(mainFilter)) {
+    query.mainFilter = mainFilter.filter;
+  }
+
+  if (!isEmpty(selectedTypes)) {
+    query.typesFilter = {
+      $or: selectedTypes.map(type => ({ type })),
+    };
+  }
+
+  return query;
 }
 
 /**

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  div
     v-layout.white(wrap, justify-space-between, align-center)
       v-flex
         v-btn(icon, @click="showSettings")

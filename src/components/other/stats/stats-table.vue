@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container(fluid)
+  div
     v-layout(justify-end)
       v-btn(icon, @click="showSettings")
         v-icon settings

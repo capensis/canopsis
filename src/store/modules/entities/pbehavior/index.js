@@ -45,7 +45,11 @@ export default {
           _id: id,
         };
 
-        const parentEntities = parents.map(parent => ({ ...parent, pbehaviors: [...parent.pbehaviors, pbehavior] }));
+        const parentEntities = parents
+          .map(parent => ({
+            ...parent,
+            pbehaviors: parent.pbehaviors ? [...parent.pbehaviors, pbehavior] : [pbehavior],
+          }));
 
         const { entities } = normalize(parentEntities, [parentSchema]);
 

@@ -1,16 +1,32 @@
 <template lang="pug">
-  v-container
+  div
     v-layout.white(justify-space-between, align-center)
-      v-flex(xs12, md4)
+      v-flex
         context-search(:query.sync="query")
-      v-flex.ml-4(xs4)
-        v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
-          v-icon delete
+      v-flex
+        pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
+      v-flex
+        v-select(
+        :label="$t('settings.selectAFilter')",
+        :items="viewFilters",
+        @input="updateSelectedFilter",
+        :value="mainFilter",
+        item-text="title",
+        item-value="filter",
+        return-object,
+        clearable
+        )
+      v-flex.ml-4
+        div(v-show="selected.length")
+          v-btn(@click.stop="deleteEntities", icon, small)
+            v-icon delete
+          v-btn(@click.stop="addPbehaviors()", icon, small)
+            v-icon pause
+      v-flex
+        context-fab
       v-flex(xs2)
         v-btn(icon, @click.prevent="showSettings")
           v-icon settings
-      v-flex(xs2)
-        context-fab
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -45,6 +61,8 @@
               v-icon edit
             v-btn(@click.stop="deleteEntity(props.item)", icon, small)
               v-icon delete
+            v-btn(@click.stop="addPbehaviors(props.item._id)", icon, small)
+              v-icon pause
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item")
       v-layout.white(align-center)
@@ -56,6 +74,9 @@
 
 <script>
 import omit from 'lodash/omit';
+import isString from 'lodash/isString';
+
+import { MODALS, SIDE_BARS, ENTITIES_TYPES } from '@/constants';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -67,6 +88,7 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import filterSelectMixin from '@/mixins/filter-select';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -96,6 +118,7 @@ export default {
     widgetQueryMixin,
     widgetColumnsMixin,
     entitiesContextEntityMixin,
+    filterSelectMixin,
   ],
   props: {
     widget: {
@@ -127,7 +150,9 @@ export default {
         'page',
         'sortKey',
         'sortDir',
-        'selectedTypes',
+        'mainFilter',
+        'searchFilter',
+        'typesFilter',
       ]);
 
       query.start = ((this.query.page - 1) * this.query.limit) || 0;
@@ -139,24 +164,28 @@ export default {
         }];
       }
 
-      if (!query._filter) {
-        const selectedTypes = this.userPreference.widget_preferences.selectedTypes || [];
+      const filters = ['mainFilter', 'searchFilter', 'typesFilter'].reduce((acc, filterKey) => {
+        const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
 
-        if (selectedTypes.length) {
-          query._filter = JSON.stringify({
-            $or: selectedTypes.map(type => ({ type })),
-          });
-        } else {
-          delete query._filter;
+        if (queryFilter) {
+          acc.push(queryFilter);
         }
+
+        return acc;
+      }, []);
+
+      if (filters.length) {
+        query._filter = {
+          $and: filters,
+        };
       }
 
       return query;
     },
     editEntity(item) {
-      if (item.type === this.$constants.ENTITIES_TYPES.watcher) {
+      if (item.type === ENTITIES_TYPES.watcher) {
         this.showModal({
-          name: this.$constants.MODALS.createWatcher,
+          name: MODALS.createWatcher,
           config: {
             title: 'modals.createWatcher.editTitle',
             item,
@@ -164,7 +193,7 @@ export default {
         });
       } else {
         this.showModal({
-          name: this.$constants.MODALS.createEntity,
+          name: MODALS.createEntity,
           config: {
             title: 'modals.createEntity.editTitle',
             item,
@@ -174,7 +203,7 @@ export default {
     },
     deleteEntity(item) {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: () => this.removeContextEntity({ id: item._id }),
         },
@@ -182,15 +211,24 @@ export default {
     },
     deleteEntities() {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
           action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
         },
       });
     },
+    addPbehaviors(itemId) {
+      this.showModal({
+        name: MODALS.createPbehavior,
+        config: {
+          itemsType: ENTITIES_TYPES.entity,
+          itemsIds: itemId ? [itemId] : this.selected,
+        },
+      });
+    },
     showSettings() {
       this.showSideBar({
-        name: this.$constants.SIDE_BARS.contextSettings,
+        name: SIDE_BARS.contextSettings,
         config: {
           widget: this.widget,
           rowId: this.rowId,
@@ -204,6 +242,29 @@ export default {
           params: this.getQuery(),
         });
       }
+    },
+    /**
+     * Surcharge updateSelectedFilter method from filterSelectMixin
+     * to adapt it to context API specification
+     */
+    async updateSelectedFilter(value = {}) {
+      this.createUserPreference({
+        userPreference: {
+          ...this.userPreference,
+
+          widget_preferences: {
+            ...this.userPreference.widget_preferences,
+
+            mainFilter: value,
+          },
+        },
+      });
+
+      this.query = {
+        ...this.query,
+
+        mainFilter: value.filter,
+      };
     },
   },
 };

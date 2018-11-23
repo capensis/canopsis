@@ -32,13 +32,19 @@
           v-select(
           label="Reason",
           v-model="form.reason",
-          :items="selectItems.reasons"
+          :items="selectItems.reasons",
+          :error-messages="errors.collect('reason')",
+          name="reason",
+          v-validate="'required'"
           )
         v-layout(row)
           v-select(
           label="Type",
           v-model="form.type_",
-          :items="selectItems.types"
+          :items="selectItems.types",
+          :error-messages="errors.collect('type')",
+          name="type",
+          v-validate="'required'"
           )
         v-layout(row)
           v-alert(:value="serverError", type="error")
@@ -82,8 +88,8 @@ export default {
         name: '',
         tstart: start,
         tstop: stop,
-        type_: types[0],
-        reason: reasons[0],
+        type_: '',
+        reason: '',
       },
       selectItems: {
         reasons,
@@ -109,7 +115,7 @@ export default {
 
           author: this.currentUser.crecord_name,
           filter: {
-            _id: { $in: this.items.map(v => v.d) },
+            _id: { $in: this.items.map(v => v._id) },
           },
           tstart: this.form.tstart.getTime(),
           tstop: this.form.tstop.getTime(),

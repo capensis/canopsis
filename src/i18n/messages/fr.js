@@ -18,7 +18,7 @@ export default {
     quitEditing: 'Quitter le mode d\'édition',
     enabled: 'Activé(e)',
     disabled: 'Désactivé(e)',
-    login: 'Connection',
+    login: 'Connexion',
     yes: 'Oui',
     no: 'Non',
     default: 'Défaut',
@@ -34,6 +34,9 @@ export default {
     authors: 'Auteurs',
     stat: 'Statistique',
     trend: 'Tendance',
+    users: 'Utilisateurs',
+    roles: 'Roles',
+    rights: 'Droits',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     connect: 'Connexion',
@@ -288,13 +291,23 @@ export default {
       edit: {
         title: 'Éditer une vue',
       },
+      duplicate: {
+        title: 'Dupliquer une vue',
+        infoMessage: 'Vous êtes en train de dupliquer une vue. Toutes les lignes et les widgets de la vue dupliquée seront copiés dans la nouvelle vue.',
+      },
       noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
       fields: {
         groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
         groupTags: 'Labels de groupes',
       },
-      success: 'Nouvelle vue créée !',
-      fail: 'Erreur lors de la création de la vue',
+      success: {
+        create: 'Nouvelle vue créée !',
+        edit: 'Vue éditée avec succès !',
+      },
+      fail: {
+        create: 'Erreur dans la création de la vue...',
+        edit: 'Erreur dans l\'édition de la vue...',
+      },
     },
     createAckEvent: {
       title: 'Acquitter',
@@ -682,5 +695,8 @@ export default {
         settings: 'Paramètres',
       },
     },
+  },
+  parameters: {
+    interfaceLanguage: 'Langage de l\'interface',
   },
 };
