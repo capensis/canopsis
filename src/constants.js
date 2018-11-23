@@ -106,10 +106,10 @@ export const ENTITIES_STATES_STYLES = {
 };
 
 export const WATCHER_STATES_COLORS = {
-  [ENTITIES_STATES.ok]: 'green darken-1',
-  [ENTITIES_STATES.minor]: 'yellow darken-1',
-  [ENTITIES_STATES.major]: 'orange darken-1',
-  [ENTITIES_STATES.critical]: 'red darken-1',
+  [ENTITIES_STATES.ok]: 'green darken-2',
+  [ENTITIES_STATES.minor]: 'yellow darken-2',
+  [ENTITIES_STATES.major]: 'orange darken-2',
+  [ENTITIES_STATES.critical]: 'red darken-2',
 };
 
 export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';

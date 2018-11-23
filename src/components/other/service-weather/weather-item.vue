@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card.ma-2.white--text(:class="format.color", tile, raised)
+v-card.ma-1.white--text(:class="format.color", tile, raised)
   div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
     v-icon.pauseIcon pause
   v-layout(justify-start, align-center)
