@@ -67,9 +67,13 @@ export default {
         icon = WEATHER_ICONS.outOfSurveillance;
       }
 
+      if (this.isPaused && !this.hasWatcherPbehavior) {
+        icon = WEATHER_ICONS.pause;
+      }
+
       return {
         color: WATCHER_PBEHAVIOR_COLOR,
-        icon: this.isPaused ? WEATHER_ICONS.pause : icon,
+        icon,
       };
     },
     compiledTemplate() {
