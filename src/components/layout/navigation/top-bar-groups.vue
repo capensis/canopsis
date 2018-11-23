@@ -1,9 +1,9 @@
 <template lang="pug">
   v-layout.secondary.groups-wrapper
-    v-toolbar-items
+    v-tabs(color="secondary", show-arrows, dark)
       v-menu(
       v-for="group in groups",
-      :key="group._id"
+      :key="group._id",
       content-class="group-v-menu-content secondary",
       close-delay="0",
       open-on-hover,
