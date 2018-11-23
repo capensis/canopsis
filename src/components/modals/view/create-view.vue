@@ -3,6 +3,8 @@
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
+    v-container
+      v-alert(v-show="config.isDuplicating", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
     v-card-text
       v-form(v-if="hasUpdateViewAccess")
         v-layout(wrap, justify-center)
@@ -60,7 +62,10 @@
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
-      v-btn.error(v-if="config.view && hasDeleteViewAccess", @click="remove") {{ $t('common.delete') }}
+      v-btn.error(
+      v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
+      @click="remove"
+      ) {{ $t('common.delete') }}
 </template>
 
 <script>
@@ -68,8 +73,8 @@ import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
-import { generateView, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
-
+import { generateView, generateRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
+import uuid from '@/helpers/uid';
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -118,6 +123,10 @@ export default {
     },
 
     title() {
+      if (this.config.isDuplicating) {
+        return `${this.$t('modals.view.duplicate.title')} - ${this.config.view.name}`;
+      }
+
       if (this.config.view) {
         return this.$t('modals.view.edit.title');
       }
@@ -142,7 +151,7 @@ export default {
     },
   },
   mounted() {
-    const { view } = this.config;
+    const { view, isDuplicating } = this.config;
 
     if (view) {
       const group = find(this.groups, { _id: view.group_id });
@@ -152,8 +161,8 @@ export default {
       }
 
       this.form = {
-        name: view.name,
-        title: view.title,
+        name: isDuplicating ? '' : view.name,
+        title: isDuplicating ? '' : view.title,
         description: view.description,
         enabled: view.enabled,
         tags: [...view.tags || []],
@@ -248,27 +257,53 @@ export default {
             group = await this.createGroup({ data: { name: this.groupName } });
           }
 
-          const data = {
-            ...generateView(),
-            ...this.form,
-            group_id: group._id,
-          };
+          /**
+           * If we're creating a new view, or duplicating an existing one.
+           * Generate a new view. Then copy rows and widgets if we're duplicating a view
+           */
+          if (!this.config.view || this.config.isDuplicating) {
+            const data = {
+              ...generateView(),
+              ...this.form,
+              group_id: group._id,
+            };
 
-          if (this.config.view) {
-            await this.updateView({ id: this.config.view._id, data });
-          } else {
+            if (this.config.isDuplicating) {
+              data.rows = this.config.view.rows.map(row => ({
+                ...generateRow(),
+
+                title: row.title,
+                widgets: row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) })),
+              }));
+            }
+
             const response = await this.createView({ data });
             await this.createRightByViewId(response._id);
+            this.addSuccessPopup({ text: this.$t('modals.view.success.create') });
+          } else {
+            const data = {
+              ...this.config.view,
+              ...this.form,
+              group_id: group._id,
+            };
+
+            await this.updateView({ id: this.config.view._id, data });
+            this.addSuccessPopup({ text: this.$t('modals.view.success.edit') });
           }
 
           await this.fetchGroupsList();
-
-          this.addSuccessPopup({ text: this.$t('modals.view.success') });
           this.hideModal();
         }
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('modals.view.fail') });
-        console.error(err);
+        /**
+         * If we got a view in modal's config, and if we're not duplicating a view, that
+         * means we're editing a view
+        */
+        if (!this.config.isDuplicating && this.config.view) {
+          this.addErrorPopup({ text: this.$t('modals.view.fail.edit') });
+        }
+        this.addErrorPopup({ text: this.$t('modals.view.fail.create') });
+        console.error(err.description);
       }
     },
   },

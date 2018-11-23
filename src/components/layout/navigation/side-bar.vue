@@ -37,6 +37,15 @@
               @click.prevent="showEditViewModal(view)"
               )
                 v-icon(small) edit
+              v-btn(
+              v-show="editing",
+              depressed,
+              small,
+              icon,
+              color="grey darken-2",
+              @click.prevent="showDuplicateViewModal(view)"
+              )
+                v-icon(small) file_copy
     v-divider
     v-speed-dial(
     v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
@@ -46,12 +55,12 @@
     direction="top"
     transition="slide-y-reverse-transition"
     )
-      v-tooltip(slot="activator", left)
+      v-tooltip(slot="activator", right)
         v-btn.primary(slot="activator", v-model="fab", fab, dark)
           v-icon settings
           v-icon close
         span {{ $t('layout.sideBar.buttons.settings') }}
-      v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", left)
+      v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", right)
         v-btn(
         slot="activator",
         v-model="editing",
@@ -64,7 +73,7 @@
           v-icon(dark) edit
           v-icon(dark) done
         span {{ $t('layout.sideBar.buttons.edit') }}
-      v-tooltip(v-if="hasCreateAnyViewAccess", left)
+      v-tooltip(v-if="hasCreateAnyViewAccess", right)
         v-btn(
         slot="activator",
         fab,
@@ -78,6 +87,7 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
@@ -142,21 +152,30 @@ export default {
 
     showEditGroupModal(group) {
       this.showModal({
-        name: this.$constants.MODALS.createGroup,
+        name: MODALS.createGroup,
         config: { group },
       });
     },
 
     showEditViewModal(view) {
       this.showModal({
-        name: this.$constants.MODALS.createView,
+        name: MODALS.createView,
         config: { view },
       });
     },
 
     showCreateViewModal() {
       this.showModal({
-        name: this.$constants.MODALS.createView,
+        name: MODALS.createView,
+      });
+    },
+    showDuplicateViewModal(view) {
+      this.showModal({
+        name: MODALS.createView,
+        config: {
+          view,
+          isDuplicating: true,
+        },
       });
     },
   },
