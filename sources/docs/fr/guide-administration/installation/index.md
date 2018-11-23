@@ -1,8 +1,7 @@
 # Sommaire
 
-Cette section va vous accompagner dans la mise en place des différents service necessaire au bon focntionnenement de Canopsis.
 
-## Installations
+## Installation
   
 - [Installation avec un paquets Deb/Rpm](installation-paquets.md)
 - [Installation avec un conteneurs Docker](installation-conteneurs.md)  

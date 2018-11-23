@@ -39,7 +39,7 @@ systemctl status redis
 /opt/canopsis/bin/canopsis-systemd status
 ```
 
-## Gestion des services avancé
+## Gestion avancées des services
 
 [Install, arrêt et relance](../gestion-services/installation-arret-relance.md)
 

@@ -4,28 +4,27 @@
 
 ### Ports
 
-Il faut vérifier les ports utilisés par `docker-compose.yml`, si certains ports sont utilisés sur votre machines veuillez les libérer pour le bon déroulement de l'installation.
+Il faut vérifier les ports utilisés par `docker-compose.yml`.  
+Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en utilisation sur le noeud d'installation.
 
 ## Installation
 
-Pour l'installation dockerisé de Canopsis, le porcédure est la suivante :
-
-- clôner le dépôt Canopsis : https://git.canopsis.net/canopsis/canopsis
-- Actuellement les conteneurs sont gérer dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
-- Dans ce dépot un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisé.
+- Cloner le dépôt Canopsis : https://git.canopsis.net/canopsis/canopsis
+- Actuellement les conteneurs sont gérés dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
+- Dans ce dépôt un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisée.
   
     - Rappel : [Installation de Docker compose](https://docs.docker.com/compose/install/#install-compose)  
   
-    - Troubleshotting : Si vous rencontrez une erreur de ce type lors d'un `docker-compose up -d` ou un `docker-compose --version`  
+    - Troubleshooting : Si vous rencontrez une erreur de ce type lors d'un `docker-compose up -d` ou un `docker-compose --version`  
     ```bash
     bash: /usr/bin/docker-compose: Aucun fichier ou dossier de ce type
     ```
 
     - Résolution : Utiliser la commande suivante `hash docker-compose`  
 
-- faire la commande suivante : `docker-compose up -d`
+- Exécuter la commande suivante : `docker-compose up -d`
 
-    - Troubleshotting :
+    - Troubleshooting :
     ```bash
     docker-compose up -d
     ERROR: Couldn't connect to Docker daemon at http+docker://localhost - is it running?
@@ -61,13 +60,6 @@ canopsis_task_mail_1        /bin/sh -c /entrypoint.sh        Up       8082/tcp
 canopsis_ticket_1           /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
 canopsis_webserver_1        /bin/sh -c /entrypoint.sh        Up       0.0.0.0:28082->8082/tcp   
 ```
-
-### Détail des colonnes
-
-- Name : Nom des conteneurs déployés.
-- Command : Commandes en rapport avec la CLI Docker.
-- State : Etat du conteneur.
-- Ports : Ports utilisé par le conteneur.
 
 ## Arrêt et suppression du docker-compose
 ```bash

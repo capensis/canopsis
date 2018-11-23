@@ -2,13 +2,13 @@
 
 ## Interface web Canopsis
 
-Par défaut, l'interface web de Canopsis se lance sur : http://localhost:8082/
+Par défaut, l'interface web de Canopsis est disponible sur : http://localhost:8082/
 
 Identifiants par défaut : `root` / `root`.
 
 ## Interface web RabbitMQ
 
-Par défaut, l'interface web d'administration de RabbitMQ se lance sur : http://localhost:15672/
+Par défaut, l'interface web d'administration de RabbitMQ est disponible sur : http://localhost:15672/
 
 Identifiants par défaut : `cpsrabbit` / `canopsis`.
 
@@ -21,8 +21,6 @@ Le bus AMQP RabbitMQ par défaut est : `amqp://cpsrabbit@canopsis:localhost:567
 En ligne de commande, la base de données MongoDB est accessible avec la commande `mongo localhost`.
 
 Identifiants par défaut : `cpsmongo` / `canopsis`.
-
-**TODO (DWU) :** lien vers manip Robo3T ?
 
 ## InfluxDB
 
