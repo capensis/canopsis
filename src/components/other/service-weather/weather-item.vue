@@ -16,9 +16,10 @@ v-card.ma-2.white--text(:class="format.color", tile, raised)
 </template>
 
 <script>
-import concat from 'lodash/concat';
+import find from 'lodash/find';
 import modalMixin from '@/mixins/modal/modal';
 import compile from '@/helpers/handlebars';
+import { WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES } from '@/constants';
 
 export default {
   mixins: [modalMixin],
@@ -35,8 +36,13 @@ export default {
     },
   },
   computed: {
+    isPaused() {
+      return this.watcher.active_pb_all;
+    },
+    isPbehavior() {
+      return this.watcher.active_pb_watcher;
+    },
     format() {
-      const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
       const iconsMap = {
         [this.$constants.ENTITIES_STATES.ok]: 'wb_sunny',
         [this.$constants.ENTITIES_STATES.minor]: 'person',
@@ -44,32 +50,40 @@ export default {
         [this.$constants.ENTITIES_STATES.critical]: 'wb_cloudy',
       };
 
-      if (hasActivePb) {
-        let icon = 'pause';
-        const pbehaviors = concat(this.watcher.pbehavior, this.watcher.watcher_pbehavior);
-
-        pbehaviors.forEach((pbehavior) => {
-          if (pbehavior.isActive) {
-            /**
-             * Need to disable eslint for this line to enable the underscore
-             * after "pbehavior.type" the we need to recognize the field from the API
-            */
-            /* eslint-disable */
-            if (pbehavior.type_ === 'Maintenance') {
-            /* eslint-enable */
-              icon = 'build';
-            } else {
-              icon = 'brightness_3';
-            }
+      if (!this.isPaused) {
+        if (this.isPbehavior) {
+          /* eslint-disable */
+          const maintenancePbehavior =
+            find(this.watcher.watcher_pbehavior, pbehavior => pbehavior.type_ === PBEHAVIOR_TYPES.maintenance);
+          const outOfSurveillancePbehavior =
+            find(this.watcher.watcher_pbehavior, pbehavior => pbehavior.type_ === PBEHAVIOR_TYPES.maintenance);
+          /* eslint-enable */
+          if (maintenancePbehavior) {
+            return {
+              icon: 'build',
+              color: WATCHER_PBEHAVIOR_COLOR,
+            };
+          } else if (outOfSurveillancePbehavior) {
+            return {
+              icon: 'brightness_3',
+              color: WATCHER_PBEHAVIOR_COLOR,
+            };
           }
-        });
 
-        return { icon, color: this.$constants.WATCHER_PBEHAVIOR_COLOR };
+          return {
+            icon: 'pause',
+            color: WATCHER_PBEHAVIOR_COLOR,
+          };
+        }
+
+        return {
+          icon: iconsMap[this.watcher.state.val],
+          color: this.$constants.WATCHER_STATES_COLORS[this.watcher.state.val],
+        };
       }
-
       return {
-        icon: iconsMap[this.watcher.state.val],
-        color: this.$constants.WATCHER_STATES_COLORS[this.watcher.state.val],
+        icon: 'pause',
+        color: WATCHER_PBEHAVIOR_COLOR,
       };
     },
     compiledTemplate() {

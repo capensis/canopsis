@@ -112,6 +112,11 @@ export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.critical]: 'red darken-1',
 };
 
+export const PBEHAVIOR_TYPES = {
+  maintenance: 'Maintenance',
+  outOfSurveillance: 'Hors plage de surveillance',
+};
+
 export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
 
 export const ENTITY_STATUS_STYLES = {
