@@ -76,8 +76,6 @@
                 v-icon.pl-1.white--text exit_to_app
     template(slot="extension")
       top-bar-groups
-    v-btn(color="pink", dark, small, absolute, bottom, right, fab)
-      v-icon add
 </template>
 
 <script>
