@@ -114,7 +114,7 @@ export const WATCHER_STATES_COLORS = {
 
 export const PBEHAVIOR_TYPES = {
   maintenance: 'Maintenance',
-  outOfSurveillance: 'Hors plage de surveillance',
+  outOfSurveillance: 'Hors plage horaire de surveillance',
 };
 
 export const WEATHER_ICONS = {
