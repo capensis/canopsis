@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.secondary.groups-wrapper
-    v-tabs(color="secondary", show-arrows, dark)
+    v-tabs(ref="tabs", color="secondary", show-arrows, dark)
       v-menu(
       v-for="group in groups",
       :key="group._id",
@@ -29,14 +29,23 @@ import EntitiesViewGroupMixin from '@/mixins/entities/view/group';
 
 export default {
   mixins: [EntitiesViewGroupMixin],
+
+  watch: {
+    groups() {
+      this.$nextTick(() => this.$refs.tabs.onResize());
+    },
+  },
+
   mounted() {
     this.fetchGroupsList();
 
     window.addEventListener('resize', this.onWindowResize);
   },
+
   beforeDestroy() {
     window.removeEventListener('resize', this.onWindowResize);
   },
+
   methods: {
     onWindowResize() {
     },

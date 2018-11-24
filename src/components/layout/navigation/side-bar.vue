@@ -1,7 +1,7 @@
 <template lang="pug">
   v-navigation-drawer.side-bar.secondary(
   v-model="isOpen",
-  :width="width",
+  :width="$config.SIDE_BAR_WIDTH",
   app,
   )
     div.brand.ma-0.secondary.lighten-1
@@ -17,7 +17,7 @@
         div(slot="header")
           span {{ group.name }}
           v-btn(
-          v-show="editing",
+          v-show="isEditingMode",
           depressed,
           small,
           icon,
@@ -29,7 +29,7 @@
             router-link(:to="{ name: 'view', params: { id: view._id } }")
               span.pl-3 {{ view.title }}
               v-btn(
-              v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && editing",
+              v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && isEditingMode",
               depressed,
               small,
               icon,
@@ -38,49 +38,16 @@
               )
                 v-icon(small) edit
     v-divider
-    v-speed-dial(
-    v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
-    v-model="fab"
-    bottom,
-    right,
-    direction="top"
-    transition="slide-y-reverse-transition"
+    settings-button(
+    :isEditingMode="isEditingMode",
+    @toggleEditingMode="toggleEditingMode"
     )
-      v-tooltip(slot="activator", left)
-        v-btn.primary(slot="activator", v-model="fab", fab, dark)
-          v-icon settings
-          v-icon close
-        span {{ $t('layout.sideBar.buttons.settings') }}
-      v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", left)
-        v-btn(
-        slot="activator",
-        v-model="editing",
-        fab,
-        dark,
-        small,
-        color="blue darken-4",
-        @click.stop="editModeToggle"
-        )
-          v-icon(dark) edit
-          v-icon(dark) done
-        span {{ $t('layout.sideBar.buttons.edit') }}
-      v-tooltip(v-if="hasCreateAnyViewAccess", left)
-        v-btn(
-        slot="activator",
-        fab,
-        dark,
-        small,
-        color="green darken-4",
-        @click.stop="showCreateViewModal"
-        )
-          v-icon(dark) add
-        span {{ $t('layout.sideBar.buttons.create') }}
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal/modal';
-import entitiesViewGroupMixin from '@/mixins/entities/view/group';
-import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
+import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
+
+import SettingsButton from './settings-button.vue';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -90,23 +57,13 @@ import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
  * @event input#update
  */
 export default {
-  mixins: [
-    modalMixin,
-    entitiesViewGroupMixin,
-    rightsTechnicalViewMixin,
-  ],
+  components: { SettingsButton },
+  mixins: [layoutNavigationGroupMenuMixin],
   props: {
     value: {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      fab: false,
-      editing: false,
-      width: this.$config.SIDE_BAR_WIDTH,
-    };
   },
   computed: {
     isOpen: {
@@ -119,59 +76,16 @@ export default {
         }
       },
     },
-
-    checkUpdateViewAccessById() {
-      return viewId => this.checkUpdateAccess(viewId) && this.hasUpdateAnyViewAccess;
-    },
-
-    checkDeleteViewAccessById() {
-      return viewId => this.checkDeleteAccess(viewId) && this.hasDeleteAnyViewAccess;
-    },
-
-    getAvailableViewsForGroup() {
-      return group => group.views.filter(view => this.checkReadAccess(view._id));
-    },
-  },
-  mounted() {
-    this.fetchGroupsList();
-  },
-  methods: {
-    editModeToggle() {
-      this.editing = !this.editing;
-    },
-
-    showEditGroupModal(group) {
-      this.showModal({
-        name: this.$constants.MODALS.createGroup,
-        config: { group },
-      });
-    },
-
-    showEditViewModal(view) {
-      this.showModal({
-        name: this.$constants.MODALS.createView,
-        config: { view },
-      });
-    },
-
-    showCreateViewModal() {
-      this.showModal({
-        name: this.$constants.MODALS.createView,
-      });
-    },
   },
 };
 </script>
 
 <style scoped>
-  .v-speed-dial {
-    position: fixed;
-  }
-
   a {
     color: inherit;
     text-decoration: none;
   }
+
   .panel {
     box-shadow: none;
   }
