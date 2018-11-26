@@ -40,11 +40,23 @@ def get_pattern_hash(pattern):
     return checksum.hexdigest()
 
 
-__expected_interval_pattern = re.compile(r'^[0-9]*(s|m|h)$')
+# __expected_interval_pattern = re.compile(r'^[0-9]*(s|m|h)$')
+#
+#
+# def check_expected_interval(expected_interval):
+#     return bool(__expected_interval_pattern.match(expected_interval))
 
 
-def check_expected_interval(expected_interval):
-    return bool(__expected_interval_pattern.match(expected_interval))
+class HeartbeatError(Exception):
+    """
+    Base Heartbeat error.
+    """
+
+
+class HeartbeatPatternExists(HeartbeatError):
+    """
+    Heartbeat pattern exists error.
+    """
 
 
 class HeartbeatManager(object):
@@ -55,18 +67,58 @@ class HeartbeatManager(object):
     COLLECTION = 'heartbeat'
     __ID_PREFIX = 'heartbeat_'
 
-    def __init__(self, collection):
+    def __init__(self, collection, heartbeat_model):
+        """
+
+        :param `~.common.collection.MongoCollection` collection: object.
+        :param `~.models.heartbeat.HeartBeat` heartbeat_model: object.
+        """
         self.__collection = MongoCollection(collection)
+        self.__model = heartbeat_model
 
-    def __build_heartbeat_id(self, pattern):
-        return self.__ID_PREFIX + get_pattern_hash(pattern)
+    def insert_heartbeat_document(self, pattern, expected_interval):
+        """
+        Add a new Heartbeat.
 
-    def create_heartbeat(self, pattern, expected_interval):
-        if not check_expected_interval(expected_interval):
+        :param `dict` pattern: mapping with a string keys
+                      and with a string values.
+        :param `str` expected_interval: expected Event interval
+                     that matches `__expected_interval_pattern` regex pattern.
+
+        :returns: a new Heartbeat ID.
+        :rtype: `str`.
+
+        :raises: (`ValueError`, `.HeartbeatPatternExists`,
+                  `~.common.collection.CollectionError`, ).
+        """
+        if not self.__model.check_heartbeat_pattern(pattern):
+            raise ValueError('Not valid param: "pattern"')
+        if not self.__model.check_expected_interval(expected_interval):
             raise ValueError('Not valid param: "expected_interval"')
-        heartbeat_id = self.__build_heartbeat_id(pattern)
+
+        heartbeat_id = self.__ID_PREFIX + get_pattern_hash(pattern)
+
+        if self.find_heartbeat_document(heartbeat_id):
+            raise HeartbeatPatternExists()
+
         return self.__collection.insert({
             "_id": heartbeat_id,
             "pattern": pattern,
             "expected_interval": expected_interval
         })[0]
+
+    def find_heartbeat_document(self, heartbeat_id):
+        return self.__collection.find_one({"_id": heartbeat_id})
+
+    def remove_heartbeat_document(self, heartbeat_id):
+        """
+        Remove Heartbeat by ID.
+
+        :param `str` heartbeat_id: Heartbeat ID.
+        :return:
+        :raises: (`~.common.collection.CollectionError`, ).
+        """
+        return self.__collection.remove({"_id": heartbeat_id})
+
+    def list_heartbeat_collection(self):
+        return self.__collection.find({})
