@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
 import re
+import itertools
 
 
 class HeartBeat:
 
     MAX_DUR_REGEXP = "^[0-9]*(s|m|h)$"
+    __expected_interval_pattern = re.compile(MAX_DUR_REGEXP)
     MAPPINGS_KEY = "mappings"
     MAX_DUR_KEY = "maxduration"
 
@@ -22,6 +24,25 @@ class HeartBeat:
         """
         self.mappings = mappings
         self.max_duration = maxduration
+
+    @staticmethod
+    def validate_heartbeat_pattern(pattern):
+        """
+        Check if ``pattern`` is a non-empty dict and
+        the all of them keys and values are strings.
+
+        :param `dict` pattern: a Heartbeat pattern.
+        :rtype: `bool`.
+        """
+        return bool(pattern) and isinstance(pattern, dict) and all((
+            isinstance(i, basestring) for i
+            in itertools.chain(*pattern.items())
+        ))
+
+    @classmethod
+    def check_expected_interval(cls, expected_interval):
+        return isinstance(expected_interval, str) and \
+               bool(cls.__expected_interval_pattern.match(expected_interval))
 
     @classmethod
     def isValid(cls, heartBeat):
@@ -67,7 +88,7 @@ class HeartBeat:
                     return False, "The value of `{0}` of the mapping object"\
                         " at index {1} must be a string.".format(key, it)
 
-        if re.match(cls.MAX_DUR_REGEXP, max_duration) is not None:
+        if cls.check_expected_interval(max_duration):
             return True, ""
 
         return False, "The maxDuration fields does not match the" \
