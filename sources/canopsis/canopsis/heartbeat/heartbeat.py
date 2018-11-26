@@ -19,11 +19,11 @@
 # ---------------------------------
 
 import itertools
-import re
 
 from hashlib import md5
 
 from canopsis.common.collection import MongoCollection
+from canopsis.models.heartbeat import HeartBeat
 
 
 def get_pattern_hash(pattern):
@@ -40,20 +40,13 @@ def get_pattern_hash(pattern):
     return checksum.hexdigest()
 
 
-# __expected_interval_pattern = re.compile(r'^[0-9]*(s|m|h)$')
-#
-#
-# def check_expected_interval(expected_interval):
-#     return bool(__expected_interval_pattern.match(expected_interval))
-
-
 class HeartbeatError(Exception):
     """
     Base Heartbeat error.
     """
 
 
-class HeartbeatPatternExists(HeartbeatError):
+class HeartbeatPatternExistsError(HeartbeatError):
     """
     Heartbeat pattern exists error.
     """
@@ -67,14 +60,13 @@ class HeartbeatManager(object):
     COLLECTION = 'heartbeat'
     __ID_PREFIX = 'heartbeat_'
 
-    def __init__(self, collection, heartbeat_model):
+    def __init__(self, collection):
         """
 
         :param `~.common.collection.MongoCollection` collection: object.
-        :param `~.models.heartbeat.HeartBeat` heartbeat_model: object.
+        # :param `~.models.heartbeat.HeartBeat` heartbeat_model: object.
         """
         self.__collection = MongoCollection(collection)
-        self.__model = heartbeat_model
 
     def insert_heartbeat_document(self, pattern, expected_interval):
         """
@@ -88,26 +80,34 @@ class HeartbeatManager(object):
         :returns: a new Heartbeat ID.
         :rtype: `str`.
 
-        :raises: (`ValueError`, `.HeartbeatPatternExists`,
+        :raises: (`ValueError`,
+                  `.HeartbeatPatternExistsError`,
+                  `pymongo.errors.PyMongoError`,
                   `~.common.collection.CollectionError`, ).
         """
-        if not self.__model.check_heartbeat_pattern(pattern):
+        if not HeartBeat.validate_heartbeat_pattern(pattern):
             raise ValueError('Not valid param: "pattern"')
-        if not self.__model.check_expected_interval(expected_interval):
+        if not HeartBeat.validate_expected_interval(expected_interval):
             raise ValueError('Not valid param: "expected_interval"')
 
         heartbeat_id = self.__ID_PREFIX + get_pattern_hash(pattern)
 
         if self.find_heartbeat_document(heartbeat_id):
-            raise HeartbeatPatternExists()
+            raise HeartbeatPatternExistsError()
 
         return self.__collection.insert({
             "_id": heartbeat_id,
             "pattern": pattern,
             "expected_interval": expected_interval
-        })[0]
+        })
 
     def find_heartbeat_document(self, heartbeat_id):
+        """
+
+        :param heartbeat_id:
+        :return:
+        :raises: (`pymongo.errors.PyMongoError`, ).
+        """
         return self.__collection.find_one({"_id": heartbeat_id})
 
     def remove_heartbeat_document(self, heartbeat_id):
@@ -121,4 +121,10 @@ class HeartbeatManager(object):
         return self.__collection.remove({"_id": heartbeat_id})
 
     def list_heartbeat_collection(self):
+        """
+        Get Heartbeats list.
+
+        :returns: list of heartbeat documents.
+        :raises: (`pymongo.errors.PyMongoError`, ).
+        """
         return self.__collection.find({})
