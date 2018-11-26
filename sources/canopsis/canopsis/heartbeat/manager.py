@@ -79,7 +79,7 @@ class HeartBeatService:
         stored into the database, HeartBeatServiceException if the given
         heartbeat is not valid.
         """
-        valid, error_message = HeartBeat.isValid(heartbeat)
+        valid, error_message = HeartBeat.is_valid_heartbeat(heartbeat)
         if not valid:
             raise HeartBeatServiceException(error_message)
 

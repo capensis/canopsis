@@ -19,13 +19,33 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+
+from pymongo.errors import PyMongoError
+
 from bottle import request
 from canopsis.heartbeat.manager import HeartBeatService
-from canopsis.heartbeat.manager import HeartBeatServiceException
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.models.heartbeat import HeartBeat
 
+
+from canopsis.heartbeat.heartbeat import (HeartbeatManager,
+                                          HeartbeatPatternExistsError)
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import CollectionError
+
 hb_service = HeartBeatService(*HeartBeatService.provide_default_basics())
+
+
+def get_heartbeat_collection():
+    store = MongoStore.get_default()
+    return store.get_collection(name=HeartbeatManager.COLLECTION)
+
+
+def gen_database_error():
+    return gen_json_error(
+                {"description": "can not retrieve the canopsis version from "
+                                "database, contact your administrator."},
+                HTTP_ERROR)
 
 
 def exports(ws):
@@ -39,28 +59,38 @@ def exports(ws):
         :rtype: a dict with the status (name) of the request and if needed a
         description.
         """
+
         try:
             json = request.json
         except ValueError:
             return gen_json_error({'description': "invalid json."},
                                   HTTP_ERROR)
 
-        try:
-            hb_service.create(HeartBeat(**json))
-            return gen_json({"name": "heartbeat created"})
-
-        except HeartBeatServiceException as exc:
-            ws.logger.exception("Can not create heartbeat.")
-            return gen_json_error({"name": "Can not create heartbeat",
-                                   "description": exc.message},
-                                  HTTP_ERROR)
-        except Exception:
-            ws.logger.exception("Can not create heartbeat.")
+        if not HeartBeat.is_valid_heartbeat(json):
             return gen_json_error(
-                {"name": "Can not create heartbeat",
-                 "description": "Contact the administrator."},
+                {"description": "invalid heartbeat payload."}, HTTP_ERROR)
+
+        try:
+            collection = get_heartbeat_collection()
+        except PyMongoError:
+            return gen_database_error()
+
+        manager = HeartbeatManager(collection)
+        try:
+            heartbeat_id = manager.insert_heartbeat_document(
+                json[HeartBeat.PATTERN_KEY],
+                json[HeartBeat.EXPECTED_INTERVAL_KEY])
+
+        except HeartbeatPatternExistsError:
+            return gen_json_error(
+                {"description": "heartbeat pattern already exists"},
                 HTTP_ERROR)
 
+        except (PyMongoError, CollectionError):
+            return gen_database_error()
+
+        heartbeat = manager.find_heartbeat_document(heartbeat_id)
+        return gen_json(heartbeat)
 
     @ws.application.get(
         "/api/v2/heartbeat/"
@@ -72,8 +102,8 @@ def exports(ws):
         encountered.
         """
         try:
-            return hb_service.get_heartbeats()
-        except Exception:
-            ws.logger.exception("Can not retreive hearbeats from database.")
-            return gen_json_error({'description': 'something went wrong.'},
-                                  HTTP_ERROR)
+            collection = get_heartbeat_collection()
+            manager = HeartbeatManager(collection)
+            return gen_json([x for x in manager.list_heartbeat_collection()])
+        except PyMongoError:
+            return gen_database_error()
