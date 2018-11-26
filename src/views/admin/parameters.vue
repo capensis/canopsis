@@ -7,16 +7,23 @@
         v-list-tile-content
           v-select(:items="languageOptions", :value="$i18n.locale", @input="setLocale")
       v-list-tile
-        v-list-tile-title Interfce navigation type
+        v-list-tile-title {{ $t('parameters.groupsNavigationType.title') }}
         v-list-tile-content
-          v-select(:items="navigationOptions", :value="navigationType")
+          v-select(
+          :items="groupsNavigationOptions",
+          :value="groupsNavigationType",
+          @change="setGroupsNavigationType"
+          )
 </template>
 
 <script>
+import { GROUPS_NAVIGATION_TYPES } from '@/constants';
+
+import appMixin from '@/mixins/app';
 import i18nMixin from '@/mixins/i18n';
 
 export default {
-  mixins: [i18nMixin],
+  mixins: [appMixin, i18nMixin],
   data() {
     return {
       languageOptions: [
@@ -29,18 +36,16 @@ export default {
           value: 'en',
         },
       ],
-      navigationOptions: [
+      groupsNavigationOptions: [
         {
-          text: 'Side bar',
-          value: 'side-bar',
+          text: this.$t('parameters.groupsNavigationType.items.sideBar'),
+          value: GROUPS_NAVIGATION_TYPES.sideBar,
         },
         {
-          text: 'Top bar',
-          value: 'top-bar',
+          text: this.$t('parameters.groupsNavigationType.items.topBar'),
+          value: GROUPS_NAVIGATION_TYPES.topBar,
         },
       ],
-
-      navigationType: 'side-bar',
     };
   },
 };

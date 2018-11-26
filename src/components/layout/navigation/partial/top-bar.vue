@@ -4,7 +4,7 @@
     fixed,
     app,
   )
-    v-toolbar-side-icon.ml-2.white--text(@click="$emit('toggleSideBar')")
+    v-toolbar-side-icon.ml-2.white--text(v-if="isShownGroupsSideBar", @click="$emit('toggleSideBar')")
     v-spacer
     v-toolbar-items
       v-menu(bottom, offset-y)
@@ -74,17 +74,18 @@
               v-layout(align-center)
                 div {{ $t('common.logout') }}
                 v-icon.pl-1.white--text exit_to_app
-    template(slot="extension")
-      top-bar-groups
+    template(v-if="isShownGroupsTopBar", slot="extension")
+      groups-top-bar
 </template>
 
 <script>
+import appMixin from '@/mixins/app';
 import authMixin from '@/mixins/auth';
-import entitiesViewMixin from '@/mixins/entities/view';
-import entitiesUserMixin from '@/mixins/entities/user';
 import modalMixin from '@/mixins/modal/modal';
+import entitiesViewMixin from '@/mixins/entities/view/index';
+import entitiesUserMixin from '@/mixins/entities/user';
 
-import TopBarGroups from './top-bar-groups.vue';
+import GroupsTopBar from './groups-top-bar.vue';
 
 /**
  * Component for the top bar of the application
@@ -92,8 +93,8 @@ import TopBarGroups from './top-bar-groups.vue';
  * @event toggleSideBar#click
  */
 export default {
-  components: { TopBarGroups },
-  mixins: [authMixin, entitiesViewMixin, entitiesUserMixin, modalMixin],
+  components: { GroupsTopBar },
+  mixins: [appMixin, authMixin, modalMixin, entitiesViewMixin, entitiesUserMixin],
   computed: {
     defaultViewTitle() {
       const userDefaultView = this.getViewById(this.currentUser.defaultview);

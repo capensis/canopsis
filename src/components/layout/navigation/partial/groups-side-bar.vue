@@ -2,6 +2,7 @@
   v-navigation-drawer.side-bar.secondary(
   v-model="isOpen",
   :width="$config.SIDE_BAR_WIDTH",
+  disable-resize-watcher,
   app,
   )
     div.brand.ma-0.secondary.lighten-1
@@ -13,7 +14,7 @@
     focusable,
     dark
     )
-      v-expansion-panel-content(v-for="group in groups", :key="group._id").secondary.white--text
+      v-expansion-panel-content.secondary.white--text(v-for="group in groups", :key="group._id")
         div(slot="header")
           span {{ group.name }}
           v-btn(
@@ -30,15 +31,15 @@
               span.pl-3 {{ view.title }}
               v-btn(
               v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && isEditingMode",
+              color="grey darken-2",
               depressed,
               small,
               icon,
-              color="grey darken-2",
               @click.prevent="showEditViewModal(view)"
               )
                 v-icon(small) edit
     v-divider
-    settings-button(
+    groups-settings-button(
     :isEditingMode="isEditingMode",
     @toggleEditingMode="toggleEditingMode"
     )
@@ -47,7 +48,7 @@
 <script>
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 
-import SettingsButton from './settings-button.vue';
+import GroupsSettingsButton from './groups-settings-button.vue';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -57,7 +58,7 @@ import SettingsButton from './settings-button.vue';
  * @event input#update
  */
 export default {
-  components: { SettingsButton },
+  components: { GroupsSettingsButton },
   mixins: [layoutNavigationGroupMenuMixin],
   props: {
     value: {
@@ -94,5 +95,9 @@ export default {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+  }
+
+  .brand {
+    height: 48px;
   }
 </style>

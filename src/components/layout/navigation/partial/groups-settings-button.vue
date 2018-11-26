@@ -2,14 +2,11 @@
   v-speed-dial(
   v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
   v-model="isVSpeedDialOpen",
-  transition="slide-y-reverse-transition"
-  direction="top"
-  bottom,
-  right,
-  fixed,
+  transition="slide-y-reverse-transition",
+  v-bind="wrapperProps"
   )
     v-tooltip(slot="activator", left)
-      v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", fab, dark)
+      v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", v-bind="buttonProps")
         v-icon settings
         v-icon close
       span {{ $t('layout.sideBar.buttons.settings') }}
@@ -51,6 +48,22 @@ export default {
     isEditingMode: {
       type: Boolean,
       default: false,
+    },
+    wrapperProps: {
+      type: Object,
+      default: () => ({
+        direction: 'top',
+        bottom: true,
+        right: true,
+        fixed: true,
+      }),
+    },
+    buttonProps: {
+      type: Object,
+      default: () => ({
+        fab: true,
+        dark: true,
+      }),
     },
   },
   data() {
