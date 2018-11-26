@@ -38,6 +38,15 @@
               @click.prevent="showEditViewModal(view)"
               )
                 v-icon(small) edit
+              v-btn(
+              v-show="isEditingMode",
+              depressed,
+              small,
+              icon,
+              color="grey darken-2",
+              @click.prevent="showDuplicateViewModal(view)"
+              )
+                v-icon(small) file_copy
     v-divider
     groups-settings-button(
     :isEditingMode="isEditingMode",

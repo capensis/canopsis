@@ -55,5 +55,15 @@ export default {
         config: { view },
       });
     },
+
+    showDuplicateViewModal(view) {
+      this.showModal({
+        name: MODALS.createView,
+        config: {
+          view,
+          isDuplicating: true,
+        },
+      });
+    },
   },
 };

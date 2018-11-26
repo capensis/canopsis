@@ -39,6 +39,15 @@
               @click.prevent="showEditViewModal(view)"
               )
                 v-icon(small) edit
+              v-btn.duplicate-view-button(
+              v-show="isEditingMode",
+              depressed,
+              small,
+              icon,
+              color="grey darken-2",
+              @click.prevent="showDuplicateViewModal(view)"
+              )
+                v-icon(small) file_copy
     groups-settings-button(
     :isEditingMode="isEditingMode",
     @toggleEditingMode="toggleEditingMode",
@@ -97,7 +106,7 @@ export default {
         line-height: 28px;
       }
 
-      .edit-view-button {
+      .edit-view-button, .duplicate-view-button {
         vertical-align: top;
         margin: 0 0 0 8px;
       }
