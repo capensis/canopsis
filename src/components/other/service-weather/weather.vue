@@ -2,9 +2,9 @@
   div
     v-layout
     v-fade-transition
-      v-layout(v-show="!watchersPending", wrap)
+      v-layout.fill-height(v-show="!watchersPending", wrap)
         v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
-          weather-item(:watcher="item", :widget="widget", :template="widget.parameters.blockTemplate")
+          weather-item.weatherItem(:watcher="item", :widget="widget", :template="widget.parameters.blockTemplate")
     v-fade-transition
       v-layout(v-show="watchersPending", column)
         v-flex(xs12)
@@ -56,3 +56,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .weatherItem {
+    height: 100%;
+  }
+</style>

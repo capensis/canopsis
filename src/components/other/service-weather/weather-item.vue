@@ -1,12 +1,12 @@
 <template lang="pug">
 v-card.white--text(:class="getItemClasses", tile)
-  div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
-    v-icon.pauseIcon pause
   v-layout(justify-start, align-center)
     v-flex(xs2)
       component.ma-2(:is="format.icon")
     v-flex(xs10)
       div.watcherName.pt-2(v-html="compiledTemplate")
+    v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
+      v-icon pause
 </template>
 
 <script>
@@ -88,29 +88,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .iconContainer {
-    font-size: 48px;
-  }
-
-  .pauseContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 25%;
-    clip-path: polygon(100% 0 , 0 100%, 100% 100%);
-    background-color: white;
-    z-index: 1;
+  .pauseIcon {
     position: absolute;
     right: 0;
+    bottom: 0;
+    cursor: inherit;
   }
 
-  .pauseIcon {
-    z-index: 4;
-    position: relative;
-    top: 0.5em;
-    left: 20%;
-    color: black;
+  .iconContainer {
+    font-size: 48px;
   }
 
   .watcherName {
