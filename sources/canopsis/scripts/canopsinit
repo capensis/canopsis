@@ -80,6 +80,7 @@ if __name__ == "__main__":
     canopsis_version = read_version_file(get_version_file_path(root_path))
     if not canopsis_version:
 	print("toto")
+	exit(2)
     else:
         COMMANDS[1].append(CANOPSIS_VERSION_ARG)
         COMMANDS[1].append(canopsis_version)
