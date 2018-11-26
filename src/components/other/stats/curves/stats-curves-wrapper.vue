@@ -1,14 +1,11 @@
 <template lang="pug">
   div
-    v-btn(icon, @click="showSettings")
-      v-icon settings
     stats-curves(:labels="labels", :datasets="datasets")
 </template>
 
 <script>
 import omit from 'lodash/omit';
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import StatsCurves from './stats-curves.vue';
@@ -17,7 +14,7 @@ export default {
   components: {
     StatsCurves,
   },
-  mixins: [entitiesStatsMixin, sideBarMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
+  mixins: [entitiesStatsMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
   props: {
     widget: {
       type: Object,
@@ -66,15 +63,6 @@ export default {
     },
   },
   methods: {
-    showSettings() {
-      this.showSideBar({
-        name: this.$constants.SIDE_BARS.statsCurvesSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
     async fetchList() {
       const stats = await this.fetchStatsEvolutionWithoutStore({
         params: omit(this.widget.parameters, ['statsColors']),

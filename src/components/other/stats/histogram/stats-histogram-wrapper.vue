@@ -1,14 +1,11 @@
 <template lang="pug">
   div
-    v-btn(icon, @click="showSettings")
-      v-icon settings
     stats-histogram(:labels="labels", :datasets="datasets")
 </template>
 
 <script>
 import omit from 'lodash/omit';
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import StatsHistogram from './stats-histogram.vue';
@@ -17,7 +14,7 @@ export default {
   components: {
     StatsHistogram,
   },
-  mixins: [entitiesStatsMixin, sideBarMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
+  mixins: [entitiesStatsMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
   props: {
     widget: {
       type: Object,
@@ -57,15 +54,6 @@ export default {
 
   },
   methods: {
-    showSettings() {
-      this.showSideBar({
-        name: this.$constants.SIDE_BARS.statsHistogramSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
     fetchList() {
       this.widget.parameters.groups.map(async (group) => {
         const stat = await this.fetchStatsListWithoutStore({

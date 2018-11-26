@@ -1,8 +1,5 @@
 <template lang="pug">
   div
-    v-layout(justify-end)
-      v-btn(icon, @click="showSettings")
-        v-icon settings
     v-data-table(
       :items="stats",
       :headers="columns",
@@ -26,7 +23,6 @@
 
 <script>
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -36,7 +32,7 @@ export default {
   components: {
     StatsNumber,
   },
-  mixins: [entitiesStatsMixin, sideBarMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
+  mixins: [entitiesStatsMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
   props: {
     widget: {
       type: Object,
@@ -58,15 +54,6 @@ export default {
     },
   },
   methods: {
-    showSettings() {
-      this.showSideBar({
-        name: this.$constants.SIDE_BARS.statsTableSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
     async fetchList() {
       const query = { ...this.query };
 

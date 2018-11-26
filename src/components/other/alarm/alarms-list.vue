@@ -25,8 +25,6 @@
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'primary' : 'black'") schedule
-        v-btn(v-if="rowId && hasUpdateAccess", @click="showSettings", icon)
-          v-icon settings
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds")
     no-columns-table(v-if="!hasColumns")
@@ -75,7 +73,7 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 
-import { MODALS, SIDE_BARS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -87,7 +85,6 @@ import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
@@ -116,7 +113,6 @@ export default {
   mixins: [
     authMixin,
     modalMixin,
-    sideBarMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
     widgetPeriodicRefreshMixin,
@@ -173,16 +169,6 @@ export default {
         config: {
           ...pick(this.query, ['interval', 'tstart', 'tstop']),
           action: params => this.query = { ...this.query, ...params },
-        },
-      });
-    },
-
-    showSettings() {
-      this.showSideBar({
-        name: SIDE_BARS.alarmSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
         },
       });
     },

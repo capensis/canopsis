@@ -1,8 +1,6 @@
 <template lang="pug">
   div
     v-layout
-      v-btn(icon, @click="showSettings")
-        v-icon settings
     v-fade-transition
       v-layout(v-show="!watchersPending", wrap)
         v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
@@ -17,7 +15,6 @@
 <script>
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import widgetQueryMixin from '@/mixins/widget/query';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 import WeatherItem from './weather-item.vue';
 
@@ -28,7 +25,6 @@ export default {
   mixins: [
     entitiesWatcherMixin,
     widgetQueryMixin,
-    sideBarMixin,
   ],
   props: {
     widget: {
@@ -50,16 +46,6 @@ export default {
     },
   },
   methods: {
-    showSettings() {
-      this.showSideBar({
-        name: this.$constants.SIDE_BARS.weatherSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
-
     fetchList() {
       this.fetchWatchersList({
         filter: this.widget.parameters.mfilter.filter,
