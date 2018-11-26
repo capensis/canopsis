@@ -35,6 +35,17 @@
           field-grid-size(v-model="settings.widget.parameters.columnMD", :title="$t('settings.columnMD')")
           v-divider
           field-grid-size(v-model="settings.widget.parameters.columnLG", :title="$t('settings.columnLG')")
+          v-divider
+          v-list-group
+            v-list-tile(slot="activator") {{ $t('settings.margin.title') }}
+            v-list.grey.lighten-4.px-2.py-0(expand)
+              field-slider(v-model="settings.widget.parameters.margin.top", :title="$t('settings.margin.top')")
+              v-divider
+              field-slider(v-model="settings.widget.parameters.margin.right", :title="$t('settings.margin.right')")
+              v-divider
+              field-slider(v-model="settings.widget.parameters.margin.bottom", :title="$t('settings.margin.bottom')")
+              v-divider
+              field-slider(v-model="settings.widget.parameters.margin.left", :title="$t('settings.margin.left')")
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -50,6 +61,7 @@ import FieldTitle from './fields/common/title.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
+import FieldSlider from './fields/common/slider.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
@@ -62,6 +74,7 @@ export default {
     FieldFilterEditor,
     FieldWeatherTemplate,
     FieldGridSize,
+    FieldSlider,
   },
   mixins: [widgetSettingsMixin],
   data() {

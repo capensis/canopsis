@@ -102,6 +102,12 @@ export function generateWidgetByType(type) {
         columnSM: 6,
         columnMD: 4,
         columnLG: 3,
+        margin: {
+          top: 1,
+          right: 1,
+          bottom: 1,
+          left: 1,
+        },
       };
       break;
     case WIDGET_TYPES.statsHistogram:

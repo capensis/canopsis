@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card.ma-1.white--text(:class="format.color", tile, raised)
+v-card.white--text(:class="getItemClasses", tile)
   div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
     v-icon.pauseIcon pause
   v-layout(justify-start, align-center)
@@ -7,12 +7,6 @@ v-card.ma-1.white--text(:class="format.color", tile, raised)
       component.ma-2(:is="format.icon")
     v-flex(xs10)
       div.watcherName.pt-2(v-html="compiledTemplate")
-  v-layout
-    v-flex(xs12)
-      div.moreInfos.py-1(@click="showWatcherModal")
-        v-layout(justify-center)
-          div More infos
-          v-icon.pl-1(color="white", small) arrow_forward
 </template>
 
 <script>
@@ -68,6 +62,15 @@ export default {
     compiledTemplate() {
       return compile(this.template, { watcher: this.watcher });
     },
+    getItemClasses() {
+      return [
+        this.format.color,
+        `mt-${this.widget.parameters.margin.top}`,
+        `mr-${this.widget.parameters.margin.right}`,
+        `mb-${this.widget.parameters.margin.bottom}`,
+        `ml-${this.widget.parameters.margin.left}`,
+      ];
+    },
   },
   methods: {
     showWatcherModal() {
@@ -105,7 +108,7 @@ export default {
   .pauseIcon {
     z-index: 4;
     position: relative;
-    top: 1em;
+    top: 0.5em;
     left: 20%;
     color: black;
   }

@@ -223,6 +223,13 @@ export default {
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
+    margin: {
+      title: 'Marges',
+      top: 'Marge - Haut',
+      right: 'Marge - Droite',
+      bottom: 'Marge - Bas',
+      left: 'Marge - Gauche',
+    },
     contextTypeOfEntities: {
       title: 'Type d\'entitées',
       fields: {
