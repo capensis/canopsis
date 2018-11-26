@@ -1,10 +1,10 @@
 <template lang="pug">
-v-card.white--text(:class="getItemClasses", tile)
-  v-layout(justify-start, align-center)
+v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight + 'em'}")
+  v-layout(justify-start)
     v-flex(xs2)
-      component.ma-2(:is="format.icon")
+      component.ma-1.mt-2.ml-2(:is="format.icon")
     v-flex(xs10)
-      div.watcherName.pt-2(v-html="compiledTemplate")
+      div.watcherName.pt-3(v-html="compiledTemplate")
     v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
       v-icon pause
 </template>
@@ -71,6 +71,9 @@ export default {
         `ml-${this.widget.parameters.margin.left}`,
       ];
     },
+    itemHeight() {
+      return 4 + this.widget.parameters.heightFactor;
+    },
   },
   methods: {
     showWatcherModal() {
@@ -95,19 +98,10 @@ export default {
     cursor: inherit;
   }
 
-  .iconContainer {
-    font-size: 48px;
-  }
-
   .watcherName {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .moreInfos {
-    z-index: 2;
-    background-color: rgba(0,0,0,0.2);
-    cursor: pointer;
+    line-height: 0em;
   }
 </style>

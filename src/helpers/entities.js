@@ -108,6 +108,7 @@ export function generateWidgetByType(type) {
           bottom: 1,
           left: 1,
         },
+        heightFactor: 1,
       };
       break;
     case WIDGET_TYPES.statsHistogram:

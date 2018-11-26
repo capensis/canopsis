@@ -39,13 +39,40 @@
           v-list-group
             v-list-tile(slot="activator") {{ $t('settings.margin.title') }}
             v-list.grey.lighten-4.px-2.py-0(expand)
-              field-slider(v-model="settings.widget.parameters.margin.top", :title="$t('settings.margin.top')")
+              field-slider(
+              v-model="settings.widget.parameters.margin.top",
+              :title="$t('settings.margin.top')",
+              :min="0",
+              :max="5",
+              )
               v-divider
-              field-slider(v-model="settings.widget.parameters.margin.right", :title="$t('settings.margin.right')")
+              field-slider(
+              v-model="settings.widget.parameters.margin.right",
+              :title="$t('settings.margin.right')",
+              :min="0",
+              :max="5",
+              )
               v-divider
-              field-slider(v-model="settings.widget.parameters.margin.bottom", :title="$t('settings.margin.bottom')")
+              field-slider(
+              v-model="settings.widget.parameters.margin.bottom",
+              :title="$t('settings.margin.bottom')",
+              :min="0",
+              :max="5",
+              )
               v-divider
-              field-slider(v-model="settings.widget.parameters.margin.left", :title="$t('settings.margin.left')")
+              field-slider(
+              v-model="settings.widget.parameters.margin.left",
+              :title="$t('settings.margin.left')",
+              :min="0",
+              :max="5",
+              )
+          v-divider
+          field-slider(
+          v-model="settings.widget.parameters.heightFactor",
+          :title="$t('settings.height')",
+          :min="1",
+          :max="20",
+          )
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
