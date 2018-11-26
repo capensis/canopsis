@@ -1,6 +1,6 @@
 # Présentation
 
-Ce guide va vous accompagner dans vos tâches d'administration de Canopsis. Vous y trouverez plusieurs documents portant sur :
+Ce guide vous accompagne dans vos tâches d'administration de Canopsis. Vous y trouverez plusieurs documents portant sur :
 
 **Sommaire :**
 

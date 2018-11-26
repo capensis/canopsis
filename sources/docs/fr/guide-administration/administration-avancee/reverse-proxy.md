@@ -1,6 +1,7 @@
 # Reverse Proxy
 
-**TODO (DWU) :** normalement `canoctl` livre un HAproxy/Nginx par défaut. Donc plus besoin de décrire cette manip.
+**Remarque** : Ces informations sont données à titre indicatif.  
+La commande `canoctl deploy` propose déjà la mise à dispoition d'un reverse proxy.
 
 ## Reverse proxy avec Apache2
 

@@ -1,8 +1,5 @@
 # UI RabbitMQ
 
-**TODO (DWU) :** aller plus loin avec DWU.
-**TODO (MG) :** Vérification de l'exactitude de l'existant.
-
 Dans le contexte d'une utilisation de Canopsis, RabbitMQ va vous servir à avoir une vision globale sur le bon fonctionnement de vos moteurs.
 Vous pourrez y voir plusieurs informations utiles mais nous allons nous concentrer dans cette documentation à la section "Queues" qui nous montre le nombre de messages
 en cours de traitement sur les diférents moteurs de Canopsis.
@@ -41,8 +38,6 @@ La troisème, *Message rates* permet d'avoir une idée sur les performances du m
 
 Le but étant d'avoir une section "Messages" remplie de 0. Si ce n'est pas le cas, cela veut dire qu'un des moteurs de Canopsis est dans un état dégradé et n'assure plus sa gestion de files.  
 Dans ce cas plusieurs pistes de résolutions sont possibles : 
-
-**TODO**
 
 ## Plus de détails
 

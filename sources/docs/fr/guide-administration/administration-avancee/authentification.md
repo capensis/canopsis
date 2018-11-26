@@ -1,6 +1,8 @@
 # Authentification
 
-**TODO (DWU) :** à migrer dans la doc EE ?
+- [LDAP](#ldap)
+
+To do
 
 - [SAML2](#saml2)  
 	- [Paramétrage ldP](#paramétrage-idp)  

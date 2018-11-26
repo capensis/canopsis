@@ -19,22 +19,16 @@ Un moteur a **plusieurs rôles**:
 - Effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.  
 - Consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.  
 
-Chaque moteur est défini par un ensemble de procédures, utilisé pour effectuer les tâches énumérées ci-dessus.  
-
-Un moteur peut avoir les **propiètées** suivantes :
+Un moteur peut avoir les **propriétées** suivantes :
 
 - un type (the python module to load)  
 - un nom (must be unique)  
 - Un identifiant (0, 1, 2, 3, ..., must be unique)  
 - Un niveau de log (debug, info, warning, or error)  
 
-Le listing des moteur peut être réalisé grace à cette commande : `ps -aux | grep canopsis`
+Le listing des moteurs peut être réalisé grace à cette commande : `systemctl list-units "canopsis*"`
 
 ## Liste des moteurs
-
-Ce document rassemble les informations sur les moteurs Canopsis.  
-
-définition moteur go `canopsis-engine-cat@task_blabla.service`
 
 ### Moteurs NG
 

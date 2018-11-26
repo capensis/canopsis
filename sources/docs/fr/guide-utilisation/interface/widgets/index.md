@@ -41,7 +41,7 @@ Le widget **Météo de services** permet de visualiser rapidement l'état des se
 
 Celui-ci présente sous forme de grille un ensemble de services, avec un jeux de couleurs et d'icones permettant de rapidement visualiser une éventuelle source de problème.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-service/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services/index.md)
 
 ### Tableau de statistiques
 

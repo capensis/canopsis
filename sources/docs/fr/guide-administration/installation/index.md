@@ -8,7 +8,7 @@
 
 ## Sécurité 
 
-- [Configuration des ports réseau à partir de la matrice des flux](pre-requis-parefeu-et-selinux.md)  
+- [Configuration des ports réseaux à partir de la matrice des flux](pre-requis-parefeu-et-selinux.md)  
 
 ## Premier login
 
