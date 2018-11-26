@@ -1,8 +1,6 @@
-# Guide Utilisateur
-
 TODO : Compléter les définitions.  
 
-## Section Vocabulaire
+## Vocabulaire
 
 **Evénement :**  
 
