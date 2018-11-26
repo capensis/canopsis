@@ -11,7 +11,7 @@ Lorsqu'un événement arrive il est envoyé vers le bac à événement puis trai
 
 **Alarme :**  
 
-Un *alarme* est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
+Une *alarme* est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
 
 **Etat :**  
 
