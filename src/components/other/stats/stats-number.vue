@@ -45,10 +45,6 @@ export default {
     entitiesUserPreferenceMixin,
   ],
   props: {
-    rowId: {
-      type: String,
-      required: true,
-    },
     widget: {
       type: Object,
       required: true,
