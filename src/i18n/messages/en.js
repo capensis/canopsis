@@ -224,6 +224,7 @@ export default {
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
+    height: 'Height',
     margin: {
       title: 'Block margins',
       top: 'Margin - Top',

@@ -1,12 +1,13 @@
 <template lang="pug">
 v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight + 'em'}")
-  v-layout(justify-start)
-    v-flex(xs2)
-      component.ma-1.mt-2.ml-2(:is="format.icon")
-    v-flex(xs10)
-      div.watcherName.pt-3(v-html="compiledTemplate")
-    v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
-      v-icon pause
+  div(:class="{ blinking: isBlinking }", )
+    v-layout(justify-start)
+      v-flex(xs2)
+        component.ma-1.mt-2.ml-2(:is="format.icon")
+      v-flex(xs10)
+        div.watcherName.pt-3(v-html="compiledTemplate")
+      v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
+        v-icon pause
 </template>
 
 <script>
@@ -74,6 +75,9 @@ export default {
     itemHeight() {
       return 4 + this.widget.parameters.heightFactor;
     },
+    isBlinking() {
+      return this.watcher.alerts_not_ack;
+    },
   },
   methods: {
     showWatcherModal() {
@@ -103,5 +107,14 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 0em;
+  }
+
+  @keyframes blink {
+    0% { opacity: 1 }
+    50% { opacity: 0.3 }
+  }
+
+  .blinking {
+    animation: blink 2s linear infinite;
   }
 </style>
