@@ -2,6 +2,8 @@
 
 Nouveaux moteurs pour Canopsis
 
+Nécessite Go 1.11 ou supérieur.
+
 ## Mise en place d'un environnement d'exécution des tests
 
 ### Installation d'un serveur RabbitMQ
