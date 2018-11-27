@@ -16,5 +16,6 @@ module.exports = {
         cookieDomainRewrite: '',
       },
     },
+    disableHostCheck: true,
   },
 };

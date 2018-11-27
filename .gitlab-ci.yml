@@ -1,0 +1,37 @@
+stages:
+  - build
+  - test
+  - push
+
+before_script:
+  - uname -a
+  - docker -v
+  - git --no-pager show
+  - docker login -u $HUBDOCKERUSER -p $HUBDOCKERPASSWORD
+
+variables:
+  COMPOSE_PROJECT_NAME: "build${CI_JOB_ID}"
+
+stage_build:
+  stage: build
+  tags: ["canopsis-next"]
+  script:
+    - docker build -t canopsis/uiv3:develop -f docker/Dockerfile .
+
+stage_test:
+  stage: test
+  tags: ["canopsis-next"]
+  script:
+    - docker-compose -f docker-compose.yml -p ${COMPOSE_PROJECT_NAME} up -d
+
+stage_push:
+  stage: push
+  tags: ["canopsis-next"]
+  script:
+    - docker push canopsis/uiv3:develop
+
+after_script:
+  - docker-compose -f docker-compose.yml -p ${COMPOSE_PROJECT_NAME} kill
+  - docker-compose -f docker-compose.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
+  - docker-compose -f docker-compose.yml -p ${COMPOSE_PROJECT_NAME} down
+
