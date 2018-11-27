@@ -76,8 +76,10 @@ def exports(ws):
         except (PyMongoError, CollectionError):
             return gen_database_error()
 
-        heartbeat = manager.find_heartbeat_document(heartbeat_id)
-        return gen_json(heartbeat)
+        return gen_json({
+            "name": "heartbeat created",
+            "description": heartbeat_id
+        })
 
     @ws.application.get(
         "/api/v2/heartbeat/"
