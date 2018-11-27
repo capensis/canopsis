@@ -1,11 +1,5 @@
 # Utilisation du widget
 
-## Création du widget
-
-Pour créer ces derniers, il vous suffit de vous rendre dans "widget", juste ici : ![g1](../img/gif_3_widget.gif).  
-
-Puis choisir entre les deux dernières propositions. La première correspond à l'histogramme, la seconde au tableur.  
-
 ## Configurations communes
 
 Les quatres premières configurations, que ce soit la création d'un histogramme ou d'un tableau, sont communes :
