@@ -1,4 +1,4 @@
-# Moteur event_filter
+# Event-filter
 
 **TODO (DWU) :** ce moteur est un moteur programmable par les utilisateurs. Ça me paraît donc bon de garder cette doc ici.
 
@@ -24,7 +24,7 @@ Les actions suivantes sont disponibles pour l'utilisateur :
 
 Chaque règle peut contenir plusieurs actions et permet ainsi à l'utilisateur d'ajouter simultanément un champ, de modifier un champ et de modifier la destination d'un évènement. Tout cela selon un filtre défini par l'utilisateur.
 
-Les règles sont enregistrées dans la base de données et peuvent être modifiées ou supprimées ultérieurement.   
+Les règles sont enregistrées dans la base de données et peuvent être modifiées ou supprimées ultérieurement.
 
 Les fonctionnalités suivantes sont disponibles dans le moteur de filtrage.
 
@@ -53,7 +53,7 @@ Les évènements peuvent être envoyés à un moteur différent de celui défini
 Cette action permet à l'utilisateur d'avoir un contrôle complet sur la chaîne de traitement et d'éviter l'envoi d'évènements dans des moteurs qui n'interagissent pas avec eux.
 
 ## Représentation
-   
-Ci-dessous est un schéma simple d'une chaîne de traitement de base.    
+
+Ci-dessous est un schéma simple d'une chaîne de traitement de base.
 
 ![img1](img/schema-event_filter.png)
