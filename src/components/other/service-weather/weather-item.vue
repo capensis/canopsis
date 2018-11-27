@@ -3,7 +3,7 @@ v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight +
   div(:class="{ blinking: isBlinking }", )
     v-layout(justify-start)
       v-flex(xs2)
-        component.ma-1.mt-2.ml-2(:is="format.icon")
+        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
       v-flex(xs10)
         div.watcherName.pt-3(v-html="compiledTemplate")
       v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
@@ -11,23 +11,12 @@ v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight +
 </template>
 
 <script>
+import find from 'lodash/find';
 import modalMixin from '@/mixins/modal/modal';
 import compile from '@/helpers/handlebars';
-
-import SunIcon from './icons/sun.vue';
-import CloudySunIcon from './icons/cloudy-sun.vue';
-import CloudIcon from './icons/cloud.vue';
-import RainingCloudIcon from './icons/raining-cloud.vue';
-import PauseIcon from './icons/pause.vue';
+import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES, WEATHER_ICONS } from '@/constants';
 
 export default {
-  components: {
-    SunIcon,
-    CloudySunIcon,
-    CloudIcon,
-    RainingCloudIcon,
-    PauseIcon,
-  },
   mixins: [modalMixin],
   props: {
     watcher: {
@@ -42,22 +31,42 @@ export default {
     },
   },
   computed: {
+    isPaused() {
+      return this.watcher.active_pb_all;
+    },
+    hasWatcherPbehavior() {
+      return this.watcher.active_pb_watcher;
+    },
     format() {
-      const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
-      const iconsMap = {
-        [this.$constants.ENTITIES_STATES.ok]: SunIcon,
-        [this.$constants.ENTITIES_STATES.minor]: CloudySunIcon,
-        [this.$constants.ENTITIES_STATES.major]: CloudIcon,
-        [this.$constants.ENTITIES_STATES.critical]: RainingCloudIcon,
-      };
+      if (!this.isPaused && !this.hasWatcherPbehavior) {
+        const state = this.watcher.state.val;
 
-      if (hasActivePb) {
-        return { icon: PauseIcon, color: this.$constants.WATCHER_PBEHAVIOR_COLOR };
+        return {
+          icon: WEATHER_ICONS[state],
+          color: WATCHER_STATES_COLORS[state],
+        };
+      }
+
+      const pbehaviors = this.hasWatcherPbehavior ? this.watcher.watcher_pbehavior : this.watcher.pbehavior;
+
+      const maintenancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.maintenance });
+      const outOfSurveillancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
+
+      let icon = WEATHER_ICONS.pause;
+
+      if (maintenancePbehavior) {
+        icon = WEATHER_ICONS.maintenance;
+      } else if (outOfSurveillancePbehavior) {
+        icon = WEATHER_ICONS.outOfSurveillance;
+      }
+
+      if (this.isPaused && !this.hasWatcherPbehavior) {
+        icon = WEATHER_ICONS.pause;
       }
 
       return {
-        icon: iconsMap[this.watcher.state.val],
-        color: this.$constants.WATCHER_STATES_COLORS[this.watcher.state.val],
+        color: WATCHER_PBEHAVIOR_COLOR,
+        icon,
       };
     },
     compiledTemplate() {
