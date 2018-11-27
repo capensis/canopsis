@@ -1,12 +1,10 @@
 <template lang="pug">
   div
     v-layout
-      v-btn(icon, @click="showSettings")
-        v-icon settings
     v-fade-transition
-      v-layout(v-show="!watchersPending", wrap)
+      v-layout.fill-height(v-show="!watchersPending", wrap)
         v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
-          weather-item(:watcher="item", :widget="widget", :template="widget.parameters.blockTemplate")
+          weather-item.weatherItem(:watcher="item", :widget="widget", :template="widget.parameters.blockTemplate")
     v-fade-transition
       v-layout(v-show="watchersPending", column)
         v-flex(xs12)
@@ -17,7 +15,6 @@
 <script>
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import widgetQueryMixin from '@/mixins/widget/query';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 import WeatherItem from './weather-item.vue';
 
@@ -28,15 +25,10 @@ export default {
   mixins: [
     entitiesWatcherMixin,
     widgetQueryMixin,
-    sideBarMixin,
   ],
   props: {
     widget: {
       type: Object,
-      required: true,
-    },
-    rowId: {
-      type: String,
       required: true,
     },
   },
@@ -50,16 +42,6 @@ export default {
     },
   },
   methods: {
-    showSettings() {
-      this.showSideBar({
-        name: this.$constants.SIDE_BARS.weatherSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
-
     fetchList() {
       this.fetchWatchersList({
         filter: this.widget.parameters.mfilter.filter,
@@ -70,3 +52,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .weatherItem {
+    height: 100%;
+  }
+</style>

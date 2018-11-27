@@ -4,8 +4,6 @@
       v-card-title
         v-layout(justify-center)
           h2 {{ widget.parameters.stat.title }}
-        v-btn(icon, @click="showSettings")
-          v-icon settings
       v-data-iterator(
         :items="stats",
         content-tag="v-layout",
@@ -34,7 +32,6 @@
 <script>
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
@@ -44,15 +41,10 @@ export default {
   },
   mixins: [
     entitiesStatsMixin,
-    sideBarMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
   ],
   props: {
-    rowId: {
-      type: String,
-      required: true,
-    },
     widget: {
       type: Object,
       required: true,
@@ -96,15 +88,6 @@ export default {
     },
   },
   methods: {
-    showSettings() {
-      this.showSideBar({
-        name: this.$constants.SIDE_BARS.statsNumberSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
     async fetchList() {
       const query = { ...this.query };
 

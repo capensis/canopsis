@@ -4,29 +4,30 @@
       v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)
           v-layout.notDisplayedFullScreen(align-center)
-            h2 {{ row.title }}
+            h2.ml-1 {{ row.title }}
             v-tooltip.ml-2(left, v-if="isEditModeEnable")
-              v-btn.ma-0(slot="activator", fab, small, dark, color="red darken-3", @click.stop="deleteRow(rowKey)")
-                v-icon delete
+              v-btn.ma-0(slot="activator", icon, @click.stop="deleteRow(rowKey)")
+                v-icon.error--text delete
               span {{ $t('common.delete') }}
         v-flex(
         v-for="(widget, widgetKey) in row.widgets",
         :key="`${widgetKeyPrefix}_${widget._id}`",
         :class="getWidgetFlexClass(widget)"
         )
-          v-layout.notDisplayedFullScreen(justify-space-between)
-            h3 {{ widget.title }}
-            v-tooltip(left, v-if="isEditModeEnable")
-              v-btn.ma-0(
-              slot="activator",
-              fab,
-              small,
-              dark,
-              color="red darken-3",
-              @click="deleteWidget(widgetKey, rowKey)"
-              )
-                v-icon delete
-              span {{ $t('common.delete') }}
+          v-layout.notDisplayedFullScreen(justify-space-between, align-center)
+            v-flex
+              h3.my-1.ml-2(v-show="widget.title") {{ widget.title }}
+            v-flex(xs1, v-if="isEditModeEnable")
+              v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, widget)")
+                v-icon settings
+              v-tooltip(left)
+                v-btn.ma-0(
+                slot="activator",
+                icon,
+                @click="deleteWidget(widgetKey, rowKey)"
+                )
+                  v-icon.error--text delete
+                span {{ $t('common.delete') }}
           component(
           :is="widgetsComponentsMap[widget.type]",
           :widget="widget",
@@ -73,7 +74,7 @@
 import get from 'lodash/get';
 import pullAt from 'lodash/pullAt';
 
-import { WIDGET_TYPES, MODALS, USERS_RIGHTS_MASKS } from '@/constants';
+import { WIDGET_TYPES, MODALS, USERS_RIGHTS_MASKS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
@@ -89,6 +90,7 @@ import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
   components: {
@@ -106,6 +108,7 @@ export default {
     popupMixin,
     modalMixin,
     entitiesViewMixin,
+    sideBarMixin,
   ],
   props: {
     id: {
@@ -173,6 +176,16 @@ export default {
       }
     },
 
+    showSettings(rowId, widget) {
+      this.showSideBar({
+        name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
+        config: {
+          widget,
+          rowId,
+        },
+      });
+    },
+
     async refreshView() {
       await this.fetchView({ id: this.id });
 
@@ -184,9 +197,11 @@ export default {
         name: MODALS.createWidget,
       });
     },
+
     toggleViewEditMode() {
       this.isEditModeEnable = !this.isEditModeEnable;
     },
+
     deleteRow(rowKey) {
       if (this.view.rows[rowKey].widgets.length > 0) {
         this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
@@ -203,6 +218,7 @@ export default {
         });
       }
     },
+
     deleteWidget(widgetKey, rowKey) {
       this.showModal({
         name: MODALS.confirmation,
