@@ -55,11 +55,8 @@ export default {
 
       const pbehaviors = this.hasWatcherPbehavior ? this.watcher.watcher_pbehavior : this.watcher.pbehavior;
 
-      // Disabled eslint cause of the trailing "_" on "pbehavior.type_"
-      /* eslint-disable */
       const maintenancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.maintenance });
       const outOfSurveillancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
-      /* eslint-enable */
 
       let icon = WEATHER_ICONS.pause;
 
