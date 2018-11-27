@@ -23,7 +23,8 @@ from __future__ import unicode_literals
 from pymongo.errors import PyMongoError
 from bottle import request
 
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import (gen_json, gen_json_error,
+                                    HTTP_ERROR, HTTP_NOT_FOUND)
 from canopsis.models.heartbeat import HeartBeat
 from canopsis.heartbeat.heartbeat import (HeartbeatManager,
                                           HeartbeatPatternExistsError)
@@ -96,3 +97,29 @@ def exports(ws):
             return gen_json([x for x in manager.list_heartbeat_collection()])
         except PyMongoError:
             return gen_database_error()
+
+    @ws.application.delete(
+        '/api/v2/heartbeat/<heartbeat_id:id_filter>'
+    )
+    def remove_heartbeat(heartbeat_id):
+        try:
+            manager = HeartbeatManager(
+                *HeartbeatManager.provide_default_basics())
+        except PyMongoError:
+            return gen_database_error()
+
+        try:
+            if not manager.find_heartbeat_document(heartbeat_id):
+                return gen_json_error({"name": "heartbeat not found",
+                                       "description": heartbeat_id},
+                                      HTTP_NOT_FOUND)
+
+            manager.remove_heartbeat_document(heartbeat_id)
+
+        except (PyMongoError, CollectionError):
+            return gen_database_error()
+
+        return gen_json({
+            "name": "heartbeat removed",
+            "description": heartbeat_id
+        })
