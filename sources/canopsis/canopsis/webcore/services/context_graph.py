@@ -381,15 +381,17 @@ function dragended(d) {
 
         return gen_json(ContextGraph.get_id(event))
 
-    @ws.application.get('/api/v2/entities/<query:id_filter>')
+    @route(
+        ws.application.get,
+        name='api/v2/entities',
+        payload=['query']
+    )
     def get_entities_with_open_alarms(query):
         """
         Return the entities filtered with a mongo filter.
         Each entity contain a list of the currently open alarms.
         """
         try:
-            q = j.loads(query)
-            res = manager.get_entities_with_open_alarms(q)
-            return gen_json(res)
+            return manager.get_entities_with_open_alarms(query)
         except Exception as err:
             return gen_json_error({'description': str(err)}, HTTP_ERROR)
