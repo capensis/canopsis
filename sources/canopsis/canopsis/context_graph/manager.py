@@ -375,15 +375,15 @@ class ContextGraph(object):
                 'from': 'periodical_alarm',
                 'localField': '_id',
                 'foreignField': 'd',
-                'as': 'alarms'
+                'as': 'alarm'
             }
         }
 
         ignore_terminated_alarms = {
             '$addFields': {
-                'alarms': {
+                'alarm': {
                     '$filter': {
-                        'input': '$alarms',
+                        'input': '$alarm',
                         'as': 'alarm',
                         'cond': {
                             "$eq": ["$$alarm.t", None]
