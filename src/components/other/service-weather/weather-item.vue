@@ -1,18 +1,19 @@
 <template lang="pug">
 v-card.ma-2.white--text(:class="format.color", tile, raised)
-  div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
-    v-icon.pauseIcon pause
-  v-layout(justify-start, align-center)
-    v-flex(xs2)
-      v-icon.px-3.py-2.white--text(size="5em") {{ format.icon }}
-    v-flex(xs10)
-      div.watcherName.pt-2(v-html="compiledTemplate")
-  v-layout
-    v-flex(xs12)
-      div.moreInfos.py-1(@click="showWatcherModal")
-        v-layout(justify-center)
-          div {{ $t('weather.moreInfos') }}
-          v-icon.pl-1(color="white", small) arrow_forward
+  div(:class="{ blinking: isBlinking }", )
+    div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
+      v-icon.pauseIcon pause
+    v-layout(justify-start, align-center)
+      v-flex(xs2)
+        v-icon.px-3.py-2.white--text(size="5em") {{ format.icon }}
+      v-flex(xs10)
+        div.watcherName.pt-2(v-html="compiledTemplate")
+    v-layout
+      v-flex(xs12)
+        div.moreInfos.py-1(@click="showWatcherModal")
+          v-layout(justify-center)
+            div {{ $t('weather.moreInfos') }}
+            v-icon.pl-1(color="white", small) arrow_forward
 </template>
 
 <script>
@@ -80,6 +81,9 @@ export default {
     compiledTemplate() {
       return compile(this.template, { watcher: this.watcher });
     },
+    isBlinking() {
+      return this.watcher.alerts_not_ack;
+    },
   },
   methods: {
     showWatcherModal() {
@@ -132,5 +136,14 @@ export default {
     z-index: 2;
     background-color: rgba(0,0,0,0.2);
     cursor: pointer;
+  }
+
+  @keyframes blink {
+    0% { opacity: 1 }
+    50% { opacity: 0.3 }
+  }
+
+  .blinking {
+    animation: blink 2s linear infinite;
   }
 </style>
