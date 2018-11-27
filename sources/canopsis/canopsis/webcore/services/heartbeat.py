@@ -46,8 +46,9 @@ def exports(ws):
     def create_heartbeat():
         """Create a new heartbeat. Read the body of the request to extract
         the heartbeat as a json.
-        :rtype: a dict with the status (name) of the request and if needed a
-        description.
+
+        :rtype: a dict with the status (name) of the request
+        and ID of created Heartbeat as description.
         """
         try:
             json = request.json
@@ -84,7 +85,8 @@ def exports(ws):
     )
     def list_heartbeats():
         """ Return every heartbeats stored in database.
-        :rtype: a json representation as a dict of every heartbeats stored in
+
+        :rtype: a json representation as a list of every heartbeats stored in
         or a dict with the status (name) and the description of the issue
         encountered.
         """
@@ -99,6 +101,14 @@ def exports(ws):
         '/api/v2/heartbeat/<heartbeat_id:id_filter>'
     )
     def remove_heartbeat(heartbeat_id):
+        """
+        Remove a Heartbeat by ID.
+
+        :param `str` heartbeat_id: Heartbeat ID.
+        :returns: ``200 OK`` if success or ``404 Not Found`` if a Heartbeat
+                  with a given ID is not found or ``400 Bad Request``
+                  if database error.
+        """
         try:
             manager = HeartbeatManager(
                 *HeartbeatManager.provide_default_basics())
@@ -122,7 +132,15 @@ def exports(ws):
         '/api/v2/heartbeat/<heartbeat_id:id_filter>'
     )
     def get_heartbeat(heartbeat_id):
+        """
+        Get a Heartbeat by ID.
 
+        :param `str` heartbeat_id: Heartbeat ID.
+        :returns: ``200 OK`` and a Heartbeat document as response body
+                  if success or ``404 Not Found`` if a Heartbeat
+                  with a given ID is not found or ``400 Bad Request``
+                  if database error.
+        """
         try:
             manager = HeartbeatManager(
                 *HeartbeatManager.provide_default_basics())
