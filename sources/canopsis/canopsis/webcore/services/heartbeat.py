@@ -21,24 +21,13 @@
 from __future__ import unicode_literals
 
 from pymongo.errors import PyMongoError
-
 from bottle import request
-from canopsis.heartbeat.manager import HeartBeatService
+
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.models.heartbeat import HeartBeat
-
-
 from canopsis.heartbeat.heartbeat import (HeartbeatManager,
                                           HeartbeatPatternExistsError)
-from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import CollectionError
-
-hb_service = HeartBeatService(*HeartBeatService.provide_default_basics())
-
-
-def get_heartbeat_collection():
-    store = MongoStore.get_default()
-    return store.get_collection(name=HeartbeatManager.COLLECTION)
 
 
 def gen_database_error():
@@ -59,27 +48,25 @@ def exports(ws):
         :rtype: a dict with the status (name) of the request and if needed a
         description.
         """
-
         try:
             json = request.json
         except ValueError:
             return gen_json_error({'description': "invalid json."},
                                   HTTP_ERROR)
-
-        if not HeartBeat.is_valid_heartbeat(json):
+        try:
+            model = HeartBeat(json)
+        except ValueError:
             return gen_json_error(
                 {"description": "invalid heartbeat payload."}, HTTP_ERROR)
 
         try:
-            collection = get_heartbeat_collection()
+            manager = HeartbeatManager(
+                *HeartbeatManager.provide_default_basics())
         except PyMongoError:
             return gen_database_error()
 
-        manager = HeartbeatManager(collection)
         try:
-            heartbeat_id = manager.insert_heartbeat_document(
-                json[HeartBeat.PATTERN_KEY],
-                json[HeartBeat.EXPECTED_INTERVAL_KEY])
+            heartbeat_id = manager.create_heartbeat(model)
 
         except HeartbeatPatternExistsError:
             return gen_json_error(
@@ -102,8 +89,8 @@ def exports(ws):
         encountered.
         """
         try:
-            collection = get_heartbeat_collection()
-            manager = HeartbeatManager(collection)
+            manager = HeartbeatManager(
+                *HeartbeatManager.provide_default_basics())
             return gen_json([x for x in manager.list_heartbeat_collection()])
         except PyMongoError:
             return gen_database_error()
