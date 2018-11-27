@@ -15,7 +15,7 @@ Aprés cela vous pouvez **choisir la durée de l'élément** ainsi que la **date
 
 ## Configuration propre à l'histogramme
 
-Vous pourrez **ajouter un groupe** ainsi qu'un **filtre** (vous retrouverez l'[éditeur de filtre ici](../bac-a-alarmes/Les-filtres.md) !).  
+Vous pourrez **ajouter un groupe** ainsi qu'un **filtre** (vous retrouverez l'[éditeur de filtre ici](../../filtres/index.md) !).  
 Ensuite, il faut **ajouter une statistique** parmi celles-ci :  
 
 - Les alarmes crées, résolues et annulées.
@@ -49,4 +49,4 @@ Pour **ajouter une statistique** parmi celles-ci :
 Il est necessaire de **donner un titre** à cette statistique.  
 L'option "Trend" est une option de l'API stats. Si elle est activée, vous recevez en même temps que vos données de Stats, une tendance par rapport à la période précédente.  
 
-Vous pourrez, comme sur l'histogramme, **ajouter un filtre** (vous retrouverez l'[éditeur de filtre ici](../bac-a-alarmes/Les-filtres.md) !).  
+Vous pourrez, comme sur l'histogramme, **ajouter un filtre** (vous retrouverez l'[éditeur de filtre ici](../../filtres/index.md) !).  

@@ -47,28 +47,28 @@ Pour les informations concernant le widget en lui-même, voir la partie sur le [
 
 Le widget **Tableau de statistiques** permet de visualiser sous forme de tableau un ensemble de statistiques du SI, ou d'un sous-ensemble du SI.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du tableau de statistiques](./statistique/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du tableau de statistiques](./stats/index.md)
 
 ### Compteur de statistique
 
 Le widget **Compteur de statistique** permet de visualiser la valeur d'une statistique, avec un jeux de couleur permettant de caractérisé la criticité de chacune des valeurs.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./statistique/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./stats/index.md)
 
 ### Histogramme de statistiques
 
 Le widget **Histogramme** permet de visualiser un ensemble de statistiques sous forme d'histogramme.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'histogramme](./statistique/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'histogramme](./stats/index.md)
 
 ### Courbe de statistiques
 
 Le widget **Courbe** permet de visualiser un ensemble de statistiques sous forme de courbes.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la courbe](./statistique/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la courbe](./stats/index.md)
 
 ### Calendrier de statistique
 
 Le widget **Calendrier** permet de visualiser le nombre d'alarmes par période de temps (par heure, par jour, par mois), dans une vue calendrier.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./statistique/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./stats/index.md)
