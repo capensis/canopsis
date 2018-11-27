@@ -11,3 +11,9 @@ Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues
 ## Les widgets
 
 Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonctionnement, rendez-vous dans les sections "Les widgets", en cliquant [ici](./widgets/index.md).
+
+## Options de l'interface
+
+Plusieurs options sont disponibles pour personnaliser l'interface de Canopsis.
+
+Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
