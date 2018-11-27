@@ -720,5 +720,12 @@ export default {
   },
   parameters: {
     interfaceLanguage: 'Interface language',
+    groupsNavigationType: {
+      title: 'Groups navigation type',
+      items: {
+        sideBar: 'Side bar',
+        topBar: 'Top bar',
+      },
+    },
   },
 };

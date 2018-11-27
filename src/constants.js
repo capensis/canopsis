@@ -415,3 +415,8 @@ export const USERS_RIGHTS = {
     },
   },
 };
+
+export const GROUPS_NAVIGATION_TYPES = {
+  sideBar: 'side-bar',
+  topBar: 'top-bar',
+};

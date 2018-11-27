@@ -1,18 +1,21 @@
 <template lang="pug">
   div
     top-bar(@toggleSideBar="toggleSideBar")
-    side-bar(v-model="isOpen")
+    groups-side-bar(v-if="isShownGroupsSideBar", v-model="isOpen")
 </template>
 
 <script>
-import TopBar from './top-bar.vue';
-import SideBar from './side-bar.vue';
+import appMixin from '@/mixins/app';
+
+import TopBar from './partial/top-bar.vue';
+import GroupsSideBar from './partial/groups-side-bar.vue';
 
 export default {
   components: {
     TopBar,
-    SideBar,
+    GroupsSideBar,
   },
+  mixins: [appMixin],
   data() {
     return {
       isOpen: false,
