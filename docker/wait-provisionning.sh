@@ -9,4 +9,4 @@ while [ ! "$(docker-compose -f ${COMPOSE_FILE} -p ${PROJECT_NAME} ps | grep prov
     echo waiting provisioning end
     sleep 1
 done
-$(docker-compose -f ${COMPOSE_FILE} -p ${PROJECT_NAME} ps
+$(docker-compose -f ${COMPOSE_FILE} -p ${PROJECT_NAME} ps)
