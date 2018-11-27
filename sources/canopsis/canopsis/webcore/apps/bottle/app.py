@@ -93,7 +93,7 @@ class WebServer():
 
     @property
     def beaker_url(self):
-        return '{}.beaker'.format(self.db.uri)
+        return self.db.beaker_uri
 
     @property
     def skip_login(self):

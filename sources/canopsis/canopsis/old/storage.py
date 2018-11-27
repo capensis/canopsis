@@ -209,6 +209,14 @@ class Storage(object):
 
         return uri
 
+    @property
+    def beaker_uri(self):
+        if '?' in self.uri:
+            url, params = self.uri.split('?')
+            return '{}.beaker?{}'.format(url, params)
+
+        return '{}.beaker'.format(self.uri)
+
     def connect(self):
         if self.connected:
             return True
@@ -219,7 +227,7 @@ class Storage(object):
             self.logger.error('Old storage connection failure: {}'.format(exc))
             return False
 
-        self.db = self.conn.get_database(self.mongo_db)
+        self.db = self.conn.client
 
         try:
             self.gridfs_namespace = CONFIG.get("master", "gridfs_namespace")
