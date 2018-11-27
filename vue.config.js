@@ -14,8 +14,8 @@ module.exports = {
         pathRewrite: { '^/api': '' },
         secure: false,
         cookieDomainRewrite: '',
-        disableHostCheck: true,
       },
     },
+    disableHostCheck: true,
   },
 };
