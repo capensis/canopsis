@@ -393,7 +393,22 @@ class ContextGraph(object):
             }
         }
 
-        pipeline = [match_query, join_alarms, ignore_terminated_alarms]
+        transform_alarm_array_to_field = {
+            '$addFields': {
+                'alarm': {
+                    "$cond": [
+                        {"$eq": [{"$size": "$alarm"}, 1]},
+                        {'$arrayElemAt': ["$alarm", 0]},
+                        None
+                    ]
+                }
+            }
+        }
+
+        pipeline = [match_query,
+                    join_alarms,
+                    ignore_terminated_alarms,
+                    transform_alarm_array_to_field]
 
         col = self.ent_storage._backend
 
