@@ -79,7 +79,8 @@ class InfosFilter:
             self._schema = self.obj_storage.get_elements(
                 query={"_id": self._schema_id}, projection={"_id": 0})[0]
         except IndexError as exc:
-            raise ValueError("No infos schema found in database: {}".format(exc))
+            raise ValueError(
+                "No infos schema found in database: {}".format(exc))
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
@@ -356,7 +357,7 @@ class ContextGraph(object):
 
         return ret_val
 
-    def get_entities_with_open_alarms(self, query):
+    def get_entities_with_open_alarms(self, query, limit, offset):
         """
         Get a list of entities enhaced with open alarms data found with
         a given mongo filter.
@@ -366,9 +367,13 @@ class ContextGraph(object):
 
         :return type: an array of entities including the open alarms.
         """
+
+        pipeline = []
+        col = self.ent_storage._backend
         match_query = {
             '$match': query
         }
+        pipeline.append(match_query)
 
         join_alarms = {
             '$lookup': {
@@ -378,6 +383,22 @@ class ContextGraph(object):
                 'as': 'alarm'
             }
         }
+        pipeline.append(join_alarms)
+
+        total_count = list(col.aggregate(
+            pipeline + [{'$count': 'total_count'}]))[0]["total_count"]
+
+        if offset > 0:
+            set_offset = {
+                '$skip': offset
+            }
+            pipeline.append(set_offset)
+
+        if limit > 0:
+            set_limit = {
+                '$limit': limit
+            }
+            pipeline.append(set_limit)
 
         ignore_terminated_alarms = {
             '$addFields': {
@@ -392,6 +413,7 @@ class ContextGraph(object):
                 }
             }
         }
+        pipeline.append(ignore_terminated_alarms)
 
         transform_alarm_array_to_field = {
             '$addFields': {
@@ -404,15 +426,13 @@ class ContextGraph(object):
                 }
             }
         }
+        pipeline.append(transform_alarm_array_to_field)
 
-        pipeline = [match_query,
-                    join_alarms,
-                    ignore_terminated_alarms,
-                    transform_alarm_array_to_field]
+        entities = list(col.aggregate(pipeline))
 
-        col = self.ent_storage._backend
-
-        return list(col.aggregate(pipeline))
+        return {"total_count": total_count,
+                "count": len(entities),
+                "data": entities}
 
     @classmethod
     def _enable_entity(cls, entity, timestamp=None):

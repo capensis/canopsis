@@ -384,14 +384,16 @@ function dragended(d) {
     @route(
         ws.application.get,
         name='api/v2/entities',
-        payload=['query']
+        payload=['query', 'limit', 'offset'],
+        response=lambda x, **kwargs: x
     )
-    def get_entities_with_open_alarms(query):
+    def get_entities_with_open_alarms(query, limit=0, offset=0):
         """
         Return the entities filtered with a mongo filter.
         Each entity contain a list of the currently open alarms.
         """
         try:
-            return manager.get_entities_with_open_alarms(query)
+            res = manager.get_entities_with_open_alarms(query, limit, offset)
+            return res
         except Exception as err:
             return gen_json_error({'description': str(err)}, HTTP_ERROR)
