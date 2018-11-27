@@ -144,6 +144,9 @@ export default {
       },
     },
   },
+  weather: {
+    moreInfos: 'Plus d\'infos',
+  },
   pbehaviors: {
     connector: 'Connecteur',
     connectorName: 'Nom du connecteur',

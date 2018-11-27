@@ -112,6 +112,21 @@ export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.critical]: 'red darken-1',
 };
 
+export const PBEHAVIOR_TYPES = {
+  maintenance: 'Maintenance',
+  outOfSurveillance: 'Hors plage horaire de surveillance',
+};
+
+export const WEATHER_ICONS = {
+  [ENTITIES_STATES.ok]: 'wb_sunny',
+  [ENTITIES_STATES.minor]: 'person',
+  [ENTITIES_STATES.major]: 'person',
+  [ENTITIES_STATES.critical]: 'wb_cloudy',
+  maintenance: 'build',
+  outOfSurveillance: 'brightness_3',
+  pause: 'pause',
+};
+
 export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
 
 export const ENTITY_STATUS_STYLES = {
