@@ -63,10 +63,7 @@ def exports(ws):
         try:
             manager = HeartbeatManager(
                 *HeartbeatManager.provide_default_basics())
-        except PyMongoError:
-            return gen_database_error()
 
-        try:
             heartbeat_id = manager.create_heartbeat(model)
 
         except HeartbeatPatternExistsError:
