@@ -10,7 +10,7 @@ before_script:
   - docker login -u $HUBDOCKERUSER -p $HUBDOCKERPASSWORD
 
 variables:
-  - COMPOSE_PROJECT_NAME: "build${CI_JOB_ID}"
+  COMPOSE_PROJECT_NAME: "build${CI_JOB_ID}"
 
 stage_build:
   stage: build
