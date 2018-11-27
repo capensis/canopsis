@@ -144,6 +144,9 @@ export default {
       },
     },
   },
+  weather: {
+    moreInfos: 'Plus d\'infos',
+  },
   pbehaviors: {
     connector: 'Connecteur',
     connectorName: 'Nom du connecteur',
@@ -223,6 +226,14 @@ export default {
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
+    height: 'Hauteur',
+    margin: {
+      title: 'Marges',
+      top: 'Marge - Haut',
+      right: 'Marge - Droite',
+      bottom: 'Marge - Bas',
+      left: 'Marge - Gauche',
+    },
     contextTypeOfEntities: {
       title: 'Type d\'entitées',
       fields: {
@@ -288,13 +299,23 @@ export default {
       edit: {
         title: 'Éditer une vue',
       },
+      duplicate: {
+        title: 'Dupliquer une vue',
+        infoMessage: 'Vous êtes en train de dupliquer une vue. Toutes les lignes et les widgets de la vue dupliquée seront copiés dans la nouvelle vue.',
+      },
       noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
       fields: {
         groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
         groupTags: 'Labels de groupes',
       },
-      success: 'Nouvelle vue créée !',
-      fail: 'Erreur lors de la création de la vue',
+      success: {
+        create: 'Nouvelle vue créée !',
+        edit: 'Vue éditée avec succès !',
+      },
+      fail: {
+        create: 'Erreur dans la création de la vue...',
+        edit: 'Erreur dans l\'édition de la vue...',
+      },
     },
     createAckEvent: {
       title: 'Acquitter',

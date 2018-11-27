@@ -145,6 +145,9 @@ export default {
       },
     },
   },
+  weather: {
+    moreInfos: 'More infos',
+  },
   pbehaviors: {
     connector: 'Connector',
     connectorName: 'Connector name',
@@ -224,6 +227,14 @@ export default {
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
+    height: 'Height',
+    margin: {
+      title: 'Block margins',
+      top: 'Margin - Top',
+      right: 'Margin - Right',
+      bottom: 'Margin - Bottom',
+      left: 'Margin - Left',
+    },
     contextTypeOfEntities: {
       title: 'Type of entities',
       fields: {
@@ -289,13 +300,23 @@ export default {
       edit: {
         title: 'Edit the view',
       },
+      duplicate: {
+        title: 'Duplicate the view',
+        infoMessage: 'You\'re duplicating a view. All duplicated view\'s rows/widgets will be copied on the new view.',
+      },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         groupIds: 'Choose a group, or create a new one',
         groupTags: 'Group tags',
       },
-      success: 'New view created',
-      fail: 'Fail in creation view',
+      success: {
+        create: 'New view created !',
+        edit: 'View successfully edited !',
+      },
+      fail: {
+        create: 'View creation failed...',
+        edit: 'View edition failed...',
+      },
       errors: {
         rightCreating: 'Error on right creating',
         rightRemoving: 'Error on right removing',
@@ -699,5 +720,12 @@ export default {
   },
   parameters: {
     interfaceLanguage: 'Interface language',
+    groupsNavigationType: {
+      title: 'Groups navigation type',
+      items: {
+        sideBar: 'Side bar',
+        topBar: 'Top bar',
+      },
+    },
   },
 };

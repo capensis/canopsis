@@ -1,38 +1,22 @@
 <template lang="pug">
-v-card.ma-2.white--text(:class="format.color", tile, raised)
-  div.pauseContainer(v-if="watcher.active_pb_some && !watcher.active_pb_all")
-    v-icon.pauseIcon pause
-  v-layout(justify-start, align-center)
-    v-flex(xs2)
-      component.ma-2(:is="format.icon")
-    v-flex(xs10)
-      div.watcherName.pt-2(v-html="compiledTemplate")
-  v-layout
-    v-flex(xs12)
-      div.moreInfos.py-1(@click="showWatcherModal")
-        v-layout(justify-center)
-          div More infos
-          v-icon.pl-1(color="white", small) arrow_forward
+v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight + 'em'}")
+  div(:class="{ blinking: isBlinking }", )
+    v-layout(justify-start)
+      v-flex(xs2)
+        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
+      v-flex(xs10)
+        div.watcherName.pt-3(v-html="compiledTemplate")
+      v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
+        v-icon pause
 </template>
 
 <script>
+import find from 'lodash/find';
 import modalMixin from '@/mixins/modal/modal';
 import compile from '@/helpers/handlebars';
-
-import SunIcon from './icons/sun.vue';
-import CloudySunIcon from './icons/cloudy-sun.vue';
-import CloudIcon from './icons/cloud.vue';
-import RainingCloudIcon from './icons/raining-cloud.vue';
-import PauseIcon from './icons/pause.vue';
+import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES, WEATHER_ICONS } from '@/constants';
 
 export default {
-  components: {
-    SunIcon,
-    CloudySunIcon,
-    CloudIcon,
-    RainingCloudIcon,
-    PauseIcon,
-  },
   mixins: [modalMixin],
   props: {
     watcher: {
@@ -47,26 +31,61 @@ export default {
     },
   },
   computed: {
+    isPaused() {
+      return this.watcher.active_pb_all;
+    },
+    hasWatcherPbehavior() {
+      return this.watcher.active_pb_watcher;
+    },
     format() {
-      const hasActivePb = this.watcher.active_pb_all || this.watcher.active_pb_watcher;
-      const iconsMap = {
-        [this.$constants.ENTITIES_STATES.ok]: SunIcon,
-        [this.$constants.ENTITIES_STATES.minor]: CloudySunIcon,
-        [this.$constants.ENTITIES_STATES.major]: CloudIcon,
-        [this.$constants.ENTITIES_STATES.critical]: RainingCloudIcon,
-      };
+      if (!this.isPaused && !this.hasWatcherPbehavior) {
+        const state = this.watcher.state.val;
 
-      if (hasActivePb) {
-        return { icon: PauseIcon, color: this.$constants.WATCHER_PBEHAVIOR_COLOR };
+        return {
+          icon: WEATHER_ICONS[state],
+          color: WATCHER_STATES_COLORS[state],
+        };
+      }
+
+      const pbehaviors = this.hasWatcherPbehavior ? this.watcher.watcher_pbehavior : this.watcher.pbehavior;
+
+      const maintenancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.maintenance });
+      const outOfSurveillancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
+
+      let icon = WEATHER_ICONS.pause;
+
+      if (maintenancePbehavior) {
+        icon = WEATHER_ICONS.maintenance;
+      } else if (outOfSurveillancePbehavior) {
+        icon = WEATHER_ICONS.outOfSurveillance;
+      }
+
+      if (this.isPaused && !this.hasWatcherPbehavior) {
+        icon = WEATHER_ICONS.pause;
       }
 
       return {
-        icon: iconsMap[this.watcher.state.val],
-        color: this.$constants.WATCHER_STATES_COLORS[this.watcher.state.val],
+        color: WATCHER_PBEHAVIOR_COLOR,
+        icon,
       };
     },
     compiledTemplate() {
       return compile(this.template, { watcher: this.watcher });
+    },
+    getItemClasses() {
+      return [
+        this.format.color,
+        `mt-${this.widget.parameters.margin.top}`,
+        `mr-${this.widget.parameters.margin.right}`,
+        `mb-${this.widget.parameters.margin.bottom}`,
+        `ml-${this.widget.parameters.margin.left}`,
+      ];
+    },
+    itemHeight() {
+      return 4 + this.widget.parameters.heightFactor;
+    },
+    isBlinking() {
+      return this.watcher.alerts_not_ack;
     },
   },
   methods: {
@@ -85,40 +104,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .iconContainer {
-    font-size: 48px;
-  }
-
-  .pauseContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 25%;
-    clip-path: polygon(100% 0 , 0 100%, 100% 100%);
-    background-color: white;
-    z-index: 1;
+  .pauseIcon {
     position: absolute;
     right: 0;
-  }
-
-  .pauseIcon {
-    z-index: 4;
-    position: relative;
-    top: 1em;
-    left: 20%;
-    color: black;
+    bottom: 0;
+    cursor: inherit;
   }
 
   .watcherName {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 0em;
   }
 
-  .moreInfos {
-    z-index: 2;
-    background-color: rgba(0,0,0,0.2);
-    cursor: pointer;
+  @keyframes blink {
+    0% { opacity: 1 }
+    50% { opacity: 0.3 }
+  }
+
+  .blinking {
+    animation: blink 2s linear infinite;
   }
 </style>

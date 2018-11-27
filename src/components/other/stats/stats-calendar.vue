@@ -1,9 +1,5 @@
 <template lang="pug">
   div
-    v-layout.white(wrap, justify-space-between, align-center)
-      v-flex
-        v-btn(icon, @click="showSettings")
-          v-icon settings
     v-layout.white.calender-wrapper
       progress-overlay(:pending="pending")
       ds-calendar(
@@ -41,7 +37,6 @@ import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/d
 import { generateWidgetByType } from '@/helpers/entities';
 
 import modalMixin from '@/mixins/modal/modal';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
@@ -52,14 +47,10 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: { ProgressOverlay, DsCalendar },
-  mixins: [modalMixin, sideBarMixin, widgetQueryMixin],
+  mixins: [modalMixin, widgetQueryMixin],
   props: {
     widget: {
       type: Object,
-      required: true,
-    },
-    rowId: {
-      type: String,
       required: true,
     },
   },
@@ -140,16 +131,6 @@ export default {
     ...alarmMapActions({
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
-
-    showSettings() {
-      this.showSideBar({
-        name: this.$constants.SIDE_BARS.statsCalendarSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
 
     editEvent(event) {
       const { meta } = event.data;
