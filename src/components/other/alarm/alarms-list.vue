@@ -127,10 +127,6 @@ export default {
     rowId: {
       type: String,
     },
-    hasUpdateAccess: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
