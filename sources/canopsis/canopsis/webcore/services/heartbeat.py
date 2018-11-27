@@ -82,7 +82,7 @@ def exports(ws):
     @ws.application.get(
         "/api/v2/heartbeat/"
     )
-    def get_heartbeats():
+    def list_heartbeats():
         """ Return every heartbeats stored in database.
         :rtype: a json representation as a dict of every heartbeats stored in
         or a dict with the status (name) and the description of the issue
@@ -102,10 +102,7 @@ def exports(ws):
         try:
             manager = HeartbeatManager(
                 *HeartbeatManager.provide_default_basics())
-        except PyMongoError:
-            return gen_database_error()
 
-        try:
             if not manager.find_heartbeat_document(heartbeat_id):
                 return gen_json_error({"name": "heartbeat not found",
                                        "description": heartbeat_id},
@@ -120,3 +117,23 @@ def exports(ws):
             "name": "heartbeat removed",
             "description": heartbeat_id
         })
+
+    @ws.application.get(
+        '/api/v2/heartbeat/<heartbeat_id:id_filter>'
+    )
+    def get_heartbeat(heartbeat_id):
+
+        try:
+            manager = HeartbeatManager(
+                *HeartbeatManager.provide_default_basics())
+
+            heartbeat = manager.find_heartbeat_document(heartbeat_id)
+            if not heartbeat:
+                return gen_json_error({"name": "heartbeat not found",
+                                       "description": heartbeat_id},
+                                      HTTP_NOT_FOUND)
+
+        except (PyMongoError, CollectionError):
+            return gen_database_error()
+
+        return gen_json(heartbeat)
