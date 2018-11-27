@@ -18,26 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import itertools
-
-from hashlib import md5
-
 from canopsis.common.collection import MongoCollection
 from canopsis.models.heartbeat import HeartBeat
-
-
-def get_pattern_hash(pattern):
-    """
-    Hash the heartbeat pattern.
-
-    :param `dict` pattern: heartbeat pattern.
-    :return: heartbeat pattern hash.
-    :rtype: `str`.
-    """
-    checksum = md5()
-    for chunk in itertools.chain(*((k, pattern[k]) for k in sorted(pattern))):
-        checksum.update(chunk)
-    return checksum.hexdigest()
+from canopsis.common.mongo_store import MongoStore
+from canopsis.logger import Logger
 
 
 class HeartbeatError(Exception):
@@ -58,26 +42,40 @@ class HeartbeatManager(object):
     """
 
     COLLECTION = 'heartbeat'
-    __ID_PREFIX = 'heartbeat_'
 
-    def __init__(self, collection):
+    LOG_PATH = 'var/log/heartbeat.log'
+
+    @classmethod
+    def provide_default_basics(cls):
+        """
+        Provide logger, config, storages...
+
+        ! Do not use in tests !
+
+        :rtype: Union[logging.Logger,
+                      canopsis.common.collection.MongoCollection]
+        """
+        store = MongoStore.get_default()
+        collection = store.get_collection(name=cls.COLLECTION)
+        return (Logger.get('action', cls.LOG_PATH),
+                MongoCollection(collection))
+
+    def __init__(self, logger, collection):
         """
 
+        :param `~.logger.Logger` logger: object.
         :param `~.common.collection.MongoCollection` collection: object.
-        # :param `~.models.heartbeat.HeartBeat` heartbeat_model: object.
         """
+        self.__logger = logger
         self.__collection = MongoCollection(collection)
 
-    def insert_heartbeat_document(self, pattern, expected_interval):
+    def create_heartbeat(self, heartbeat):
         """
-        Add a new Heartbeat.
+        Create a new Heartbeat.
 
-        :param `dict` pattern: mapping with a string keys
-                      and with a string values.
-        :param `str` expected_interval: expected Event interval
-                     that matches `__expected_interval_pattern` regex pattern.
+        :param `HeartBeat` heartbeat: a Heartbeat model.
 
-        :returns: a new Heartbeat ID.
+        :returns: a created Heartbeat ID.
         :rtype: `str`.
 
         :raises: (`ValueError`,
@@ -85,21 +83,10 @@ class HeartbeatManager(object):
                   `pymongo.errors.PyMongoError`,
                   `~.common.collection.CollectionError`, ).
         """
-        if not HeartBeat.validate_heartbeat_pattern(pattern):
-            raise ValueError('Not valid param: "pattern"')
-        if not HeartBeat.validate_expected_interval(expected_interval):
-            raise ValueError('Not valid param: "expected_interval"')
-
-        heartbeat_id = self.__ID_PREFIX + get_pattern_hash(pattern)
-
-        if self.find_heartbeat_document(heartbeat_id):
+        if self.find_heartbeat_document(heartbeat.id):
             raise HeartbeatPatternExistsError()
 
-        return self.__collection.insert({
-            "_id": heartbeat_id,
-            "pattern": pattern,
-            "expected_interval": expected_interval
-        })
+        return self.__collection.insert(heartbeat.to_dict())
 
     def find_heartbeat_document(self, heartbeat_id):
         """
