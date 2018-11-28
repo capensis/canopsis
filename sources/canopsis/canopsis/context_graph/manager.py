@@ -375,18 +375,20 @@ class ContextGraph(object):
         }
         pipeline.append(match_query)
 
-        join_alarms = {
-            '$lookup': {
-                'from': 'periodical_alarm',
-                'localField': '_id',
-                'foreignField': 'd',
-                'as': 'alarm'
-            }
-        }
-        pipeline.append(join_alarms)
+        total_count_data = list(col.aggregate(
+            pipeline + [{'$count': 'total_count'}]))
 
-        total_count = list(col.aggregate(
-            pipeline + [{'$count': 'total_count'}]))[0]["total_count"]
+        if(len(total_count_data) == 1):
+            try:
+                total_count = total_count_data[0]["total_count"]
+            except (IndexError, KeyError):
+                self.logger.error(
+                    "Exception while trying to reach total_count")
+                return {"total_count": 0, "count": 0, "data": []}
+        else:
+            self.logger.error(
+                "The aggregate returned unexpected data about total_count")
+            return {"total_count": 0, "count": 0, "data": []}
 
         if offset > 0:
             set_offset = {
