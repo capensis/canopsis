@@ -390,7 +390,7 @@ function dragended(d) {
     def get_entities_with_open_alarms(query={}, limit=0, offset=0):
         """
         Return the entities filtered with a mongo filter.
-        Each entity contain a list of the currently open alarms.
+        Each entity can contain an open alarm, if it exists.
         """
         try:
             res = manager.get_entities_with_open_alarms(query, limit, offset)

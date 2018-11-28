@@ -359,8 +359,8 @@ class ContextGraph(object):
 
     def get_entities_with_open_alarms(self, query, limit, offset):
         """
-        Get a list of entities enhaced with open alarms data found with
-        a given mongo filter.
+        Return the entities filtered with a mongo filter.
+        Each entity can contain an open alarm, if it exists.
 
         :param query: Custom mongodb filter for entities
         :type query: dict
