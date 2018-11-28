@@ -387,7 +387,7 @@ function dragended(d) {
         payload=['query', 'limit', 'offset'],
         response=lambda x, **kwargs: x
     )
-    def get_entities_with_open_alarms(query, limit=0, offset=0):
+    def get_entities_with_open_alarms(query={}, limit=0, offset=0):
         """
         Return the entities filtered with a mongo filter.
         Each entity contain a list of the currently open alarms.
