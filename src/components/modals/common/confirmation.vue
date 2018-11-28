@@ -5,7 +5,7 @@
         span.headline {{ $t('common.confirmation') }}
     v-card-text
       v-layout(wrap, justify-center)
-        v-btn.primary(@click="submit") {{ $t('common.yes') }}
+        v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.yes') }}
         v-btn.error(@click="hideModal") {{ $t('common.no') }}
 </template>
 
@@ -19,12 +19,19 @@ import { MODALS } from '@/constants';
 export default {
   name: MODALS.confirmation,
   mixins: [modalInnerMixin],
+  data() {
+    return {
+      submitting: false,
+    };
+  },
   methods: {
     async submit() {
+      this.submitting = true;
       if (this.config.action) {
         await this.config.action();
       }
       this.hideModal();
+      this.submitting = false;
     },
   },
 };

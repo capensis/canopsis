@@ -52,14 +52,11 @@ export default {
     },
   },
   actions: {
-    create(context, { data }) {
-      return request.post(
-        API_ROUTES.watcher,
-        { _id: data._id, mfilter: data.mfilter, display_name: data.display_name },
-      );
+    async create(context, { data }) {
+      await request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
     },
-    edit(context, { data }) {
-      return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
+    async edit(context, { data }) {
+      await request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
     },
 
     async remove({ dispatch }, { id } = {}) {
