@@ -407,7 +407,7 @@ class ContextGraph(object):
                         'input': '$alarm',
                         'as': 'alarm',
                         'cond': {
-                            "$eq": ["$$alarm.t", None]
+                            "$not": "$$alarm.v.resolved"
                         }
                     }
                 }
