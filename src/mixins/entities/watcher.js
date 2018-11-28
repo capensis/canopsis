@@ -23,6 +23,9 @@ export default {
     ...mapActions({
       fetchWatcherItem: 'fetchItem',
       fetchWatchersList: 'fetchList',
+      createWatcher: 'create',
+      removeWatcher: 'remove',
+      editWatcher: 'edit',
     }),
   },
 };

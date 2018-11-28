@@ -22,9 +22,11 @@
 
 <script>
 
+import uid from '@/helpers/uid';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import popupMixin from '@/mixins/popup';
 
 import CreateForm from './partial/create-entity-form.vue';
 import ManageInfos from './partial/manage-infos.vue';
@@ -44,6 +46,7 @@ export default {
   mixins: [
     modalInnerMixin,
     entitiesContextEntityMixin,
+    popupMixin,
   ],
   data() {
     return {
@@ -82,6 +85,10 @@ export default {
     if (this.config.item) {
       this.form = { ...this.config.item };
     }
+
+    if (this.config.isDuplicating) {
+      this.form.name = '';
+    }
   },
   methods: {
     updateImpact(entities) {
@@ -94,16 +101,27 @@ export default {
       this.submitting = true;
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
-        if (this.config.item) {
-          await this.updateContextEntity({ data: this.form });
-        } else {
-          const formData = { ...this.form, _id: this.form.name };
-          await this.createContextEntity({ data: formData });
+        const formData = { ...this.form };
+
+        if (!this.config.item || this.config.isDuplicating) {
+          formData._id = uid();
         }
+        try {
+          await this.config.action(formData);
+          this.refreshContextEntitiesLists();
+          this.hideModal();
 
-        this.refreshContextEntitiesLists();
-
-        this.hideModal();
+          if (this.config.item && !this.config.isDuplicating) {
+            this.addSuccessPopup({ text: this.$t('modals.createEntity.success.edit') });
+          } else if (this.config.isDuplicating) {
+            this.addSuccessPopup({ text: this.$t('modals.createEntity.success.duplicate') });
+          } else {
+            this.addSuccessPopup({ text: this.$t('modals.createEntity.success.create') });
+          }
+        } catch (err) {
+          console.error(err);
+          this.addErrorPopup({ text: this.$t('error.default') });
+        }
       }
 
       this.submitting = false;

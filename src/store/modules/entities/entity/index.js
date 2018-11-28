@@ -115,21 +115,19 @@ export default {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
-    async create({ dispatch }, { data }) {
+    async create(context, { data }) {
       try {
         // Need this special syntax for request params for the backend to handle it
         await request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
-        await dispatch('popup/add', { type: 'success', text: i18n.t('success.createEntity') }, { root: true });
       } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        console.warn(err);
       }
     },
-    async update({ dispatch }, { data }) {
+    async update(context, { data }) {
       try {
         await request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
-        await dispatch('popup/add', { type: 'success', text: i18n.t('success.editEntity') }, { root: true });
       } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        console.warn(err);
       }
     },
     async fetchGeneralList({ commit, dispatch }, { params } = {}) {

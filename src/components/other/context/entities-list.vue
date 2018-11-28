@@ -59,6 +59,8 @@
           td
             v-btn(@click.stop="editEntity(props.item)", icon, small)
               v-icon edit
+            v-btn(@click.stop="duplicateEntity(props.item)", icon, small)
+              v-icon file_copy
             v-btn(@click.stop="deleteEntity(props.item)", icon, small)
               v-icon delete
             v-btn(@click.stop="addPbehaviors(props.item._id)", icon, small)
@@ -88,6 +90,7 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import filterSelectMixin from '@/mixins/filter-select';
 
 import ContextFab from './actions/context-fab.vue';
@@ -118,6 +121,7 @@ export default {
     widgetQueryMixin,
     widgetColumnsMixin,
     entitiesContextEntityMixin,
+    entitiesWatcherMixin,
     filterSelectMixin,
   ],
   props: {
@@ -189,6 +193,7 @@ export default {
           config: {
             title: 'modals.createWatcher.editTitle',
             item,
+            action: watcher => this.editWatcher({ data: watcher }),
           },
         });
       } else {
@@ -197,6 +202,30 @@ export default {
           config: {
             title: 'modals.createEntity.editTitle',
             item,
+            action: entity => this.updateContextEntity({ data: entity }),
+          },
+        });
+      }
+    },
+    duplicateEntity(item) {
+      if (item.type === 'watcher') {
+        this.showModal({
+          name: MODALS.createWatcher,
+          config: {
+            title: 'modals.createWatcher.editTitle',
+            item,
+            isDuplicating: true,
+            action: watcher => this.createWatcher({ data: watcher }),
+          },
+        });
+      } else {
+        this.showModal({
+          name: MODALS.createEntity,
+          config: {
+            title: 'modals.createEntity.duplicateTitle',
+            item,
+            isDuplicating: true,
+            action: entity => this.createContextEntity({ data: entity }),
           },
         });
       }
