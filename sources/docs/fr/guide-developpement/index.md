@@ -5,6 +5,8 @@ Vous trouverez ici toute la documentations nécéssaire au développement sur ca
 # Process de développement
 ## Organisation des dépôts
 ## Process de release
+### Nomenclature des messages de commit
+  - specification des segments de canopsis (alerts, action, …)
 
 # Installation d'un environnement de développement
 ## Python
