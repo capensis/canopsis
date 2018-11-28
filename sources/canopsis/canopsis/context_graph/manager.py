@@ -402,6 +402,16 @@ class ContextGraph(object):
             }
             pipeline.append(set_limit)
 
+        join_alarms = {
+            '$lookup': {
+                'from': 'periodical_alarm',
+                'localField': '_id',
+                'foreignField': 'd',
+                'as': 'alarm'
+            }
+        }
+        pipeline.append(join_alarms)
+
         ignore_terminated_alarms = {
             '$addFields': {
                 'alarm': {
