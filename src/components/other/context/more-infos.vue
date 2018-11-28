@@ -66,9 +66,7 @@ export default {
   computed: {
     lastActiveDate() {
       if (this.item.enable_history) {
-        const enableHistory = [...this.item.enable_history];
-        enableHistory.sort(((a, b) => a - b));
-        return enableHistory[0] * 1000;
+        return Math.max(this.item.enable_history) * 1000;
       }
 
       return null;
