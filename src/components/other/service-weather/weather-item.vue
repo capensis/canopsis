@@ -2,10 +2,8 @@
 v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight + 'em'}")
   div(:class="{ blinking: isBlinking }", )
     v-layout(justify-start)
-      v-flex(xs2)
-        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
-      v-flex(xs10)
-        div.watcherName.pt-3(v-html="compiledTemplate")
+      v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
+      div.watcherName.pt-3(v-html="compiledTemplate")
       v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
         v-icon pause
 </template>
@@ -112,10 +110,11 @@ export default {
   }
 
   .watcherName {
+    color: white;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 0em;
+    line-height: 1em;
   }
 
   @keyframes blink {
