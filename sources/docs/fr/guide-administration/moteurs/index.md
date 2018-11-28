@@ -1,67 +1,65 @@
 # Sommaire et présentation
 
-- [L'arrêt et la relance des moteurs](activation-desactivation-moteurs.md)  
-- [Schéma d'enchainement](schema-enchainement-moteurs.md)  
+- [L'arrêt et la relance des moteurs](activation-desactivation-moteurs.md)
+- [Schéma d'enchainement](schema-enchainement-moteurs.md)
 
 **TODO (DWU) :** doublons sur certains moteurs, entre cette partie du Guide Administrateur et le Guide Utilisateur ! Exemple : pbehaviors, météo… Ne pas documenter la même chose à 2 endroits !
 
 **(MG) :** Moteur présent dans schéma d'enchaînements non présent dans liste des moteurs et inversement, normal ?
 **(MG)/amélioration :** Mettre liens clicables dans tableau moteurs vers les docs.
 
-**TODO (DWU) :** schéma, etc. Plus de détails sur les champs obligatoires aujourd'hui ?   
+**TODO (DWU) :** schéma, etc. Plus de détails sur les champs obligatoires aujourd'hui ?
 **TODO :** les différents flags (ex : printEventOnError, publishQueue) ne sont pas du tout documentés.
 
-Les événements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.  
-  
-Un moteur a **plusieurs rôles**:  
+Les événements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.
 
-- consommation d'un événement: pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).  
-- Effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.  
-- Consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.  
+Un moteur a **plusieurs rôles**:
+
+- consommation d'un événement: pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
+- Effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.
+- Consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
 
 Un moteur peut avoir les **propriétées** suivantes :
 
-- un type (the python module to load)  
-- un nom (must be unique)  
-- Un identifiant (0, 1, 2, 3, ..., must be unique)  
-- Un niveau de log (debug, info, warning, or error)  
+- un type (the python module to load)
+- un nom (must be unique)
+- Un identifiant (0, 1, 2, 3, ..., must be unique)
+- Un niveau de log (debug, info, warning, or error)
 
 Le listing des moteurs peut être réalisé grace à cette commande : `systemctl list-units "canopsis*"`
 
 ## Liste des moteurs
 
-### Moteurs NG
-
-(Moteurs Go)
+### Moteurs Go
 
 | Moteur         | Description                                                                                       | CAT ?              |
 |:---------------|:--------------------------------------------------------------------------------------------------|:------------------:|
-| axe            | TODO                                                                                              |                    |
-| che            | TODO                                                                                              |                    |
-| heartbeat      | Parcourir les entités surveillées pour surveiller l'absence d'information, clore les alarmes.     |                    |
-| stat           | Peupler le registre d'activité (donnés et méta-données).                                          |                    |
+| axe            | Gère le cycle de vie des alarmes.                                                                 |                    |
+| che            | Supprime les événements invalides, gère le contexte, et enrichi les événements.                   |                    |
+| heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.                        |                    |
+| stat           | Peuple le registre d'activité (données et méta-données).                                          |                    |
 
 **TODO (DWU) :** voir avec Lucas ce qui est prévu entre stat et statng ?
 
 ### Moteurs Python
- 
+
 | Moteur                                                         | Description                                      | CAT ?              |
 |:---------------------------------------------------------------|:-------------------------------------------------|:------------------:|
-| canopsis-engine@**dynamic-alerts**.service                     | Gérer les alarmes à partir d'événements          |                    | 
-| canopsis-engine@**cleaner-cleaner_alerts**.service             | Supprimer des événements invalides               |                    | 
-| canopsis-engine@**cleaner-cleaner_events**.service             | Supprime les événements incorrects               |                    |
-| canopsis-engine@**dynamic-context-graph**.service              | Stocker les données contextuelles de l'événement |                    | 
-| **datametrie**                                                 | Gestion du connecteur datametrie                 | :white_check_mark: | 
-| canopsis-engine@**event_filter-event_filter**.service          | Appliquer des règles de filtrage                 |                    | 
-| **metric**                                                     | Stocker les données de métrologie de l'événement |                    | 
+| canopsis-engine@**dynamic-alerts**.service                     | Gère le cycle de vie des alarmes.                |                    |
+| canopsis-engine@**cleaner-cleaner_alerts**.service             | Supprime les événements invalides.               |                    |
+| canopsis-engine@**cleaner-cleaner_events**.service             | Supprime les événements invalides.               |                    |
+| canopsis-engine@**dynamic-context-graph**.service              | Stocke les données contextuelles des événements. |                    |
+| **datametrie**                                                 | Gestion du connecteur datametrie.                | :white_check_mark: |
+| canopsis-engine@**event_filter-event_filter**.service          | Applique des règles de filtrage.                 |                    |
+| **metric**                                                     | Stocke les données de métrologie des événements. |                    |
 | canopsis-engine@**dynamic-pbehavior**.service                  | Gestion des périodes de maintenance              |                    |
-| canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches |                    | 
-| **snmp**                                                       | Pour la gestion des traps SNMP                   | :white_check_mark: | 
-| canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données    |                    | 
-| canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse     |                    | 
-| canopsis-engine@**task_mail-task_mail**.service                | Gestionnaire de tâches pour envoyer du courrier  |                    | 
-| canopsis-engine@**ticket-ticket**.service                      | Gestion du ticketing                             |                    | 
-| canopsis-engine@**dynamic-watcher**.service                    | Gestion des Watchers (groupes de surveillance)   |                    | 
+| canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches |                    |
+| **snmp**                                                       | Pour la gestion des traps SNMP                   | :white_check_mark: |
+| canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données    |                    |
+| canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse     |                    |
+| canopsis-engine@**task_mail-task_mail**.service                | Gestionnaire de tâches pour envoyer du courrier  |                    |
+| canopsis-engine@**ticket-ticket**.service                      | Gestion du ticketing                             |                    |
+| canopsis-engine@**dynamic-watcher**.service                    | Gestion des Watchers (groupes de surveillance)   |                    |
 
 ## Flags & Usage
 
