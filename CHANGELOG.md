@@ -8,6 +8,20 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.5.0 - Due date : 2018-11-29
+
+- [Documentation]: Add a new documentation
+- [Python]: Add a new route to fetch a list of entities with their current alarm
+- [Python]: Automatically recover from the loss of the primary member of a MongoDB replicaset
+- [Go]: Prevent a crash when a snooze has no duration
+- [Go]: Add an option to automatically acknowledge the resources below a component
+- [Go]: End the implementation of the eventfilter service
+- [Go]: Automatically create a ticket when a new alarm is created if the flag autoDeclareTickets is given to the axe engine
+- [ServiceWeather]: Fix the message set in the events sent when an action is triggered
+- [Tooling]: Update the configuration of catag to handle the new canopsis project
+- [Tooling]: Add a VERSION.txt file inside canopsis, display it on the prompt inside the canopsis env and add an API to retrieve it through HTTP
+- [Tooling]: Add the missing engine-action in the push_docker_image.sh script
+
 ## Canopsis 3.4.0 - Due date : 2018-11-15
 
 - [Go]: Fix make release command
