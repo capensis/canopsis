@@ -1,7 +1,7 @@
 # Sommaire et présentation
 
-- [L'arrêt et la relance des moteurs](activation-desactivation-moteurs.md)
-- [Schéma d'enchainement](schema-enchainement-moteurs.md)
+- [Activation et désactivation des moteurs](activation-desactivation-moteurs.md)
+- [Enchainement des moteurs](schema-enchainement-moteurs.md)
 
 **TODO (DWU) :** doublons sur certains moteurs, entre cette partie du Guide Administrateur et le Guide Utilisateur ! Exemple : pbehaviors, météo… Ne pas documenter la même chose à 2 endroits !
 
@@ -19,7 +19,7 @@ Un moteur a **plusieurs rôles**:
 - Effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.
 - Consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
 
-Un moteur peut avoir les **propriétées** suivantes :
+Un moteur peut avoir les **propriétés** suivantes :
 
 - un type (the python module to load)
 - un nom (must be unique)
@@ -32,34 +32,36 @@ Le listing des moteurs peut être réalisé grace à cette commande : `systemctl
 
 ### Moteurs Go
 
-| Moteur         | Description                                                                                       | CAT ?              |
-|:---------------|:--------------------------------------------------------------------------------------------------|:------------------:|
-| axe            | Gère le cycle de vie des alarmes.                                                                 |                    |
-| che            | Supprime les événements invalides, gère le contexte, et enrichi les événements.                   |                    |
-| heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.                        |                    |
-| stat           | Peuple le registre d'activité (données et méta-données).                                          |                    |
+| Moteur         | Description                                                                     | CAT ?              |
+|:---------------|:--------------------------------------------------------------------------------|:------------------:|
+| axe            | Gère le cycle de vie des alarmes.                                               |                    |
+| che            | Supprime les événements invalides, gère le contexte, et enrichi les événements. |                    |
+| heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.      |                    |
+| stat           | Calcule des statistiques sur les états des alarmes.                             |                    |
+| action         | Applique des actions définies par l'utilisateur.                                |                    |
 
 **TODO (DWU) :** voir avec Lucas ce qui est prévu entre stat et statng ?
 
 ### Moteurs Python
 
-| Moteur                                                         | Description                                      | CAT ?              |
-|:---------------------------------------------------------------|:-------------------------------------------------|:------------------:|
-| canopsis-engine@**dynamic-alerts**.service                     | Gère le cycle de vie des alarmes.                |                    |
-| canopsis-engine@**cleaner-cleaner_alerts**.service             | Supprime les événements invalides.               |                    |
-| canopsis-engine@**cleaner-cleaner_events**.service             | Supprime les événements invalides.               |                    |
-| canopsis-engine@**dynamic-context-graph**.service              | Stocke les données contextuelles des événements. |                    |
-| **datametrie**                                                 | Gestion du connecteur datametrie.                | :white_check_mark: |
-| canopsis-engine@**event_filter-event_filter**.service          | Applique des règles de filtrage.                 |                    |
-| **metric**                                                     | Stocke les données de métrologie des événements. |                    |
-| canopsis-engine@**dynamic-pbehavior**.service                  | Gestion des périodes de maintenance              |                    |
-| canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches |                    |
-| **snmp**                                                       | Pour la gestion des traps SNMP                   | :white_check_mark: |
-| canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données    |                    |
-| canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse     |                    |
-| canopsis-engine@**task_mail-task_mail**.service                | Gestionnaire de tâches pour envoyer du courrier  |                    |
-| canopsis-engine@**ticket-ticket**.service                      | Gestion du ticketing                             |                    |
-| canopsis-engine@**dynamic-watcher**.service                    | Gestion des Watchers (groupes de surveillance)   |                    |
+| Moteur                                                         | Description                                              | CAT ?              |
+|:---------------------------------------------------------------|:---------------------------------------------------------|:------------------:|
+| canopsis-engine@**dynamic-alerts**.service                     | Gère le cycle de vie des alarmes.                        |                    |
+| canopsis-engine@**cleaner-cleaner_alerts**.service             | Supprime les événements invalides.                       |                    |
+| canopsis-engine@**cleaner-cleaner_events**.service             | Supprime les événements invalides.                       |                    |
+| canopsis-engine@**dynamic-context-graph**.service              | Stocke les données contextuelles des événements.         |                    |
+| **datametrie**                                                 | Gère le connecteur datametrie.                           | :white_check_mark: |
+| canopsis-engine@**event_filter-event_filter**.service          | Applique des règles de filtrage.                         |                    |
+| canopsis-engine@**metric-metric**.service                      | Stocke les données de métrologie des événements.         |                    |
+| canopsis-engine@**dynamic-pbehavior**.service                  | Gère les périodes de maintenance.                        |                    |
+| canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches.        |                    |
+| **snmp**                                                       | Gère les traps SNMP.                                     | :white_check_mark: |
+| canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données.           |                    |
+| canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse.            |                    |
+| canopsis-engine@**task_mail-task_mail**.service                | Gestionnaire de tâches pour envoyer du courrier.         |                    |
+| canopsis-engine@**ticket-ticket**.service                      | Gère les tickets externes.                               |                    |
+| canopsis-engine@**dynamic-watcher**.service                    | Gère les watchers (groupes de surveillance).             |                    |
+| canopsis-engine-cat@**statsng-statsng**.service                | Calcule des statistiques sur les alarmes et les entités. | :white_check_mark: |
 
 ## Flags & Usage
 
@@ -115,6 +117,7 @@ revolution/cmd/engine-che/engine-che:
 *  acknowledgement
 *  cancel
 *  context
+*  eventstore
 *  task_linklist : n'existe plus depuis Canopsis 3.0
 *  linklist : n'existe plus depuis Canopsis 3.0, remplacé par les linkbuilders
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric
