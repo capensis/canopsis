@@ -24,9 +24,6 @@
             v-icon pause
       v-flex
         context-fab
-      v-flex(xs2)
-        v-btn(icon, @click.prevent="showSettings")
-          v-icon settings
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -78,7 +75,7 @@
 import omit from 'lodash/omit';
 import isString from 'lodash/isString';
 
-import { MODALS, SIDE_BARS, ENTITIES_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -86,7 +83,6 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import modalMixin from '@/mixins/modal/modal';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
@@ -117,7 +113,6 @@ export default {
   },
   mixins: [
     modalMixin,
-    sideBarMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
     entitiesContextEntityMixin,
@@ -127,10 +122,6 @@ export default {
   props: {
     widget: {
       type: Object,
-      required: true,
-    },
-    rowId: {
-      type: String,
       required: true,
     },
   },
@@ -252,15 +243,6 @@ export default {
         config: {
           itemsType: ENTITIES_TYPES.entity,
           itemsIds: itemId ? [itemId] : this.selected,
-        },
-      });
-    },
-    showSettings() {
-      this.showSideBar({
-        name: SIDE_BARS.contextSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
         },
       });
     },

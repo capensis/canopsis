@@ -227,6 +227,14 @@ export default {
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
+    height: 'Height',
+    margin: {
+      title: 'Block margins',
+      top: 'Margin - Top',
+      right: 'Margin - Right',
+      bottom: 'Margin - Bottom',
+      left: 'Margin - Left',
+    },
     contextTypeOfEntities: {
       title: 'Type of entities',
       fields: {
@@ -724,5 +732,12 @@ export default {
   },
   parameters: {
     interfaceLanguage: 'Interface language',
+    groupsNavigationType: {
+      title: 'Groups navigation type',
+      items: {
+        sideBar: 'Side bar',
+        topBar: 'Top bar',
+      },
+    },
   },
 };

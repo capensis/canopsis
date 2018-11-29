@@ -158,11 +158,12 @@ export default {
     },
     refreshLists({ dispatch, getters, state }) {
       const widgetsIds = Object.keys(state.widgets);
-
-      widgetsIds.forEach(widgetId => dispatch('fetchList', {
+      const fetchRequests = widgetsIds.map(widgetId => dispatch('fetchList', {
         widgetId,
         params: getters.getFetchingParamsByWidgetId(widgetId),
       }));
+
+      return Promise.all(fetchRequests);
     },
   },
 };
