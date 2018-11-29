@@ -13,9 +13,9 @@ Canopsis doit être installé sur l'un des environnements Linux suivants :
 ### Sur Debian
 
 ```sh
-apt install software-properties-common apt-transport-https lsb-release
-add-apt-repository \
-  "deb [trusted=yes] https://repositories.canopsis.net/pulp/deb/debian$(cat /etc/debian_version | cut -d'.' -f 1)-canopsis/ stable main"
+apt install apt-transport-https lsb-release
+echo "deb [trusted=yes] https://repositories.canopsis.net/pulp/deb/debian$(cat /etc/debian_version | cut -d'.' -f 1)-canopsis/ stable main" \
+> /etc/apt/sources.list.d/canopsis.list
 apt update
 apt install canopsis-core
 ```
