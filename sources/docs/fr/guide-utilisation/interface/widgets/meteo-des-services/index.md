@@ -87,7 +87,7 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir le filtre à appliquer à la météo de services.
 Ce filtre permet de n'afficher qu'une partie des observateurs.
-Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../filtres/index.md).
+Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../avance/filtres/index.md).
 
 Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouton 'Créer/Editer'. Une fenêtre de création de filtre s'ouvre alors.
 

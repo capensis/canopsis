@@ -31,3 +31,107 @@ markdown_extensions:
 plugins:
     - search
 
+site_name: Documentation Canopsis
+site_url: https://doc.canopsis.net
+
+repo_url: https://git.canopsis.net/canopsis/canopsis
+
+docs_dir: 
+   sources/docs/fr
+copyright: Documentation © Canopsis 2018 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
+
+theme:
+  name: material
+  language: fr
+  extra:
+    search:
+        language: 'fr, en'
+  logo: 'img/canopsis-mkdocs.png'
+  palette:
+    primary: 'green'
+    accent: 'green'
+  feature:
+    tabs: true
+
+
+markdown_extensions:
+    - admonition
+    - codehilite:
+        guess_lang: false
+    - toc:
+        permalink: True
+
+plugins:
+    - search
+
+nav:
+- Introduction: 'index.md'
+- Guide administration:
+    - Présentation: './guide-administration/index.md'
+    - Architecture interne: './guide-administration/architecture-interne/index.md'
+    - Installation:
+        - Sommaire: './guide-administration/installation/index.md'
+        - Installation conteneur: './guide-administration/installation/installation-conteneurs.md'
+        - Installation par paquets: './guide-administration/installation/installation-paquets.md'
+        - SeLinux et Firewall: './guide-administration/installation/pre-requis-parefeu-et-selinux.md'
+        - Première connexion, identifiants par défaut: './guide-administration/installation/premiere-connexion.md'
+    - Mise à jour: './guide-administration/mise-a-jour/index.md'
+    - Moteurs: 
+        - Sommaire et présentation: './guide-administration/moteurs/index.md'
+        - Enchainement des moteurs: './guide-administration/moteurs/schema-enchainement-moteurs.md'
+        - Activation/Désactivation des moteurs: './guide-administration/moteurs/activation-desactivation-moteurs.md'
+        - Event filter: './guide-administration/moteurs/moteur-event_filter.md'
+        - Pbehavior: './guide-administration/moteurs/moteur-pbehavior.md'
+        - Metric: './guide-administration/moteurs/moteur-metric.md'
+        - Context-graph: './guide-administration/moteurs/moteur-context-graph.md'
+        - Weather / Météo des services: './guide-administration/moteurs/moteur-meteo-des-services.md'
+    - Gestion des services: 
+        - Sommaire: './guide-administration/gestion-services/index.md'
+        - Liste des services: './guide-administration/gestion-services/liste-des-services.md'
+        - Installation, arrêt et relance: './guide-administration/gestion-services/installation-arret-relance.md'
+    - Administration avancée: 
+        - Sommaire: './guide-administration/administration-avancee/index.md'
+        - Authentification avancée: './guide-administration/administration-avancee/authentification.md'
+        - Backup et Restore BDD: './guide-administration/administration-avancee/sauvegarde-et-restauration.md'
+        - Sécurité avancée: './guide-administration/administration-avancee/configuration-parefeu-et-selinux.md'
+        - Reverse proxy: './guide-administration/administration-avancee/reverse-proxy.md'
+    - Exemples d'interconnexions: './guide-administration/exemples-interconnexions/index.md'
+    - Troubleshooting: 
+        - Sommaire: './guide-administration/troubleshooting/index.md'
+        - BDD - Requêtes de base etc.md : './guide-administration/troubleshooting/bdd-requetes-de-base.md'
+        - BDD - Cas d'un full-disk : './guide-administration/troubleshooting/fulldisk.md' 
+        - Healthcheck: './guide-administration/troubleshooting/etat-des-services.md'
+        - UI RabbitMQ: './guide-administration/troubleshooting/rabbitmq-webui.md'
+        - Analyse temps réel des flux issus des connecteurs ou des relais AMQP: './guide-administration/troubleshooting/amqp2tty.md'
+- Guide connecteurs:
+    - Présentation: './guide-connecteurs/index.md'
+    - Base de données: './guide-connecteurs/Base-de-donnees/Mysql-MariaDB-PostgreSQL-Oracle.md'
+    - Hypervision: './guide-connecteurs/Hypervision/datametrie.md'
+    - Infrastructure:
+        - Logstash vers Canopsis: './guide-connecteurs/Infrastructure/Logstash.md'
+        - SNMP Trap: './guide-connecteurs/Infrastructure/SNMPtrap.md'
+        - SNMP Trap Custom: './guide-connecteurs/Infrastructure/SNMPtrap_custom.md'
+        - Python send_event connector to Canopsis / AMQP: './guide-connecteurs/Infrastructure/send_event.md'
+    - Supervision:
+        - Connector-centreon-engine - Module (Event Broker) Centreon pour Canopsis: './guide-connecteurs/Supervision/Centreon.md'
+        - Compilation manuelle du module connector-centreon-engine: './guide-connecteurs/Supervision/Compilation-Manuelle-Module-Centreon.md'
+        - Connector Livestatus2Canopsis: './guide-connecteurs/Supervision/Icinga2.md'
+        - LibreNMS, rules, alerts and transport: './guide-connecteurs/Supervision/LibreNMS.md'
+        - Neb2Canopsis - Module (Event Broker) Nagios/Nagios-like pour Canopsis: './guide-connecteurs/Supervision/Nagios-et-Icinga.md'
+        - Shinken: './guide-connecteurs/Supervision/Shinken.md'
+        - Zabbix: './guide-connecteurs/Supervision/Zabbix.md'
+- Guide développement: ''
+- Guide utilisation:
+    - Présentation: './guide-utilisation/index.md'
+    - Interface:
+        - Présentation: './guide-utilisation/interface/index.md'
+        - Les vues: './guide-utilisation/interface/vues/index.md'
+        - Les widgets: './guide-utilisation/interface/widgets/index.md'
+        - Paramètres de l'interface: './guide-utilisation/interface/parametres-de-linterface/index.md'
+        - Avancé:
+            - Recherche: './guide-utilisation/interface/avance/recherche/index.md'
+            - Les filtres: './guide-utilisation/interface/avance/filtres/index.md'
+            - Les comportement périodiques (Pbehaviors): './guide-utilisation/interface/avance/pbehaviors/index.md'
+            - Linkbuilder: './guide-utilisation/interface/avance/linkbuilder/index.md'
+    - Vocabulaire: './guide-utilisation/vocabulaire/index.md'
+- Notes de versions: './notes-de-versions/index.md'

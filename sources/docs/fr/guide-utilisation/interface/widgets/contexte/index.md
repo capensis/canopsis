@@ -30,17 +30,17 @@ Au clique sur une entité (en dehors du texte des colonnes), des détails suppl�
 
 Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
 
-![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
+![Champ de recherche](../../avance/recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche").
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../avance/recherche/img/search-icon.png "Icone recherche").
 
-Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche").
+Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../avance/recherche/img/delete-search-icon.png "Icone suppression recherche").
 
 ### Filtres
 
 Le sélecteur de filtre permet d'appliquer un filtre sur l'Explorateur de contexte. Seuls les entités correspondant aux critères du filtres seront affichées.
 
-![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
+![Sélecteur de filtre](../../avance/filtres/img/filter-selector.png "Sélecteur de filtre")
 
 Pour sélectionner un filtre, il suffit de cliquer sur le champs 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
 Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
@@ -92,7 +92,7 @@ Au clique sur l'icône de création d'observateurs, une fenêtre s'ouvre.
 Pour créer un observateur, il vous suffit d'entrer deux informations : 
 
 - Nom (*requis*)
-- Filtre : Pour plus de détails sur les filtres et leur création, voir : [Les filtres](../../filtres/index.md)
+- Filtre : Pour plus de détails sur les filtres et leur création, voir : [Les filtres](../../avance/filtres/index.md)
 
 Cliquez ensuite sur le bouton 'Envoyer'. Votre observateur est créé !
 
@@ -102,13 +102,13 @@ Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles
 
 - Editer : Au clic sur l'icone d'édition ![Icone Editer entité](./img/edit-entity-icon.png "Icone Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
 - Supprimer : Permet de supprimer une entité/un observateur. Au clique sur l'icone de suppression ![Icone Supprimer entité](./img/delete-entity-icon.png "Icone Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur. 
-- Ajouter un comportement périodique : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clique sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+- Ajouter un comportement périodique : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clique sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../avance/pbehaviors/index.md).
 
 ### Comportements périodiques
 
 Depuis l'explorateur de contexte, il est possible d'ajouter un comportement périodique directement sur une entité, ou sur un sélection d'entités.
 
-Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques - Pbehaviors](../../avance/pbehaviors/index.md).
 
 Pour ajouter un comportement périodique sur un entité, cliquez sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
 
@@ -177,7 +177,7 @@ Ce paramètre permet de sélectionner un filtre à appliquer à l'explorateur de
 
 Un champ de sélection permet d'abord de choisir un filtre à appliquer à l'explorateur de contexte parmis les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmis les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer à l'explorateur de contexte (*Cf: [filtres](#filtres)*).
 
-Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
+Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../avance/filtres/index.md).
 Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.
 
 #### Types d'entités

@@ -146,7 +146,7 @@ Si la colonne 'state' est activée dans le Bac à alarme, l'icone ![Icone User s
 
 L'action 'Comportement périodique' permet d'ajouter un comportement périodique.
 
-Pour plus de détails sur les comportements périodiques, voir : [Les comportements périodiques](../../pbehaviors/index.md).
+Pour plus de détails sur les comportements périodiques, voir : [Les comportements périodiques](../../avance/pbehaviors/index.md).
 
 ### Lister les comportements périodiques
 
