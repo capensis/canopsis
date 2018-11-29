@@ -65,11 +65,7 @@ export default {
   },
   computed: {
     lastActiveDate() {
-      if (this.item.enable_history) {
-        return Math.max(this.item.enable_history) * 1000;
-      }
-
-      return null;
+      return Math.max(this.item.enable_history) * 1000;
     },
   },
   methods: {
