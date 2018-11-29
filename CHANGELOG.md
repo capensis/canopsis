@@ -10,7 +10,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Canopsis 3.5.0 - Due date : 2018-11-29
 
-- [Documentation]:
+- [Documentation]: Deletion of the previous canopsis documentation and add a new one.
 - [Python]: Add a new route to fetch a list of alarms with their current alarm
 - [Tooling]: Update the configuration of catag to handle the new canopsis project
 - [Go]: Automatically ack the resources below a component
