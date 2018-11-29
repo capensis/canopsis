@@ -24,4 +24,4 @@ Le schéma suivant représente un *exemple* de configuration d'enchaînement de 
 
 ![schema_moteurs](img/schema_moteurs_V3.png)
 
-Le détail du rôle des différents moteurs est dans [la liste des moteurs](../moteurs#liste-des-moteurs).  
+Le détail du rôle des différents moteurs est dans [la liste des moteurs](index.md#liste-des-moteurs).
