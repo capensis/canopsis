@@ -79,7 +79,8 @@ class InfosFilter:
             self._schema = self.obj_storage.get_elements(
                 query={"_id": self._schema_id}, projection={"_id": 0})[0]
         except IndexError as exc:
-            raise ValueError("No infos schema found in database: {}".format(exc))
+            raise ValueError(
+                "No infos schema found in database: {}".format(exc))
 
         if isinstance(self._schema, list):
             self._schema = self._schema[0]
@@ -355,6 +356,95 @@ class ContextGraph(object):
             ret_val.add(i['_id'])
 
         return ret_val
+
+    def get_entities_with_open_alarms(self, query, limit, offset):
+        """
+        Return the entities filtered with a mongo filter.
+        Each entity can contain an open alarm, if it exists.
+
+        :param query: Custom mongodb filter for entities
+        :type query: dict
+
+        :return type: an array of entities including the open alarms.
+        """
+
+        pipeline = []
+        col = self.ent_storage._backend
+        match_query = {
+            '$match': query
+        }
+        pipeline.append(match_query)
+
+        total_count_data = list(col.aggregate(
+            pipeline + [{'$count': 'total_count'}]))
+
+        if(len(total_count_data) == 1):
+            try:
+                total_count = total_count_data[0]["total_count"]
+            except (IndexError, KeyError):
+                self.logger.error(
+                    "Exception while trying to reach total_count")
+                return {"total_count": 0, "count": 0, "data": []}
+        else:
+            self.logger.error(
+                "The aggregate returned unexpected data about total_count")
+            return {"total_count": 0, "count": 0, "data": []}
+
+        if offset > 0:
+            set_offset = {
+                '$skip': offset
+            }
+            pipeline.append(set_offset)
+
+        if limit > 0:
+            set_limit = {
+                '$limit': limit
+            }
+            pipeline.append(set_limit)
+
+        join_alarms = {
+            '$lookup': {
+                'from': 'periodical_alarm',
+                'localField': '_id',
+                'foreignField': 'd',
+                'as': 'alarm'
+            }
+        }
+        pipeline.append(join_alarms)
+
+        ignore_terminated_alarms = {
+            '$addFields': {
+                'alarm': {
+                    '$filter': {
+                        'input': '$alarm',
+                        'as': 'alarm',
+                        'cond': {
+                            "$not": "$$alarm.v.resolved"
+                        }
+                    }
+                }
+            }
+        }
+        pipeline.append(ignore_terminated_alarms)
+
+        transform_alarm_array_to_field = {
+            '$addFields': {
+                'alarm': {
+                    "$cond": [
+                        {"$eq": [{"$size": "$alarm"}, 1]},
+                        {'$arrayElemAt': ["$alarm", 0]},
+                        None
+                    ]
+                }
+            }
+        }
+        pipeline.append(transform_alarm_array_to_field)
+
+        entities = list(col.aggregate(pipeline))
+
+        return {"total_count": total_count,
+                "count": len(entities),
+                "data": entities}
 
     @classmethod
     def _enable_entity(cls, entity, timestamp=None):
