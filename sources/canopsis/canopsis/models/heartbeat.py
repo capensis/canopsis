@@ -7,15 +7,20 @@ from hashlib import md5
 
 
 class HeartBeat(object):
+    """
+    Heartbeat model abstraction.
+
+    public attrs::
+        `dict` pattern: a Heartbeat pattern
+        `str` expected_interval: an event expected interval.
+        `str` id (computable property): an ID of a Heartbeat
+        derived from a pattern.
+    """
 
     __EXPECTED_INTERVAL_REGEXP = re.compile(r"^[0-9]*(s|m|h)$")
 
     PATTERN_KEY = "pattern"
     EXPECTED_INTERVAL_KEY = "expected_interval"
-
-    pattern = None  # type: dict
-    expected_interval = None  # type: str
-    id = None  # type: str
 
     def __init__(self, heartbeat_json):
         """
@@ -27,8 +32,17 @@ class HeartBeat(object):
         if not self.is_valid_heartbeat(heartbeat_json):
             raise ValueError('invalid heartbeat format')
         self.pattern = heartbeat_json[self.PATTERN_KEY]
-        self.id = self.get_pattern_hash(self.pattern)
         self.expected_interval = heartbeat_json[self.EXPECTED_INTERVAL_KEY]
+
+    @property
+    def id(self):
+        """
+        A Heartbeat ID.
+
+        :returns: a Heartbeat pattern hash.
+        :rtype: `str`.
+        """
+        return self.get_pattern_hash(self.pattern)
 
     def to_dict(self):
         """
