@@ -40,6 +40,9 @@ def gen_database_error():
 
 def exports(ws):
 
+    manager = HeartbeatManager(
+        *HeartbeatManager.provide_default_basics())
+
     @ws.application.post(
         "/api/v2/heartbeat/"
     )
@@ -62,10 +65,7 @@ def exports(ws):
                 {"description": "invalid heartbeat payload."}, HTTP_ERROR)
 
         try:
-            manager = HeartbeatManager(
-                *HeartbeatManager.provide_default_basics())
-
-            heartbeat_id = manager.create_heartbeat(model)
+            heartbeat_id = manager.create(model)
 
         except HeartbeatPatternExistsError:
             return gen_json_error(
@@ -91,18 +91,16 @@ def exports(ws):
         encountered.
         """
         try:
-            manager = HeartbeatManager(
-                *HeartbeatManager.provide_default_basics())
-            return gen_json([x for x in manager.list_heartbeat_collection()])
+            return gen_json(manager.get())
         except PyMongoError:
             return gen_database_error()
 
     @ws.application.delete(
         '/api/v2/heartbeat/<heartbeat_id:id_filter>'
     )
-    def remove_heartbeat(heartbeat_id):
+    def delete_heartbeat(heartbeat_id):
         """
-        Remove a Heartbeat by ID.
+        Delete a Heartbeat by ID.
 
         :param `str` heartbeat_id: Heartbeat ID.
         :returns: ``200 OK`` if success or ``404 Not Found`` if a Heartbeat
@@ -110,15 +108,12 @@ def exports(ws):
                   if database error.
         """
         try:
-            manager = HeartbeatManager(
-                *HeartbeatManager.provide_default_basics())
-
-            if not manager.find_heartbeat_document(heartbeat_id):
+            if not manager.get(heartbeat_id):
                 return gen_json_error({"name": "heartbeat not found",
                                        "description": heartbeat_id},
                                       HTTP_NOT_FOUND)
 
-            manager.remove_heartbeat_document(heartbeat_id)
+            manager.delete(heartbeat_id)
 
         except (PyMongoError, CollectionError):
             return gen_database_error()
@@ -142,16 +137,13 @@ def exports(ws):
                   if database error.
         """
         try:
-            manager = HeartbeatManager(
-                *HeartbeatManager.provide_default_basics())
-
-            heartbeat = manager.find_heartbeat_document(heartbeat_id)
+            heartbeat = manager.get(heartbeat_id)
             if not heartbeat:
                 return gen_json_error({"name": "heartbeat not found",
                                        "description": heartbeat_id},
                                       HTTP_NOT_FOUND)
 
-        except (PyMongoError, CollectionError):
+        except PyMongoError:
             return gen_database_error()
 
         return gen_json(heartbeat)
