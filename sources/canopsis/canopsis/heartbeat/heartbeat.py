@@ -69,7 +69,7 @@ class HeartbeatManager(object):
         self.__logger = logger
         self.__collection = MongoCollection(collection)
 
-    def create_heartbeat(self, heartbeat):
+    def create(self, heartbeat):
         """
         Create a new Heartbeat.
 
@@ -78,40 +78,35 @@ class HeartbeatManager(object):
         :returns: a created Heartbeat ID.
         :rtype: `str`.
 
-        :raises: (`ValueError`,
-                  `.HeartbeatPatternExistsError`,
+        :raises: (`.HeartbeatPatternExistsError`,
                   `pymongo.errors.PyMongoError`,
                   `~.common.collection.CollectionError`, ).
         """
-        if self.find_heartbeat_document(heartbeat.id):
+        if self.get(heartbeat.id):
             raise HeartbeatPatternExistsError()
 
         return self.__collection.insert(heartbeat.to_dict())
 
-    def find_heartbeat_document(self, heartbeat_id):
+    def get(self, heartbeat_id=None):
         """
+        Get Heartbeat by ID or a list of Heartbeats
+        when calling with default arguments.
 
-        :param heartbeat_id:
-        :return:
+        :param `Optional[str]` heartbeat_id:
+        :returns: list of Heartbeat documents if **heartbeat_id** is None
+                  else single Heartbeat document or None if not found.
         :raises: (`pymongo.errors.PyMongoError`, ).
         """
-        return self.__collection.find_one({"_id": heartbeat_id})
+        if heartbeat_id:
+            return self.__collection.find_one({"_id": heartbeat_id})
+        return [x for x in self.__collection.find({})]
 
-    def remove_heartbeat_document(self, heartbeat_id):
+    def delete(self, heartbeat_id):
         """
-        Remove Heartbeat by ID.
+        Delete Heartbeat by ID.
 
         :param `str` heartbeat_id: Heartbeat ID.
         :return:
         :raises: (`~.common.collection.CollectionError`, ).
         """
         return self.__collection.remove({"_id": heartbeat_id})
-
-    def list_heartbeat_collection(self):
-        """
-        Get Heartbeats list.
-
-        :returns: list of heartbeat documents.
-        :raises: (`pymongo.errors.PyMongoError`, ).
-        """
-        return self.__collection.find({})
