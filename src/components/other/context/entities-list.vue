@@ -212,7 +212,7 @@ export default {
         this.showModal({
           name: MODALS.createWatcher,
           config: {
-            title: 'modals.createWatcher.editTitle',
+            title: 'modals.createWatcher.duplicateTitle',
             item,
             isDuplicating: true,
             action: watcher => this.createWatcher({ data: watcher }),

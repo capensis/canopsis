@@ -25,12 +25,15 @@
 </template>
 
 <script>
-import uid from '@/helpers/uid';
-import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
+
+import uuid from '@/helpers/uuid';
+
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import popupMixin from '@/mixins/popup';
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+
+import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
 
 export default {
   name: MODALS.createWatcher,
@@ -66,7 +69,7 @@ export default {
       if (isFormValid) {
         const data = {
           ...this.form,
-          _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uid(),
+          _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
           display_name: this.form.name,
           type: ENTITIES_TYPES.watcher,
         };

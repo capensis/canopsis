@@ -21,10 +21,11 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
+
 import modalInnerMixin from '@/mixins/modal/modal-inner';
-import { MODALS } from '@/constants';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import popupMixin from '@/mixins/popup';
 
