@@ -10,17 +10,17 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 ## Canopsis 3.5.0 - Due date : 2018-11-29
 
-- [Documentation]: Deletion of the previous canopsis documentation and add a new one.
-- [Python]: Add a new route to fetch a list of alarms with their current alarm
-- [Tooling]: Update the configuration of catag to handle the new canopsis project
-- [Go]: Automatically ack the resources below a component
-- [Tooling]: Add a VERSION.txt file inside the canopsis, display it on the prompt inside the canopsis env and add an API to retreive it through HTTP
-- [Go]: Prevent a crash if a snooze has no duration
-- [Tooling]: Add the missing engine-action in the push_docker_image.sh script
-- [Python]: Automatically recover from the loss of a primary
+- [Documentation]: Add a new documentation
+- [Python]: Add a new route to fetch a list of entities with their current alarm
+- [Python]: Automatically recover from the loss of the primary member of a MongoDB replicaset
+- [Go]: Prevent a crash when a snooze has no duration
+- [Go]: Add an option to automatically acknowledge the resources below a component
 - [Go]: End the implementation of the eventfilter service
-- [ServiceWeather]: Fix the message set in the events send when an action is triggered
-- [Go]: automaticaly create a ticket when a new alarm is created if the flag autoDeclareTickets is given to the axe engine
+- [Go]: Automatically create a ticket when a new alarm is created if the flag autoDeclareTickets is given to the axe engine
+- [ServiceWeather]: Fix the message set in the events sent when an action is triggered
+- [Tooling]: Update the configuration of catag to handle the new canopsis project
+- [Tooling]: Add a VERSION.txt file inside canopsis, display it on the prompt inside the canopsis env and add an API to retrieve it through HTTP
+- [Tooling]: Add the missing engine-action in the push_docker_image.sh script
 
 ## Canopsis 3.4.0 - Due date : 2018-11-15
 
