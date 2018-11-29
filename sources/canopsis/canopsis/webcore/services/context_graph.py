@@ -392,9 +392,25 @@ function dragended(d) {
         Return the entities filtered with a mongo filter.
         Each entity can contain an open alarm, if it exists.
         """
+
+        def stringify_query_keys(dic):
+            for key, val in dic.iteritems():
+                if isinstance(val, dict):
+                    stringify_query_keys(val)
+
+                if not isinstance(key, basestring):
+                    dic[str(key)] = val
+                    del dic[key]
+
+            return dic
+
         try:
             if query is None:
                 query = {}
+
+            if isinstance(query, basestring):
+                query = stringify_query_keys(eval(query))
+
             res = manager.get_entities_with_open_alarms(query, limit, offset)
             return res
         except Exception as err:
