@@ -28,7 +28,10 @@ import os
 import sys
 from configparser import ConfigParser
 from os.path import join as pjoin
-from urlparse import urlparse, parse_qs
+from urlparse import urlparse
+
+from pymongo import uri_parser
+from pymongo.errors import ConfigurationError
 
 from canopsis.common import root_path
 
@@ -40,24 +43,61 @@ class Env2Cfg(object):
     CPS_MONGO_URL = 'CPS_MONGO_URL'
     CPS_INFLUX_URL = 'CPS_INFLUX_URL'
 
-    def _check(self, varname):
+    MONGO_URI_KEY = 'db_uri'
+
+    @staticmethod
+    def _check_empty(varname):
+        """
+        Check that an environment variable is defined.
+
+        :param str varname: an environment variable
+        :raises: ValueError when the environment variable is empty or
+        undefined.
+        """
         varval = os.environ.get(varname, '')
         if varval is '':
             raise ValueError('env var {} is empty'.format(varname))
 
+    def __check_mongo_dsn(self):
+        """
+        Check that the CPS_MONGO_URL environment variable is a valid MongoDB
+        uri.
+
+        :raises: ValueError when the environment variable is undefined, or when
+        it is not a valid MongoDB uri.
+        """
+        self._check_empty(self.CPS_MONGO_URL)
+        try:
+            uri_parser.parse_uri(os.environ[self.CPS_MONGO_URL])
+        except ConfigurationError:
+            raise ValueError('Env var {} has invalid format'.format(self.CPS_MONGO_URL))
+
     def check(self):
-        self._check(self.CPS_AMQP_URL)
-        self._check(self.CPS_MONGO_URL)
-        self._check(self.CPS_REDIS_URL)
-        self._check(self.CPS_INFLUX_URL)
+        """
+        Check the values of the environment variables.
 
-    def _makedirs(self, fpath):
+        :raises: ValueError if one of the values is invalid.
+        """
+        self._check_empty(self.CPS_AMQP_URL)
+        self._check_empty(self.CPS_REDIS_URL)
+        self._check_empty(self.CPS_INFLUX_URL)
+        self.__check_mongo_dsn()
+
+    @staticmethod
+    def _makedirs(fpath):
+        """
+        Given a file's path, create the directory containing this file.
+
+        :param str fpath: A path to a file.
+        """
         dirs = os.path.dirname(fpath)
-
         if not os.path.isdir(dirs):
             os.makedirs(dirs)
 
     def _update_influx(self):
+        """
+        Write the InfluxDB configuration.
+        """
         pu = urlparse(os.environ.get(self.CPS_INFLUX_URL))
 
         p = pjoin(root_path, 'etc', 'influx', 'storage.conf')
@@ -81,6 +121,9 @@ class Env2Cfg(object):
             influx.write(fh)
 
     def _update_amqp(self):
+        """
+        Write the RabbitMQ configuration.
+        """
         pu = urlparse(os.environ.get(self.CPS_AMQP_URL))
 
         p = pjoin(root_path, 'etc', 'amqp.conf')
@@ -107,12 +150,9 @@ class Env2Cfg(object):
             amqp.write(fh)
 
     def _update_mongo(self):
-        pu = urlparse(os.environ.get(self.CPS_MONGO_URL))
-
-        replica_set = ''
-        if pu.query != '':
-            replica_set = parse_qs(pu.query).get("replicaSet", '')[0]
-
+        """
+        Write the MongoDB configuration.
+        """
         pms = pjoin(root_path, 'etc', 'common', 'mongo_store.conf')
         pcs = pjoin(root_path, 'etc', 'cstorage.conf')
         ps = pjoin(root_path, 'etc', 'mongo', 'storage.conf')
@@ -132,32 +172,18 @@ class Env2Cfg(object):
         if 'DATABASE' not in mongo_store.sections():
             mongo_store.add_section('DATABASE')
 
-        mongo_store.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        mongo_store.set('DATABASE', 'port', '27017' if pu.port is None else str(pu.port))
-        mongo_store.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
-        mongo_store.set('DATABASE', 'user', 'cpsmongo' if pu.username is None else pu.username)
-        mongo_store.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
-        mongo_store.set('DATABASE', 'replica_set', replica_set)
-
         if 'master' not in cstorage.sections():
             cstorage.add_section('master')
-
-        cstorage['master']['host'] = mongo_store['DATABASE']['host']
-        cstorage['master']['port'] = mongo_store['DATABASE']['port']
-        cstorage['master']['userid'] = mongo_store['DATABASE']['user']
-        cstorage['master']['password'] = mongo_store['DATABASE']['pwd']
-        cstorage['master']['db'] = mongo_store['DATABASE']['db']
-        cstorage['master']['replica_set'] = mongo_store['DATABASE']['replica_set']
 
         if 'DATABASE' not in storage.sections():
             storage.add_section('DATABASE')
 
-        storage['DATABASE']['host'] = mongo_store['DATABASE']['host']
-        storage['DATABASE']['port'] = mongo_store['DATABASE']['port']
-        storage['DATABASE']['db'] = mongo_store['DATABASE']['db']
-        storage['DATABASE']['user'] = mongo_store['DATABASE']['user']
-        storage['DATABASE']['pwd'] = mongo_store['DATABASE']['pwd']
-        storage['DATABASE']['replica_set'] = mongo_store['DATABASE']['replica_set']
+        mongo_store.set('DATABASE', self.MONGO_URI_KEY,
+                        os.environ[self.CPS_MONGO_URL])
+        cstorage['master'][self.MONGO_URI_KEY] = \
+            mongo_store['DATABASE'][self.MONGO_URI_KEY]
+        storage['DATABASE'][self.MONGO_URI_KEY] = \
+            mongo_store['DATABASE'][self.MONGO_URI_KEY]
 
         with open(pms, 'w') as fh:
             mongo_store.write(fh)
@@ -169,6 +195,9 @@ class Env2Cfg(object):
             storage.write(fh)
 
     def _update_redis(self):
+        """
+        Write the Redis configuration.
+        """
         pu = urlparse(os.environ.get(self.CPS_REDIS_URL))
 
         p = pjoin(root_path, 'etc', 'common', 'redis_store.conf')
@@ -192,6 +221,9 @@ class Env2Cfg(object):
             redis.write(fh)
 
     def update(self):
+        """
+        Write the configuration files.
+        """
         self._update_amqp()
         self._update_mongo()
         self._update_redis()
@@ -199,6 +231,9 @@ class Env2Cfg(object):
 
     @staticmethod
     def main():
+        """
+        Runs env2cfg.
+        """
         app = Env2Cfg()
         try:
             app.check()
@@ -208,6 +243,7 @@ class Env2Cfg(object):
 
         app.update()
         return 0
+
 
 if __name__ == '__main__':
     rc = Env2Cfg.main()

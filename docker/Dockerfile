@@ -43,6 +43,8 @@ RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 COPY sources/webcore /sources/webcore
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 
+COPY VERSION.txt /${CPS_HOME}/
+
 ## Canopsis Core Image
 FROM canopsis/canopsis-sysbase:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
 

@@ -69,11 +69,12 @@ class MongoStore(object):
         except ValueError:
             self.port = DEFAULT_PORT
 
-        self.replicaset = conf.get('replicaset')
+        self._db_uri = conf.get('db_uri')
+
         self.read_preference = getattr(
             ReadPreference,
-            conf.get('read_preference', 'SECONDARY_PREFERRED'),
-            ReadPreference.SECONDARY_PREFERRED
+            conf.get('read_preference', 'PRIMARY_PREFERRED'),
+            ReadPreference.PRIMARY_PREFERRED
         )
 
         # missing from storage: journaling, sharding, retention ;;
@@ -94,20 +95,18 @@ class MongoStore(object):
         Connect to the desired database.
         """
         self._authenticated = False
-        if self.replicaset is None:
+        if self._db_uri:
             self.conn = MongoClient(
-                'mongodb://{}:{}'.format(self.host, self.port), w=1, j=True
+                self._db_uri,
+                w=1, j=True, read_preference=self.read_preference
             )
 
         else:
-            self.conn = MongoClient(
-                'mongodb://{}:{}/?replicaSet={}'.format(
-                    self.host, self.port, self.replicaset
-                ), w=1, j=True, read_preference=self.read_preference
-            )
+            db_uri = 'mongodb://{}:{}@{}:{}/{}'.format(
+                self._user, self._pwd, self.host, self.port, self.db_name)
+            self.conn = MongoClient(db_uri, w=1, j=True)
 
-        self.client = self.get_database(self.db_name)
-        self.authenticate()
+        self.client = self.get_database()
 
     def get_collection(self, name):
         """
@@ -122,13 +121,13 @@ class MongoStore(object):
         """
         return MongoStore.hr(getattr, self.client, name)
 
-    def get_database(self, name):
+    def get_database(self):
         """
         Returns a raw pymongo Database object.
 
         :rtype: pymongo.database.Database
         """
-        return MongoStore.hr(getattr, self.conn, name)
+        return MongoStore.hr(self.conn.get_database)
 
     def alive(self):
         return self.conn is not None
@@ -136,14 +135,25 @@ class MongoStore(object):
     def authenticate(self):
         """
         Authenticate against the requested database.
+
+        This method used to use MongoClient.authenticate, which is now
+        deprecated. Some parts of the code still need authenticate to raise an
+        exception when the authentication fails, so it now calls get_database,
+        which also raises an exception when the authentication fails.
+
+        .. deprecated:: 3.3.1
+           The authentication check is already done in the get_database method.
         """
-        MongoStore.hr(self.client.authenticate, self._user, self._pwd)
+        self.get_database()
         self._authenticated = True
 
     @property
     def authenticated(self):
         """
         :rtype: bool
+
+        .. deprecated:: 3.3.1
+           This is set by the authenticate method, which is deprecated.
         """
         return self._authenticated
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------
-# Copyright (c) 2015 "Capensis" [http://www.capensis.com]
+# Copyright (c) 2018 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
 #
@@ -18,18 +18,32 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-from argparse import ArgumentParser
 
-from canopsis.migration.manager import MigrationTool
-from canopsis.version import CANOPSIS_VERSION_ARG
+
+# Append the following triple-quoted code to your .bashrc to see
+# the Canopsis version in your shell prompt.
+"""
+if [ -x "$(command -v canopsis-version)" ]; then
+     export PS1='(\u `canopsis-version`)[\u@\h \W]\$ '
+fi
+"""
+
+
+import sys
+
+from canopsis.version import get_version_file_path, read_version_file
+from canopsis.common import root_path
+
+
+def main():
+    """
+    Print Canopsis version to STDOUT or nothing if version file not found.
+    """
+    canopsis_version = read_version_file(get_version_file_path(root_path))
+    if canopsis_version:
+        print >>sys.stdout, canopsis_version
+        sys.stdout.flush()
+
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description='Canopsis Migration Tool')
-    parser.add_argument('--yes', dest='yes', action='store_true')
-    parser.add_argument('--authorize-reinit', dest='reinit', action='store_true')
-    parser.add_argument(CANOPSIS_VERSION_ARG, required=False, default=None,
-                        dest='canopsis_version')
-    args = parser.parse_args()
-
-    mgr = MigrationTool(canopsis_version=args.canopsis_version)
-    mgr.fill(yes=args.yes, reinit_auth=args.reinit)
+    main()
