@@ -115,21 +115,7 @@ export default {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
-    async create(context, { data }) {
-      try {
-        // Need this special syntax for request params for the backend to handle it
-        await request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
-      } catch (err) {
-        console.warn(err);
-      }
-    },
-    async update(context, { data }) {
-      try {
-        await request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
-      } catch (err) {
-        console.warn(err);
-      }
-    },
+
     async fetchGeneralList({ commit, dispatch }, { params } = {}) {
       try {
         commit(types.FETCH_GENERAL_LIST, { params });
@@ -142,7 +128,27 @@ export default {
       } catch (err) {
         console.error(err);
         commit(types.FETCH_GENERAL_LIST_FAILED);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
+    },
+
+    refreshLists({ dispatch, getters, state }) {
+      const widgetsIds = Object.keys(state.widgets);
+      const fetchRequests = widgetsIds.map(widgetId => dispatch('fetchList', {
+        widgetId,
+        params: getters.getFetchingParamsByWidgetId(widgetId),
+      }));
+
+      return Promise.all(fetchRequests);
+    },
+
+    async create(context, { data }) {
+      // Need this special syntax for request params for the backend to handle it
+      return request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
+    },
+
+    async update(context, { data }) {
+      return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
     },
 
     async remove({ dispatch }, { id } = {}) {
@@ -155,15 +161,6 @@ export default {
       } catch (err) {
         console.error(err);
       }
-    },
-    refreshLists({ dispatch, getters, state }) {
-      const widgetsIds = Object.keys(state.widgets);
-      const fetchRequests = widgetsIds.map(widgetId => dispatch('fetchList', {
-        widgetId,
-        params: getters.getFetchingParamsByWidgetId(widgetId),
-      }));
-
-      return Promise.all(fetchRequests);
     },
   },
 };
