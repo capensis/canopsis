@@ -1,12 +1,15 @@
 # Présentation
 
-Vous trouverez ici toute la documentations nécéssaire au développement sur canopsis.
+Vous trouverez ici toute la documentation nécessaire au développement sur canopsis.
+
+!!! tip "Note"
+    Cette page contient le plan de la documentation de développement, qui est en cours d'écriture.
 
 # Process de développement
 ## Organisation des dépôts
 ## Process de release
-### Nomenclature des messages de commit
-  - specification des segments de canopsis (alerts, action, …)
+## Nomenclature des messages de commit
+<!--  - specification des segments de canopsis (alerts, action, …) -->
 
 # Installation d'un environnement de développement
 ## Python
@@ -21,8 +24,10 @@ Vous trouverez ici toute la documentations nécéssaire au développement sur ca
 ## Python
 ### Installation de nouvelle source python
 ### Structure du projet
+<!--
   - organisation des packages
   - architecture à mettre en place : modele, adapter, api
+-->
 ### Création d'engines
 ### Création d'API
 
@@ -33,15 +38,17 @@ Vous trouverez ici toute la documentations nécéssaire au développement sur ca
 ## Implémentation de source de données externes (pour l'event-filter)
 
 # Base de données
+<!--
 ## default_entities
 ### Présentation générale
 ### Présentation de la structure d'un document.
 ## periodical_alarms
 ### Présentation générale
 ### Présentation de la structure d'un document.
+-->
 
 # Front-end
-## Mise en place de l'env. de dev
+## Mise en place de l'environnement de développement
 ## Technologies utilisées
 ## Structure du projet
 ## Règles de style
@@ -53,11 +60,11 @@ Vous trouverez ici toute la documentations nécéssaire au développement sur ca
 ### Widget (+ Paramètres du widget)
 
 # API
+
+[Présentation de toutes les routes disponibles](API.md)
+
   * Pbehavior
   * Event-filter
   * [Healthcheck](./healthcheck/api_v2_healthcheck.md)
 
 # Gestion de la documentation
-
-
-[Présentation de toutes les routes disponibles](API.md)
