@@ -1,5 +1,8 @@
 <template lang="pug">
   div
+    v-tabs(color="secondary lighten-2", slider-color="primary", dark)
+      v-tab(v-for="item in items", :key="`item-${item}`", ripple) Something
+      v-tab-item(v-for="item in items", :key="`tab-item-${item}`", ripple) Test
     div#view
       v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
         v-flex(xs12)
@@ -118,6 +121,8 @@ export default {
   },
   data() {
     return {
+      activeTab: null,
+      items: [1, 2, 3],
       widgetsComponentsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',

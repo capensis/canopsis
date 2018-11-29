@@ -228,21 +228,31 @@ export function generateWidgetByType(type) {
   return widget;
 }
 
-export function generateRow() {
+export function generateViewRow() {
   return {
-    _id: uuid('row'),
+    _id: uuid('view-row'),
     title: '',
     widgets: [],
   };
 }
 
+export function generateViewTab() {
+  return {
+    _id: uuid('view-tab'),
+    title: '',
+    rows: [],
+  };
+}
+
 export function generateView() {
+  const defaultTab = { ...generateViewTab(), title: 'Default' };
+
   return {
     title: '',
     name: '',
     description: '',
     group_id: null,
-    rows: [],
+    tabs: [defaultTab],
     tags: [],
     enabled: true,
   };
@@ -319,7 +329,7 @@ export function generateRoleRightByChecksum(checksum) {
 
 export default {
   generateWidgetByType,
-  generateRow,
+  generateViewRow,
   generateView,
   generateUserPreferenceByWidgetAndUser,
   generateUser,
