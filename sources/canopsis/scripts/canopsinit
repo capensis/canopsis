@@ -28,6 +28,8 @@ import time
 from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
 from canopsis.common import root_path
+from canopsis.version import (get_version_file_path, CANOPSIS_VERSION_ARG,
+                              read_version_file)
 
 COMMANDS = [root_path + "/bin/schema2db",
             [root_path + "/bin/canopsis-filldb", "--yes"]]
@@ -40,6 +42,7 @@ DFT_MAX_RETRY = 10
 DFT_RETRY_DELAY = 30
 DFT_WAIT_FIRST_ATTEMPT = 0
 AUTH_REINIT = '--authorize-reinit'
+
 
 if __name__ == "__main__":
     parser = ArgumentParser(description='Canopsinit')
@@ -73,6 +76,14 @@ if __name__ == "__main__":
             started = True
 
     sys.stdout.flush()
+
+    canopsis_version = read_version_file(get_version_file_path(root_path))
+    if not canopsis_version:
+        print("Error: could not obtain a Canopsis version. Exit now.")
+        exit(3)
+    else:
+        COMMANDS[1].append(CANOPSIS_VERSION_ARG)
+        COMMANDS[1].append(canopsis_version)
 
     if started is True:
         for cmd in COMMANDS:
