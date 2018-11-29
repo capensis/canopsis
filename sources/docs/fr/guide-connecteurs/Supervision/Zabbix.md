@@ -1,7 +1,5 @@
 # Zabbix
 
-**TODO (DWU) :** remettre au propre cette doc.
-
 `connector-zabbix2canopsis` est basée sur le toolkit sqlalchemy (http://www.sqlalchemy.org/) pour interroger la base de donée et sur la librairie kombu pour publier des messages dans RabbitMQ.
 
 ```
@@ -31,14 +29,14 @@ Development version:
 
 ## Install Zabbix action
 
-Create hostgroup hg_canopsis, all hosts monitored must belong to this hostgroup.  
+Create hostgroup hg_canopsis, all hosts monitored must belong to this hostgroup.
 
-AlertScriptsPath is configued in zabbix_server.conf.  
-Create action ac_send_canopsis.  
+AlertScriptsPath is configued in zabbix_server.conf.
+Create action ac_send_canopsis.
 
-Créer le groupe hôte hg_canopsis, tous les hôtes surveillés doivent appartenir à ce groupe.  
+Créer le groupe hôte hg_canopsis, tous les hôtes surveillés doivent appartenir à ce groupe.
 
-AlertScriptsPath est configuré dans zabbix_server.conf. Créez l'action ac_send_canopsis.  
+AlertScriptsPath est configuré dans zabbix_server.conf. Créez l'action ac_send_canopsis.
 
 ```
     Configure condition :

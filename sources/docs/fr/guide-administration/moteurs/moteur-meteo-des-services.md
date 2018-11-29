@@ -1,14 +1,12 @@
 # Weather / Météo des services
 
-**TODO (DWU) :** UIv2.
-
 Le widget météo permet d'afficher l'état de l'évènement de manière esthétique.
 
 Il est conçu pour obtenir un aperçu rapide des composants et des ressources.
 
 ## Créer une météo dans une vue
 
-L'insertion d'un widget météo dans Canopsis nécessite des droits de gestion. Veuillez vous référer à la gestion des droits de Canopsis pour en savoir plus sur ce sujet (**TODO :** lien).
+L'insertion d'un widget météo dans Canopsis nécessite des droits de gestion. Veuillez vous référer à la gestion des droits de Canopsis pour en savoir plus sur ce sujet.
 
 Tout d'abord, choisissez une vue où la météo des services sera insérée. Une fois terminé, passez en mode édition de widgets, choisissez la météo dans la liste et cliquez dessus. Le formulaire spécifique pour la météo est affiché et permet de saisir cette configuration de widget.
 

@@ -6,8 +6,6 @@ Le moteur `context-graph` gère les dépendances entre les entités.
 
 Ce nœud final renvoie une liste d'entités de graphe de contexte, basées sur un filtre MongoDB prédéfini.
 
-**TODO (DWU) :** pour moi, à partir du point suivant, c'est de la doc Développeur, à déplacer ?
-
 ## URL
 
 GET / api / v2 / context /? limit = 100 & start = 1 & sort = ASC | DESC

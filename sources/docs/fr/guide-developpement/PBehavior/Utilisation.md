@@ -1,12 +1,10 @@
 # Utilisation
 
-**TODO (DWU) :** à déplacer dans le Guide de dév, si pas d'erreur de ma part (pas de l'inté ici, mais du dév interne Canopsis).
-
 # API PBehaviors
 
 Pbehaviors sont des événements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
 
-**Note sur les attributs tstartet tstopd'un pbehavior**
+**Note sur les attributs tstart et tstop d'un pbehavior**
 
 Les comportements sont similaires aux événements de calendrier, avec une récurrence facultative.
 Les paramètres tstart et tstop servent à définir les dates de début et de fin de la première occurrence d'événement.
@@ -25,7 +23,7 @@ Par exemple, le comportement ci-dessous commence à 11 heures et se termine une 
 ```
 
 **Lorsque l'événement est récurrent, la date de la dernière occurrence est stockée dans l'attribut `UNTIL` de l' événement.rrule**
- 
+
 ## Créer un pbehavior
 
 #### Url

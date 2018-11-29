@@ -1,7 +1,5 @@
 # Event-filter
 
-**TODO (DWU) :** ce moteur est un moteur programmable par les utilisateurs. Ça me paraît donc bon de garder cette doc ici.
-
 Le moteur `event_filter` permet d'exécuter, sur des évènements, des actions prédéfinies par l'utilisateur.
 
 Les filtres de moteurs peuvent être placés n'importe où dans la chaîne de traitement. Plusieurs filtres de moteurs fonctionnent en parallèle ou l'un après l'autre pour accélérer le traitement des événements.

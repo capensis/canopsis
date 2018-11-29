@@ -16,11 +16,6 @@ Un pbehavior se caractérise par les informations suivantes.
 | `type_` | string | Optionnel. Type de pbehavior (pause, maintenance…). |
 | `reason` | string | Optionnel. Raison pour laquelle ce pbehavior a été posé. |
 
-**TODO (DWU) :** voir avec les devs ? Noms de champs d'events en français ?! Une erreur ?
-
-*  `connecteur` : une chaîne représentant le type de connecteur qui a généré le comportement (`canopsis` si non spécifié).  
-*  `nom_connecteur` : chaîne représentant le nom du connecteur ayant généré le comportement pbehavior (`canopsis` si non spécifié).  
-
 Un exemple d'évènement pbehavior brut :
 ```js
 {
@@ -46,9 +41,9 @@ Un exemple d'évènement pbehavior brut :
 
 ## rrules
 
-Dans le cas où la `rrule` est absente, `tstart` et `tstop` font office de plage d’activation du pbehavior, sans récurrence.  
+Dans le cas où la `rrule` est absente, `tstart` et `tstop` font office de plage d’activation du pbehavior, sans récurrence.
 
-Dans le cas où la `rrule` est présente, `tstart` et `tstop` seront recalculés afin de refléter la récurrence.  
+Dans le cas où la `rrule` est présente, `tstart` et `tstop` seront recalculés afin de refléter la récurrence.
 
 ## Création
 

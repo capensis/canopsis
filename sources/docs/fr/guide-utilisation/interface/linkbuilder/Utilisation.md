@@ -1,7 +1,5 @@
 # Utilisation
 
-**TODO (DWU) :** très bas niveau mais c'est la manip officielle.
-
 ## Objectif
 
 Présenter des URLs sur un bac à alarmes pour par exemple :

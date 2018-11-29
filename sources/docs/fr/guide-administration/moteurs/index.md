@@ -3,14 +3,6 @@
 - [Activation et désactivation des moteurs](activation-desactivation-moteurs.md)
 - [Enchainement des moteurs](schema-enchainement-moteurs.md)
 
-**TODO (DWU) :** doublons sur certains moteurs, entre cette partie du Guide Administrateur et le Guide Utilisateur ! Exemple : pbehaviors, météo… Ne pas documenter la même chose à 2 endroits !
-
-**(MG) :** Moteur présent dans schéma d'enchaînements non présent dans liste des moteurs et inversement, normal ?
-**(MG)/amélioration :** Mettre liens clicables dans tableau moteurs vers les docs.
-
-**TODO (DWU) :** schéma, etc. Plus de détails sur les champs obligatoires aujourd'hui ?
-**TODO :** les différents flags (ex : printEventOnError, publishQueue) ne sont pas du tout documentés.
-
 Les événements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.
 
 Un moteur a **plusieurs rôles**:
@@ -39,8 +31,6 @@ Le listing des moteurs peut être réalisé grace à cette commande : `systemctl
 | heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.      |                    |
 | stat           | Calcule des statistiques sur les états des alarmes.                             |                    |
 | action         | Applique des actions définies par l'utilisateur.                                |                    |
-
-**TODO (DWU) :** voir avec Lucas ce qui est prévu entre stat et statng ?
 
 ### Moteurs Python
 
@@ -82,7 +72,6 @@ Le listing des moteurs peut être réalisé grace à cette commande : `systemctl
 ### Utilisation de engine-che
 
 ```
-revolution/cmd/engine-che/engine-che:
   -consumeQueue string
         Consomme les événements venant de cette queue. (default "Engine_che").
   -createContext
@@ -108,11 +97,7 @@ revolution/cmd/engine-che/engine-che:
         version infos
 ```
 
-à terminer.
-
 # Moteurs obsolètes
-
-**TODO (DWU) :** je pense que ça ne doit apparaître que dans les guides de mise à jour (fichiers `UPGRAGING_` à la racine du dépôt canopsis/canopsis, sur `develop`), qui doivent être réécrits et migrés ailleurs dans cette doc.
 
 *  acknowledgement
 *  cancel

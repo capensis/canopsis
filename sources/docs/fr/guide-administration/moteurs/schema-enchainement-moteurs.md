@@ -10,11 +10,9 @@ beat_processing = canopsis.[nom_du_moteur].process.beat_processing
 next = [moteur_suivant],[moteur_suivant2]
 ```
 
-Dans le fichier `amqp2engines.conf` il y a `event.processing` et `beat.processing` : le premier permet de lire les événements, le second permet de configurer leur traitement périodique (*TODO :* ça ne donne pas assez d'informations).
+Dans le fichier `amqp2engines.conf` il y a `event.processing` et `beat.processing` : le premier permet de lire les événements, le second permet de configurer leur traitement périodique.
 
 Tous les moteurs peuvent communiquer avec MongoDB et InfluxDB.
-
-**TODO :** mettre une liste détaillée ?
 
 ## Représentation
 

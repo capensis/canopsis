@@ -1,7 +1,5 @@
 # Logstash vers canopsis
 
-**TODO (DWU) :** faire valider par quelqu'un qui l'a mis en prod ?
-
 ## Sommaire
 
 1. [Introduction](#introduction)
@@ -17,12 +15,12 @@
 
 ## Introduction
 
-Cette documentation détaille la remontée des logs vers Canopsis via Logstash.  
+Cette documentation détaille la remontée des logs vers Canopsis via Logstash.
 Connaître les base du fonctionnement de Logstash vous permettra d'avoir une meilleur compréhension de ce qui va suivre. Pour cela, je vous invite à aller vous documenter sur [l'input](https://www.elastic.co/guide/en/logstash/6.2/input-plugins.html), [les filtres](https://www.elastic.co/guide/en/logstash/6.2/filter-plugins.html) et enfin [l'output](https://www.elastic.co/guide/en/logstash/6.2/output-plugins.html)
 
 ## Fonctionnement
 
-La remontée des logs de logstash vers Canopsis se fait en passant par le bus AMQP.  
+La remontée des logs de logstash vers Canopsis se fait en passant par le bus AMQP.
 Les logs devront donc être formatés d'une certaine manière afin que Canopsis puisse les comprendre et les intégrer.
 
 ## Les informations AMQP
@@ -37,7 +35,7 @@ Les logs devront donc être formatés d'une certaine manière afin que Canopsis 
 
 ## La structure d'un event
 
-Actuellement, un "event" de type *log* doit être remonté dans canopsis comme un "event" de type *check*.  
+Actuellement, un "event" de type *log* doit être remonté dans canopsis comme un "event" de type *check*.
 Voici les champs attendus dans Canopsis afin que l'event puisse être reconnu :
 
 ```
@@ -62,7 +60,7 @@ Voici les champs attendus dans Canopsis afin que l'event puisse être reconnu :
 }
 ```
 
-:exclamation: Les champs `state`, `state_type` et `status` doivent être de type `entier`.  
+:exclamation: Les champs `state`, `state_type` et `status` doivent être de type `entier`.
 
 :exclamation: Le champ `timestamp`, s'il est utilisé, doit être au format timestamp unix sinon l'event risque de ne pas être interprété. S'il n'est pas renseigné, Canopsis utilisera la date et l'heure à laquelle il traite l'event.
 
@@ -106,7 +104,7 @@ filter {
    # S'assurer que l'on traite bien les event comportant le tag *syslog* défini dans l'input
         if "syslog" in [tags] {
 
-            # Parse de la log et récupération des informations nécéssaires pour l'event et/ou la routing_key. Exemple 'component',  
+            # Parse de la log et récupération des informations nécéssaires pour l'event et/ou la routing_key. Exemple 'component',
             # 'resource', 'output', 'timestamp'...etc.
             grok {
                 match => {"message" => "%{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:component} %{NOTSPACE:resource}\[%{NUMBER:pid}\]\: %{GREEDYDATA:output}"}
@@ -168,11 +166,11 @@ output {
         host => "XXX.XXX.XXX.XXX" # IP de la machine RabbitMQ (ou VIP)
         user => "my_user"
         password => "my_passwd"
-        vhost => "canopsis" 
+        vhost => "canopsis"
         exchange => "canopsis.events"
         exchange_type => "topic"
         message_properties => { "content_type" => "application/json" }
-        key => "%{[@metadata][canopsis_rk]}" 
+        key => "%{[@metadata][canopsis_rk]}"
     }
 
 }
@@ -194,8 +192,8 @@ output {
   'resource':'cft-logging',
   'output':'Server is going down',
   'state':1,
-  'state_type':1, 
-  'status':1 
+  'state_type':1,
+  'status':1
  }
  ```
 
@@ -209,7 +207,7 @@ output {
 
 #### L'event ne remonte pas dans Canopsis
 
-Lorsque l'on active l'option *"stdout { codec => rubydebug }"*, les logs traités sont affichés à l'écran via la sortie standard. 
+Lorsque l'on active l'option *"stdout { codec => rubydebug }"*, les logs traités sont affichés à l'écran via la sortie standard.
 On peut donc plus facilement debugger. On retrouve la structure de l'event avec les champs ainsi que leurs valeurs, mais aussi la routing key au niveau des metadata.
 
 1) Vérifier que la routing key est correcte et au bon format (Voir les exemples ci dessus).

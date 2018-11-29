@@ -7,5 +7,3 @@
 | RabbitMQ       | Transfert de messages | `/opt/canopsis/etc/amqp.conf`               |
 | InfluxDB       | Métriques             | `/opt/canopsis/etc/infux/storage.conf`      |
 | Canopsis       | Hyperviseur           |                                             |
-
-**TODO (DWU) :** `canoctl` livre un Nginx (ou HAproxy) par défaut. Est-ce qu'on l'utilise par défaut dans Core ?

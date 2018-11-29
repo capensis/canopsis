@@ -1,25 +1,23 @@
 # Les filtres
 
-**TODO (DWU) :** ajouter d'autres exemples.
-
 Lors de la configuration d'une vue, il est possible d'appliquer des filtres à notre liste.
 
 Pour cela, dans l'onglet "Filters"
 
-![img1](img/img1.png)  
+![img1](img/img1.png)
 
 Cliquez sur "add" pour créer votre premier filtre, une fenêtre apparaît :
 
-![create_filter](img/create_filter.png)  
+![create_filter](img/create_filter.png)
 
-Donnez un titre à votre filtre, deux méthodes de création, une pour les néophytes et une pour les utilisateurs expérimentés. Nous allons nous concentrer sur la première méthode, 
-vous verrez dans un second temps que la méthode avancée évolue en même temps que vos actions sur l'autre méthode.  
+Donnez un titre à votre filtre, deux méthodes de création, une pour les néophytes et une pour les utilisateurs expérimentés. Nous allons nous concentrer sur la première méthode,
+vous verrez dans un second temps que la méthode avancée évolue en même temps que vos actions sur l'autre méthode.
 
 ## AND / OR
 
-Il faut maintenant choisir quel filtres prendre. Deux choix principaux s'offrent à vous sous forme d'opérateurs booléens **ET** et **OU** (AND et OR). En choisir un, puis appuyer sur "Add a rule".  
+Il faut maintenant choisir quel filtres prendre. Deux choix principaux s'offrent à vous sous forme d'opérateurs booléens **ET** et **OU** (AND et OR). En choisir un, puis appuyer sur "Add a rule".
 
-![adarule](img/adarule.png)  
+![adarule](img/adarule.png)
 
 Dans la première colonne, choisir de quel type sera l'objet filtré. Quatre choix :
 
@@ -33,7 +31,7 @@ Dans la seconde, le filtre qui lui sera alloué
 * equal
 * not equal
 * in
-* not in 
+* not in
 * begins with
 * ....
 
@@ -43,13 +41,13 @@ Il vous est possible d'ajouter autant de filtre que vous souhaitez en cliquant s
 
 Vous pouvez aussi séparer vos filtres en groupes. Simplement en cliquand sur "Add a group", et le supprimer en cliquant simplement sur "Delete groupe".
 
-## Editeur avancé 
+## Editeur avancé
 
 Je souhaite créer un filtre appelé "Mon premier filtre !" qui récupère les composants dont le nom est égal à "composants" :
 
-Cela va ce fait trés simplement comme suit 
+Cela va ce fait trés simplement comme suit
 
-![example](img/exmpl1.png)  
+![example](img/exmpl1.png)
 
 Maintenant, allons voir l'éditeur avancé, vous remarquerez que l'on retrouve certains éléments du dernier screen :
 
@@ -63,7 +61,7 @@ Maintenant, allons voir l'éditeur avancé, vous remarquerez que l'on retrouve c
 }
 ```
 
-Compliquons les choses ! 
+Compliquons les choses !
 
 Je veux maintenant ajouter le fait qu'une ressources ne doit pas être vide. Une fois la configuration réalisée via l'interface visuelle, on retrouve plusieur choses ajoutées à l'éditeur avancé :
 
@@ -84,16 +82,16 @@ Je veux maintenant ajouter le fait qu'une ressources ne doit pas être vide. Une
 
 Il est bien évidement possible de réaliser cette configuration via l'interface utilisateur avancée. Le bouton "Parse" va vous servir à vérifier l'exactitude de votre JSON, si celui ci est invalide ce message apparaîtra :
 
-![invjson](img/invjson.png)  
+![invjson](img/invjson.png)
 
 ## Résultat
 
-Une fois votre Filtre réalisé, il apparaîtra dans le menu déroulant "select a filter". 
+Une fois votre Filtre réalisé, il apparaîtra dans le menu déroulant "select a filter".
 
-![select_filter](img/select_filter.png)  
+![select_filter](img/select_filter.png)
 
 ## Autre filtre
 
-Si vous souhaitez limiter votre vue dans la durée, il vous suffit de cliquer sur l'icone en forme d'horloge à côté de "select a filter", une fenêtre s'ouvrira et vous pourrez alors choisir votre interval.  
- 
-![reporting](img/reporting.gif)  
+Si vous souhaitez limiter votre vue dans la durée, il vous suffit de cliquer sur l'icone en forme d'horloge à côté de "select a filter", une fenêtre s'ouvrira et vous pourrez alors choisir votre interval.
+
+![reporting](img/reporting.gif)

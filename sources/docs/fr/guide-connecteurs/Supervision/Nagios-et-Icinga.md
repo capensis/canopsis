@@ -1,7 +1,5 @@
 # neb2canopsis : module (Event Broker) Nagios/Nagios-like pour Canopsis
 
-**TODO (DWU) :** enlever les manips avancées.
-
 ## Description
 
 Ce dépôt contient un module (Broker) Nagios/Nagios-like pour l'envoi d'évènements à Canopsis. Il est écrit en C.

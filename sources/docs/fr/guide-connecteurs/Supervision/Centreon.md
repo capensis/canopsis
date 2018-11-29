@@ -1,7 +1,5 @@
 # connector-centreon-engine : module (Event Broker) Centreon pour Canopsis
 
-**TODO (DWU) :** ouvrir ce connecteur en open-source (voir avec Mika).
-
 ## Description
 
 Ce dépôt contient un module Broker Centreon pour l'envoi d'évènements à Canopsis. Il est écrit en C++, et des modules pré-compilés sont disponibles pour certains environnements.
