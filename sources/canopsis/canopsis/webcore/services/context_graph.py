@@ -398,4 +398,4 @@ function dragended(d) {
             res = manager.get_entities_with_open_alarms(query, limit, offset)
             return res
         except Exception as err:
-            return gen_json_error({'description': str(err)}, HTTP_ERROR)
+            return gen_json_error({'description': str(repr(err))}, HTTP_ERROR)
