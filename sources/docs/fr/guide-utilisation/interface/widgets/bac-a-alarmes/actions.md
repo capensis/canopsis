@@ -1,4 +1,4 @@
-# Les action du bac à alarmes
+# Les actions du bac à alarmes
 
 Lorsqu'un événement arrive il est envoyé vers le bac à événements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
 
