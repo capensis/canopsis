@@ -9,6 +9,7 @@ TAG:=develop
 DISTRIBUTIONS=debian8,debian9,centos7 # Every GNU/Linux distribution supported by Canopsis
 DOCKER_DISTRIB="debian9" # The GNU/Linux distribution use as foundation for the official Canopsis Docker image
 PACKAGE_REV=""
+NEXT_TAG="develop"
 
 # It's trick to allow subst to replace a comma.
 .comma:=,
@@ -16,6 +17,7 @@ PACKAGE_REV=""
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
 	echo ${OWNER}
+	git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} sources/webcore/src/canopsis-next
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib; \
 		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
@@ -27,6 +29,7 @@ docker_images:
 		sed 's|{{IMAGE_TAG}}|'$$image_tag'|' Dockerfile.prov.template ; \
 		sed 's|{{IMAGE_TAG}}|'$$image_tag'|' Dockerfile.prov.template | docker build -f - . -t canopsis/canopsis-prov:$$image_tag ; \
 	done
+	rm -rf sources/webcore/src/canopsis-next
 
 packages: docker_images
 	echo "Building packages" ; \
