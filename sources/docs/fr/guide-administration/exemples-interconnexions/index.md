@@ -1,6 +1,6 @@
 # Quelques Interconnexions
 
-Canopsis est généralement nourri à partir d'événements en provenance de connecteurs.  
+Canopsis est généralement nourri à partir d'évènements en provenance de connecteurs.  
 Voici quelques exemples de connecteurs et configurations associées.
 
 ## Quelques Connecteurs

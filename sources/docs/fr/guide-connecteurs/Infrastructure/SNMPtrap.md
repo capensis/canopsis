@@ -227,7 +227,7 @@ On ré exécute l'émisson du trap SNMP
  /usr/bin/snmptrap -v 2c -c public IP_RECEPTEUR_SNMP '' NAGIOS-NOTIFY-MIB::nSvcEvent nSvcHostname s "Equipement Impacte" nSvcDesc s "Ressource Impactee" nSvcStateID i 3 nSvcOutput s "Message de sortie du trap SNMP"  
 ```
 
-On contrôle le bac à événements
+On contrôle le bac à évènements
 
 ![img6](img/scenario_e5.png)
 

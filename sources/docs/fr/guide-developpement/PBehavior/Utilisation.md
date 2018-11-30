@@ -2,13 +2,13 @@
 
 # API PBehaviors
 
-Pbehaviors sont des événements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
+Pbehaviors sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
 
 **Note sur les attributs tstart et tstop d'un pbehavior**
 
-Les comportements sont similaires aux événements de calendrier, avec une récurrence facultative.
-Les paramètres tstart et tstop servent à définir les dates de début et de fin de la première occurrence d'événement.
-Lorsque l'événement est répété, ces attributs sont utilisés pour définir la durée de chaque instance, en fonction des heures de début et de fin de la première instance.
+Les comportements sont similaires aux évènements de calendrier, avec une récurrence facultative.
+Les paramètres tstart et tstop servent à définir les dates de début et de fin de la première occurrence d'évènement.
+Lorsque l'évènement est répété, ces attributs sont utilisés pour définir la durée de chaque instance, en fonction des heures de début et de fin de la première instance.
 
 Par exemple, le comportement ci-dessous commence à 11 heures et se termine une heure plus tard tous les matins à partir du 2018/06/18:
 
@@ -22,7 +22,7 @@ Par exemple, le comportement ci-dessous commence à 11 heures et se termine une 
 }
 ```
 
-**Lorsque l'événement est récurrent, la date de la dernière occurrence est stockée dans l'attribut `UNTIL` de l' événement.rrule**
+**Lorsque l'évènement est récurrent, la date de la dernière occurrence est stockée dans l'attribut `UNTIL` de l' évènement.rrule**
 
 ## Créer un pbehavior
 

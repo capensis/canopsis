@@ -1,18 +1,18 @@
 #  Les PBehaviors
 
-Pbehaviors sont des événements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
+Pbehaviors sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
 
 # Utiliser la vue Context
 
 ## Introduction
 
-Dans Canopsis , chaque événement en cours de traitement contient des informations contextuelles.
+Dans Canopsis , chaque évènement en cours de traitement contient des informations contextuelles.
 Nous extrayons ces informations afin de créer une **entité**.
 
 La vue **Context** permet de voir toutes les entités détectées.
 
 > L'édition et la suppression sont ignorées par le système.
-> Toutes les modifications seront effacées lors du prochain événement entrant.
+> Toutes les modifications seront effacées lors du prochain évènement entrant.
 
 ## Comportement périodique
 
@@ -24,14 +24,14 @@ Le comportement spécifié sera configuré avec une periode et éventuellement u
 Un temps d'arrêt est défini sur une entité lorsque nous savons que cette entité sera «Down». Cette situation peut se produire lorsque vous redémarrez un serveur, par exemple.
 Le serveur aura un état erroné, qui sera ignoré par Canopsis pendant une courte période.
 
-Les temps d'arrêt excluront les événements de contrôle associés des sélecteurs l'utilisant.
+Les temps d'arrêt excluront les évènements de contrôle associés des sélecteurs l'utilisant.
 Ainsi, le sélecteur ne sera pas influencé par les faux états erronés de l'entité.
 
-Étant donné que l'événement est exclu du sélecteur, le SLA exclut également les événement des calculs.
+Étant donné que l'évènement est exclu du sélecteur, le SLA exclut également les évènement des calculs.
 
 ## Comment l'utiliser ?
 
-Pour instaurer un Pbehavior il vous suffit de selectionner un événement, un boutton pause va alors apparaître :
+Pour instaurer un Pbehavior il vous suffit de selectionner un évènement, un boutton pause va alors apparaître :
 
 ![menu](img/menu.png)
 

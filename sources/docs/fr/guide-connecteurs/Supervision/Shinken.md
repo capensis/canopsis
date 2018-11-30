@@ -10,8 +10,8 @@ set ``maxqueuelength`` (the maximum number of events that should be kept
 in case of connection loss).
 
 Le module broker vous permet la perte de connexion et la reconnexion avec le 
-bus de messages canopsis amqp sans perte d'événements.
-Vous devriez envisager de définir `` maxqueuelength`` (le nombre maximal d'événements à conserver 
+bus de messages canopsis amqp sans perte d'évènements.
+Vous devriez envisager de définir `` maxqueuelength`` (le nombre maximal d'évènements à conserver 
 en cas de perte de connexion). 
 
 ```

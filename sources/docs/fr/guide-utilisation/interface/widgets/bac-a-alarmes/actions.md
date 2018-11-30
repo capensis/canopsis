@@ -1,6 +1,6 @@
 # Les actions du bac à alarmes
 
-Lorsqu'un événement arrive il est envoyé vers le bac à événements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
+Lorsqu'un évènement arrive il est envoyé vers le bac à évènements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
 
 Les différentes actions possibles sur cette alarme sont :
 - [Accuser réception (Ack)](#accuser-réception-ack)
@@ -19,7 +19,7 @@ Les différentes actions possibles sur cette alarme sont :
 
 Deux choix possibles : ACK et Ack rapide
 
-L'Ack permet de voir les détails généraux de l'événement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
+L'Ack permet de voir les détails généraux de l'évènement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
 
 L'Ack rapide, lui, permet d'accuser réception sans pour autant remplir ces informations.
 

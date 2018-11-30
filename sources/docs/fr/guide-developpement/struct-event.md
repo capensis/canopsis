@@ -10,7 +10,7 @@
 
 ## Structure basique d'un évènement
 
-Voici la structure de base d'un événement, commune à tous les type d'événements.
+Voici la structure de base d'un évènement, commune à tous les type d'évènements.
 
 ```javascript
 {
@@ -38,7 +38,7 @@ Voici la structure de base d'un événement, commune à tous les type d'événem
 
 ## Ajout d'éléments et personnalisation
 
-Aprés avoir définit la structure de base de l'événement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
+Aprés avoir définit la structure de base de l'évènement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
 
 ### Event Check Structure
 
@@ -263,6 +263,6 @@ trap | Utilisé pour envoyer des traps SNMP|
 user | Utilisé par l'utilisateur pour evoyer des informations |
 ack | Utilisé pour acquitter une alerte |
 downtime | Utilisé pour programmer un downtime |
-cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'événement référent, le cas échéant.  |
-uncancel | Utilisé pour annuler un événement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
-ackremove | Utilisé pour supprimer un accusé de réception d'un événement. (champ ack supprimé et collection ack mise à jour) |
+cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
+uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
+ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |

@@ -1,7 +1,7 @@
 *Ce fichier est à intégrer à la documentation de `che`*
 
 L'event-filter peut utiliser des sources de données externes pour enrichir les
-événements. Ces sources externes (à l'exception de `entity`) sont des plugins
+évènements. Ces sources externes (à l'exception de `entity`) sont des plugins
 disponibles dans Canopsis CAT.
 
 Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
