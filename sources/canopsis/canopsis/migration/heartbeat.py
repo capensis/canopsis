@@ -72,23 +72,22 @@ class HeartbeatMigrationSource(object):
                 pass
         return []
 
-    def get_new_model_from_old_item(self, heartbeat_item):
+    def get_new_models_from_old_item(self, heartbeat_item):
         """
-        Convert an old Heartbeat item to a new Heartbeat model.
+        Convert an old Heartbeat item to a list of new Heartbeat models.
 
         :param `dict` heartbeat_item: old Heartbeat item.
-        :returns: a Heartbeat model else None if conversion fails.
-        :rtype: `Optional[HeartBeat]`.
+        :returns: a list of Heartbeat models.
+        :rtype: `List[HeartBeat]`.
         """
-        try:
-            return HeartBeat({
-                HeartBeat.PATTERN_KEY:
-                    heartbeat_item[self.MAPPINGS_KEY],
+        result = []
+        for mapping in heartbeat_item[self.MAPPINGS_KEY]:
+            result.append(HeartBeat({
+                HeartBeat.PATTERN_KEY: mapping,
                 HeartBeat.EXPECTED_INTERVAL_KEY:
                     heartbeat_item[self.MAX_DUR_KEY]
-            })
-        except (ValueError, KeyError):
-            return
+            }))
+        return result
 
 
 class HeartbeatModule(MigrationModule):
@@ -104,33 +103,33 @@ class HeartbeatModule(MigrationModule):
             *HeartbeatMigrationSource.provide_default_basics())
         manager = HeartbeatManager(
             *HeartbeatManager.provide_default_basics())
-        print("Looking for old Heartbeat items..")
+        print("Looking for old Heartbeat mappings..")
         items = migration_source.get_old_heartbeat_items()
         if not items:
-            print("No previously Heartbeat items found.")
+            print("No previously Heartbeat mappings found.")
             print("Heartbeat migration was skipped.")
             return
-        total = len(items)
-        print("{} old Heartbeat items found.".format(total))
-        print("Started Heartbeat items migration..")
+        total_mappings = sum(len(x[migration_source.MAPPINGS_KEY])
+                             for x in items)
+        print("{} old Heartbeat mappings found.".format(total_mappings))
+        print("Started Heartbeat mappings migration..")
         failed = 0
+        success = 0
         for heartbeat_item in items:
-            model = migration_source\
-                .get_new_model_from_old_item(heartbeat_item)
-            if not model:
-                print("Heartbeat item conversion failed: \n{}"
-                      .format(json.dumps(heartbeat_item, indent=3,
-                                         sort_keys=True)))
-                failed += 1
-                continue
-            try:
-                manager.create(model)
-            except HeartbeatPatternExistsError:
-                print("Duplicate Heartbeat mapping occured: \n{}"
-                      .format(json.dumps(heartbeat_item, indent=3,
-                                         sort_keys=True)))
+            new_models = migration_source\
+                .get_new_models_from_old_item(heartbeat_item)
+            for model in new_models:
+                try:
+                    manager.create(model)
+                except HeartbeatPatternExistsError:
+                    failed += 1
+                    print("Duplicate Heartbeat mapping occured: \n{}"
+                          .format(json.dumps(model.pattern, indent=3,
+                                             sort_keys=True)))
+                else:
+                    success += 1
         print("Heartbeat migration done:")
-        print("  {} items was updated successfully".format(total-failed))
-        print("  {} items could not updated".format(failed))
+        print("  {} mappings was updated successfully".format(success))
+        print("  {} mappings could not updated".format(failed))
         print("Note! The old Heartbeat documents was not removed or "
               "modified for backward compatibility reason.")
