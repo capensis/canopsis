@@ -77,13 +77,17 @@ if __name__ == "__main__":
 
     sys.stdout.flush()
 
-    canopsis_version = read_version_file(get_version_file_path(root_path))
-    if not canopsis_version:
-        print("Error: could not obtain a Canopsis version. Exit now.")
+    try:
+        canopsis_version = read_version_file(get_version_file_path(root_path))
+    except ValueError:
+        print("Error: could not parse the Canopsis version. Exit now.")
         exit(3)
-    else:
-        COMMANDS[1].append(CANOPSIS_VERSION_ARG)
-        COMMANDS[1].append(canopsis_version)
+    except IOError as exc:
+        print("{}. Exit now.".format(exc))
+        exit(4)
+
+    COMMANDS[1].append(CANOPSIS_VERSION_ARG)
+    COMMANDS[1].append(canopsis_version)
 
     if started is True:
         for cmd in COMMANDS:
