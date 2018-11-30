@@ -53,7 +53,7 @@ export default {
         name: this.$constants.MODALS.createEntity,
         config: {
           title: 'modals.createEntity.createTitle',
-          action: entity => this.createContextEntity({ data: entity }),
+          action: entity => this.createContextEntity(entity),
         },
       });
     },
@@ -62,7 +62,7 @@ export default {
         name: this.$constants.MODALS.createWatcher,
         config: {
           title: 'modals.createWatcher.createTitle',
-          action: watcher => this.createWatcher({ data: watcher }),
+          action: watcher => this.createWatcher(watcher),
         },
       });
     },

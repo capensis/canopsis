@@ -184,7 +184,7 @@ export default {
           config: {
             title: 'modals.createWatcher.editTitle',
             item,
-            action: watcher => this.editWatcher({ data: watcher }),
+            action: watcher => this.editWatcher(watcher),
           },
         });
       } else {
@@ -193,7 +193,7 @@ export default {
           config: {
             title: 'modals.createEntity.editTitle',
             item,
-            action: entity => this.updateContextEntity({ data: entity }),
+            action: entity => this.updateContextEntity(entity),
           },
         });
       }
@@ -206,7 +206,7 @@ export default {
             title: 'modals.createWatcher.duplicateTitle',
             item,
             isDuplicating: true,
-            action: watcher => this.createWatcher({ data: watcher }),
+            action: watcher => this.duplicateWatcher(watcher),
           },
         });
       } else {
@@ -216,7 +216,7 @@ export default {
             title: 'modals.createEntity.duplicateTitle',
             item,
             isDuplicating: true,
-            action: entity => this.createContextEntity({ data: entity }),
+            action: entity => this.duplicateContextEntity(entity),
           },
         });
       }

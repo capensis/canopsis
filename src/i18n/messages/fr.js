@@ -285,9 +285,9 @@ export default {
         },
       },
       success: {
-        create: 'Entitée créée avec succès !',
-        edit: 'Entitée editée avec succès !',
-        duplicate: 'Entitée dupliquée avec succès !',
+        create: 'Entité créée avec succès !',
+        edit: 'Entité editée avec succès !',
+        duplicate: 'Entité dupliquée avec succès !',
       },
     },
     createWatcher: {
@@ -296,9 +296,9 @@ export default {
       duplicateTitle: 'Dupliquer un observateur',
       displayName: 'Nom',
       success: {
-        create: 'Watcher créé avec succès !',
-        edit: 'Watcher edité avec succès !',
-        duplicate: 'Watcher dupliqué avec succès !',
+        create: 'Observateur créé avec succès !',
+        edit: 'Observateur edité avec succès !',
+        duplicate: 'Observateur dupliqué avec succès !',
       },
     },
     view: {

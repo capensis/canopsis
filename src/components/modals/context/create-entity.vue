@@ -109,16 +109,10 @@ export default {
         }
         try {
           await this.config.action(formData);
-          this.refreshContextEntitiesLists();
-          this.hideModal();
 
-          if (this.config.item && !this.config.isDuplicating) {
-            this.addSuccessPopup({ text: this.$t('modals.createEntity.success.edit') });
-          } else if (this.config.isDuplicating) {
-            this.addSuccessPopup({ text: this.$t('modals.createEntity.success.duplicate') });
-          } else {
-            this.addSuccessPopup({ text: this.$t('modals.createEntity.success.create') });
-          }
+          this.refreshContextEntitiesLists();
+
+          this.hideModal();
         } catch (err) {
           console.error(err);
           this.addErrorPopup({ text: this.$t('error.default') });

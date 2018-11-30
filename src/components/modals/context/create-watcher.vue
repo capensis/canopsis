@@ -27,7 +27,6 @@ import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import popupMixin from '@/mixins/popup';
 
 import CreateForm from './partial/create-watcher-form.vue';
 import ManageInfos from './partial/manage-infos.vue';
@@ -41,7 +40,7 @@ export default {
     CreateForm,
     ManageInfos,
   },
-  mixins: [modalInnerMixin, entitiesContextEntityMixin, popupMixin],
+  mixins: [modalInnerMixin, entitiesContextEntityMixin],
   data() {
     const { item } = this.modal.config;
 
@@ -82,17 +81,6 @@ export default {
 
         try {
           await this.config.action(data);
-          this.refreshContextEntitiesLists();
-          this.hideModal();
-
-          if (this.config.item && !this.config.isDuplicating) {
-            this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.edit') });
-          } else if (this.config.isDuplicating) {
-            this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.duplicate') });
-          } else {
-            this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.create') });
-          }
-
           this.refreshContextEntitiesLists();
 
           this.hideModal();
