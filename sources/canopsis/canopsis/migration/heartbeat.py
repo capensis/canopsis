@@ -18,8 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import json
+
 from canopsis.common.mongo_store import MongoStore
-from canopsis.heartbeat import HeartbeatManager
+from canopsis.heartbeat import HeartbeatManager, HeartbeatPatternExistsError
 from canopsis.models.heartbeat import HeartBeat
 from canopsis.common.collection import MongoCollection
 
@@ -49,7 +51,7 @@ class HeartbeatMigrationSource(object):
         :rtype: `~.common.collection.MongoCollection`.
         """
         store = MongoStore.get_default()
-        return MongoCollection(store.get_collection(cls.COLLECTION))
+        return (MongoCollection(store.get_collection(cls.COLLECTION)), )
 
     def __init__(self, mongo_collection):
         self.__collection = mongo_collection
@@ -63,10 +65,12 @@ class HeartbeatMigrationSource(object):
         """
         global_config = \
             self.__collection.find_one({self.ID: self.GLOBAL_CONF_ID})
-        try:
-            return global_config[self.HEARTBEAT_SECTION][self.ITEMS_KEY]
-        except KeyError:
-            return []
+        if global_config:
+            try:
+                return global_config[self.HEARTBEAT_SECTION][self.ITEMS_KEY]
+            except KeyError:
+                pass
+        return []
 
     def get_new_model_from_old_item(self, heartbeat_item):
         """
@@ -92,11 +96,41 @@ class HeartbeatModule(MigrationModule):
     Heartbeat migration module.
 
     """
-    def init(self):
+    def init(self, yes=None):
         pass
 
-    def update(self):
+    def update(self, yes=None):
         migration_source = HeartbeatMigrationSource(
             *HeartbeatMigrationSource.provide_default_basics())
         manager = HeartbeatManager(
             *HeartbeatManager.provide_default_basics())
+        print("Looking for old Heartbeat items..")
+        items = migration_source.get_old_heartbeat_items()
+        if not items:
+            print("No previously Heartbeat items found.")
+            print("Heartbeat migration was skipped.")
+            return
+        total = len(items)
+        print("{} old Heartbeat items found.".format(total))
+        print("Started Heartbeat items migration..")
+        failed = 0
+        for heartbeat_item in items:
+            model = migration_source\
+                .get_new_model_from_old_item(heartbeat_item)
+            if not model:
+                print("Heartbeat item conversion failed: \n{}"
+                      .format(json.dumps(heartbeat_item, indent=3,
+                                         sort_keys=True)))
+                failed += 1
+                continue
+            try:
+                manager.create(model)
+            except HeartbeatPatternExistsError:
+                print("Duplicate Heartbeat mapping occured: \n{}"
+                      .format(json.dumps(heartbeat_item, indent=3,
+                                         sort_keys=True)))
+        print("Heartbeat migration done:")
+        print("  {} items was updated successfully".format(total-failed))
+        print("  {} items could not updated".format(failed))
+        print("Note! The old Heartbeat documents was not removed or "
+              "modified for backward compatibility reason.")
