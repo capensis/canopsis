@@ -27,30 +27,6 @@ ARG PROXY
 
 SHELL ["/bin/bash", "-c"]
 
-# Template here
-# RUN apt-get update; \
-# 	apt-get -y --no-install-recommends install \
-# 		build-essential \
-# 		curl \
-# 		libcurl4-openssl-dev \
-# 		libsasl2-dev \
-# 		libxml2-dev \
-# 		libxslt1-dev \
-# 		libssl-dev \
-# 		libffi-dev \
-# 		libxmlsec1-dev \
-# 		libxmlsec1-openssl \
-# 		libldap2-dev \
-# 		pkg-config \
-# 		python2.7-dev \
-# 		python-pip \
-# 		python-pkg-resources \
-# 		python-virtualenv \
-# 		python-wheel \
-# 		virtualenv \
-# 		net-tools \
-# 		procps; \
-# 	apt-get clean
 RUN {{BUILD_SETUP}}
 
 # RUN {{BUILD_IMAGE_SETUP}}
@@ -69,6 +45,7 @@ COPY sources/canopsis/etc ./etc
 COPY docker/files/bashrc .bashrc
 COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
+COPY sources/db-conf/ /opt/canopsis/
 
 RUN chmod +x /opt/canopsis/.bash_profile
 
@@ -99,7 +76,6 @@ COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/cano
 ##############
 # CORE IMAGE #
 ##############
-#FROM debian:stretch-slim as core
 FROM {{BASE_DOCKER_IMAGE}} as core
 #Todo : add label and description to the final image
 
@@ -109,6 +85,8 @@ ENV CPS_HOME /opt/canopsis
 
 SHELL ["/bin/bash", "-c"]
 WORKDIR ${CPS_HOME}
+
+RUN {{FINAL_IMAGE_SETUP}}
 
 RUN groupadd ${CPS_GROUP} ;
 RUN useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER}
