@@ -380,3 +380,38 @@ function dragended(d) {
                                   HTTP_ERROR)
 
         return gen_json(ContextGraph.get_id(event))
+
+    @route(
+        ws.application.get,
+        name='api/v2/entities',
+        payload=['query', 'limit', 'offset'],
+        response=lambda x, **kwargs: x
+    )
+    def get_entities_with_open_alarms(query=None, limit=0, offset=0):
+        """
+        Return the entities filtered with a mongo filter.
+        Each entity can contain an open alarm, if it exists.
+        """
+
+        def stringify_query_keys(dic):
+            for key, val in dic.iteritems():
+                if isinstance(val, dict):
+                    stringify_query_keys(val)
+
+                if not isinstance(key, basestring):
+                    dic[str(key)] = val
+                    del dic[key]
+
+            return dic
+
+        try:
+            if query is None:
+                query = {}
+
+            if isinstance(query, basestring):
+                query = stringify_query_keys(eval(query))
+
+            res = manager.get_entities_with_open_alarms(query, limit, offset)
+            return res
+        except Exception as err:
+            return gen_json_error({'description': str(repr(err))}, HTTP_ERROR)

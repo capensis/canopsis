@@ -8,7 +8,6 @@ from pymongo import errors
 from redlock import Redlock
 
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.redis_store import RedisStore
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
@@ -84,7 +83,6 @@ class AlertLockRedis(object):
         """
             provide default basics
         """
-        conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
         config = Configuration.load(
             os.path.join(root_path, cls.CONF_PATH), Ini).get(cls.CONF_SECTION)
         redis_host = config.get('host', cls.DEFAULT_DB_HOST)

@@ -18,3 +18,27 @@ La documentation est maintenue selon ces principes :
 ## Licence
 
 La documentation est sous licence CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/).
+
+
+## Visualisation de la documentation
+
+C'est l'outil **mkdocs** (https://www.mkdocs.org/) qui sert la documentation.  
+Le thème **material** (https://squidfunk.github.io/mkdocs-material/) est utilisé pour le rendu.  
+
+### Installation
+
+````sh
+$ pip install mkdocs
+$ pip install mkdocs-material
+````
+
+
+### Visualisation
+
+A la racine du dépôt :
+
+````sh
+$ mkdocs serve 
+````
+
+Ensuite, vous pouvez faire pointer votre navigateur sur l'URL donnée

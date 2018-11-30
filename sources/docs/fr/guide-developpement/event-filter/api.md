@@ -1,7 +1,4 @@
-# API event filter
-
-L'API event filter permet de manipuler les règles du filtre à événements du
-moteur go `che`.
+# API
 
 ## Lister les règles
 
@@ -57,7 +54,7 @@ Supprime la règle dont l'id vaut `<rule_id>`, ou renvoie une erreur si
 celle-ci n'existe pas.
 
 ## Modifier une règle
-Content-Type:·"application/json"
+
 ```json
 PUT /api/v2/eventfilter/rules/<rule_id>
 Content-Type: "application/json"
@@ -70,3 +67,81 @@ Content-Type: "application/json"
 
 Modifie la règle dont l'id vaut `<rule_id>`, ou renvoie une erreur si la
 règle est invalide, ou si son id a été modifié.
+
+
+# Utilisation de l'API avec curl
+
+## Ajouter une règle
+
+```shell
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+    "type": "enrichment",
+    "pattern": {
+        "component": "192.168.0.1"
+    },
+    "actions": [
+        {
+            "type": "set_field",
+            "name": "Component",
+            "value": "example.com"
+        }
+    ],
+    "priority": 101,
+    "on_success": "pass",
+    "on_failure": "pass"
+}' 'https://<hostname>/api/v2/eventfilter/rules'
+```
+
+`<hostname>` est à remplacer par le nom de domaine ou l'adresse IP du serveur
+canopsis, et `root:root` par les identifiants de l'administrateur.
+
+Si la règle est valide, cette requête renverra l'id de la règle, sous la forme :
+```json
+{"_id": "cc5f3dc2-0652-42f3-be50-5e34e5bb08b7"}
+```
+
+Sinon, elle renverra une erreur, et la règle ne sera pas ajoutée à l'event-filter.
+
+## Lister les règles
+
+```shell
+curl -X GET -u root:root 'https://<hostname>/api/v2/eventfilter/rules'
+```
+
+`<hostname>` est à remplacer par le nom de domaine ou l'adresse IP du serveur
+canopsis, et `root:root` par les identifiants de l'administrateur.
+
+## Supprimer une règle
+
+```shell
+curl -X DEL -u root:root 'https://<hostname>/api/v2/eventfilter/rules/<rule_id>'
+```
+
+`<hostname>` est à remplacer par le nom de domaine ou l'adresse IP du serveur
+canopsis, `<rule_id>` par l'id de la règle à supprimer, et `root:root` par les
+identifiants de l'administrateur.
+
+## Modifier une règle
+
+```shell
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
+    "type": "enrichment",
+    "pattern": {
+        "component": "192.168.0.1"
+    },
+    "actions": [
+        {
+            "type": "set_field",
+            "name": "Component",
+            "value": "s.example.com"
+        }
+    ],
+    "priority": 101,
+    "on_success": "pass",
+    "on_failure": "pass"
+}' 'https://<hostname>/api/v2/eventfilter/rules/<rule_id>'
+```
+
+`<hostname>` est à remplacer par le nom de domaine ou l'adresse IP du serveur
+canopsis, `<rule_id>` par l'id de la règle à modifier, et `root:root` par les
+identifiants de l'administrateur.
