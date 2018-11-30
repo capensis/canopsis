@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-from .heartbeat import HeartbeatManager, HeartbeatPatternExistsError
+from .manager import HeartbeatManager, HeartbeatPatternExistsError

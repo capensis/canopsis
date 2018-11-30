@@ -26,8 +26,7 @@ from bottle import request
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_ERROR, HTTP_NOT_FOUND)
 from canopsis.models.heartbeat import HeartBeat
-from canopsis.heartbeat.heartbeat import (HeartbeatManager,
-                                          HeartbeatPatternExistsError)
+from canopsis.heartbeat import (HeartbeatManager, HeartbeatPatternExistsError)
 from canopsis.common.collection import CollectionError
 
 
