@@ -37,7 +37,8 @@ DEFAULT_MODULES = ['canopsis.migration.purge.PurgeModule',
                    'canopsis.migration.jsonloader.JSONLoaderModule',
                    'canopsis.migration.rights.RightsModule',
                    'canopsis.migration.views.ViewsModule',
-                   'canopsis.migration.perfdata.PerfdataModule']
+                   'canopsis.migration.perfdata.PerfdataModule',
+                   'canopsis.migration.heartbeat.HeartbeatModule']
 DEFAULT_ASK_TIMEOUT = 30
 DEFAULT_VERSION_INFO = '~/var/lib/canopsis/migration.json'
 
