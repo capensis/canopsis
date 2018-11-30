@@ -1,10 +1,15 @@
 <template lang="pug">
   div
-    v-tabs(color="secondary lighten-2", slider-color="primary", dark)
-      v-tab(v-for="tab in view.tabs", :key="`tab-${tab._id}`", ripple) {{ tab.title }}
+    v-tabs(v-model="activeTab", color="secondary lighten-2", slider-color="primary", dark)
+      v-tab(v-for="tab in view.tabs", :key="`tab-${tab._id}`", ripple)
+        span {{ tab.title }}
+        v-btn(v-show="hasUpdateAccess && isEditModeEnable", small, flat, icon, @click="showUpdateTabModal(tab)")
+          v-icon(small) edit
+        v-btn(v-show="hasUpdateAccess && isEditModeEnable", small, flat, icon, @click="showDeleteTabModal(tab)")
+          v-icon(small) delete
       v-tab-item(v-for="tab in view.tabs", :key="`tab-item-${tab._id}`", lazy)
         div#view
-          v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
+          v-layout(v-for="(row, rowKey) in tab.rows", :key="row._id", row, wrap)
             v-flex(xs12)
               v-layout.notDisplayedFullScreen(align-center)
                 h2.ml-1 {{ row.title }}
@@ -21,7 +26,7 @@
                 v-flex
                   h3.my-1.ml-2(v-show="widget.title") {{ widget.title }}
                 v-flex(xs1, v-if="isEditModeEnable")
-                  v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, widget)")
+                  v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, tab._id, widget)")
                     v-icon settings
                   v-tooltip(left)
                     v-btn.ma-0(
@@ -34,8 +39,6 @@
               component(
               :is="widgetsComponentsMap[widget.type]",
               :widget="widget",
-              :rowId="row._id",
-              :hasUpdateAccess="hasUpdateAccess"
               )
     .fab
       v-tooltip(left)
@@ -62,15 +65,19 @@
             v-icon fullscreen
             v-icon fullscreen_exit
           span alt + enter / command + enter
-        v-tooltip(top)
-          v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
-            v-icon add
-          span {{ $t('common.addWidget') }}
         v-tooltip(v-if="hasUpdateAccess", top)
           v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
             v-icon edit
             v-icon done
           span {{ $t('common.toggleEditView') }}
+        v-tooltip(top)
+          v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
+            v-icon add
+          span {{ $t('common.addWidget') }}
+        v-tooltip(top)
+          v-btn(slot="activator", fab, dark, small, color="green", @click.stop="showCreateTabModal")
+            v-icon add
+          span Add tab
 </template>
 
 <script>
@@ -79,6 +86,7 @@ import pullAt from 'lodash/pullAt';
 
 import { WIDGET_TYPES, MODALS, USERS_RIGHTS_MASKS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 import uid from '@/helpers/uid';
+import { generateViewTab } from '@/helpers/entities';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
@@ -122,7 +130,6 @@ export default {
   data() {
     return {
       activeTab: null,
-      items: [1, 2, 3],
       widgetsComponentsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
@@ -181,12 +188,13 @@ export default {
       }
     },
 
-    showSettings(rowId, widget) {
+    showSettings(rowId, tabId, widget) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
           widget,
           rowId,
+          tabId,
         },
       });
     },
@@ -200,6 +208,62 @@ export default {
     showCreateWidgetModal() {
       this.showModal({
         name: MODALS.createWidget,
+        config: {
+          tabId: this.view.tabs[this.activeTab]._id,
+        },
+      });
+    },
+
+    showCreateTabModal() {
+      this.showModal({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: 'Create tab',
+          field: {
+            name: 'text',
+            label: 'Title',
+            validationRules: 'required',
+          },
+          action: (title) => {
+            const newTab = { ...generateViewTab(), title };
+            const view = {
+              ...this.view,
+              tabs: [...this.view.tabs, newTab],
+            };
+
+            this.updateView({ id: this.id, data: view });
+          },
+        },
+      });
+    },
+
+    showUpdateTabModal(tab) {
+      this.showModal({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: 'Create tab',
+          field: {
+            name: 'text',
+            label: 'Title',
+            value: tab.title,
+            validationRules: 'required',
+          },
+          action: (title) => {
+            const newTab = { ...tab, title };
+            const view = {
+              ...this.view,
+              tabs: this.view.tabs.map((viewTab) => {
+                if (viewTab._id === newTab._id) {
+                  return newTab;
+                }
+
+                return viewTab;
+              }),
+            };
+
+            this.updateView({ id: this.id, data: view });
+          },
+        },
       });
     },
 
