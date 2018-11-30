@@ -40,18 +40,18 @@ Le listing des moteurs peut être réalisé grace à cette commande : `systemctl
 | canopsis-engine@**cleaner-cleaner_alerts**.service             | Supprime les évènements invalides.                       |                    |
 | canopsis-engine@**cleaner-cleaner_events**.service             | Supprime les évènements invalides.                       |                    |
 | canopsis-engine@**dynamic-context-graph**.service              | Stocke les données contextuelles des évènements.         |                    |
-| **datametrie**                                                 | Gère le connecteur datametrie.                           | :white_check_mark: |
+| **datametrie**                                                 | Gère le connecteur datametrie.                           | ✅             |
 | canopsis-engine@**event_filter-event_filter**.service          | Applique des règles de filtrage.                         |                    |
 | canopsis-engine@**metric-metric**.service                      | Stocke les données de métrologie des évènements.         |                    |
 | canopsis-engine@**dynamic-pbehavior**.service                  | Gère les périodes de maintenance.                        |                    |
 | canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches.        |                    |
-| **snmp**                                                       | Gère les traps SNMP.                                     | :white_check_mark: |
+| **snmp**                                                       | Gère les traps SNMP.                                     | ✅             |
 | canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données.           |                    |
 | canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse.            |                    |
 | canopsis-engine@**task_mail-task_mail**.service                | Gestionnaire de tâches pour envoyer du courrier.         |                    |
 | canopsis-engine@**ticket-ticket**.service                      | Gère les tickets externes.                               |                    |
 | canopsis-engine@**dynamic-watcher**.service                    | Gère les watchers (groupes de surveillance).             |                    |
-| canopsis-engine-cat@**statsng-statsng**.service                | Calcule des statistiques sur les alarmes et les entités. | :white_check_mark: |
+| canopsis-engine-cat@**statsng-statsng**.service                | Calcule des statistiques sur les alarmes et les entités. | ✅             |
 
 ## Flags & Usage
 
