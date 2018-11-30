@@ -1,42 +1,42 @@
 <template lang="pug">
   div
     v-tabs(color="secondary lighten-2", slider-color="primary", dark)
-      v-tab(v-for="item in items", :key="`item-${item}`", ripple) Something
-      v-tab-item(v-for="item in items", :key="`tab-item-${item}`", ripple) Test
-    div#view
-      v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
-        v-flex(xs12)
-          v-layout.notDisplayedFullScreen(align-center)
-            h2.ml-1 {{ row.title }}
-            v-tooltip.ml-2(left, v-if="isEditModeEnable")
-              v-btn.ma-0(slot="activator", icon, @click.stop="deleteRow(rowKey)")
-                v-icon.error--text delete
-              span {{ $t('common.delete') }}
-        v-flex(
-        v-for="(widget, widgetKey) in row.widgets",
-        :key="`${widgetKeyPrefix}_${widget._id}`",
-        :class="getWidgetFlexClass(widget)"
-        )
-          v-layout.notDisplayedFullScreen(justify-space-between, align-center)
-            v-flex
-              h3.my-1.ml-2(v-show="widget.title") {{ widget.title }}
-            v-flex(xs1, v-if="isEditModeEnable")
-              v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, widget)")
-                v-icon settings
-              v-tooltip(left)
-                v-btn.ma-0(
-                slot="activator",
-                icon,
-                @click="deleteWidget(widgetKey, rowKey)"
-                )
-                  v-icon.error--text delete
-                span {{ $t('common.delete') }}
-          component(
-          :is="widgetsComponentsMap[widget.type]",
-          :widget="widget",
-          :rowId="row._id",
-          :hasUpdateAccess="hasUpdateAccess"
-          )
+      v-tab(v-for="tab in view.tabs", :key="`tab-${tab._id}`", ripple) {{ tab.title }}
+      v-tab-item(v-for="tab in view.tabs", :key="`tab-item-${tab._id}`", lazy)
+        div#view
+          v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
+            v-flex(xs12)
+              v-layout.notDisplayedFullScreen(align-center)
+                h2.ml-1 {{ row.title }}
+                v-tooltip.ml-2(left, v-if="isEditModeEnable")
+                  v-btn.ma-0(slot="activator", icon, @click.stop="deleteRow(rowKey)")
+                    v-icon.error--text delete
+                  span {{ $t('common.delete') }}
+            v-flex(
+            v-for="(widget, widgetKey) in row.widgets",
+            :key="`${widgetKeyPrefix}_${widget._id}`",
+            :class="getWidgetFlexClass(widget)"
+            )
+              v-layout.notDisplayedFullScreen(justify-space-between, align-center)
+                v-flex
+                  h3.my-1.ml-2(v-show="widget.title") {{ widget.title }}
+                v-flex(xs1, v-if="isEditModeEnable")
+                  v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, widget)")
+                    v-icon settings
+                  v-tooltip(left)
+                    v-btn.ma-0(
+                    slot="activator",
+                    icon,
+                    @click="deleteWidget(widgetKey, rowKey)"
+                    )
+                      v-icon.error--text delete
+                    span {{ $t('common.delete') }}
+              component(
+              :is="widgetsComponentsMap[widget.type]",
+              :widget="widget",
+              :rowId="row._id",
+              :hasUpdateAccess="hasUpdateAccess"
+              )
     .fab
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
