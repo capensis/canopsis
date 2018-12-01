@@ -1,6 +1,7 @@
 #!/bin/sed -f
 s|{{BASE_DOCKER_IMAGE}}|debian:stretch-slim|g
 s|{{BUILD_SETUP}}|apt-get update; \\ \
+	apt-get -y install apt-utils; \\ \
 	apt-get -y --no-install-recommends install \\ \
 		build-essential \\ \
 		curl \\ \
