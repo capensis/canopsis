@@ -66,115 +66,126 @@ services:
     ports:
       - 6379:6379
   provisionning:
-    image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    restart: "no"
-  cleaner_events:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=provisionning
+    restart: "no"
+  cleaner_events:
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    depends_on:
+      - "mongodb"
+    environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=cleaner_events
       - ENGINE_MODULE=canopsis.engines.cleaner
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   event_filter:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=event_filter
       - ENGINE_MODULE=canopsis.engines.event_filter
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   pbehavior:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=pbehavior
       - ENGINE_MODULE=canopsis.engines.dynamic
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   eventstore:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=eventstore
       - ENGINE_MODULE=canopsis.engines.eventstore
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   context-graph:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=context-graph
       - ENGINE_MODULE=canopsis.engines.dynamic
     restart: unless-stopped
     mem_limit: 2g
     mem_reservation: 2g
   alerts:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=alerts
       - ENGINE_MODULE=canopsis.engines.dynamic
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   scheduler:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=scheduler
       - ENGINE_MODULE=canopsis.engines.scheduler
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   task_mail:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=task_mail
       - ENGINE_MODULE=canopsis.engines.task_mail
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   task_importctx:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=task_importctx
       - ENGINE_MODULE=canopsis.engines.task_importctx
     volumes:
@@ -183,23 +194,24 @@ services:
     mem_limit: 200m
     mem_reservation: 200m
   metric:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     depends_on:
       - "influxdb"
     environment:
+      - CPS_COMPONENT=engine
       - ENGINE_NAME=metric
       - ENGINE_MODULE=canopsis.engines.metric
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
   webserver:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/canopsis:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     environment:
-      - CPS_WEBSERVER=1
+      - CPS_COMPONENT=webserver
     depends_on:
       - "mongodb"
     ports:
