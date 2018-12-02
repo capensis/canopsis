@@ -68,6 +68,8 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p tmp && \
     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf
 
+COPY VERSION.txt ${CPS_HOME}/
+
 RUN mkdir -p ${CPS_HOME}/var/www
 COPY sources/webcore/src ${CPS_HOME}/var/www/src
 COPY --from=canopsis-next_build /canopsis-next/dist ${CPS_HOME}/var/www/src/canopsis-next

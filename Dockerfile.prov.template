@@ -1,9 +1,0 @@
-ARG CANOPSIS_TAG
-ARG CANOPSIS_DISTRIBUTION
-
-FROM canopsis/canopsis-core:{{IMAGE_TAG}}
-# COPY docker/files/entrypoint-prov-sync.sh /
-ADD docker/files/entrypoint-prov.sh /
-COPY sources/db-conf/ /opt/canopsis/
-
-ENTRYPOINT /entrypoint-prov.sh
