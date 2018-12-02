@@ -14,10 +14,15 @@ NEXT_TAG="develop"
 # It's trick to allow subst to replace a comma.
 .comma:=,
 
+.NEXT_SRC=sources/webcore/src/canopsis-next
+
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
-	echo ${OWNER}
-	git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} sources/webcore/src/canopsis-next
+	if [ ! -d ${.NEXT_SRC} ] then \
+		git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} sources/webcore/src/canopsis-next \
+	else \
+		git checkout ${NEXT_TAG} \
+	fi; \
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib; \
 		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
@@ -25,10 +30,9 @@ docker_images:
 		else \
 			export image_tag=$$distrib-${TAG}; \
 		fi; \
-		./$$distrib.sed Dockerfile.core.template | docker build -f - . -t canopsis/canopsis-core:$$image_tag ; \
-		sed 's|{{IMAGE_TAG}}|'$$image_tag'|' Dockerfile.prov.template ; \
-		sed 's|{{IMAGE_TAG}}|'$$image_tag'|' Dockerfile.prov.template | docker build -f - . -t canopsis/canopsis-prov:$$image_tag ; \
+		./$$distrib.sed Dockerfile.template | docker build -f - . -t canopsis/canopsis:$$image_tag ; \
 	done
+
 	rm -rf sources/webcore/src/canopsis-next
 
 packages: docker_images
@@ -46,7 +50,7 @@ packages: docker_images
 		           -v `pwd`/build:/build \
 		           -v `pwd`/docker/packaging:/packages \
 		           --entrypoint "/packages/package-"$$distrib".sh" \
-		           --user=0 canopsis/canopsis-prov:develop ; \
+		           --user=0 canopsis/canopsis:develop ; \
 	done
 
 all: packages
@@ -54,7 +58,7 @@ all: packages
 help:
 	@echo "Available targets: "
 	@echo "   * help: display this help."
-	@echo "   * docker_images: Builds the docker images canopsis-core, canopsis-prov."
+	@echo "   * docker_images: Builds the docker image canopsis/canopsis."
 	@echo "       - DISTRIBUTIONS: a coma separated list of GNU/Linux distribution."
 	@echo "       Currently, debian8, debian9 and centos7 are supported. By default,"
 	@echo "       only the debian9 images are build"
