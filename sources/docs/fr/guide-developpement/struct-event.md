@@ -38,7 +38,7 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
 
 ## Ajout d'éléments et personnalisation
 
-Aprés avoir définit la structure de base de l'évènement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
+Aprés avoir défini la structure de base de l'évènement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
 
 ### Event Check Structure
 
@@ -158,7 +158,7 @@ Aprés avoir définit la structure de base de l'évènement, choississez ce que 
 
 ### Event Perf Structure
 
-Un évènement de type \'perf\' ne sera jamais sauvegarder dans une base de données, il est uniquement utilisé pour envoyer des perfdata :
+Un évènement de type `perf` ne sera jamais sauvegardé dans une base de données, il est uniquement utilisé pour envoyer des perfdata :
 
 ```javascript
 {
@@ -169,7 +169,7 @@ Un évènement de type \'perf\' ne sera jamais sauvegarder dans une base de donn
 }
 ```
 
-See bellow for more informations about those fields.
+See below for more informations about those fields.
 
 ### Event Statistics Counter Increment Structure
 
@@ -220,7 +220,7 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ## Metrology
 
-Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'un des champs suivant :
+Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'un des champs suivants :
 
 ```javascript
 {
@@ -237,7 +237,7 @@ Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'
 ### Basic Alert Structure
 
 Un alarme est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
-Dans MongoDB, il contient les champs suivant.
+Dans MongoDB, il contient les champs suivants.
 
 ```javascript
 {
