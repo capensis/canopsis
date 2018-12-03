@@ -1,6 +1,7 @@
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { eventFilterRuleSchema } from '@/store/schemas';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -48,6 +49,18 @@ export default {
       } catch (err) {
         console.error(err);
         commit(types.FETCH_LIST_FAILED);
+      }
+    },
+
+    async remove({ dispatch }, { id } = {}) {
+      try {
+        await request.delete(`${API_ROUTES.eventFilterRules}/${id}`);
+        await dispatch('entities/removeFromStore', {
+          id,
+          type: ENTITIES_TYPES.eventFilterRule,
+        }, { root: true });
+      } catch (err) {
+        console.error(err);
       }
     },
   },

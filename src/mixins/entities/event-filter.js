@@ -12,6 +12,7 @@ export default {
   methods: {
     ...mapActions({
       fetchEventFilterRulesList: 'fetchList',
+      removeEventFilterRule: 'remove',
     }),
   },
 };
