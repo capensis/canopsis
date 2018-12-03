@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group/index';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 
@@ -64,7 +65,7 @@ import GroupsSettingsButton from './groups-settings-button.vue';
 
 export default {
   components: { GroupsSettingsButton },
-  mixins: [entitiesViewGroupMixin, layoutNavigationGroupMenuMixin],
+  mixins: [vuetifyTabsMixin, entitiesViewGroupMixin, layoutNavigationGroupMenuMixin],
   watch: {
     groups() {
       this.$nextTick(this.callTabsOnResizeMethod);
@@ -75,10 +76,6 @@ export default {
       this.isEditingMode = !this.isEditingMode;
 
       this.$nextTick(this.callTabsOnResizeMethod);
-    },
-
-    callTabsOnResizeMethod() {
-      this.$refs.tabs.onResize();
     },
   },
 };

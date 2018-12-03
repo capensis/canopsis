@@ -80,7 +80,7 @@ import { MODALS } from '@/constants';
 import { generateUser } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
 

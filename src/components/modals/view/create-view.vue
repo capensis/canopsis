@@ -77,7 +77,7 @@ import { generateView, generateViewRow, generateRight, generateRoleRightByChecks
 import uuid from '@/helpers/uid';
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesRightMixin from '@/mixins/entities/right';

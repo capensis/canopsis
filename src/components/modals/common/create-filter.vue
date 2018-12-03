@@ -25,7 +25,7 @@ import pick from 'lodash/pick';
 
 import { MODALS } from '@/constants';
 import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
   name: MODALS.createFilter,

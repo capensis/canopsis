@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
 
 export default {

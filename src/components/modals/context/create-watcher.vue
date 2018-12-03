@@ -23,7 +23,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import { MODALS } from '@/constants';
 

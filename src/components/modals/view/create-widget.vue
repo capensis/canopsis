@@ -26,7 +26,7 @@
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 import { generateWidgetByType } from '@/helpers/entities';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 /**

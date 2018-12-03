@@ -14,7 +14,7 @@
 <script>
 import { MODALS } from '@/constants';
 import { quillEditor as QuillEditor } from 'vue-quill-editor';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
   name: MODALS.textEditor,

@@ -17,7 +17,7 @@ v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import pbehaviorEntityMixin from '@/mixins/entities/pbehavior';
 import { MODALS } from '@/constants';
 

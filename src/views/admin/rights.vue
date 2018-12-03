@@ -69,7 +69,7 @@ import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';

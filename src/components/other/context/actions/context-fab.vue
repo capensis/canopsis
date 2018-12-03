@@ -14,7 +14,7 @@ v-speed-dial.d-inline-block(
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import entityMixin from '@/mixins/entities/context-entity';
 
 /**

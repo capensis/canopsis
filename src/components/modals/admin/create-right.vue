@@ -34,7 +34,7 @@
 import { MODALS, USERS_RIGHTS_TYPES } from '@/constants';
 
 import popupMixin from '@/mixins/popup';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 import { generateRight } from '@/helpers/entities';
 

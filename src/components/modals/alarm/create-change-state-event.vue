@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsMixin from '@/mixins/event-actions';
 import { MODALS } from '@/constants';
 

@@ -33,7 +33,7 @@
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   mixins: [authMixin, modalMixin],

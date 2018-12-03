@@ -3,9 +3,9 @@
     v-tabs(v-model="activeTab", color="secondary lighten-2", slider-color="primary", dark)
       v-tab(v-for="tab in view.tabs", :key="`tab-${tab._id}`", ripple)
         span {{ tab.title }}
-        v-btn(v-show="hasUpdateAccess && isEditModeEnable", small, flat, icon, @click="showUpdateTabModal(tab)")
+        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
           v-icon(small) edit
-        v-btn(v-show="hasUpdateAccess && isEditModeEnable", small, flat, icon, @click="showDeleteTabModal(tab)")
+        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
           v-icon(small) delete
       v-tab-item(v-for="tab in view.tabs", :key="`tab-item-${tab._id}`", lazy)
         div#view
@@ -13,7 +13,7 @@
             v-flex(xs12)
               v-layout.notDisplayedFullScreen(align-center)
                 h2.ml-1 {{ row.title }}
-                v-tooltip.ml-2(left, v-if="isEditModeEnable")
+                v-tooltip.ml-2(left, v-if="isEditingMode")
                   v-btn.ma-0(slot="activator", icon, @click.stop="deleteRow(rowKey)")
                     v-icon.error--text delete
                   span {{ $t('common.delete') }}
@@ -25,7 +25,7 @@
               v-layout.notDisplayedFullScreen(justify-space-between, align-center)
                 v-flex
                   h3.my-1.ml-2(v-show="widget.title") {{ widget.title }}
-                v-flex(xs1, v-if="isEditModeEnable")
+                v-flex(xs1, v-if="isEditingMode")
                   v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, tab._id, widget)")
                     v-icon settings
                   v-tooltip(left)
@@ -66,7 +66,7 @@
             v-icon fullscreen_exit
           span alt + enter / command + enter
         v-tooltip(v-if="hasUpdateAccess", top)
-          v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
+          v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditingMode")
             v-icon edit
             v-icon done
           span {{ $t('common.toggleEditView') }}
@@ -99,9 +99,9 @@ import StatsNumber from '@/components/other/stats/stats-number.vue';
 
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
-import modalMixin from '@/mixins/modal/modal';
-import entitiesViewMixin from '@/mixins/entities/view';
+import modalMixin from '@/mixins/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
+import entitiesViewMixin from '@/mixins/entities/view';
 
 export default {
   components: {
@@ -118,8 +118,8 @@ export default {
     authMixin,
     popupMixin,
     modalMixin,
-    entitiesViewMixin,
     sideBarMixin,
+    entitiesViewMixin,
   ],
   props: {
     id: {
@@ -141,7 +141,7 @@ export default {
         [WIDGET_TYPES.statsNumber]: 'stats-number',
       },
       widgetKeyPrefix: uid(),
-      isEditModeEnable: false,
+      isEditingMode: false,
       isFullScreenModeEnable: false,
       fab: false,
     };
@@ -231,7 +231,7 @@ export default {
               tabs: [...this.view.tabs, newTab],
             };
 
-            this.updateView({ id: this.id, data: view });
+            return this.updateView({ id: this.id, data: view });
           },
         },
       });
@@ -241,7 +241,7 @@ export default {
       this.showModal({
         name: MODALS.textFieldEditor,
         config: {
-          title: 'Create tab',
+          title: 'Update tab',
           field: {
             name: 'text',
             label: 'Title',
@@ -261,14 +261,30 @@ export default {
               }),
             };
 
-            this.updateView({ id: this.id, data: view });
+            return this.updateView({ id: this.id, data: view });
+          },
+        },
+      });
+    },
+
+    showDeleteTabModal(tab) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => {
+            const view = {
+              ...this.view,
+              tabs: this.view.tabs.filter(viewTab => viewTab._id !== tab._id),
+            };
+
+            return this.updateView({ id: this.id, data: view });
           },
         },
       });
     },
 
     toggleViewEditMode() {
-      this.isEditModeEnable = !this.isEditModeEnable;
+      this.isEditingMode = !this.isEditingMode;
     },
 
     deleteRow(rowKey) {

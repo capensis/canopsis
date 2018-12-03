@@ -10,7 +10,7 @@ v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight +
 
 <script>
 import find from 'lodash/find';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import compile from '@/helpers/handlebars';
 import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES, WEATHER_ICONS } from '@/constants';
 

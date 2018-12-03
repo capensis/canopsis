@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import { MODALS } from '@/constants';
 
 /**

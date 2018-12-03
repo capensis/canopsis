@@ -36,7 +36,7 @@ import { Calendar, Units } from 'dayspan';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';

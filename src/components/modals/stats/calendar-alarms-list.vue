@@ -14,7 +14,7 @@ import pick from 'lodash/pick';
 
 import { MODALS } from '@/constants';
 import AlarmList from '@/components/other/alarm/alarms-list.vue';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import queryMixin from '@/mixins/query';
 
 export default {

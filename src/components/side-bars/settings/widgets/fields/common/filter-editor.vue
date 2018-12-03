@@ -15,7 +15,7 @@ v-container.pa-3(fluid)
 <script>
 import isEmpty from 'lodash/isEmpty';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   mixins: [modalMixin],

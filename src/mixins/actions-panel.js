@@ -1,4 +1,4 @@
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import eventActionsMixin from '@/mixins/event-actions';
 import { EVENT_ENTITY_TYPES, MODALS, USERS_RIGHTS } from '@/constants';
 
