@@ -8,7 +8,16 @@
     v-spacer
     v-toolbar-items
       v-menu(bottom, offset-y)
-        v-btn.white--text(slot="activator", flat) Administration
+        v-btn.white--text(slot="activator", flat) {{ $t('common.exploitation') }}
+        v-list.pb-0
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'exploitation-event-filter' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('eventFilter.title') }}
+                  v-icon.ml-2 list
+      v-menu(bottom, offset-y)
+        v-btn.white--text(slot="activator", flat) {{ $t('common.administration') }}
         v-list.pb-0
           v-list-tile
             v-list-tile-title

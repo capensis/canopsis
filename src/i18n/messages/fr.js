@@ -62,6 +62,8 @@ export default {
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
+    exploitation: 'Exploitation',
+    administration: 'Administration',
     actions: {
       close: 'Fermer',
       acknowledge: 'Acquitter',
@@ -694,6 +696,9 @@ export default {
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
     },
+  },
+  eventFilter: {
+    title: 'Filtre d\'événements',
   },
   layout: {
     sideBar: {

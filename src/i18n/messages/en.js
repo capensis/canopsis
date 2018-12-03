@@ -62,6 +62,8 @@ export default {
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    exploitation: 'Exploitation',
+    administration: 'Administration',
     forbidden: 'Forbidden',
     actions: {
       close: 'Close',
@@ -708,6 +710,9 @@ export default {
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
     },
+  },
+  eventFilter: {
+    title: 'Event filter',
   },
   layout: {
     sideBar: {
