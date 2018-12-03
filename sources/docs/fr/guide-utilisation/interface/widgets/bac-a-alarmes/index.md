@@ -135,7 +135,7 @@ Ce paramètre permet de définir quels colonnes seront affichées dans le bac à
 
 Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
-Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tout les champs de l'alarme, et de l'entité concernée par l'alarme, peuvent être utilisés, en préfixant le nom du champs de "alarm", ou de "entity".
+Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'alarme, et de l'entité concernée par l'alarme, peuvent être utilisés, en préfixant le nom du champs de "alarm", ou de "entity".
 
 Example: Pour ajouter une colonne ayant pour label "Composant" et pour valeur le nom du composant, renseignez les champs comme suit :
 

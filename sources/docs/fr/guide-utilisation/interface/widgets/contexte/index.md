@@ -68,7 +68,7 @@ Le 1er onglet, 'Formulaire', vous demande de renseigner les informations princip
 - Description
 - Activé(e) : Définit si l'entité est activée, ou non.
 - Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
-- Impacts et Dépendances : Permet de définir les entités que l'entités que vous êtes en train de créer impactes, et celles dont elle dépend. Pour ajouter des entités dans une de ces liste, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icone ![Icone Ajout impact/dépendance](./img/add-impact-depends.png "Icone Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
+- Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces listes, effectuez une recherche grâce au champ de recherche, puis cliquez sur l'icone ![Icone Ajout impact/dépendance](./img/add-impact-depends.png "Icone Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisé pour ajouter des entités.
 
 Le 2ème onglet permet de gérer les infos contenues dans le champs 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
 Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
@@ -163,7 +163,7 @@ Ce paramètre permet de définir quels colonnes seront affichées dans l'explora
 
 Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
-Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tout les champs de l'entités sont directement disponibles. 
+Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'entité sont directement disponibles.
 
 Exemple: "name", qui contient le nom de l'entité, ou encore "type", qui contient le type  de l'entité.
 

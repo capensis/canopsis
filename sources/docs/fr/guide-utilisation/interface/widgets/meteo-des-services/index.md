@@ -25,7 +25,7 @@ Chaque tuile correspond à un observateur.
 
 Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur l'observateur.
 
-La couleur de la tuile, ainsi que l'icône présent sur celle-ci permettent d'obtenir des informations sur **l'état** de l'observateur:
+La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **l'état** de l'observateur:
 
 ### 1. La couleur
 
@@ -104,7 +104,7 @@ Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur d
 
 Une variable est disponible ici pour vous permettre d'affiché les détails de l'observateur : ```watcher```.
 Exemple : Pour afficher le champs 'display_name' de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : ```{{ watcher.display_name }}```.
-Tout les champs disponibles dans l'observateurs sont disponibles ici.
+Tous les champs disponibles dans l'observateur sont disponibles ici.
 
 ##### Template - Modal
 
@@ -122,7 +122,7 @@ Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur d
 
 Une variable est disponible ici pour vous permettre d'affiché les détails de l'entité : ```entity```.
 Exemple : Pour afficher le champs 'name' de l'entité (qui correspond au nom de l'entité), il vous faut écrire dans le template : ```{{ entity.name }}```.
-Tout les champs disponibles dans l'entité sont disponibles ici.
+Tous les champs disponibles dans l'entité sont disponibles ici.
 
 ##### Colonnes - Petit
 
