@@ -14,6 +14,7 @@ export const ENTITIES_TYPES = {
   stat: 'stat',
   user: 'user',
   role: 'role',
+  eventFilterRule: 'eventFilterRule',
 };
 
 export const MODALS = {

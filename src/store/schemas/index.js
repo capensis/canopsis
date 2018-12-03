@@ -69,6 +69,7 @@ export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribu
 
 export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
 
+export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -83,4 +84,5 @@ export default {
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,
   [ENTITIES_TYPES.role]: roleSchema,
+  [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
 };
