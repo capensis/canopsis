@@ -31,23 +31,23 @@ export default {
     ...mapActions({
       fetchContextEntitiesList: 'fetchList',
       removeContextEntity: 'remove',
-      update: 'update',
-      create: 'create',
+      updateContextEntity: 'update',
+      createContextEntity: 'create',
       refreshContextEntitiesLists: 'refreshLists',
     }),
 
-    async updateContextEntity(data) {
-      await this.update({ data });
+    async updateContextEntityWithPopup(data) {
+      await this.updateContextEntity({ data });
       this.addSuccessPopup({ text: this.$t('modals.createEntity.success.edit') });
     },
 
-    async createContextEntity(data) {
-      await this.create({ data });
+    async createContextEntityWithPopup(data) {
+      await this.createContextEntity({ data });
       this.addSuccessPopup({ text: this.$t('modals.createEntity.success.create') });
     },
 
-    async duplicateContextEntity(data) {
-      await this.create({ data });
+    async duplicateContextEntityWithPopup(data) {
+      await this.createContextEntity({ data });
       this.addSuccessPopup({ text: this.$t('modals.createEntity.success.duplicate') });
     },
   },

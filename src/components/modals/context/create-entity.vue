@@ -23,7 +23,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import uid from '@/helpers/uid';
+import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
@@ -105,7 +105,7 @@ export default {
         const formData = { ...this.form };
 
         if (!this.config.item || this.config.isDuplicating) {
-          formData._id = uid();
+          formData._id = uuid('entity');
         }
         try {
           await this.config.action(formData);

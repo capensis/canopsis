@@ -142,12 +142,12 @@ export default {
       return Promise.all(fetchRequests);
     },
 
-    async create(context, { data }) {
+    create(context, { data }) {
       // Need this special syntax for request params for the backend to handle it
       return request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
     },
 
-    async update(context, { data }) {
+    update(context, { data }) {
       return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
     },
 

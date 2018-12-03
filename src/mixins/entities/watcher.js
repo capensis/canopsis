@@ -26,22 +26,22 @@ export default {
     ...mapActions({
       fetchWatcherItem: 'fetchItem',
       fetchWatchersList: 'fetchList',
-      create: 'create',
-      edit: 'edit',
+      createWatcher: 'create',
+      editWatcher: 'edit',
     }),
 
-    async createWatcher(data) {
-      await this.create({ data });
+    async createWatcherWithPopup(data) {
+      await this.createWatcher({ data });
       this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.create') });
     },
 
-    async duplicateWatcher(data) {
-      await this.create({ data });
+    async duplicateWatcherWithPopup(data) {
+      await this.createWatcher({ data });
       this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.duplicate') });
     },
 
-    async editWatcher(data) {
-      await this.edit({ data });
+    async editWatcherWithPopup(data) {
+      await this.editWatcher({ data });
       this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.edit') });
     },
   },
