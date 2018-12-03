@@ -4,14 +4,13 @@ const { mapGetters, mapActions } = createNamespacedHelpers('query');
 
 export default {
   computed: {
-    ...mapGetters({
-      getQueryById: 'getItemById',
-    }),
+    ...mapGetters(['getQueryById', 'getQueryNonceById']),
   },
   methods: {
     ...mapActions({
       updateQuery: 'update',
       mergeQuery: 'merge',
+      forceUpdateQuery: 'forceUpdate',
     }),
   },
 };

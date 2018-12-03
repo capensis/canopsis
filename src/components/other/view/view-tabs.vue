@@ -1,30 +1,36 @@
 <template lang="pug">
   v-tabs(
+  ref="tabs",
   :value="value",
   @input="$emit('input', $event)",
   color="secondary lighten-2",
   slider-color="primary",
   dark
   )
-    v-tab(v-for="tab in view.tabs", :key="`tab-${tab._id}`", ripple)
+    v-tab(v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
       span {{ tab.title }}
       v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
         v-icon(small) edit
       v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
         v-icon(small) delete
-    v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`")
-      slot(:tab="tab", :updateTabMethod="updateTab")
+    v-tabs-items(ref="tabItems")
+      v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`", :value="tab._id", lazy)
+        slot(
+        :tab="tab",
+        :isEditingMode="isEditingMode",
+        :hasUpdateAccess="hasUpdateAccess",
+        :updateTabMethod="updateTab"
+        )
 </template>
 
 <script>
-import get from 'lodash/get';
-
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
+import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 
 export default {
-  mixins: [modalMixin],
+  mixins: [modalMixin, vuetifyTabsMixin],
   props: {
     view: {
       type: Object,
@@ -49,7 +55,20 @@ export default {
   },
   computed: {
     tabs() {
-      return get(this.view, 'tabs', []);
+      return this.view.tabs || [];
+    },
+  },
+  watch: {
+    isEditingMode() {
+      this.$nextTick(this.callTabsOnResizeMethod);
+    },
+    'view.tabs': {
+      handler() {
+        this.$nextTick(() => {
+          this.callTabsOnResizeMethod();
+          this.callTabsUpdateTabsMethod();
+        });
+      },
     },
   },
   methods: {
@@ -57,10 +76,10 @@ export default {
       this.showModal({
         name: MODALS.textFieldEditor,
         config: {
-          title: 'Update tab',
+          title: this.$t('modals.viewTab.edit.title'),
           field: {
             name: 'text',
-            label: 'Title',
+            label: this.$t('modals.viewTab.fields.title'),
             value: tab.title,
             validationRules: 'required',
           },
@@ -77,13 +96,13 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => {
+          action: async () => {
             const view = {
               ...this.view,
               tabs: this.view.tabs.filter(viewTab => viewTab._id !== tab._id),
             };
 
-            return this.updateViewMethod(view);
+            await this.updateViewMethod(view);
           },
         },
       });

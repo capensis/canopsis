@@ -30,12 +30,12 @@
         component(
         :is="widgetsComponentsMap[widget.type]",
         :widget="widget",
+        :tabId="tab._id"
         )
 </template>
 
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
-import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
 import EntitiesList from '@/components/other/context/entities-list.vue';
@@ -46,7 +46,6 @@ import StatsTable from '@/components/other/stats/stats-table.vue';
 import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
 
-import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -63,7 +62,6 @@ export default {
     StatsNumber,
   },
   mixins: [
-    authMixin,
     popupMixin,
     modalMixin,
     sideBarMixin,
@@ -88,7 +86,6 @@ export default {
   },
   data() {
     return {
-      widgetKeyPrefix: uid(),
       widgetsComponentsMap: {
         [WIDGET_TYPES.alarmList]: 'alarms-list',
         [WIDGET_TYPES.context]: 'entities-list',
@@ -157,18 +154,16 @@ export default {
             const newTab = {
               ...this.tab,
 
-              rows: [
-                ...this.rows.map((tabRow) => {
-                  if (tabRow._id === rowId) {
-                    return {
-                      ...tabRow,
-                      widgets: tabRow.widgets.filter(rowWidget => rowWidget._id !== widget._id),
-                    };
-                  }
+              rows: this.rows.map((tabRow) => {
+                if (tabRow._id === rowId) {
+                  return {
+                    ...tabRow,
+                    widgets: tabRow.widgets.filter(rowWidget => rowWidget._id !== widget._id),
+                  };
+                }
 
-                  return tabRow;
-                }),
-              ],
+                return tabRow;
+              }),
             };
 
             return this.updateTabMethod(newTab);
@@ -179,3 +174,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .full-screen {
+    .hide-on-full-screen {
+      display: none;
+    }
+  }
+</style>

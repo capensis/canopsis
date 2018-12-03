@@ -1,18 +1,15 @@
 <template lang="pug">
-  div#view-page
+  div
     view-tabs(
     v-model="activeTabIndex",
     :view="view",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="view => updateView({ id, data: view })"
+    :updateViewMethod="data => updateView({ id, data })"
     )
-      view-widgets(
-      slot-scope="{ tab, updateTabMethod }",
-      :tab="tab",
-      :isEditingMode="isEditingMode",
-      :hasUpdateAccess="hasUpdateAccess",
-      :updateTabMethod="updateTabMethod"
+      view-tab-rows(
+      slot-scope="props",
+      v-bind="props",
       )
     .fab
       v-tooltip(left)
@@ -20,11 +17,11 @@
           v-icon refresh
         span {{ $t('common.refresh') }}
       v-speed-dial(
-      v-model="fab",
+      v-model="isVSpeedDialOpen",
       direction="left",
       transition="slide-y-reverse-transition"
       )
-        v-btn(slot="activator", color="primary", dark, fab, v-model="fab")
+        v-btn(slot="activator", :input-value="isVSpeedDialOpen", color="primary", dark, fab)
           v-icon menu
           v-icon close
         v-tooltip(top)
@@ -55,31 +52,26 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
-import uid from '@/helpers/uid';
 import { generateViewTab } from '@/helpers/entities';
 
 import ViewTabs from '@/components/other/view/view-tabs.vue';
-import ViewWidgets from '@/components/other/view/view-widgets.vue';
+import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 
 import authMixin from '@/mixins/auth';
-import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
+import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
 
 export default {
   components: {
     ViewTabs,
-    ViewWidgets,
+    ViewTabRows,
   },
   mixins: [
     authMixin,
-    popupMixin,
     modalMixin,
-    sideBarMixin,
+    queryMixin,
     entitiesViewMixin,
   ],
   props: {
@@ -90,7 +82,7 @@ export default {
   },
   data() {
     return {
-      fab: false,
+      isVSpeedDialOpen: false,
       activeTabIndex: null,
       isEditingMode: false,
       isFullScreenMode: false,
@@ -100,15 +92,13 @@ export default {
     hasUpdateAccess() {
       return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
     },
-    getWidgetFlexClass() {
-      return widget => [
-        `xs${widget.size.sm}`,
-        `md${widget.size.md}`,
-        `lg${widget.size.lg}`,
-      ];
-    },
-    rows() {
-      return get(this.view, 'rows', []);
+
+    activeTab() {
+      if (this.view.tabs && this.activeTabIndex !== null) {
+        return this.view.tabs[this.activeTabIndex];
+      }
+
+      return null;
     },
   },
   created() {
@@ -141,28 +131,30 @@ export default {
     async refreshView() {
       await this.fetchView({ id: this.id });
 
-      // TODO: fix it
-
-      this.widgetKeyPrefix = uid();
+      if (this.activeTab) {
+        this.forceUpdateQuery({ id: this.activeTab._id });
+      }
     },
 
     showCreateWidgetModal() {
-      this.showModal({
-        name: MODALS.createWidget,
-        config: {
-          tabId: this.view.tabs[this.activeTabIndex]._id,
-        },
-      });
+      if (this.activeTab) {
+        this.showModal({
+          name: MODALS.createWidget,
+          config: {
+            tabId: this.activeTab._id,
+          },
+        });
+      }
     },
 
     showCreateTabModal() {
       this.showModal({
         name: MODALS.textFieldEditor,
         config: {
-          title: 'Create tab',
+          title: this.$t('modals.viewTab.create.title'),
           field: {
             name: 'text',
-            label: 'Title',
+            label: this.$t('modals.viewTab.fields.title'),
             validationRules: 'required',
           },
           action: (title) => {
@@ -184,13 +176,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-  #view-page {
-    .full-screen {
-      .hide-on-full-screen {
-        display: none;
-      }
-    }
-  }
-</style>

@@ -522,6 +522,17 @@ export default {
         type: 'Type',
       },
     },
+    viewTab: {
+      create: {
+        title: 'Create tab',
+      },
+      edit: {
+        title: 'Edit tab',
+      },
+      fields: {
+        title: 'Title',
+      },
+    },
   },
   tables: {
     noData: 'No data',
