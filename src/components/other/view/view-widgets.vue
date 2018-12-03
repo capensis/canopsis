@@ -1,29 +1,29 @@
 <template lang="pug">
   div#view
-    v-layout(v-for="(row, rowKey) in rows", :key="row._id", row, wrap)
+    v-layout(v-for="row in rows", :key="row._id", row, wrap)
       v-flex(xs12)
-        v-layout.notDisplayedFullScreen(align-center)
+        v-layout.hide-on-full-screen(align-center)
           h2.ml-1 {{ row.title }}
           v-tooltip.ml-2(left, v-if="isEditingMode")
-            v-btn.ma-0(slot="activator", icon, @click.stop="deleteRow(rowKey)")
+            v-btn.ma-0(slot="activator", icon, @click.stop="showDeleteRowModal(row)")
               v-icon.error--text delete
             span {{ $t('common.delete') }}
       v-flex(
-      v-for="(widget, widgetKey) in row.widgets",
-      :key="`${widgetKeyPrefix}_${widget._id}`",
+      v-for="widget in row.widgets",
+      :key="widget._id",
       :class="getWidgetFlexClass(widget)"
       )
-        v-layout.notDisplayedFullScreen(justify-space-between, align-center)
+        v-layout.hide-on-full-screen(justify-space-between, align-center)
           v-flex
             h3.my-1.ml-2(v-show="widget.title") {{ widget.title }}
           v-flex(xs1, v-if="isEditingMode")
-            v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, tab._id, widget)")
+            v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(tab._id, row._id, widget)")
               v-icon settings
             v-tooltip(left)
               v-btn.ma-0(
               slot="activator",
               icon,
-              @click="deleteWidget(widgetKey, rowKey)"
+              @click="showDeleteWidgetModal(row._id, widget)"
               )
                 v-icon.error--text delete
               span {{ $t('common.delete') }}
@@ -34,10 +34,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import pullAt from 'lodash/pullAt';
-
-import { MODALS, WIDGET_TYPES, USERS_RIGHTS_MASKS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 import uid from '@/helpers/uid';
 
 import AlarmsList from '@/components/other/alarm/alarms-list.vue';
@@ -76,9 +73,17 @@ export default {
       type: Object,
       required: true,
     },
+    hasUpdateAccess: {
+      type: Boolean,
+      default: false,
+    },
     isEditingMode: {
       type: Boolean,
       default: false,
+    },
+    updateTabMethod: {
+      type: Function,
+      required: true,
     },
   },
   data() {
@@ -98,11 +103,9 @@ export default {
   },
   computed: {
     rows() {
-      return get(this.tab, 'rows', []);
+      return this.tab.rows || [];
     },
-    hasUpdateAccess() {
-      return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
-    },
+
     getWidgetFlexClass() {
       return widget => [
         `xs${widget.size.sm}`,
@@ -112,42 +115,63 @@ export default {
     },
   },
   methods: {
-    showSettings(rowId, tabId, widget) {
+    showSettings(tabId, rowId, widget) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
-          widget,
-          rowId,
           tabId,
+          rowId,
+          widget,
         },
       });
     },
 
-    deleteRow(rowKey) {
-      if (this.view.rows[rowKey].widgets.length > 0) {
+    showDeleteRowModal(row = {}) {
+      const widgets = row.widgets || [];
+
+      if (widgets.length > 0) {
         this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
       } else {
         this.showModal({
           name: MODALS.confirmation,
           config: {
             action: () => {
-              const view = { ...this.view };
-              pullAt(view.rows, rowKey);
-              this.updateView({ id: this.id, data: view });
+              const newTab = {
+                ...this.tab,
+
+                rows: this.rows.filter(tabRow => tabRow._id !== row._id),
+              };
+
+              return this.updateTabMethod(newTab);
             },
           },
         });
       }
     },
 
-    deleteWidget(widgetKey, rowKey) {
+    showDeleteWidgetModal(rowId, widget = {}) {
       this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => {
-            const view = { ...this.view };
-            pullAt(view.rows[rowKey].widgets, widgetKey);
-            this.updateView({ id: this.id, data: view });
+            const newTab = {
+              ...this.tab,
+
+              rows: [
+                ...this.rows.map((tabRow) => {
+                  if (tabRow._id === rowId) {
+                    return {
+                      ...tabRow,
+                      widgets: tabRow.widgets.filter(rowWidget => rowWidget._id !== widget._id),
+                    };
+                  }
+
+                  return tabRow;
+                }),
+              ],
+            };
+
+            return this.updateTabMethod(newTab);
           },
         },
       });

@@ -1,45 +1,19 @@
 <template lang="pug">
-  div
-    v-tabs(v-model="activeTab", color="secondary lighten-2", slider-color="primary", dark)
-      v-tab(v-for="tab in view.tabs", :key="`tab-${tab._id}`", ripple)
-        span {{ tab.title }}
-        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
-          v-icon(small) edit
-        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
-          v-icon(small) delete
-      v-tab-item(v-for="tab in view.tabs", :key="`tab-item-${tab._id}`", lazy)
-        div#view
-          v-layout(v-for="(row, rowKey) in tab.rows", :key="row._id", row, wrap)
-            v-flex(xs12)
-              v-layout.notDisplayedFullScreen(align-center)
-                h2.ml-1 {{ row.title }}
-                v-tooltip.ml-2(left, v-if="isEditingMode")
-                  v-btn.ma-0(slot="activator", icon, @click.stop="deleteRow(rowKey)")
-                    v-icon.error--text delete
-                  span {{ $t('common.delete') }}
-            v-flex(
-            v-for="(widget, widgetKey) in row.widgets",
-            :key="`${widgetKeyPrefix}_${widget._id}`",
-            :class="getWidgetFlexClass(widget)"
-            )
-              v-layout.notDisplayedFullScreen(justify-space-between, align-center)
-                v-flex
-                  h3.my-1.ml-2(v-show="widget.title") {{ widget.title }}
-                v-flex(xs1, v-if="isEditingMode")
-                  v-btn.ma-0(v-if="hasUpdateAccess", icon, @click="showSettings(row._id, tab._id, widget)")
-                    v-icon settings
-                  v-tooltip(left)
-                    v-btn.ma-0(
-                    slot="activator",
-                    icon,
-                    @click="deleteWidget(widgetKey, rowKey)"
-                    )
-                      v-icon.error--text delete
-                    span {{ $t('common.delete') }}
-              component(
-              :is="widgetsComponentsMap[widget.type]",
-              :widget="widget",
-              )
+  div#view-page
+    view-tabs(
+    v-model="activeTabIndex",
+    :view="view",
+    :isEditingMode="isEditingMode",
+    :hasUpdateAccess="hasUpdateAccess",
+    :updateViewMethod="view => updateView({ id, data: view })"
+    )
+      view-widgets(
+      slot-scope="{ tab, updateTabMethod }",
+      :tab="tab",
+      :isEditingMode="isEditingMode",
+      :hasUpdateAccess="hasUpdateAccess",
+      :updateTabMethod="updateTabMethod"
+      )
     .fab
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
@@ -56,17 +30,17 @@
         v-tooltip(top)
           v-btn(
           slot="activator",
-          v-model="isFullScreenModeEnable"
+          v-model="isFullScreenMode"
           fab,
           dark,
           small,
-          @click="fullScreenToggle",
+          @click="toggleFullScreen",
           )
             v-icon fullscreen
             v-icon fullscreen_exit
           span alt + enter / command + enter
         v-tooltip(v-if="hasUpdateAccess", top)
-          v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditingMode")
+          v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditingMode", v-model="isEditingMode")
             v-icon edit
             v-icon done
           span {{ $t('common.toggleEditView') }}
@@ -82,20 +56,13 @@
 
 <script>
 import get from 'lodash/get';
-import pullAt from 'lodash/pullAt';
 
-import { WIDGET_TYPES, MODALS, USERS_RIGHTS_MASKS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import uid from '@/helpers/uid';
 import { generateViewTab } from '@/helpers/entities';
 
-import AlarmsList from '@/components/other/alarm/alarms-list.vue';
-import EntitiesList from '@/components/other/context/entities-list.vue';
-import Weather from '@/components/other/service-weather/weather.vue';
-import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
-import StatsCurves from '@/components/other/stats/curves/stats-curves-wrapper.vue';
-import StatsTable from '@/components/other/stats/stats-table.vue';
-import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
-import StatsNumber from '@/components/other/stats/stats-number.vue';
+import ViewTabs from '@/components/other/view/view-tabs.vue';
+import ViewWidgets from '@/components/other/view/view-widgets.vue';
 
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
@@ -105,14 +72,8 @@ import entitiesViewMixin from '@/mixins/entities/view';
 
 export default {
   components: {
-    AlarmsList,
-    EntitiesList,
-    Weather,
-    StatsHistogram,
-    StatsCurves,
-    StatsTable,
-    StatsCalendar,
-    StatsNumber,
+    ViewTabs,
+    ViewWidgets,
   },
   mixins: [
     authMixin,
@@ -129,21 +90,10 @@ export default {
   },
   data() {
     return {
-      activeTab: null,
-      widgetsComponentsMap: {
-        [WIDGET_TYPES.alarmList]: 'alarms-list',
-        [WIDGET_TYPES.context]: 'entities-list',
-        [WIDGET_TYPES.weather]: 'weather',
-        [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
-        [WIDGET_TYPES.statsCurves]: 'stats-curves',
-        [WIDGET_TYPES.statsTable]: 'stats-table',
-        [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
-        [WIDGET_TYPES.statsNumber]: 'stats-number',
-      },
-      widgetKeyPrefix: uid(),
-      isEditingMode: false,
-      isFullScreenModeEnable: false,
       fab: false,
+      activeTabIndex: null,
+      isEditingMode: false,
+      isFullScreenMode: false,
     };
   },
   computed: {
@@ -172,35 +122,26 @@ export default {
   methods: {
     keyDownListener({ keyCode, altKey }) {
       if (keyCode === 13 && altKey) {
-        this.fullScreenToggle();
+        this.toggleFullScreen();
       }
     },
 
-    fullScreenToggle() {
+    toggleFullScreen() {
       const element = document.getElementById('view');
 
       if (element) {
         this.$fullscreen.toggle(element, {
-          fullscreenClass: 'fullscreen',
+          fullscreenClass: 'full-screen',
           background: 'white',
-          callback: value => this.isFullScreenModeEnable = value,
+          callback: value => this.isFullScreenMode = value,
         });
       }
     },
 
-    showSettings(rowId, tabId, widget) {
-      this.showSideBar({
-        name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
-        config: {
-          widget,
-          rowId,
-          tabId,
-        },
-      });
-    },
-
     async refreshView() {
       await this.fetchView({ id: this.id });
+
+      // TODO: fix it
 
       this.widgetKeyPrefix = uid();
     },
@@ -209,7 +150,7 @@ export default {
       this.showModal({
         name: MODALS.createWidget,
         config: {
-          tabId: this.view.tabs[this.activeTab]._id,
+          tabId: this.view.tabs[this.activeTabIndex]._id,
         },
       });
     },
@@ -237,93 +178,19 @@ export default {
       });
     },
 
-    showUpdateTabModal(tab) {
-      this.showModal({
-        name: MODALS.textFieldEditor,
-        config: {
-          title: 'Update tab',
-          field: {
-            name: 'text',
-            label: 'Title',
-            value: tab.title,
-            validationRules: 'required',
-          },
-          action: (title) => {
-            const newTab = { ...tab, title };
-            const view = {
-              ...this.view,
-              tabs: this.view.tabs.map((viewTab) => {
-                if (viewTab._id === newTab._id) {
-                  return newTab;
-                }
-
-                return viewTab;
-              }),
-            };
-
-            return this.updateView({ id: this.id, data: view });
-          },
-        },
-      });
-    },
-
-    showDeleteTabModal(tab) {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => {
-            const view = {
-              ...this.view,
-              tabs: this.view.tabs.filter(viewTab => viewTab._id !== tab._id),
-            };
-
-            return this.updateView({ id: this.id, data: view });
-          },
-        },
-      });
-    },
-
-    toggleViewEditMode() {
+    toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
-    },
-
-    deleteRow(rowKey) {
-      if (this.view.rows[rowKey].widgets.length > 0) {
-        this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
-      } else {
-        this.showModal({
-          name: MODALS.confirmation,
-          config: {
-            action: () => {
-              const view = { ...this.view };
-              pullAt(view.rows, rowKey);
-              this.updateView({ id: this.id, data: view });
-            },
-          },
-        });
-      }
-    },
-
-    deleteWidget(widgetKey, rowKey) {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => {
-            const view = { ...this.view };
-            pullAt(view.rows[rowKey].widgets, widgetKey);
-            this.updateView({ id: this.id, data: view });
-          },
-        },
-      });
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-.fullscreen {
-  .notDisplayedFullScreen {
-    display: none;
+<style lang="scss">
+  #view-page {
+    .full-screen {
+      .hide-on-full-screen {
+        display: none;
+      }
+    }
   }
-}
 </style>

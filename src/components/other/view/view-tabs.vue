@@ -1,12 +1,19 @@
 <template lang="pug">
-  v-tabs(v-model="activeTab", color="secondary lighten-2", slider-color="primary", dark)
+  v-tabs(
+  :value="value",
+  @input="$emit('input', $event)",
+  color="secondary lighten-2",
+  slider-color="primary",
+  dark
+  )
     v-tab(v-for="tab in view.tabs", :key="`tab-${tab._id}`", ripple)
       span {{ tab.title }}
       v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
         v-icon(small) edit
       v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
         v-icon(small) delete
-    slot(v-for="tab in tabs", :tab="tab", @updateTab="updateTab")
+    v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`")
+      slot(:tab="tab", :updateTabMethod="updateTab")
 </template>
 
 <script>
@@ -21,6 +28,22 @@ export default {
   props: {
     view: {
       type: Object,
+      required: true,
+    },
+    value: {
+      type: Number,
+      default: null,
+    },
+    hasUpdateAccess: {
+      type: Boolean,
+      default: false,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    updateViewMethod: {
+      type: Function,
       required: true,
     },
   },
@@ -44,7 +67,7 @@ export default {
           action: (title) => {
             const newTab = { ...tab, title };
 
-            return this.updateTab(newTab);
+            return this.updateTabMethod(newTab);
           },
         },
       });
@@ -60,7 +83,7 @@ export default {
               tabs: this.view.tabs.filter(viewTab => viewTab._id !== tab._id),
             };
 
-            return this.$emit('updateView', view);
+            return this.updateViewMethod(view);
           },
         },
       });
@@ -78,7 +101,7 @@ export default {
         }),
       };
 
-      return this.$emit('updateView', view);
+      return this.updateViewMethod(view);
     },
   },
 };
