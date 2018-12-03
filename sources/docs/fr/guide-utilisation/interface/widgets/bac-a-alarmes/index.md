@@ -22,9 +22,9 @@ Le tableau d'alarmes présente la liste des alarmes. Une ligne correspond à une
 Les colonnes affichées sont personnalisables (*Cf: [Guide exploitant](#guide-exploitant)*).
 En plus de détails de l'alarme, chaque ligne expose une liste d'actions opérables sur l'alarme (*Cf: [Actions](#actions)*).
 
-Il est possible d'attacher à chaque colonne une Info popup, qui s'ouvrira au clique sur le texte de la colonne, présentant dans une fenêtre un texte personnalisable (*Cf: [Guide exploitant](#guide-exploitant)*).
+Il est possible d'attacher à chaque colonne une Info popup, qui s'ouvrira au clic sur le texte de la colonne, présentant dans une fenêtre un texte personnalisable (*Cf: [Guide exploitant](#guide-exploitant)*).
 
-Au clique sur une alarme (en dehors du texte des colonnes), l'historique de l'alarme s'affiche.
+Au clic sur une alarme (en dehors du texte des colonnes), l'historique de l'alarme s'affiche.
 
 ![Time line](./img/timeline.png "Time line")
 
@@ -76,11 +76,11 @@ Pour chaque alarme, des actions sont disponibles.
 
 Pour le détail de chacune des actions, voir la [liste des actions du Bac à alarmes](./actions.md).
 
-### Elements par page
+### Éléments par page
 
 Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à afficher sur chaque page.
 
-Le choix par défaut est réglables dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
+Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
 
 ## Guide exploitant
 ### Paramètres du widget
@@ -200,4 +200,4 @@ Deux variables sont disponibles ici, 'alarm' et 'entity'.
 
 En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme, ou de l'entité concerné par cette alarme.
 
-Exemple: Pour afficher l'état de l'alarme, ajoutez {{ alarm.state.val }}.
+Exemple: Pour afficher l'état de l'alarme, ajoutez `{{ alarm.state.val }}`.

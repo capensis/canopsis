@@ -12,7 +12,7 @@ Aprés cela vous pouvez **choisir la durée de l'élément** ainsi que la **date
 Vous pourrez **ajouter un groupe** ainsi qu'un **filtre** (vous retrouverez l'[éditeur de filtre ici](../../filtres/index.md) !).  
 Ensuite, il faut **ajouter une statistique** parmi celles-ci :  
 
-- Les alarmes crées, résolues et annulées.
+- Les alarmes créées, résolues et annulées.
 - Le temps SLA (Service Level Agreement) des accusés de réception.
 - Le temps de résolution SLA.
 - Le taux d'état (d'alarme).
@@ -31,7 +31,7 @@ Enfin,lors de la dernière étape, vous avez la posibilité de choisir une coule
 Pour le tableau, le choix de la stat part du même principe que celle de l'histogramme. 
 Pour **ajouter une statistique** parmi celles-ci :  
 
-- Les alarmes crées, résolues et annulées.
+- Les alarmes créées, résolues et annulées.
 - Le temps SLA (Service Level Agreement) des accusé de réception.
 - Le temps de résolution SLA.
 - Le taux d'état (d'alarme).

@@ -15,7 +15,7 @@ Le moteur va alors exécuter une fonction d'identification (match) dans chacune
 des classes héritant de SnmpTrap présentes dans un dossier spécifique.
 
 Si l'identification réussie, une seconde fonction est exécutée ; celle-ci va
-permettre de construire un event, qui sera envoyé à canopsis.
+permettre de construire un event, qui sera envoyé à Canopsis.
 
 ## Ajouter une classe custom
 

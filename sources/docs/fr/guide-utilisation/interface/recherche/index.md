@@ -1,6 +1,6 @@
 # Moteur de recherche
 
-Actullement, il y a deux type de recherches disponible dans le bac à alarmes :
+Actullement, il y a deux types de recherches disponibles dans le bac à alarmes :
   * la recherche naturelle
   * la recherche avancée
 
@@ -14,7 +14,7 @@ bac à alarmes.
 
 ## La recherche avancée
 
-Vous retrouverais un résumé de cette partie en cliquant sur le point d'interrogation.  
+Vous retrouverez un résumé de cette partie en cliquant sur le point d'interrogation.
 
 La recherche avancée est une recherche qui permet de rechercher des alarmes en
 fonction de la valeur d'une ou plusieurs de ces colonnes défini explicitement
@@ -31,7 +31,7 @@ Pour faire une recherche avec grammaire, il faut absolument la préfixer par
 ### Les conditions
 
 Une condition est constituée de deux opérandes séparées par un opérateur de
-comparaison. Cette condition peut être précédé d'inverseur qui va inverser le
+comparaison. Cette condition peut être précédée d'inverseur qui va inverser le
 résultat de la condition.
 
 L'opérande de gauche correspond au nom de la colonne dans laquelle
@@ -39,7 +39,7 @@ rechercher la valeur contenue dans l'opérande de droite.
 
 #### Le nom de colonne
 
-Le nom de colonne est une chaine de caractères alpha-numériques correspondante
+Le nom de colonne est une chaine de caractères alpha-numériques correspondant
 aux noms des colonnes affichées dans le bac à alarmes.
 
 #### Les types de valeur
@@ -68,10 +68,10 @@ Il existe 8 opérateurs de comparaison :
   * "**>**" pour sélectionner des alarmes dont la valeur numérique est strictement
   supérieure à l'opérande de droite ;
   * "**LIKE**" pour rechercher des alarmes dont la chaine de caractères correspond
-  à l'expression régulière mongoDB.
+  à l'expression régulière MongoDB.
 
 
-#### Les opérateurs logique
+#### Les opérateurs logiques
 
 Il existe 3 opérateurs booléens :
 
@@ -80,7 +80,7 @@ Il existe 3 opérateurs booléens :
   * **NOT** qui permet d'inverser le résultat d'une condition.
 
 
-### Exemple d'utilisation
+### Exemples d'utilisation
 
   * ```- Connector = "connector_1"``` : pour rechercher toutes les alarmes
   dont le connecteur est "connector_1" ;
@@ -96,7 +96,7 @@ Il existe 3 opérateurs booléens :
   * ```- NOT Connector = "connector_1"``` : pour rechercher toutes les alarmes
   dont le connecteur n'est pas "connector_1".
 
-### Liste de requêtes utile
+### Liste de requêtes utiles
 
   * Recherche d'alarmes à partir d'un numéro de ticket :
   ```- ticket.val = "123456"```

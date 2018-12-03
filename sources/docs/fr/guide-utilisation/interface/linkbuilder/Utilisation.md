@@ -2,7 +2,7 @@
 
 ## Objectif
 
-Présenter des URLs sur un bac à alarmes pour par exemple :
+Présenter des URL sur un bac à alarmes pour, par exemple :
 
 * Déclarer un ticket
 * Visualiser une consigne/procédure
@@ -15,7 +15,7 @@ Ces variables sont celles contenues à la racine d'une entité.
 
 ### Configuration basique
 
-Soit la configuration suivante:
+Soit la configuration suivante :
 
 ```json
 $ cat basic_link_builder.json
@@ -56,8 +56,8 @@ l'URL qui sera générée à la volée sur un bac à alarmes sera :
 ### Basic alarm link builder
 
 Une classe permettant de construire des liens à partir d'informations de
-l'alarmes lié à l'entité ciblée est disponible. Par exemple, avec la
-configuration suivante:
+l'alarmes liées à l'entité ciblée est disponible. Par exemple, avec la
+configuration suivante :
 
 ```json
 {
@@ -72,7 +72,7 @@ précise pas **alarm**, la valeur sera recherchée dans l'entité.
 
 ### Mise en oeuvre backend
 
-La configuration préalablement établie doit être postée sur l'API de Canopsis
+La configuration préalablement établie doit être postée sur l'API de Canopsis.
 
 **Phase d'authentification sur l'API**
 
@@ -80,14 +80,13 @@ La configuration préalablement établie doit être postée sur l'API de Canopsi
 curl -POST http://x.x.x.x:8082/auth -d 'username=root&password=root' -vL -c canopsis_cookie
 ```
 
-**Post de la configuration**
+**Envoi de la configuration**
 
 ```bash
 curl -H "Content-Type: application/json" -X POST -d @basic_link_builder.json http://localhost:28082/api/v2/associativetable/link_builders_settings -b canopsis_cookie
 ```
 
 Si une configuration existe déjà en base, remplacez **POST** par **PUT**.
-
 
 Notez qu'un redémarrage du moteur **context-graph** ainsi que du **webserver** est nécessaire.
 

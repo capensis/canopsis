@@ -16,7 +16,7 @@
 ## Introduction
 
 Cette documentation détaille la remontée des logs vers Canopsis via Logstash.
-Connaître les base du fonctionnement de Logstash vous permettra d'avoir une meilleur compréhension de ce qui va suivre. Pour cela, je vous invite à aller vous documenter sur [l'input](https://www.elastic.co/guide/en/logstash/6.2/input-plugins.html), [les filtres](https://www.elastic.co/guide/en/logstash/6.2/filter-plugins.html) et enfin [l'output](https://www.elastic.co/guide/en/logstash/6.2/output-plugins.html)
+Connaître les base du fonctionnement de Logstash vous permettra d'avoir une meilleur compréhension de ce qui va suivre. Pour cela, nous vous invitons à vous documenter sur [l'input](https://www.elastic.co/guide/en/logstash/6.2/input-plugins.html), [les filtres](https://www.elastic.co/guide/en/logstash/6.2/filter-plugins.html) et [l'output](https://www.elastic.co/guide/en/logstash/6.2/output-plugins.html)
 
 ## Fonctionnement
 
@@ -35,7 +35,7 @@ Les logs devront donc être formatés d'une certaine manière afin que Canopsis 
 
 ## La structure d'un event
 
-Actuellement, un "event" de type *log* doit être remonté dans canopsis comme un "event" de type *check*.
+Actuellement, un "event" de type *log* doit être remonté dans Canopsis comme un "event" de type *check*.
 Voici les champs attendus dans Canopsis afin que l'event puisse être reconnu :
 
 ```
@@ -82,7 +82,7 @@ input {
 ```
 filter {
 
-    # ajout des champs essentiels pour un event canopsis
+    # ajout des champs essentiels pour un event Canopsis
         mutate {
           add_field => {
             "connector" => "logstash"

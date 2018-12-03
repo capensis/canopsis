@@ -1,12 +1,12 @@
 #  Les PBehaviors
 
-Pbehaviors sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
+Les Pbehaviors sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance, par exemple).
 
 # Utiliser la vue Context
 
 ## Introduction
 
-Dans Canopsis , chaque évènement en cours de traitement contient des informations contextuelles.
+Dans Canopsis, chaque évènement en cours de traitement contient des informations contextuelles.
 Nous extrayons ces informations afin de créer une **entité**.
 
 La vue **Context** permet de voir toutes les entités détectées.
@@ -31,40 +31,40 @@ Ainsi, le sélecteur ne sera pas influencé par les faux états erronés de l'en
 
 ## Comment l'utiliser ?
 
-Pour instaurer un Pbehavior il vous suffit de selectionner un évènement, un boutton pause va alors apparaître :
+Pour instaurer un Pbehavior il vous suffit de selectionner un évènement, un bouton pause va alors apparaître :
 
 ![menu](img/menu.png)
 
-Cliquez dessus, plusieur configuration sont disponibles :
+Cliquez dessus, plusieurs configuration sont disponibles :
 
 * Le titre de ce PBehavior
 * Sa durée
-* La mise en place d'une récursivitée ou non
+* La mise en place d'une récursivité ou non
 * La raison
 * Le type
 
 ### Exemple
 
-Je veux un PBehavior nommé "Mon premier PBehavior !", qui s'étend du 12/10/2018 à 18h00 au 14/10/2018 à 9h00 dont la raison est "autre" et dont le type est "hors plage horraire de surveillance".
+On veut un PBehavior nommé "Mon premier PBehavior !", qui s'étend du 12/10/2018 à 18h00 au 14/10/2018 à 9h00 dont la raison est "autre" et dont le type est "hors plage horraire de surveillance".
 Dans ce cas, notre fenêtre sera la suivante :
 
 ![fen1](img/fen1.png)
 
-### Récursivitée
+### Récursivité
 
-Je voudrais maintenant mettre en place une règle de récursivitée sur un PBehavior.
+On voudrait maintenant mettre en place une règle de récursivité sur un PBehavior.
 
-il vous suffit de cliquer sur "Put a rrule on this PBheavior ?"
+Il vous suffit de cliquer sur "Put a rrule on this PBheavior ?"
 
 #### Configuration basique
 
-Nous allons tout d'abors nous concentrer sur la configuration basique. Plusieurs options sont disponibles :
+Nous allons tout d'abord nous concentrer sur la configuration basique. Plusieurs options sont disponibles :
 
 * La fréquence :  Les choix possibles sont variés : Toutes les X Secondes, minutes, heures, jours, semaines, mois ou années.
 * Jusqu'à : Date et heure de fin de l'activation de ce PBehavior.
 * Un jour en particulier : Choisir un jour où le PBehavior va s'activer.
 * Répétition : Combien de fois le PBehavior va s'activer.
-* Interval : Interval de jour entre chaque activations du PBehavior.
+* Intervale : Intervale de jour entre chaque activation du PBehavior.
 
 #### Configuration Avancée
 

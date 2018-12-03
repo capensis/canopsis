@@ -108,13 +108,13 @@ Tous les champs disponibles dans l'observateur sont disponibles ici.
 
 ##### Template - Modal
 
-Ce paramètre permet de personnaliser les informations affichées en haut de la fenêtre 'Plus d'infos' (ouverte au clique sur 'Plus d'infos', sur une des tuiles de la météo de services).
+Ce paramètre permet de personnaliser les informations affichées en haut de la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
 Celui-ci fonctionne de la même manière que le paramètre Template - Tuile présenté ci-dessus. Cliquez [ici](#template-tuile) pour vous rendre à cette partie.
 
 ##### Template - Entités
 
-Ce paramètre permet de personnaliser les informations affichées pour chaque entités dans la fenêtre 'Plus d'infos' (ouverte au clique sur 'Plus d'infos', sur une des tuiles de la météo de services).
+Ce paramètre permet de personnaliser les informations affichées pour chaque entités dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
 Le langage utilisé ici est le Handlebars.
 

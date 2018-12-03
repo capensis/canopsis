@@ -1,6 +1,6 @@
 # Les actions du bac à alarmes
 
-Lorsqu'un évènement arrive il est envoyé vers le bac à évènements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
+Lorsqu'un évènement arrive, il est envoyé vers le bac à évènements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
 
 Les différentes actions possibles sur cette alarme sont :
 - [Accuser réception (Ack)](#accuser-réception-ack)
@@ -15,15 +15,15 @@ Les différentes actions possibles sur cette alarme sont :
     - [Lister les comportements périodiques](#lister-les-comportements-périodiques)
     - [Obtenir plus d'infos](#obtenir-plus-d-infos)
 
-## Accuser réception (Ack)
+## Accuser réception (ACK)
 
-Deux choix possibles : ACK et Ack rapide
+Deux choix possibles : ACK et ACK rapide
 
 L'Ack permet de voir les détails généraux de l'évènement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
 
 L'Ack rapide, lui, permet d'accuser réception sans pour autant remplir ces informations.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Ack Extra details](./img/ack-extra-details-icon.png  "Icone Ack Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Ack Extra details](./img/ack-extra-details-icon.png  "Icone Ack Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ## Gérer l'incident
 
@@ -73,10 +73,10 @@ Cette fenêtre présente quelques détails de l'évènement.
 
 En dessous des détails de l'évènement, un champs de texte vous demande renseigner le numéro du ticket que vous souhaitez associer à cet évènement.
 
-Après avoir renseigner le numéro de ticket, cliquez sur 'Sauvegarder'.
+Après avoir renseigné le numéro de ticket, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Assoc ticket Extra details](./img/assoc-ticket-extra-details-icon.png  "Icone Assoc ticket Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc)
+Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Assoc ticket Extra details](./img/assoc-ticket-extra-details-icon.png  "Icone Assoc ticket Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc)
 
 ### Annuler l'alarme
 
@@ -93,7 +93,7 @@ En dessous des détails de l'évènement, un champs de texte vous demande rensei
 Après avoir renseigner cette note, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Cancel Extra details](./img/cancel-extra-details-icon.png  "Icone Cancel Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Cancel Extra details](./img/cancel-extra-details-icon.png  "Icone Cancel Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ### Annuler l'Ack
 
@@ -125,7 +125,7 @@ Cette fenêtre vous demande de renseigner la durée souhaitée.
 Une fois la durée renseignée, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarme, l'icone ![Icone Snooze Extra details](./img/snooze-extra-details-icon.png  "Icone Snooze Extra details") apparait. Au survol de la sourie, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Snooze Extra details](./img/snooze-extra-details-icon.png  "Icone Snooze Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ### Changer la criticité
 

@@ -18,7 +18,7 @@ Un moteur peut avoir les **propriétés** suivantes :
 - Un identifiant (0, 1, 2, 3, ..., must be unique)
 - Un niveau de log (debug, info, warning, or error)
 
-Le listing des moteurs peut être réalisé grace à cette commande : `systemctl list-units "canopsis*"`
+Le listing des moteurs peut être réalisé grâce à cette commande : `systemctl list-units "canopsis*"`
 
 ## Liste des moteurs
 

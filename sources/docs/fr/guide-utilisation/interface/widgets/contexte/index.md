@@ -22,7 +22,7 @@ Le tableau d'entités présente la liste de toutes les entités. Une ligne corre
 Les colonnes affichées sont personnalisables (*Cf: [Guide exploitant](#guide-exploitant)*).
 En plus de détails de l'entité, chaque ligne expose une liste d'actions opérables sur l'entité (*Cf: [Actions](#actions)*).
 
-Au clique sur une entité (en dehors du texte des colonnes), des détails supplémentaires concernant l'entité s'affichent (comportements périodiques, informations, impacts et dépendances, etc)
+Au clic sur une entité (en dehors du texte des colonnes), des détails supplémentaires concernant l'entité s'affichent (comportements périodiques, informations, impacts et dépendances, etc)
 
 ![Plus d'infos entités](./img/context-entity-more-infos.png "Plus d'infos entités").
 
@@ -59,7 +59,7 @@ Le premier icone à gauche permet de créer une entité, le deuxième permet de 
 
 #### Création d'entité
 
-Au clique sur l'icone de création d'entité, une fenêtre s'ouvre.
+Au clic sur l'icone de création d'entité, une fenêtre s'ouvre.
 
 ![Formulaire création Entité](./img/entity-creation-form.png "Formulaire création Entité")
 
@@ -75,17 +75,17 @@ Pour ajouter une information, remplissez les champs demandés, puis cliquez sur 
 
 ![Formulaire Gérer infos](./img/manage-infos.png "Formulaire Gérer infos")
 
-Au clique sur une information dans la liste des infos, les détails de cette information apparaissent.
+Au clic sur une information dans la liste des infos, les détails de cette information apparaissent.
 Deux actions sont disponibles pour chaque information.
 
-- Editer : Permet d'éditer une information. Au clique sur l'icone ![Icone Editer infos](./img/edit-info-icon.png "Icone Editer infos"), le formulaire situé en dessous s'auto-complète avec les détails de l'information à éditer. Editez les informations, puis cliquez sur le bouton 'Ajouter'. Votre information est éditée.
+- Editer : Permet d'éditer une information. Au clic sur l'icone ![Icone Editer infos](./img/edit-info-icon.png "Icone Editer infos"), le formulaire situé en dessous s'auto-complète avec les détails de l'information à éditer. Editez les informations, puis cliquez sur le bouton 'Ajouter'. Votre information est éditée.
 - Supprimer : Permet de supprimer une information. Il vous suffit de cliquer sur l'icone ![Icone Suppression info](./img/delete-info-icon.png "Icone Suppression infos"). Votre information a été supprimée !
 
 Cliquez ensuite sur le bouton 'Envoyer' pour sauvegarder votre entité !
 
 #### Création d'observateur
 
-Au clique sur l'icône de création d'observateurs, une fenêtre s'ouvre.
+Au clic sur l'icône de création d'observateurs, une fenêtre s'ouvre.
 
 ![Formulaire création Observateurs](./img/watcher-creation-form.png "Formulaire création Observateurs")
 
@@ -101,8 +101,8 @@ Cliquez ensuite sur le bouton 'Envoyer'. Votre observateur est créé !
 Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles :
 
 - Editer : Au clic sur l'icone d'édition ![Icone Editer entité](./img/edit-entity-icon.png "Icone Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
-- Supprimer : Permet de supprimer une entité/un observateur. Au clique sur l'icone de suppression ![Icone Supprimer entité](./img/delete-entity-icon.png "Icone Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur. 
-- Ajouter un comportement périodique : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clique sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+- Supprimer : Permet de supprimer une entité/un observateur. Au clic sur l'icone de suppression ![Icone Supprimer entité](./img/delete-entity-icon.png "Icone Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur. 
+- Ajouter un comportement périodique : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clic sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
 ### Comportements périodiques
 

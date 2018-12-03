@@ -4,13 +4,8 @@
 
 #### Pré requis
 
-The broker module allow dynamic connection loss and reconnect with
-canopsis amqp message bus without loss of events. You should consider to
-set ``maxqueuelength`` (the maximum number of events that should be kept
-in case of connection loss).
-
 Le module broker vous permet la perte de connexion et la reconnexion avec le 
-bus de messages canopsis amqp sans perte d'évènements.
+bus de messages Canopsis amqp sans perte d'évènements.
 Vous devriez envisager de définir `` maxqueuelength`` (le nombre maximal d'évènements à conserver 
 en cas de perte de connexion). 
 
@@ -20,10 +15,10 @@ easy_install kombu
 
 #### Setup
 
-Le module broker canopsis est présent de manière native dans la distribution shinken. 
+Le module broker Canopsis est présent de manière native dans la distribution shinken. 
 Vous aurez besion d'au moins la version dev. 
 
-Vous devez uniquement activer le module broker et au moins configurer l'adresse de l'hôte canopsis.
+Vous devez uniquement activer le module broker et au moins configurer l'adresse de l'hôte Canopsis.
 
 Modifier le `` etc / Shinken-specific.cfg`` et ajouter `` Canopsis`` à la liste des modules activés :
 
@@ -33,7 +28,7 @@ define broker {
 }
 ```
 
-Dans le même fichier, recherchez le module `` Canopsis`` et définissez au moins la directive host sur l'adresse de l'hôte canopsis :
+Dans le même fichier, recherchez le module `` Canopsis`` et définissez au moins la directive host sur l'adresse de l'hôte Canopsis :
 
 ```
 define module{

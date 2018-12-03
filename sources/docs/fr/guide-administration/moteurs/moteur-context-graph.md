@@ -19,7 +19,7 @@ start   (optionnel): utilisé
 
 limite   (facultatif): nombre maximal d'éléments à renvoyer
 
-sort    (facultatif): ordre de tri ( ASC = croissant, DESC = décroissant). Le tri par filtre d'échantillon peut être:
+sort    (facultatif): ordre de tri ( ASC = croissant, DESC = décroissant). Le tri par filtre d'échantillon peut être :
 
 {"type":"connector"}
 

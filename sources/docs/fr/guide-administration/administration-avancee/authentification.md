@@ -180,7 +180,7 @@ saml2_setup/
     secret_key
 ```
 
-Le fichier `conf_path` devra contenir le chemin de destination de la configuration SAML2 lorsqu’elle sera utilisée par le webserver canopsis. Exemple : `/opt/canopsis/tmp/saml2`.
+Le fichier `conf_path` devra contenir le chemin de destination de la configuration SAML2 lorsqu’elle sera utilisée par le webserver de Canopsis. Exemple : `/opt/canopsis/tmp/saml2`.
 
 Le fichier `secret_key` permettra de déchiffrer les données SAML2 en cas de chiffrement. Si vous n’activez pas le chiffrement, créez quand même ce fichier.
 
@@ -196,7 +196,7 @@ Donc si vous voulez apporter une modification de la configuration, pas besoin de
 
 ### Activation de l’authentification SAML2
 
-Éditer le fichier de configuration canopsis `etc/webserver.conf` :
+Éditer le fichier de configuration Canopsis `etc/webserver.conf` :
 
 ```ini
 [webservices]
@@ -218,7 +218,7 @@ Le fichier de log `var/log/saml2.log` contiendra les erreurs SAML2 s’il y en a
 
 Pour tester l’authentification :
 
- * Rendez-vous sur la page de login de canopsis ;
+ * Rendez-vous sur la page de login de Canopsis ;
  * Entrez un utilisateur autre que ceux présents dans Canopsis, et n’importe quoi en mot de passe (changements à venir) ;
  * Vous devez être redirigé vers la page de login de l’IdP SAML2 ;
  * Une fois authentifié via l’IdP, vous devez être redirigé vers Canopsis sans erreur.
