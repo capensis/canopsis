@@ -18,11 +18,11 @@ NEXT_TAG="develop"
 
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
-	if [ ! -d ${.NEXT_SRC} ] then \
-		git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} sources/webcore/src/canopsis-next \
-	else \
-		git checkout ${NEXT_TAG} \
-	fi; \
+ifeq ($(wildcard ${.NEXT_SRC}),)
+		git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} sources/webcore/src/canopsis-next
+else
+		cd ${.NEXT_SRC}; git checkout ${NEXT_TAG}
+endif
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib; \
 		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
@@ -32,8 +32,6 @@ docker_images:
 		fi; \
 		./$$distrib.sed Dockerfile.template | docker build -f - . -t canopsis/canopsis:$$image_tag ; \
 	done
-
-	rm -rf sources/webcore/src/canopsis-next
 
 packages: docker_images
 	echo "Building packages" ; \
