@@ -6,15 +6,11 @@
       v-flex
         pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
       v-flex(v-if="hasAccessToListFilters")
-        v-select(
+        filter-selector(
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
-        @input="updateSelectedFilter",
         :value="mainFilter",
-        item-text="title",
-        item-value="filter",
-        return-object,
-        clearable
+        @input="updateSelectedFilter",
         )
       v-flex
         v-chip.primary.white--text(
@@ -82,6 +78,7 @@ import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.v
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
+import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
@@ -109,6 +106,7 @@ export default {
     ActionsPanel,
     AlarmColumnValue,
     NoColumnsTable,
+    FilterSelector,
   },
   mixins: [
     authMixin,

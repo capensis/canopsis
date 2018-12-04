@@ -17,7 +17,7 @@ v-form
 </template>
 
 <script>
-import FilterEditor from '@/components/other/filter-editor/filter-editor.vue';
+import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 import formMixin from '@/mixins/form';
 
 export default {
