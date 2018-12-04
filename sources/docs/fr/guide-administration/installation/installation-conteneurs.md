@@ -61,6 +61,11 @@ canopsis_ticket_1           /bin/sh -c /entrypoint.sh        Up       8082/tcp
 canopsis_webserver_1        /bin/sh -c /entrypoint.sh        Up       0.0.0.0:28082->8082/tcp   
 ```
 
+- Interface web: [http://localhost:28082/](http://localhost:28082/)
+    - Troubleshooting : Chargement bloqué avec le message `Fetching frontend bricks`
+    - Résolution : Vérifiez que vous n'avais pas de bloqueur de publicité.
+
+
 ## Arrêt et suppression du docker-compose
 ```bash
 sudo docker-compose down
