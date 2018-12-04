@@ -14,7 +14,7 @@ partie [Exemples](#exemples).
 Une règle est un document JSON contenant les paramètres suivants :
 
  - `type` (requis) : le type de la règle (voir [Types de
-   règles](#types-de-règles) pour plus de détails).
+   règles](#types-de-regles) pour plus de détails).
  - `pattern` (optionnel) : un pattern permettant de sélectionner les événements
    auxquels la règle doit être appliquée. Si le pattern n'est pas précisé, la
    règle est appliquée à tous les événements (voir [Patterns](#patterns) pour
@@ -49,7 +49,7 @@ Cette règle supprime donc les événements dont la ressource vaut
 Lors de la réception d'un événement par le moteur `che`, les règles sont
 parcourues par ordre de priorité croissante. Si l'événement est reconnu par le
 `pattern` d'une règle, celle-ci est appliquée à l'événement. Le traitement
-effectué dépend du `type` de la règle (voir [Types de règles](#types-de-règles)
+effectué dépend du `type` de la règle (voir [Types de règles](#types-de-regles)
 pour plus de détails).
 
 **Note :** Pour pouvoir être traité par Canopsis, un événement doit respecter
@@ -139,7 +139,7 @@ Ces règles peuvent avoir les paramètres suivants (en plus de `type`, `pattern`
  - `actions` (requis) : une liste d'actions à appliquer à l'événement (voir
    [Actions](#actions) pour plus de détails).
  - `external_data` (optionnel) : des sources de données externes (voir
-   [Données externes](#données-externes) pour plus de détails).
+   [Données externes](#donnees-externes) pour plus de détails).
  - `on_success` (optionnel, `pass` par défaut) : le résultat de la règle en cas
    de succès (`pass`, `break` ou `drop`).
  - `on_failure` (optionnel, `pass` par défaut) : le résultat de la règle en cas
@@ -166,7 +166,7 @@ Une action est un objet JSON contenant un champ `type` indiquant le type de
 l'action, et des paramètres. Les actions disponibles sont précisées ci-dessous.
 
 **Note :** Les actions utilisent la représentation interne à Canopsis des
-événements. Voir [Champs des événements](#champs-des-événements) pour la
+événements. Voir [Champs des événements](#champs-des-evenements) pour la
 correspondance entre les noms des champs des événements en JSON et dans la
 représentation de Canopsis.
 
@@ -205,8 +205,8 @@ go](https://golang.org/pkg/text/template/). Les champs de l'événement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-régulières) pour plus de détails), ou
-d'utiliser des [données externes](#données-externes).
+[Expressions régulières](#expressions-regulieres) pour plus de détails), ou
+d'utiliser des [données externes](#donnees-externes).
 
 Par exemple, l'action suivante modifie l'output d'un événement pour y ajouter
 son auteur :
@@ -237,8 +237,8 @@ go](https://golang.org/pkg/text/template/). Les champs de l'événement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-régulières) pour plus de détails), ou
-d'utiliser des [données externes](#données-externes).
+[Expressions régulières](#expressions-regulieres) pour plus de détails), ou
+d'utiliser des [données externes](#donnees-externes).
 
 
 Par exemple, l'action suivante modifie l'information `customer` d'une entité :
@@ -255,7 +255,7 @@ Par exemple, l'action suivante modifie l'information `customer` d'une entité :
 Cette action échoue si l'entité n'a pas été ajoutée à l'événement au préalable.
 Pour utiliser cette action, il est donc nécessaire de définir une règle
 [ajoutant les entités aux
-événements](#ajout-de-lentité-correspondant-à-un-événement), avec une priorité
+événements](#ajout-de-lentite-correspondant-a-un-evenement), avec une priorité
 inférieure à celles des règles contenant des actions de type
 `set_entity_info_from_template`.
 
@@ -268,8 +268,8 @@ Les paramètres de l'action sont :
  - `from` : le nom du champ dont la valeur doit être copiée. Il peut s'agir
    d'un champ de l'événement (`Event.NomDuChamp`), d'un sous-groupe d'une
    expression régulière (voir [Expressions
-   régulières](#expressions-régulières)), ou d'une donnée externe (voir
-   [Données externes](#données-externes)).
+   régulières](#expressions-regulieres)), ou d'une donnée externe (voir
+   [Données externes](#donnees-externes)).
  - `to` : le nom du champ de l'événement dans lequel la valeur doit être
    copiée.
 
@@ -335,7 +335,7 @@ Une source de données de type `entity` renvoie l'entité correspondant à un
 événement. Elle ne prend pas de paramètres.
 
 Voir [Ajout de l'entité correspondant à un
-événement](#ajout-de-lentité-correspondant-à-un-événement) pour un exemple
+événement](#ajout-de-lentite-correspondant-a-un-evenement) pour un exemple
 d'utilisation de cette source de données.
 
 #### Collection MongoDB
@@ -356,7 +356,7 @@ go](https://golang.org/pkg/text/template/). Les champs de l'événement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-régulières) pour plus de détails).
+[Expressions régulières](#expressions-regulieres) pour plus de détails).
 
 Par exemple, la source de données ci-dessous permet de récupérer un document
 dont l'id est le nom du composant d'un événement dans une collection
@@ -372,7 +372,7 @@ dont l'id est le nom du composant d'un événement dans une collection
 }
 ```
 
-Voir [Ajout d'informations à l'entité](#ajout-dinformations-à-lentité) pour un
+Voir [Ajout d'informations à l'entité](#ajout-dinformations-a-lentite) pour un
 exemple de règle utilisant cette source de données.
 
 **Note :** Chaque utilisation d'une source de données de type `mongo` effectue
@@ -675,4 +675,4 @@ des événements.
 | author         | Author                             |       |
 | ticket         | Ticket                             |       |
 | debug          | Debug                              |       |
-| current_entity | Entity                             | Ce champ n'est pas défini au début de l'exécution de l'event-filter. Pour y accéder, ou pour modifier les informations de l'entité, il faut utiliser une [règle ajoutant les entités aux événements](#ajout-de-lentité-correspondant-à-un-événement). |
+| current_entity | Entity                             | Ce champ n'est pas défini au début de l'exécution de l'event-filter. Pour y accéder, ou pour modifier les informations de l'entité, il faut utiliser une [règle ajoutant les entités aux événements](#ajout-de-lentite-correspondant-a-un-evenement). |

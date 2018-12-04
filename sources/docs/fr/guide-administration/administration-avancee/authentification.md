@@ -4,13 +4,13 @@
 
 To do
 
-- [SAML2](#saml2)  
-	- [Paramétrage ldP](#paramétrage-idp)  
-	- [Création du paramètrage côté Canopsis](#création-du-paramétrage-côté-canopsis)  
-    - [Intégration des paramètres en base](#intégration-des-paramètres-en-base)  
-    - [Activation de l'authentification SAML2](#activation-de-lauthentification-saml2)  
-    - [Test et logs](#tests-et-log)  
-    - [troubleshooting](#troubleshooting)  
+- [SAML2](#saml2)
+	- [Paramétrage ldP](#parametrage-idp)
+	- [Création du paramètrage côté Canopsis](#creation-du-parametrage-cote-canopsis)
+    - [Intégration des paramètres en base](#integration-des-parametres-en-base)
+    - [Activation de l'authentification SAML2](#activation-de-lauthentification-saml2)
+    - [Test et logs](#tests-et-log)
+    - [troubleshooting](#troubleshooting)
 
 ## SAML2
 

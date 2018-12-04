@@ -3,16 +3,16 @@
 Lorsqu'un événement arrive il est envoyé vers le bac à événements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
 
 Les différentes actions possibles sur cette alarme sont :
-- [Accuser réception (Ack)](#accuser-réception-ack)
+- [Accuser réception (Ack)](#accuser-reception-ack)
 - Une fois la réception faite, la gestion de l'incident:
-    - [Déclarer un incident](#déclarer-un-ticket)
+    - [Déclarer un incident](#declarer-un-ticket)
     - [Associer un ticket](#associer-un-ticket)
     - [Annuler l'alarme](#annuler-lalarme)
     - [Annuler l'Ack](#annuler-lack)
     - [Snooze](#snooze)
-    - [Changer la criticité](#changer-la-criticité)
-    - [Comportement périodique](#comportement-périodique)
-    - [Lister les comportements périodiques](#lister-les-comportements-périodiques)
+    - [Changer la criticité](#changer-la-criticite)
+    - [Comportement périodique](#comportement-periodique)
+    - [Lister les comportements périodiques](#lister-les-comportements-periodiques)
     - [Obtenir plus d'infos](#obtenir-plus-d-infos)
 
 ## Accuser réception (Ack)
