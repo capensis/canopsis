@@ -4,7 +4,7 @@ L'event-filter est une fonctionnalité du moteur `che` permettant de définir de
 règles manipulant les événements.
 
 Les règles sont définies dans la collection MongoDB `eventfilter`, et
-peuvent-être ajoutées et modifiées avec l'[API event-filter](api.html).
+peuvent-être ajoutées et modifiées avec l'[API event-filter](/guide-developpement/event-filter/api/).
 
 Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la
 partie [Exemples](#exemples).
@@ -125,7 +125,7 @@ l'événement est traité par Canopsis.
 
 Les règles de types `enrichment` sont des règles d'enrichissement, qui
 permettent d'appliquer des actions modifiant les événements. Voir [Règles
-d'enrichissement](enrichment.md) pour plus de détails.
+d'enrichissement](#regles-denrichissement) pour plus de détails.
 
 
 ## Règles d'enrichissement
