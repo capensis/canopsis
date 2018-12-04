@@ -2,6 +2,12 @@ import isEmpty from 'lodash/isEmpty';
 
 export default {
   computed: {
+    isMainFilterMultiple() {
+      return this.userPreference.widget_preferences.isMainFilterMultiple;
+    },
+    mainFilterCondition() {
+      return this.userPreference.widget_preferences.mainFilterCondition;
+    },
     mainFilter() {
       const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
 
@@ -30,6 +36,10 @@ export default {
       } else {
         this.query = { ...this.query, filter: undefined };
       }
+    },
+
+    updateQueryFilter(filter) {
+      this.query = { ...this.query, filter };
     },
   },
 };

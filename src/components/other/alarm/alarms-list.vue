@@ -10,7 +10,8 @@
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
         :value="mainFilter",
-        @input="updateSelectedFilter",
+        :condition.sync="condition",
+        @input="updateSelectedFilter"
         )
       v-flex
         v-chip.primary.white--text(
@@ -126,6 +127,8 @@ export default {
   data() {
     return {
       selected: [],
+      multiple: false,
+      condition: '$and',
     };
   },
   computed: {
