@@ -466,6 +466,26 @@
         "desc" : "Rights on view: current alarms"
     },
     {
+	"_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+	"crecord_write_time" : 1543852261,
+	"crecord_type" : "action",
+	"enable" : true,
+	"type" : "RW",
+	"crecord_creation_time" : 1543852261,
+	"crecord_name" : null,
+	"desc" : "Rights on view: alarmes en cours"
+    },
+    {
+	"_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
+	"crecord_write_time" : 1543852261,
+	"crecord_type" : "action",
+	"enable" : true,
+	"type" : "RW",
+	"crecord_creation_time" : 1543852261,
+	"crecord_name" : null,
+	"desc" : "Rights on view: alarmes resolues"
+    },
+    {
         "_id" : "view_history_alarms",
         "loader_id" : "view_history_alarms",
         "crecord_type" : "action",
