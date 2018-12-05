@@ -703,6 +703,11 @@ export default {
       invalidJSON: 'Invalid JSON',
     },
   },
+  filterSelector: {
+    fields: {
+      mixFilters: 'Mix filters',
+    },
+  },
   validator: {
     unique: 'Field must be unique',
   },

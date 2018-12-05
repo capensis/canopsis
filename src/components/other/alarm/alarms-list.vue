@@ -11,8 +11,8 @@
         :items="viewFilters",
         :value="mainFilter",
         :condition="mainFilterCondition",
-        @update:condition="updateSelectedCondition",
-        @input="updateSelectedFilter"
+        @input="updateSelectedFilter",
+        @update:condition="updateSelectedCondition"
         )
       v-flex
         v-chip.primary.white--text(
@@ -88,7 +88,7 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import filterSelectMixin from '@/mixins/filter-select';
+import filterSelectMixin from '@/mixins/filter/select';
 
 /**
  * Alarm-list component

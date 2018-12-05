@@ -6,15 +6,13 @@
       v-flex
         pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
       v-flex
-        v-select(
+        filter-selector(
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
-        @input="updateSelectedFilter",
         :value="mainFilter",
-        item-text="title",
-        item-value="filter",
-        return-object,
-        clearable
+        :condition="mainFilterCondition",
+        @input="updateSelectedFilter",
+        @update:condition="updateSelectedCondition"
         )
       v-flex.ml-4
         div(v-show="selected.length")
@@ -81,13 +79,14 @@ import ContextSearch from '@/components/other/context/search/context-search.vue'
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
+import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 import modalMixin from '@/mixins/modal/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import filterSelectMixin from '@/mixins/filter-select';
+import filterSelectMixin from '@/mixins/filter/select';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -110,6 +109,7 @@ export default {
     Ellipsis,
     ContextFab,
     NoColumnsTable,
+    FilterSelector,
   },
   mixins: [
     modalMixin,

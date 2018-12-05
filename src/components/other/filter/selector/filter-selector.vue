@@ -2,9 +2,9 @@
   v-layout
     v-flex
       v-switch(
-      label="Mix filters",
+      :label="$t('filterSelector.fields.mixFilters')",
       :value="isMultiple",
-      @change="updateIsMultipleFlag",
+      @change="updateIsMultipleFlag"
       )
     v-flex(v-show="isMultiple")
       v-radio-group(
@@ -15,7 +15,7 @@
         v-radio(label="OR", value="$or")
     v-flex
       v-select(
-      v-bind="$props"
+      v-bind="$props",
       :multiple="isMultiple",
       return-object,
       clearable,
@@ -53,24 +53,13 @@ export default {
       default: FILTER_DEFAULT_VALUES.condition,
     },
   },
-  data() {
-    return {
-      isMultiple: Array.isArray(this.value),
-    };
-  },
-  watch: {
-    value() {
-      const isMultiple = Array.isArray(this.value);
-
-      if (isMultiple !== this.isMultiple) {
-        this.isMultiple = isMultiple;
-      }
+  computed: {
+    isMultiple() {
+      return Array.isArray(this.value);
     },
   },
   methods: {
     updateIsMultipleFlag(value) {
-      this.isMultiple = value;
-
       if (value && !Array.isArray(this.value)) {
         this.updateFilter(this.value ? [this.value] : []);
       } else if (!value && Array.isArray(this.value)) {

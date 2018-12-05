@@ -16,7 +16,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import filterEditorResultsMixin from '@/mixins/filter-editor/results';
+import filterEditorResultsMixin from '@/mixins/filter/editor/results';
 
 const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 
