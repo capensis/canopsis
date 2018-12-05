@@ -14,8 +14,11 @@ v-speed-dial.d-inline-block(
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import modalMixin from '@/mixins/modal';
-import entityMixin from '@/mixins/entities/context-entity';
+import entitiesWatcherMixin from '@/mixins/entities/watcher';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 /**
  * Buttons to open the modal to add entities
@@ -25,7 +28,8 @@ import entityMixin from '@/mixins/entities/context-entity';
 export default {
   mixins: [
     modalMixin,
-    entityMixin,
+    entitiesWatcherMixin,
+    entitiesContextEntityMixin,
   ],
   data() {
     return {
@@ -48,17 +52,19 @@ export default {
   methods: {
     showCreateEntityModal() {
       this.showModal({
-        name: this.$constants.MODALS.createEntity,
+        name: MODALS.createEntity,
         config: {
           title: 'modals.createEntity.createTitle',
+          action: entity => this.createContextEntityWithPopup(entity),
         },
       });
     },
     showCreateWatcherModal() {
       this.showModal({
-        name: this.$constants.MODALS.createWatcher,
+        name: MODALS.createWatcher,
         config: {
           title: 'modals.createWatcher.createTitle',
+          action: watcher => this.createWatcherWithPopup(watcher),
         },
       });
     },

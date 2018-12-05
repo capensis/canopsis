@@ -59,19 +59,6 @@ export default {
       return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
     },
 
-    async remove({ dispatch }, { id } = {}) {
-      try {
-        await request.delete(API_ROUTES.watcher, { params: { watcher_id: id } });
-
-        await dispatch('entities/removeFromStore', {
-          id,
-          type: ENTITIES_TYPES.watcher,
-        }, { root: true });
-      } catch (err) {
-        console.warn(err);
-      }
-    },
-
     async fetchList({ dispatch, commit }, { widgetId, params, filter } = {}) {
       try {
         const requestFilter = filter || '{}';
