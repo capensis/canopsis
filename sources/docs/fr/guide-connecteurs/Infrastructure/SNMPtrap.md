@@ -82,7 +82,7 @@ Exemple :
   'timestamp': 1440075343.725282}
 ```
 
-Etant donné que le connecteur ne possède aucune MIB, le tableau `snmp_vars` embarque directement les ID des objets (OID) sans traduction. 
+Étant donné que le connecteur ne possède aucune MIB, le tableau `snmp_vars` embarque directement les ID des objets (OID) sans traduction.
 Les messages seront traduits par Canopsis directement.
  
 ### Publier les messages
@@ -101,7 +101,7 @@ La section de configuration à observer est `amqp`
 ```
 A ce stade, le connecteur a terminé son travail.
 
-## Traduction des TRAPS
+## Traduction des traps
 
 Comme observé sur le schéma de cycle de vie, les traps SNMP `bruts` sont traduits par un moteur grâce à un jeu de règles à définir.
 
@@ -155,7 +155,7 @@ La configuration associée est la suivante :
 
 Nous allons générer un trap SNMP en nous appuyant sur la MIB NAGIOS.
 Nagios fournit 1 fichier MIB embarquant les différentes notifications possibles ainsi qu'un fichier de dépendance qui contient les objets basiques.
-Etant donné que nous parlons de TRAPS SNMP, il faut s'intéresser au type `NOTIFICATION TYPE` présent dans les MIBS.
+Étant donné que nous parlons de trapsSNMP, il faut s'intéresser au type `NOTIFICATION TYPE` présent dans les MIB.
 
 Voici l'objet que nous allons utiliser pour générer un TRAP
 
@@ -178,7 +178,7 @@ Pour générer le trap adéquat, voici la ligne de commande utilisée :
 ``` 
 
 Une fois exécutée, le connecteur recevra le trap, le convertira en JSON et le transmettra à Canopsis dans l'exchange `canopsis.snmp`.
-Etant donné que le moteur ne possède pour le moment pas de règle de transformation, le trap brut sera affiché.
+Étant donné que le moteur ne possède pour le moment pas de règle de transformation, le trap brut sera affiché.
 
 ![img9](img/trap_brut.png)
 
@@ -201,17 +201,17 @@ Dans l'exemple précédent, nous souhaitons obtenir le message suivant :
 
 Pour cela, nous devons :
 
-* Uploader les MIBS Nagios dans Canopsis
+* Uploader les MIB Nagios dans Canopsis
 * Créer une règle de transformation
 * Constater les résultats
 
-**Upload des MIBS**
+**Upload des MIB**
 
 On sélectionne les fichiers.
 
 ![img2](img/scenario_e1.png)
 
-On vérifie que le traducteur ait bien trouvé des objets de type **notification**
+On vérifie que le traducteur a bien trouvé des objets de type **notification**
 
 ![img4](img/scenario_e3.png)
 

@@ -62,14 +62,14 @@ Exemple: `self.word('a#b#c', 2) == 'b'`
 ## Tester une classe custom
 
 Pour tester un trap contre un handler, créer un fichier `trap_event.json`
-contenant un json telle qu'envoyé par le connecteur snmp, puis lancer le script
+contenant un JSON tel qu'envoyé par le connecteur SNMP, puis lancer le script
 suivant, avec la ligne d'import de classe voulue :
 
 ```bash
 custom-trap-tester --trap trap_event.json --classe canopsis_cat.snmp.custom_handler.<example>
 ```
 
-## Exemple de trap envoyé par le connecteur snmp
+## Exemple de trap envoyé par le connecteur SNMP
 
 ```json
 {

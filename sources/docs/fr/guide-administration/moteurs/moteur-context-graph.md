@@ -13,7 +13,7 @@ GET / api / v2 / context /? limit = 100 & start = 1 & sort = ASC | DESC
 
 ### params:
 
-filter (optionnel): une requête mongoDB envoyée en json codé en url
+filter (optionnel): une requête MongoDB envoyée en JSON codé en URL
 
 start   (optionnel): utilisé
 

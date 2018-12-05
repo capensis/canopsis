@@ -9,7 +9,7 @@ Une fenêtre apparaît :
 
 ![Modal création de vue](./img/modal_creation_vue.png  "Modal création de vue")
 
-Plusieurs informations concernants la vue sont demandées :
+Plusieurs informations concernant la vue sont demandées :
 
 * Nom (*requis*): Nom de la vue
 * Titre (*requis*): Titre de la vue

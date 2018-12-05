@@ -5,18 +5,18 @@
 
 Les évènements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.
 
-Un moteur a **plusieurs rôles**:
+Un moteur a **plusieurs rôles** :
 
-- consommation d'un évènement: pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
-- Effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.
-- Consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
+*  consommation d'un évènement: pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
+*  effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.
+*  consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
 
 Un moteur peut avoir les **propriétés** suivantes :
 
-- un type (the python module to load)
-- un nom (must be unique)
-- Un identifiant (0, 1, 2, 3, ..., must be unique)
-- Un niveau de log (debug, info, warning, or error)
+*  un type (the python module to load)
+*  un nom (must be unique)
+*  un identifiant (0, 1, 2, 3, ..., must be unique)
+*  un niveau de log (debug, info, warning, or error)
 
 Le listing des moteurs peut être réalisé grâce à cette commande : `systemctl list-units "canopsis*"`
 

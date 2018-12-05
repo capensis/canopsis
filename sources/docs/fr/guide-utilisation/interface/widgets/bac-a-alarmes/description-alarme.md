@@ -14,13 +14,13 @@ Voici une liste non exhaustive des différents cas où une alarme peut apparaît
 *  un évènement de **commentaire** d'alarme  
 *  un ou plusieurs évènements de **contrôle avec un état distinct non OK**  
 *  un ou plusieurs **évènements de reconnaissance**  
-*  
-Cet ensemble d'évènements s'appelle, dans Canopsis, un *cycle d'alarme* et est associé à une entité contextuelle.
+
+Dans Canopsis, cet ensemble d'évènements s'appelle un *cycle d'alarme* et est associé à une entité contextuelle.
 
 ## Etapes d'Alarmes
 
 Le cycle d'alarme ne peut être terminé qu'après un statut défini sur 0 si la période de battement potentiel s'est écoulée.   
-À chaque étape de l'alarme , le cycle d'alarme peut transporter une information parmi celles ci-dessous:  
+À chaque étape de l'alarme, le cycle d'alarme peut transporter une information parmi celles ci-dessous :
   
 *  l'alarme est en cours (on going)  
 *  l'alarme sonne (flapping)  
@@ -70,7 +70,9 @@ Un évènement est considéré **On going** si sa _criticité_ est dans un état
 ### Stealthy
 
 Un évènement est considéré **Stealthy** si sa _criticité_ est passée d'alerte à stable dans un délai spécifié.  
+
 Si la _criticité_ de cet évènement est modifiée à nouveau dans le délai spécifié, il est toujours considéré **Stealthy**.  
+
 Un évènement restera **Stealthy** pendant une durée spécifiée et passera à **Off** si le dernier état était 0, **On Going** s'il s'agissait d'une alerte ou **Bagot** s'il se qualifie en tant que tel.
 
 ### Bagot
@@ -80,15 +82,19 @@ Un évènement est considéré Bagot s'il est passé d'un état d'alerte à un �
 ### Cancel
 
 Un évènement est considéré **cancel** si l'utilisateur l'a signalé comme tel à partir de l'interface utilisateur.
+
 Un évènement marqué comme **cancel** changera d'état s'il passe d'un état d'alerte à un état stable.
+
 De plus, l'utilisateur peut spécifier si l'évènement doit changer d'état si sa _criticité_ change dans les différents états d'alerte ou uniquement entre les états d'alerte et les états stables.
 
 ## Timeline
 
 La timeline représente tous les changements qui ont été faits sur l'alarme ; c'est à dire ses changments d'état, de statut, d'output, ...  
+
 Cette timeline est limitée en taille : s'il y a trop d'états, un "crop state" sera généré ; c'est un bloc résumant combien de changements ont été effectués.
 
 Dans le cas où le recadrage par paliers ne suffirait pas, un fonction existe empêchant une alarme de devenir trop grosse. elle contrôle simplement le nombre maximum d'étapes qu'une alarme peut avoir.
+
 Si une étape doit être ajoutée alors que la limite est atteinte, elle doit être supprimée et ne peut pas être récupérée.
 La seule étape à prendre en compte lorsqu'une alarme a atteint sa limite absolue est une annulation d'alarme.
   
