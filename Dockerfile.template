@@ -22,6 +22,7 @@ FROM {{BASE_DOCKER_IMAGE}} as canopsis_build
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 ENV CPS_HOME /opt/canopsis
+ENV CPS_UNITTEST ${CPS_HOME}/var/lib/canopsis/unittest/canopsis/
 
 ARG PROXY
 
@@ -68,6 +69,9 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p tmp && \
     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf
 
+# Copy unittest
+COPY /sources/canopsis/test/ ${CPS_UNITTEST}
+
 COPY VERSION.txt ${CPS_HOME}/
 
 RUN mkdir -p ${CPS_HOME}/var/www
@@ -84,6 +88,8 @@ FROM {{BASE_DOCKER_IMAGE}} as core
 ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis
 ENV CPS_HOME /opt/canopsis
+ENV CPS_UNITTEST ${CPS_HOME}/var/lib/canopsis/unittest/canopsis/
+
 
 SHELL ["/bin/bash", "-c"]
 WORKDIR ${CPS_HOME}
@@ -105,10 +111,17 @@ RUN {{FINAL_IMAGE_SETUP}}
 
 
 COPY --from=canopsis_build /${CPS_HOME} /${CPS_HOME}
+RUN echo chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/tmp -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_UNITTEST} -R
 RUN chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
 	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache -R ;\
-    chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
-	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/tmp -R
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/log -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/tmp -R ;\
+	chown ${CPS_USER}:${CPS_GROUP} ${CPS_UNITTEST} -R
+
 USER ${CPS_USER}:${CPS_GROUP}
 
 EXPOSE 8082
