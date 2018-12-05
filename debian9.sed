@@ -70,11 +70,11 @@ s|{{FINAL_IMAGE_SETUP}}|echo "deb http://ftp.fr.debian.org/debian/ stretch main 
 		libxmlsec1 \\ \
 		libxmlsec1-openssl \\ \
 		libldap-2.4-2 \\ \
-		# python \
 		python2.7 \\ \
-		# snmp \
 		smitools \\ \
 		sudo \\ \
-		# tmux \
 		vim; \\ \
+		# snmp \
+		# tmux \
+		# python \
 	apt-get clean|g
