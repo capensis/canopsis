@@ -1,5 +1,6 @@
 <template lang="pug">
   v-tabs(
+  v-show="tabs.length",
   ref="tabs",
   :value="value",
   @input="$emit('input', $event)",
