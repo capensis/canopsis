@@ -1,18 +1,22 @@
 import isEmpty from 'lodash/isEmpty';
+import isBoolean from 'lodash/isBoolean';
+
+import { FILTER_DEFAULT_VALUES } from '@/constants';
+
+import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 export default {
   computed: {
-    isMainFilterMultiple() {
-      return this.userPreference.widget_preferences.isMainFilterMultiple;
-    },
     mainFilterCondition() {
       return this.userPreference.widget_preferences.mainFilterCondition;
     },
+
     mainFilter() {
       const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
 
       return isEmpty(mainFilter) ? null : mainFilter;
     },
+
     viewFilters() {
       const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
 
@@ -20,26 +24,28 @@ export default {
     },
   },
   methods: {
-    updateSelectedFilter(value) {
-      this.createUserPreference({
-        userPreference: {
-          ...this.userPreference,
-          widget_preferences: {
-            ...this.userPreference.widget_preferences,
-            mainFilter: value || {},
-          },
-        },
-      });
+    updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
+      if (this.hasAccessToAddFilter || !isBoolean(this.hasAccessToAddFilter)) {
+        this.updateWidgetPreferencesInUserPreference({
+          ...this.userPreference.widget_preferences,
 
-      if (value && value.filter) {
-        this.query = { ...this.query, filter: value.filter };
-      } else {
-        this.query = { ...this.query, filter: undefined };
+          mainFilterCondition: condition,
+        });
       }
+
+      this.query = { ...this.query, filter: prepareMainFilterToQueryFilter(this.mainFilter, condition) };
     },
 
-    updateQueryFilter(filter) {
-      this.query = { ...this.query, filter };
+    updateSelectedFilter(filterObject) {
+      if (this.hasAccessToAddFilter || !isBoolean(this.hasAccessToAddFilter)) {
+        this.updateWidgetPreferencesInUserPreference({
+          ...this.userPreference.widget_preferences,
+
+          mainFilter: filterObject || {},
+        });
+      }
+
+      this.query = { ...this.query, filter: prepareMainFilterToQueryFilter(filterObject, this.mainFilterCondition) };
     },
   },
 };

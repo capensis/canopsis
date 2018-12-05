@@ -10,7 +10,8 @@
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
         :value="mainFilter",
-        :condition.sync="condition",
+        :condition="mainFilterCondition",
+        @update:condition="updateSelectedCondition",
         @input="updateSelectedFilter"
         )
       v-flex
@@ -127,8 +128,6 @@ export default {
   data() {
     return {
       selected: [],
-      multiple: false,
-      condition: '$and',
     };
   },
   computed: {
@@ -179,26 +178,6 @@ export default {
           widgetId: this.widget._id,
           params: query,
         });
-      }
-    },
-
-    updateSelectedFilter(value) {
-      if (this.hasAccessToEditFilter) {
-        this.createUserPreference({
-          userPreference: {
-            ...this.userPreference,
-            widget_preferences: {
-              ...this.userPreference.widget_preferences,
-              mainFilter: value || {},
-            },
-          },
-        });
-      }
-
-      if (value && value.filter) {
-        this.query = { ...this.query, filter: value.filter };
-      } else {
-        this.query = { ...this.query, filter: undefined };
       }
     },
   },

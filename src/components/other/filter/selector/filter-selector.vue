@@ -6,8 +6,8 @@
       :value="isMultiple",
       @change="updateIsMultipleFlag",
       )
+    v-flex(v-show="isMultiple")
       v-radio-group(
-      v-show="multiple",
       :value="condition",
       @change="updateCondition"
       )
@@ -48,10 +48,6 @@ export default {
       type: String,
       default: 'filter',
     },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
     condition: {
       type: String,
       default: FILTER_DEFAULT_VALUES.condition,
@@ -61,6 +57,15 @@ export default {
     return {
       isMultiple: Array.isArray(this.value),
     };
+  },
+  watch: {
+    value() {
+      const isMultiple = Array.isArray(this.value);
+
+      if (isMultiple !== this.isMultiple) {
+        this.isMultiple = isMultiple;
+      }
+    },
   },
   methods: {
     updateIsMultipleFlag(value) {
@@ -72,9 +77,11 @@ export default {
         this.updateFilter(this.value[0] || null);
       }
     },
+
     updateFilter(value) {
       this.$emit('input', value);
     },
+
     updateCondition(value) {
       this.$emit('update:condition', value);
     },
