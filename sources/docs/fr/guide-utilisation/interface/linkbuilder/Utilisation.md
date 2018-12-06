@@ -1,23 +1,24 @@
-# Utilisation
+# Utilisation du linkbuilder
 
 ## Objectif
 
-Présenter des URL sur un bac à alarmes pour, par exemple :
+Le linkbuilder permet de présenter des URL sur un bac à alarmes pour, par exemple :
 
-* Déclarer un ticket
-* Visualiser une consigne/procédure
-* Rediriger vers un screenshot
+*  déclarer un ticket ;
+*  visualiser une consigne ou une procédure ;
+*  rediriger vers un screenshot.
 
 ## Utilisation du basic builder
 
 Le basic builder permet d'enrichir les alarmes avec un lien pouvant contenir des variables.
+
 Ces variables sont celles contenues à la racine d'une entité.
 
 ### Configuration basique
 
 Soit la configuration suivante :
 
-```json
+```sh
 $ cat basic_link_builder.json
 {
     "basic_link_builder" : {
@@ -55,9 +56,7 @@ l'URL qui sera générée à la volée sur un bac à alarmes sera :
 
 ### Basic alarm link builder
 
-Une classe permettant de construire des liens à partir d'informations de
-l'alarmes liées à l'entité ciblée est disponible. Par exemple, avec la
-configuration suivante :
+Une classe permettant de construire des liens à partir d'informations de l'alarme liées à l'entité ciblée est disponible. Par exemple, avec la configuration suivante :
 
 ```json
 {
@@ -67,29 +66,28 @@ configuration suivante :
 }
 ```
 
-On va rechercher la valeur `component`, dans `v` de l'`alarm`. Si l'on ne
-précise pas **alarm**, la valeur sera recherchée dans l'entité.
+On va rechercher la valeur `component`, dans `v` de l'`alarm`. Si l'on ne précise pas **alarm**, la valeur sera recherchée dans l'entité.
 
-### Mise en oeuvre backend
+### Mise en œuvre backend
 
 La configuration préalablement établie doit être postée sur l'API de Canopsis.
 
-**Phase d'authentification sur l'API**
+**Phase d'authentification sur l'API :**
 
-```bash
+```sh
 curl -POST http://x.x.x.x:8082/auth -d 'username=root&password=root' -vL -c canopsis_cookie
 ```
 
-**Envoi de la configuration**
+**Envoi de la configuration :**
 
-```bash
+```sh
 curl -H "Content-Type: application/json" -X POST -d @basic_link_builder.json http://localhost:28082/api/v2/associativetable/link_builders_settings -b canopsis_cookie
 ```
 
-Si une configuration existe déjà en base, remplacez **POST** par **PUT**.
+Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
 
-Notez qu'un redémarrage du moteur **context-graph** ainsi que du **webserver** est nécessaire.
+Notez qu'un redémarrage du moteur `context-graph` ainsi que du `webserver` est nécessaire.
 
 ### Visualisation frontend
 
-Dans un bac à alarmes, demandez l'affichage de la colonne **links**.
+Dans un bac à alarmes, demandez l'affichage de la colonne `links`.
