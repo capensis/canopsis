@@ -121,7 +121,7 @@ export default {
         getter: () => {
           const firstRule = Object.values(this.filter.rules)[0];
 
-          return firstRule && firstRule.field !== '' && firstRule.operator !== '';
+          return firstRule && firstRule.field !== '' && firstRule.operator !== '' && firstRule.input !== '';
         },
         context: () => this,
       });

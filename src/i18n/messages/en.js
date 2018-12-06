@@ -701,7 +701,7 @@ export default {
     },
     errors: {
       invalidJSON: 'Invalid JSON',
-      required: 'You should put least one correct rule',
+      required: 'You need to add at least one valid rule',
     },
   },
   validator: {
