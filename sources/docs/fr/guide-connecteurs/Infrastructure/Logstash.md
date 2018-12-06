@@ -49,7 +49,7 @@ Voici les champs attendus dans Canopsis afin que l'event puisse être reconnu :
     'component':   Ex: Server5
     'resource':    Ex: kernel
     'output':      // Message
-    'state':       // Check state (0 - OK, 1 - WARNING, 2 - CRITICAL, 3 - UNKNOWN), default is 0
+    'state':       // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
     'state_type':  // Check state type (0 - SOFT, 1 - HARD), default is 1
     'status':      // 0 == Ok | 1 == En cours | 2 == Furtif | 3 == Bagot | 4 == Annule
 
