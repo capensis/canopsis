@@ -258,7 +258,7 @@ selector | Envoyé par l'engine selector |
 sla |  Envoyé par l'engine selector sla |
 statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |
 statduration | Utilisé pour ajouter une durée dans l'engine statistics |
-statstateinterval | Utilisé pour ajouter une état d'intervale dans l'engine statistics |
+statstateinterval | Utilisé pour ajouter un état d'intervalle dans l'engine statistics |
 trap | Utilisé pour envoyer des traps SNMP|
 user | Utilisé par l'utilisateur pour evoyer des informations |
 ack | Utilisé pour acquitter une alerte |

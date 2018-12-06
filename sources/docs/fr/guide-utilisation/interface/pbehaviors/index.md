@@ -64,7 +64,7 @@ Nous allons tout d'abord nous concentrer sur la configuration basique. Plusieurs
 * Jusqu'à : Date et heure de fin de l'activation de ce PBehavior.
 * Un jour en particulier : Choisir un jour où le PBehavior va s'activer.
 * Répétition : Combien de fois le PBehavior va s'activer.
-* Intervale : Intervale de jour entre chaque activation du PBehavior.
+* Intervalle : Intervalle de jours entre chaque activation du PBehavior.
 
 #### Configuration Avancée
 
