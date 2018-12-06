@@ -25,7 +25,19 @@
         v-divider
         v-btn.primary(@click="addAction") Add
     v-container
-      div(v-for="action in actions") {{ action }}
+      h2 Actions
+      v-list
+        draggable(v-model="actions", @start="drag=true", @end="drag=false")
+          v-list-group.grey.white--text(v-for="(action, index) in actions", :key="action.name")
+            v-list-tile(slot="activator")
+              v-list-tile-title {{index + 1}} - {{ action.type }} - {{ action.name || action.from }}
+            v-list-tile
+              v-layout(column)
+                div(v-if="action.name") Name: {{ action.name }}
+                div(v-if="action.value") Value: {{ action.value }}
+                div(v-if="action.description") Description: {{ action.description }}
+                div(v-if="action.from") From: {{ action.from }}
+                div(v-if="action.to") To: {{ action.to }}
     v-divider
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -33,12 +45,16 @@
 </template>
 
 <script>
+import Draggable from 'vuedraggable';
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 
 export default {
   name: MODALS.eventFilterRuleActions,
+  components: {
+    Draggable,
+  },
   mixins: [modalInnerMixin],
   data() {
     return {
@@ -52,6 +68,9 @@ export default {
         to: '',
       },
     };
+  },
+  mounted() {
+    this.actions = [...this.config.actions];
   },
   methods: {
     isRequired(actionType, option) {
