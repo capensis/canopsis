@@ -63,20 +63,20 @@ Une fois réceptionnés, les traps sont décodés puis transformés en JSON.
 Exemple :
 
 ```json
-{'component': '127.0.0.1',
- 'connector': 'snmp',
- 'connector_name': 'snmp2canopsis',
- 'event_type': 'trap',
- 'snmp_timeticks': '2350066',
- 'snmp_trap_oid': '1.3.6.1.6.3.1.1.5.3',
- 'snmp_vars': {'1.3.6.1.2.1.2.2.1.1': '1',
-               '1.3.6.1.2.1.2.2.1.7': '2',
-               '1.3.6.1.2.1.2.2.1.8': '2'},
- 'snmp_version': '1',
- 'source_type': 'component',
- 'state': 3,
- 'state_type': 1,
- 'timestamp': 1440075343.725282}
+{"component": "127.0.0.1",
+ "connector": "snmp",
+ "connector_name": "snmp2canopsis",
+ "event_type": "trap",
+ "snmp_timeticks": "2350066",
+ "snmp_trap_oid": "1.3.6.1.6.3.1.1.5.3",
+ "snmp_vars": {"1.3.6.1.2.1.2.2.1.1": "1",
+               "1.3.6.1.2.1.2.2.1.7": "2",
+               "1.3.6.1.2.1.2.2.1.8": "2"},
+ "snmp_version": "1",
+ "source_type": "component",
+ "state": 3,
+ "state_type": 1,
+ "timestamp": 1440075343.725282}
 ```
 
 Étant donné que le connecteur ne possède aucune MIB, le tableau `snmp_vars` embarque directement les ID des objets (OID) sans traduction.
