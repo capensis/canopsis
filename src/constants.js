@@ -45,6 +45,9 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createRight: 'create-right',
+  createEventFilterRule: 'create-event-filter-rule',
+  createEventFilterRulePattern: 'create-event-filter-rule-pattern',
+  eventFilterRuleActions: 'event-filter-rule-actions',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -420,4 +423,78 @@ export const USERS_RIGHTS = {
 export const GROUPS_NAVIGATION_TYPES = {
   sideBar: 'side-bar',
   topBar: 'top-bar',
+};
+
+export const EVENT_FILTER_RULE_TYPES = {
+  drop: 'drop',
+  break: 'break',
+  enrichment: 'enrichment',
+};
+
+export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
+  setField: {
+    value: 'set_field',
+    options: {
+      name: {
+        text: 'Name',
+        value: 'name',
+        required: true,
+      },
+      value: {
+        text: 'Value',
+        value: 'value',
+        required: true,
+      },
+    },
+  },
+  setFieldFromTemplate: {
+    value: 'set_field_from_template',
+    options: {
+      name: {
+        text: 'Name',
+        value: 'name',
+        required: true,
+      },
+      value: {
+        text: 'Value',
+        value: 'value',
+        required: true,
+      },
+    },
+  },
+  setEntityInfoFromTemplate: {
+    value: 'set_entity_info_from_template',
+    options: {
+      name: {
+        text: 'Name',
+        value: 'name',
+        required: true,
+      },
+      description: {
+        text: 'Description',
+        value: 'description',
+        required: false,
+      },
+      value: {
+        text: 'Value',
+        value: 'value',
+        required: true,
+      },
+    },
+  },
+  copy: {
+    value: 'copy',
+    options: {
+      from: {
+        text: 'From',
+        value: 'from',
+        required: true,
+      },
+      to: {
+        text: 'To',
+        value: 'to',
+        required: true,
+      },
+    },
+  },
 };

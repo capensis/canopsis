@@ -41,6 +41,9 @@ import CalendarAlarmsList from './stats/calendar-alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
 import CreateRight from './admin/create-right.vue';
+import CreateEventFilterRule from './event-filter/create-event-filter-rule.vue';
+import CreateEventFilterRulePattern from './event-filter/pattern/create-event-filter-rule-pattern.vue';
+import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -77,6 +80,9 @@ export default {
     CreateUser,
     CreateRole,
     CreateRight,
+    CreateEventFilterRule,
+    CreateEventFilterRulePattern,
+    EventFilterRuleActions,
   },
   data() {
     return {
