@@ -7,7 +7,7 @@
       :label="$t('settings.selectAFilter')",
       :items="filters",
       :value="value",
-      :condition="mainFilterCondition",
+      :condition="condition",
       @input="$emit('input', $event)",
       @update:condition="$emit('update:condition', $event)"
       )
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
@@ -46,6 +46,10 @@ export default {
     value: {
       type: [Object, Array],
       default: null,
+    },
+    condition: {
+      type: String,
+      default: FILTER_DEFAULT_VALUES.condition,
     },
     hideSelect: {
       type: Boolean,
