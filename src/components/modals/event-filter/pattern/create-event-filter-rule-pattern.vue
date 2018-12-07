@@ -8,11 +8,11 @@
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
       v-tabs-items(v-model="activeTab")
         v-tab-item
-          pattern-field-creation-form
+          pattern-field-creation-form(v-model="pattern", :operators="operators")
         v-tab-item
-          pattern-simple-editor(v-model="config.pattern", :operators="operators")
+          pattern-simple-editor(v-model="pattern", :operators="operators")
         v-tab-item
-          pattern-advanced-editor(v-model="config.pattern")
+          pattern-advanced-editor(v-model="pattern")
     v-divider
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -40,12 +40,16 @@ export default {
     return {
       activeTab: 0,
       tabs: ['Add a field', 'Simple editor', 'Advanced editor'],
+      pattern: {},
       operators: ['>=', '>', '<', '<=', 'regex'],
     };
   },
+  mounted() {
+    this.pattern = { ...this.config.pattern };
+  },
   methods: {
     submit() {
-      this.config.action(this.config.pattern);
+      this.config.action(this.pattern);
       this.hideModal();
     },
   },

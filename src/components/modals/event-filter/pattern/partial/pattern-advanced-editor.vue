@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-textarea(:value="JSON.stringify(value, undefined, 4)", @input="checkValidity", rows="20")
+    v-textarea(:value="JSON.stringify(value, undefined, 4)", @input="checkValidity", rows="15")
     v-btn(
     :color="error ? 'error' : 'primary'",
     :disabled="error ? true : false",

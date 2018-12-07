@@ -29,32 +29,45 @@ export default {
   },
   data() {
     return {
+      form: {
+        advancedMode: false,
+        field: '',
+        value: '',
+        advancedRuleFields: [],
+      },
       pattern: [],
     };
   },
-  mounted() {
-    Object.keys(this.value).forEach((key) => {
-      if (this.isSimpleRule(this.value[key])) {
-        this.pattern.push({ key, value: this.value[key] });
-      } else {
-        const rule = [];
-        Object.keys(this.value[key]).forEach((field) => {
-          rule.push({ key: field, value: this.value[key][field] });
-        });
-
-        this.pattern.push({ key, value: rule });
-      }
-    });
+  watch: {
+    value() {
+      this.convertPatternToForm();
+    },
   },
   methods: {
     isSimpleRule(rule) {
       if (typeof rule === 'string') {
         return true;
       }
+
       return false;
     },
+    convertPatternToForm() {
+      this.pattern = [];
+      Object.keys(this.value).forEach((key) => {
+        if (this.isSimpleRule(this.value[key])) {
+          this.pattern.push({ key, value: this.value[key] });
+        } else {
+          const rule = [];
+          Object.keys(this.value[key]).forEach((field) => {
+            rule.push({ key: field, value: this.value[key][field] });
+          });
+
+          this.pattern.push({ key, value: rule });
+        }
+      });
+    },
     convertPatternAndSave() {
-      const pattern = {};
+      const pattern = [];
       this.pattern.forEach((rule) => {
         if (this.isSimpleRule(rule.value)) {
           pattern[rule.key] = rule.value;
