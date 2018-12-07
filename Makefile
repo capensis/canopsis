@@ -19,10 +19,13 @@ NEXT_TAG="develop"
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
 ifeq ($(wildcard ${.NEXT_SRC}),)
-		git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} sources/webcore/src/canopsis-next
-else
-		cd ${.NEXT_SRC}; git checkout ${NEXT_TAG}
+		git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
 endif
+
+ifneq ($(NEXT_TAG), "$(shell cd ${.NEXT_SRC}; git branch | grep \* | cut -d ' ' -f2)")
+	git -C ${.NEXT_SRC} checkout ${NEXT_TAG}
+endif
+
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib; \
 		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
