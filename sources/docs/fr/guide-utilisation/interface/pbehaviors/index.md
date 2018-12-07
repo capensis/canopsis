@@ -54,7 +54,7 @@ Dans ce cas, notre fenêtre sera la suivante :
 
 On voudrait maintenant mettre en place une règle de récursivité sur un PBehavior.
 
-Il vous suffit de cliquer sur "Put a rrule on this PBheavior ?"
+Il vous suffit de cliquer sur "Put a rrule on this PBehavior ?"
 
 #### Configuration basique
 
