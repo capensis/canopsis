@@ -35,7 +35,7 @@ Dans la seconde, le filtre qui lui sera alloué
 * begins with
 * ....
 
-Puis, dans la dernière, il vous est possible de remplir un champs qui sera "matché" avec le filtre.
+Puis, dans la dernière, il vous est possible de remplir un champ qui sera "matché" avec le filtre.
 
 Il vous est possible d'ajouter autant de filtre que vous souhaitez en cliquant sur "Add a rule".
 

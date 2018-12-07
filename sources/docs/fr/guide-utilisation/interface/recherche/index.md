@@ -9,7 +9,7 @@ Actullement, il y a deux types de recherches disponibles dans le bac à alarmes 
 ## La recherche naturelle
 
 La recherche naturelle consiste en la recherche d'une chaine de caractères,
-saisie dans le champs de recherche, sur toutes les colonnes affichées dans le
+saisie dans le champ de recherche, sur toutes les colonnes affichées dans le
 bac à alarmes.
 
 ## La recherche avancée

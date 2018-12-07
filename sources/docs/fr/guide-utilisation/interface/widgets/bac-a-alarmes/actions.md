@@ -71,7 +71,7 @@ Au clic sur l'action 'Associer un ticket', une fenêtre s'affiche :
 
 Cette fenêtre présente quelques détails de l'évènement.
 
-En dessous des détails de l'évènement, un champs de texte vous demande renseigner le numéro du ticket que vous souhaitez associer à cet évènement.
+En dessous des détails de l'évènement, un champ de texte vous demande renseigner le numéro du ticket que vous souhaitez associer à cet évènement.
 
 Après avoir renseigné le numéro de ticket, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
@@ -88,7 +88,7 @@ Au clic sur l'action 'Annuler l'alarme', une fenêtre s'affiche :
 
 Cette fenêtre présente quelques détails de l'évènement.
 
-En dessous des détails de l'évènement, un champs de texte vous demande renseigner une note concernant l'action que vous effectuez.
+En dessous des détails de l'évènement, un champ de texte vous demande renseigner une note concernant l'action que vous effectuez.
 
 Après avoir renseigner cette note, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
@@ -105,7 +105,7 @@ Au clic sur l'action 'Annuler l'Ack', une fenêtre s'affiche :
 
 Cette fenêtre présente quelques détails de l'évènement.
 
-En dessous des détails de l'évènement, un champs de texte vous demande renseigner une note concernant l'action que vous effectuez.
+En dessous des détails de l'évènement, un champ de texte vous demande renseigner une note concernant l'action que vous effectuez.
 
 Après avoir renseigner cette note, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.

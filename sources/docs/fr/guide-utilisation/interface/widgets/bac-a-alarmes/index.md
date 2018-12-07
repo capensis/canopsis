@@ -36,7 +36,7 @@ Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
 
 ![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
 
 Dans le bac à alarmes, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cette aspect [ici](../../recherche/index.md) !
 
@@ -48,9 +48,9 @@ Le sélecteur de filtre permet d'appliquer un filtre sur le Bac à alarmes. Seul
 
 ![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
 
-Pour sélectionner un filtre, il suffit de cliquer sur le champs 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
-Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
-Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au bout du champ de sélection de filtre. Le bac à alarme se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
+Pour sélectionner un filtre, il suffit de cliquer sur le champ 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
+Cliquez sur un filtre. Celui-ci est sélectionné et directement appliqué.
+Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au bout du champ de sélection de filtre. Le bac à alarmes se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
 
 #### Filtres de période
 
@@ -119,13 +119,14 @@ Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
 ![Paramètre colonne de tri par défaut](../img/settings/default-column-sort.png "Paramètre colonne de tri par défaut")
 
-Un champs de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom.
-Example : pour trier sur la base de la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
+Un champ de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom.
+
+Exemple : pour trier sur la base de la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
 
 Une sélecteur vous permet ensuite de définir le sens de tri :
 
-- "ASC" = Ascendant
-- "DESC" = Descendant
+*  "ASC" = Ascendant
+*  "DESC" = Descendant
 
 ##### Nom des colonnes
 
@@ -135,9 +136,10 @@ Ce paramètre permet de définir quels colonnes seront affichées dans le bac à
 
 Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
-Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'alarme, et de l'entité concernée par l'alarme, peuvent être utilisés, en préfixant le nom du champs de "alarm", ou de "entity".
 
-Example: Pour ajouter une colonne ayant pour label "Composant" et pour valeur le nom du composant, renseignez les champs comme suit :
+Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'alarme et de l'entité concernée par l'alarme peuvent être utilisés, en préfixant le nom du champ par "alarm" ou "entity".
+
+Exemple : Pour ajouter une colonne ayant pour label "Composant" et pour valeur le nom du composant, renseignez les champs comme suit :
 
 - Label : "Composant"
 - Valeur : "alarm.component" 
@@ -180,7 +182,7 @@ Ce paramètre permet d'ajouter un info popup sur une des colonnes du Bac à alar
 Pour ajouter une info popup, cliquez sur le bouton 'Ajouter'.
 
 Une case info popup vide apparaît.
-Cette case comporte deux champs : 
+Cette case comporte deux champs :
 
 - Colonne : Ce champ permet de définir sur quelle colonne l'info popup sera disponible. Il faut ici entrer la **valeur** de la colonne, et non son nom.
 Example : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".

@@ -32,7 +32,7 @@ Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
 
 ![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche").
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche").
 
 Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche").
 
@@ -42,7 +42,7 @@ Le sélecteur de filtre permet d'appliquer un filtre sur l'Explorateur de contex
 
 ![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
 
-Pour sélectionner un filtre, il suffit de cliquer sur le champs 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
+Pour sélectionner un filtre, il suffit de cliquer sur le champ 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
 Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
 Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au bout du champ de sélection de filtre. L'explorateur de contexte se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
 
@@ -70,7 +70,7 @@ Le 1er onglet, 'Formulaire', vous demande de renseigner les informations princip
 - Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
 - Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces listes, effectuez une recherche grâce au champ de recherche, puis cliquez sur l'icone ![Icone Ajout impact/dépendance](./img/add-impact-depends.png "Icone Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisé pour ajouter des entités.
 
-Le 2ème onglet permet de gérer les infos contenues dans le champs 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
+Le 2ème onglet permet de gérer les infos contenues dans le champ 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
 Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
 
 ![Formulaire Gérer infos](./img/manage-infos.png "Formulaire Gérer infos")
@@ -148,7 +148,7 @@ Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
 ![Paramètre colonne de tri par défaut](../img/settings/default-column-sort.png "Paramètre colonne de tri par défaut")
 
-Un champs de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*).
+Un champ de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*).
 
 Une sélecteur vous permet ensuite de définir le sens de tri :
 
