@@ -60,7 +60,7 @@ Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/pe
 
 ![Modal filtre par période](./img/modal-filtre-periode.png "Modal filtre par période")
 
-Il suffit alors de sélectionner la période souhaitée parmis les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
+Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
 Cliquez ensuite sur 'Appliquer'.
 
 La fenêtre se ferme, le bac à alarme se rafraichit. Votre filtre par période est appliqué.
@@ -101,7 +101,7 @@ Ce paramètre permet de régler la taille du widget.
 
 ![Paramètre Taille du widget](../img/settings/widget-size.png "Paramètre Taille du widget")
 
-La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmis les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
+La première information à renseigner est la ligne dans laquelle le widget doit apparaître. Ce champ permet de rechercher parmi les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
 
 Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
 La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
@@ -168,7 +168,7 @@ Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée),
 
 Ce paramètre permet de sélectionner un filtre à appliquer au bac à alarme, et d'en créer de nouveaux.
 
-Un champ de sélection permet d'abord de choisir un filtre à appliquer au bac à alarmes parmis les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmis les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer au bac à alarmes (*Cf: [filtres](#filtres)*).
+Un champ de sélection permet d'abord de choisir un filtre à appliquer au bac à alarmes parmi les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmi les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer au bac à alarmes (*Cf: [filtres](#filtres)*).
 
 Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
 Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.

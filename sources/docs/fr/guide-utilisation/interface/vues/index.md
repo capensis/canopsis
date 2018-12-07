@@ -16,7 +16,7 @@ Plusieurs informations concernant la vue sont demandées :
 * Description: Description de la vue
 * Activée: La vue doit-elle être accessible, ou non ?
 * Labels de groupes: Labels permettant la classification
-* Groupe (*requis*): Groupe auquel la vue appartient. Le champ permet de rechercher parmis les groupes existant. Si aucun groupe n'est trouvé, appuyez sur la touche Entrée pour en créer un nouveau.
+* Groupe (*requis*): Groupe auquel la vue appartient. Le champ permet de rechercher parmi les groupes existant. Si aucun groupe n'est trouvé, appuyez sur la touche Entrée pour en créer un nouveau.
 
 Une fois les champs renseignés, cliquez sur "Envoyer", votre vue apparaîtra dans la barre latérale, dans le groupe que vous avez choisi lors de la création.
 

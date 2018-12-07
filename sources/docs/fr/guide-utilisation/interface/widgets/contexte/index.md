@@ -130,7 +130,7 @@ Ce paramètre permet de régler la taille du widget.
 
 ![Paramètre Taille du widget](../img/settings/widget-size.png "Paramètre Taille du widget")
 
-La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmis les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
+La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmi les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
 
 Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
 La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
@@ -175,7 +175,7 @@ Dans la liste des colonnes sont égalements présentes, pour chaque colonne, des
 
 Ce paramètre permet de sélectionner un filtre à appliquer à l'explorateur de contexte, et d'en créer de nouveaux.
 
-Un champ de sélection permet d'abord de choisir un filtre à appliquer à l'explorateur de contexte parmis les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmis les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer à l'explorateur de contexte (*Cf: [filtres](#filtres)*).
+Un champ de sélection permet d'abord de choisir un filtre à appliquer à l'explorateur de contexte parmi les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmi les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer à l'explorateur de contexte (*Cf: [filtres](#filtres)*).
 
 Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
 Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.

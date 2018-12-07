@@ -29,7 +29,7 @@ La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir d
 
 ### 1. La couleur
 
-La couleur de la tuile correspond à l'état de l'observateur. Cet état est calculé en prenant en compte le pire état parmis les entités surveillées par cet observateur.
+La couleur de la tuile correspond à l'état de l'observateur. Cet état est calculé en prenant en compte le pire état parmi les entités surveillées par cet observateur.
 
 Exemple : 
 Un observateur surveille deux entités, A et B. A a un état de 1. B a un état de 3. L'état de l'observateur sera alors égal à 3.
@@ -72,7 +72,7 @@ Ce paramètre permet de régler la taille du widget.
 
 ![Paramètre Taille du widget](../img/settings/widget-size.png "Paramètre Taille du widget")
 
-La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmis les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
+La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmi les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
 
 Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
 La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
