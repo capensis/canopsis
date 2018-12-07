@@ -36,7 +36,7 @@ endif
 		./$$distrib.sed Dockerfile.template | docker build -f - . -t canopsis/canopsis:$$image_tag ; \
 	done
 
-packages: docker_images
+packages:
 	echo "Building packages" ; \
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib " package"; \
