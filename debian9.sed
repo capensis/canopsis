@@ -74,7 +74,7 @@ s|{{FINAL_IMAGE_SETUP}}|echo "deb http://ftp.fr.debian.org/debian/ stretch main 
 		smitools \\ \
 		sudo \\ \
 		vim; \\ \
+		apt-get clean \
 		# snmp \
 		# tmux \
-		# python \
-	apt-get clean|g
+		# python|g
