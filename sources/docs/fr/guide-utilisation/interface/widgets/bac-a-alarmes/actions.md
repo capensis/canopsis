@@ -3,48 +3,48 @@
 Lorsqu'un évènement arrive, il est envoyé vers le bac à évènements, puis traité. Il devient alors une alarme (Une alarme est le résultat de l'analyse des évènements. cf [vocabulaire](../../../vocabulaire/index.md)).  
 
 Les différentes actions possibles sur cette alarme sont :
-- [Accuser réception (Ack)](#accuser-réception-ack)
-- Une fois la réception faite, la gestion de l'incident:
-    - [Déclarer un incident](#déclarer-un-ticket)
-    - [Associer un ticket](#associer-un-ticket)
-    - [Annuler l'alarme](#annuler-lalarme)
-    - [Annuler l'Ack](#annuler-lack)
-    - [Snooze](#snooze)
-    - [Changer la criticité](#changer-la-criticité)
-    - [Comportement périodique](#comportement-périodique)
-    - [Lister les comportements périodiques](#lister-les-comportements-périodiques)
-    - [Obtenir plus d'infos](#obtenir-plus-d-infos)
+*  [Accuser réception (Ack)](#accuser-réception-ack)
+*  Une fois la réception faite, la gestion de l'incident :
+    *  [Déclarer un incident](#déclarer-un-ticket)
+    *  [Associer un ticket](#associer-un-ticket)
+    *  [Annuler l'alarme](#annuler-lalarme)
+    *  [Annuler l'Ack](#annuler-lack)
+    *  [Snooze](#snooze)
+    *  [Changer la criticité](#changer-la-criticité)
+    *  [Comportement périodique](#comportement-périodique)
+    *  [Lister les comportements périodiques](#lister-les-comportements-périodiques)
+    *  [Obtenir plus d'infos](#obtenir-plus-d-infos)
 
 ## Accuser réception (ACK)
 
-Deux choix possibles : ACK et ACK rapide
+Deux choix possibles : ACK et ACK rapide.
 
 L'Ack permet de voir les détails généraux de l'évènement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
 
 L'Ack rapide, lui, permet d'accuser réception sans pour autant remplir ces informations.
 
-Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Ack Extra details](./img/ack-extra-details-icon.png  "Icone Ack Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Ack Extra details](./img/ack-extra-details-icon.png  "Icone Ack Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ## Gérer l'incident
 
-Une fois la réception faites, un nouveau menu apparait à la place des actions d'Ack et d'Ack rapide
+Une fois la réception faite, un nouveau menu apparaît à la place des actions d'Ack et d'Ack rapide.
 
-Il permet de :
+Il permet de :
 
-- Déclarer un ticket
-- Associer un ticket
-- Annuler l'alarme
-- Snooze
-- Changer la criticité
-- Lister les comportements périodiques
-- Comportement périodique
-- Obtenir plus d'infos
+*  déclarer un ticket
+*  associer un ticket
+*  annuler l'alarme
+*  snooze
+*  changer la criticité
+*  lister les comportements périodiques
+*  définir un comportement périodique
+*  obtenir plus d'infos
 
-Les actions 'Déclarer un ticket', 'Associer un ticket' et 'Annuler l'alarme' sont disponibles immédiatement sur chaque ligne d'alarme, dans le Bac à alarme
+Les actions 'Déclarer un ticket', 'Associer un ticket' et 'Annuler l'alarme' sont disponibles immédiatement sur chaque ligne d'alarme, dans le Bac à alarmes.
 
 ![Menu actions bac à alarmes](./img/menu-actions.png "Menu actions bac à alarmes")
 
-Les autres actions sont disponibles en cliquant sur les 3 points situés à droite de actions citées précedemment
+Les autres actions sont disponibles en cliquant sur les 3 points situés à droite de actions citées précedemment.
 
 ![Menu plus d'actions bac à alarmes](./img/menu-more-actions.png "Menu actions bac à alarmes")
 
@@ -71,12 +71,12 @@ Au clic sur l'action 'Associer un ticket', une fenêtre s'affiche :
 
 Cette fenêtre présente quelques détails de l'évènement.
 
-En dessous des détails de l'évènement, un champ de texte vous demande renseigner le numéro du ticket que vous souhaitez associer à cet évènement.
+En dessous des détails de l'évènement, un champ de texte vous demande de renseigner le numéro du ticket que vous souhaitez associer à cet évènement.
 
 Après avoir renseigné le numéro de ticket, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Assoc ticket Extra details](./img/assoc-ticket-extra-details-icon.png  "Icone Assoc ticket Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc)
+Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Assoc ticket Extra details](./img/assoc-ticket-extra-details-icon.png  "Icone Assoc ticket Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc)
 
 ### Annuler l'alarme
 
@@ -88,12 +88,12 @@ Au clic sur l'action 'Annuler l'alarme', une fenêtre s'affiche :
 
 Cette fenêtre présente quelques détails de l'évènement.
 
-En dessous des détails de l'évènement, un champ de texte vous demande renseigner une note concernant l'action que vous effectuez.
+En dessous des détails de l'évènement, un champ de texte vous demande de renseigner une note concernant l'action que vous effectuez.
 
-Après avoir renseigner cette note, cliquez sur 'Sauvegarder'.
+Après avoir renseigné cette note, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Cancel Extra details](./img/cancel-extra-details-icon.png  "Icone Cancel Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Cancel Extra details](./img/cancel-extra-details-icon.png  "Icone Cancel Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ### Annuler l'Ack
 
@@ -105,9 +105,9 @@ Au clic sur l'action 'Annuler l'Ack', une fenêtre s'affiche :
 
 Cette fenêtre présente quelques détails de l'évènement.
 
-En dessous des détails de l'évènement, un champ de texte vous demande renseigner une note concernant l'action que vous effectuez.
+En dessous des détails de l'évènement, un champ de texte vous demande de renseigner une note concernant l'action que vous effectuez.
 
-Après avoir renseigner cette note, cliquez sur 'Sauvegarder'.
+Après avoir renseigné cette note, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
 Les actions disponibles reviennent alors à l'état dans lequel elles étaient avant l'action d'Ack (ou Ack rapide) effectuée auparavant.
@@ -125,7 +125,7 @@ Cette fenêtre vous demande de renseigner la durée souhaitée.
 Une fois la durée renseignée, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'extra_details' est activée dans le bac à alarmes, l'icone ![Icone Snooze Extra details](./img/snooze-extra-details-icon.png  "Icone Snooze Extra details") apparait. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
+Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Snooze Extra details](./img/snooze-extra-details-icon.png  "Icone Snooze Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ### Changer la criticité
 
@@ -140,7 +140,7 @@ Cette fenêtre vous demande de choisir le niveau de criticité souhaité et de r
 Une fois la durée renseignée, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'state' est activée dans le Bac à alarme, l'icone ![Icone User state](./img/icone-user-state.png  "Icone User state") apparait à côté de l'état de l'alarme, signifiant que celui-ci a été modifié manuellement.
+Si la colonne 'state' est activée dans le Bac à alarmes, l'icone ![Icone User state](./img/icone-user-state.png  "Icone User state") apparaît à côté de l'état de l'alarme, signifiant que celui-ci a été modifié manuellement.
 
 ### Comportement périodique
 
@@ -164,4 +164,4 @@ Pour fermer la fenêtre, cliquez en dehors de celle-ci, ou sur le bouton 'Annule
 
 ### Obtenir plus d'infos 
 
-L'action 'Obtenir plus d'infos' permet d'ouvrir la fenêtre 'Plus d'infos'. Cette fenêtre personnalisable permet d'afficher toutes les informations souhaitées concernant l'alarme, ou l'entité associée à cette alarme.
+L'action 'Obtenir plus d'infos' permet d'ouvrir la fenêtre 'Plus d'infos'. Cette fenêtre personnalisable permet d'afficher toutes les informations souhaitées concernant l'alarme ou l'entité associée à cette alarme.

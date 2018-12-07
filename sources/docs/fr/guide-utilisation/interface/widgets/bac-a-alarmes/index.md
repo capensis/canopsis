@@ -65,7 +65,7 @@ Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/pe
 Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
 Cliquez ensuite sur 'Appliquer'.
 
-La fenêtre se ferme, le bac à alarme se rafraîchit. Votre filtre par période est appliqué.
+La fenêtre se ferme, le bac à alarmes se rafraîchit. Votre filtre par période est appliqué.
 Celui-ci est visible en haut du Bac à alarmes.
 
 ![Filtre par période selectionné](./img/filter-current-period.png "Filtre par période selectionné")
@@ -153,7 +153,7 @@ Dans la liste des colonnes sont égalements présentes, pour chaque colonne, des
 
 ##### Nombre d'éléments par page par défaut
 
-Ce paramètre permet de définir combien d'éléments seront affichés, par défaut, pour chaque page du bac à alarme.
+Ce paramètre permet de définir combien d'éléments seront affichés, par défaut, pour chaque page du bac à alarmes.
 
 Pour modifier ce paramètre, sélectionnez simplement la valeur souhaitée.
 
@@ -171,12 +171,12 @@ Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée),
 
 ##### Filtres
 
-Ce paramètre permet de sélectionner un filtre à appliquer au bac à alarme, et d'en créer de nouveaux.
+Ce paramètre permet de sélectionner un filtre à appliquer au bac à alarmes, et d'en créer de nouveaux.
 
 Un champ de sélection permet d'abord de choisir un filtre à appliquer au bac à alarmes parmi les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmi les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer au bac à alarmes (*Cf: [filtres](#filtres)*).
 
 Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
-Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.
+Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer ou de supprimer les filtres.
 
 ##### Info popup
 
@@ -203,6 +203,6 @@ Ce champ se présente sous forme d'un éditeur de texte.
 Le langage utilisé dans cet éditeur est le Handlebars.
 Deux variables sont disponibles ici, 'alarm' et 'entity'.
 
-En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme, ou de l'entité concerné par cette alarme.
+En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme ou de l'entité concernée par cette alarme.
 
 Exemple : Pour afficher l'état de l'alarme, ajoutez `{{ alarm.state.val }}`.

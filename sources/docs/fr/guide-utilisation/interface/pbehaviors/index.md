@@ -21,13 +21,13 @@ Le comportement spécifié sera configuré avec une periode et éventuellement u
 
 ### Downtime
 
-Un temps d'arrêt est défini sur une entité lorsque nous savons que cette entité sera «Down». Cette situation peut se produire lorsque vous redémarrez un serveur, par exemple.
+Un temps d'arrêt est défini sur une entité lorsque nous savons que cette entité sera « Down ». Cette situation peut se produire lorsque vous redémarrez un serveur, par exemple.
 Le serveur aura un état erroné, qui sera ignoré par Canopsis pendant une courte période.
 
 Les temps d'arrêt excluront les évènements de contrôle associés des sélecteurs l'utilisant.
 Ainsi, le sélecteur ne sera pas influencé par les faux états erronés de l'entité.
 
-Étant donné que l'évènement est exclu du sélecteur, le SLA exclut également les évènement des calculs.
+Étant donné que l'évènement est exclu du sélecteur, le SLA exclut également les évènements des calculs.
 
 ## Comment l'utiliser ?
 
@@ -37,15 +37,16 @@ Pour instaurer un Pbehavior il vous suffit de selectionner un évènement, un bo
 
 Cliquez dessus, plusieurs configuration sont disponibles :
 
-* Le titre de ce PBehavior
-* Sa durée
-* La mise en place d'une récursivité ou non
-* La raison
-* Le type
+*  le titre de ce PBehavior
+*  sa durée
+*  la mise en place d'une récursivité ou non
+*  la raison
+*  le type
 
 ### Exemple
 
 On veut un PBehavior nommé "Mon premier PBehavior !", qui s'étend du 12/10/2018 à 18h00 au 14/10/2018 à 9h00 dont la raison est "autre" et dont le type est "hors plage horraire de surveillance".
+
 Dans ce cas, notre fenêtre sera la suivante :
 
 ![fen1](img/fen1.png)
@@ -60,14 +61,14 @@ Il vous suffit de cliquer sur "Put a rrule on this PBehavior ?"
 
 Nous allons tout d'abord nous concentrer sur la configuration basique. Plusieurs options sont disponibles :
 
-* La fréquence :  Les choix possibles sont variés : Toutes les X Secondes, minutes, heures, jours, semaines, mois ou années.
-* Jusqu'à : Date et heure de fin de l'activation de ce PBehavior.
-* Un jour en particulier : Choisir un jour où le PBehavior va s'activer.
-* Répétition : Combien de fois le PBehavior va s'activer.
-* Intervalle : Intervalle de jours entre chaque activation du PBehavior.
+*  La fréquence : les choix possibles sont variés : toutes les X Secondes, minutes, heures, jours, semaines, mois ou années.
+*  Jusqu'à : date et heure de fin de l'activation de ce PBehavior.
+*  Un jour en particulier : choisir un jour où le PBehavior va s'activer.
+*  Répétition : combien de fois le PBehavior va s'activer.
+*  Intervalle : intervalle de jours entre chaque activation du PBehavior.
 
 #### Configuration Avancée
 
 La configuration avancée est reservée aux utilisateurs les plus expérimentés.
-Elle permet, comme son nom l'indique, d'appliquer des règles plus détailées comme sélectionner les jours / heures / secondes sur un laps de temps précis (mois, années, semaines) dans lesquelles le PBehavior va se déclencher.
 
+Elle permet, comme son nom l'indique, d'appliquer des règles plus détailées comme sélectionner les jours / heures / secondes sur un laps de temps précis (mois, années, semaines) dans lesquelles le PBehavior va se déclencher.
