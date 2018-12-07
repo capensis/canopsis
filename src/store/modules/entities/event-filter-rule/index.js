@@ -14,6 +14,7 @@ export default {
   state: {
     allIds: [],
     pending: false,
+    fetchingParams: {},
   },
   getters: {
     items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](ENTITIES_TYPES.eventFilterRule, state.allIds),
@@ -50,6 +51,17 @@ export default {
         console.error(err);
         commit(types.FETCH_LIST_FAILED);
       }
+    },
+
+    fetchListWithPreviousParams({ dispatch, state }) {
+      return dispatch('fetchList', {
+        params: state.fetchingParams,
+      });
+    },
+
+    async create({ dispatch }, { data }) {
+      await request.post(API_ROUTES.eventFilterRules, data);
+      dispatch('fetchListWithPreviousParams');
     },
 
     async remove({ dispatch }, { id } = {}) {

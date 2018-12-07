@@ -36,10 +36,7 @@ export default {
       ruleTypes: Object.values(EVENT_FILTER_RULE_TYPES),
       form: {
         type: EVENT_FILTER_RULE_TYPES.drop,
-        pattern: {
-          component: 'canopsis',
-          state: { '<=': 3, '>=': 1 },
-        },
+        pattern: {},
         priority: 0,
         enabled: true,
       },
