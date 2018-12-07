@@ -48,6 +48,7 @@ export const MODALS = {
   createEventFilterRule: 'create-event-filter-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
+  eventFilterRuleExternalData: 'event-filter-rule-external-data',
 };
 
 export const EVENT_ENTITY_TYPES = {

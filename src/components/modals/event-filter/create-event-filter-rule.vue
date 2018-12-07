@@ -14,7 +14,7 @@
           v-divider
           h3.my-2 Enrichment options
           v-btn(@click="editActions") Edit actions
-          v-btn Exernal data
+          v-btn(@click="editExternalData") Exernal data
           v-select(label="On success", v-model="enrichmentOptions.on_success", :items=['pass', 'break', 'drop'])
           v-select(label="On failure", v-model="enrichmentOptions.on_failure", :items=['pass', 'break', 'drop'])
     v-divider
@@ -67,6 +67,15 @@ export default {
         config: {
           actions: this.enrichmentOptions.actions,
           action: updatedActions => this.enrichmentOptions.actions = updatedActions,
+        },
+      });
+    },
+    editExternalData() {
+      this.showModal({
+        name: MODALS.eventFilterRuleExternalData,
+        config: {
+          value: this.enrichmentOptions.external_data,
+          action: value => this.enrichmentOptions.external_data = value,
         },
       });
     },

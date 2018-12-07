@@ -12,7 +12,7 @@
               v-select(:items="operators", v-model="value.key")
             v-flex(xs9)
               v-text-field(v-model="value.value", :type="value.key !== 'regex' ? 'number' : null")
-    v-btn(@click="convertPatternAndSave") Validate
+    v-btn(@click="convertPatternAndSave", color="primary") Save changes
 </template>
 
 <script>

@@ -1,7 +1,11 @@
 <template lang="pug">
   div
     v-textarea(:value="JSON.stringify(value, undefined, 4)", @input="checkValidity", rows="20")
-    v-btn(:color="error ? 'error' : 'primary'") {{ error ? 'JSON not valid' : 'Valid JSON' }}
+    v-btn(
+    :color="error ? 'error' : 'primary'",
+    :disabled="error ? true : false",
+    @click="save",
+    ) {{ error ? 'JSON not valid' : 'Save changes' }}
 </template>
 
 <script>
@@ -15,18 +19,21 @@ export default {
   },
   data() {
     return {
+      newVal: {},
       error: '',
     };
   },
   methods: {
     checkValidity(event) {
       try {
-        JSON.parse(event);
-        this.$emit('input', JSON.parse(event));
+        this.newVal = JSON.parse(event);
         this.error = '';
       } catch (err) {
         this.error = err.message;
       }
+    },
+    save() {
+      this.$emit('input', this.newVal);
     },
   },
 };

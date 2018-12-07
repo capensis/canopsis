@@ -40,7 +40,6 @@ export default {
     return {
       activeTab: 0,
       tabs: ['Add a field', 'Simple editor', 'Advanced editor'],
-      pattern: {},
       operators: ['>=', '>', '<', '<=', 'regex'],
     };
   },
