@@ -467,20 +467,24 @@
     },
     {
 	"_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+	"loader_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
 	"crecord_write_time" : 1543852261,
 	"crecord_type" : "action",
 	"enable" : true,
 	"type" : "RW",
+	"checksum" : 15,
 	"crecord_creation_time" : 1543852261,
 	"crecord_name" : null,
 	"desc" : "Rights on view: alarmes en cours"
     },
     {
 	"_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
+	"loader_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
 	"crecord_write_time" : 1543852261,
 	"crecord_type" : "action",
 	"enable" : true,
 	"type" : "RW",
+	"checksum" : 15,
 	"crecord_creation_time" : 1543852261,
 	"crecord_name" : null,
 	"desc" : "Rights on view: alarmes resolues"

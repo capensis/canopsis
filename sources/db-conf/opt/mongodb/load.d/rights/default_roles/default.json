@@ -4,6 +4,9 @@
         "models_userview" : {
             "checksum" : 15
         },
+        "models_actions" : {
+            "checksum" : 15
+        },
         "models_profile" : {
             "checksum" : 15
         },
