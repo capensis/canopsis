@@ -4,7 +4,7 @@
         "models_userview" : {
             "checksum" : 15
         },
-        "models_actions" : {
+        "models_action" : {
             "checksum" : 15
         },
         "models_profile" : {
@@ -225,7 +225,15 @@
         "serviceweather_pause" : {
             "checksum": 1,
             "desc": ""
-        }
+        },
+	"da7ac9b9-db1c-4435-a1f2-edb4d6be4db8" : {
+        	"checksum" : 15,
+		"crecord_type" : "right"
+	},
+	"875df4c2-027b-4549-8add-e20ed7ff7d4f" : {
+        	"checksum" : 15,
+		"crecord_type" : "right"
+	}
     },
 	"defaultview": "view.current_alarms"
 },{
