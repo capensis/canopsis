@@ -1,14 +1,14 @@
 <template lang="pug">
-  v-tabs(
-  v-show="tabs.length",
+  v-tabs.view-tabs(
   ref="tabs",
   :value="value",
-  @input="$emit('input', $event)",
+  :class="{ hidden: this.tabs.length < 2 }",
   color="secondary lighten-2",
   slider-color="primary",
-  dark
+  dark,
+  @input="$emit('input', $event)"
   )
-    v-tab(v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
+    v-tab(v-if="tabs.length", v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
       span {{ tab.title }}
       v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
         v-icon(small) edit
@@ -126,3 +126,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .view-tabs.hidden {
+    & /deep/ .v-tabs__bar {
+      display: none;
+    }
+  }
+</style>
