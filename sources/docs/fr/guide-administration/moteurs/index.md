@@ -7,8 +7,8 @@ Les évènements envoyés par des connecteurs à Canopsis sont traités à l'aid
 
 Un moteur a **plusieurs rôles** :
 
-*  consommation d'un évènement: pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
-*  effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.
+*  consommation d'un évènement : pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
+*  effectuer une tâche périodique : appelée « beat », cette tâche sera exécutée à intervalle régulier.
 *  consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
 
 Un moteur peut avoir les **propriétés** suivantes :
@@ -103,6 +103,6 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 *  cancel
 *  context
 *  eventstore
-*  task_linklist : n'existe plus depuis Canopsis 3.0
+*  task\_linklist : n'existe plus depuis Canopsis 3.0
 *  linklist : n'existe plus depuis Canopsis 3.0, remplacé par les linkbuilders
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric

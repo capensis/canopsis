@@ -5,6 +5,7 @@
 ## Sommaire 
 
 ### Guide utilisateur
+
 1. [Alarmes](#alarmes)
 2. [Recherche](#recherche)
 3. [Filtres](#filtres)
@@ -12,6 +13,7 @@
 5. [Elements par page](#elements-par-page)
 
 ### Guide exploitant
+
 1. [Paramètres du widget](#parametres-du-widget)
 
 ## Guide utilisateur
@@ -44,7 +46,7 @@ Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](
  
 ### Filtres
 
-Le sélecteur de filtre permet d'appliquer un filtre sur le Bac à alarmes. Seuls les alarmes correspondant aux critères du filtres seront affichées.
+Le sélecteur de filtre permet d'appliquer un filtre sur le Bac à alarmes. Seules les alarmes correspondant aux critères du filtres seront affichées.
 
 ![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
 
@@ -56,14 +58,14 @@ Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au b
 
 Le filtre par période permet de filtre les alarmes en ne conservant que les alarmes d'une période donnée.
 
-Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/period-filter.png "Filtre par période") présent à droite du sélecteur de filtre. Une fenêtre apparaît.
+Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/period-filter.png "Filtre par période") présente à droite du sélecteur de filtre. Une fenêtre apparaît.
 
 ![Modal filtre par période](./img/modal-filtre-periode.png "Modal filtre par période")
 
 Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
 Cliquez ensuite sur 'Appliquer'.
 
-La fenêtre se ferme, le bac à alarme se rafraichit. Votre filtre par période est appliqué.
+La fenêtre se ferme, le bac à alarme se rafraîchit. Votre filtre par période est appliqué.
 Celui-ci est visible en haut du Bac à alarmes.
 
 ![Filtre par période selectionné](./img/filter-current-period.png "Filtre par période selectionné")
@@ -83,6 +85,7 @@ Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à aff
 Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
 
 ## Guide exploitant
+
 ### Paramètres du widget
 
 1. Taille du widget
@@ -93,7 +96,6 @@ Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: 
     3. Nombre d'éléments par page par défaut
     4. Filtre sur open/resolved
     5. Filtres
-
 
 #### Taille du widget (*requis*)
 
@@ -113,6 +115,7 @@ Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus
 Un champ de texte vous permet de définir ce titre.
 
 #### Paramètres avancés
+
 ##### Colonne de tri par défaut
 
 Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
@@ -141,8 +144,8 @@ Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tab
 
 Exemple : Pour ajouter une colonne ayant pour label "Composant" et pour valeur le nom du composant, renseignez les champs comme suit :
 
-- Label : "Composant"
-- Valeur : "alarm.component" 
+*  Label : "Composant"
+*  Valeur : "alarm.component"
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
@@ -160,8 +163,8 @@ Les valeurs disponibles sont : 5, 10, 20, 50 et 100.
 
 Ce paramètre permet de filtrer les alarmes en fonction de leur état.
 
-- Open => Alarmes "Ouvertes"
-- Resolved => Alarmes "Résolues"
+*  Open : Alarmes "Ouvertes"
+*  Resolved : Alarmes "Résolues"
 
 Pour modifier ce paramètre, sélectionnez les types d'alarmes que vous souhaitez afficher en cochant la case correspondante.
 Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée), une des deux cases, ou les deux cases (les alarmes ouvertes ET résolues seront alors affichées).
@@ -184,17 +187,17 @@ Pour ajouter une info popup, cliquez sur le bouton 'Ajouter'.
 Une case info popup vide apparaît.
 Cette case comporte deux champs :
 
-- Colonne : Ce champ permet de définir sur quelle colonne l'info popup sera disponible. Il faut ici entrer la **valeur** de la colonne, et non son nom.
-Example : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
-- Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template l'état de l'alarme, ajoutez au template {{ alarm.state.val }}.
+*  Colonne : Ce champ permet de définir sur quelle colonne l'info popup sera disponible. Il faut ici entrer la **valeur** de la colonne, et non son nom.
+Exemple : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
+*  Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template l'état de l'alarme, ajoutez au template {{ alarm.state.val }}.
 
 Vous pouvez ajouter autant d'info popup que vous le souhaitez.
 
 Pour supprimer une info popup, cliquez sur la croix rouge, en haut à droite de la case de l'info popup que vous souhaitez supprimer.
 
-##### Fenetre Plus d'infos
+##### Fenêtre Plus d'infos
 
-Ce paramètre permet de définir le contenu de la fenêtre plus d'infos. Le bouton permettant d'ouvrir cette fenêtre se trouve dans les actions de chaque alarmes du bac à alarmes.
+Ce paramètre permet de définir le contenu de la fenêtre plus d'infos. Le bouton permettant d'ouvrir cette fenêtre se trouve dans les actions de chaque alarme du bac à alarmes.
 
 Ce champ se présente sous forme d'un éditeur de texte.
 Le langage utilisé dans cet éditeur est le Handlebars.
@@ -202,4 +205,4 @@ Deux variables sont disponibles ici, 'alarm' et 'entity'.
 
 En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme, ou de l'entité concerné par cette alarme.
 
-Exemple: Pour afficher l'état de l'alarme, ajoutez `{{ alarm.state.val }}`.
+Exemple : Pour afficher l'état de l'alarme, ajoutez `{{ alarm.state.val }}`.

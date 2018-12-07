@@ -73,7 +73,7 @@ Réponse : UID de l'élément inséré
 
 ## Récupérer les pbehaviors d'une entité
 
-Cette route répertorie les pbehavior existantes sur une entité, identifiée par son eid (Entity ID)
+Cette route répertorie les pbehaviors existant sur une entité, identifiée par son eid (Entity ID)
 
 #### URL
 

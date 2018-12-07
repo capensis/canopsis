@@ -10,8 +10,7 @@ Cliquez sur "add" pour créer votre premier filtre, une fenêtre apparaît :
 
 ![create_filter](img/create_filter.png)
 
-Donnez un titre à votre filtre, deux méthodes de création, une pour les néophytes et une pour les utilisateurs expérimentés. Nous allons nous concentrer sur la première méthode,
-vous verrez dans un second temps que la méthode avancée évolue en même temps que vos actions sur l'autre méthode.
+Donnez un titre à votre filtre, deux méthodes de création, une pour les néophytes et une pour les utilisateurs expérimentés. Nous allons nous concentrer sur la première méthode, vous verrez dans un second temps que la méthode avancée évolue en même temps que vos actions sur l'autre méthode.
 
 ## AND / OR
 
@@ -21,19 +20,19 @@ Il faut maintenant choisir quel filtre prendre. Deux choix principaux s'offrent 
 
 Dans la première colonne, choisir de quel type sera l'objet filtré. Quatre choix :
 
-* component_name
-* connector_name
-* connector
-* ressource
+*  component\_name
+*  connector\_name
+*  connector
+*  ressource
 
-Dans la seconde, le filtre qui lui sera alloué
+Dans la seconde, le filtre qui lui sera alloué :
 
-* equal
-* not equal
-* in
-* not in
-* begins with
-* ....
+*  equal
+*  not equal
+*  in
+*  not in
+*  begins with
+*  …
 
 Puis, dans la dernière, il vous est possible de remplir un champ qui sera "matché" avec le filtre.
 
@@ -80,7 +79,9 @@ On veut maintenant ajouter le fait qu'une ressource ne doit pas être vide. Une 
 }
 ```
 
-Il est bien évidement possible de réaliser cette configuration via l'interface utilisateur avancée. Le bouton "Parse" va vous servir à vérifier l'exactitude de votre JSON, si celui ci est invalide ce message apparaîtra :
+Il est bien évidement possible de réaliser cette configuration via l'interface utilisateur avancée.
+
+Le bouton "Parse" va vous servir à vérifier l'exactitude de votre JSON, si celui ci est invalide ce message apparaîtra :
 
 ![invjson](img/invjson.png)
 
