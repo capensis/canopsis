@@ -80,7 +80,13 @@ export default {
       });
     },
     submit() {
-      // TODO: Submit button
+      if (this.form.type === 'enrichment') {
+        this.config.action({ ...this.form, ...this.enrichmentOptions });
+      } else {
+        this.config.action({ ...this.form });
+      }
+
+      this.hideModal();
     },
   },
 };
