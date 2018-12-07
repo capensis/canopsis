@@ -1,3 +1,3 @@
 <template lang="pug">
-  div Field creation
+  div
 </template>

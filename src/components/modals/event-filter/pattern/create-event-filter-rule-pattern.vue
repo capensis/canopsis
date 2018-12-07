@@ -13,6 +13,7 @@
           pattern-simple-editor(v-model="config.pattern", :operators="operators")
         v-tab-item
           pattern-advanced-editor(v-model="config.pattern")
+    v-divider
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
