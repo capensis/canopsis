@@ -19,7 +19,7 @@ NEXT_TAG="develop"
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
 ifeq ($(wildcard ${.NEXT_SRC}),)
-		git clone git@git.canopsis.net:canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
+		git clone https://git.canopsis.net/canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
 endif
 
 ifneq ($(NEXT_TAG), "$(shell cd ${.NEXT_SRC}; git branch | grep \* | cut -d ' ' -f2)")
