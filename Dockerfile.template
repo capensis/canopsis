@@ -16,7 +16,6 @@ RUN NODE_ENV=production yarn run build
 #########
 
 # Template here
-# FROM debian:stretch as canopsis_build
 FROM {{BASE_DOCKER_IMAGE}} as canopsis_build
 
 ENV http_proxy ${PROXY}
@@ -29,8 +28,6 @@ ARG PROXY
 SHELL ["/bin/bash", "-c"]
 
 RUN {{BUILD_SETUP}}
-
-# RUN {{BUILD_IMAGE_SETUP}}
 
 RUN mkdir ${CPS_HOME}
 WORKDIR ${CPS_HOME}
