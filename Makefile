@@ -18,12 +18,8 @@ NEXT_TAG="develop"
 
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
-	-ls ${.NEXT_SRC}
-ifeq ($(wildcard ${.NEXT_SRC}),)
-	echo "** Cloning canopsis-next source"
+	-rm -rf ${.NEXT_SRC}
 	git clone https://git.canopsis.net/canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
-endif
-
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib; \
 		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
@@ -33,6 +29,7 @@ endif
 		fi; \
 		./$$distrib.sed Dockerfile.template | docker build -f - . -t canopsis/canopsis:$$image_tag ; \
 	done
+	-rm -rf ${.NEXT_SRC}
 
 packages:
 	echo "Building packages" ; \
