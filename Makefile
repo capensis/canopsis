@@ -9,7 +9,7 @@ TAG:=develop
 DISTRIBUTIONS=debian8,debian9,centos7 # Every GNU/Linux distribution supported by Canopsis
 DOCKER_DISTRIB="debian9" # The GNU/Linux distribution use as foundation for the official Canopsis Docker image
 PACKAGE_REV=""
-NEXT_TAG="develop"
+NEXT_TAG=3.5.0
 
 # It's trick to allow subst to replace a comma.
 .comma:=,
