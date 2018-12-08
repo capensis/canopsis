@@ -7,16 +7,20 @@ stages:
 build_docker:
   stage: build
   tags: ["canopsis"]
-  script: make docker_images NEXT_TAG=develop
+  variables:
+    NEXT_DIR=./sources/webcore/src/canopsis-next
+    NEXT_TAG=develop
 
   before_script:
     - uname -a
     - docker -v
     - git --no-pager show
-    - git clone https://git.canopsis.net/canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
+    - git clone https://git.canopsis.net/canopsis/canopsis-next.git -b $NEXT_TAG $NEXT_DIR
+
+  script: make docker_images
 
   after_script:
-    - rm -rf ${.NEXT_SRC}
+    - rm -rf $NEXT_DIR
 
 test-unit:
   stage: test
