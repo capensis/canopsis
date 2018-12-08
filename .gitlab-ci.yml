@@ -12,6 +12,9 @@ build_docker:
     NEXT_TAG: develop
 
   before_script:
+    - docker system prune
+    - docker rmi $(docker images -q) -f
+    - docker ps
     - uname -a
     - docker -v
     - git --no-pager show
