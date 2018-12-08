@@ -6,9 +6,9 @@ FROM node:10.6-stretch as canopsis-next_build
 
 COPY sources/webcore/src/canopsis-next /canopsis-next
 WORKDIR /canopsis-next
-RUN npm install
+RUN yarn install
 
-RUN NODE_ENV=production npm run build
+RUN NODE_ENV=production yarn run build
 
 
 #########
