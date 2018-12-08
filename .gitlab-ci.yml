@@ -12,12 +12,13 @@ build_docker:
     NEXT_TAG: develop
 
   before_script:
-    - docker system prune
+    - docker system prune -f
     - docker rmi $(docker images -q) -f
     - docker ps
     - uname -a
     - docker -v
     - git --no-pager show
+    - rm -rf $NEXT_DIR
     - git clone https://git.canopsis.net/canopsis/canopsis-next.git -b $NEXT_TAG $NEXT_DIR
 
   script: make docker_images
