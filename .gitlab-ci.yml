@@ -8,8 +8,8 @@ build_docker:
   stage: build
   tags: ["canopsis"]
   variables:
-    NEXT_DIR:./sources/webcore/src/canopsis-next
-    NEXT_TAG:develop
+    NEXT_DIR: ./sources/webcore/src/canopsis-next
+    NEXT_TAG: develop
 
   before_script:
     - uname -a
