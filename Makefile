@@ -24,11 +24,6 @@ ifeq ($(wildcard ${.NEXT_SRC}),)
 	git clone https://git.canopsis.net/canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
 endif
 
-ifneq ($(NEXT_TAG), "$(shell cd ${.NEXT_SRC}; git branch | grep \* | cut -d ' ' -f2)")
-	echo "*** Checkout to ${NEXT_TAG}"
-	git -C ${.NEXT_SRC} checkout ${NEXT_TAG}
-endif
-
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib; \
 		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
