@@ -45,10 +45,35 @@ test-functionnal:
     - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
     - docker volume prune -f
 
-build_package:
+build_package-debian8:
   stage: packaging
   tags: ["canopsis"]
-  script: make package TAG=todo
+
+  variable:
+    DISTRIBUTION: debian8
+  script:
+    - make docker DISTRIBUTIONS=$DISTRIBUTION
+    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+build_package-debian8:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variable:
+    DISTRIBUTION: debian9
+  script:
+    - make docker DISTRIBUTIONS=$DISTRIBUTION
+    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+build_package-centos7:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variable:
+    DISTRIBUTION: debian8
+  script:
+    - make docker DISTRIBUTIONS=$DISTRIBUTION
+    - make packages DISTRIBUTIONS=$DISTRIBUTION
 
 publish-docker:
   stage: publish
