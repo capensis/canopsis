@@ -7,21 +7,17 @@ stages:
 build_docker:
   stage: build
   tags: ["canopsis"]
-  variables:
-    NEXT_DIR: ./sources/webcore/src/canopsis-next
-    NEXT_TAG: develop
 
   before_script:
     - uname -a
     - docker -v
     - git --no-pager show
-    - rm -rf $NEXT_DIR
-    - git clone https://git.canopsis.net/canopsis/canopsis-next.git -b $NEXT_TAG $NEXT_DIR
+    - make init_canopsis-next
 
   script: make docker_images
 
   after_script:
-    - rm -rf $NEXT_DIR
+    - make delete_canopsis-next
 
 test-unit:
   stage: test
@@ -51,9 +47,16 @@ build_package-debian8:
 
   variables:
     DISTRIBUTION: debian8
+
+  before_script:
+    - make init_canopsis-next
+
   script:
     - make docker DISTRIBUTIONS=$DISTRIBUTION
     - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+  after_script:
+    - make delete_canopsis-next
 
 build_package-debian9:
   stage: packaging
@@ -61,9 +64,16 @@ build_package-debian9:
 
   variables:
     DISTRIBUTION: debian9
+
+  before_script:
+    - make init_canopsis-next
+
   script:
     - make docker DISTRIBUTIONS=$DISTRIBUTION
     - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+  after_script:
+    - make delete_canopsis-next
 
 build_package-centos7:
   stage: packaging
@@ -71,9 +81,16 @@ build_package-centos7:
 
   variables:
     DISTRIBUTION: centos7
+
+  before_script:
+    - make init_canopsis-next
+
   script:
     - make docker DISTRIBUTIONS=$DISTRIBUTION
     - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+  after_script:
+    - make delete_canopsis-next
 
 publish-docker:
   stage: publish

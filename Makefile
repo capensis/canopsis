@@ -13,6 +13,15 @@ PACKAGE_REV=""
 # It's trick to allow subst to replace a comma.
 .comma:=,
 
+NEXT_TAG="develop"
+NEXT_DIR=./sources/webcore/src/canopsis-next
+
+init_canopsis-next:
+	rm -rf ${NEXT_DIR}
+	git clone https://git.canopsis.net/canopsis/canopsis-next.git -b ${NEXT_TAG} ${NEXT_DIR}
+
+delete_canopsis-next:
+	rm -rf ${NEXT_DIR}
 
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
