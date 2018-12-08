@@ -13,6 +13,10 @@ build_docker:
     - uname -a
     - docker -v
     - git --no-pager show
+    - git clone https://git.canopsis.net/canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
+
+  after_script:
+    - rm -rf ${.NEXT_SRC}
 
 test-unit:
   stage: test
@@ -46,7 +50,7 @@ publish-docker:
   tags: ["canopsis"]
   script: echo "TODO push docker"
 
-publish-:
+publish-packages:
   stage: publish
   tags: ["canopsis"]
   script: echo "TODO push packages"

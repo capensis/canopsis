@@ -18,9 +18,6 @@ NEXT_TAG=3.5.0
 
 docker_images: DISTRIBUTIONS=debian9
 docker_images:
-	-rm -rf ${.NEXT_SRC}
-	git clone https://git.canopsis.net/canopsis/canopsis-next.git -b ${NEXT_TAG} ${.NEXT_SRC}
-	git -C ${.NEXT_SRC} --no-pager show
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
 		echo "*** Building " $$distrib; \
 		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
@@ -30,7 +27,7 @@ docker_images:
 		fi; \
 		./$$distrib.sed Dockerfile.template | docker build -f - . -t canopsis/canopsis:$$image_tag ; \
 	done
-	-rm -rf ${.NEXT_SRC}
+
 
 packages:
 	echo "Building packages" ; \
