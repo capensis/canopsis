@@ -15,6 +15,7 @@ build_docker:
     - uname -a
     - docker -v
     - git --no-pager show
+    - echo $NEXT_DIR
     - rm -rf $NEXT_DIR
     - git clone https://git.canopsis.net/canopsis/canopsis-next.git -b $NEXT_TAG $NEXT_DIR
 
