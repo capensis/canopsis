@@ -49,7 +49,7 @@ build_package-debian8:
   stage: packaging
   tags: ["canopsis"]
 
-  variable:
+  variables:
     DISTRIBUTION: debian8
   script:
     - make docker DISTRIBUTIONS=$DISTRIBUTION
@@ -59,7 +59,7 @@ build_package-debian8:
   stage: packaging
   tags: ["canopsis"]
 
-  variable:
+  variables:
     DISTRIBUTION: debian9
   script:
     - make docker DISTRIBUTIONS=$DISTRIBUTION
@@ -69,7 +69,7 @@ build_package-centos7:
   stage: packaging
   tags: ["canopsis"]
 
-  variable:
+  variables:
     DISTRIBUTION: debian8
   script:
     - make docker DISTRIBUTIONS=$DISTRIBUTION
