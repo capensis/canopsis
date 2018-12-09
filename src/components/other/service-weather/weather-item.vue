@@ -6,13 +6,33 @@ v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight +
       div.watcherName.pt-3(v-html="compiledTemplate")
       v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
         v-icon pause
+    v-layout
+      v-flex(xs12)
+        div.moreInfos.py-1(v-if="isAlarmListModalType", @click="showAlarmListModal")
+          v-layout(justify-center)
+            div {{ $t('weather.alarmList') }}
+        div.moreInfos.py-1(v-else, @click="showMainInfoModal")
+          v-layout(justify-center)
+            div {{ $t('weather.moreInfos') }}
 </template>
 
 <script>
 import find from 'lodash/find';
-import modalMixin from '@/mixins/modal/modal';
+
+import {
+  MODALS,
+  WIDGET_TYPES,
+  WATCHER_STATES_COLORS,
+  WATCHER_PBEHAVIOR_COLOR,
+  PBEHAVIOR_TYPES,
+  WEATHER_ICONS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+} from '@/constants';
+
 import compile from '@/helpers/handlebars';
-import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES, WEATHER_ICONS } from '@/constants';
+import { generateWidgetByType } from '@/helpers/entities';
+
+import modalMixin from '@/mixins/modal/modal';
 
 export default {
   mixins: [modalMixin],
@@ -29,6 +49,9 @@ export default {
     },
   },
   computed: {
+    isAlarmListModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
+    },
     isPaused() {
       return this.watcher.active_pb_all;
     },
@@ -87,13 +110,37 @@ export default {
     },
   },
   methods: {
-    showWatcherModal() {
+    showMainInfoModal() {
       this.showModal({
-        name: this.$constants.MODALS.watcher,
+        name: MODALS.watcher,
         config: {
           watcherId: this.watcher.entity_id,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
+        },
+      });
+    },
+    showAlarmListModal() {
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widgetParameters = {
+        widgetColumns: widget.parameters.widgetColumns.map(column => ({
+          label: column.label,
+          value: column.value.replace('alarm.', 'v.'),
+        })),
+      };
+
+      this.showModal({
+        name: MODALS.alarmsList,
+        config: {
+          query: {},
+          widget: {
+            ...widget,
+
+            parameters: {
+              ...widget.parameters,
+              ...widgetParameters,
+            },
+          },
         },
       });
     },

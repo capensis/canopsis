@@ -33,6 +33,8 @@ import isEmpty from 'lodash/isEmpty';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
+import { MODALS, WIDGET_TYPES } from '@/constants';
+
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
@@ -134,7 +136,7 @@ export default {
 
     editEvent(event) {
       const { meta } = event.data;
-      const widget = generateWidgetByType(this.$constants.WIDGET_TYPES.alarmList);
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const widgetParameters = {
         ...this.widget.parameters.alarmsList,
 
@@ -147,7 +149,7 @@ export default {
       }
 
       this.showModal({
-        name: this.$constants.MODALS.calendarAlarmsList,
+        name: MODALS.alarmsList,
         config: {
           query: pick(meta, ['tstart', 'tstop']),
           widget: {

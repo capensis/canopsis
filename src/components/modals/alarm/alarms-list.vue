@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.calendarAlarmsList.title') }}
+        span.headline {{ $t('modals.alarmsList.title') }}
         v-btn(icon, dark, @click.native="hideModal")
           v-icon close
     v-card-text
@@ -12,20 +12,22 @@
 <script>
 import pick from 'lodash/pick';
 
-import { MODALS } from '@/constants';
-import AlarmList from '@/components/other/alarm/alarms-list.vue';
+import { MODALS, LIVE_REPORTING_INTERVALS } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import queryMixin from '@/mixins/query';
 
+import AlarmList from '@/components/other/alarm/alarms-list.vue';
+
 export default {
-  name: MODALS.calendarAlarmsList,
+  name: MODALS.alarmsList,
   components: { AlarmList },
   mixins: [modalInnerMixin, queryMixin],
   created() {
     const query = pick(this.config.query, ['tstart', 'tstop']);
 
     if (query.tstart || query.tstop) {
-      query.interval = this.$constants.LIVE_REPORTING_INTERVALS.custom;
+      query.interval = LIVE_REPORTING_INTERVALS.custom;
     }
 
     this.mergeQuery({

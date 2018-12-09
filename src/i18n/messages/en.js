@@ -261,6 +261,13 @@ export default {
     considerPbehaviors: {
       title: 'Consider pbehaviors',
     },
+    serviceWeatherModalTypes: {
+      title: 'Type of the weather modal window',
+      fields: {
+        moreInfo: 'More info',
+        alarmList: 'Alarm list',
+      },
+    },
   },
   modals: {
     contextInfos: {
@@ -501,7 +508,7 @@ export default {
         isNotEmpty: 'The group is not empty',
       },
     },
-    calendarAlarmsList: {
+    alarmsList: {
       title: 'Calendar alarms list',
     },
     createUser: {
