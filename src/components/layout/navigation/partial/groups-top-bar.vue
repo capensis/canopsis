@@ -93,7 +93,11 @@ export default {
     }
 
     .v-speed-dial--bottom.v-speed-dial--absolute {
-      bottom: 0;
+      bottom: -10px;
+    }
+
+    .v-speed-dial--right.v-speed-dial--absolute {
+      right: 25px;
     }
   }
 
