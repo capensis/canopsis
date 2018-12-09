@@ -52,7 +52,7 @@ build_package-debian8:
     - make init_canopsis-next
 
   script:
-    - make docker DISTRIBUTIONS=$DISTRIBUTION
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
     - make packages DISTRIBUTIONS=$DISTRIBUTION
 
   after_script:
@@ -69,7 +69,7 @@ build_package-debian9:
     - make init_canopsis-next
 
   script:
-    - make docker DISTRIBUTIONS=$DISTRIBUTION
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
     - make packages DISTRIBUTIONS=$DISTRIBUTION
 
   after_script:
@@ -86,7 +86,7 @@ build_package-centos7:
     - make init_canopsis-next
 
   script:
-    - make docker DISTRIBUTIONS=$DISTRIBUTION
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
     - make packages DISTRIBUTIONS=$DISTRIBUTION
 
   after_script:
