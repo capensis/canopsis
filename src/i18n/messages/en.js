@@ -15,6 +15,7 @@ export default {
     submit: 'Submit',
     cancel: 'Cancel',
     options: 'Options',
+    type: 'Type',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
     disabled: 'Disabled',
@@ -45,6 +46,7 @@ export default {
     title: 'Title',
     save: 'Save',
     label: 'Label',
+    field: 'Field',
     value: 'Value',
     add: 'Add',
     create: 'Create',
@@ -524,6 +526,26 @@ export default {
         type: 'Type',
       },
     },
+    eventFilterRule: {
+      create: {
+        title: 'Create event filter rule',
+      },
+      edit: {
+        title: 'Edit an event filter rule',
+      },
+      priority: 'Priority',
+      editPattern: 'Edit pattern',
+      advanced: 'Advanced',
+      addAField: 'Add a field',
+      simpleEditor: 'Simple editor',
+      advancedEditor: 'Advanced editor',
+      comparisonRules: 'Comparison rules',
+      enrichmentOptions: 'Enrichment options',
+      editActions: 'Edit actions',
+      externalData: 'External data',
+      onSuccess: 'On success',
+      onFailure: 'On failure',
+    },
   },
   tables: {
     noData: 'No data',
@@ -652,6 +674,7 @@ export default {
   errors: {
     default: 'Something went wrong...',
     lineNotEmpty: 'This line is not empty',
+    JSONNotValid: 'Invalid JSON',
   },
   calendar: {
     today: 'Today',

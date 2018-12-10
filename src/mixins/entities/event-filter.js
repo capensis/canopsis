@@ -14,6 +14,7 @@ export default {
       fetchEventFilterRulesList: 'fetchList',
       removeEventFilterRule: 'remove',
       createEventFilterRule: 'create',
+      editEventFilterRule: 'edit',
     }),
   },
 };

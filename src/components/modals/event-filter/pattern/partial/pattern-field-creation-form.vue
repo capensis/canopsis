@@ -1,13 +1,13 @@
 <template lang="pug">
   div
-    v-form
-      v-switch(label="Advanced", v-model="form.advancedMode", hide-details)
-      v-text-field(v-model="form.field", label="Field")
+    v-form(ref="form")
+      v-switch(:label="$t('modals.eventFilterRule.advanced')", v-model="form.advancedMode", hide-details)
+      v-text-field(v-model="form.field", :label="$t('common.field')")
       template(v-if="!form.advancedMode")
-        v-text-field(v-model="form.value", label="Value")
+        v-text-field(v-model="form.value", :label="$t('common.value')")
       template(v-else)
         v-layout(align-center, justify-center)
-          h2 Comparison rules
+          h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
           v-btn.primary(@click="addAdvancedRuleField", icon, fab, small)
             v-icon add
         v-layout(v-for="field in form.advancedRuleFields", :key="field.key")
@@ -15,7 +15,7 @@
             v-select(:items="operators", v-model="field.key")
           v-flex(xs9)
             v-text-field(v-model="field.value")
-    v-btn.primary(@click="addRule") Save
+    v-btn.primary(@click="addRule") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -55,6 +55,7 @@ export default {
         newPattern[this.form.field] = ruleValue;
       }
       this.$emit('input', newPattern);
+      this.$refs.form.reset();
     },
   },
 };

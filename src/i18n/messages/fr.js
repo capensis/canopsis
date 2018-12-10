@@ -15,6 +15,7 @@ export default {
     submit: 'Envoyer',
     cancel: 'Annuler',
     options: 'Options',
+    type: 'Type',
     quitEditing: 'Quitter le mode d\'édition',
     enabled: 'Activé(e)',
     disabled: 'Désactivé(e)',
@@ -45,6 +46,7 @@ export default {
     title: 'Titre',
     save: 'Sauvegarder',
     label: 'Label',
+    field: 'Champs',
     value: 'Valeur',
     add: 'Ajouter',
     create: 'Créer',
@@ -510,6 +512,26 @@ export default {
     editRole: {
       title: 'Editer un role',
     },
+    eventFilterRule: {
+      create: {
+        title: 'Créer une règle',
+      },
+      edit: {
+        title: 'Editer une règle',
+      },
+      priority: 'Priorité',
+      editPattern: 'Editer le pattern',
+      advanced: 'Avancée',
+      addAField: 'Ajouter un champs',
+      simpleEditor: 'Editeur simple',
+      advancedEditor: 'Editeur avancé',
+      comparisonRules: 'Règles de comparaison',
+      enrichmentOptions: 'Options d\'enrichissement',
+      editActions: 'Editer les actions',
+      externalData: 'Données externes',
+      onSuccess: 'En cas de succès',
+      onFailure: 'En cas d\'échec',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -638,6 +660,7 @@ export default {
   errors: {
     default: 'Une erreur s\'est produite...',
     lineNotEmpty: 'Cette ligne n\'est pas vide',
+    JSONNotValid: 'JSON non valide..',
   },
   calendar: {
     today: 'Aujourd\'hui',

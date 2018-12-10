@@ -64,6 +64,11 @@ export default {
       dispatch('fetchListWithPreviousParams');
     },
 
+    async edit({ dispatch }, { id, data }) {
+      await request.put(`${API_ROUTES.eventFilterRules}/${id}`, data);
+      dispatch('fetchListWithPreviousParams');
+    },
+
     async remove({ dispatch }, { id } = {}) {
       try {
         await request.delete(`${API_ROUTES.eventFilterRules}/${id}`);

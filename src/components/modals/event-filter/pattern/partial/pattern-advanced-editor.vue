@@ -5,7 +5,7 @@
     :color="error ? 'error' : 'primary'",
     :disabled="error ? true : false",
     @click="save",
-    ) {{ error ? 'JSON not valid' : 'Save changes' }}
+    ) {{ error ? $t('errors.JSONNotValid') : $t('common.save') }}
 </template>
 
 <script>

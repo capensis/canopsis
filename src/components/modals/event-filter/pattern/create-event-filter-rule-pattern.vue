@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Rule's pattern
+        span.headline {{ $t('modals.eventFilterRule.editPattern') }}
     v-card-text
       v-tabs(fixed-tabs, v-model="activeTab")
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
@@ -39,7 +39,11 @@ export default {
   data() {
     return {
       activeTab: 0,
-      tabs: ['Add a field', 'Simple editor', 'Advanced editor'],
+      tabs: [
+        this.$t('modals.eventFilterRule.addAField'),
+        this.$t('modals.eventFilterRule.simpleEditor'),
+        this.$t('modals.eventFilterRule.advancedEditor'),
+      ],
       pattern: {},
       operators: ['>=', '>', '<', '<=', 'regex'],
     };

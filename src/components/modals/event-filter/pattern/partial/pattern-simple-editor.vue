@@ -12,7 +12,7 @@
               v-select(:items="operators", v-model="value.key")
             v-flex(xs9)
               v-text-field(v-model="value.value", :type="value.key !== 'regex' ? 'number' : null")
-    v-btn(@click="convertPatternAndSave", color="primary") Save changes
+    v-btn(@click="convertPatternAndSave", color="primary") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -67,7 +67,7 @@ export default {
       });
     },
     convertPatternAndSave() {
-      const pattern = [];
+      const pattern = {};
       this.pattern.forEach((rule) => {
         if (this.isSimpleRule(rule.value)) {
           pattern[rule.key] = rule.value;

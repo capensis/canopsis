@@ -2,21 +2,29 @@
    v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Event filter rule
+        span.headline {{ config.title }}
     v-card-text
       v-form
-        v-select(:items="ruleTypes", v-model="form.type", label="Type")
-        v-text-field(v-model="form.priority", type="number", label="Priority")
-        v-switch(v-model="form.enabled", label="Enabled")
-      v-btn(@click="editPattern") Edit pattern
+        v-select(:items="ruleTypes", v-model="form.type", :label="$t('common.type')")
+        v-text-field(v-model="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
+        v-switch(v-model="form.enabled", :label="$t('common.enabled')")
+      v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
       template(v-if="form.type === this.$constants.EVENT_FILTER_RULE_TYPES.enrichment")
         v-container
           v-divider
-          h3.my-2 Enrichment options
-          v-btn(@click="editActions") Edit actions
-          v-btn(@click="editExternalData") Exernal data
-          v-select(label="On success", v-model="enrichmentOptions.on_success", :items=['pass', 'break', 'drop'])
-          v-select(label="On failure", v-model="enrichmentOptions.on_failure", :items=['pass', 'break', 'drop'])
+          h3.my-2 {{ $t('modals.eventFilterRule.enrichmentOptions') }}
+          v-btn(@click="editActions") {{ $t('modals.eventFilterRule.editActions') }}
+          v-btn(@click="editExternalData") {{ $t('modals.eventFilterRule.externalData') }}
+          v-select(
+          :label="$t('modals.eventFilterRule.onSuccess')",
+          v-model="enrichmentOptions.onSuccess",
+          :items=['pass', 'break', 'drop'],
+          )
+          v-select(
+          :label="$t('modals.eventFilterRule.onFailure')",
+          v-model="enrichmentOptions.onFailure",
+          :items=['pass', 'break', 'drop'],
+          )
     v-divider
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -42,11 +50,37 @@ export default {
       },
       enrichmentOptions: {
         actions: [],
-        external_data: {},
-        on_success: 'pass',
-        on_failure: 'pass',
+        externalData: {},
+        onSuccess: 'pass',
+        onFailure: 'pass',
       },
     };
+  },
+  mounted() {
+    if (this.config.rule) {
+      const {
+        type,
+        pattern,
+        priority,
+        enabled,
+        actions,
+        external_data: externalData,
+        on_success: onSuccess,
+        on_failure: onFailure,
+      } = this.config.rule;
+      this.form = {
+        type,
+        pattern,
+        priority,
+        enabled,
+      };
+      this.enrichmentOptions = {
+        actions,
+        externalData,
+        onSuccess,
+        onFailure,
+      };
+    }
   },
   methods: {
     editPattern() {
@@ -71,14 +105,20 @@ export default {
       this.showModal({
         name: MODALS.eventFilterRuleExternalData,
         config: {
-          value: this.enrichmentOptions.external_data,
-          action: value => this.enrichmentOptions.external_data = value,
+          value: this.enrichmentOptions.externalData,
+          action: value => this.enrichmentOptions.externalData = value,
         },
       });
     },
     submit() {
       if (this.form.type === 'enrichment') {
-        this.config.action({ ...this.form, ...this.enrichmentOptions });
+        this.config.action({
+          ...this.form,
+          actions: this.enrichmentOptions.actions,
+          external_data: this.enrichmentOptions.externalData,
+          on_success: this.enrichmentOptions.onSuccess,
+          on_failure: this.enrichmentOptions.onFailure,
+        });
       } else {
         this.config.action({ ...this.form });
       }
