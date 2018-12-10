@@ -1,19 +1,16 @@
 <template lang="pug">
-v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight + 'em'}")
-  div(:class="{ blinking: isBlinking }", )
-    v-layout(justify-start)
-      v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
-      div.watcherName.pt-3(v-html="compiledTemplate")
-      v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
-        v-icon pause
-    v-layout
-      v-flex(xs12)
-        div.moreInfos.py-1(v-if="isAlarmListModalType", @click="showAlarmListModal")
-          v-layout(justify-center)
-            div {{ $t('weather.alarmsList') }}
-        div.moreInfos.py-1(v-else, @click="showMainInfoModal")
-          v-layout(justify-center)
-            div {{ $t('weather.moreInfos') }}
+  v-card.white--text.cursor-pointer(
+  :class="getItemClasses",
+  :style="{ height: itemHeight + 'em'}",
+  tile,
+  @click.native="showAdditionalInfoModal"
+  )
+    div(:class="{ blinking: isBlinking }", )
+      v-layout(justify-start)
+        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
+        div.watcherName.pt-3(v-html="compiledTemplate")
+        v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
+          v-icon pause
 </template>
 
 <script>
@@ -49,9 +46,6 @@ export default {
     },
   },
   computed: {
-    isAlarmListModalType() {
-      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
-    },
     isPaused() {
       return this.watcher.active_pb_all;
     },
@@ -110,6 +104,14 @@ export default {
     },
   },
   methods: {
+    showAdditionalInfoModal() {
+      if (this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList) {
+        this.showAlarmListModal();
+      } else {
+        this.showMainInfoModal();
+      }
+    },
+
     showMainInfoModal() {
       this.showModal({
         name: MODALS.watcher,
@@ -120,6 +122,7 @@ export default {
         },
       });
     },
+
     showAlarmListModal() {
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const watcherFilter = {
@@ -139,6 +142,9 @@ export default {
       this.showModal({
         name: MODALS.alarmsList,
         config: {
+          query: {
+            filter: watcherFilter.filter,
+          },
           widget: {
             ...widget,
 
@@ -177,5 +183,9 @@ export default {
 
   .blinking {
     animation: blink 2s linear infinite;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
   }
 </style>

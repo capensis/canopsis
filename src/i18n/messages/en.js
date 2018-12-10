@@ -145,10 +145,6 @@ export default {
       },
     },
   },
-  weather: {
-    moreInfos: 'More infos',
-    alarmsList: 'Alarms list',
-  },
   pbehaviors: {
     connector: 'Connector',
     connectorName: 'Connector name',
