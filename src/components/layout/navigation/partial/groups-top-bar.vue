@@ -11,7 +11,7 @@
       bottom,
       dark
       )
-        v-btn(slot="activator", flat, dark)
+        div.v-btn.v-btn--flat.theme--dark(slot="activator")
           span {{ group.name }}
           v-btn(
           v-show="isEditingMode",
@@ -93,7 +93,11 @@ export default {
     }
 
     .v-speed-dial--bottom.v-speed-dial--absolute {
-      bottom: 0;
+      bottom: -10px;
+    }
+
+    .v-speed-dial--right.v-speed-dial--absolute {
+      right: 25px;
     }
   }
 
