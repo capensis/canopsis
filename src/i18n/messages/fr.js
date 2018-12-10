@@ -527,9 +527,15 @@ export default {
     eventFilterRule: {
       create: {
         title: 'Créer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une règle',
+        success: 'Règle créée avec succès !',
       },
       edit: {
         title: 'Editer une règle',
+        success: 'Règle éditée avec succès !',
       },
       priority: 'Priorité',
       editPattern: 'Editer le pattern',

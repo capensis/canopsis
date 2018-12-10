@@ -59,14 +59,12 @@ export default {
       });
     },
 
-    async create({ dispatch }, { data }) {
-      await request.post(API_ROUTES.eventFilterRules, data);
-      dispatch('fetchListWithPreviousParams');
+    create(context, { data }) {
+      return request.post(API_ROUTES.eventFilterRules, data);
     },
 
-    async edit({ dispatch }, { id, data }) {
-      await request.put(`${API_ROUTES.eventFilterRules}/${id}`, data);
-      dispatch('fetchListWithPreviousParams');
+    edit(context, { id, data }) {
+      return request.put(`${API_ROUTES.eventFilterRules}/${id}`, data);
     },
 
     async remove({ dispatch }, { id } = {}) {

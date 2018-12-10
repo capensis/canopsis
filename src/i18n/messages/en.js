@@ -541,9 +541,15 @@ export default {
     eventFilterRule: {
       create: {
         title: 'Create event filter rule',
+        success: 'Rule successfully created !',
+      },
+      duplicate: {
+        title: 'Duplicate event filter rule',
+        success: 'Rule successfully created !',
       },
       edit: {
         title: 'Edit an event filter rule',
+        success: 'Rule successfully edited !',
       },
       priority: 'Priority',
       editPattern: 'Edit pattern',
