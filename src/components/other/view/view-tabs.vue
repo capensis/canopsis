@@ -87,7 +87,7 @@ export default {
           action: (title) => {
             const newTab = { ...tab, title };
 
-            return this.updateTabMethod(newTab);
+            return this.updateTab(newTab);
           },
         },
       });
