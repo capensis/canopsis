@@ -1,19 +1,24 @@
 <template lang="pug">
-v-form
-  v-layout(wrap, justify-center)
-    v-flex(xs11)
-      v-text-field(
+  v-form
+    v-layout(wrap, justify-center)
+      v-flex(xs11)
+        v-text-field(
         :label="$t('modals.createWatcher.displayName')",
-        v-model="form.name",
+        :value="form.name",
+        :error-messages="errors.collect('name')",
         data-vv-name="name",
         v-validate="'required'",
-        :error-messages="errors.collect('name')",
-      )
-  v-layout(wrap, justify-center)
-    v-flex(xs11)
-      h3.text-xs-center {{ $t('filterEditor.title') }}
-      v-divider
-      filter-editor(v-model="form.mfilter")
+        @input="updateField('name', $event)"
+        )
+    v-layout(wrap, justify-center)
+      v-flex(xs11)
+        h3.text-xs-center {{ $t('filterEditor.title') }}
+        v-divider
+        filter-editor(
+        :value="form.mfilter",
+        required,
+        @input="updateField('mfilter', $event)"
+        )
 </template>
 
 <script>

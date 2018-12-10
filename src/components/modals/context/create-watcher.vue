@@ -67,10 +67,11 @@ export default {
   },
   methods: {
     async submit() {
-      this.submitting = true;
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
+        this.submitting = true;
+
         const data = {
           ...this.form,
           _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
