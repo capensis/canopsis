@@ -12,4 +12,4 @@ Voici quelques exemples de connecteurs et configurations associées.
 
 ## Voir tous les connecteurs disponibles
 
-- [cliquez ici](../../guide-connecteurs)  
+- [Cliquez ici](../../guide-connecteurs/index.md)

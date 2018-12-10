@@ -6,10 +6,10 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 
 ## Guides
 
-*  [Guide d'administration](guide-administration) : comment installer, maintenir et mettre à jour un environnement Canopsis.
-*  [Guide des connecteurs](guide-connecteurs) : comment brancher des sources de supervision et des données externes à Canopsis.
-*  [Guide d'utilisation](guide-utilisation) : comment utiliser l'interface de Canopsis au quotidien.
-*  [Guide de développement](guide-developpement) : comment contribuer au développement de Canopsis (procédures, description des routes et des API…).
+*  [Guide d'administration](guide-administration/index.md) : comment installer, maintenir et mettre à jour un environnement Canopsis.
+*  [Guide des connecteurs](guide-connecteurs/index.md) : comment brancher des sources de supervision et des données externes à Canopsis.
+*  [Guide d'utilisation](guide-utilisation/index.md) : comment utiliser l'interface de Canopsis au quotidien.
+*  [Guide de développement](guide-developpement/index.md) : comment contribuer au développement de Canopsis (procédures, description des routes et des API…).
 
 ## Notes de version
 
