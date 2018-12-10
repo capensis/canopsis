@@ -10,9 +10,7 @@
 </template>
 
 <script>
-import pick from 'lodash/pick';
-
-import { MODALS, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import queryMixin from '@/mixins/query';
@@ -24,15 +22,9 @@ export default {
   components: { AlarmList },
   mixins: [modalInnerMixin, queryMixin],
   created() {
-    const query = pick(this.config.query, ['tstart', 'tstop']);
-
-    if (query.tstart || query.tstop) {
-      query.interval = LIVE_REPORTING_INTERVALS.custom;
-    }
-
     this.mergeQuery({
       id: this.config.widget._id,
-      query,
+      query: this.config.query,
     });
   },
 };
