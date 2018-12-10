@@ -420,3 +420,5 @@ export const GROUPS_NAVIGATION_TYPES = {
   sideBar: 'side-bar',
   topBar: 'top-bar',
 };
+
+export const EVENT_DEFAULT_ORIGIN = 'canopsis';

@@ -1,7 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
 
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES, EVENT_DEFAULT_ORIGIN } from '@/constants';
 
 import authMixin from './auth';
 
@@ -70,6 +70,7 @@ export default {
         timestamp: moment().unix(),
         resource: item.v.resource,
         ref_rk: `${item.v.resource}/${item.v.component}`,
+        origin: EVENT_DEFAULT_ORIGIN,
       };
 
       if (type !== EVENT_ENTITY_TYPES.snooze) {
