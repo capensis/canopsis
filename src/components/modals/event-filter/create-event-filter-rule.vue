@@ -6,7 +6,7 @@
     v-card-text
       v-form
         v-select(:items="ruleTypes", v-model="form.type", :label="$t('common.type')")
-        v-text-field(v-model="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
+        v-text-field(v-model.number="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
         v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
       template(v-if="form.type === this.$constants.EVENT_FILTER_RULE_TYPES.enrichment")
