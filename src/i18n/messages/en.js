@@ -147,6 +147,7 @@ export default {
   },
   weather: {
     moreInfos: 'More infos',
+    alarmsList: 'Alarms list',
   },
   pbehaviors: {
     connector: 'Connector',
@@ -509,7 +510,7 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Calendar alarms list',
+      title: 'Alarms list',
     },
     createUser: {
       title: 'Create user',

@@ -6,7 +6,7 @@
         v-btn(icon, dark, @click.native="hideModal")
           v-icon close
     v-card-text
-      alarm-list(:widget="config.widget")
+      alarms-list-widget(:widget="config.widget")
 </template>
 
 <script>
@@ -15,11 +15,11 @@ import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import queryMixin from '@/mixins/query';
 
-import AlarmList from '@/components/other/alarm/alarms-list.vue';
+import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 
 export default {
   name: MODALS.alarmsList,
-  components: { AlarmList },
+  components: { AlarmsListWidget },
   mixins: [modalInnerMixin, queryMixin],
   created() {
     this.mergeQuery({

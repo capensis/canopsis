@@ -10,7 +10,7 @@ v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight +
       v-flex(xs12)
         div.moreInfos.py-1(v-if="isAlarmListModalType", @click="showAlarmListModal")
           v-layout(justify-center)
-            div {{ $t('weather.alarmList') }}
+            div {{ $t('weather.alarmsList') }}
         div.moreInfos.py-1(v-else, @click="showMainInfoModal")
           v-layout(justify-center)
             div {{ $t('weather.moreInfos') }}
@@ -122,17 +122,23 @@ export default {
     },
     showAlarmListModal() {
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const watcherFilter = {
+        title: this.watcher.display_name,
+        filter: this.watcher.mfilter,
+      };
+
       const widgetParameters = {
         widgetColumns: widget.parameters.widgetColumns.map(column => ({
           label: column.label,
           value: column.value.replace('alarm.', 'v.'),
         })),
+        mainFilter: watcherFilter,
+        viewFilters: [watcherFilter],
       };
 
       this.showModal({
         name: MODALS.alarmsList,
         config: {
-          query: {},
           widget: {
             ...widget,
 
