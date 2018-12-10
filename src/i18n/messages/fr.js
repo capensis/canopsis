@@ -272,6 +272,7 @@ export default {
     createEntity: {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
+      duplicateTitle: 'Dupliquer une entitée',
       infosList: 'Infos',
       addInfos: 'Ajouter un champ info',
       noInfos: 'No infos',
@@ -287,11 +288,22 @@ export default {
           resource: 'ressource',
         },
       },
+      success: {
+        create: 'Entité créée avec succès !',
+        edit: 'Entité editée avec succès !',
+        duplicate: 'Entité dupliquée avec succès !',
+      },
     },
     createWatcher: {
       createTitle: 'Créer un observateur',
       editTitle: 'Editer un observateur',
+      duplicateTitle: 'Dupliquer un observateur',
       displayName: 'Nom',
+      success: {
+        create: 'Observateur créé avec succès !',
+        edit: 'Observateur edité avec succès !',
+        duplicate: 'Observateur dupliqué avec succès !',
+      },
     },
     view: {
       select: {

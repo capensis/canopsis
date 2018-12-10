@@ -17,20 +17,19 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+      v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
+
+import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import { MODALS } from '@/constants';
 
 import CreateForm from './partial/create-watcher-form.vue';
 import ManageInfos from './partial/manage-infos.vue';
-
-const { mapActions: watcherMapActions } = createNamespacedHelpers('watcher');
 
 export default {
   name: MODALS.createWatcher,
@@ -59,6 +58,7 @@ export default {
 
     return {
       form,
+      submitting: false,
       tabs: [
         { component: 'CreateForm', name: this.$t('modals.createEntity.fields.form') },
         { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
@@ -66,34 +66,31 @@ export default {
     };
   },
   methods: {
-    ...watcherMapActions(['create', 'edit']),
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
+        this.submitting = true;
+
         const data = {
           ...this.form,
+          _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
           infos: this.form.infos,
-          _id: this.config.item ? this.config.item._id : this.form.name,
           display_name: this.form.name,
-          type: this.$constants.ENTITIES_TYPES.watcher,
-          mfilter: this.form.mfilter,
+          type: ENTITIES_TYPES.watcher,
         };
 
         try {
-          if (this.config.item) {
-            await this.edit({ data });
-          } else {
-            await this.create({ data });
-          }
-
+          await this.config.action(data);
           this.refreshContextEntitiesLists();
 
           this.hideModal();
         } catch (err) {
+          this.addErrorPopup({ text: this.$t('error.default') });
           console.error(err);
         }
+
+        this.submitting = false;
       }
     },
   },

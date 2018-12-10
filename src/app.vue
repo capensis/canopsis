@@ -1,8 +1,8 @@
 <template lang="pug">
   v-app#app
-    v-layout
+    v-layout(v-if="!pending")
       navigation#main-navigation(v-if="$route.name !== 'login'")
-      v-content#main-content(v-if="!currentUserPending")
+      v-content#main-content
         router-view(:key="$route.fullPath")
     side-bars
     modals
@@ -28,8 +28,15 @@ export default {
     Popups,
   },
   mixins: [authMixin],
+  data() {
+    return {
+      pending: true,
+    };
+  },
   mounted() {
     this.fetchCurrentUser();
+
+    this.pending = false;
   },
 };
 </script>

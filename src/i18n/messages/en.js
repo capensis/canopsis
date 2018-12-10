@@ -273,6 +273,7 @@ export default {
     createEntity: {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
+      duplicateTitle: 'Duplicate an entity',
       infosList: 'Infos list',
       addInfos: 'Add Infos',
       noInfos: 'No Infos',
@@ -288,11 +289,22 @@ export default {
           resource: 'resource',
         },
       },
+      success: {
+        create: 'Entity successfully created !',
+        edit: 'Entity successfully edited !',
+        duplicate: 'Entity successfully duplicated !',
+      },
     },
     createWatcher: {
       createTitle: 'Create a watcher',
       editTitle: 'Edit a watcher',
+      duplicateTitle: 'Duplicate a watcher',
       displayName: 'Name',
+      success: {
+        create: 'Watcher successfully created !',
+        edit: 'Watcher successfully edited !',
+        duplicate: 'Watcher successfully duplicated !',
+      },
     },
     view: {
       select: {
@@ -714,6 +726,7 @@ export default {
     },
     errors: {
       invalidJSON: 'Invalid JSON',
+      required: 'You need to add at least one valid rule',
     },
   },
   validator: {
