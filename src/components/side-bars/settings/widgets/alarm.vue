@@ -132,6 +132,8 @@ export default {
             ...v,
             column: this.prefixFormatter(v.column),
           })),
+
+          sort: this.prefixFormatter(widget.parameters.sort),
         },
       };
     },
