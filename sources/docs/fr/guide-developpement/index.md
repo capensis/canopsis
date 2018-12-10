@@ -2,8 +2,7 @@
 
 Vous trouverez ici toute la documentation nécessaire au développement sur canopsis.
 
-!!! tip "Note"
-    Cette page contient le plan de la documentation de développement, qui est en cours d'écriture.
+> **Note :** cette page contient le plan de la documentation de développement, qui est en cours d'écriture.
 
 # Process de développement
 ## Organisation des dépôts

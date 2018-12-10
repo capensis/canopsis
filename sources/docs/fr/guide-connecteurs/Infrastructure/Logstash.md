@@ -20,8 +20,7 @@ Les logs devront donc être formatés d'une certaine manière afin que Canopsis 
 *  Exchange Options : `type: topic`, `durable: true`, `auto_delete: false`
 *  Content Type : `application/json`
 
-!!! attention
-    Faire très attention à la *routing key* !
+> **Attention :** Faire très attention à la *routing key* !
 
 ### Structure d'un évènement
 
@@ -50,11 +49,9 @@ Voici les champs attendus dans Canopsis afin que l'évènement puisse être reco
 }
 ```
 
-!!! attention
-    Les champs `state`, `state_type` et `status` doivent être de type `entier`.
-
-!!! attention
-    Le champ `timestamp`, s'il est utilisé, doit être au format timestamp Unix, sinon l'évènement risque de ne pas être interprété. S'il n'est pas renseigné, Canopsis utilisera la date et l'heure à laquelle il traite l'évènement.
+> **Note :** Les champs `state`, `state_type` et `status` doivent être de type `entier`.
+> 
+> Le champ `timestamp`, s'il est utilisé, doit être au format timestamp Unix, sinon l'évènement risque de ne pas être interprété. S'il n'est pas renseigné, Canopsis utilisera la date et l'heure à laquelle il traite l'évènement.
 
 ## Exemple de configuration Logstash
 
@@ -167,8 +164,7 @@ output {
 }
 ```
 
-!!! attention
-    Faire bien attention à ce que la *routing key* soit au bon format (voir plus haut).
+> **Attention :** faire bien attention à ce que la *routing key* soit au bon format (voir plus haut).
 
 ## Exemples
 
