@@ -30,14 +30,14 @@ Voici les champs attendus dans Canopsis afin que l'évènement puisse être reco
 
 ```js
 {
-   // Les champs obligatoires
+    // Les champs obligatoires
 
-    'connector': logstash
-    'connector_name':  logstash
-    'event_type':   check
-    'source_type':  resource
-    'component':   Ex: Server5
-    'resource':    Ex: kernel
+    'connector': 'logstash',
+    'connector_name': 'logstash',
+    'event_type': 'check',
+    'source_type': 'resource',
+    'component':   // Ex: Server5
+    'resource':    // Ex: kernel
     'output':      // Message
     'state':       // Check state (0 - OK, 1 - WARNING, 2 - CRITICAL, 3 - UNKNOWN), default is 0
     'state_type':  // Check state type (0 - SOFT, 1 - HARD), default is 1
@@ -45,7 +45,7 @@ Voici les champs attendus dans Canopsis afin que l'évènement puisse être reco
 
     // Les champs facultatifs
 
-    'timestamp':        // UNIX timestamp for when the event was emitted (optional: set by the server to now)
+    'timestamp':   // UNIX timestamp for when the event was emitted (optional: set by the server to now)
 }
 ```
 

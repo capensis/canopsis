@@ -4,7 +4,7 @@
 
 Ce guide décrit la réception et de la traduction de traps SNMP au sein de Canopsis.
 
-Bon nombre d'équipements émettent des traps, Canpsis est en mesure de :
+Bon nombre d'équipements émettent des traps, Canopsis est en mesure de :
 
 *  les réceptionner ;
 *  les traduire grâce à un jeu de règles ;

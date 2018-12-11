@@ -79,7 +79,7 @@ On veut maintenant ajouter le fait qu'une ressource ne doit pas être vide. Une 
 }
 ```
 
-Il est bien évidement possible de réaliser cette configuration via l'interface utilisateur avancée.
+Il est bien évidemment possible de réaliser cette configuration via l'interface utilisateur avancée.
 
 Le bouton "Parse" va vous servir à vérifier l'exactitude de votre JSON, si celui ci est invalide ce message apparaîtra :
 
