@@ -8,7 +8,7 @@
 1. [Entités](#entites)
 2. [Recherche](#recherche)
 3. [Filtres](#filtres)
-4. [Création d'entités et d'observateurs](#creation-dentites-et-dobservateurs)
+4. [Création/Edition/Duplication d'entités et d'observateurs](#creationeditionduplication-dentites-et-dobservateurs)
 5. [Actions](#actions)
 6. [Comportements périodiques](#comportements-periodiques)
 
@@ -32,9 +32,9 @@ Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
 
 ![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche").
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champs de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icône ![Icône recherche](../../recherche/img/search-icon.png "Icône recherche").
 
-Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche").
+Pour supprimer la recherche, cliquez sur l'icône ![Icône suppression recherche](../../recherche/img/delete-search-icon.png "Icône suppression recherche").
 
 ### Filtres
 
@@ -44,22 +44,22 @@ Le sélecteur de filtre permet d'appliquer un filtre sur l'Explorateur de contex
 
 Pour sélectionner un filtre, il suffit de cliquer sur le champs 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
 Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
-Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au bout du champ de sélection de filtre. L'explorateur de contexte se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
+Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icône présent au bout du champ de sélection de filtre. L'explorateur de contexte se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
 
-### Création d'entités et d'observateurs
+### Création/Edition/Duplication d'entités et d'observateurs
 
 Depuis l'explorateur de contexte, il vous est possible de créer des entités et des observateurs.
 
-Pour accéder aux fenêtre de création, survoler le bouton ![Icone Création Entité / Observateur](./img/add-entity-button.png "Icone Création Entité / Observateur").
+Pour accéder aux fenêtre de création, survoler le bouton ![Icône Création Entité / Observateur](./img/add-entity-button.png "Icône Création Entité / Observateur").
 Au survol de ce bouton, un menu s'ouvre avec deux boutons disponibles.
 
-![Icones Création Entité / Observateur](./img/add-entity-button-hover.png "Icones Création Entité / Observateur").
+![Icônes Création Entité / Observateur](./img/add-entity-button-hover.png "Icônes Création Entité / Observateur").
 
-Le premier icone à gauche permet de créer une entité, le deuxième permet de créer un observateur.
+Le premier icône à gauche permet de créer une entité, le deuxième permet de créer un observateur.
 
 #### Création d'entité
 
-Au clique sur l'icone de création d'entité, une fenêtre s'ouvre.
+Au clique sur l'icône de création d'entité, une fenêtre s'ouvre.
 
 ![Formulaire création Entité](./img/entity-creation-form.png "Formulaire création Entité")
 
@@ -68,7 +68,7 @@ Le 1er onglet, 'Formulaire', vous demande de renseigner les informations princip
 - Description
 - Activé(e) : Définit si l'entité est activée, ou non.
 - Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
-- Impacts et Dépendances : Permet de définir les entités que l'entités que vous êtes en train de créer impactes, et celles dont elle dépend. Pour ajouter des entités dans une de ces liste, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icone ![Icone Ajout impact/dépendance](./img/add-impact-depends.png "Icone Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
+- Impacts et Dépendances : Permet de définir les entités que l'entités que vous êtes en train de créer impactes, et celles dont elle dépend. Pour ajouter des entités dans une de ces liste, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
 
 Le 2ème onglet permet de gérer les infos contenues dans le champs 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
 Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
@@ -78,8 +78,8 @@ Pour ajouter une information, remplissez les champs demandés, puis cliquez sur 
 Au clique sur une information dans la liste des infos, les détails de cette information apparaissent.
 Deux actions sont disponibles pour chaque information.
 
-- Editer : Permet d'éditer une information. Au clique sur l'icone ![Icone Editer infos](./img/edit-info-icon.png "Icone Editer infos"), le formulaire situé en dessous s'auto-complète avec les détails de l'information à éditer. Editez les informations, puis cliquez sur le bouton 'Ajouter'. Votre information est éditée.
-- Supprimer : Permet de supprimer une information. Il vous suffit de cliquer sur l'icone ![Icone Suppression info](./img/delete-info-icon.png "Icone Suppression infos"). Votre information a été supprimée !
+- Editer : Permet d'éditer une information. Au clique sur l'icône ![Icône Editer infos](./img/edit-info-icon.png "Icône Editer infos"), le formulaire situé en dessous s'auto-complète avec les détails de l'information à éditer. Editez les informations, puis cliquez sur le bouton 'Ajouter'. Votre information est éditée.
+- Supprimer : Permet de supprimer une information. Il vous suffit de cliquer sur l'icône ![Icône Suppression info](./img/delete-info-icon.png "Icône Suppression infos"). Votre information a été supprimée !
 
 Cliquez ensuite sur le bouton 'Envoyer' pour sauvegarder votre entité !
 
@@ -100,9 +100,10 @@ Cliquez ensuite sur le bouton 'Envoyer'. Votre observateur est créé !
 
 Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles :
 
-- Editer : Au clic sur l'icone d'édition ![Icone Editer entité](./img/edit-entity-icon.png "Icone Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
-- Supprimer : Permet de supprimer une entité/un observateur. Au clique sur l'icone de suppression ![Icone Supprimer entité](./img/delete-entity-icon.png "Icone Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur. 
-- Ajouter un comportement périodique : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clique sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+- **Editer** : Au clic sur l'icône d'édition ![Icône Editer entité](./img/edit-entity-icon.png "Icône Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
+- **Dupliquer**: Au clic sur l'icône ![Icône Dupliquer entité](./img/duplicate-entity-icon.png "Icône Dupliquer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur que vous souhaitez dupliquer (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir entré les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe qu'une nouvelle entité a été créée avec succès !
+- **Supprimer** : Permet de supprimer une entité/un observateur. Au clique sur l'icône de suppression ![icône Supprimer entité](./img/delete-entity-icon.png "icône Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur. 
+- **Ajouter un comportement périodique** : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clique sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
 ### Comportements périodiques
 
@@ -110,9 +111,9 @@ Depuis l'explorateur de contexte, il est possible d'ajouter un comportement pér
 
 Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
-Pour ajouter un comportement périodique sur un entité, cliquez sur l'icone ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
+Pour ajouter un comportement périodique sur un entité, cliquez sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
 
-Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. Le premier icone permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![Icone Ajouter Pbehavior](./img/add-pbehavior-icon.png "Icone Ajouter Pbehavior"). Une fenêtre de création de comportement périodique apparaît alors.
+Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. Le premier icône permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"). Une fenêtre de création de comportement périodique apparaît alors.
 
 ## Guide exploitant
 ### Paramètres du widget
