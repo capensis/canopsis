@@ -701,6 +701,7 @@ export default {
     },
     errors: {
       invalidJSON: 'Invalid JSON',
+      required: 'You need to add at least one valid rule',
     },
   },
   filterSelector: {

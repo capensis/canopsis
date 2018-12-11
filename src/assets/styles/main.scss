@@ -19,3 +19,11 @@
   bottom: 0;
   right: 0;
 }
+
+.wf-loading, .wf-inactive {
+  .v-icon {
+    max-width: 24px !important;
+    max-height: 24px !important;
+    overflow: hidden !important;
+  }
+}
