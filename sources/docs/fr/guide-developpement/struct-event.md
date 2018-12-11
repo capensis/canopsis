@@ -10,7 +10,7 @@
 
 ## Structure basique d'un évènement
 
-Voici la structure de base d'un événement, commune à tous les type d'événements.
+Voici la structure de base d'un évènement, commune à tous les type d'évènements.
 
 ```javascript
 {
@@ -38,7 +38,7 @@ Voici la structure de base d'un événement, commune à tous les type d'événem
 
 ## Ajout d'éléments et personnalisation
 
-Aprés avoir définit la structure de base de l'événement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
+Aprés avoir défini la structure de base de l'évènement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
 
 ### Event Check Structure
 
@@ -158,7 +158,7 @@ Aprés avoir définit la structure de base de l'événement, choississez ce que 
 
 ### Event Perf Structure
 
-Un évènement de type \'perf\' ne sera jamais sauvegarder dans une base de données, il est uniquement utilisé pour envoyer des perfdata :
+Un évènement de type `perf` ne sera jamais sauvegardé dans une base de données, il est uniquement utilisé pour envoyer des perfdata :
 
 ```javascript
 {
@@ -169,7 +169,7 @@ Un évènement de type \'perf\' ne sera jamais sauvegarder dans une base de donn
 }
 ```
 
-See bellow for more informations about those fields.
+See below for more informations about those fields.
 
 ### Event Statistics Counter Increment Structure
 
@@ -220,7 +220,7 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ## Metrology
 
-Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'un des champs suivant :
+Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'un des champs suivants :
 
 ```javascript
 {
@@ -237,7 +237,7 @@ Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'
 ### Basic Alert Structure
 
 Un alarme est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
-Dans MongoDB, il contient les champs suivant.
+Dans MongoDB, il contient les champs suivants.
 
 ```javascript
 {
@@ -258,11 +258,11 @@ selector | Envoyé par l'engine selector |
 sla |  Envoyé par l'engine selector sla |
 statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |
 statduration | Utilisé pour ajouter une durée dans l'engine statistics |
-statstateinterval | Utilisé pour ajouter une état d'intervale dans l'engine statistics |
+statstateinterval | Utilisé pour ajouter un état d'intervalle dans l'engine statistics |
 trap | Utilisé pour envoyer des traps SNMP|
 user | Utilisé par l'utilisateur pour evoyer des informations |
 ack | Utilisé pour acquitter une alerte |
 downtime | Utilisé pour programmer un downtime |
-cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'événement référent, le cas échéant.  |
-uncancel | Utilisé pour annuler un événement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
-ackremove | Utilisé pour supprimer un accusé de réception d'un événement. (champ ack supprimé et collection ack mise à jour) |
+cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
+uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
+ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |

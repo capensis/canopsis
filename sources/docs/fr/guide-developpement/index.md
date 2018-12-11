@@ -1,6 +1,6 @@
-# Présentation
+# Guide de développement Canopsis
 
-Vous trouverez ici toute la documentation nécessaire au développement sur canopsis.
+Vous trouverez ici toute la documentation nécessaire au développement sur Canopsis.
 
 !!! tip "Note"
     Cette page contient le plan de la documentation de développement, qui est en cours d'écriture.

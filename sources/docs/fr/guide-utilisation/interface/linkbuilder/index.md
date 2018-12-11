@@ -2,7 +2,7 @@
 
 ## Objectif
 
-Présenter des URLs sur un bac à alarmes pour par exemple :
+Présenter des URL sur un bac à alarmes pour, par exemple :
 
 * Déclarer un ticket
 * Visualiser une consigne/procédure
