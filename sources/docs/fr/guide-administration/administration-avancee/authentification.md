@@ -40,7 +40,7 @@ Vous pouvez suivre cette documentation : https://github.com/onelogin/python-saml
 
 En particulier la génération des clefs et des paramètres :
 
-```
+```sh
 mkdir certs
 openssl req -new -x509 -days 3652 -nodes -out certs/sp.crt -keyout certs/sp.key
 ```
@@ -86,17 +86,17 @@ En prenant ici pour exemple la configuration OneLogin :
 
 Remplacer les occurrences des paramètres suivants :
 
- * Les url `https://domain.onelogin.com...` sont à remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher ;
- * `CANOPSIS_BASE_URL` ; exemple : `https://canopsis.domain.tld/` **ATTENTION** Il faut **OBLIGATOIREMENT** que cette URL soit un `FQDN` ;
- * `CONTENU_CERTIFICAT_X509_IDP` avec le contenu au format PEM du certificat public de l’IdP.
+*  Les URL `https://domain.onelogin.com...` sont à remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher ;
+*  `CANOPSIS_BASE_URL` ; exemple : `https://canopsis.domain.tld/` **ATTENTION** Il faut **OBLIGATOIREMENT** que cette URL soit un `FQDN` ;
+*  `CONTENU_CERTIFICAT_X509_IDP` avec le contenu au format PEM du certificat public de l’IdP.
 
 Exemple de certificat fourni par l’IdP OneLogin :
 
 ![saml2_onelogin_x509_pem](img/saml2_onelogin_x509_pem.png)
 
-Pour le certificat de l’IdP, télécharger le, puis :
+Pour le certificat de l’IdP, téléchargez le, puis :
 
-```bash
+```sh
 cat idp_cert.pem | grep -v "BEGIN CERTIFICATE" | grep -v "END CERTIFICATE" | tr '\n' ' ' | sed -e 's/ //g'
 ```
 
@@ -151,9 +151,9 @@ Créer le fichier de configuration de la correspondance Utilisateur Canopsis <->
 }
 ```
 
-Dans le cas où toutes les valeurs sont à `null` des paramètres par défaut seront appliqués.
+Dans le cas où toutes les valeurs sont à `null`, des paramètres par défaut seront appliqués.
 
-Si vous voulez paramétrer vous même la correspondance, mettez simplement une chaîne de caractère contenant le nom de l’attribut fourni par l’IdP. Exemple avec OneLogin :
+Si vous voulez paramétrer vous même la correspondance, mettez simplement une chaîne de caractères contenant le nom de l’attribut fourni par l’IdP. Exemple avec OneLogin :
 
 ```json
 {
@@ -184,9 +184,9 @@ Le fichier `conf_path` devra contenir le chemin de destination de la configurati
 
 Le fichier `secret_key` permettra de déchiffrer les données SAML2 en cas de chiffrement. Si vous n’activez pas le chiffrement, créez quand même ce fichier.
 
-Ensuite, dans l’environnement Canopsis, exécutez ceci dans un shell Python :
+Ensuite, dans l’environnement Canopsis, exécutez ceci dans un shell :
 
-```bash
+```sh
 python -c 'from canopsis_cat.saml2 import SAML2Conf; SAML2Conf.insert_conf("/opt/canopsis/tmp/saml2_setup", SAML2Conf.provide_default_collection())'
 ```
 
@@ -208,20 +208,20 @@ canopsis_cat.webcore.services.saml2 = 1
 
 Puis exécutez :
 
-```bash
+```sh
 su - canopsis -c "service webserver restart"
 ```
 
 ### Tests et log
 
-Le fichier de log `var/log/saml2.log` contiendra les erreurs SAML2 s’il y en a.
+Le fichier de log `var/log/saml2.log` contiendra les erreurs SAML2, s’il y en a.
 
-Pour tester l’authentification :
+Pour tester l’authentification :
 
- * Rendez-vous sur la page de login de Canopsis ;
- * Entrez un utilisateur autre que ceux présents dans Canopsis, et n’importe quoi en mot de passe (changements à venir) ;
- * Vous devez être redirigé vers la page de login de l’IdP SAML2 ;
- * Une fois authentifié via l’IdP, vous devez être redirigé vers Canopsis sans erreur.
+*  Rendez-vous sur la page de login de Canopsis ;
+*  Entrez un utilisateur autre que ceux présents dans Canopsis, et n’importe quoi en mot de passe (changements à venir) ;
+*  Vous devez être redirigé vers la page de login de l’IdP SAML2 ;
+*  Une fois authentifié via l’IdP, vous devez être redirigé vers Canopsis sans erreur.
 
 ### Troubleshooting
 
@@ -241,6 +241,6 @@ Vérifier que les URL `sp` sont toutes des FQDN.
 [2018-03-01 10:47:30,220] [ERROR] [saml2] SAML Authentication errors: ['invalid_response'] | The response was received at http://canopsis.local:8082/auth/saml2/acs/ instead of http://canopsis:8082/auth/saml2/acs/
 ```
 
-Ici l’IdP est mal configurée. Assurez-vous que la configuration active dans le webserver est conforme à ce qu’attend l’IdP et inversement.
+Ici, l’IdP est mal configurée. Assurez-vous que la configuration active dans le webserver soit conforme à ce qu’attend l’IdP et inversement.
 
 Redémarrer le webserver si besoin afin d’être certain de la configuration actuellement utilisée.
