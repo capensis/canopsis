@@ -499,3 +499,5 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
     },
   },
 };
+
+export const EVENT_DEFAULT_ORIGIN = 'canopsis';
