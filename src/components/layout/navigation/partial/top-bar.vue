@@ -74,7 +74,6 @@
               v-layout(align-center)
                 div {{ $t('common.logout') }}
                 v-icon.pl-1.white--text exit_to_app
-    div.white--text.font-weight-bold.pa-2 {{ getVersion }}
     template(v-if="isShownGroupsTopBar", slot="extension")
       groups-top-bar
 </template>
@@ -82,7 +81,6 @@
 <script>
 import appMixin from '@/mixins/app';
 import authMixin from '@/mixins/auth';
-import versionMixin from '@/mixins/version';
 import modalMixin from '@/mixins/modal/modal';
 import entitiesViewMixin from '@/mixins/entities/view/index';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -96,15 +94,12 @@ import GroupsTopBar from './groups-top-bar.vue';
  */
 export default {
   components: { GroupsTopBar },
-  mixins: [appMixin, authMixin, versionMixin, modalMixin, entitiesViewMixin, entitiesUserMixin],
+  mixins: [appMixin, authMixin, modalMixin, entitiesViewMixin, entitiesUserMixin],
   computed: {
     defaultViewTitle() {
       const userDefaultView = this.getViewById(this.currentUser.defaultview);
       return userDefaultView ? userDefaultView.title : null;
     },
-  },
-  mounted() {
-    this.fetchVersion();
   },
   methods: {
     editDefaultView() {

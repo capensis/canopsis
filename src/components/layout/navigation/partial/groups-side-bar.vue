@@ -7,7 +7,10 @@
   )
     div.brand.ma-0.secondary.lighten-1
       v-layout(justify-center, align-center)
-        img.my-1(src="@/assets/canopsis.png")
+        v-flex.text-xs-center(xs11)
+          img.my-1(src="@/assets/canopsis.png")
+        v-flex.version.white--text.caption
+          div {{ getVersion }}
     v-expansion-panel.panel(
     v-if="hasReadAnyViewAccess",
     expand,
@@ -55,6 +58,7 @@
 </template>
 
 <script>
+import versionMixin from '@/mixins/version';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
@@ -68,7 +72,7 @@ import GroupsSettingsButton from './groups-settings-button.vue';
  */
 export default {
   components: { GroupsSettingsButton },
-  mixins: [layoutNavigationGroupMenuMixin],
+  mixins: [versionMixin, layoutNavigationGroupMenuMixin],
   props: {
     value: {
       type: Boolean,
@@ -86,6 +90,9 @@ export default {
         }
       },
     },
+  },
+  mounted() {
+    this.fetchVersion();
   },
 };
 </script>
@@ -108,5 +115,13 @@ export default {
 
   .brand {
     height: 48px;
+    position: relative;
+  }
+
+  .version {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding-right: 0.5em;
   }
 </style>
