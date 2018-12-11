@@ -4,9 +4,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('version');
 
 export default {
   computed: {
-    ...mapGetters({
-      getVersion: 'version',
-    }),
+    ...mapGetters(['version']),
   },
   methods: {
     ...mapActions(['fetchVersion']),

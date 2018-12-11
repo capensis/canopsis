@@ -9,7 +9,6 @@ import popupModule from './modules/popup';
 import eventModule from './modules/event';
 import queryModule from './modules/query';
 import sideBarModule from './modules/side-bar';
-import versionModule from './modules/version';
 import entitiesModules from './modules/entities';
 
 import entitiesPlugin from './plugins/entities';
@@ -36,7 +35,6 @@ export default new Vuex.Store({
     event: eventModule,
     query: queryModule,
     sideBar: sideBarModule,
-    version: versionModule,
 
     ...entitiesModules,
   },

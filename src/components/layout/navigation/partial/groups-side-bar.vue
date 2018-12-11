@@ -10,7 +10,7 @@
         v-flex.text-xs-center(xs11)
           img.my-1(src="@/assets/canopsis.png")
         v-flex.version.white--text.caption
-          div {{ getVersion }}
+          div {{ version }}
     v-expansion-panel.panel(
     v-if="hasReadAnyViewAccess",
     expand,
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import versionMixin from '@/mixins/version';
+import versionMixin from '@/mixins/entities/version';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
