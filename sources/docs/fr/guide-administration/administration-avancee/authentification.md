@@ -20,13 +20,13 @@ Nécessite l’installation de la brique `CAT`.
 
 ### Paramétrage IdP
 
- * ACS Consumer URL : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
- * Single Logout URL : `http[s]://canopsis.fqdn.tld/auth/saml2/sls/`
- * Audience : `http[s]://canopsis.fqdn.tld/auth/saml2/metadata/`
- * Recipient : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
- * RelayState : `http[s]://canopsis.fqdn.tld/`
+*  ACS Consumer URL : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
+*  Single Logout URL : `http[s]://canopsis.fqdn.tld/auth/saml2/sls/`
+*  Audience : `http[s]://canopsis.fqdn.tld/auth/saml2/metadata/`
+*  Recipient : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
+*  RelayState : `http[s]://canopsis.fqdn.tld/`
 
-L’IdP doit impérativement fournir dans les réponses d’authentification une valeur normalisée `NameID`. Il suffit de créer un *mapping* entre ce champs normalisé et une information unique dans le backend utilisé par l’IdP. Dans le cas contraire l’authentification côté Canopsis **ne pourra pas fonctionner**.
+L’IdP doit impérativement fournir dans les réponses d’authentification une valeur normalisée `NameID`. Il suffit de créer un *mapping* entre ce champ normalisé et une information unique dans le backend utilisé par l’IdP. Dans le cas contraire, l’authentification côté Canopsis **ne pourra pas fonctionner**.
 
 Exemple de configuration OneLogin :
 
