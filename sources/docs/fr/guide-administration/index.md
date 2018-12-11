@@ -1,8 +1,8 @@
-# Présentation
+# Guide d'administration Canopsis
 
-Ce guide vous accompagne dans vos tâches d'administration de Canopsis. Vous y trouverez plusieurs documents portant sur :
+Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
-**Sommaire :**
+## Sommaire
 
 *  [Architecture interne](architecture-interne/index.md)
 *  [Installation](installation/index.md)

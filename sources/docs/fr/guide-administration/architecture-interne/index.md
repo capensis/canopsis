@@ -1,6 +1,6 @@
-# Présentation
+# Architecture interne de Canopsis
 
-### Fonctionnement général de Canopsis
+## Fonctionnement général de Canopsis
 
 Voici le schéma du fonctionnement général de Canopsis.  
 Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que les moteurs faisant fonctionner Canopsis.  
@@ -8,7 +8,7 @@ Certains moteurs sont des moteurs propriétaires non disponibles dans la version
 
 ![img1](img/schema.png)
 
-### Schéma Macro
+## Schéma Macro
 
 ![img2](img/Cano_macro_resume.png)
 
