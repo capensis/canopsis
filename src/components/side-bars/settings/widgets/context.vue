@@ -78,7 +78,6 @@ export default {
   },
   created() {
     const { widget_preferences: widgetPreference } = this.userPreference;
-
     this.settings.widget_preferences = {
       selectedTypes: get(widgetPreference, 'selectedTypes', []),
       viewFilters: get(widgetPreference, 'viewFilters', []),

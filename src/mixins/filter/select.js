@@ -45,21 +45,19 @@ export default {
 
     updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
       this.updateFilterFieldInWidgetPreferences('mainFilterCondition', condition);
-
-      this.query = {
-        ...this.query,
-
-        filter: prepareMainFilterToQueryFilter(this.mainFilter, condition),
-      };
+      this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
     },
 
     updateSelectedFilter(filterObject) {
       this.updateFilterFieldInWidgetPreferences('mainFilter', filterObject || {});
+      this.updateQueryBySelectedFilterAndCondition(filterObject, this.mainFilterCondition);
+    },
 
+    updateQueryBySelectedFilterAndCondition(filter, condition) {
       this.query = {
         ...this.query,
 
-        filter: prepareMainFilterToQueryFilter(filterObject, this.mainFilterCondition),
+        filter: prepareMainFilterToQueryFilter(filter, condition),
       };
     },
   },

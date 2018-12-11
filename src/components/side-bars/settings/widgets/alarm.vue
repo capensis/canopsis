@@ -27,7 +27,9 @@
             field-filters(
             v-model="settings.widget_preferences.mainFilter",
             :filters.sync="settings.widget_preferences.viewFilters",
-            :condition.sync="settings.widget_preferences.mainFilterCondition"
+            :condition.sync="settings.widget_preferences.mainFilterCondition",
+            :hasAccessToAddFilter="hasAccessToAddFilter",
+            :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
           field-info-popup(v-model="settings.widget.parameters.infoPopups")
@@ -97,6 +99,14 @@ export default {
   computed: {
     hasAccessToListFilters() {
       return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
+    },
+
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+    },
+
+    hasAccessToAddFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.addFilter);
     },
   },
   mounted() {

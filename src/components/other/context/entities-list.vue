@@ -74,6 +74,7 @@ import omit from 'lodash/omit';
 import isString from 'lodash/isString';
 
 import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -254,27 +255,12 @@ export default {
         });
       }
     },
-    /**
-     * Surcharge updateSelectedFilter method from filterSelectMixin
-     * to adapt it to context API specification
-     */
-    async updateSelectedFilter(value = {}) {
-      this.createUserPreference({
-        userPreference: {
-          ...this.userPreference,
 
-          widget_preferences: {
-            ...this.userPreference.widget_preferences,
-
-            mainFilter: value,
-          },
-        },
-      });
-
+    updateQueryBySelectedFilterAndCondition(filter, condition) {
       this.query = {
         ...this.query,
 
-        mainFilter: value.filter,
+        mainFilter: prepareMainFilterToQueryFilter(filter, condition),
       };
     },
   },

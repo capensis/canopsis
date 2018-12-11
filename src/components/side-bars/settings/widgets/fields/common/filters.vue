@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { MODALS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
@@ -55,13 +55,13 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+    hasAccessToAddFilter: {
+      type: Boolean,
+      default: true,
     },
-    hasAccessToAddFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.addFilter);
+    hasAccessToEditFilter: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {

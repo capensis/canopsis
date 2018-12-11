@@ -3,7 +3,7 @@
     v-flex
       v-switch(
       :label="$t('filterSelector.fields.mixFilters')",
-      :value="isMultiple",
+      :input-value="isMultiple",
       @change="updateIsMultipleFlag"
       )
     v-flex(v-show="isMultiple")
