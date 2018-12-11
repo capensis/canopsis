@@ -22,12 +22,11 @@ theme:
 
 
 markdown_extensions:
+    - admonition
     - codehilite:
         guess_lang: false
     - toc:
         permalink: True
-# XXX: wait for Gitlab support before enabling this.
-#    - admonition
 
 plugins:
     - search
