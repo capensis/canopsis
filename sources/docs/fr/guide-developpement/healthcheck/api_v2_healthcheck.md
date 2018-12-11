@@ -2,7 +2,29 @@
 
 L'API healthcheck permet d'obtenir l'état de fonctionnement de Canopsis ; par exemple elle permet de savoir si les services nécessaires sont disponibles.
 
-## Récupérer l'état
+### Récupérer l'état global
+
+```
+GET /api/v2/healthcheck/
+```
+
+Renvoie un résumé de l'état.
+
+```json
+{
+    "amqp": "",
+    "cache": "",
+    "database": "",
+    "engines": "",
+    "time_series": "",
+    "timestamp": 1542795713,
+    "overall": true
+}
+```
+
+Le bon fonctionnement général est annoncé par la clef **overall** qui doit être à *true*.
+
+### Récupérer l'état des services
 
 ```
 GET /api/v2/healthcheck/?criticals=amqp,cache,database,engines,time_series
@@ -39,4 +61,3 @@ Concernant `overall`, par défaut, tous les services sont pris en compte pour ca
 * database: la connection fonctionne et il est possible de lire dans une liste de collections ;
 * engines : hors docker, vérifie par systemctl que les engines de bases (python) sont "running" ;
 * time series : vérifie que la database existe et que l'on peut lire des measurements.
-
