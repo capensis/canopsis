@@ -11,7 +11,7 @@
       v-btn.primary(
       @click.prevent="submit",
       :disabled="error ? true : false",
-      ) {{ error ? 'Invalid JSON' : $t('common.submit') }}
+      ) {{ error ? $t('errors.JSONNotValid') : $t('common.submit') }}
 </template>
 
 <script>
@@ -29,9 +29,9 @@ export default {
     };
   },
   methods: {
-    checkValidity(event) {
+    checkValidity(value) {
       try {
-        this.newVal = JSON.parse(event);
+        this.newVal = JSON.parse(value);
         this.error = '';
       } catch (err) {
         this.error = err.message;

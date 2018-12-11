@@ -432,6 +432,12 @@ export const EVENT_FILTER_RULE_TYPES = {
   enrichment: 'enrichment',
 };
 
+export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
+  pass: 'pass',
+  break: 'break',
+  drop: 'drop',
+};
+
 export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   setField: {
     value: 'set_field',

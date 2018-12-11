@@ -2,10 +2,10 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Event filter actions
+        span.headline {{ $t('modals.eventFilterRule.editActions') }}
     v-card-text
       v-card
-        v-card-title.primary.white--text Add action
+        v-card-title.primary.white--text {{ $t('modals.eventFilterRule.addAction') }}
         v-card-text
           v-select(
           :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES)",
@@ -23,9 +23,9 @@
           :required="isRequired(actionForm.type, option)"
           )
         v-divider
-        v-btn.primary(@click="addAction") Add
+        v-btn.primary(@click="addAction") {{ $t('common.add') }}
     v-container
-      h2 Actions
+      h2 {{ $t('modals.eventFilterRule.actions') }}
       v-list
         draggable(v-model="actions", @start="drag=true", @end="drag=false")
           v-list-group.grey.white--text(v-for="(action, index) in actions", :key="action.name")
@@ -33,11 +33,11 @@
               v-list-tile-title {{index + 1}} - {{ action.type }} - {{ action.name || action.from }}
             v-list-tile
               v-layout(column)
-                div(v-if="action.name") Name: {{ action.name }}
-                div(v-if="action.value") Value: {{ action.value }}
-                div(v-if="action.description") Description: {{ action.description }}
-                div(v-if="action.from") From: {{ action.from }}
-                div(v-if="action.to") To: {{ action.to }}
+                div(v-if="action.name") {{ $t('common.name') }}: {{ action.name }}
+                div(v-if="action.value") {{ $t('common.value') }}: {{ action.value }}
+                div(v-if="action.description") {{ $t('common.description') }}: {{ action.description }}
+                div(v-if="action.from") {{ $t('common.from') }}: {{ action.from }}
+                div(v-if="action.to") {{ $t('common.to') }}: {{ action.to }}
     v-divider
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}

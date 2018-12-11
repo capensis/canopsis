@@ -9,7 +9,7 @@
         v-text-field(v-model.number="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
         v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
-      template(v-if="form.type === this.$constants.EVENT_FILTER_RULE_TYPES.enrichment")
+      template(v-if="form.type === $constants.EVENT_FILTER_RULE_TYPES.enrichment")
         v-container
           v-divider
           h3.my-2 {{ $t('modals.eventFilterRule.enrichmentOptions') }}
@@ -18,12 +18,12 @@
           v-select(
           :label="$t('modals.eventFilterRule.onSuccess')",
           v-model="enrichmentOptions.onSuccess",
-          :items=['pass', 'break', 'drop'],
+          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)",
           )
           v-select(
           :label="$t('modals.eventFilterRule.onFailure')",
           v-model="enrichmentOptions.onFailure",
-          :items=['pass', 'break', 'drop'],
+          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)",
           )
     v-divider
     v-layout.pa-2(justify-end)
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { MODALS, EVENT_FILTER_RULE_TYPES, EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
 
@@ -51,8 +51,8 @@ export default {
       enrichmentOptions: {
         actions: [],
         externalData: {},
-        onSuccess: 'pass',
-        onFailure: 'pass',
+        onSuccess: EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
+        onFailure: EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
       },
     };
   },

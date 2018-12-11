@@ -15,7 +15,7 @@
             v-select(:items="operators", v-model="field.key")
           v-flex(xs9)
             v-text-field(v-model="field.value")
-    v-btn.primary(@click="addRule") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -44,7 +44,7 @@ export default {
     addAdvancedRuleField() {
       this.form.advancedRuleFields.push({ key: '<', value: '' });
     },
-    addRule() {
+    submit() {
       const newPattern = { ...this.value };
       if (!this.form.advancedMode) {
         newPattern[this.form.field] = this.form.value;
