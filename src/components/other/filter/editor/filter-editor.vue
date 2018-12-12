@@ -32,8 +32,8 @@ import isEmpty from 'lodash/isEmpty';
 
 import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
-import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
-import parseFilterToRequest from '@/helpers/filter-editor/parse-filter-to-request';
+import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
+import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 
 import FilterGroup from './partial/filter-group.vue';
 import FilterResultsAlarm from './partial/results/alarm.vue';

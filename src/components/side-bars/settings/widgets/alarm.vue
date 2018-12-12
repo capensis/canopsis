@@ -26,7 +26,10 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
             v-model="settings.widget_preferences.mainFilter",
-            :filters.sync="settings.widget_preferences.viewFilters"
+            :filters.sync="settings.widget_preferences.viewFilters",
+            :condition.sync="settings.widget_preferences.mainFilterCondition",
+            :hasAccessToAddFilter="hasAccessToAddFilter",
+            :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
           field-info-popup(v-model="settings.widget.parameters.infoPopups")
@@ -41,7 +44,7 @@ import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
+import { SIDE_BARS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
@@ -97,6 +100,14 @@ export default {
     hasAccessToListFilters() {
       return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
     },
+
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+    },
+
+    hasAccessToAddFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.addFilter);
+    },
   },
   mounted() {
     const { widget_preferences: widgetPreference } = this.userPreference;
@@ -105,6 +116,7 @@ export default {
       itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
       viewFilters: get(widgetPreference, 'viewFilters', []),
       mainFilter: get(widgetPreference, 'mainFilter', {}),
+      mainFilterCondition: get(widgetPreference, 'mainFilterCondition', FILTER_DEFAULT_VALUES.condition),
     };
   },
   methods: {

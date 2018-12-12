@@ -19,7 +19,8 @@
           v-divider
           field-filters(
           v-model="settings.widget_preferences.mainFilter",
-          :filters.sync="settings.widget_preferences.viewFilters"
+          :filters.sync="settings.widget_preferences.viewFilters",
+          :condition.sync="settings.widget_preferences.mainFilterCondition"
           )
           v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
@@ -31,7 +32,7 @@
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS, FILTER_DEFAULT_VALUES } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -77,11 +78,11 @@ export default {
   },
   created() {
     const { widget_preferences: widgetPreference } = this.userPreference;
-
     this.settings.widget_preferences = {
       selectedTypes: get(widgetPreference, 'selectedTypes', []),
       viewFilters: get(widgetPreference, 'viewFilters', []),
       mainFilter: get(widgetPreference, 'mainFilter', {}),
+      mainFilterCondition: get(widgetPreference, 'mainFilterCondition', FILTER_DEFAULT_VALUES.condition),
     };
   },
   methods: {

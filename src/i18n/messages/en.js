@@ -704,6 +704,11 @@ export default {
       required: 'You need to add at least one valid rule',
     },
   },
+  filterSelector: {
+    fields: {
+      mixFilters: 'Mix filters',
+    },
+  },
   validator: {
     unique: 'Field must be unique',
   },

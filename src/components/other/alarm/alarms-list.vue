@@ -6,15 +6,13 @@
       v-flex
         pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
       v-flex(v-if="hasAccessToListFilters")
-        v-select(
+        filter-selector(
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
-        @input="updateSelectedFilter",
         :value="mainFilter",
-        item-text="title",
-        item-value="filter",
-        return-object,
-        clearable
+        :condition="mainFilterCondition",
+        @input="updateSelectedFilter",
+        @update:condition="updateSelectedCondition"
         )
       v-flex
         v-chip.primary.white--text(
@@ -82,6 +80,7 @@ import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.v
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
+import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
@@ -89,7 +88,7 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import filterSelectMixin from '@/mixins/filter-select';
+import filterSelectMixin from '@/mixins/filter/select';
 
 /**
  * Alarm-list component
@@ -109,6 +108,7 @@ export default {
     ActionsPanel,
     AlarmColumnValue,
     NoColumnsTable,
+    FilterSelector,
   },
   mixins: [
     authMixin,
@@ -178,26 +178,6 @@ export default {
           widgetId: this.widget._id,
           params: query,
         });
-      }
-    },
-
-    updateSelectedFilter(value) {
-      if (this.hasAccessToEditFilter) {
-        this.createUserPreference({
-          userPreference: {
-            ...this.userPreference,
-            widget_preferences: {
-              ...this.userPreference.widget_preferences,
-              mainFilter: value || {},
-            },
-          },
-        });
-      }
-
-      if (value && value.filter) {
-        this.query = { ...this.query, filter: value.filter };
-      } else {
-        this.query = { ...this.query, filter: undefined };
       }
     },
   },
