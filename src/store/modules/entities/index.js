@@ -8,6 +8,7 @@ import statsModule from './stats';
 import roleModule from './role';
 import userModule from './user';
 import rightModule from './right';
+import versionModule from './version';
 
 export default {
   alarm: alarmModule,
@@ -20,4 +21,5 @@ export default {
   role: roleModule,
   user: userModule,
   right: rightModule,
+  version: versionModule,
 };

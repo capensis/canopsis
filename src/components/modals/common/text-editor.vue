@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card.text-editor-modal
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.textEditor.title') }}
@@ -40,4 +40,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .text-editor-modal {
+    .quill-editor {
+      .ql-editor{
+        min-height: 120px !important;
+        max-height: 300px;
+        overflow: hidden;
+        overflow-y: auto;
+      }
+    }
+  }
+</style>
 

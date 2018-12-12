@@ -1,26 +1,28 @@
 <template lang="pug">
-  v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
-    v-tab(:disabled="isRequestStringChanged") {{$t('filterEditor.tabs.visualEditor')}}
-    v-tab-item
-      v-container
-        filter-group(
-        :group="filter",
-        :possibleFields="possibleFields",
-        @update:group="updateFilter",
-        isInitial
+  div
+    v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
+      v-tab(:disabled="isRequestStringChanged") {{ $t('filterEditor.tabs.visualEditor') }}
+      v-tab-item
+        v-container
+          filter-group(
+          :group="filter",
+          :possibleFields="possibleFields",
+          isInitial,
+          @update:group="updateFilter"
+          )
+      v-tab(@click="openAdvancedTab") {{ $t('filterEditor.tabs.advancedEditor') }}
+      v-tab-item
+        v-textarea(
+        v-model="requestString",
+        :label="$t('filterEditor.tabs.advancedEditor')",
+        @input="updateRequestString",
+        rows="10",
         )
-    v-tab(@click="openAdvancedTab") {{$t('filterEditor.tabs.advancedEditor')}}
-    v-tab-item
-      v-textarea(
-      v-model="requestString",
-      :label="$t('filterEditor.tabs.advancedEditor')",
-      @input="updateRequestString",
-      rows="10",
-      )
-      v-layout(justify-center)
-        v-flex(xs10 md-6)
-          v-alert(:value="parseError", type="error") {{ parseError }}
-      v-btn(@click="parse", :disabled="!isRequestStringChanged") {{$t('common.parse')}}
+        v-layout(justify-center)
+          v-flex(xs10 md-6)
+            v-alert(:value="parseError", type="error") {{ parseError }}
+        v-btn(@click="parse", :disabled="!isRequestStringChanged") {{ $t('common.parse') }}
+    v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>
 
 
@@ -30,8 +32,8 @@ import isEmpty from 'lodash/isEmpty';
 
 import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
-import parseGroupToFilter from '@/helpers/filter-editor/parse-group-to-filter';
-import parseFilterToRequest from '@/helpers/filter-editor/parse-filter-to-request';
+import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
+import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 
 import FilterGroup from './partial/filter-group.vue';
 import FilterResultsAlarm from './partial/results/alarm.vue';
@@ -45,6 +47,7 @@ import FilterResultsEntity from './partial/results/entity.vue';
  * @event input
  */
 export default {
+  inject: ['$validator'],
   components: {
     FilterGroup,
     FilterResultsAlarm,
@@ -59,6 +62,10 @@ export default {
       type: String,
       default: ENTITIES_TYPES.alarm,
       validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -85,9 +92,6 @@ export default {
     };
   },
   computed: {
-    resultsComponent() {
-      return `filter-results-${this.entitiesType}`;
-    },
     request() {
       try {
         return parseFilterToRequest(this.filter);
@@ -97,12 +101,13 @@ export default {
         return {};
       }
     },
+
     possibleFields() {
       switch (this.entitiesType) {
-        case this.$constants.ENTITIES_TYPES.alarm:
+        case ENTITIES_TYPES.alarm:
           return ['connector', 'connector_name', 'component', 'resource'];
 
-        case this.$constants.ENTITIES_TYPES.entity:
+        case ENTITIES_TYPES.entity:
           return ['name', 'type'];
 
         default:
@@ -110,10 +115,27 @@ export default {
       }
     },
   },
+  created() {
+    if (this.required && this.$validator) {
+      this.$validator.attach('filter', 'required:true', {
+        getter: () => {
+          const firstRule = Object.values(this.filter.rules)[0];
+
+          return firstRule && firstRule.field !== '' && firstRule.operator !== '' && firstRule.input !== '';
+        },
+        context: () => this,
+      });
+    }
+  },
   methods: {
     updateFilter(value) {
       this.filter = value;
+
       this.$emit('input', JSON.stringify(parseFilterToRequest(value)));
+
+      if (this.required && this.$validator && this.errors.has('filter')) {
+        this.$validator.validate('filter');
+      }
     },
 
     updateRequestString() {
