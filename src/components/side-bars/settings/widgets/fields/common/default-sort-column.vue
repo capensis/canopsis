@@ -2,10 +2,13 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
     v-container
-      v-text-field(
+      v-select(
       :value="value.column",
-      @input="updateField('column', $event)",
-      :placeholder="$t('settings.columnName')"
+      :items="columns",
+      :label="$t('settings.columnName')",
+      item-text="label",
+      item-value="value",
+      @change="updateField('column', $event)"
       )
       v-select(
       :value="value.order",
@@ -33,6 +36,10 @@ export default {
         column: '',
         order: 'ASC',
       }),
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

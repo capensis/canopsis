@@ -172,7 +172,7 @@ export default {
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
-    defaultSortColumn: 'Default Sort Column',
+    defaultSortColumn: 'Default sort column',
     columnNames: 'Column names',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
