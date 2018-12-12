@@ -42,6 +42,7 @@
 <script>
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
+import isString from 'lodash/isString';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
@@ -112,7 +113,11 @@ export default {
   },
   methods: {
     prefixFormatter(value) {
-      return value.replace('alarm.', 'v.');
+      if (isString(value)) {
+        return value.replace('alarm.', 'v.');
+      }
+
+      return value;
     },
 
     prepareSettingsWidget() {
