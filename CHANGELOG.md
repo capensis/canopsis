@@ -8,6 +8,27 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.6.0 - Due date : 2018-12-13
+
+ - [Documentation] Add documentation for global status check with the healthcheck route
+ - [Documentation] Add documentation for mix-filters and entity duplication
+ - [Documentation] Various cosmetic improvements
+ - [Go] Fix requests to the Observer ticketing API
+ - [Go] Fix statecounter steps handling
+ - [Tooling] Fix error handling in canopsinit
+ - [Tooling] Fix issue with unused parameters in init
+ - [UI] Add default views and rights for UIv3
+ - [UI/Context] Add "Manage infos" panel for watchers
+ - [UI/Context] Fix a bug with resources expand
+ - [UI/Context] Add "Clone" action on entities and watchers
+ - [UI/Context] Filter required on watcher's creation (at least one valid rule in the filter)
+ - [UI/Rights] Fix a bug with confirmation panel not closing when submitting rights
+ - [UI/Events] Add an `origin: 'canopsis'` parameter with all events coming from Canopsis UI
+ - [UI/Version] Add Canopsis version number on side-bar
+ - [UI/Filters] Add "Mix filters" feature
+ - [UI/Alarm list] Simplify default sort column selector in settings
+ - [UI/Top bar] Fix a bug with group editing on the top bar
+
 ## Canopsis 3.5.0 - Due date : 2018-11-29
 
 - [Documentation]: Add a new documentation
