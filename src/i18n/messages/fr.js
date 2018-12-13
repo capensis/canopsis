@@ -744,6 +744,11 @@ export default {
   },
   eventFilter: {
     title: 'Filtre d\'événements',
+    type: 'Type',
+    pattern: 'Pattern',
+    priority: 'Priorité',
+    enabled: 'Activé',
+    actions: 'Actions',
   },
   layout: {
     sideBar: {

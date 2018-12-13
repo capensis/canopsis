@@ -46,6 +46,8 @@
 
 <script>
 import Draggable from 'vuedraggable';
+import cloneDeep from 'lodash/cloneDeep';
+
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -57,10 +59,12 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
+    const enrichmentActionsTypes = cloneDeep(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES);
+
     return {
       actions: [],
       actionForm: {
-        type: EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
+        type: enrichmentActionsTypes.setField,
         name: '',
         value: '',
         description: '',
@@ -70,7 +74,9 @@ export default {
     };
   },
   mounted() {
-    this.actions = [...this.config.actions];
+    if (this.config.actions) {
+      this.actions = [...this.config.actions];
+    }
   },
   methods: {
     isRequired(actionType, option) {

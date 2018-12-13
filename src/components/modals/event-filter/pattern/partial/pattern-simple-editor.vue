@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout(v-for="(rule, ruleKey) in pattern", :key="rule.key", justify-space-between)
+    v-layout(v-for="(rule, ruleKey) in convertedPattern", :key="rule.key", justify-space-between)
       v-flex(xs6)
         v-text-field(v-model="rule.key")
       v-flex(v-if="isSimpleRule(rule.value)", xs5)
@@ -25,8 +25,12 @@
 
 <script>
 export default {
+  model: {
+    prop: 'pattern',
+    event: 'input',
+  },
   props: {
-    value: {
+    pattern: {
       type: Object,
       required: true,
     },
@@ -37,11 +41,11 @@ export default {
   },
   data() {
     return {
-      pattern: [],
+      convertedPattern: [],
     };
   },
   watch: {
-    value() {
+    pattern() {
       this.convertPatternToForm();
     },
   },
@@ -55,45 +59,54 @@ export default {
     },
 
     editAdvancedRuleOperator(operator, rule, ruleKey, subRuleKey) {
-      const newPattern = [...this.pattern];
+      const newPattern = [...this.convertedPattern];
       newPattern[ruleKey].value[subRuleKey] = { ...rule, key: operator };
-      this.pattern = newPattern;
+      this.convertedPattern = newPattern;
     },
 
     editAdvancedRuleValue(value, rule, ruleKey, subRuleKey) {
-      const newPattern = [...this.pattern];
+      const newPattern = [...this.convertedPattern];
       newPattern[ruleKey].value[subRuleKey] = { ...rule, value };
-      this.pattern = newPattern;
+      this.convertedPattern = newPattern;
     },
 
     convertPatternToForm() {
-      this.pattern = [];
-      Object.keys(this.value).forEach((key) => {
-        if (this.isSimpleRule(this.value[key])) {
-          this.pattern.push({ key, value: this.value[key] });
+      this.convertedPattern = Object.keys(this.pattern).reduce((acc, key) => {
+        if (this.isSimpleRule(this.pattern[key])) {
+          acc.push({ key, value: this.pattern[key] });
         } else {
-          const rule = [];
-          Object.keys(this.value[key]).forEach((field) => {
-            rule.push({ key: field, value: this.value[key][field] });
-          });
-
-          this.pattern.push({ key, value: rule });
+          acc.push({ key, value: this.convertAdvancedRuleToForm(this.pattern[key]) });
         }
-      });
+        return acc;
+      }, []);
     },
-    convertPatternAndSave() {
-      const pattern = {};
-      this.pattern.forEach((rule) => {
-        if (this.isSimpleRule(rule.value)) {
-          pattern[rule.key] = rule.value;
-        } else {
-          const ruleValue = {};
-          rule.value.map(value => ruleValue[value.key] = value.value);
-          pattern[rule.key] = ruleValue;
-        }
-      });
 
-      this.$emit('input', pattern);
+    convertAdvancedRuleToForm(rule) {
+      return Object.keys(rule).reduce((acc, key) => {
+        acc.push({ key, value: rule[key] });
+        return acc;
+      }, []);
+    },
+
+    convertAdvancedRuleToObject(rule) {
+      return rule.value.reduce((acc, key) => {
+        acc[key.key] = key.value;
+        return acc;
+      }, {});
+    },
+
+    convertPatternAndSave() {
+      const newPattern = this.convertedPattern.reduce((acc, rule) => {
+        if (this.isSimpleRule(rule.value)) {
+          acc[rule.key] = rule.value;
+        } else {
+          acc[rule.key] = this.convertAdvancedRuleToObject(rule);
+        }
+
+        return acc;
+      }, {});
+
+      this.$emit('input', newPattern);
     },
   },
 };

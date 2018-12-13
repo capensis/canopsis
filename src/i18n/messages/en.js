@@ -759,6 +759,11 @@ export default {
   },
   eventFilter: {
     title: 'Event filter',
+    type: 'Type',
+    pattern: 'Pattern',
+    priority: 'Priority',
+    enabled: 'Enabled',
+    actions: 'Actions',
   },
   layout: {
     sideBar: {
