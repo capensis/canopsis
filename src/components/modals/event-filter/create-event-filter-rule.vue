@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
 import { MODALS, EVENT_FILTER_RULE_TYPES, EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -64,16 +65,18 @@ export default {
         priority,
         enabled,
         actions,
-        external_data: externalData,
+        externalData,
         on_success: onSuccess,
         on_failure: onFailure,
-      } = this.config.rule;
+      } = cloneDeep(this.config.rule);
+
       this.form = {
         type,
         pattern,
         priority,
         enabled,
       };
+
       this.enrichmentOptions = {
         actions,
         externalData,

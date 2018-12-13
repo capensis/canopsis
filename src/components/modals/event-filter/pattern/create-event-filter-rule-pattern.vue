@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/modal-inner';
@@ -49,7 +51,7 @@ export default {
     };
   },
   mounted() {
-    this.pattern = { ...this.config.pattern };
+    this.pattern = cloneDeep(this.config.pattern);
   },
   methods: {
     submit() {

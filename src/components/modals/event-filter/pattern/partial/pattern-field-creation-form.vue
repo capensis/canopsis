@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+
 export default {
   props: {
     value: {
@@ -45,14 +47,15 @@ export default {
       this.form.advancedRuleFields.push({ key: '<', value: '' });
     },
     submit() {
-      const newPattern = { ...this.value };
+      const newPattern = cloneDeep(this.value);
       if (!this.form.advancedMode) {
         newPattern[this.form.field] = this.form.value;
       } else {
-        const ruleValue = {};
         Object.values(this.form.advancedRuleFields)
-          .forEach(rule => ruleValue[rule.key] = rule.value);
-        newPattern[this.form.field] = ruleValue;
+          .reduce((acc, rule) => {
+            acc[rule.key] = rule.value;
+            return newPattern[this.form.field] = acc;
+          }, {});
       }
       this.$emit('input', newPattern);
       this.$refs.form.reset();

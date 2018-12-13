@@ -4,13 +4,13 @@
       v-layout(justify-space-between, align-center)
         span.headline Event filter - External datas
     v-card-text
-      v-textarea(:value="JSON.stringify(config.value, undefined, 4)", @input="checkValidity")
+      v-textarea(:value="externalDataValue", @input="checkValidity")
     v-divider
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
       @click.prevent="submit",
-      :disabled="error ? true : false",
+      :disabled="error",
       ) {{ error ? $t('errors.JSONNotValid') : $t('common.submit') }}
 </template>
 
@@ -25,16 +25,26 @@ export default {
   data() {
     return {
       newVal: {},
-      error: '',
+      error: false,
     };
+  },
+  computed: {
+    externalDataValue() {
+      try {
+        return JSON.stringify(this.config.value, undefined, 4);
+      } catch (err) {
+        console.error(err);
+        return '';
+      }
+    },
   },
   methods: {
     checkValidity(value) {
       try {
         this.newVal = JSON.parse(value);
-        this.error = '';
+        this.error = false;
       } catch (err) {
-        this.error = err.message;
+        this.error = true;
       }
     },
     submit() {

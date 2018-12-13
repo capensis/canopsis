@@ -87,6 +87,7 @@ export default {
     },
     submit() {
       this.config.action(this.actions);
+      this.hideModal();
     },
   },
 };
