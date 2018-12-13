@@ -54,7 +54,7 @@
           fab,
           dark,
           small,
-          @click="fullScreenToggle",
+          @click="fullScreenModeToggle",
           )
             v-icon fullscreen
             v-icon fullscreen_exit
@@ -64,10 +64,10 @@
             v-icon add
           span {{ $t('common.addWidget') }}
         v-tooltip(v-if="hasUpdateAccess", top)
-          v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditMode", v-model="isEditModeEnable")
+          v-btn(slot="activator", fab, dark, small, @click.stop="viewEditModeToggle", v-model="isEditModeEnable")
             v-icon edit
             v-icon done
-          span {{ $t('common.toggleEditView') }}
+          span {{ $t('common.toggleEditView') }} (ctrl + e / command + e)
 </template>
 
 <script>
@@ -158,13 +158,17 @@ export default {
     document.removeEventListener('keydown', this.keyDownListener);
   },
   methods: {
-    keyDownListener({ keyCode, altKey }) {
-      if (keyCode === 13 && altKey) {
-        this.fullScreenToggle();
+    keyDownListener(event) {
+      if (event.keyCode === 13 && event.altKey) {
+        this.fullScreenModeToggle();
+        event.preventDefault();
+      } else if (event.keyCode === 69 && event.ctrlKey) {
+        this.viewEditModeToggle();
+        event.preventDefault();
       }
     },
 
-    fullScreenToggle() {
+    fullScreenModeToggle() {
       const element = document.getElementById('view');
 
       if (element) {
@@ -198,7 +202,7 @@ export default {
       });
     },
 
-    toggleViewEditMode() {
+    viewEditModeToggle() {
       this.isEditModeEnable = !this.isEditModeEnable;
     },
 
