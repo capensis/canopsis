@@ -26,6 +26,7 @@
           :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)",
           )
     v-divider
+    v-alert(:value="errors.has('actions')", type="error") {{ $t('eventFilter.actionsRequired') }}
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
@@ -39,6 +40,9 @@ import modalInnerMixin from '@/mixins/modal/modal-inner';
 
 export default {
   name: MODALS.createEventFilterRule,
+  $_veeValidate: {
+    validator: 'new',
+  },
   mixins: [modalInnerMixin],
   data() {
     return {
@@ -80,10 +84,16 @@ export default {
       this.enrichmentOptions = {
         actions,
         externalData,
-        onSuccess,
-        onFailure,
+        onSuccess: onSuccess || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
+        onFailure: onFailure || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
       };
     }
+  },
+  created() {
+    this.$validator.attach('actions', 'required', {
+      getter: () => this.enrichmentOptions.actions,
+      context: () => this,
+    });
   },
   methods: {
     editPattern() {
@@ -113,20 +123,23 @@ export default {
         },
       });
     },
-    submit() {
+    async submit() {
       if (this.form.type === 'enrichment') {
-        this.config.action({
-          ...this.form,
-          actions: this.enrichmentOptions.actions,
-          external_data: this.enrichmentOptions.externalData,
-          on_success: this.enrichmentOptions.onSuccess,
-          on_failure: this.enrichmentOptions.onFailure,
-        });
+        const isFormValid = await this.$validator.validate('actions');
+        if (isFormValid) {
+          this.config.action({
+            ...this.form,
+            actions: this.enrichmentOptions.actions,
+            external_data: this.enrichmentOptions.externalData,
+            on_success: this.enrichmentOptions.onSuccess,
+            on_failure: this.enrichmentOptions.onFailure,
+          });
+          this.hideModal();
+        }
       } else {
         this.config.action({ ...this.form });
+        this.hideModal();
       }
-
-      this.hideModal();
     },
   },
 };

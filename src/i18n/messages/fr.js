@@ -749,6 +749,7 @@ export default {
     priority: 'Priorité',
     enabled: 'Activé',
     actions: 'Actions',
+    actionsRequired: 'Veuillez ajouter au moins une action',
   },
   layout: {
     sideBar: {
