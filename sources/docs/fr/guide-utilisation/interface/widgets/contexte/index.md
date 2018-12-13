@@ -57,7 +57,7 @@ Au survol de ce bouton, un menu s'ouvre avec deux boutons disponibles.
 
 ![Icônes Création Entité / Observateur](./img/add-entity-button-hover.png "Icônes Création Entité / Observateur").
 
-La première icône à gauche permet de créer une entité, le deuxième permet de créer un observateur.
+La première icône à gauche permet de créer une entité, la deuxième permet de créer un observateur.
 
 #### Création d'entité
 
@@ -71,7 +71,7 @@ Le 1er onglet, 'Formulaire', vous demande de renseigner les informations princip
 - Description
 - Activé(e) : Définit si l'entité est activée, ou non.
 - Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
-- Impacts et Dépendances : Permet de définir les entités que l'entités que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces liste, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
+- Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces liste, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
 
 Le 2ème onglet permet de gérer les infos contenues dans le champ 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
 Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
