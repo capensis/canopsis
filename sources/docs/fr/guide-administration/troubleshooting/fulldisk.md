@@ -39,7 +39,7 @@ Il est possible que RabbitMQ ait empiré la situation en flushant continuellemen
 Les services ont besoin d'être arrêtés afin d'arrêter les écritures en cours et de pouvoir libérer de l'espace pour Mongo.
 
 ```
-# systemctl stop influxdb.service
+# systemctl stop influxdb.service
 # systemctl stop rabbitmq-server.service
 ```
 

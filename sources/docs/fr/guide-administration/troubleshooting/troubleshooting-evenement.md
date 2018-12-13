@@ -35,4 +35,4 @@ Cf: [Vocabulaire](../../guide-utilisation/vocabulaire/index.md)
 
 Ces évènements, formatés en JSON, doivent être composés de plusieurs champs, certains étant obligatoires, d'autres étant optionnels.
 
-Une liste détaillée de ces champs est [disponible ici](../../guide-developpement/struct-event.md).  
+Une liste détaillée de ces champs est [disponible ici](../../guide-developpement/struct-event.md).

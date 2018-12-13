@@ -26,6 +26,8 @@ VERSION_FILE = "VERSION.txt"
 
 CANOPSIS_VERSION_ARG = '--canopsis-version'
 
+__VERSION_PATTERN = re.compile(r'(\d+\.\d+\.\d+)')
+
 
 def get_version_file_path(root_path):
     """
@@ -35,9 +37,6 @@ def get_version_file_path(root_path):
     :return: `str` version file path.
     """
     return os.path.join(root_path, VERSION_FILE)
-
-
-__VERSION_PATTERN = re.compile(r'(\d+\.\d+\.\d+)')
 
 
 def parse_version(version_string):
@@ -51,6 +50,8 @@ def parse_version(version_string):
     matched = __VERSION_PATTERN.findall(version_string)
     if matched:
         return matched[0]
+    else:
+        raise ValueError("Can not parse the version inside VERSION.txt.")
 
 
 def read_version_file(version_file_path):
@@ -60,8 +61,5 @@ def read_version_file(version_file_path):
     :param version_file_path: `str` version file path.
     :return: `str` Canopsis version or None if failed.
     """
-    try:
-        with open(version_file_path, 'r') as fp:
-            return parse_version(fp.read())
-    except (OSError, IOError):
-        pass
+    with open(version_file_path, 'r') as fp:
+        return parse_version(fp.read())

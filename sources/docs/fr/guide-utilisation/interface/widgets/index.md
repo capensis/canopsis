@@ -18,7 +18,7 @@ Plusieurs types de widgets sont disponibles dans Canopsis :
 
 Le widget **Bac à alarmes** permet de visualiser les alarmes présentes dans le SI.
 
-Il permet de visualiser les informations de l'alarme (composant concerné, status de l'alarme, etc), ainsi que d'effectuer des actions sur ces alarmes.
+Il permet de visualiser les informations de l'alarme (composant concerné, statut de l'alarme, etc), ainsi que d'effectuer des actions sur ces alarmes.
 
 Pour plus d'information sur ce qu'est une alarme, ainsi que sur les champs présents, voir la [description d'une alarme](./bac-a-alarmes/description-alarme.md).
 
@@ -39,7 +39,7 @@ Pour les informations concernant le widget en lui-même, voir la partie sur le [
 
 Le widget **Météo de services** permet de visualiser rapidement l'état des services.
 
-Celui-ci présente sous forme de grille un ensemble de services, avec un jeux de couleurs et d'icones permettant de rapidement visualiser une éventuelle source de problème.
+Celui-ci présente sous forme de grille un ensemble de services, avec un jeu de couleurs et d'icones permettant de rapidement visualiser une éventuelle source de problème.
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services/index.md)
 
@@ -51,7 +51,7 @@ Pour les informations concernant le widget en lui-même, voir la partie sur le [
 
 ### Compteur de statistique
 
-Le widget **Compteur de statistique** permet de visualiser la valeur d'une statistique, avec un jeux de couleur permettant de caractérisé la criticité de chacune des valeurs.
+Le widget **Compteur de statistique** permet de visualiser la valeur d'une statistique, avec un jeu de couleur permettant de caractérisé la criticité de chacune des valeurs.
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./stats/index.md)
 

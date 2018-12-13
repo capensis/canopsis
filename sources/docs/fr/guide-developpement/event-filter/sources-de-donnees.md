@@ -41,7 +41,7 @@ func (f dummyDataSourceFactory) Create(parameters map[string]interface{}) (event
 type dummyDataSourceGetter struct {}
 
 // Get est appelé à l'exécution de la règle contenant la source de donnée, et
-// renvoie les données correspondant à l'événement, qui est disponible dans
+// renvoie les données correspondant à l'évènement, qui est disponible dans
 // parameters.Event.
 func (g dummyDataSourceGetter) Get(parameters eventfilter.DataSourceGetterParameters) (interface{}, error) {
 	result := map[string]interface{}{

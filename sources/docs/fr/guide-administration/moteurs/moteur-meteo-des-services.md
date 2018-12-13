@@ -27,7 +27,7 @@ Nous avons d’abord donné un titre météo qui est affiché directement dans l
 Le sélecteur d'évènements du formulaire permet de sélectionner les évènements à surveiller dans la base de données. Ces évènements peuvent être :
 
 *  des évènements normaux ;
-*  des événements de sélection ;
+*  des évènements de sélection ;
 *  ou des évènements de topologie.
 
 Le statuts de ces évènements sera affiché dans le rendu. Le rendu affiche tous les évènements sélectionnés avec des couleurs spécifiques. Le jeu de couleurs dépend de l'état de l'évènement, comme suit :
@@ -46,7 +46,7 @@ Dans ce panneau de configuration, « *is refreshable widget* » permet de choi
 
 Lorsque cette case n'est pas cochée, le widget est actualisé uniquement lors du rendu (lorsque l'utilisateur demande l'affichage de la vue contenant la météo).
 
-L'option « *show output* » permet de choisir si la sortie d'événement sera affichée lorsque la météo affiche un seul événement.
+L'option « *show output* » permet de choisir si la sortie d'évènement sera affichée lorsque la météo affiche un seul évènement.
 
 ## Configuration de l'évènement au clic
 

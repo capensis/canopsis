@@ -1,14 +1,14 @@
-# Présentation
+# Guide d'administration Canopsis
 
-Ce guide vous accompagne dans vos tâches d'administration de Canopsis. Vous y trouverez plusieurs documents portant sur :
+Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
-**Sommaire :**
+## Sommaire
 
-- [Architecture Interne](architecture-interne)  
-- [Installation](installation)  
-- [Mise à jour](mise-a-jour)  
-- [Quelques Interconnexions](exemples-interconnexions)  
-- [Gestion des services](gestion-services)  
-- [Moteurs](moteurs)  
-- [Administration avancée](administration-avancee)  
-- [Troubleshooting](troubleshooting)  
+*  [Architecture interne](architecture-interne/index.md)
+*  [Installation](installation/index.md)
+*  [Mise à jour](mise-a-jour/index.md)
+*  [Quelques interconnexions](exemples-interconnexions/index.md)
+*  [Gestion des services](gestion-services/index.md)
+*  [Moteurs](moteurs/index.md)
+*  [Administration avancée](administration-avancee/index.md)
+*  [Troubleshooting](troubleshooting/index.md)
