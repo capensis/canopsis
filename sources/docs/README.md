@@ -8,6 +8,7 @@ Rendez vous sur [**doc.canopsis.net**](https://doc.canopsis.net) pour parcourir 
 
 La documentation est maintenue selon ces principes :
 
+*  Utilisation de Markdown et de mkdocs.
 *  Pour l'instant, la rédaction de la documentation se fait uniquement en français (quelques exceptions sont possibles uniquement pour le Guide de développement).
 *  Ne décrire que l'UIv3 et les moteurs Go par défaut.
 *  La documentation est unifiée, que le composant soit open-source ou non. Ajouter un bandeau lorsque la fonctionnalité décrite n'est pas disponible dans l'édition open-source.
@@ -15,30 +16,29 @@ La documentation est maintenue selon ces principes :
 *  Chaque nouvelle branche (3.2.0, 3.3.0…) occasionne obligatoirement l'écriture d'un Guide de migration, validé par l'équipe d'intégration. (Si une nouvelle branche ne nécessite pas d'étape de migration, le préciser.)
 *  Une fonctionnalité n'existe pas tant qu'elle n'est pas documentée.
 
-## Licence
-
-La documentation est sous licence CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/).
-
-
 ## Visualisation de la documentation
 
-C'est l'outil **mkdocs** (https://www.mkdocs.org/) qui sert la documentation.  
-Le thème **material** (https://squidfunk.github.io/mkdocs-material/) est utilisé pour le rendu.  
+### Installation des pré-requis
 
-### Installation
+On a besoin d'installer une version récente de mkdocs (https://www.mkdocs.org/) avec le thème `material` (https://squidfunk.github.io/mkdocs-material/) associé :
 
-````sh
+```sh
 $ pip install mkdocs
 $ pip install mkdocs-material
-````
+```
 
+Les réglages de mkdocs sont dans le fichier `mkdocs.yml` à la racine du dépôt.
 
 ### Visualisation
 
-A la racine du dépôt :
+À la racine du dépôt :
 
-````sh
+```sh
 $ mkdocs serve 
-````
+```
 
-Ensuite, vous pouvez faire pointer votre navigateur sur l'URL donnée
+Ensuite, vous pouvez faire pointer votre navigateur sur l'URL donnée.
+
+## Licence
+
+La documentation est sous licence CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/).

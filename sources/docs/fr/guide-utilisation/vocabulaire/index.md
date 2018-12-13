@@ -1,21 +1,21 @@
 ## Vocabulaire
 
-**Evénement :**
+**Évènement :**
 
-Un *évènement* est un message arrivant dans Canopsis. Il est formatté en json et provient généralement d'une source externe ou d'un connecteur (email, snmp, etc.).
-Lorsqu'un événement arrive il est envoyé vers le bac à événement puis traité, il devient donc un alarme.
+Un *évènement* est un message arrivant dans Canopsis. Il est formatté en JSON et provient généralement d'une source externe ou d'un connecteur (email, SNMP, etc.).
+Lorsqu'un évènement arrive il est envoyé vers le bac à évènements puis traité, il devient donc un alarme.
 
 **Alarme :**
 
 Une *alarme* est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
 
-**Etat :**
+**État :**
 
 **Statut :**
 
 **Bagot :**
 
-Un événement est considéré *Bagot* s'il est passé d'un état d'alerte à un état stable un nombre spécifique de fois sur une période donnée.
+Un évènement est considéré *Bagot* s'il est passé d'un état d'alerte à un état stable un nombre spécifique de fois sur une période donnée.
 
 **Météo :**
 

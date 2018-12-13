@@ -13,13 +13,13 @@ GET / api / v2 / context /? limit = 100 & start = 1 & sort = ASC | DESC
 
 ### params:
 
-filter (optionnel): une requête mongoDB envoyée en json codé en url
+filter (optionnel): une requête MongoDB envoyée en JSON codé en URL
 
 start   (optionnel): utilisé
 
 limite   (facultatif): nombre maximal d'éléments à renvoyer
 
-sort    (facultatif): ordre de tri ( ASC = croissant, DESC = décroissant). Le tri par filtre d'échantillon peut être:
+sort    (facultatif): ordre de tri ( ASC = croissant, DESC = décroissant). Le tri par filtre d'échantillon peut être :
 
 {"type":"connector"}
 

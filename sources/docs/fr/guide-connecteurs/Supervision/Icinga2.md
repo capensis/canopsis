@@ -2,7 +2,7 @@
 
 ## Objectif
 
-Ce connecteur récupère les événements de Livestatus (pour obtenir les résultats des vérifications de Nagios, Icinga2, Centreon ...)
+Ce connecteur récupère les évènements de Livestatus (pour obtenir les résultats des vérifications de Nagios, Icinga2, Centreon ...)
 
 ## Structure
 
@@ -49,7 +49,7 @@ Ce fichier contient le connecteur de classe. Dans cette classe, il existe quelqu
 
 * **Lance** Fonction qui initie le fonctionnement du connecteur (Socket, One Exec, Daemon).
 
-* **Processing** convertit les données d'entrée en données Canopsis mais publie également un événement.
+* **Processing** convertit les données d'entrée en données Canopsis mais publie également un évènement.
 
 ## Configuration 
 La configuration de ce connecteur ce fait dans `./etc/config.json`
@@ -57,7 +57,7 @@ La configuration de ce connecteur ce fait dans `./etc/config.json`
 * `wait_loop` :  le temps d'attente pour fermer la connexion lors de la demande de livestatus.
 
 ## Attribu : 
-* `state_changed` : est défini lorsque `state` est différent de `last_state` et peut être utiliser pour limiter l'utilisation de la bande passante lorsqu'il utilisé pour envoyer un événement via Canopsis2Canopsis (CAT).
+* `state_changed` : est défini lorsque `state` est différent de `last_state` et peut être utiliser pour limiter l'utilisation de la bande passante lorsqu'il utilisé pour envoyer un évènement via Canopsis2Canopsis (CAT).
 
 # Installation
 
