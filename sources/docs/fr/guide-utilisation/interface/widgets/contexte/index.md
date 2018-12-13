@@ -48,6 +48,18 @@ Pour sélectionner un filtre, il suffit de cliquer sur le champ 'Sélectionner u
 Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
 Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au bout du champ de sélection de filtre. L'explorateur de contexte se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
 
+#### Mix filters
+
+L'option "Mix filters", présente à gauche du sélecteur de filtre permet de cumuler plusieurs filtres.
+
+Pour activer cette option, cliquez sur le bouton ![Mix filters](../../filtres/img/mix-filters.png "Mix filters").
+Une fois l'options activée, un sélecteur apparaît à droite du bouton d'activation ![Mix filters operator](../../filtres/img/mix-filters-operator.png "Mix filters operator"). Ce sélecteur permet de choisir l'opérateur utilisé pour réunir les filtres.
+
+- "AND": Les critères présents dans tout les filtres doivent êtres vérifiés
+- "OR": Les critères présents dans un ou plusieurs des filtres doivent êtres vérifiés.
+
+Une fois l'opérateur sélectionné, il ne vous reste plus qu'à sélectionner les filtres à appliquer dans le menu déroulant de sélection de filtres.
+
 ### Création d'entités et d'observateurs
 
 Depuis l'explorateur de contexte, il vous est possible de créer des entités et des observateurs.
@@ -185,6 +197,8 @@ Un champ de sélection permet d'abord de choisir un filtre à appliquer à l'exp
 
 Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
 Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.
+
+L'option "Mix filters" est également disponible depuis ce menu. Pour plus de détails concernant cette option, voir  [Mix filters](#mix-filters).
 
 #### Types d'entités
 

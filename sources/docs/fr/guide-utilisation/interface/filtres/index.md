@@ -90,9 +90,3 @@ Le bouton "Parse" va vous servir à vérifier l'exactitude de votre JSON, si cel
 Une fois votre Filtre réalisé, il apparaîtra dans le menu déroulant "select a filter".
 
 ![select_filter](img/select_filter.png)
-
-## Autre filtre
-
-Si vous souhaitez limiter votre vue dans la durée, il vous suffit de cliquer sur l'icone en forme d'horloge à côté de "select a filter", une fenêtre s'ouvrira et vous pourrez alors choisir votre intervalle.
-
-![reporting](img/reporting.gif)
