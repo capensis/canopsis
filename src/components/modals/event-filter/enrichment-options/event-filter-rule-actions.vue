@@ -31,6 +31,8 @@
           v-list-group.grey.white--text(v-for="(action, index) in actions", :key="action.name")
             v-list-tile(slot="activator")
               v-list-tile-title {{index + 1}} - {{ action.type }} - {{ action.name || action.from }}
+              v-btn(@click.stop="deleteAction(index)", icon)
+                v-icon delete
             v-list-tile
               v-layout(column)
                 div(v-if="action.name") {{ $t('common.name') }}: {{ action.name }}
@@ -47,6 +49,7 @@
 <script>
 import Draggable from 'vuedraggable';
 import cloneDeep from 'lodash/cloneDeep';
+import pullAt from 'lodash/pullAt';
 
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
@@ -82,6 +85,7 @@ export default {
     isRequired(actionType, option) {
       return actionType.options[option.value].required;
     },
+
     addAction() {
       const action = {
         type: this.actionForm.type.value,
@@ -91,6 +95,13 @@ export default {
 
       this.actions.push(action);
     },
+
+    deleteAction(index) {
+      const newActions = [...this.actions];
+      pullAt(newActions, [index]);
+      this.actions = [...newActions];
+    },
+
     submit() {
       this.config.action(this.actions);
       this.hideModal();
