@@ -425,3 +425,5 @@ export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   moreInfo: 'more-info',
   alarmList: 'alarm-list',
 };
+
+export const EVENT_DEFAULT_ORIGIN = 'canopsis';

@@ -13,13 +13,17 @@
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-default-sort-column(v-model="settings.widget.parameters.sort")
+          field-default-sort-column(
+          v-model="settings.widget.parameters.sort",
+          :columns="settings.widget.parameters.widgetColumns"
+          )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
           v-divider
           field-filters(
           v-model="settings.widget_preferences.mainFilter",
-          :filters.sync="settings.widget_preferences.viewFilters"
+          :filters.sync="settings.widget_preferences.viewFilters",
+          :condition.sync="settings.widget_preferences.mainFilterCondition"
           )
           v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
@@ -31,7 +35,7 @@
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS, FILTER_DEFAULT_VALUES } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -77,11 +81,11 @@ export default {
   },
   created() {
     const { widget_preferences: widgetPreference } = this.userPreference;
-
     this.settings.widget_preferences = {
       selectedTypes: get(widgetPreference, 'selectedTypes', []),
       viewFilters: get(widgetPreference, 'viewFilters', []),
       mainFilter: get(widgetPreference, 'mainFilter', {}),
+      mainFilterCondition: get(widgetPreference, 'mainFilterCondition', FILTER_DEFAULT_VALUES.condition),
     };
   },
   methods: {

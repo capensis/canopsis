@@ -5,7 +5,7 @@
         v-flex(xs12)
           v-layout.notDisplayedFullScreen(align-center)
             h2.ml-1 {{ row.title }}
-            v-tooltip.ml-2(left, v-if="isEditModeEnable")
+            v-tooltip.ml-2(v-if="isEditModeEnable", left)
               v-btn.ma-0(slot="activator", icon, @click.stop="deleteRow(rowKey)")
                 v-icon.error--text delete
               span {{ $t('common.delete') }}
