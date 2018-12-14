@@ -60,8 +60,6 @@ export default {
       ...convertWidgetToQuery(this.widget),
       ...convertUserPreferenceToQuery(this.userPreference),
     };
-
-    await this.fetchList(); // TODO: remove it when we will finish settings integration for weather
   },
   methods: {
     getQuery() {

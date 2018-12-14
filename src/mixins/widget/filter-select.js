@@ -5,10 +5,7 @@ import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter/index';
 
-import widgetQueryMixin from '../widget/query';
-
 export default {
-  mixins: [widgetQueryMixin],
   computed: {
     mainFilterCondition() {
       return this.userPreference.widget_preferences.mainFilterCondition;

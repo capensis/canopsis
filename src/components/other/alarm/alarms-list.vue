@@ -86,9 +86,9 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import filterSelectMixin from '@/mixins/filter/select';
 
 /**
  * Alarm-list component
@@ -115,9 +115,9 @@ export default {
     modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    filterSelectMixin,
   ],
   props: {
     widget: {
