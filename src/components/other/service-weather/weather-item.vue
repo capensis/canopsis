@@ -30,9 +30,10 @@ import compile from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
 
 import modalMixin from '@/mixins/modal/modal';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 export default {
-  mixins: [modalMixin],
+  mixins: [modalMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -123,11 +124,18 @@ export default {
       });
     },
 
-    showAlarmListModal() {
+    async showAlarmListModal() {
+      const entities = await this.fetchWatcherEntitiesListWithoutStore({ watcherId: this.watcher.entity_id });
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const watcherFilter = {
         title: this.watcher.display_name,
-        filter: this.watcher.mfilter,
+        filter: {
+          $and: [
+            {
+              entity: { $in: entities.map(entity => entity.entity_id) },
+            },
+          ],
+        },
       };
 
       const widgetParameters = {

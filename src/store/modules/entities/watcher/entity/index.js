@@ -4,6 +4,7 @@ import get from 'lodash/get';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { watcherEntitySchema } from '@/store/schemas';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -62,6 +63,9 @@ export default {
 
         commit(types.FETCH_LIST_FAILED, { watcherId });
       }
+    },
+    fetchListWithoutStore(context, { watcherId, params }) {
+      return request.get(`${API_ROUTES.weatherWatcher}/${watcherId}`, { params });
     },
   },
 };
