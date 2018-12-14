@@ -63,6 +63,11 @@ export default {
 
     await this.fetchList(); // TODO: remove it when we will finish settings integration for weather
   },
+  destroyed() {
+    this.removeQuery({
+      id: this.widget._id,
+    });
+  },
   methods: {
     getQuery() {
       const query = omit(this.query, [

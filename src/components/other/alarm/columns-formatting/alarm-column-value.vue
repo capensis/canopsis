@@ -12,10 +12,12 @@
 <script>
 import get from 'lodash/get';
 import Handlebars from 'handlebars';
+
+import popupMixin from '@/mixins/popup';
+
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
 import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
-import popupMixin from '@/mixins/popup';
 
 /**
  * Component to format alarms list columns
@@ -60,9 +62,6 @@ export default {
       const context = { alarm: this.alarm.v };
 
       return template(context);
-    },
-    columnName() {
-      return this.column.value.split('.')[1];
     },
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {

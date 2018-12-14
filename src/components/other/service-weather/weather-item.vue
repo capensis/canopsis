@@ -1,21 +1,39 @@
 <template lang="pug">
-v-card.white--text(:class="getItemClasses", tile, :style="{ height: itemHeight + 'em'}")
-  div(:class="{ blinking: isBlinking }", )
-    v-layout(justify-start)
-      v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
-      div.watcherName.pt-3(v-html="compiledTemplate")
-      v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
-        v-icon pause
+  v-card.white--text.cursor-pointer(
+  :class="getItemClasses",
+  :style="{ height: itemHeight + 'em'}",
+  tile,
+  @click.native="showAdditionalInfoModal"
+  )
+    div(:class="{ blinking: isBlinking }", )
+      v-layout(justify-start)
+        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
+        div.watcherName.pt-3(v-html="compiledTemplate")
+        v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
+          v-icon pause
 </template>
 
 <script>
 import find from 'lodash/find';
-import modalMixin from '@/mixins/modal/modal';
+
+import {
+  MODALS,
+  WIDGET_TYPES,
+  WATCHER_STATES_COLORS,
+  WATCHER_PBEHAVIOR_COLOR,
+  PBEHAVIOR_TYPES,
+  WEATHER_ICONS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+} from '@/constants';
+
 import compile from '@/helpers/handlebars';
-import { WATCHER_STATES_COLORS, WATCHER_PBEHAVIOR_COLOR, PBEHAVIOR_TYPES, WEATHER_ICONS } from '@/constants';
+import { generateWidgetByType } from '@/helpers/entities';
+
+import modalMixin from '@/mixins/modal/modal';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 export default {
-  mixins: [modalMixin],
+  mixins: [modalMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -87,13 +105,62 @@ export default {
     },
   },
   methods: {
-    showWatcherModal() {
+    showAdditionalInfoModal() {
+      if (this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList) {
+        this.showAlarmListModal();
+      } else {
+        this.showMainInfoModal();
+      }
+    },
+
+    showMainInfoModal() {
       this.showModal({
-        name: this.$constants.MODALS.watcher,
+        name: MODALS.watcher,
         config: {
           watcherId: this.watcher.entity_id,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
+        },
+      });
+    },
+
+    async showAlarmListModal() {
+      const entities = await this.fetchWatcherEntitiesListWithoutStore({ watcherId: this.watcher.entity_id });
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const watcherFilter = {
+        title: this.watcher.display_name,
+        filter: {
+          $and: [
+            {
+              entity: { $in: entities.map(entity => entity.entity_id) },
+            },
+          ],
+        },
+      };
+
+      const widgetParameters = {
+        widgetColumns: widget.parameters.widgetColumns.map(column => ({
+          label: column.label,
+          value: column.value.replace('alarm.', 'v.'),
+        })),
+        mainFilter: watcherFilter,
+        viewFilters: [watcherFilter],
+      };
+
+      this.showModal({
+        name: MODALS.alarmsList,
+        config: {
+          query: {
+            filter: watcherFilter.filter,
+          },
+          widget: {
+            ...widget,
+
+            parameters: {
+              ...widget.parameters,
+              ...widgetParameters,
+            },
+          },
         },
       });
     },
@@ -124,5 +191,9 @@ export default {
 
   .blinking {
     animation: blink 2s linear infinite;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
   }
 </style>

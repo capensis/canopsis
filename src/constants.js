@@ -34,7 +34,7 @@ export const MODALS = {
   createWidget: 'create-widget',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
-  calendarAlarmsList: 'calendar-alarms-list',
+  alarmsList: 'alarms-list',
   addStat: 'add-stat',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
@@ -436,6 +436,11 @@ export const USERS_RIGHTS = {
 export const GROUPS_NAVIGATION_TYPES = {
   sideBar: 'side-bar',
   topBar: 'top-bar',
+};
+
+export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
+  moreInfo: 'more-info',
+  alarmList: 'alarm-list',
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';

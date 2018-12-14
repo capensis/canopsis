@@ -145,9 +145,6 @@ export default {
       },
     },
   },
-  weather: {
-    moreInfos: 'More infos',
-  },
   pbehaviors: {
     connector: 'Connector',
     connectorName: 'Connector name',
@@ -260,6 +257,13 @@ export default {
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
+    },
+    serviceWeatherModalTypes: {
+      title: 'Type of the weather modal window',
+      fields: {
+        moreInfo: 'More info',
+        alarmList: 'Alarm list',
+      },
     },
   },
   modals: {
@@ -501,8 +505,8 @@ export default {
         isNotEmpty: 'The group is not empty',
       },
     },
-    calendarAlarmsList: {
-      title: 'Calendar alarms list',
+    alarmsList: {
+      title: 'Alarms list',
     },
     createUser: {
       title: 'Create user',
