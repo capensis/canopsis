@@ -86,6 +86,7 @@ export default {
         [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
         [MODALS.createWidget]: { maxWidth: 500, lazy: true },
         [MODALS.alarmsList]: { fullscreen: true, lazy: true },
+        [MODALS.createFilter]: { maxWidth: 920, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

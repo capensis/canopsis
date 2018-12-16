@@ -3,7 +3,7 @@
     v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
       v-tab(:disabled="isRequestStringChanged") {{ $t('filterEditor.tabs.visualEditor') }}
       v-tab-item
-        v-container
+        v-container.pa-1
           filter-group(
           :group="filter",
           :possibleFields="possibleFields",
