@@ -1,5 +1,5 @@
 <template lang="pug">
-  div#view
+  div.view(:id="`view-tab-${tab._id}`")
     v-layout(v-for="row in rows", :key="row._id", row, wrap)
       v-flex(xs12)
         v-layout.hide-on-full-screen(align-center)

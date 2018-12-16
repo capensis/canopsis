@@ -14,8 +14,8 @@
         v-icon(small) edit
       v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
         v-icon(small) delete
-    v-tabs-items(ref="tabItems")
-      v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`", :value="tab._id", lazy)
+    v-tabs-items(ref="tabItems", active-class="active-view-tab")
+      v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`", lazy)
         slot(
         :tab="tab",
         :isEditingMode="isEditingMode",

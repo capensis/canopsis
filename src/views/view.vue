@@ -117,14 +117,16 @@ export default {
     },
 
     toggleFullScreen() {
-      const element = document.getElementById('view');
+      if (this.activeTab) {
+        const element = document.getElementById(`view-tab-${this.activeTab._id}`);
 
-      if (element) {
-        this.$fullscreen.toggle(element, {
-          fullscreenClass: 'full-screen',
-          background: 'white',
-          callback: value => this.isFullScreenMode = value,
-        });
+        if (element) {
+          this.$fullscreen.toggle(element, {
+            fullscreenClass: 'full-screen',
+            background: 'white',
+            callback: value => this.isFullScreenMode = value,
+          });
+        }
       }
     },
 
@@ -158,10 +160,11 @@ export default {
             validationRules: 'required',
           },
           action: (title) => {
+            const oldTabs = this.view.tabs || [];
             const newTab = { ...generateViewTab(), title };
             const view = {
               ...this.view,
-              tabs: [...this.view.tabs, newTab],
+              tabs: [...oldTabs, newTab],
             };
 
             return this.updateView({ id: this.id, data: view });
