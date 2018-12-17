@@ -2,7 +2,7 @@
    v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Event filter - External datas
+        span.headline {{ $t('modals.eventFilterRule.externalData') }}
     v-card-text
       v-textarea(:value="externalDataValue", @input="checkValidity")
     v-divider

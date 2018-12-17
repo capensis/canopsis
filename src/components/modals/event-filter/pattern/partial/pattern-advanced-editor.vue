@@ -2,10 +2,10 @@
   div
     v-textarea(:value="patternValue", @input="checkValidity", rows="15")
     v-btn(
-    :color="error ? 'error' : 'primary'",
-    :disabled="error",
+    :color="isInvalidJSON ? 'error' : 'primary'",
+    :disabled="isInvalidJSON",
     @click="save",
-    ) {{ error ? $t('errors.JSONNotValid') : $t('common.save') }}
+    ) {{ isInvalidJSON ? $t('errors.JSONNotValid') : $t('common.save') }}
 </template>
 
 <script>
@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       newVal: {},
-      error: false,
+      isInvalidJSON: false,
       valueChanged: false,
     };
   },
@@ -39,9 +39,9 @@ export default {
 
       try {
         this.newVal = JSON.parse(value);
-        this.error = false;
+        this.isInvalidJSON = false;
       } catch (err) {
-        this.error = true;
+        this.isInvalidJSON = true;
       }
     },
     save() {

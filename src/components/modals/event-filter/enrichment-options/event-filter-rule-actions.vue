@@ -12,7 +12,7 @@
           v-model="actionForm.type",
           return-object,
           item-text="value",
-          label="Type",
+          :label="$t('common.type')",
           )
           v-text-field(
           v-for="option in actionForm.type.options",
@@ -27,7 +27,7 @@
     v-container
       h2 {{ $t('modals.eventFilterRule.actions') }}
       v-list
-        draggable(v-model="actions", @start="drag=true", @end="drag=false")
+        draggable(v-model="actions")
           v-list-group.grey.white--text(v-for="(action, index) in actions", :key="action.name")
             v-list-tile(slot="activator")
               v-list-tile-title {{index + 1}} - {{ action.type }} - {{ action.name || action.from }}
@@ -49,7 +49,6 @@
 <script>
 import Draggable from 'vuedraggable';
 import cloneDeep from 'lodash/cloneDeep';
-import pullAt from 'lodash/pullAt';
 
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
@@ -97,9 +96,7 @@ export default {
     },
 
     deleteAction(index) {
-      const newActions = [...this.actions];
-      pullAt(newActions, [index]);
-      this.actions = [...newActions];
+      this.$delete(this.actions, index);
     },
 
     submit() {
