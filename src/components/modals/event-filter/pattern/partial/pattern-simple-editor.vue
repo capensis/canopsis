@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+
 export default {
   model: {
     prop: 'pattern',
@@ -59,23 +61,24 @@ export default {
     },
 
     editAdvancedRuleOperator(operator, rule, ruleKey, subRuleKey) {
-      const newPattern = [...this.convertedPattern];
+      const newPattern = cloneDeep(this.convertedPattern);
       newPattern[ruleKey].value[subRuleKey] = { ...rule, key: operator };
       this.convertedPattern = newPattern;
     },
 
     editAdvancedRuleValue(value, rule, ruleKey, subRuleKey) {
-      const newPattern = [...this.convertedPattern];
+      const newPattern = cloneDeep(this.convertedPattern);
       newPattern[ruleKey].value[subRuleKey] = { ...rule, value };
       this.convertedPattern = newPattern;
     },
 
     convertPatternToForm() {
-      this.convertedPattern = Object.keys(this.pattern).reduce((acc, key) => {
-        if (this.isSimpleRule(this.pattern[key])) {
-          acc.push({ key, value: this.pattern[key] });
+      const pattern = cloneDeep(this.pattern);
+      this.convertedPattern = Object.keys(pattern).reduce((acc, key) => {
+        if (this.isSimpleRule(pattern[key])) {
+          acc.push({ key, value: pattern[key] });
         } else {
-          acc.push({ key, value: this.convertAdvancedRuleToForm(this.pattern[key]) });
+          acc.push({ key, value: this.convertAdvancedRuleToForm(pattern[key]) });
         }
         return acc;
       }, []);
