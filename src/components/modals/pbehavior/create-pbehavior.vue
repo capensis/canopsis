@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
@@ -77,23 +78,18 @@ export default {
   components: { DateTimePicker, RRuleForm },
   mixins: [modalInnerItemsMixin, authMixin],
   data() {
-    const start = new Date();
-    const stop = new Date(start.getTime());
-    const reasons = ['Problème Habilitation', 'Problème Robot', 'Problème Scénario', 'Autre'];
-    const types = ['Pause', 'Maintenance', 'Hors plage horaire de surveillance'];
-
     return {
       rRuleObject: null,
       form: {
         name: '',
-        tstart: start,
-        tstop: stop,
+        tstart: new Date(),
+        tstop: new Date(),
         type_: '',
         reason: '',
       },
       selectItems: {
-        reasons,
-        types,
+        reasons: ['Problème Habilitation', 'Problème Robot', 'Problème Scénario', 'Autre'],
+        types: ['Pause', 'Maintenance', 'Hors plage horaire de surveillance'],
       },
       serverError: null,
     };
@@ -117,8 +113,8 @@ export default {
           filter: {
             _id: { $in: this.items.map(v => v._id) },
           },
-          tstart: this.form.tstart.getTime(),
-          tstop: this.form.tstop.getTime(),
+          tstart: moment(this.form.tstart).unix(),
+          tstop: moment(this.form.tstop).unix(),
         };
 
         if (this.rRuleObject) {
