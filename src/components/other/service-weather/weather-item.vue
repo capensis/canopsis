@@ -125,17 +125,17 @@ export default {
     },
 
     async showAlarmListModal() {
-      const entities = await this.fetchWatcherEntitiesListWithoutStore({ watcherId: this.watcher.entity_id });
+      const initialFilter = JSON.parse(this.watcher.mfilter);
+      const newFilter = Object.keys(initialFilter).reduce((acc, key) => {
+        const newKey = `entity.${key}`;
+        acc[newKey] = initialFilter[key];
+        return acc;
+      }, {});
+
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const watcherFilter = {
         title: this.watcher.display_name,
-        filter: {
-          $and: [
-            {
-              entity: { $in: entities.map(entity => entity.entity_id) },
-            },
-          ],
-        },
+        filter: newFilter,
       };
 
       const widgetParameters = {
@@ -150,9 +150,6 @@ export default {
       this.showModal({
         name: MODALS.alarmsList,
         config: {
-          query: {
-            filter: watcherFilter.filter,
-          },
           widget: {
             ...widget,
 

@@ -260,6 +260,13 @@ export default {
     considerPbehaviors: {
       title: 'Prendre en compte les comportements périodiques ?',
     },
+    serviceWeatherModalTypes: {
+      title: 'Type de modal',
+      fields: {
+        moreInfo: 'Plus d\'infos',
+        alarmList: 'Bac à alarmes',
+      },
+    },
   },
   modals: {
     contextInfos: {

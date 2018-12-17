@@ -18,7 +18,6 @@ export default {
   methods: {
     ...mapActions({
       fetchWatcherEntitiesList: 'fetchList',
-      fetchWatcherEntitiesListWithoutStore: 'fetchListWithoutStore',
     }),
   },
 };
