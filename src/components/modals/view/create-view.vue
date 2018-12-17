@@ -73,11 +73,11 @@ import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
-import { generateView, generateRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
+import { generateView, generateViewRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
 import uuid from '@/helpers/uid';
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesRightMixin from '@/mixins/entities/right';
@@ -270,7 +270,7 @@ export default {
 
             if (this.config.isDuplicating) {
               data.rows = this.config.view.rows.map(row => ({
-                ...generateRow(),
+                ...generateViewRow(),
 
                 title: row.title,
                 widgets: row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) })),

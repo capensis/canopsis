@@ -7,6 +7,7 @@ export default {
     watcher: 'Watcher',
     widget: 'Widget',
     addWidget: 'Add widget',
+    addTab: 'Add tab',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
     name: 'Name',
@@ -149,9 +150,6 @@ export default {
       },
     },
   },
-  weather: {
-    moreInfos: 'More infos',
-  },
   pbehaviors: {
     connector: 'Connector',
     connectorName: 'Connector name',
@@ -176,7 +174,7 @@ export default {
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
-    defaultSortColumn: 'Default Sort Column',
+    defaultSortColumn: 'Default sort column',
     columnNames: 'Column names',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
@@ -264,6 +262,13 @@ export default {
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
+    },
+    serviceWeatherModalTypes: {
+      title: 'Type of the weather modal window',
+      fields: {
+        moreInfo: 'More info',
+        alarmList: 'Alarm list',
+      },
     },
   },
   modals: {
@@ -505,8 +510,8 @@ export default {
         isNotEmpty: 'The group is not empty',
       },
     },
-    calendarAlarmsList: {
-      title: 'Calendar alarms list',
+    alarmsList: {
+      title: 'Alarms list',
     },
     createUser: {
       title: 'Create user',
@@ -567,6 +572,17 @@ export default {
       externalData: 'External data',
       onSuccess: 'On success',
       onFailure: 'On failure',
+    },
+    viewTab: {
+      create: {
+        title: 'Create tab',
+      },
+      edit: {
+        title: 'Edit tab',
+      },
+      fields: {
+        title: 'Title',
+      },
     },
   },
   tables: {
@@ -737,6 +753,11 @@ export default {
     errors: {
       invalidJSON: 'Invalid JSON',
       required: 'You need to add at least one valid rule',
+    },
+  },
+  filterSelector: {
+    fields: {
+      mixFilters: 'Mix filters',
     },
   },
   validator: {

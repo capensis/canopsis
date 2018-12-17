@@ -36,7 +36,7 @@
 <script>
 import isEmpty from 'lodash/isEmpty';
 
-import { generateRow } from '@/helpers/entities';
+import { generateViewRow } from '@/helpers/entities';
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
 export default {
@@ -78,7 +78,7 @@ export default {
             let selectedRow = this.availableRows.find(row => row.title === value);
 
             if (!selectedRow) {
-              selectedRow = generateRow();
+              selectedRow = generateViewRow();
 
               selectedRow.title = value;
 

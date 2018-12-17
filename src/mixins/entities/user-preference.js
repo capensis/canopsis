@@ -21,5 +21,14 @@ export default {
       fetchUserPreferenceByWidgetId: 'fetchItemByWidgetId',
       createUserPreference: 'create',
     }),
+
+    updateWidgetPreferencesInUserPreference(widgetPreferences = {}) {
+      return this.createUserPreference({
+        userPreference: {
+          ...this.userPreference,
+          widget_preferences: widgetPreferences,
+        },
+      });
+    },
   },
 };

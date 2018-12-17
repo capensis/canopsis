@@ -9,7 +9,8 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  row: 'row',
+  viewRow: 'viewRow',
+  viewTab: 'viewTab',
   widget: 'widget',
   stat: 'stat',
   user: 'user',
@@ -35,12 +36,14 @@ export const MODALS = {
   createWidget: 'create-widget',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
-  calendarAlarmsList: 'calendar-alarms-list',
+  alarmsList: 'alarms-list',
   addStat: 'add-stat',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
+  textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
+  createViewTab: 'create-view-tab',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
@@ -270,6 +273,23 @@ export const FILTER_DEFAULT_VALUES = {
     condition: '$and',
     groups: {},
     rules: {},
+  },
+  preFilledRules: {
+    component: {
+      field: 'component',
+      operator: FILTER_OPERATORS.equal,
+      input: '...',
+    },
+    resource: {
+      field: 'resource',
+      operator: FILTER_OPERATORS.equal,
+      input: '...',
+    },
+    connector: {
+      field: 'connector',
+      operator: FILTER_OPERATORS.equal,
+      input: '...',
+    },
   },
 };
 
@@ -504,6 +524,11 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
       },
     },
   },
+};
+
+export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
+  moreInfo: 'more-info',
+  alarmList: 'alarm-list',
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';

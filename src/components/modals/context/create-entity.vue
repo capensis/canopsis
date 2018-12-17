@@ -25,9 +25,9 @@ import { MODALS } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 
-import modalInnerMixin from '@/mixins/modal/modal-inner';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import popupMixin from '@/mixins/popup';
+import modalInnerMixin from '@/mixins/modal/inner';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import CreateForm from './partial/create-entity-form.vue';
 import ManageInfos from './partial/manage-infos.vue';
@@ -45,9 +45,9 @@ export default {
     ManageInfos,
   },
   mixins: [
+    popupMixin,
     modalInnerMixin,
     entitiesContextEntityMixin,
-    popupMixin,
   ],
   data() {
     return {

@@ -9,6 +9,7 @@ import roleModule from './role';
 import userModule from './user';
 import rightModule from './right';
 import eventFilterRuleModule from './event-filter-rule';
+import versionModule from './version';
 
 export default {
   alarm: alarmModule,
@@ -22,4 +23,5 @@ export default {
   user: userModule,
   right: rightModule,
   eventFilterRule: eventFilterRuleModule,
+  version: versionModule,
 };

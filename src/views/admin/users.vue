@@ -42,7 +42,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 

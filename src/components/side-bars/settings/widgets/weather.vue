@@ -73,6 +73,8 @@
           :min="1",
           :max="20",
           )
+          v-divider
+          field-modal-type(v-model="settings.widget.parameters.modalType")
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -89,6 +91,7 @@ import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
+import FieldModalType from './fields/weather/modal-type.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
@@ -102,6 +105,7 @@ export default {
     FieldWeatherTemplate,
     FieldGridSize,
     FieldSlider,
+    FieldModalType,
   },
   mixins: [widgetSettingsMixin],
   data() {

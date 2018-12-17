@@ -5,6 +5,8 @@ import isEmpty from 'lodash/isEmpty';
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
+import { prepareMainFilterToQueryFilter } from './filter';
+
 /**
  * WIDGET CONVERTERS
  */
@@ -159,13 +161,18 @@ export function convertStatsNumberWidgetToQuery(widget) {
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   const query = {};
+  const {
+    itemsPerPage,
+    mainFilter,
+    mainFilterCondition,
+  } = widgetPreferences;
 
-  if (widgetPreferences.itemsPerPage) {
-    query.limit = widgetPreferences.itemsPerPage;
+  if (itemsPerPage) {
+    query.limit = itemsPerPage;
   }
 
-  if (!isEmpty(widgetPreferences.mainFilter)) {
-    query.filter = widgetPreferences.mainFilter.filter;
+  if (!isEmpty(mainFilter)) {
+    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   return query;
@@ -178,15 +185,20 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  * @returns {{}}
  */
 export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences = {} }) {
-  const { itemsPerPage, mainFilter, selectedTypes } = widgetPreferences;
   const query = {};
+  const {
+    itemsPerPage,
+    mainFilter,
+    mainFilterCondition,
+    selectedTypes,
+  } = widgetPreferences;
 
   if (itemsPerPage) {
     query.limit = itemsPerPage;
   }
 
   if (!isEmpty(mainFilter)) {
-    query.mainFilter = mainFilter.filter;
+    query.mainFilter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   if (!isEmpty(selectedTypes)) {

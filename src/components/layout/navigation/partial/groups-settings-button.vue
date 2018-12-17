@@ -39,7 +39,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
 export default {

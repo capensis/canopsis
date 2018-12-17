@@ -264,6 +264,13 @@ export default {
     considerPbehaviors: {
       title: 'Prendre en compte les comportements périodiques ?',
     },
+    serviceWeatherModalTypes: {
+      title: 'Type de modal',
+      fields: {
+        moreInfo: 'Plus d\'infos',
+        alarmList: 'Bac à alarmes',
+      },
+    },
   },
   modals: {
     contextInfos: {
@@ -500,7 +507,7 @@ export default {
         isNotEmpty: 'Ce groupe n\'est pas vide',
       },
     },
-    calendarAlarmsList: {
+    alarmsList: {
       title: 'Bac à alarmes',
     },
     createUser: {
@@ -553,6 +560,17 @@ export default {
       externalData: 'Données externes',
       onSuccess: 'En cas de succès',
       onFailure: 'En cas d\'échec',
+    },
+    viewTab: {
+      create: {
+        title: 'Ajouter un onglet',
+      },
+      edit: {
+        title: 'Editer l\'onglet',
+      },
+      fields: {
+        title: 'Titre',
+      },
     },
   },
   tables: {

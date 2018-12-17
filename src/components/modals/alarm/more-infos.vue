@@ -11,7 +11,7 @@
 <script>
 import HandleBars from 'handlebars';
 
-import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import { MODALS } from '@/constants';
 
 /**

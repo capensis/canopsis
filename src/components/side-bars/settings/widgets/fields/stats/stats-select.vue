@@ -29,7 +29,7 @@ import omit from 'lodash/omit';
 import set from 'lodash/set';
 import unset from 'lodash/unset';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   inject: ['$validator'],

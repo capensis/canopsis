@@ -21,7 +21,7 @@ import { MODALS } from '@/constants';
 import compile from '@/helpers/handlebars';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 
 import WatcherEntity from './partial/entity.vue';
 

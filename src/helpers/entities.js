@@ -1,7 +1,7 @@
 import moment from 'moment';
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS } from '@/constants';
+import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
 
 import uuid from './uuid';
 
@@ -109,6 +109,7 @@ export function generateWidgetByType(type) {
           left: 1,
         },
         heightFactor: 1,
+        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
       };
       break;
     case WIDGET_TYPES.statsHistogram:
@@ -228,21 +229,31 @@ export function generateWidgetByType(type) {
   return widget;
 }
 
-export function generateRow() {
+export function generateViewRow() {
   return {
-    _id: uuid('row'),
+    _id: uuid('view-row'),
     title: '',
     widgets: [],
   };
 }
 
+export function generateViewTab() {
+  return {
+    _id: uuid('view-tab'),
+    title: '',
+    rows: [],
+  };
+}
+
 export function generateView() {
+  const defaultTab = { ...generateViewTab(), title: 'Default' };
+
   return {
     title: '',
     name: '',
     description: '',
     group_id: null,
-    rows: [],
+    tabs: [defaultTab],
     tags: [],
     enabled: true,
   };
@@ -319,7 +330,7 @@ export function generateRoleRightByChecksum(checksum) {
 
 export default {
   generateWidgetByType,
-  generateRow,
+  generateViewRow,
   generateView,
   generateUserPreferenceByWidgetAndUser,
   generateUser,

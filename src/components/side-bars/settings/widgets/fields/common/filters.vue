@@ -2,16 +2,14 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
-      v-select(
+      filter-selector(
       v-show="hasAccessToEditFilter && !hideSelect",
       :label="$t('settings.selectAFilter')",
       :items="filters",
       :value="value",
-      @change="$emit('input', $event)",
-      item-text="title",
-      item-value="filter",
-      return-object,
-      clearable
+      :condition="condition",
+      @input="$emit('input', $event)",
+      @update:condition="$emit('update:condition', $event)"
       )
       v-list
         v-list-tile(v-for="(filter, index) in filters", :key="filter.title", @click="")
@@ -30,12 +28,15 @@
 </template>
 
 <script>
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
+
+import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 export default {
+  components: { FilterSelector },
   mixins: [authMixin, modalMixin],
   props: {
     filters: {
@@ -43,20 +44,24 @@ export default {
       default: () => [],
     },
     value: {
-      type: Object,
-      default: () => ({}),
+      type: [Object, Array],
+      default: null,
+    },
+    condition: {
+      type: String,
+      default: FILTER_DEFAULT_VALUES.condition,
     },
     hideSelect: {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+    hasAccessToAddFilter: {
+      type: Boolean,
+      default: true,
     },
-    hasAccessToAddFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.addFilter);
+    hasAccessToEditFilter: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {
