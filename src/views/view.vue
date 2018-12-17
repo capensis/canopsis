@@ -115,7 +115,7 @@ export default {
         this.fullScreenModeToggle();
         event.preventDefault();
       } else if (event.keyCode === 69 && event.ctrlKey) {
-        this.viewEditModeToggle();
+        this.toggleViewEditingMode();
         event.preventDefault();
       }
     },
