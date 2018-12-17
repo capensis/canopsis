@@ -496,7 +496,7 @@ export default {
         isNotEmpty: 'Ce groupe n\'est pas vide',
       },
     },
-    calendarAlarmsList: {
+    alarmsList: {
       title: 'Bac à alarmes',
     },
     createUser: {

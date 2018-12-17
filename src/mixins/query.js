@@ -10,6 +10,8 @@ export default {
     ...mapActions({
       updateQuery: 'update',
       mergeQuery: 'merge',
+      removeQuery: 'remove',
+
       forceUpdateQuery: 'forceUpdate',
     }),
   },

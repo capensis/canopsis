@@ -35,7 +35,7 @@ export const MODALS = {
   createWidget: 'create-widget',
   createFilter: 'create-filter',
   manageHistogramGroups: 'manage-histogram-groups',
-  calendarAlarmsList: 'calendar-alarms-list',
+  alarmsList: 'alarms-list',
   addStat: 'add-stat',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
@@ -269,6 +269,23 @@ export const FILTER_DEFAULT_VALUES = {
     groups: {},
     rules: {},
   },
+  preFilledRules: {
+    component: {
+      field: 'component',
+      operator: FILTER_OPERATORS.equal,
+      input: '...',
+    },
+    resource: {
+      field: 'resource',
+      operator: FILTER_OPERATORS.equal,
+      input: '...',
+    },
+    connector: {
+      field: 'connector',
+      operator: FILTER_OPERATORS.equal,
+      input: '...',
+    },
+  },
 };
 
 export const DATETIME_FORMATS = {
@@ -422,6 +439,11 @@ export const USERS_RIGHTS = {
 export const GROUPS_NAVIGATION_TYPES = {
   sideBar: 'side-bar',
   topBar: 'top-bar',
+};
+
+export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
+  moreInfo: 'more-info',
+  alarmList: 'alarm-list',
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';

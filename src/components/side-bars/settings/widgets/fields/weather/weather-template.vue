@@ -9,7 +9,10 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import modalMixin from '@/mixins/modal';
+
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
 
 export default {
@@ -30,7 +33,7 @@ export default {
   methods: {
     showtextEditorModal() {
       this.showModal({
-        name: this.$constants.MODALS.textEditor,
+        name: MODALS.textEditor,
         config: {
           text: this.value,
           action: value => this.$emit('input', value),

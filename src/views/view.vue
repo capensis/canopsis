@@ -31,7 +31,7 @@
           fab,
           dark,
           small,
-          @click="toggleFullScreen",
+          @click="toggleFullScreenMode",
           )
             v-icon fullscreen
             v-icon fullscreen_exit
@@ -40,7 +40,7 @@
           v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditingMode", v-model="isEditingMode")
             v-icon edit
             v-icon done
-          span {{ $t('common.toggleEditView') }}
+          span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
         v-tooltip(top)
           v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateWidgetModal")
             v-icon add
@@ -48,7 +48,7 @@
         v-tooltip(top)
           v-btn(slot="activator", fab, dark, small, color="green", @click.stop="showCreateTabModal")
             v-icon add
-          span Add tab
+          span {{ $t('common.addTab') }}
 </template>
 
 <script>
@@ -110,13 +110,17 @@ export default {
     document.removeEventListener('keydown', this.keyDownListener);
   },
   methods: {
-    keyDownListener({ keyCode, altKey }) {
-      if (keyCode === 13 && altKey) {
-        this.toggleFullScreen();
+    keyDownListener(event) {
+      if (event.keyCode === 13 && event.altKey) {
+        this.fullScreenModeToggle();
+        event.preventDefault();
+      } else if (event.keyCode === 69 && event.ctrlKey) {
+        this.viewEditModeToggle();
+        event.preventDefault();
       }
     },
 
-    toggleFullScreen() {
+    toggleFullScreenMode() {
       if (this.activeTab) {
         const element = document.getElementById(`view-tab-${this.activeTab._id}`);
 
