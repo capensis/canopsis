@@ -85,9 +85,9 @@ import FilterSelector from '@/components/other/filter/selector/filter-selector.v
 import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import filterSelectMixin from '@/mixins/filter/select';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -116,9 +116,9 @@ export default {
     modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     entitiesWatcherMixin,
-    filterSelectMixin,
   ],
   props: {
     widget: {

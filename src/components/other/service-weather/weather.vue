@@ -41,6 +41,9 @@ export default {
       ];
     },
   },
+  mounted() {
+    this.fetchList();
+  },
   methods: {
     fetchList() {
       this.fetchWatchersList({
