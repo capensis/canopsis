@@ -150,9 +150,6 @@ export default {
       this.showModal({
         name: MODALS.alarmsList,
         config: {
-          query: {
-            filter: watcherFilter,
-          },
           widget: {
             ...widget,
 
