@@ -7,7 +7,7 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
-import { viewSchema, rowSchema, widgetSchema } from '@/store/schemas';
+import { viewSchema, viewTabSchema, viewRowSchema, widgetSchema } from '@/store/schemas';
 
 import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
 
@@ -26,9 +26,11 @@ export default {
   ],
   data() {
     return {
+      tabId: this.config.tabId,
       normalizedEntities: {
         [viewSchema.key]: {},
-        [rowSchema.key]: {},
+        [viewTabSchema.key]: {},
+        [viewRowSchema.key]: {},
         [widgetSchema.key]: {},
       },
     };
@@ -38,16 +40,16 @@ export default {
       return this.config.widget;
     },
 
-    localView() {
-      return denormalize(this.view._id, viewSchema, this.normalizedEntities);
+    localTab() {
+      return denormalize(this.tabId, viewTabSchema, this.normalizedEntities);
     },
 
     availableRows() {
-      if (!this.localView) {
+      if (!this.localTab) {
         return [];
       }
 
-      return this.localView.rows.map((row) => {
+      return this.localTab.rows.map((row) => {
         const availableSize = row.widgets.reduce((acc, widget) => {
           if (widget._id !== this.widget._id) {
             acc.sm -= widget.size.sm;
@@ -85,12 +87,12 @@ export default {
     },
 
     createRow(row) {
-      const view = this.normalizedEntities.view[this.view._id];
+      const tab = this.normalizedEntities.viewTab[this.tabId];
 
-      this.updateNormalizedEntity(rowSchema.key, row);
-      this.updateNormalizedEntity(viewSchema.key, {
-        ...view,
-        rows: [...view.rows, row._id],
+      this.updateNormalizedEntity(viewRowSchema.key, row);
+      this.updateNormalizedEntity(viewTabSchema.key, {
+        ...tab,
+        rows: [...tab.rows, row._id],
       });
     },
 
@@ -138,23 +140,23 @@ export default {
 
         if (oldRowId !== newRowId) {
           if (oldRowId) {
-            const oldRow = get(this.normalizedEntities, `${rowSchema.key}.${oldRowId}`, { widgets: [] });
+            const oldRow = get(this.normalizedEntities, `${viewRowSchema.key}.${oldRowId}`, { widgets: [] });
 
             /**
              * Remove widget from old row in local normalized store
              */
-            this.updateNormalizedEntity(rowSchema.key, {
+            this.updateNormalizedEntity(viewRowSchema.key, {
               ...oldRow,
               widgets: oldRow.widgets.filter(oldWidget => oldWidget !== widget._id),
             });
           }
 
-          const newRow = get(this.normalizedEntities, `${rowSchema.key}.${newRowId}`, { widgets: [] });
+          const newRow = get(this.normalizedEntities, `${viewRowSchema.key}.${newRowId}`, { widgets: [] });
 
           /**
-           * Put widget widget into new row in local normalized store
+           * Put widget into new row in local normalized store
            */
-          this.updateNormalizedEntity(rowSchema.key, {
+          this.updateNormalizedEntity(viewRowSchema.key, {
             ...newRow,
             widgets: [
               ...newRow.widgets.filter(oldWidget => oldWidget !== widget._id),

@@ -13,7 +13,7 @@
 
 <script>
 import set from 'lodash/set';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   mixins: [modalMixin],

@@ -27,9 +27,10 @@ import CreatePbehavior from './pbehavior/create-pbehavior.vue';
 import PbehaviorList from './pbehavior/pbehavior-list.vue';
 import EditLiveReporting from './alarm/edit-live-reporting.vue';
 import Confirmation from './common/confirmation.vue';
-import CreateWidget from './common/create-widget.vue';
+import CreateWidget from './view/create-widget.vue';
 import ColorPicker from './common/color-picker.vue';
 import TextEditor from './common/text-editor.vue';
+import TextFieldEditor from './common/text-field-editor.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
 import SelectView from './view/select-view.vue';
@@ -68,6 +69,7 @@ export default {
     CreateWidget,
     ColorPicker,
     TextEditor,
+    TextFieldEditor,
     SelectView,
     CreateView,
     CreateFilter,

@@ -29,7 +29,7 @@ import {
 import compile from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 export default {

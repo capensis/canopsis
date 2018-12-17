@@ -83,7 +83,7 @@ import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';

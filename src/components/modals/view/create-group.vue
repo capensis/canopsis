@@ -24,7 +24,7 @@ import get from 'lodash/get';
 import { MODALS } from '@/constants';
 
 import popupMixin from '@/mixins/popup';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 

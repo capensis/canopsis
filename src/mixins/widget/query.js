@@ -15,6 +15,12 @@ export default {
     Pagination,
   },
   mixins: [queryMixin, entitiesUserPreferenceMixin],
+  props: {
+    tabId: {
+      type: String,
+      required: true,
+    },
+  },
   computed: {
     query: {
       get() {
@@ -44,10 +50,19 @@ export default {
         }
       },
     },
+
+    tabQueryNonce() {
+      return this.getQueryNonceById(this.tabId);
+    },
   },
   watch: {
     query(value, oldValue) {
       if (!isEqual(value, oldValue)) {
+        this.fetchList();
+      }
+    },
+    tabQueryNonce(value, oldValue) {
+      if (value > oldValue) {
         this.fetchList();
       }
     },

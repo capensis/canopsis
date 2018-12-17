@@ -25,7 +25,7 @@ import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import CreateForm from './partial/create-watcher-form.vue';

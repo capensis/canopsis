@@ -12,7 +12,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import queryMixin from '@/mixins/query';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';

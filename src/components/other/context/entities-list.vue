@@ -82,7 +82,7 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';

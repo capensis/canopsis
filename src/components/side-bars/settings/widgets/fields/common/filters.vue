@@ -31,7 +31,7 @@
 import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 

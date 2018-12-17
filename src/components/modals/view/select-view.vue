@@ -14,7 +14,7 @@
 
 <script>
 import { MODALS } from '@/constants';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 
 export default {

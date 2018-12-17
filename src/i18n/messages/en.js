@@ -7,6 +7,7 @@ export default {
     watcher: 'Watcher',
     widget: 'Widget',
     addWidget: 'Add widget',
+    addTab: 'Add tab',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
     name: 'Name',
@@ -536,6 +537,17 @@ export default {
         id: 'ID',
         description: 'Description',
         type: 'Type',
+      },
+    },
+    viewTab: {
+      create: {
+        title: 'Create tab',
+      },
+      edit: {
+        title: 'Edit tab',
+      },
+      fields: {
+        title: 'Title',
       },
     },
   },

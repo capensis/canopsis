@@ -39,7 +39,7 @@ import moment from 'moment';
 import { MODALS } from '@/constants';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 
 /**
    * Modal to add a time filter on alarm-list

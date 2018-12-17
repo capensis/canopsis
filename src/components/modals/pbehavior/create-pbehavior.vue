@@ -60,7 +60,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import DateTimePicker from '@/components/forms/date-time-picker.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
-import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
+import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import authMixin from '@/mixins/auth';
 import { MODALS } from '@/constants';
 

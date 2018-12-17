@@ -1,6 +1,6 @@
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 

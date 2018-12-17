@@ -81,7 +81,7 @@
 <script>
 import appMixin from '@/mixins/app';
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 import entitiesViewMixin from '@/mixins/entities/view/index';
 import entitiesUserMixin from '@/mixins/entities/user';
 
