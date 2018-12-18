@@ -139,10 +139,8 @@ export default {
       };
 
       const widgetParameters = {
-        widgetColumns: widget.parameters.widgetColumns.map(column => ({
-          label: column.label,
-          value: column.value.replace('alarm.', 'v.'),
-        })),
+        ...this.widget.parameters.alarmsList,
+
         mainFilter: watcherFilter,
         viewFilters: [watcherFilter],
       };

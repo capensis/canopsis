@@ -13,6 +13,17 @@
       field-filter-editor(v-model="settings.widget.parameters.mfilter")
       v-divider
       v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns")
+          v-divider
+          field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
+          v-divider
+          field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
+          v-divider
+          field-more-info(v-model="settings.widget.parameters.alarmsList.moreInfoTemplate")
+      v-divider
+      v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-weather-template(
@@ -84,6 +95,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -92,6 +104,10 @@ import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
 import FieldModalType from './fields/weather/modal-type.vue';
+import FieldColumns from './fields/common/columns.vue';
+import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
+import FieldInfoPopup from './fields/common/info-popup.vue';
+import FieldMoreInfo from './fields/common/more-info.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
@@ -106,8 +122,12 @@ export default {
     FieldGridSize,
     FieldSlider,
     FieldModalType,
+    FieldColumns,
+    FieldDefaultElementsPerPage,
+    FieldInfoPopup,
+    FieldMoreInfo,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -117,6 +137,21 @@ export default {
         widget: cloneDeep(widget),
       },
     };
+  },
+  methods: {
+    prepareWidgetSettings() {
+      const { widget } = this.settings;
+
+      return {
+        ...widget,
+
+        parameters: {
+          ...widget.parameters,
+
+          alarmsList: this.prepareAlarmWidgetParametersSettings(widget.parameters.alarmsList),
+        },
+      };
+    },
   },
 };
 </script>

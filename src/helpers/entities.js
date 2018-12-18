@@ -1,4 +1,5 @@
 import moment from 'moment';
+
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
@@ -18,48 +19,53 @@ export function generateWidgetByType(type) {
     },
   };
 
+  const alarmsListDefaultParameters = {
+    itemsPerPage: PAGINATION_LIMIT,
+    infoPopups: [],
+    moreInfoTemplate: '',
+    widgetColumns: [
+      {
+        label: i18n.t('tables.alarmGeneral.connector'),
+        value: 'alarm.connector',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.connectorName'),
+        value: 'alarm.connector_name',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.component'),
+        value: 'alarm.component',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.resource'),
+        value: 'alarm.resource',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.output'),
+        value: 'alarm.output',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.extraDetails'),
+        value: 'extra_details',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.state'),
+        value: 'alarm.state.val',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.status'),
+        value: 'alarm.status.val',
+      },
+    ],
+  };
+
   let specialParameters = {};
 
   switch (type) {
     case WIDGET_TYPES.alarmList:
       specialParameters = {
-        itemsPerPage: PAGINATION_LIMIT,
-        moreInfoTemplate: '',
-        alarmsStateFilter: {},
-        widgetColumns: [
-          {
-            label: i18n.t('tables.alarmGeneral.connector'),
-            value: 'alarm.connector',
-          },
-          {
-            label: i18n.t('tables.alarmGeneral.connectorName'),
-            value: 'alarm.connector_name',
-          },
-          {
-            label: i18n.t('tables.alarmGeneral.component'),
-            value: 'alarm.component',
-          },
-          {
-            label: i18n.t('tables.alarmGeneral.resource'),
-            value: 'alarm.resource',
-          },
-          {
-            label: i18n.t('tables.alarmGeneral.output'),
-            value: 'alarm.output',
-          },
-          {
-            label: i18n.t('tables.alarmGeneral.extraDetails'),
-            value: 'extra_details',
-          },
-          {
-            label: i18n.t('tables.alarmGeneral.state'),
-            value: 'alarm.state.val',
-          },
-          {
-            label: i18n.t('tables.alarmGeneral.status'),
-            value: 'alarm.status.val',
-          },
-        ],
+        ...alarmsListDefaultParameters,
+
         viewFilters: [],
         infoPopups: [],
         periodicRefresh: {
@@ -110,6 +116,7 @@ export function generateWidgetByType(type) {
         },
         heightFactor: 1,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
+        alarmsList: alarmsListDefaultParameters,
       };
       break;
     case WIDGET_TYPES.statsHistogram:
@@ -158,45 +165,7 @@ export function generateWidgetByType(type) {
           major: 30,
           critical: 40,
         },
-        alarmsList: {
-          itemsPerPage: PAGINATION_LIMIT,
-          infoPopups: [],
-          moreInfoTemplate: '',
-          widgetColumns: [
-            {
-              label: i18n.t('tables.alarmGeneral.connector'),
-              value: 'alarm.connector',
-            },
-            {
-              label: i18n.t('tables.alarmGeneral.connectorName'),
-              value: 'alarm.connector_name',
-            },
-            {
-              label: i18n.t('tables.alarmGeneral.component'),
-              value: 'alarm.component',
-            },
-            {
-              label: i18n.t('tables.alarmGeneral.resource'),
-              value: 'alarm.resource',
-            },
-            {
-              label: i18n.t('tables.alarmGeneral.output'),
-              value: 'alarm.output',
-            },
-            {
-              label: i18n.t('tables.alarmGeneral.extraDetails'),
-              value: 'extra_details',
-            },
-            {
-              label: i18n.t('tables.alarmGeneral.state'),
-              value: 'alarm.state.val',
-            },
-            {
-              label: i18n.t('tables.alarmGeneral.status'),
-              value: 'alarm.status.val',
-            },
-          ],
-        },
+        alarmsList: alarmsListDefaultParameters,
       };
       break;
 

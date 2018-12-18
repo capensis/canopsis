@@ -45,13 +45,13 @@
 <script>
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
-import isString from 'lodash/isString';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -84,7 +84,7 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: [authMixin, widgetSettingsMixin],
+  mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -124,34 +124,13 @@ export default {
     };
   },
   methods: {
-    prefixFormatter(value) {
-      if (isString(value)) {
-        return value.replace('alarm.', 'v.');
-      }
-
-      return value;
-    },
-
-    prepareSettingsWidget() {
+    prepareWidgetSettings() {
       const { widget } = this.settings;
 
       return {
         ...widget,
-        parameters: {
-          ...widget.parameters,
 
-          widgetColumns: widget.parameters.widgetColumns.map(v => ({
-            ...v,
-            value: this.prefixFormatter(v.value),
-          })),
-
-          infoPopups: widget.parameters.infoPopups.map(v => ({
-            ...v,
-            column: this.prefixFormatter(v.column),
-          })),
-
-          sort: this.prefixFormatter(widget.parameters.sort),
-        },
+        parameters: this.prepareAlarmWidgetParametersSettings(widget.parameters),
       };
     },
   },
