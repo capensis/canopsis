@@ -51,10 +51,11 @@ export default {
       if (!this.form.advancedMode) {
         newPattern[this.form.field] = this.form.value;
       } else {
-        Object.values(this.form.advancedRuleFields)
+        newPattern[this.form.field] = Object.values(this.form.advancedRuleFields)
           .reduce((acc, rule) => {
             acc[rule.key] = rule.value;
-            return newPattern[this.form.field] = acc;
+
+            return acc;
           }, {});
       }
       this.$emit('input', newPattern);

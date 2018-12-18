@@ -24,7 +24,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/modal-inner';
+import modalInnerMixin from '@/mixins/modal/inner';
 
 import PatternFieldCreationForm from './partial/pattern-field-creation-form.vue';
 import PatternSimpleEditor from './partial/pattern-simple-editor.vue';

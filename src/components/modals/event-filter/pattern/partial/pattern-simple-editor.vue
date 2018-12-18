@@ -61,13 +61,13 @@ export default {
     },
 
     editAdvancedRuleOperator(operator, rule, ruleKey, subRuleKey) {
-      const newPattern = cloneDeep(this.convertedPattern);
+      const newPattern = [...this.convertedPattern];
       newPattern[ruleKey].value[subRuleKey] = { ...rule, key: operator };
       this.convertedPattern = newPattern;
     },
 
     editAdvancedRuleValue(value, rule, ruleKey, subRuleKey) {
-      const newPattern = cloneDeep(this.convertedPattern);
+      const newPattern = [...this.convertedPattern];
       newPattern[ruleKey].value[subRuleKey] = { ...rule, value };
       this.convertedPattern = newPattern;
     },
@@ -76,9 +76,9 @@ export default {
       const pattern = cloneDeep(this.pattern);
       this.convertedPattern = Object.keys(pattern).reduce((acc, key) => {
         if (this.isSimpleRule(pattern[key])) {
-          acc.push({ key, value: pattern[key] });
+          acc.push({ key, value: cloneDeep(pattern[key]) });
         } else {
-          acc.push({ key, value: this.convertAdvancedRuleToForm(pattern[key]) });
+          acc.push({ key, value: this.convertAdvancedRuleToForm(cloneDeep(pattern[key])) });
         }
         return acc;
       }, []);
