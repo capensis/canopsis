@@ -104,7 +104,7 @@ export default {
       return true;
     },
 
-    prepareSettingsWidget() {
+    prepareWidgetSettings() {
       return this.settings.widget;
     },
 
@@ -118,7 +118,7 @@ export default {
       if (isFormValid) {
         const widget = {
           ...this.settings.widget,
-          ...this.prepareSettingsWidget(),
+          ...this.prepareWidgetSettings(),
         };
 
         const userPreference = {

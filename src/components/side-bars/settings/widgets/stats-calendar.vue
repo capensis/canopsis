@@ -43,7 +43,9 @@
 import cloneDeep from 'lodash/cloneDeep';
 
 import { SIDE_BARS } from '@/constants';
+
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -78,7 +80,7 @@ export default {
     FieldInfoPopup,
     FieldMoreInfo,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -89,17 +91,8 @@ export default {
       },
     };
   },
-  computed: {
-    entitiesType() {
-      return this.$constants.ENTITIES_TYPES.entity;
-    },
-  },
   methods: {
-    prefixFormatter(value) {
-      return value.replace('alarm.', 'v.');
-    },
-
-    prepareSettingsWidget() {
+    prepareWidgetSettings() {
       const { widget } = this.settings;
 
       return {
@@ -108,19 +101,7 @@ export default {
         parameters: {
           ...widget.parameters,
 
-          alarmsList: {
-            ...widget.parameters.alarmsList,
-
-            widgetColumns: widget.parameters.alarmsList.widgetColumns.map(v => ({
-              ...v,
-              value: this.prefixFormatter(v.value),
-            })),
-
-            infoPopups: widget.parameters.alarmsList.infoPopups.map(v => ({
-              ...v,
-              column: this.prefixFormatter(v.column),
-            })),
-          },
+          alarmsList: this.prepareAlarmWidgetParametersSettings(widget.parameters.alarmsList),
         },
       };
     },
