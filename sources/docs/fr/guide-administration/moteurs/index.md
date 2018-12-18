@@ -48,7 +48,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | **snmp**                                                       | Gère les traps SNMP.                                     | ✅             |
 | canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données.           |                    |
 | canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse.            |                    |
-| [canopsis-engine-cat@**task_ackcentreon-task_ackcentreon**.service](moteur-task_ackcentreon.md)      | ACK descendants vers Centreon.            |                    |
+| [canopsis-engine-cat@**task_ackcentreon-task_ackcentreon**.service](moteur-task_ackcentreon.md)      | ACK descendants vers Centreon.            | ✅ |
 | canopsis-engine@**task_mail-task_mail**.service                | Gestionnaire de tâches pour envoyer du courrier.         |                    |
 | canopsis-engine@**ticket-ticket**.service                      | Gère les tickets externes.                               |                    |
 | canopsis-engine@**dynamic-watcher**.service                    | Gère les watchers (groupes de surveillance).             |                    |

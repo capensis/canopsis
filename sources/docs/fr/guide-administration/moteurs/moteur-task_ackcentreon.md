@@ -1,13 +1,13 @@
 # Task ackcentreon
 
-Le moteur `task_ackcentreon` permet de **descendre** les acks positionnés depuis Canopsis vers l'outil Centreon.  
-Cela est valable aussi bien pour les poses d'ACK que pour les suppressions d'ACK.  
+!!! attention
+    Ce moteur n'est disponible que dans l'édition CAT de Canopsis.
 
-Ainsi, lorsqu'un ACK est posé sur Canopsis, l'information est **répliquée** sur le Poller Centreon qui avai généré l'alarme.  
-En utilisation conjointe du [connecteur Centreon](../../guide-connecteurs/Supervision/Centreon.md), la communication est bi-directionnelle.  
+Le moteur `task_ackcentreon` permet de *descendre* les ACK positionnés depuis Canopsis vers l'outil Centreon. Ceci est valable aussi bien pour les poses d'ACK que pour les suppressions d'ACK.
 
+Ainsi, lorsqu'un ACK est posé sur Canopsis, l'information est *répliquée* sur le Poller Centreon qui avait généré l'alarme. En utilisation conjointe du [connecteur Centreon](../../guide-connecteurs/Supervision/Centreon.md), la communication est bi-directionnelle.
 
-## Workflow
+## Fonctionnement
 
 Voici les différentes étapes permettant d'obtenir le résulat souhaité :
 
@@ -19,54 +19,58 @@ Voici les différentes étapes permettant d'obtenir le résulat souhaité :
     *  Génération d'une commande externe conforme à la pose ou la suppression de l'ACK
     *  POST de la commande dans le fichier de commande externe
 
+## Mise en place
 
-### Infrastructure
+### Activation du moteur
 
-**Activation du moteur**
+Sur le nœud des moteurs Canopsis :
 
-````
+```sh
 systemctl enable canopsis-engine-cat@task_ackcentreon-task_ackcentreon.service
 systemctl start canopsis-engine-cat@task_ackcentreon-task_ackcentreon.service
-````
+```
 
-**SSH**
+### Accès SSH entre Canopsis et Centreon
 
-Etant donné que les commandes vont circuler over SSH, un échange de clés est nécessaire.  
-C'est l'utilisateur `canopsis` qui sera à l'origine des exécutions over ssh.  
-Sa clé publique doit donc être placée dans .authorized_keys de l'utilisateur ̀`centreon` sur la machine centrale Centreon.  
+La remontée d'informations de Canopsis vers Centreon s'exécute via SSH. Il est donc nécessaire d'ajouter une clé publique SSH depuis le nœud Canopsis (avec l'utilisateur `canopsis`) vers le nœud central Centreon (avec l'utilisateur `centreon`).
 
-**CLAPI**
+Sur le nœud Canopsis, on crée une nouvelle clé RSA si nécessaire, et on récupère le contenu de la clé publique associée :
 
-`CLAPI` doit être disponible sur l'hôte Centreon.  
-Vous devez donc vous en assurer. Une authentification sera demandée par le moteur `task_ackcentreon`.  
+```sh
+su - canopsis
+[ ! -r ~/.ssh/id_rsa.pub ] && ssh-keygen -t rsa -N ''
+cat ~/.ssh/id_rsa.pub
+```
 
-La commande finale qui sera utilisée est la suivante :
+Le contenu du fichier `/opt/canopsis/.ssh/id_rsa.pub` du nœud Canopsis doit ensuite être ajouté au fichier `/home/centreon/.ssh/authorized_keys` du nœud Centreon.
 
-````
-/path/to/centreon -u un_utilisateur -p un_mdp -a POLLERLIST"
-````
+### Mise en place de CLAPI sur le nœud Centreon
 
-### Job Ack Centreon
+CLAPI doit être disponible sur l'hôte Centreon.  Vous devez donc vous en assurer. Une authentification sera demandée par le moteur `task_ackcentreon`.
 
-Vous devez créer un job **notification** de type **ack_centreon** dans Canopsis.  
+!!! note
+    À titre d'information, la commande finale qui sera utilisée est la suivante :
 
-* xtype : ackcentreon, type : notification
+    `/chemin/vers/centreon -u un_utilisateur -p un_mdp -a POLLERLIST`
 
-Renseignez les informations demandées :
+### Ajout d'un job « ACK Centreon » dans Canopsis
 
-* Hôte Centreon
-* Utilisateur/port SSH
-* Path Clapi
-* Authentification Clapi
+Danos Canopsis, vous devez créer un job avec les paramètres `type: notification` et `xtype: ack_centreon` dans Canopsis.
 
-### Règle Event Filter
+Renseignez ensuite les informations demandées :
 
-Le moteur `event_filter` doit exécuter le job ack_centreon lorsqu'il reçoit un événement de type **ack** ou **ackremove**.  
-Il vous faut créer une règle de event_filter avec comme paramètres :
+*  Hôte Centreon
+*  Utilisateur/port SSH
+*  Chemin CLAPI
+*  Authentification CLAPI
 
-Filtre :
+### Ajout d'une règle dans l'Event Filter
 
-````json
+Le moteur `event_filter` (Python) doit exécuter le job `ack_centreon` lorsqu'il reçoit un évènement de type `ack` ou `ackremove` (pause et suppression d'un ACK).
+
+Il faut, pour cela, créer une règle d'`event_filter` avec le filtre suivant :
+
+```json
 {
   "$and": [
     {
@@ -90,23 +94,27 @@ Filtre :
     }
   ]
 }
-````
+```
 
-Notez bien le `"extra.origin": "canopsis"` qui précise que seuls les ACK/ACKREMOVE en provenance de Canopsis doivent être transmis à Centreon.  
-Cela permet d'éviter des boucles entre Canopsis et Centreon.
+!!! note
+    Notez bien le `"extra.origin": "canopsis"` qui précise que seuls les ACK/ACKREMOVE en provenance de Canopsis doivent être transmis à Centreon. Ceci est indispensable pour ne pas créer de boucles entre Canopsis et Centreon.
 
-Action :
+Après avoir configuré le filtre, créer l'action suivante :
 
-`execjob` qui pointe sur le job précédemment créé.
+*  `execjob`, qui pointe sur le job précédemment créé.
 
-## Cas d'un environnement avec moteurs GO
+## Procédure supplémentaire en environnement Go
 
-Lorsque vous utilisez un environnement Canopsis avec moteurs en GO, vous devez spécifier en plus des éléments précédent une règle d'enrichissement pour le moteur **che**.  
-Cette règle permet d'ajouter aux événements qui circulent les informations de l'entité correspondante disponible dans Canopsis.  
-Le moteur **ack_centreon** en a besoin pour savoir s'il y a bien une alarme en cours et pour laquelle on souhaite descendre un ACK vers Centreon.  
+!!! attention
+    Cette procédure est obligatoire dans le cas d'un environnement Go. Elle n'a pas besoin d'être exécutée dans un environnement pur Python.
 
-````
-$ cat ../enrich/enrichentity.json 
+Lorsque vous utilisez un environnement Canopsis avec moteurs en Go, vous devez spécifier une règle d'enrichissement supplémentaire, pour le moteur `che`.
+
+Cette règle permet d'ajouter aux évènements qui circulent les informations de l'entité correspondante disponible dans Canopsis. Contrairement aux moteurs Python où cette information est ajoutée par défaut, les moteurs Go nécessitent une règle explicite. Sans cette règle, la tâche `ackcentreon` ne peut pas fonctionner en environnement Go.
+
+Sur un nœud frontend Canopsis, créer un fichier `enrichentity.json` :
+
+```json
 {
     "type": "enrichment",
     "pattern": {},
@@ -126,14 +134,14 @@ $ cat ../enrich/enrichentity.json
     "on_failure": "pass",
     "priority": 1
 }
-````
+```
 
-Cette règle est à poster sur l'API `eventfilter` de cette manière : 
+Cette règle est à envoyer à l'API `eventfilter` de cette manière (adapter les identifiants Canopsis, l'URL et le nom du fichier JSON si nécessaire) :
 
-````
-curl -X POST -u root:root -H "Content-Type: application/json" -d @enrichentity.json 'http://localhost:28082/api/v2/eventfilter/rules'
-````
+```sh
+curl -X POST -u root:root -H "Content-Type: application/json" -d @enrichentity.json 'http://localhost:8082/api/v2/eventfilter/rules'
+```
 
-## Tests de bout en bout
+## Procédure de test
 
-A ce stade, vous pouvez poser un ACK dans Canopsis et vérifier sur l'interface de Centreon qui l'a bien été transmis et même chose pour la suppression d'un ACK.
+À ce stade, vous pouvez poser un ACK dans Canopsis et vérifier sur l'interface de Centreon qui l'a bien été transmis, et même chose pour la suppression d'un ACK.
