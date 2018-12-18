@@ -9,7 +9,7 @@ Ainsi, lorsqu'un ACK est posé sur Canopsis, l'information est *répliquée* sur
 
 ## Fonctionnement
 
-Voici les différentes étapes permettant d'obtenir le résulat souhaité :
+Voici les différentes étapes permettant d'obtenir le résultat souhaité :
 
 *  Un ACK est posé ou retiré depuis Canopsis
 *  Le moteur [`event_filter`](moteur-event_filter.md) est configuré pour exécuter un job
@@ -32,7 +32,7 @@ systemctl start canopsis-engine-cat@task_ackcentreon-task_ackcentreon.service
 
 ### Accès SSH entre Canopsis et Centreon
 
-La remontée d'informations de Canopsis vers Centreon s'exécute via SSH. Il est donc nécessaire d'ajouter une clé publique SSH depuis le nœud Canopsis (avec l'utilisateur `canopsis`) vers le nœud central Centreon (avec l'utilisateur `centreon`).
+La remontée d'informations de Canopsis vers Centreon s'exécute via SSH. Il est donc nécessaire de transférer une clé publique SSH depuis le nœud Canopsis (avec l'utilisateur `canopsis`) vers le nœud central Centreon (avec l'utilisateur `centreon`).
 
 Sur le nœud Canopsis, on crée une nouvelle clé RSA si nécessaire, et on récupère le contenu de la clé publique associée :
 
@@ -68,7 +68,7 @@ Renseignez ensuite les informations demandées :
 
 Le moteur `event_filter` (Python) doit exécuter le job `ack_centreon` lorsqu'il reçoit un évènement de type `ack` ou `ackremove` (pause et suppression d'un ACK).
 
-Il faut, pour cela, créer une règle d'`event_filter` avec le filtre suivant :
+Il faut, pour cela, [créer une règle d'`event_filter`](moteur-event_filter.md) avec le filtre suivant :
 
 ```json
 {
@@ -144,4 +144,4 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d @enrichentity.j
 
 ## Procédure de test
 
-À ce stade, vous pouvez poser un ACK dans Canopsis et vérifier sur l'interface de Centreon qui l'a bien été transmis, et même chose pour la suppression d'un ACK.
+À ce stade, vous pouvez poser un ACK dans Canopsis et vérifier sur l'interface de Centreon qu'il a bien été transmis, et même chose pour la suppression d'un ACK.
