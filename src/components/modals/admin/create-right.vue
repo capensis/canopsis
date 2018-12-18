@@ -68,7 +68,7 @@ export default {
 
           await this.createRight({ data });
 
-          this.addSuccessPopup({ text: this.$t('successes.default') });
+          this.addSuccessPopup({ text: this.$t('success.default') });
           this.hideModal();
         }
       } catch (err) {

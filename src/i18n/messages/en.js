@@ -762,4 +762,9 @@ export default {
       },
     },
   },
+  view: {
+    errors: {
+      emptyTabs: 'You should create a tab',
+    },
+  },
 };

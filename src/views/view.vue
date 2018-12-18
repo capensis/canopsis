@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import isNull from 'lodash/isNull';
+
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
@@ -60,6 +62,7 @@ import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -71,6 +74,7 @@ export default {
   mixins: [
     authMixin,
     modalMixin,
+    popupMixin,
     queryMixin,
     entitiesViewMixin,
   ],
@@ -94,7 +98,11 @@ export default {
     },
 
     activeTab() {
-      if (this.view.tabs && this.activeTabIndex !== null) {
+      if (this.view.tabs && this.view.tabs.length) {
+        if (isNull(this.activeTabIndex)) {
+          return this.view.tabs[0];
+        }
+
         return this.view.tabs[this.activeTabIndex];
       }
 
@@ -111,10 +119,10 @@ export default {
   },
   methods: {
     keyDownListener(event) {
-      if (event.keyCode === 13 && event.altKey) {
-        this.fullScreenModeToggle();
+      if (event.keyCode === 13 && event.altKey) { // alt + enter
+        this.toggleFullScreenMode();
         event.preventDefault();
-      } else if (event.keyCode === 69 && event.ctrlKey) {
+      } else if (event.keyCode === 69 && event.ctrlKey) { // ctrl + e
         this.toggleViewEditingMode();
         event.preventDefault();
       }
@@ -131,6 +139,8 @@ export default {
             callback: value => this.isFullScreenMode = value,
           });
         }
+      } else {
+        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
@@ -150,6 +160,8 @@ export default {
             tabId: this.activeTab._id,
           },
         });
+      } else {
+        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
