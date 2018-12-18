@@ -10,8 +10,8 @@ Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en
 ## Installation
 
 - Cloner le dépôt Canopsis : https://git.canopsis.net/canopsis/canopsis
-- Actuellement les conteneurs sont gérés dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
-- Dans ce dépôt un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisée.
+- Actuellement, les conteneurs sont gérés dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
+- Dans ce dépôt, un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisée.
   
     - Rappel : [Installation de Docker compose](https://docs.docker.com/compose/install/#install-compose)  
   
@@ -25,7 +25,7 @@ Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en
 - Exécuter la commande suivante : `docker-compose up -d`
 
     - Troubleshooting :
-    ```bash
+    ```sh
     docker-compose up -d
     ERROR: Couldn't connect to Docker daemon at http+docker://localhost - is it running?
     If it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.
@@ -36,8 +36,9 @@ Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en
 
 La vérification va passer par la commande `sudo docker-compose ps` :
 
-```bash
+```sh
 sudo docker-compose ps
+
           Name                         Command               State                          Ports                      
 -----------------------------------------------------------------------------------------------------------------------
 canopsis_alerts_1           /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
@@ -62,8 +63,10 @@ canopsis_webserver_1        /bin/sh -c /entrypoint.sh        Up       0.0.0.0:28
 ```
 
 ## Arrêt et suppression du docker-compose
-```bash
+
+```sh
 sudo docker-compose down
+
 Stopping canopsis_webserver_1      ... done
 Stopping canopsis_metric_1         ... done
 Stopping canopsis_event_filter_1   ... done

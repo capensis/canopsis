@@ -102,8 +102,8 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'affiché les détails de l'observateur : ```watcher```.
-Exemple : Pour afficher le champ 'display_name' de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : ```{{ watcher.display_name }}```.
+Une variable est disponible ici pour vous permettre d'affiché les détails de l'observateur : `watcher`.
+Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ watcher.display_name }}`.
 Tous les champs disponibles dans l'observateur sont disponibles ici.
 
 ##### Template - Modal
@@ -120,8 +120,8 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'affiché les détails de l'entité : ```entity```.
-Exemple : Pour afficher le champ 'name' de l'entité (qui correspond au nom de l'entité), il vous faut écrire dans le template : ```{{ entity.name }}```.
+Une variable est disponible ici pour vous permettre d'affiché les détails de l'entité : `entity`.
+Exemple : Pour afficher le champ 'name' de l'entité (qui correspond au nom de l'entité), il vous faut écrire dans le template : `{{ entity.name }}`.
 Tous les champs disponibles dans l'entité sont disponibles ici.
 
 ##### Colonnes - Petit
