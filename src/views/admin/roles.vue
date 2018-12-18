@@ -87,7 +87,7 @@ export default {
               await this.removeRole({ id });
               await this.fetchRolesListWithPreviousParams();
 
-              this.addSuccessPopup({ text: this.$t('successes.default') });
+              this.addSuccessPopup({ text: this.$t('success.default') });
             } catch (err) {
               this.addErrorPopup({ text: this.$t('errors.default') });
             }
@@ -105,7 +105,7 @@ export default {
 
               this.selected = [];
 
-              this.addSuccessPopup({ text: this.$t('successes.default') });
+              this.addSuccessPopup({ text: this.$t('success.default') });
             } catch (err) {
               this.addErrorPopup({ text: this.$t('errors.default') });
             }

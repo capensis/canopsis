@@ -227,7 +227,7 @@ export default {
           await this.fetchCurrentUser();
         }
 
-        this.addSuccessPopup({ text: this.$t('successes.default') });
+        this.addSuccessPopup({ text: this.$t('success.default') });
         this.clearChangedRoles();
 
         this.pending = false;

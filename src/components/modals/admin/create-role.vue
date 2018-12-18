@@ -105,7 +105,7 @@ export default {
           await this.createRole({ data: { ...formData, ...this.form } });
           await this.fetchRolesListWithPreviousParams();
 
-          this.addSuccessPopup({ text: this.$t('successes.default') });
+          this.addSuccessPopup({ text: this.$t('success.default') });
           this.hideModal();
         }
       } catch (err) {
