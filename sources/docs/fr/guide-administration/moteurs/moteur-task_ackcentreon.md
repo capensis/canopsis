@@ -99,6 +99,9 @@ Il faut, pour cela, [créer une règle d'`event_filter`](moteur-event_filter.md)
 !!! note
     Notez bien le `"extra.origin": "canopsis"` qui précise que seuls les ACK/ACKREMOVE en provenance de Canopsis doivent être transmis à Centreon. Ceci est indispensable pour ne pas créer de boucles entre Canopsis et Centreon.
 
+!!! note
+    Il est possible, dans un environnement pur Python, que le champ `"extra.origin": "canopsis"` doive être remplacé par `"origin": "canopsis"`. Tester l'une ou l'autre de ces valeurs, si la tâche semble ne pas se déclencher.
+
 Après avoir configuré le filtre, créer l'action suivante :
 
 *  `execjob`, qui pointe sur le job précédemment créé.
