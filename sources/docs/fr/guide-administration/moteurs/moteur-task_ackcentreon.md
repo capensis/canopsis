@@ -42,7 +42,7 @@ su - canopsis
 cat ~/.ssh/id_rsa.pub
 ```
 
-Le contenu du fichier `/opt/canopsis/.ssh/id_rsa.pub` du nœud Canopsis doit ensuite être ajouté au fichier `/home/centreon/.ssh/authorized_keys` du nœud Centreon.
+Le contenu du fichier `/opt/canopsis/.ssh/id_rsa.pub` du nœud Canopsis doit ensuite être ajouté au fichier `/var/spool/centreon/.ssh/authorized_keys` du nœud Centreon.
 
 ### Mise en place de CLAPI sur le nœud Centreon
 
