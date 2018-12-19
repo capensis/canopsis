@@ -7,6 +7,9 @@ Le moteur `task_ackcentreon` permet de *descendre* les ACK positionnés depuis C
 
 Ainsi, lorsqu'un ACK est posé sur Canopsis, l'information est *répliquée* sur le Poller Centreon qui avait généré l'alarme. En utilisation conjointe du [connecteur Centreon](../../guide-connecteurs/Supervision/Centreon.md), la communication est bi-directionnelle.
 
+!!! attention
+    Cette procédure nécessite l'utilisation d'une UIv3 sur un Canopsis ⩾ 3.6.0.
+
 ## Fonctionnement
 
 Voici les différentes étapes permettant d'obtenir le résultat souhaité :
