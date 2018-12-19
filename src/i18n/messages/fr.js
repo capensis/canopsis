@@ -15,6 +15,7 @@ export default {
     submit: 'Envoyer',
     cancel: 'Annuler',
     options: 'Options',
+    type: 'Type',
     quitEditing: 'Quitter le mode d\'édition',
     enabled: 'Activé(e)',
     disabled: 'Désactivé(e)',
@@ -45,6 +46,7 @@ export default {
     title: 'Titre',
     save: 'Sauvegarder',
     label: 'Label',
+    field: 'Champs',
     value: 'Valeur',
     add: 'Ajouter',
     create: 'Créer',
@@ -62,6 +64,8 @@ export default {
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
+    exploitation: 'Exploitation',
+    administration: 'Administration',
     actions: {
       close: 'Fermer',
       acknowledge: 'Acquitter',
@@ -527,6 +531,47 @@ export default {
     editRole: {
       title: 'Editer un role',
     },
+    eventFilterRule: {
+      create: {
+        title: 'Créer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      edit: {
+        title: 'Editer une règle',
+        success: 'Règle éditée avec succès !',
+      },
+      priority: 'Priorité',
+      editPattern: 'Editer le pattern',
+      advanced: 'Avancée',
+      addAField: 'Ajouter un champs',
+      simpleEditor: 'Editeur simple',
+      advancedEditor: 'Editeur avancé',
+      comparisonRules: 'Règles de comparaison',
+      enrichmentOptions: 'Options d\'enrichissement',
+      editActions: 'Editer les actions',
+      addAction: 'Ajouter une action',
+      actions: 'Actions',
+      from: 'Depuis',
+      to: 'Vers',
+      externalData: 'Données externes',
+      onSuccess: 'En cas de succès',
+      onFailure: 'En cas d\'échec',
+    },
+    viewTab: {
+      create: {
+        title: 'Ajouter un onglet',
+      },
+      edit: {
+        title: 'Editer l\'onglet',
+      },
+      fields: {
+        title: 'Titre',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -655,6 +700,7 @@ export default {
   errors: {
     default: 'Une erreur s\'est produite...',
     lineNotEmpty: 'Cette ligne n\'est pas vide',
+    JSONNotValid: 'JSON non valide..',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -713,6 +759,15 @@ export default {
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
     },
+  },
+  eventFilter: {
+    title: 'Filtre d\'événements',
+    type: 'Type',
+    pattern: 'Pattern',
+    priority: 'Priorité',
+    enabled: 'Activé',
+    actions: 'Actions',
+    actionsRequired: 'Veuillez ajouter au moins une action',
   },
   layout: {
     sideBar: {

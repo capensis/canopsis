@@ -16,6 +16,7 @@ export default {
     submit: 'Submit',
     cancel: 'Cancel',
     options: 'Options',
+    type: 'Type',
     quitEditing: 'Quit editing',
     enabled: 'Enabled',
     disabled: 'Disabled',
@@ -46,6 +47,7 @@ export default {
     title: 'Title',
     save: 'Save',
     label: 'Label',
+    field: 'Field',
     value: 'Value',
     add: 'Add',
     create: 'Create',
@@ -63,6 +65,8 @@ export default {
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    exploitation: 'Exploitation',
+    administration: 'Administration',
     forbidden: 'Forbidden',
     actions: {
       close: 'Close',
@@ -539,6 +543,36 @@ export default {
         type: 'Type',
       },
     },
+    eventFilterRule: {
+      create: {
+        title: 'Create event filter rule',
+        success: 'Rule successfully created !',
+      },
+      duplicate: {
+        title: 'Duplicate event filter rule',
+        success: 'Rule successfully created !',
+      },
+      edit: {
+        title: 'Edit an event filter rule',
+        success: 'Rule successfully edited !',
+      },
+      priority: 'Priority',
+      editPattern: 'Edit pattern',
+      advanced: 'Advanced',
+      addAField: 'Add a field',
+      simpleEditor: 'Simple editor',
+      advancedEditor: 'Advanced editor',
+      comparisonRules: 'Comparison rules',
+      enrichmentOptions: 'Enrichment options',
+      editActions: 'Edit actions',
+      addAction: 'Add an action',
+      actions: 'Actions',
+      from: 'From',
+      to: 'To',
+      externalData: 'External data',
+      onSuccess: 'On success',
+      onFailure: 'On failure',
+    },
     viewTab: {
       create: {
         title: 'Create tab',
@@ -678,6 +712,7 @@ export default {
   errors: {
     default: 'Something went wrong...',
     lineNotEmpty: 'This line is not empty',
+    JSONNotValid: 'Invalid JSON',
   },
   calendar: {
     today: 'Today',
@@ -742,6 +777,15 @@ export default {
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
     },
+  },
+  eventFilter: {
+    title: 'Event filter',
+    type: 'Type',
+    pattern: 'Pattern',
+    priority: 'Priority',
+    enabled: 'Enabled',
+    actions: 'Actions',
+    actionsRequired: 'Please add at least one action',
   },
   layout: {
     sideBar: {

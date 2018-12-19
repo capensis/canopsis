@@ -15,6 +15,7 @@ export const ENTITIES_TYPES = {
   stat: 'stat',
   user: 'user',
   role: 'role',
+  eventFilterRule: 'eventFilterRule',
 };
 
 export const MODALS = {
@@ -47,6 +48,10 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createRight: 'create-right',
+  createEventFilterRule: 'create-event-filter-rule',
+  createEventFilterRulePattern: 'create-event-filter-rule-pattern',
+  eventFilterRuleActions: 'event-filter-rule-actions',
+  eventFilterRuleExternalData: 'event-filter-rule-external-data',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -439,6 +444,86 @@ export const USERS_RIGHTS = {
 export const GROUPS_NAVIGATION_TYPES = {
   sideBar: 'side-bar',
   topBar: 'top-bar',
+};
+
+export const EVENT_FILTER_RULE_TYPES = {
+  drop: 'drop',
+  break: 'break',
+  enrichment: 'enrichment',
+};
+
+export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
+  pass: 'pass',
+  break: 'break',
+  drop: 'drop',
+};
+
+export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
+  setField: {
+    value: 'set_field',
+    options: {
+      name: {
+        text: 'Name',
+        value: 'name',
+        required: true,
+      },
+      value: {
+        text: 'Value',
+        value: 'value',
+        required: true,
+      },
+    },
+  },
+  setFieldFromTemplate: {
+    value: 'set_field_from_template',
+    options: {
+      name: {
+        text: 'Name',
+        value: 'name',
+        required: true,
+      },
+      value: {
+        text: 'Value',
+        value: 'value',
+        required: true,
+      },
+    },
+  },
+  setEntityInfoFromTemplate: {
+    value: 'set_entity_info_from_template',
+    options: {
+      name: {
+        text: 'Name',
+        value: 'name',
+        required: true,
+      },
+      description: {
+        text: 'Description',
+        value: 'description',
+        required: false,
+      },
+      value: {
+        text: 'Value',
+        value: 'value',
+        required: true,
+      },
+    },
+  },
+  copy: {
+    value: 'copy',
+    options: {
+      from: {
+        text: 'From',
+        value: 'from',
+        required: true,
+      },
+      to: {
+        text: 'To',
+        value: 'to',
+        required: true,
+      },
+    },
+  },
 };
 
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {

@@ -17,6 +17,7 @@ import AdminRights from '@/views/admin/rights.vue';
 import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
+import EventFilter from '@/views/exploitation/event-filter.vue';
 
 Vue.use(Router);
 
@@ -88,6 +89,12 @@ const routes = [
     path: '/admin/parameters',
     name: 'admin-parameters',
     component: AdminParameters,
+    meta: requiresLoginMeta,
+  },
+  {
+    path: '/exploitation/event-filter',
+    name: 'exploitation-event-filter',
+    component: EventFilter,
     meta: requiresLoginMeta,
   },
 ];

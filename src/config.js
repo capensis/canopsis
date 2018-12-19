@@ -51,4 +51,5 @@ export const API_ROUTES = {
     create: '/account/role',
     remove: '/account/delete/role',
   },
+  eventFilterRules: '/api/v2/eventfilter/rules',
 };
