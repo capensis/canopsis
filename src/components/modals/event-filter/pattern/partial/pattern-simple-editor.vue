@@ -78,7 +78,7 @@ export default {
         if (this.isSimpleRule(pattern[key])) {
           acc.push({ key, value: cloneDeep(pattern[key]) });
         } else {
-          acc.push({ key, value: this.convertAdvancedRuleToForm(cloneDeep(pattern[key])) });
+          acc.push({ key, value: this.convertAdvancedRuleToForm(pattern[key]) });
         }
         return acc;
       }, []);
