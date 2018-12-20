@@ -29,6 +29,7 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
 
 import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
@@ -55,7 +56,7 @@ export default {
   },
   props: {
     value: {
-      type: String,
+      type: [String, Object],
       default: '',
     },
     entitiesType: {
@@ -69,22 +70,24 @@ export default {
     },
   },
   data() {
-    let filter = cloneDeep(FILTER_DEFAULT_VALUES.group);
+    let filter;
 
-    if (this.value !== '') {
-      const valueObject = JSON.parse(this.value);
+    try {
+      if (this.value !== '') {
+        if (isString(this.value)) {
+          filter = JSON.parse(this.value);
+        }
 
-      if (!isEmpty(valueObject)) {
-        try {
-          filter = parseGroupToFilter(valueObject);
-        } catch (err) {
-          console.warn(err);
+        if (!isEmpty(this.value)) {
+          filter = parseGroupToFilter(this.value);
         }
       }
+    } catch (err) {
+      console.warn(err);
     }
 
     return {
-      filter,
+      filter: filter || cloneDeep(FILTER_DEFAULT_VALUES.group),
       activeTab: 0,
       requestString: '',
       parseError: '',
@@ -129,9 +132,11 @@ export default {
   },
   methods: {
     updateFilter(value) {
+      const preparedFilter = parseFilterToRequest(value);
+
       this.filter = value;
 
-      this.$emit('input', JSON.stringify(parseFilterToRequest(value)));
+      this.$emit('input', isString(this.value) ? JSON.stringify(preparedFilter) : preparedFilter);
 
       if (this.required && this.$validator && this.errors.has('filter')) {
         this.$validator.validate('filter');

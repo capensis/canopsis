@@ -10,7 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter")
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hidden-fields="['title']")
       v-divider
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}

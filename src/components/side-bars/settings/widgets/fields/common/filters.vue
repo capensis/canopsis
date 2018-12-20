@@ -69,7 +69,7 @@ export default {
       this.showModal({
         name: MODALS.createFilter,
         config: {
-          title: 'modals.filter.create.title',
+          title: this.$t('modals.filter.create.title'),
           action: newFilter => this.$emit('update:filters', [...this.filters, newFilter]),
         },
       });
@@ -79,9 +79,9 @@ export default {
       const filter = this.filters[index];
 
       this.showModal({
-        name: this.$constants.MODALS.createFilter,
+        name: MODALS.createFilter,
         config: {
-          title: 'modals.filter.edit.title',
+          title: this.$t('modals.filter.edit.title'),
           filter,
           action: (newFilter) => {
             if (this.value.title === filter.title) {
