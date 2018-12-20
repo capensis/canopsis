@@ -74,12 +74,10 @@ export default {
 
     try {
       if (this.value !== '') {
-        if (isString(this.value)) {
-          filter = JSON.parse(this.value);
-        }
+        const parsedFilter = isString(this.value) ? JSON.parse(this.value) : this.value;
 
-        if (!isEmpty(this.value)) {
-          filter = parseGroupToFilter(this.value);
+        if (!isEmpty(parsedFilter)) {
+          filter = parseGroupToFilter(parsedFilter);
         }
       }
     } catch (err) {

@@ -15,9 +15,9 @@
         h3.text-xs-center {{ $t('filterEditor.title') }}
         v-divider
         filter-editor(
-        :value="filterValue",
+        :value="form.mfilter",
         required,
-        @input="updateFilterValue"
+        @input="updateField('mfilter', $event)"
         )
 </template>
 
@@ -39,22 +39,6 @@ export default {
     form: {
       type: Object,
       required: true,
-    },
-  },
-  computed: {
-    filterValue() {
-      try {
-        return JSON.parse(this.form.mfilter);
-      } catch (err) {
-        console.warn(err);
-
-        return {};
-      }
-    },
-  },
-  methods: {
-    updateFilterValue(value) {
-      this.updateField('mfilter', JSON.stringify(value));
     },
   },
 };
