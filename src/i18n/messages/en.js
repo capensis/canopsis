@@ -98,7 +98,7 @@ export default {
       infos: 'Infos',
       type: 'Type',
       lastActiveDate: 'Last Active Date',
-      infosSearchLabel: 'Search infos value',
+      infosSearchLabel: 'Search infos',
     },
   },
   search: {

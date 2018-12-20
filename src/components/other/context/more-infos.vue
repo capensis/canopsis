@@ -81,7 +81,10 @@ export default {
 
       const searchingText = this.infosSearchingText.toLowerCase();
 
-      return pickBy(this.item.infos, ({ value }) => value.toLowerCase().indexOf(searchingText) !== -1);
+      return pickBy(this.item.infos, ({ value, description }, key) =>
+        value.toLowerCase().indexOf(searchingText) !== -1 ||
+        description.toLowerCase().indexOf(searchingText) !== -1 ||
+        key.indexOf(searchingText) !== -1);
     },
   },
 };
