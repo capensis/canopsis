@@ -33,10 +33,13 @@
         h3.text-xs-center.my-2 Pbehaviors
         pbehaviors-list(:itemId="item._id")
       v-flex.my-2(xs12)
-        h3.text-xs-center Infos
+        h3.text-xs-center {{ $t('context.moreInfos.infos') }}
         v-container(fluid, grid-list-sm)
+          v-layout(row, wrap, justify-center)
+            v-flex(xs3)
+              v-text-field(v-model="infosSearchingText", :label="$t('context.moreInfos.infosSearchLabel')")
           v-layout(row, wrap)
-            v-flex(v-for="(value, key) in item.infos", :key="key", xs4)
+            v-flex(v-for="(value, key) in filteredItemInfos", :key="key", xs4)
               h4.text-xs-center {{ key }}
               p.text-xs-center {{ $t('common.description') }} : {{ value.description }}
               p.text-xs-center {{ $t('common.value') }} : {{ value.value }}
@@ -45,6 +48,8 @@
 </template>
 
 <script>
+import pickBy from 'lodash/pickBy';
+
 import PbehaviorsList from './pbehaviors-list.vue';
 
 export default {
@@ -59,6 +64,7 @@ export default {
   },
   data() {
     return {
+      infosSearchingText: '',
       isImpactExpanded: false,
       isDependsExpanded: false,
     };
@@ -67,8 +73,16 @@ export default {
     lastActiveDate() {
       return Math.max(this.item.enable_history) * 1000;
     },
-  },
-  methods: {
+
+    filteredItemInfos() {
+      if (this.infosSearchingText === '') {
+        return this.item.infos;
+      }
+
+      const searchingText = this.infosSearchingText.toLowerCase();
+
+      return pickBy(this.item.infos, ({ value }) => value.toLowerCase().indexOf(searchingText) !== -1);
+    },
   },
 };
 </script>

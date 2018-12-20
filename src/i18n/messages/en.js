@@ -95,8 +95,10 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
     moreInfos: {
+      infos: 'Infos',
       type: 'Type',
       lastActiveDate: 'Last Active Date',
+      infosSearchLabel: 'Search infos value',
     },
   },
   search: {
