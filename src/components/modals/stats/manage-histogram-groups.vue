@@ -45,7 +45,7 @@ export default {
       this.showModal({
         name: MODALS.createFilter,
         config: {
-          title: 'modals.filter.create.title',
+          title: this.$t('modals.filter.create.title'),
           filter: this.form.filter,
           action: filter => this.form.filter = filter,
         },

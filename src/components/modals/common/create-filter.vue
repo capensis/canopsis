@@ -2,18 +2,22 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ $t(config.title) }}
+        span.headline {{ title }}
     v-divider
     v-card-text
       v-text-field(
-      :label="$t('modals.filter.fields.title')",
-      :error-messages="errors.collect('title')"
+      v-if="!hiddenFields.includes('title')"
       v-model="form.title",
       v-validate="'required'",
-      required,
+      :label="$t('modals.filter.fields.title')",
+      :error-messages="errors.collect('title')"
       name="title",
+      required,
       )
-      filter-editor(v-model="form.filter")
+      filter-editor(
+      v-if="!hiddenFields.includes('filter')",
+      v-model="form.filter"
+      )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -41,11 +45,18 @@ export default {
     modalInnerMixin,
   ],
   data() {
-    const { filter } = this.modal.config || { title: '', filter: '{}' };
+    const { hiddenFields = [], filter = {} } = this.modal.config;
 
     return {
+      hiddenFields,
+
       form: pick(filter, ['title', 'filter']),
     };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.filter.create.title');
+    },
   },
   methods: {
     async submit() {
