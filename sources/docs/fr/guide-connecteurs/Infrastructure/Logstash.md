@@ -187,7 +187,7 @@ Un exemple d'évènement :
   'state_type': 1,
   'status': 1
  }
- ```
+```
 
 Un exemple de `routing_key` (rk) :
 
