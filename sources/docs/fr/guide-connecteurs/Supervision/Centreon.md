@@ -92,7 +92,3 @@ Sur la nouvelle page qui s'affiche, il faut ensuite cocher les cases « Move Ex
 ![Redémarrage du service : étape 2](img/module_restart1.png)
 
 **ATTENTION :** Il faut bien faire un `restart` et non pas un simple `reload` ! Sans quoi vous risquez des problèmes de cohérence sur les évènements échangés avec Canopsis.
-
-## Aller plus loin
-
-[Compilation manuelle du module](Compilation-Manuelle-Module-Centreon.md) : peut être nécessaire s'il n'existe pas de binaire pré-compilé pour votre environnement.
