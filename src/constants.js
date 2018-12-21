@@ -278,17 +278,17 @@ export const FILTER_DEFAULT_VALUES = {
     component: {
       field: 'component',
       operator: FILTER_OPERATORS.equal,
-      input: '...',
+      input: '',
     },
     resource: {
       field: 'resource',
       operator: FILTER_OPERATORS.equal,
-      input: '...',
+      input: '',
     },
     connector: {
       field: 'connector',
       operator: FILTER_OPERATORS.equal,
-      input: '...',
+      input: '',
     },
   },
 };
