@@ -29,7 +29,7 @@
         v-text-field(
         :label="$t('common.name')",
         v-model="form.name",
-        v-validate="'required|unique-name'",
+        v-validate="'required'",
         data-vv-name="name",
         :error-messages="errors.collect('name')"
         )
@@ -48,10 +48,12 @@
         data-vv-name="value",
         :error-messages="errors.collect('value')"
         )
+        v-alert(:value="uniqueInfoError", error) Nom unique
         v-btn(@click="submit", depressed) {{ $t('common.add') }}
 </template>
 
 <script>
+import find from 'lodash/find';
 import formMixin from '@/mixins/form';
 
 /**
@@ -85,6 +87,7 @@ export default {
       },
       isEditing: false,
       editingInfoName: '',
+      uniqueInfoError: false,
     };
   },
   computed: {
@@ -92,21 +95,22 @@ export default {
       return Object.keys(this.infos);
     },
   },
-  created() {
-    this.createUniqueValidationRule();
-  },
   methods: {
     async addInfo() {
       const isFormValid = await this.$validator.validateAll();
-
+      const existingInfo = find(this.infos, info => info.name === this.form.name);
       if (isFormValid) {
-        if (this.isEditing) {
+        if (existingInfo) {
+          this.uniqueInfoError = true;
+        } else if (this.isEditing) {
+          await this.removeField(this.editingInfoName);
           await this.updateField(this.form.name, { ...this.form });
-          this.removeField(this.editingInfoName);
           this.isEditing = false;
+          this.uniqueInfoError = false;
           this.$refs.form.reset();
         } else {
           await this.updateField(this.form.name, { ...this.form });
+          this.uniqueInfoError = false;
           this.$refs.form.reset();
         }
       }
@@ -121,13 +125,6 @@ export default {
       this.isEditing = true;
       this.editingInfoName = info.name;
       this.form = { ...info };
-    },
-
-    createUniqueValidationRule() {
-      this.$validator.extend('unique-name', {
-        getMessage: () => this.$t('validator.unique'),
-        validate: value => !this.infosNames.includes(value),
-      });
     },
   },
 };
