@@ -9,6 +9,7 @@ export default {
   computed: {
     ...mapGetters({
       viewId: 'itemId',
+      viewPending: 'pending',
       view: 'item',
       getItemById: 'getItemById',
     }),

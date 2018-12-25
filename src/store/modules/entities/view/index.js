@@ -12,6 +12,7 @@ import groupModule from './group';
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',
   FETCH_ITEM_COMPLETED: 'FETCH_ITEM_COMPLETED',
+  FETCH_ITEM_FAILED: 'FETCH_ITEM_FAILED',
 };
 
 export default {
@@ -21,9 +22,11 @@ export default {
   },
   state: {
     activeViewId: null,
+    pending: true,
   },
   getters: {
     itemId: state => state.activeViewId,
+    pending: state => state.pending,
     item: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.view, state.activeViewId),
     getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](ENTITIES_TYPES.view, id),
@@ -35,6 +38,9 @@ export default {
     },
     [types.FETCH_ITEM_COMPLETED]: (state, viewId) => {
       state.activeViewId = viewId;
+      state.pending = false;
+    },
+    [types.FETCH_ITEM_FAILED]: (state) => {
       state.pending = false;
     },
   },
@@ -51,6 +57,8 @@ export default {
         commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
       } catch (err) {
         console.error(err);
+
+        commit(types.FETCH_ITEM_FAILED);
       }
     },
 

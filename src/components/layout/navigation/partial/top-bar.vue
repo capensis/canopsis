@@ -88,6 +88,8 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import appMixin from '@/mixins/app';
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -113,17 +115,18 @@ export default {
   methods: {
     editDefaultView() {
       this.showModal({
-        name: this.$constants.MODALS.selectView,
+        name: MODALS.selectView,
         config: {
           action: (viewId) => {
             const user = { ...this.currentUser, defaultview: viewId };
-            this.editUserAccount(user);
+
+            return this.editUserAccount(user);
           },
         },
       });
     },
-    async editUserAccount(user) {
-      await this.editUser({ user });
+    async editUserAccount(data) {
+      await this.createUser({ data });
       await this.fetchCurrentUser();
     },
   },
