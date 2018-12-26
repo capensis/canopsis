@@ -57,6 +57,7 @@ export default {
         await request.post(API_ROUTES.user.create, qs.stringify({ user: JSON.stringify(data) }), {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         });
+
         await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });

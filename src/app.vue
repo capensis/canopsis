@@ -33,8 +33,8 @@ export default {
       pending: true,
     };
   },
-  mounted() {
-    this.fetchCurrentUser();
+  async mounted() {
+    await this.fetchCurrentUser();
 
     this.pending = false;
   },
