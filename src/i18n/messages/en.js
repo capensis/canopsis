@@ -715,6 +715,7 @@ export default {
     default: 'Something went wrong...',
     lineNotEmpty: 'This line is not empty',
     JSONNotValid: 'Invalid JSON',
+    versionNotFound: 'Unable to get application version',
   },
   calendar: {
     today: 'Today',
