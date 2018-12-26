@@ -1,4 +1,5 @@
 import request from '@/services/request';
+import i18n from '@/i18n';
 import { API_ROUTES } from '@/config';
 
 export const types = {
@@ -19,9 +20,14 @@ export default {
     },
   },
   actions: {
-    async fetchVersion({ commit }) {
-      const { version } = await request.get(API_ROUTES.version);
-      commit(types.FETCH_VERSION_COMPLETED, version);
+    async fetchVersion({ commit, dispatch }) {
+      try {
+        const { version } = await request.get(API_ROUTES.version);
+        commit(types.FETCH_VERSION_COMPLETED, version);
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.versionNotFound') }, { root: true });
+        console.warn(err);
+      }
     },
   },
 };
