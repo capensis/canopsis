@@ -8,6 +8,19 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.7.0 - Due date : 2018-12-27
+
+ - [Documentation] Add documentation for ackcentreon task
+ - [Tooling] Fix debian installation method
+ - [UI] Add tabs system inside views
+ - [UI] Add default views feature for roles and users
+ - [UI/ServiceWeather] Add a parameter that, when clicking on a service weather tile, allows choosing between opening a modal with the observer's entities list and opening an alarm list related to the observer
+ - [UI/ServiceWeather] Fix random screen freezing
+ - [UI/Alarm List] Fix bug that fetched the alarms twice
+ - [UI/Context] Fix timestamp problem at pbehavior creation
+ - [UI/Context] Add a search bar used to search through an entity's informations
+ - [UI/Filters] Add a CRUD managing the event filter rules
+
 ## Canopsis 3.6.0 - Due date : 2018-12-13
 
  - [Documentation] Add documentation for global status check with the healthcheck route
