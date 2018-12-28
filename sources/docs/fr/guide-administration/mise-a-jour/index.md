@@ -4,14 +4,17 @@
 
 Depuis la version 3.5.0, Canopsis veille à suivre le principe du *versionnage sémantique*.
 
-Sur une version `X.Y.Z` de Canopsis :
+Pour une mise à jour vers une version `X.Y.Z` de Canopsis :
 
-*  le `X` décrit une mise à jour **majeure** de Canopsis.
-    *  Cela signifie que des changements fondamentaux ont été apportés à Canopsis, ou qu'une incompatibilité majeure est survenue (exemple : mise à jour d'un Canopsis 2.6.8 vers un Canopsis 3.1.0). La mise à jour n'est pas garantie, et il faudra parfois prévoir une réinstallation suivie d'une migration.
-*  le `Y` décrit une mise à jour **intermédiaire** de Canopsis (on parle aussi d'une nouvelle *branche*).
-    *  Elle peut apporter de nouvelles fonctionnalités, ou des changements de comportement. Ces mises à jour peuvent nécessiter d'appliquer une [procédure de mise à jour](#guides-de-migration), comme décrit plus bas (exemple : mise à jour d'une version 3.4.0 vers 3.5.0).
-*  le `Z` apporte uniquement des **correctifs**, et aucun changement fonctionnel.
-    *  Pour cette raison, une simple [mise à jour standard](#procedure-standard-de-mise-a-jour) est suffisante (exemple : mise à jour d'une version 3.5.0 vers 3.5.1).
+*  une incrémentation du `X` désigne une mise à jour **majeure** de Canopsis.
+    *  Exemple : Canopsis 2.6.8 vers 3.1.0.
+    *  Cela signifie que des changements fondamentaux ont été apportés à Canopsis, ou qu'une incompatibilité majeure est survenue. La mise à jour n'est pas garantie, et il faudra généralement prévoir une réinstallation et une reconfiguration complète.
+*  une incrémentation du `Y` désigne une mise à jour **intermédiaire** de Canopsis (on parle aussi d'une nouvelle *branche*).
+    *  Exemple : Canopsis 3.4.0 vers 3.5.0.
+    *  Elle peut apporter de nouvelles fonctionnalités, ou des changements de comportement. Elle nécessite de suivre la [mise à jour standard](#procedure-standard-de-mise-a-jour) et de vérifier la présence d'un [guide de migration](#guides-de-migration).
+*  une incrémentation du `Z` apporte uniquement des **correctifs**. Il n'y a aucun changement fonctionnel.
+    *  Exemple : Canopsis 3.5.0 vers 3.5.1.
+    *  Pour cette raison, une simple [mise à jour standard](#procedure-standard-de-mise-a-jour) est suffisante.
 
 ## Procédure standard de mise à jour
 
@@ -21,9 +24,10 @@ Cette procédure s'applique aux mises à jour intermédiaires (3.4.0 vers 3.5.0
 
 ## Guides de migration
 
-La mise à jour vers certaines branches de Canopsis nécessite parfois des manipulations supplémentaires et **OBLIGATOIRES**.
+Cette procédure s'applique au mises à jour intermédiaires (3.4.0 vers 3.5.0). Ce sont des manipulations supplémentaires et **obligatoires**.
 
 Celles-ci sont décrites dans les documents suivants, branche par branche :
 
 *  [3.5.0](../../notes-de-version/3.5.0.md)
 *  [3.6.0](../../notes-de-version/3.6.0.md)
+*  [3.7.0](../../notes-de-version/3.7.0.md)
