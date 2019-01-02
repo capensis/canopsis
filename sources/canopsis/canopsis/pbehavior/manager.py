@@ -116,6 +116,7 @@ class PBehavior(BasePBehavior):
     AUTHOR = 'author'
     TYPE = 'type_'
     REASON = 'reason'
+    TIMEZONE = 'timezone'
 
     DEFAULT_TYPE = 'generic'
 
@@ -191,11 +192,10 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
-        # FIXME : this is an ugly hack. This should not exist.
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
+        self.default_tz = self.config_data.get("default_timezone", "Europe/Paris")
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
-
         self.currently_active_pb = set()
 
     def get(self, _id, query=None):
@@ -546,6 +546,13 @@ class PBehaviorManager(object):
         fromts = datetime.utcfromtimestamp
         tstart = pbehavior[PBehavior.TSTART]
         tstop = pbehavior[PBehavior.TSTOP]
+        default_tz = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
+
+        try:
+            tz_object = pytz.timezone(default_tz)
+        except pytz.UnknownTimeZoneError:
+            self.logger.error("Can not parse the timezone : {}.".format(default_tz))
+            raise
 
         if not isinstance(tstart, (int, float)):
             return False
@@ -559,13 +566,13 @@ class PBehaviorManager(object):
         pbh_duration = tstop - tstart
 
         dtts = fromts(timestamp).replace(tzinfo=tz)
-        dtts = dtts.astimezone(pytz.timezone("Europe/Paris"))
+        dtts = dtts.astimezone(pytz.timezone(default_tz))
         # ddts_offset contains the current timestamp minus the duration of
         # the pbhevior, so the computation of the rrules occurences
         # will include the running occurence. Thus the current pbehavior
         # will be detected.
         dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
-        dtts_offset = dtts_offset.astimezone(pytz.timezone("Europe/Paris"))
+        dtts_offset = dtts_offset.astimezone(tz_object)
 
         rrule = pbehavior['rrule']
         if rrule:
@@ -577,8 +584,7 @@ class PBehaviorManager(object):
             dt_tstart_date = dtts_offset.date()
             dt_tstart_time = dttstart.time().replace(tzinfo=tz)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
-            dt_dtstart = dt_dtstart.astimezone(pytz.timezone("Europe/Paris"))
-
+            dt_dtstart = dt_dtstart.astimezone(tz_object)
 
             dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
             if dt is None:
