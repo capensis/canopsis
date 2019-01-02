@@ -559,11 +559,13 @@ class PBehaviorManager(object):
         pbh_duration = tstop - tstart
 
         dtts = fromts(timestamp).replace(tzinfo=tz)
+        dtts = dtts.astimezone(pytz.timezone("Europe/Paris"))
         # ddts_offset contains the current timestamp minus the duration of
         # the pbhevior, so the computation of the rrules occurences
         # will include the running occurence. Thus the current pbehavior
         # will be detected.
         dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
+        dtts_offset = dtts_offset.astimezone(pytz.timezone("Europe/Paris"))
 
         rrule = pbehavior['rrule']
         if rrule:
@@ -575,10 +577,8 @@ class PBehaviorManager(object):
             dt_tstart_date = dtts_offset.date()
             dt_tstart_time = dttstart.time().replace(tzinfo=tz)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
+            dt_dtstart = dt_dtstart.astimezone(pytz.timezone("Europe/Paris"))
 
-            # dates in dt_list at 0 and 1 indexes can be equal, so we generate
-            # three dates to ensure [1] - [2] will give a non-zero timedelta
-            # object.
 
             dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
             if dt is None:
