@@ -181,31 +181,6 @@ class PBehaviorManager(object):
 
         return config, logger, pb_storage
 
-    # FIXME : this is an ugly hack. This should not exist
-    @staticmethod
-    def parse_offset(offset):
-        """
-        Return a timedelta from a time offset from utc.
-        :param string offset: a string that respect the following format ±00:00
-        or ±0000.
-        :return timedelta: the offset from utc is a timedelta object
-        """
-        minus = offset[0] == "-"
-
-        if offset[3] == ":":
-            offset = offset[1:].split(":")
-        else:
-            offset = [offset[1:3], offset[3:5]]
-
-        hours = int(offset[0])
-        minutes = int(offset[1])
-
-        if minus:
-            hours = -hours
-            minutes = -minutes
-
-        return timedelta(hours=hours, minutes=minutes)
-
     def __init__(self, config, logger, pb_storage):
         """
         :param dict config: configuration
@@ -219,8 +194,6 @@ class PBehaviorManager(object):
         # FIXME : this is an ugly hack. This should not exist.
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
-        str_offset = self.config_data.get("offset_from_utc", "+00:00")
-        self.offset_from_utc = self.parse_offset(str_offset)
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
 
         self.currently_active_pb = set()
@@ -611,18 +584,7 @@ class PBehaviorManager(object):
             if dt is None:
                 return False
 
-            # FIXME : this is an ugly hack. This should not exist
-            substract_day = False
-            new_dtts = dtts - self.offset_from_utc
-
-            if dtts.day != new_dtts.day:
-                substract_day = True
-
             delta = dttstop - dttstart
-
-            if substract_day:
-                # FIXME : this is an ugly hack. This should not exist
-                dt = dt.replace(day=dt.day - 1)
 
             if dt <= dtts <= dt + delta:
                 return True
