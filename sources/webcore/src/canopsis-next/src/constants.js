@@ -28,6 +28,7 @@ export const MODALS = {
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
+  addEntityInfo: 'add-entity-info',
   watcher: 'watcher',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',

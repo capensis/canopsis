@@ -95,10 +95,10 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
     moreInfos: {
-      infos: 'Infos',
+      infos: 'Informations',
       type: 'Type',
       lastActiveDate: 'Last Active Date',
-      infosSearchLabel: 'Search infos',
+      infosSearchLabel: 'Search informations',
     },
   },
   search: {
@@ -281,9 +281,11 @@ export default {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
       duplicateTitle: 'Duplicate an entity',
-      infosList: 'Infos list',
-      addInfos: 'Add Infos',
-      noInfos: 'No Infos',
+      manageInfos: {
+        infosList: 'Informations',
+        addInfo: 'Add Information',
+        noInfos: 'No information',
+      },
       fields: {
         type: 'Type',
         manageInfos: 'Manage Infos',
@@ -312,6 +314,10 @@ export default {
         edit: 'Watcher successfully edited !',
         duplicate: 'Watcher successfully duplicated !',
       },
+    },
+    addEntityInfo: {
+      addTitle: 'Add an information',
+      editTitle: 'Edit an information',
     },
     view: {
       select: {
