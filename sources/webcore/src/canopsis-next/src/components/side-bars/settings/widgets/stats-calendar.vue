@@ -24,7 +24,11 @@
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-filters(:filters.sync="settings.widget.parameters.filters", hideSelect)
+          field-filters(
+          v-model="settings.widget.parameters.filters",
+          :filters.sync="settings.widget.parameters.filters",
+          hideSelect
+          )
           v-divider
           field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
           v-divider

@@ -143,12 +143,7 @@ export default {
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
       };
 
-      if (!isEmpty(event.data.meta.filter)) {
-        widgetParameters.viewFilter = meta.filter;
-        widgetParameters.mainFilters = [meta.filter];
-      }
-
-      const query = pick(meta, ['tstart', 'tstop']);
+      const query = { ...pick(meta, ['tstart', 'tstop']), filter: meta.filter.filter };
 
       if (query.tstart || query.tstop) {
         query.interval = LIVE_REPORTING_INTERVALS.custom;
