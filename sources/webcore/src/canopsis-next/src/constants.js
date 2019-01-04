@@ -18,6 +18,21 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
 };
 
+export const ALARMLIST_ACTION_PANEL_ACTIONS_TYPES = {
+  ack: 'ack',
+  fastAck: 'fastAck',
+  ackRemove: 'ackRemove',
+  snooze: 'snooze',
+  changeState: 'changeState',
+  declareTicket: 'declareTicket',
+  associateTicket: 'associateTicket',
+  cancel: 'cancel',
+  pbehavior: 'pbehavior',
+  pbehaviorList: 'pbehaviorList',
+  moreInfos: 'moreInfos',
+  variablesHelp: 'variablesHelp',
+};
+
 export const MODALS = {
   createAckEvent: 'create-ack-event',
   createAssociateTicketEvent: 'create-associate-ticket-event',
@@ -25,6 +40,7 @@ export const MODALS = {
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
+  variablesHelp: 'variables-help',
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',

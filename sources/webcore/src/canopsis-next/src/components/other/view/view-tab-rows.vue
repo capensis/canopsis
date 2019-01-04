@@ -30,7 +30,8 @@
         component(
         :is="widgetsComponentsMap[widget.type]",
         :widget="widget",
-        :tabId="tab._id"
+        :tabId="tab._id",
+        :isEditingMode="isEditingMode",
         )
 </template>
 

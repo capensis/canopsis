@@ -46,7 +46,7 @@
 import pick from 'lodash/pick';
 import pickBy from 'lodash/pickBy';
 
-import { MODALS, ENTITIES_TYPES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, ALARMLIST_ACTION_PANEL_ACTIONS_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import actionsPanelMixin from '@/mixins/actions-panel';
@@ -72,6 +72,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -121,6 +125,10 @@ export default {
           type: 'moreInfos',
           method: this.showMoreInfosModal(),
         },
+        variablesHelp: {
+          type: 'variablesHelp',
+          method: this.showVariablesHelperModal(),
+        },
       },
     };
   },
@@ -140,31 +148,50 @@ export default {
         .includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
-            main: pick(this.actionsMap, ['declareTicket', 'associateTicket', 'cancel']),
-            dropDown: pick(this.actionsMap, [
-              'ackRemove',
-              'snooze',
-              'changeState',
-              'pbehavior',
-              'pbehaviorList',
-              'moreInfos',
-            ]),
+            main: pick(
+              this.actionsMap,
+              [
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.declareTicket,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.declareTicket,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.associateTicket,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.cancel,
+                this.isEditingMode ? ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.variablesHelp : null,
+              ],
+            ),
+            dropDown: pick(
+              this.actionsMap,
+              [
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.ackRemove,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.snooze,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.changeState,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.pbehavior,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.pbehaviorList,
+                ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.moreInfos,
+              ],
+            ),
           };
         }
 
         return {
-          main: pick(this.actionsMap, ['ack', 'fastAck']),
-          dropDown: pick(this.actionsMap, ['moreInfos']),
+          main: pick(
+            this.actionsMap,
+            [
+              ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.ack,
+              ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.fastAck,
+              this.isEditingMode ? ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.variablesHelp : null,
+            ],
+          ),
+          dropDown: pick(this.actionsMap, [ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.moreInfos]),
         };
       } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
         return {
-          main: pick(this.actionsMap, ['pbehaviorList']),
+          main: pick(this.actionsMap, [ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.pbehaviorList]),
           dropDown: [],
         };
       }
 
       return {
-        main: pick(this.actionsMap, ['pbehaviorList']),
+        main: pick(this.actionsMap, [ALARMLIST_ACTION_PANEL_ACTIONS_TYPES.pbehaviorList]),
         dropDown: [],
       };
     },

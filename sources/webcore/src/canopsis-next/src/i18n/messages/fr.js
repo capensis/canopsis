@@ -135,6 +135,7 @@ export default {
         cancel: 'Annuler alarme',
         changeState: 'Changer criticité',
         moreInfos: 'Plus d\'infos',
+        variablesHelp: 'Liste des variables disponibles',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -712,6 +713,7 @@ export default {
     default: 'Action effectuée avec succès',
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
+    pathCopied: 'Chemin copié dans le presse-papier',
   },
   filterEditor: {
     title: 'Éditeur de filtre',

@@ -139,6 +139,7 @@ export default {
         cancel: 'Cancel alarm',
         changeState: 'Change criticity',
         moreInfos: 'More infos',
+        variablesHelp: 'List of available variables',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -727,6 +728,7 @@ export default {
     default: 'Done !',
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
+    pathCopied: 'Path copied to clipboard',
   },
   filterEditor: {
     title: 'Filter editor',

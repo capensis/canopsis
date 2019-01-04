@@ -60,6 +60,8 @@
               v-icon delete
             v-btn(@click.stop="addPbehaviors(props.item._id)", icon, small)
               v-icon pause
+            v-btn(v-if="isEditingMode", @click.stop="showVariablesHelpModal(props.item)", icon, small)
+              v-icon help
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item")
       v-layout.white(align-center)
@@ -88,6 +90,8 @@ import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
+
+import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
 import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos.vue';
@@ -123,6 +127,10 @@ export default {
   props: {
     widget: {
       type: Object,
+      required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
       required: true,
     },
   },
@@ -262,6 +270,18 @@ export default {
 
         mainFilter: prepareMainFilterToQueryFilter(filter, condition),
       };
+    },
+
+    showVariablesHelpModal(entity) {
+      const entitiesFields = convertObjectFieldToTreeBranch(entity, 'entity');
+      const variables = [entitiesFields];
+
+      this.showModal({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
+        },
+      });
     },
   },
 };
