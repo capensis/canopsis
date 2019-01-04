@@ -47,6 +47,8 @@
           v-divider
           field-grid-size(v-model="settings.widget.parameters.columnLG", :title="$t('settings.columnLG')")
           v-divider
+          field-number-select(v-model="settings.widget.parameters.limit", :title="$t('settings.limit')")
+          v-divider
           v-list-group
             v-list-tile(slot="activator") {{ $t('settings.margin.title') }}
             v-list.grey.lighten-4.px-2.py-0(expand)
@@ -100,6 +102,7 @@ import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldNumberSelect from './fields/common/number-select.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
@@ -118,6 +121,7 @@ export default {
     FieldRowGridSize,
     FieldTitle,
     FieldFilterEditor,
+    FieldNumberSelect,
     FieldWeatherTemplate,
     FieldGridSize,
     FieldSlider,

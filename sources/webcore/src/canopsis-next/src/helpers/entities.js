@@ -108,6 +108,7 @@ export function generateWidgetByType(type) {
         columnSM: 6,
         columnMD: 4,
         columnLG: 3,
+        limit: 100,
         margin: {
           top: 1,
           right: 1,
@@ -119,6 +120,7 @@ export function generateWidgetByType(type) {
         alarmsList: alarmsListDefaultParameters,
       };
       break;
+
     case WIDGET_TYPES.statsHistogram:
       specialParameters = {
         mfilter: {},

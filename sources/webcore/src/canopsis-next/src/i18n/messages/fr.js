@@ -230,6 +230,7 @@ export default {
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
+    limit: 'Limite',
     height: 'Hauteur',
     margin: {
       title: 'Marges',

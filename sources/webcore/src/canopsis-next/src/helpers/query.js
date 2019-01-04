@@ -2,7 +2,7 @@ import omit from 'lodash/omit';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
 
-import { PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
 
 import { prepareMainFilterToQueryFilter } from './filter';
@@ -86,6 +86,12 @@ export function convertContextWidgetToQuery(widget) {
   };
 
   return { ...query, ...convertSortToQuery(widget) };
+}
+
+export function convertWeatherWidgetToQuery(widget) {
+  const { limit } = widget.parameters;
+
+  return { limit: limit || DEFAULT_WEATHER_LIMIT };
 }
 
 export function convertStatsHistogramToQuery(widget) {
@@ -243,6 +249,8 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.weather:
+      return convertWeatherWidgetToQuery(widget);
     case WIDGET_TYPES.statsHistogram:
       return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:
