@@ -97,8 +97,16 @@ export default {
     moreInfos: {
       infos: 'Infos',
       type: 'Type',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
       lastActiveDate: 'Last Active Date',
       infosSearchLabel: 'Search infos',
+      tabs: {
+        main: 'Main',
+        pbehaviors: 'Pbehaviors',
+        impactDepends: 'Impact/Depends',
+        infos: 'Infos',
+      },
     },
   },
   search: {

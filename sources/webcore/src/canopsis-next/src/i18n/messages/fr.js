@@ -94,7 +94,16 @@ export default {
     dependencies: 'Dépendances',
     moreInfos: {
       type: 'Type',
+      enabled: 'Activée',
+      disabled: 'Désactivée',
       lastActiveDate: 'Dernière Date d\'Activité',
+      infosSearchLabel: 'Rechercher une info',
+      tabs: {
+        main: 'Principal',
+        pbehaviors: 'Comportements périodiques',
+        impactDepends: 'Impacts/Dépendances',
+        infos: 'Infos',
+      },
     },
   },
   search: {
