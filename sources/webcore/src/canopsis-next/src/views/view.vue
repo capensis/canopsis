@@ -147,10 +147,6 @@ export default {
 
     async refreshView() {
       await this.fetchView({ id: this.id });
-
-      if (this.activeTab) {
-        this.forceUpdateQuery({ id: this.activeTab._id });
-      }
     },
 
     showCreateWidgetModal() {

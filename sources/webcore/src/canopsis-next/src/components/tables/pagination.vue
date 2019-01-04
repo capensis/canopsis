@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { PAGINATION_LIMIT } from '@/config';
+
 /**
  * Pagination component
  *
@@ -66,8 +68,10 @@ export default {
     },
 
     totalPages() {
+      const limit = this.query.limit || PAGINATION_LIMIT;
+
       if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.query.limit);
+        return Math.ceil(this.meta.total / limit);
       }
 
       return 0;
