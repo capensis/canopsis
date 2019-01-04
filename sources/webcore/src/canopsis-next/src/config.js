@@ -33,7 +33,11 @@ export const API_ROUTES = {
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   weatherWatcher: '/api/v2/weather/watchers',
-  pbehavior: '/api/v2/pbehavior',
+  pbehavior: {
+    pbehavior: '/api/v2/pbehavior',
+    create: '/pbehavior/create',
+    list: '/pbehavior/read',
+  },
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
