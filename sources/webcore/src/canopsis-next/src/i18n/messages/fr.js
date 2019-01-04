@@ -7,6 +7,7 @@ export default {
     watcher: 'Observateur',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
+    addTab: 'Ajouter un onglet',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
     name: 'Nom',
@@ -780,5 +781,19 @@ export default {
   },
   parameters: {
     interfaceLanguage: 'Langage de l\'interface',
+    groupsNavigationType: {
+      title: 'Type d\'affichage de la barre de vues',
+      items: {
+        sideBar: 'Barre latérale',
+        topBar: 'Barre en haut de la page',
+      },
+    },
+  },
+  view: {
+    errors: {
+      emptyTabs: 'Merci de créer un onglet',
+    },
+    deleteRow: 'Supprimer la ligne',
+    deleteWidget: 'Supprimer le widget',
   },
 };
