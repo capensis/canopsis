@@ -1,12 +1,17 @@
 <template lang="pug">
-  div
-    div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
-    ellipsis(
-    v-else,
-    :text="alarm | get(column.value, columnFilter, '')",
-    :column="column.value",
-    @textClicked="showPopup"
-    ) {{ popupData }}
+  v-menu(v-model="isInfoPopupOpen", :close-on-content-click="false", offset-y)
+    div(slot="activator")
+      div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
+      ellipsis(
+      v-else,
+      :text="alarm | get(column.value, columnFilter, '')",
+      :column="column.value",
+      @textClicked="showInfoPopup"
+      )
+    v-card(v-if="isInfoPopupOpen", dark)
+      v-card-title.primary.pa-1.white--text
+        h4 {{ $t('alarmList.infoPopup') }}
+      v-card-text.pa-2(v-html="popupTextContent")
 </template>
 
 <script>
@@ -51,6 +56,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isInfoPopupOpen: false,
+    };
+  },
   computed: {
     popupData() {
       const popups = get(this.widget.parameters, 'infoPopups', []);
@@ -58,10 +68,12 @@ export default {
       return popups.find(popup => popup.column === this.column.value);
     },
     popupTextContent() {
-      const template = Handlebars.compile(this.popupData.template);
-      const context = { alarm: this.alarm.v };
-
-      return template(context);
+      if (this.popupData) {
+        const template = Handlebars.compile(this.popupData.template);
+        const context = { alarm: this.alarm.v };
+        return template(context);
+      }
+      return '';
     },
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
@@ -86,11 +98,9 @@ export default {
     },
   },
   methods: {
-    showPopup() {
+    showInfoPopup() {
       if (this.popupData) {
-        this.addInfoPopup({
-          text: this.popupTextContent,
-        });
+        this.isInfoPopupOpen = true;
       }
     },
   },

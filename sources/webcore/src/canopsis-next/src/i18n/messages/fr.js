@@ -147,6 +147,7 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+    infoPopup: 'Info',
   },
   weather: {
     moreInfos: 'Plus d\'infos',
