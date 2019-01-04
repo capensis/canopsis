@@ -7,6 +7,7 @@ export default {
     watcher: 'Observateur',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
+    addTab: 'Ajouter un onglet',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
     name: 'Nom',
@@ -184,7 +185,7 @@ export default {
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
-    filterEditor: 'Ésditeur de filtre',
+    filterEditor: 'Éditeur de filtre',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -386,6 +387,11 @@ export default {
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique ?',
       },
     },
+    createPause: {
+      title: 'Mettre en pause',
+      comment: 'Commentaire',
+      reason: 'Raison',
+    },
     createAckRemove: {
       title: 'Annuler l\'acquittement',
     },
@@ -434,6 +440,7 @@ export default {
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervals d\'éxécution',
+      actionPending: 'action(s) en attente',
     },
     filter: {
       create: {
@@ -739,7 +746,13 @@ export default {
       },
       errors: {
         invalidJSON: 'JSON non valide',
+        required: 'Merci d\'ajouter au moins une règle valide',
       },
+    },
+  },
+  filterSelector: {
+    fields: {
+      mixFilters: 'Mix de filtres',
     },
   },
   validator: {
