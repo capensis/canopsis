@@ -24,10 +24,15 @@ Une fois les champs renseignés, cliquez sur "Envoyer", votre vue apparaîtra da
 
 ## Mode édition
 
-Afin d'accéder aux fonctionnalités d'édition/suppression des vues et des groupes de vues, il est nécessaire d'activer le mode d'édition. Celui-ci s'active en cliquant sur le bouton 'Activer/Désactiver le mode d'édition' présent dans le menu 'Paramètres' de la barre latérale
-![Bouton Activer/Désactiver mode édition](./img/toggle_edition_mode_buton.png  "Bouton Activer/Désactiver mode édition").
+Afin d'accéder aux fonctionnalités d'édition/suppression des vues et des groupes de vues, il est nécessaire d'activer le mode d'édition.
 
-Pour désactiver le mode d'édition, il suffit de cliquer à nouveau sur ce bouton.
+Il existe deux méthodes pour activer le mode d'édition :
+
+- Clic sur le bouton 'Activer/Désactiver le mode d'édition' présent dans le menu 'Paramètres' de la barre latérale
+![Bouton Activer/Désactiver mode édition](./img/toggle_edition_mode_button.png  "Bouton Activer/Désactiver mode édition").
+- Raccourci clavier CTRL+E
+
+Pour désactiver le mode d'édition, il suffit de cliquer à nouveau sur le bouton d'édition, ou d'utiliser à nouveau le raccourci clavier CTRL+E.
 
 ## Édition/Suppression d'une vue
 
@@ -69,6 +74,50 @@ Une fois les modifications faites, cliquez sur 'Envoyer'. Le groupe est modifié
 
 Afin de supprimer un groupe, il vous faut ouvrir la fenêtre d'édition de la vue que vous souhaitez supprimer. Cf: [Editer un groupe](#editer-un-groupe)
 À l'intérieur de cette fenêtre se trouve un bouton 'Supprimer'. Cliquez sur ce bouton. Une fenêtre vous demande confirmation, cliquez sur 'Oui'. Votre vue est supprimée !
+
+## Les onglets
+
+![Barre des onglets](./img/tabs_bar.png  "Barre des onglets")
+
+Dans l'interface de Canopsis, chaque vue peut être découpée en onglets.
+Ces onglets permettent de regrouper des widgets dans une même vue, sans surcharger l'affichage.
+
+La liste des onglets d'une vue est présente en haut de celle-ci, sous la barre du haut.
+
+Par défaut, chaque vue créée dans l'interface de Canopsis est constituée d'un onglet "Default".
+
+**Lorsqu'une vue ne contient qu'un seul onglet, celui-ci est invisible dans l'interface.**
+
+### Créer un nouvel onglet
+
+Afin de créer un onglet, cliquez sur le bouton "Ajouter un onglet", situé dans le menu en bas à droite.
+
+![Bouton ajouter un onglet](./img/add_tab_button.png  "Bouton ajouter un onglet")
+
+Une fenêtre s'ouvre alors, vous demandant d'entrer le nom que vous souhaitez donner au nouvel onglet. Une fois le nom renseigné, cliquez sur le bouton "Envoyer". Votre nouvel onglet a été créé !
+
+### Editer un onglet
+
+Afin d'éditer un onglet, il vous faut tout d'abord [activer le mode d'édition](#mode-edition).
+
+Deux boutons apparaissent alors à droite du nom de chaque onglet, dans la barre des onglets.
+
+Le premier bouton ![Bouton editer un onglet](./img/edit_tab_button.png  "Bouton editer un onglet"), permet d'éditer l'onglet.
+Au clic sur ce bouton, une fenêtre s'ouvre. Cette fenêtre vous permet de modifier le nom de l'onglet.
+
+Cliquez sur "Envoyer" pour valider le changement. Votre onglet a été modifié !
+
+### Supprimer un onglet
+
+Afin de supprimer un onglet, il vous faut tout d'abord [activer le mode d'édition](#mode-edition).
+
+Deux boutons apparaissent alors à droite du nom de chaque onglet, dans la barre des onglets.
+
+Le deuxième bouton ![Bouton supprimer un onglet](./img/delete_tab_button.png  "Bouton supprimer un onglet"), permet de supprimer l'onglet.
+
+Au clic sur ce bouton, une fenêtre de confirmation s'ouvre. Cliquez sur "Oui" pour valider la suppression de l'onglet.
+
+**Attention: Tout les widgets à l'intérieur de l'onglet seront supprimés également**
 
 ## La suite...
 
