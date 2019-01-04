@@ -86,7 +86,7 @@ export default {
       };
     },
     compiledTemplate() {
-      return compile(this.template, { watcher: this.watcher });
+      return compile(this.template, { entity: this.watcher });
     },
     getItemClasses() {
       return [
