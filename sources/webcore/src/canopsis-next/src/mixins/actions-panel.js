@@ -16,7 +16,7 @@ export default {
     },
 
     showMoreInfosModal() {
-      return () => this.showModal({
+      this.showModal({
         name: MODALS.moreInfos,
         config: {
           ...this.modalConfig,

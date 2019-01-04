@@ -89,6 +89,10 @@ export default {
           icon: 'more_horiz',
           title: this.$t('alarmList.actions.titles.moreInfos'),
         },
+        history: {
+          icon: 'history',
+          title: this.$t('alarmList.actions.titles.history'),
+        },
       },
     };
   },

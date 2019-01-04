@@ -46,7 +46,9 @@
 import pick from 'lodash/pick';
 import pickBy from 'lodash/pickBy';
 
-import { MODALS, ENTITIES_TYPES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, WIDGET_TYPES } from '@/constants';
+
+import { generateWidgetByType } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import actionsPanelMixin from '@/mixins/actions-panel';
@@ -119,7 +121,11 @@ export default {
         },
         moreInfos: {
           type: 'moreInfos',
-          method: this.showMoreInfosModal(),
+          method: this.showMoreInfosModal,
+        },
+        history: {
+          type: 'history',
+          method: this.showAlarmHistoryModal,
         },
       },
     };
@@ -148,23 +154,24 @@ export default {
               'pbehavior',
               'pbehaviorList',
               'moreInfos',
+              'history',
             ]),
           };
         }
 
         return {
           main: pick(this.actionsMap, ['ack', 'fastAck']),
-          dropDown: pick(this.actionsMap, ['moreInfos']),
+          dropDown: pick(this.actionsMap, ['moreInfos', 'history']),
         };
       } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
         return {
-          main: pick(this.actionsMap, ['pbehaviorList']),
+          main: pick(this.actionsMap, ['pbehaviorList', 'history']),
           dropDown: [],
         };
       }
 
       return {
-        main: pick(this.actionsMap, ['pbehaviorList']),
+        main: pick(this.actionsMap, ['pbehaviorList', 'history']),
         dropDown: [],
       };
     },
@@ -172,6 +179,38 @@ export default {
   methods: {
     createAckEvent() {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
+    },
+
+    showAlarmHistoryModal() {
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const filterObject = {
+        title: this.item.entity.name,
+        filter: {
+          $and: [
+            { entity: this.item.entity._id },
+          ],
+        },
+      };
+
+      const widgetParameters = {
+        mainFilter: filterObject,
+        viewFilters: [filterObject],
+        alarmsStateFilter: { resolved: true },
+      };
+
+      this.showModal({
+        name: MODALS.alarmsList,
+        config: {
+          widget: {
+            ...widget,
+
+            parameters: {
+              ...widget.parameters,
+              ...widgetParameters,
+            },
+          },
+        },
+      });
     },
   },
 };

@@ -139,6 +139,7 @@ export default {
         cancel: 'Cancel alarm',
         changeState: 'Change criticity',
         moreInfos: 'More infos',
+        history: 'History',
       },
       iconsTitles: {
         ack: 'Ack',
