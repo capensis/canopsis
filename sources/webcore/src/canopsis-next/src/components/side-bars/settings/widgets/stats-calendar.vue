@@ -39,7 +39,11 @@
           v-divider
           field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
           v-divider
-          field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors", hideSuffix)
+          field-levels-colors-selector(
+          v-model="settings.widget.parameters.criticityLevelsColors",
+          colorType="hex",
+          hideSuffix
+          )
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
