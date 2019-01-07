@@ -121,7 +121,7 @@ class PBehavior(BasePBehavior):
     DEFAULT_TYPE = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
@@ -212,7 +212,7 @@ class PBehaviorManager(object):
             tstart, tstop, rrule='',
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            type_=PBehavior.DEFAULT_TYPE, reason=''):
+            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None):
         """
         Method creates pbehavior record
 
@@ -239,6 +239,9 @@ class PBehaviorManager(object):
         :rtype: str
         """
 
+        if timezone is None:
+            timezone = self.default_tz
+
         if enabled in [True, "True", "true"]:
             enabled = True
         elif enabled in [False, "False", "false"]:
@@ -262,21 +265,25 @@ class PBehaviorManager(object):
                     raise ValueError("The message field is missing")
 
         pb_kwargs = {
-            'name': name,
-            'filter': filter,
-            'author': author,
-            'tstart': tstart,
-            'tstop': tstop,
-            'rrule': rrule,
-            'enabled': enabled,
-            'comments': comments,
-            'connector': connector,
-            'connector_name': connector_name,
+            PBehavior.NAME: name,
+            PBehavior.FILTER: filter,
+            PBehavior.AUTHOR: author,
+            PBehavior.TSTART: tstart,
+            PBehavior.TSTOP: tstop,
+            PBehavior.RRULE: rrule,
+            PBehavior.ENABLED: enabled,
+            PBehavior.COMMENTS: comments,
+            PBehavior.CONNECTOR: connector,
+            PBehavior.CONNECTOR_NAME: connector_name,
             PBehavior.TYPE: type_,
-            'reason': reason
+            PBehavior.REASON: reason,
+            PBehavior.TIMEZONE: timezone
         }
         if PBehavior.EIDS not in pb_kwargs:
             pb_kwargs[PBehavior.EIDS] = []
+
+        if timezone is None:
+            pb_kwargs[PBehavior.TIMEZONE] = self.default_tz
 
         data = PBehavior(**pb_kwargs)
         if not data.comments or not isinstance(data.comments, list):
