@@ -66,6 +66,10 @@ export default {
           type: 'ackRemove',
           method: this.showAckRemoveModal,
         },
+        {
+          type: 'cancel',
+          method: this.showActionModal(MODALS.createCancelEvent),
+        },
       ],
     };
   },
