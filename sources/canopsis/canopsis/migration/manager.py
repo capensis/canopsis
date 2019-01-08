@@ -67,7 +67,8 @@ class MigrationTool(object):
 
     def __put_canopsis_version_document(self):
         """
-        Put Canopsis version document if a ``__canopsis_version`` attribute is set.
+        Put Canopsis version document if a ``__canopsis_version`` attribute
+        is set.
         """
         if self.__canopsis_version:
             store = MongoStore.get_default()
@@ -115,8 +116,8 @@ class MigrationTool(object):
 
         if init is None and reinit_auth is False:
             data = {
-                "_id" : "initialized",
-                "at" : str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+                "_id": "initialized",
+                "at": str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))
             }
             print("The canopsis initialization flag did not exist in the "
                   "database. So canopsinit will (re?)initialized the "
@@ -137,8 +138,8 @@ class MigrationTool(object):
 
         if init is True:
             coll.insert({"_id": self.FLAG_COLLECTION,
-                         "at": str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))})
-
+                         "at": str(time.strftime(
+                             "%a, %d %b %Y %H:%M:%S +0000"))})
 
 
 class MigrationModule(object):

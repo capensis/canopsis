@@ -19,7 +19,6 @@
 # ---------------------------------
 
 from canopsis.common.collection import MongoCollection
-from canopsis.models.heartbeat import HeartBeat
 from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
 
