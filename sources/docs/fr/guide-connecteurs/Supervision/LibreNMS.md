@@ -1,10 +1,21 @@
-# LibreNMS, rules, alerts and transport
+# Connecteur LibreNMS
 
-# Installation & Configuration
+## Fonctionnement général
 
-Instaler `php-pecl-amqp` et l'activer dans la configuration PHP.
+Il est important de noter que ce connecteur n'envoie que des alertes.
 
-Copiez le fichier connecteur dans `/opt/librenms/includes/alerts/` et configurez `/opt/librenms/config.php`:
+Voici le processus complet d'une vérification LibreNMS menant à une alerte :
+
+*  Le poller LibreNMS recueille les données (principalement SNMP) des hôtes.
+*  Ces données sont vérifiées par rapport à un ensemble de règles, configurables via l'interface Web ou dans un fichier de configuration.
+*  Si une règle correspond, une alerte est ajoutée et prête à être envoyée.
+*  LibreNMS envoie, via le script `alerts.php` des alertes sur chaque transport activé configuré.
+
+## Installation et configuration
+
+Installer `php-pecl-amqp` et l'activer dans la configuration PHP.
+
+Copier le fichier connecteur dans `/opt/librenms/includes/alerts/` et configurer `/opt/librenms/config.php`:
 
 ```php
 $config['alert']['transports']['canopsis'] = Array();
@@ -18,39 +29,12 @@ $config['alert']['transports']['canopsis']['connector_name'] = 'LibreNMS';
 $config['alert']['transports']['canopsis']['debug_noconnect'] = false;
 ```
 
+## Environnement de test
 
-## Comment ça marche ?
+1.  Désactiver alert cron. Dans `/etc/cron.d/librenms`, commenter l'appel de la ligne `/opt/librenms/alerts.php`.
+2.  Créer / configurer une machine pour qu'elle dispose des interfaces et ports requis, afin de pouvoir changer leur état.
+3.  Vous pouvez éventuellement installer Canopsis ou configurer `debug_noconnect` sur `true`. Ceci ignorera la connexion AMQP et imprimera des alertes sur la sortie standard du scripts `alerts.php`.
+4.  Créer vos devices et règles.
+5.  Lancer `poller.php -h <hostname>`
 
-Tout d'abord, gardez à l'esprit qu'un connecteur d'alerte librenms n'envoie que des alertes.
-
-Voici le processus complet d'une vérification LibreNMS menant à une alerte:
-
-
-Le poller LibreNMS recueillera les données, principalement SNMP, de vos hôtes.
-Ces données seront vérifiées par rapport à un ensemble de règles, configurables via l'interface Web ou dans un fichier de configuration.
-Si une règle correspond, une alerte sera ajoutée et prête à être envoyée.
-LibreNMS, via le script `alerts.php`, enverra des alertes sur chaque transport activé configuré.
-
-
-## L'envoi d'alerte fonctionne comme ceci:
-
-
-LibreNMS parcourt toutes les alertes
-LibreNMS effectuera une boucle sur chaque transport activé pour chaque alerte: `$config['alert']['transports']['transport_name'] != empty`
-
-Le fichier PHP de transport complet est lu, stocké dans une chaîne déclarant une fonction temporaire, puis évalué (!).
-Cette fonction est exécutée avec certains paramètres donnés: `$obj` pour l'alerte, `$opts` pour la configuration du transport.
-
-
-Veillez à éviter les longs délais d'attente lors de l'envoi d'alertes, car chaque traitement d'alerte est bloquant.
-
-
-Environnement de test
-
-1. Désactiver alert cron:, `/etc/cron.d/librenms` commentez l'appel de la ligne `/opt/librenms/alerts.php`.
-2. Créez / configurez une machine (virtuelle ou non) pour qu'elle dispose des interfaces / ports / requis, de sorte que vous puissiez changer leur état.
-3. Vous pouvez éventuellement installer Canopsis ou le configurer `debug_noconnectsur` sur `true`. Cela ignorera la connexion AMQP et imprimera des alertes sur la sortie standard du `alerts.php` script.
-4. Créez vos devices, règles
-5. Run `poller.php -h <test_host_name>`
-
-Run `alerts.php`
+Lancer `alerts.php`.

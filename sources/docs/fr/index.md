@@ -17,3 +17,4 @@ Liste des changements et procédures particulières à suivre pour la mise à jo
 
 *  [3.5.0](notes-de-version/3.5.0.md)
 *  [3.6.0](notes-de-version/3.6.0.md)
+*  [3.7.0](notes-de-version/3.7.0.md)

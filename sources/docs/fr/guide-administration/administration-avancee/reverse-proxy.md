@@ -12,16 +12,18 @@ Pour utiliser un autre port pour votre serveur web, vous pouvez utiliser [Apache
 Installer Apache2 si cela n'est pas déjà fait.
 
 #### Ubuntu / Debian
-```
-apt-get install apache2
+
+```sh
+apt install apache2
 ```
 
 #### CentOS / RHEL
-```
+
+```sh
 yum install httpd
 ```
 
-### Configurer le VHost (replace ``<DNS_NAME>``)
+### Configurer le VHost
 
 ```
 <VirtualHost *:80>
@@ -39,10 +41,9 @@ yum install httpd
 </VirtualHost>
 ```
 
-
 ### Restart Apache & démarrage du service automatique
 
-```
+```sh
 service apache2 restart or service httpd restart
 update-rc.d apache2 defaults or chkconfig httpd on 
 ```
@@ -50,23 +51,25 @@ update-rc.d apache2 defaults or chkconfig httpd on
 ## Reverse Proxy avec Ngnix
 
 ### Ubuntu / Debian
-```
-apt-get install nginx
+
+```sh
+apt install nginx
 ``` 
 
 ### CentOS / REHL 
-```
+
+```sh
 yum install nginx
 ```
 
 **Don't forget to add epel repositories for RedHat/CentOS**
 
-### Configurer le VHost (replace ``<DNS_NAME>``)
+### Configurer le VHost
 
 ```
 server {
 	listen 80;
-	server_name <DNS_NAME>;
+	server_name <DNS_NAME>; # À adapter
 
 	gzip on;
 	gzip_disable "msie6";
