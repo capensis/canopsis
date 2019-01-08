@@ -32,8 +32,8 @@ from canopsis.common.collection import CollectionError
 
 def gen_database_error():
     return gen_json_error(
-                {"description": "can not retrieve the canopsis version from "
-                                "database, contact your administrator."},
+                {"description": "database error, please contact your"
+                 " administrator."},
                 HTTP_ERROR)
 
 
