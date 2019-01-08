@@ -124,7 +124,7 @@ export default {
       });
     },
     async submit() {
-      if (this.form.type === 'enrichment') {
+      if (this.form.type === EVENT_FILTER_RULE_TYPES.enrichment) {
         const isFormValid = await this.$validator.validate('actions');
         if (isFormValid) {
           this.config.action({

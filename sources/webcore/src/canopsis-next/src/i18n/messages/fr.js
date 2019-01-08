@@ -547,7 +547,7 @@ export default {
       priority: 'Priorité',
       editPattern: 'Editer le pattern',
       advanced: 'Avancée',
-      addAField: 'Ajouter un champs',
+      addAField: 'Ajouter un champ',
       simpleEditor: 'Editeur simple',
       advancedEditor: 'Editeur avancé',
       comparisonRules: 'Règles de comparaison',
