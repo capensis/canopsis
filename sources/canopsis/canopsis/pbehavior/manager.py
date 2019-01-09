@@ -194,7 +194,11 @@ class PBehaviorManager(object):
         self.pb_storage = pb_storage
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
-        self.default_tz = self.config_data.get("default_timezone", "Europe/Paris")
+        self.default_tz = self.config_data.get("default_timezone",
+                                               "Europe/Paris")
+        # this line allow us to raise an exception pytz.UnknownTimeZoneError,
+        # if the timezone defined in the pbehabior configuration file is wrong
+        pytz.timezone(self.default_tz)
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
         self.currently_active_pb = set()
 
