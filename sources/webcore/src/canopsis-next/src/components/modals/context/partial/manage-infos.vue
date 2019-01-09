@@ -8,6 +8,7 @@
           span {{ $t('modals.createEntity.manageInfos.addInfo') }}
       v-data-table(
       :items="items",
+      item-key="name",
       :headers="tableHeaders",
       :no-data-text="$t('modals.createEntity.manageInfos.noInfos')",
       )
@@ -24,7 +25,7 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import omit from 'lodash/omit';
 
 import { MODALS } from '@/constants';
 
@@ -76,12 +77,7 @@ export default {
   },
   computed: {
     items() {
-      const infos = cloneDeep(this.infos);
-      return Object.keys(infos).map(info => ({
-        name: infos[info].name,
-        description: infos[info].description,
-        value: infos[info].value,
-      }));
+      return Object.values(this.infos).map(info => ({ ...info }));
     },
   },
   methods: {
@@ -90,7 +86,7 @@ export default {
         name: MODALS.addEntityInfo,
         config: {
           infos: this.infos,
-          title: 'modals.addEntityInfo.addTitle',
+          title: this.$t('modals.addEntityInfo.addTitle'),
           action: info => this.updateField(info.name, { ...info }),
         },
       });
@@ -102,10 +98,11 @@ export default {
         config: {
           infos: this.infos,
           editingInfo: info,
-          title: 'modals.addEntityInfo.editTitle',
-          action: async (editedInfo) => {
-            await this.removeField(info.name);
-            this.updateField(editedInfo.name, { ...editedInfo });
+          title: this.$t('modals.addEntityInfo.editTitle'),
+          action: (editedInfo) => {
+            const newInfos = { ...omit(this.infos, info.name) };
+            newInfos[editedInfo.name] = { ...editedInfo };
+            this.$emit('input', newInfos);
           },
         },
       });

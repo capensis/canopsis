@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ $t(config.title) }}
+        span.headline {{ config.title }}
     v-card-text
       v-form
         v-text-field(
@@ -29,14 +29,17 @@
         )
       v-divider
       v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
         v-btn(@click="submit", color="primary") {{ $t('common.add') }}
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
-  name: 'add-entity-info',
+  name: MODALS.addEntityInfo,
   $_veeValidate: {
     validator: 'new',
   },
@@ -63,7 +66,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config.action({ ...this.form });
+        await this.config.action(this.form);
         this.hideModal();
       }
     },
