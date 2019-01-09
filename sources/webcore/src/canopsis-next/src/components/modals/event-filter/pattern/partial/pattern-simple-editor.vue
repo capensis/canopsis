@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import omit from 'lodash/omit';
+
 import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
@@ -65,7 +67,11 @@ export default {
           ruleValue: this.pattern[rule],
           isSimpleRule: this.isSimpleRule(this.pattern[rule]),
           operators: this.operators,
-          action: newRule => console.warn(newRule),
+          action: (newRule) => {
+            const newPattern = omit(this.pattern, rule);
+            newPattern[newRule.field] = newRule.value;
+            this.$emit('input', newPattern);
+          },
         },
       });
     },
@@ -75,7 +81,7 @@ export default {
         name: MODALS.addEventFilterRuleToPattern,
         config: {
           operators: this.operators,
-          action: newPattern => this.$emit('input', newPattern),
+          action: newRule => this.updateField(newRule.field, newRule.value),
         },
       });
     },

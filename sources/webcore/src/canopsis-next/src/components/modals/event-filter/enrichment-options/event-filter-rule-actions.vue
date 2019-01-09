@@ -26,13 +26,13 @@
         v-btn.primary(@click="addAction") {{ $t('common.add') }}
     v-container
       h2 {{ $t('modals.eventFilterRule.actions') }}
-      v-list
+      v-list(dark)
         draggable(v-model="actions")
-          v-list-group.grey.white--text(v-for="(action, index) in actions", :key="action.name")
+          v-list-group(v-for="(action, index) in actions", :key="action.name")
             v-list-tile(slot="activator")
               v-list-tile-title {{index + 1}} - {{ action.type }} - {{ action.name || action.from }}
               v-btn(@click.stop="deleteAction(index)", icon)
-                v-icon delete
+                v-icon(color="error") delete
             v-list-tile
               v-layout(column)
                 div(v-if="action.name") {{ $t('common.name') }}: {{ action.name }}

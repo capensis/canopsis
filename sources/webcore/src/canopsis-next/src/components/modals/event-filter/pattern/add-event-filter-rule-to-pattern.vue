@@ -6,9 +6,21 @@
     v-card-text
       v-form
         v-switch(:label="$t('modals.eventFilterRule.advanced')", v-model="form.advancedMode", hide-details)
-        v-text-field(v-model="form.field", :label="$t('common.field')")
+        v-text-field(
+        v-model="form.field",
+        :label="$t('common.field')",
+        name="field",
+        v-validate="'required'",
+        :error-messages="errors.collect('field')"
+        )
         template(v-if="!form.advancedMode")
-          v-text-field(v-model="form.value", :label="$t('common.value')")
+          v-text-field(
+          v-model="form.value",
+          :label="$t('common.value')",
+          name="value",
+          v-validate="'required'",
+          :error-messages="errors.collect('value')"
+          )
         template(v-else)
           v-layout(align-center, justify-center)
             h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
@@ -23,11 +35,12 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
-
 import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   mixins: [modalInnerMixin],
   data() {
     return {
@@ -42,7 +55,12 @@ export default {
   },
   mounted() {
     if (this.config) {
-      const { operators, ruleKey, ruleValue, isSimpleRule } = { ...this.config };
+      const {
+        operators,
+        ruleKey = '',
+        ruleValue = '',
+        isSimpleRule = true,
+      } = { ...this.config };
       this.operators = operators;
       this.form.advancedMode = !isSimpleRule;
       this.form.field = ruleKey;
@@ -59,19 +77,27 @@ export default {
       this.form.advancedRuleFields.push({ key: '<', value: '' });
     },
     async submit() {
-      const newPattern = cloneDeep(this.pattern);
-      if (!this.form.advancedMode) {
-        newPattern[this.form.field] = this.form.value;
-      } else {
-        newPattern[this.form.field] = Object.values(this.form.advancedRuleFields)
-          .reduce((acc, rule) => {
-            acc[rule.key] = rule.value;
+      const isFormValid = await this.$validator.validateAll();
 
-            return acc;
-          }, {});
+      if (isFormValid) {
+        if (this.config.action) {
+          let newRule = {};
+
+          if (!this.form.advancedMode) {
+            newRule = { field: this.form.field, value: this.form.value };
+          } else {
+            const value = this.form.advancedRuleFields.reduce((acc, field) => {
+              acc[field.key] = field.value;
+              return acc;
+            }, {});
+            newRule = { field: this.form.field, value };
+          }
+
+          await this.config.action(newRule);
+        }
+
+        this.hideModal();
       }
-      await this.config.action(newPattern);
-      this.hideModal();
     },
   },
 };
