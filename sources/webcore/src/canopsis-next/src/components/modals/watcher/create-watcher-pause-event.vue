@@ -6,8 +6,21 @@
         v-btn(icon, dark, @click="hideModal")
           v-icon close
     v-card-text
-      v-textarea(:label="$t('modals.createPause.comment')", v-model="comment")
-      v-select(:label="$t('modals.createPause.reason')", v-model="reason", :items="reasons")
+      v-textarea(
+      :label="$t('modals.createPause.comment')",
+      v-model="form.comment",
+      v-validate="'required'",
+      :error-messages="errors.collect('comment')"
+      name="comment",
+      )
+      v-select(
+      :label="$t('modals.createPause.reason')",
+      v-model="form.reason",
+      :items="reasons",
+      v-validate="'required'",
+      :error-messages="errors.collect('reason')"
+      name="reason",
+      )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -20,18 +33,30 @@ import { PAUSE_REASONS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   mixins: [modalInnerMixin],
   data() {
     return {
       reasons: Object.values(PAUSE_REASONS),
-      comment: '',
-      reason: '',
+      form: {
+        comment: '',
+        reason: '',
+      },
     };
   },
   methods: {
     async submit() {
-      await this.config.action({ comment: this.comment, reason: this.reason });
-      this.hideModal();
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action({ ...this.form });
+        }
+
+        this.hideModal();
+      }
     },
   },
 };

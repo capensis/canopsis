@@ -6,7 +6,13 @@
         v-btn(icon, dark, @click="hideModal")
           v-icon close
     v-card-text
-      v-text-field(:label="$t('modals.createAssociateTicket.fields.ticket')", v-model="ticket")
+      v-text-field(
+      :label="$t('modals.createAssociateTicket.fields.ticket')",
+      v-model="ticket",
+      name="ticket",
+      v-validate="'required'",
+      :error-messages="errors.collect('ticket')"
+      )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -17,6 +23,9 @@
 import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   mixins: [modalInnerMixin],
   data() {
     return {
@@ -25,8 +34,15 @@ export default {
   },
   methods: {
     async submit() {
-      await this.config.action(this.ticket);
-      this.hideModal();
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.ticket);
+        }
+
+        this.hideModal();
+      }
     },
   },
 };

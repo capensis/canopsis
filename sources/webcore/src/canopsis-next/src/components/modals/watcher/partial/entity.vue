@@ -22,7 +22,6 @@
 
 <script>
 import find from 'lodash/find';
-import filter from 'lodash/filter';
 
 import {
   MODALS,
@@ -154,7 +153,7 @@ export default {
     },
 
     availableActions() {
-      return filter(this.actions, (action) => {
+      return this.actions.filter((action) => {
         if (
           this.entity.state.val !== ENTITIES_STATES.major &&
           (action.name === EVENT_ENTITY_TYPES.invalidate || action.name === EVENT_ENTITY_TYPES.validate)
