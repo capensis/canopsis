@@ -559,12 +559,12 @@ class PBehaviorManager(object):
         fromts = datetime.utcfromtimestamp
         tstart = pbehavior[PBehavior.TSTART]
         tstop = pbehavior[PBehavior.TSTOP]
-        default_tz = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
+        pbh_tz = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
 
         try:
-            tz_object = pytz.timezone(default_tz)
+            tz_object = pytz.timezone(pbh_tz)
         except pytz.UnknownTimeZoneError:
-            self.logger.error("Can not parse the timezone : {}.".format(default_tz))
+            self.logger.error("Can not parse the timezone : {}.".format(pbh_tz))
             raise
 
         if not isinstance(tstart, (int, float)):
@@ -572,19 +572,18 @@ class PBehaviorManager(object):
         if not isinstance(tstop, (int, float)):
             return False
 
-        tz = pytz.UTC
-        dttstart = fromts(tstart).replace(tzinfo=tz)
-        dttstop = fromts(tstop).replace(tzinfo=tz)
+        dttstart = fromts(tstart).replace(tzinfo=pytz.UTC)
+        dttstop = fromts(tstop).replace(tzinfo=pytz.UTC)
 
         pbh_duration = tstop - tstart
 
-        dtts = fromts(timestamp).replace(tzinfo=tz)
-        dtts = dtts.astimezone(pytz.timezone(default_tz))
+        dtts = fromts(timestamp).replace(tzinfo=pytz.UTC)
+        dtts = dtts.astimezone(pytz.timezone(pbh_tz))
         # ddts_offset contains the current timestamp minus the duration of
         # the pbhevior, so the computation of the rrules occurences
         # will include the running occurence. Thus the current pbehavior
         # will be detected.
-        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
+        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=pytz.UTC)
         dtts_offset = dtts_offset.astimezone(tz_object)
 
         rrule = pbehavior['rrule']
@@ -595,7 +594,7 @@ class PBehaviorManager(object):
             # at index 0 of the generated dt_list to ensure we manage
             # dates at boundaries.
             dt_tstart_date = dtts_offset.date()
-            dt_tstart_time = dttstart.time().replace(tzinfo=tz)
+            dt_tstart_time = dttstart.time().replace(tzinfo=pytz.UTC)
             dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
             dt_dtstart = dt_dtstart.astimezone(tz_object)
 
