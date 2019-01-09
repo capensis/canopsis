@@ -239,12 +239,17 @@ class PBehaviorManager(object):
         :param str type_: associated type_ for this pbh
         :param str reason: associated reason for this pbh
         :raises ValueError: invalid RRULE
+        :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
         :rtype: str
         """
 
         if timezone is None:
             timezone = self.default_tz
+
+        # this line allow us to raise an exception pytz.UnknownTimeZoneError,
+        # if the timezone defined in the pbehabior configuration file is wrong
+	pytz.timezone(self.default_tz)
 
         if enabled in [True, "True", "true"]:
             enabled = True
