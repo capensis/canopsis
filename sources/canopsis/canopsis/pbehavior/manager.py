@@ -23,7 +23,7 @@ Managing PBehavior.
 """
 
 from calendar import timegm
-from datetime import datetime, timedelta
+from datetime import datetime
 from json import loads, dumps
 from time import time
 from uuid import uuid4
@@ -281,9 +281,6 @@ class PBehaviorManager(object):
         }
         if PBehavior.EIDS not in pb_kwargs:
             pb_kwargs[PBehavior.EIDS] = []
-
-        if timezone is None:
-            pb_kwargs[PBehavior.TIMEZONE] = self.default_tz
 
         data = PBehavior(**pb_kwargs)
         if not data.comments or not isinstance(data.comments, list):
