@@ -1,82 +1,126 @@
 from __future__ import unicode_literals
 
 import re
+import itertools
+
+from hashlib import md5
 
 
-class HeartBeat:
+class HeartBeat(object):
+    """
+    Heartbeat model abstraction.
 
-    MAX_DUR_REGEXP = "^[0-9]*(s|m|h)$"
-    MAPPINGS_KEY = "mappings"
-    MAX_DUR_KEY = "maxduration"
+    public attrs::
+        `dict` pattern: a Heartbeat pattern
+        `str` expected_interval: an event expected interval.
+        `str` id (computable property): an ID of a Heartbeat
+        derived from a pattern.
+    """
 
-    def __init__(self, mappings, maxduration):
-        """Create a new heartbeat instance.
+    __EXPECTED_INTERVAL_REGEXP = re.compile(r"^[0-9]*(s|m|h)$")
 
-        For more information about the format see the isValid class method
-        docstring.
+    PATTERN_KEY = "pattern"
+    EXPECTED_INTERVAL_KEY = "expected_interval"
 
-        :param mappings: a list of dict use to map an event to a maxDuration.
-        :param maxduration: a string that represent the time to wait
-        before an alarm is created in the case no event link to an entity is
-        received.
+    def __init__(self, heartbeat_json):
         """
-        self.mappings = mappings
-        self.max_duration = maxduration
+
+        :param `dict` heartbeat_json: a Heartbeat as a dict.
+
+        :raises: (`ValueError`, ).
+        """
+        if not self.is_valid_heartbeat(heartbeat_json):
+            raise ValueError('invalid heartbeat format')
+        self.pattern = heartbeat_json[self.PATTERN_KEY]
+        self.expected_interval = heartbeat_json[self.EXPECTED_INTERVAL_KEY]
+
+    @property
+    def id(self):
+        """
+        A Heartbeat ID.
+
+        :returns: a Heartbeat pattern hash.
+        :rtype: `str`.
+        """
+        return self.get_pattern_hash(self.pattern)
+
+    def to_dict(self):
+        """
+        Dump Heartbeat model as dictionary.
+
+        :rtype: `dict`.
+        """
+        return {
+            "_id": self.id,
+            self.PATTERN_KEY: self.pattern,
+            self.EXPECTED_INTERVAL_KEY: self.expected_interval
+        }
+
+    @staticmethod
+    def get_pattern_hash(pattern):
+        """
+        Hash the heartbeat pattern.
+
+        :param `dict` pattern: heartbeat pattern.
+        :returns: heartbeat pattern hash.
+        :rtype: `str`.
+        """
+        checksum = md5()
+        for chunk in itertools.chain(*((k, pattern[k])
+                                       for k in sorted(pattern))):
+            checksum.update(chunk)
+        return checksum.hexdigest()
+
+    @staticmethod
+    def validate_heartbeat_pattern(pattern):
+        """
+        Check if ``pattern`` is a non-empty dict and
+        the all of them keys and values are strings.
+
+        :param `dict` pattern: a Heartbeat pattern.
+        :rtype: `bool`.
+        """
+        return bool(pattern) and isinstance(pattern, dict) and all((
+            isinstance(i, basestring) for i
+            in itertools.chain(*pattern.items())
+        ))
 
     @classmethod
-    def isValid(cls, heartBeat):
+    def validate_expected_interval(cls, expected_interval):
+        """
+        Check if the expected event interval is valid.
+
+        :param expected_interval: a string that represent the time to wait
+        before an alarm is created in the case no event link to an entity is
+        received.
+        :return:
+        """
+        return isinstance(expected_interval, basestring) and \
+            bool(cls.__EXPECTED_INTERVAL_REGEXP.match(expected_interval))
+
+    @classmethod
+    def is_valid_heartbeat(cls, heartbeat_json):
         """
         Check if the heartBeat given is valid.
 
-        In order to considered valid, the `mappings` and `maxDuration`
-        attributs must be valid.
+        In order to considered valid, the `pattern` and `expected_interval`
+        attributes must be valid.
 
-        `Mappings` is a list of item.
-        An `item` is an ojects with at least one key. The key and the
-        associated value are both string
-        `maxduration` is a string that match the follow pattern: ^[0-9]*(s|m|h)$.
+        An `pattern` is an json-object with at least one key. The key and the
+        associated value are both string.
+
+        `expected_interval` is a string that match the follow pattern:
+        ^[0-9]*(s|m|h)$.
         `s` means waiting XX seconds
         `m` means waiting XX minutes
         `h` means waiting XX hours
 
-        :param dict heartBeat: a dict.
-        :rtype: (bool, str).
+        :param `dict` heartbeat_json: a Heartbeat json-object.
+        :rtype: `bool`.
         """
-        try:
-            mappings = heartBeat.mappings
-        except KeyError:
-            return False, "The `mappings` field is missing."
-
-        try:
-            max_duration = heartBeat.max_duration
-        except KeyError:
-            return False, "The `maxduration` field is missing."
-
-        if len(mappings) == 0:
-            return False, "The mappings array must not be empty."
-
-        for mapping in mappings:
-            if len(mapping) == 0:
-                return False, "The mapping object must not be empty."
-
-            for it, key in enumerate(mapping):
-                if not isinstance(key, basestring):
-                    return False, "{} must be a string.".format(key)
-
-                if not isinstance(mapping[key], basestring):
-                    return False, "The value of `{0}` of the mapping object"\
-                        " at index {1} must be a string.".format(key, it)
-
-        if re.match(cls.MAX_DUR_REGEXP, max_duration) is not None:
-            return True, ""
-
-        return False, "The maxDuration fields does not match the" \
-            " regular expression {}.".format(cls.MAX_DUR_KEY)
-
-    def to_dict(self):
-        """
-        Return the representation of the current instance as a dict.
-        :rtype: dict
-        """
-        return {self.MAPPINGS_KEY: self.mappings,
-                self.MAX_DUR_KEY: self.max_duration}
+        return cls.PATTERN_KEY in heartbeat_json and \
+            cls.EXPECTED_INTERVAL_KEY in heartbeat_json and \
+            cls.validate_heartbeat_pattern(
+                heartbeat_json[cls.PATTERN_KEY]) and \
+            cls.validate_expected_interval(
+                heartbeat_json[cls.EXPECTED_INTERVAL_KEY])
