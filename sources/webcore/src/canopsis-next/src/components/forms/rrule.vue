@@ -175,7 +175,7 @@ import RRule from 'rrule';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 
-import DateTimePicker from '@/components/forms/date-time-picker.vue';
+import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
 
 /**
  * RRule form component
