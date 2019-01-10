@@ -249,7 +249,7 @@ class PBehaviorManager(object):
 
         # this line allow us to raise an exception pytz.UnknownTimeZoneError,
         # if the timezone defined in the pbehabior configuration file is wrong
-	pytz.timezone(self.default_tz)
+        pytz.timezone(self.timezone)
 
         if enabled in [True, "True", "true"]:
             enabled = True
