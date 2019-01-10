@@ -28,11 +28,12 @@
 </template>
 
 <script>
-import { PAUSE_REASONS } from '@/constants';
+import { PAUSE_REASONS, MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
+  name: MODALS.createWatcherPauseEvent,
   $_veeValidate: {
     validator: 'new',
   },
@@ -52,7 +53,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action({ ...this.form });
+          await this.config.action(this.form);
         }
 
         this.hideModal();

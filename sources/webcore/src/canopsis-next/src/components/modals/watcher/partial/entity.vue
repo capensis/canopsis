@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import find from 'lodash/find';
-
 import {
   MODALS,
   WATCHER_PBEHAVIOR_COLOR,
@@ -31,6 +29,7 @@ import {
   EVENT_ENTITY_STYLE,
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
+  PBEHAVIOR_TYPES,
 } from '@/constants';
 import compile from '@/helpers/handlebars';
 
@@ -56,67 +55,32 @@ export default {
         {
           name: EVENT_ENTITY_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
-          action: (actionName) => {
-            this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-            this.actionsClicked.push(actionName);
-          },
+          action: this.prepareAckAction,
         },
         {
           name: EVENT_ENTITY_TYPES.declareTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
-          action: actionName => this.showModal({
-            name: MODALS.createWatcherDeclareTicketEvent,
-            config: {
-              action: (ticket) => {
-                this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-                this.addDeclareTicketActionToQueue({ entity: this.entity, ticket });
-                this.actionsClicked.push(actionName);
-              },
-            },
-          }),
+          action: this.prepareDeclareTicketAction,
         },
         {
           name: EVENT_ENTITY_TYPES.validate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.validate].icon,
-          action: (actionName) => {
-            this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk });
-            this.addValidateActionToQueue({ entity: this.entity });
-            this.actionsClicked.push(actionName);
-          },
+          action: this.prepareValidateAction,
         },
         {
           name: EVENT_ENTITY_TYPES.invalidate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.invalidate].icon,
-          action: (actionName) => {
-            this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-            this.addInvalidateActionToQueue({ entity: this.entity });
-            this.actionsClicked.push(actionName);
-          },
+          action: this.prepareInvalidateAction,
         },
         {
           name: EVENT_ENTITY_TYPES.pause,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pause].icon,
-          action: actionName => this.showModal({
-            name: MODALS.createWatcherPauseEvent,
-            config: {
-              action: (pause) => {
-                this.addPauseActionToQueue({
-                  entity: this.entity,
-                  comment: pause.comment,
-                  reason: pause.reason,
-                });
-                this.actionsClicked.push(actionName);
-              },
-            },
-          }),
+          action: this.preparePauseAction,
         },
         {
           name: EVENT_ENTITY_TYPES.play,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
-          action: (actionName) => {
-            this.addPlayActionToQueue({ entity: this.entity });
-            this.actionsClicked.push(actionName);
-          },
+          action: this.preparePlayAction,
         },
       ],
     };
@@ -149,7 +113,7 @@ export default {
     },
 
     isPaused() {
-      return this.entity.pbehavior.some(pbehavior => pbehavior.type_.toLowerCase() === 'pause');
+      return this.entity.pbehavior.some(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
     },
 
     availableActions() {
@@ -161,8 +125,8 @@ export default {
           return false;
         }
 
-        if ((
-          this.entity.state === ENTITIES_STATES.ok || this.entity.ack !== null) &&
+        if (
+          (this.entity.state === ENTITIES_STATES.ok || this.entity.ack !== null) &&
           action.name === EVENT_ENTITY_TYPES.ack
         ) {
           return false;
@@ -179,11 +143,62 @@ export default {
         return true;
       });
     },
+
+    isActionBtnEnable() {
+      return action => !this.actionsClicked.includes(action);
+    },
   },
+
   methods: {
-    isActionBtnEnable(action) {
-      const actionFound = find(this.actionsClicked, actionName => actionName === action);
-      return actionFound === undefined;
+    prepareAckAction() {
+      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
+      this.actionsClicked.push(EVENT_ENTITY_TYPES.ack);
+    },
+
+    prepareDeclareTicketAction() {
+      this.showModal({
+        name: MODALS.createWatcherDeclareTicketEvent,
+        config: {
+          action: (ticket) => {
+            this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
+            this.addDeclareTicketActionToQueue({ entity: this.entity, ticket });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.declareTicket);
+          },
+        },
+      });
+    },
+
+    prepareValidateAction() {
+      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk });
+      this.addValidateActionToQueue({ entity: this.entity });
+      this.actionsClicked.push(EVENT_ENTITY_TYPES.validate);
+    },
+
+    prepareInvalidateAction() {
+      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
+      this.addInvalidateActionToQueue({ entity: this.entity });
+      this.actionsClicked.push(EVENT_ENTITY_TYPES.invalidate);
+    },
+
+    preparePauseAction() {
+      this.showModal({
+        name: MODALS.createWatcherPauseEvent,
+        config: {
+          action: (pause) => {
+            this.addPauseActionToQueue({
+              entity: this.entity,
+              comment: pause.comment,
+              reason: pause.reason,
+            });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.pause);
+          },
+        },
+      });
+    },
+
+    preparePlayAction() {
+      this.addPlayActionToQueue({ entity: this.entity });
+      this.actionsClicked.push(EVENT_ENTITY_TYPES.play);
     },
   },
 };

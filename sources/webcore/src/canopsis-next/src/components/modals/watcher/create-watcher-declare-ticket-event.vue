@@ -20,9 +20,12 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
+  name: MODALS.createWatcherDeclareTicketEvent,
   $_veeValidate: {
     validator: 'new',
   },
