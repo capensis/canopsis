@@ -1,5 +1,6 @@
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
 
 import { PAGINATION_LIMIT } from '@/config';
 import Pagination from '@/components/tables/pagination.vue';
@@ -58,7 +59,7 @@ export default {
   },
   watch: {
     query(value, oldValue) {
-      if (!isEqual(value, oldValue)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
         this.fetchList();
       }
     },

@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     view-tabs(
-    v-if="!viewPending || !view",
+    v-if="view",
     v-model="activeTabIndex",
     :view="view",
     :isEditingMode="isEditingMode",
