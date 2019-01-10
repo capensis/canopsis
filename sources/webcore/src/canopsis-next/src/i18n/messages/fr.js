@@ -282,12 +282,14 @@ export default {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
       duplicateTitle: 'Dupliquer une entitée',
-      infosList: 'Infos',
-      addInfos: 'Ajouter un champ info',
-      noInfos: 'No infos',
+      manageInfos: {
+        infosList: 'Informations',
+        addInfo: 'Ajouter une information',
+        noInfos: 'Aucune information',
+      },
       fields: {
         type: 'Type',
-        manageInfos: 'Gérer Infos',
+        manageInfos: 'Gérer les informations',
         form: 'Formulaire',
         impact: 'Impacts',
         depends: 'Dépendances',
@@ -313,6 +315,10 @@ export default {
         edit: 'Observateur edité avec succès !',
         duplicate: 'Observateur dupliqué avec succès !',
       },
+    },
+    addEntityInfo: {
+      addTitle: 'Ajouter une information',
+      editTitle: 'Editer une information',
     },
     view: {
       select: {

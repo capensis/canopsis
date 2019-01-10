@@ -33,6 +33,7 @@ import TextEditor from './common/text-editor.vue';
 import TextFieldEditor from './common/text-field-editor.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
+import AddEntityInfo from './context/add-entity-info.vue';
 import SelectView from './view/select-view.vue';
 import CreateView from './view/create-view.vue';
 import CreateGroup from './view/create-group.vue';
@@ -72,6 +73,7 @@ export default {
     Confirmation,
     CreateEntity,
     CreateWatcher,
+    AddEntityInfo,
     CreateWidget,
     ColorPicker,
     TextEditor,
