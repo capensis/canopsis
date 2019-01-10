@@ -197,7 +197,7 @@ export default {
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
-    filterEditor: 'Ésditeur de filtre',
+    filterEditor: 'Éditeur de filtre',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -293,12 +293,14 @@ export default {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
       duplicateTitle: 'Dupliquer une entitée',
-      infosList: 'Infos',
-      addInfos: 'Ajouter un champ info',
-      noInfos: 'No infos',
+      manageInfos: {
+        infosList: 'Informations',
+        addInfo: 'Ajouter une information',
+        noInfos: 'Aucune information',
+      },
       fields: {
         type: 'Type',
-        manageInfos: 'Gérer Infos',
+        manageInfos: 'Gérer les informations',
         form: 'Formulaire',
         impact: 'Impacts',
         depends: 'Dépendances',
@@ -324,6 +326,10 @@ export default {
         edit: 'Observateur edité avec succès !',
         duplicate: 'Observateur dupliqué avec succès !',
       },
+    },
+    addEntityInfo: {
+      addTitle: 'Ajouter une information',
+      editTitle: 'Editer une information',
     },
     view: {
       select: {
@@ -399,6 +405,11 @@ export default {
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique ?',
       },
     },
+    createPause: {
+      title: 'Mettre en pause',
+      comment: 'Commentaire',
+      reason: 'Raison',
+    },
     createAckRemove: {
       title: 'Annuler l\'acquittement',
     },
@@ -447,6 +458,7 @@ export default {
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervals d\'éxécution',
+      actionPending: 'action(s) en attente',
     },
     filter: {
       create: {
@@ -753,6 +765,7 @@ export default {
       },
       errors: {
         invalidJSON: 'JSON non valide',
+        required: 'Merci d\'ajouter au moins une règle valide',
       },
     },
   },

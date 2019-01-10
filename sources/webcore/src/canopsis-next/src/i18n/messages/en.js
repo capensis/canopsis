@@ -98,7 +98,7 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
     moreInfos: {
-      infos: 'Infos',
+      infos: 'Informations',
       type: 'Type',
       enabled: 'Enabled',
       disabled: 'Disabled',
@@ -292,9 +292,11 @@ export default {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
       duplicateTitle: 'Duplicate an entity',
-      infosList: 'Infos list',
-      addInfos: 'Add Infos',
-      noInfos: 'No Infos',
+      manageInfos: {
+        infosList: 'Informations',
+        addInfo: 'Add Information',
+        noInfos: 'No information',
+      },
       fields: {
         type: 'Type',
         manageInfos: 'Manage Infos',
@@ -323,6 +325,10 @@ export default {
         edit: 'Watcher successfully edited !',
         duplicate: 'Watcher successfully duplicated !',
       },
+    },
+    addEntityInfo: {
+      addTitle: 'Add an information',
+      editTitle: 'Edit an information',
     },
     view: {
       select: {
@@ -402,6 +408,11 @@ export default {
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },
+    createPause: {
+      title: 'Create Pause event',
+      comment: 'Comment',
+      reason: 'Reason',
+    },
     createAckRemove: {
       title: 'Remove ack',
     },
@@ -450,6 +461,7 @@ export default {
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
+      actionPending: 'action(s) pending',
     },
     filter: {
       create: {
