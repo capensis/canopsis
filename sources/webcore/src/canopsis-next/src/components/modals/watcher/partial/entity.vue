@@ -21,7 +21,9 @@ import get from 'lodash/get';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
-import compile from '@/helpers/handlebars';
+import { WATCHER_PBEHAVIOR_COLOR, WATCHER_STATES_COLORS } from '@/constants';
+
+import { compile } from '@/helpers/handlebars';
 
 export default {
   props: {
@@ -59,10 +61,10 @@ export default {
   computed: {
     entityClass() {
       if (this.hasActivePbehavior) {
-        return this.$constants.WATCHER_PBEHAVIOR_COLOR;
+        return WATCHER_PBEHAVIOR_COLOR;
       }
 
-      return this.$constants.WATCHER_STATES_COLORS[this.attributes.state];
+      return WATCHER_STATES_COLORS[this.attributes.state];
     },
 
     hasActivePbehavior() {
@@ -80,7 +82,7 @@ export default {
     },
 
     compiledTemplate() {
-      return compile(this.template, { watcher: this.watcher, entity: this.entity });
+      return compile(this.template, { entity: this.entity });
     },
   },
 };

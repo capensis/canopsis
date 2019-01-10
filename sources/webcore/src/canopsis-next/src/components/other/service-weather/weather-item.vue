@@ -26,7 +26,7 @@ import {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
-import compile from '@/helpers/handlebars';
+import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
 
 import modalMixin from '@/mixins/modal';
