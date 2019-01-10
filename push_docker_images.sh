@@ -19,10 +19,7 @@ for engine in {"core","cat","prov","cat-prov"}; do
 done
 # Go engines
 if [ "${push_go}" = "Y" ]||[ "${push_go}" = "y" ]; then
-    for engine in {"axe","che","heartbeat","stat","watcher","action"}; do
-        docker push canopsis/engine-$engine:${CANOPSIS_TAG}
-    done
-    for engine in {"init"}; do
+    for engine in {"init", "engine-axe","engine-che","engine-heartbeat","engine-stat","engine-watcher","engine-action"}; do
         docker push canopsis/$engine:${CANOPSIS_TAG}
     done
 fi
