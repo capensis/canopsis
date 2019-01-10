@@ -5,6 +5,7 @@ export default {
     undefined: 'Non définie',
     entity: 'Entitée',
     watcher: 'Observateur',
+    pbehaviors: 'Comportements périodiques',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
     addTab: 'Ajouter un onglet',
