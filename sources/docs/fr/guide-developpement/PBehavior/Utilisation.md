@@ -63,7 +63,7 @@ Les attributs du corps sont les suivants :
 | tstop           | integer | No       | Timestamp de la date de fin                    |
 | \_id            | string  | No       | indentifiant du Pbehavior                      |
 | eids            | array   | No       | tableau du \_ids pour les entités impactées.   |
-| timestamp       | string  | yes      | La timezone à utilisé pour le calcul des dates |
+| timezone        | string  | yes      | La timezone à utilisé pour le calcul des dates |
 
 
 Réponse : UID de l'élément inséré
@@ -129,7 +129,7 @@ Les attributs de réponse sont les suivants :
 | \_id            | string  | No       | Pbehavior identifier                           |
 | eids            | array   | No       | Array of \_ids for the impacted entities.      |
 | isActive        | boolean | No       | is the pbehavior currently active              |
-| timestamp       | string  | yes      | La timezone à utilisé pour le calcul des dates |
+| timeszone       | string  | yes      | La timezone à utilisé pour le calcul des dates |
 
 ## Supprimer un pbehavior
 

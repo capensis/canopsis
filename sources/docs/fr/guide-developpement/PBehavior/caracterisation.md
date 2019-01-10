@@ -57,8 +57,8 @@ Event de type pbehavior : créé à partir des champs cités en introduction
 
 L'exécution de chaque pbehavior se fait dans une timezone particulière.
 Lorsqu'un pbehavior ne contient pas de champ timezone, la timezone utilisé
-sera celle défini dans le fichier de configuration `etc/pbehavior/manager.conf`
+sera celle définie dans le fichier de configuration `etc/pbehavior/manager.conf`
 sous le champ `default_timezone`.
 
-Si le fichier de configuration n'existe pas ou que le champ `default_timezone`
+Si le fichier de configuration n'existe pas ou si le champ `default_timezone`
 n'existe pas, la timezone `Europe/Paris` sera utilisé.
