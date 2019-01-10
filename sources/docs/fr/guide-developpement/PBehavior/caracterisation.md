@@ -15,6 +15,7 @@ Un pbehavior se caractérise par les informations suivantes.
 | `tstop` | int | Timestamp fournissant la date de fin du pbehavior, recalculée à partir de la `rrule` si présente. |
 | `type_` | string | Optionnel. Type de pbehavior (pause, maintenance…). |
 | `reason` | string | Optionnel. Raison pour laquelle ce pbehavior a été posé. |
+| `timezone` | string | Timezone dans laquelle le pbehavior doit s'exécuter.
 
 Un exemple d'évènement pbehavior brut :
 ```js
@@ -35,7 +36,8 @@ Un exemple d'évènement pbehavior brut :
    "eids" : [ ],
    "connector" : string,
    "connector_name" : string,
-   "author" : string
+   "author" : string,
+   "timezone" : string
 }
 ```
 
@@ -50,3 +52,13 @@ Dans le cas où la `rrule` est présente, `tstart` et `tstop` seront recalculés
 API HTTP : voir l’API `/pbehavior/create`
 
 Event de type pbehavior : créé à partir des champs cités en introduction
+
+## Timezone
+
+L'exécution de chaque pbehavior se fait dans une timezone particulière.
+Lorsqu'un pbehavior ne contient pas de champ timezone, la timezone utilisé
+sera celle définie dans le fichier de configuration `etc/pbehavior/manager.conf`
+sous le champ `default_timezone`.
+
+Si le fichier de configuration n'existe pas ou si le champ `default_timezone`
+n'existe pas, la timezone `Europe/Paris` sera utilisé.
