@@ -99,9 +99,7 @@ export default {
           infos: this.infos,
           editingInfo: info,
           title: this.$t('modals.addEntityInfo.editTitle'),
-          action: (editedInfo) => {
-            this.updateAndMoveField(info.name, editedInfo.name, { ...editedInfo });
-          },
+          action: editedInfo => this.updateAndMoveField(info.name, editedInfo.name, { ...editedInfo }),
         },
       });
     },
