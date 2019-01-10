@@ -68,6 +68,8 @@ export default {
     noResults: 'Pas de résultats',
     exploitation: 'Exploitation',
     administration: 'Administration',
+    forbidden: 'Accès refusé',
+    search: 'Recherche',
     actions: {
       close: 'Fermer',
       acknowledge: 'Acquitter',
@@ -96,7 +98,16 @@ export default {
     dependencies: 'Dépendances',
     moreInfos: {
       type: 'Type',
+      enabled: 'Activée',
+      disabled: 'Désactivée',
       lastActiveDate: 'Dernière Date d\'Activité',
+      infosSearchLabel: 'Rechercher une info',
+      tabs: {
+        main: 'Principal',
+        pbehaviors: 'Comportements périodiques',
+        impactDepends: 'Impacts/Dépendances',
+        infos: 'Infos',
+      },
     },
   },
   search: {
@@ -715,6 +726,7 @@ export default {
     default: 'Une erreur s\'est produite...',
     lineNotEmpty: 'Cette ligne n\'est pas vide',
     JSONNotValid: 'JSON non valide..',
+    versionNotFound: 'Erreur dans la récupération du numéro de version...',
   },
   calendar: {
     today: 'Aujourd\'hui',

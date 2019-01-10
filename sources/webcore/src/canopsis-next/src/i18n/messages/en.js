@@ -100,8 +100,16 @@ export default {
     moreInfos: {
       infos: 'Informations',
       type: 'Type',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
       lastActiveDate: 'Last Active Date',
-      infosSearchLabel: 'Search informations',
+      infosSearchLabel: 'Search infos',
+      tabs: {
+        main: 'Main',
+        pbehaviors: 'Pbehaviors',
+        impactDepends: 'Impact/Depends',
+        infos: 'Infos',
+      },
     },
   },
   search: {

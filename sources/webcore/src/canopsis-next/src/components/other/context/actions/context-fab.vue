@@ -1,7 +1,6 @@
 <template lang="pug">
 v-speed-dial.d-inline-block(
   direction="left",
-  :open-on-hover="true",
   transition="scale-transition"
   )
   v-btn.primary(slot="activator", dark, fab, small)
