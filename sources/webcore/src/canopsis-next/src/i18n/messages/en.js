@@ -813,5 +813,7 @@ export default {
     errors: {
       emptyTabs: 'You should create a tab',
     },
+    deleteRow: 'Delete row',
+    deleteWidget: 'Delete widget',
   },
 };
