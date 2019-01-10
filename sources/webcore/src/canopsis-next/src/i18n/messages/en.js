@@ -394,6 +394,11 @@ export default {
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },
+    createPause: {
+      title: 'Create Pause event',
+      comment: 'Comment',
+      reason: 'Reason',
+    },
     createAckRemove: {
       title: 'Remove ack',
     },
@@ -442,6 +447,7 @@ export default {
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
+      actionPending: 'action(s) pending',
     },
     filter: {
       create: {

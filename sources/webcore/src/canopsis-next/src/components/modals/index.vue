@@ -38,6 +38,8 @@ import CreateView from './view/create-view.vue';
 import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
+import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
+import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
 import AlarmsList from './alarm/alarms-list.vue';
@@ -79,6 +81,8 @@ export default {
     CreateFilter,
     CreateGroup,
     Watcher,
+    CreateWatcherDeclareTicketEvent,
+    CreateWatcherPauseEvent,
     ManageHistogramGroups,
     AddStat,
     AlarmsList,
