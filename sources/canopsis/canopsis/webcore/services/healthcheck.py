@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 
+import re
+
 from bottle import request
 
 from canopsis.healthcheck.manager import HealthcheckManager
@@ -23,9 +25,15 @@ def exports(ws):
 
         :returns: <Healthcheck>
         """
-        criticals = request.query.criticals.split(',') or None
+        criticals = request.query.criticals.split(',')
+
         if len(criticals) == 0:
             criticals = None
+        else:
+            # Filter will remove the empty strings and the space-only strings
+            regex = re.compile("(?!\s*$).+")
+            criticals = filter(regex.search, criticals) or None
+
         health_obj = healthcheckManager.check(criticals=criticals)
         if health_obj is None:
             return gen_json_error({'description': 'Healthcheck is empty !'},
