@@ -77,7 +77,7 @@ export default {
   },
   computed: {
     items() {
-      return Object.values(this.infos).map(info => ({ ...info }));
+      return Object.values(this.infos);
     },
   },
   methods: {
@@ -100,9 +100,7 @@ export default {
           editingInfo: info,
           title: this.$t('modals.addEntityInfo.editTitle'),
           action: (editedInfo) => {
-            const newInfos = { ...omit(this.infos, info.name) };
-            newInfos[editedInfo.name] = { ...editedInfo };
-            this.$emit('input', newInfos);
+            this.updateAndMoveField(info.name, editedInfo.name, { ...editedInfo });
           },
         },
       });
