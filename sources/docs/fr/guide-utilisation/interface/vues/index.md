@@ -117,7 +117,7 @@ Le deuxième bouton ![Bouton supprimer un onglet](./img/delete_tab_button.png  "
 
 Au clic sur ce bouton, une fenêtre de confirmation s'ouvre. Cliquez sur "Oui" pour valider la suppression de l'onglet.
 
-**Attention: Tout les widgets à l'intérieur de l'onglet seront supprimés également**
+**Attention: Tous les widgets à l'intérieur de l'onglet seront également supprimés**
 
 ## La suite...
 
