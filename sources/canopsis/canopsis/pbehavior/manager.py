@@ -588,16 +588,6 @@ class PBehaviorManager(object):
 
         rrule = pbehavior['rrule']
         if rrule:
-            # compute the minimal date from which to start generating
-            # dates from the rrule.
-            # a complementary date (missing_date) is computed and added
-            # at index 0 of the generated dt_list to ensure we manage
-            # dates at boundaries.
-            dt_tstart_date = dtts_offset.date()
-            dt_tstart_time = dttstart.time().replace(tzinfo=pytz.UTC)
-            dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
-            dt_dtstart = dt_dtstart.astimezone(tz_object)
-
             dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
             if dt is None:
                 return False
