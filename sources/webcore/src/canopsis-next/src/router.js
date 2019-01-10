@@ -17,7 +17,8 @@ import AdminRights from '@/views/admin/rights.vue';
 import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
-import EventFilter from '@/views/exploitation/event-filter.vue';
+import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
+import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 
 Vue.use(Router);
 
@@ -92,9 +93,15 @@ const routes = [
     meta: requiresLoginMeta,
   },
   {
+    path: '/exploitation/pbehaviors',
+    name: 'exploitation-pbehaviors',
+    component: ExploitationPbehaviors,
+    meta: requiresLoginMeta,
+  },
+  {
     path: '/exploitation/event-filter',
     name: 'exploitation-event-filter',
-    component: EventFilter,
+    component: ExploitationEventFilter,
     meta: requiresLoginMeta,
   },
 ];

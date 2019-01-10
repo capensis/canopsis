@@ -5,9 +5,11 @@ export default {
     undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
+    pbehaviors: 'PBehaviors',
     widget: 'Widget',
     addWidget: 'Add widget',
     addTab: 'Add tab',
+    addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
     name: 'Name',
@@ -68,6 +70,7 @@ export default {
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Forbidden',
+    search: 'Search',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -111,18 +114,18 @@ export default {
   },
   search: {
     advancedSearch: '<span>Help on the advanced research :</span>\n' +
-    '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-    '<p>The "-" before the research is required</p>\n' +
-    '<p>Operators :\n' +
-    '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-    '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-    '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-    '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-    '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
-    '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
-    '</dl>',
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators :\n' +
+      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
+      '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+      '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
+      '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
+      '</dl>',
   },
   entities: {
     watcher: 'watcher',
@@ -821,5 +824,7 @@ export default {
     errors: {
       emptyTabs: 'You should create a tab',
     },
+    deleteRow: 'Delete row',
+    deleteWidget: 'Delete widget',
   },
 };

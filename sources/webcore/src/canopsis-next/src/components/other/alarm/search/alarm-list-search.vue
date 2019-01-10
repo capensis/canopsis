@@ -1,17 +1,5 @@
 <template lang="pug">
-  v-toolbar.white(dense, flat)
-    v-text-field(
-      label="Search",
-      v-model="searchingText",
-      hide-details,
-      single-line,
-      @keyup.enter="submit",
-      @keyup.delete="clear",
-    )
-    v-btn(icon @click="submit")
-      v-icon search
-    v-btn(icon @click="clear")
-      v-icon clear
+  search-field(v-model="searchingText", @submit="submit", @clear="clear")
     v-tooltip(bottom)
       v-btn(icon slot="activator")
         v-icon help_outline
@@ -21,12 +9,15 @@
 <script>
 import searchMixin from '@/mixins/search';
 
+import SearchField from '@/components/forms/fields/search-field.vue';
+
 /**
  * Search component for the alarms list
  *
  * @module alarm
  */
 export default {
+  components: { SearchField },
   mixins: [searchMixin],
   data() {
     return {
@@ -41,4 +32,3 @@ export default {
   },
 };
 </script>
-

@@ -1,6 +1,8 @@
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
 
+import { PAGINATION_LIMIT } from '@/config';
 import Pagination from '@/components/tables/pagination.vue';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -57,7 +59,7 @@ export default {
   },
   watch: {
     query(value, oldValue) {
-      if (!isEqual(value, oldValue)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
         this.fetchList();
       }
     },
@@ -90,7 +92,7 @@ export default {
         'sortDir',
       ]);
 
-      const { page, interval } = this.query;
+      const { page, interval, limit = PAGINATION_LIMIT } = this.query;
 
       if (interval && interval !== 'custom') {
         try {
@@ -108,8 +110,8 @@ export default {
         query.sort_dir = this.query.sortDir;
       }
 
-      query.limit = this.query.limit;
-      query.skip = ((page - 1) * this.query.limit) || 0;
+      query.limit = limit;
+      query.skip = ((page - 1) * limit) || 0;
 
       return query;
     },

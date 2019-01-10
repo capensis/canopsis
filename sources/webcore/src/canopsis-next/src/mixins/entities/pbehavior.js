@@ -8,11 +8,15 @@ const { mapGetters, mapActions } = createNamespacedHelpers('pbehavior');
 export default {
   computed: {
     ...mapGetters({
-      pbehaviorItems: 'items',
+      pbehaviors: 'items',
+      pbehaviorsPending: 'pending',
+      pbehaviorsMeta: 'meta',
     }),
   },
   methods: {
     ...mapActions({
+      fetchPbehaviorsList: 'fetchList',
+      fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore',
       createPbehavior: 'create',
       removePbehavior: 'remove',
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',

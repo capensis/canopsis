@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     view-tabs(
-    v-if="!viewPending",
+    v-if="view",
     v-model="activeTabIndex",
     :view="view",
     :isEditingMode="isEditingMode",
@@ -120,10 +120,10 @@ export default {
   },
   methods: {
     keyDownListener(event) {
-      if (event.keyCode === 13 && event.altKey) { // alt + enter
+      if (event.key === 'Enter' && event.altKey) {
         this.toggleFullScreenMode();
         event.preventDefault();
-      } else if (event.keyCode === 69 && event.ctrlKey) { // ctrl + e
+      } else if (event.key === 'e' && event.ctrlKey) {
         this.toggleViewEditingMode();
         event.preventDefault();
       }

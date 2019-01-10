@@ -25,8 +25,8 @@
 <script>
 import moment from 'moment-timezone';
 
-import DatePicker from '@/components/forms/date-picker/date-picker.vue';
-import DateTimePicker from '@/components/forms/date-time-picker.vue';
+import DatePicker from '@/components/forms/fields/date-picker/date-picker.vue';
+import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
 
 export default {
   components: {
