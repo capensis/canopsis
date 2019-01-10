@@ -4,7 +4,12 @@
       v-layout(row, wrap)
         v-flex(xs3)
           v-text-field(v-model="infosSearchingText", :label="$t('context.moreInfos.infosSearchLabel')", dark)
-      v-data-table(:items="items", :headers="headers", :search="infosSearchingText")
+      v-data-table(
+      :items="items",
+      item-key="item.name",
+      :headers="headers",
+      :search="infosSearchingText"
+      )
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.description }}
@@ -40,10 +45,11 @@ export default {
   },
   computed: {
     items() {
-      return Object.keys(this.infos).reduce((acc, info) => {
-        acc.push({ name: info, description: this.infos[info].description, value: this.infos[info].value });
-        return acc;
-      }, []);
+      return Object.keys(this.infos).map(info => ({
+        name: info,
+        description: this.infos[info].description,
+        value: this.infos[info].value,
+      }));
     },
   },
 };

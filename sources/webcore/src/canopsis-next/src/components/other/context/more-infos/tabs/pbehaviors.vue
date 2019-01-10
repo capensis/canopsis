@@ -99,7 +99,10 @@ export default {
     },
     async fetchItems() {
       await this.fetchPbehaviorsByEntityId({ id: this.itemId });
-      this.items = [...this.pbehaviorItems];
+
+      if (this.pbehaviorItems) {
+        this.items = [...this.pbehaviorItems];
+      }
     },
   },
 };

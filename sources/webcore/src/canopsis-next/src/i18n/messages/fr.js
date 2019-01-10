@@ -68,6 +68,8 @@ export default {
     noResults: 'Pas de résultats',
     exploitation: 'Exploitation',
     administration: 'Administration',
+    forbidden: 'Accès refusé',
+    search: 'Recherche',
     actions: {
       close: 'Fermer',
       acknowledge: 'Acquitter',
@@ -712,6 +714,7 @@ export default {
     default: 'Une erreur s\'est produite...',
     lineNotEmpty: 'Cette ligne n\'est pas vide',
     JSONNotValid: 'JSON non valide..',
+    versionNotFound: 'Erreur dans la récupération du numéro de version...',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -751,6 +754,11 @@ export default {
       errors: {
         invalidJSON: 'JSON non valide',
       },
+    },
+  },
+  filterSelector: {
+    fields: {
+      mixFilters: 'Mix de filtres',
     },
   },
   validator: {

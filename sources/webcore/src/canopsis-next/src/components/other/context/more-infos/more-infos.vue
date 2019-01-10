@@ -36,11 +36,6 @@ export default {
       ],
     };
   },
-  computed: {
-    lastActiveDate() {
-      return Math.max(this.item.enable_history) * 1000;
-    },
-  },
 };
 </script>
 
