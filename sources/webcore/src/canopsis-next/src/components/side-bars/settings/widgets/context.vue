@@ -19,13 +19,15 @@
           )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
-          v-divider
-          field-filters(
-          v-model="settings.widget_preferences.mainFilter",
-          :filters.sync="settings.widget_preferences.viewFilters",
-          :condition.sync="settings.widget_preferences.mainFilterCondition"
-          )
-          v-divider
+          template(v-if="hasAccessToListFilters")
+            field-filters(
+            v-model="settings.widget_preferences.mainFilter",
+            :filters.sync="settings.widget_preferences.viewFilters",
+            :condition.sync="settings.widget_preferences.mainFilterCondition",
+            :hasAccessToAddFilter="hasAccessToAddFilter",
+            :hasAccessToEditFilter="hasAccessToEditFilter"
+            )
+            v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
@@ -35,7 +37,7 @@
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { SIDE_BARS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -78,6 +80,19 @@ export default {
         },
       },
     };
+  },
+  computed: {
+    hasAccessToListFilters() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.listFilters);
+    },
+
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.editFilter);
+    },
+
+    hasAccessToAddFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.addFilter);
+    },
   },
   created() {
     const { widget_preferences: widgetPreference } = this.userPreference;

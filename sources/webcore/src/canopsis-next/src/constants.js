@@ -449,7 +449,7 @@ export const USERS_RIGHTS = {
     taskreporting: 'models_taskreporting',
   },
   business: {
-    alarmList: {
+    alarmsList: {
       actions: {
         ack: 'listalarm_ack',
         fastAck: 'listalarm_fastAck',
@@ -464,6 +464,21 @@ export const USERS_RIGHTS = {
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
+      },
+    },
+    context: {
+      actions: {
+        createEntity: 'crudcontext_createEntity',
+        createWatcher: 'crudcontext_createWatcher',
+        edit: 'crudcontext_edit',
+        duplicate: 'crudcontext_duplicate',
+        remove: 'crudcontext_remove',
+        pbehavior: 'crudcontext_pbehavior',
+        pbehaviorList: 'crudcontext_listPbehavior',
+
+        listFilters: 'crudcontext_listFilters',
+        editFilter: 'crudcontext_editFilter',
+        addFilter: 'crudcontext_addFilter',
       },
     },
   },

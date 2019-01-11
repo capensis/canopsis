@@ -37,13 +37,13 @@ export default {
     },
 
     actionsAccessFilterHandler({ type }) {
-      const right = USERS_RIGHTS.business.alarmList.actions[type];
+      const right = USERS_RIGHTS.business.alarmsList.actions[type];
 
       if (!right) {
         return true;
       }
 
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions[type]);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions[type]);
     },
   },
 };

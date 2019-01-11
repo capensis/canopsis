@@ -5,7 +5,7 @@
         context-search(:query.sync="query")
       v-flex
         pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
-      v-flex
+      v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
@@ -73,7 +73,7 @@
 import omit from 'lodash/omit';
 import isString from 'lodash/isString';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -82,6 +82,7 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
@@ -113,6 +114,7 @@ export default {
     FilterSelector,
   },
   mixins: [
+    authMixin,
     modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
@@ -138,6 +140,14 @@ export default {
       }
 
       return [];
+    },
+
+    hasAccessToListFilters() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.listFilters);
+    },
+
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.editFilter);
     },
   },
   methods: {
