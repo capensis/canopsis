@@ -28,12 +28,14 @@ import {
 
 import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
+import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
 import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 export default {
-  mixins: [modalMixin, entitiesWatcherEntityMixin],
+  mixins: [modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -101,7 +103,12 @@ export default {
       return 4 + this.widget.parameters.heightFactor;
     },
     isBlinking() {
-      return this.watcher.alerts_not_ack;
+      return (
+        this.watcher.alerts_not_ack
+        && !this.hasWatcherPbehavior
+        && !this.isPaused
+        && !this.watcher.active_pb_some
+      );
     },
   },
   methods: {
@@ -125,39 +132,40 @@ export default {
     },
 
     async showAlarmListModal() {
-      const initialFilter = JSON.parse(this.watcher.mfilter);
-      const newFilter = Object.keys(initialFilter).reduce((acc, key) => {
-        const newKey = `entity.${key}`;
-        acc[newKey] = initialFilter[key];
-        return acc;
-      }, {});
+      try {
+        const initialFilter = JSON.parse(this.watcher.mfilter);
+        const newFilter = prepareFilterWithFieldsPrefix(initialFilter, 'entity.');
+        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+        const watcherFilter = {
+          title: this.watcher.display_name,
+          filter: newFilter,
+        };
 
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
-      const watcherFilter = {
-        title: this.watcher.display_name,
-        filter: newFilter,
-      };
+        const widgetParameters = {
+          ...this.widget.parameters.alarmsList,
 
-      const widgetParameters = {
-        ...this.widget.parameters.alarmsList,
+          mainFilter: watcherFilter,
+          viewFilters: [watcherFilter],
+        };
 
-        mainFilter: watcherFilter,
-        viewFilters: [watcherFilter],
-      };
+        this.showModal({
+          name: MODALS.alarmsList,
+          config: {
+            widget: {
+              ...widget,
 
-      this.showModal({
-        name: MODALS.alarmsList,
-        config: {
-          widget: {
-            ...widget,
-
-            parameters: {
-              ...widget.parameters,
-              ...widgetParameters,
+              parameters: {
+                ...widget.parameters,
+                ...widgetParameters,
+              },
             },
           },
-        },
-      });
+        });
+      } catch (err) {
+        this.addErrorPopup({
+          text: this.$t('errors.default'),
+        });
+      }
     },
   },
 };
