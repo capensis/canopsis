@@ -145,7 +145,7 @@ class MongoCollection(object):
         self.logger.error(message)
         raise CollectionError(message)
 
-    def remove(self, query={}, *args, **kwargs):
+    def remove(self, query=None, *args, **kwargs):
         """
         Remove an element in the collection.
 
@@ -153,6 +153,7 @@ class MongoCollection(object):
         :raises: OperationFailure
         :rtype: dict
         """
+        query = query or {}
         try:
             return self._hr(self.collection.remove, query, *args, **kwargs)
 

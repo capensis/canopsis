@@ -1,19 +1,21 @@
 <template lang="pug">
-v-data-table(:items="items", :headers="pbehaviorsTableHeaders")
-  template(slot="items" slot-scope="props")
-    td {{ props.item.name }}
-    td {{ props.item.author }}
-    td {{ props.item.connector }}
-    td {{ props.item.connector_name }}
-    td {{ props.item.enabled }}
-    td {{ props.item.tstart | date('long') }}
-    td {{ props.item.tstop | date('long') }}
-    td {{ props.item.type_ }}
-    td {{ props.item.reason }}
-    td {{ props.item.rrule }}
-    td
-      v-btn.error--text(@click="deletePbehavior(props.item._id)", icon, small)
-        v-icon delete
+  v-card.secondary.lighten-2(flat)
+    v-card-text
+      v-data-table.ma-0.pbehaviorsTable(:items="items", :headers="pbehaviorsTableHeaders")
+        template(slot="items", slot-scope="props")
+          td {{ props.item.name }}
+          td {{ props.item.author }}
+          td {{ props.item.connector }}
+          td {{ props.item.connector_name }}
+          td {{ props.item.enabled }}
+          td {{ props.item.tstart | date('long') }}
+          td {{ props.item.tstop | date('long') }}
+          td {{ props.item.type_ }}
+          td {{ props.item.reason }}
+          td {{ props.item.rrule }}
+          td
+            v-btn.error--text(@click="deletePbehavior(props.item._id)", icon, small)
+              v-icon delete
 </template>
 
 <script>
@@ -97,7 +99,10 @@ export default {
     },
     async fetchItems() {
       await this.fetchPbehaviorsByEntityId({ id: this.itemId });
-      this.items = [...this.pbehaviorItems];
+
+      if (this.pbehaviorItems) {
+        this.items = [...this.pbehaviorItems];
+      }
     },
   },
 };

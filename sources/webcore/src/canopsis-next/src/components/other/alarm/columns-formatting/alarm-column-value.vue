@@ -11,8 +11,8 @@
 
 <script>
 import get from 'lodash/get';
-import Handlebars from 'handlebars';
 
+import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
@@ -58,10 +58,7 @@ export default {
       return popups.find(popup => popup.column === this.column.value);
     },
     popupTextContent() {
-      const template = Handlebars.compile(this.popupData.template);
-      const context = { alarm: this.alarm.v };
-
-      return template(context);
+      return compile(this.popupData.template, { alarm: this.alarm });
     },
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {

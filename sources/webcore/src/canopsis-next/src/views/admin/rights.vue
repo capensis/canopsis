@@ -64,7 +64,7 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import transform from 'lodash/transform';
 
-import { MODALS } from '@/constants';
+import { MODALS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
@@ -114,8 +114,6 @@ export default {
     },
 
     getCheckboxes() {
-      const { USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } = this.$constants;
-
       return (role, right) => {
         if (right.type) {
           let masks = [];

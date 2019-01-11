@@ -26,23 +26,23 @@ export function generateWidgetByType(type) {
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),
-        value: 'alarm.connector',
+        value: 'v.connector',
       },
       {
         label: i18n.t('tables.alarmGeneral.connectorName'),
-        value: 'alarm.connector_name',
+        value: 'v.connector_name',
       },
       {
         label: i18n.t('tables.alarmGeneral.component'),
-        value: 'alarm.component',
+        value: 'v.component',
       },
       {
         label: i18n.t('tables.alarmGeneral.resource'),
-        value: 'alarm.resource',
+        value: 'v.resource',
       },
       {
         label: i18n.t('tables.alarmGeneral.output'),
-        value: 'alarm.output',
+        value: 'v.output',
       },
       {
         label: i18n.t('tables.alarmGeneral.extraDetails'),
@@ -50,11 +50,11 @@ export function generateWidgetByType(type) {
       },
       {
         label: i18n.t('tables.alarmGeneral.state'),
-        value: 'alarm.state.val',
+        value: 'v.state.val',
       },
       {
         label: i18n.t('tables.alarmGeneral.status'),
-        value: 'alarm.status.val',
+        value: 'v.status.val',
       },
     ],
   };

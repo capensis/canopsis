@@ -134,7 +134,7 @@ export default {
     return {
       settings: {
         rowId,
-        widget: cloneDeep(widget),
+        widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
       },
     };
   },
@@ -142,15 +142,7 @@ export default {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
-      return {
-        ...widget,
-
-        parameters: {
-          ...widget.parameters,
-
-          alarmsList: this.prepareAlarmWidgetParametersSettings(widget.parameters.alarmsList),
-        },
-      };
+      return this.prepareWidgetWithAlarmParametersSettings(widget);
     },
   },
 };

@@ -28,7 +28,10 @@ export const MODALS = {
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
+  addEntityInfo: 'add-entity-info',
   watcher: 'watcher',
+  createWatcherDeclareTicketEvent: 'create-watcher-declare-ticket-event',
+  createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
@@ -68,6 +71,10 @@ export const EVENT_ENTITY_TYPES = {
   declareTicket: 'declareticket',
   snooze: 'snooze',
   done: 'done',
+  validate: 'validate',
+  invalidate: 'invalidate',
+  pause: 'pause',
+  play: 'play',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -124,6 +131,15 @@ export const WATCHER_STATES_COLORS = {
 export const PBEHAVIOR_TYPES = {
   maintenance: 'Maintenance',
   outOfSurveillance: 'Hors plage horaire de surveillance',
+  pause: 'pause',
+};
+
+export const PAUSE_REASONS = {
+  authorisationProblem: 'Problème d\'habilitation',
+  robotProblem: 'Problème Robot',
+  scenarioProblem: 'Problème Scénario',
+  flashFunctionnalProblem: 'Problème Flash Fonctionnel',
+  other: 'Autre',
 };
 
 export const WEATHER_ICONS = {
@@ -237,6 +253,18 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.done]: {
     color: 'green',
     icon: 'assignment_turned_in',
+  },
+  [EVENT_ENTITY_TYPES.validate]: {
+    icon: 'thumb_up',
+  },
+  [EVENT_ENTITY_TYPES.invalidate]: {
+    icon: 'thumb_down',
+  },
+  [EVENT_ENTITY_TYPES.pause]: {
+    icon: 'pause',
+  },
+  [EVENT_ENTITY_TYPES.play]: {
+    icon: 'play_arrow',
   },
 };
 
@@ -530,6 +558,14 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   moreInfo: 'more-info',
   alarmList: 'alarm-list',
+};
+
+export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
+
+export const WEATHER_ACK_EVENT_OUTPUT = {
+  ack: 'MDS_ACKNOWLEDGE',
+  validateOk: 'MDS_VALIDATEOK',
+  validateCancel: 'MDS_VALIDATECANCEL',
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';
