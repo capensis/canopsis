@@ -1,0 +1,82 @@
+{
+	"_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+	"loader_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+        "loader_no_update": false,
+	"rows" : [
+		{
+			"widgets" : [
+				{
+					"size" : {
+						"md" : 3,
+						"sm" : 3,
+						"lg" : 12
+					},
+					"_id" : "widget_AlarmsList_e89d705c-83eb-4b72-84c1-d5908fed4279",
+					"type" : "AlarmsList",
+					"parameters" : {
+						"widgetColumns" : [
+							{
+								"value" : "v.connector",
+								"label" : "Connector"
+							},
+							{
+								"value" : "v.connector_name",
+								"label" : "Connector name"
+							},
+							{
+								"value" : "v.component",
+								"label" : "Component"
+							},
+							{
+								"value" : "v.resource",
+								"label" : "Resource"
+							},
+							{
+								"value" : "v.output",
+								"label" : "Output"
+							},
+							{
+								"value" : "extra_details",
+								"label" : "Extra details"
+							},
+							{
+								"value" : "v.state.val",
+								"label" : "State"
+							},
+							{
+								"value" : "v.status.val",
+								"label" : "Status"
+							}
+						],
+						"sort" : {
+							"order" : "ASC"
+						},
+						"viewFilters" : [ ],
+						"itemsPerPage" : 10,
+						"infoPopups" : [ ],
+						"alarmsStateFilter" : {
+							"opened" : true
+						},
+						"moreInfoTemplate" : "",
+						"periodicRefresh" : {
+							"interval" : 60,
+							"enabled" : false
+						}
+					},
+					"title" : ""
+				}
+			],
+			"_id" : "row_9c547957-7519-4390-87e0-64a4f65e689e",
+			"title" : "En cours"
+		}
+	],
+	"description" : "Alarmes en cours",
+	"tags" : [
+		"alarmes"
+	],
+	"title" : "En cours",
+	"enabled" : true,
+	"group_id" : "05b2e049-b3c4-4c5b-94a5-6e7ff142b28c",
+	"name" : "en_cours"
+}
+

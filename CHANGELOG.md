@@ -8,6 +8,57 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.8.0 - Due date : 2019-01-10
+
+ - [Documentation] Clean up README.md
+ - [Documentation] Add documentation for the tabs system
+ - [Tooling] Push the init image in the push_docker_image.sh script
+ - [Go] Refactor heartbeat engine and API
+ - [Python] Fix timezone handling in pbehaviors
+ - [Python] Add ack support in alarm filter
+ - [UI] Delete lines name display
+ - [UI] Fix pagination length bug
+ - [UI] Add Pbehaviors CRUD view
+ - [UI/ServiceWeather] Add actions on entities
+ - [UI/ServiceWeather] Fix weather items blinking conditions
+ - [UI/Calendar] Fix filter deletion bug
+ - [UI/Context] Refactor "Manage infos" panel
+ - [UI/Context] Improve "More infos" expand panel style
+
+## Canopsis 3.7.0 - Due date : 2018-12-27
+
+ - [Documentation] Add documentation for ackcentreon task
+ - [Tooling] Fix debian installation method
+ - [UI] Add tabs system inside views
+ - [UI] Add default views feature for roles and users
+ - [UI/ServiceWeather] Add a parameter that, when clicking on a service weather tile, allows choosing between opening a modal with the observer's entities list and opening an alarm list related to the observer
+ - [UI/ServiceWeather] Fix random screen freezing
+ - [UI/Alarm List] Fix bug that fetched the alarms twice
+ - [UI/Context] Fix timestamp problem at pbehavior creation
+ - [UI/Context] Add a search bar used to search through an entity's informations
+ - [UI/Filters] Add a CRUD managing the event filter rules
+
+## Canopsis 3.6.0 - Due date : 2018-12-13
+
+ - [Documentation] Add documentation for global status check with the healthcheck route
+ - [Documentation] Add documentation for mix-filters and entity duplication
+ - [Documentation] Various cosmetic improvements
+ - [Go] Fix requests to the Observer ticketing API
+ - [Go] Fix statecounter steps handling
+ - [Tooling] Fix error handling in canopsinit
+ - [Tooling] Fix issue with unused parameters in init
+ - [UI] Add default views and rights for UIv3
+ - [UI/Context] Add "Manage infos" panel for watchers
+ - [UI/Context] Fix a bug with resources expand
+ - [UI/Context] Add "Clone" action on entities and watchers
+ - [UI/Context] Filter required on watcher's creation (at least one valid rule in the filter)
+ - [UI/Rights] Fix a bug with confirmation panel not closing when submitting rights
+ - [UI/Events] Add an `origin: 'canopsis'` parameter with all events coming from Canopsis UI
+ - [UI/Version] Add Canopsis version number on side-bar
+ - [UI/Filters] Add "Mix filters" feature
+ - [UI/Alarm list] Simplify default sort column selector in settings
+ - [UI/Top bar] Fix a bug with group editing on the top bar
+
 ## Canopsis 3.5.0 - Due date : 2018-11-29
 
 - [Documentation]: Add a new documentation

@@ -1,16 +1,16 @@
-# Utilisation
+# Utilisation des pbehaviors
 
 # API PBehaviors
 
-Pbehaviors sont des événements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
+Les pbehaviors sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
 
 **Note sur les attributs tstart et tstop d'un pbehavior**
 
-Les comportements sont similaires aux événements de calendrier, avec une récurrence facultative.
-Les paramètres tstart et tstop servent à définir les dates de début et de fin de la première occurrence d'événement.
-Lorsque l'événement est répété, ces attributs sont utilisés pour définir la durée de chaque instance, en fonction des heures de début et de fin de la première instance.
+Les comportements sont similaires aux évènements de calendrier, avec une récurrence facultative.
+Les paramètres tstart et tstop servent à définir les dates de début et de fin de la première occurrence d'évènement.
+Lorsque l'évènement est répété, ces attributs sont utilisés pour définir la durée de chaque instance, en fonction des heures de début et de fin de la première instance.
 
-Par exemple, le comportement ci-dessous commence à 11 heures et se termine une heure plus tard tous les matins à partir du 2018/06/18:
+Par exemple, le comportement ci-dessous commence à 11 heures et se termine une heure plus tard tous les matins à partir du 2018/06/18 :
 
 ```js
 {
@@ -22,17 +22,17 @@ Par exemple, le comportement ci-dessous commence à 11 heures et se termine une 
 }
 ```
 
-**Lorsque l'événement est récurrent, la date de la dernière occurrence est stockée dans l'attribut `UNTIL` de l' événement.rrule**
+**Lorsque l'évènement est récurrent, la date de la dernière occurrence est stockée dans l'attribut `UNTIL` de l' évènement.rrule**
 
 ## Créer un pbehavior
 
-#### Url
+#### URL
 
   `POST /api/v2/pbehavior`
 
 #### POST exemple
 
-json :
+JSON :
 
 ```json
 {
@@ -45,35 +45,36 @@ json :
 }
 ```
 
-Les attributs du corps sont les suivants:
+Les attributs du corps sont les suivants :
 
-| Name           | type    | nullable | Description                              |
-|----------------|---------|----------|------------------------------------------|
-| connector      | string  | No       | Identifiant du connecteur d'entité       |
-| name           | string  | No       | Display name du pbehavior            |
-| author         | string  | No       | Nom de l'auteur                              |
-| enabled        | boolean | No       | Si le pbehavior est déclenché ou non      |
-| reason         | string  | yes      | motif d'administration (optionnal)        |
-| comments       | array   | yes      | Commentaires (option)                        |
-| filter         | string  | No       | filtre d'entité (json)                   |
-| type_          | string  | No       | type de Pbehavior                           |
-| connector_name | string  | No       | Display name du connector     |
-| rrule          | string  | yes      | Rrule (recurrence)                       |
-| tstart         | integer | No       | Timestamp de la date de départ              |
-| tstop          | integer | No       | Timestamp de la date de fin                      |
-| _id            | string  | No       | indentifiant du Pbheavior                     |
-| eids           | array   | No       | tableau du _ids pour les entités impactées. |
+| Name            | type    | nullable | Description                                    |
+|-----------------|---------|----------|------------------------------------------------|
+| connector       | string  | No       | Identifiant du connecteur d'entité             |
+| name            | string  | No       | Display name du pbehavior                      |
+| author          | string  | No       | Nom de l'auteur                                |
+| enabled         | boolean | No       | Si le pbehavior est déclenché ou non           |
+| reason          | string  | yes      | motif d'administration (optionnel)             |
+| comments        | array   | yes      | Commentaires (option)                          |
+| filter          | string  | No       | filtre d'entité (JSON)                         |
+| type\_          | string  | No       | type de Pbehavior                              |
+| connector\_name | string  | No       | Display name du connector                      |
+| rrule           | string  | yes      | Rrule (récurrence)                             |
+| tstart          | integer | No       | Timestamp de la date de départ                 |
+| tstop           | integer | No       | Timestamp de la date de fin                    |
+| \_id            | string  | No       | indentifiant du Pbehavior                      |
+| eids            | array   | No       | tableau du \_ids pour les entités impactées.   |
+| timezone        | string  | yes      | La timezone à utilisé pour le calcul des dates |
 
 
-Réponse: uid de l'élément inséré
+Réponse : UID de l'élément inséré
 
-```{json}
+```json
 "b72e841a-d9d1-11e7-9a70-022abfd0f78f"
 ```
 
 ## Récupérer les pbehaviors d'une entité
 
-cette route répertorie les pbehavior existantes sur une entité, identifiée par son eid (Entity ID)
+Cette route répertorie les pbehaviors existant sur une entité, identifiée par son eid (Entity ID)
 
 #### URL
 
@@ -109,31 +110,32 @@ cette route répertorie les pbehavior existantes sur une entité, identifiée pa
 ]
 ```
 
-Les attributs de réponse sont les suivants:
+Les attributs de réponse sont les suivants :
 
-| Name           | type    | nullable | Description                              |
-|----------------|---------|----------|------------------------------------------|
-| connector      | string  | No       | Identifier of the entity connector       |
-| name           | string  | No       | Display name of the pbehavior            |
-| author         | string  | No       | Author name                              |
-| enabled        | boolean | No       | Should the pbehavior trigger or not      |
-| reason         | string  | yes      | Administrative reason (optionnal)        |
-| comments       | array   | yes      | Comments (option)                        |
-| filter         | string  | No       | Entities filter (json)                   |
-| type_          | string  | No       | Pbehavior type                           |
-| connector_name | string  | No       | Display name of the entity connector     |
-| rrule          | string  | yes      | Rrule (recurrence)                       |
-| tstart         | integer | No       | Timestamp of the start date              |
-| tstop          | integer | No       | Timestamp  end date                      |
-| _id            | string  | No       | Pbheavior identifier                     |
-| eids           | array   | No       | Array of _ids for the impacted entities. |
-| isActive       | boolean | No       | is the pbehavior currently active        |
+| Name            | type    | nullable | Description                                    |
+|-----------------|---------|----------|------------------------------------------------|
+| connector       | string  | No       | Identifier of the entity connector             |
+| name            | string  | No       | Display name of the pbehavior                  |
+| author          | string  | No       | Author name                                    |
+| enabled         | boolean | No       | Should the pbehavior trigger or not            |
+| reason          | string  | yes      | Administrative reason (optionnal)              |
+| comments        | array   | yes      | Comments (option)                              |
+| filter          | string  | No       | Entities filter (json)                         |
+| type\_          | string  | No       | Pbehavior type                                 |
+| connector\_name | string  | No       | Display name of the entity connector           |
+| rrule           | string  | yes      | Rrule (recurrence)                             |
+| tstart          | integer | No       | Timestamp of the start date                    |
+| tstop           | integer | No       | Timestamp  end date                            |
+| \_id            | string  | No       | Pbehavior identifier                           |
+| eids            | array   | No       | Array of \_ids for the impacted entities.      |
+| isActive        | boolean | No       | is the pbehavior currently active              |
+| timeszone       | string  | yes      | La timezone à utilisé pour le calcul des dates |
 
-## Supprimer un pbheavior
+## Supprimer un pbehavior
 
-Cette route permet de supprimer un pbheavior
+Cette route permet de supprimer un pbehavior.
 
-#### Url
+#### URL
 
   `DELETE /api/v2/pbehavior/<pbehavior_id>`
 
@@ -148,27 +150,23 @@ Response: a status object
 }
 ```
 
-
 ## Update un pbeahvior
 
 Il n'y a actuellement aucune méthode pour mettre à jour un comportement en place. Il est nécessaire de supprimer et de recréer un comportement pour mettre à jour son contenu.
 
-## Forcer le calcul de pbheaviors
+## Forcer le calcul de pbehaviors
 
 Cette route impose un nouveau calcul pour tous les comportements.
-
 
 #### URL
 
 GET / api / v2 / compute-pbehaviors
 
-
 #### GET exemple
 
 / api / v2 / compute-pbehaviors
 
-Réponse: les calculs ont-ils été traités?
-
+Réponse: les calculs ont-ils été traités ?
 
 ```json
 true

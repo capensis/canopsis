@@ -39,8 +39,12 @@ def main():
     """
     Print Canopsis version to STDOUT or nothing if version file not found.
     """
-    canopsis_version = read_version_file(get_version_file_path(root_path))
-    if canopsis_version:
+    try:
+        canopsis_version = read_version_file(get_version_file_path(root_path))
+    except Exception:
+        print >> sys.stdout, "NO VERSION AVAILABLE"
+        sys.stdout.flush()
+    else:
         print >>sys.stdout, canopsis_version
         sys.stdout.flush()
 

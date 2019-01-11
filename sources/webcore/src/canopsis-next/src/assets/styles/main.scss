@@ -1,0 +1,33 @@
+.v-list {
+  .v-input {
+    &, &__slot {
+      margin-top: 4px;
+    }
+
+    &__slot {
+      margin-bottom: 8px;
+    }
+
+    .v-messages {
+      display: block;
+    }
+  }
+}
+
+.v-tabs__div {
+  max-width: none;
+}
+
+.fab {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.wf-loading, .wf-inactive {
+  .v-icon {
+    max-width: 24px !important;
+    max-height: 24px !important;
+    overflow: hidden !important;
+  }
+}

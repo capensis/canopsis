@@ -3,55 +3,56 @@
 - [Activation et désactivation des moteurs](activation-desactivation-moteurs.md)
 - [Enchainement des moteurs](schema-enchainement-moteurs.md)
 
-Les événements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.
+Les évènements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.
 
-Un moteur a **plusieurs rôles**:
+Un moteur a **plusieurs rôles** :
 
-- consommation d'un événement: pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
-- Effectuer une tâche périodique: appelée «beat», cette tâche sera exécutée à intervalle régulier.
-- Consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
+*  consommation d'un évènement : pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
+*  effectuer une tâche périodique : appelée « beat », cette tâche sera exécutée à intervalle régulier.
+*  consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
 
 Un moteur peut avoir les **propriétés** suivantes :
 
-- un type (the python module to load)
-- un nom (must be unique)
-- Un identifiant (0, 1, 2, 3, ..., must be unique)
-- Un niveau de log (debug, info, warning, or error)
+*  un type (the python module to load)
+*  un nom (must be unique)
+*  un identifiant (0, 1, 2, 3, ..., must be unique)
+*  un niveau de log (debug, info, warning, or error)
 
-Le listing des moteurs peut être réalisé grace à cette commande : `systemctl list-units "canopsis*"`
+Le listing des moteurs peut être réalisé grâce à cette commande : `systemctl list-units "canopsis*"`
 
 ## Liste des moteurs
 
 ### Moteurs Go
 
-| Moteur         | Description                                                                     | CAT ?              |
-|:---------------|:--------------------------------------------------------------------------------|:------------------:|
-| axe            | Gère le cycle de vie des alarmes.                                               |                    |
-| che            | Supprime les événements invalides, gère le contexte, et enrichi les événements. |                    |
-| heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.      |                    |
-| stat           | Calcule des statistiques sur les états des alarmes.                             |                    |
-| action         | Applique des actions définies par l'utilisateur.                                |                    |
+| Moteur         | Description                                                                      | CAT ?              |
+|:---------------|:---------------------------------------------------------------------------------|:------------------:|
+| axe            | Gère le cycle de vie des alarmes.                                                |                    |
+| che            | Supprime les évènements invalides, gère le contexte, et enrichit les évènements. |                    |
+| heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.       |                    |
+| stat           | Calcule des statistiques sur les états des alarmes.                              |                    |
+| action         | Applique des actions définies par l'utilisateur.                                 |                    |
 
 ### Moteurs Python
 
 | Moteur                                                         | Description                                              | CAT ?              |
 |:---------------------------------------------------------------|:---------------------------------------------------------|:------------------:|
 | canopsis-engine@**dynamic-alerts**.service                     | Gère le cycle de vie des alarmes.                        |                    |
-| canopsis-engine@**cleaner-cleaner_alerts**.service             | Supprime les événements invalides.                       |                    |
-| canopsis-engine@**cleaner-cleaner_events**.service             | Supprime les événements invalides.                       |                    |
-| canopsis-engine@**dynamic-context-graph**.service              | Stocke les données contextuelles des événements.         |                    |
-| **datametrie**                                                 | Gère le connecteur datametrie.                           | :white_check_mark: |
-| canopsis-engine@**event_filter-event_filter**.service          | Applique des règles de filtrage.                         |                    |
-| canopsis-engine@**metric-metric**.service                      | Stocke les données de métrologie des événements.         |                    |
+| canopsis-engine@**cleaner-cleaner_alerts**.service             | Supprime les évènements invalides.                       |                    |
+| canopsis-engine@**cleaner-cleaner_events**.service             | Supprime les évènements invalides.                       |                    |
+| canopsis-engine@**dynamic-context-graph**.service              | Stocke les données contextuelles des évènements.         |                    |
+| **datametrie**                                                 | Gère le connecteur datametrie.                           | ✅             |
+| [canopsis-engine@**event_filter-event_filter**.service](moteur-event_filter.md)          | Applique des règles de filtrage.                         |                    |
+| canopsis-engine@**metric-metric**.service                      | Stocke les données de métrologie des évènements.         |                    |
 | canopsis-engine@**dynamic-pbehavior**.service                  | Gère les périodes de maintenance.                        |                    |
 | canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches.        |                    |
-| **snmp**                                                       | Gère les traps SNMP.                                     | :white_check_mark: |
+| **snmp**                                                       | Gère les traps SNMP.                                     | ✅             |
 | canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données.           |                    |
 | canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse.            |                    |
+| [canopsis-engine-cat@**task_ackcentreon-task_ackcentreon**.service](moteur-task_ackcentreon.md)      | ACK descendants vers Centreon.            | ✅ |
 | canopsis-engine@**task_mail-task_mail**.service                | Gestionnaire de tâches pour envoyer du courrier.         |                    |
 | canopsis-engine@**ticket-ticket**.service                      | Gère les tickets externes.                               |                    |
 | canopsis-engine@**dynamic-watcher**.service                    | Gère les watchers (groupes de surveillance).             |                    |
-| canopsis-engine-cat@**statsng-statsng**.service                | Calcule des statistiques sur les alarmes et les entités. | :white_check_mark: |
+| canopsis-engine-cat@**statsng-statsng**.service                | Calcule des statistiques sur les alarmes et les entités. | ✅             |
 
 ## Flags & Usage
 
@@ -62,9 +63,9 @@ Le listing des moteurs peut être réalisé grace à cette commande : `systemctl
   -featureHideResources
         Active les features de gestion de ressources cachées.
   -featureStatEvents
-        Envoie les événements de statistiques
+        Envoie les évènements de statistiques
   -printEventOnError
-        Afficher les événements sur les erreurs de traitement.
+        Afficher les évènements sur les erreurs de traitement.
   -version
         version infos
 ```
@@ -73,7 +74,7 @@ Le listing des moteurs peut être réalisé grace à cette commande : `systemctl
 
 ```
   -consumeQueue string
-        Consomme les événements venant de cette queue. (default "Engine_che").
+        Consomme les évènements venant de cette queue. (default "Engine_che").
   -createContext
         Active la création de context graph. Activé par défaut.
         WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
@@ -103,6 +104,6 @@ Le listing des moteurs peut être réalisé grace à cette commande : `systemctl
 *  cancel
 *  context
 *  eventstore
-*  task_linklist : n'existe plus depuis Canopsis 3.0
+*  task\_linklist : n'existe plus depuis Canopsis 3.0
 *  linklist : n'existe plus depuis Canopsis 3.0, remplacé par les linkbuilders
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric

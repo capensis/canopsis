@@ -25,11 +25,11 @@ Chaque tuile correspond à un observateur.
 
 Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur l'observateur.
 
-La couleur de la tuile, ainsi que l'icône présent sur celle-ci permettent d'obtenir des informations sur **l'état** de l'observateur:
+La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **l'état** de l'observateur:
 
 ### 1. La couleur
 
-La couleur de la tuile correspond à l'état de l'observateur. Cet état est calculé en prenant en compte le pire état parmis les entités surveillées par cet observateur.
+La couleur de la tuile correspond à l'état de l'observateur. Cet état est calculé en prenant en compte le pire état parmi les entités surveillées par cet observateur.
 
 Exemple : 
 Un observateur surveille deux entités, A et B. A a un état de 1. B a un état de 3. L'état de l'observateur sera alors égal à 3.
@@ -72,7 +72,7 @@ Ce paramètre permet de régler la taille du widget.
 
 ![Paramètre Taille du widget](../img/settings/widget-size.png "Paramètre Taille du widget")
 
-La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmis les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
+La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmi les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
 
 Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
 La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
@@ -102,27 +102,27 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'affiché les détails de l'observateur : ```watcher```.
-Exemple : Pour afficher le champs 'display_name' de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : ```{{ watcher.display_name }}```.
-Tout les champs disponibles dans l'observateurs sont disponibles ici.
+Une variable est disponible ici pour vous permettre d'affiché les détails de l'observateur : `watcher`.
+Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ watcher.display_name }}`.
+Tous les champs disponibles dans l'observateur sont disponibles ici.
 
 ##### Template - Modal
 
-Ce paramètre permet de personnaliser les informations affichées en haut de la fenêtre 'Plus d'infos' (ouverte au clique sur 'Plus d'infos', sur une des tuiles de la météo de services).
+Ce paramètre permet de personnaliser les informations affichées en haut de la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
 Celui-ci fonctionne de la même manière que le paramètre Template - Tuile présenté ci-dessus. Cliquez [ici](#template-tuile) pour vous rendre à cette partie.
 
 ##### Template - Entités
 
-Ce paramètre permet de personnaliser les informations affichées pour chaque entités dans la fenêtre 'Plus d'infos' (ouverte au clique sur 'Plus d'infos', sur une des tuiles de la météo de services).
+Ce paramètre permet de personnaliser les informations affichées pour chaque entités dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
 Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'affiché les détails de l'entité : ```entity```.
-Exemple : Pour afficher le champs 'name' de l'entité (qui correspond au nom de l'entité), il vous faut écrire dans le template : ```{{ entity.name }}```.
-Tout les champs disponibles dans l'entité sont disponibles ici.
+Une variable est disponible ici pour vous permettre d'affiché les détails de l'entité : `entity`.
+Exemple : Pour afficher le champ 'name' de l'entité (qui correspond au nom de l'entité), il vous faut écrire dans le template : `{{ entity.name }}`.
+Tous les champs disponibles dans l'entité sont disponibles ici.
 
 ##### Colonnes - Petit
 
