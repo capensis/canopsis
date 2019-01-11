@@ -32,7 +32,7 @@ build_next:
    stage: test
    tags: ["canopsis"]
    script:
-     - docker build -t canopsis/uiv3:develop -f docker/Dockerfile .
+     - docker build -t canopsis/uiv3:develop -f docker/Dockerfile.next-nightly .
      - docker-compose -f docker-compose.yml -p ${COMPOSE_PROJECT_NAME}-next up -d
      - docker push canopsis/uiv3:develop
    # only:
