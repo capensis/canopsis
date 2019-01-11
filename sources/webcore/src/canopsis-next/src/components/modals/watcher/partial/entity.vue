@@ -31,7 +31,7 @@ import {
   ENTITIES_STATES,
   PBEHAVIOR_TYPES,
 } from '@/constants';
-import compile from '@/helpers/handlebars';
+import { compile } from '@/helpers/handlebars';
 
 import modalMixin from '@/mixins/modal';
 import weatherEventsMixin from '@/mixins/weather-event-actions';
@@ -109,7 +109,7 @@ export default {
     },
 
     compiledTemplate() {
-      return compile(this.template, { watcher: this.watcher, entity: this.entity });
+      return compile(this.template, { entity: this.entity });
     },
 
     isPaused() {

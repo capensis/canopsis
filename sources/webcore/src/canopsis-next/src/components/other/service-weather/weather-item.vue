@@ -26,7 +26,7 @@ import {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
-import compile from '@/helpers/handlebars';
+import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
 import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
@@ -88,7 +88,7 @@ export default {
       };
     },
     compiledTemplate() {
-      return compile(this.template, { watcher: this.watcher });
+      return compile(this.template, { entity: this.watcher });
     },
     getItemClasses() {
       return [
