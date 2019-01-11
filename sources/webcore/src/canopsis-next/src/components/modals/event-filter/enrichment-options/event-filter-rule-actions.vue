@@ -7,23 +7,25 @@
       v-card
         v-card-title.primary.white--text {{ $t('modals.eventFilterRule.addAction') }}
         v-card-text
-          v-select(
-          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES)",
-          v-model="actionForm.type",
-          return-object,
-          item-text="value",
-          :label="$t('common.type')",
-          )
-          v-text-field(
-          v-for="option in actionForm.type.options",
-          :key="option.value"
-          v-model="actionForm[option.value]",
-          :label="option.text",
-          hide-details,
-          :required="isRequired(actionForm.type, option)"
-          )
-        v-divider
-        v-btn.primary(@click="addAction") {{ $t('common.add') }}
+          v-form(ref="form")
+            v-select(
+            :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES)",
+            v-model="form.type",
+            return-object,
+            item-text="value",
+            :label="$t('common.type')",
+            )
+            v-text-field(
+            v-for="option in form.type.options",
+            :key="option.value"
+            v-model="form[option.value]",
+            :label="option.text",
+            name="value",
+            v-validate="`${isRequired(form.type, option) ? 'required': null}`",
+            :error-messages="errors.collect('value')"
+            )
+          v-divider
+          v-btn.primary(@click="addAction") {{ $t('common.add') }}
     v-container
       h2 {{ $t('modals.eventFilterRule.actions') }}
       v-list(dark)
@@ -56,6 +58,9 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
   name: MODALS.eventFilterRuleActions,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     Draggable,
   },
@@ -65,7 +70,7 @@ export default {
 
     return {
       actions: [],
-      actionForm: {
+      form: {
         type: enrichmentActionsTypes.setField,
         name: '',
         value: '',
@@ -85,14 +90,18 @@ export default {
       return actionType.options[option.value].required;
     },
 
-    addAction() {
-      const action = {
-        type: this.actionForm.type.value,
-      };
+    async addAction() {
+      const isFormValid = await this.$validator.validateAll();
 
-      Object.keys(this.actionForm.type.options).forEach(option => action[option] = this.actionForm[option]);
+      if (isFormValid) {
+        const action = {
+          type: this.form.type.value,
+        };
 
-      this.actions.push(action);
+        Object.keys(this.form.type.options).forEach(option => action[option] = this.form[option]);
+
+        this.actions.push(action);
+      }
     },
 
     deleteAction(index) {

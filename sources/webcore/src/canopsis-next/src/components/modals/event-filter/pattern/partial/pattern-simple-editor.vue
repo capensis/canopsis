@@ -68,9 +68,7 @@ export default {
           isSimpleRule: this.isSimpleRule(this.pattern[rule]),
           operators: this.operators,
           action: (newRule) => {
-            const newPattern = omit(this.pattern, rule);
-            newPattern[newRule.field] = newRule.value;
-            this.$emit('input', newPattern);
+            this.updateAndMoveField(rule, newRule.field, newRule.value);
           },
         },
       });

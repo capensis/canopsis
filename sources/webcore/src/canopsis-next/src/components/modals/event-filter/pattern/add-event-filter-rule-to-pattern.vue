@@ -24,13 +24,33 @@
         template(v-else)
           v-layout(align-center, justify-center)
             h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
-            v-btn.primary(@click="addAdvancedRuleField", icon, fab, small)
+            v-btn(
+            @click="addAdvancedRuleField",
+            :disabled="!availableOperators.length > 0",
+            icon,
+            small,
+            )
               v-icon add
-          v-layout(v-for="field in form.advancedRuleFields", :key="field.key")
+          v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
             v-flex(xs3)
-              v-select(:items="operators", v-model="field.key")
+              v-select(
+              :items="getAvailableOperators(field)",
+              v-model="field.key",
+              name="fieldKey",
+              v-validate="'required'",
+              :error-messages="errors.collect('fieldKey')"
+              )
             v-flex(xs9)
-              v-text-field(v-model="field.value")
+              v-text-field(
+              v-model="field.value",
+              name="fieldValue",
+              :type="field.key === 'regex' ? 'text' : 'number'"
+              v-validate="'required'",
+              :error-messages="errors.collect('fieldValue')"
+              )
+            v-flex
+              v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
+                v-icon(color="error") delete
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
@@ -55,6 +75,11 @@ export default {
       },
     };
   },
+  computed: {
+    availableOperators() {
+      return this.operators.filter(operator => !this.form.advancedRuleFields.find(rule => rule.key === operator));
+    },
+  },
   mounted() {
     if (this.config) {
       const {
@@ -63,6 +88,7 @@ export default {
         ruleValue = '',
         isSimpleRule = true,
       } = { ...this.config };
+
       this.operators = operators;
       this.form.advancedMode = !isSimpleRule;
       this.form.field = ruleKey;
@@ -76,8 +102,21 @@ export default {
   },
   methods: {
     addAdvancedRuleField() {
-      this.form.advancedRuleFields.push({ key: '<', value: '' });
+      this.form.advancedRuleFields.push({ key: this.availableOperators[0], value: '' });
     },
+
+    deleteAdvancedRuleField(field) {
+      this.form.advancedRuleFields = [...this.form.advancedRuleFields].filter(rule => rule.key !== field.key);
+    },
+
+    getAvailableOperators(rule) {
+      const rules = this.form.advancedRuleFields.filter(advancedRule => advancedRule.key !== rule.key);
+
+      const operators = this.operators.filter(operator => !rules.find(test => test.key === operator));
+
+      return operators;
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
