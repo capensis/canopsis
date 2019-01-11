@@ -35,9 +35,9 @@ build_next:
      - docker build -t canopsis/uiv3:develop -f docker/Dockerfile .
      - docker-compose -f docker-compose.yml -p ${COMPOSE_PROJECT_NAME}-next up -d
      - docker push canopsis/uiv3:develop
-   only:
-     changes:
-       - sources/webcore/src/canopsis-next
+   # only:
+   #   changes:
+   #     - sources/webcore/src/canopsis-next
    after_script:
      - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME}-next kill
      - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME}-next rm -sf
