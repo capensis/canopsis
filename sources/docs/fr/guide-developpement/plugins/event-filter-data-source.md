@@ -1,4 +1,4 @@
-# Implémentation de sources de données
+# Sources de données pour l'event-filter
 
 Une source de données externe est un module go exportant une variable
 `DataSourceFactory` qui implémente l'interface `DataSourceFactory` (définie
