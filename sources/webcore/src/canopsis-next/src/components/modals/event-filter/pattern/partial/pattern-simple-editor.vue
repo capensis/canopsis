@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(justify-end)
-      v-btn(@click="showAddRuleFieldModal", small) Add a field
+      v-btn(@click="showAddRuleFieldModal", small) {{ $t('modals.eventFilterRule.addAField') }}
     div(v-for="(rule, ruleKey) in pattern", :key="ruleKey")
       v-card.my-1(flat, dark, tile)
         v-card-text

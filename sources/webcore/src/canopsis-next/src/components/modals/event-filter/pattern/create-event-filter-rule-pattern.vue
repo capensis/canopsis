@@ -7,8 +7,6 @@
       v-tabs(fixed-tabs, v-model="activeTab")
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
       v-tabs-items(v-model="activeTab")
-        //v-tab-item
-          pattern-field-creation-form(v-model="pattern", :operators="operators")
         v-tab-item
           pattern-simple-editor(v-model="pattern", :operators="operators")
         v-tab-item

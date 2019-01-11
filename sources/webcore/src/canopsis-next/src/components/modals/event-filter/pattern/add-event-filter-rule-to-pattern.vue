@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Add event filter rule
+        span.headline {{ $t('modals.eventFilterRule.addAField') }}
     v-card-text
       v-form
         v-switch(:label="$t('modals.eventFilterRule.advanced')", v-model="form.advancedMode", hide-details)
@@ -13,14 +13,14 @@
         v-validate="'required'",
         :error-messages="errors.collect('field')"
         )
-        template(v-if="!form.advancedMode")
-          v-text-field(
-          v-model="form.value",
-          :label="$t('common.value')",
-          name="value",
-          v-validate="'required'",
-          :error-messages="errors.collect('value')"
-          )
+        v-text-field(
+        v-if="!form.advancedMode"
+        v-model="form.value",
+        :label="$t('common.value')",
+        name="value",
+        v-validate="'required'",
+        :error-messages="errors.collect('value')"
+        )
         template(v-else)
           v-layout(align-center, justify-center)
             h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
@@ -31,7 +31,9 @@
               v-select(:items="operators", v-model="field.key")
             v-flex(xs9)
               v-text-field(v-model="field.value")
-      v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-layout.pa-2(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -68,7 +70,7 @@ export default {
       if (isSimpleRule) {
         this.form.value = ruleValue;
       } else {
-        Object.keys(ruleValue).forEach(key => this.form.advancedRuleFields.push({ key, value: ruleValue[key] }));
+        this.form.advancedRuleFields = Object.keys(ruleValue).map(key => ({ key, value: ruleValue[key] }));
       }
     }
   },
