@@ -1252,8 +1252,16 @@ class Alerts(object):
                 'connector': value['connector'],
                 'connector_name': value['connector_name'],
                 'output': lifter.output(message),
-                'event_type': Check.EVENT_TYPE
+                'event_type': Check.EVENT_TYPE,
+                'component': value["component"]
             }
+
+            if value["resource"] is not None:
+                event["source_type"] = "resource"
+                event["resource"] = value["resource"]
+            else:
+                event["source_type"] = "component"
+
             vstate = AlarmField.state.value
 
             # Execute each defined action
