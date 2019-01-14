@@ -16,6 +16,12 @@
                 v-layout(justify-space-between)
                   span.black--text {{ $t('eventFilter.title') }}
                   v-icon.ml-2 list
+          v-list-tile
+            v-list-tile-title
+              router-link(:to="{ name: 'exploitation-pbehaviors' }")
+                v-layout(justify-space-between)
+                  span.black--text {{ $t('common.pbehaviors') }}
+                  v-icon pause
       v-menu(bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ $t('common.administration') }}
         v-list.pb-0

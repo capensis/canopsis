@@ -1,4 +1,5 @@
 import Handlebars from 'handlebars';
+
 import dateFilter from '@/filters/date';
 
 Handlebars.registerHelper('timestamp', (date) => {
@@ -9,8 +10,12 @@ Handlebars.registerHelper('timestamp', (date) => {
   return '';
 });
 
-export default function compile(template, context) {
+export function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template);
 
   return handleBarFunction(context);
 }
+
+export default {
+  compile,
+};

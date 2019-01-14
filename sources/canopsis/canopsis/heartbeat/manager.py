@@ -18,29 +18,31 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from __future__ import unicode_literals
-
-from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
+from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
-from canopsis.models.heartbeat import HeartBeat
 
 
-class HeartBeatServiceException(Exception):
-    pass
+class HeartbeatError(Exception):
+    """
+    Base Heartbeat error.
+    """
 
 
-class HeartBeatService:
-    """HeartBeat mapping management."""
+class HeartbeatPatternExistsError(HeartbeatError):
+    """
+    Heartbeat pattern exists error.
+    """
 
-    HEARTBEAT_COLLECTION = "configuration"
+
+class HeartbeatManager(object):
+    """
+    Heartbeat service manager abstraction.
+    """
+
+    COLLECTION = 'heartbeat'
+
     LOG_PATH = 'var/log/heartbeat.log'
-
-    ID = "_id"
-    GLOBAL_CONF_ID = "global_config"
-    HEARTBEAT_SECTION = "heartbeat"
-    MAPPINGS_KEY = "MAPPINGS"
-    ITEMS_KEY = "items"
 
     @classmethod
     def provide_default_basics(cls):
@@ -52,40 +54,58 @@ class HeartBeatService:
         :rtype: Union[logging.Logger,
                       canopsis.common.collection.MongoCollection]
         """
-        logger = Logger.get('action', cls.LOG_PATH)
         store = MongoStore.get_default()
-        collection = store.get_collection(name=cls.HEARTBEAT_COLLECTION)
-        mongo_collection = MongoCollection(collection)
+        collection = store.get_collection(name=cls.COLLECTION)
+        return (Logger.get('action', cls.LOG_PATH),
+                MongoCollection(collection))
 
-        return logger, mongo_collection
+    def __init__(self, logger, collection):
+        """
 
-    def __init__(self, logger, mongo_collection):
-        self.logger = logger
-        self.collection = mongo_collection
-
-    def __get_conf(self):
-        return self.collection.find_one({self.ID: self.GLOBAL_CONF_ID})
-
-    def get_heartbeats(self):
-        global_config = self.__get_conf()
-        return global_config[self.HEARTBEAT_SECTION]
+        :param `~.logger.Logger` logger: object.
+        :param `~.common.collection.MongoCollection` collection: object.
+        """
+        self.__logger = logger
+        self.__collection = MongoCollection(collection)
 
     def create(self, heartbeat):
         """
-        Create a new heartbeat in the database from a heartbeat model instance.
+        Create a new Heartbeat.
 
-        :param heartbeat: a heartbeat model instance.
-        :raises: CollectionError if an error occured while the heartBeat is
-        stored into the database, HeartBeatServiceException if the given
-        heartbeat is not valid.
+        :param `HeartBeat` heartbeat: a Heartbeat model.
+
+        :returns: a created Heartbeat ID.
+        :rtype: `str`.
+
+        :raises: (`.HeartbeatPatternExistsError`,
+                  `pymongo.errors.PyMongoError`,
+                  `~.common.collection.CollectionError`, ).
         """
-        valid, error_message = HeartBeat.isValid(heartbeat)
-        if not valid:
-            raise HeartBeatServiceException(error_message)
+        if self.get(heartbeat.id):
+            raise HeartbeatPatternExistsError()
 
-        global_config = self.__get_conf()
-        hb_Section = global_config[self.HEARTBEAT_SECTION]
-        hb_Section[self.ITEMS_KEY].append(heartbeat.to_dict())
+        return self.__collection.insert(heartbeat.to_dict())
 
-        self.collection.update({"_id": self.GLOBAL_CONF_ID},
-                               {"$set": {self.HEARTBEAT_SECTION: hb_Section}})
+    def get(self, heartbeat_id=None):
+        """
+        Get Heartbeat by ID or a list of Heartbeats
+        when calling with default arguments.
+
+        :param `Optional[str]` heartbeat_id:
+        :returns: list of Heartbeat documents if **heartbeat_id** is None
+                  else single Heartbeat document or None if not found.
+        :raises: (`pymongo.errors.PyMongoError`, ).
+        """
+        if heartbeat_id:
+            return self.__collection.find_one({"_id": heartbeat_id})
+        return [x for x in self.__collection.find({})]
+
+    def delete(self, heartbeat_id):
+        """
+        Delete Heartbeat by ID.
+
+        :param `str` heartbeat_id: Heartbeat ID.
+        :return:
+        :raises: (`~.common.collection.CollectionError`, ).
+        """
+        return self.__collection.remove({"_id": heartbeat_id})

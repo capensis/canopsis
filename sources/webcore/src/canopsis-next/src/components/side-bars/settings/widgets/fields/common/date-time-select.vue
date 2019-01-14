@@ -7,7 +7,7 @@
 
 <script>
 import moment from 'moment';
-import DateTimePicker from '@/components/forms/date-time-picker.vue';
+import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
 
 export default {
   components: {
