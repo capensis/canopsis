@@ -5,8 +5,10 @@ export default {
     undefined: 'Non définie',
     entity: 'Entitée',
     watcher: 'Observateur',
+    pbehaviors: 'Comportements périodiques',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
+    addTab: 'Ajouter un onglet',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
     name: 'Nom',
@@ -66,6 +68,8 @@ export default {
     noResults: 'Pas de résultats',
     exploitation: 'Exploitation',
     administration: 'Administration',
+    forbidden: 'Accès refusé',
+    search: 'Recherche',
     actions: {
       close: 'Fermer',
       acknowledge: 'Acquitter',
@@ -94,7 +98,16 @@ export default {
     dependencies: 'Dépendances',
     moreInfos: {
       type: 'Type',
+      enabled: 'Activée',
+      disabled: 'Désactivée',
       lastActiveDate: 'Dernière Date d\'Activité',
+      infosSearchLabel: 'Rechercher une info',
+      tabs: {
+        main: 'Principal',
+        pbehaviors: 'Comportements périodiques',
+        impactDepends: 'Impacts/Dépendances',
+        infos: 'Infos',
+      },
     },
   },
   search: {
@@ -185,7 +198,7 @@ export default {
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
-    filterEditor: 'Ésditeur de filtre',
+    filterEditor: 'Éditeur de filtre',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -281,12 +294,14 @@ export default {
       createTitle: 'Créer une entitée',
       editTitle: 'Editer une entitée',
       duplicateTitle: 'Dupliquer une entitée',
-      infosList: 'Infos',
-      addInfos: 'Ajouter un champ info',
-      noInfos: 'No infos',
+      manageInfos: {
+        infosList: 'Informations',
+        addInfo: 'Ajouter une information',
+        noInfos: 'Aucune information',
+      },
       fields: {
         type: 'Type',
-        manageInfos: 'Gérer Infos',
+        manageInfos: 'Gérer les informations',
         form: 'Formulaire',
         impact: 'Impacts',
         depends: 'Dépendances',
@@ -312,6 +327,10 @@ export default {
         edit: 'Observateur edité avec succès !',
         duplicate: 'Observateur dupliqué avec succès !',
       },
+    },
+    addEntityInfo: {
+      addTitle: 'Ajouter une information',
+      editTitle: 'Editer une information',
     },
     view: {
       select: {
@@ -387,6 +406,11 @@ export default {
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique ?',
       },
     },
+    createPause: {
+      title: 'Mettre en pause',
+      comment: 'Commentaire',
+      reason: 'Raison',
+    },
     createAckRemove: {
       title: 'Annuler l\'acquittement',
     },
@@ -435,6 +459,7 @@ export default {
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervals d\'éxécution',
+      actionPending: 'action(s) en attente',
     },
     filter: {
       create: {
@@ -702,6 +727,7 @@ export default {
     default: 'Une erreur s\'est produite...',
     lineNotEmpty: 'Cette ligne n\'est pas vide',
     JSONNotValid: 'JSON non valide..',
+    versionNotFound: 'Erreur dans la récupération du numéro de version...',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -740,7 +766,13 @@ export default {
       },
       errors: {
         invalidJSON: 'JSON non valide',
+        required: 'Merci d\'ajouter au moins une règle valide',
       },
+    },
+  },
+  filterSelector: {
+    fields: {
+      mixFilters: 'Mix de filtres',
     },
   },
   validator: {
@@ -781,5 +813,19 @@ export default {
   },
   parameters: {
     interfaceLanguage: 'Langage de l\'interface',
+    groupsNavigationType: {
+      title: 'Type d\'affichage de la barre de vues',
+      items: {
+        sideBar: 'Barre latérale',
+        topBar: 'Barre en haut de la page',
+      },
+    },
+  },
+  view: {
+    errors: {
+      emptyTabs: 'Merci de créer un onglet',
+    },
+    deleteRow: 'Supprimer la ligne',
+    deleteWidget: 'Supprimer le widget',
   },
 };

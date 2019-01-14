@@ -6,7 +6,7 @@
     v-divider
     v-card-text
       v-text-field(
-      v-if="!hiddenFields.includes('title')"
+      v-if="!hiddenFields.includes('title')",
       v-model="form.title",
       v-validate="'required'",
       :label="$t('modals.filter.fields.title')",

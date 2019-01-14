@@ -16,8 +16,8 @@
 
 <script>
 import get from 'lodash/get';
-import Handlebars from 'handlebars';
 
+import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
@@ -69,9 +69,7 @@ export default {
     },
     popupTextContent() {
       if (this.popupData) {
-        const template = Handlebars.compile(this.popupData.template);
-        const context = { alarm: this.alarm };
-        return template(context);
+        return compile(this.popupData.template, { alarm: this.alarm });
       }
       return '';
     },

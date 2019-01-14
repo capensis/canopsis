@@ -5,9 +5,11 @@ export default {
     undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
+    pbehaviors: 'PBehaviors',
     widget: 'Widget',
     addWidget: 'Add widget',
     addTab: 'Add tab',
+    addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
     name: 'Name',
@@ -68,6 +70,7 @@ export default {
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Forbidden',
+    search: 'Search',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
@@ -95,26 +98,34 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
     moreInfos: {
-      infos: 'Infos',
+      infos: 'Informations',
       type: 'Type',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
       lastActiveDate: 'Last Active Date',
       infosSearchLabel: 'Search infos',
+      tabs: {
+        main: 'Main',
+        pbehaviors: 'Pbehaviors',
+        impactDepends: 'Impact/Depends',
+        infos: 'Infos',
+      },
     },
   },
   search: {
     advancedSearch: '<span>Help on the advanced research :</span>\n' +
-    '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-    '<p>The "-" before the research is required</p>\n' +
-    '<p>Operators :\n' +
-    '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-    '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-    '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-    '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-    '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
-    '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
-    '</dl>',
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators :\n' +
+      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
+      '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+      '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
+      '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
+      '</dl>',
   },
   entities: {
     watcher: 'watcher',
@@ -282,9 +293,11 @@ export default {
       createTitle: 'Create an entity',
       editTitle: 'Edit an entity',
       duplicateTitle: 'Duplicate an entity',
-      infosList: 'Infos list',
-      addInfos: 'Add Infos',
-      noInfos: 'No Infos',
+      manageInfos: {
+        infosList: 'Informations',
+        addInfo: 'Add Information',
+        noInfos: 'No information',
+      },
       fields: {
         type: 'Type',
         manageInfos: 'Manage Infos',
@@ -313,6 +326,10 @@ export default {
         edit: 'Watcher successfully edited !',
         duplicate: 'Watcher successfully duplicated !',
       },
+    },
+    addEntityInfo: {
+      addTitle: 'Add an information',
+      editTitle: 'Edit an information',
     },
     view: {
       select: {
@@ -392,6 +409,11 @@ export default {
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },
+    createPause: {
+      title: 'Create Pause event',
+      comment: 'Comment',
+      reason: 'Reason',
+    },
     createAckRemove: {
       title: 'Remove ack',
     },
@@ -440,6 +462,7 @@ export default {
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
+      actionPending: 'action(s) pending',
     },
     filter: {
       create: {
@@ -814,5 +837,7 @@ export default {
     errors: {
       emptyTabs: 'You should create a tab',
     },
+    deleteRow: 'Delete row',
+    deleteWidget: 'Delete widget',
   },
 };

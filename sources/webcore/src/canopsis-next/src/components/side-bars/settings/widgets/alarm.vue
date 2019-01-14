@@ -91,7 +91,7 @@ export default {
     return {
       settings: {
         rowId,
-        widget: cloneDeep(widget),
+        widget: this.prepareAlarmWidgetSettings(cloneDeep(widget), true),
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,
           viewFilters: [],
@@ -127,11 +127,7 @@ export default {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
-      return {
-        ...widget,
-
-        parameters: this.prepareAlarmWidgetParametersSettings(widget.parameters),
-      };
+      return this.prepareAlarmWidgetSettings(widget);
     },
   },
 };

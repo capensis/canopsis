@@ -8,6 +8,23 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.8.0 - Due date : 2019-01-10
+
+ - [Documentation] Clean up README.md
+ - [Documentation] Add documentation for the tabs system
+ - [Tooling] Push the init image in the push_docker_image.sh script
+ - [Go] Refactor heartbeat engine and API
+ - [Python] Fix timezone handling in pbehaviors
+ - [Python] Add ack support in alarm filter
+ - [UI] Delete lines name display
+ - [UI] Fix pagination length bug
+ - [UI] Add Pbehaviors CRUD view
+ - [UI/ServiceWeather] Add actions on entities
+ - [UI/ServiceWeather] Fix weather items blinking conditions
+ - [UI/Calendar] Fix filter deletion bug
+ - [UI/Context] Refactor "Manage infos" panel
+ - [UI/Context] Improve "More infos" expand panel style
+
 ## Canopsis 3.7.0 - Due date : 2018-12-27
 
  - [Documentation] Add documentation for ackcentreon task
