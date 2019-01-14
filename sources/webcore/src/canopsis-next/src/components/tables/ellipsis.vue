@@ -4,9 +4,9 @@
       span(@click.stop="textClicked") {{ text }}
     template(v-else)
       span(@click.stop="textClicked") {{ text.substr(0, maxLetters) }}
-      v-menu(v-model="fullTextMenu", :close-on-content-click="false")
-        span.ml-1(slot="activator", small, depressed, @click.stop="fullTextMenu = true") ...
-        v-card
+      v-menu(v-model="isFullTextMenuOpen", :close-on-content-click="false")
+        span.ml-1(slot="activator", small, depressed, @click.stop="openFullTextMenu") ...
+        v-card(dark)
           v-card-title {{ text }}
 </template>
 
@@ -26,12 +26,15 @@ export default {
   },
   data() {
     return {
-      fullTextMenu: false,
+      isFullTextMenuOpen: false,
     };
   },
   methods: {
     textClicked() {
       this.$emit('textClicked');
+    },
+    openFullTextMenu() {
+      this.isFullTextMenuOpen = true;
     },
   },
 };

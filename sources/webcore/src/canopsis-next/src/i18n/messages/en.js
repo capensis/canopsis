@@ -151,7 +151,7 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
-    infoPopup: 'Info',
+    infoPopup: 'Info popup',
   },
   pbehaviors: {
     connector: 'Connector',

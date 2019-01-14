@@ -8,8 +8,8 @@
       :column="column.value",
       @textClicked="showInfoPopup"
       )
-    v-card(v-if="isInfoPopupOpen", dark)
-      v-card-title.primary.pa-1.white--text
+    v-card(dark)
+      v-card-title.primary.pa-2.white--text
         h4 {{ $t('alarmList.infoPopup') }}
       v-card-text.pa-2(v-html="popupTextContent")
 </template>
@@ -70,7 +70,7 @@ export default {
     popupTextContent() {
       if (this.popupData) {
         const template = Handlebars.compile(this.popupData.template);
-        const context = { alarm: this.alarm.v };
+        const context = { alarm: this.alarm };
         return template(context);
       }
       return '';
