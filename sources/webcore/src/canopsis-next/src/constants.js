@@ -469,7 +469,6 @@ export const USERS_RIGHTS = {
     context: {
       actions: {
         createEntity: 'crudcontext_createEntity',
-        createWatcher: 'crudcontext_createWatcher',
         editEntity: 'crudcontext_edit',
         duplicateEntity: 'crudcontext_duplicate',
         deleteEntity: 'crudcontext_delete',
@@ -503,7 +502,6 @@ export const WIDGETS_ACTIONS_TYPES = {
   },
   context: {
     createEntity: 'createEntity',
-    createWatcher: 'createWatcher',
     editEntity: 'editEntity',
     duplicateEntity: 'duplicateEntity',
     deleteEntity: 'deleteEntity',
@@ -536,7 +534,6 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
 
   context: {
     [WIDGETS_ACTIONS_TYPES.context.createEntity]: USERS_RIGHTS.business.context.actions.createEntity,
-    [WIDGETS_ACTIONS_TYPES.context.createWatcher]: USERS_RIGHTS.business.context.actions.createWatcher,
     [WIDGETS_ACTIONS_TYPES.context.editEntity]: USERS_RIGHTS.business.context.actions.editEntity,
     [WIDGETS_ACTIONS_TYPES.context.duplicateEntity]: USERS_RIGHTS.business.context.actions.duplicateEntity,
     [WIDGETS_ACTIONS_TYPES.context.deleteEntity]: USERS_RIGHTS.business.context.actions.deleteEntity,

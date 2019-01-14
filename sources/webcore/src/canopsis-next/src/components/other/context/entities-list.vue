@@ -17,7 +17,7 @@
       v-flex.ml-4
         mass-actions-panel(:itemsIds="selected")
       v-flex
-        context-fab
+        context-fab(v-if="hasAccessToCreateEntity")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -130,6 +130,10 @@ export default {
       }
 
       return [];
+    },
+
+    hasAccessToCreateEntity() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.createEntity);
     },
 
     hasAccessToListFilters() {

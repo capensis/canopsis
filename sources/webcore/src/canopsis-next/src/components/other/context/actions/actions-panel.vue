@@ -14,11 +14,11 @@ import widgetActionsPanelContextMixin from '@/mixins/widget/actions-panel/contex
 import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
 
 /**
- * Panel regrouping mass actions icons
+ * Component to regroup actions (actions-panel-item) for each entity on the context entities list
  *
- * @module alarm
+ * @module context
  *
- * @prop {Object} [item] - Item of context widget lists
+ * @prop {Object} item - Item of context entities lists
  */
 export default {
   components: { SharedActionsPanel },

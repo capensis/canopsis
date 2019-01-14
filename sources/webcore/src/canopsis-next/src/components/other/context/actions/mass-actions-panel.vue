@@ -14,7 +14,7 @@ import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass
 /**
  * Panel regrouping mass actions icons
  *
- * @module alarm
+ * @module context
  *
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
