@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Variables
+        span.headline {{ $t('modals.variablesHelp.variables') }}
     v-card-text
       v-treeview(
       :items="config.variables",
@@ -14,7 +14,7 @@
           v-tooltip(left)
             v-btn(@click="copyPathToClipBoard(props.item.path)", slot="activator", small, icon)
               v-icon file_copy
-            span Copy to clipboard
+            span {{ $t('modals.variablesHelp.copyToClipboard') }}
 </template>
 
 <script>
@@ -24,7 +24,7 @@ import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import popupMixin from '@/mixins/popup';
 
 export default {
-  name: MODALS.alarmsListVariablesHelp,
+  name: MODALS.variablesHelp,
   mixins: [modalInnerItemsMixin, popupMixin],
   methods: {
     async copyPathToClipBoard(itemPath) {

@@ -18,7 +18,7 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
 };
 
-export const ALARMLIST_ACTION_PANEL_ACTIONS_TYPES = {
+export const ALARMLIST_ACTIONS_TYPES = {
   ack: 'ack',
   fastAck: 'fastAck',
   ackRemove: 'ackRemove',

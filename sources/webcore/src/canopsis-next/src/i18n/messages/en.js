@@ -421,6 +421,10 @@ export default {
       moreInfos: 'More infos',
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
+    variablesHelp: {
+      variables: 'Variables',
+      copyToClipboard: 'Copy to clipboard',
+    },
     watcher: {
       criticity: 'Criticity',
       organization: 'Organization',
