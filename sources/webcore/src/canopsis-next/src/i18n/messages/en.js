@@ -111,6 +111,14 @@ export default {
         infos: 'Infos',
       },
     },
+    actions: {
+      titles: {
+        editEntity: 'Edit entity',
+        duplicateEntity: 'Duplicate entity',
+        deleteEntity: 'Delete entity',
+        pbehavior: 'Periodical behavior',
+      },
+    },
   },
   search: {
     advancedSearch: '<span>Help on the advanced research :</span>\n' +
