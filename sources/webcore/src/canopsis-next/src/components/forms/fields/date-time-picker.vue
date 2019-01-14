@@ -43,20 +43,22 @@
         v-if="isActiveDateTab",
         :locale="$i18n.locale",
         v-model="dateString",
-        @input="updateDateTimeObject",
-        @change="showHourTab"
+        color="primary",
         no-title,
+        @input="updateDateTimeObject",
+        @change="showHourTab",
         )
       v-fade-transition
         v-time-picker(
         v-show="isActiveTimeTab",
         ref="timePicker"
         v-model="timeString",
-        @input="updateDateTimeObject",
-        @change="showDateTab",
-        format="24hr",
         :allowed-minutes="allowedMinutes"
+        color="primary",
+        format="24hr",
         no-title,
+        @input="updateDateTimeObject",
+        @change="showDateTab"
         )
     .text-xs-center.dropdown-footer
       v-btn(@click.prevent="submit", color="primary", depressed) Ok
@@ -196,7 +198,7 @@ export default {
     .date-time-picker__body {
       position: relative;
       width: 290px;
-      height: 290px;
+      height: 300px;
 
       .v-picker {
         position: absolute;
@@ -226,7 +228,7 @@ export default {
     }
 
     .v-date-picker-table {
-      height: 246px;
+      height: 260px;
     }
 
     .v-card {

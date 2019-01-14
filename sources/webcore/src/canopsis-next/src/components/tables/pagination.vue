@@ -67,7 +67,7 @@ export default {
 
     totalPages() {
       if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.query.limit);
+        return Math.ceil(this.meta.total / this.query.limit) || 0;
       }
 
       return 0;

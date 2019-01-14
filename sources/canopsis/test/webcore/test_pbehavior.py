@@ -158,7 +158,7 @@ class TestPbehaviorWebservice(TestCase):
         updated_pb = self.rhpb.read(pb_id)
         self.assertEquals(updated_pb.get('name'), 'pb_new_name')
         self.assertEquals(updated_pb.get('author'), 'pb_new_author')
-        self.assertEquals(updated_pb.get('filter_'), '{"new": "filter"}')
+        self.assertEquals(updated_pb.get('filter'), {u"new": "filter"})
         self.assertEquals(updated_pb.get('tstart'), pbehavior.get('tstart') * 10)
         self.assertEquals(updated_pb.get('tstop'), pbehavior.get('tstop') * 10)
         self.assertEquals(updated_pb.get('rrule'), 'FREQ=DAILY;BYDAY=SU')

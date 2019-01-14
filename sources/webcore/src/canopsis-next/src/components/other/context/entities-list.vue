@@ -52,11 +52,11 @@
             :maxLetters="column.maxLetters"
             )
           td
-            v-btn(@click.stop="editEntity(props.item)", icon, small)
+            v-btn.primary--text(@click.stop="editEntity(props.item)", icon, small)
               v-icon edit
             v-btn(@click.stop="duplicateEntity(props.item)", icon, small)
               v-icon file_copy
-            v-btn(@click.stop="deleteEntity(props.item)", icon, small)
+            v-btn.error--text(@click.stop="deleteEntity(props.item)", icon, small)
               v-icon delete
             v-btn(@click.stop="addPbehaviors(props.item._id)", icon, small)
               v-icon pause
@@ -94,7 +94,7 @@ import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
 import ContextFab from './actions/context-fab.vue';
-import MoreInfos from './more-infos.vue';
+import MoreInfos from './more-infos/more-infos.vue';
 
 /**
  * Entities list

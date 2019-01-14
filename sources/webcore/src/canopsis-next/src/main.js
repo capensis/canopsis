@@ -24,7 +24,7 @@ import filters from '@/filters';
 import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
 
-import VCheckboxFunctional from '@/components/forms/v-checkbox-functional.vue';
+import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
 Vue.use(filters);

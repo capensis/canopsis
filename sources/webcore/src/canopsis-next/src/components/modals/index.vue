@@ -34,11 +34,14 @@ import TextEditor from './common/text-editor.vue';
 import TextFieldEditor from './common/text-field-editor.vue';
 import CreateWatcher from './context/create-watcher.vue';
 import CreateEntity from './context/create-entity.vue';
+import AddEntityInfo from './context/add-entity-info.vue';
 import SelectView from './view/select-view.vue';
 import CreateView from './view/create-view.vue';
 import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
+import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
+import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
 import AlarmsList from './alarm/alarms-list.vue';
@@ -72,6 +75,7 @@ export default {
     Confirmation,
     CreateEntity,
     CreateWatcher,
+    AddEntityInfo,
     CreateWidget,
     ColorPicker,
     TextEditor,
@@ -81,6 +85,8 @@ export default {
     CreateFilter,
     CreateGroup,
     Watcher,
+    CreateWatcherDeclareTicketEvent,
+    CreateWatcherPauseEvent,
     ManageHistogramGroups,
     AddStat,
     AlarmsList,

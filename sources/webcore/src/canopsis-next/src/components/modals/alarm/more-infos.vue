@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import HandleBars from 'handlebars';
+import { MODALS } from '@/constants';
+import { compile } from '@/helpers/handlebars';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import { MODALS } from '@/constants';
 
 /**
  * Modal showing more infos on an alarm
@@ -24,10 +24,7 @@ export default {
   mixins: [modalInnerItemsMixin],
   computed: {
     output() {
-      const output = HandleBars.compile(this.config.template);
-      const context = { alarm: this.firstItem, entity: this.firstItem.entity };
-
-      return output(context);
+      return compile(this.config.template, { alarm: this.firstItem, entity: this.firstItem.entity });
     },
   },
 };

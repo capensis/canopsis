@@ -128,6 +128,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    tabId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
