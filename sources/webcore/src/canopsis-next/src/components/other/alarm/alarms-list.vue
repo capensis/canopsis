@@ -124,6 +124,10 @@ export default {
       type: Object,
       required: true,
     },
+    tabId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {

@@ -39,7 +39,11 @@
           v-divider
           field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
           v-divider
-          field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors", hideSuffix)
+          field-levels-colors-selector(
+          v-model="settings.widget.parameters.criticityLevelsColors",
+          colorType="hex",
+          hideSuffix
+          )
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -91,7 +95,7 @@ export default {
     return {
       settings: {
         rowId,
-        widget: cloneDeep(widget),
+        widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
       },
     };
   },
@@ -99,15 +103,7 @@ export default {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
-      return {
-        ...widget,
-
-        parameters: {
-          ...widget.parameters,
-
-          alarmsList: this.prepareAlarmWidgetParametersSettings(widget.parameters.alarmsList),
-        },
-      };
+      return this.prepareWidgetWithAlarmParametersSettings(widget);
     },
   },
 };

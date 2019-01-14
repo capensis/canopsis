@@ -59,6 +59,12 @@ export default {
           title: this.$t('alarmList.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
+        {
+          type: alarmsListActionsTypes.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          title: this.$t('alarmList.actions.titles.cancel'),
+          method: this.showActionModal(MODALS.createCancelEvent),
+        },
       ],
     };
   },
