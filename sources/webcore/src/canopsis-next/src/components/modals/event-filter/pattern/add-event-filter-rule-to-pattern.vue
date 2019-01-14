@@ -8,7 +8,7 @@
         v-switch(:label="$t('modals.eventFilterRule.advanced')", v-model="form.advancedMode", hide-details)
         v-text-field(
         v-model="form.field",
-        :label="$t('common.field')",
+        :label="$t('modals.eventFilterRule.field')",
         name="field",
         v-validate="'required'",
         :error-messages="errors.collect('field')"
@@ -16,7 +16,7 @@
         v-text-field(
         v-if="!form.advancedMode"
         v-model="form.value",
-        :label="$t('common.value')",
+        :label="$t('modals.eventFilterRule.value')",
         name="value",
         v-validate="'required'",
         :error-messages="errors.collect('value')"
@@ -77,7 +77,7 @@ export default {
   },
   computed: {
     availableOperators() {
-      return this.operators.filter(operator => !this.form.advancedRuleFields.find(rule => rule.key === operator));
+      return this.operators.filter(operator => !this.form.advancedRuleFields.find(({ key }) => key === operator));
     },
   },
   mounted() {
@@ -106,15 +106,13 @@ export default {
     },
 
     deleteAdvancedRuleField(field) {
-      this.form.advancedRuleFields = [...this.form.advancedRuleFields].filter(rule => rule.key !== field.key);
+      this.form.advancedRuleFields = this.form.advancedRuleFields.filter(({ key }) => key !== field.key);
     },
 
     getAvailableOperators(rule) {
-      const rules = this.form.advancedRuleFields.filter(advancedRule => advancedRule.key !== rule.key);
+      const rules = this.form.advancedRuleFields.filter(({ key }) => key !== rule.key);
 
-      const operators = this.operators.filter(operator => !rules.find(test => test.key === operator));
-
-      return operators;
+      return this.operators.filter(operator => !rules.find(({ key }) => key === operator));
     },
 
     async submit() {

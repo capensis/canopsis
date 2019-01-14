@@ -7,9 +7,9 @@
         v-card-text
           v-layout
             v-flex
-              p Field : {{ ruleKey }}
+              p {{ $t('modals.eventFilterRule.field') }} : {{ ruleKey }}
             v-flex(v-if="isSimpleRule(rule)")
-              p Value : {{ rule }}
+              p {{ $t('modals.eventFilterRule.value') }} : {{ rule }}
             v-flex(v-else)
               v-layout(column)
                 v-flex(v-for="(field, fieldKey) in rule", :key="fieldKey")
@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-
 import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
@@ -67,9 +65,7 @@ export default {
           ruleValue: this.pattern[rule],
           isSimpleRule: this.isSimpleRule(this.pattern[rule]),
           operators: this.operators,
-          action: (newRule) => {
-            this.updateAndMoveField(rule, newRule.field, newRule.value);
-          },
+          action: newRule => this.updateAndMoveField(rule, newRule.field, newRule.value),
         },
       });
     },

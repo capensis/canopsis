@@ -21,7 +21,7 @@
             v-model="form[option.value]",
             :label="option.text",
             name="value",
-            v-validate="`${isRequired(form.type, option) ? 'required': null}`",
+            v-validate="`${isRequired(form.type, option) ? 'required': ''}`",
             :error-messages="errors.collect('value')"
             )
           v-divider
@@ -51,6 +51,7 @@
 <script>
 import Draggable from 'vuedraggable';
 import cloneDeep from 'lodash/cloneDeep';
+import pick from 'lodash/pick';
 
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
@@ -96,9 +97,8 @@ export default {
       if (isFormValid) {
         const action = {
           type: this.form.type.value,
+          ...pick(this.form, Object.keys(this.form.type.options)),
         };
-
-        Object.keys(this.form.type.options).forEach(option => action[option] = this.form[option]);
 
         this.actions.push(action);
       }

@@ -574,6 +574,8 @@ export default {
       advanced: 'Avancée',
       addAField: 'Ajouter un champ',
       simpleEditor: 'Editeur simple',
+      field: 'Champ',
+      value: 'Valeur',
       advancedEditor: 'Editeur avancé',
       comparisonRules: 'Règles de comparaison',
       enrichmentOptions: 'Options d\'enrichissement',
