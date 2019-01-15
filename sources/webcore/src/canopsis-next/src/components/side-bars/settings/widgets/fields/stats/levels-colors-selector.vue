@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import { MODALS, STATS_CALENDAR_COLORS, STATS_CRITICITY } from '@/constants';
+
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 
@@ -22,11 +24,15 @@ export default {
   props: {
     levelsColors: {
       type: Object,
-      default: () => ({ ...this.$constants.STATS_CALENDAR_COLORS.alarm }),
+      default: () => ({ ...STATS_CALENDAR_COLORS.alarm }),
     },
     hideSuffix: {
       type: Boolean,
       default: false,
+    },
+    colorType: {
+      type: String,
+      default: 'rgba',
     },
   },
   computed: {
@@ -35,9 +41,9 @@ export default {
         let suffix = '';
 
         if (!this.hideSuffix) {
-          if (key === this.$constants.STATS_CRITICITY.ok) {
+          if (key === STATS_CRITICITY.ok) {
             suffix = ` / ${this.$t('common.yes')}`;
-          } else if (key === this.$constants.STATS_CRITICITY.critical) {
+          } else if (key === STATS_CRITICITY.critical) {
             suffix = ` / ${this.$t('common.no')}`;
           }
         }
@@ -49,10 +55,11 @@ export default {
   methods: {
     showColorPickerModal(level) {
       this.showModal({
-        name: this.$constants.MODALS.colorPicker,
+        name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
           color: this.levelsColors[level],
+          type: this.colorType,
           action: (color) => {
             this.updateField(level, color);
           },

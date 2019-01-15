@@ -587,6 +587,8 @@ export default {
       advanced: 'Advanced',
       addAField: 'Add a field',
       simpleEditor: 'Simple editor',
+      field: 'Field',
+      value: 'Value',
       advancedEditor: 'Advanced editor',
       comparisonRules: 'Comparison rules',
       enrichmentOptions: 'Enrichment options',
