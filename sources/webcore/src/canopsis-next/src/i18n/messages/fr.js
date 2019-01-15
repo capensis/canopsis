@@ -160,6 +160,7 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+    infoPopup: 'Info popup',
   },
   weather: {
     moreInfos: 'Plus d\'infos',

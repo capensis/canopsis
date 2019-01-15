@@ -162,6 +162,7 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
+    infoPopup: 'Info popup',
   },
   pbehaviors: {
     connector: 'Connector',
