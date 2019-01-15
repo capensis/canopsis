@@ -39,6 +39,15 @@ Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {
     getPrefix: () => '',
+    getStyleColor(details, calendarEvent, past, cancelled) {
+      let { color } = details;
+
+      if (!past && !cancelled) {
+        color = this.blend(color, this.inactiveBlendAmount, this.inactiveBlendTarget);
+      }
+
+      return color;
+    },
   },
   data: {
     defaults: {

@@ -54,6 +54,7 @@ export const MODALS = {
   createRight: 'create-right',
   createEventFilterRule: 'create-event-filter-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
+  addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
 };

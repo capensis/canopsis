@@ -50,6 +50,7 @@ import CreateRole from './admin/create-role.vue';
 import CreateRight from './admin/create-right.vue';
 import CreateEventFilterRule from './event-filter/create-event-filter-rule.vue';
 import CreateEventFilterRulePattern from './event-filter/pattern/create-event-filter-rule-pattern.vue';
+import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
 
@@ -95,6 +96,7 @@ export default {
     CreateRight,
     CreateEventFilterRule,
     CreateEventFilterRulePattern,
+    AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
   },
