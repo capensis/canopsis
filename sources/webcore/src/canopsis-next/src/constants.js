@@ -18,21 +18,6 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
 };
 
-export const ALARMLIST_ACTIONS_TYPES = {
-  ack: 'ack',
-  fastAck: 'fastAck',
-  ackRemove: 'ackRemove',
-  snooze: 'snooze',
-  changeState: 'changeState',
-  declareTicket: 'declareTicket',
-  associateTicket: 'associateTicket',
-  cancel: 'cancel',
-  pbehavior: 'pbehavior',
-  pbehaviorList: 'pbehaviorList',
-  moreInfos: 'moreInfos',
-  variablesHelp: 'variablesHelp',
-};
-
 export const MODALS = {
   createAckEvent: 'create-ack-event',
   createAssociateTicketEvent: 'create-associate-ticket-event',
@@ -482,6 +467,27 @@ export const USERS_RIGHTS = {
         addFilter: 'listalarm_addFilter',
       },
     },
+  },
+};
+
+export const WIDGETS_ACTIONS_TYPES = {
+  alarmsList: {
+    ack: 'ack',
+    fastAck: 'fastAck',
+    ackRemove: 'ackRemove',
+    pbehaviorAdd: 'pbehaviorAdd',
+    pbehaviorList: 'pbehaviorList',
+    moreInfos: 'moreInfos',
+    snooze: 'snooze',
+    declareTicket: 'declareTicket',
+    associateTicket: 'associateTicket',
+    cancel: 'cancel',
+    changeState: 'changeState',
+    variablesHelp: 'variablesHelp',
+
+    listFilters: 'listFilters',
+    editFilter: 'editFilter',
+    addFilter: 'addFilter',
   },
 };
 
