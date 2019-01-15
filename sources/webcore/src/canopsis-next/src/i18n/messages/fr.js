@@ -148,6 +148,7 @@ export default {
         cancel: 'Annuler alarme',
         changeState: 'Changer criticité',
         moreInfos: 'Plus d\'infos',
+        variablesHelp: 'Liste des variables disponibles',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -439,6 +440,10 @@ export default {
     moreInfos: {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    },
+    variablesHelp: {
+      variables: 'Variables',
+      copyToClipboard: 'Copier dans le Presse-papier',
     },
     watcher: {
       criticity: 'Criticity',
@@ -741,6 +746,7 @@ export default {
     default: 'Action effectuée avec succès',
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
+    pathCopied: 'Chemin copié dans le presse-papier',
   },
   filterEditor: {
     title: 'Éditeur de filtre',

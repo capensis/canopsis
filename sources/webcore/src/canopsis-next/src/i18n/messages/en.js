@@ -150,6 +150,7 @@ export default {
         cancel: 'Cancel alarm',
         changeState: 'Change criticity',
         moreInfos: 'More infos',
+        variablesHelp: 'List of available variables',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -442,6 +443,10 @@ export default {
     moreInfos: {
       moreInfos: 'More infos',
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
+    },
+    variablesHelp: {
+      variables: 'Variables',
+      copyToClipboard: 'Copy to clipboard',
     },
     watcher: {
       criticity: 'Criticity',
@@ -753,6 +758,7 @@ export default {
     default: 'Done !',
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
+    pathCopied: 'Path copied to clipboard',
   },
   filterEditor: {
     title: 'Filter editor',

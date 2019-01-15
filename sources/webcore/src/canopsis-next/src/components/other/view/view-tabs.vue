@@ -6,7 +6,7 @@
   color="secondary lighten-2",
   slider-color="primary",
   dark,
-  @input="$emit('input', $event)"
+  @change="$emit('input', $event)"
   )
     v-tab(v-if="tabs.length", v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
       span {{ tab.title }}
