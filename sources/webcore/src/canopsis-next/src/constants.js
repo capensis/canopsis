@@ -25,6 +25,7 @@ export const MODALS = {
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
+  variablesHelp: 'variables-help',
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
@@ -467,6 +468,27 @@ export const USERS_RIGHTS = {
         addFilter: 'listalarm_addFilter',
       },
     },
+  },
+};
+
+export const WIDGETS_ACTIONS_TYPES = {
+  alarmsList: {
+    ack: 'ack',
+    fastAck: 'fastAck',
+    ackRemove: 'ackRemove',
+    pbehaviorAdd: 'pbehaviorAdd',
+    pbehaviorList: 'pbehaviorList',
+    moreInfos: 'moreInfos',
+    snooze: 'snooze',
+    declareTicket: 'declareTicket',
+    associateTicket: 'associateTicket',
+    cancel: 'cancel',
+    changeState: 'changeState',
+    variablesHelp: 'variablesHelp',
+
+    listFilters: 'listFilters',
+    editFilter: 'editFilter',
+    addFilter: 'addFilter',
   },
 };
 

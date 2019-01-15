@@ -5,12 +5,15 @@
   tile,
   @click.native="showAdditionalInfoModal"
   )
-    div(:class="{ blinking: isBlinking }", )
+    v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
+      v-icon help
+    div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
         v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
           v-icon pause
+
 </template>
 
 <script>
@@ -34,6 +37,8 @@ import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
+import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+
 export default {
   mixins: [modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
@@ -46,6 +51,10 @@ export default {
     },
     widget: {
       type: Object,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -167,6 +176,18 @@ export default {
         });
       }
     },
+
+    showVariablesHelpModal() {
+      const entityFields = convertObjectFieldToTreeBranch(this.watcher, 'entity');
+      const variables = [entityFields];
+
+      this.showModal({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
+        },
+      });
+    },
   },
 };
 </script>
@@ -198,5 +219,11 @@ export default {
 
   .cursor-pointer {
     cursor: pointer;
+  }
+
+  .helpBtn {
+    position: absolute;
+    right: 0.2em;
+    top: 0;
   }
 </style>

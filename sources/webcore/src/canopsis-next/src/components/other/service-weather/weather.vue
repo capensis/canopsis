@@ -4,7 +4,12 @@
     v-fade-transition
       v-layout.fill-height(v-show="!watchersPending", wrap)
         v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
-          weather-item.weatherItem(:watcher="item", :widget="widget", :template="widget.parameters.blockTemplate")
+          weather-item.weatherItem(
+          :watcher="item",
+          :widget="widget",
+          :template="widget.parameters.blockTemplate",
+          :isEditingMode="isEditingMode",
+        )
     v-fade-transition
       v-layout(v-show="watchersPending", column)
         v-flex(xs12)
@@ -30,6 +35,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

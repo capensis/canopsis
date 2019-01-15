@@ -22,6 +22,7 @@ import CreateCancelEvent from './alarm/create-cancel-event.vue';
 import CreateChangeStateEvent from './alarm/create-change-state-event.vue';
 import CreateDeclareTicketEvent from './alarm/create-declare-ticket-event.vue';
 import CreateSnoozeEvent from './alarm/create-snooze-event.vue';
+import VariablesHelp from './common/variables-help.vue';
 import MoreInfos from './alarm/more-infos.vue';
 import CreatePbehavior from './pbehavior/create-pbehavior.vue';
 import PbehaviorList from './pbehavior/pbehavior-list.vue';
@@ -67,6 +68,7 @@ export default {
     CreateChangeStateEvent,
     CreateDeclareTicketEvent,
     CreateSnoozeEvent,
+    VariablesHelp,
     CreatePbehavior,
     PbehaviorList,
     EditLiveReporting,

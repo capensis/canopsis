@@ -6,7 +6,7 @@
   color="secondary lighten-2",
   slider-color="primary",
   dark,
-  @input="$emit('input', $event)"
+  @change="$emit('input', $event)"
   )
     draggable.d-flex(v-model="tabs", :options="draggableOptions", @end="onUpdateTabs")
       v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
