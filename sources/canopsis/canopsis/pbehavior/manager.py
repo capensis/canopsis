@@ -711,8 +711,11 @@ class PBehaviorManager(object):
         results = []
 
         for pb in ret_val:
-            if self.check_active_pbehavior(now, pb):
-                results.append(pb)
+            try:
+                if self.check_active_pbehavior(now, pb):
+                    results.append(pb)
+            except ValueError as exept:
+                self.logger.exception("Can't check if the pbehavior is active.")
 
         return results
 
