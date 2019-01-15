@@ -61,8 +61,8 @@ import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from './fields/common/filters.vue';
-import FieldInfoPopup from './fields/common/info-popup.vue';
-import FieldMoreInfo from './fields/common/more-info.vue';
+import FieldInfoPopup from './fields/alarm/info-popup.vue';
+import FieldMoreInfo from './fields/alarm/more-info.vue';
 
 /**
  * Component to regroup the alarms list settings fields

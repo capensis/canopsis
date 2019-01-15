@@ -106,8 +106,8 @@ import FieldSlider from './fields/common/slider.vue';
 import FieldModalType from './fields/weather/modal-type.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
-import FieldInfoPopup from './fields/common/info-popup.vue';
-import FieldMoreInfo from './fields/common/more-info.vue';
+import FieldInfoPopup from './fields/alarm/info-popup.vue';
+import FieldMoreInfo from './fields/alarm/more-info.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
