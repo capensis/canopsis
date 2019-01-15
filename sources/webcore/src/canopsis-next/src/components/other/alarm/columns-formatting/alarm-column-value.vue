@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu(v-model="isInfoPopupOpen", :close-on-content-click="false", offset-y)
+  v-menu(v-model="isInfoPopupOpen", :close-on-content-click="false", :open-on-click="false", offset-y)
     div(slot="activator")
       div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
       ellipsis(
