@@ -8,12 +8,13 @@
   dark,
   @input="$emit('input', $event)"
   )
-    v-tab(v-if="tabs.length", v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
-      span {{ tab.title }}
-      v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
-        v-icon(small) edit
-      v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
-        v-icon(small) delete
+    draggable.d-flex(v-model="tabs", :options="draggableOptions", @end="onUpdateTabs")
+      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
+        span {{ tab.title }}
+        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
+          v-icon(small) edit
+        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
+          v-icon(small) delete
     v-tabs-items(ref="tabItems", active-class="active-view-tab")
       v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`", lazy)
         slot(
@@ -25,12 +26,17 @@
 </template>
 
 <script>
+import Draggable from 'vuedraggable';
+import isEqual from 'lodash/isEqual';
+
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 
 export default {
+  components: { Draggable },
   mixins: [modalMixin, vuetifyTabsMixin],
   props: {
     view: {
@@ -54,21 +60,39 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      tabs: [],
+    };
+  },
   computed: {
-    tabs() {
-      return this.view.tabs || [];
+    draggableOptions() {
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+        disabled: !this.isEditingMode,
+      };
     },
   },
   watch: {
-    isEditingMode() {
+    isEditingMode(value) {
       this.$nextTick(this.callTabsOnResizeMethod);
+
+      if (!value) {
+        this.updateViewMethod({
+          ...this.view,
+
+          tabs: this.tabs,
+        });
+      }
     },
     'view.tabs': {
-      handler() {
-        this.$nextTick(() => {
-          this.callTabsOnResizeMethod();
-          this.callTabsUpdateTabsMethod();
-        });
+      immediate: true,
+      handler(tabs, prevTabs) {
+        if (!isEqual(tabs, prevTabs)) {
+          this.tabs = [...tabs];
+        }
+
+        this.onUpdateTabs();
       },
     },
   },
@@ -123,6 +147,13 @@ export default {
 
       return this.updateViewMethod(view);
     },
+
+    onUpdateTabs() {
+      this.$nextTick(() => {
+        this.callTabsOnResizeMethod();
+        this.callTabsUpdateTabsMethod();
+      });
+    },
   },
 };
 </script>
@@ -132,5 +163,10 @@ export default {
     & /deep/ .v-tabs__bar {
       display: none;
     }
+  }
+
+  .draggable-item {
+    position: relative;
+    transform: translateZ(0);
   }
 </style>
