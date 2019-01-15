@@ -38,6 +38,8 @@ import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -64,6 +66,7 @@ export default {
     FieldContextEntitiesTypesFilter,
   },
   mixins: [
+    authMixin,
     widgetSettingsMixin,
   ],
   data() {
