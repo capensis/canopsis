@@ -25,7 +25,9 @@ import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-
  *
  * @module alarm
  *
- * @prop {Object} [item] - Object representing an alarm
+ * @prop {Object} item - Object representing an alarm
+ * @prop {Object} widget - Full widget object
+ * @prop {boolean} [isEditingMode=false] - Is editing mode enable on a view
  */
 export default {
   components: { SharedActionsPanel },
@@ -38,6 +40,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -111,6 +117,12 @@ export default {
           title: this.$t('alarmList.actions.titles.moreInfos'),
           method: this.showMoreInfosModal(),
         },
+        variablesHelp: {
+          type: alarmsListActionsTypes.variablesHelp,
+          icon: 'help',
+          title: this.$t('alarmList.actions.titles.variablesHelp'),
+          method: this.showVariablesHelperModal(),
+        },
       },
     };
   },
@@ -156,6 +168,10 @@ export default {
           dropDownActions = [
             filteredActionsMap.moreInfos,
           ];
+        }
+
+        if (this.isEditingMode) {
+          inlineActions.push(filteredActionsMap.variablesHelp);
         }
       }
 

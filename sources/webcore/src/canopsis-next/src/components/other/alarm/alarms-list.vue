@@ -55,7 +55,7 @@
             )
               alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
             td
-              actions-panel(:item="props.item", :widget="widget")
+              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           time-line(:alarmProps="props.item")
       v-layout.white(align-center)
@@ -73,8 +73,8 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
-import ActionsPanel from '@/components/other/alarm/actions-panel/actions-panel.vue';
-import MassActionsPanel from '@/components/other/alarm/actions-panel/mass-actions-panel.vue';
+import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
+import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -123,6 +123,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
     tabId: {
       type: String,

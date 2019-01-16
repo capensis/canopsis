@@ -1,11 +1,13 @@
 <template lang="pug">
-  div(
-    v-if="expanded || (!expanded && text.length <= maxLetters)"
-  )
-    span(@click.stop="textClicked") {{ text }}
-  div(v-else)
-    span(@click.stop="textClicked") {{ text.substr(0, maxLetters) }}
-    span ...
+  div
+    template(v-if="text.length <= maxLetters")
+      span(@click.stop="textClicked") {{ text }}
+    template(v-else)
+      span(@click.stop="textClicked") {{ text.substr(0, maxLetters) }}
+      v-menu(v-model="isFullTextMenuOpen", :close-on-content-click="false", :open-on-click="false")
+        span.ml-1(slot="activator", small, depressed, @click.stop="openFullTextMenu") ...
+        v-card(dark)
+          v-card-title {{ text }}
 </template>
 
 <script>
@@ -24,13 +26,15 @@ export default {
   },
   data() {
     return {
-      expanded: false,
+      isFullTextMenuOpen: false,
     };
   },
   methods: {
     textClicked() {
       this.$emit('textClicked');
-      this.expanded = !this.expanded;
+    },
+    openFullTextMenu() {
+      this.isFullTextMenuOpen = true;
     },
   },
 };

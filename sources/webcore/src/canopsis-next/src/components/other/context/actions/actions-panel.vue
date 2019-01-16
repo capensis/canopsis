@@ -1,9 +1,13 @@
 <template lang="pug">
-  shared-actions-panel(:actions="filteredActions")
+  shared-actions-panel(:actions="actions")
 </template>
 
 <script>
+import pickBy from 'lodash/pickBy';
+
 import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
+
+import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -19,6 +23,7 @@ import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-
  * @module context
  *
  * @prop {Object} item - Item of context entities lists
+ * @prop {boolean} [isEditingMode=false] - Is editing mode enable on a view
  */
 export default {
   components: { SharedActionsPanel },
@@ -34,44 +39,71 @@ export default {
       type: Object,
       required: true,
     },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
     return {
-      actions: [
-        {
+      actionsMap: {
+        editEntity: {
           type: contextActionsTypes.editEntity,
           icon: 'edit',
           iconClass: 'primary--text',
           title: this.$t('context.actions.titles.editEntity'),
           method: this.showEditEntityModal,
         },
-        {
+        duplicateEntity: {
           type: contextActionsTypes.duplicateEntity,
           icon: 'file_copy',
           title: this.$t('context.actions.titles.duplicateEntity'),
           method: this.showDuplicateEntityModal,
         },
-        {
+        deleteEntity: {
           type: contextActionsTypes.deleteEntity,
           icon: 'delete',
           iconClass: 'error--text',
           title: this.$t('context.actions.titles.deleteEntity'),
           method: this.showDeleteEntityModal,
         },
-        {
+        pbehavior: {
           type: contextActionsTypes.pbehaviorAdd,
           icon: 'pause',
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
-      ],
+        variablesHelp: {
+          type: contextActionsTypes.variablesHelp,
+          icon: 'help',
+          title: this.$t('context.actions.titles.variablesHelp'),
+          method: this.showVariablesHelpModal,
+        },
+      },
     };
   },
   computed: {
-    filteredActions() {
-      return this.actions.filter(this.actionsAccessFilterHandler);
+    filteredActionsMap() {
+      return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
+    },
+
+    actions() {
+      const { filteredActionsMap } = this;
+
+      const actions = [
+        filteredActionsMap.editEntity,
+        filteredActionsMap.duplicateEntity,
+        filteredActionsMap.deleteEntity,
+        filteredActionsMap.pbehavior,
+      ];
+
+      if (this.isEditingMode) {
+        actions.push(filteredActionsMap.variablesHelp);
+      }
+
+      return actions.filter(action => !!action);
     },
   },
   methods: {
@@ -136,6 +168,18 @@ export default {
         config: {
           itemsType: ENTITIES_TYPES.entity,
           itemsIds: [this.item._id],
+        },
+      });
+    },
+
+    showVariablesHelpModal() {
+      const entitiesFields = convertObjectFieldToTreeBranch(this.item, 'entity');
+      const variables = [entitiesFields];
+
+      this.showModal({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
         },
       });
     },

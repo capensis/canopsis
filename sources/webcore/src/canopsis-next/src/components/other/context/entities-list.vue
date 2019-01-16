@@ -48,7 +48,7 @@
             :maxLetters="column.maxLetters"
             )
           td
-            actions-panel(:item="props.item")
+            actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item")
       v-layout.white(align-center)
@@ -115,6 +115,10 @@ export default {
   props: {
     widget: {
       type: Object,
+      required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
       required: true,
     },
   },
