@@ -1,6 +1,11 @@
+import omit from 'lodash/omit';
+
+import { EVENT_ENTITY_TYPES, MODALS, USERS_RIGHTS } from '@/constants';
+
 import modalMixin from '@/mixins/modal';
 import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, MODALS, USERS_RIGHTS } from '@/constants';
+
+import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -32,6 +37,26 @@ export default {
           ...this.modalConfig,
           title: 'modals.createAckRemove.title',
           eventType: EVENT_ENTITY_TYPES.ackRemove,
+        },
+      });
+    },
+
+    showVariablesHelperModal() {
+      const variables = [];
+
+      const alarmFields = convertObjectFieldToTreeBranch(omit(this.item, ['entity']), 'alarm');
+      variables.push(alarmFields);
+
+      if (this.item.entity) {
+        const entityFields = convertObjectFieldToTreeBranch(this.item.entity, 'entity');
+        variables.push(entityFields);
+      }
+
+      return () => this.showModal({
+        name: MODALS.variablesHelp,
+        config: {
+          ...this.modalConfig,
+          variables,
         },
       });
     },

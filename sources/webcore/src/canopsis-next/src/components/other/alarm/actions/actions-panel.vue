@@ -46,7 +46,7 @@
 import pick from 'lodash/pick';
 import pickBy from 'lodash/pickBy';
 
-import { MODALS, ENTITIES_TYPES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import actionsPanelMixin from '@/mixins/actions-panel';
@@ -72,6 +72,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -121,6 +125,10 @@ export default {
           type: 'moreInfos',
           method: this.showMoreInfosModal(),
         },
+        variablesHelp: {
+          type: 'variablesHelp',
+          method: this.showVariablesHelperModal(),
+        },
       },
     };
   },
@@ -140,31 +148,49 @@ export default {
         .includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           return {
-            main: pick(this.actionsMap, ['declareTicket', 'associateTicket', 'cancel']),
-            dropDown: pick(this.actionsMap, [
-              'ackRemove',
-              'snooze',
-              'changeState',
-              'pbehavior',
-              'pbehaviorList',
-              'moreInfos',
-            ]),
+            main: pick(
+              this.actionsMap,
+              [
+                WIDGETS_ACTIONS_TYPES.alarmsList.declareTicket,
+                WIDGETS_ACTIONS_TYPES.alarmsList.associateTicket,
+                WIDGETS_ACTIONS_TYPES.alarmsList.cancel,
+                this.isEditingMode ? WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp : null,
+              ],
+            ),
+            dropDown: pick(
+              this.actionsMap,
+              [
+                WIDGETS_ACTIONS_TYPES.alarmsList.ackRemove,
+                WIDGETS_ACTIONS_TYPES.alarmsList.snooze,
+                WIDGETS_ACTIONS_TYPES.alarmsList.changeState,
+                WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorAdd,
+                WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList,
+                WIDGETS_ACTIONS_TYPES.alarmsList.moreInfos,
+              ],
+            ),
           };
         }
 
         return {
-          main: pick(this.actionsMap, ['ack', 'fastAck']),
-          dropDown: pick(this.actionsMap, ['moreInfos']),
+          main: pick(
+            this.actionsMap,
+            [
+              WIDGETS_ACTIONS_TYPES.alarmsList.ack,
+              WIDGETS_ACTIONS_TYPES.alarmsList.fastAck,
+              this.isEditingMode ? WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp : null,
+            ],
+          ),
+          dropDown: pick(this.actionsMap, [WIDGETS_ACTIONS_TYPES.alarmsList.moreInfos]),
         };
       } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
         return {
-          main: pick(this.actionsMap, ['pbehaviorList']),
+          main: pick(this.actionsMap, [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList]),
           dropDown: [],
         };
       }
 
       return {
-        main: pick(this.actionsMap, ['pbehaviorList']),
+        main: pick(this.actionsMap, [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList]),
         dropDown: [],
       };
     },

@@ -22,6 +22,7 @@ import CreateCancelEvent from './alarm/create-cancel-event.vue';
 import CreateChangeStateEvent from './alarm/create-change-state-event.vue';
 import CreateDeclareTicketEvent from './alarm/create-declare-ticket-event.vue';
 import CreateSnoozeEvent from './alarm/create-snooze-event.vue';
+import VariablesHelp from './common/variables-help.vue';
 import MoreInfos from './alarm/more-infos.vue';
 import InfoPopupSetting from './alarm/info-popup-setting/info-popup-setting.vue';
 import AddInfoPopup from './alarm/info-popup-setting/add-info-popup.vue';
@@ -51,6 +52,7 @@ import CreateRole from './admin/create-role.vue';
 import CreateRight from './admin/create-right.vue';
 import CreateEventFilterRule from './event-filter/create-event-filter-rule.vue';
 import CreateEventFilterRulePattern from './event-filter/pattern/create-event-filter-rule-pattern.vue';
+import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
 
@@ -68,6 +70,7 @@ export default {
     CreateChangeStateEvent,
     CreateDeclareTicketEvent,
     CreateSnoozeEvent,
+    VariablesHelp,
     CreatePbehavior,
     PbehaviorList,
     EditLiveReporting,
@@ -97,6 +100,7 @@ export default {
     CreateRight,
     CreateEventFilterRule,
     CreateEventFilterRulePattern,
+    AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
   },
