@@ -35,7 +35,10 @@
             :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
-          field-info-popup(v-model="settings.widget.parameters.infoPopups")
+          field-info-popup(
+          v-model="settings.widget.parameters.infoPopups",
+          :columns="settings.widget.parameters.widgetColumns",
+          )
           v-divider
           field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
       v-divider

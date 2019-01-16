@@ -439,6 +439,15 @@ export default {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
+    infoPopupSetting: {
+      title: 'Info popup',
+      add: 'Ajouter',
+      column: 'Colonne',
+      template: 'Template',
+      addInfoPopup: {
+        title: 'Ajouter une popup d\'info',
+      },
+    },
     watcher: {
       criticity: 'Criticity',
       organization: 'Organization',

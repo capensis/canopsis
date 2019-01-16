@@ -1,8 +1,12 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{$t('settings.infoPopup.title')}}
-    v-container
-      v-btn(@click="edit") Edit
+  v-container.pa-3(fluid)
+    v-layout(align-center, justify-space-between)
+      div.subheading {{ $t('settings.infoPopup.title') }}
+      v-layout(justify-end)
+        v-btn.primary(
+        small,
+        @click="edit"
+        ) {{ $t('common.create') }}/{{ $t('common.edit') }}
       //v-card.my-2(v-for="(popup, index) in popups", :key="`settings-info-popup-${index}`")
         v-layout(justify-space-between)
           v-flex(xs3)
@@ -47,6 +51,10 @@ export default {
       type: [Array, Object],
       default: () => [],
     },
+    columns: {
+      type: Array,
+      default: () => [],
+    },
   },
   methods: {
     add() {
@@ -55,6 +63,11 @@ export default {
     edit() {
       this.showModal({
         name: MODALS.infoPopupSetting,
+        config: {
+          infoPopups: this.popups,
+          columns: this.columns,
+          action: popups => this.$emit('input', popups),
+        },
       });
     },
   },

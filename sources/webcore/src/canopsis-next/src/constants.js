@@ -36,6 +36,7 @@ export const MODALS = {
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
   infoPopupSetting: 'info-popup-setting',
+  addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',

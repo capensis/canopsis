@@ -66,6 +66,8 @@ export default {
      * @param {*} value
      */
     addItemIntoArray(value) {
+      console.log(this[this[formKeyComputed]]);
+
       this.$emit(this[eventKeyComputed], [...this[this[formKeyComputed]], value]);
     },
 
