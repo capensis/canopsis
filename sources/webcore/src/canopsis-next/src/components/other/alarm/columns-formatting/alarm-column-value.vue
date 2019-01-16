@@ -5,7 +5,7 @@
       ellipsis(
       v-else,
       :text="alarm | get(column.value, columnFilter, '')",
-      :column="column.value",
+      :maxLetters="5",
       @textClicked="showInfoPopup"
       )
     v-card(dark)
