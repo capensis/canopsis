@@ -19,7 +19,7 @@
                   v-icon(color="primary") edit
           v-card-text
             p {{ $t('modals.infoPopupSetting.template') }}:
-            v-textarea(:value="popup.template", :disabled="true", dark)
+            v-textarea(:value="popup.template", disabled, dark)
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -27,8 +27,6 @@
 </template>
 
 <script>
-import pullAt from 'lodash/pullAt';
-
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -63,10 +61,7 @@ export default {
     },
 
     deletePopup(index) {
-      const popups = [...this.popups];
-      pullAt(popups, index);
-
-      this.popups = popups;
+      this.$delete(this.popups, index);
     },
 
     editPopup(index, popup) {
@@ -76,18 +71,15 @@ export default {
           columns: this.config.columns,
           popup,
           action: (editedPopup) => {
-            const popups = [...this.popups];
-            popups[index] = editedPopup;
-
-            this.popups = popups;
+            this.$set(this.popups, index, editedPopup);
           },
         },
       });
     },
 
-    submit() {
+    async submit() {
       if (this.config.action) {
-        this.config.action(this.popups);
+        await this.config.action(this.popups);
       }
 
       this.hideModal();
