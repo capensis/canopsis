@@ -458,6 +458,69 @@
         "desc": "Rights on listalarm: add filter"
     },
     {
+        "_id": "crudcontext_createEntity",
+        "loader_id": "crudcontext_createEntity",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_createEntity",
+        "desc": "Rights on context: create entity"
+    },
+    {
+        "_id": "crudcontext_edit",
+        "loader_id": "crudcontext_edit",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_edit",
+        "desc": "Rights on context: edit entity"
+    },
+    {
+        "_id": "crudcontext_duplicate",
+        "loader_id": "crudcontext_duplicate",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_duplicate",
+        "desc": "Rights on context: duplicate entity"
+    },
+    {
+        "_id": "crudcontext_delete",
+        "loader_id": "crudcontext_delete",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_delete",
+        "desc": "Rights on context: delete entity"
+    },
+    {
+        "_id": "crudcontext_pbehavior",
+        "loader_id": "crudcontext_pbehavior",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_pbehavior",
+        "desc": "Rights on context: pbehavior"
+    },
+    {
+        "_id": "crudcontext_listPbehavior",
+        "loader_id": "crudcontext_listPbehavior",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_listPbehavior",
+        "desc": "Rights on context: List Pbehaviors"
+    },
+    {
+        "_id": "crudcontext_listFilters",
+        "loader_id": "crudcontext_listFilters",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_listFilters",
+        "desc": "Rights on context: List filters"
+    },
+    {
+        "_id": "crudcontext_editFilter",
+        "loader_id": "crudcontext_editFilter",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_editFilter",
+        "desc": "Rights on context: Edit filter"
+    },
+    {
+        "_id": "crudcontext_addFilter",
+        "loader_id": "crudcontext_addFilter",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_addFilter",
+        "desc": "Rights on context: Add filter"
+    },
+    {
         "_id" : "view_current_alarms",
         "loader_id" : "view_current_alarms",
         "crecord_type" : "action",
@@ -466,28 +529,28 @@
         "desc" : "Rights on view: current alarms"
     },
     {
-	"_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
-	"loader_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
-	"crecord_write_time" : 1543852261,
-	"crecord_type" : "action",
-	"enable" : true,
-	"type" : "RW",
-	"checksum" : 15,
-	"crecord_creation_time" : 1543852261,
-	"crecord_name" : null,
-	"desc" : "Rights on view: alarmes en cours"
+        "_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+        "loader_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+        "crecord_write_time" : 1543852261,
+        "crecord_type" : "action",
+        "enable" : true,
+        "type" : "RW",
+        "checksum" : 15,
+        "crecord_creation_time" : 1543852261,
+        "crecord_name" : null,
+        "desc" : "Rights on view: alarmes en cours"
     },
     {
-	"_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
-	"loader_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
-	"crecord_write_time" : 1543852261,
-	"crecord_type" : "action",
-	"enable" : true,
-	"type" : "RW",
-	"checksum" : 15,
-	"crecord_creation_time" : 1543852261,
-	"crecord_name" : null,
-	"desc" : "Rights on view: alarmes resolues"
+        "_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
+        "loader_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
+        "crecord_write_time" : 1543852261,
+        "crecord_type" : "action",
+        "enable" : true,
+        "type" : "RW",
+        "checksum" : 15,
+        "crecord_creation_time" : 1543852261,
+        "crecord_name" : null,
+        "desc" : "Rights on view: alarmes resolues"
     },
     {
         "_id" : "view_history_alarms",
