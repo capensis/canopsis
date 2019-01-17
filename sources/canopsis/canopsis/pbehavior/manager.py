@@ -271,7 +271,8 @@ class PBehaviorManager(object):
             raise ValueError("The enabled value does not match a boolean")
 
         check_valid_rrule(rrule)
-        parse_exdate(exdate)
+        if exdate is not None:
+            parse_exdate(exdate)
 
         if comments is not None:
             for comment in comments:
