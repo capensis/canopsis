@@ -374,6 +374,8 @@ class PBehaviorManager(object):
             raise ValueError("The id does not match any pebahvior")
 
         check_valid_rrule(kwargs.get('rrule', ''))
+        if PBehavior.EXDATE in kwargs:
+            parse_exdate(kwargs[PBehavior.EXDATE])
 
         pbehavior = PBehavior(**self.get(_id))
         new_data = {k: v for k, v in kwargs.items() if v is not None}
