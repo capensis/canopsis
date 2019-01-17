@@ -1,6 +1,7 @@
 <template lang="pug">
   v-tabs.view-tabs(
   ref="tabs",
+  :key="tabsKey",
   :value="value",
   :class="{ hidden: this.tabs.length < 2 }",
   color="secondary lighten-2",
@@ -8,15 +9,15 @@
   dark,
   @change="$emit('input', $event)"
   )
-    draggable.d-flex(v-model="tabs", :options="draggableOptions", @end="onUpdateTabs")
-      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
+    draggable.d-flex(v-model="tabs", :options="draggableOptions", @end="onDragEnd")
+      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", ripple)
         span {{ tab.title }}
         v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
           v-icon(small) edit
         v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
           v-icon(small) delete
     v-tabs-items(ref="tabItems", active-class="active-view-tab")
-      v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`", lazy)
+      v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
         slot(
         :tab="tab",
         :isEditingMode="isEditingMode",
@@ -31,6 +32,8 @@ import isEqual from 'lodash/isEqual';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
+
+import uid from '@/helpers/uid';
 
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
@@ -63,6 +66,7 @@ export default {
   data() {
     return {
       tabs: [],
+      tabsKey: uid(),
     };
   },
   computed: {
@@ -153,6 +157,10 @@ export default {
         this.callTabsOnResizeMethod();
         this.callTabsUpdateTabsMethod();
       });
+    },
+
+    onDragEnd() {
+      this.tabsKey = uid();
     },
   },
 };
