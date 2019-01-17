@@ -259,6 +259,9 @@ class PBehaviorManager(object):
         if timezone is None:
             timezone = self.default_tz
 
+        if exdate is None:
+            exdate = []
+
         # this line allow us to raise an exception pytz.UnknownTimeZoneError,
         # if the timezone defined in the pbehabior configuration file is wrong
         pytz.timezone(timezone)
@@ -274,9 +277,8 @@ class PBehaviorManager(object):
             exdate = [exdate]
 
         check_valid_rrule(rrule)
-        if exdate is not None:
-            for date in exdate:
-                parse_exdate(date)
+        for date in exdate:
+            parse_exdate(date)
 
         if comments is not None:
             for comment in comments:
