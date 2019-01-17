@@ -245,7 +245,7 @@ class PBehaviorManager(object):
         :param str timezone: the timezone of the new pbehabior. If no timezone
         are given, use the default one. See the pbehavior documentation
         for more information.
-        :param list of str exdate: a list of string representation of a date
+        :param list of str| str exdate: a list of string representation of a date
         following this pattern "YYYY/MM/DD HH:MM:00 TIMEZONE". The hour use the
         24 hours clock system and the timezone is the name of the timezone. The
         month, the day of the month, the hour, the minute and second are
@@ -270,9 +270,13 @@ class PBehaviorManager(object):
         else:
             raise ValueError("The enabled value does not match a boolean")
 
+        if not isinstance(exdate, list):
+            exdate = [exdate]
+
         check_valid_rrule(rrule)
         if exdate is not None:
-            parse_exdate(exdate)
+            for date in exdate:
+                parse_exdate(date)
 
         if comments is not None:
             for comment in comments:
