@@ -3,6 +3,11 @@ Utils for pbehaviors.
 """
 
 from dateutil.rrule import rrulestr
+from datetime import datetime
+
+import pytz
+
+EXDATE_DATE_FORMAT = "%Y/%m/%d %H:%M:%S"
 
 
 def check_valid_rrule(rrule):
@@ -24,3 +29,28 @@ def check_valid_rrule(rrule):
         raise ValueError('Invalid RRULE: {}'.format(ex))
 
     return True
+
+
+def parse_exdate(exdate):
+    """Extract the date, time and timezone fron the given exdate.
+
+    Return the date and time as a datetime object and the timezone as a string.
+    :param str exdate: the date and timezone to parse
+    :raises ValueError: if the timezone extracted from the exdate string is
+    invalid or if the date extracted from the exdate is invalid.
+    :return (datetime, str): the date and time and the timezone as a string"""
+
+    data = exdate.split(" ")
+
+    if len(data) != 3:
+        raise ValueError("The exdate does not follow the pattern "
+                         "({} TIMEZONE_NAME).".format(EXDATE_DATE_FORMAT))
+
+    date_time = datetime.strptime(data[0] + " " + data[1], EXDATE_DATE_FORMAT)
+
+    try:
+        timezone = pytz.timezone(data[2])
+    except pytz.UnknownTimeZoneError:
+        raise ValueError("Unknown timezone : {}.".format(data[2]))
+
+    return date_time, timezone

@@ -40,7 +40,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
-from canopsis.pbehavior.utils import check_valid_rrule
+from canopsis.pbehavior.utils import check_valid_rrule, parse_exdate
 
 
 class BasePBehavior(dict):
@@ -117,14 +117,17 @@ class PBehavior(BasePBehavior):
     TYPE = 'type_'
     REASON = 'reason'
     TIMEZONE = 'timezone'
+    EXDATE = 'exdate'
 
     DEFAULT_TYPE = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE,
+               EXDATE)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
-                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
+                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
+                        EXDATE)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -216,7 +219,8 @@ class PBehaviorManager(object):
             tstart, tstop, rrule='',
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None):
+            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
+            exdate=None):
         """
         Method creates pbehavior record
 
@@ -238,6 +242,14 @@ class PBehaviorManager(object):
             that has generated the pbehavior
         :param str type_: associated type_ for this pbh
         :param str reason: associated reason for this pbh
+        :param str timezone: the timezone of the new pbehabior. If no timezone
+        are given, use the default one. See the pbehavior documentation
+        for more information.
+        :param list of str exdate: a list of string representation of a date
+        following this pattern "YYYY/MM/DD HH:MM:00 TIMEZONE". The hour use the
+        24 hours clock system and the timezone is the name of the timezone. The
+        month, the day of the month, the hour, the minute and second are
+        zero-padded.
         :raises ValueError: invalid RRULE
         :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
@@ -259,6 +271,7 @@ class PBehaviorManager(object):
             raise ValueError("The enabled value does not match a boolean")
 
         check_valid_rrule(rrule)
+        parse_exdate(exdate)
 
         if comments is not None:
             for comment in comments:
@@ -286,10 +299,10 @@ class PBehaviorManager(object):
             PBehavior.CONNECTOR_NAME: connector_name,
             PBehavior.TYPE: type_,
             PBehavior.REASON: reason,
-            PBehavior.TIMEZONE: timezone
+            PBehavior.TIMEZONE: timezone,
+            PBehavior.EXDATE: exdate,
+            PBehavior.EIDS: []
         }
-        if PBehavior.EIDS not in pb_kwargs:
-            pb_kwargs[PBehavior.EIDS] = []
 
         data = PBehavior(**pb_kwargs)
         if not data.comments or not isinstance(data.comments, list):
