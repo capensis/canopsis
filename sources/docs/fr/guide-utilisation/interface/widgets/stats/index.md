@@ -1,8 +1,8 @@
-# Présentation
+# Les widgets de statistiques
 
-## Stats calculées et mises à disposition
+## Présentation
 
-Canopsis vous propose d'afficher des statistiques détaillées sur vos alarmes sous différentes formes : Tableau ou Histogramme. 
+Canopsis vous propose d'afficher des statistiques détaillées sur vos alarmes sous différentes formes (tableaux, histogrammes, courbes, compteurs, calendriers). 
 
 Les données pouvant être calculées sont : 
 
@@ -15,4 +15,11 @@ Les données pouvant être calculées sont :
 - Les alarmes en cours : Ongoing alarms
 - Les alarmes actuellement en cours : Current Ongoing alarms
 
-Pour plus de détails sur les indicateurs, [rendez-vous ici !](Utilisation-du-widget.md)
+
+## Les widgets
+
+- Tableau: Le widget Tableau vous permet d'afficher les valeurs des statistiques que vous sélectionner, sur une période choisie, sur tout ou partie de vos entités. Pour plus de détails concernant ce widget, cliquez [ici](./table/index.md).
+- Histogrammes
+- Courbes
+- Compteur
+- Calendrier
