@@ -33,7 +33,7 @@ Le widget **Explorateur de contexte** permet de lister les entités (composants,
 Il permet de visualiser les informations concernant chaque entité, de créer de nouvelles entités, d'en supprimer, ainsi que de les éditer.
 Il permet également d'accéder à la liste des comportements périodiques de chaque entité, d'en ajouter, et d'en supprimer.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./contexte/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./contexte)
 
 ### Météo de services
 
@@ -41,34 +41,34 @@ Le widget **Météo de services** permet de visualiser rapidement l'état des se
 
 Celui-ci présente sous forme de grille un ensemble de services, avec un jeu de couleurs et d'icones permettant de rapidement visualiser une éventuelle source de problème.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services)
 
 ### Tableau de statistiques
 
 Le widget **Tableau de statistiques** permet de visualiser sous forme de tableau un ensemble de statistiques du SI, ou d'un sous-ensemble du SI.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du tableau de statistiques](./stats/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du tableau de statistiques](./stats/table)
 
 ### Compteur de statistique
 
 Le widget **Compteur de statistique** permet de visualiser la valeur d'une statistique, avec un jeu de couleur permettant de caractérisé la criticité de chacune des valeurs.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./stats/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./stats/count)
 
 ### Histogramme de statistiques
 
 Le widget **Histogramme** permet de visualiser un ensemble de statistiques sous forme d'histogramme.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'histogramme](./stats/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'histogramme](./stats/histogram)
 
 ### Courbe de statistiques
 
 Le widget **Courbe** permet de visualiser un ensemble de statistiques sous forme de courbes.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la courbe](./stats/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la courbe](./stats/curves)
 
 ### Calendrier de statistique
 
 Le widget **Calendrier** permet de visualiser le nombre d'alarmes par période de temps (par heure, par jour, par mois), dans une vue calendrier.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./stats/index.md)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./stats/calendar)
