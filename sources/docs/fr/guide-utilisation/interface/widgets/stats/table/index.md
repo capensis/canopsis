@@ -30,7 +30,7 @@ Une tendance par rapport à la période précédente peut être affichée à dro
 3. Durée (*requis*)
 4. Date de fin (*requis*)
 5. Sélecteur de statistique (*requis*)
-3. Paramètres avancés
+6. Paramètres avancés
     1. Editeur de filtre (*optionnel*)
 
 #### Taille du widget (*requis*)
@@ -73,7 +73,7 @@ Les dates disponibles dépendent de l'unité de [durée](#duree-requis) sélecti
 
 Ce paramètre permet de définir les statistiques à afficher dans le tableau. Chaque statistique se verra affecter une colonne du tableau.
 
-Il est nécessaire d'ajouter au moins une statistique pour le bon fonctionnement du widget.
+**Il est obligatoire d'ajouter au moins une statistique**
 
 Pour ajouter une statistique, cliquez sur le bouton ```Ajouter une statistique```.
 
