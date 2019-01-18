@@ -453,12 +453,12 @@ export const USERS_RIGHTS = {
     taskreporting: 'models_taskreporting',
   },
   business: {
-    alarmList: {
+    alarmsList: {
       actions: {
         ack: 'listalarm_ack',
         fastAck: 'listalarm_fastAck',
         ackRemove: 'listalarm_cancelAck',
-        pbehavior: 'listalarm_pbehavior',
+        pbehaviorAdd: 'listalarm_pbehavior',
         snooze: 'listalarm_snoozeAlarm',
         pbehaviorList: 'listalarm_listPbehavior',
         declareTicket: 'listalarm_declareanIncident',
@@ -468,6 +468,20 @@ export const USERS_RIGHTS = {
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
+      },
+    },
+    context: {
+      actions: {
+        createEntity: 'crudcontext_createEntity',
+        editEntity: 'crudcontext_edit',
+        duplicateEntity: 'crudcontext_duplicate',
+        deleteEntity: 'crudcontext_delete',
+        pbehaviorAdd: 'crudcontext_pbehavior',
+        pbehaviorList: 'crudcontext_listPbehavior',
+
+        listFilters: 'crudcontext_listFilters',
+        editFilter: 'crudcontext_editFilter',
+        addFilter: 'crudcontext_addFilter',
       },
     },
   },
@@ -491,6 +505,51 @@ export const WIDGETS_ACTIONS_TYPES = {
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
+  },
+  context: {
+    createEntity: 'createEntity',
+    editEntity: 'editEntity',
+    duplicateEntity: 'duplicateEntity',
+    deleteEntity: 'deleteEntity',
+    pbehaviorAdd: 'pbehaviorAdd',
+    pbehaviorList: 'pbehaviorList',
+    variablesHelp: 'variablesHelp',
+
+    listFilters: 'listFilters',
+    editFilter: 'editFilter',
+    addFilter: 'addFilter',
+  },
+};
+
+export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
+  alarmsList: {
+    [WIDGETS_ACTIONS_TYPES.alarmsList.ack]: USERS_RIGHTS.business.alarmsList.actions.ack,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.fastAck]: USERS_RIGHTS.business.alarmsList.actions.fastAck,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.ackRemove]: USERS_RIGHTS.business.alarmsList.actions.ackRemove,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorAdd]: USERS_RIGHTS.business.alarmsList.actions.pbehaviorAdd,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList]: USERS_RIGHTS.business.alarmsList.actions.pbehaviorList,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.snooze]: USERS_RIGHTS.business.alarmsList.actions.snooze,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.declareTicket]: USERS_RIGHTS.business.alarmsList.actions.declareTicket,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.associateTicket]: USERS_RIGHTS.business.alarmsList.actions.associateTicket,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+  },
+
+  context: {
+    [WIDGETS_ACTIONS_TYPES.context.createEntity]: USERS_RIGHTS.business.context.actions.createEntity,
+    [WIDGETS_ACTIONS_TYPES.context.editEntity]: USERS_RIGHTS.business.context.actions.editEntity,
+    [WIDGETS_ACTIONS_TYPES.context.duplicateEntity]: USERS_RIGHTS.business.context.actions.duplicateEntity,
+    [WIDGETS_ACTIONS_TYPES.context.deleteEntity]: USERS_RIGHTS.business.context.actions.deleteEntity,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorAdd]: USERS_RIGHTS.business.context.actions.pbehaviorAdd,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorList]: USERS_RIGHTS.business.context.actions.pbehaviorList,
+
+    [WIDGETS_ACTIONS_TYPES.context.listFilters]: USERS_RIGHTS.business.context.actions.listFilters,
+    [WIDGETS_ACTIONS_TYPES.context.editFilter]: USERS_RIGHTS.business.context.actions.editFilter,
+    [WIDGETS_ACTIONS_TYPES.context.addFilter]: USERS_RIGHTS.business.context.actions.addFilter,
   },
 };
 

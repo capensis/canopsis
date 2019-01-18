@@ -105,15 +105,15 @@ export default {
   },
   computed: {
     hasAccessToListFilters() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 
     hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
     },
 
     hasAccessToAddFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.addFilter);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.addFilter);
     },
   },
   mounted() {
