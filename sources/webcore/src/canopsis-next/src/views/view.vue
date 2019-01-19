@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    view-tabs(
+    view-tabs-wrapper(
     v-if="view",
     v-model="activeTabIndex",
     :view="view",
@@ -8,10 +8,6 @@
     :hasUpdateAccess="hasUpdateAccess",
     :updateViewMethod="data => updateView({ id, data })"
     )
-      view-tab-rows(
-      slot-scope="props",
-      v-bind="props",
-      )
     .fab
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
@@ -60,6 +56,7 @@ import { generateViewTab } from '@/helpers/entities';
 
 import ViewTabs from '@/components/other/view/view-tabs.vue';
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
+import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -71,6 +68,7 @@ export default {
   components: {
     ViewTabs,
     ViewTabRows,
+    ViewTabsWrapper,
   },
   mixins: [
     authMixin,
@@ -87,10 +85,10 @@ export default {
   },
   data() {
     return {
-      isVSpeedDialOpen: false,
       activeTabIndex: null,
       isEditingMode: false,
       isFullScreenMode: false,
+      isVSpeedDialOpen: false,
     };
   },
   computed: {
