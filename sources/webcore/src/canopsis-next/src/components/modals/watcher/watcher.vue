@@ -7,11 +7,9 @@
           v-icon close
     v-divider
     v-card-text
-      div(v-html="compiledTemplate")
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
-          div.mt-2(v-for="watcherEntity in watcherEntities")
-            watcher-entity(:entity="watcherEntity", :template="config.entityTemplate", @addEvent="addEventToQueue")
+          v-runtime-template(:template="compiledTemplate")
       v-fade-transition
         v-layout(v-show="watcherEntitiesPending", column)
           v-flex(xs12)
@@ -31,6 +29,8 @@
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
+import VRuntimeTemplate from 'v-runtime-template';
+
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
@@ -47,6 +47,7 @@ import WatcherEntity from './partial/entity.vue';
 export default {
   name: MODALS.watcher,
   components: {
+    VRuntimeTemplate,
     WatcherEntity,
   },
   mixins: [
@@ -61,14 +62,18 @@ export default {
       attributes: {},
       eventsQueue: [],
       submitting: false,
+      watcherEntitiess: [],
     };
   },
   computed: {
     watcher() {
       return this.getWatcher(this.config.watcherId);
     },
+    watcherEntities() {
+      return this.getWatcherEntitiesListByWatcherId(this.watcher.entity_id);
+    },
     compiledTemplate() {
-      return compile(this.config.modalTemplate, { entity: this.watcher });
+      return `<div>${compile(this.config.modalTemplate, { entity: this.watcher })}</div>`;
     },
   },
   mounted() {
