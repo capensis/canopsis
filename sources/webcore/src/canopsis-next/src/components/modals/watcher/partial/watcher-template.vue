@@ -13,7 +13,6 @@ import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars'
 
 import WatcherEntity from './entity.vue';
 
-
 export default {
   name: MODALS.watcher,
   components: {
@@ -37,10 +36,6 @@ export default {
       type: String,
       default: '',
     },
-    pending: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     compiledTemplate() {
@@ -49,7 +44,7 @@ export default {
   },
   beforeCreate() {
     registerHelper('entities', ({ hash }) => {
-      const entityNameField = hash.name || 'entity.name';
+      const entityNameField = hash.name || 'name';
 
       return new Handlebars.SafeString(`
         <div class="mt-2" v-for="watcherEntity in watcherEntities">
@@ -67,7 +62,7 @@ export default {
   },
   methods: {
     addEventToQueue(event) {
-      this.eventsQueue.push(event);
+      this.$emit('addEvent', event);
     },
   },
 };

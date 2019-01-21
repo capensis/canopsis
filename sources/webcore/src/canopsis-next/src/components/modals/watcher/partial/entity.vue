@@ -3,7 +3,7 @@
     v-expansion-panel
       v-expansion-panel-content(hide-actions)
         v-layout.pa-2(slot="header", :class="entityClass", justify-space-between)
-          span.pl-1.white--text.subheading.entity-title {{ entity | get(entityNameField) }}
+          span.pl-1.white--text.subheading.entity-title {{ entity | get(entityNameField, false, entityNameField) }}
           v-layout(justify-end)
             div(v-for="action in availableActions", :key="action.name")
               v-btn.secondary(
@@ -52,7 +52,6 @@ export default {
     },
   },
   data() {
-    console.log(this.entity);
     return {
       state: this.entity.state.val,
       actionsClicked: [],
