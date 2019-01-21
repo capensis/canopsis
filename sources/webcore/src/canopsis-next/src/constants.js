@@ -306,23 +306,6 @@ export const FILTER_DEFAULT_VALUES = {
     groups: {},
     rules: {},
   },
-  preFilledRules: {
-    component: {
-      field: 'component',
-      operator: FILTER_OPERATORS.equal,
-      input: '',
-    },
-    resource: {
-      field: 'resource',
-      operator: FILTER_OPERATORS.equal,
-      input: '',
-    },
-    connector: {
-      field: 'connector',
-      operator: FILTER_OPERATORS.equal,
-      input: '',
-    },
-  },
 };
 
 export const DATETIME_FORMATS = {
