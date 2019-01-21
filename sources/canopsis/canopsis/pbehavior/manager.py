@@ -23,7 +23,7 @@ Managing PBehavior.
 """
 
 from calendar import timegm
-from datetime import datetime, timedelta
+from datetime import datetime
 from json import loads, dumps
 from time import time
 from uuid import uuid4
@@ -116,11 +116,12 @@ class PBehavior(BasePBehavior):
     AUTHOR = 'author'
     TYPE = 'type_'
     REASON = 'reason'
+    TIMEZONE = 'timezone'
 
     DEFAULT_TYPE = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
@@ -181,31 +182,6 @@ class PBehaviorManager(object):
 
         return config, logger, pb_storage
 
-    # FIXME : this is an ugly hack. This should not exist
-    @staticmethod
-    def parse_offset(offset):
-        """
-        Return a timedelta from a time offset from utc.
-        :param string offset: a string that respect the following format ±00:00
-        or ±0000.
-        :return timedelta: the offset from utc is a timedelta object
-        """
-        minus = offset[0] == "-"
-
-        if offset[3] == ":":
-            offset = offset[1:].split(":")
-        else:
-            offset = [offset[1:3], offset[3:5]]
-
-        hours = int(offset[0])
-        minutes = int(offset[1])
-
-        if minus:
-            hours = -hours
-            minutes = -minutes
-
-        return timedelta(hours=hours, minutes=minutes)
-
     def __init__(self, config, logger, pb_storage):
         """
         :param dict config: configuration
@@ -216,13 +192,14 @@ class PBehaviorManager(object):
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
         self.pb_storage = pb_storage
-        # FIXME : this is an ugly hack. This should not exist.
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
-        str_offset = self.config_data.get("offset_from_utc", "+00:00")
-        self.offset_from_utc = self.parse_offset(str_offset)
+        self.default_tz = self.config_data.get("default_timezone",
+                                               "Europe/Paris")
+        # this line allow us to raise an exception pytz.UnknownTimeZoneError,
+        # if the timezone defined in the pbehabior configuration file is wrong
+        pytz.timezone(self.default_tz)
         self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
-
         self.currently_active_pb = set()
 
     def get(self, _id, query=None):
@@ -239,7 +216,7 @@ class PBehaviorManager(object):
             tstart, tstop, rrule='',
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            type_=PBehavior.DEFAULT_TYPE, reason=''):
+            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None):
         """
         Method creates pbehavior record
 
@@ -262,9 +239,17 @@ class PBehaviorManager(object):
         :param str type_: associated type_ for this pbh
         :param str reason: associated reason for this pbh
         :raises ValueError: invalid RRULE
+        :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
         :rtype: str
         """
+
+        if timezone is None:
+            timezone = self.default_tz
+
+        # this line allow us to raise an exception pytz.UnknownTimeZoneError,
+        # if the timezone defined in the pbehabior configuration file is wrong
+        pytz.timezone(timezone)
 
         if enabled in [True, "True", "true"]:
             enabled = True
@@ -289,18 +274,19 @@ class PBehaviorManager(object):
                     raise ValueError("The message field is missing")
 
         pb_kwargs = {
-            'name': name,
-            'filter': filter,
-            'author': author,
-            'tstart': tstart,
-            'tstop': tstop,
-            'rrule': rrule,
-            'enabled': enabled,
-            'comments': comments,
-            'connector': connector,
-            'connector_name': connector_name,
+            PBehavior.NAME: name,
+            PBehavior.FILTER: filter,
+            PBehavior.AUTHOR: author,
+            PBehavior.TSTART: tstart,
+            PBehavior.TSTOP: tstop,
+            PBehavior.RRULE: rrule,
+            PBehavior.ENABLED: enabled,
+            PBehavior.COMMENTS: comments,
+            PBehavior.CONNECTOR: connector,
+            PBehavior.CONNECTOR_NAME: connector_name,
             PBehavior.TYPE: type_,
-            'reason': reason
+            PBehavior.REASON: reason,
+            PBehavior.TIMEZONE: timezone
         }
         if PBehavior.EIDS not in pb_kwargs:
             pb_kwargs[PBehavior.EIDS] = []
@@ -573,56 +559,40 @@ class PBehaviorManager(object):
         fromts = datetime.utcfromtimestamp
         tstart = pbehavior[PBehavior.TSTART]
         tstop = pbehavior[PBehavior.TSTOP]
+        pbh_tz = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
+
+        try:
+            tz_object = pytz.timezone(pbh_tz)
+        except pytz.UnknownTimeZoneError:
+            self.logger.error("Can not parse the timezone : {}.".format(pbh_tz))
+            raise
 
         if not isinstance(tstart, (int, float)):
             return False
         if not isinstance(tstop, (int, float)):
             return False
 
-        tz = pytz.UTC
-        dttstart = fromts(tstart).replace(tzinfo=tz)
-        dttstop = fromts(tstop).replace(tzinfo=tz)
+        dttstart = fromts(tstart).replace(tzinfo=pytz.UTC)
+        dttstop = fromts(tstop).replace(tzinfo=pytz.UTC)
 
         pbh_duration = tstop - tstart
 
-        dtts = fromts(timestamp).replace(tzinfo=tz)
+        dtts = fromts(timestamp).replace(tzinfo=pytz.UTC)
+        dtts = dtts.astimezone(pytz.timezone(pbh_tz))
         # ddts_offset contains the current timestamp minus the duration of
         # the pbhevior, so the computation of the rrules occurences
         # will include the running occurence. Thus the current pbehavior
         # will be detected.
-        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
+        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=pytz.UTC)
+        dtts_offset = dtts_offset.astimezone(tz_object)
 
         rrule = pbehavior['rrule']
         if rrule:
-            # compute the minimal date from which to start generating
-            # dates from the rrule.
-            # a complementary date (missing_date) is computed and added
-            # at index 0 of the generated dt_list to ensure we manage
-            # dates at boundaries.
-            dt_tstart_date = dtts_offset.date()
-            dt_tstart_time = dttstart.time().replace(tzinfo=tz)
-            dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
-
-            # dates in dt_list at 0 and 1 indexes can be equal, so we generate
-            # three dates to ensure [1] - [2] will give a non-zero timedelta
-            # object.
-
             dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
             if dt is None:
                 return False
 
-            # FIXME : this is an ugly hack. This should not exist
-            substract_day = False
-            new_dtts = dtts - self.offset_from_utc
-
-            if dtts.day != new_dtts.day:
-                substract_day = True
-
             delta = dttstop - dttstart
-
-            if substract_day:
-                # FIXME : this is an ugly hack. This should not exist
-                dt = dt.replace(day=dt.day - 1)
 
             if dt <= dtts <= dt + delta:
                 return True
@@ -741,8 +711,11 @@ class PBehaviorManager(object):
         results = []
 
         for pb in ret_val:
-            if self.check_active_pbehavior(now, pb):
-                results.append(pb)
+            try:
+                if self.check_active_pbehavior(now, pb):
+                    results.append(pb)
+            except ValueError as exept:
+                self.logger.exception("Can't check if the pbehavior is active.")
 
         return results
 

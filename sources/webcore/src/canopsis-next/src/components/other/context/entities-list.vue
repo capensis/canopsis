@@ -5,7 +5,7 @@
         context-search(:query.sync="query")
       v-flex
         pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
-      v-flex
+      v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
         :items="viewFilters",
@@ -15,13 +15,9 @@
         @update:condition="updateSelectedCondition"
         )
       v-flex.ml-4
-        div(v-show="selected.length")
-          v-btn(@click.stop="deleteEntities", icon, small)
-            v-icon delete
-          v-btn(@click.stop="addPbehaviors()", icon, small)
-            v-icon pause
+        mass-actions-panel(:itemsIds="selected")
       v-flex
-        context-fab
+        context-fab(v-if="hasAccessToCreateEntity")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -52,14 +48,7 @@
             :maxLetters="column.maxLetters"
             )
           td
-            v-btn.primary--text(@click.stop="editEntity(props.item)", icon, small)
-              v-icon edit
-            v-btn(@click.stop="duplicateEntity(props.item)", icon, small)
-              v-icon file_copy
-            v-btn.error--text(@click.stop="deleteEntity(props.item)", icon, small)
-              v-icon delete
-            v-btn(@click.stop="addPbehaviors(props.item._id)", icon, small)
-              v-icon pause
+            actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item")
       v-layout.white(align-center)
@@ -73,24 +62,25 @@
 import omit from 'lodash/omit';
 import isString from 'lodash/isString';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
+import Ellipsis from '@/components/tables/ellipsis.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import Ellipsis from '@/components/tables/ellipsis.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
-import modalMixin from '@/mixins/modal';
+import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import entitiesWatcherMixin from '@/mixins/entities/watcher';
 
-import ContextFab from './actions/context-fab.vue';
 import MoreInfos from './more-infos/more-infos.vue';
+import ContextFab from './actions/context-fab.vue';
+import ActionsPanel from './actions/actions-panel.vue';
+import MassActionsPanel from './actions/mass-actions-panel.vue';
 
 /**
  * Entities list
@@ -104,25 +94,31 @@ import MoreInfos from './more-infos/more-infos.vue';
  */
 export default {
   components: {
+    Ellipsis,
     ContextSearch,
     RecordsPerPage,
-    MoreInfos,
-    Ellipsis,
-    ContextFab,
     NoColumnsTable,
     FilterSelector,
+
+    MoreInfos,
+    ContextFab,
+    ActionsPanel,
+    MassActionsPanel,
   },
   mixins: [
-    modalMixin,
+    authMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
-    entitiesWatcherMixin,
   ],
   props: {
     widget: {
       type: Object,
+      required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
       required: true,
     },
   },
@@ -138,6 +134,18 @@ export default {
       }
 
       return [];
+    },
+
+    hasAccessToCreateEntity() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.createEntity);
+    },
+
+    hasAccessToListFilters() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.listFilters);
+    },
+
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.editFilter);
     },
   },
   methods: {
@@ -177,75 +185,6 @@ export default {
       }
 
       return query;
-    },
-    editEntity(item) {
-      if (item.type === ENTITIES_TYPES.watcher) {
-        this.showModal({
-          name: MODALS.createWatcher,
-          config: {
-            title: 'modals.createWatcher.editTitle',
-            item,
-            action: watcher => this.editWatcherWithPopup(watcher),
-          },
-        });
-      } else {
-        this.showModal({
-          name: MODALS.createEntity,
-          config: {
-            title: 'modals.createEntity.editTitle',
-            item,
-            action: entity => this.updateContextEntityWithPopup(entity),
-          },
-        });
-      }
-    },
-    duplicateEntity(item) {
-      if (item.type === 'watcher') {
-        this.showModal({
-          name: MODALS.createWatcher,
-          config: {
-            title: 'modals.createWatcher.duplicateTitle',
-            item,
-            isDuplicating: true,
-            action: watcher => this.duplicateWatcherWithPopup(watcher),
-          },
-        });
-      } else {
-        this.showModal({
-          name: MODALS.createEntity,
-          config: {
-            title: 'modals.createEntity.duplicateTitle',
-            item,
-            isDuplicating: true,
-            action: entity => this.duplicateContextEntityWithPopup(entity),
-          },
-        });
-      }
-    },
-    deleteEntity(item) {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => this.removeContextEntity({ id: item._id }),
-        },
-      });
-    },
-    deleteEntities() {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
-        },
-      });
-    },
-    addPbehaviors(itemId) {
-      this.showModal({
-        name: MODALS.createPbehavior,
-        config: {
-          itemsType: ENTITIES_TYPES.entity,
-          itemsIds: itemId ? [itemId] : this.selected,
-        },
-      });
     },
     fetchList() {
       if (this.hasColumns) {

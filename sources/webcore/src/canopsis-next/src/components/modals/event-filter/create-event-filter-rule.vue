@@ -69,7 +69,7 @@ export default {
         priority,
         enabled,
         actions,
-        externalData,
+        external_data: externalData,
         on_success: onSuccess,
         on_failure: onFailure,
       } = cloneDeep(this.config.rule);
@@ -110,7 +110,10 @@ export default {
         name: MODALS.eventFilterRuleActions,
         config: {
           actions: this.enrichmentOptions.actions,
-          action: updatedActions => this.enrichmentOptions.actions = updatedActions,
+          action: async (updatedActions) => {
+            this.enrichmentOptions.actions = updatedActions;
+            await this.$validator.validate('actions');
+          },
         },
       });
     },
@@ -124,7 +127,7 @@ export default {
       });
     },
     async submit() {
-      if (this.form.type === 'enrichment') {
+      if (this.form.type === EVENT_FILTER_RULE_TYPES.enrichment) {
         const isFormValid = await this.$validator.validate('actions');
         if (isFormValid) {
           this.config.action({

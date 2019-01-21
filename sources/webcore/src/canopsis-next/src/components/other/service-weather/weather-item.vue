@@ -5,12 +5,15 @@
   tile,
   @click.native="showAdditionalInfoModal"
   )
-    div(:class="{ blinking: isBlinking }", )
+    v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
+      v-icon help
+    div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
         v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
           v-icon pause
+
 </template>
 
 <script>
@@ -26,14 +29,18 @@ import {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
-import compile from '@/helpers/handlebars';
+import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
+import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
 import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
+import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+
 export default {
-  mixins: [modalMixin, entitiesWatcherEntityMixin],
+  mixins: [modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -44,6 +51,10 @@ export default {
     },
     widget: {
       type: Object,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -86,7 +97,7 @@ export default {
       };
     },
     compiledTemplate() {
-      return compile(this.template, { watcher: this.watcher });
+      return compile(this.template, { entity: this.watcher });
     },
     getItemClasses() {
       return [
@@ -130,37 +141,50 @@ export default {
     },
 
     async showAlarmListModal() {
-      const initialFilter = JSON.parse(this.watcher.mfilter);
-      const newFilter = Object.keys(initialFilter).reduce((acc, key) => {
-        const newKey = `entity.${key}`;
-        acc[newKey] = initialFilter[key];
-        return acc;
-      }, {});
+      try {
+        const initialFilter = JSON.parse(this.watcher.mfilter);
+        const newFilter = prepareFilterWithFieldsPrefix(initialFilter, 'entity.');
+        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+        const watcherFilter = {
+          title: this.watcher.display_name,
+          filter: newFilter,
+        };
 
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
-      const watcherFilter = {
-        title: this.watcher.display_name,
-        filter: newFilter,
-      };
+        const widgetParameters = {
+          ...this.widget.parameters.alarmsList,
 
-      const widgetParameters = {
-        ...this.widget.parameters.alarmsList,
+          mainFilter: watcherFilter,
+          viewFilters: [watcherFilter],
+        };
 
-        mainFilter: watcherFilter,
-        viewFilters: [watcherFilter],
-      };
+        this.showModal({
+          name: MODALS.alarmsList,
+          config: {
+            widget: {
+              ...widget,
 
-      this.showModal({
-        name: MODALS.alarmsList,
-        config: {
-          widget: {
-            ...widget,
-
-            parameters: {
-              ...widget.parameters,
-              ...widgetParameters,
+              parameters: {
+                ...widget.parameters,
+                ...widgetParameters,
+              },
             },
           },
+        });
+      } catch (err) {
+        this.addErrorPopup({
+          text: this.$t('errors.default'),
+        });
+      }
+    },
+
+    showVariablesHelpModal() {
+      const entityFields = convertObjectFieldToTreeBranch(this.watcher, 'entity');
+      const variables = [entityFields];
+
+      this.showModal({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
         },
       });
     },
@@ -195,5 +219,11 @@ export default {
 
   .cursor-pointer {
     cursor: pointer;
+  }
+
+  .helpBtn {
+    position: absolute;
+    right: 0.2em;
+    top: 0;
   }
 </style>

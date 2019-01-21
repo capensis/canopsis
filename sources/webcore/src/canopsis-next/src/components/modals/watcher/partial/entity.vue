@@ -3,7 +3,7 @@
     v-expansion-panel
       v-expansion-panel-content(hide-actions)
         v-layout.pa-2(slot="header", :class="entityClass", justify-space-between)
-          span.pl-1.white--text.subheading.entity-title {{ entity.name }}
+          span.pl-1.white--text.subheading.entity-title {{ entity | get(entityNameField, false, entityNameField) }}
           v-layout(justify-end)
             div(v-for="action in availableActions", :key="action.name")
               v-btn.secondary(
@@ -31,7 +31,7 @@ import {
   ENTITIES_STATES,
   PBEHAVIOR_TYPES,
 } from '@/constants';
-import compile from '@/helpers/handlebars';
+import { compile } from '@/helpers/handlebars';
 
 import modalMixin from '@/mixins/modal';
 import weatherEventsMixin from '@/mixins/weather-event-actions';
@@ -42,6 +42,10 @@ export default {
     entity: {
       type: Object,
       required: true,
+    },
+    entityNameField: {
+      type: String,
+      default: 'name',
     },
     template: {
       type: String,
@@ -109,7 +113,7 @@ export default {
     },
 
     compiledTemplate() {
-      return compile(this.template, { watcher: this.watcher, entity: this.entity });
+      return compile(this.template, { entity: this.entity });
     },
 
     isPaused() {

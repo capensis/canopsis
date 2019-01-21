@@ -55,7 +55,7 @@
             )
               alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
             td
-              actions-panel(:item="props.item", :widget="widget")
+              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           time-line(:alarmProps="props.item")
       v-layout.white(align-center)
@@ -124,6 +124,14 @@ export default {
       type: Object,
       required: true,
     },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    tabId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -144,11 +152,11 @@ export default {
     },
 
     hasAccessToListFilters() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 
     hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
     },
   },
   methods: {

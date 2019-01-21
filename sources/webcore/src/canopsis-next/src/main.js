@@ -8,6 +8,7 @@ import frValidationMessages from 'vee-validate/dist/locale/fr';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
+import VueClipboard from 'vue-clipboard2';
 
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
@@ -38,6 +39,15 @@ Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {
     getPrefix: () => '',
+    getStyleColor(details, calendarEvent, past, cancelled) {
+      let { color } = details;
+
+      if (!past && !cancelled) {
+        color = this.blend(color, this.inactiveBlendAmount, this.inactiveBlendTarget);
+      }
+
+      return color;
+    },
   },
   data: {
     defaults: {
@@ -69,6 +79,8 @@ Vue.component('v-expansion-panel-content', VExpansionPanelContent);
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
+
+Vue.use(VueClipboard);
 
 Vue.use(VeeValidate, {
   i18n,
