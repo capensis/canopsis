@@ -14,9 +14,9 @@ Certains moteurs sont des moteurs propriétaires non disponibles dans la version
 
 **Documentation des différentes parties :**
 
-[Documentation connecteurs](../../guide-connecteurs)  
-[Documentation moteurs](../moteurs)  
-[Documentation base de données](../troubleshooting/bdd-requetes-de-base.md)  
-[Documentation Web UI](../../guide-utilisation/interface)  
+- [Documentation connecteurs](../../guide-connecteurs)  
+- [Documentation moteurs](../moteurs)  
+- [Documentation base de données](../troubleshooting/bdd-requetes-de-base.md)  
+- [Documentation Web UI](../../guide-utilisation/interface)  
 
 Plus de détails sur l'enchaînement des moteurs [disponible ici](../moteurs/schema-enchainement-moteurs.md)
