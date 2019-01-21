@@ -1,25 +1,36 @@
-# connecteur de base de données SQL vers Canopsis / AMQP
+# Connecteur de base de données SQL vers Canopsis / AMQP
 
-## Sommaire 
+## Sommaire
 
-[MySQL/MariaDB](#mysql-mariadb)  
-[PostGreSQL](#postgresql)  
-[Oracle](#oracle)  
-[DB2](#db2)  
-[MSSQL](#mssql)  
+- [Connecteur de base de données SQL vers Canopsis / AMQP](#connecteur-de-base-de-données-sql-vers-canopsis-amqp)
+	- [Sommaire](#sommaire)
+	- [Prérequis](#prérequis)
+		- [Description](#description)
+	- [Installation](#installation)
+	- [Installation d'un « dialect »](#installation-dun-dialect-)
+		- [MySQL / MariaDB](#mysql-mariadb)
+		- [PostgreSQL](#postgresql)
+		- [Oracle](#oracle)
+		- [Plus de détails sur les URL de connexion](#plus-de-détails-sur-les-url-de-connexion)
+	- [Utilisation](#utilisation)
+		- [Configuration du fichier INI](#configuration-du-fichier-ini)
+		- [Injection de valeurs avec `{sql_last_value}`](#injection-de-valeurs-avec-sqllastvalue)
+	- [Métriques](#métriques)
+		- [DB2](#db2)
+		- [MSSQL](#mssql)
 
-# Pré requis :
+## Prérequis
 
-[kombu](https://pypi.python.org/pypi/kombu)  
-[sqlalchemy](https://pypi.python.org/pypi/sqlalchemy)  
+- [kombu](https://pypi.python.org/pypi/kombu)  
+- [sqlalchemy](https://pypi.python.org/pypi/sqlalchemy)  
 
-## Description
+### Description
 
-usage: `python connector-sql2canopsis.py [-h] -c CONFIG [-l LOGLEVEL]`
+**usage:** `python connector-sql2canopsis.py [-h] -c CONFIG [-l LOGLEVEL]`
 
-Ce script Python permet d'exécuter des requêtes SQL et de publier ses résultats vers Canopsis avec AMQP.
+Ce script Python permet d'exécuter des requêtes SQL et de publier ses résultats vers Canopsis via le protocol AMQP (Advanced Message Queuing Protocol).
 
-Il prend obligatoirement en paramètre un fichier de configuration INI (`-c CONFIG`) et optionnellement un degré d'alerte (`-l LOGLEVEL`).
+Il prend obligatoirement en paramètre un fichier de configuration au format **INI** (`-c CONFIG`) et optionnellement un degré d'alerte pour la verbosité : (`-l LOGLEVEL`).
 
 ## Installation
 
@@ -35,13 +46,21 @@ $ python -c 'import sys; print sys.maxunicode'
 
 Si ces conditions ne sont pas réunies (c'est-à-dire si l'on a un autre résultat que `1114111`, ou une plus ancienne version de Python ou bien Python 3), cela signifie que l'environnement n'est pas compatible avec ce script.
 
-Mais si tout est conforme, on peut alors installer pip et les fichiers de développement Python (note : sur CentOS, le dépôt EPEL doit être activé) :
+Mais si tout est conforme, on peut alors installer pip et les fichiers de développement Python
+> Note : sur CentOS, le dépôt EPEL doit être activé
+
+
+Pour Debian / Ubuntu :
 ```shell
-# Pour Debian / Ubuntu
 $ sudo apt-get install python-pip python-dev
-# Pour Red Hat / CentOS
+```
+
+Pour Red Hat / CentOS :
+```shell
 $ sudo yum install python-pip python-devel
 ```
+
+
 
 On installe et on met en place virtualenv :
 ```shell
@@ -70,17 +89,25 @@ On a aussi besoin d'installer un `dialect` sqlachemy (<http://docs.sqlalchemy.or
 ### MySQL / MariaDB
 
 Pour MySQL / MariaDB, il faut tout d'abord installer ses fichiers de développement :
-```shell
-# Pour Debian / Ubuntu
-$ sudo apt-get install libmariadbclient-dev
-# Ou, pour les versions plus anciennes (ex : Debian < 9)
-$ sudo apt-get install libmysqlclient-dev
 
-# Pour Red Hat / CentOS
-$ sudo yum install mariadb-devel mariadb-libs
-# Ou, pour les versions plus anciennes (ex : CentOS < 7)
-$ sudo yum install mysql-devel mysql-libs
-```
+
+Pour Debian / Ubuntu :
+> ```shell
+> $ sudo apt-get install libmariadbclient-dev
+> ```
+> Ou, pour les versions plus anciennes (ex : Debian < 9)
+> ```shell
+> $ sudo apt-get install libmysqlclient-dev
+> ```
+
+Pour Red Hat / CentOS :
+> ```shell
+> $ sudo yum install mariadb-devel mariadb-libs
+> ```
+> Ou, pour les versions plus anciennes (ex : CentOS < 7)
+> ```shell
+> $ sudo yum install mysql-devel mysql-libs
+> ```
 
 Installation du module Python nécessaire pour MySQL / MariaDB :
 ```shell
@@ -96,12 +123,16 @@ url=mysql://user:password@mysql_host/database
 ### PostgreSQL
 
 Pour PostgreSQL, certaines configurations nécessitent l'installation de ses fichiers de développement :
-```shell
-# Pour Debian / Ubuntu
-$ sudo apt-get install postgresql-server-dev-all libpq-dev
-# Pour Red Hat / CentOS
-$ sudo yum install postgresql-libs postgresql-devel
-```
+
+Pour Debian / Ubuntu :
+> ```shell
+> $ sudo apt-get install postgresql-server-dev-all libpq-dev
+> ```
+
+Pour Red Hat / CentOS :
+> ```shell
+> $ sudo yum install postgresql-libs postgresql-devel
+> ```
 
 ```shell
 (virtualenv) pip install psycopg2
@@ -115,7 +146,8 @@ url=postgresql://user:password@postgresql_host/database
 
 ### Oracle
 
-Pré-requis : récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`). Disponibles sur <http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html> (attention, un compte est nécessaire).
+**Pré-requis :** récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`).
+Disponibles sur [sur le site de l'éditeur](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html) (attention, un compte est nécessaire).
 
 Définir le répertoire d'installation d'Oracle Instant Client :
 ```shell
@@ -134,12 +166,17 @@ On peut alors installer le module pip :
 ```
 
 L'URL de connexion à ajouter au fichier de configuration sera de ce type (voir plus bas) :
-```ini
-[database]
-url=oracle://user:password@oracle_host:1521/sid
-# Variante
-#url=oracle+cx_oracle://user:password@tnsname
-```
+
+Il existe de manière de faire :
+
+> ```ini
+> [database]
+> url=oracle://user:password@oracle_host:1521/sid
+> ```
+> ```ini
+> [database]
+> url=oracle+cx_oracle://user:password@tnsname
+> ```
 
 ### Plus de détails sur les URL de connexion
 
@@ -231,6 +268,6 @@ Lorsque plusieurs métriques sont utilisées pour générer des évènements, le
 
 Pour ce qui est de DB2, l'un des systèmes de gestion de base de données propriétaire d'IBM, veillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/#production-ready), ou encore [ici](https://github.com/ibmdb/python-ibmdb).
 
-### MSSQL 
+### MSSQL
 
 Pour ce qui est de DB2, le système de gestion de base de données propriétaire de Microsoft, veillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/mssql.html), ou encore [ici](https://docs.sqlalchemy.org/en/latest/core/engines.html#microsoft-sql-server).
