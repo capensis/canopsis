@@ -1,7 +1,5 @@
 # Mail vers Canopsis
 
-# /!\ Documentation CAT /!\
-
 !!! attention
     Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
 
