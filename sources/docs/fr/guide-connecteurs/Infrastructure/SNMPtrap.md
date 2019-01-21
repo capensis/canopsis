@@ -175,6 +175,7 @@ $  snmptrap -v 2c -c public IP_RECEPTEUR_SNMP '' NAGIOS-NOTIFY-MIB::nSvcEvent nS
 
 Une fois cette commande exécutée, le connecteur recevra le trap, le convertira en JSON et le transmettra à Canopsis dans l'exchange `canopsis.snmp`.
 
+
 ## Informations complémentaires
 
-TRAP-TYPE et NOTIFICATION-TRAP
+Pour la suite de la configuration, se référer à la documentation sur le [moteur `snmp`](../../guide-administration/moteurs/moteur-snmp.md).
