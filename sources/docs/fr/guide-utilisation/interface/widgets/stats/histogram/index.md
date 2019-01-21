@@ -15,6 +15,10 @@
 
 ### Présentation du widget
 
+Le widget Histogramme de statistiques vous permet de représenter un ensemble de statistiques, sous forme d'histogramme.
+
+Il vous permet d'afficher les statistiques souhaitées pour un ou plusieurs groupes, représentants tout ou partie des entités présentes dans Canopsis.
+
 ## Guide exploitant
 
 ### Paramètres du widget
