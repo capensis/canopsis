@@ -53,6 +53,7 @@
     "@vue/test-utils": "^1.0.0-beta.10",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.0.4",
+    "husky": "^1.3.1",
     "jest-localstorage-mock": "^2.2.0",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.7.2",
@@ -69,8 +70,10 @@
     "last 2 versions",
     "not ie <= 8"
   ],
-  "gitHooks": {
-    "pre-commit": "lint-staged"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.js": [
