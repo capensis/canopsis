@@ -66,11 +66,15 @@ Pour cela, nous devons :
 
 **Envoi des MIB**
 
+Le paquet snmp-mibs-downloader peut être nécessaire. Il embarque lui-même une bibliothèque de MIBs et permet, au besoin, d'en télécharger automatiquement des complémentaires sur le net.
+
+Ici par exemple, le paquet `snmp-mibs-downloader` a été installé sur la machine.
+
 Lors de l'upload des MIB, Canopsis concatène les fichiers uploadés par ordre
 alphabétique. On fera donc particulièrement attention à renommer les fichiers
-pour que l’ordre alphabétique des MIB soit cohérent avec les fichiers à importés
+pour que l’ordre alphabétique des MIB soit cohérent avec les fichiers à importés.
 
-Ici par exemple, le fichier `Root` qui doit être traité avant le fichier `Notify`.
+Ici par exemple, le fichier `nagios-root.mib` doit être traité avant le fichier `NAGIOS-NOTIFY-MIB`. Ils ont donc été respectivement renommés en `NAGIOS1-ROOT-MIB` et `NAGIOS2-ROOT-MIB`.
 
 On sélectionne les fichiers.
 
@@ -95,3 +99,8 @@ On exécute à nouveau l'émisson du trap SNMP :
 On contrôle le bac :
 
 ![img6](img/scenario_e5.png)
+
+La remontée de l'alarme dans le bac s'opère :
+
+- À chaque changement d'état
+- Lorsqu'un ACK a été posé sur l'alarme et qu'elle remonte à nouveau.

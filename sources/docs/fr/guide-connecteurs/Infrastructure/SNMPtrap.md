@@ -167,7 +167,21 @@ Voici l'objet que nous allons utiliser pour générer un trap :
    ::= { nagiosNotify 7 }
 ```
 
-Pour générer le trap adéquat, voici la ligne de commande utilisée :
+Pour générer le trap adéquat, nous allons utiliser l'outil snmptrap.
+
+Pour installer snmptrap sous Debian :
+
+```sh
+# apt-get install snmp
+```
+
+Pour installer snmptrap sous Centos :
+
+```sh
+# yum install net-snmp-utils
+```
+
+Voici la ligne de commande utilisée avec snmptrap pour générer le trap :
 
 ```sh
 $  snmptrap -v 2c -c public IP_RECEPTEUR_SNMP '' NAGIOS-NOTIFY-MIB::nSvcEvent nSvcHostname s "Equipement Impacte" nSvcDesc s "Ressource Impactee" nSvcStateID i 3 nSvcOutput s "Message de sortie du trap SNMP"  
