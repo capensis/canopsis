@@ -1,24 +1,21 @@
 <template lang="pug">
   div
-    view-tabs.absolute(
-    v-if="isTabsChanged",
-    :value="value",
+    view-tabs.tabs-absolute(
+    v-if="view && isTabsChanged",
     :view="view",
     :tabs.sync="tabs",
     :isTabsChanged="isTabsChanged",
     :isEditingMode="isEditingMode",
-    :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateViewMethod(data)"
-    hide-slider,
+    :hasUpdateAccess="hasUpdateAccess"
     )
     v-fade-transition
       div
         .v-overlay.v-overlay--active(v-show="view && isTabsChanged")
-          v-btn(@click="submit") Submit
-          v-btn(@click="cancel") Cancel
+          v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+          v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
-    :value="value",
     :view="view",
+    :value="value",
     :tabs.sync="tabs",
     :isTabsChanged="isTabsChanged",
     :isEditingMode="isEditingMode",
@@ -92,19 +89,24 @@ export default {
     cancel() {
       this.tabs = [...this.view.tabs];
     },
-    submit() {
-      this.updateViewMethod({
+    async submit() {
+      const activeTab = this.view.tabs[this.value];
+      const activeTabIndex = this.tabs.findIndex(tab => activeTab._id === tab._id);
+
+      await this.updateViewMethod({
         ...this.view,
 
         tabs: this.tabs,
       });
+
+      this.$emit('input', activeTabIndex);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .absolute {
+  .tabs-absolute {
     position: absolute;
     z-index: 6;
     width: 100%;

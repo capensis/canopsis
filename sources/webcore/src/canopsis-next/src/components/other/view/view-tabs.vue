@@ -4,8 +4,8 @@
     ref="tabs",
     :key="vTabsKey",
     :value="value",
-    :class="{ hidden: this.tabs.length < 2 }",
-    :hide-slider="hideSlider",
+    :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
+    :hide-slider="isTabsChanged",
     color="secondary lighten-2",
     slider-color="primary",
     dark,
@@ -17,11 +17,10 @@
       @end="onDragEnd",
       @input="$emit('update:tabs', $event)"
       )
-        v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", ripple)
+        v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
           span {{ tab.title }}
           v-btn(
           v-show="hasUpdateAccess && isEditingMode",
-          :disabled="isTabsChanged",
           small,
           flat,
           icon,
@@ -30,7 +29,6 @@
             v-icon(small) edit
           v-btn(
           v-show="hasUpdateAccess && isEditingMode",
-          :disabled="isTabsChanged",
           small,
           flat,
           icon,
@@ -86,11 +84,7 @@ export default {
     },
     updateViewMethod: {
       type: Function,
-      required: true,
-    },
-    hideSlider: {
-      type: Boolean,
-      default: false,
+      default: () => {},
     },
   },
   computed: {
@@ -105,21 +99,12 @@ export default {
     },
   },
   watch: {
-    isEditingMode(value) {
+    isEditingMode() {
       this.$nextTick(this.callTabsOnResizeMethod);
-
-      if (!value) {
-        this.updateViewMethod({
-          ...this.view,
-
-          tabs: this.tabs,
-        });
-      }
     },
     tabs: {
       immediate: true,
-      handler(value) {
-        console.log(value);
+      handler() {
         this.onUpdateTabs();
       },
     },
@@ -200,5 +185,24 @@ export default {
   .draggable-item {
     position: relative;
     transform: translateZ(0);
+
+    .tabs-editing & {
+      cursor: move;
+
+      & /deep/ .v-tabs__item {
+        cursor: move;
+      }
+    }
+
+    & /deep/ .v-tabs__item--disabled {
+      color: #fff;
+      opacity: 1;
+
+      button {
+        color: rgba(255,255,255,0.3) !important;
+        box-shadow: none !important;
+        pointer-events: none;
+      }
+    }
   }
 </style>
