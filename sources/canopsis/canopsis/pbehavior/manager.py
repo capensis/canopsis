@@ -776,8 +776,7 @@ class PBehaviorManager(object):
         watchers_ids = set()
         for watcher in self.get_wacher_on_entities(merged_eids):
             watchers_ids.add(watcher['_id'])
-        for watcher_id in watchers_ids:
-            watcher_manager.compute_state(watcher_id)
+        watcher_manager.compute_watchers(list(watchers_ids))
 
         return len(list(watchers_ids))
 

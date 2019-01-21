@@ -109,7 +109,7 @@ class Watcher:
         except ValueError:
             self.context_graph.update_entity(entity)
 
-        self.compute_state(watcher_id)
+        self.compute_watchers([watcher_id])
 
         return True  # TODO: return really something
 
@@ -170,10 +170,11 @@ class Watcher:
 
         :param alarm_id: alarm id
         """
-        watchers = self.context_graph.get_entities(query={'type': 'watcher'})
-        for i in watchers:
-            if alarm_id in i['depends']:
-                self.compute_state(i['_id'])
+        impacted_watchers = self.context_graph.get_entities(query={
+            'type': 'watcher',
+            'depends': alarm_id
+        })
+        self.compute_watchers(impacted_watchers)
 
     def _get_enabled_watchers_with_dependencies(self, ids=None):
         """
