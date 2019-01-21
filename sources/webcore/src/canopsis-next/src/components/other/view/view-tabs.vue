@@ -1,48 +1,47 @@
 <template lang="pug">
-  div
-    v-tabs.view-tabs(
-    ref="tabs",
-    :key="vTabsKey",
-    :value="value",
-    :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
-    :hide-slider="isTabsChanged",
-    color="secondary lighten-2",
-    slider-color="primary",
-    dark,
-    @change="$emit('input', $event)"
+  v-tabs.view-tabs(
+  ref="tabs",
+  :key="vTabsKey",
+  :value="value",
+  :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
+  :hide-slider="isTabsChanged",
+  color="secondary lighten-2",
+  slider-color="primary",
+  dark,
+  @change="$emit('input', $event)"
+  )
+    draggable.d-flex(
+    :value="tabs",
+    :options="draggableOptions",
+    @end="onDragEnd",
+    @input="$emit('update:tabs', $event)"
     )
-      draggable.d-flex(
-      :value="tabs",
-      :options="draggableOptions",
-      @end="onDragEnd",
-      @input="$emit('update:tabs', $event)"
-      )
-        v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
-          span {{ tab.title }}
-          v-btn(
-          v-show="hasUpdateAccess && isEditingMode",
-          small,
-          flat,
-          icon,
-          @click.stop="showUpdateTabModal(tab)"
-          )
-            v-icon(small) edit
-          v-btn(
-          v-show="hasUpdateAccess && isEditingMode",
-          small,
-          flat,
-          icon,
-          @click.stop="showDeleteTabModal(tab)"
-          )
-            v-icon(small) delete
-      v-tabs-items(v-if="$scopedSlots.default", active-class="active-view-tab")
-        v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
-          slot(
-          :tab="tab",
-          :isEditingMode="isEditingMode",
-          :hasUpdateAccess="hasUpdateAccess",
-          :updateTabMethod="updateTab"
-          )
+      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
+        span {{ tab.title }}
+        v-btn(
+        v-show="hasUpdateAccess && isEditingMode",
+        small,
+        flat,
+        icon,
+        @click.stop="showUpdateTabModal(tab)"
+        )
+          v-icon(small) edit
+        v-btn(
+        v-show="hasUpdateAccess && isEditingMode",
+        small,
+        flat,
+        icon,
+        @click.stop="showDeleteTabModal(tab)"
+        )
+          v-icon(small) delete
+    v-tabs-items(v-if="$scopedSlots.default", active-class="active-view-tab")
+      v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
+        slot(
+        :tab="tab",
+        :isEditingMode="isEditingMode",
+        :hasUpdateAccess="hasUpdateAccess",
+        :updateTabMethod="updateTab"
+        )
 </template>
 
 <script>
