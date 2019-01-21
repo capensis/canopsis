@@ -6,13 +6,16 @@ Voici le listing des connecteurs qui peuvent fournir des évènements entrants �
 
 ## Base de données
 
-### Mysql, PostgeSQL, Oracle, DB2, MSSQL 
+### Mysql, PostgeSQL, Oracle, DB2, MSSQL
 [connector-sql2canopsis](Base-de-donnees/Mysql-MariaDB-PostgreSQL-Oracle.md)  
 
 ## Infrastructure
 
 ### Logstash
 [logstash2canopsis](Infrastructure/Logstash.md)  
+
+### Mail
+[mail2canopsis](Infrastructure/Mail.md)  
 
 ### SNMPtrap
 [SNMPtrap - snmp2canopsis](Infrastructure/SNMPtrap.md)  
