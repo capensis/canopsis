@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Cette documentation détaille la remontée des logs vers Canopsis via le connecteur `mail2canopsis`.
+Cette documentation détaille la remontée des logs vers Canopsis via le connecteur `email2canopsis`.
 
 ## Fonctionnement
 
@@ -59,7 +59,7 @@ template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 
 Les blocs `[amqp]` et `[redis]` contiennent respectivement la configuration pour la connexion au bus RabbitMQ et au cache Redis.
 
-Il faut donc vérifier que les URLs qui y figurent sont les bonnes.
+Il faut donc vérifier que les URL qui y figurent sont les bonnes.
 
 #### Configuration de la Boîte aux Lettres
 
@@ -105,28 +105,29 @@ timestamp.output=timestamp
 ```
 
 Les clefs sont divisées en deux parties, séparées par un point :
- - à gauche, une *racine* : le nom de la variable à insérer dans l'événement généré
- - à droite, une *méthode* : c'est-à-dire l'action de transformation à appliquer
+- à gauche, une *racine* : le nom de la variable à insérer dans l'événement généré
+- à droite, une *méthode* : c'est-à-dire l'action de transformation à appliquer
 
 Les actions peuvent être les suivantes :
- * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
- * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont appliquables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2, ...
+* *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
+* *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont appliquables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2, ...
 
 La partie droite décrit les régles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
- - MAIL_BODY, MAIL_DATE, MAIL_ID, MAIL_SENDER, et MAIL_SUBJECT sont les différentes parties de l'email
- - line(a) sélectionne une ligne entière numéro a
- - line(a).word(b) sélectionne le b-ième mot de la ligne a
- - line(a).word(b).untilword(c) sélectionne tous les mots entre le b-ième et le c-ième sur la ligne a
- - line(a).word(b).untilword() sélectionne tous les mots à partir du b-ième jusqu'à la fin de la ligne a
- - line(a).after(d) sélectionne tous les mots après le mot d
- - line(a).after(d).untilword(c) sélectionne les mots après le mot d et c mots ensuite
- - line(a).after(d).word(b).untilword(c) sélectionne les mots après le mot d, à partir du b-ième jusqu'au c-ième
- - line(a).before(e) sélectionne tous les mots avant e
- - line(a).before(e).word(c) sélectionne tous les mots avant e, mais en commençant au c-ième
+- MAIL_BODY, MAIL_DATE, MAIL_ID, MAIL_SENDER, et MAIL_SUBJECT sont les différentes parties de l'email
+- line(a) sélectionne une ligne entière numéro a
+- line(a).word(b) sélectionne le b-ième mot de la ligne a
+- line(a).word(b).untilword(c) sélectionne tous les mots entre le b-ième et le c-ième sur la ligne a
+- line(a).word(b).untilword() sélectionne tous les mots à partir du b-ième jusqu'à la fin de la ligne a
+- line(a).after(d) sélectionne tous les mots après le mot d
+- line(a).after(d).untilword(c) sélectionne les mots après le mot d et c mots ensuite
+- line(a).after(d).word(b).untilword(c) sélectionne les mots après le mot d, à partir du b-ième jusqu'au c-ième
+- line(a).before(e) sélectionne tous les mots avant e
+- line(a).before(e).word(c) sélectionne tous les mots avant e, mais en commençant au c-ième
 
 MAIL_DATE est automatiquement convertie en objet date, inutile d'applique d'action 'dateformat' dessus.
 
-**ATTENTION :** les numéros de lignes et de mots commencent à partir de 0, non de 1.
+!!! attention
+    Les numéros de lignes et de mots commencent à partir de 0, non de 1.
 
 Exemple : La séquence à la 1° ligne située entre les 5° et le 18° mots sont donc sélectionnables avec la ligne `line(0).word(4).untilword(17)`.
 

@@ -140,16 +140,16 @@ exchange = canopsis.snmp
 Pour installer `snmptrap` sur Debian :
 
 ```bash
-# apt-get install snmp
+apt-get install snmp
 ```
 
 Sur Centos :
 
 ```bash
-# yum install net-snmp-utils
+yum install net-snmp-utils
 ```
 
-Nous allons nous appuyer sur la MIB Nagios [NAGIOS-NOTIFY-MIB](https://github.com/monitoring-plugins/nagios-mib/blob/master/MIB/NAGIOS-NOTIFY-MIB) et sa dépendance [nagios-root-mib](https://github.com/nagios-plugins/nagios-mib/blob/master/src-mib/nagios-root.mib) dans le répertoire de MIBs SNMP `/usr/share/snmp/mibs`.
+Nous allons nous appuyer sur la MIB Nagios [NAGIOS-NOTIFY-MIB](https://github.com/monitoring-plugins/nagios-mib/blob/master/MIB/NAGIOS-NOTIFY-MIB) et sa dépendance [nagios-root-mib](https://github.com/nagios-plugins/nagios-mib/blob/master/src-mib/nagios-root.mib) dans le répertoire de MIB SNMP `/usr/share/snmp/mibs`.
 
 Puisqu'il s'agit de traps SNMP, il faut s'intéresser au type `NOTIFICATION TYPE` présent dans les MIB.
 
@@ -167,18 +167,18 @@ Voici l'objet que nous allons utiliser pour générer un trap :
    ::= { nagiosNotify 7 }
 ```
 
-Pour générer le trap adéquat, nous allons utiliser l'outil snmptrap.
+Pour générer le trap adéquat, nous allons utiliser l'outil `snmptrap`.
 
-Pour installer snmptrap sous Debian :
+Pour installer `snmptrap` sous Debian :
 
 ```sh
-# apt-get install snmp
+apt-get install snmp
 ```
 
-Pour installer snmptrap sous Centos :
+Pour installer `snmptrap` sous Centos :
 
 ```sh
-# yum install net-snmp-utils
+yum install net-snmp-utils
 ```
 
 Voici la ligne de commande utilisée avec snmptrap pour générer le trap :

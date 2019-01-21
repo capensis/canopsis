@@ -3,7 +3,7 @@
 !!! attention
     Ce moteur n'est disponible que dans l'édition CAT de Canopsis.
 
-Le moteur `snmp` permet de traiter les traps snmp récupérés par le connecteur `snmp2canopsis` selon des règles prédéfinies par l'utilisateur.
+Le moteur `snmp` permet de traiter les traps SNMP récupérés par le connecteur `snmp2canopsis` selon des règles prédéfinies par l'utilisateur.
 
 ## Fonctionnement
 
@@ -66,13 +66,13 @@ Pour cela, nous devons :
 
 **Envoi des MIB**
 
-Le paquet snmp-mibs-downloader peut être nécessaire. Il embarque lui-même une bibliothèque de MIBs et permet, au besoin, d'en télécharger automatiquement des complémentaires sur le net.
+Le paquet snmp-mibs-downloader peut être nécessaire. Il embarque lui-même une bibliothèque de MIB et permet, au besoin, d'en télécharger automatiquement des complémentaires sur le net.
 
 Ici par exemple, le paquet `snmp-mibs-downloader` a été installé sur la machine.
 
 Lors de l'upload des MIB, Canopsis concatène les fichiers uploadés par ordre
 alphabétique. On fera donc particulièrement attention à renommer les fichiers
-pour que l’ordre alphabétique des MIB soit cohérent avec les fichiers à importés.
+pour que l’ordre alphabétique des MIB soit cohérent avec les fichiers à importer.
 
 Ici par exemple, le fichier `nagios-root.mib` doit être traité avant le fichier `NAGIOS-NOTIFY-MIB`. Ils ont donc été respectivement renommés en `NAGIOS1-ROOT-MIB` et `NAGIOS2-ROOT-MIB`.
 

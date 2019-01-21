@@ -15,7 +15,7 @@ Voici le listing des connecteurs qui peuvent fournir des évènements entrants �
 [logstash2canopsis](Infrastructure/Logstash.md)  
 
 ### Mail
-[mail2canopsis](Infrastructure/Mail.md)  
+[email2canopsis](Infrastructure/Mail.md)  
 
 ### SNMPtrap
 [SNMPtrap - snmp2canopsis](Infrastructure/SNMPtrap.md)  
