@@ -2,21 +2,29 @@
 
 ## Sommaire
 
-1. [Introduction](#introduction)
-2. [Fonctionnement](#fonctionnement)
-3. [Les informations AMQP](#les-informations-amqp)
-4. [La structure d'un event](#la-structure-dun-event)
-5. [Exemple de configuration logstash](#exemple-de-configuration-logstash)
-    1. [Input](#input)
-    2. [Filter](#filter)
-    3. [Output](#output)
-6. [Exemple d'event](#exemples)
-7. [Troubleshootings](#troubleshootings)
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Logstash vers canopsis](#logstash-vers-canopsis)
+	- [Sommaire](#sommaire)
+	- [Introduction](#introduction)
+	- [Fonctionnement](#fonctionnement)
+	- [Les informations AMQP](#les-informations-amqp)
+	- [La structure d'un event](#la-structure-dun-event)
+	- [Exemple de configuration logstash](#exemple-de-configuration-logstash)
+			- [Input](#input)
+			- [Filter](#filter)
+			- [Output](#output)
+	- [Exemples](#exemples)
+	- [Troubleshootings](#troubleshootings)
+			- [L'event ne remonte pas dans Canopsis](#levent-ne-remonte-pas-dans-canopsis)
+
+<!-- /TOC -->
 
 ## Introduction
 
 Cette documentation détaille la remontée des logs vers Canopsis via Logstash.
-Connaître les base du fonctionnement de Logstash vous permettra d'avoir une meilleur compréhension de ce qui va suivre. Pour cela, je vous invite à aller vous documenter sur [l'input](https://www.elastic.co/guide/en/logstash/6.2/input-plugins.html), [les filtres](https://www.elastic.co/guide/en/logstash/6.2/filter-plugins.html) et enfin [l'output](https://www.elastic.co/guide/en/logstash/6.2/output-plugins.html)
+Connaître les bases du fonctionnement de Logstash vous permettra d'avoir une meilleure compréhension de ce qui va suivre.
+Pour cela, je vous invite à aller vous documenter sur [l'input](https://www.elastic.co/guide/en/logstash/6.2/input-plugins.html), [les filtres](https://www.elastic.co/guide/en/logstash/6.2/filter-plugins.html) et enfin [l'output](https://www.elastic.co/guide/en/logstash/6.2/output-plugins.html)
 
 ## Fonctionnement
 
@@ -101,7 +109,7 @@ filter {
           convert => ["[status]", "integer"]
         }
 
-   # S'assurer que l'on traite bien les event comportant le tag *syslog* défini dans l'input
+    # S'assurer que l'on traite bien les events comportant le tag *syslog* défini dans l'input
         if "syslog" in [tags] {
 
             # Parse de la log et récupération des informations nécéssaires pour l'event et/ou la routing_key. Exemple 'component',
@@ -118,7 +126,7 @@ filter {
             }
         }
 
-        Ex: exemple de traitement d'une valeur pour un besoin précis (Facultatif)
+        # Ex: exemple de traitement d'une valeur pour un besoin précis (Facultatif)
         mutate {
             update => { "resource" => "%{resource}-%{pid}" }
         }
