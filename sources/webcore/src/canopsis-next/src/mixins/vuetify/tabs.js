@@ -8,8 +8,8 @@ export default {
       }
     },
     callTabsUpdateTabsMethod() {
-      if (this.$refs.tabs && isFunction(this.$refs.tabs.updateTabs)) {
-        this.$refs.tabs.updateTabs();
+      if (this.$refs.tabs && isFunction(this.$refs.tabs.updateTabsView)) {
+        this.$refs.tabs.updateTabsView();
       }
     },
   },
