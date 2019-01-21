@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
