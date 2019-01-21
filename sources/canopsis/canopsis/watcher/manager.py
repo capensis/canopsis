@@ -38,13 +38,16 @@ class Watcher:
         self.sla_storage = Middleware.get_middleware_by_uri(
             'storage-default-sla://')
 
-        self.watcher_collection = MongoCollection(self.watcher_storage._backend)
-        self.alarm_collection = MongoCollection(self.alert_storage._backend)
-
         self.context_graph = ContextGraph(self.logger)
         self.pbehavior_manager = PBehaviorManager(
             *PBehaviorManager.provide_default_basics()
         )
+
+        self.watcher_collection = MongoCollection(self.watcher_storage._backend)
+        self.alarm_collection = MongoCollection(self.alert_storage._backend)
+        self.entities_collection = MongoCollection(self.context_graph.ent_storage._backend)
+        self.pbehavior_collection = self.pbehavior_manager.pb_store
+
         self.amqp_pub = amqp_pub
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), self.logger)
@@ -205,7 +208,7 @@ class Watcher:
         # but this may break previous behaviors.
         pipeline.append({
             "$lookup": {
-                "from": "default_entities",
+                "from": self.entities_collection.name,
                 "localField": "watcher._id",
                 "foreignField": "_id",
                 "as": "entity"
@@ -228,7 +231,7 @@ class Watcher:
         # Get each watcher's dependencies.
         pipeline.append({
             "$lookup": {
-                "from": "default_entities",
+                "from": self.entities_collection.name,
                 "localField": "entity.depends",
                 "foreignField": "_id",
                 "as": "depends_entity"
@@ -303,7 +306,7 @@ class Watcher:
         # Get the pbehaviors that affect each alarm.
         pipeline.append({
             "$lookup": {
-                "from": "default_pbehavior",
+                "from": self.pbehavior_collection.name,
                 "localField": "alarm.d",
                 "foreignField": "eids",
                 "as": "pbehaviors"

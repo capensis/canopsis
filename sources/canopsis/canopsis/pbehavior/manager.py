@@ -199,7 +199,7 @@ class PBehaviorManager(object):
         # this line allow us to raise an exception pytz.UnknownTimeZoneError,
         # if the timezone defined in the pbehabior configuration file is wrong
         pytz.timezone(self.default_tz)
-        self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
+        self.pb_store = MongoCollection(pb_storage._backend)
         self.currently_active_pb = set()
 
     def get(self, _id, query=None):

@@ -14,6 +14,7 @@ from mock import Mock
 from canopsis.alerts.manager import Alerts
 from canopsis.common import root_path
 from canopsis.common.ethereal_data import EtherealData
+from canopsis.common.collection import MongoCollection
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 # from canopsis.context_graph.process import create_entity
@@ -78,6 +79,10 @@ class BaseTest(TestCase):
         self.manager.alert_storage = self.alerts_storage
         self.manager.context_graph = self.context_graph_manager
         self.manager.watcher_storage = self.watcher_storage
+
+        self.manager.watcher_collection = MongoCollection(self.watcher_storage._backend)
+        self.manager.alarm_collection = MongoCollection(self.alerts_storage._backend)
+        self.manager.entities_collection = MongoCollection(self.entities_storage._backend)
 
     def tearDown(self):
         self.watcher_storage.remove_elements()
@@ -207,7 +212,9 @@ class ComputeState(BaseTest):
                                     logger=logger,
                                     pb_storage=pbehavior_storage)
         self.pbm.context = self.context_graph_manager
+
         self.manager.pbehavior_manager = self.pbm
+        self.manager.pbehavior_collection = self.pbm.pb_store
 
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
         filter_ = {'crecord_type': 'statusmanagement'}
