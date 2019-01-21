@@ -81,6 +81,7 @@ export default {
         'v.last_event_date': value => this.$options.filters.date(value, 'long'),
         'v.state.t': value => this.$options.filters.date(value, 'long'),
         'v.status.t': value => this.$options.filters.date(value, 'long'),
+        'v.resolved': value => this.$options.filters.date(value, 'long'),
         t: value => this.$options.filters.date(value, 'long'),
       };
 

@@ -152,11 +152,11 @@ export default {
     },
 
     hasAccessToListFilters() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 
     hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
     },
   },
   methods: {

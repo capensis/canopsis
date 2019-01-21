@@ -29,7 +29,9 @@ export default {
   },
   methods: {
     updateFilterFieldInWidgetPreferences(field, value) {
-      if (this.hasAccessToAddFilter || !isBoolean(this.hasAccessToAddFilter)) {
+      const hasAccessToEditFilter = this.hasAccessToEditFilter || !isBoolean(this.hasAccessToEditFilter);
+
+      if (hasAccessToEditFilter) {
         return this.updateWidgetPreferencesInUserPreference({
           ...this.userPreference.widget_preferences,
 

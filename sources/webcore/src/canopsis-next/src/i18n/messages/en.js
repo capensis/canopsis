@@ -111,6 +111,15 @@ export default {
         infos: 'Infos',
       },
     },
+    actions: {
+      titles: {
+        editEntity: 'Edit entity',
+        duplicateEntity: 'Duplicate entity',
+        deleteEntity: 'Delete entity',
+        pbehavior: 'Periodical behavior',
+        variablesHelp: 'List of available variables',
+      },
+    },
   },
   search: {
     advancedSearch: '<span>Help on the advanced research :</span>\n' +
@@ -443,6 +452,15 @@ export default {
     moreInfos: {
       moreInfos: 'More infos',
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
+    },
+    infoPopupSetting: {
+      title: 'Info popup',
+      add: 'Add',
+      column: 'Column',
+      template: 'Template',
+      addInfoPopup: {
+        title: 'Add an info popup',
+      },
     },
     variablesHelp: {
       variables: 'Variables',
