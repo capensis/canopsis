@@ -370,7 +370,7 @@ class Watcher:
             counters[AlarmState.CRITICAL])
 
         # Set the state of the watcher.
-        # NOTE: The value of entity['state'] is set for backwards
+        # NOTE: The value of entity['state'] is set for backward
         # compatibility, and should not be used. The source of truth for the
         # state of the watcher is the entity's alarm.
         if watcher_state != entity.get('state', None):
