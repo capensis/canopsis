@@ -14,10 +14,10 @@ Voici le listing des connecteurs qui peuvent fournir des évènements entrants �
 ### Logstash
 [logstash2canopsis](Infrastructure/Logstash.md)  
 
-### Mail
+### Mail /!\ Documentation CAT /!\
 [email2canopsis](Infrastructure/Mail.md)  
 
-### SNMPtrap
+### SNMPtrap /!\ Documentation CAT /!\
 [SNMPtrap - snmp2canopsis](Infrastructure/SNMPtrap.md)  
 
 ###  SNMPtrap_Custom /!\ Documentation CAT /!\

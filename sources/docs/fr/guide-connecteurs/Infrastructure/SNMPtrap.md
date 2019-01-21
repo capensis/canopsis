@@ -1,5 +1,10 @@
 # snmpTrap
 
+# /!\ Documentation CAT /!\
+
+!!! attention
+    Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
+
 ## Introduction
 
 Ce guide décrit la réception et de la traduction de traps SNMP au sein de Canopsis.
@@ -184,7 +189,7 @@ yum install net-snmp-utils
 Voici la ligne de commande utilisée avec snmptrap pour générer le trap :
 
 ```sh
-$  snmptrap -v 2c -c public IP_RECEPTEUR_SNMP '' NAGIOS-NOTIFY-MIB::nSvcEvent nSvcHostname s "Equipement Impacte" nSvcDesc s "Ressource Impactee" nSvcStateID i 3 nSvcOutput s "Message de sortie du trap SNMP"  
+snmptrap -v 2c -c public IP_RECEPTEUR_SNMP '' NAGIOS-NOTIFY-MIB::nSvcEvent nSvcHostname s "Equipement Impacte" nSvcDesc s "Ressource Impactee" nSvcStateID i 3 nSvcOutput s "Message de sortie du trap SNMP"  
 ```
 
 Une fois cette commande exécutée, le connecteur recevra le trap, le convertira en JSON et le transmettra à Canopsis dans l'exchange `canopsis.snmp`.
