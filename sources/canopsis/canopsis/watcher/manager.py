@@ -405,72 +405,12 @@ class Watcher:
         Send an event watcher with the new state of the watcher.
 
         :param watcher_id: watcher id
+
+        .. deprecated:: 3.8.1
+           compute_watchers should be used instead, especially when updating
+           multiple watchers.
         """
-        try:
-            watcher_entity = self.context_graph.get_entities(
-                query={'_id': watcher_id})[0]
-        except IndexError:
-            return None
-
-        entities = watcher_entity['depends']
-
-        query = {"_id": {"$in": entities},
-                 "enabled": True}
-        cursor = self.context_graph.get_entities(query=query,
-                                                 projection={"_id": 1})
-
-        entities = []
-        for ent in cursor:
-            entities.append(ent["_id"])
-
-        display_name = watcher_entity['name']
-
-        alarm_list = list(self.alert_storage._backend.find({
-            '$and': [
-                {'d': {'$in': entities}},
-                {
-                    '$or': [
-                        {'v.resolved': None},
-                        {'v.resolved': {'$exists': False}}
-                    ]
-                }
-            ]
-        }))
-        states = []
-
-        for alarm in alarm_list:
-            pbh_alarm = self.pbehavior_manager.get_pbehaviors_by_eid(alarm['d'])
-
-            active_pbh = []
-            now = int(time.time())
-            for pbh in pbh_alarm:
-                if self.pbehavior_manager.check_active_pbehavior(now, pbh):
-                    active_pbh.append(pbh)
-            if len(active_pbh) == 0:
-                states.append(alarm['v']['state']['val'])
-
-        nb_entities = len(entities)
-        nb_crit = states.count(AlarmState.CRITICAL)
-        nb_major = states.count(AlarmState.MAJOR)
-        nb_minor = states.count(AlarmState.MINOR)
-        nb_ok = nb_entities - (nb_crit + nb_major + nb_minor)
-
-        # here add selection for calculation method actually it's worst state
-        # by default and think to add pbehavior in tab
-        computed_state = self.worst_state(nb_crit, nb_major, nb_minor)
-        output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
-            nb_ok, nb_minor, nb_major, nb_crit)
-
-        if computed_state != watcher_entity.get('state', None):
-            watcher_entity['state'] = computed_state
-            self.context_graph.update_entity(watcher_entity)
-
-        self.publish_event(
-            display_name,
-            computed_state,
-            output,
-            watcher_entity['_id']
-        )
+        self.compute_watchers([watcher_id])
 
     def compute_slas(self):
         """
