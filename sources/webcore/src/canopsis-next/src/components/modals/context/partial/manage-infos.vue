@@ -77,14 +77,11 @@ export default {
   },
   computed: {
     items() {
-      return Object.keys(this.infos).reduce((acc, key) => {
-        acc.push({
-          name: key,
-          description: this.infos[key].description,
-          value: this.infos[key].value,
-        });
-        return acc;
-      }, []);
+      return Object.keys(this.infos).map(key => ({
+        name: key,
+        description: this.infos[key].description,
+        value: this.infos[key].value,
+      }));
     },
   },
   methods: {
