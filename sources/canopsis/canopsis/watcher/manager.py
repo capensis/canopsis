@@ -8,10 +8,11 @@ from __future__ import unicode_literals
 import time
 import json
 
-from canopsis.check import Check
+from canopsis.alarms.models import AlarmState
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.logger import Logger
+from canopsis.common.collection import MongoCollection
 from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.common.amqp import AmqpPublisher
@@ -36,6 +37,9 @@ class Watcher:
 
         self.sla_storage = Middleware.get_middleware_by_uri(
             'storage-default-sla://')
+
+        self.watcher_collection = MongoCollection(self.watcher_storage._backend)
+        self.alarm_collection = MongoCollection(self.alert_storage._backend)
 
         self.context_graph = ContextGraph(self.logger)
         self.pbehavior_manager = PBehaviorManager(
@@ -168,13 +172,229 @@ class Watcher:
             if alarm_id in i['depends']:
                 self.compute_state(i['_id'])
 
-    def compute_watchers(self):
+    def _get_enabled_watchers_with_dependencies(self, ids=None):
         """
-        Compute all watchers states.
+        Given a list of watcher ids, return the enabled watchers, their
+        corresponding entities, and their enabled dependencies.
+
+        :param Optional[List[str]] ids: The ids of the watcher which will be
+        returned. By default, all the watchers are returned.
+        :returns: An iterator of tuples (watcher, entity, enabled_dependencies).
         """
-        watchers = list(self.watcher_storage.get_elements(query={}))
-        for watcher in watchers:
-            self.compute_state(watcher['_id'])
+        pipeline = []
+
+        if ids is not None:
+            # Filter the watchers by id.
+            pipeline.append({
+                "$match": {
+                    "_id": {"$in": ids}
+                }
+            })
+
+        # Move the watcher from the root of the document to the watcher field,
+        # so that the fields added by this pipeline (entity, enabled_depends,
+        # ...) are not mixed with the watcher's field.
+        pipeline.append({
+            "$project": {
+                "watcher": "$$ROOT"
+            }
+        })
+
+        # Get the entity corresponding to each watcher.
+        # We could probably get the watchers directly from default_entities,
+        # but this may break previous behaviors.
+        pipeline.append({
+            "$lookup": {
+                "from": "default_entities",
+                "localField": "watcher._id",
+                "foreignField": "_id",
+                "as": "entity"
+            }
+        })
+
+        # At this step of the pipeline, the entity field is a list containing
+        # one entity. This step replaces the list with this entity.
+        pipeline.append({
+            "$unwind": "$entity"
+        })
+
+        # Remove the watchers that are disabled.
+        pipeline.append({
+            "$match": {
+                "entity.enabled": True
+            }
+        })
+
+        # Get each watcher's dependencies.
+        pipeline.append({
+            "$lookup": {
+                "from": "default_entities",
+                "localField": "entity.depends",
+                "foreignField": "_id",
+                "as": "depends_entity"
+            }
+        })
+
+        # Remove the dependencies that are disabled, and only keep a list of
+        # the ids of the other dependencies.
+        pipeline.append({
+            "$project": {
+                "watcher": True,
+                "entity": True,
+                "enabled_dependencies": {
+                    "$map": {
+                        "input": {
+                            "$filter": {
+                                "input": "$depends_entity",
+                                "as": "item",
+                                "cond": {
+                                    "$eq": ["$$item.enabled", True]
+                                }
+                            }
+                        },
+                        "as": "item",
+                        "in": "$$item._id"
+                    }
+                }
+            }
+        })
+
+        # Run the pipeline
+        documents = self.watcher_collection.aggregate(
+            pipeline, allowDiskUse=True, cursor={})
+
+        for d in documents:
+            yield d['watcher'], d['entity'], d['enabled_dependencies']
+
+    def _get_alarms_with_pbehaviors(self, ids):
+        """
+        Returns the ongoing alarms on a list of entities, and the pbehaviors
+        that may affect each of these alarms.
+
+        :param List[str] ids: The ids of the entities whose alarms will be
+        returned.
+        :returns: An iterator of tuples (alarm, pbehaviors)
+        """
+        pipeline = []
+
+        # Get the ongoing alarms on the entities.
+        pipeline.append({
+            "$match": {
+                "$and": [{
+                    "d": {"$in": ids}
+                }, {
+                    "$or": [
+                        {"v.resolved": None},
+                        {"v.resolved": {"$exists": False}}
+                    ]
+                }]
+            }
+        })
+
+        # Move the alarm from the root of the document to the alarm field,
+        # so that the field added by this pipeline (pbehaviors) are not mixed
+        # with the alarm's field.
+        pipeline.append({
+            "$project": {
+                "alarm": "$$ROOT"
+            }
+        })
+
+        # Get the pbehaviors that affect each alarm.
+        pipeline.append({
+            "$lookup": {
+                "from": "default_pbehavior",
+                "localField": "alarm.d",
+                "foreignField": "eids",
+                "as": "pbehaviors"
+            }
+        })
+
+        documents = self.alarm_collection.aggregate(
+            pipeline, allowDiskUse=True, cursor={})
+
+        for d in documents:
+            yield d['alarm'], d['pbehaviors']
+
+    def _compute_watcher_state(self, watcher, entity, dependencies):
+        """
+        Compute the state of a watcher given the ids of its enabled
+        dependencies.
+
+        :param Dict watcher: The watcher
+        :param Dict entity: The corresponding entity
+        :param List[str] dependencies: The ids of the watcher's dependencies.
+        """
+        now = int(time.time())
+
+        alarms = self._get_alarms_with_pbehaviors(dependencies)
+
+        # Count the number of alarms without active pbehaviors in each state.
+        counters = {
+            AlarmState.OK: 0,
+            AlarmState.MINOR: 0,
+            AlarmState.MAJOR: 0,
+            AlarmState.CRITICAL: 0,
+        }
+        for alarm, pbehaviors in alarms:
+            has_active_pbehavior = any(
+                self.pbehavior_manager.check_active_pbehavior(now, pbehavior)
+                for pbehavior in pbehaviors)
+
+            if not has_active_pbehavior:
+                alarm_state = alarm['v']['state']['val']
+                counters[alarm_state] += 1
+
+        # The number of entities that are in an "OK" state cannot be computed
+        # in the same way as the others, since we also need to take into
+        # account the entities that do not have an ongoing alarm.
+        not_ok_alarms = (
+            counters[AlarmState.CRITICAL]
+            + counters[AlarmState.MAJOR]
+            + counters[AlarmState.MINOR]
+        )
+        counters[AlarmState.OK] = len(dependencies) - not_ok_alarms
+
+        # Compute the state and the output of the watcher
+        watcher_state = self.worst_state(
+            counters[AlarmState.CRITICAL],
+            counters[AlarmState.MAJOR],
+            counters[AlarmState.MINOR])
+        output = '{0} ok, {1} minor, {2} major, {3} critical'.format(
+            counters[AlarmState.OK],
+            counters[AlarmState.MINOR],
+            counters[AlarmState.MAJOR],
+            counters[AlarmState.CRITICAL])
+
+        # Set the state of the watcher.
+        # NOTE: The value of entity['state'] is set for backwards
+        # compatibility, and should not be used. The source of truth for the
+        # state of the watcher is the entity's alarm.
+        if watcher_state != entity.get('state', None):
+            entity['state'] = watcher_state
+            self.context_graph.update_entity_body(entity)
+
+        self.publish_event(
+            entity['name'],
+            watcher_state,
+            output,
+            entity['_id'])
+
+    def compute_watchers(self, ids=None):
+        """
+        Compute the states of watchers.
+
+        This method computes the states of the enabled watchers whose id is
+        given in parameters, and sends events to update the corresponding
+        alarms.
+
+        :param Optional[List[str]] ids: The ids of the watcher whose states
+        will be computed. By default, the states of all the watchers are
+        computed.
+        """
+        watchers = self._get_enabled_watchers_with_dependencies(ids)
+        for watcher, entity, dependencies in watchers:
+            self._compute_watcher_state(watcher, entity, dependencies)
 
     def compute_state(self, watcher_id):
         """
@@ -226,9 +446,9 @@ class Watcher:
                 states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
-        nb_crit = states.count(Check.CRITICAL)
-        nb_major = states.count(Check.MAJOR)
-        nb_minor = states.count(Check.MINOR)
+        nb_crit = states.count(AlarmState.CRITICAL)
+        nb_major = states.count(AlarmState.MAJOR)
+        nb_minor = states.count(AlarmState.MINOR)
         nb_ok = nb_entities - (nb_crit + nb_major + nb_minor)
 
         # here add selection for calculation method actually it's worst state
