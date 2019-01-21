@@ -12,6 +12,12 @@ systemctl start/stop canopsis-engine@dynamic-alerts.service
 systemctl start/stop canopsis-engine@cleaner-cleaner_events.service
 ```
 
+Moteurs Cat :
+
+```sh
+systemctl start/stop canopsis-engine-cat@snmp
+```
+
 Vérification de leur bon lancement :
 ```sh
 systemctl status canopsis-engine-go\@\* -l
