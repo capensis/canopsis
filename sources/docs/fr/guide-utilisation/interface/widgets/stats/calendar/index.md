@@ -28,6 +28,24 @@ Il vous est donc possible de :
 
 ### Le calendrier
 
+Par défaut, la vue affichée est la vue au mois. Sur cette vue, chaque journée est représentée par une case du calendrier.
+
+D'autres vues sont disponibles : à la semaine, et au jour.
+
+Pour changer de vue, cliquez sur le menu déroulant situé en haut à droite du widget, puis cliquez sur la vue souhaitée.
+
+// TODO: INSERER IMAGER MENU DEROULANT CHOIX VUE
+
+Pour chacune des vue, la période concernée est affichée en haut du widget. Des flèches permettent de passer à la période précédente/suivante.
+
+// TODO: INSERER IMAGE PERIODE
+
+En haut à gauche, un bouton ```Aujourd'hui``` vous permet de vous rendre directement à la période actuelle.
+
+Dans les vues "semaine" et "jour", les alarmes sont affichées selon leur heure de création.
+
+// TODO: INSERER IMAGE VUE JOUR CALENDRIER
+
 ### Le bac à alarmes
 
 ## Guide exploitant
