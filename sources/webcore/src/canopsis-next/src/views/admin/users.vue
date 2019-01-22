@@ -31,8 +31,13 @@
                 v-btn(v-if="hasDeleteAnyUserAccess", @click="showRemoveUserModal(props.item._id)", icon)
                   v-icon(color="red darken-4") delete
     .fab(v-if="hasCreateAnyUserAccess")
+      v-layout(column)
+        v-tooltip(left)
+          v-btn(slot="activator", fab, dark, icon, color="secondary", @click.stop="fetchList")
+            v-icon refresh
+          span {{ $t('common.refresh') }}
       v-tooltip(left)
-        v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateUserModal")
+        v-btn(slot="activator", fab, color="primary", @click.stop="showCreateUserModal")
           v-icon add
         span {{ $t('modals.createUser.title') }}
 </template>

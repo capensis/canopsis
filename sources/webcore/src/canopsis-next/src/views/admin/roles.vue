@@ -33,7 +33,7 @@
             v-icon refresh
           span {{ $t('common.refresh') }}
         v-tooltip(left)
-          v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateRoleModal")
+          v-btn(slot="activator", fab, color="primary", @click.stop="showCreateRoleModal")
             v-icon add
           span {{ $t('modals.createRole.title') }}
 </template>
