@@ -2,9 +2,9 @@ import Vuetify from 'vuetify';
 import { generate as generateString } from 'randomstring';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 
-import { EXPAND_DEFAULT_MAX_LETTERS } from '../../../src/config';
+import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
-import Ellipsis from '../../../src/components/tables/ellipsis.vue';
+import Ellipsis from '@/components/tables/ellipsis.vue';
 
 const localVue = createLocalVue();
 

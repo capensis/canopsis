@@ -2,7 +2,7 @@ import Vuetify from 'vuetify';
 import { generate as generateString } from 'randomstring';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 
-import SearchField from '../../../src/components/forms/fields/search-field.vue';
+import SearchField from '@/components/forms/fields/search-field.vue';
 
 const localVue = createLocalVue();
 
