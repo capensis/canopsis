@@ -50,6 +50,7 @@
     "@vue/cli-service": "^3.0.0-beta.6",
     "@vue/eslint-config-airbnb": "^3.0.0-beta.6",
     "@vue/test-utils": "^1.0.0-beta.10",
+    "axios-mock-adapter": "^1.16.0",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.0.4",
     "jest-localstorage-mock": "^2.2.0",
