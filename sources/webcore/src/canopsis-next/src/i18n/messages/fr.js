@@ -9,6 +9,7 @@ export default {
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
     addTab: 'Ajouter un onglet',
+    addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
     name: 'Nom',
@@ -397,14 +398,14 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Ajouter un comportement périodique à ces éléments ?',
+      title: 'Ajouter un comportement périodique',
       fields: {
         name: 'Nom',
         start: 'Début',
         stop: 'Fin',
         reason: 'Raison',
         type: 'Type',
-        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique ?',
+        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
       },
     },
     createPause: {

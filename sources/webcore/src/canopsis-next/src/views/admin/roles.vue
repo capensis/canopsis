@@ -25,13 +25,17 @@
               v-btn.ma-0(v-if="hasUpdateAnyRoleAccess", @click="showEditRoleModal(props.item._id)", icon)
                 v-icon edit
               v-btn.ma-0(v-if="hasDeleteAnyRoleAccess", @click="showRemoveRoleModal(props.item._id)", icon)
-                v-icon(color="red darken-4") delete
+                v-icon(color="error") delete
     .fab(v-if="hasCreateAnyRoleAccess")
-      v-tooltip(left)
-        v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateRoleModal")
-          v-icon add
-        span {{ $t('modals.createRole.title') }}
-
+      v-layout(column)
+        v-tooltip(left)
+          v-btn(slot="activator", fab, dark, icon, color="secondary", @click.stop="fetchList")
+            v-icon refresh
+          span {{ $t('common.refresh') }}
+        v-tooltip(left)
+          v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateRoleModal")
+            v-icon add
+          span {{ $t('modals.createRole.title') }}
 </template>
 
 <script>
@@ -95,6 +99,7 @@ export default {
         },
       });
     },
+
     showRemoveSelectedRolesModal() {
       this.showModal({
         name: MODALS.confirmation,
@@ -113,6 +118,7 @@ export default {
         },
       });
     },
+
     showEditRoleModal(roleId) {
       this.showModal({
         name: MODALS.createRole,
@@ -122,11 +128,13 @@ export default {
         },
       });
     },
+
     showCreateRoleModal() {
       this.showModal({
         name: MODALS.createRole,
       });
     },
+
     fetchList() {
       const {
         rowsPerPage, page, sortBy, descending,
@@ -140,7 +148,6 @@ export default {
         },
       });
     },
-
   },
 };
 </script>
