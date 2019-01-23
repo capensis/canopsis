@@ -26,11 +26,11 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 | Moteur         | Description                                                                      | CAT ?              |
 |:---------------|:---------------------------------------------------------------------------------|:------------------:|
+| action         | Applique des actions définies par l'utilisateur.                                 |                    |
 | axe            | Gère le cycle de vie des alarmes.                                                |                    |
 | che            | Supprime les évènements invalides, gère le contexte, et enrichit les évènements. |                    |
 | heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.       |                    |
 | stat           | Calcule des statistiques sur les états des alarmes.                              |                    |
-| action         | Applique des actions définies par l'utilisateur.                                 |                    |
 
 ### Moteurs Python
 
@@ -55,6 +55,14 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | canopsis-engine-cat@**statsng-statsng**.service                | Calcule des statistiques sur les alarmes et les entités. | ✅             |
 
 ## Flags & Usage
+
+### Utilisation de engine-action
+
+```
+  -d    debug
+  -version
+        version infos
+```
 
 ### Utilisation de engine-axe
 
@@ -94,6 +102,22 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         Publish event to this queue. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
+  -version
+        version infos
+```
+
+### Utilisation de engine-heartbeat
+
+```
+  -d    debug
+  -version
+        version infos
+```
+
+### Utilisation de engine-stat
+
+```
+  -d    debug
   -version
         version infos
 ```
