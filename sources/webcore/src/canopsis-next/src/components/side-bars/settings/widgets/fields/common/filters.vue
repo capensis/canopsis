@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       filter-selector(
-      v-show="hasAccessToEditFilter && !hideSelect",
+      v-if="hasAccessToEditFilter && !hideSelect",
       :label="$t('settings.selectAFilter')",
       :items="filters",
       :value="value",
