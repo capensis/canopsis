@@ -25,14 +25,10 @@ def exports(ws):
 
         :returns: <Healthcheck>
         """
-        criticals = request.query.criticals.split(',')
+        criticals = request.query.criticals.split(',') or None
 
-        if len(criticals) == 0:
+        if criticals == ['']:
             criticals = None
-        else:
-            # Filter will remove the empty strings and the space-only strings
-            regex = re.compile("(?!\s*$).+")
-            criticals = filter(regex.search, criticals) or None
 
         health_obj = healthcheckManager.check(criticals=criticals)
         if health_obj is None:
