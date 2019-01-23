@@ -32,10 +32,7 @@
                   v-icon(color="red darken-4") delete
     .fab(v-if="hasCreateAnyUserAccess")
       v-layout(column)
-        v-tooltip(left)
-          v-btn(slot="activator", fab, dark, icon, color="secondary", @click.stop="fetchList")
-            v-icon refresh
-          span {{ $t('common.refresh') }}
+        refresh-btn(:action="fetchList")
       v-tooltip(left)
         v-btn(slot="activator", fab, color="primary", @click.stop="showCreateUserModal")
           v-icon add
@@ -51,7 +48,12 @@ import modalMixin from '@/mixins/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
+import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+
 export default {
+  components: {
+    RefreshBtn,
+  },
   mixins: [modalMixin, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {
     return {

@@ -37,10 +37,7 @@
       v-btn(@click="cancel") {{ $t('common.cancel') }}
     .fab(v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess")
       v-layout(column)
-        v-tooltip(left)
-          v-btn(slot="activator", fab, dark, icon, color="secondary", @click.stop="fetchRightsList")
-            v-icon refresh
-          span {{ $t('common.refresh') }}
+        refresh-btn(:action="fetchRightsList")
         v-speed-dial(
         v-model="fab",
         direction="left",
@@ -81,8 +78,12 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
+import RefreshBtn from '@/components/other/view/refresh-btn.vue';
 
 export default {
+  components: {
+    RefreshBtn,
+  },
   mixins: [
     authMixin,
     popupMixin,

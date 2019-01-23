@@ -28,10 +28,7 @@
                 v-icon(color="error") delete
     .fab(v-if="hasCreateAnyRoleAccess")
       v-layout(column)
-        v-tooltip(left)
-          v-btn(slot="activator", fab, dark, icon, color="secondary", @click.stop="fetchList")
-            v-icon refresh
-          span {{ $t('common.refresh') }}
+        refresh-btn(:action="fetchList")
         v-tooltip(left)
           v-btn(slot="activator", fab, color="primary", @click.stop="showCreateRoleModal")
             v-icon add
@@ -48,7 +45,12 @@ import modalMixin from '@/mixins/modal';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
+import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+
 export default {
+  components: {
+    RefreshBtn,
+  },
   mixins: [
     popupMixin,
     modalMixin,
