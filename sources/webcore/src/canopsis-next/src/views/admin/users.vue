@@ -32,7 +32,7 @@
                   v-icon(color="red darken-4") delete
     .fab(v-if="hasCreateAnyUserAccess")
       v-layout(column)
-        refresh-btn(:action="fetchList")
+        refresh-btn(@click="fetchList")
       v-tooltip(left)
         v-btn(slot="activator", fab, color="primary", @click.stop="showCreateUserModal")
           v-icon add

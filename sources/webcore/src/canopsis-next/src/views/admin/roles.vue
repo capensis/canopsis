@@ -28,7 +28,7 @@
                 v-icon(color="error") delete
     .fab(v-if="hasCreateAnyRoleAccess")
       v-layout(column)
-        refresh-btn(:action="fetchList")
+        refresh-btn(@click="fetchList")
         v-tooltip(left)
           v-btn(slot="activator", fab, color="primary", @click.stop="showCreateRoleModal")
             v-icon add

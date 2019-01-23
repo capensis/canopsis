@@ -37,7 +37,7 @@
       v-btn(@click="cancel") {{ $t('common.cancel') }}
     .fab(v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess")
       v-layout(column)
-        refresh-btn(:action="fetchRightsList")
+        refresh-btn(@click="fetchRightsList")
         v-speed-dial(
         v-model="fab",
         direction="left",
