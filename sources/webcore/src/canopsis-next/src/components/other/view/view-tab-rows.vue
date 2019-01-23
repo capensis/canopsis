@@ -14,19 +14,20 @@
       :key="widget._id",
       :class="getWidgetFlexClass(widget)"
       )
-        v-layout.hide-on-full-screen(align-center, justify-end)
+        v-layout.hide-on-full-screen(align-center, justify-space-between)
           h3.my-1.mx-2(v-show="widget.title") {{ widget.title }}
-          template(v-if="isEditingMode && hasUpdateAccess")
-            v-btn.ma-1(
-            @click="showDeleteWidgetModal(row._id, widget)",
-            small,
-            color="error",
-            ) {{ $t('view.deleteWidget') }}
-            v-btn.ma-1(
-            @click="showSettings(tab._id, row._id, widget)",
-            icon
-            )
-              v-icon settings
+          v-layout(justify-end)
+            template(v-if="isEditingMode && hasUpdateAccess")
+              v-btn.ma-1(
+              @click="showDeleteWidgetModal(row._id, widget)",
+              small,
+              color="error",
+              ) {{ $t('view.deleteWidget') }}
+              v-btn.ma-1(
+              @click="showSettings(tab._id, row._id, widget)",
+              icon
+              )
+                v-icon settings
         component(
         :is="widgetsComponentsMap[widget.type]",
         :widget="widget",
