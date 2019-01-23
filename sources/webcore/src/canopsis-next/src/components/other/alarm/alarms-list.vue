@@ -71,7 +71,9 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import isEmpty from 'lodash/isEmpty';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS, ENTITIES_TYPES } from '@/constants';
+
+import { alarmSchema } from '@/store/schemas';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -89,6 +91,7 @@ import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import createDataLayerMixin from '@/mixins/data-layer';
 
 /**
  * Alarm-list component
@@ -118,6 +121,7 @@ export default {
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
+    createDataLayerMixin(ENTITIES_TYPES.alarm, 'alarms'),
   ],
   props: {
     widget: {

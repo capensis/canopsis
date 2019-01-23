@@ -2,7 +2,9 @@ import Vue from 'vue';
 import get from 'lodash/get';
 import omit from 'lodash/omit';
 import uniq from 'lodash/uniq';
+import pickBy from 'lodash/pickBy';
 import mergeWith from 'lodash/mergeWith';
+import isEmpty from 'lodash/isEmpty';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
@@ -17,8 +19,11 @@ const internalTypes = {
   ENTITIES_DELETE: 'ENTITIES_DELETE',
 };
 
+const usingEntitiesCount = {};
+
 const entitiesModule = {
   namespaced: true,
+  state: {},
   getters: {
     getItem(state) {
       return (type, id) => {
@@ -90,6 +95,42 @@ const entitiesModule = {
     },
   },
   actions: {
+    start({ dispatch }) {
+      setInterval(() => {
+        dispatch('removeUnusedEntities');
+      }, 10 * 1000);
+    },
+
+    removeUnusedEntities({ commit }) {
+      const entitiesForDeletion = {};
+
+      Object.keys(usingEntitiesCount).forEach((type) => {
+        const items = pickBy(usingEntitiesCount[type], value => value <= 0);
+
+        if (!isEmpty(items)) {
+          entitiesForDeletion[type] = items;
+        }
+      });
+
+      if (!isEmpty(entitiesForDeletion)) {
+        commit(internalTypes.ENTITIES_DELETE, entitiesForDeletion);
+      }
+    },
+
+    mergeEntitiesUsingCount(context, { entity, usingCount = {} }) {
+      if (!usingEntitiesCount[entity]) {
+        usingEntitiesCount[entity] = {};
+      }
+
+      Object.keys(usingCount).forEach((key) => {
+        if (!usingEntitiesCount[entity][key]) {
+          usingEntitiesCount[entity][key] = 0;
+        }
+
+        usingEntitiesCount[entity][key] += usingCount[key];
+      });
+    },
+
     async sendRequest(
       { commit },
       {
@@ -185,4 +226,6 @@ export const types = {
 
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);
+
+  store.dispatch('entities/start');
 };
