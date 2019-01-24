@@ -198,6 +198,42 @@
             "checksum": 1,
             "desc": ""
         },
+        "crudcontext_createEntity": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_edit": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_duplicate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_delete": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_pbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_listPbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_listFilters": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_editFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_addFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
         "view_current_alarms": {
             "checksum": 7,
             "desc": ""
