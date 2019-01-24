@@ -8,6 +8,29 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.9.0 - Due date : 2019-01-24
+
+ - [Documentation] Add documentation for action API
+ - [Go] Add support for MongoDB replicaset
+ - [Go] Add a post-processing plugins system in the axe engine
+ - [Go] Define triggers in the axe engine
+ - [Python] Fix healthcheck API response when criticals is undefined
+ - [Python] Fix pbehavior handling when the rrule generates invalid dates
+ - [UI] Add "Help" buttons on ListAlarm/Context/Service weather widgets
+ - [UI] Add "Reorder tabs" functionnality
+ - [UI] Add "Refresh" button on all administration/exploitation views
+ - [UI] Improve left sidebar style
+ - [UI] Variables harmonization for all templates parameters (Info popup, More infos, Service weather)
+ - [UI / Calendar] Fix display bug when only 1 filter is set
+ - [UI / Calendar] Improve style (colors)
+ - [UI / ListAlarm] Add "Delete" alarms mass action
+ - [UI / ListAlarm] Refactor "Info popup" setting
+ - [UI / ListAlarm] Fix "Resolved" column problem
+ - [UI / ListAlarm] Improve "Info popup" style
+ - [UI / Context] Add rights
+ - [UI / Service weather] Fix bug on ListAlarm's modal's filter
+ - [UI / Service weather] Add entities names customization, in "More info" modal
+
 ## Canopsis 3.8.0 - Due date : 2019-01-10
 
  - [Documentation] Clean up README.md
