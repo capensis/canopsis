@@ -1,4 +1,4 @@
-# Compteur de statistiques
+# Calendrier
 
 // INSERER IMAGE CALENDRIER
 
@@ -44,9 +44,15 @@ En haut à gauche, un bouton ```Aujourd'hui``` vous permet de vous rendre direct
 
 Dans les vues "semaine" et "jour", les alarmes sont affichées selon leur heure de création.
 
-// TODO: INSERER IMAGE VUE JOUR CALENDRIER
+// TODO: INSERER IMAGE VUE JOUR/SEMAINE CALENDRIER
 
 ### Le bac à alarmes
+
+Au clic sur une des valeurs affichées dans le calendrier, une fenêtre s'ouvre.
+
+Celle-ci présente un widget Bac à alarmes, vous permettant de visualiser les alarmes de la période sur laquelle vous avez cliquer (la journée, l'heure, ...).
+
+Ce bac à alarme est paramétrable depuis le panneau de configuration du widget Calendrier (voir [Paramétres du Bac à alarmes](#parametres-du-bac-a-alarmes)).
 
 ## Guide exploitant
 
@@ -84,3 +90,75 @@ Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus
 Un champ de texte vous permet de définir ce titre.
 
 #### Paramètres du Bac à alarmes
+
+##### Nom des colonnes
+
+Ce paramètre est détaillé [ici](../../bac-a-alarmes#nom-des-colonnes).
+
+##### Nombre d'éléments/page par défaut
+
+Ce paramètre est détaillé [ici](../../bac-a-alarmes#nombre-delements-par-page-par-defaut).
+
+##### Info popup
+
+Ce paramètre est détaillé [ici](../../bac-a-alarmes#info-popup).
+
+##### Fenêtre "Plus d'infos"
+
+Ce paramètre est détaillé [ici](../../bac-a-alarmes#fenetre-plus-dinfos).
+
+#### Paramètres avancés
+
+##### Filtres (*optionnel*)
+
+Ce paramètre permet de définir le/les filtre(s) à appliquer.
+
+Si aucun filtre n'est appliqué, toutes les alarmes sont prises en compte.
+
+Si un seul filtre est défini, les alarmes affichés ne concernent que les entités entrant dans les critères de celui-ci.
+
+Si plusieurs filtres sont définis, les valeurs seront affichées pour chacun de ces filtres, à côté du nom de celui-ci.
+
+Pour ajouter un filtre, cliquez sur le boutton ```Ajouter```. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](../../../filtres).
+
+Les filtres appliqués apparaissent en dessous du boutton ```Ajouter```. Chacun dispose d'un boutton d'édition, et de suppression.
+
+##### Filtre sur Open/Resolved (*requis*)
+
+Ce paramètre permet de ne prendre en compte, dans les valeurs ne nombre d'alarmes affichées dans le calendrier, que les alarmes ouvertes, résolues, ou les deux.
+
+Cocher la/les cases correspondantes au(x) statu(s) que vous souhaitez prendre en compte.
+
+Par défaut, seul les alarmes ouvertes sont prises en compte.
+
+##### Prendre en compte les comportements périodiques ? (*requis*)
+
+Ce paramètre permet, s'il est activé, de ne pas prendre en compte les alarmes concernant une entité ayant un comportement périodique actif.
+
+Cela permet d'exclure des valeurs affichées les alarmes concernant, par exemple, une entité en maintenance.
+
+Ce paramètre est désactivé par défaut.
+
+##### Niveaux de criticité (*requis*)
+
+Ce paramètre permet de configurer à partir de quelle valeur la valeur d'une statistique est considérée comme mineur/majeure ou critique.
+
+Le niveau de criticité permet de modifier, combinée au paramètre [sélecteur de couleurs](), la couleur à afficher pour la statistique, en fonction de sa valeur.
+
+Les valeurs par défaut sont :
+
+- Ok: Entre 0 et 20
+- Mineur: Entre 20 et 30
+- Majeur: Entre 30 et 40
+- Critique: Supérieur à 40
+
+##### Sélecteur de couleurs (*requis*)
+
+Ce paramètre permet d'affecter une couleur à chaque [niveau de criticité](#niveaux-de-criticite-requis).
+
+Cela permet, d'un seul coup d'oeil, d'identifier les valeurs selon leur niveau de criticité.
+
+Pour modifier une des couleurs définies par défaut, cliquez sur le bouton correspondant à un niveau de criticité. Une fenêtre s'ouvre, vous donnant accès à plusieurs méthodes de choix de la couleur.
+
+Une fois la couleur sélectionnée, cliquez sur ```Envoyer```.
+Votre couleur apparaît maintenant dans le menu de paramètres du widget !
