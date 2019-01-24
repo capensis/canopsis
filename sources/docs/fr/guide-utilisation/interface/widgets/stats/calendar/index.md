@@ -143,7 +143,7 @@ Ce paramètre est désactivé par défaut.
 
 Ce paramètre permet de configurer à partir de quelle valeur la valeur d'une statistique est considérée comme mineur/majeure ou critique.
 
-Le niveau de criticité permet de modifier, combinée au paramètre [sélecteur de couleurs](), la couleur à afficher pour la statistique, en fonction de sa valeur.
+Le niveau de criticité permet de modifier, combinée au paramètre [sélecteur de couleurs](#selecteur-de-couleurs-requis), la couleur à afficher pour la statistique, en fonction de sa valeur.
 
 Les valeurs par défaut sont :
 
