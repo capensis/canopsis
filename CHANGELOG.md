@@ -11,6 +11,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 ## Canopsis 3.9.0 - Due date : 2019-01-24
 
  - [Documentation] Add documentation for action API
+ - [Tooling] Fix building scripts that used the wrong version of canopsis-next
  - [Go] Add support for MongoDB replicaset
  - [Go] Add a post-processing plugins system in the axe engine
  - [Go] Define triggers in the axe engine
