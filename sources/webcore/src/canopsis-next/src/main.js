@@ -9,8 +9,10 @@ import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
+import VueCodeMirror from 'vue-codemirror';
 
 import 'vuetify/dist/vuetify.min.css';
+import 'codemirror/lib/codemirror.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 import * as config from '@/config';
@@ -36,6 +38,7 @@ Vue.use(Vuetify, {
   },
 });
 Vue.use(VueFullScreen);
+Vue.use(VueCodeMirror);
 Vue.use(DaySpanVuetify, {
   methods: {
     getPrefix: () => '',
