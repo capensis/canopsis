@@ -1,6 +1,6 @@
 # Calendrier
 
-// INSERER IMAGE CALENDRIER
+![Calendrier](./img/calendar.png "Calendrier")
 
 ## Sommaire
 ### Guide utilisateur
@@ -21,30 +21,36 @@ Le widget Calendrier vous permet d'afficher le nombre d'alarmes créées/résolu
 
 Il vous est donc possible de :
 
-- Visionner le nombre d'alarmes créées/résolues chaque jours.
-- Regrouper ces alarmes par groupes, représentants une partie déterminée de votre SI.
+- Visionner le nombre d'alarmes créées/résolues chaques jours.
+- Regrouper ces alarmes par groupes, représentants une partie de votre SI.
 - Affecter des seuils de criticité, associés à des couleurs, vous permettant de repérer d'un seul coup d'oeil les mois/jours/heures où se sont produits des incidents.
-- Accèder directement à un Bac à alarmes, regroupant les alarmes de la période.
+- Accéder directement à un Bac à alarmes, regroupant les alarmes de la période.
 
 ### Le calendrier
 
 Par défaut, la vue affichée est la vue au mois. Sur cette vue, chaque journée est représentée par une case du calendrier.
 
-D'autres vues sont disponibles : à la semaine, et au jour.
+D'autres vues sont disponibles : à la semaine et au jour.
 
 Pour changer de vue, cliquez sur le menu déroulant situé en haut à droite du widget, puis cliquez sur la vue souhaitée.
 
-// TODO: INSERER IMAGER MENU DEROULANT CHOIX VUE
+![Menu choix du type de vue](./img/calendar_view_menu.png "Menu choix du type de vue")
 
 Pour chacune des vue, la période concernée est affichée en haut du widget. Des flèches permettent de passer à la période précédente/suivante.
 
-// TODO: INSERER IMAGE PERIODE
+![Menu changement de période](./img/calendar_period_menu.png "Menu changement de période")
 
 En haut à gauche, un bouton ```Aujourd'hui``` vous permet de vous rendre directement à la période actuelle.
 
 Dans les vues "semaine" et "jour", les alarmes sont affichées selon leur heure de création.
 
-// TODO: INSERER IMAGE VUE JOUR/SEMAINE CALENDRIER
+**Vue à la semaine**
+
+![Vue semaine](./img/calendar_week.png "Vue semaine")
+
+**Vue à la journée**
+
+![Vue jour](./img/calendar_day.png "Vue jour")
 
 ### Le bac à alarmes
 
@@ -53,6 +59,8 @@ Au clic sur une des valeurs affichées dans le calendrier, une fenêtre s'ouvre.
 Celle-ci présente un widget Bac à alarmes, vous permettant de visualiser les alarmes de la période sur laquelle vous avez cliquer (la journée, l'heure, ...).
 
 Ce bac à alarme est paramétrable depuis le panneau de configuration du widget Calendrier (voir [Paramétres du Bac à alarmes](#parametres-du-bac-a-alarmes)).
+
+![Modal Bac à alarmes](./img/calendar_listalarm_modal.png "Modal Bac à alarmes")
 
 ## Guide exploitant
 
