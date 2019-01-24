@@ -24,7 +24,7 @@ def exports(ws):
         :returns: <Healthcheck>
         """
         criticals = request.query.criticals.split(',') or None
-        if len(criticals) == 0:
+        if criticals == ['']:
             criticals = None
         health_obj = healthcheckManager.check(criticals=criticals)
         if health_obj is None:

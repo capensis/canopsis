@@ -7,11 +7,15 @@
           v-icon close
     v-divider
     v-card-text
-      div(v-html="compiledTemplate")
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
-          div.mt-2(v-for="watcherEntity in watcherEntities")
-            watcher-entity(:entity="watcherEntity", :template="config.entityTemplate", @addEvent="addEventToQueue")
+          watcher-template(
+          :watcher="watcher",
+          :watcherEntities="watcherEntities",
+          :modalTemplate="config.modalTemplate",
+          :entityTemplate="config.entityTemplate",
+          @addEvent="addEventToQueue"
+          )
       v-fade-transition
         v-layout(v-show="watcherEntitiesPending", column)
           v-flex(xs12)
@@ -31,9 +35,10 @@
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
+import VRuntimeTemplate from 'v-runtime-template';
+
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
-import { compile } from '@/helpers/handlebars';
 import weatherEventMixin from '@/mixins/weather-event-actions';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
@@ -41,13 +46,13 @@ import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import WatcherEntity from './partial/entity.vue';
-
+import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
   components: {
-    WatcherEntity,
+    VRuntimeTemplate,
+    WatcherTemplate,
   },
   mixins: [
     weatherEventMixin,
@@ -66,9 +71,6 @@ export default {
   computed: {
     watcher() {
       return this.getWatcher(this.config.watcherId);
-    },
-    compiledTemplate() {
-      return compile(this.config.modalTemplate, { entity: this.watcher });
     },
   },
   mounted() {

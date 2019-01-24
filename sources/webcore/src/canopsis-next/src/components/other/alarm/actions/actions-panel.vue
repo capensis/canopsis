@@ -1,69 +1,37 @@
 <template lang="pug">
-  div
-      div(v-if="$options.filters.mq($mq, { l: true })")
-        v-layout
-          actions-panel-item(
-          v-for="(action, index) in actions.main",
-          v-bind="action",
-          :key="`main-${index}`"
-          )
-          v-menu(v-show="actions.dropDown && Object.keys(actions.dropDown).length", bottom, left, @click.native.stop)
-            v-btn(icon, slot="activator")
-              v-icon more_vert
-            v-list
-              actions-panel-item(
-              v-for="(action, index) in actions.dropDown",
-              v-bind="action",
-              isDropDown,
-              :key="`drop-down-${index}`"
-              )
-      div(v-if="$options.filters.mq($mq, { m: true, l: false })")
-        v-layout
-          v-menu(
-          v-show="Object.keys(actions.main).length + Object.keys(actions.dropDown).length > 0",
-          bottom,
-          left,
-          @click.native.stop
-          )
-            v-btn(icon slot="activator")
-              v-icon more_vert
-            v-list
-              actions-panel-item(
-              v-for="(action, index) in actions.main",
-              v-bind="action",
-              isDropDown,
-              :key="`mobile-main-${index}`"
-              )
-              actions-panel-item(
-              v-for="(action, index) in actions.dropDown",
-              v-bind="action",
-              isDropDown,
-              :key="`mobile-drop-down-${index}`"
-              )
+  shared-actions-panel(:actions="actions.inline", :dropDownActions="actions.dropDown")
 </template>
 
 <script>
-import pick from 'lodash/pick';
 import pickBy from 'lodash/pickBy';
 
-import { MODALS, ENTITIES_TYPES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import {
+  MODALS,
+  ENTITIES_TYPES,
+  ENTITIES_STATUSES,
+  EVENT_ENTITY_TYPES,
+  EVENT_ENTITY_STYLE,
+  WIDGETS_ACTIONS_TYPES,
+} from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import actionsPanelMixin from '@/mixins/actions-panel';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
 
-import ActionsPanelItem from './actions-panel-item.vue';
+import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
 
 /**
  * Component to regroup actions (actions-panel-item) for each alarm on the alarms list
  *
  * @module alarm
  *
- * @prop {Object} [item] - Object representing an alarm
+ * @prop {Object} item - Object representing an alarm
+ * @prop {Object} widget - Full widget object
+ * @prop {boolean} [isEditingMode=false] - Is editing mode enable on a view
  */
 export default {
-  components: { ActionsPanelItem },
-  mixins: [authMixin, actionsPanelMixin, entitiesAlarmMixin],
+  components: { SharedActionsPanel },
+  mixins: [authMixin, entitiesAlarmMixin, widgetActionsPanelAlarmMixin],
   props: {
     item: {
       type: Object,
@@ -79,62 +47,88 @@ export default {
     },
   },
   data() {
+    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
     return {
-      allActionsMap: {
+      actionsMap: {
         ack: {
-          type: 'ack',
+          type: alarmsListActionsTypes.ack,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
+          title: this.$t('alarmList.actions.titles.ack'),
           method: this.showActionModal(MODALS.createAckEvent),
         },
         fastAck: {
-          type: 'fastAck',
+          type: alarmsListActionsTypes.fastAck,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          title: this.$t('alarmList.actions.titles.fastAck'),
           method: this.createAckEvent,
         },
         ackRemove: {
-          type: 'ackRemove',
+          type: alarmsListActionsTypes.ackRemove,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
+          title: this.$t('alarmList.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
-        pbehavior: {
-          type: 'pbehavior',
+        pbehaviorAdd: {
+          type: alarmsListActionsTypes.pbehaviorAdd,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
+          title: this.$t('alarmList.actions.titles.pbehavior'),
           method: this.showActionModal(MODALS.createPbehavior),
         },
         snooze: {
-          type: 'snooze',
+          type: alarmsListActionsTypes.snooze,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
+          title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
         pbehaviorList: {
-          type: 'pbehaviorList',
+          type: alarmsListActionsTypes.pbehaviorList,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
+          title: this.$t('alarmList.actions.titles.pbehaviorList'),
           method: this.showActionModal(MODALS.pbehaviorList),
         },
         declareTicket: {
-          type: 'declareTicket',
+          type: alarmsListActionsTypes.declareTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
+          title: this.$t('alarmList.actions.titles.declareTicket'),
           method: this.showActionModal(MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
-          type: 'associateTicket',
+          type: alarmsListActionsTypes.associateTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          title: this.$t('alarmList.actions.titles.associateTicket'),
           method: this.showActionModal(MODALS.createAssociateTicketEvent),
         },
         cancel: {
-          type: 'cancel',
+          type: alarmsListActionsTypes.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showActionModal(MODALS.createCancelEvent),
         },
         changeState: {
-          type: 'changeState',
+          type: alarmsListActionsTypes.changeState,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
+          title: this.$t('alarmList.actions.titles.changeState'),
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
         moreInfos: {
-          type: 'moreInfos',
+          type: alarmsListActionsTypes.moreInfos,
+          icon: 'more_horiz',
+          title: this.$t('alarmList.actions.titles.moreInfos'),
           method: this.showMoreInfosModal(),
         },
         variablesHelp: {
-          type: 'variablesHelp',
+          type: alarmsListActionsTypes.variablesHelp,
+          icon: 'help',
+          title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal(),
         },
       },
     };
   },
   computed: {
-    actionsMap() {
-      return pickBy(this.allActionsMap, this.actionsAccessFilterHandler);
+    filteredActionsMap() {
+      return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
     modalConfig() {
       return {
@@ -144,54 +138,46 @@ export default {
       };
     },
     actions() {
-      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping]
-        .includes(this.item.v.status.val)) {
+      const { filteredActionsMap } = this;
+
+      let inlineActions = [filteredActionsMap.pbehaviorList];
+      let dropDownActions = [];
+
+      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
-          return {
-            main: pick(
-              this.actionsMap,
-              [
-                WIDGETS_ACTIONS_TYPES.alarmsList.declareTicket,
-                WIDGETS_ACTIONS_TYPES.alarmsList.associateTicket,
-                WIDGETS_ACTIONS_TYPES.alarmsList.cancel,
-                this.isEditingMode ? WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp : null,
-              ],
-            ),
-            dropDown: pick(
-              this.actionsMap,
-              [
-                WIDGETS_ACTIONS_TYPES.alarmsList.ackRemove,
-                WIDGETS_ACTIONS_TYPES.alarmsList.snooze,
-                WIDGETS_ACTIONS_TYPES.alarmsList.changeState,
-                WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorAdd,
-                WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList,
-                WIDGETS_ACTIONS_TYPES.alarmsList.moreInfos,
-              ],
-            ),
-          };
+          inlineActions = [
+            filteredActionsMap.declareTicket,
+            filteredActionsMap.associateTicket,
+            filteredActionsMap.cancel,
+          ];
+
+          dropDownActions = [
+            filteredActionsMap.ackRemove,
+            filteredActionsMap.snooze,
+            filteredActionsMap.changeState,
+            filteredActionsMap.pbehaviorAdd,
+            filteredActionsMap.pbehaviorList,
+            filteredActionsMap.moreInfos,
+          ];
+        } else {
+          inlineActions = [
+            filteredActionsMap.ack,
+            filteredActionsMap.fastAck,
+          ];
+
+          dropDownActions = [
+            filteredActionsMap.moreInfos,
+          ];
         }
 
-        return {
-          main: pick(
-            this.actionsMap,
-            [
-              WIDGETS_ACTIONS_TYPES.alarmsList.ack,
-              WIDGETS_ACTIONS_TYPES.alarmsList.fastAck,
-              this.isEditingMode ? WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp : null,
-            ],
-          ),
-          dropDown: pick(this.actionsMap, [WIDGETS_ACTIONS_TYPES.alarmsList.moreInfos]),
-        };
-      } else if (this.item.v.status.val === ENTITIES_STATUSES.cancelled) {
-        return {
-          main: pick(this.actionsMap, [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList]),
-          dropDown: [],
-        };
+        if (this.isEditingMode) {
+          inlineActions.push(filteredActionsMap.variablesHelp);
+        }
       }
 
       return {
-        main: pick(this.actionsMap, [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList]),
-        dropDown: [],
+        inline: inlineActions.filter(action => !!action),
+        dropDown: dropDownActions.filter(action => !!action),
       };
     },
   },

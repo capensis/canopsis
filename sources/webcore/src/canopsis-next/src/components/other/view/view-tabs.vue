@@ -1,22 +1,41 @@
 <template lang="pug">
   v-tabs.view-tabs(
   ref="tabs",
+  :key="vTabsKey",
   :value="value",
-  :class="{ hidden: this.tabs.length < 2 }",
+  :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
+  :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
   dark,
   @change="$emit('input', $event)"
   )
-    draggable.d-flex(v-model="tabs", :options="draggableOptions", @end="onUpdateTabs")
-      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="`tab-${tab._id}`", ripple)
+    draggable.d-flex(
+    :value="tabs",
+    :options="draggableOptions",
+    @end="onDragEnd",
+    @input="$emit('update:tabs', $event)"
+    )
+      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
         span {{ tab.title }}
-        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showUpdateTabModal(tab)")
+        v-btn(
+        v-show="hasUpdateAccess && isEditingMode",
+        small,
+        flat,
+        icon,
+        @click.stop="showUpdateTabModal(tab)"
+        )
           v-icon(small) edit
-        v-btn(v-show="hasUpdateAccess && isEditingMode", small, flat, icon, @click.stop="showDeleteTabModal(tab)")
+        v-btn(
+        v-show="hasUpdateAccess && isEditingMode",
+        small,
+        flat,
+        icon,
+        @click.stop="showDeleteTabModal(tab)"
+        )
           v-icon(small) delete
-    v-tabs-items(ref="tabItems", active-class="active-view-tab")
-      v-tab-item(v-for="tab in tabs", :key="`tab-item-${tab._id}`", lazy)
+    v-tabs-items(v-if="$scopedSlots.default", active-class="active-view-tab")
+      v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
         slot(
         :tab="tab",
         :isEditingMode="isEditingMode",
@@ -27,7 +46,6 @@
 
 <script>
 import Draggable from 'vuedraggable';
-import isEqual from 'lodash/isEqual';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
@@ -43,11 +61,19 @@ export default {
       type: Object,
       required: true,
     },
+    tabs: {
+      type: Array,
+      required: true,
+    },
     value: {
       type: Number,
       default: null,
     },
     hasUpdateAccess: {
+      type: Boolean,
+      default: false,
+    },
+    isTabsChanged: {
       type: Boolean,
       default: false,
     },
@@ -57,15 +83,13 @@ export default {
     },
     updateViewMethod: {
       type: Function,
-      required: true,
+      default: () => {},
     },
   },
-  data() {
-    return {
-      tabs: [],
-    };
-  },
   computed: {
+    vTabsKey() {
+      return this.view.tabs.map(tab => tab._id).join('-');
+    },
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
@@ -74,24 +98,12 @@ export default {
     },
   },
   watch: {
-    isEditingMode(value) {
+    isEditingMode() {
       this.$nextTick(this.callTabsOnResizeMethod);
-
-      if (!value) {
-        this.updateViewMethod({
-          ...this.view,
-
-          tabs: this.tabs,
-        });
-      }
     },
-    'view.tabs': {
+    tabs: {
       immediate: true,
-      handler(tabs, prevTabs) {
-        if (!isEqual(tabs, prevTabs)) {
-          this.tabs = [...tabs];
-        }
-
+      handler() {
         this.onUpdateTabs();
       },
     },
@@ -154,6 +166,10 @@ export default {
         this.callTabsUpdateTabsMethod();
       });
     },
+
+    onDragEnd() {
+      this.onUpdateTabs();
+    },
   },
 };
 </script>
@@ -168,5 +184,24 @@ export default {
   .draggable-item {
     position: relative;
     transform: translateZ(0);
+
+    .tabs-editing & {
+      cursor: move;
+
+      & /deep/ .v-tabs__item {
+        cursor: move;
+      }
+    }
+
+    & /deep/ .v-tabs__item--disabled {
+      color: #fff;
+      opacity: 1;
+
+      button {
+        color: rgba(255,255,255,0.3) !important;
+        box-shadow: none !important;
+        pointer-events: none;
+      }
+    }
   }
 </style>

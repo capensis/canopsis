@@ -1,5 +1,5 @@
 <template lang="pug">
-  quill-editor(:value="value", @input="$emit('input', $event)")
+  quill-editor(:value="value", @input="$emit('input', $event)", :disabled="disabled")
 </template>
 
 <script>
@@ -12,6 +12,10 @@ export default {
   props: {
     value: {
       type: String,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };

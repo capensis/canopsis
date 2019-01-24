@@ -24,6 +24,8 @@ import CreateDeclareTicketEvent from './alarm/create-declare-ticket-event.vue';
 import CreateSnoozeEvent from './alarm/create-snooze-event.vue';
 import VariablesHelp from './common/variables-help.vue';
 import MoreInfos from './alarm/more-infos.vue';
+import InfoPopupSetting from './alarm/info-popup-setting/info-popup-setting.vue';
+import AddInfoPopup from './alarm/info-popup-setting/add-info-popup.vue';
 import CreatePbehavior from './pbehavior/create-pbehavior.vue';
 import PbehaviorList from './pbehavior/pbehavior-list.vue';
 import EditLiveReporting from './alarm/edit-live-reporting.vue';
@@ -73,6 +75,8 @@ export default {
     PbehaviorList,
     EditLiveReporting,
     MoreInfos,
+    InfoPopupSetting,
+    AddInfoPopup,
     Confirmation,
     CreateEntity,
     CreateWatcher,

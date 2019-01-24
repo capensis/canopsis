@@ -1,6 +1,6 @@
 import omit from 'lodash/omit';
 
-import { EVENT_ENTITY_TYPES, MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import eventActionsMixin from '@/mixins/event-actions';
@@ -35,7 +35,7 @@ export default {
         name: MODALS.createCancelEvent,
         config: {
           ...this.modalConfig,
-          title: 'modals.createAckRemove.title',
+          title: this.$t('modals.createAckRemove.title'),
           eventType: EVENT_ENTITY_TYPES.ackRemove,
         },
       });
@@ -62,13 +62,13 @@ export default {
     },
 
     actionsAccessFilterHandler({ type }) {
-      const right = USERS_RIGHTS.business.alarmList.actions[type];
+      const right = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[type];
 
       if (!right) {
         return true;
       }
 
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions[type]);
+      return this.checkAccess(right);
     },
   },
 };

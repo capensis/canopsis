@@ -31,7 +31,7 @@
           v-btn.primary(type="button", @click="showCreateFilterModal") Filter
         r-rule-form(@input="changeRRule")
         v-layout(row)
-          v-select(
+          v-combobox(
           label="Reason",
           v-model="form.reason",
           :items="selectItems.reasons",

@@ -27,6 +27,7 @@
     "sha1": "^1.1.1",
     "uid": "^0.0.2",
     "uuid": "^3.3.2",
+    "v-runtime-template": "^1.5.2",
     "vee-validate": "^2.0.6",
     "vue": "^2.5.13",
     "vue-chartjs": "^3.4.0",

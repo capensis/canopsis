@@ -143,7 +143,12 @@ export default {
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
       };
 
-      const query = { ...pick(meta, ['tstart', 'tstop']), filter: meta.filter.filter };
+      const query = { ...pick(meta, ['tstart', 'tstop']) };
+
+      if (!isEmpty(event.data.meta.filter)) {
+        widgetParameters.viewFilters = [meta.filter];
+        widgetParameters.mainFilter = meta.filter;
+      }
 
       if (query.tstart || query.tstop) {
         query.interval = LIVE_REPORTING_INTERVALS.custom;
@@ -232,6 +237,11 @@ export default {
         width: 100%;
         height: 100%!important;
         padding: 4px;
+
+        .v-menu__activator {
+          width: 100%;
+          height: 100%;
+        }
 
         .ds-calendar-event {
           padding-left: 0;
