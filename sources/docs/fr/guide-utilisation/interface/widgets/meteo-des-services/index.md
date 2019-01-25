@@ -11,7 +11,8 @@
 4. [Les détails d'une entité d'un service](#les-details-dune-entite-dun-service)
 
 ### Guide exploitant
-1. [Paramètres du widget](#parametres-du-widget)
+1. [Aide sur les variables](#aide-variables)
+2. [Paramètres du widget](#parametres-du-widget)
 
 ## Guide utilisateur
 ### Présentation générale
@@ -54,6 +55,21 @@ Un observateur surveille deux entités, A et B. A a un état de 1. B a un état 
 ### Les détails d'une entité d'un service
 
 ## Guide exploitant
+
+### Aide - Variables
+
+Durant la configuration de votre widget Météo de services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les observateurs.
+
+Example: Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom de l'observateur, ou son identifiant, etc.
+
+Afin de connaitre les variables disponibles, une modal d'aide est disponible.
+
+Pour y accèder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
+
+Un bouton d'aide apparaît alors sur chacune des tuiles de la Météo de service.
+
+Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles dans vos différents template. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
+
 ### Paramètres du widget
 1. Taille du widget
 2. Titre
@@ -102,19 +118,31 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'affiché les détails de l'observateur : `watcher`.
-Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ watcher.display_name }}`.
+Une variable est disponible ici pour vous permettre d'affiché les détails de l'observateur : `entity`.
+Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ entity.display_name }}`.
 Tous les champs disponibles dans l'observateur sont disponibles ici.
 
 ##### Template - Modal
 
-Ce paramètre permet de personnaliser les informations affichées en haut de la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
+Ce paramètre permet de personnaliser les informations affichées dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
+
+Il vous est possible ici d'afficher, à n'importe quel endroit de la modal, la liste des entités concernées par l'observateur sur lequel vous avez cliquer. Pour ce faire, insérez dans le template:
+
+{{ entities }}
+
+Cela aura pour effet d'insérer dans la modal la liste des entités. Par défaut, le nom de l'entité sera affiché pour chacune d'entre elles. Il vous est possible de modifier la valeur affichée ici. Tout les champs de l'entité sont disponibles. Pour ce faire, ajoutez un argument ```name``` à la balise précédemment ajoutée. Il vous est donc possible d'écrire, par exemple :
+
+{{ entities name="_id" }}
+
+Pour chaque entité de la liste, l'id de l'entité sera affiché, à la place de son nom.
 
 Celui-ci fonctionne de la même manière que le paramètre Template - Tuile présenté ci-dessus. Cliquez [ici](#template-tuile) pour vous rendre à cette partie.
 
 ##### Template - Entités
 
 Ce paramètre permet de personnaliser les informations affichées pour chaque entités dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
+
+**Attention: La liste des entités n'est affichée que si cela a été précisé dans le [Template - Modal](#template-modal).**
 
 Le langage utilisé ici est le Handlebars.
 
