@@ -1,5 +1,5 @@
 module.exports = {
-  baseUrl: process.env.NODE_ENV === 'production' ? '/en/static/canopsis-next/dist/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/en/static/canopsis-next/dist/' : '/',
   lintOnSave: false,
   chainWebpack: (config) => {
     config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
