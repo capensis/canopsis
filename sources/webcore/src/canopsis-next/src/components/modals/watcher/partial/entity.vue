@@ -8,9 +8,10 @@
           v-flex.pl-1.white--text.subheading.entity-title(
           xs12,
           )
-            v-layout
-              div {{ entity | get(entityNameField, false, entityNameField) }}
-              v-icon.pa-1(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color") {{ icon.icon }}
+            v-layout(align-center)
+              div.mr-1 {{ entity | get(entityNameField, false, entityNameField) }}
+              v-btn.ma-0(v-for="icon in extraIcons", :key="icon.icon", icon)
+                v-icon(:color="icon.color") {{ icon.icon }}
         v-card
           v-card-text
             v-layout(row, align-center)
