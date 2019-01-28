@@ -70,9 +70,8 @@ import {
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
-const { mapActions } = createNamespacedHelpers('userPreference');
+const { mapActions: userPreferenceMapActions } = createNamespacedHelpers('userPreference');
 
 export default {
   components: { Draggable },
@@ -80,7 +79,6 @@ export default {
     authMixin,
     modalMixin,
     vuetifyTabsMixin,
-    entitiesUserPreferenceMixin,
   ],
   props: {
     view: {
@@ -135,7 +133,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
+    ...userPreferenceMapActions({
       createUserPreference: 'create',
       fetchUserPreferenceByWidgetIdWithoutStore: 'fetchItemByWidgetIdWithoutStore',
     }),
