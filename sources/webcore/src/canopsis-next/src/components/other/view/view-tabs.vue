@@ -55,18 +55,33 @@
 <script>
 import omit from 'lodash/omit';
 import Draggable from 'vuedraggable';
+import { createNamespacedHelpers } from 'vuex';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
-import { generateViewTab, generateViewRow, generateWidgetByType } from '@/helpers/entities';
+import {
+  generateViewTab,
+  generateViewRow,
+  generateWidgetByType,
+  generateUserPreferenceByWidgetAndUser,
+} from '@/helpers/entities';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+
+const { mapActions } = createNamespacedHelpers('userPreference');
 
 export default {
   components: { Draggable },
-  mixins: [modalMixin, vuetifyTabsMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    vuetifyTabsMixin,
+    entitiesUserPreferenceMixin,
+  ],
   props: {
     view: {
       type: Object,
@@ -120,6 +135,11 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      createUserPreference: 'create',
+      fetchUserPreferenceByWidgetIdWithoutStore: 'fetchItemByWidgetIdWithoutStore',
+    }),
+
     showUpdateTabModal(tab) {
       this.showModal({
         name: MODALS.textFieldEditor,
@@ -150,22 +170,7 @@ export default {
             label: this.$t('modals.viewTab.fields.title'),
             validationRules: 'required',
           },
-          action: (title) => {
-            const newTab = {
-              ...generateViewTab(),
-              title,
-              rows: tab.rows.map(row => ({
-                ...generateViewRow(),
-                title: row.title,
-                widgets: row.widgets.map(widget => ({
-                  ...generateWidgetByType(widget.type),
-                  ...omit(widget, ['_id']),
-                })),
-              })),
-            };
-
-            return this.addTab(newTab);
-          },
+          action: title => this.duplicateTabAction(tab, title),
         },
       });
     },
@@ -177,6 +182,57 @@ export default {
           action: () => this.deleteTab(tab._id),
         },
       });
+    },
+
+    async duplicateTabAction(tab, title) {
+      const widgetsIdsMap = {};
+      const newTab = {
+        ...generateViewTab(),
+
+        title,
+        rows: tab.rows.map(row => ({
+          ...generateViewRow(),
+
+          title: row.title,
+          widgets: row.widgets.map((widget) => {
+            const newWidget = generateWidgetByType(widget.type);
+
+            widgetsIdsMap[widget._id] = newWidget._id;
+
+            return {
+              ...newWidget,
+              ...omit(widget, ['_id']),
+            };
+          }),
+        })),
+      };
+
+      await this.copyUserPreferencesForWidgets(widgetsIdsMap);
+
+      return this.addTab(newTab);
+    },
+
+    async copyUserPreferencesForWidgets(widgetsIdsMap) {
+      const oldWidgetsIds = Object.keys(widgetsIdsMap);
+      const userPreferences = await Promise.all(oldWidgetsIds.map(widgetId =>
+        this.fetchUserPreferenceByWidgetIdWithoutStore({ widgetId })));
+
+
+      return Promise.all(userPreferences.map((userPreference) => {
+        if (!userPreference) {
+          return Promise.resolve();
+        }
+
+        const newWidgetId = widgetsIdsMap[userPreference.widget_id];
+        const newUserPreference = generateUserPreferenceByWidgetAndUser({ _id: newWidgetId }, this.currentUser);
+
+        return this.createUserPreference({
+          userPreference: {
+            ...newUserPreference,
+            ...omit(userPreference, ['_id', 'widget_id']),
+          },
+        });
+      }));
     },
 
     updateTab(tab) {
