@@ -55,7 +55,7 @@
         v-flex(xs10)
           pagination(:meta="contextEntitiesMeta", :query.sync="query")
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
@@ -75,6 +75,7 @@ import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import MoreInfos from './more-infos/more-infos.vue';
@@ -110,6 +111,7 @@ export default {
     widgetQueryMixin,
     widgetColumnsMixin,
     widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
   ],
   props: {
