@@ -631,6 +631,9 @@ export default {
       edit: {
         title: 'Edit tab',
       },
+      duplicate: {
+        title: 'Duplicate tab',
+      },
       fields: {
         title: 'Title',
       },
