@@ -7,8 +7,7 @@
 ### Guide utilisateur
 1. [Présentation générale](#presentation-generale)
 2. [Les tuiles](#les-tuiles)
-3. [La fenêtre 'Plus d'infos'](#la-fenetre-plus-dinfos)
-4. [Les détails d'une entité d'un service](#les-details-dune-entite-dun-service)
+3. [La modal](#la-modal)
 
 ### Guide exploitant
 1. [Paramètres du widget](#parametres-du-widget)
@@ -27,31 +26,47 @@ Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](
 
 La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **l'état** de l'observateur:
 
-### 1. La couleur
+#### La couleur
 
 La couleur de la tuile correspond à l'état de l'observateur. Cet état est calculé en prenant en compte le pire état parmi les entités surveillées par cet observateur.
 
 Exemple : 
 Un observateur surveille deux entités, A et B. A a un état de 1. B a un état de 3. L'état de l'observateur sera alors égal à 3.
 
-- Vert : Etat = 0 => Ok
-- Jaune : Etat = 1 => Mineur
-- Orange : Etat = 2 => Majeur
-- Rouge : Etat = 3 => Critique
-- Gris : 
+- Vert: Etat = 0 => Ok
+- Jaune: Etat = 1 => Mineur
+- Orange: Etat = 2 => Majeur
+- Rouge: Etat = 3 => Critique
+- Gris: L'observateur (ou toutes les entités de l'observateur) possède un comportement périodique actif (pause, maintenance, ...).
 
-### 2. L'icone
+#### L'icone
 
-- Soleil
-- Soleil + Nuage
-- Nuage
-- Pluie
-- Clé
-- Lune
-- Pause
+- Soleil: L'observateur possède un état "Ok" (égal à 0)
+- Personne: L'observateur possède un état Mineur (égal à 1) ou Majeur (égal à 2)
+- Nuage: L'observateur possède un état: "Critique" (égal à 3)
+- Clé: L'observateur possède un comportement périodique actif, de type "Maintenance"
+- Lune: L'observateur possède un comportement périodique actif, de type "Hors plage de surveillance"
+- Pause: L'observateur ne possède pas de comportement périodique, mais toutes les entités liées à cet observateur possède un comportement périodique actif.
 
-### La fenêtre 'Plus d'infos'
-### Les détails d'une entité d'un service
+#### Le clignotement
+
+Une tuile de la météo de service clignotera si une des entités lui appartenant possède une alarme non acquittée, et que celui-ci n'est pas en pause/ne possède pas d'entité en pause.
+
+### La modal
+
+Au clic sur une tuile de la météo de services, une fenêtre s'ouvre.
+
+Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
+
+Celle-ci contient, au choix : 
+
+- "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant l'observateur sur lequel vous avez cliquer. Celle-ci peut, notamment, contenir la liste des entités concernées par l'observateur. Le template de cette fenêtre est configurable depuis les paramètres du widget.
+
+![Modal - Plus d'infos](./img/modal_more_infos.png "Modal - Plus d'infos")
+
+- "Bac à alarmes": Cette fenêtre contient un widget Bac à alarmes. Ce Bac à alarmes regroupe toutes les alarmes dans le spectre de l'observateur. Celui-ci est configurable depuis les paramètres du widget.
+
+![Modal - Bac à alarmes](./img/modal_alarmlist.png "Modal - Bac à alarmes")
 
 ## Guide exploitant
 ### Paramètres du widget
@@ -59,12 +74,15 @@ Un observateur surveille deux entités, A et B. A a un état de 1. B a un état 
 2. Titre
 3. Editeur de filtre
 4. Paramètres avancés
-  1. Template - Tuiles
-  2. Template - Modal
-  3. Template - Entités
-  4. Colonnes - Petit
-  5. Colonnes - Moyen
-  6. Colonnes - Large
+    1. Template - Tuiles
+    2. Template - Modal
+    3. Template - Entités
+    4. Colonnes - Petit
+    5. Colonnes - Moyen
+    6. Colonnes - Large
+    7. Marges
+    8. Hauteur
+    9. Type de modal
 
 #### Taille du widget (*requis*)
 
@@ -141,3 +159,30 @@ Il suffit de faire glisser le curseur pour sélectionner le nombre de colonne pa
 Ce paramètre permet de définir la proportion de l'écran, en largeur, prise par chaque tuile de la météo de services. Ce paramètre concerne les écrans d'ordinateurs (largeur > 900px). Une tuile occupe au minimum une colonne (1/12 de la largeur de la page), et au maximum 12 colonnes (100 % de la largeur de la page).
 
 Il suffit de faire glisser le curseur pour sélectionner le nombre de colonne par tuile souhaité.
+
+##### Marges
+
+Ce paramètre permet de régler les espaces séparant les tuiles de la Météo de services.
+
+Celui-ci est séparé en quatre, vous permettant de régler l'espace que vous souhaitez pour chaque côté des tuiles (haut, bas, droite et gauche).
+
+Pour modifier ce paramètre, faites glisser le sélecteur, afin de choisir une valeur entre 0 et 5 (0 correspondant à l'absence de marge, 5 le maximum de marge).
+
+Par défaut, ce paramètre est réglé sur une valeur de 1 pour chacuns des côtés des tuiles.
+
+##### Hauteur
+
+Ce paramètre permet de régler la hauteur des tuiles de la Météo de services.
+
+Pour le modifier, faites glisser le sélecteur, afin de choisir une valeur entre 1 (hauteur minimale) et 20 (hauteur maximale).
+
+Par défaut, ce paramètre est réglé sur une valeur de 1.
+
+##### Type de modal
+
+Ce paramètre vous permet de sélectionner le type de modal que vous souhaitez ouvrir au clic sur une tuile de la Météo de services.
+
+Les types de modal disponibles sont : 
+
+- "Plus d'infos": Cette modal vous permet d'afficher (grâce à un template configurable) des détails supplémentaire sur l'observateur sur lequel vous cliquez.
+- "Bac à alarmes": Cette modal vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à l'observateur. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
