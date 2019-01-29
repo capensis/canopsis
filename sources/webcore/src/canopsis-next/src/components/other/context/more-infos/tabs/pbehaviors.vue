@@ -1,21 +1,25 @@
 <template lang="pug">
   v-card.secondary.lighten-2(flat)
     v-card-text
-      v-data-table.ma-0.pbehaviorsTable(:items="items", :headers="pbehaviorsTableHeaders")
+      v-data-table.ma-0.pbehaviorsTable(:items="pbehaviors", :headers="pbehaviorsTableHeaders")
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
           td {{ props.item.connector }}
           td {{ props.item.connector_name }}
-          td {{ props.item.enabled }}
+          td
+            v-icon(
+            small,
+            :color="props.item.enabled ? 'primary' : 'error'"
+            ) {{ props.item.enabled ? 'check' : 'clear'}}
           td {{ props.item.tstart | date('long') }}
           td {{ props.item.tstop | date('long') }}
           td {{ props.item.type_ }}
           td {{ props.item.reason }}
           td {{ props.item.rrule }}
           td
-            v-btn.error--text(@click="deletePbehavior(props.item._id)", icon, small)
-              v-icon delete
+            v-btn(@click="deletePbehavior(props.item._id)", icon, small)
+              v-icon(color="error") delete
 </template>
 
 <script>
@@ -33,7 +37,6 @@ export default {
   },
   data() {
     return {
-      items: [],
       pbehaviorsTableHeaders: [
         {
           text: this.$t('common.name'),
