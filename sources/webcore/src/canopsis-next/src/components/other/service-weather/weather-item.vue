@@ -13,7 +13,6 @@
         div.watcherName.pt-3(v-html="compiledTemplate")
         v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
           v-icon(color="white") {{ secondaryIcon }}
-
 </template>
 
 <script>
@@ -209,7 +208,7 @@ export default {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1em;
+    line-height: 1.2em;
   }
 
   @keyframes blink {
@@ -229,5 +228,6 @@ export default {
     position: absolute;
     right: 0.2em;
     top: 0;
+    z-index: 1;
   }
 </style>

@@ -9,7 +9,7 @@
           xs12,
           )
             v-layout(align-center)
-              div.mr-1 {{ entity | get(entityNameField, false, entityNameField) }}
+              div.mr-1 {{ { entity } | get(entityNameField, false, entityNameField) }}
               v-btn.mx-1.white(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color", small, dark, icon)
                 v-icon(small) {{ icon.icon }}
         v-card(color="white black--text")
