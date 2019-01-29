@@ -1,7 +1,7 @@
 <template lang="pug">
   .weather-watcher-entity-expansion-panel
-    v-expansion-panel
-      v-expansion-panel-content(:class="entityClass")
+    v-expansion-panel(dark)
+      v-expansion-panel-content.px-1(:style="{ backgroundColor: color }")
         v-layout(slot="header", justify-space-between, align-center)
           v-flex.pa-1(v-for="(icon, index) in mainIcons", :key="index")
             v-icon(color="white", small) {{ icon }}
@@ -10,9 +10,9 @@
           )
             v-layout(align-center)
               div.mr-1 {{ entity | get(entityNameField, false, entityNameField) }}
-              v-btn.ma-0(v-for="icon in extraIcons", :key="icon.icon", icon)
-                v-icon(:color="icon.color") {{ icon.icon }}
-        v-card
+              v-btn.mx-1.white(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color", small, dark, icon)
+                v-icon(small) {{ icon.icon }}
+        v-card(color="white black--text")
           v-card-text
             v-layout(row, align-center)
               div {{ $t('common.actionsLabel') }}:
@@ -22,6 +22,7 @@
                 :disabled="!isActionBtnEnable(action.name)",
                 depressed,
                 small,
+                light,
                 )
                   v-icon {{ action.icon }}
             div(v-html="compiledTemplate")
@@ -100,7 +101,7 @@ export default {
     };
   },
   computed: {
-    entityClass() {
+    color() {
       if (this.hasActivePbehavior) {
         return WATCHER_PBEHAVIOR_COLOR;
       }
