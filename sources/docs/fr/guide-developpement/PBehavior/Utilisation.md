@@ -38,7 +38,7 @@ JSON :
 {
     "name": "imagine",
     "author": "lennon",
-    "filter_": {"_id": "all_the_people"},
+    "filter": {"_id": "all_the_people"},
     "rrule": "",
     "tstart": 0,
     "tstop": 1000
@@ -61,9 +61,9 @@ Les attributs du corps sont les suivants :
 | rrule           | string  | yes      | Rrule (récurrence)                             |
 | tstart          | integer | No       | Timestamp de la date de départ                 |
 | tstop           | integer | No       | Timestamp de la date de fin                    |
-| \_id            | string  | No       | indentifiant du Pbehavior                      |
+| \_id            | string  | No       | identifiant du Pbehavior                       |
 | eids            | array   | No       | tableau du \_ids pour les entités impactées.   |
-| timezone        | string  | yes      | La timezone à utilisé pour le calcul des dates |
+| timezone        | string  | yes      | La timezone à utiliser pour le calcul des dates |
 
 
 Réponse : UID de l'élément inséré
@@ -129,7 +129,7 @@ Les attributs de réponse sont les suivants :
 | \_id            | string  | No       | Pbehavior identifier                           |
 | eids            | array   | No       | Array of \_ids for the impacted entities.      |
 | isActive        | boolean | No       | is the pbehavior currently active              |
-| timeszone       | string  | yes      | La timezone à utilisé pour le calcul des dates |
+| timezone        | string  | yes      | La timezone à utiliser pour le calcul des dates |
 
 ## Supprimer un pbehavior
 
@@ -160,11 +160,11 @@ Cette route impose un nouveau calcul pour tous les comportements.
 
 #### URL
 
-GET / api / v2 / compute-pbehaviors
+`GET /api/v2/compute-pbehaviors`
 
 #### GET exemple
 
-/ api / v2 / compute-pbehaviors
+/api/v2/compute-pbehaviors
 
 Réponse: les calculs ont-ils été traités ?
 
