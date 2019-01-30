@@ -5,7 +5,7 @@
     :key="key",
     :modal="modal",
     :index="index",
-    :dialogProps="dialogPropsMap[modal.name] || defaultDialogProps",
+    :dialogProps="dialogProps(modal)",
     )
       component(:is="modal.name", :modal="modal")
 </template>
@@ -111,12 +111,22 @@ export default {
         [MODALS.createWidget]: { maxWidth: 500, lazy: true },
         [MODALS.alarmsList]: { fullscreen: true, lazy: true },
         [MODALS.createFilter]: { maxWidth: 920, lazy: true },
+        [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
+        [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
   },
   computed: {
     ...modalMapGetters(['modals']),
+
+    dialogProps() {
+      return modal => ({
+        ...this.defaultDialogProps,
+        ...this.dialogPropsMap[modal.name],
+        ...modal.dialogProps,
+      });
+    },
   },
 };
 </script>
