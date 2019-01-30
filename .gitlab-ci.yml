@@ -39,7 +39,7 @@ build_next:
     changes:
       - sources/webcore/src/canopsis-next/**/*
     refs:
-      - develop
+      - fix/canopsis-next-ci
    after_script:
      - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next kill
      - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next rm -sf
