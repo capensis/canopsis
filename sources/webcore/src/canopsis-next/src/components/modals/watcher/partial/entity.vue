@@ -1,15 +1,17 @@
 <template lang="pug">
   .weather-watcher-entity-expansion-panel
     v-expansion-panel(dark)
-      v-expansion-panel-content.px-1(:style="{ backgroundColor: color }")
+      v-expansion-panel-content(:style="{ backgroundColor: color }")
         v-layout(slot="header", justify-space-between, align-center)
-          v-flex.pa-1(v-for="(icon, index) in mainIcons", :key="index")
+          v-flex.pa-2(v-for="(icon, index) in mainIcons", :key="index")
             v-icon(color="white", small) {{ icon }}
           v-flex.pl-1.white--text.subheading.entity-title(
           xs12,
           )
             v-layout(align-center)
-              div.mr-1 {{ { entity } | get(entityNameField, false, entityNameField) }}
+              div.mr-1.entityName(
+              v-resize-text="{maxFontSize: '16px'}",
+              ) {{ { entity } | get(entityNameField, false, entityNameField) }}
               v-btn.mx-1.white(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color", small, dark, icon)
                 v-icon(small) {{ icon.icon }}
         v-card(color="white black--text")
@@ -270,5 +272,9 @@ export default {
     .actions-button-wrapper {
       float: right;
     }
+  }
+
+  .entityName {
+    line-height: 1.5em;
   }
 </style>
