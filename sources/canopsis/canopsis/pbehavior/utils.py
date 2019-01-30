@@ -31,14 +31,16 @@ def check_valid_rrule(rrule):
     return True
 
 
-def parse_exdate(exdate):
+def parse_exdate(exdate, utc=False):
     """Extract the date, time and timezone fron the given exdate.
 
     Return the date and time as a datetime object and the timezone as a string.
     :param str exdate: the date and timezone to parse
+    :param bool utc: to return the datetime in utc instead of the timezone
+    defined in the exdate
     :raises ValueError: if the timezone extracted from the exdate string is
     invalid or if the date extracted from the exdate is invalid.
-    :return (datetime, str): the date and time and the timezone as a string"""
+    :return datetime: a timezone aware datetime"""
 
     data = exdate.split(" ")
 
@@ -53,4 +55,8 @@ def parse_exdate(exdate):
     if timezone is None:
         ValueError("Unknown timezone : {}.".format(data[2]))
 
-    return date_time, timezone
+    date_time = date_time.replace(tzinfo=timezone)
+    if not utc:
+        return date_time
+
+    return date_time.astimezone(tz.gettz("UTC"))

@@ -581,9 +581,7 @@ class PBehaviorManager(object):
         stop = stop.replace(tzinfo=None)
 
         for str_date in pbehavior[PBehavior.EXDATE]:
-            date, timezone = parse_exdate(str_date)
-            exdate = date.replace(tzinfo=timezone)
-            exdate = exdate.astimezone(tz.gettz("UTC"))
+            exdate = parse_exdate(str_date, utc=True)
             exdate = exdate.replace(tzinfo=None)
             rec_set.exdate(exdate)
 
