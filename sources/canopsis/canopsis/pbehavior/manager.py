@@ -24,11 +24,11 @@ Managing PBehavior.
 
 from calendar import timegm
 from datetime import datetime
+from dateutil import tz, rrule
 from json import loads, dumps
 from time import time
 from uuid import uuid4
 from six import string_types
-from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
 import pytz
@@ -560,73 +560,65 @@ class PBehaviorManager(object):
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
 
-    def check_active_pbehavior(self, timestamp, pbehavior):
-        """
-        For a given pbehavior (as dict) check that the given timestamp is active
-        using either:
-
-        the rrule, if any, from the pbehavior + tstart and tstop to define
-        start and stop times.
-
-        tstart and tstop alone if no rrule is available.
-
-        All dates and times are computed using UTC timezone, so check that your
-        timestamp was exported using UTC.
-
-        :param int timestamp: timestamp to check
-        :param dict pbehavior: the pbehavior
-        :rtype bool:
-        :returns: pbehavior is currently active or not
-        """
-        fromts = datetime.utcfromtimestamp
-        tstart = pbehavior[PBehavior.TSTART]
-        tstop = pbehavior[PBehavior.TSTOP]
-        pbh_tz = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
-
-        try:
-            tz_object = pytz.timezone(pbh_tz)
-        except pytz.UnknownTimeZoneError:
-            self.logger.error("Can not parse the timezone : {}.".format(pbh_tz))
-            raise
-
-        if not isinstance(tstart, (int, float)):
-            return False
-        if not isinstance(tstop, (int, float)):
-            return False
-
-        dttstart = fromts(tstart).replace(tzinfo=pytz.UTC)
-        dttstop = fromts(tstop).replace(tzinfo=pytz.UTC)
-
-        pbh_duration = tstop - tstart
-
-        dtts = fromts(timestamp).replace(tzinfo=pytz.UTC)
-        dtts = dtts.astimezone(pytz.timezone(pbh_tz))
-        # ddts_offset contains the current timestamp minus the duration of
-        # the pbhevior, so the computation of the rrules occurences
-        # will include the running occurence. Thus the current pbehavior
-        # will be detected.
-        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=pytz.UTC)
-        dtts_offset = dtts_offset.astimezone(tz_object)
-
-        rrule = pbehavior['rrule']
-        if rrule:
-            dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
-            if dt is None:
-                return False
-
-            delta = dttstop - dttstart
-
-            if dt <= dtts <= dt + delta:
-                return True
-
-            return False
-
-        else:
-            if dtts >= dttstart and dtts <= dttstop:
-                return True
-            return False
+    def _check_active_simple_pbehavior(self, timestamp, pbh):
+        if pbh[PBehavior.TSTART] <= timestamp <= pbh[PBehavior.TSTOP]:
+            return True
 
         return False
+
+    def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
+
+        rec_set = rrule.rruleset()
+
+        # convert datetime/timestamps to naive UTC datetime
+        now = datetime.utcfromtimestamp(timestamp)
+        now = now.replace(tzinfo=None)
+
+        start = datetime.utcfromtimestamp(pbehavior[PBehavior.TSTART])
+        start = start.replace(tzinfo=None)
+
+        stop = datetime.utcfromtimestamp(pbehavior[PBehavior.TSTOP])
+        stop = stop.replace(tzinfo=None)
+
+        for str_date in pbehavior[PBehavior.EXDATE]:
+            date, timezone = parse_exdate(str_date)
+            exdate = date.replace(tzinfo=timezone)
+            exdate = exdate.astimezone(tz.gettz("UTC"))
+            exdate = exdate.replace(tzinfo=None)
+            rec_set.exdate(exdate)
+
+        duration = stop - start  # pbehavior duration
+
+        rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
+                                     dtstart=start))
+
+        rec_start = rec_set.before(now)
+
+        self.logger.debug("Recurence start : {}".format(rec_start))
+        self.logger.debug("Timestamp       : {}".format(now))
+        self.logger.debug("Recurence stop  : {}".format(rec_start + duration))
+
+        print("Rec_start {}".format(rec_start))
+        print("Now       {}".format(now))
+        print("Rec_stop  {}".format(rec_start + duration))
+        print("\nDuration  {}".format(duration))
+
+        # No recurrence found
+        if rec_start is None:
+            return False
+
+        if rec_start <= now <= rec_start + duration:
+            return True
+
+        return False
+
+    def check_active_pbehavior(self, timestamp, pbehavior):
+        if PBehavior.RRULE not in pbehavior or\
+           pbehavior[PBehavior.RRULE] is None or\
+           pbehavior[PBehavior.RRULE] == "":
+            return self._check_active_simple_pbehavior(timestamp, pbehavior)
+        else:
+            return self._check_active_reccuring_pbehavior(timestamp, pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """

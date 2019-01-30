@@ -3,9 +3,9 @@ Utils for pbehaviors.
 """
 
 from dateutil.rrule import rrulestr
+from dateutil import tz
 from datetime import datetime
 
-import pytz
 
 EXDATE_DATE_FORMAT = "%Y/%m/%d %H:%M:%S"
 
@@ -48,9 +48,9 @@ def parse_exdate(exdate):
 
     date_time = datetime.strptime(data[0] + " " + data[1], EXDATE_DATE_FORMAT)
 
-    try:
-        timezone = pytz.timezone(data[2])
-    except pytz.UnknownTimeZoneError:
-        raise ValueError("Unknown timezone : {}.".format(data[2]))
+    timezone = tz.gettz(data[2])
+
+    if timezone is None:
+        ValueError("Unknown timezone : {}.".format(data[2]))
 
     return date_time, timezone
