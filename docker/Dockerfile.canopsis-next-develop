@@ -1,7 +1,7 @@
 FROM node:8.12-alpine
 
 WORKDIR /canopsis-next
-ADD ./ /canopsis-next/
+ADD ./sources/webcore/src/canopsis-next/ /canopsis-next/
 
 RUN cd /canopsis-next/ && \
     yarn install

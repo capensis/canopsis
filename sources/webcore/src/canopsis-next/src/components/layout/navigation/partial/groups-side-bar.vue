@@ -2,6 +2,7 @@
   v-navigation-drawer.side-bar.secondary(
   v-model="isOpen",
   :width="$config.SIDE_BAR_WIDTH",
+  :class="{ editing: isEditingMode }"
   disable-resize-watcher,
   app,
   )
@@ -18,8 +19,8 @@
     dark
     )
       v-expansion-panel-content.secondary.white--text(v-for="group in groups", :key="group._id")
-        div(slot="header")
-          span {{ group.name }}
+        div.panel-header(slot="header")
+          span(:title="group.name") {{ group.name }}
           v-btn(
           v-show="isEditingMode",
           depressed,
@@ -28,28 +29,26 @@
           @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
-        v-card.secondary.white--text(v-for="view in getAvailableViewsForGroup(group)", :key="view._id")
-          v-card-text
-            router-link(:to="{ name: 'view', params: { id: view._id } }")
+        v-card.secondary.lighten-1.white--text(v-for="view in getAvailableViewsForGroup(group)", :key="view._id")
+          v-card-text.panel-item-content
+            router-link.panel-item-content-link(:title="view.title", :to="{ name: 'view', params: { id: view._id } }")
               span.pl-3 {{ view.title }}
-              v-btn(
-              v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && isEditingMode",
-              color="grey darken-2",
-              depressed,
-              small,
-              icon,
-              @click.prevent="showEditViewModal(view)"
-              )
-                v-icon(small) edit
-              v-btn(
-              v-show="isEditingMode",
-              depressed,
-              small,
-              icon,
-              color="grey darken-2",
-              @click.prevent="showDuplicateViewModal(view)"
-              )
-                v-icon(small) file_copy
+            v-btn(
+            v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && isEditingMode",
+            depressed,
+            small,
+            icon,
+            @click.prevent="showEditViewModal(view)"
+            )
+              v-icon(small) edit
+            v-btn(
+            v-show="isEditingMode",
+            depressed,
+            small,
+            icon,
+            @click.prevent="showDuplicateViewModal(view)"
+            )
+              v-icon(small) file_copy
     v-divider
     groups-settings-button(
     :isEditingMode="isEditingMode",
@@ -97,7 +96,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   a {
     color: inherit;
     text-decoration: none;
@@ -111,6 +110,10 @@ export default {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+
+    & /deep/ .v-expansion-panel__header {
+      height: 48px;
+    }
   }
 
   .brand {
@@ -123,5 +126,52 @@ export default {
     bottom: 0;
     right: 0;
     padding-right: 0.5em;
+  }
+
+  .panel-header {
+    max-width: 88%;
+
+    span {
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
+      vertical-align: middle;
+
+      .editing & {
+        max-width: 73%;
+      }
+    }
+  }
+
+  .panel-item-content {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    cursor: pointer;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    padding: 12px 24px;
+    height: 48px;
+
+    & > div {
+      max-width: 100%;
+    }
+
+    & /deep/ .v-btn:not(:last-child) {
+      margin-right: 0;
+    }
+
+    .panel-item-content-link {
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
+      vertical-align: middle;
+    }
   }
 </style>
