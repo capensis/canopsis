@@ -62,10 +62,17 @@ export default {
   mounted() {
     this.editor = new Jodit(this.$el, this.editorConfig);
     this.editor.setEditorValue(this.value);
-    this.editor.events.on('change', newValue => this.$emit('input', newValue));
+    this.editor.events.on('change', this.onChange);
   },
   beforeDestroy() {
+    this.editor.events.off('change', this.onChange);
     this.editor.destruct();
+    delete this.editor;
+  },
+  methods: {
+    onChange(value) {
+      this.$emit('input', value);
+    },
   },
 };
 </script>
