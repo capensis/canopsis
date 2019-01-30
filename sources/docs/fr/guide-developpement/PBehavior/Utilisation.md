@@ -24,6 +24,9 @@ Par exemple, le comportement ci-dessous commence à 11 heures et se termine une 
 
 **Lorsque l'évènement est récurrent, la date de la dernière occurrence est stockée dans l'attribut `UNTIL` de l' évènement.rrule**
 
+!!! attention
+    L'API actuelle des pbehaviors n'a pas de réelle gestion des fuseaux horaires : sur un serveur réglé sur le fuseau `Europe/Paris`, un pbehavior posé en heure d'hiver restera « bloqué » sur ce fuseau et apparaîtra décalé en heure d'été, s'il n'est pas recréé.
+
 ## Créer un pbehavior
 
 #### URL
