@@ -32,7 +32,7 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.confng.helpers import cfg_to_bool
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
-from canopsis.pbehavior.utils import check_valid_rrule
+from canopsis.pbehavior.utils import check_valid_rrule, parse_exdate
 from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
@@ -108,6 +108,12 @@ def check_values(data):
     if 'rrule' in data:
         check_valid_rrule(data['rrule'])
 
+    if PBehavior.EXDATE in data:
+        if isinstance(data[PBehavior.EXDATE], list):
+            for date in data[PBehavior.EXDATE]:
+                parse_exdate(date)
+        else:
+            raise ValueError("Exdate must be a list of string.")
     # useful when enabled doesn't exist in document
     if ("enabled" not in data
             or data["enabled"] is None
