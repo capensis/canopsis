@@ -23,7 +23,7 @@
                   v-layout(justify-center)
                     v-btn Connect with WebSSO
                   v-layout(justify-end)
-                    v-btn(type="standardLogin", color="primary") {{ $t('common.connect') }}
+                    v-btn(@click="standardLogin", type="submit", color="primary") {{ $t('common.connect') }}
             v-tab-item
               v-card
                 v-card-text
@@ -36,7 +36,7 @@
                   v-layout(justify-center)
                     v-btn Connect with WebSSO
                   v-layout(justify-end)
-                    v-btn(type="ldapLogin", color="primary") {{ $t('common.connect') }}
+                    v-btn(@click="ldapLogin", type="submit", color="primary") {{ $t('common.connect') }}
 </template>
 
 <script>
@@ -90,7 +90,7 @@ export default {
         const formIsValid = await this.$validator.validateAll();
 
         if (formIsValid) {
-          await this.login(this.form);
+          await this.login(this.standardForm);
 
           this.redirect();
         }

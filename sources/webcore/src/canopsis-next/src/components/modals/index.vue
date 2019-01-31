@@ -50,6 +50,7 @@ import AlarmsList from './alarm/alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
 import CreateRight from './admin/create-right.vue';
+import LdapConfiguration from './admin/ldap-configuration.vue';
 import CreateEventFilterRule from './event-filter/create-event-filter-rule.vue';
 import CreateEventFilterRulePattern from './event-filter/pattern/create-event-filter-rule-pattern.vue';
 import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
@@ -98,6 +99,7 @@ export default {
     CreateUser,
     CreateRole,
     CreateRight,
+    LdapConfiguration,
     CreateEventFilterRule,
     CreateEventFilterRulePattern,
     AddEventFilterRuleToPattern,

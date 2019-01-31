@@ -14,16 +14,21 @@
           :value="groupsNavigationType",
           @change="setGroupsNavigationType"
           )
+      v-list-tile
+        v-list-tile-title LDAP Authentification
+        v-list-tile-content
+          v-btn(@click="openLDAPConfigModal") Configuration
 </template>
 
 <script>
-import { GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { GROUPS_NAVIGATION_TYPES, MODALS } from '@/constants';
 
 import appMixin from '@/mixins/app';
 import i18nMixin from '@/mixins/i18n';
+import modalMixin from '@/mixins/modal';
 
 export default {
-  mixins: [appMixin, i18nMixin],
+  mixins: [appMixin, i18nMixin, modalMixin],
   data() {
     return {
       languageOptions: [
@@ -47,6 +52,13 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    openLDAPConfigModal() {
+      this.showModal({
+        name: MODALS.ldapConfiguration,
+      });
+    },
   },
 };
 </script>
