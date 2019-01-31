@@ -562,12 +562,26 @@ class PBehaviorManager(object):
             self.pb_storage.put_element(element=pbehavior)
 
     def _check_active_simple_pbehavior(self, timestamp, pbh):
+        """ Check if a pbehavior without a rrule is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
+        """
         if pbh[PBehavior.TSTART] <= timestamp <= pbh[PBehavior.TSTOP]:
             return True
 
         return False
 
     def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
+        """ Check if a pbehavior with a rrule is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
+        :raise ValueError: if the pbehavior.exdate is invalid. Or if the
+        date of an occurence of the pbehavior is not a valid date.
+        """
 
         rec_set = rrule.rruleset()
 
@@ -607,6 +621,14 @@ class PBehaviorManager(object):
         return False
 
     def check_active_pbehavior(self, timestamp, pbehavior):
+        """ Check if a pbehavior is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
+        :raise ValueError: if the pbehavior.exdate is invalid. Or if the
+        date of an occurence of the pbehavior is not a valid date.
+        """
         if PBehavior.RRULE not in pbehavior or\
            pbehavior[PBehavior.RRULE] is None or\
            pbehavior[PBehavior.RRULE] == "":
