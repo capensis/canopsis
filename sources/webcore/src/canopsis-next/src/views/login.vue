@@ -8,65 +8,82 @@
     v-layout(justify-center, align-center, row)
       v-flex(xs11, md6, lg4)
         v-card
-          v-layout(row, wrap)
-            v-flex(xs12)
-              v-toolbar.primary.white--text
-                v-toolbar-title {{ $t('common.login') }}
-            v-flex(xs12)
-              v-layout(justify-center)
-                img.my-4(src="@/assets/canopsis-green.png")
-            v-flex(xs12)
-              v-form.py-2(@submit.prevent="submit")
-                v-flex(px-3)
-                  v-text-field(
-                  :label="$t('common.username')",
-                  :error-messages="errors.collect('username')",
-                  v-model="form.username",
-                  v-validate="'required'",
-                  color="primary",
-                  name="username",
-                  autofocus,
-                  clearable,
-                  outline
-                  )
-                v-flex(px-3)
-                  v-text-field(
-                  :label="$t('common.password')",
-                  :error-messages="errors.collect('password')",
-                  v-model="form.password",
-                  v-validate="'required'",
-                  color="primary",
-                  name="password",
-                  type="password",
-                  clearable,
-                  outline
-                  )
-                v-flex.px-3.py-2
-                  v-alert(:value="hasServerError", type="error")
-                    span {{ $t('login.errors.incorrectEmailOrPassword') }}
-                v-flex(xs2 px-2)
-                  v-btn.primary(type="submit") {{ $t('common.connect') }}
+          v-tabs(v-model="activeTab", color="primary", dark, slider-color="secondary")
+            v-tab Standard
+            v-tab LDAP
+            v-tab-item
+              v-card
+                v-card-text
+                  v-layout(wrap)
+                    v-flex(xs12)
+                      v-layout(justify-center)
+                        img.my-4(src="@/assets/canopsis-green.png")
+                    v-flex(xs12)
+                      login-form(v-model="standardForm", :hasServerError="hasServerError")
+                  v-layout(justify-center)
+                    v-btn Connect with WebSSO
+                  v-layout(justify-end)
+                    v-btn(type="standardLogin", color="primary") {{ $t('common.connect') }}
+            v-tab-item
+              v-card
+                v-card-text
+                  v-layout(wrap)
+                    v-flex(xs12)
+                      v-layout(justify-center)
+                        img.my-4(src="@/assets/canopsis-green.png")
+                    v-flex(xs12)
+                      login-form(v-model="ldapForm", :hasServerError="hasServerError")
+                  v-layout(justify-center)
+                    v-btn Connect with WebSSO
+                  v-layout(justify-end)
+                    v-btn(type="ldapLogin", color="primary") {{ $t('common.connect') }}
 </template>
 
 <script>
 import authMixin from '@/mixins/auth';
 
+import LoginForm from '@/components/forms/login.vue';
+
 export default {
   $_veeValidate: {
     validator: 'new',
   },
+  components: {
+    LoginForm,
+  },
   mixins: [authMixin],
   data() {
     return {
-      hasServerError: false,
-      form: {
+      standardForm: {
         username: '',
         password: '',
       },
+      ldapForm: {
+        username: '',
+        password: '',
+      },
+      hasServerError: false,
+      activeTab: 0,
     };
   },
   methods: {
-    async submit() {
+    redirect() {
+      if (
+        this.$route.query.redirect &&
+        this.$route.query.redirect !== '/'
+      ) {
+        this.$router.push(this.$route.query.redirect);
+      } else if (this.currentUser.defaultview) {
+        this.$router.push({
+          name: 'view',
+          params: { id: this.currentUser.defaultview },
+        });
+      } else {
+        this.$router.push({ name: 'home' });
+      }
+    },
+
+    async standardLogin() {
       try {
         this.hasServerError = false;
 
@@ -75,16 +92,23 @@ export default {
         if (formIsValid) {
           await this.login(this.form);
 
-          if (this.$route.query.redirect && this.$route.query.redirect !== '/') {
-            this.$router.push(this.$route.query.redirect);
-          } else if (this.currentUser.defaultview) {
-            this.$router.push({
-              name: 'view',
-              params: { id: this.currentUser.defaultview },
-            });
-          } else {
-            this.$router.push({ name: 'home' });
-          }
+          this.redirect();
+        }
+      } catch (err) {
+        this.hasServerError = true;
+      }
+    },
+
+    async ldapLogin() {
+      try {
+        this.hasServerError = false;
+
+        const formIsValid = await this.$validator.validateAll();
+
+        if (formIsValid) {
+          await this.login(this.form);
+
+          this.redirect();
         }
       } catch (err) {
         this.hasServerError = true;
