@@ -88,6 +88,14 @@ export function convertContextWidgetToQuery(widget) {
   return { ...query, ...convertSortToQuery(widget) };
 }
 
+export function convertWeatherWidgetToQuery(widget) {
+  const query = {
+    filter: widget.parameters.mfilter.filter,
+  };
+
+  return query;
+}
+
 export function convertStatsHistogramToQuery(widget) {
   return widget.parameters.groups.map(group =>
     ({
@@ -243,6 +251,8 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.weather:
+      return convertWeatherWidgetToQuery(widget);
     case WIDGET_TYPES.statsHistogram:
       return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:
