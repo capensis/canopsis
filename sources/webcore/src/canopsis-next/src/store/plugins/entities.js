@@ -23,7 +23,10 @@ const usingEntitiesCount = {};
 
 const entitiesModule = {
   namespaced: true,
-  state: {},
+  state: {
+    entities: {},
+    entitiesUsingCount: {},
+  },
   getters: {
     getItem(state) {
       return (type, id) => {
@@ -31,11 +34,11 @@ const entitiesModule = {
           throw new Error('[entities/getItem] Missing required argument.');
         }
 
-        if (!state[type] || !id) {
+        if (!state.entities[type] || !id) {
           return null;
         }
 
-        return denormalize(id, schemas[type], state);
+        return denormalize(id, schemas[type], state.entities);
       };
     },
     getList(state) {
@@ -44,11 +47,11 @@ const entitiesModule = {
           throw new Error('[entities/getList] Missing required argument.');
         }
 
-        if (!state[type] || ids.length === 0) {
+        if (!state.entities[type] || ids.length === 0) {
           return [];
         }
 
-        const result = denormalize(ids, [schemas[type]], state);
+        const result = denormalize(ids, [schemas[type]], state.entities);
 
         return result.filter(v => !!v);
       };
@@ -60,9 +63,10 @@ const entitiesModule = {
      * @param {Object.<string, Object>} entities - Object of entities
      */
     [internalTypes.ENTITIES_UPDATE](state, entities) {
+      // TODO: Put usingCount update and filter state.entities by it
       Object.keys(entities).forEach((type) => {
-        Vue.set(state, type, {
-          ...(state[type] || {}),
+        Vue.set(state.entities, type, {
+          ...(state.entities[type] || {}),
           ...entities[type],
         });
       });
@@ -73,14 +77,18 @@ const entitiesModule = {
      * @param {Object.<string, Object>} entities - Object of entities
      */
     [internalTypes.ENTITIES_MERGE](state, entities) {
+      // TODO: Put usingCount update and filter state.entities by it
       Object.keys(entities).forEach((type) => {
-        Vue.set(state, type, mergeWith({}, state[type] || {}, entities[type]), (objValue, srcValue) => {
-          if (Array.isArray(objValue)) {
-            return uniq(objValue.concat(srcValue));
-          }
+        Vue.set(
+          state.entities, type, mergeWith({}, state.entities[type] || {}, entities[type]),
+          (objValue, srcValue) => {
+            if (Array.isArray(objValue)) {
+              return uniq(objValue.concat(srcValue));
+            }
 
-          return undefined;
-        });
+            return undefined;
+          },
+        );
       });
     },
 
@@ -90,44 +98,43 @@ const entitiesModule = {
      */
     [internalTypes.ENTITIES_DELETE](state, entities) {
       Object.keys(entities).forEach((key) => {
-        Vue.set(state, key, omit(state[key], Object.keys(entities[key])));
+        Vue.set(state.entities, key, omit(state.entities[key], Object.keys(entities[key])));
       });
     },
   },
   actions: {
-    start({ dispatch }) {
-      setInterval(() => {
-        dispatch('removeUnusedEntities');
-      }, 10 * 1000);
-    },
+    sweep({ dispatch }, { type } = {}) {
+      let entitiesForDeletion = {};
 
-    removeUnusedEntities({ commit }) {
-      const entitiesForDeletion = {};
+      if (type) {
+        entitiesForDeletion[type] = pickBy(usingEntitiesCount[type], value => value <= 0);
+      } else {
+        entitiesForDeletion = Object.keys(usingEntitiesCount).reduce((acc, localType) => {
+          const items = pickBy(usingEntitiesCount[localType], value => value <= 0);
 
-      Object.keys(usingEntitiesCount).forEach((type) => {
-        const items = pickBy(usingEntitiesCount[type], value => value <= 0);
+          if (!isEmpty(items)) {
+            acc[localType] = items;
+          }
 
-        if (!isEmpty(items)) {
-          entitiesForDeletion[type] = items;
-        }
-      });
-
-      if (!isEmpty(entitiesForDeletion)) {
-        commit(internalTypes.ENTITIES_DELETE, entitiesForDeletion);
+          return acc;
+        }, {});
       }
+
+      Object.keys(entitiesForDeletion).map(localType => Object.keys(entitiesForDeletion[localType])
+        .map(id => dispatch('removeFromStore', { id, type: localType })));
     },
 
-    mergeEntitiesUsingCount(context, { entity, usingCount = {} }) {
-      if (!usingEntitiesCount[entity]) {
-        usingEntitiesCount[entity] = {};
+    mark(context, { type, usingCount = {} } = {}) {
+      if (!usingEntitiesCount[type]) {
+        usingEntitiesCount[type] = {};
       }
 
       Object.keys(usingCount).forEach((key) => {
-        if (!usingEntitiesCount[entity][key]) {
-          usingEntitiesCount[entity][key] = 0;
+        if (!usingEntitiesCount[type][key]) {
+          usingEntitiesCount[type][key] = 0;
         }
 
-        usingEntitiesCount[entity][key] += usingCount[key];
+        usingEntitiesCount[type][key] += usingCount[key];
       });
     },
 
@@ -200,7 +207,7 @@ const entitiesModule = {
       } = prepareEntitiesToDelete({ type, data });
 
       parents.forEach((parent) => {
-        const parentEntity = state[parent.type][parent.id];
+        const parentEntity = state.entities[parent.type][parent.id];
 
         if (!entitiesToMerge[parent.type]) {
           entitiesToMerge[parent.type] = {};
@@ -226,6 +233,4 @@ export const types = {
 
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);
-
-  store.dispatch('entities/start');
 };

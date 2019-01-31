@@ -1,6 +1,8 @@
 import { createNamespacedHelpers } from 'vuex';
 import { schema as normalizrSchema } from 'normalizr';
 
+import uid from '@/helpers/uid';
+
 const { mapActions } = createNamespacedHelpers('entities');
 
 const prepareUsingCountForArraySchema = (schema, value = [], oldValue = []) => {
@@ -43,6 +45,9 @@ const prepareUsingCountForEntitySchema = (schema, value = {}, oldValue = {}) => 
   return usingCount;
 };
 
+const markMethodName = uid('mark');
+const sweepMethodName = uid('sweep');
+
 export default (schema, entityFieldName) => {
   const isArray = schema instanceof normalizrSchema.Array || Array.isArray(schema);
   let entitySchema = schema;
@@ -65,20 +70,39 @@ export default (schema, entityFieldName) => {
           let usingCount = {};
 
           if (isArray) {
-            usingCount = prepareUsingCountForArraySchema(schema, value, oldValue);
+            usingCount = prepareUsingCountForArraySchema(entitySchema, value, oldValue);
           } else {
-            usingCount = prepareUsingCountForEntitySchema(schema, value, oldValue);
+            usingCount = prepareUsingCountForEntitySchema(entitySchema, value, oldValue);
           }
 
-          this.mergeEntitiesUsingCount({
-            entity: entitySchema.key,
+          this[markMethodName]({
+            type: entitySchema.key,
             usingCount,
           });
         },
       },
     },
+    async beforeDestroy() {
+      let usingCount;
+
+      if (isArray) {
+        usingCount = prepareUsingCountForArraySchema(entitySchema, [], this[entityFieldName]);
+      } else {
+        usingCount = prepareUsingCountForEntitySchema(entitySchema, {}, this[entityFieldName]);
+      }
+
+      await this[markMethodName]({
+        type: entitySchema.key,
+        usingCount,
+      });
+
+      this[sweepMethodName]({ type: entitySchema.key });
+    },
     methods: {
-      ...mapActions(['mergeEntitiesUsingCount']),
+      ...mapActions({
+        [markMethodName]: 'mark',
+        [sweepMethodName]: 'sweep',
+      }),
     },
   };
 };

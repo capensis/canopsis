@@ -91,7 +91,7 @@ import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import createEntityWatcherMixin from '@/mixins/data-layer';
+import createEntitiesGarbageCollectionMixin from '@/mixins/entities-garbage-collection';
 
 /**
  * Alarm-list component
@@ -121,7 +121,7 @@ export default {
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    createEntityWatcherMixin([alarmSchema], 'alarms'),
+    createEntitiesGarbageCollectionMixin([alarmSchema], 'alarms'),
   ],
   props: {
     widget: {
