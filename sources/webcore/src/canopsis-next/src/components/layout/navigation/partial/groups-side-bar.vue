@@ -57,8 +57,11 @@
 </template>
 
 <script>
+import { groupSchema } from '@/store/schemas';
+
 import versionMixin from '@/mixins/entities/version';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
+import createEntitiesGarbageCollectionMixin from '@/mixins/entities-garbage-collection';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
 
@@ -71,7 +74,12 @@ import GroupsSettingsButton from './groups-settings-button.vue';
  */
 export default {
   components: { GroupsSettingsButton },
-  mixins: [versionMixin, layoutNavigationGroupMenuMixin],
+  mixins: [
+    versionMixin,
+    layoutNavigationGroupMenuMixin,
+
+    createEntitiesGarbageCollectionMixin([groupSchema], 'groups'),
+  ],
   props: {
     value: {
       type: Boolean,

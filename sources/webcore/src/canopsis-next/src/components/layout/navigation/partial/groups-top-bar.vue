@@ -57,15 +57,24 @@
 </template>
 
 <script>
+import { groupSchema } from '@/store/schemas';
+
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group/index';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
+import createEntitiesGarbageCollectionMixin from '@/mixins/entities-garbage-collection';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
 
 export default {
   components: { GroupsSettingsButton },
-  mixins: [vuetifyTabsMixin, entitiesViewGroupMixin, layoutNavigationGroupMenuMixin],
+  mixins: [
+    vuetifyTabsMixin,
+    entitiesViewGroupMixin,
+    layoutNavigationGroupMenuMixin,
+
+    createEntitiesGarbageCollectionMixin([groupSchema], 'groups'),
+  ],
   watch: {
     groups() {
       this.$nextTick(this.callTabsOnResizeMethod);

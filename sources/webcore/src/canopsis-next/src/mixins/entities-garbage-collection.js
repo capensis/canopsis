@@ -5,48 +5,8 @@ import uid from '@/helpers/uid';
 
 const { mapActions } = createNamespacedHelpers('entities');
 
-const prepareUsingCountForArraySchema = (schema, value = [], oldValue = []) => {
-  const usingCount = {};
-
-  value.forEach((item) => {
-    const id = item[schema.idAttribute];
-
-    if (id) {
-      usingCount[id] = (usingCount[id] || 0) + 1;
-    }
-  });
-
-  oldValue.forEach((item) => {
-    const id = item[schema.idAttribute];
-
-    if (id) {
-      usingCount[id] = (usingCount[id] || 0) - 1;
-    }
-  });
-
-  return usingCount;
-};
-
-const prepareUsingCountForEntitySchema = (schema, value = {}, oldValue = {}) => {
-  const usingCount = {};
-  const newValueId = value[schema.idAttribute];
-  const oldValueId = oldValue[schema.idAttribute];
-
-  if (newValueId !== oldValueId) {
-    if (newValueId) {
-      usingCount[newValueId] = 1;
-    }
-
-    if (oldValueId) {
-      usingCount[oldValueId] = -1;
-    }
-  }
-
-  return usingCount;
-};
-
-const markMethodName = uid('mark');
-const sweepMethodName = uid('sweep');
+const registerGetterMethodName = uid('registerGetter');
+const unregisterGetterMethodName = uid('unregisterGetter');
 
 export default (schema, entityFieldName) => {
   const isArray = schema instanceof normalizrSchema.Array || Array.isArray(schema);
@@ -62,46 +22,28 @@ export default (schema, entityFieldName) => {
     return {};
   }
 
+  let dependenciesPreparer;
+
+  if (isArray) {
+    dependenciesPreparer = entities => entities.map(entity => ({ type: entitySchema.key, id: entity._id }));
+  } else {
+    dependenciesPreparer = entity => ({ type: entitySchema.key, id: entity._id });
+  }
+
   return {
-    watch: {
-      [entityFieldName]: {
-        immediate: true,
-        handler(value, oldValue) {
-          let usingCount = {};
-
-          if (isArray) {
-            usingCount = prepareUsingCountForArraySchema(entitySchema, value, oldValue);
-          } else {
-            usingCount = prepareUsingCountForEntitySchema(entitySchema, value, oldValue);
-          }
-
-          this[markMethodName]({
-            type: entitySchema.key,
-            usingCount,
-          });
-        },
-      },
-    },
-    async beforeDestroy() {
-      let usingCount;
-
-      if (isArray) {
-        usingCount = prepareUsingCountForArraySchema(entitySchema, [], this[entityFieldName]);
-      } else {
-        usingCount = prepareUsingCountForEntitySchema(entitySchema, {}, this[entityFieldName]);
-      }
-
-      await this[markMethodName]({
-        type: entitySchema.key,
-        usingCount,
+    mounted() {
+      this[registerGetterMethodName]({
+        getDependencies: () => dependenciesPreparer(this[entityFieldName]),
+        instance: this,
       });
-
-      this[sweepMethodName]({ type: entitySchema.key });
+    },
+    beforeDestroy() {
+      this[unregisterGetterMethodName](this);
     },
     methods: {
       ...mapActions({
-        [markMethodName]: 'mark',
-        [sweepMethodName]: 'sweep',
+        [registerGetterMethodName]: 'registerGetter',
+        [unregisterGetterMethodName]: 'unregisterGetter',
       }),
     },
   };

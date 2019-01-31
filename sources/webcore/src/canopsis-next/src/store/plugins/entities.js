@@ -2,9 +2,7 @@ import Vue from 'vue';
 import get from 'lodash/get';
 import omit from 'lodash/omit';
 import uniq from 'lodash/uniq';
-import pickBy from 'lodash/pickBy';
 import mergeWith from 'lodash/mergeWith';
-import isEmpty from 'lodash/isEmpty';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
@@ -19,7 +17,7 @@ const internalTypes = {
   ENTITIES_DELETE: 'ENTITIES_DELETE',
 };
 
-const usingEntitiesCount = {};
+let registeredGetters = [];
 
 const entitiesModule = {
   namespaced: true,
@@ -103,39 +101,30 @@ const entitiesModule = {
     },
   },
   actions: {
-    sweep({ dispatch }, { type } = {}) {
-      let entitiesForDeletion = {};
-
-      if (type) {
-        entitiesForDeletion[type] = pickBy(usingEntitiesCount[type], value => value <= 0);
-      } else {
-        entitiesForDeletion = Object.keys(usingEntitiesCount).reduce((acc, localType) => {
-          const items = pickBy(usingEntitiesCount[localType], value => value <= 0);
-
-          if (!isEmpty(items)) {
-            acc[localType] = items;
-          }
-
-          return acc;
-        }, {});
-      }
-
-      Object.keys(entitiesForDeletion).map(localType => Object.keys(entitiesForDeletion[localType])
-        .map(id => dispatch('removeFromStore', { id, type: localType })));
+    registerGetter(context, getterObject) {
+      registeredGetters.push(getterObject);
     },
+    unregisterGetter(context, instance) {
+      registeredGetters = registeredGetters.filter(getterObject => getterObject.instance !== instance);
+    },
+    sweep({ state }) {
+      let entities = {};
 
-    mark(context, { type, usingCount = {} } = {}) {
-      if (!usingEntitiesCount[type]) {
-        usingEntitiesCount[type] = {};
+      if (registeredGetters.length) {
+        entities = registeredGetters
+          .reduce((acc, { getDependencies }) => acc.concat(getDependencies()), [])
+          .reduce((acc, { type, id }) => {
+            if (!acc[type]) {
+              acc[type] = {};
+            }
+
+            acc[type][id] = state.entities[type][id];
+
+            return acc;
+          }, {});
       }
 
-      Object.keys(usingCount).forEach((key) => {
-        if (!usingEntitiesCount[type][key]) {
-          usingEntitiesCount[type][key] = 0;
-        }
-
-        usingEntitiesCount[type][key] += usingCount[key];
-      });
+      return entities;
     },
 
     async sendRequest(
@@ -233,4 +222,6 @@ export const types = {
 
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);
+
+  setInterval(() => store.dispatch('entities/sweep'), 10000);
 };
