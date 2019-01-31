@@ -10,23 +10,56 @@
             v-switch(v-model="form.enabled", label="Enabled")
           v-flex(xs12)
             div Role par défaut
-            v-select(v-model="form.defaultRole", :items="roles")
+            v-select(
+            v-model="form.defaultRole",
+            :items="roles",
+            return-object,
+            item-text="id",
+            name="role",
+            v-validate="'required'",
+            :error-messages="errors.collect('role')",
+            )
           v-flex(xs12)
-            v-text-field(v-model="form.title", label="Title")
+            v-text-field(
+            v-model="form.title",
+            label="Title",
+            name="title",
+            v-validate="'required'",
+            :error-messages="errors.collect('title')",
+            )
           v-flex(xs12)
-            v-text-field(v-model="form.server", label="Server")
+            v-text-field(
+            v-model="form.server",
+            label="Server",
+            name="server",
+            v-validate="'required'",
+            :error-messages="errors.collect('server')",
+            )
           v-flex(xs12)
-            v-text-field(v-model="form.service", label="Service")
+            v-text-field(
+            v-model="form.service",
+            label="Service",
+            name="service",
+            v-validate="'required'",
+            :error-messages="errors.collect('service')",
+            )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn.primary(@click.prevent="") {{ $t('common.submit') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
+import modalInner from '@/mixins/modal/inner';
+import roleMixin from '@/mixins/entities/role';
+
 export default {
   name: MODALS.casConfiguration,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  mixins: [modalInner, roleMixin],
   data() {
     return {
       form: {
@@ -36,8 +69,24 @@ export default {
         server: '',
         service: '',
       },
-      roles: ['admin', 'CSIO'],
+      roles: [],
     };
+  },
+  async mounted() {
+    const roles = await this.fetchRolesListWithoutStore({ limit: 10000 });
+
+    this.roles = roles.data;
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        // TODO: SEND CONFIG
+
+        this.hideModal();
+      }
+    },
   },
 };
 </script>

@@ -15,7 +15,7 @@
                 v-switch(v-model="form.enabled", label="Enabled")
               v-flex(xs12)
                 div Role par défaut
-                v-select(v-model="form.defaultRole", :items="roles")
+                v-select(v-model="form.defaultRole", :items="roles", return-object, item-text="id")
         v-tab-item
           v-container
             v-layout(wrap)
@@ -92,13 +92,14 @@
 import { MODALS } from '@/constants';
 
 import modalInner from '@/mixins/modal/inner';
+import roleMixin from '@/mixins/entities/role';
 
 export default {
   name: MODALS.ldapConfiguration,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInner],
+  mixins: [modalInner, roleMixin],
   data() {
     return {
       activeTab: 0,
@@ -119,8 +120,13 @@ export default {
         base: '',
         target: '',
       },
-      roles: ['admin', 'CSIO'],
+      roles: [],
     };
+  },
+  async mounted() {
+    const roles = await this.fetchRolesListWithoutStore({ limit: 10000 });
+
+    this.roles = roles.data;
   },
   methods: {
     async submit() {
