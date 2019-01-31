@@ -179,7 +179,7 @@ Récupère un ou plusieurs HeartBeat crée en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le heartbeat avec l'`id` `cd92421e77f48435d38b3682beb62f07` :
 
 ```sh
-curl -X GET -u root:root 'http://localhost:8082/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
 ```
 
 ##### Réponse en cas de réussite
@@ -245,7 +245,7 @@ Récupèr tous les HeartBeats stocké en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les heartbeats :
 
 ```sh
-curl -X GET -u root:root 'http://localhost:8082/api/v2/heartbeat/'
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/'
 ```
 
 ##### Réponse en cas de réussite
