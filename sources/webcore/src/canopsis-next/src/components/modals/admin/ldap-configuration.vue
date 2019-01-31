@@ -20,9 +20,16 @@
           v-container
             v-layout(wrap)
               v-flex(xs12)
-                v-text-field(v-model="form.ldapServerHost", label="LDAP Server Host")
+                v-text-field(
+                v-model="form.ldapServerHost",
+                label="LDAP Server Host",
+                )
               v-flex(xs12)
-                v-text-field(v-model="form.ldapServerPost", label="LDAP Server Port", type="number")
+                v-text-field(
+                v-model="form.ldapServerPost",
+                label="LDAP Server Port",
+                type="number",
+                )
               v-flex(xs12)
                 v-text-field(v-model="form.adminDn", label="Admin DN")
               v-flex(xs12)
@@ -32,6 +39,20 @@
               v-flex(xs12)
                 v-text-field(v-model="form.adminDn", label="User base")
         v-tab-item
+          v-container
+            div(v-for="(attribute, key) in form.ldapAttributes" :key="key")
+              v-layout(justify-center, align-center)
+                v-flex
+                  v-layout(align-center)
+                    v-chip {{ attribute }}
+                    v-icon arrow_right_alt
+                    v-chip {{ key }}
+                v-btn(icon, small)
+                  v-icon(color="error") clear
+            v-layout(align-center)
+              v-text-field.mx-1(v-model="attributeForm.base", label="Base")
+              v-text-field.mx-1(v-model="attributeForm.target", label="Target  ")
+              v-btn(depressed, color="secondary") Add
       v-divider
       v-layout.py-1(justify-end)
         v-btn.primary(@click.prevent="") {{ $t('common.submit') }}
@@ -40,8 +61,14 @@
 <script>
 import { MODALS } from '@/constants';
 
+import modalInner from '@/mixins/modal/inner';
+
 export default {
   name: MODALS.ldapConfiguration,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  mixins: [modalInner],
   data() {
     return {
       activeTab: 0,
@@ -54,9 +81,27 @@ export default {
         adminPassword: '',
         userFilter: '',
         userBase: '',
+        ldapAttributes: {
+          password: 'test',
+        },
+      },
+      attributeForm: {
+        base: '',
+        target: '',
       },
       roles: ['admin', 'CSIO'],
     };
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        // TODO SEND CONFIG
+
+        this.hideModal();
+      }
+    },
   },
 };
 </script>

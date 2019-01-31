@@ -17,7 +17,11 @@
       v-list-tile
         v-list-tile-title LDAP Authentification
         v-list-tile-content
-          v-btn(@click="openLDAPConfigModal") Configuration
+          v-btn(@click="showLDAPConfigModal") Configuration
+      v-list-tile
+        v-list-tile-title CAS Authentification
+        v-list-tile-content
+          v-btn(@click="showCASConfigModal") Configuration
 </template>
 
 <script>
@@ -54,9 +58,14 @@ export default {
     };
   },
   methods: {
-    openLDAPConfigModal() {
+    showLDAPConfigModal() {
       this.showModal({
         name: MODALS.ldapConfiguration,
+      });
+    },
+    showCASConfigModal() {
+      this.showModal({
+        name: MODALS.casConfiguration,
       });
     },
   },

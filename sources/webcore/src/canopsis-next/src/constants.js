@@ -55,6 +55,7 @@ export const MODALS = {
   createRole: 'create-role',
   createRight: 'create-right',
   ldapConfiguration: 'ldap-configuration',
+  casConfiguration: 'cas-configuration',
   createEventFilterRule: 'create-event-filter-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
