@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
-import { schema as normalizrSchema } from 'normalizr';
+import { normalize } from 'normalizr';
 
 import uid from '@/helpers/uid';
 
@@ -9,26 +9,14 @@ const registerGetterMethodName = uid('registerGetter');
 const unregisterGetterMethodName = uid('unregisterGetter');
 
 export default (schema, entityFieldName) => {
-  const isArray = schema instanceof normalizrSchema.Array || Array.isArray(schema);
-  let entitySchema = schema;
+  const dependenciesPreparer = (entities) => {
+    const { entities: normalizedEntities } = normalize(entities, schema);
 
-  if (isArray) {
-    entitySchema = schema[0] || schema.schema;
-  }
-
-  if (!entitySchema) {
-    console.error('Incorrect entitySchema');
-
-    return {};
-  }
-
-  let dependenciesPreparer;
-
-  if (isArray) {
-    dependenciesPreparer = entities => entities.map(entity => ({ type: entitySchema.key, id: entity._id }));
-  } else {
-    dependenciesPreparer = entity => ({ type: entitySchema.key, id: entity._id });
-  }
+    return Object.keys(normalizedEntities).map(type => ({
+      type,
+      ids: Object.keys(normalizedEntities[type]),
+    }));
+  };
 
   return {
     mounted() {

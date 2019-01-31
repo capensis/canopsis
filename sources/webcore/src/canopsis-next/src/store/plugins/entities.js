@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import get from 'lodash/get';
 import omit from 'lodash/omit';
+import pick from 'lodash/pick';
 import uniq from 'lodash/uniq';
 import mergeWith from 'lodash/mergeWith';
 import { normalize, denormalize } from 'normalizr';
@@ -12,6 +13,8 @@ import { prepareEntitiesToDelete } from '@/helpers/store';
 const entitiesModuleName = 'entities';
 
 const internalTypes = {
+  SWEEP: 'SWEEP',
+
   ENTITIES_UPDATE: 'ENTITIES_UPDATE',
   ENTITIES_MERGE: 'ENTITIES_MERGE',
   ENTITIES_DELETE: 'ENTITIES_DELETE',
@@ -23,7 +26,7 @@ const entitiesModule = {
   namespaced: true,
   state: {
     entities: {},
-    entitiesUsingCount: {},
+    registeredGetters: {},
   },
   getters: {
     getItem(state) {
@@ -56,6 +59,16 @@ const entitiesModule = {
     },
   },
   mutations: {
+    [internalTypes.SWEEP](state) {
+      state.entities = registeredGetters
+        .reduce((acc, { getDependencies }) => acc.concat(getDependencies()), [])
+        .reduce((acc, { type, ids }) => {
+          acc[type] = pick(state.entities[type], ids);
+
+          return acc;
+        }, {});
+    },
+
     /**
      * @param {Object} state - state of the module
      * @param {Object.<string, Object>} entities - Object of entities
@@ -107,24 +120,8 @@ const entitiesModule = {
     unregisterGetter(context, instance) {
       registeredGetters = registeredGetters.filter(getterObject => getterObject.instance !== instance);
     },
-    sweep({ state }) {
-      let entities = {};
-
-      if (registeredGetters.length) {
-        entities = registeredGetters
-          .reduce((acc, { getDependencies }) => acc.concat(getDependencies()), [])
-          .reduce((acc, { type, id }) => {
-            if (!acc[type]) {
-              acc[type] = {};
-            }
-
-            acc[type][id] = state.entities[type][id];
-
-            return acc;
-          }, {});
-      }
-
-      return entities;
+    sweep({ commit }) {
+      commit(internalTypes.SWEEP);
     },
 
     async sendRequest(
