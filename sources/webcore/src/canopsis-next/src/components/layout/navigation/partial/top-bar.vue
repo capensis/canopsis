@@ -49,23 +49,14 @@
                 v-layout(justify-space-between)
                   span.black--text {{ $t('common.parameters') }}
                   v-icon settings
-      v-menu(bottom, offset-y)
+      v-menu(bottom, offset-y, offset-x)
         v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
         v-list.pb-0
-          v-list-tile
-            v-list-tile-title
-              v-layout
-                div {{ $t('user.firstName') }} :
-                div.px-1(v-if="currentUser.firstname") {{ currentUser.firstname }}
-                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
-          v-divider
-          v-list-tile
-            v-list-tile-title
-              v-layout
-                div {{ $t('user.lastName') }} :
-                div.px-1(v-if="currentUser.lastname") {{ currentUser.lastname }}
-                div.px-1.font-italic(v-else) {{ $t('common.undefined') }}
-          v-divider
+          template(v-if="currentUser.firstname && currentUser.lastname")
+            v-list-tile
+              v-list-tile-title
+                p {{ currentUser.firstname }} {{ currentUser.lastname }}
+            v-divider
           v-list-tile
             v-list-tile-title
               v-layout
@@ -81,14 +72,14 @@
                   div.px-1 {{ defaultViewTitle }}
                 v-flex(v-else)
                   div.px-1.font-italic {{ $t('common.undefined') }}
-                v-btn.primary(@click.stop="editDefaultView", small, fab, depressed)
+                v-btn(@click.stop="editDefaultView", small, fab, icon, depressed)
                   v-icon edit
           v-divider
-          v-list-tile.error.white--text(@click.prevent="logout")
+          v-list-tile(@click.prevent="logout")
             v-list-tile-title
               v-layout(align-center)
-                div {{ $t('common.logout') }}
-                v-icon.pl-1.white--text exit_to_app
+                div.error--text {{ $t('common.logout') }}
+                v-icon.pl-1(color="error") exit_to_app
     template(v-if="isShownGroupsTopBar", slot="extension")
       groups-top-bar
 </template>
