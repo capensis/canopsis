@@ -25,6 +25,18 @@ Crée un nouveau HeartBeat à partir du corps de la requête.
 }
 ```
 
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
+
+```sh
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+  "pattern": {
+      "connector": "c1",
+      "connector_name": "connector1"
+  },
+  "expected_interval": "10s"
+}' 'http://<Canopsis_URL>/api/v2/heartbeat'
+```
+
 #### Réponse en cas de réussite
 
 **Condition** : l'HeartBeat est crée
@@ -98,6 +110,12 @@ Supprime un HeartBeat en fonction de son `id`.
 
 **Permissions requise** : Aucune
 
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le heartbeat avec l'`id` `cd92421e77f48435d38b3682beb62f07` :
+
+```sh
+curl -X DEL -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
+```
+
 #### Réponse en cas de réussite
 
 **Condition** : L'Heartbeat à bien été supprimé.
@@ -158,6 +176,12 @@ Récupère un ou plusieurs HeartBeat crée en base.
 
 **Permissions requise** : Aucune
 
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le heartbeat avec l'`id` `cd92421e77f48435d38b3682beb62f07` :
+
+```sh
+curl -X GET -u root:root 'http://localhost:8082/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
+```
+
 ##### Réponse en cas de réussite
 
 **Condition** : Un HeartBeat correspondant à l'`id est trouvé.
@@ -217,6 +241,12 @@ Récupèr tous les HeartBeats stocké en base
 **Authentification requise** : Oui
 
 **Permissions requise** : Aucune
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les heartbeats :
+
+```sh
+curl -X GET -u root:root 'http://localhost:8082/api/v2/heartbeat/'
+```
 
 ##### Réponse en cas de réussite
 
