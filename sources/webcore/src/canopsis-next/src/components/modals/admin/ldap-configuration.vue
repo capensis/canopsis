@@ -23,21 +23,51 @@
                 v-text-field(
                 v-model="form.ldapServerHost",
                 label="LDAP Server Host",
+                name="ldapServerHost",
+                v-validate="'required'",
+                :error-messages="errors.collect('ldapServerHost')",
                 )
               v-flex(xs12)
                 v-text-field(
-                v-model="form.ldapServerPost",
+                v-model="form.ldapServerPort",
                 label="LDAP Server Port",
                 type="number",
+                name="ldapServerPort",
+                v-validate="'required|numeric|min:0'",
+                :error-messages="errors.collect('ldapServerPort')",
                 )
               v-flex(xs12)
-                v-text-field(v-model="form.adminDn", label="Admin DN")
+                v-text-field(
+                v-model="form.adminDn",
+                label="Admin DN",
+                name="adminDn",
+                v-validate="'required'",
+                :error-messages="errors.collect('adminDn')",
+                )
               v-flex(xs12)
-                v-text-field(v-model="form.adminPassword", label="Admin Password")
+                v-text-field(
+                v-model="form.adminPassword",
+                label="Admin Password",
+                name="password",
+                v-validate="'required'",
+                :error-messages="errors.collect('password')",
+                )
               v-flex(xs12)
-                v-text-field(v-model="form.adminDn", label="User filter")
+                v-text-field(
+                v-model="form.adminDn",
+                label="User filter",
+                name="filter",
+                v-validate="'required'",
+                :error-messages="errors.collect('filter')",
+                )
               v-flex(xs12)
-                v-text-field(v-model="form.adminDn", label="User base")
+                v-text-field(
+                v-model="form.adminDn",
+                label="User base",
+                name="userBase",
+                v-validate="'required'",
+                :error-messages="errors.collect('userBase')",
+                )
         v-tab-item
           v-container
             div(v-for="(attribute, key) in form.ldapAttributes" :key="key")
@@ -55,7 +85,7 @@
               v-btn(depressed, color="secondary") Add
       v-divider
       v-layout.py-1(justify-end)
-        v-btn.primary(@click.prevent="") {{ $t('common.submit') }}
+        v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -76,7 +106,7 @@ export default {
         enabled: false,
         defaultRole: 'admin',
         ldapServerHost: '',
-        ldapServerPost: 0,
+        ldapServerPort: 0,
         adminDn: '',
         adminPassword: '',
         userFilter: '',
