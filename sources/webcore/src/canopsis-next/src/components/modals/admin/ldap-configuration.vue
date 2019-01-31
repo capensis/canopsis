@@ -93,13 +93,14 @@ import { MODALS } from '@/constants';
 
 import modalInner from '@/mixins/modal/inner';
 import roleMixin from '@/mixins/entities/role';
+import authProtocolMixin from '@/mixins/entities/authProtocol';
 
 export default {
   name: MODALS.ldapConfiguration,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInner, roleMixin],
+  mixins: [modalInner, roleMixin, authProtocolMixin],
   data() {
     return {
       activeTab: 0,
@@ -120,11 +121,12 @@ export default {
         base: '',
         target: '',
       },
-      roles: [],
     };
   },
   async mounted() {
     const roles = await this.fetchRolesListWithoutStore({ limit: 10000 });
+    // TODO: ASSIGN FORM VALUES
+    await this.fetchLDAPConfig();
 
     this.roles = roles.data;
   },

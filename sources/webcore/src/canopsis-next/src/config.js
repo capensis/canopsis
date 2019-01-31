@@ -26,6 +26,9 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 
 export const API_ROUTES = {
   auth: '/auth',
+  authProtocols: {
+    ldapConfig: '/rest/object/ldapconfig/cservice.ldapconfig',
+  },
   currentUser: '/account/me',
   version: '/api/v2/version',
   alarmList: '/alerts/get-alarms',

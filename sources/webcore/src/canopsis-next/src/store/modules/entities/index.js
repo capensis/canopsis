@@ -10,6 +10,7 @@ import userModule from './user';
 import rightModule from './right';
 import eventFilterRuleModule from './event-filter-rule';
 import versionModule from './version';
+import authProtocolModule from './authProtocol';
 
 export default {
   alarm: alarmModule,
@@ -24,4 +25,5 @@ export default {
   right: rightModule,
   eventFilterRule: eventFilterRuleModule,
   version: versionModule,
+  authProtocol: authProtocolModule,
 };
