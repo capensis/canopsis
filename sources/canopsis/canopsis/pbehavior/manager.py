@@ -382,7 +382,8 @@ class PBehaviorManager(object):
 
         check_valid_rrule(kwargs.get('rrule', ''))
         if PBehavior.EXDATE in kwargs:
-            parse_exdate(kwargs[PBehavior.EXDATE])
+            for date in kwargs[PBehavior.EXDATE]:
+                parse_exdate(date)
 
         pbehavior = PBehavior(**self.get(_id))
         new_data = {k: v for k, v in kwargs.items() if v is not None}
@@ -593,17 +594,12 @@ class PBehaviorManager(object):
         rec_start = rec_set.before(now)
 
         self.logger.debug("Recurence start : {}".format(rec_start))
-        self.logger.debug("Timestamp       : {}".format(now))
-        self.logger.debug("Recurence stop  : {}".format(rec_start + duration))
-
-        print("Rec_start {}".format(rec_start))
-        print("Now       {}".format(now))
-        print("Rec_stop  {}".format(rec_start + duration))
-        print("\nDuration  {}".format(duration))
-
         # No recurrence found
         if rec_start is None:
             return False
+
+        self.logger.debug("Timestamp       : {}".format(now))
+        self.logger.debug("Recurence stop  : {}".format(rec_start + duration))
 
         if rec_start <= now <= rec_start + duration:
             return True
@@ -616,6 +612,8 @@ class PBehaviorManager(object):
            pbehavior[PBehavior.RRULE] == "":
             return self._check_active_simple_pbehavior(timestamp, pbehavior)
         else:
+            if PBehavior.EXDATE not in pbehavior:
+                pbehavior[PBehavior.EXDATE] = []
             return self._check_active_reccuring_pbehavior(timestamp, pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
@@ -671,7 +669,7 @@ class PBehaviorManager(object):
             dt_list = [tstart, tstop]
             if pbehavior['rrule'] is not None:
                 dt_list = list(
-                    rrulestr(pbehavior['rrule'], dtstart=tstart).between(
+                    rrule.rrulestr(pbehavior['rrule'], dtstart=tstart).between(
                         tstart, tstop, inc=True
                     )
                 )
@@ -826,7 +824,7 @@ class PBehaviorManager(object):
         :param Dict[str, Any] pbehavior:
         :rtype: List[Tuple[int, int]]
         """
-        rrule = pbehavior[PBehavior.RRULE]
+        rrule_str = pbehavior[PBehavior.RRULE]
         tstart = pbehavior[PBehavior.TSTART]
         tstop = pbehavior[PBehavior.TSTOP]
 
@@ -844,7 +842,7 @@ class PBehaviorManager(object):
         dtafter = datetime.utcfromtimestamp(after).replace(tzinfo=tz)
         dtbefore = datetime.utcfromtimestamp(before).replace(tzinfo=tz)
 
-        if not rrule:
+        if not rrule_str:
             # The only interval where the pbehavior is active is
             # [dttstart, dttstop]. Ensure that it is included in
             # [after, before], and convert the datetimes to timestamps.
@@ -859,7 +857,7 @@ class PBehaviorManager(object):
         else:
             # Get all the intervals that intersect with the [after, before]
             # interval.
-            interval_starts = rrulestr(rrule, dtstart=dttstart).between(
+            interval_starts = rrule.rrulestr(rrule_str, dtstart=dttstart).between(
                 dtafter - delta, dtbefore, inc=False)
             for interval_start in interval_starts:
                 interval_end = interval_start + delta
