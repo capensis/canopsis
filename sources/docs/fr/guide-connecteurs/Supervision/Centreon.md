@@ -96,7 +96,7 @@ Des options de configuration « Canopsis AMQP bus » apparaissent alors en bas
 
 On redémarre ensuite le service pour s'assurer du bon chargement de la nouvelle configuration.
 
-Cette étape est **OBLIGATOIRE**, votre connecteur Centreon ne fonctionnera **PAS** dans Canopsis tant que vous n'effecturez pas cette procédure de redémarrage.
+Cette étape est **OBLIGATOIRE**, votre connecteur Centreon ne fonctionnera **PAS** dans Canopsis tant que vous n'effectuerez pas cette procédure de redémarrage.
 
 Pour cela, aller dans Configuration > Pollers > cocher les éléments concernés > cliquer sur « Export configuration ».
 
