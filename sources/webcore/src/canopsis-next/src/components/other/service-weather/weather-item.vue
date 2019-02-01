@@ -63,6 +63,9 @@ export default {
     hasWatcherPbehavior() {
       return this.watcher.active_pb_watcher;
     },
+    isPbehavior() {
+      return this.watcher.pbehavior.some(pbehavior => pbehavior.isActive);
+    },
     format() {
       if (!this.isPaused && !this.hasWatcherPbehavior) {
         const state = this.watcher.state.val;
@@ -118,8 +121,7 @@ export default {
       return (
         this.watcher.alerts_not_ack
         && !this.hasWatcherPbehavior
-        && !this.isPaused
-        && !this.watcher.active_pb_some
+        && !this.isPbehavior
       );
     },
   },
