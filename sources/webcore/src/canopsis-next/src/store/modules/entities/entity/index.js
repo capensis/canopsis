@@ -89,9 +89,9 @@ export default {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,
         schema: [entitySchema],
+        method: 'POST',
         params,
         dataPreparer: d => d.data,
-        isPost: true,
       }, { root: true });
     },
 

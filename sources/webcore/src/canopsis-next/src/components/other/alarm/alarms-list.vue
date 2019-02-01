@@ -73,8 +73,6 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
-import { alarmSchema } from '@/store/schemas';
-
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
@@ -91,7 +89,6 @@ import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import createEntitiesGarbageCollectionMixin from '@/mixins/entities-garbage-collection';
 
 /**
  * Alarm-list component
@@ -121,7 +118,6 @@ export default {
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    createEntitiesGarbageCollectionMixin([alarmSchema], 'alarms'),
   ],
   props: {
     widget: {

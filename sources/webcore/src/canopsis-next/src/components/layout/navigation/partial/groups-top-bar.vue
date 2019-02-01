@@ -62,7 +62,7 @@ import { groupSchema } from '@/store/schemas';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group/index';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
-import createEntitiesGarbageCollectionMixin from '@/mixins/entities-garbage-collection';
+import registrableMixin from '@/mixins/registrable';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
 
@@ -73,7 +73,7 @@ export default {
     entitiesViewGroupMixin,
     layoutNavigationGroupMenuMixin,
 
-    createEntitiesGarbageCollectionMixin([groupSchema], 'groups'),
+    registrableMixin([groupSchema], 'groups'),
   ],
   watch: {
     groups() {

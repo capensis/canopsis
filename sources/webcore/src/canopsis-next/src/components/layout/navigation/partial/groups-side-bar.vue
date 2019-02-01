@@ -61,7 +61,7 @@ import { groupSchema } from '@/store/schemas';
 
 import versionMixin from '@/mixins/entities/version';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
-import createEntitiesGarbageCollectionMixin from '@/mixins/entities-garbage-collection';
+import registrableMixin from '@/mixins/registrable';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
 
@@ -78,7 +78,7 @@ export default {
     versionMixin,
     layoutNavigationGroupMenuMixin,
 
-    createEntitiesGarbageCollectionMixin([groupSchema], 'groups'),
+    registrableMixin([groupSchema], 'groups'),
   ],
   props: {
     value: {

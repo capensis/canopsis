@@ -62,7 +62,6 @@
 import omit from 'lodash/omit';
 import isString from 'lodash/isString';
 
-import { entitySchema } from '@/store/schemas';
 import { USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
@@ -77,7 +76,6 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import createEntitiesGarbageCollectionMixin from '@/mixins/entities-garbage-collection';
 
 import MoreInfos from './more-infos/more-infos.vue';
 import ContextFab from './actions/context-fab.vue';
@@ -113,7 +111,6 @@ export default {
     widgetColumnsMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
-    createEntitiesGarbageCollectionMixin([entitySchema], 'contextEntities'),
   ],
   props: {
     widget: {
