@@ -8,13 +8,15 @@ const { mapGetters, mapActions } = createNamespacedHelpers('authProtocol');
 export default {
   computed: {
     ...mapGetters({
-      ldapConfigPending: 'ldapConfigPending',
-      ldapConfig: 'ldapConfig',
+      configPending: 'configPending',
     }),
   },
   methods: {
     ...mapActions({
       fetchLDAPConfigWithoutStore: 'fetchLDAPConfigWithoutStore',
+      updateLDAPConfig: 'updateLDAPConfig',
+      fetchCASConfigWithoutStore: 'fetchCASConfigWithoutStore',
+      updateCASConfig: 'updateCASConfig',
     }),
   },
 };

@@ -13,8 +13,8 @@
             v-select(
             v-model="form.defaultRole",
             :items="roles",
-            return-object,
-            item-text="id",
+            item-text="crecord_name",
+            item-value="crecord_name"
             name="role",
             v-validate="'required'",
             :error-messages="errors.collect('role')",
@@ -49,17 +49,20 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 import { MODALS } from '@/constants';
 
 import modalInner from '@/mixins/modal/inner';
 import roleMixin from '@/mixins/entities/role';
+import authProtocolMixin from '@/mixins/entities/authProtocol';
 
 export default {
   name: MODALS.casConfiguration,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInner, roleMixin],
+  mixins: [modalInner, roleMixin, authProtocolMixin],
   data() {
     return {
       form: {
@@ -69,20 +72,49 @@ export default {
         server: '',
         service: '',
       },
-      roles: [],
     };
   },
   async mounted() {
-    const roles = await this.fetchRolesListWithoutStore({ limit: 10000 });
+    await this.fetchRolesList();
 
-    this.roles = roles.data;
+    const casConfig = await this.fetchCASConfigWithoutStore();
+
+    const {
+      enable: enabled,
+      default_role: defaultRole,
+      title,
+      server,
+      service,
+    } = casConfig[0];
+
+    this.form = {
+      ...this.form,
+      enabled,
+      defaultRole,
+      title,
+      server,
+      service,
+    };
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        // TODO: SEND CONFIG
+        const data = {
+          default_role: this.form.defaultRole,
+          enable: this.form.enabled,
+          id: 'cservice.casconfig',
+          server: this.form.server,
+          service: this.form.service,
+          title: this.form.title,
+          crecord_creation_time: moment().unix(),
+          crecord_write_time: moment().unix(),
+          crecord_name: 'casconfig',
+          crecord_type: 'casconfig',
+        };
+
+        await this.updateCASConfig({ data });
 
         this.hideModal();
       }

@@ -2,33 +2,66 @@ import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 
 const types = {
-  FETCH_LDAP_CONFIG_STARTED: 'FETCH_LDAP_CONFIG_STARTED',
-  FETCH_LDAP_CONFIG_COMPLETED: 'FETCH_LDAP_CONFIG_COMPLETED',
-  FETCH_LDAP_CONFIG_ERROR: 'FETCH_LDAP_ERROR',
-  UPDATE_LDAP_CONFIG: 'UPDATE_LDAP_CONFIG',
+  FETCH_CONFIG_STARTED: 'FETCH_CONFIG_STARTED',
+  FETCH_CONFIG_COMPLETED: 'FETCH_CONFIG_COMPLETED',
+  FETCH_CONFIG_ERROR: 'FETCH_ERROR',
 };
 
 export default {
   namespaced: true,
   state: {
-    ldapConfigPending: false,
-    ldapConfig: {},
-  },
-  getters: {
-    ldapConfig: state => state.ldapConfig,
+    configPending: false,
   },
   mutations: {
-    [types.FETCH_LDAP_CONFIG_STARTED](state) {
-      state.ldapConfigPending = true;
+    [types.FETCH_CONFIG_STARTED](state) {
+      state.configPending = true;
+    },
+    [types.FETCH_CONFIG_COMPLETED](state) {
+      state.configPending = false;
+    },
+    [types.FETCH_CONFIG_ERROR](state) {
+      state.configPending = false;
     },
   },
   actions: {
     async fetchLDAPConfigWithoutStore({ commit }) {
-      commit(types.FETCH_LDAP_CONFIG_STARTED);
+      commit(types.FETCH_CONFIG_STARTED);
 
-      const { data } = await request.get(API_ROUTES.authProtocols.ldapConfig);
+      try {
+        const { data } = await request.get(API_ROUTES.authProtocols.ldapConfig);
+        commit(types.FETCH_CONFIG_COMPLETED);
+        return data;
+      } catch (err) {
+        return commit(types.FETCH_CONFIG_ERROR);
+      }
+    },
 
-      return data;
+    async updateLDAPConfig(context, { data } = {}) {
+      try {
+        await request.put(API_ROUTES.authProtocols.ldapConfig, data);
+      } catch (err) {
+        console.warn(err);
+      }
+    },
+
+    async fetchCASConfigWithoutStore({ commit }) {
+      commit(types.FETCH_CONFIG_STARTED);
+
+      try {
+        const { data } = await request.get(API_ROUTES.authProtocols.casConfig);
+        commit(types.FETCH_CONFIG_COMPLETED);
+        return data;
+      } catch (err) {
+        return commit(types.FETCH_CONFIG_ERROR);
+      }
+    },
+
+    async updateCASConfig(context, { data } = {}) {
+      try {
+        await request.put(API_ROUTES.authProtocols.casConfig, data);
+      } catch (err) {
+        console.warn(err);
+      }
     },
   },
 };

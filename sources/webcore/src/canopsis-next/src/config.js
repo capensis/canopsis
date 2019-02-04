@@ -28,6 +28,7 @@ export const API_ROUTES = {
   auth: '/auth',
   authProtocols: {
     ldapConfig: '/rest/object/ldapconfig/cservice.ldapconfig',
+    casConfig: '/rest/object/casconfig/cservice.casconfig',
   },
   currentUser: '/account/me',
   version: '/api/v2/version',

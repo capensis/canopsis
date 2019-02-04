@@ -15,7 +15,12 @@
                 v-switch(v-model="form.enabled", label="Enabled")
               v-flex(xs12)
                 div Role par défaut
-                v-select(v-model="form.defaultRole", :items="roles", return-object, item-text="id")
+                v-select(
+                v-model="form.defaultRole",
+                :items="roles",
+                item-text="crecord_name",
+                item-value="crecord_name",
+                )
         v-tab-item
           v-container
             v-layout(wrap)
@@ -89,6 +94,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 import { MODALS } from '@/constants';
 
 import modalInner from '@/mixins/modal/inner';
@@ -106,16 +113,14 @@ export default {
       activeTab: 0,
       form: {
         enabled: false,
-        defaultRole: 'admin',
+        defaultRole: '',
         ldapServerHost: '',
         ldapServerPort: 0,
         adminDn: '',
         adminPassword: '',
         userFilter: '',
         userBase: '',
-        ldapAttributes: {
-          password: 'test',
-        },
+        ldapAttributes: {},
       },
       attributeForm: {
         base: '',
@@ -124,18 +129,56 @@ export default {
     };
   },
   async mounted() {
-    const roles = await this.fetchRolesListWithoutStore({ limit: 10000 });
-    // TODO: ASSIGN FORM VALUES
-    await this.fetchLDAPConfig();
+    await this.fetchRolesList();
+    const ldapConfiguration = await this.fetchLDAPConfigWithoutStore();
 
-    this.roles = roles.data;
+    const {
+      enable: enabled,
+      default_role: defaultRole,
+      host: ldapServerHost,
+      port: ldapServerPort,
+      admin_dn: adminDn,
+      admin_passwd: adminPassword,
+      ufilter: userFilter,
+      user_dn: userBase,
+      attrs: ldapAttributes,
+    } = ldapConfiguration[0];
+
+    this.form = {
+      ...this.form,
+      enabled,
+      defaultRole,
+      ldapServerHost,
+      ldapServerPort,
+      adminDn,
+      adminPassword,
+      userFilter,
+      userBase,
+      ldapAttributes,
+    };
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        // TODO SEND CONFIG
+        const data = {
+          admin_dn: this.form.adminDn,
+          admin_passwd: this.form.adminPassword,
+          attrs: this.form.ldapAttributes,
+          default_role: this.form.defaultRole,
+          enable: this.form.enabled,
+          host: this.form.ldapServerHost,
+          port: this.form.ldapServerPort,
+          ufilter: this.form.userFilter,
+          user_dn: this.form.userBase,
+          crecord_creation_time: moment().unix(),
+          crecord_write_time: moment().unix(),
+          crecord_name: 'ldapconfig',
+          crecord_type: 'ldapconfig',
+        };
+
+        await this.updateLDAPConfig({ data });
 
         this.hideModal();
       }

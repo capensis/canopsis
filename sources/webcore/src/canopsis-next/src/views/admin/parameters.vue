@@ -17,11 +17,11 @@
       v-list-tile
         v-list-tile-title LDAP Authentification
         v-list-tile-content
-          v-btn(@click="showLDAPConfigModal") Configuration
+          v-btn(@click="showLDAPConfigModal", dark, color="secondary") Configuration
       v-list-tile
         v-list-tile-title CAS Authentification
         v-list-tile-content
-          v-btn(@click="showCASConfigModal") Configuration
+          v-btn(@click="showCASConfigModal", dark, color="secondary") Configuration
 </template>
 
 <script>
