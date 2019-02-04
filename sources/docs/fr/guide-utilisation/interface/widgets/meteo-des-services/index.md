@@ -46,7 +46,7 @@ Un observateur surveille deux entités, A et B. A a un état de 1. B a un état 
 - Nuage: L'observateur possède un état: "Critique" (égal à 3)
 - Clé: L'observateur possède un comportement périodique actif, de type "Maintenance"
 - Lune: L'observateur possède un comportement périodique actif, de type "Hors plage de surveillance"
-- Pause: L'observateur ne possède pas de comportement périodique, mais toutes les entités liées à cet observateur possède un comportement périodique actif.
+- Pause: L'observateur ne possède pas de comportement périodique, mais toutes les entités liées à cet observateur possèdent un comportement périodique actif.
 
 #### Le clignotement
 
@@ -60,13 +60,28 @@ Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
 Celle-ci contient, au choix : 
 
-- "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant l'observateur sur lequel vous avez cliquer. Celle-ci peut, notamment, contenir la liste des entités concernées par l'observateur. Le template de cette fenêtre est configurable depuis les paramètres du widget.
+- "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant l'observateur sur lequel vous avez cliqué. Celle-ci peut, notamment, contenir la liste des entités concernées par l'observateur. Le template de cette fenêtre est configurable depuis les paramètres du widget.
 
 ![Modal - Plus d'infos](./img/modal_more_infos.png "Modal - Plus d'infos")
 
 - "Bac à alarmes": Cette fenêtre contient un widget Bac à alarmes. Ce Bac à alarmes regroupe toutes les alarmes dans le spectre de l'observateur. Celui-ci est configurable depuis les paramètres du widget.
 
 ![Modal - Bac à alarmes](./img/modal_alarmlist.png "Modal - Bac à alarmes")
+
+### Les actions
+
+Dans [la modal "Plus d'infos"](#la-modal), il vous est possible d'afficher la liste des entités concernées par l'observateur (*Cf: [Template - Modal](#template-modal)*).
+
+Si la liste d'entités est affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de l'état de l'entité.
+
+Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne sont éxécutées qu'au clic sur le bouton ```Envoyer``` de la modal "Plus d'infos".
+
+- ![Action: Déclarer un incident](./img/action_declareTicket.png "Action: Déclarer un incident") *Déclarer un incident*: Cette action vous permet de déclarer un numéro de ticket, associer à un incident. Au clic sur cette action, une fenêtre s'ouvre, vous permettant d'indiquer un numéro de ticket. Cette action déclenche également automatiquement une action d'acquittement.
+- ![Action: Pause](./img/action_pause.png "Action: Pause") *Pause*: Cette action vous permet de mettre une entité en pause. Au clic, une fenêtre s'ouvre. Celle-ci vous permet de renseigner un commentaire, ainsi que la raison de la pause. Cette action n'est disponible que pour les entités qui ne sont pas déjà en pause.
+- ![Action: Play](./img/action_play.png "Action: Play") *Play*: Cette action vous permet de retirer la mise en pause d'une entité. Cette action n'est disponible que pour les entités en pause.
+- ![Action: acquittement](./img/action_ack.png "Action: acquittement") *Acquittement*: Cette action vous permet d'acquitter une alarme présente sur une entité. Cette action n'est disponible que pour les entités ayant un état différent de "Ok" (0), et ayant une alarme non acquittée.
+- ![Action: Validate](./img/action_validate.png "Action: Validate") *Valider*: Cette action déclenche un changement d'état de l'alarme, de majeur (2) à critique (3). Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant un état majeur (2).
+- ![Action: Invalidate](./img/action_invalidate.png "Action: Invalidate") *Invalider*: Cette action déclenche une action d'annulation de l'alarme. Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant un état majeur (2).
 
 ## Guide exploitant
 ### Paramètres du widget
