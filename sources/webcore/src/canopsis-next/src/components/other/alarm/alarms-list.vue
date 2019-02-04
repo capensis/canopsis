@@ -4,7 +4,14 @@
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
-        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
+        pagination(
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="alarmsMeta.total",
+        type="top",
+        @input="updatePage"
+        )
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
@@ -55,12 +62,15 @@
             )
               alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
             td
-              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           time-line(:alarmProps="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="alarmsMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total",
+          )
         v-spacer
         v-flex(xs2)
           records-per-page(:query.sync="query")
@@ -160,6 +170,10 @@ export default {
     },
   },
   methods: {
+    updatePage(page) {
+      this.query = { ...this.query, page };
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
     },
