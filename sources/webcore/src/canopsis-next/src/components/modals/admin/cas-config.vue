@@ -2,14 +2,18 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline CAS Authentification
+        span.headline {{ $t('parameters.casAuthentication.title') }}
     v-card-text.pa-0
       v-container
         v-layout(wrap)
           v-flex(xs12)
-            v-switch(v-model="form.enabled", label="Enabled")
+            v-switch(v-model="form.enabled", :label="$t('common.enabled')")
           v-flex(xs12)
-            div Role par défaut
+            v-layout(align-center)
+              div(slot="activator") {{ $t('parameters.casAuthentication.fields.defaultRole.title') }}
+              v-tooltip.ml-1(left)
+                v-icon(slot="activator", small) help
+                span {{ $t('parameters.casAuthentication.fields.defaultRole.tooltip') }}
             v-select(
             v-model="form.defaultRole",
             :items="roles",
@@ -20,29 +24,38 @@
             :error-messages="errors.collect('role')",
             )
           v-flex(xs12)
-            v-text-field(
-            v-model="form.title",
-            label="Title",
-            name="title",
-            v-validate="'required'",
-            :error-messages="errors.collect('title')",
-            )
+            v-tooltip.ml-1(left)
+              v-text-field(
+              slot="activator",
+              v-model="form.title",
+              :label="$t('parameters.casAuthentication.fields.title.title')",
+              name="title",
+              v-validate="'required'",
+              :error-messages="errors.collect('title')",
+              )
+              span {{ $t('parameters.casAuthentication.fields.title.tooltip') }}
           v-flex(xs12)
-            v-text-field(
-            v-model="form.server",
-            label="Server",
-            name="server",
-            v-validate="'required'",
-            :error-messages="errors.collect('server')",
-            )
+            v-tooltip.ml-1(left)
+              v-text-field(
+              slot="activator",
+              v-model="form.server",
+              :label="$t('parameters.casAuthentication.fields.server.title')",
+              name="server",
+              v-validate="'required'",
+              :error-messages="errors.collect('server')",
+              )
+              span {{ $t('parameters.casAuthentication.fields.server.tooltip') }}
           v-flex(xs12)
-            v-text-field(
-            v-model="form.service",
-            label="Service",
-            name="service",
-            v-validate="'required'",
-            :error-messages="errors.collect('service')",
-            )
+            v-tooltip.ml-1(left)
+              v-text-field(
+              slot="activator",
+              v-model="form.service",
+              :label="$t('parameters.casAuthentication.fields.service.title')",
+              name="service",
+              v-validate="'required'",
+              :error-messages="errors.collect('service')",
+              )
+              span {{ $t('parameters.casAuthentication.fields.service.tooltip') }}
     v-divider
     v-layout.py-1(justify-end)
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}

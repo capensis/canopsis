@@ -836,6 +836,71 @@ export default {
         topBar: 'Barre en haut de la page',
       },
     },
+    configuration: 'Configuration',
+    ldapAuthentication: {
+      title: 'Authentification LDAP',
+      tabs: {
+        general: 'Général',
+        server: 'Serveur',
+        linkFields: 'Champs liés',
+      },
+      fields: {
+        defaultRole: {
+          title: 'Rôle par défaut',
+          tooltip: 'Rôle par défaut pour les nouveaux utilisateurs',
+        },
+        ldapServerHost: {
+          title: 'Hôte Serveur LDAP',
+          tooltip: 'Hôte - Serveur LDAP',
+        },
+        ldapServerPort: {
+          title: 'Port Serveur LDAP',
+          tooltip: 'Port - Serveur LDAP',
+        },
+        adminDn: {
+          title: 'Admin - Nom d\'utilisateur',
+          tooltip: 'Nom d\'utilisateur du compte administrateur LDAP',
+        },
+        adminPassword: {
+          title: 'Admin - Mot de passe',
+          tooltip: 'Mot de passe du compte administrateur LDAP',
+        },
+        userFilter: {
+          title: 'Filtre utilisateur',
+          tooltip: 'Chaîne de caractères utilisée pour la recherche d\'utilisateurs LDAP ("%s" doit apparaître, sera remplacé par l\'utilisateur souhaité)',
+        },
+        userBase: {
+          title: 'Base d\'utilisateurs',
+          tooltip: 'Dossier LDAP contenant les utilisateurs',
+        },
+        linkFields: {
+          base: 'Base',
+          target: 'Cible',
+          tooltip: 'Relier les champs du formulaire à des champs LDAP',
+        },
+      },
+    },
+    casAuthentication: {
+      title: 'Authentification CAS',
+      fields: {
+        defaultRole: {
+          title: 'Rôle par défaut',
+          tooltip: 'Rôle par défaut pour les nouveaux utilisateurs',
+        },
+        title: {
+          title: 'Titre',
+          tooltip: 'Titre affiché sur la page de connexion',
+        },
+        server: {
+          title: 'Serveur',
+          tooltip: 'Adresse du serveur CAS',
+        },
+        service: {
+          title: 'Service',
+          tooltip: 'URL de Canopsis',
+        },
+      },
+    },
   },
   view: {
     errors: {

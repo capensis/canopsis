@@ -859,6 +859,71 @@ export default {
         topBar: 'Top bar',
       },
     },
+    configuration: 'Configuration',
+    ldapAuthentication: {
+      title: 'LDAP Authentication',
+      tabs: {
+        general: 'General',
+        server: 'Server',
+        linkFields: 'Link fields',
+      },
+      fields: {
+        defaultRole: {
+          title: 'Default Role',
+          tooltip: 'Default role for new users.',
+        },
+        ldapServerHost: {
+          title: 'LDAP Server Host',
+          tooltip: 'LDAP Server Host adress',
+        },
+        ldapServerPort: {
+          title: 'LDAP Server Port',
+          tooltip: 'LDAP Server Port',
+        },
+        adminDn: {
+          title: 'Admin DN',
+          tooltip: 'LDAP account name to login to LDAP Server',
+        },
+        adminPassword: {
+          title: 'Admin Password',
+          tooltip: 'Password to login to LDAP Server',
+        },
+        userFilter: {
+          title: 'User filter',
+          tooltip: 'Format string used to search user in LDAP (a single "%s" must appear, will be replaced by the wanted user)',
+        },
+        userBase: {
+          title: 'User base',
+          tooltip: 'Base directory in LDAP to look for users in',
+        },
+        linkFields: {
+          base: 'Base',
+          target: 'Target',
+          tooltip: 'Map user fields to LDAP fields',
+        },
+      },
+    },
+    casAuthentication: {
+      title: 'CAS Authentication',
+      fields: {
+        defaultRole: {
+          title: 'Default Role',
+          tooltip: 'Default role for new users.',
+        },
+        title: {
+          title: 'Title',
+          tooltip: 'Title displayed on login page',
+        },
+        server: {
+          title: 'Server',
+          tooltip: 'CAS Server adress',
+        },
+        service: {
+          title: 'Service',
+          tooltip: 'Canopsis URL',
+        },
+      },
+    },
   },
   view: {
     errors: {

@@ -2,19 +2,23 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline LDAP Authentification
+        span.headline {{ $t('parameters.ldapAuthentication.title') }}
     v-card-text.pa-0
       v-tabs(v-model="activeTab", color="secondary", slider-color="primary", dark)
-        v-tab General
-        v-tab Serveur
-        v-tab Champs liés
+        v-tab {{ $t('parameters.ldapAuthentication.tabs.general') }}
+        v-tab {{ $t('parameters.ldapAuthentication.tabs.server') }}
+        v-tab {{ $t('parameters.ldapAuthentication.tabs.linkFields') }}
         v-tab-item
           v-container
             v-layout(wrap)
               v-flex(xs12)
-                v-switch(v-model="form.enabled", label="Enabled")
+                v-switch(v-model="form.enabled", :label="$t('common.enabled')")
               v-flex(xs12)
-                div Role par défaut
+                v-layout(align-center)
+                  div(slot="activator") {{ $t('parameters.ldapAuthentication.fields.defaultRole.title') }}
+                  v-tooltip.ml-1(left)
+                    v-icon(slot="activator", small) help
+                    span {{ $t('parameters.ldapAuthentication.fields.defaultRole.tooltip') }}
                 v-select(
                 v-model="form.defaultRole",
                 :items="roles",
@@ -25,54 +29,73 @@
           v-container
             v-layout(wrap)
               v-flex(xs12)
-                v-text-field(
-                v-model="form.ldapServerHost",
-                label="LDAP Server Host",
-                name="ldapServerHost",
-                v-validate="'required'",
-                :error-messages="errors.collect('ldapServerHost')",
-                )
+                v-tooltip.ml-1(left)
+                  v-text-field(
+                  slot="activator",
+                  v-model="form.ldapServerHost",
+                  :label="$t('parameters.ldapAuthentication.fields.ldapServerHost.title')",
+                  name="ldapServerHost",
+                  v-validate="'required'",
+                  :error-messages="errors.collect('ldapServerHost')",
+                  )
+                  span {{ $t('parameters.ldapAuthentication.fields.ldapServerHost.tooltip') }}
               v-flex(xs12)
-                v-text-field(
-                v-model="form.ldapServerPort",
-                label="LDAP Server Port",
-                type="number",
-                name="ldapServerPort",
-                v-validate="'required|numeric|min:0'",
-                :error-messages="errors.collect('ldapServerPort')",
-                )
+                v-tooltip.ml-1(left)
+                  v-text-field(
+                  slot="activator",
+                  v-model="form.ldapServerPort",
+                  :label="$t('parameters.ldapAuthentication.fields.ldapServerPort.title')",
+                  type="number",
+                  name="ldapServerPort",
+                  v-validate="'required|numeric|min:0'",
+                  :error-messages="errors.collect('ldapServerPort')",
+                  )
+                  span {{ $t('parameters.ldapAuthentication.fields.ldapServerPort.tooltip') }}
               v-flex(xs12)
-                v-text-field(
-                v-model="form.adminDn",
-                label="Admin DN",
-                name="adminDn",
-                v-validate="'required'",
-                :error-messages="errors.collect('adminDn')",
-                )
+                v-tooltip.ml-1(left)
+                  v-text-field(
+                  slot="activator",
+                  v-model="form.adminDn",
+                  :label="$t('parameters.ldapAuthentication.fields.adminDn.title')",
+                  name="adminDn",
+                  v-validate="'required'",
+                  :error-messages="errors.collect('adminDn')",
+                  )
+                  span {{ $t('parameters.ldapAuthentication.fields.adminDn.tooltip') }}
               v-flex(xs12)
-                v-text-field(
-                v-model="form.adminPassword",
-                label="Admin Password",
-                name="password",
-                v-validate="'required'",
-                :error-messages="errors.collect('password')",
-                )
+                v-tooltip.ml-1(left)
+                  v-text-field(
+                  slot="activator",
+                  v-model="form.adminPassword",
+                  :label="$t('parameters.ldapAuthentication.fields.adminPassword.title')",
+                  type="password",
+                  name="password",
+                  v-validate="'required'",
+                  :error-messages="errors.collect('password')",
+                  )
+                  span {{ $t('parameters.ldapAuthentication.fields.adminPassword.tooltip') }}
               v-flex(xs12)
-                v-text-field(
-                v-model="form.adminDn",
-                label="User filter",
-                name="filter",
-                v-validate="'required'",
-                :error-messages="errors.collect('filter')",
-                )
+                v-tooltip.ml-1(left)
+                  v-text-field(
+                  slot="activator",
+                  v-model="form.adminDn",
+                  :label="$t('parameters.ldapAuthentication.fields.userFilter.title')",
+                  name="filter",
+                  v-validate="'required'",
+                  :error-messages="errors.collect('filter')",
+                  )
+                  span {{ $t('parameters.ldapAuthentication.fields.userFilter.tooltip') }}
               v-flex(xs12)
-                v-text-field(
-                v-model="form.adminDn",
-                label="User base",
-                name="userBase",
-                v-validate="'required'",
-                :error-messages="errors.collect('userBase')",
-                )
+                v-tooltip.ml-1(left)
+                  v-text-field(
+                  slot="activator",
+                  v-model="form.adminDn",
+                  :label="$t('parameters.ldapAuthentication.fields.userBase.title')",
+                  name="userBase",
+                  v-validate="'required'",
+                  :error-messages="errors.collect('userBase')",
+                  )
+                  span {{ $t('parameters.ldapAuthentication.fields.userBase.tooltip') }}
         v-tab-item
           v-container
             div(v-for="(attribute, key) in form.ldapAttributes" :key="key")
@@ -85,9 +108,15 @@
                 v-btn(icon, small)
                   v-icon(color="error") clear
             v-layout(align-center)
-              v-text-field.mx-1(v-model="attributeForm.base", label="Base")
-              v-text-field.mx-1(v-model="attributeForm.target", label="Target  ")
-              v-btn(depressed, color="secondary") Add
+              v-text-field.mx-1(
+              v-model="attributeForm.base",
+              :label="$t('parameters.ldapAuthentication.fields.linkFields.base')",
+              )
+              v-text-field.mx-1(
+              v-model="attributeForm.target",
+              :label="$t('parameters.ldapAuthentication.fields.linkFields.target')",
+              )
+              v-btn(depressed, color="secondary") {{ $t('common.add') }}
       v-divider
       v-layout.py-1(justify-end)
         v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}

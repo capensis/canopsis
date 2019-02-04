@@ -15,13 +15,13 @@
           @change="setGroupsNavigationType"
           )
       v-list-tile
-        v-list-tile-title LDAP Authentification
+        v-list-tile-title {{ $t('parameters.ldapAuthentication.title') }}
         v-list-tile-content
-          v-btn(@click="showLDAPConfigModal", dark, color="secondary") Configuration
+          v-btn(@click="showLDAPConfigModal", dark, color="secondary") {{ $t('parameters.configuration') }}
       v-list-tile
-        v-list-tile-title CAS Authentification
+        v-list-tile-title {{ $t('parameters.casAuthentication.title') }}
         v-list-tile-content
-          v-btn(@click="showCASConfigModal", dark, color="secondary") Configuration
+          v-btn(@click="showCASConfigModal", dark, color="secondary") {{ $t('parameters.configuration') }}
 </template>
 
 <script>
