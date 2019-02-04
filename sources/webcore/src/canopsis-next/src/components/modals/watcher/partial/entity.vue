@@ -1,30 +1,43 @@
 <template lang="pug">
   .weather-watcher-entity-expansion-panel
-    v-expansion-panel
-      v-expansion-panel-content(hide-actions)
-        v-layout.pa-2(slot="header", :class="entityClass", justify-space-between)
-          span.pl-1.white--text.subheading.entity-title {{ entity | get(entityNameField, false, entityNameField) }}
-          v-layout(justify-end)
-            div(v-for="action in availableActions", :key="action.name")
-              v-btn.secondary(
-              @click.stop="action.action(action.name)",
-              :disabled="!isActionBtnEnable(action.name)",
-              small,
-              fab,
-              depressed
-              )
-                v-icon {{ action.icon }}
-        v-card
+    v-expansion-panel(dark)
+      v-expansion-panel-content(:style="{ backgroundColor: color }")
+        v-layout(slot="header", justify-space-between, align-center)
+          v-flex.pa-2(v-for="(icon, index) in mainIcons", :key="index")
+            v-icon(color="white", small) {{ icon }}
+          v-flex.pl-1.white--text.subheading.entity-title(
+          xs12,
+          )
+            v-layout(align-center)
+              div.mr-1.entityName(
+              v-resize-text="{maxFontSize: '16px'}",
+              ) {{ { entity } | get(entityNameField, false, entityNameField) }}
+              v-btn.mx-1.white(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color", small, dark, icon)
+                v-icon(small) {{ icon.icon }}
+        v-card(color="white black--text")
           v-card-text
+            v-layout(row, align-center)
+              div {{ $t('common.actionsLabel') }}:
+              div(v-for="action in availableActions", :key="action.name")
+                v-btn(
+                @click.stop="action.action(action.name)",
+                :disabled="!isActionBtnEnable(action.name)",
+                depressed,
+                small,
+                light,
+                )
+                  v-icon {{ action.icon }}
             div(v-html="compiledTemplate")
-        v-divider
 </template>
 
 <script>
+import find from 'lodash/find';
+
 import {
   MODALS,
   WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
+  WEATHER_ICONS,
   WEATHER_ACK_EVENT_OUTPUT,
   EVENT_ENTITY_STYLE,
   EVENT_ENTITY_TYPES,
@@ -90,7 +103,7 @@ export default {
     };
   },
   computed: {
-    entityClass() {
+    color() {
       if (this.hasActivePbehavior) {
         return WATCHER_PBEHAVIOR_COLOR;
       }
@@ -98,18 +111,57 @@ export default {
       return WATCHER_STATES_COLORS[this.state];
     },
 
+    mainIcons() {
+      const mainIcons = [];
+      if (!this.isPaused && !this.hasActivePbehavior) {
+        mainIcons.push(WEATHER_ICONS[this.entity.state.val]);
+      }
+
+      const pausePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.pause });
+      const maintenancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.maintenance });
+      const outOfSurveillancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
+
+      if (maintenancePbehavior) {
+        mainIcons.push(WEATHER_ICONS.maintenance);
+      }
+
+      if (outOfSurveillancePbehavior) {
+        mainIcons.push(WEATHER_ICONS.outOfSurveillance);
+      }
+
+      if (pausePbehavior) {
+        mainIcons.push(WEATHER_ICONS.pause);
+      }
+
+      return mainIcons;
+    },
+
+    extraIcons() {
+      const extraIcons = [];
+
+      if (this.entity.ack) {
+        extraIcons.push({
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          color: 'purple',
+        });
+      }
+
+      if (this.entity.ticket) {
+        extraIcons.push({
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          color: 'blue',
+        });
+      }
+
+      return extraIcons;
+    },
+
     hasActivePbehavior() {
       if (!this.entity.pbehavior || !this.entity.pbehavior.length) {
         return false;
       }
 
-      return this.entity.pbehavior.filter((value) => {
-        const start = value.dtstart * 1000;
-        const end = value.dtend * 1000;
-        const now = Date.now();
-
-        return start <= now && now < end;
-      }).length;
+      return this.entity.pbehavior.filter(value => value.isActive).length;
     },
 
     compiledTemplate() {
@@ -220,5 +272,9 @@ export default {
     .actions-button-wrapper {
       float: right;
     }
+  }
+
+  .entityName {
+    line-height: 1.5em;
   }
 </style>
