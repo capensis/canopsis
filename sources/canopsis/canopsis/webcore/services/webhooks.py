@@ -53,7 +53,7 @@ def exports(ws):
     )
     def create_webhook():
         """
-        Create a new ticketapi.
+        Create a new webhook.
 
         :returns: nothing
         """
@@ -83,6 +83,35 @@ def exports(ws):
                                   HTTP_ERROR)
 
         return gen_json({})
+
+    @ws.application.put(
+        '/api/v2/webhook/<webhook_id>'
+    )
+    def update_webhook_from_id(webhook_id):
+        try:
+            webhook = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+
+        if webhook is None or not isinstance(webhook, dict):
+            return gen_json_error(
+                {'description': 'nothing to update'}, HTTP_ERROR)
+
+        try:
+            ok = webhook_manager.update_webhook_from_id(webhook_id, webhook)
+        except CollectionError as ce:
+            ws.logger.error('Webhook update error : {}'.format(ce))
+            return gen_json_error(
+                {'description': 'error while updating an webhook'},
+                HTTP_ERROR
+            )
+
+        if not ok:
+            return gen_json_error({'description': 'failed to update webhook'},
+                                  HTTP_ERROR)
 
     @ws.application.delete(
         '/api/v2/webhook/<webhook_id>'
