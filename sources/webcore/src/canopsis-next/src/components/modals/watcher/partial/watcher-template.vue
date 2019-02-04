@@ -44,7 +44,7 @@ export default {
   },
   beforeCreate() {
     registerHelper('entities', ({ hash }) => {
-      const entityNameField = hash.name || 'name';
+      const entityNameField = hash.name || 'entity.name';
 
       return new Handlebars.SafeString(`
         <div class="mt-2" v-for="watcherEntity in watcherEntities">
