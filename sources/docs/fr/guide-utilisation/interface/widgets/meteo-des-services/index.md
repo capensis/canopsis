@@ -62,7 +62,7 @@ Durant la configuration de votre widget Météo de services, notamment les Templ
 
 Exemple: Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom de l'observateur, ou son identifiant, etc.
 
-Afin de connaitre les variables disponibles, une modal d'aide est disponible.
+Afin de connaitre les variables disponibles, une modale d'aide est disponible.
 
 Pour y accéder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
 
@@ -76,7 +76,7 @@ Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables
 3. Editeur de filtre
 4. Paramètres avancés
   1. Template - Tuiles
-  2. Template - Modal
+  2. Template - modale
   3. Template - Entités
   4. Colonnes - Petit
   5. Colonnes - Moyen
@@ -122,17 +122,17 @@ Une variable est disponible ici pour vous permettre d'afficher les détails de l
 Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ entity.display_name }}`.
 Tous les champs disponibles dans l'observateur sont disponibles ici.
 
-##### Template - Modal
+##### Template - Modale
 
 Ce paramètre permet de personnaliser les informations affichées dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
-Il vous est possible ici d'afficher, à n'importe quel endroit de la modal, la liste des entités concernées par l'observateur sur lequel vous avez cliqué. Pour ce faire, insérez dans le template:
+Il vous est possible ici d'afficher, à n'importe quel endroit de la modale, la liste des entités concernées par l'observateur sur lequel vous avez cliqué. Pour ce faire, insérez dans le template:
 
 ```
 {{ entities }}
 ```
 
-Cela aura pour effet d'insérer dans la modal la liste des entités. Par défaut, le nom de l'entité sera affiché pour chacune d'entre elles. Il vous est possible de modifier la valeur affichée ici. Tous les champs de l'entité sont disponibles. Pour ce faire, ajoutez un argument ```name``` à la balise précédemment ajoutée. Il vous est donc possible d'écrire, par exemple :
+Cela aura pour effet d'insérer dans la modale la liste des entités. Par défaut, le nom de l'entité sera affiché pour chacune d'entre elles. Il vous est possible de modifier la valeur affichée ici. Tous les champs de l'entité sont disponibles. Pour ce faire, ajoutez un argument ```name``` à la balise précédemment ajoutée. Il vous est donc possible d'écrire, par exemple :
 
 ```
 {{ entities name="_id" }}
@@ -146,7 +146,7 @@ Celui-ci fonctionne de la même manière que le paramètre Template - Tuile pré
 
 Ce paramètre permet de personnaliser les informations affichées pour chaque entités dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
-**Attention: La liste des entités n'est affichée que si cela a été précisé dans le [Template - Modal](#template-modal).**
+**Attention: La liste des entités n'est affichée que si cela a été précisé dans le [Template - Modale](#template-modale).**
 
 Le langage utilisé ici est le Handlebars.
 
