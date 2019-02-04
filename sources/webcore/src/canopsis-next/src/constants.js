@@ -125,10 +125,10 @@ export const ENTITIES_STATES_STYLES = {
 };
 
 export const WATCHER_STATES_COLORS = {
-  [ENTITIES_STATES.ok]: 'green darken-2',
-  [ENTITIES_STATES.minor]: 'yellow darken-2',
-  [ENTITIES_STATES.major]: 'orange darken-2',
-  [ENTITIES_STATES.critical]: 'red darken-2',
+  [ENTITIES_STATES.ok]: '#00a65a',
+  [ENTITIES_STATES.minor]: '#ff9900',
+  [ENTITIES_STATES.major]: '#ff9900',
+  [ENTITIES_STATES.critical]: '#f56954',
 };
 
 export const PBEHAVIOR_TYPES = {
@@ -155,7 +155,7 @@ export const WEATHER_ICONS = {
   pause: 'pause',
 };
 
-export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
+export const WATCHER_PBEHAVIOR_COLOR = '#808080';
 
 export const ENTITY_STATUS_STYLES = {
   [ENTITIES_STATUSES.off]: {

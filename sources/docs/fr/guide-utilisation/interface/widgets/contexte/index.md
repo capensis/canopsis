@@ -137,7 +137,7 @@ Pour ajouter un comportement périodique sur une sélection d'entités, sélecti
 
 Durant la configuration de votre widget Exporateur de contexte, notamment la liste des colonnes, il vous sera possible d'accéder à des variables concernant les entités.
 
-Afin de connaitre les variables disponibles, une modal d'aide est disponible.
+Afin de connaitre les variables disponibles, une modale d'aide est disponible.
 
 Pour y accéder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
 

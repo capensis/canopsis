@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
   :class="getItemClasses",
-  :style="{ height: itemHeight + 'em'}",
+  :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
   tile,
   @click.native="showAdditionalInfoModal"
   )
@@ -11,9 +11,8 @@
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
-        v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
-          v-icon pause
-
+        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
+          v-icon(color="white") {{ secondaryIcon }}
 </template>
 
 <script>
@@ -64,6 +63,9 @@ export default {
     hasWatcherPbehavior() {
       return this.watcher.active_pb_watcher;
     },
+    isPbehavior() {
+      return this.watcher.pbehavior.some(pbehavior => pbehavior.isActive);
+    },
     format() {
       if (!this.isPaused && !this.hasWatcherPbehavior) {
         const state = this.watcher.state.val;
@@ -87,21 +89,25 @@ export default {
         icon = WEATHER_ICONS.outOfSurveillance;
       }
 
-      if (this.isPaused && !this.hasWatcherPbehavior) {
-        icon = WEATHER_ICONS.pause;
-      }
-
       return {
         color: WATCHER_PBEHAVIOR_COLOR,
         icon,
       };
+    },
+    secondaryIcon() {
+      if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
+        return WEATHER_ICONS.maintenance;
+      } else if (this.watcher.pbehavior.every(value => value.type_ === PBEHAVIOR_TYPES.outOfSurveillance)) {
+        return WEATHER_ICONS.outOfSurveillance;
+      }
+
+      return WEATHER_ICONS.pause;
     },
     compiledTemplate() {
       return compile(this.template, { entity: this.watcher });
     },
     getItemClasses() {
       return [
-        this.format.color,
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
@@ -115,8 +121,7 @@ export default {
       return (
         this.watcher.alerts_not_ack
         && !this.hasWatcherPbehavior
-        && !this.isPaused
-        && !this.watcher.active_pb_some
+        && !this.isPbehavior
       );
     },
   },
@@ -205,7 +210,7 @@ export default {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1em;
+    line-height: 1.2em;
   }
 
   @keyframes blink {
@@ -225,5 +230,6 @@ export default {
     position: absolute;
     right: 0.2em;
     top: 0;
+    z-index: 1;
   }
 </style>

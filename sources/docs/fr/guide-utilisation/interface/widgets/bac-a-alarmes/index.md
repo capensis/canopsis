@@ -73,7 +73,7 @@ Le filtre par période permet de filtre les alarmes en ne conservant que les ala
 
 Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/period-filter.png "Filtre par période") présente à droite du sélecteur de filtre. Une fenêtre apparaît.
 
-![Modal filtre par période](./img/modal-filtre-periode.png "Modal filtre par période")
+![modale filtre par période](./img/modal-filtre-periode.png "modale filtre par période")
 
 Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
 Cliquez ensuite sur 'Appliquer'.
@@ -105,7 +105,7 @@ Durant la configuration de votre widget Bac à alarmes, notamment paramètres "I
 
 Exemple: Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", l'état de l'alarme.
 
-Afin de connaitre les variables disponibles, une modal d'aide est disponible.
+Afin de connaitre les variables disponibles, une modale d'aide est disponible.
 
 Pour y accèder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
 
