@@ -51,67 +51,36 @@ def exports(ws):
     @ws.application.post(
         '/api/v2/webhook'
     )
-    def create_webhook():
-        """
-        Create a new webhook.
-
-        :returns: nothing
-        """
-        try:
-            webhook = request.json
-        except ValueError:
-            return gen_json_error(
-                {'description': 'invalid JSON'},
-                HTTP_ERROR
-            )
-
-        if webhook is None or not isinstance(webhook, dict):
-            return gen_json_error(
-                {'description': 'nothing to insert'}, HTTP_ERROR)
-
-        try:
-            ok = webhook_manager.create(webhook)
-        except CollectionError as ce:
-            ws.logger.error('Webhook creation error : {}'.format(ce))
-            return gen_json_error(
-                {'description': 'error while creating an webhook'},
-                HTTP_ERROR
-            )
-
-        if not ok:
-            return gen_json_error({'description': 'failed to create webhook'},
-                                  HTTP_ERROR)
-
-        return gen_json({})
-
     @ws.application.put(
         '/api/v2/webhook/<webhook_id>'
     )
-    def update_webhook_from_id(webhook_id):
+    def upsert(webhook_id=None):
         try:
             webhook = request.json
         except ValueError:
             return gen_json_error(
-                {'description': 'invalid JSON'},
+                {'description': 'Invalid JSON'},
                 HTTP_ERROR
             )
 
         if webhook is None or not isinstance(webhook, dict):
             return gen_json_error(
-                {'description': 'nothing to update'}, HTTP_ERROR)
+                {'description': 'nothing to upsert'}, HTTP_ERROR)
 
         try:
-            ok = webhook_manager.update_webhook_from_id(webhook_id, webhook)
+            ok = webhook_manager.upsert_webhook(webhook, webhook_id)
         except CollectionError as ce:
-            ws.logger.error('Webhook update error : {}'.format(ce))
+            ws.logger.error('Webhook error : {}'.format(ce))
             return gen_json_error(
-                {'description': 'error while updating an webhook'},
+                {'description': 'error while upserting an webhook'},
                 HTTP_ERROR
             )
 
         if not ok:
-            return gen_json_error({'description': 'failed to update webhook'},
+            return gen_json_error({'description': 'failed to upsert webhook'},
                                   HTTP_ERROR)
+
+        return gen_json({})
 
     @ws.application.delete(
         '/api/v2/webhook/<webhook_id>'

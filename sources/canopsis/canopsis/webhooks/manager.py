@@ -37,12 +37,17 @@ class CanopsisWebhookManager(object):
     def get_webhook_from_id(self, wid):
         return self.__collection.find_one({'_id': wid})
 
-    def create(self, webhook):
+    def create_webhook(self, webhook):
         return self.__collection.insert(webhook)
 
-    def update_webhook_from_id(self, wid, webhook):
+    def update_webhook_from_id(self, webhook, wid):
         resp = self.__collection.update(query={'_id': wid}, document=webhook)
         return self.__collection.is_successfull(resp)
+
+    def upsert_webhook(self, webhook, wid=None):
+        if wid is not None:
+            return self.update_webhook_from_id(webhook, wid)
+        return self.create_webhook(webhook)
 
     def delete_webhook_from_id(self, wid):
         resp = self.__collection.remove({'_id': wid})
