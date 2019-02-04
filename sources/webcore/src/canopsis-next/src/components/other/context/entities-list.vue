@@ -4,7 +4,13 @@
       v-flex
         context-search(:query.sync="query")
       v-flex
-        pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
+        pagination(
+        :page="query.page",
+        :limit="query.limit",
+        :total="contextEntitiesMeta.total",
+        type="top",
+        @input="updateQueryPage"
+        )
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
@@ -53,7 +59,12 @@
           more-infos(:item="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="contextEntitiesMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="contextEntitiesMeta.total",
+          @input="updateQueryPage"
+          )
         v-flex(xs2)
           records-per-page(:query.sync="query")
 </template>
@@ -74,6 +85,7 @@ import FilterSelector from '@/components/other/filter/selector/filter-selector.v
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
@@ -99,7 +111,6 @@ export default {
     RecordsPerPage,
     NoColumnsTable,
     FilterSelector,
-
     MoreInfos,
     ContextFab,
     ActionsPanel,
@@ -109,6 +120,7 @@ export default {
     authMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
   ],

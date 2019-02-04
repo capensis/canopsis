@@ -10,7 +10,7 @@
         :limit="query.limit",
         :total="alarmsMeta.total",
         type="top",
-        @input="updatePage"
+        @input="updateQueryPage"
         )
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
@@ -55,7 +55,7 @@
         template(slot="items", slot-scope="props")
           tr
             td
-              v-checkbox(primary, hide-details, v-model="props.selected")
+              v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
             v-for="column in columns",
             @click="props.expanded = !props.expanded"
@@ -70,6 +70,7 @@
           :page="query.page",
           :limit="query.limit",
           :total="alarmsMeta.total",
+          @input="updateQueryPage"
           )
         v-spacer
         v-flex(xs2)
@@ -96,6 +97,7 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -125,6 +127,7 @@ export default {
     modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
@@ -170,10 +173,6 @@ export default {
     },
   },
   methods: {
-    updatePage(page) {
-      this.query = { ...this.query, page };
-    },
-
     removeHistoryFilter() {
       this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
     },
