@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     isShort() {
-      return this.text.length > this.maxLetters;
+      return this.text.length <= this.maxLetters;
     },
     shortenedText() {
       if (this.isShort) {
