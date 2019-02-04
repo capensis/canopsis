@@ -89,8 +89,6 @@ export default {
     },
   },
   user: {
-    firstName: 'First name',
-    lastName: 'Last name',
     role: 'Role',
     defaultView: 'Default view',
   },
@@ -630,6 +628,9 @@ export default {
       },
       edit: {
         title: 'Edit tab',
+      },
+      duplicate: {
+        title: 'Duplicate tab',
       },
       fields: {
         title: 'Title',

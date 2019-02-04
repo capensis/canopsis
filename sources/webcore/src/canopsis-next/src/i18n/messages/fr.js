@@ -89,8 +89,6 @@ export default {
     },
   },
   user: {
-    firstName: 'Prénom',
-    lastName: 'Nom',
     role: 'Role',
     defaultView: 'Vue par défaut',
   },
