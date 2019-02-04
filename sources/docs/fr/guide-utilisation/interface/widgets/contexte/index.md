@@ -139,7 +139,7 @@ Durant la configuration de votre widget Exporateur de contexte, notamment la lis
 
 Afin de connaitre les variables disponibles, une modal d'aide est disponible.
 
-Pour y accèder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
+Pour y accéder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
 
 Un bouton d'action supplémentaire "Liste des variables disponibles" apparaît alors pour chaque entité du tableau.
 

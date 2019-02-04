@@ -103,7 +103,7 @@ Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: 
 
 Durant la configuration de votre widget Bac à alarmes, notamment paramètres "Info popup", et "Fenêtre Plus d'infos", il vous sera possible d'accéder à des variables concernant les alarmes et les entités.
 
-Example: Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", l'état de l'alarme.
+Exemple: Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", l'état de l'alarme.
 
 Afin de connaitre les variables disponibles, une modal d'aide est disponible.
 
