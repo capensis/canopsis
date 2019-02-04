@@ -7,7 +7,7 @@
 ### Guide utilisateur
 1. [Présentation générale](#presentation-generale)
 2. [Les tuiles](#les-tuiles)
-3. [La modal](#la-modal)
+3. [La modale](#la-modale)
 
 ### Guide exploitant
 1. [Paramètres du widget](#parametres-du-widget)
@@ -52,7 +52,7 @@ Un observateur surveille deux entités, A et B. A a un état de 1. B a un état 
 
 Une tuile de la météo de service clignotera si une des entités lui appartenant possède une alarme non acquittée, et que celui-ci n'est pas en pause/ne possède pas d'entité en pause.
 
-### La modal
+### La modale
 
 Au clic sur une tuile de la météo de services, une fenêtre s'ouvre.
 
@@ -62,21 +62,21 @@ Celle-ci contient, au choix :
 
 - "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant l'observateur sur lequel vous avez cliqué. Celle-ci peut, notamment, contenir la liste des entités concernées par l'observateur. Le template de cette fenêtre est configurable depuis les paramètres du widget.
 
-![Modal - Plus d'infos](./img/modal_more_infos.png "Modal - Plus d'infos")
+![modale - Plus d'infos](./img/modal_more_infos.png "modale - Plus d'infos")
 
 - "Bac à alarmes": Cette fenêtre contient un widget Bac à alarmes. Ce Bac à alarmes regroupe toutes les alarmes dans le spectre de l'observateur. Celui-ci est configurable depuis les paramètres du widget.
 
-![Modal - Bac à alarmes](./img/modal_alarmlist.png "Modal - Bac à alarmes")
+![modale - Bac à alarmes](./img/modal_alarmlist.png "modale - Bac à alarmes")
 
 ### Les actions
 
-Dans [la modal "Plus d'infos"](#la-modal), il vous est possible d'afficher la liste des entités concernées par l'observateur (*Cf: [Template - Modal](#template-modal)*).
+Dans [la modale "Plus d'infos"](#la-modale), il vous est possible d'afficher la liste des entités concernées par l'observateur (*Cf: [Template - modale](#template-modale)*).
 
 Si la liste d'entités est affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de l'état de l'entité.
 
-Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne sont éxécutées qu'au clic sur le bouton ```Envoyer``` de la modal "Plus d'infos".
+Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne sont exécutées qu'au clic sur le bouton ```Envoyer``` de la modale "Plus d'infos".
 
-- ![Action: Déclarer un incident](./img/action_declareTicket.png "Action: Déclarer un incident") *Déclarer un incident*: Cette action vous permet de déclarer un numéro de ticket, associer à un incident. Au clic sur cette action, une fenêtre s'ouvre, vous permettant d'indiquer un numéro de ticket. Cette action déclenche également automatiquement une action d'acquittement.
+- ![Action: Déclarer un incident](./img/action_declareTicket.png "Action: Déclarer un incident") *Déclarer un incident*: Cette action vous permet de déclarer un numéro de ticket, associé à un incident. Au clic sur cette action, une fenêtre s'ouvre, vous permettant d'indiquer un numéro de ticket. Cette action déclenche également automatiquement une action d'acquittement.
 - ![Action: Pause](./img/action_pause.png "Action: Pause") *Pause*: Cette action vous permet de mettre une entité en pause. Au clic, une fenêtre s'ouvre. Celle-ci vous permet de renseigner un commentaire, ainsi que la raison de la pause. Cette action n'est disponible que pour les entités qui ne sont pas déjà en pause.
 - ![Action: Play](./img/action_play.png "Action: Play") *Play*: Cette action vous permet de retirer la mise en pause d'une entité. Cette action n'est disponible que pour les entités en pause.
 - ![Action: acquittement](./img/action_ack.png "Action: acquittement") *Acquittement*: Cette action vous permet d'acquitter une alarme présente sur une entité. Cette action n'est disponible que pour les entités ayant un état différent de "Ok" (0), et ayant une alarme non acquittée.
@@ -90,14 +90,14 @@ Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne son
 3. Editeur de filtre
 4. Paramètres avancés
     1. Template - Tuiles
-    2. Template - Modal
+    2. Template - modale
     3. Template - Entités
     4. Colonnes - Petit
     5. Colonnes - Moyen
     6. Colonnes - Large
     7. Marges
     8. Hauteur
-    9. Type de modal
+    9. Type de modale
 
 #### Taille du widget (*requis*)
 
@@ -139,7 +139,7 @@ Une variable est disponible ici pour vous permettre d'affiché les détails de l
 Exemple : Pour afficher le champ `display_name` de l'observateur (qui correspond au nom de l'observateur), il vous faut écrire dans le template : `{{ watcher.display_name }}`.
 Tous les champs disponibles dans l'observateur sont disponibles ici.
 
-##### Template - Modal
+##### Template - modale
 
 Ce paramètre permet de personnaliser les informations affichées en haut de la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
@@ -193,11 +193,11 @@ Pour le modifier, faites glisser le sélecteur, afin de choisir une valeur entre
 
 Par défaut, ce paramètre est réglé sur une valeur de 1.
 
-##### Type de modal
+##### Type de modale
 
-Ce paramètre vous permet de sélectionner le type de modal que vous souhaitez ouvrir au clic sur une tuile de la Météo de services.
+Ce paramètre vous permet de sélectionner le type de modale que vous souhaitez ouvrir au clic sur une tuile de la Météo de services.
 
-Les types de modal disponibles sont : 
+Les types de modale disponibles sont : 
 
-- "Plus d'infos": Cette modal vous permet d'afficher (grâce à un template configurable) des détails supplémentaire sur l'observateur sur lequel vous cliquez.
-- "Bac à alarmes": Cette modal vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à l'observateur. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
+- "Plus d'infos": Cette modale vous permet d'afficher (grâce à un template configurable) des détails supplémentaires sur l'observateur sur lequel vous cliquez.
+- "Bac à alarmes": Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à l'observateur. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
