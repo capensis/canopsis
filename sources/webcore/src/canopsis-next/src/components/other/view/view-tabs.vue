@@ -3,7 +3,7 @@
   ref="tabs",
   :key="vTabsKey",
   :value="value",
-  :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
+  :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
