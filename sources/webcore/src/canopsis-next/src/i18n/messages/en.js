@@ -416,6 +416,7 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
+        comment: 'Comment',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },

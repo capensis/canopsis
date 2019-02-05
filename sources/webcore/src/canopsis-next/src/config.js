@@ -35,7 +35,6 @@ export const API_ROUTES = {
   weatherWatcher: '/api/v2/weather/watchers',
   pbehavior: {
     pbehavior: '/api/v2/pbehavior',
-    create: '/pbehavior/create',
     list: '/pbehavior/read',
   },
   pbehaviorById: '/api/v2/pbehavior_byeid',
