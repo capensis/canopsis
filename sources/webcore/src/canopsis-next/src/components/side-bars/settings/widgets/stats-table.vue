@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
+
 import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 

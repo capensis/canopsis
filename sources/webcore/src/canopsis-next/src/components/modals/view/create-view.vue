@@ -69,8 +69,7 @@
 </template>
 
 <script>
-import find from 'lodash/find';
-import omit from 'lodash/omit';
+import { find, omit } from 'lodash';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateView, generateViewRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';

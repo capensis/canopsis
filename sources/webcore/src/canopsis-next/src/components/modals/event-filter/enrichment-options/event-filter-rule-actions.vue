@@ -50,8 +50,7 @@
 
 <script>
 import Draggable from 'vuedraggable';
-import cloneDeep from 'lodash/cloneDeep';
-import pick from 'lodash/pick';
+import { cloneDeep, pick } from 'lodash';
 
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 

@@ -32,8 +32,7 @@
 </template>
 
 <script>
-import pick from 'lodash/pick';
-import mapValues from 'lodash/mapValues';
+import { pick, mapValues } from 'lodash';
 
 import VRuntimeTemplate from 'v-runtime-template';
 

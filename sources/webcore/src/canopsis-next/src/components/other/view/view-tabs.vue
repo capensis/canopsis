@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 import Draggable from 'vuedraggable';
 import { createNamespacedHelpers } from 'vuex';
 

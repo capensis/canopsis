@@ -16,8 +16,7 @@
 </template>
 
 <script>
-import union from 'lodash/union';
-import filter from 'lodash/filter';
+import { union, filter } from 'lodash';
 
 import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 

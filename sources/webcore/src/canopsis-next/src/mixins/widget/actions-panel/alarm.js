@@ -1,4 +1,4 @@
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/constants';
 

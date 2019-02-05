@@ -1,8 +1,5 @@
 import Vue from 'vue';
-import get from 'lodash/get';
-import omit from 'lodash/omit';
-import uniq from 'lodash/uniq';
-import mergeWith from 'lodash/mergeWith';
+import { get, omit, uniq, mergeWith } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';

@@ -26,10 +26,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import omit from 'lodash/omit';
-import pick from 'lodash/pick';
-import isEmpty from 'lodash/isEmpty';
+import { get, omit, pick, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 

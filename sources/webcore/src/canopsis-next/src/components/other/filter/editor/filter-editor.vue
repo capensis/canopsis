@@ -27,9 +27,7 @@
 
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
-import isEmpty from 'lodash/isEmpty';
-import isString from 'lodash/isString';
+import { cloneDeep, isEmpty, isString } from 'lodash';
 
 import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 

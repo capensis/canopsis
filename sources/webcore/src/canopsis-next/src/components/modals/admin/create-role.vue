@@ -39,7 +39,7 @@ v-card
 </template>
 
 <script>
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 

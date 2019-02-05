@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import queryMixin from '@/mixins/query';

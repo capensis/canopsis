@@ -1,6 +1,4 @@
-import omit from 'lodash/omit';
-import isUndefined from 'lodash/isUndefined';
-import isEmpty from 'lodash/isEmpty';
+import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES } from '@/constants';
