@@ -361,10 +361,12 @@ export default {
       success: {
         create: 'New view created !',
         edit: 'View successfully edited !',
+        delete: 'View successfully deleted !',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        delete: 'View deletion failed...',
       },
       errors: {
         rightCreating: 'Error on right creating',

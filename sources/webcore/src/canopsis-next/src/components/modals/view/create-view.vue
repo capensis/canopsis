@@ -235,10 +235,10 @@ export default {
                 this.fetchGroupsList(),
               ]);
 
-              this.addSuccessPopup({ text: this.$t('modals.view.success') });
+              this.addSuccessPopup({ text: this.$t('modals.view.success.delete') });
               this.hideModal();
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('modals.view.fail') });
+              this.addErrorPopup({ text: this.$t('modals.view.fail.delete') });
             }
           },
         },
