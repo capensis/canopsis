@@ -2,7 +2,6 @@
   div
     view-tabs-wrapper(
     v-if="view",
-    v-model="activeTabIndex",
     :view="view",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
@@ -97,12 +96,14 @@ export default {
     },
 
     activeTab() {
+      const tabIndex = Number(this.$route.query.tabIndex);
+
       if (this.view.tabs && this.view.tabs.length) {
-        if (isNull(this.activeTabIndex)) {
+        if (!tabIndex) {
           return this.view.tabs[0];
         }
 
-        return this.view.tabs[this.activeTabIndex];
+        return this.view.tabs[tabIndex];
       }
 
       return null;

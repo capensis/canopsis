@@ -15,13 +15,11 @@
           v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
     :view="view",
-    :value="value",
     :tabs.sync="tabs",
     :isTabsChanged="isTabsChanged",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
     :updateViewMethod="data => updateViewMethod(data)",
-    @input="$emit('input', $event)"
     )
       view-tab-rows(
       slot-scope="props",
@@ -41,10 +39,6 @@ export default {
     ViewTabRows,
   },
   props: {
-    value: {
-      type: Number,
-      default: null,
-    },
     view: {
       type: Object,
       required: true,

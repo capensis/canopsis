@@ -2,21 +2,28 @@
   v-tabs.view-tabs(
   ref="tabs",
   :key="vTabsKey",
-  :value="value",
+  :value="$route.fullPath"
   :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
-  dark,
-  @change="$emit('input', $event)"
+  dark
   )
     draggable.d-flex(
+    v-if="tabs.length",
     :value="tabs",
     :options="draggableOptions",
     @end="onDragEnd",
     @input="$emit('update:tabs', $event)"
     )
-      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
+      v-tab.draggable-item(
+      v-for="(tab, index) in tabs",
+      :key="tab._id",
+      :disabled="isTabsChanged",
+      :to="getTabHrefByIndex(index)",
+      exact,
+      ripple
+      )
         span {{ tab.title }}
         v-btn(
         v-show="hasUpdateAccess && isEditingMode",
@@ -42,8 +49,13 @@
         @click.stop="showDeleteTabModal(tab)"
         )
           v-icon(small) delete
-    v-tabs-items(v-if="$scopedSlots.default", active-class="active-view-tab")
-      v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
+    template(v-if="$scopedSlots.default")
+      v-tab-item(
+      v-for="(tab, index) in tabs",
+      :key="tab._id",
+      :value="getTabHrefByIndex(index)",
+      lazy
+      )
         slot(
         :tab="tab",
         :isEditingMode="isEditingMode",
@@ -89,10 +101,6 @@ export default {
       type: Array,
       required: true,
     },
-    value: {
-      type: Number,
-      default: null,
-    },
     hasUpdateAccess: {
       type: Boolean,
       default: false,
@@ -118,6 +126,17 @@ export default {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
         disabled: !this.isEditingMode,
+      };
+    },
+    getTabHrefByIndex() {
+      return (index) => {
+        if (index === 0) {
+          return this.$route.path;
+        }
+
+        const { href } = this.$router.resolve({ query: { tabIndex: index } }, this.$route);
+
+        return href;
       };
     },
   },
