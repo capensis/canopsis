@@ -573,6 +573,18 @@ class PBehaviorManager(object):
 
         return False
 
+    @staticmethod
+    def __convert_timestamp(timestamp, timezone):
+        """Convert a pbehavior timestamp defined in the timezone to a naive
+        datetime in utc.
+        :param timestamp:"""
+
+        date = datetime.utcfromtimestamp(timestamp)
+        date = date.replace(tzinfo=tz.gettz("UTC"))
+        date = date.astimezone(tz.gettz(timezone))
+        date = date.replace(tzinfo=None)
+        return date
+
     def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
         """ Check if a pbehavior with a rrule is active at the given time.
 
@@ -583,21 +595,19 @@ class PBehaviorManager(object):
         date of an occurence of the pbehavior is not a valid date.
         """
 
+        tz_name = pbehavior[PBehavior.TIMEZONE]
+
         rec_set = rrule.rruleset()
 
         # convert datetime/timestamps to naive UTC datetime
         now = datetime.utcfromtimestamp(timestamp)
         now = now.replace(tzinfo=None)
 
-        start = datetime.utcfromtimestamp(pbehavior[PBehavior.TSTART])
-        start = start.replace(tzinfo=None)
+        start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
+        stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
 
-        stop = datetime.utcfromtimestamp(pbehavior[PBehavior.TSTOP])
-        stop = stop.replace(tzinfo=None)
-
-        for str_date in pbehavior[PBehavior.EXDATE]:
-            exdate = parse_exdate(str_date, utc=True)
-            exdate = exdate.replace(tzinfo=None)
+        for date in pbehavior[PBehavior.EXDATE]:
+            exdate = self.__convert_timestamp(date, tz_name)
             rec_set.exdate(exdate)
 
         duration = stop - start  # pbehavior duration
