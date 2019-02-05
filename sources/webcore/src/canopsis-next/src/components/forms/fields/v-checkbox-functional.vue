@@ -13,6 +13,29 @@
         ) {{ props.label }}
 </template>
 
+<script>
+export default {
+  model: {
+    prop: 'inputValue',
+    event: 'change',
+  },
+  props: {
+    inputValue: {
+      type: Boolean,
+      default: false,
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
+</script>
+
 <style scoped>
   label {
     cursor: pointer;

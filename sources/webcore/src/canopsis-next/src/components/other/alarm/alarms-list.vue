@@ -62,6 +62,7 @@
             )
               alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
             td
+              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           time-line(:alarmProps="props.item")
       v-layout.white(align-center)
