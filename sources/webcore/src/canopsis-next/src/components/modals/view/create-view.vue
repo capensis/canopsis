@@ -73,7 +73,7 @@ import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
-import { generateView, generateViewRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
+import { generateView, generateViewTab, generateViewRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
 import uuid from '@/helpers/uid';
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
@@ -259,7 +259,7 @@ export default {
 
           /**
            * If we're creating a new view, or duplicating an existing one.
-           * Generate a new view. Then copy rows and widgets if we're duplicating a view
+           * Generate a new view. Then copy tabs, rows and widgets if we're duplicating a view
            */
           if (!this.config.view || this.config.isDuplicating) {
             const data = {
@@ -269,11 +269,14 @@ export default {
             };
 
             if (this.config.isDuplicating) {
-              data.rows = this.config.view.rows.map(row => ({
-                ...generateViewRow(),
-
-                title: row.title,
-                widgets: row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) })),
+              data.tabs = this.config.view.tabs.map(tab => ({
+                ...generateViewTab(),
+                title: tab.title,
+                rows: tab.rows.map(row => ({
+                  ...generateViewRow(),
+                  title: row.title,
+                  widgets: row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) })),
+                })),
               }));
             }
 
