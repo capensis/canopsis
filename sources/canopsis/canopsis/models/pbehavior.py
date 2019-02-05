@@ -36,13 +36,15 @@ class PBehavior(object):
     TYPE = 'type_'
     REASON = 'reason'
     SOURCE = 'source'
+    EXDATE = 'exdate'
+    TIMEZONE = 'timezone'
 
     def __init__(self, _id, name, filter_, tstart, tstop, rrule, author,
                  connector=DEFAULT_CONNECTOR_VALUE,
                  connector_name=DEFAULT_CONNECTOR_NAME_VALUE,
                  comments=None, eids=None, type_=None, reason=None,
-                 enabled=True, source=None,
-                 *args, **kwargs):
+                 enabled=True, source=None, exdate=None,
+                 timezone="UTC", *args, **kwargs):
         """
         :param str _id: pbehavior id
         :param str name: pbehavior name
@@ -59,6 +61,8 @@ class PBehavior(object):
         :param str reason: explanation on pbehavior creation
         :param bool enabled: allow this pbehavior to be used. This is NOT the same as the is_active property.
         :param str source: if None, pbehavior was created from canopsis. if anything else, it was created from an external data like an event from Nagios or so.
+        :param list int exdate: a list of exclusion date as a timestamp
+        :param str timezone: a timezone name
         """
         if filter_ is None:
             filter_ = {}
@@ -88,6 +92,15 @@ class PBehavior(object):
         if source is not None and not isinstance(source, string_types):
             raise TypeError('source must be None or a string, got {}'.format(type(source)))
 
+        if exdate is None:
+            exdate = []
+        elif not isinstance(exdate, list):
+            raise TypeError('exdate must be None or a list, got {}'.format(type(source)))
+        else:
+            for date in exdate:
+                if not isinstance(date, int):
+                    raise TypeError('The date inside exdate must be an int, got {}'.format(type(source)))
+
         self._id = _id
         self.enabled = enabled
         self.name = name
@@ -103,6 +116,8 @@ class PBehavior(object):
         self.type_ = type_
         self.reason = reason
         self.source = source
+        self.exdate = exdate
+        self.timezone = timezone
 
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
@@ -171,7 +186,9 @@ class PBehavior(object):
             self.ENABLED: self.enabled,
             self.TYPE: self.type_,
             self.REASON: self.reason,
-            self.SOURCE: self.source
+            self.SOURCE: self.source,
+            self.EXDATE: self.exdate,
+            self.TIMEZONE: self.timezone
         }
 
         return dictionnary

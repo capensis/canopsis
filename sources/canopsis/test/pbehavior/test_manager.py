@@ -376,7 +376,8 @@ class TestManager(BaseTest):
                 PBehavior.TYPE: 'maintenance',
                 "rrule": 'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
                 'tstart': now - hour,
-                'tstop': now + hour
+                'tstop': now + hour,
+                'timezone': "Europe/Paris"
             }
         )
 
@@ -500,6 +501,7 @@ class TestManager(BaseTest):
             "rrule": "FREQ=WEEKLY;BYDAY=FR",
             "tstart": 1529085600,
             "tstop": 1529294400,
+            "timezone": "Europe/Paris"
         }
 
         for i, ts in enumerate(timestamps):
