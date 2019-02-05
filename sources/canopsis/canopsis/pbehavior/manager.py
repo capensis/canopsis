@@ -40,7 +40,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
-from canopsis.pbehavior.utils import check_valid_rrule, parse_exdate
+from canopsis.pbehavior.utils import check_valid_rrule
 
 
 class BasePBehavior(dict):
@@ -277,8 +277,6 @@ class PBehaviorManager(object):
             exdate = [exdate]
 
         check_valid_rrule(rrule)
-        for date in exdate:
-            parse_exdate(date)
 
         if comments is not None:
             for comment in comments:
@@ -381,9 +379,6 @@ class PBehaviorManager(object):
             raise ValueError("The id does not match any pebahvior")
 
         check_valid_rrule(kwargs.get('rrule', ''))
-        if PBehavior.EXDATE in kwargs:
-            for date in kwargs[PBehavior.EXDATE]:
-                parse_exdate(date)
 
         pbehavior = PBehavior(**self.get(_id))
         new_data = {k: v for k, v in kwargs.items() if v is not None}
