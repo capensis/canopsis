@@ -377,7 +377,7 @@ class TestManager(BaseTest):
                 "rrule": 'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
                 'tstart': now - hour,
                 'tstop': now + hour,
-                'timezone': "Europe/Paris"
+                'timezone': "UTC"
             }
         )
 
@@ -500,8 +500,8 @@ class TestManager(BaseTest):
         pbehavior = {
             "rrule": "FREQ=WEEKLY;BYDAY=FR",
             "tstart": 1529085600,
-            "tstop": 1529294400,
-            "timezone": "Europe/Paris"
+            "tstop":  1529294400,
+            "timezone": "UTC"
         }
 
         for i, ts in enumerate(timestamps):
