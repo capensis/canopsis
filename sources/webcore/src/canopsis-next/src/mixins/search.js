@@ -1,4 +1,4 @@
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 /**
  * @mixin Add searching logic, need Pagination mixins

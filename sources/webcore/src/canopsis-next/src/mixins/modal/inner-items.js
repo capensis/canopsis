@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
-import first from 'lodash/first';
+import { first } from 'lodash';
 
 import modalInnerMixin from './inner';
 

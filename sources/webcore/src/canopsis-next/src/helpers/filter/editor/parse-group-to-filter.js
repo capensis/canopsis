@@ -1,6 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-import isObject from 'lodash/isObject';
-import cloneDeep from 'lodash/cloneDeep';
+import { isEmpty, isObject, cloneDeep } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
 import uid from '@/helpers/uid';

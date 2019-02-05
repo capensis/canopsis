@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import pickBy from 'lodash/pickBy';
 import moment from 'moment';
+import { pickBy } from 'lodash';
+
 import { stepTitle, stepType } from '@/helpers/timeline';
 
 import Flag from '@/components/other/alarm/timeline/timeline-flag.vue';

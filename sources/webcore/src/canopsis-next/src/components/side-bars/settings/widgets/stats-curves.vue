@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetSettingsMixin from '@/mixins/widget/settings';

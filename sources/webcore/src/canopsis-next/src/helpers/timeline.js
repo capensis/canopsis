@@ -3,7 +3,7 @@ We regroup this two function, because in the component, stepTitle can't access s
 in the component filter
  */
 import { ENTITY_INFOS_TYPE } from '@/constants';
-import capitalize from 'lodash/capitalize';
+import { capitalize } from 'lodash';
 
 export function stepType(title) {
   if (title.startsWith('status')) {
@@ -13,6 +13,7 @@ export function stepType(title) {
   }
   return ENTITY_INFOS_TYPE.action;
 }
+
 export function stepTitle(title, author) {
   let formattedStepTitle = '';
   if (stepType(title) !== ENTITY_INFOS_TYPE.action) {
