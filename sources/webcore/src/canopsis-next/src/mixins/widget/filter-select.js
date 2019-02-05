@@ -1,5 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-import isBoolean from 'lodash/isBoolean';
+import { isEmpty, isBoolean } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 

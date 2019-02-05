@@ -95,7 +95,7 @@ export default {
 
     async create({ commit }, { data, parents, parentsType }) {
       try {
-        const id = await request.post(API_ROUTES.pbehavior.create, data);
+        const id = await request.post(API_ROUTES.pbehavior.pbehavior, data);
         const pbehavior = {
           ...data,
           enabled: true,

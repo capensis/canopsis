@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 import { entitySchema } from '@/store/schemas';
 import request from '@/services/request';

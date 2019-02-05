@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import isNull from 'lodash/isNull';
+import { isNull } from 'lodash';
 
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';

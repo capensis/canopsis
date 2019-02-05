@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
 
 import ViewTabs from './view-tabs.vue';
 import ViewTabRows from './view-tab-rows.vue';

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import pickBy from 'lodash/pickBy';
+import { pickBy } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
