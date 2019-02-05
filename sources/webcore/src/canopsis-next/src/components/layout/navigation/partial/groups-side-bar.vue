@@ -38,9 +38,7 @@
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
-                    v-show=`(checkUpdateViewAccessById(view._id) ||
-                    checkDeleteViewAccessById(view._id)) &&
-                    isEditingMode`,
+                    :v-show="checkViewEditButtonAccessById",
                     depressed,
                     small,
                     icon,
@@ -95,6 +93,11 @@ export default {
           this.$emit('input', value);
         }
       },
+    },
+    checkViewEditButtonAccessById() {
+      return id => (this.checkUpdateViewAccessById(id) ||
+        this.checkDeleteViewAccessById(this.view._id)) &&
+        this.isEditingMode;
     },
   },
   mounted() {
