@@ -30,25 +30,32 @@
           )
             v-icon(small) edit
         v-card.secondary.lighten-1.white--text(v-for="view in getAvailableViewsForGroup(group)", :key="view._id")
-          v-card-text.panel-item-content
-            router-link.panel-item-content-link(:title="view.title", :to="{ name: 'view', params: { id: view._id } }")
-              span.pl-3 {{ view.title }}
-            v-btn(
-            v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && isEditingMode",
-            depressed,
-            small,
-            icon,
-            @click.prevent="showEditViewModal(view)"
-            )
-              v-icon(small) edit
-            v-btn(
-            v-show="isEditingMode",
-            depressed,
-            small,
-            icon,
-            @click.prevent="showDuplicateViewModal(view)"
-            )
-              v-icon(small) file_copy
+          router-link.panel-item-content-link(:title="view.title", :to="{ name: 'view', params: { id: view._id } }")
+            v-card-text.panel-item-content
+              v-layout(align-center, justify-space-between)
+                v-flex
+                  span.pl-2 {{ view.title }}
+                v-flex
+                  v-layout(justify-end)
+                    v-btn.ma-0(
+                    v-show=`(checkUpdateViewAccessById(view._id) ||
+                    checkDeleteViewAccessById(view._id)) &&
+                    isEditingMode`,
+                    depressed,
+                    small,
+                    icon,
+                    @click.prevent="showEditViewModal(view)"
+                    )
+                      v-icon(small) edit
+                    v-btn.ma-0(
+                    v-show="isEditingMode",
+                    depressed,
+                    small,
+                    icon,
+                    @click.prevent="showDuplicateViewModal(view)"
+                    )
+                      v-icon(small) file_copy
+          v-divider
     v-divider
     groups-settings-button(
     :isEditingMode="isEditingMode",
