@@ -5,6 +5,7 @@
         context-search(:query.sync="query")
       v-flex
         pagination(
+        v-if="hasColumns",
         :page="query.page",
         :limit="query.limit",
         :total="contextEntitiesMeta.total",
