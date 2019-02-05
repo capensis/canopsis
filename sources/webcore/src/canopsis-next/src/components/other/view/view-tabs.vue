@@ -3,7 +3,7 @@
   ref="tabs",
   :key="vTabsKey",
   :value="value",
-  :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
+  :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
@@ -31,6 +31,14 @@
         small,
         flat,
         icon,
+        @click.stop="showDuplicateTabModal(tab)"
+        )
+          v-icon(small) file_copy
+        v-btn(
+        v-show="hasUpdateAccess && isEditingMode",
+        small,
+        flat,
+        icon,
         @click.stop="showDeleteTabModal(tab)"
         )
           v-icon(small) delete
@@ -45,17 +53,33 @@
 </template>
 
 <script>
+import omit from 'lodash/omit';
 import Draggable from 'vuedraggable';
+import { createNamespacedHelpers } from 'vuex';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
+import {
+  generateViewTab,
+  generateViewRow,
+  generateWidgetByType,
+  generateUserPreferenceByWidgetAndUser,
+} from '@/helpers/entities';
+
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 
+const { mapActions: userPreferenceMapActions } = createNamespacedHelpers('userPreference');
+
 export default {
   components: { Draggable },
-  mixins: [modalMixin, vuetifyTabsMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    vuetifyTabsMixin,
+  ],
   props: {
     view: {
       type: Object,
@@ -109,6 +133,11 @@ export default {
     },
   },
   methods: {
+    ...userPreferenceMapActions({
+      createUserPreference: 'create',
+      fetchUserPreferenceByWidgetIdWithoutStore: 'fetchItemByWidgetIdWithoutStore',
+    }),
+
     showUpdateTabModal(tab) {
       this.showModal({
         name: MODALS.textFieldEditor,
@@ -129,32 +158,109 @@ export default {
       });
     },
 
-    showDeleteTabModal(tab) {
+    showDuplicateTabModal(tab) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: MODALS.textFieldEditor,
         config: {
-          action: async () => {
-            const view = {
-              ...this.view,
-              tabs: this.view.tabs.filter(viewTab => viewTab._id !== tab._id),
-            };
-
-            await this.updateViewMethod(view);
+          title: this.$t('modals.viewTab.duplicate.title'),
+          field: {
+            name: 'text',
+            label: this.$t('modals.viewTab.fields.title'),
+            validationRules: 'required',
           },
+          action: title => this.duplicateTabAction(tab, title),
         },
       });
     },
 
-    updateTab(newTab) {
+    showDeleteTabModal(tab) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.deleteTab(tab._id),
+        },
+      });
+    },
+
+    async duplicateTabAction(tab, title) {
+      const widgetsIdsMap = {};
+      const newTab = {
+        ...generateViewTab(),
+
+        title,
+        rows: tab.rows.map(row => ({
+          ...generateViewRow(),
+
+          title: row.title,
+          widgets: row.widgets.map((widget) => {
+            const newWidget = generateWidgetByType(widget.type);
+
+            widgetsIdsMap[widget._id] = newWidget._id;
+
+            return {
+              ...newWidget,
+              ...omit(widget, ['_id']),
+            };
+          }),
+        })),
+      };
+
+      await this.copyUserPreferencesForWidgets(widgetsIdsMap);
+
+      return this.addTab(newTab);
+    },
+
+    async copyUserPreferencesForWidgets(widgetsIdsMap) {
+      const oldWidgetsIds = Object.keys(widgetsIdsMap);
+      const userPreferences = await Promise.all(oldWidgetsIds.map(widgetId =>
+        this.fetchUserPreferenceByWidgetIdWithoutStore({ widgetId })));
+
+
+      return Promise.all(userPreferences.map((userPreference) => {
+        if (!userPreference) {
+          return Promise.resolve();
+        }
+
+        const newWidgetId = widgetsIdsMap[userPreference.widget_id];
+        const newUserPreference = generateUserPreferenceByWidgetAndUser({ _id: newWidgetId }, this.currentUser);
+
+        return this.createUserPreference({
+          userPreference: {
+            ...newUserPreference,
+            ...omit(userPreference, ['_id', 'widget_id']),
+          },
+        });
+      }));
+    },
+
+    updateTab(tab) {
       const view = {
         ...this.view,
         tabs: this.view.tabs.map((viewTab) => {
-          if (viewTab._id === newTab._id) {
-            return newTab;
+          if (viewTab._id === tab._id) {
+            return tab;
           }
 
           return viewTab;
         }),
+      };
+
+      return this.updateViewMethod(view);
+    },
+
+    addTab(tab) {
+      const view = {
+        ...this.view,
+        tabs: [...this.view.tabs, tab],
+      };
+
+      return this.updateViewMethod(view);
+    },
+
+    deleteTab(tabId) {
+      const view = {
+        ...this.view,
+        tabs: this.view.tabs.filter(viewTab => viewTab._id !== tabId),
       };
 
       return this.updateViewMethod(view);

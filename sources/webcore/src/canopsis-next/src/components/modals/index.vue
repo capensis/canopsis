@@ -111,6 +111,7 @@ export default {
         [MODALS.createWidget]: { maxWidth: 500, lazy: true },
         [MODALS.alarmsList]: { fullscreen: true, lazy: true },
         [MODALS.createFilter]: { maxWidth: 920, lazy: true },
+        [MODALS.watcher]: { maxWidth: 920, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
