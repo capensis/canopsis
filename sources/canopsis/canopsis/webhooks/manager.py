@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 
 
@@ -25,14 +26,25 @@ class WebhookManager(object):
 
     COLLECTION = "webhooks"
 
-    def __init__(self, mongo_store):
+    def __init__(self, mongo_collection):
         """
-        :param collection: `pymongo.collection.Collection` object.
+        :param mongo_collection: `pymongo.collection.Collection` object.
         """
         super(WebhookManager, self).__init__()
-        self.__mongo_store = mongo_store
-        collection = self.__mongo_store.get_collection(self.COLLECTION)
-        self.__collection = MongoCollection(collection)
+        self.__collection = mongo_collection
+
+    @classmethod
+    def default_collection(cls):
+        """
+        Returns the default collection for the manager.
+
+        ! Do not use in tests !
+
+        :rtype: canopsis.common.collection.MongoCollection
+        """
+        store = MongoStore.get_default()
+        collection = store.get_collection(name=cls.COLLECTION)
+        return MongoCollection(collection)
 
     def get_webhook_from_id(self, wid):
         return self.__collection.find_one({'_id': wid})

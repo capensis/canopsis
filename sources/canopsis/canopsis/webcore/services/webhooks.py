@@ -22,7 +22,6 @@ from bottle import request
 
 from pymongo.errors import PyMongoError
 
-from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import CollectionError
 from canopsis.webhooks import WebhookManager
 from canopsis.webcore.utils import (gen_json, gen_json_error,
@@ -31,8 +30,7 @@ from canopsis.webcore.utils import (gen_json, gen_json_error,
 
 def exports(ws):
 
-    store = MongoStore.get_default()
-    webhook_manager = WebhookManager(store)
+    webhook_manager = WebhookManager(WebhookManager.default_collection())
 
     @ws.application.get(
         '/api/v2/webhook/<webhook_id>'
