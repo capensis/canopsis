@@ -31,7 +31,7 @@
             v-list-tile-title
               span {{ view.title }}
               v-btn.edit-view-button(
-              v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && isEditingMode",
+              v-show="checkViewEditButtonAccessById(view._id)",
               color="grey darken-2",
               depressed,
               small,
