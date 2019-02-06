@@ -14,12 +14,12 @@
 !!! attention
 		Les fonctionnalités liées à LDAP sont en cours de développement. Toutes les fonctionnalités d'LDAP ne sont pas encore implémentées.
 
-L'authentification LDAP est actuellement fonctionnel et est basé sur [python-ldap](https://python-ldap.readthedocs.io) qui utilise la *libldap* du projet [OpenLDAP](http://www.openldap.org/).
+L'authentification LDAP est actuellement fonctionnelle et est basée sur [python-ldap](https://python-ldap.readthedocs.io) qui utilise la *libldap* du projet [OpenLDAP](http://www.openldap.org/).
 Canopsis utilise la version 3 du protocole LDAP.
 
 Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
-Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte le [RFC4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
+Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
 
 ## SAML2
