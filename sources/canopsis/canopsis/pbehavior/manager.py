@@ -570,15 +570,11 @@ class PBehaviorManager(object):
 
     @staticmethod
     def __convert_timestamp(timestamp, timezone):
-        """Convert a pbehavior timestamp defined in the timezone to a naive
-        datetime in utc.
+        """Convert a pbehavior timestamp defined in the timezone to a datetime
+        in the same timezone.
         :param timestamp:"""
 
-        date = datetime.utcfromtimestamp(timestamp)
-        date = date.replace(tzinfo=tz.gettz("UTC"))
-        date = date.astimezone(tz.gettz(timezone))
-        date = date.replace(tzinfo=None)
-        return date
+        return datetime.fromtimestamp(timestamp, tz.gettz(timezone))
 
     def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
         """ Check if a pbehavior with a rrule is active at the given time.
@@ -595,8 +591,7 @@ class PBehaviorManager(object):
         rec_set = rrule.rruleset()
 
         # convert datetime/timestamps to naive UTC datetime
-        now = datetime.utcfromtimestamp(timestamp)
-        now = now.replace(tzinfo=None)
+        now = self.__convert_timestamp(timestamp, tz_name)
 
         start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
         stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
