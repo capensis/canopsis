@@ -35,9 +35,9 @@ def exports(ws):
     @ws.application.get(
         '/api/v2/webhook/<webhook_id>'
     )
-    def get_webhook_from_id(webhook_id):
+    def get_webhook_by_id(webhook_id):
         try:
-            document = webhook_manager.get_webhook_from_id(webhook_id)
+            document = webhook_manager.get_webhook_by_id(webhook_id)
         except PyMongoError:
             return gen_json_error(
                 {"description": "Can not retrieve the webhook data from "
@@ -83,9 +83,9 @@ def exports(ws):
     @ws.application.delete(
         '/api/v2/webhook/<webhook_id>'
     )
-    def delete_webhook_from_id(webhook_id):
+    def delete_webhook_by_id(webhook_id):
         try:
-            ok = webhook_manager.delete_webhook_from_id(webhook_id)
+            ok = webhook_manager.delete_webhook_by_id(webhook_id)
         except PyMongoError:
             return gen_json_error(
                 {"description": "Can not retrieve the webhook data from "
