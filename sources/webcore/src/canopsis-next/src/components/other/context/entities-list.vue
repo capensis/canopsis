@@ -59,8 +59,7 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import isString from 'lodash/isString';
+import { omit, isString } from 'lodash';
 
 import { USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';

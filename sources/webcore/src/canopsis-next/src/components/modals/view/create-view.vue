@@ -69,8 +69,7 @@
 </template>
 
 <script>
-import find from 'lodash/find';
-import omit from 'lodash/omit';
+import { find, omit } from 'lodash';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateView, generateViewRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
@@ -236,10 +235,10 @@ export default {
                 this.fetchGroupsList(),
               ]);
 
-              this.addSuccessPopup({ text: this.$t('modals.view.success') });
+              this.addSuccessPopup({ text: this.$t('modals.view.success.delete') });
               this.hideModal();
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('modals.view.fail') });
+              this.addErrorPopup({ text: this.$t('modals.view.fail.delete') });
             }
           },
         },

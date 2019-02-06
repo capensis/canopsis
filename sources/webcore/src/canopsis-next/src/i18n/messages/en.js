@@ -89,8 +89,6 @@ export default {
     },
   },
   user: {
-    firstName: 'First name',
-    lastName: 'Last name',
     role: 'Role',
     defaultView: 'Default view',
   },
@@ -363,10 +361,12 @@ export default {
       success: {
         create: 'New view created !',
         edit: 'View successfully edited !',
+        delete: 'View successfully deleted !',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        delete: 'View deletion failed...',
       },
       errors: {
         rightCreating: 'Error on right creating',
@@ -416,6 +416,7 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
+        comment: 'Comment',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },
@@ -630,6 +631,9 @@ export default {
       },
       edit: {
         title: 'Edit tab',
+      },
+      duplicate: {
+        title: 'Duplicate tab',
       },
       fields: {
         title: 'Title',

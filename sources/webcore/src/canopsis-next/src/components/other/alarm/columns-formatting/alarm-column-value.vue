@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';

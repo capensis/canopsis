@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Cookies from 'js-cookie';
-import isEmpty from 'lodash/isEmpty';
-import isFunction from 'lodash/isFunction';
+import { isEmpty, isFunction } from 'lodash';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
