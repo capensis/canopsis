@@ -73,8 +73,8 @@ import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
-import { generateView, generateViewTab, generateViewRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
-import uuid from '@/helpers/uid';
+import { generateView, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
+import copyViewTabs from '@/helpers/duplication';
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -82,6 +82,7 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
@@ -101,6 +102,7 @@ export default {
     entitiesRoleMixin,
     entitiesRightMixin,
     entitiesViewGroupMixin,
+    entitiesUserPreferenceMixin,
     rightsTechnicalViewMixin,
     vuetifyComboboxMixin,
   ],
@@ -269,15 +271,10 @@ export default {
             };
 
             if (this.config.isDuplicating) {
-              data.tabs = this.config.view.tabs.map(tab => ({
-                ...generateViewTab(),
-                title: tab.title,
-                rows: tab.rows.map(row => ({
-                  ...generateViewRow(),
-                  title: row.title,
-                  widgets: row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) })),
-                })),
-              }));
+              const { tabs, widgetsIdsMap } = copyViewTabs(this.config.view.tabs);
+              data.tabs = tabs;
+
+              await this.copyUserPreferencesForWidgets(widgetsIdsMap);
             }
 
             const response = await this.createView({ data });

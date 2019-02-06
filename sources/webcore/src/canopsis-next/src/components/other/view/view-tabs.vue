@@ -53,25 +53,17 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
 import Draggable from 'vuedraggable';
-import { createNamespacedHelpers } from 'vuex';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
-import {
-  generateViewTab,
-  generateViewRow,
-  generateWidgetByType,
-  generateUserPreferenceByWidgetAndUser,
-} from '@/helpers/entities';
+import { copyTab } from '@/helpers/duplication';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
-
-const { mapActions: userPreferenceMapActions } = createNamespacedHelpers('userPreference');
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 export default {
   components: { Draggable },
@@ -79,6 +71,7 @@ export default {
     authMixin,
     modalMixin,
     vuetifyTabsMixin,
+    entitiesUserPreferenceMixin,
   ],
   props: {
     view: {
@@ -133,11 +126,6 @@ export default {
     },
   },
   methods: {
-    ...userPreferenceMapActions({
-      createUserPreference: 'create',
-      fetchUserPreferenceByWidgetIdWithoutStore: 'fetchItemByWidgetIdWithoutStore',
-    }),
-
     showUpdateTabModal(tab) {
       this.showModal({
         name: MODALS.textFieldEditor,
@@ -183,54 +171,11 @@ export default {
     },
 
     async duplicateTabAction(tab, title) {
-      const widgetsIdsMap = {};
-      const newTab = {
-        ...generateViewTab(),
-
-        title,
-        rows: tab.rows.map(row => ({
-          ...generateViewRow(),
-
-          title: row.title,
-          widgets: row.widgets.map((widget) => {
-            const newWidget = generateWidgetByType(widget.type);
-
-            widgetsIdsMap[widget._id] = newWidget._id;
-
-            return {
-              ...newWidget,
-              ...omit(widget, ['_id']),
-            };
-          }),
-        })),
-      };
+      const { tab: newTab, widgetsIdsMap } = copyTab(tab, title);
 
       await this.copyUserPreferencesForWidgets(widgetsIdsMap);
 
       return this.addTab(newTab);
-    },
-
-    async copyUserPreferencesForWidgets(widgetsIdsMap) {
-      const oldWidgetsIds = Object.keys(widgetsIdsMap);
-      const userPreferences = await Promise.all(oldWidgetsIds.map(widgetId =>
-        this.fetchUserPreferenceByWidgetIdWithoutStore({ widgetId })));
-
-
-      return Promise.all(userPreferences.map((userPreference) => {
-        if (!userPreference) {
-          return Promise.resolve();
-        }
-
-        const newWidgetId = widgetsIdsMap[userPreference.widget_id];
-        const newUserPreference = generateUserPreferenceByWidgetAndUser({ _id: newWidgetId }, this.currentUser);
-
-        return this.createUserPreference({
-          userPreference: {
-            ...newUserPreference,
-            ...omit(userPreference, ['_id', 'widget_id']),
-          },
-        });
-      }));
     },
 
     updateTab(tab) {
