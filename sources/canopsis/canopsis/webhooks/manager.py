@@ -21,7 +21,7 @@
 from canopsis.common.collection import MongoCollection
 
 
-class CanopsisWebhookManager(object):
+class WebhookManager(object):
 
     COLLECTION = "webhooks"
 
@@ -29,7 +29,7 @@ class CanopsisWebhookManager(object):
         """
         :param collection: `pymongo.collection.Collection` object.
         """
-        super(CanopsisWebhookManager, self).__init__()
+        super(WebhookManager, self).__init__()
         self.__mongo_store = mongo_store
         collection = self.__mongo_store.get_collection(self.COLLECTION)
         self.__collection = MongoCollection(collection)

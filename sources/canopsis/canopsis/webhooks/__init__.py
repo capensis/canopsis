@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-from .manager import CanopsisWebhookManager
+from .manager import WebhookManager
