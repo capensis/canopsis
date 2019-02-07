@@ -586,7 +586,7 @@ class PBehaviorManager(object):
         date of an occurence of the pbehavior is not a valid date.
         """
 
-        tz_name = pbehavior[PBehavior.TIMEZONE]
+        tz_name = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
 
         rec_set = rrule.rruleset()
 
@@ -596,9 +596,11 @@ class PBehaviorManager(object):
         start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
         stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
 
-        for date in pbehavior[PBehavior.EXDATE]:
-            exdate = self.__convert_timestamp(date, tz_name)
-            rec_set.exdate(exdate)
+        if PBehavior.EXDATE in pbehavior and\
+           isinstance(pbehavior[PBehavior.EXDATE], list):
+            for date in pbehavior[PBehavior.EXDATE]:
+                exdate = self.__convert_timestamp(date, tz_name)
+                rec_set.exdate(exdate)
 
         duration = stop - start  # pbehavior duration
 
