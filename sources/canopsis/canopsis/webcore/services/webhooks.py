@@ -30,7 +30,19 @@ from canopsis.webcore.utils import (gen_json, gen_json_error,
 
 def exports(ws):
 
-    webhook_manager = WebhookManager(WebhookManager.default_collection())
+    @ws.application.get(
+        '/api/v2/webhook'
+    )
+    def get_webhook_list():
+        try:
+            document = webhook_manager.get_webhook_list()
+        except PyMongoError:
+            return gen_json_error(
+                {"description": "Can not retrieve the webhooks list from "
+                                "database, contact your administrator."},
+                HTTP_ERROR)
+
+        return gen_json(document)
 
     @ws.application.get(
         '/api/v2/webhook/<webhook_id>'

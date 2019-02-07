@@ -46,6 +46,9 @@ class WebhookManager(object):
         collection = store.get_collection(name=cls.COLLECTION)
         return MongoCollection(collection)
 
+    def get_webhook_list(self):
+        return list(self.__collection.find({}))
+
     def get_webhook_by_id(self, wid):
         return self.__collection.find_one({'_id': wid})
 
