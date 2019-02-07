@@ -32,7 +32,7 @@ Pour le tableau, le choix de la stat part du même principe que celle de l'histo
 Pour **ajouter une statistique** parmi celles-ci :  
 
 *  Les alarmes créées, résolues et annulées.
-*  Le temps SLA (Service Level Agreement) des accusé de réception.
+*  Le temps SLA (Service Level Agreement) des accusés de réception.
 *  Le temps de résolution SLA.
 *  Le taux d'état (d'alarme).
 *  Le MTBF (mean time between failures), temps moyen entre pannes.

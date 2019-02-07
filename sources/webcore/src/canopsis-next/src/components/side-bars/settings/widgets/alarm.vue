@@ -46,8 +46,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import cloneDeep from 'lodash/cloneDeep';
+import { get, cloneDeep } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';

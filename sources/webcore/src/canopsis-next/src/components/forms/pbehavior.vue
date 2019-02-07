@@ -32,7 +32,7 @@
         r-rule-form(@input="changeRRule")
         v-layout(row)
           v-combobox(
-          label="Reason",
+          :label="$t('modals.createPbehavior.fields.reason')",
           v-model="form.reason",
           :items="selectItems.reasons",
           :error-messages="errors.collect('reason')",
@@ -41,12 +41,17 @@
           )
         v-layout(row)
           v-select(
-          label="Type",
+          :label="$t('modals.createPbehavior.fields.type')",
           v-model="form.type_",
           :items="selectItems.types",
           :error-messages="errors.collect('type')",
           name="type",
           v-validate="'required'"
+          )
+        v-layout(row)
+          v-textarea(
+          :label="$t('modals.createPbehavior.fields.comment')",
+          v-model="commentMessage",
           )
         v-layout(row)
           v-alert(:value="serverError", type="error")
@@ -88,6 +93,7 @@ export default {
   data() {
     return {
       rRuleObject: null,
+      commentMessage: '',
       form: {
         name: '',
         tstart: new Date(),
@@ -139,6 +145,13 @@ export default {
 
         if (this.rRuleObject) {
           data.rrule = this.rRuleObject.toString();
+        }
+
+        if (this.commentMessage !== '') {
+          data.comments = [{
+            author: this.currentUser.crecord_name,
+            message: this.commentMessage,
+          }];
         }
 
         this.$emit('submit', data);

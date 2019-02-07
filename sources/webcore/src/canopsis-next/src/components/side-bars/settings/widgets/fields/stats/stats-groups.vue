@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import pullAt from 'lodash/pullAt';
+import { pullAt } from 'lodash';
 
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';

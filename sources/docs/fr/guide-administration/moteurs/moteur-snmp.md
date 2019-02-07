@@ -41,7 +41,7 @@ systemctl start canopsis-engine-cat@snmp
 
 Pour créer des règles de transformations il faut se logger sur la page dédiée sur l'UIv2 :
 
-http://<canopsis_addr:port>/en/static/canopsis/index.html#/userview/view.snmprule
+http://CANOPSIS_ADDR:PORT/en/static/canopsis/index.html#/userview/view.snmprule
 
 Une règle de transformation consiste à convertir des `OID` en valeurs compréhensibles et associer les attributs nécessaires à un message Canopsis.
 
