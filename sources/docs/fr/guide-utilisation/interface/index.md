@@ -1,4 +1,4 @@
-#  Présentation
+# Présentation de l'interface web de Canopsis
 
 ## Les vues
 
