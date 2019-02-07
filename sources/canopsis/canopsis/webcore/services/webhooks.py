@@ -72,6 +72,11 @@ def exports(ws):
                                 "database, contact your administrator."},
                 HTTP_ERROR)
 
+        if document is None:
+            return gen_json_error(
+                {"description": "No webhook found with ID " + webhook_id},
+                HTTP_ERROR)
+
         return gen_json(document)
 
     @ws.application.post(
