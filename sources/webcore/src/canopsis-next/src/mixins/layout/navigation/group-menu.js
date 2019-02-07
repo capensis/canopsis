@@ -33,6 +33,11 @@ export default {
     getAvailableViewsForGroup() {
       return group => group.views.filter(view => this.checkReadAccess(view._id));
     },
+
+    checkViewEditButtonAccessById(viewId) {
+      return id =>
+        (this.checkUpdateViewAccessById(id) || this.checkDeleteViewAccessById(viewId)) && this.isEditingMode;
+    },
   },
   mounted() {
     this.fetchGroupsList();
