@@ -38,7 +38,7 @@
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
-                    :v-show="checkViewEditButtonAccessById(view._id)",
+                    v-show="checkViewEditButtonAccessById(view._id)",
                     depressed,
                     small,
                     icon,

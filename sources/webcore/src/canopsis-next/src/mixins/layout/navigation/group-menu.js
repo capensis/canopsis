@@ -34,9 +34,9 @@ export default {
       return group => group.views.filter(view => this.checkReadAccess(view._id));
     },
 
-    checkViewEditButtonAccessById(viewId) {
+    checkViewEditButtonAccessById() {
       return id =>
-        (this.checkUpdateViewAccessById(id) || this.checkDeleteViewAccessById(viewId)) && this.isEditingMode;
+        (this.checkUpdateViewAccessById(id) || this.checkDeleteViewAccessById(id)) && this.isEditingMode;
     },
   },
   mounted() {
