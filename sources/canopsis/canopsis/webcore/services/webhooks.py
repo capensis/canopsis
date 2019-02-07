@@ -30,6 +30,8 @@ from canopsis.webcore.utils import (gen_json, gen_json_error,
 
 def exports(ws):
 
+    webhook_manager = WebhookManager(WebhookManager.default_collection())
+
     @ws.application.get(
         '/api/v2/webhook'
     )
@@ -61,10 +63,7 @@ def exports(ws):
     @ws.application.post(
         '/api/v2/webhook'
     )
-    @ws.application.put(
-        '/api/v2/webhook/<webhook_id>'
-    )
-    def upsert(webhook_id=None):
+    def create_webhook():
         try:
             webhook = request.json
         except ValueError:
@@ -75,20 +74,47 @@ def exports(ws):
 
         if webhook is None or not isinstance(webhook, dict):
             return gen_json_error(
-                {'description': 'nothing to upsert'}, HTTP_ERROR)
+                {'description': 'Nothing to create'}, HTTP_ERROR)
 
         try:
-            ok = webhook_manager.upsert_webhook(webhook, webhook_id)
+            return webhook_manager.create_webhook(webhook)
         except CollectionError as ce:
-            ws.logger.error('Webhook error : {}'.format(ce))
+            ws.logger.error('Webhook creation error : {}'.format(ce))
             return gen_json_error(
-                {'description': 'error while upserting an webhook'},
+                {'description': 'Error while creating an webhook'},
+                HTTP_ERROR
+            )
+
+    @ws.application.put(
+        '/api/v2/webhook/<webhook_id>'
+    )
+    def update_webhook_by_id(webhook_id):
+        try:
+            webhook = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'Invalid JSON'},
+                HTTP_ERROR
+            )
+
+        if webhook is None or not isinstance(webhook, dict):
+            return gen_json_error(
+                {'description': 'Nothing to update'}, HTTP_ERROR)
+
+        try:
+            ok = webhook_manager.update_webhook_by_id(webhook, webhook_id)
+        except CollectionError as ce:
+            ws.logger.error('Webhook update error : {}'.format(ce))
+            return gen_json_error(
+                {'description': 'Error while updating an webhook'},
                 HTTP_ERROR
             )
 
         if not ok:
-            return gen_json_error({'description': 'failed to upsert webhook'},
-                                  HTTP_ERROR)
+            return gen_json_error(
+                {'description': 'Failed to update webhook'},
+                HTTP_ERROR
+            )
 
         return gen_json({})
 
