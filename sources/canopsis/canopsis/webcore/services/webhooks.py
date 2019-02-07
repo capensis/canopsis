@@ -22,24 +22,22 @@ from bottle import request
 
 from pymongo.errors import PyMongoError
 
-from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import CollectionError
-from canopsis.webhooks import CanopsisWebhookManager
+from canopsis.webhooks import WebhookManager
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_NOT_FOUND, HTTP_ERROR)
 
 
 def exports(ws):
 
-    store = MongoStore.get_default()
-    webhook_manager = CanopsisWebhookManager(store)
+    webhook_manager = WebhookManager(WebhookManager.default_collection())
 
     @ws.application.get(
         '/api/v2/webhook/<webhook_id>'
     )
-    def get_webhook_from_id(webhook_id):
+    def get_webhook_by_id(webhook_id):
         try:
-            document = webhook_manager.get_webhook_from_id(webhook_id)
+            document = webhook_manager.get_webhook_by_id(webhook_id)
         except PyMongoError:
             return gen_json_error(
                 {"description": "Can not retrieve the webhook data from "
@@ -85,9 +83,9 @@ def exports(ws):
     @ws.application.delete(
         '/api/v2/webhook/<webhook_id>'
     )
-    def delete_webhook_from_id(webhook_id):
+    def delete_webhook_by_id(webhook_id):
         try:
-            ok = webhook_manager.delete_webhook_from_id(webhook_id)
+            ok = webhook_manager.delete_webhook_by_id(webhook_id)
         except PyMongoError:
             return gen_json_error(
                 {"description": "Can not retrieve the webhook data from "

@@ -18,37 +18,49 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 
 
-class CanopsisWebhookManager(object):
+class WebhookManager(object):
 
     COLLECTION = "webhooks"
 
-    def __init__(self, mongo_store):
+    def __init__(self, mongo_collection):
         """
-        :param collection: `pymongo.collection.Collection` object.
+        :param mongo_collection: `pymongo.collection.Collection` object.
         """
-        super(CanopsisWebhookManager, self).__init__()
-        self.__mongo_store = mongo_store
-        collection = self.__mongo_store.get_collection(self.COLLECTION)
-        self.__collection = MongoCollection(collection)
+        super(WebhookManager, self).__init__()
+        self.__collection = mongo_collection
 
-    def get_webhook_from_id(self, wid):
+    @classmethod
+    def default_collection(cls):
+        """
+        Returns the default collection for the manager.
+
+        ! Do not use in tests !
+
+        :rtype: canopsis.common.collection.MongoCollection
+        """
+        store = MongoStore.get_default()
+        collection = store.get_collection(name=cls.COLLECTION)
+        return MongoCollection(collection)
+
+    def get_webhook_by_id(self, wid):
         return self.__collection.find_one({'_id': wid})
 
     def create_webhook(self, webhook):
         return self.__collection.insert(webhook)
 
-    def update_webhook_from_id(self, webhook, wid):
+    def update_webhook_by_id(self, webhook, wid):
         resp = self.__collection.update(query={'_id': wid}, document=webhook)
         return self.__collection.is_successfull(resp)
 
     def upsert_webhook(self, webhook, wid=None):
         if wid is not None:
-            return self.update_webhook_from_id(webhook, wid)
+            return self.update_webhook_by_id(webhook, wid)
         return self.create_webhook(webhook)
 
-    def delete_webhook_from_id(self, wid):
+    def delete_webhook_by_id(self, wid):
         resp = self.__collection.remove({'_id': wid})
         return self.__collection.is_successfull(resp)
