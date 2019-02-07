@@ -1,6 +1,6 @@
+import { omit, set } from 'lodash';
+
 import i18n from '@/i18n';
-import omit from 'lodash/omit';
-import set from 'lodash/set';
 
 import request from '@/services/request';
 import { API_ROUTES } from '@/config';

@@ -34,8 +34,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import cloneDeep from 'lodash/cloneDeep';
+import { get, cloneDeep } from 'lodash';
 
 import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
 

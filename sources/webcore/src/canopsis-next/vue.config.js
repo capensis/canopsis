@@ -19,4 +19,10 @@ module.exports = {
     },
     disableHostCheck: true,
   },
+  pluginOptions: {
+    webpackBundleAnalyzer: {
+      analyzerMode: process.env.BUNDLE_ANALYZER_MODE, // 'disabled' / 'server' / 'static'
+      openAnalyzer: false,
+    },
+  },
 };

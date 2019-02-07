@@ -25,9 +25,7 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import set from 'lodash/set';
-import unset from 'lodash/unset';
+import { omit, set, unset } from 'lodash';
 
 import modalMixin from '@/mixins/modal';
 
