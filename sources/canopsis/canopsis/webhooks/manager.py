@@ -23,6 +23,9 @@ from canopsis.common.collection import MongoCollection
 
 
 class WebhookManager(object):
+    """
+    Manager for the webhooks
+    """
 
     COLLECTION = "webhooks"
 
@@ -47,18 +50,53 @@ class WebhookManager(object):
         return MongoCollection(collection)
 
     def get_webhook_list(self):
+        """
+        Return a list of all the webhooks.
+
+        :rtype: List[Dict[str, Any]]
+        """
         return list(self.__collection.find({}))
 
     def get_webhook_by_id(self, wid):
+        """
+        Get a webhook given its id.
+
+        :param str rule_id: the id of the webhook.
+        :rtype: Dict[str, Any]
+        """
         return self.__collection.find_one({'_id': wid})
 
     def create_webhook(self, webhook):
+        """
+        Create a webhook and return its id.
+
+        :param Dict[str, Any] webhook:
+        :rtype: str
+        :raises: CollectionError if the creation fails.
+        """
         return self.__collection.insert(webhook)
 
     def update_webhook_by_id(self, webhook, wid):
+        """
+        Update a webhook given its id.
+        Return a boolean if the operation is successful.
+
+        :param str wid: the id of the webhook.
+        :param Dict[str, Any] webhook:
+        :rtype: bool
+        :raises: CollectionError if the update fails.
+        """
         resp = self.__collection.update(query={'_id': wid}, document=webhook)
         return self.__collection.is_successfull(resp)
 
     def delete_webhook_by_id(self, wid):
+        """
+        Remove a webhook given its id.
+        Return a boolean if the operation is successful.
+
+        :param str wid: the id of the rule.
+        :rtype: bool
+        :raises: CollectionError if the deletion fails.
+        """
         resp = self.__collection.remove({'_id': wid})
         return self.__collection.is_successfull(resp)

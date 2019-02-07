@@ -36,6 +36,12 @@ def exports(ws):
         '/api/v2/webhook'
     )
     def get_webhook_list():
+        """
+        Return the list of all webhooks.
+
+        :returns: <Webhook>
+        :rtype: list
+        """
         try:
             document = webhook_manager.get_webhook_list()
         except PyMongoError:
@@ -50,6 +56,14 @@ def exports(ws):
         '/api/v2/webhook/<webhook_id>'
     )
     def get_webhook_by_id(webhook_id):
+        """
+        Return a webhook given the id.
+
+        :param webhook_id: ID of the webhook
+        :type webhook_id: str
+        :returns: <Webhook>
+        :rtype: dict
+        """
         try:
             document = webhook_manager.get_webhook_by_id(webhook_id)
         except PyMongoError:
@@ -64,6 +78,12 @@ def exports(ws):
         '/api/v2/webhook'
     )
     def create_webhook():
+        """
+        Create a new webhook.
+
+        :returns: ID of the webhook
+        :rtype: string
+        """
         try:
             webhook = request.json
         except ValueError:
@@ -89,6 +109,13 @@ def exports(ws):
         '/api/v2/webhook/<webhook_id>'
     )
     def update_webhook_by_id(webhook_id):
+        """
+        Update an existing webhook.
+
+        :param webhook_id: ID of the webhook
+        :type webhook_id: str
+        :rtype: dict
+        """
         try:
             webhook = request.json
         except ValueError:
@@ -122,6 +149,13 @@ def exports(ws):
         '/api/v2/webhook/<webhook_id>'
     )
     def delete_webhook_by_id(webhook_id):
+        """
+        Delte an existing webhook, given its id.
+
+        :param webhook_id: ID of the webhook
+        :type webhook_id: str
+        :rtype: dict
+        """
         try:
             ok = webhook_manager.delete_webhook_by_id(webhook_id)
         except PyMongoError:
