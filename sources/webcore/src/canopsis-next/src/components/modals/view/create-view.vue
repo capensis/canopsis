@@ -73,8 +73,14 @@ import find from 'lodash/find';
 import omit from 'lodash/omit';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
-import { generateView, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
-import copyViewTabs from '@/helpers/duplication';
+import {
+  generateView,
+  generateRight,
+  generateRoleRightByChecksum,
+  generateCopyOfView,
+  getViewsWidgetsIdsMappings,
+} from '@/helpers/entities';
+
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -271,10 +277,13 @@ export default {
             };
 
             if (this.config.isDuplicating) {
-              const { tabs, widgetsIdsMap } = copyViewTabs(this.config.view.tabs);
+              const { tabs } = generateCopyOfView(this.config.view);
+
               data.tabs = tabs;
 
-              await this.copyUserPreferencesForWidgets(widgetsIdsMap);
+              const widgetsIdsMappings = getViewsWidgetsIdsMappings(this.config.view, data);
+
+              await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
             }
 
             const response = await this.createView({ data });

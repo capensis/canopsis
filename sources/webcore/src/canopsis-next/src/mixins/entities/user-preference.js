@@ -35,21 +35,22 @@ export default {
       });
     },
 
-    async copyUserPreferencesForWidgets(widgetsIdsMap) {
-      const oldWidgetsIds = Object.keys(widgetsIdsMap);
+    /**
+     * Send requests to create userPreference by widgetsIdsMappings
+     *
+     * @param {Array.<{oldId: string, newId: string}>} widgetsIdsMappings
+     * @returns {Promise.<*[]>}
+     */
+    copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings) {
+      return Promise.all(widgetsIdsMappings.map(async ({ oldId, newId }) => {
+        const userPreference = await this.fetchUserPreferenceByWidgetIdWithoutStore({ widgetId: oldId });
 
-      const userPreferences = await Promise.all(oldWidgetsIds.map(widgetId => (
-        this.fetchUserPreferenceByWidgetIdWithoutStore({ widgetId })
-      )));
-
-      return Promise.all(userPreferences.map((userPreference) => {
         if (!userPreference) {
           return Promise.resolve();
         }
 
-        const newWidgetId = widgetsIdsMap[userPreference.widget_id];
         const newUserPreference = generateUserPreferenceByWidgetAndUser({
-          _id: newWidgetId,
+          _id: newId,
         }, this.currentUser);
 
         return this.createUserPreference({

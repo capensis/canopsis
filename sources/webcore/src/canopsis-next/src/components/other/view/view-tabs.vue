@@ -58,7 +58,7 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
-import { copyTab } from '@/helpers/duplication';
+import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -171,9 +171,15 @@ export default {
     },
 
     async duplicateTabAction(tab, title) {
-      const { tab: newTab, widgetsIdsMap } = copyTab(tab, title);
+      const newTab = {
+        ...generateCopyOfViewTab(tab),
 
-      await this.copyUserPreferencesForWidgets(widgetsIdsMap);
+        title,
+      };
+
+      const widgetsIdsMappings = getViewsTabsWidgetsIdsMappings(tab, newTab);
+
+      await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
 
       return this.addTab(newTab);
     },
