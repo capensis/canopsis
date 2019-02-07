@@ -18,9 +18,52 @@ Pour une mise à jour vers une version `X.Y.Z` de Canopsis :
 
 ## Procédure standard de mise à jour
 
+!!! note
+    Cette procédure ne décrit que la mise à jour d'une instance **mono-nœud** de Canopsis.
+
 Cette procédure s'applique aux mises à jour intermédiaires (3.4.0 vers 3.5.0) et aux mises à jour de correctifs (3.5.0 vers 3.5.1).
 
-> **TODO :** cette procédure est en cours de rédaction.
+Vous devez **impérativement** lire chacune des [notes de version](../../notes-de-version/index.md) vous séparant de votre version précédente à votre version cible, avant de procéder à une mise à jour.
+
+### Mise à jour en installation par paquets
+
+Puisque la [procédure d'installation](../installation/index.md) ajoute un dépôt Canopsis dans votre gestionnaire de paquets, il suffit de lancer une mise à jour pour bénéficier d'un paquet à jour.
+
+**Cette mise à jour causera une interruption de service.**
+
+Sur un environnement Debian :
+```sh
+apt update
+apt upgrade
+```
+
+Sur un environnement CentOS :
+```sh
+yum update
+```
+
+!!! attention
+    La procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée ([Bug #1431](https://git.canopsis.net/canopsis/canopsis/issues/1431)).
+
+Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour :
+```sh
+su - canopsis
+(canopsis) canopsinit
+```
+
+Puis, redémarrer l'ensemble des moteurs Canopsis :
+```sh
+/opt/canopsis/bin/canopsis-systemd restart
+```
+
+Appliquer toute éventuelle procédure supplémentaire décrite dans les [notes de version](../../notes-de-version/index.md) qui vous concernent.
+
+Vous pouvez alors vous connecter à nouveau sur l'interface Canopsis pour valider que tout fonctionne correctement.
+
+### Mise à jour en environnement Docker
+
+!!! todo
+    Cette procédure est en cours de rédaction.
 
 ## Guides de migration
 
