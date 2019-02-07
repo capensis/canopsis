@@ -1,4 +1,4 @@
-# Installation Conteneur
+# Installation de Canopsis avec Docker
 
 ## Pré-requis
 
