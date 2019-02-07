@@ -47,24 +47,24 @@ JSON :
 
 Les attributs du corps sont les suivants :
 
-| Name            | type    | nullable | Description                                                |
-|-----------------|---------|----------|------------------------------------------------------------|
-| connector       | string  | No       | Identifiant du connecteur d'entité                         |
-| name            | string  | No       | Display name du pbehavior                                  |
-| author          | string  | No       | Nom de l'auteur                                            |
-| enabled         | boolean | No       | Si le pbehavior est déclenché ou non                       |
-| reason          | string  | Yes      | motif d'administration (optionnel)                         |
-| comments        | array   | Yes      | Commentaires (option)                                      |
-| filter          | string  | No       | filtre d'entité (JSON)                                     |
-| type\_          | string  | No       | type de Pbehavior                                          |
-| connector\_name | string  | No       | Display name du connector                                  |
-| rrule           | string  | Yes      | Rrule (récurrence)                                         |
-| tstart          | integer | No       | Timestamp de la date de départ                             |
-| tstop           | integer | No       | Timestamp de la date de fin                                |
-| \_id            | string  | No       | indentifiant du Pbehavior                                  |
-| eids            | array   | No       | tableau du \_ids pour les entités impactées.               |
-| timezone        | string  | Yes      | La timezone à utilisé pour le calcul des dates             |
-| exdate          | array   | Yes      | La liste des occurences à ignorer sous forme de timestamps |
+| Name            | type    | nullable | Description                                                 |
+|-----------------|---------|----------|-------------------------------------------------------------|
+| connector       | string  | No       | Identifiant du connecteur d'entité                          |
+| name            | string  | No       | Display name du pbehavior                                   |
+| author          | string  | No       | Nom de l'auteur                                             |
+| enabled         | boolean | No       | Si le pbehavior est déclenché ou non                        |
+| reason          | string  | Yes      | motif d'administration (optionnel)                          |
+| comments        | array   | Yes      | Commentaires (option)                                       |
+| filter          | string  | No       | filtre d'entité (JSON)                                      |
+| type\_          | string  | No       | type de Pbehavior                                           |
+| connector\_name | string  | No       | Display name du connector                                   |
+| rrule           | string  | Yes      | Rrule (récurrence)                                          |
+| tstart          | integer | No       | Timestamp de la date de départ                              |
+| tstop           | integer | No       | Timestamp de la date de fin                                 |
+| \_id            | string  | No       | indentifiant du Pbehavior                                   |
+| eids            | array   | No       | tableau du \_ids pour les entités impactées.                |
+| timezone        | string  | Yes      | La timezone à utilisé pour le calcul des dates              |
+| exdate          | array   | Yes      | La liste des occurrences à ignorer sous forme de timestamps |
 
 
 Réponse : UID de l'élément inséré
@@ -135,7 +135,7 @@ Les attributs de réponse sont les suivants :
 | eids            | array   | No       | Array of \_ids for the impacted entities.                  |
 | isActive        | boolean | No       | is the pbehavior currently active                          |
 | timeszone       | string  | yes      | La timezone à utilisé pour le calcul des dates             |
-| exdate          | array   | Yes      | La liste des occurences à ignorer sous forme de timestamps |
+| exdate          | array   | Yes      | La liste des occurrences à ignorer sous forme de timestamps |
 
 
 ## Supprimer un pbehavior

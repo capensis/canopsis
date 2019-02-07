@@ -16,7 +16,7 @@ Un pbehavior se caractérise par les informations suivantes.
 | `type_` | string | Optionnel. Type de pbehavior (pause, maintenance…). |
 | `reason` | string | Optionnel. Raison pour laquelle ce pbehavior a été posé. |
 | `timezone` | string | Timezone dans laquelle le pbehavior doit s'exécuter.
-| `exdate` | array | Yes | La liste des occurences à ignorer sous forme de timestamps |
+| `exdate` | array | Yes | La liste des occurrences à ignorer sous forme de timestamps |
 
 Un exemple d'évènement pbehavior brut :
 ```js
@@ -68,6 +68,6 @@ Si le fichier de configuration n'existe pas ou si le champ `default_timezone`
 n'existe pas, la timezone `Europe/Paris` sera utilisé.
 
 ## Exdate
-Il est possible d'empêcher l'exécution d'une occurence d'un pbehavior, à l'aide
+Il est possible d'empêcher l'exécution d'une occurrence d'un pbehavior, à l'aide
 du champ exdate. Exdate est une liste de timestamp correspondant à au début
 d'une occurence à empêcher.
