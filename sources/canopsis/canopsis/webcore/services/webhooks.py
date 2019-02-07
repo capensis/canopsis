@@ -150,7 +150,7 @@ def exports(ws):
     )
     def delete_webhook_by_id(webhook_id):
         """
-        Delte an existing webhook, given its id.
+        Delete an existing webhook, given its id.
 
         :param webhook_id: ID of the webhook
         :type webhook_id: str
