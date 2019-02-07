@@ -1,7 +1,7 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
 
 import { prepareMainFilterToQueryFilter } from './filter';
 
@@ -54,6 +54,10 @@ export function convertAlarmWidgetToQuery(widget) {
     }
 
     if (!isUndefined(alarmsStateFilter.resolved)) {
+      if (alarmsStateFilter.resolved) {
+        query.interval = LIVE_REPORTING_INTERVALS.last30Days;
+      }
+
       query.resolved = alarmsStateFilter.resolved;
     }
   }
