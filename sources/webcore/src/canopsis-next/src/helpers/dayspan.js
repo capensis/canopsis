@@ -1,5 +1,5 @@
 import moment from 'moment';
-import groupBy from 'lodash/groupBy';
+import { groupBy } from 'lodash';
 import { Day, Schedule } from 'dayspan';
 
 /**

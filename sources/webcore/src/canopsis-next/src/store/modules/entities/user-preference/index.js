@@ -1,4 +1,4 @@
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';

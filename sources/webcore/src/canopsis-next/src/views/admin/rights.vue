@@ -61,10 +61,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
-import isUndefined from 'lodash/isUndefined';
-import transform from 'lodash/transform';
+import { get, isEmpty, isUndefined, transform } from 'lodash';
 
 import { MODALS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';

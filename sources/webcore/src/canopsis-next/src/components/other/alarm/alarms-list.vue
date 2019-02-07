@@ -67,9 +67,7 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import pick from 'lodash/pick';
-import isEmpty from 'lodash/isEmpty';
+import { omit, pick, isEmpty } from 'lodash';
 
 import { MODALS, USERS_RIGHTS } from '@/constants';
 

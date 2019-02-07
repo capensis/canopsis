@@ -1,3 +1,13 @@
+/**
+ * @typedef {Object} VuexActionContext
+ * @property {Object} state
+ * @property {Object} rootState
+ * @property {Object} getters
+ * @property {Object} rootGetters
+ * @property {function} commit
+ * @property {function} dispatch
+ */
+
 import Vue from 'vue';
 import Vuex from 'vuex';
 

@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import find from 'lodash/find';
+import { find } from 'lodash';
 
 export default {
   inject: ['$validator'],

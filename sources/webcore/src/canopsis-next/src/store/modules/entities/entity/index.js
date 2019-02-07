@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 import { entitySchema } from '@/store/schemas';
 import request from '@/services/request';
@@ -89,9 +89,9 @@ export default {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,
         schema: [entitySchema],
+        method: 'POST',
         params,
         dataPreparer: d => d.data,
-        isPost: true,
       }, { root: true });
     },
 

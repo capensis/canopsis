@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 import { MODALS, EVENT_FILTER_RULE_TYPES, EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
