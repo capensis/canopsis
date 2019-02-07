@@ -590,7 +590,7 @@ class PBehaviorManager(object):
 
         rec_set = rrule.rruleset()
 
-        # convert datetime/timestamps to naive UTC datetime
+        # convert the timestamp to a datetime in the pbehavior's timezone
         now = self.__convert_timestamp(timestamp, tz_name)
 
         start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
