@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import uuid
 from bottle import request
 
 from pymongo.errors import PyMongoError
@@ -100,6 +101,9 @@ def exports(ws):
         if webhook is None or not isinstance(webhook, dict):
             return gen_json_error(
                 {'description': 'Nothing to create'}, HTTP_ERROR)
+
+        if '_id' not in webhook:
+            webhook['_id'] = str(uuid.uuid4())
 
         try:
             return webhook_manager.create_webhook(webhook)
