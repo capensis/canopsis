@@ -45,10 +45,12 @@
 </template>
 
 <script>
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to create an ack event
@@ -61,7 +63,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
       showValidationErrors: false,
@@ -79,7 +81,7 @@ export default {
   },
   methods: {
     async create(withDeclare) {
-      const ackEventData = this.prepareData(this.$constants.EVENT_ENTITY_TYPES.ack, this.items, this.form);
+      const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
 
       await this.createEventAction({
         data: ackEventData,
@@ -87,7 +89,7 @@ export default {
 
       if (withDeclare) {
         const declareTicketEventData =
-          this.prepareData(this.$constants.EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
+          this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
 
         await this.createEventAction({
           data: declareTicketEventData,

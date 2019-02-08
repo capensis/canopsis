@@ -3,21 +3,17 @@ import moment from 'moment';
 
 import { EVENT_ENTITY_TYPES, EVENT_DEFAULT_ORIGIN } from '@/constants';
 
-import authMixin from './auth';
+import authMixin from '../auth';
+import eventActionsMixin from './index';
 
-const { mapActions: eventMapActions } = createNamespacedHelpers('event');
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 /**
  * @mixin
  */
 export default {
-  mixins: [authMixin],
+  mixins: [authMixin, eventActionsMixin],
   methods: {
-    ...eventMapActions({
-      createEventAction: 'create',
-    }),
-
     ...alarmMapActions({
       fetchAlarmsListWithPreviousParams: 'fetchListWithPreviousParams',
     }),
@@ -41,7 +37,7 @@ export default {
         return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
       }
 
-      return undefined;
+      return Promise.resolve();
     },
 
     /**
