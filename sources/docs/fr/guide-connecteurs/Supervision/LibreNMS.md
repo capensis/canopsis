@@ -13,28 +13,155 @@ Voici le processus complet d'une vérification LibreNMS menant à une alerte :
 
 ## Installation et configuration
 
-Installer `php-pecl-amqp` et l'activer dans la configuration PHP.
-
-Copier le fichier connecteur dans `/opt/librenms/includes/alerts/` et configurer `/opt/librenms/config.php`:
+Le connecteur est installé par défaut lors d'une installation de LibreNMS à
+l'adresse `/opt/librenms/LibreNMS/Alert/Transport/Canopsis.php` :
 
 ```php
-$config['alert']['transports']['canopsis'] = Array();
-$config['alert']['transports']['canopsis']['user'] = 'cpsrabbit';
-$config['alert']['transports']['canopsis']['password'] = 'canopsis';
-$config['alert']['transports']['canopsis']['vhost'] = 'canopsis';
-$config['alert']['transports']['canopsis']['host'] = '10.25.190.159';
-$config['alert']['transports']['canopsis']['port'] = 5672;
-$config['alert']['transports']['canopsis']['exchange_name'] = 'canopsis.events';
-$config['alert']['transports']['canopsis']['connector_name'] = 'LibreNMS';
-$config['alert']['transports']['canopsis']['debug_noconnect'] = false;
+<?php
+namespace LibreNMS\Alert\Transport;
+use LibreNMS\Alert\Transport;
+class Canopsis extends Transport
+{
+    public function deliverAlert($obj, $opts)
+    {
+        if (!empty($this->config)) {
+            $opts['host'] = $this->config['canopsis-host'];
+            $opts['port'] = $this->config['canopsis-port'];
+            $opts['user'] = $this->config['canopsis-user'];
+            $opts['pass'] = $this->config['canopsis-pass'];
+            $opts['vhost'] = $this->config['canopsis-vhost'];
+        }
+        return $this->contactCanopsis($obj, $opts);
+    }
+    public function contactCanopsis($obj, $opts)
+    {
+        // Configurations
+        $host     = $opts["host"];
+        $port     = $opts["port"];
+        $user     = $opts["user"];
+        $pass     = $opts["pass"];
+        $vhost    = $opts["vhost"];
+        $exchange = "canopsis.events";
+        // Connection
+        $conn = new \PhpAmqpLib\Connection\AMQPConnection($host, $port, $user, $pass, $vhost);
+        $ch   = $conn->channel();
+        // Declare exchange (if not exist)
+        // exchange_declare($exchange, $type, $passive=false, $durable=false, $auto_delete=true, $internal=false, $nowait=false, $arguments=null, $ticket=null)
+        $ch->exchange_declare($exchange, 'topic', false, true, false);
+        // Create Canopsis event, see: https://github.com/capensis/canopsis/wiki/Event-specification
+        switch ($obj['severity']) {
+            case "ok":
+                $state = 0;
+                break;
+            case "warning":
+                $state = 2;
+                break;
+            case "critical":
+                $state = 3;
+                break;
+            default:
+                $state = 0;
+        }
+        $msg_body = array(
+            "timestamp" => time(),
+            "connector" => "librenms",
+            "connector_name" => "LibreNMS1",
+            "event_type" => "check",
+            "source_type" => "resource",
+            "component" => $obj['hostname'],
+            "resource" => $obj['name'],
+            "state" => $state,
+            "output" => $obj['msg'],
+            "display_name" => "librenms"
+        );
+        $msg_raw  = json_encode($msg_body);
+        // Build routing key
+        if ($msg_body['source_type'] == "resource") {
+            $msg_rk = $msg_rk . "." . $msg_body['resource'];
+        } else {
+            $msg_rk = $msg_body['connector'] . "." . $msg_body['connector_name'] . "." . $msg_body['event_type'] . "." . $msg_body['source_type'] . "." . $msg_body['component'];
+        }
+        // Publish Event
+        $msg = new \PhpAmqpLib\Message\AMQPMessage($msg_raw, array('content_type' => 'application/json', 'delivery_mode' => 2));
+        $ch->basic_publish($msg, $exchange, $msg_rk);
+        // Close connection
+        $ch->close();
+        $conn->close();
+        return true;
+    }
+
+    public static function configTemplate()
+    {
+        return [
+            'config' => [
+                [
+                    'title' => 'Hostname',
+                    'name' => 'canopsis-host',
+                    'descr' => 'Canopsis Hostname',
+                    'type' => 'text'
+                ],
+                [
+                    'title' => 'Port Number',
+                    'name' => 'canopsis-port',
+                    'descr' => 'Canopsis Port Number',
+                    'type' => 'text'
+                ],
+                [
+                    'title' => 'User',
+                    'name' => 'canopsis-user',
+                    'descr' => 'Canopsis User',
+                    'type' => 'text'
+                ],
+                [
+                    'title' => 'Password',
+                    'name' => 'canopsis-pass',
+                    'descr' => 'Canopsis Password',
+                    'type' => 'text'
+                ],
+                [
+                    'title' => 'Vhost',
+                    'name' => 'canopsis-vhost',
+                    'descr' => 'Canopsis Vhost',
+                    'type' => 'text'
+                ],
+            ],
+            'validation' => [
+                'canopsis-host' => 'required|string',
+                'canopsis-port' => 'required|numeric',
+                'canopsis-user' => 'required|string',
+                'canopsis-pass' => 'required|string',
+                'canopsis-vhost' => 'required|string',
+            ]
+        ];
+    }
+}
+```
+Les principales modifications à apporter seront dans la variable `msg_body`:
+* `connector` et `connector_name` corresponde à la valeur affichée dans la colonne éponyme de la webUI Canopsis.
+* `component` donne par défaut le nom d'hôte ayant déclenché l’alerte.
+* `resource` donne par défaut le nom de l'alarme définit dans LibreNMS.
+
+Ci-dessous une liste non exhaustive des différentes variables pouvant être
+utilisées :
+
+```
+    $obj['hostname']
+    $obj['sysName']
+    $obj['sysDescr']
+    $obj['sysContact']
+    $obj['os']
+    $obj['type']
+    $obj['ip']
+    $obj['hardware']
+    $obj['version']
+    $obj['severity']
+    $obj['name']
+    $obj['title']
+    $obj['community']
+    $obj['msg']
+
 ```
 
-## Environnement de test
-
-1.  Désactiver alert cron. Dans `/etc/cron.d/librenms`, commenter l'appel de la ligne `/opt/librenms/alerts.php`.
-2.  Créer / configurer une machine pour qu'elle dispose des interfaces et ports requis, afin de pouvoir changer leur état.
-3.  Vous pouvez éventuellement installer Canopsis ou configurer `debug_noconnect` sur `true`. Ceci ignorera la connexion AMQP et imprimera des alertes sur la sortie standard du scripts `alerts.php`.
-4.  Créer vos devices et règles.
-5.  Lancer `poller.php -h <hostname>`
-
-Lancer `alerts.php`.
+Pour un meilleur lisibilité des alarmes, il est conseillé lors de la définition
+de l’alarme dans LibreNMS de lui donnée un nom explicite et de changer la
+variable output à `"output" => $obj['title']`
