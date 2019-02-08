@@ -25,7 +25,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [Tooling] Fix push_docker_images to push the go engines' images
  - [Tooling] Remove python-ldap from docker images (WARNING: this will temporarily break support for ldap authentication, and should be fixed in the next release)
  - [Tooling] Add engine-axe-cat docker image
- - [Tooling] Fix SNMP MIBs import
+ - [Tooling] Fix SNMP MIBs import for CAT
  - [UI] Fix default views
  - [UI] Update to VueJS 2.5.21
  - [UI] Fix - View deletion message
