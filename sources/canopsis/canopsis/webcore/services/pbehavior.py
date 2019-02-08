@@ -398,6 +398,53 @@ def exports(ws):
                 HTTP_ERROR
             )
 
+    @ws.application.put('/api/v2/pbehavior/<pbehavior_id:id_filter>')
+    def update_v2(pbehavior_id):
+        """
+        Update a pbehavior.
+
+        :raises ValueError: invalid keys sent.
+        """
+        try:
+            elements = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+
+        if elements is None:
+            return gen_json_error(
+                {'description': 'nothing to update'},
+                HTTP_ERROR
+            )
+
+        invalid_keys = []
+
+        # keep compatibility with APIv1
+        if 'filter' in elements:
+            elements['filter_'] = elements.pop('filter')
+
+        for key in elements.keys():
+            if key not in VALID_PBEHAVIOR_PARAMS:
+                invalid_keys.append(key)
+                elements.pop(key)
+        if len(invalid_keys) != 0:
+            ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
+
+        try:
+            return rhpb.update(pbehavior_id, **elements)
+        except TypeError:
+            return gen_json_error(
+                {'description': 'The fields name, filter, author, tstart, tstop are required.'},
+                HTTP_ERROR
+            )
+        except ValueError as exc:
+            return gen_json_error(
+                {'description': '{}'.format(exc.message)},
+                HTTP_ERROR
+            )
+
     @route(
         ws.application.get,
         name='pbehavior/read',
