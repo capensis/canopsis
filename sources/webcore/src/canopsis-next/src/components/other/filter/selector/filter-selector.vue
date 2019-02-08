@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout
+  v-layout(align-center)
     v-flex
       v-switch(
       :label="$t('filterSelector.fields.mixFilters')",
@@ -21,12 +21,18 @@
       clearable,
       @input="updateFilter"
       )
+    v-flex
+      v-btn(@click="showCreateFilterModal", icon, small)
+        v-icon add
 </template>
 
 <script>
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+
+import modalMixin from '@/mixins/modal';
 
 export default {
+  mixins: [modalMixin],
   props: {
     value: {
       type: [Object, Array],
@@ -73,6 +79,15 @@ export default {
 
     updateCondition(value) {
       this.$emit('update:condition', value);
+    },
+
+    showCreateFilterModal() {
+      this.showModal({
+        name: MODALS.createFilter,
+        config: {
+          action: filter => this.$emit('create:filter', filter),
+        },
+      });
     },
   },
 };

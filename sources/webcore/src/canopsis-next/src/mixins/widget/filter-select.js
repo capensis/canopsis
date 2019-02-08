@@ -27,6 +27,12 @@ export default {
     },
   },
   methods: {
+    createFilter(filter) {
+      const newViewFilters = [...this.viewFilters, filter];
+
+      return this.updateFilterFieldInWidgetPreferences('viewFilters', newViewFilters);
+    },
+
     updateFilterFieldInWidgetPreferences(field, value) {
       const hasAccessToEditFilter = this.hasAccessToEditFilter || !isBoolean(this.hasAccessToEditFilter);
 

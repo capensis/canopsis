@@ -12,7 +12,8 @@
         :value="mainFilter",
         :condition="mainFilterCondition",
         @input="updateSelectedFilter",
-        @update:condition="updateSelectedCondition"
+        @update:condition="updateSelectedCondition",
+        @create:filter="createFilter"
         )
       v-flex
         v-chip.primary.white--text(
