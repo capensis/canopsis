@@ -2,10 +2,17 @@
 
 ## Pré-requis
 
+### Version de Docker
+
+Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 18.06 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux hébergés par votre distribution.
+
+Une fois Docker CE installé, vous devez ensuite [installer Docker compose](https://docs.docker.com/compose/install/#install-compose).
+
 ### Ports
 
 Il faut vérifier les ports utilisés par `docker-compose.yml`.  
-Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en utilisation sur le noeud d'installation.
+
+Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en utilisation sur le nœud d'installation.
 
 ## Installation
 
@@ -13,7 +20,6 @@ Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en
 - Actuellement, les conteneurs sont gérés dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
 - Dans ce dépôt, un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisée.
   
-    - Rappel : [Installation de Docker compose](https://docs.docker.com/compose/install/#install-compose)  
   
     - Troubleshooting : Si vous rencontrez une erreur de ce type lors d'un `docker-compose up -d` ou un `docker-compose --version`  
     ```bash
