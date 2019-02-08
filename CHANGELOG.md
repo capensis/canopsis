@@ -8,6 +8,41 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.10.0 - Due date : 2019-02-08
+
+ - [Documentation] Update Service Weather documentation
+ - [Documentation] Update available variables on customizable templates.
+ - [Documentation] The Centreon connector is now open-source
+ - [Documentation] Fix typos in pbehavior documentation
+ - [Go] Add webhooks plugin
+ - [Go] Fix issue with missing ack statistics
+ - [Go] Add conversion of patterns into MongoDB requests
+ - [Go] Add pattern lists
+ - [Go] Add entities in calls to AxePostProcessor.ProcessAlarms
+ - [Go] Add the possibility to declare a ticket without an event
+ - [Python] Add support for exclusion dates in pbehaviors
+ - [Python] Add webhook API
+ - [Tooling] Fix push_docker_images to push the go engines' images
+ - [Tooling] Remove python-ldap from docker images (WARNING: this will temporarily break support for ldap authentication, and should be fixed in the next release)
+ - [Tooling] Add engine-axe-cat docker image
+ - [Tooling] Fix SNMP MIBs import
+ - [UI] Fix default views
+ - [UI] Update to VueJS 2.5.21
+ - [UI] Fix - View deletion message
+ - [UI] Add optionnal "Comment" field on pbehavior creation
+ - [UI] Improve sidebar views links
+ - [UI] Fix - Variable type change, on filter editor's advanced mode
+ - [UI] Fix - View duplication
+ - [UI - UX] Fix - User profile menu's position
+ - [UI - UX] Improve user profile menu's styling
+ - [UI - Tabs] Add tab duplication functionnality
+ - [UI - VueX] Unused entities automatic clean-up
+ - [UI - Lodash] Add babel-plugin-lodash package
+ - [UI - Service Weather] Add automatic refresh when filter setting has changed
+ - [UI - Service Weather] Style improvments
+ - [UI - Service Weather] Fix - Blinking conditions and Displayed icons
+ - [UI - Service Weather] Add actions for actions done on entities
+
 ## Canopsis 3.9.0 - Due date : 2019-01-24
 
  - [Documentation] Add documentation for action API
