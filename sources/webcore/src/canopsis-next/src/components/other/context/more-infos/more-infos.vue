@@ -39,3 +39,10 @@ export default {
 };
 </script>
 
+<style lang="scss" scoped>
+  .v-tabs {
+    & /deep/ .v-tabs__bar {
+      display: block;
+    }
+  }
+</style>
