@@ -17,7 +17,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [Go] Add webhooks plugin
  - [Go] Fix issue with missing ack statistics
  - [Go] Add conversion of patterns into MongoDB requests
- - [Go] Add pattern lists
+ - [Go] Add pattern list types
  - [Go] Add entities in calls to AxePostProcessor.ProcessAlarms
  - [Go] Add the possibility to declare a ticket without an event
  - [Python] Add support for exclusion dates in pbehaviors
