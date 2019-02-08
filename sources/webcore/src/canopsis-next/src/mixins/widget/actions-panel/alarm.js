@@ -1,6 +1,11 @@
+import { omit } from 'lodash';
+
+import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/constants';
+
 import modalMixin from '@/mixins/modal';
 import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, MODALS, USERS_RIGHTS } from '@/constants';
+
+import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -30,20 +35,40 @@ export default {
         name: MODALS.createCancelEvent,
         config: {
           ...this.modalConfig,
-          title: 'modals.createAckRemove.title',
+          title: this.$t('modals.createAckRemove.title'),
           eventType: EVENT_ENTITY_TYPES.ackRemove,
         },
       });
     },
 
+    showVariablesHelperModal() {
+      const variables = [];
+
+      const alarmFields = convertObjectFieldToTreeBranch(omit(this.item, ['entity']), 'alarm');
+      variables.push(alarmFields);
+
+      if (this.item.entity) {
+        const entityFields = convertObjectFieldToTreeBranch(this.item.entity, 'entity');
+        variables.push(entityFields);
+      }
+
+      return () => this.showModal({
+        name: MODALS.variablesHelp,
+        config: {
+          ...this.modalConfig,
+          variables,
+        },
+      });
+    },
+
     actionsAccessFilterHandler({ type }) {
-      const right = USERS_RIGHTS.business.alarmList.actions[type];
+      const right = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[type];
 
       if (!right) {
         return true;
       }
 
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions[type]);
+      return this.checkAccess(right);
     },
   },
 };

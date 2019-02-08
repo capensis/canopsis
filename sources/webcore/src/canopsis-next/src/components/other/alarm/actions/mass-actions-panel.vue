@@ -1,33 +1,16 @@
 <template lang="pug">
-  div
-    div(v-show="$options.filters.mq($mq, { l: true })")
-      actions-panel-item(
-      v-for="(action, index) in actions",
-      v-bind="action",
-      :key="`multiple-${index}`"
-      )
-    div(v-show="$options.filters.mq($mq, { m: true, l: false })")
-      v-menu(bottom, left, @click.native.stop)
-        v-btn(icon slot="activator")
-          v-icon more_vert
-        v-list
-          actions-panel-item(
-          v-for="(action, index) in actions",
-          v-bind="action",
-          isDropDown,
-          :key="`mobile-multiple-${index}`"
-          )
+  shared-mass-actions-panel(:actions="filteredActions")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '../../../../constants';
 
-import authMixin from '@/mixins/auth';
-import actionsPanelMixin from '@/mixins/actions-panel';
+import authMixin from '../../../../mixins/auth';
+import widgetActionsPanelAlarmMixin from '../../../../mixins/widget/actions-panel/alarm';
 
-import ActionsPanelItem from './actions-panel-item.vue';
+import SharedMassActionsPanel from '../../shared/actions-panel/mass-actions-panel.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -39,32 +22,48 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
-  components: { ActionsPanelItem },
-  mixins: [authMixin, actionsPanelMixin],
+  components: { SharedMassActionsPanel },
+  mixins: [authMixin, widgetActionsPanelAlarmMixin],
   props: {
     itemsIds: {
       type: Array,
-      required: true,
+      default: () => [],
     },
   },
   data() {
+    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
     return {
-      allActions: [
+      actions: [
         {
-          type: 'pbehavior',
+          type: alarmsListActionsTypes.pbehaviorAdd,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
+          title: this.$t('alarmList.actions.titles.pbehavior'),
           method: this.showActionModal(MODALS.createPbehavior),
         },
         {
-          type: 'fastAck',
-          method: this.createAckEvent,
-        },
-        {
-          type: 'ack',
+          type: alarmsListActionsTypes.ack,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
+          title: this.$t('alarmList.actions.titles.ack'),
           method: this.showActionModal(MODALS.createAckEvent),
         },
         {
-          type: 'ackRemove',
+          type: alarmsListActionsTypes.fastAck,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          title: this.$t('alarmList.actions.titles.fastAck'),
+          method: this.createAckEvent,
+        },
+        {
+          type: alarmsListActionsTypes.ackRemove,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
+          title: this.$t('alarmList.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
+        },
+        {
+          type: alarmsListActionsTypes.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          title: this.$t('alarmList.actions.titles.cancel'),
+          method: this.showActionModal(MODALS.createCancelEvent),
         },
       ],
     };
@@ -72,8 +71,8 @@ export default {
   computed: {
     ...entitiesMapGetters(['getList']),
 
-    actions() {
-      return this.allActions.filter(this.actionsAccessFilterHandler);
+    filteredActions() {
+      return this.actions.filter(this.actionsAccessFilterHandler);
     },
 
     items() {

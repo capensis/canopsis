@@ -25,7 +25,6 @@
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-filters(
-          v-model="settings.widget.parameters.filters",
           :filters.sync="settings.widget.parameters.filters",
           hideSelect
           )
@@ -39,12 +38,16 @@
           v-divider
           field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
           v-divider
-          field-levels-colors-selector(v-model="settings.widget.parameters.criticityLevelsColors", hideSuffix)
+          field-levels-colors-selector(
+          v-model="settings.widget.parameters.criticityLevelsColors",
+          colorType="hex",
+          hideSuffix
+          )
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 
 import { SIDE_BARS } from '@/constants';
 
@@ -60,8 +63,8 @@ import FieldCriticityLevels from './fields/stats/criticity-levels.vue';
 import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
-import FieldInfoPopup from './fields/common/info-popup.vue';
-import FieldMoreInfo from './fields/common/more-info.vue';
+import FieldInfoPopup from './fields/alarm/info-popup.vue';
+import FieldMoreInfo from './fields/alarm/more-info.vue';
 
 /**
  * Component to regroup the entities list settings fields
@@ -91,7 +94,7 @@ export default {
     return {
       settings: {
         rowId,
-        widget: cloneDeep(widget),
+        widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
       },
     };
   },
@@ -99,14 +102,15 @@ export default {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
+      return this.prepareWidgetWithAlarmParametersSettings(widget);
+    },
+
+    prepareWidgetQuery(newQuery, oldQuery) {
       return {
-        ...widget,
+        tstart: oldQuery.tstart,
+        tstop: oldQuery.tstop,
 
-        parameters: {
-          ...widget.parameters,
-
-          alarmsList: this.prepareAlarmWidgetParametersSettings(widget.parameters.alarmsList),
-        },
+        ...newQuery,
       };
     },
   },

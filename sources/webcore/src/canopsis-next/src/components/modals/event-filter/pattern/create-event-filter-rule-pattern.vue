@@ -8,8 +8,6 @@
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
       v-tabs-items(v-model="activeTab")
         v-tab-item
-          pattern-field-creation-form(v-model="pattern", :operators="operators")
-        v-tab-item
           pattern-simple-editor(v-model="pattern", :operators="operators")
         v-tab-item
           pattern-advanced-editor(v-model="pattern")
@@ -20,20 +18,18 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import PatternFieldCreationForm from './partial/pattern-field-creation-form.vue';
 import PatternSimpleEditor from './partial/pattern-simple-editor.vue';
 import PatternAdvancedEditor from './partial/pattern-advanced-editor.vue';
 
 export default {
   name: MODALS.createEventFilterRulePattern,
   components: {
-    PatternFieldCreationForm,
     PatternSimpleEditor,
     PatternAdvancedEditor,
   },
@@ -42,7 +38,6 @@ export default {
     return {
       activeTab: 0,
       tabs: [
-        this.$t('modals.eventFilterRule.addAField'),
         this.$t('modals.eventFilterRule.simpleEditor'),
         this.$t('modals.eventFilterRule.advancedEditor'),
       ],

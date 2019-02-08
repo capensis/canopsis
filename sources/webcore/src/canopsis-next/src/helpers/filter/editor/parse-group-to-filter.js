@@ -1,6 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-import isObject from 'lodash/isObject';
-import cloneDeep from 'lodash/cloneDeep';
+import { isEmpty, isObject, cloneDeep } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
 import uid from '@/helpers/uid';
@@ -21,7 +19,7 @@ function ruleOperatorAndInput(rule) {
   /**
    * Switch to determine if it's a short syntax for '$eq' and '$eq:'''
    */
-  if (typeof ruleValue === 'string') {
+  if (typeof ruleValue !== 'object') {
     if (Object.values(rule)[0] === '') {
       parsedRule.operator = FILTER_OPERATORS.isEmpty;
     } else {

@@ -2,6 +2,7 @@ module.exports = {
   baseUrl: process.env.NODE_ENV === 'production' ? '/en/static/canopsis-next/dist/' : '/',
   lintOnSave: false,
   chainWebpack: (config) => {
+    config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
     config.resolve.alias.store.set('handlebars', 'handlebars/dist/handlebars.js');
 
     return config;
@@ -17,5 +18,11 @@ module.exports = {
       },
     },
     disableHostCheck: true,
+  },
+  pluginOptions: {
+    webpackBundleAnalyzer: {
+      analyzerMode: process.env.BUNDLE_ANALYZER_MODE, // 'disabled' / 'server' / 'static'
+      openAnalyzer: false,
+    },
   },
 };

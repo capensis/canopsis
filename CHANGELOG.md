@@ -8,6 +8,65 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+## Canopsis 3.10.0 - Due date : 2019-02-08
+
+ - [Documentation] Update Service Weather documentation
+ - [Documentation] Update available variables on customizable templates.
+ - [Documentation] The Centreon connector is now open-source
+ - [Documentation] Fix typos in pbehavior documentation
+ - [Go] Add webhooks plugin
+ - [Go] Fix issue with missing ack statistics
+ - [Go] Add conversion of patterns into MongoDB requests
+ - [Go] Add pattern list types
+ - [Go] Add entities in calls to AxePostProcessor.ProcessAlarms
+ - [Go] Add the possibility to declare a ticket without an event
+ - [Python] Add support for exclusion dates in pbehaviors
+ - [Python] Add webhook API
+ - [Tooling] Fix push_docker_images to push the go engines' images
+ - [Tooling] Remove python-ldap from docker images (WARNING: this will temporarily break support for ldap authentication, and should be fixed in the next release)
+ - [Tooling] Add engine-axe-cat docker image
+ - [Tooling] Fix SNMP MIBs import for CAT
+ - [UI] Fix default views
+ - [UI] Update to VueJS 2.5.21
+ - [UI] Fix - View deletion message
+ - [UI] Add optionnal "Comment" field on pbehavior creation
+ - [UI] Improve sidebar views links
+ - [UI] Fix - Variable type change, on filter editor's advanced mode
+ - [UI] Fix - View duplication
+ - [UI - UX] Fix - User profile menu's position
+ - [UI - UX] Improve user profile menu's styling
+ - [UI - Tabs] Add tab duplication functionnality
+ - [UI - VueX] Unused entities automatic clean-up
+ - [UI - Lodash] Add babel-plugin-lodash package
+ - [UI - Service Weather] Add automatic refresh when filter setting has changed
+ - [UI - Service Weather] Style improvments
+ - [UI - Service Weather] Fix - Blinking conditions and Displayed icons
+ - [UI - Service Weather] Add actions for actions done on entities
+
+## Canopsis 3.9.0 - Due date : 2019-01-24
+
+ - [Documentation] Add documentation for action API
+ - [Tooling] Fix building scripts that used the wrong version of canopsis-next
+ - [Go] Add support for MongoDB replicaset
+ - [Go] Add a post-processing plugins system in the axe engine
+ - [Go] Define triggers in the axe engine
+ - [Python] Fix healthcheck API response when criticals is undefined
+ - [Python] Fix pbehavior handling when the rrule generates invalid dates
+ - [UI] Add "Help" buttons on ListAlarm/Context/Service weather widgets
+ - [UI] Add "Reorder tabs" functionnality
+ - [UI] Add "Refresh" button on all administration/exploitation views
+ - [UI] Improve left sidebar style
+ - [UI] Variables harmonization for all templates parameters (Info popup, More infos, Service weather)
+ - [UI / Calendar] Fix display bug when only 1 filter is set
+ - [UI / Calendar] Improve style (colors)
+ - [UI / ListAlarm] Add "Delete" alarms mass action
+ - [UI / ListAlarm] Refactor "Info popup" setting
+ - [UI / ListAlarm] Fix "Resolved" column problem
+ - [UI / ListAlarm] Improve "Info popup" style
+ - [UI / Context] Add rights
+ - [UI / Service weather] Fix bug on ListAlarm's modal's filter
+ - [UI / Service weather] Add entities names customization, in "More info" modal
+
 ## Canopsis 3.8.0 - Due date : 2019-01-10
 
  - [Documentation] Clean up README.md

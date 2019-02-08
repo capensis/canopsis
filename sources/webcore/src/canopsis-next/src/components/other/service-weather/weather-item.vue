@@ -1,20 +1,22 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
   :class="getItemClasses",
-  :style="{ height: itemHeight + 'em'}",
+  :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
   tile,
   @click.native="showAdditionalInfoModal"
   )
-    div(:class="{ blinking: isBlinking }", )
+    v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
+      v-icon help
+    div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
-        v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
-          v-icon pause
+        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
+          v-icon(color="white") {{ secondaryIcon }}
 </template>
 
 <script>
-import find from 'lodash/find';
+import { find } from 'lodash';
 
 import {
   MODALS,
@@ -26,14 +28,18 @@ import {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
-import compile from '@/helpers/handlebars';
+import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
+import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
 import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
+import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+
 export default {
-  mixins: [modalMixin, entitiesWatcherEntityMixin],
+  mixins: [modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -45,6 +51,10 @@ export default {
     widget: {
       type: Object,
     },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isPaused() {
@@ -52,6 +62,9 @@ export default {
     },
     hasWatcherPbehavior() {
       return this.watcher.active_pb_watcher;
+    },
+    isPbehavior() {
+      return this.watcher.pbehavior.some(pbehavior => pbehavior.isActive);
     },
     format() {
       if (!this.isPaused && !this.hasWatcherPbehavior) {
@@ -76,21 +89,25 @@ export default {
         icon = WEATHER_ICONS.outOfSurveillance;
       }
 
-      if (this.isPaused && !this.hasWatcherPbehavior) {
-        icon = WEATHER_ICONS.pause;
-      }
-
       return {
         color: WATCHER_PBEHAVIOR_COLOR,
         icon,
       };
     },
+    secondaryIcon() {
+      if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
+        return WEATHER_ICONS.maintenance;
+      } else if (this.watcher.pbehavior.every(value => value.type_ === PBEHAVIOR_TYPES.outOfSurveillance)) {
+        return WEATHER_ICONS.outOfSurveillance;
+      }
+
+      return WEATHER_ICONS.pause;
+    },
     compiledTemplate() {
-      return compile(this.template, { watcher: this.watcher });
+      return compile(this.template, { entity: this.watcher });
     },
     getItemClasses() {
       return [
-        this.format.color,
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
@@ -104,8 +121,7 @@ export default {
       return (
         this.watcher.alerts_not_ack
         && !this.hasWatcherPbehavior
-        && !this.isPaused
-        && !this.watcher.active_pb_some
+        && !this.isPbehavior
       );
     },
   },
@@ -130,37 +146,50 @@ export default {
     },
 
     async showAlarmListModal() {
-      const initialFilter = JSON.parse(this.watcher.mfilter);
-      const newFilter = Object.keys(initialFilter).reduce((acc, key) => {
-        const newKey = `entity.${key}`;
-        acc[newKey] = initialFilter[key];
-        return acc;
-      }, {});
+      try {
+        const initialFilter = JSON.parse(this.watcher.mfilter);
+        const newFilter = prepareFilterWithFieldsPrefix(initialFilter, 'entity.');
+        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+        const watcherFilter = {
+          title: this.watcher.display_name,
+          filter: newFilter,
+        };
 
-      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
-      const watcherFilter = {
-        title: this.watcher.display_name,
-        filter: newFilter,
-      };
+        const widgetParameters = {
+          ...this.widget.parameters.alarmsList,
 
-      const widgetParameters = {
-        ...this.widget.parameters.alarmsList,
+          mainFilter: watcherFilter,
+          viewFilters: [watcherFilter],
+        };
 
-        mainFilter: watcherFilter,
-        viewFilters: [watcherFilter],
-      };
+        this.showModal({
+          name: MODALS.alarmsList,
+          config: {
+            widget: {
+              ...widget,
 
-      this.showModal({
-        name: MODALS.alarmsList,
-        config: {
-          widget: {
-            ...widget,
-
-            parameters: {
-              ...widget.parameters,
-              ...widgetParameters,
+              parameters: {
+                ...widget.parameters,
+                ...widgetParameters,
+              },
             },
           },
+        });
+      } catch (err) {
+        this.addErrorPopup({
+          text: this.$t('errors.default'),
+        });
+      }
+    },
+
+    showVariablesHelpModal() {
+      const entityFields = convertObjectFieldToTreeBranch(this.watcher, 'entity');
+      const variables = [entityFields];
+
+      this.showModal({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
         },
       });
     },
@@ -181,7 +210,7 @@ export default {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1em;
+    line-height: 1.2em;
   }
 
   @keyframes blink {
@@ -195,5 +224,12 @@ export default {
 
   .cursor-pointer {
     cursor: pointer;
+  }
+
+  .helpBtn {
+    position: absolute;
+    right: 0.2em;
+    top: 0;
+    z-index: 1;
   }
 </style>

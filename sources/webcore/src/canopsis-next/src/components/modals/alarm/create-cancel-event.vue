@@ -3,7 +3,7 @@
     v-card
       v-card-title.primary.white--text
         v-layout(justify-space-between, align-center)
-          span.headline {{ $t(title) }}
+          span.headline {{ title }}
       v-card-text
         v-container
           v-layout(row)
@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || 'modals.createCancelEvent.title';
+      return this.config.title || this.$t('modals.createCancelEvent.title');
     },
 
     eventType() {

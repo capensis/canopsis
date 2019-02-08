@@ -41,10 +41,12 @@ export default {
   },
   methods: {
     async submit() {
-      const { rgba } = this.color;
+      const { rgba, hex } = this.color;
 
       if (this.config.action) {
-        await this.config.action(`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`);
+        const result = this.config.type === 'hex' ? hex : `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+
+        await this.config.action(result);
       }
 
       this.hideModal();

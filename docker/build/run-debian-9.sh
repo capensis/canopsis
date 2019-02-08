@@ -52,6 +52,7 @@ apt-get -y --no-install-recommends install \
     python2.7 \
     rsync \
     snmp \
+    snmp-mibs-downloader \
     smitools \
     sudo \
     tmux \

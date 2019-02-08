@@ -1,4 +1,4 @@
-import isFunction from 'lodash/isFunction';
+import { isFunction } from 'lodash';
 
 export default {
   methods: {
@@ -8,8 +8,8 @@ export default {
       }
     },
     callTabsUpdateTabsMethod() {
-      if (this.$refs.tabs && isFunction(this.$refs.tabs.updateTabs)) {
-        this.$refs.tabs.updateTabs();
+      if (this.$refs.tabs && isFunction(this.$refs.tabs.updateTabsView)) {
+        this.$refs.tabs.updateTabsView();
       }
     },
   },

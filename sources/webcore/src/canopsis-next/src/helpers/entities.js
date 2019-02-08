@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { get, omit } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
@@ -6,6 +7,12 @@ import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, SERVICE_WEAT
 
 import uuid from './uuid';
 
+/**
+ * Generate widget by type
+ *
+ * @param {string} type
+ * @returns {Object}
+ */
 export function generateWidgetByType(type) {
   const widget = {
     type,
@@ -26,23 +33,23 @@ export function generateWidgetByType(type) {
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),
-        value: 'alarm.connector',
+        value: 'v.connector',
       },
       {
         label: i18n.t('tables.alarmGeneral.connectorName'),
-        value: 'alarm.connector_name',
+        value: 'v.connector_name',
       },
       {
         label: i18n.t('tables.alarmGeneral.component'),
-        value: 'alarm.component',
+        value: 'v.component',
       },
       {
         label: i18n.t('tables.alarmGeneral.resource'),
-        value: 'alarm.resource',
+        value: 'v.resource',
       },
       {
         label: i18n.t('tables.alarmGeneral.output'),
-        value: 'alarm.output',
+        value: 'v.output',
       },
       {
         label: i18n.t('tables.alarmGeneral.extraDetails'),
@@ -50,11 +57,11 @@ export function generateWidgetByType(type) {
       },
       {
         label: i18n.t('tables.alarmGeneral.state'),
-        value: 'alarm.state.val',
+        value: 'v.state.val',
       },
       {
         label: i18n.t('tables.alarmGeneral.status'),
-        value: 'alarm.status.val',
+        value: 'v.status.val',
       },
     ],
   };
@@ -198,6 +205,11 @@ export function generateWidgetByType(type) {
   return widget;
 }
 
+/**
+ * Generate view row
+ *
+ * @returns {Object}
+ */
 export function generateViewRow() {
   return {
     _id: uuid('view-row'),
@@ -206,6 +218,11 @@ export function generateViewRow() {
   };
 }
 
+/**
+ * Generate view tab
+ *
+ * @returns {Object}
+ */
 export function generateViewTab() {
   return {
     _id: uuid('view-tab'),
@@ -214,6 +231,11 @@ export function generateViewTab() {
   };
 }
 
+/**
+ * Generate view
+ *
+ * @returns {Object}
+ */
 export function generateView() {
   const defaultTab = { ...generateViewTab(), title: 'Default' };
 
@@ -228,6 +250,13 @@ export function generateView() {
   };
 }
 
+/**
+ * Generate user preference by widget and user objects
+ *
+ * @param {Object} widget
+ * @param {Object} user
+ * @returns {Object}
+ */
 export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
     _id: `${widget._id}_${user.crecord_name}`,
@@ -239,6 +268,11 @@ export function generateUserPreferenceByWidgetAndUser(widget, user) {
   };
 }
 
+/**
+ * Generate user
+ *
+ * @returns {Object}
+ */
 export function generateUser() {
   return {
     crecord_write_time: null,
@@ -264,6 +298,11 @@ export function generateUser() {
   };
 }
 
+/**
+ * Generate role
+ *
+ * @returns {Object}
+ */
 export function generateRole() {
   return {
     crecord_write_time: null,
@@ -276,6 +315,11 @@ export function generateRole() {
   };
 }
 
+/**
+ * Generate right
+ *
+ * @returns {Object}
+ */
 export function generateRight() {
   return {
     crecord_creation_time: null,
@@ -290,12 +334,90 @@ export function generateRight() {
   };
 }
 
+/**
+ * Generate role right by checksum
+ *
+ * @param {number} checksum
+ * @returns {Object}
+ */
 export function generateRoleRightByChecksum(checksum) {
   return {
     checksum,
     crecord_type: 'right',
   };
 }
+
+/**
+ * Generate copy of view tab
+ *
+ * @param {Object} tab
+ * @returns {Object}
+ */
+export function generateCopyOfViewTab(tab) {
+  return {
+    ...generateViewTab(),
+
+    rows: tab.rows.map(row => ({
+      ...generateViewRow(),
+
+      title: row.title,
+      widgets: row.widgets.map(widget => ({
+        ...generateWidgetByType(widget.type),
+        ...omit(widget, ['_id']),
+      })),
+    })),
+  };
+}
+
+/**
+ * Generate copy of view
+ *
+ * @param {Object} view
+ * @returns {Object}
+ */
+export function generateCopyOfView(view) {
+  return {
+    ...generateView(),
+    ...omit(view, ['_id', 'tabs']),
+
+    tabs: view.tabs.map(tab => ({
+      ...generateCopyOfViewTab(tab),
+
+      ...omit(tab, ['_id', 'rows']),
+    })),
+  };
+}
+
+/**
+ * Get mappings for widgets ids from old tab to new tab
+ *
+ * @param {Object} oldTab
+ * @param {Object} newTab
+ * @returns {Array.<{ oldId: number, newId: number }>}
+ */
+export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
+  return oldTab.rows.reduce((acc, row, rowIndex) => {
+    const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
+      oldId: widget._id,
+      newId: get(newTab, `rows.${rowIndex}.widgets.${widgetIndex}._id`, null),
+    }));
+
+    return acc.concat(widgetsIds);
+  }, []);
+}
+
+/**
+ * Get mappings for widgets from old view to new view
+ *
+ * @param {Object} oldView
+ * @param {Object} newView
+ * @returns {Array.<{ oldId: number, newId: number }>}
+ */
+export function getViewsWidgetsIdsMappings(oldView, newView) {
+  return oldView.tabs.reduce((acc, tab, index) =>
+    acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
+}
+
 
 export default {
   generateWidgetByType,
@@ -306,4 +428,9 @@ export default {
   generateRole,
   generateRight,
   generateRoleRightByChecksum,
+  generateCopyOfViewTab,
+  generateCopyOfView,
+
+  getViewsTabsWidgetsIdsMappings,
+  getViewsWidgetsIdsMappings,
 };

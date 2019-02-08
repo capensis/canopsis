@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
