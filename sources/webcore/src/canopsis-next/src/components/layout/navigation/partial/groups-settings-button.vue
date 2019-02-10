@@ -5,12 +5,12 @@
   transition="slide-y-reverse-transition",
   v-bind="wrapperProps"
   )
-    v-tooltip(slot="activator", left)
+    v-tooltip(slot="activator", right)
       v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", v-bind="buttonProps")
         v-icon settings
         v-icon close
       span {{ $t('layout.sideBar.buttons.settings') }}
-    v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", left)
+    v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", right)
       v-btn(
       slot="activator",
       :input-value="isEditingMode",
@@ -23,7 +23,7 @@
         v-icon(dark) edit
         v-icon(dark) done
       span {{ $t('layout.sideBar.buttons.edit') }}
-    v-tooltip(v-if="hasCreateAnyViewAccess", left)
+    v-tooltip(v-if="hasCreateAnyViewAccess", right)
       v-btn(
       slot="activator",
       color="green darken-4",

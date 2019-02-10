@@ -3,7 +3,7 @@
   ref="tabs",
   :key="vTabsKey",
   :value="value",
-  :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
+  :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
@@ -31,6 +31,14 @@
         small,
         flat,
         icon,
+        @click.stop="showDuplicateTabModal(tab)"
+        )
+          v-icon(small) file_copy
+        v-btn(
+        v-show="hasUpdateAccess && isEditingMode",
+        small,
+        flat,
+        icon,
         @click.stop="showDeleteTabModal(tab)"
         )
           v-icon(small) delete
@@ -50,12 +58,21 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
+import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
+
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 export default {
   components: { Draggable },
-  mixins: [modalMixin, vuetifyTabsMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    vuetifyTabsMixin,
+    entitiesUserPreferenceMixin,
+  ],
   props: {
     view: {
       type: Object,
@@ -129,32 +146,72 @@ export default {
       });
     },
 
-    showDeleteTabModal(tab) {
+    showDuplicateTabModal(tab) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: MODALS.textFieldEditor,
         config: {
-          action: async () => {
-            const view = {
-              ...this.view,
-              tabs: this.view.tabs.filter(viewTab => viewTab._id !== tab._id),
-            };
-
-            await this.updateViewMethod(view);
+          title: this.$t('modals.viewTab.duplicate.title'),
+          field: {
+            name: 'text',
+            label: this.$t('modals.viewTab.fields.title'),
+            validationRules: 'required',
           },
+          action: title => this.duplicateTabAction(tab, title),
         },
       });
     },
 
-    updateTab(newTab) {
+    showDeleteTabModal(tab) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.deleteTab(tab._id),
+        },
+      });
+    },
+
+    async duplicateTabAction(tab, title) {
+      const newTab = {
+        ...generateCopyOfViewTab(tab),
+
+        title,
+      };
+
+      const widgetsIdsMappings = getViewsTabsWidgetsIdsMappings(tab, newTab);
+
+      await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
+
+      return this.addTab(newTab);
+    },
+
+    updateTab(tab) {
       const view = {
         ...this.view,
         tabs: this.view.tabs.map((viewTab) => {
-          if (viewTab._id === newTab._id) {
-            return newTab;
+          if (viewTab._id === tab._id) {
+            return tab;
           }
 
           return viewTab;
         }),
+      };
+
+      return this.updateViewMethod(view);
+    },
+
+    addTab(tab) {
+      const view = {
+        ...this.view,
+        tabs: [...this.view.tabs, tab],
+      };
+
+      return this.updateViewMethod(view);
+    },
+
+    deleteTab(tabId) {
+      const view = {
+        ...this.view,
+        tabs: this.view.tabs.filter(viewTab => viewTab._id !== tabId),
       };
 
       return this.updateViewMethod(view);

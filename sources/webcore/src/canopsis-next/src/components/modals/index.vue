@@ -113,6 +113,7 @@ export default {
         [MODALS.createFilter]: { maxWidth: 920, lazy: true },
         [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
+        [MODALS.watcher]: { maxWidth: 920, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

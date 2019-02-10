@@ -3,6 +3,8 @@
 !!! attention
     Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
 
+    À noter aussi que ce moteur n'est actuellement pas fonctionnel en environnement Debian 8 ([bug #1456](https://git.canopsis.net/canopsis/canopsis/issues/1456)).
+
 ## Introduction
 
 Ce guide décrit la réception et de la traduction de traps SNMP au sein de Canopsis.

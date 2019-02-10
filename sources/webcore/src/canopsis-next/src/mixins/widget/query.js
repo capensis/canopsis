@@ -1,6 +1,4 @@
-import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
-import isEmpty from 'lodash/isEmpty';
+import { omit, isEqual, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import Pagination from '@/components/tables/pagination.vue';

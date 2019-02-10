@@ -31,7 +31,7 @@
             v-list-tile-title
               span {{ view.title }}
               v-btn.edit-view-button(
-              v-show="(checkUpdateViewAccessById(view._id) || checkDeleteViewAccessById(view._id)) && isEditingMode",
+              v-show="checkViewEditButtonAccessById(view._id)",
               color="grey darken-2",
               depressed,
               small,
@@ -57,15 +57,24 @@
 </template>
 
 <script>
+import { groupSchema } from '@/store/schemas';
+
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group/index';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
+import registrableMixin from '@/mixins/registrable';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
 
 export default {
   components: { GroupsSettingsButton },
-  mixins: [vuetifyTabsMixin, entitiesViewGroupMixin, layoutNavigationGroupMenuMixin],
+  mixins: [
+    vuetifyTabsMixin,
+    entitiesViewGroupMixin,
+    layoutNavigationGroupMenuMixin,
+
+    registrableMixin([groupSchema], 'groups'),
+  ],
   watch: {
     groups() {
       this.$nextTick(this.callTabsOnResizeMethod);

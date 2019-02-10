@@ -1,9 +1,10 @@
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { userPreferenceSchema } from '@/store/schemas';
 import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -82,6 +83,28 @@ export default {
           },
         },
       });
+    },
+
+    /**
+     * This action fetches user preference item by widget id without store
+     *
+     * @param {function} rootGetters
+     * @param {string|number} widgetId
+     */
+    async fetchItemByWidgetIdWithoutStore({ rootGetters }, { widgetId }) {
+      const currentUser = rootGetters['auth/currentUser'];
+      const params = {
+        limit: 1,
+        filter: {
+          crecord_name: currentUser.crecord_name,
+          widget_id: widgetId,
+          _id: `${widgetId}_${currentUser.crecord_name}`,
+        },
+      };
+
+      const { data: [item] } = await request.get(API_ROUTES.userPreferences, { params });
+
+      return item;
     },
 
     /**
