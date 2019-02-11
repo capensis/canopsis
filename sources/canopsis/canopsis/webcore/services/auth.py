@@ -207,3 +207,7 @@ def exports(ws):
     def logout():
         session.delete()
         redirect('/')
+
+    @ws.application.get('/auth_infos')
+    def auth_infos():
+        return gen_json(ws.config["auth"]["providers"])
