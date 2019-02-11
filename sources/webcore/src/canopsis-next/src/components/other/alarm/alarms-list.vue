@@ -8,12 +8,13 @@
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
-        :items="viewFilters",
+        :filters="viewFilters",
+        :lockedFilters="widgetViewFilters"
         :value="mainFilter",
         :condition="mainFilterCondition",
         @input="updateSelectedFilter",
         @update:condition="updateSelectedCondition",
-        @create:filter="createFilter"
+        @update:filters="updateFilters",
         )
       v-flex
         v-chip.primary.white--text(

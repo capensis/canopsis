@@ -3,40 +3,33 @@
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       filter-selector(
-      v-if="hasAccessToEditFilter && !hideSelect",
       :label="$t('settings.selectAFilter')",
-      :items="filters",
       :value="value",
+      :filters="filters",
       :condition="condition",
+      :hideSelect="hideSelect",
+      :hasAccessToAddFilter="hasAccessToAddFilter",
+      :hasAccessToEditFilter="hasAccessToEditFilter",
+      long,
       @input="$emit('input', $event)",
-      @update:condition="$emit('update:condition', $event)"
+      @update:condition="$emit('update:condition', $event)",
+      @update:filters="updateFilters"
       )
-      v-list
-        v-list-tile(v-for="(filter, index) in filters", :key="filter.title", @click="")
-          v-list-tile-content {{ filter.title }}
-          v-list-tile-action(v-if="hasAccessToEditFilter")
-            div
-              v-btn.ma-1(icon, @click="showEditFilterModal(index)")
-                v-icon edit
-              v-btn.ma-1(icon, @click="showDeleteFilterModal(index)")
-                v-icon delete
-      v-btn(
-      v-if="hasAccessToAddFilter",
-      color="primary",
-      @click.prevent="showCreateFilterModal"
-      ) {{ $t('common.add') }}
 </template>
 
 <script>
-import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { isUndefined } from 'lodash';
+
+import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import FiltersList from '@/components/other/filter/list/filters-list.vue';
 
 export default {
-  components: { FilterSelector },
+  components: { FilterSelector, FiltersList },
   mixins: [authMixin, modalMixin],
   props: {
     filters: {
@@ -65,52 +58,12 @@ export default {
     },
   },
   methods: {
-    showCreateFilterModal() {
-      this.showModal({
-        name: MODALS.createFilter,
-        config: {
-          title: this.$t('modals.filter.create.title'),
-          action: newFilter => this.$emit('update:filters', [...this.filters, newFilter]),
-        },
-      });
-    },
+    updateFilters(filters, value) {
+      this.$emit('update:filters', filters);
 
-    showEditFilterModal(index) {
-      const filter = this.filters[index];
-
-      this.showModal({
-        name: MODALS.createFilter,
-        config: {
-          title: this.$t('modals.filter.edit.title'),
-          filter,
-          action: (newFilter) => {
-            if (this.value && this.value.title === filter.title) {
-              this.$emit('input', newFilter);
-            }
-
-            this.$emit('update:filters', [
-              ...this.filters.map((v, i) => (index === i ? newFilter : v)),
-            ]);
-          },
-        },
-      });
-    },
-
-    showDeleteFilterModal(index) {
-      const filter = this.filters[index];
-
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => {
-            if (this.value && this.value.title === filter.title) {
-              this.$emit('input', {});
-            }
-
-            this.$emit('update:filters', this.filters.filter((v, i) => index !== i));
-          },
-        },
-      });
+      if (!isUndefined(value)) {
+        this.$emit('input', value);
+      }
     },
   },
 };
