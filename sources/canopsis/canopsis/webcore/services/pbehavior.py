@@ -259,6 +259,38 @@ class RouteHandlerPBehavior(object):
 
         return self.pb_manager.update(_id, **params)
 
+    def update_v2(self, _id, name=None, filter_=None, tstart=None, tstop=None,
+                  rrule=None, enabled=None, comments=None, connector=None,
+                  connector_name=None, author=None, type_=None, reason=None,
+                  timezone=None, exdate=None):
+        """
+        Update pbehavior fields. Fields to None will **not** be updated.
+
+        :param str _id: pbehavior id
+        """
+        if exdate is None:
+            exdate = []
+
+        params = {
+            PBehavior.NAME: name,
+            PBehavior.FILTER: filter_,
+            PBehavior.AUTHOR: author,
+            PBehavior.TSTART: tstart,
+            PBehavior.TSTOP: tstop,
+            PBehavior.RRULE: rrule,
+            PBehavior.ENABLED: enabled,
+            PBehavior.COMMENTS: comments,
+            PBehavior.CONNECTOR: connector,
+            PBehavior.CONNECTOR_NAME: connector_name,
+            PBehavior.TYPE: type_,
+            PBehavior.REASON: reason,
+            PBehavior.TIMEZONE: timezone,
+            PBehavior.EXDATE: exdate
+        }
+        check_values(params)
+
+        return self.pb_manager.update_v2(_id, **params)
+
     def delete(self, _id):
         """
         Delete pbehavior.
@@ -433,10 +465,11 @@ def exports(ws):
             ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
 
         try:
-            return rhpb.update(pbehavior_id, **elements)
-        except TypeError:
+            return rhpb.update_v2(pbehavior_id, **elements)
+        except TypeError as te:
             return gen_json_error(
-                {'description': 'The fields name, filter, author, tstart, tstop are required.'},
+                {'description': str(
+                    'The fields name, filter, author, tstart, tstop are required.')},
                 HTTP_ERROR
             )
         except ValueError as exc:
