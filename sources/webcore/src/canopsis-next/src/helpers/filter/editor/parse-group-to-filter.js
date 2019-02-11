@@ -1,7 +1,17 @@
-import { isEmpty, isObject, cloneDeep } from 'lodash';
+import { isEmpty, isObject, cloneDeep, isBoolean, isNumber } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_INPUT_TYPES } from '@/constants';
 import uid from '@/helpers/uid';
+
+function getInputType(input) {
+  if (isBoolean(input)) {
+    return FILTER_INPUT_TYPES.boolean;
+  } else if (isNumber(input)) {
+    return FILTER_INPUT_TYPES.number;
+  }
+
+  return FILTER_INPUT_TYPES.string;
+}
 
 /**
  * @description Determine the operator and the input value of a rule
@@ -25,6 +35,7 @@ function ruleOperatorAndInput(rule) {
     } else {
       const [input] = Object.values(rule);
       parsedRule.input = input;
+      parsedRule.inputType = getInputType(input);
       parsedRule.operator = FILTER_OPERATORS.equal;
     }
   } else if (typeof ruleValue === 'object') {
@@ -35,6 +46,7 @@ function ruleOperatorAndInput(rule) {
       case ('$eq'): {
         const [input] = Object.values(rule);
         parsedRule.input = input;
+        parsedRule.inputType = getInputType(input);
         parsedRule.operator = FILTER_OPERATORS.equal;
         break;
       }
@@ -47,6 +59,7 @@ function ruleOperatorAndInput(rule) {
           const [inputObject] = Object.values(rule);
           const [input] = Object.values(inputObject);
           parsedRule.input = input;
+          parsedRule.inputType = getInputType(input);
           parsedRule.operator = FILTER_OPERATORS.notEqual;
         }
         break;
@@ -55,6 +68,7 @@ function ruleOperatorAndInput(rule) {
         const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
+        parsedRule.inputType = getInputType(input);
         parsedRule.operator = FILTER_OPERATORS.in;
         break;
       }
@@ -62,6 +76,7 @@ function ruleOperatorAndInput(rule) {
         const [inputArray] = Object.values(ruleValue);
         const [input] = inputArray;
         parsedRule.input = input;
+        parsedRule.inputType = getInputType(input);
         parsedRule.operator = FILTER_OPERATORS.notIn;
         break;
       }
@@ -73,10 +88,12 @@ function ruleOperatorAndInput(rule) {
         const [input] = Object.values(inputObject);
 
         parsedRule.input = input;
+        parsedRule.inputType = getInputType(input);
         parsedRule.operator = operator;
       }
     }
   }
+
   return parsedRule;
 }
 
@@ -93,6 +110,7 @@ function parseRuleToFilter(rule) {
 
   parsedRule.operator = operator;
   parsedRule.input = input;
+  parsedRule.inputType = getInputType(input);
 
   return parsedRule;
 }
