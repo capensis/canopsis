@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Filters
+        span.headline {{ $t('common.filters') }}
     v-card-text
       filters-list-component(
       :filters.sync="filters",

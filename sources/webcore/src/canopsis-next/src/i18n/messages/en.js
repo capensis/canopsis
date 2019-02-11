@@ -71,6 +71,7 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    filters: 'Filters',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
