@@ -1,17 +1,7 @@
-import { isEmpty, isObject, cloneDeep, isBoolean, isNumber, isNull } from 'lodash';
+import { isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_INPUT_TYPES } from '@/constants';
+import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
 import uid from '@/helpers/uid';
-
-export function getInputType(input) {
-  if (isBoolean(input)) {
-    return FILTER_INPUT_TYPES.boolean;
-  } else if (isNumber(input)) {
-    return FILTER_INPUT_TYPES.number;
-  }
-
-  return FILTER_INPUT_TYPES.string;
-}
 
 /**
  * @description Determine the operator and the input value of a rule

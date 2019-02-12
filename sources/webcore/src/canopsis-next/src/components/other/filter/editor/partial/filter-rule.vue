@@ -44,15 +44,15 @@
             @input="updateInputTypeField"
             )
               template(slot="selection", slot-scope="{ parent, item, index }")
-                v-icon.type-icon(small) {{ getIcon(item.value) }}
+                v-icon.type-icon(small) {{ getInputTypeIcon(item.value) }}
               template(slot="item", slot-scope="{ item }")
                 v-list-tile-avatar.small-avatar
-                  v-icon.type-icon(small) {{ getIcon(item.value) }}
+                  v-icon.type-icon(small) {{ getInputTypeIcon(item.value) }}
                 v-list-tile-content
                   v-list-tile-title {{ item.text }}
           v-flex(xs9)
             v-text-field.input-field(
-            v-show="isInputType",
+            v-if="isInputTypeText",
             :type="rule.inputType === $constants.FILTER_INPUT_TYPES.number ? 'number' : 'text'",
             :value="rule.input",
             @input="updateInputField",
@@ -62,7 +62,7 @@
             flat
             )
             v-switch.ma-0.ml-3.pa-0(
-            v-show="$constants.FILTER_INPUT_TYPES.boolean === inputType",
+            v-else,
             :inputValue="rule.input",
             @change="updateField('input', $event)",
             solo-inverted,
@@ -73,9 +73,9 @@
 </template>
 
 <script>
-import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
+import { isBoolean, isNumber } from 'lodash';
 
-import { getInputType } from '@/helpers/filter/editor/parse-group-to-filter';
+import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
@@ -123,7 +123,21 @@ export default {
     };
   },
   computed: {
-    getIcon() {
+    inputType() {
+      if (isBoolean(this.rule.input)) {
+        return FILTER_INPUT_TYPES.boolean;
+      } else if (isNumber(this.rule.input)) {
+        return FILTER_INPUT_TYPES.number;
+      }
+
+      return FILTER_INPUT_TYPES.string;
+    },
+
+    isInputTypeText() {
+      return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.inputType);
+    },
+
+    getInputTypeIcon() {
       const TYPES_ICONS_MAP = {
         [FILTER_INPUT_TYPES.string]: 'title',
         [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
@@ -132,12 +146,7 @@ export default {
 
       return type => TYPES_ICONS_MAP[type];
     },
-    inputType() {
-      return getInputType(this.rule.input);
-    },
-    isInputType() {
-      return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.inputType);
-    },
+
     isShownInputField() {
       return ![
         FILTER_OPERATORS.isEmpty,
