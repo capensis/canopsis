@@ -15,8 +15,8 @@
         v-textarea(
         v-model="requestString",
         :label="$t('filterEditor.tabs.advancedEditor')",
-        @input="updateRequestString",
         rows="10",
+        @input="updateRequestString"
         )
         v-layout(justify-center)
           v-flex(xs10 md-6)
@@ -68,27 +68,30 @@ export default {
     },
   },
   data() {
-    let filter;
+    const data = {
+      filter: cloneDeep(FILTER_DEFAULT_VALUES.group),
+      activeTab: 0,
+      parseError: '',
+      requestString: '',
+      isRequestStringChanged: false,
+    };
 
     try {
       if (this.value !== '') {
         const parsedFilter = isString(this.value) ? JSON.parse(this.value) : this.value;
 
         if (!isEmpty(parsedFilter)) {
-          filter = parseGroupToFilter(parsedFilter);
+          data.filter = parseGroupToFilter(parsedFilter);
         }
       }
     } catch (err) {
-      console.warn(err);
+      data.activeTab = 1;
+      data.requestString = isString(this.value) ? this.value : JSON.stringify(this.value);
+      data.isRequestStringChanged = true;
+      data.parseError = this.$t('filterEditor.errors.invalidJSON');
     }
 
-    return {
-      filter: filter || cloneDeep(FILTER_DEFAULT_VALUES.group),
-      activeTab: 0,
-      requestString: '',
-      parseError: '',
-      isRequestStringChanged: false,
-    };
+    return data;
   },
   computed: {
     request() {
@@ -139,8 +142,12 @@ export default {
       }
     },
 
-    updateRequestString() {
-      this.isRequestStringChanged = true;
+    updateRequestString(requestString) {
+      if (!this.isRequestStringChanged) {
+        this.isRequestStringChanged = true;
+      }
+
+      this.$emit('input', requestString);
     },
 
     openAdvancedTab() {
@@ -151,14 +158,15 @@ export default {
 
     parse() {
       this.parseError = '';
+
       try {
         if (this.requestString !== '') {
           this.updateFilter(parseGroupToFilter(JSON.parse(this.requestString)));
-          this.isRequestStringChanged = false;
         } else {
           this.requestString = JSON.stringify(this.request, undefined, 4);
-          this.isRequestStringChanged = false;
         }
+
+        this.isRequestStringChanged = false;
       } catch (err) {
         this.parseError = this.$t('filterEditor.errors.invalidJSON');
       }

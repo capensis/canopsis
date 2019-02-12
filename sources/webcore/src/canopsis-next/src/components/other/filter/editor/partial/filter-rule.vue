@@ -36,7 +36,7 @@
           v-flex(xs3)
             v-select(
             :items="types",
-            :value="rule.inputType",
+            :value="inputType",
             solo-inverted,
             hide-details,
             dense,
@@ -44,9 +44,12 @@
             @input="updateInputTypeField"
             )
               template(slot="selection", slot-scope="{ parent, item, index }")
-                v-icon.type-icon(v-if="item.value === $constants.FILTER_INPUT_TYPES.string", small) title
-                v-icon.type-icon(v-if="item.value === $constants.FILTER_INPUT_TYPES.number", small) exposure_plus_1
-                v-icon.type-icon(v-if="item.value === $constants.FILTER_INPUT_TYPES.boolean", small) toggle_on
+                v-icon.type-icon(small) {{ getIcon(item.value) }}
+              template(slot="item", slot-scope="{ item }")
+                v-list-tile-avatar.small-avatar
+                  v-icon.type-icon(small) {{ getIcon(item.value) }}
+                v-list-tile-content
+                  v-list-tile-title {{ item.text }}
           v-flex(xs9)
             v-text-field.input-field(
             v-show="isInputType",
@@ -59,7 +62,7 @@
             flat
             )
             v-switch.ma-0.ml-3.pa-0(
-            v-show="$constants.FILTER_INPUT_TYPES.boolean === rule.inputType",
+            v-show="$constants.FILTER_INPUT_TYPES.boolean === inputType",
             :inputValue="rule.input",
             @change="updateField('input', $event)",
             solo-inverted,
@@ -71,6 +74,8 @@
 
 <script>
 import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
+
+import { getInputType } from '@/helpers/filter/editor/parse-group-to-filter';
 
 import formMixin from '@/mixins/form';
 
@@ -118,8 +123,20 @@ export default {
     };
   },
   computed: {
+    getIcon() {
+      const TYPES_ICONS_MAP = {
+        [FILTER_INPUT_TYPES.string]: 'title',
+        [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
+        [FILTER_INPUT_TYPES.boolean]: 'toggle_on',
+      };
+
+      return type => TYPES_ICONS_MAP[type];
+    },
+    inputType() {
+      return getInputType(this.rule.input);
+    },
     isInputType() {
-      return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.rule.inputType);
+      return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.inputType);
     },
     isShownInputField() {
       return ![
@@ -132,13 +149,11 @@ export default {
   },
   methods: {
     updateInputField(value) {
-      const isInputTypeNumber = this.rule.inputType === FILTER_INPUT_TYPES.number;
+      const isInputTypeNumber = this.inputType === FILTER_INPUT_TYPES.number;
 
       this.updateField('input', isInputTypeNumber ? Number(value) : value);
     },
     updateInputTypeField(value) {
-      this.updateField('inputType', value);
-
       switch (value) {
         case FILTER_INPUT_TYPES.number:
           this.updateField('input', Number(this.rule.input));
@@ -163,5 +178,14 @@ export default {
   .type-icon {
     color: inherit;
     opacity: .6;
+  }
+
+  .small-avatar {
+    min-width: 30px;
+
+    & /deep/ .v-avatar {
+      width: 20px!important;
+      height: 20px!important;
+    }
   }
 </style>
