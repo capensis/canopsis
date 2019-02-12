@@ -44,6 +44,7 @@ export const MODALS = {
   manageHistogramGroups: 'manage-histogram-groups',
   alarmsList: 'alarms-list',
   addStat: 'add-stat',
+  statsDateInterval: 'stats-date-interval',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
   textFieldEditor: 'text-field-editor',
@@ -191,6 +192,7 @@ export const WIDGET_TYPES = {
   weather: 'ServiceWeather',
   statsHistogram: 'StatsHistogram',
   statsCurves: 'StatsCurves',
+  statsNewCurves: 'StatsNewCurves',
   statsTable: 'StatsTable',
   statsCalendar: 'StatsCalendar',
   statsNumber: 'StatsNumber',
@@ -202,6 +204,7 @@ export const SIDE_BARS = {
   weatherSettings: 'weather-settings',
   statsHistogramSettings: 'stats-histogram-settings',
   statsCurvesSettings: 'stats-curves-settings',
+  statsNewCurvesSettings: 'stats-new-curves-settings',
   statsTableSettings: 'stats-table-settings',
   statsCalendarSettings: 'stats-calendar-settings',
   statsNumberSettings: 'stats-number-settings',
@@ -216,6 +219,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
+  [WIDGET_TYPES.statsNewCurves]: SIDE_BARS.statsNewCurvesSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {

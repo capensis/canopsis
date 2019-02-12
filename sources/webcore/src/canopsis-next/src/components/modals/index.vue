@@ -46,6 +46,7 @@ import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ti
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
 import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
+import StatsDateInterval from './stats/stats-date-interval.vue';
 import AlarmsList from './alarm/alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
@@ -94,6 +95,7 @@ export default {
     CreateWatcherPauseEvent,
     ManageHistogramGroups,
     AddStat,
+    StatsDateInterval,
     AlarmsList,
     CreateUser,
     CreateRole,
