@@ -130,7 +130,7 @@ export default {
     },
     async submit() {
       if (this.form.type === EVENT_FILTER_RULE_TYPES.enrichment) {
-        const isFormValid = await this.$validator.validateAll();
+        const isFormValid = await this.$validator.validateAll(['actions']);
 
         if (isFormValid) {
           this.config.action({
