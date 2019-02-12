@@ -90,7 +90,9 @@ export default {
     }
   },
   created() {
-    this.$validator.attach('actions', 'required', {
+    this.$validator.attach({
+      name: 'actions',
+      rules: 'required',
       getter: () => this.enrichmentOptions.actions,
       context: () => this,
     });
@@ -128,7 +130,8 @@ export default {
     },
     async submit() {
       if (this.form.type === EVENT_FILTER_RULE_TYPES.enrichment) {
-        const isFormValid = await this.$validator.validate('actions');
+        const isFormValid = await this.$validator.validateAll();
+
         if (isFormValid) {
           this.config.action({
             ...this.form,
