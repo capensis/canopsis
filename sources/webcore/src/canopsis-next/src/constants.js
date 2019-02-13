@@ -16,6 +16,7 @@ export const ENTITIES_TYPES = {
   user: 'user',
   role: 'role',
   eventFilterRule: 'eventFilterRule',
+  webhook: 'webhook',
 };
 
 export const MODALS = {
