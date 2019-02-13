@@ -71,6 +71,7 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    webhooks: 'Webhooks',
     actions: {
       close: 'Close',
       acknowledge: 'Acknowledge',
