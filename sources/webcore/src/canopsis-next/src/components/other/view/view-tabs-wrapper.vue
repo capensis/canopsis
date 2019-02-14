@@ -84,16 +84,11 @@ export default {
       this.tabs = [...this.view.tabs];
     },
     async submit() {
-      const activeTab = this.view.tabs[this.value];
-      const activeTabIndex = this.tabs.findIndex(tab => activeTab._id === tab._id);
-
-      await this.updateViewMethod({
+      this.updateViewMethod({
         ...this.view,
 
         tabs: this.tabs,
       });
-
-      this.$emit('input', activeTabIndex);
     },
   },
 };

@@ -5,7 +5,7 @@
     :view="view",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateView({ id, data })"
+    :updateViewMethod="updateViewWithActiveTabUpdate",
     )
     .fab
       v-tooltip(left)
@@ -82,7 +82,6 @@ export default {
   },
   data() {
     return {
-      activeTabIndex: null,
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
@@ -189,6 +188,16 @@ export default {
 
     toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
+    },
+
+    async updateViewWithActiveTabUpdate(view) {
+      const newActiveTabIndex = view.tabs.findIndex(tab => this.activeTab._id === tab._id);
+
+      await this.updateView({ id: this.id, data: view });
+
+      if (newActiveTabIndex >= 0) {
+        this.$router.replace({ query: { tabIndex: newActiveTabIndex } });
+      }
     },
   },
 };
