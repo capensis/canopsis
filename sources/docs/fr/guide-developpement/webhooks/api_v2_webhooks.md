@@ -276,7 +276,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/declare_externa
 
 ##### Réponse en cas d'erreur
 
-**Condition** : Aucun Webhook correspondant à l'`id n'est trouvé.
+**Condition** : Aucun Webhook correspondant à l'`id` n'est trouvé.
 
 **Code** : `404 NOT FOUND`
 
