@@ -169,10 +169,10 @@ Supprime un Webhook en fonction de son `id`.
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le heartbeat avec l'`id` `declare_external_ticket` :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le webhook avec l'`id` `declare_external_ticket` :
 
 ```sh
-curl -X DEL -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/declare_external_ticket'
+curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_ticket'
 ```
 
 #### Réponse en cas de réussite
@@ -219,10 +219,10 @@ Récupère un ou plusieurs Webhook crée en base.
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le heartbeat avec l'`id` `declare_external_ticket` :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le webhook avec l'`id` `declare_external_ticket` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/declare_external_ticket'
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_ticket'
 ```
 
 ##### Réponse en cas de réussite
@@ -315,7 +315,7 @@ Récupèr tous les Webhooks stocké en base
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les heartbeats :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les webhooks :
 
 ```sh
 curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook'
