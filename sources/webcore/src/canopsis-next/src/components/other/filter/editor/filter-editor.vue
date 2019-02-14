@@ -119,11 +119,15 @@ export default {
   },
   created() {
     if (this.required && this.$validator) {
-      this.$validator.attach('filter', 'required:true', {
+      this.$validator.attach({
+        name: 'filter',
+        rules: 'required:true',
         getter: () => {
           const firstRule = Object.values(this.filter.rules)[0];
+          const isFilterNotEmpty = firstRule && firstRule.field !== '' && firstRule.operator !== '';
+          const isRequestStringNotEmpty = this.isRequestStringChanged && this.requestString !== '';
 
-          return firstRule && firstRule.field !== '' && firstRule.operator !== '' && firstRule.input !== '';
+          return isFilterNotEmpty || isRequestStringNotEmpty;
         },
         context: () => this,
       });
