@@ -10,7 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-date-interval(v-model="settings.widget.parameters.interval")
+      field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
@@ -20,6 +20,8 @@
       :stats="settings.widget.parameters.stats",
       v-model="settings.widget.parameters.statsColors"
       )
+      v-divider
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -38,9 +40,6 @@ import FieldStatsColors from './fields/stats/stats-colors.vue';
 
 export default {
   name: SIDE_BARS.statsNewCurvesSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldRowGridSize,
     FieldTitle,

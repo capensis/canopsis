@@ -151,12 +151,14 @@ export function generateWidgetByType(type) {
       break;
     case WIDGET_TYPES.statsNewCurves:
       specialParameters = {
-        stats: {},
-        interval: {
-          duration: `1${STATS_DURATION_UNITS.day}`,
-          tstart: moment(),
-          tstop: moment(),
+        mfilter: {},
+        dateInterval: {
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
         },
+        stats: {},
+        statsColors: {},
       };
       break;
     case WIDGET_TYPES.statsTable:

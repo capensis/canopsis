@@ -93,6 +93,10 @@ export function parseStringToDateInterval(dateString, type) {
     deltaUnit = preparedDateString.slice(-3, -2);
     deltaValue = preparedDateString.slice(1, -3);
 
+    if (deltaUnit === 'm') {
+      deltaUnit = deltaUnit.toUpperCase();
+    }
+
     if (type === 'start') {
       return operator === '+' ?
         moment().utc().startOf(roundUnit).add(deltaValue, deltaUnit) :
@@ -109,6 +113,10 @@ export function parseStringToDateInterval(dateString, type) {
     deltaUnit = preparedDateString.slice(-1);
     deltaValue = preparedDateString.slice(1, -1);
 
+    if (deltaUnit === 'm') {
+      deltaUnit = deltaUnit.toUpperCase();
+    }
+
     if (type === 'start') {
       return operator === '+' ?
         moment().utc().add(deltaValue, deltaUnit) :
@@ -122,6 +130,11 @@ export function parseStringToDateInterval(dateString, type) {
     }
   } else if (preparedDateString.match(/^\/[hdwmy]{1}$/)) {
     roundUnit = preparedDateString.slice(-1);
+
+    if (roundUnit === 'm') {
+      roundUnit = roundUnit.toUpperCase();
+    }
+
     if (type === 'start') {
       return moment().utc().startOf(roundUnit);
     }

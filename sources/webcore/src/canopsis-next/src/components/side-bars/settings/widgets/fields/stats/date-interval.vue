@@ -11,10 +11,20 @@ import { MODALS } from '@/constants';
 
 export default {
   mixins: [modalMixin],
+  props: {
+    value: {
+      type: Object,
+      required: true,
+    },
+  },
   methods: {
     showEditModal() {
       this.showModal({
         name: MODALS.statsDateInterval,
+        config: {
+          interval: this.value,
+          action: date => this.$emit('input', date),
+        },
       });
     },
   },

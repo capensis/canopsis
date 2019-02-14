@@ -96,6 +96,7 @@ export default {
         [WIDGET_TYPES.weather]: 'weather',
         [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
         [WIDGET_TYPES.statsCurves]: 'stats-curves',
+        [WIDGET_TYPES.statsNewCurves]: 'stats-new-curves',
         [WIDGET_TYPES.statsTable]: 'stats-table',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
         [WIDGET_TYPES.statsNumber]: 'stats-number',

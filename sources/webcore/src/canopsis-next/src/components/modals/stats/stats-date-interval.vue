@@ -13,8 +13,8 @@
         stats-date-selector(v-model="dateForm", :periodUnit="periodUnit")
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click="") {{ $t('common.submit') }}
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -56,6 +56,23 @@ export default {
         },
       ],
     };
+  },
+  mounted() {
+    if (this.config.interval) {
+      const { periodUnit, tstart, tstop } = this.config.interval;
+
+      this.periodUnit = periodUnit;
+      this.dateForm = { ...this.dateForm, tstart, tstop };
+    }
+  },
+  methods: {
+    async submit() {
+      if (this.config.action) {
+        this.config.action({ periodUnit: this.periodUnit, tstart: this.dateForm.tstart, tstop: this.dateForm.tstop });
+      }
+
+      this.hideModal();
+    },
   },
 };
 </script>
