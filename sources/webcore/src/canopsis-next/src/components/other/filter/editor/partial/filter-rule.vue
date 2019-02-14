@@ -61,9 +61,10 @@
             single-line,
             flat
             )
-            v-switch.ma-0.ml-3.pa-0(
+            v-switch.ma-0.ml-3.pa-0.switch-field(
             v-else,
             :inputValue="rule.input",
+            :label="switchLabel",
             @change="updateField('input', $event)",
             solo-inverted,
             hide-details,
@@ -123,6 +124,10 @@ export default {
     };
   },
   computed: {
+    switchLabel() {
+      return String(this.rule.input);
+    },
+
     inputType() {
       if (isBoolean(this.rule.input)) {
         return FILTER_INPUT_TYPES.boolean;
@@ -196,5 +201,9 @@ export default {
       width: 20px!important;
       height: 20px!important;
     }
+  }
+
+  .switch-field /deep/ .v-label {
+    text-transform: capitalize;
   }
 </style>
