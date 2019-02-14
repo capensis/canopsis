@@ -27,6 +27,16 @@ Une règle est un document JSON contenant les paramètres suivants :
 
 Si la variable d'environnement `CPS_CERTIFICATES_DIRECTORY` est définie, et est un chemin vers un dossier existant, les fichiers de ce dossier sont ajoutés aux certificats SSL de confiance pour les requêtes effectuées par le service de webhooks.
 
+### Activation d'un webhook
+
+Le champ `hook` représente les conditions d'activation d'un webhook. Il contient obligatoirement `triggers` qui est un tableau de triggers et éventuellement des `patterns` sur les alarmes, les entités et les évenements.
+
+Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `"ackremove"`, `"cancel"`, `"uncancel"`, `"declareticket"`, `"assocticket"`, `"snooze"`, `"unsnooze"`, `"resolve"`, `"done"`, et `"comment"`.
+
+`alarm_patterns` est un tableau pouvant contenir plusieurs patterns d'alarmes. Si plusieurs patterns sont ainsi définies, il suffit qu'un seul pattern d'alarme corresponde à l'alarme en cours pour que la condition sur les `alarm_patterns` soit validée. Il en va de même pour `entity_patterns` (tableaux de patterns d'entités) et `event_patterns` (tableaux de patterns d'événements).
+
+Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
+
 ### Templates
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évenement ou de l'entité.
@@ -40,6 +50,14 @@ On peut également générer du texte en fonction de l'état de la variable. Dan
 De même façon que le `or` et le `eq`, il est possible de tester les conditions avec `and`, `not`, `ne` (not equal), `lt` (less than), `le` (less than or equal), `gt` (greater than) ou `ge` (greater than or equal).
 
 Pour plus d'informations, vous pouvez consulter la [documentaion offficelle de Go sur les templates](https://golang.org/pkg/text/template).
+
+### Données externes
+
+Si `declare_ticket` est défini, les données récupérées du service externe sont stockées dans l'alarme et un step `declareticket` est ajouté à l'alarme.
+
+Dans `declare_ticket`, le champ `ticket_id` définit le champ où se trouve l'identificant du ticket créé via le service externe. Par exemple, si l'API retourne l'id dans le champ `numberTicket`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "numberTicket"`.
+
+Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
 ### Exemples
 
@@ -84,9 +102,11 @@ Pour plus d'informations, vous pouvez consulter la [documentaion offficelle de G
 }
 ```
 
-## Activation des webhooks
+## Activation du plugin webhooks
 
-Le moteur axe par défaut ne contient pas ce plugin gérant les webhooks. Pour pouvoire utiliser les webhooks, il faut :
+Le moteur axe par défaut ne contient pas ce plugin gérant les webhooks. Pour pouvoir utiliser les webhooks, il faut :
 - compiler le plugin webhooks dans le répertoire contenant le plugin webhooks `CGO_ENABLED=1 go build -buildmode=plugin -o webhookPlugin.so main.go`
-- lancer le moteur axe avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`
+- lancer le moteur axe avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`.
+
+Le plugin webhook se trouve dans l'image `engine-axe-cat`.
 
