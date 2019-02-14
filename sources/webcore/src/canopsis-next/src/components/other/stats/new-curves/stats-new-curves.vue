@@ -47,7 +47,7 @@ export default {
         It's the same for all stats, that's why we can just take the first.
         We then give it to the date filter, to display it with a date format
         */
-        values[stats[0]].sum.map(value => labels.push(this.$options.filters.date(value.start, 'long')));
+        values[stats[0]].sum.map(value => labels.push(this.$options.filters.date(value.end, 'long')));
         return labels;
       }
       return labels;
