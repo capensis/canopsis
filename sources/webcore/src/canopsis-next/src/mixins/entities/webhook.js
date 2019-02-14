@@ -2,23 +2,23 @@ import { createNamespacedHelpers } from 'vuex';
 
 import popupMixin from '@/mixins/popup';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('eventFilterRule');
+const { mapActions, mapGetters } = createNamespacedHelpers('webhook');
 
 export default {
   mixins: [popupMixin],
   computed: {
     ...mapGetters({
-      eventFilterRulesPending: 'pending',
-      eventFilterRules: 'items',
+      webhooksPending: 'pending',
+      webhooks: 'items',
     }),
   },
   methods: {
     ...mapActions({
-      fetchEventFilterRulesList: 'fetchList',
-      refreshEventFilterList: 'fetchListWithPreviousParams',
-      removeEventFilterRule: 'remove',
-      createEventFilterRule: 'create',
-      editEventFilterRule: 'edit',
+      fetchWebhooksList: 'fetchList',
+      refreshWebhooksList: 'fetchListWithPreviousParams',
+      removeWebhook: 'remove',
+      createWebhook: 'create',
+      editWebhook: 'edit',
     }),
 
     async createEventFilterRuleWithPopup(rule) {
