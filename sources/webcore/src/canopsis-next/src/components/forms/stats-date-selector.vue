@@ -31,7 +31,13 @@
             v-btn(slot="activator", icon, fab, small, color="secondary")
               v-icon calendar_today
             date-time-picker(:value="toDateObject(value.tstop)", @submit="handleTstopChange", roundHours)
-      v-flex(xs7)
+      v-flex.px-1(xs7)
+        h4.primary--text Quick ranges
+        v-layout(wrap)
+          v-flex(xs3, v-for="range in $constants.STATS_QUICK_RANGES", :key="range.value")
+            a.black--text(
+            @click="updateRange(range.start, range.stop)",
+            ) {{ $t(`settings.statsDateInterval.quickRanges.${range.value}`) }}
 </template>
 
 <script>
@@ -102,13 +108,15 @@ export default {
     handleTstartChange(tstart) {
       this.updateField('tstart', tstart);
       this.isTstartDateMenuOpen = false;
-      this.$refs.menu.save();
     },
 
     handleTstopChange(tstop) {
       this.updateField('tstop', tstop);
       this.isTstopDateMenuOpen = false;
-      this.$refs.menu.save();
+    },
+
+    updateRange(tstart, tstop) {
+      this.$emit('input', { tstart, tstop });
     },
   },
 };

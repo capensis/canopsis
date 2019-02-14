@@ -379,6 +379,99 @@ export const STATS_CRITICITY = {
   critical: 'critical',
 };
 
+export const STATS_QUICK_RANGES = {
+  last2Days: {
+    value: 'last2Days',
+    start: 'now-2d',
+    stop: 'now',
+  },
+  last7Days: {
+    value: 'last7Days',
+    start: 'now-7d',
+    stop: 'now',
+  },
+  last30Days: {
+    value: 'last30Days',
+    start: 'now-30d',
+    stop: 'now',
+  },
+  last1Year: {
+    value: 'last1Year',
+    start: 'now-1y',
+    stop: 'now',
+  },
+  yesterday: {
+    value: 'yesterday',
+    start: 'now-1d/d',
+    stop: 'now-1d/d',
+  },
+  previousWeek: {
+    value: 'previousWeek',
+    start: 'now-1w/w',
+    stop: 'now-1w/w',
+  },
+  previousMonth: {
+    value: 'previousMonth',
+    start: 'now-1m/m',
+    stop: 'now-1m/m',
+  },
+  today: {
+    value: 'today',
+    start: 'now/d',
+    stop: 'now/d',
+  },
+  todaySoFar: {
+    value: 'todaySoFar',
+    start: 'now/d',
+    stop: 'now',
+  },
+  thisWeek: {
+    value: 'thisWeek',
+    start: 'now/w',
+    stop: 'now/w',
+  },
+  thisWeekSoFar: {
+    value: 'thisWeekSoFar',
+    start: 'now/w',
+    stop: 'now',
+  },
+  thisMonth: {
+    value: 'thisMonth',
+    start: 'now/m',
+    stop: 'now/m',
+  },
+  thisMonthSoFar: {
+    value: 'thisMonthSoFar',
+    start: 'now/m',
+    stop: 'now',
+  },
+  last1Hour: {
+    value: 'last1Hour',
+    start: 'now-1h',
+    stop: 'now',
+  },
+  last3Hour: {
+    value: 'last3Hour',
+    start: 'now-3h',
+    stop: 'now',
+  },
+  last6Hour: {
+    value: 'last6Hour',
+    start: 'now-6h',
+    stop: 'now',
+  },
+  last12Hour: {
+    value: 'last12Hour',
+    start: 'now-12h',
+    stop: 'now',
+  },
+  last24Hour: {
+    value: 'last24Hour',
+    start: 'now-24h',
+    stop: 'now',
+  },
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
