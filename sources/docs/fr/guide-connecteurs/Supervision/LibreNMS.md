@@ -13,6 +13,9 @@ Voici le processus complet d'une vérification LibreNMS menant à une alerte :
 
 ## Installation et configuration
 
+:warning: Le module php `bcmath` est nécéssaire pour le bon fonctionnement du
+connecteur.
+
 Le connecteur est installé par défaut lors d'une installation de LibreNMS à
 l'adresse `/opt/librenms/LibreNMS/Alert/Transport/Canopsis.php` :
 
@@ -136,10 +139,12 @@ class Canopsis extends Transport
     }
 }
 ```
+
 Les principales modifications à apporter seront dans la variable `msg_body`:
-* `connector` et `connector_name` corresponde à la valeur affichée dans la colonne éponyme de la webUI Canopsis.
+
+* `connector` et `connector_name` correspondent à la valeur affichée dans la colonne éponyme de la webUI Canopsis.
 * `component` donne par défaut le nom d'hôte ayant déclenché l’alerte.
-* `resource` donne par défaut le nom de l'alarme définit dans LibreNMS.
+* `resource` donne par défaut le nom de l'alarme défini dans LibreNMS.
 
 Ci-dessous une liste non exhaustive des différentes variables pouvant être
 utilisées :
@@ -162,6 +167,20 @@ utilisées :
 
 ```
 
-Pour un meilleur lisibilité des alarmes, il est conseillé lors de la définition
-de l’alarme dans LibreNMS de lui donnée un nom explicite et de changer la
+Pour une meilleure lisibilité des alarmes, il est conseillé lors de la définition
+de l’alarme dans LibreNMS de lui donner un nom explicite et de changer la
 variable output à `"output" => $obj['title']`
+
+## Utilisation dans LibreNMS
+
+Il faut ensuite créer un Transport Canopsis : 
+
+![Création d'un transport dans LibreNMS](img/librenms1.png)
+
+Et mettre les différentes informations de votre infrastructure (Ci-dessous les informations par défaut à modifier selon votre installation) :
+
+![Déclaration du transport de type Canopsis](img/librenms2.png)
+
+Une fois le transport créer il suffit de l'assigner à une `Alert Rule` (cf point 1) dans la partie `Transports` :
+
+![Création d'une alerte avec le transport Canopsis](img/librenms3.png)
