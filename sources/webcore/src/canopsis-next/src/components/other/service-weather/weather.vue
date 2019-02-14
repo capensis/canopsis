@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import widgetQueryMixin from '@/mixins/widget/query';
 
@@ -28,6 +29,7 @@ export default {
     WeatherItem,
   },
   mixins: [
+    widgetPeriodicRefreshMixin,
     entitiesWatcherMixin,
     widgetQueryMixin,
   ],
