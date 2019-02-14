@@ -31,6 +31,14 @@ Si la variable d'environnement `CPS_CERTIFICATES_DIRECTORY` est définie, et est
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évenement ou de l'entité.
 
+`{{ .Alarm }}` permet d'accéder aux propriétés d'une alarme, de même que `{{ .Event }}` pour un événement et `{{ .Entity }}` pour une entité.
+
+Ces trois éléments contiennent plusieurs qu'on peut utiliser pour créer des chaînes dynamiques. Par exemple, `"Component : {{ .Alarm.Value.Component }}` va créer la chaîne de caractères `"Component : comp"` si le nom du component est `comp`.
+
+On peut également générer du texte en fonction de l'état de la variable. Dans le cas suivant `"{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}"`, on obtiendra `"http://127.0.0.1:5000/even"` si le statut de l'alarm vaut 0, 2 ou 4, `"http://127.0.0.1:5000/odd"` sinon.
+
+De même façon que le `or` et le `eq`, il est possible de tester les conditions avec `and`, `not`, `ne` (not equal), `lt` (less than), `le` (less than or equal), `gt` (greater than) ou `ge` (greater than or equal).
+
 Pour plus d'informations, vous pouvez consulter la [documentaion offficelle de Go sur les templates](https://golang.org/pkg/text/template).
 
 ### Exemples
