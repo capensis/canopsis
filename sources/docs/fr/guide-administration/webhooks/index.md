@@ -83,3 +83,10 @@ Pour plus d'informations, vous pouvez consulter la [documentaion offficelle de G
     }
 }
 ```
+
+## Activation des webhooks
+
+Le moteur axe par défaut ne contient pas ce plugin gérant les webhooks. Pour pouvoire utiliser les webhooks, il faut :
+- compiler le plugin webhooks dans le répertoire contenant le plugin webhooks `CGO_ENABLED=1 go build -buildmode=plugin -o webhookPlugin.so main.go`
+- lancer le moteur axe avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`
+
