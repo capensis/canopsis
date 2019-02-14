@@ -60,6 +60,7 @@ export const MODALS = {
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
+  createWebhook: 'create-webhook',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -636,3 +637,22 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';
+
+export const WEBHOOK_TRIGGERS = {
+  create: 'create',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  statusinc: 'statusinc',
+  statusdec: 'statusdec',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  cancel: 'cancel',
+  uncancel: 'uncancel',
+  comment: 'comment',
+  done: 'done',
+  declareticket: 'declareticket',
+  assocticket: 'assocticket',
+  snooze: 'snooze',
+  unsnooze: 'unsnooze',
+  resolve: 'resolve',
+};
