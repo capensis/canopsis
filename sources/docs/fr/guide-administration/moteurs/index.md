@@ -28,6 +28,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 |:---------------|:---------------------------------------------------------------------------------|:------------------:|
 | action         | Applique des actions définies par l'utilisateur.                                 |                    |
 | axe            | Gère le cycle de vie des alarmes.                                                |                    |
+| [axe@**webhooks**](../webhooks/index.md)   | Gère le système de webhooks vers des services externes.                                                | ✅                 |
 | che            | Supprime les évènements invalides, gère le contexte, et enrichit les évènements. |                    |
 | heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.       |                    |
 | stat           | Calcule des statistiques sur les états des alarmes.                              |                    |
@@ -68,18 +69,18 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 ```
   -autoDeclareTickets
-        Automatically declare tickets on every alarm
+        Déclare les tickets automatiquement pour chaque alarme.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
   -featureStatEvents
         Envoie les évènements de statistiques
-  -postProcessorsDirectory string
-        The path of the directory containing the post-processing plugins. (default ".")
+  -postProcessorsDirectory
+        Le répetoire contenant les plugins de post-traitement (par défaut ".")
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
-  -publishQueue string
-        Publish event to this queue. (default "Engine_action")
+  -publishQueue
+        Publie les événements sur cette queue. (par défaut "Engine_action")
   -version
         version infos
 ```
@@ -93,7 +94,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         Active la création de context graph. Activé par défaut.
         WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
   -d    debug
-  -dataSourceDirectory string
+  -dataSourceDirectory
         The path of the directory containing the event filter's data source plugins. (default ".")
   -enrichContext
         Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
@@ -106,8 +107,8 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         Print event on processing error
   -processEvent
         enable event processing. enabled by default. (default true)
-  -publishQueue string
-        Publish event to this queue. (default "Engine_event_filter")
+  -publishQueue
+        Publie les événements sur cette queue. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
   -version
