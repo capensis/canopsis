@@ -13,7 +13,8 @@ Voici le processus complet d'une vérification LibreNMS menant à une alerte :
 
 ## Installation et configuration
 
-:warning: Le module php `bcmath` est nécéssaire pour le bon fonctionnement du
+!!! note
+    Le module php `bcmath` est nécéssaire pour le bon fonctionnement du
 connecteur.
 
 Le connecteur est installé par défaut lors d'une installation de LibreNMS à
@@ -173,7 +174,7 @@ variable output à `"output" => $obj['title']`
 
 ## Utilisation dans LibreNMS
 
-Il faut ensuite créer un Transport Canopsis : 
+Il faut ensuite créer un Transport Canopsis :
 
 ![Création d'un transport dans LibreNMS](img/librenms1.png)
 
@@ -181,6 +182,6 @@ Et mettre les différentes informations de votre infrastructure (Ci-dessous les 
 
 ![Déclaration du transport de type Canopsis](img/librenms2.png)
 
-Une fois le transport créer il suffit de l'assigner à une `Alert Rule` (cf point 1) dans la partie `Transports` :
+Une fois le transport créé il suffit de l'assigner à une `Alert Rule` (cf point 1) dans la partie `Transports` :
 
 ![Création d'une alerte avec le transport Canopsis](img/librenms3.png)
