@@ -67,13 +67,19 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ### Utilisation de engine-axe
 
 ```
+  -autoDeclareTickets
+        Automatically declare tickets on every alarm
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
   -featureStatEvents
         Envoie les évènements de statistiques
+  -postProcessorsDirectory string
+        The path of the directory containing the post-processing plugins. (default ".")
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
+  -publishQueue string
+        Publish event to this queue. (default "Engine_action")
   -version
         version infos
 ```
@@ -87,6 +93,8 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         Active la création de context graph. Activé par défaut.
         WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
   -d    debug
+  -dataSourceDirectory string
+        The path of the directory containing the event filter's data source plugins. (default ".")
   -enrichContext
         Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
         WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
