@@ -19,7 +19,7 @@ function ruleOperatorAndInput(rule) {
   /**
    * Switch to determine if it's a short syntax for '$eq' and '$eq:'''
    */
-  if (typeof ruleValue === 'string') {
+  if (typeof ruleValue !== 'object') {
     if (Object.values(rule)[0] === '') {
       parsedRule.operator = FILTER_OPERATORS.isEmpty;
     } else {

@@ -169,4 +169,8 @@ router.beforeResolve((to, from, next) => {
   }
 });
 
+router.afterEach(() => {
+  store.dispatch('entities/sweep');
+});
+
 export default router;
