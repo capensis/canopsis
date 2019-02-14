@@ -5,7 +5,7 @@
     :view="view",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="updateViewWithActiveTabUpdate",
+    :updateViewMethod="data => updateView({ id, data })",
     )
     .fab
       v-tooltip(left)
@@ -93,28 +93,44 @@ export default {
     },
 
     activeTab() {
-      const tabIndex = Number(this.$route.query.tabIndex);
+      const { tabId } = this.$route.query;
 
       if (this.view.tabs && this.view.tabs.length) {
-        if (!tabIndex) {
+        if (!tabId) {
           return this.view.tabs[0];
         }
 
-        return this.view.tabs[tabIndex];
+        return this.view.tabs.find(tab => tab._id === tabId) || null;
       }
 
       return null;
     },
   },
+
   created() {
     document.addEventListener('keydown', this.keyDownListener);
     this.fetchView({ id: this.id });
+    this.registerViewOnceWatcher();
   },
+
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
   },
+
   methods: {
+    registerViewOnceWatcher() {
+      const unwatch = this.$watch('view', (view) => {
+        const { tabId } = this.$route.query;
+
+        if (!tabId && view.tabs && view.tabs.length) {
+          this.$router.replace({ query: { tabId: view.tabs[0]._id } });
+        }
+
+        unwatch();
+      });
+    },
+
     keyDownListener(event) {
       if (event.key === 'Enter' && event.altKey) {
         this.toggleFullScreenMode();
@@ -188,16 +204,6 @@ export default {
 
     toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
-    },
-
-    async updateViewWithActiveTabUpdate(view) {
-      const newActiveTabIndex = view.tabs.findIndex(tab => this.activeTab._id === tab._id);
-
-      await this.updateView({ id: this.id, data: view });
-
-      if (newActiveTabIndex >= 0) {
-        this.$router.replace({ query: { tabIndex: newActiveTabIndex } });
-      }
     },
   },
 };

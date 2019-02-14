@@ -83,6 +83,7 @@ export default {
     cancel() {
       this.tabs = [...this.view.tabs];
     },
+
     async submit() {
       this.updateViewMethod({
         ...this.view,

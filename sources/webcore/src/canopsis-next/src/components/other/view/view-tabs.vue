@@ -17,10 +17,10 @@
     @input="$emit('update:tabs', $event)"
     )
       v-tab.draggable-item(
-      v-for="(tab, index) in tabs",
+      v-for="tab in tabs",
       :key="tab._id",
       :disabled="isTabsChanged",
-      :to="getTabHrefByIndex(index)",
+      :to="getTabHrefById(tab._id)",
       exact,
       ripple
       )
@@ -51,9 +51,9 @@
           v-icon(small) delete
     template(v-if="$scopedSlots.default")
       v-tab-item(
-      v-for="(tab, index) in tabs",
+      v-for="tab in tabs",
       :key="tab._id",
-      :value="getTabHrefByIndex(index)",
+      :value="getTabHrefById(tab._id)",
       lazy
       )
         slot(
@@ -121,13 +121,9 @@ export default {
         disabled: !this.isEditingMode,
       };
     },
-    getTabHrefByIndex() {
-      return (index) => {
-        if (index === 0) {
-          return this.$route.path;
-        }
-
-        const { href } = this.$router.resolve({ query: { tabIndex: index } }, this.$route);
+    getTabHrefById() {
+      return (id) => {
+        const { href } = this.$router.resolve({ query: { tabId: id } }, this.$route);
 
         return href;
       };
