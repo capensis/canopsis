@@ -106,7 +106,7 @@ export default {
     },
 
     handleTstopChange(tstop) {
-      this.updateField('tstart', tstop);
+      this.updateField('tstop', tstop);
       this.isTstopDateMenuOpen = false;
       this.$refs.menu.save();
     },

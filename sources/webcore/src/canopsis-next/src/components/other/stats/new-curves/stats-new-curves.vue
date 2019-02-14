@@ -1,7 +1,11 @@
 <template lang="pug">
   div
-    template(v-if="!pending")
-      stats-curves(:labels="labels", :datasets="datasets.data")
+    stats-curves(v-if="!pending", :labels="labels", :datasets="datasets.data")
+    v-layout(v-else, justify-center)
+      v-progress-circular(
+      indeterminate,
+      color="primary",
+      )
 </template>
 
 <script>
