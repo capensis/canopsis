@@ -185,7 +185,7 @@ Le langage utilisé ici est le Handlebars.
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Une variable est disponible ici pour vous permettre d'affiché les détails de l'entité : `entity`.
+Une variable est disponible ici pour vous permettre d'afficher les détails de l'entité : `entity`.
 Exemple : Pour afficher le champ 'name' de l'entité (qui correspond au nom de l'entité), il vous faut écrire dans le template : `{{ entity.name }}`.
 Tous les champs disponibles dans l'entité sont disponibles ici.
 

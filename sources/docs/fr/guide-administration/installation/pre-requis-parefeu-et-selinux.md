@@ -1,15 +1,17 @@
-# SeLinux & Firewall
+# Pré-requis réseau et de sécurité pour l'installation de Canopsis
 
-## Selinux
+## Désactivation de SELinux
 
-Il est nécessaire de désactiver SeLinux pour installer correctement Canopsis.
-Dans tous les cas la commande `canoctl deploy` s'en charge automatiquement.
-Vous retrouverez cette commande lors de [l'installation par paquets](installation-paquets.md) ou de [l'installation via conteneurs](installation-conteneurs.md).
+Les environnements SELinux ne sont pas pris en charge par Canopsis. Il est donc nécessaire de désactiver SELinux s'il est présent sur votre environnement.
 
-## Firewall
+La commande `canoctl deploy` s'en charge automatiquement lors de votre premier déploiement de Canopsis.
 
-Au niveau du Firewall, certains ports devront être ouverts. Voici une matrice des flux de Canopsis V3 qui répertorie les différents ports utilisés.
-Pour plus de détail, [rendez-vous ici](../administration-avancee/configuration-parefeu-et-selinux.md)
+Plus de détails dans [la documentation des différentes méthodes d'installation](index.md).
 
-![CanoV3Flux](img/matrice-flux-canopsis.png)
+## Pré-requis pare-feu (flux réseau)
 
+Dans le cas où votre environnement nécessite l'ouverture explicite de ports sur un pare-feu, la matrice suivante vous permet de connaître les différents ports réseaux utilisés par une installation de Canopsis 3.
+
+![Matrice des flux Canopsis 3](img/matrice-flux-canopsis.png)
+
+Pour plus de détails, consultez [le guide avancé de sécurité](../administration-avancee/configuration-parefeu-et-selinux.md).

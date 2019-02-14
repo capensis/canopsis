@@ -33,7 +33,7 @@ export function convertSortToQuery({ parameters }) {
  */
 export function convertAlarmWidgetToQuery(widget) {
   const {
-    alarmsStateFilter,
+    alarmsStateFilter = {},
     widgetColumns,
     itemsPerPage,
     mainFilter,
@@ -41,6 +41,8 @@ export function convertAlarmWidgetToQuery(widget) {
 
   const query = {
     page: 1,
+    opened: alarmsStateFilter.opened || false,
+    resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
   };
 
@@ -48,18 +50,8 @@ export function convertAlarmWidgetToQuery(widget) {
     query.filter = mainFilter.filter;
   }
 
-  if (alarmsStateFilter) {
-    if (!isUndefined(alarmsStateFilter.opened)) {
-      query.opened = alarmsStateFilter.opened;
-    }
-
-    if (!isUndefined(alarmsStateFilter.resolved)) {
-      if (alarmsStateFilter.resolved) {
-        query.interval = LIVE_REPORTING_INTERVALS.last30Days;
-      }
-
-      query.resolved = alarmsStateFilter.resolved;
-    }
+  if (query.resolved) {
+    query.interval = LIVE_REPORTING_INTERVALS.last30Days;
   }
 
   if (widgetColumns) {

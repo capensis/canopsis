@@ -72,8 +72,14 @@
 import { find, omit } from 'lodash';
 
 import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
-import { generateView, generateViewRow, generateRight, generateRoleRightByChecksum } from '@/helpers/entities';
-import uuid from '@/helpers/uid';
+import {
+  generateView,
+  generateRight,
+  generateRoleRightByChecksum,
+  generateCopyOfView,
+  getViewsWidgetsIdsMappings,
+} from '@/helpers/entities';
+
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -81,6 +87,7 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
@@ -100,6 +107,7 @@ export default {
     entitiesRoleMixin,
     entitiesRightMixin,
     entitiesViewGroupMixin,
+    entitiesUserPreferenceMixin,
     rightsTechnicalViewMixin,
     vuetifyComboboxMixin,
   ],
@@ -258,7 +266,7 @@ export default {
 
           /**
            * If we're creating a new view, or duplicating an existing one.
-           * Generate a new view. Then copy rows and widgets if we're duplicating a view
+           * Generate a new view. Then copy tabs, rows and widgets if we're duplicating a view
            */
           if (!this.config.view || this.config.isDuplicating) {
             const data = {
@@ -268,12 +276,13 @@ export default {
             };
 
             if (this.config.isDuplicating) {
-              data.rows = this.config.view.rows.map(row => ({
-                ...generateViewRow(),
+              const { tabs } = generateCopyOfView(this.config.view);
 
-                title: row.title,
-                widgets: row.widgets.map(widget => ({ ...widget, _id: uuid(`widget_${widget.type}`) })),
-              }));
+              data.tabs = tabs;
+
+              const widgetsIdsMappings = getViewsWidgetsIdsMappings(this.config.view, data);
+
+              await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
             }
 
             const response = await this.createView({ data });
