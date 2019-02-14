@@ -55,9 +55,7 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import isEmpty from 'lodash/isEmpty';
-import cloneDeep from 'lodash/cloneDeep';
+import { omit, cloneDeep } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
@@ -100,15 +98,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  created() {
-    if (this.isInitial && isEmpty(this.group.rules)) {
-      this.updateField('rules', {
-        [uid('rule')]: { ...FILTER_DEFAULT_VALUES.preFilledRules.component },
-        [uid('rule')]: { ...FILTER_DEFAULT_VALUES.preFilledRules.resource },
-        [uid('rule')]: { ...FILTER_DEFAULT_VALUES.preFilledRules.connector },
-      });
-    }
   },
   methods: {
     updateRule(key, value) {

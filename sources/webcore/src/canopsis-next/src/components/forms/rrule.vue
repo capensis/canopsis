@@ -172,8 +172,7 @@
 
 <script>
 import RRule from 'rrule';
-import mapValues from 'lodash/mapValues';
-import pickBy from 'lodash/pickBy';
+import { mapValues, pickBy } from 'lodash';
 
 import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
 

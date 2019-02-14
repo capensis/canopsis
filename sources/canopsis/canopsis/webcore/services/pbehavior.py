@@ -40,7 +40,7 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 VALID_PBEHAVIOR_PARAMS = [
     'name', 'filter_', 'author', 'tstart', 'tstop', 'rrule',
     'enabled', 'comments', 'connector', 'connector_name', 'type_', 'reason',
-    'timezone'
+    'timezone', 'exdate'
 ]
 
 
@@ -108,6 +108,13 @@ def check_values(data):
     if 'rrule' in data:
         check_valid_rrule(data['rrule'])
 
+    if PBehavior.EXDATE in data:
+        if isinstance(data[PBehavior.EXDATE], list):
+            for date in data[PBehavior.EXDATE]:
+                if not isinstance(date, int):
+                    raise ValueError("The date inside exdate must be an int.")
+        else:
+            raise ValueError("Exdate must be a list of string.")
     # useful when enabled doesn't exist in document
     if ("enabled" not in data
             or data["enabled"] is None
@@ -135,7 +142,8 @@ class RouteHandlerPBehavior(object):
                tstart, tstop, rrule=None,
                enabled=True, comments=None,
                connector='canopsis', connector_name='canopsis',
-               type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None):
+               type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
+               exdate=None):
         """
         Create a pbehavior.
 
@@ -152,6 +160,9 @@ class RouteHandlerPBehavior(object):
         :param str type_: an associated type_
         :param str reason: a reason to apply this behavior
         """
+        if exdate is None:
+            exdate = []
+
         data = {
             PBehavior.NAME: name,
             PBehavior.FILTER: filter_,
@@ -165,7 +176,8 @@ class RouteHandlerPBehavior(object):
             PBehavior.CONNECTOR_NAME: connector_name,
             PBehavior.TYPE: type_,
             PBehavior.REASON: reason,
-            PBehavior.TIMEZONE: timezone
+            PBehavior.TIMEZONE: timezone,
+            PBehavior.EXDATE: exdate
         }
 
         check_values(data)
@@ -183,7 +195,8 @@ class RouteHandlerPBehavior(object):
             connector_name=connector_name,
             type_=type_,
             reason=reason,
-            timezone=timezone
+            timezone=timezone,
+            exdate=exdate
         )
 
         return result
@@ -217,12 +230,15 @@ class RouteHandlerPBehavior(object):
     def update(self, _id, name=None, filter_=None, tstart=None, tstop=None,
                rrule=None, enabled=None, comments=None, connector=None,
                connector_name=None, author=None, type_=None, reason=None,
-               timezone=None):
+               timezone=None, exdate=None):
         """
         Update pbehavior fields. Fields to None will **not** be updated.
 
         :param str _id: pbehavior id
         """
+        if exdate is None:
+            exdate = []
+
         params = {
             PBehavior.NAME: name,
             PBehavior.FILTER: filter_,
@@ -236,7 +252,8 @@ class RouteHandlerPBehavior(object):
             PBehavior.CONNECTOR_NAME: connector_name,
             PBehavior.TYPE: type_,
             PBehavior.REASON: reason,
-            PBehavior.TIMEZONE: timezone
+            PBehavior.TIMEZONE: timezone,
+            PBehavior.EXDATE: exdate
         }
         check_values(params)
 
@@ -309,7 +326,7 @@ def exports(ws):
             'tstart', 'tstop', 'rrule',
             'enabled', 'comments',
             'connector', 'connector_name',
-            'type_', 'reason', 'timezone'
+            'type_', 'reason', 'timezone', 'exdate'
         ]
     )
     def create(
@@ -317,7 +334,8 @@ def exports(ws):
             tstart, tstop, rrule=None,
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None
+            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
+            exdate=None
     ):
         """
         Create a pbehavior.
@@ -325,7 +343,7 @@ def exports(ws):
         return rhpb.create(
             name, filter, author, tstart, tstop, rrule,
             enabled, comments, connector, connector_name, type_, reason,
-            timezone
+            timezone, exdate
         )
 
     @ws.application.post('/api/v2/pbehavior')
@@ -399,7 +417,7 @@ def exports(ws):
             'name', 'filter',
             'tstart', 'tstop', 'rrule',
             'enabled',
-            'timezone'
+            'timezone', 'exdate'
         ]
     )
     def update(
@@ -408,7 +426,7 @@ def exports(ws):
             tstart=None, tstop=None, rrule=None,
             enabled=None, comments=None,
             connector=None, connector_name=None,
-            author=None, type_=None, reason=None, timezone=None
+            author=None, type_=None, reason=None, timezone=None, exdate=None
     ):
         """
         Update a pbehavior.
@@ -427,7 +445,8 @@ def exports(ws):
             author=author,
             type_=type_,
             reason=reason,
-            timezone=timezone
+            timezone=timezone,
+            exdate=exdate
         )
 
     @route(

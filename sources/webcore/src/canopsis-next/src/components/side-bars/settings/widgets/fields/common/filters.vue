@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       filter-selector(
-      v-show="hasAccessToEditFilter && !hideSelect",
+      v-if="hasAccessToEditFilter && !hideSelect",
       :label="$t('settings.selectAFilter')",
       :items="filters",
       :value="value",
@@ -84,7 +84,7 @@ export default {
           title: this.$t('modals.filter.edit.title'),
           filter,
           action: (newFilter) => {
-            if (this.value.title === filter.title) {
+            if (this.value && this.value.title === filter.title) {
               this.$emit('input', newFilter);
             }
 
@@ -103,7 +103,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => {
-            if (this.value.title === filter.title) {
+            if (this.value && this.value.title === filter.title) {
               this.$emit('input', {});
             }
 

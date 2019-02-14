@@ -25,6 +25,7 @@ export const MODALS = {
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
+  variablesHelp: 'variables-help',
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
@@ -35,6 +36,8 @@ export const MODALS = {
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
+  infoPopupSetting: 'info-popup-setting',
+  addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
@@ -53,6 +56,7 @@ export const MODALS = {
   createRight: 'create-right',
   createEventFilterRule: 'create-event-filter-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
+  addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
 };
@@ -121,10 +125,10 @@ export const ENTITIES_STATES_STYLES = {
 };
 
 export const WATCHER_STATES_COLORS = {
-  [ENTITIES_STATES.ok]: 'green darken-2',
-  [ENTITIES_STATES.minor]: 'yellow darken-2',
-  [ENTITIES_STATES.major]: 'orange darken-2',
-  [ENTITIES_STATES.critical]: 'red darken-2',
+  [ENTITIES_STATES.ok]: '#00a65a',
+  [ENTITIES_STATES.minor]: '#ff9900',
+  [ENTITIES_STATES.major]: '#ff9900',
+  [ENTITIES_STATES.critical]: '#f56954',
 };
 
 export const PBEHAVIOR_TYPES = {
@@ -151,7 +155,7 @@ export const WEATHER_ICONS = {
   pause: 'pause',
 };
 
-export const WATCHER_PBEHAVIOR_COLOR = 'grey lighten-1';
+export const WATCHER_PBEHAVIOR_COLOR = '#808080';
 
 export const ENTITY_STATUS_STYLES = {
   [ENTITIES_STATUSES.off]: {
@@ -302,23 +306,6 @@ export const FILTER_DEFAULT_VALUES = {
     groups: {},
     rules: {},
   },
-  preFilledRules: {
-    component: {
-      field: 'component',
-      operator: FILTER_OPERATORS.equal,
-      input: '',
-    },
-    resource: {
-      field: 'resource',
-      operator: FILTER_OPERATORS.equal,
-      input: '',
-    },
-    connector: {
-      field: 'connector',
-      operator: FILTER_OPERATORS.equal,
-      input: '',
-    },
-  },
 };
 
 export const DATETIME_FORMATS = {
@@ -449,12 +436,12 @@ export const USERS_RIGHTS = {
     taskreporting: 'models_taskreporting',
   },
   business: {
-    alarmList: {
+    alarmsList: {
       actions: {
         ack: 'listalarm_ack',
         fastAck: 'listalarm_fastAck',
         ackRemove: 'listalarm_cancelAck',
-        pbehavior: 'listalarm_pbehavior',
+        pbehaviorAdd: 'listalarm_pbehavior',
         snooze: 'listalarm_snoozeAlarm',
         pbehaviorList: 'listalarm_listPbehavior',
         declareTicket: 'listalarm_declareanIncident',
@@ -466,6 +453,86 @@ export const USERS_RIGHTS = {
         addFilter: 'listalarm_addFilter',
       },
     },
+    context: {
+      actions: {
+        createEntity: 'crudcontext_createEntity',
+        editEntity: 'crudcontext_edit',
+        duplicateEntity: 'crudcontext_duplicate',
+        deleteEntity: 'crudcontext_delete',
+        pbehaviorAdd: 'crudcontext_pbehavior',
+        pbehaviorList: 'crudcontext_listPbehavior',
+
+        listFilters: 'crudcontext_listFilters',
+        editFilter: 'crudcontext_editFilter',
+        addFilter: 'crudcontext_addFilter',
+      },
+    },
+  },
+};
+
+export const WIDGETS_ACTIONS_TYPES = {
+  alarmsList: {
+    ack: 'ack',
+    fastAck: 'fastAck',
+    ackRemove: 'ackRemove',
+    pbehaviorAdd: 'pbehaviorAdd',
+    pbehaviorList: 'pbehaviorList',
+    moreInfos: 'moreInfos',
+    snooze: 'snooze',
+    declareTicket: 'declareTicket',
+    associateTicket: 'associateTicket',
+    cancel: 'cancel',
+    changeState: 'changeState',
+    variablesHelp: 'variablesHelp',
+
+    listFilters: 'listFilters',
+    editFilter: 'editFilter',
+    addFilter: 'addFilter',
+  },
+  context: {
+    createEntity: 'createEntity',
+    editEntity: 'editEntity',
+    duplicateEntity: 'duplicateEntity',
+    deleteEntity: 'deleteEntity',
+    pbehaviorAdd: 'pbehaviorAdd',
+    pbehaviorList: 'pbehaviorList',
+    variablesHelp: 'variablesHelp',
+
+    listFilters: 'listFilters',
+    editFilter: 'editFilter',
+    addFilter: 'addFilter',
+  },
+};
+
+export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
+  alarmsList: {
+    [WIDGETS_ACTIONS_TYPES.alarmsList.ack]: USERS_RIGHTS.business.alarmsList.actions.ack,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.fastAck]: USERS_RIGHTS.business.alarmsList.actions.fastAck,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.ackRemove]: USERS_RIGHTS.business.alarmsList.actions.ackRemove,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorAdd]: USERS_RIGHTS.business.alarmsList.actions.pbehaviorAdd,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.pbehaviorList]: USERS_RIGHTS.business.alarmsList.actions.pbehaviorList,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.snooze]: USERS_RIGHTS.business.alarmsList.actions.snooze,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.declareTicket]: USERS_RIGHTS.business.alarmsList.actions.declareTicket,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.associateTicket]: USERS_RIGHTS.business.alarmsList.actions.associateTicket,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+  },
+
+  context: {
+    [WIDGETS_ACTIONS_TYPES.context.createEntity]: USERS_RIGHTS.business.context.actions.createEntity,
+    [WIDGETS_ACTIONS_TYPES.context.editEntity]: USERS_RIGHTS.business.context.actions.editEntity,
+    [WIDGETS_ACTIONS_TYPES.context.duplicateEntity]: USERS_RIGHTS.business.context.actions.duplicateEntity,
+    [WIDGETS_ACTIONS_TYPES.context.deleteEntity]: USERS_RIGHTS.business.context.actions.deleteEntity,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorAdd]: USERS_RIGHTS.business.context.actions.pbehaviorAdd,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorList]: USERS_RIGHTS.business.context.actions.pbehaviorList,
+
+    [WIDGETS_ACTIONS_TYPES.context.listFilters]: USERS_RIGHTS.business.context.actions.listFilters,
+    [WIDGETS_ACTIONS_TYPES.context.editFilter]: USERS_RIGHTS.business.context.actions.editFilter,
+    [WIDGETS_ACTIONS_TYPES.context.addFilter]: USERS_RIGHTS.business.context.actions.addFilter,
   },
 };
 

@@ -36,35 +36,34 @@
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
     .fab(v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess")
-      v-speed-dial(
-      v-model="fab",
-      direction="left",
-      transition="slide-y-reverse-transition"
-      )
-        v-btn.secondary(slot="activator", color="primary", dark, fab, v-model="fab")
-          v-icon add
-          v-icon close
-        v-tooltip(v-if="hasCreateAnyUserAccess", top)
-          v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateUserModal")
-            v-icon people
-          span {{ $t('modals.createUser.title') }}
-        v-tooltip(v-if="hasCreateAnyRoleAccess", top)
-          v-btn(slot="activator", fab, dark, small, color="deep-purple ", @click.stop="showCreateRoleModal")
-            v-icon supervised_user_circle
-          span {{ $t('modals.createRole.title') }}
-        v-tooltip(v-if="hasCreateAnyActionAccess", top)
-          v-btn(slot="activator", fab, dark, small, color="teal", @click.stop="showCreateRightModal")
-            v-icon verified_user
-          span {{ $t('modals.createRight.title') }}
+      v-layout(column)
+        refresh-btn(@click="fetchRightsList")
+        v-speed-dial(
+        v-model="fab",
+        direction="left",
+        transition="slide-y-reverse-transition"
+        )
+          v-btn(slot="activator", color="primary", fab, v-model="fab")
+            v-icon add
+            v-icon close
+          v-tooltip(v-if="hasCreateAnyUserAccess", top)
+            v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateUserModal")
+              v-icon people
+            span {{ $t('modals.createUser.title') }}
+          v-tooltip(v-if="hasCreateAnyRoleAccess", top)
+            v-btn(slot="activator", fab, dark, small, color="deep-purple ", @click.stop="showCreateRoleModal")
+              v-icon supervised_user_circle
+            span {{ $t('modals.createRole.title') }}
+          v-tooltip(v-if="hasCreateAnyActionAccess", top)
+            v-btn(slot="activator", fab, dark, small, color="teal", @click.stop="showCreateRightModal")
+              v-icon verified_user
+            span {{ $t('modals.createRight.title') }}
 </template>
 
 <script>
-import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
-import isUndefined from 'lodash/isUndefined';
-import transform from 'lodash/transform';
+import { get, isEmpty, isUndefined, transform } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
@@ -76,8 +75,12 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
+import RefreshBtn from '@/components/other/view/refresh-btn.vue';
 
 export default {
+  components: {
+    RefreshBtn,
+  },
   mixins: [
     authMixin,
     popupMixin,
@@ -114,8 +117,6 @@ export default {
     },
 
     getCheckboxes() {
-      const { USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } = this.$constants;
-
       return (role, right) => {
         if (right.type) {
           let masks = [];
@@ -156,14 +157,19 @@ export default {
       };
     },
   },
-  async mounted() {
-    this.pending = true;
-
-    await this.fetchList();
-
-    this.pending = false;
+  mounted() {
+    this.fetchRightsList();
   },
   methods: {
+
+    async fetchRightsList() {
+      this.pending = true;
+
+      await this.fetchList();
+
+      this.pending = false;
+    },
+
     showCreateUserModal() {
       this.showModal({
         name: MODALS.createUser,

@@ -1,5 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-import isBoolean from 'lodash/isBoolean';
+import { isEmpty, isBoolean } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
@@ -29,7 +28,9 @@ export default {
   },
   methods: {
     updateFilterFieldInWidgetPreferences(field, value) {
-      if (this.hasAccessToAddFilter || !isBoolean(this.hasAccessToAddFilter)) {
+      const hasAccessToEditFilter = this.hasAccessToEditFilter || !isBoolean(this.hasAccessToEditFilter);
+
+      if (hasAccessToEditFilter) {
         return this.updateWidgetPreferencesInUserPreference({
           ...this.userPreference.widget_preferences,
 

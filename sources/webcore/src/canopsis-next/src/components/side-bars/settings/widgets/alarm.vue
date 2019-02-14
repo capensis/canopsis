@@ -35,7 +35,10 @@
             :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
-          field-info-popup(v-model="settings.widget.parameters.infoPopups")
+          field-info-popup(
+          v-model="settings.widget.parameters.infoPopups",
+          :columns="settings.widget.parameters.widgetColumns",
+          )
           v-divider
           field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
       v-divider
@@ -43,8 +46,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import cloneDeep from 'lodash/cloneDeep';
+import { get, cloneDeep } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';
@@ -61,8 +63,8 @@ import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from './fields/common/filters.vue';
-import FieldInfoPopup from './fields/common/info-popup.vue';
-import FieldMoreInfo from './fields/common/more-info.vue';
+import FieldInfoPopup from './fields/alarm/info-popup.vue';
+import FieldMoreInfo from './fields/alarm/more-info.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -91,7 +93,7 @@ export default {
     return {
       settings: {
         rowId,
-        widget: cloneDeep(widget),
+        widget: this.prepareAlarmWidgetSettings(cloneDeep(widget), true),
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,
           viewFilters: [],
@@ -102,15 +104,15 @@ export default {
   },
   computed: {
     hasAccessToListFilters() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.listFilters);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 
     hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.editFilter);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
     },
 
     hasAccessToAddFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmList.actions.addFilter);
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.addFilter);
     },
   },
   mounted() {
@@ -127,11 +129,7 @@ export default {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
-      return {
-        ...widget,
-
-        parameters: this.prepareAlarmWidgetParametersSettings(widget.parameters),
-      };
+      return this.prepareAlarmWidgetSettings(widget);
     },
   },
 };

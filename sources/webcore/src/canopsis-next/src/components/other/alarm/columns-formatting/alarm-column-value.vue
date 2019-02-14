@@ -1,18 +1,23 @@
 <template lang="pug">
-  div
-    div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
-    ellipsis(
-    v-else,
-    :text="alarm | get(column.value, columnFilter, '')",
-    :column="column.value",
-    @textClicked="showPopup"
-    ) {{ popupData }}
+  v-menu(v-model="isInfoPopupOpen", :close-on-content-click="false", :open-on-click="false", offset-y)
+    div(slot="activator")
+      div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
+      ellipsis(
+      v-else,
+      :text="alarm | get(column.value, columnFilter, '')",
+      :column="column.value",
+      @textClicked="showInfoPopup"
+      )
+    v-card(dark)
+      v-card-title.primary.pa-2.white--text
+        h4 {{ $t('alarmList.infoPopup') }}
+      v-card-text.pa-2(v-html="popupTextContent")
 </template>
 
 <script>
-import get from 'lodash/get';
-import Handlebars from 'handlebars';
+import { get } from 'lodash';
 
+import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
@@ -51,6 +56,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isInfoPopupOpen: false,
+    };
+  },
   computed: {
     popupData() {
       const popups = get(this.widget.parameters, 'infoPopups', []);
@@ -58,10 +68,10 @@ export default {
       return popups.find(popup => popup.column === this.column.value);
     },
     popupTextContent() {
-      const template = Handlebars.compile(this.popupData.template);
-      const context = { alarm: this.alarm.v };
-
-      return template(context);
+      if (this.popupData) {
+        return compile(this.popupData.template, { alarm: this.alarm });
+      }
+      return '';
     },
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
@@ -71,6 +81,7 @@ export default {
         'v.last_event_date': value => this.$options.filters.date(value, 'long'),
         'v.state.t': value => this.$options.filters.date(value, 'long'),
         'v.status.t': value => this.$options.filters.date(value, 'long'),
+        'v.resolved': value => this.$options.filters.date(value, 'long'),
         t: value => this.$options.filters.date(value, 'long'),
       };
 
@@ -86,11 +97,9 @@ export default {
     },
   },
   methods: {
-    showPopup() {
+    showInfoPopup() {
       if (this.popupData) {
-        this.addInfoPopup({
-          text: this.popupTextContent,
-        });
+        this.isInfoPopupOpen = true;
       }
     },
   },

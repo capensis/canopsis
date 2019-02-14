@@ -22,7 +22,7 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
     'resource':         // Resource's name (only if source_type is 'resource')
 
     // /!\ The following is optional /!\
-    
+
     'hostgroups':       // Nagios hostgroups for component, default []
     'servicegroups':    // Nagios servicegroups for resource, default []
     'timestamp':        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
@@ -31,8 +31,6 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
     'long_output':      // Description
     'tags':             // Tags for the event (optional, the server adds connector, connector_name, event_type, source_type, component and resource if present)
 
-    'perf_data':        // Nagios formatted perfdata string
-    'perf_data_array':  // array of metrics (see below)
 }
 ```
 
@@ -47,9 +45,9 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
     'event_type': 'check',
 
     'state':                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
-    
+
     // /!\ The following is optional /!\
-    
+
     'scheduled':            // True if the check was scheduled, False otherwise
 
     'check_type':           // Nagios Check Type (host or service)
@@ -65,21 +63,6 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 }
 ```
 
-### Event Log Structure
-
-```javascript
-{
-    'event_type': 'log',
-
-    'output':           // Becomes mandatory
-    'long_output':      // Remains optional
-    'display_name':     // Remains optional
-
-    'level':            // Optional log level
-    'facility':         // Optional log facility
-}
-```
-
 ### Event Acknowledgment Structure
 
 ```javascript
@@ -89,7 +72,7 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
     'ref_rk':               // Routing Key of acknowledged event, mandatory
     'author':               // Acknowledgment author, mandatory
     'output':               // Acknowledgment comment, mandatory
- 
+
 ```
 
 ### Event Cancel Structure
@@ -156,21 +139,6 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 }
 ```
 
-### Event Perf Structure
-
-Un évènement de type `perf` ne sera jamais sauvegardé dans une base de données, il est uniquement utilisé pour envoyer des perfdata :
-
-```javascript
-{
-    'event_type': 'perf',   // mandatory
-
-    'perf_data':            // mandatory
-    'perf_data_array':      // mandatory
-}
-```
-
-See below for more informations about those fields.
-
 ### Event Statistics Counter Increment Structure
 
 ```javascript
@@ -218,22 +186,6 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
 Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
-## Metrology
-
-Pour envoyer des perfdata vers Canopsis, vous avez juste besoin de spécifier l'un des champs suivants :
-
-```javascript
-{
-    'perf_data':        // Performance data ("Nagios format":http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN201)
-    'perf_data_array':  // Array of performance data with metric's type ('GAUGE', 'DERIVE', 'COUNTER', 'ABSOLUTE'), Ex:
-    [
-        {'metric': 'shortterm', 'value': 0.25, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
-        {'metric': 'midterm',   'value': 0.16, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' },
-        {'metric': 'longterm',  'value': 0.12, 'unit': None, 'min': None, 'max': None, 'warn': None, 'crit': None, 'type': 'GAUGE' }
-    ]
-}
-```
-
 ### Basic Alert Structure
 
 Un alarme est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
@@ -253,7 +205,6 @@ Type | Description |
 -----|-------------|
 check | Utilisé pour envoyer le résultat d'un check (depuis Nagios, Icinga,...)  |
 comment | Utilisé pour envoyer un commentaire |
-perf | Utilisé pour envoyer seulement des perfdata |
 selector | Envoyé par l'engine selector |
 sla |  Envoyé par l'engine selector sla |
 statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |

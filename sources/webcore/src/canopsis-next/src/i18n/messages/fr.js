@@ -9,6 +9,7 @@ export default {
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
     addTab: 'Ajouter un onglet',
+    addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
     name: 'Nom',
@@ -88,8 +89,6 @@ export default {
     },
   },
   user: {
-    firstName: 'Prénom',
-    lastName: 'Nom',
     role: 'Role',
     defaultView: 'Vue par défaut',
   },
@@ -148,6 +147,7 @@ export default {
         cancel: 'Annuler alarme',
         changeState: 'Changer criticité',
         moreInfos: 'Plus d\'infos',
+        variablesHelp: 'Liste des variables disponibles',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -160,6 +160,7 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+    infoPopup: 'Info popup',
   },
   weather: {
     moreInfos: 'Plus d\'infos',
@@ -353,10 +354,12 @@ export default {
       success: {
         create: 'Nouvelle vue créée !',
         edit: 'Vue éditée avec succès !',
+        delete: 'Vue supprimée avec succès !',
       },
       fail: {
         create: 'Erreur dans la création de la vue...',
         edit: 'Erreur dans l\'édition de la vue...',
+        delete: 'Erreur dans la suppression de la vue...',
       },
     },
     createAckEvent: {
@@ -395,14 +398,14 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Ajouter un comportement périodique à ces éléments ?',
+      title: 'Ajouter un comportement périodique',
       fields: {
         name: 'Nom',
         start: 'Début',
         stop: 'Fin',
         reason: 'Raison',
         type: 'Type',
-        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique ?',
+        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
       },
     },
     createPause: {
@@ -438,6 +441,19 @@ export default {
     moreInfos: {
       moreInfos: 'Plus d\'infos',
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
+    },
+    infoPopupSetting: {
+      title: 'Info popup',
+      add: 'Ajouter',
+      column: 'Colonne',
+      template: 'Template',
+      addInfoPopup: {
+        title: 'Ajouter une popup d\'info',
+      },
+    },
+    variablesHelp: {
+      variables: 'Variables',
+      copyToClipboard: 'Copier dans le Presse-papier',
     },
     watcher: {
       criticity: 'Criticity',
@@ -572,8 +588,10 @@ export default {
       priority: 'Priorité',
       editPattern: 'Editer le pattern',
       advanced: 'Avancée',
-      addAField: 'Ajouter un champs',
+      addAField: 'Ajouter un champ',
       simpleEditor: 'Editeur simple',
+      field: 'Champ',
+      value: 'Valeur',
       advancedEditor: 'Editeur avancé',
       comparisonRules: 'Règles de comparaison',
       enrichmentOptions: 'Options d\'enrichissement',
@@ -738,6 +756,7 @@ export default {
     default: 'Action effectuée avec succès',
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
+    pathCopied: 'Chemin copié dans le presse-papier',
   },
   filterEditor: {
     title: 'Éditeur de filtre',
