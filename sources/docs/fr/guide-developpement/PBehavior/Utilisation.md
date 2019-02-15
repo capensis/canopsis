@@ -48,23 +48,24 @@ JSON :
 
 Les attributs du corps sont les suivants :
 
-| Name            | type    | nullable | Description                                    |
-|-----------------|---------|----------|------------------------------------------------|
-| connector       | string  | No       | Identifiant du connecteur d'entité             |
-| name            | string  | No       | Display name du pbehavior                      |
-| author          | string  | No       | Nom de l'auteur                                |
-| enabled         | boolean | No       | Si le pbehavior est déclenché ou non           |
-| reason          | string  | yes      | motif d'administration (optionnel)             |
-| comments        | array   | yes      | Commentaires (option)                          |
-| filter          | string  | No       | filtre d'entité (JSON)                         |
-| type\_          | string  | No       | type de Pbehavior                              |
-| connector\_name | string  | No       | Display name du connector                      |
-| rrule           | string  | yes      | Rrule (récurrence)                             |
-| tstart          | integer | No       | Timestamp de la date de départ                 |
-| tstop           | integer | No       | Timestamp de la date de fin                    |
-| \_id            | string  | No       | identifiant du Pbehavior                       |
-| eids            | array   | No       | tableau du \_ids pour les entités impactées.   |
-| timezone        | string  | yes      | La timezone à utiliser pour le calcul des dates |
+| Name            | type    | nullable | Description                                                 |
+|-----------------|---------|----------|-------------------------------------------------------------|
+| connector       | string  | No       | Identifiant du connecteur d'entité                          |
+| name            | string  | No       | Display name du pbehavior                                   |
+| author          | string  | No       | Nom de l'auteur                                             |
+| enabled         | boolean | No       | Si le pbehavior est déclenché ou non                        |
+| reason          | string  | Yes      | motif d'administration (optionnel)                          |
+| comments        | array   | Yes      | Commentaires (option)                                       |
+| filter          | string  | No       | filtre d'entité (JSON)                                      |
+| type\_          | string  | No       | type de Pbehavior                                           |
+| connector\_name | string  | No       | Display name du connector                                   |
+| rrule           | string  | Yes      | Rrule (récurrence)                                          |
+| tstart          | integer | No       | Timestamp de la date de départ                              |
+| tstop           | integer | No       | Timestamp de la date de fin                                 |
+| \_id            | string  | No       | Indentifiant du Pbehavior                                   |
+| eids            | array   | No       | tableau du \_ids pour les entités impactées.                |
+| timezone        | string  | Yes      | La timezone à utiliser pour le calcul des dates             |
+| exdate          | array   | Yes      | La liste des occurrences à ignorer sous forme de timestamps |
 
 
 Réponse : UID de l'élément inséré
@@ -106,31 +107,37 @@ Cette route répertorie les pbehaviors existant sur une entité, identifiée par
         "isActive": true,
         "eids": [
             "580059AB4B100031"
-        ]
+        ],
+        "exdate" : [
+            1592471125
+        ],
+        "timezone": "Europe/Paris"
     }
 ]
 ```
 
 Les attributs de réponse sont les suivants :
 
-| Name            | type    | nullable | Description                                    |
-|-----------------|---------|----------|------------------------------------------------|
-| connector       | string  | No       | Identifier of the entity connector             |
-| name            | string  | No       | Display name of the pbehavior                  |
-| author          | string  | No       | Author name                                    |
-| enabled         | boolean | No       | Should the pbehavior trigger or not            |
-| reason          | string  | yes      | Administrative reason (optionnal)              |
-| comments        | array   | yes      | Comments (option)                              |
-| filter          | string  | No       | Entities filter (json)                         |
-| type\_          | string  | No       | Pbehavior type                                 |
-| connector\_name | string  | No       | Display name of the entity connector           |
-| rrule           | string  | yes      | Rrule (recurrence)                             |
-| tstart          | integer | No       | Timestamp of the start date                    |
-| tstop           | integer | No       | Timestamp  end date                            |
-| \_id            | string  | No       | Pbehavior identifier                           |
-| eids            | array   | No       | Array of \_ids for the impacted entities.      |
-| isActive        | boolean | No       | is the pbehavior currently active              |
-| timezone        | string  | yes      | La timezone à utiliser pour le calcul des dates |
+| Name            | type    | nullable | Description                                                 |
+|-----------------|---------|----------|-------------------------------------------------------------|
+| connector       | string  | No       | Identifier of the entity connector                          |
+| name            | string  | No       | Display name of the pbehavior                               |
+| author          | string  | No       | Author name                                                 |
+| enabled         | boolean | No       | Should the pbehavior trigger or not                         |
+| reason          | string  | yes      | Administrative reason (optionnal)                           |
+| comments        | array   | yes      | Comments (option)                                           |
+| filter          | string  | No       | Entities filter (json)                                      |
+| type\_          | string  | No       | Pbehavior type                                              |
+| connector\_name | string  | No       | Display name of the entity connector                        |
+| rrule           | string  | yes      | Rrule (recurrence)                                          |
+| tstart          | integer | No       | Timestamp of the start date                                 |
+| tstop           | integer | No       | Timestamp  end date                                         |
+| \_id            | string  | No       | Pbehavior identifier                                        |
+| eids            | array   | No       | Array of \_ids for the impacted entities.                   |
+| isActive        | boolean | No       | Is the pbehavior currently active                           |
+| timeszone       | string  | yes      | La timezone à utiliser pour le calcul des dates             |
+| exdate          | array   | Yes      | La liste des occurrences à ignorer sous forme de timestamps |
+
 
 ## Supprimer un pbehavior
 

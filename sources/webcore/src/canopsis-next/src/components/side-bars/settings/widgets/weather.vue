@@ -10,6 +10,8 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
+      field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
+      v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hidden-fields="['title']")
       v-divider
       v-list-group
@@ -99,6 +101,7 @@ import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
+import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
@@ -117,6 +120,7 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
+    FieldPeriodicRefresh,
     FieldFilterEditor,
     FieldWeatherTemplate,
     FieldGridSize,
