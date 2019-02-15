@@ -27,15 +27,12 @@ Crée un nouveau Webhook à partir du corps de la requête.
                 "connector" : "zabbix"
             }
         ],
-        "alarm_patterns" : [
-            {
-                "ticket" : null
-            }
-        ],
         "entity_patterns" : [
             {
                 "infos" : {
-                    "output" : "MemoryDisk.*"
+                    "output" : {
+                        "value": {"regex_match": "MemoryDisk.*"}
+                    }
                 }
             }
         ]
@@ -70,15 +67,12 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
                 "connector" : "zabbix"
             }
         ],
-        "alarm_patterns" : [
-            {
-                "ticket" : null
-            }
-        ],
         "entity_patterns" : [
             {
                 "infos" : {
-                    "output" : "MemoryDisk.*"
+                    "output" : {
+                        "value": {"regex_match": "MemoryDisk.*"}
+                    }
                 }
             }
         ]

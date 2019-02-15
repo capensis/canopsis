@@ -15,7 +15,6 @@ Des exemples pratiques d'utilisation des webhooks sont disponibles dans la parti
 Une règle est un document JSON contenant les paramètres suivants :
  - `_id` (optionnel): l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
-     - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
      - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les événements. Le format des patterns est le même que pour l'[event-filter](../event-filter/index.md).
      - `triggers` (requis) : Liste de triggers. Au moins un de ces triggers doit avoir eu lieu pour que le webhook soit appelé.
@@ -36,7 +35,7 @@ Le champ `hook` représente les conditions d'activation d'un webhook. Il contien
 
 Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `"ackremove"`, `"cancel"`, `"uncancel"`, `"declareticket"`, `"assocticket"`, `"snooze"`, `"unsnooze"`, `"resolve"`, `"done"`, et `"comment"`.
 
-`alarm_patterns` est un tableau pouvant contenir plusieurs patterns d'alarmes. Si plusieurs patterns sont ainsi définies, il suffit qu'un seul pattern d'alarme corresponde à l'alarme en cours pour que la condition sur les `alarm_patterns` soit validée. Il en va de même pour `entity_patterns` (tableaux de patterns d'entités) et `event_patterns` (tableaux de patterns d'événements).
+`entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définies, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `event_patterns` (tableaux de patterns d'événements).
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
