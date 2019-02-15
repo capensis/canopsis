@@ -44,7 +44,6 @@ import EntitiesList from '@/components/other/context/entities-list.vue';
 import Weather from '@/components/other/service-weather/weather.vue';
 import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
 import StatsCurves from '@/components/other/stats/curves/stats-curves-wrapper.vue';
-import StatsNewCurves from '@/components/other/stats/new-curves/stats-new-curves.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
 import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
@@ -60,7 +59,6 @@ export default {
     Weather,
     StatsHistogram,
     StatsCurves,
-    StatsNewCurves,
     StatsTable,
     StatsCalendar,
     StatsNumber,
@@ -96,7 +94,6 @@ export default {
         [WIDGET_TYPES.weather]: 'weather',
         [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
         [WIDGET_TYPES.statsCurves]: 'stats-curves',
-        [WIDGET_TYPES.statsNewCurves]: 'stats-new-curves',
         [WIDGET_TYPES.statsTable]: 'stats-table',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
         [WIDGET_TYPES.statsNumber]: 'stats-number',

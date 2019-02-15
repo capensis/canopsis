@@ -45,7 +45,6 @@ export default {
         { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: WIDGET_TYPES.statsTable, icon: 'table_chart' },
         { title: this.$t('modals.widgetCreation.types.statsCalendar.title'), value: WIDGET_TYPES.statsCalendar, icon: 'calendar_today' },
         { title: this.$t('modals.widgetCreation.types.statsCurves.title'), value: WIDGET_TYPES.statsCurves, icon: 'show_chart' },
-        { title: this.$t('modals.widgetCreation.types.statsCurves.title'), value: WIDGET_TYPES.statsNewCurves, icon: 'view_list' },
         { title: this.$t('modals.widgetCreation.types.statsNumber.title'), value: WIDGET_TYPES.statsNumber, icon: 'table_chart' },
       ],
     };

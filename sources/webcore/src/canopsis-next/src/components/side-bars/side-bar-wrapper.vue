@@ -46,7 +46,6 @@ export default {
         [sideBars.weatherSettings]: this.$t('settings.titles.weatherSettings'),
         [sideBars.statsHistogramSettings]: this.$t('settings.titles.statsHistogramSettings'),
         [sideBars.statsCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
-        [sideBars.statsNewCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
         [sideBars.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
         [sideBars.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
         [sideBars.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),

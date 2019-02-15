@@ -34,10 +34,10 @@
       v-flex.px-1(xs7)
         h4.primary--text Quick ranges
         v-layout(wrap)
-          v-flex(xs3, v-for="range in $constants.STATS_QUICK_RANGES", :key="range.value")
+          v-flex(xs6, v-for="range in $constants.STATS_QUICK_RANGES", :key="range.value")
             a.black--text(
             @click="updateRange(range.start, range.stop)",
-            ) {{ $t(`settings.statsDateInterval.quickRanges.${range.value}`) }}
+            ) - {{ $t(`settings.statsDateInterval.quickRanges.${range.value}`) }}
 </template>
 
 <script>

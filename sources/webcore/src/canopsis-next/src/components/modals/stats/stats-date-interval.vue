@@ -5,11 +5,18 @@
         span.headline Stats - Date interval
     v-card-text
       v-container
-        v-select.pt-0(
-        :items="periodUnits",
-        v-model="periodUnit",
-        label="Period",
-        )
+        v-layout
+          v-flex(xs3)
+            v-text-field.pt-0(
+            type="number",
+            v-model="periodValue",
+            label="Period value"
+            )
+          v-select.pt-0(
+          :items="periodUnits",
+          v-model="periodUnit",
+          label="Period unit",
+          )
         stats-date-selector(v-model="dateForm", :periodUnit="periodUnit")
       v-divider
       v-layout.py-1(justify-end)
@@ -32,6 +39,7 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
+      periodValue: 1,
       periodUnit: 'h',
       dateForm: {
         tstart: 'now+1d',
@@ -59,8 +67,14 @@ export default {
   },
   mounted() {
     if (this.config.interval) {
-      const { periodUnit, tstart, tstop } = this.config.interval;
+      const {
+        periodValue,
+        periodUnit,
+        tstart,
+        tstop,
+      } = this.config.interval;
 
+      this.periodValue = periodValue;
       this.periodUnit = periodUnit;
       this.dateForm = { ...this.dateForm, tstart, tstop };
     }
@@ -68,7 +82,12 @@ export default {
   methods: {
     async submit() {
       if (this.config.action) {
-        this.config.action({ periodUnit: this.periodUnit, tstart: this.dateForm.tstart, tstop: this.dateForm.tstop });
+        this.config.action({
+          periodValue: this.periodValue,
+          periodUnit: this.periodUnit,
+          tstart: this.dateForm.tstart,
+          tstop: this.dateForm.tstop,
+        });
       }
 
       this.hideModal();
