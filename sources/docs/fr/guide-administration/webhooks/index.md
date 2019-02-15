@@ -76,15 +76,12 @@ Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Dat
                 "connector" : "zabbix"
             }
         ],
-        "alarm_patterns" : [
-            {
-                "ticket" : null
-            }
-        ],
         "entity_patterns" : [
             {
                 "infos" : {
-                    "output" : "MemoryDisk.*"
+                    "output" : {
+                        "value": {"regex_match": "MemoryDisk.*"}
+                    }
                 }
             }
         ]

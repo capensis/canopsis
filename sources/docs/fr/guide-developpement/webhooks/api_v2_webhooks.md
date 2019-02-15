@@ -245,15 +245,12 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_
                 "connector" : "zabbix"
             }
         ],
-        "alarm_patterns" : [
-            {
-                "ticket" : null
-            }
-        ],
         "entity_patterns" : [
             {
                 "infos" : {
-                    "output" : "MemoryDisk.*"
+                    "output" : {
+                        "value": {"regex_match": "MemoryDisk.*"}
+                    }
                 }
             }
         ]
