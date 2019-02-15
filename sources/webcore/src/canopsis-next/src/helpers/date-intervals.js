@@ -82,7 +82,7 @@ export function parseStringToDateInterval(dateString, type) {
   if (preparedDateString.match(/^now/)) {
     preparedDateString = preparedDateString.substring(3);
   } else {
-    throw new Error("No 'now' operator found");
+    throw new Error('Date string pattern not recognized');
   }
 
   if (!preparedDateString) {
@@ -144,5 +144,5 @@ export function parseStringToDateInterval(dateString, type) {
     }
   }
 
-  throw new Error('Pattern not recognized');
+  throw new Error('Date string pattern not recognized');
 }

@@ -20,7 +20,6 @@
       :stats="settings.widget.parameters.stats",
       v-model="settings.widget.parameters.statsColors"
       )
-      v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -40,6 +39,9 @@ import FieldStatsColors from './fields/stats/stats-colors.vue';
 
 export default {
   name: SIDE_BARS.statsCurvesSettings,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     FieldRowGridSize,
     FieldTitle,

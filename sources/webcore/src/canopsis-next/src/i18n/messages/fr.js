@@ -226,6 +226,7 @@ export default {
       },
     },
     statsDateInterval: {
+      monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
       quickRanges: {
         [STATS_QUICK_RANGES.last2Days.value]: '2 derniers jours',
         [STATS_QUICK_RANGES.last7Days.value]: '7 derniers jours',

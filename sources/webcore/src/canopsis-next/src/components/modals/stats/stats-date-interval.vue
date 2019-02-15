@@ -17,15 +17,28 @@
           v-model="periodUnit",
           label="Period unit",
           )
-        stats-date-selector(v-model="dateForm", :periodUnit="periodUnit")
+        v-alert.mb-2(
+        v-if="periodUnit === 'm'", type="info", value="true"
+        ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
+        stats-date-selector.my-1(v-model="dateForm", :periodUnit="periodUnit", @input="resetValidation")
+      v-alert(
+      value="errors",
+      type="error",
+      v-for="error in errors",
+      :key="error",
+      ) {{ error }}
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click="submit") {{ $t('common.submit') }}
+        v-btn.primary(@click="submit", :disabled="errors.length !== 0") {{ $t('common.submit') }}
 </template>
 
 <script>
+import moment from 'moment';
+
 import { MODALS } from '@/constants';
+
+import { parseStringToDateInterval } from '@/helpers/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -63,6 +76,7 @@ export default {
           value: 'm',
         },
       ],
+      errors: [],
     };
   },
   mounted() {
@@ -80,17 +94,42 @@ export default {
     }
   },
   methods: {
-    async submit() {
-      if (this.config.action) {
-        this.config.action({
-          periodValue: this.periodValue,
-          periodUnit: this.periodUnit,
-          tstart: this.dateForm.tstart,
-          tstop: this.dateForm.tstop,
-        });
+    resetValidation() {
+      this.errors = [];
+    },
+
+    validate() {
+      const { tstart, tstop } = this.dateForm;
+
+      try {
+        const convertedTstart = moment(tstart).isValid() ? moment(tstart) : parseStringToDateInterval(tstart, 'start');
+        const convertedTstop = moment(tstop).isValid() ? moment(tstop) : parseStringToDateInterval(tstop, 'stop');
+
+        if (convertedTstop.isBefore(convertedTstart)) {
+          this.errors.push('Tstop before tstart');
+          return false;
+        }
+      } catch (err) {
+        this.errors.push(err.message);
+        return false;
       }
 
-      this.hideModal();
+      return true;
+    },
+
+    async submit() {
+      if (this.validate()) {
+        if (this.config.action) {
+          this.config.action({
+            periodValue: this.periodValue,
+            periodUnit: this.periodUnit,
+            tstart: this.dateForm.tstart,
+            tstop: this.dateForm.tstop,
+          });
+        }
+
+        this.hideModal();
+      }
     },
   },
 };

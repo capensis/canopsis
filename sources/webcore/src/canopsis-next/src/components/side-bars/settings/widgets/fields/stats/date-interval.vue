@@ -1,8 +1,12 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") Date interval
-    v-container
-      v-btn(@click="showEditModal") Edit
+  v-container.pa-3(fluid)
+    v-layout(align-center, justify-space-between)
+      div.subheading Date interval
+      div
+        v-btn.primary(
+        small,
+        @click="showEditModal"
+        ) {{ $t('common.edit') }}
 </template>
 
 <script>

@@ -43,6 +43,8 @@
 <script>
 import moment from 'moment';
 
+import { STATS_DURATION_UNITS } from '@/constants';
+
 import formMixin from '@/mixins/form';
 
 import DateTimePicker from '@/components/forms/fields/date-picker/date-time-picker-field.vue';
@@ -71,7 +73,7 @@ export default {
   computed: {
     tstartDateString: {
       get() {
-        return moment(this.value.tstart).isValid() ? moment(this.value.tstart).format('DD/MM/YYYY HH:mm') : this.value.tstart;
+        return this.value.tstart;
       },
       set(value) {
         if (value !== this.value.tstart) {
@@ -81,7 +83,7 @@ export default {
     },
     tstopDateString: {
       get() {
-        return moment(this.value.tstop).isValid() ? moment(this.value.tstop).format('DD/MM/YYYY HH:mm') : this.value.tstop;
+        return this.value.tstop;
       },
       set(value) {
         if (value !== this.value.tstop) {
@@ -95,23 +97,23 @@ export default {
       const isValidDate = moment(date).isValid();
 
       if (isValidDate) {
-        return this.periodUnit === 'm' ?
+        return this.periodUnit === STATS_DURATION_UNITS.month ?
           moment(date).startOf('month').toDate() :
           moment(date).startOf('hour').toDate();
       }
 
-      return this.periodUnit === 'm' ?
+      return this.periodUnit === STATS_DURATION_UNITS.month ?
         moment().startOf('month').toDate() :
         moment().startOf('hour').toDate();
     },
 
     handleTstartChange(tstart) {
-      this.updateField('tstart', tstart);
+      this.updateField('tstart', moment(tstart).format('DD-MM-YYYY hh:mm'));
       this.isTstartDateMenuOpen = false;
     },
 
     handleTstopChange(tstop) {
-      this.updateField('tstop', tstop);
+      this.updateField('tstop', moment(tstop).format('DD-MM-YYYY hh:mm'));
       this.isTstopDateMenuOpen = false;
     },
 
