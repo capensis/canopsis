@@ -296,12 +296,19 @@ export const FILTER_OPERATORS = {
   isNotNull: 'is not null',
 };
 
+export const FILTER_INPUT_TYPES = {
+  string: 'string',
+  number: 'number',
+  boolean: 'boolean',
+};
+
 export const FILTER_DEFAULT_VALUES = {
   condition: '$and',
   rule: {
     field: '',
     operator: '',
     input: '',
+    inputType: FILTER_INPUT_TYPES.string,
   },
   group: {
     condition: '$and',

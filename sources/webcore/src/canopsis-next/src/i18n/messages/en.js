@@ -809,7 +809,7 @@ export default {
       },
     },
     errors: {
-      invalidJSON: 'Invalid JSON',
+      invalidJSON: 'We can\'t parse this filter to Visual Editor',
       required: 'You need to add at least one valid rule',
     },
   },

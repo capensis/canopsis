@@ -16,7 +16,8 @@
       )
       filter-editor(
       v-if="!hiddenFields.includes('filter')",
-      v-model="form.filter"
+      v-model="form.filter",
+      required
       )
     v-divider
     v-layout.py-1(justify-end)

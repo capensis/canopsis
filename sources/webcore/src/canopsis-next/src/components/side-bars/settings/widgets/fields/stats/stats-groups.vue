@@ -41,7 +41,9 @@ export default {
     },
   },
   created() {
-    this.$validator.attach('groups', 'required', {
+    this.$validator.attach({
+      name: 'groups',
+      rules: 'required',
       getter: () => this.groups,
       context: () => this,
     });
