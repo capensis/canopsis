@@ -1,5 +1,8 @@
 # Webhooks
 
+!!! note
+    Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
+
 Les webhooks sont une fonctionnalité du moteur `axe` permettant d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des événements ou des alarmes.
 
 Les webhooks sont définis dans la collection MongoDB `webhooks`, et
@@ -106,7 +109,9 @@ Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Dat
 
 Le moteur axe par défaut ne contient pas ce plugin gérant les webhooks. Pour pouvoir utiliser les webhooks, il faut :
 - compiler le plugin webhooks dans le répertoire contenant le plugin webhooks `CGO_ENABLED=1 go build -buildmode=plugin -o webhookPlugin.so main.go`
-- lancer le moteur axe avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`.
+- lancer le moteur axe avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`. Sauf configuration spécifique, `webhookPlugin.so` se trouve dans `/plugins/axepostprocessor`.
 
 Le plugin webhook se trouve dans l'image `engine-axe-cat`.
 
+!!! note
+    Il est déconseillé d'utiliser l'option `-autoDeclareTickets` qui est **dépréciée** depuis la version 3.10.0 et l'ajout des webhooks.
