@@ -16,6 +16,9 @@
               v-model="form.hook.triggers",
               :items="availableTriggers",
               label="Triggers",
+              :error-messages="errors.collect('triggers')",
+              v-validate="'required'",
+              name="triggers",
               multiple,
               chips
               )
@@ -25,27 +28,11 @@
                 v-tab Alarms patterns
                 v-tab Entities patterns
                 v-tab-item
-                  v-layout(row, wrap)
-                    v-flex(xs11)
-                      v-textarea(
-                      value="Test 123\nasd\nasdasd\nasdasd\nasd\nTEST",
-                      rows="7",
-                      no-resize,
-                      readonly,
-                      disabled
-                      )
-                    v-flex(xs1)
-                      div
-                        v-btn(icon, @click="showEditEventPatternModal")
-                          v-icon edit
-                      div
-                        v-btn(color="error", icon, @click="showRemovePatternModal('event_pattern', 0)")
-                          v-icon delete
-                  v-btn(color="primary", @click="showEditEventPatternModal") Add pattern
+                  patterns-list(v-model="form.hook.event_pattern")
                 v-tab-item
-                  v-btn(color="primary", @click="showEditEventPatternModal") Add pattern
+                  patterns-list(v-model="form.hook.alarm_pattern")
                 v-tab-item
-                  v-btn(color="primary", @click="showEditEventPatternModal") Add pattern
+                  patterns-list(v-model="form.hook.entity_pattern")
         v-tab-item
           h2 Request
           v-layout(justify-space-between, align-center)
@@ -102,6 +89,8 @@ import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import PatternsList from './partials/patterns-list.vue';
+
 /**
  * Modal to create widget
  */
@@ -109,6 +98,9 @@ export default {
   name: MODALS.createWebhook,
   $_veeValidate: {
     validator: 'new',
+  },
+  components: {
+    PatternsList,
   },
   mixins: [
     authMixin,
@@ -143,21 +135,17 @@ export default {
     };
   },
   methods: {
-    showEditEventPatternModal() {
-      this.showModal({
-        name: MODALS.createEventFilterRulePattern,
-        config: {},
-      });
+    async submit() {
+      const isValid = await this.$validator.validateAll();
+
+      if (isValid) {
+        if (this.config.action) {
+          await this.config.action(this.form);
+        }
+
+        this.hideModal();
+      }
     },
-    showRemovePatternModal(key, index) {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => this.$delete(this.form.hook[key], index),
-        },
-      });
-    },
-    submit() {},
   },
 };
 </script>

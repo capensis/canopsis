@@ -21,22 +21,22 @@ export default {
       editWebhook: 'edit',
     }),
 
-    async createEventFilterRuleWithPopup(rule) {
-      await this.createEventFilterRule({ data: rule });
-      this.refreshEventFilterList();
-      this.addSuccessPopup({ text: this.$t('modals.eventFilterRule.create.success') });
+    async createWebhookWithPopup(data) {
+      await this.createWebhook({ data });
+      this.refreshWebhooksList();
+      this.addSuccessPopup({ text: this.$t('modals.webhook.create.success') });
     },
 
-    async duplicateEventFilterRuleWithPopup(rule) {
-      await this.createEventFilterRule({ data: rule });
-      this.refreshEventFilterList();
-      this.addSuccessPopup({ text: this.$t('modals.eventFilterRule.duplicate.success') });
+    async duplicateWebhookWithPopup(data) {
+      await this.createWebhook({ data });
+      this.refreshWebhooksList();
+      this.addSuccessPopup({ text: this.$t('modals.webhook.duplicate.success') });
     },
 
-    async editEventFilterRuleWithPopup(ruleId, editedRule) {
-      await this.editEventFilterRule({ id: ruleId, data: editedRule });
-      this.refreshEventFilterList();
-      this.addSuccessPopup({ text: this.$t('modals.eventFilterRule.edit.success') });
+    async editEventFilterRuleWithPopup(id, data) {
+      await this.editWebhook({ id, data });
+      this.refreshWebhooksList();
+      this.addSuccessPopup({ text: this.$t('modals.webhook.edit.success') });
     },
   },
 };
