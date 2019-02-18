@@ -3,6 +3,8 @@
 !!! attention
     Ce moteur n'est disponible que dans l'édition CAT de Canopsis.
 
+    À noter aussi que ce moteur n'est actuellement pas fonctionnel en environnement Debian 8 ([bug #1456](https://git.canopsis.net/canopsis/canopsis/issues/1456)).
+
 Le moteur `snmp` permet de traiter les traps SNMP récupérés par le connecteur `snmp2canopsis` selon des règles prédéfinies par l'utilisateur.
 
 ## Fonctionnement
