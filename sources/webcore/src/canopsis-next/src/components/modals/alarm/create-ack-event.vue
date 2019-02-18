@@ -38,7 +38,7 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit", :disabled="errors.any()") {{ $t('common.actions.acknowledge') }}
+      v-btn.primary(@click.prevent="submit", :disabled="errors.any()") {{ $t('common.actions.ack') }}
       v-btn.warning(
       @click.prevent="submitWithDeclare",
       ) {{ $t('common.actions.acknowledgeAndReport') }}
