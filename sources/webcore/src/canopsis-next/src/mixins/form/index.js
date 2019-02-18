@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import uid from '@/helpers/uid';
-import { setIn, unsetIn, addIn, removeIn } from '@/helpers/immutable';
 
 const eventKeyComputed = uid('_eventKey');
 const formKeyComputed = uid('_formKey');
@@ -95,45 +94,6 @@ export default {
      */
     removeItemFromArray(index) {
       this.$emit(this[eventKeyComputed], this[this[formKeyComputed]].filter((v, i) => i !== index));
-    },
-
-    /**
-     * Deep update field in object and in array
-     *
-     * @param {string|Array} path - Path to field or to array item
-     * @param {*} value - New field or item value
-     */
-    deepUpdateField(path, value) {
-      this.$emit(this[eventKeyComputed], setIn(this[this[formKeyComputed]], path, value));
-    },
-
-    /**
-     * Deep remove field from object or item from array
-     *
-     * @param {string|Array} path - Path to field or to array item
-     */
-    deepRemoveField(path) {
-      this.$emit(this[eventKeyComputed], unsetIn(this[this[formKeyComputed]], path));
-    },
-
-    /**
-     * Deep add new item into array
-     *
-     * @param {string|Array} path - Path to field or to array item
-     * @param {*} value - Value of new array item
-     */
-    deepAddItemIntoArray(path, value) {
-      this.$emit(this[eventKeyComputed], addIn(this[this[formKeyComputed]], path, value));
-    },
-
-    /**
-     * Deep remove item from array
-     *
-     * @param {string|Array} path - Path to field or to array item
-     * @param {number} index - Index of item
-     */
-    deepRemoveItemFromArray(path, index) {
-      this.$emit(this[eventKeyComputed], removeIn(this[this[formKeyComputed]], path, index));
     },
   },
 };

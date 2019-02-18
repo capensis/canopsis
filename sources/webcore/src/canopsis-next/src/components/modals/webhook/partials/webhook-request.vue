@@ -63,11 +63,11 @@
 <script>
 import uid from '@/helpers/uid';
 
-import formMixin from '@/mixins/form';
+import formDeepMixin from '@/mixins/form/deep';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
+  mixins: [formDeepMixin],
   model: {
     prop: 'request',
     event: 'input',

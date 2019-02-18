@@ -29,9 +29,10 @@
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
+import formArrayMixin from '@/mixins/form/array';
 
 export default {
-  mixins: [modalMixin],
+  mixins: [modalMixin, formArrayMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -54,15 +55,11 @@ export default {
     },
   },
   methods: {
-    updatePatterns(patterns) {
-      return this.$emit('input', patterns);
-    },
-
     showCreatePatternModal() {
       this.showModal({
         name: MODALS.createEventFilterRulePattern,
         config: {
-          action: pattern => this.updatePatterns(this.patterns.concat(pattern)),
+          action: pattern => this.addItemIntoArray(pattern),
         },
       });
     },
@@ -71,17 +68,7 @@ export default {
       this.showModal({
         name: MODALS.createEventFilterRulePattern,
         config: {
-          action: (pattern) => {
-            const newPatterns = this.patterns.map((p, i) => {
-              if (i === index) {
-                return pattern;
-              }
-
-              return p;
-            });
-
-            this.updatePatterns(newPatterns);
-          },
+          action: pattern => this.updateItemInArray(index, pattern),
         },
       });
     },
@@ -90,7 +77,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.updatePatterns(this.patterns.filter((p, i) => i !== index)),
+          action: () => this.removeItemFromArray(index),
         },
       });
     },
