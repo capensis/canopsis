@@ -29,12 +29,17 @@
           @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
-        v-card.secondary.lighten-1.white--text(v-for="view in getAvailableViewsForGroup(group)", :key="view._id")
+        v-card(
+        v-for="view in getAvailableViewsForGroup(group)",
+        :key="view._id",
+        :color="color(view._id)",
+        )
           router-link.panel-item-content-link(:title="view.title", :to="{ name: 'view', params: { id: view._id } }")
             v-card-text.panel-item-content
               v-layout(align-center, justify-space-between)
                 v-flex
-                  span.pl-2 {{ view.title }}
+                  v-layout(align-center)
+                    span.pl-2() {{ view.title }}
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
@@ -102,9 +107,18 @@ export default {
         }
       },
     },
+    color() {
+      return id => (this.isViewActive(id) ? 'secondary white--text lighten-2' : 'secondary white--text lighten-1');
+    },
   },
   mounted() {
     this.fetchVersion();
+  },
+  methods: {
+    isViewActive(viewId) {
+      return this.$route.params.id && this.$route.params.id === viewId;
+    },
+
   },
 };
 </script>
