@@ -60,10 +60,10 @@ export default {
   },
   computed: {
     hasMoreInfosAccess() {
-      return this.checkAccess(USERS_RIGHTS.weather.moreInfos);
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
     },
     hasAlarmsListAccess() {
-      return this.checkAccess(USERS_RIGHTS.weather.alarmsList);
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
     },
     isPaused() {
       return this.watcher.active_pb_all;
