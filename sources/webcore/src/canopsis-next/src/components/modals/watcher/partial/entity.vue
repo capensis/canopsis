@@ -82,7 +82,7 @@ export default {
           action: this.prepareAckAction,
         },
         declareTicket: {
-          type: weatherActionsTypes.entityDeclareTicker,
+          type: weatherActionsTypes.entityDeclareTicket,
           eventType: EVENT_ENTITY_TYPES.declareTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
           action: this.prepareDeclareTicketAction,
