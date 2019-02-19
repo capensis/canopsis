@@ -14,7 +14,7 @@ export default {
      * @param {string|Array} path - Path to field or to array item
      * @param {*} value - New field or item value
      */
-    deepUpdateField(path, value) {
+    updateField(path, value) {
       this.$emit(this[eventKeyComputed], setIn(this[this[formKeyComputed]], path, value));
     },
 
@@ -23,7 +23,7 @@ export default {
      *
      * @param {string|Array} path - Path to field or to array item
      */
-    deepRemoveField(path) {
+    removeField(path) {
       this.$emit(this[eventKeyComputed], unsetIn(this[this[formKeyComputed]], path));
     },
 
@@ -33,7 +33,7 @@ export default {
      * @param {string|Array} path - Path to field or to array item
      * @param {*} value - Value of new array item
      */
-    deepAddItemIntoArray(path, value) {
+    addItemIntoArray(path, value) {
       this.$emit(this[eventKeyComputed], addIn(this[this[formKeyComputed]], path, value));
     },
 
@@ -43,7 +43,7 @@ export default {
      * @param {string|Array} path - Path to field or to array item
      * @param {number} index - Index of item
      */
-    deepRemoveItemFromArray(path, index) {
+    removeItemFromArray(path, index) {
       this.$emit(this[eventKeyComputed], removeIn(this[this[formKeyComputed]], path, index));
     },
   },

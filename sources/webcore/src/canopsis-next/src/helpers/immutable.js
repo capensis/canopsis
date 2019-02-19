@@ -13,6 +13,36 @@ export function setIn(obj, path, value) {
 }
 
 /**
+ * Immutable method for deep updating object fields
+ *
+ * @param {Object|Array} obj - Object will be copied and copy will be updated
+ * @param {Object} pathsValuesMap - Map for paths and values ex: { 'a.b.c': 'value', 'a.b.y': 'another value' }
+ * @return {Object|Array}
+ */
+export function setInSeveral(obj, pathsValuesMap) {
+  const alreadyClonedPaths = {};
+  const clonedObject = clone(obj);
+
+  Object.keys(pathsValuesMap).forEach((path) => {
+    let currentPath = '';
+
+    setWith(clonedObject, path, pathsValuesMap[path], (value, key) => {
+      currentPath += `.${key}`;
+
+      if (alreadyClonedPaths[currentPath]) {
+        return value;
+      }
+
+      alreadyClonedPaths[currentPath] = true;
+
+      return clone(value);
+    });
+  });
+
+  return clonedObject;
+}
+
+/**
  * Immutable method for deep updating object field or array item by customizer function
  *
  * @param {Object|Array} obj - Object will be copied and copy will be updated

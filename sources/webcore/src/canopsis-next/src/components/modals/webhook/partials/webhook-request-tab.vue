@@ -2,22 +2,23 @@
   div
     h2 Request
     v-layout(justify-space-between, align-center)
-      v-flex.pa-1
-        v-text-field(
+      v-flex(xs6).pa-1
+        v-select(
         :value="request.method",
+        :items="availableMethods",
         label="Method",
         v-validate="'required'",
         name="request.method",
         :error-messages="errors.collect('request.method')",
         @input="updateField('method', $event)"
         )
-      v-flex.pa-1
+      v-flex(xs6).pa-1
         v-text-field(
         v-model="request.url",
         label="URL",
         v-validate="'required'",
         name="request.url",
-        :error-messages="errors.collect('request.url')"
+        :error-messages="errors.collect('request.url')",
         @input="updateField('url', $event)"
         )
     v-layout(
@@ -32,8 +33,8 @@
         label="Header key",
         :name="`headers[${index}].key`",
         :error-messages="errors.collect(`headers[${index}].key`)"
-        v-validate="'required|unique-key'",
-        @input="deepUpdateField(`headers[${index}].key`, $event)"
+        v-validate="'required'",
+        @input="updateField(`headers[${index}].key`, $event)"
         )
       v-flex.pa-1
         v-text-field(
@@ -42,9 +43,9 @@
         :name="`headers[${index}].value`",
         :error-messages="errors.collect(`headers[${index}].value`)"
         v-validate="'required'",
-        @input="deepUpdateField(`headers[${index}].value`, $event)"
+        @input="updateField(`headers[${index}].value`, $event)"
         )
-      v-btn(icon, @click="deepRemoveItemFromArray('headers', index)")
+      v-btn(icon, @click="removeItemFromArray('headers', index)")
         v-icon close
     v-layout
       v-btn(color="primary", @click="addHeader") Add header
@@ -55,7 +56,7 @@
         label="Payload",
         v-validate="'required'",
         name="request.payload",
-        :error-messages="errors.collect('request.payload')"
+        :error-messages="errors.collect('request.payload')",
         @input="updateField('payload', $event)"
         )
 </template>
@@ -73,17 +74,22 @@ export default {
     event: 'input',
   },
   props: {
-    request: Object,
-    required: true,
+    request: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
       headers: [],
+      availableMethods: [
+        'POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'CONNECT', 'OPTIONS', 'TRACE',
+      ],
     };
   },
   methods: {
     addHeader() {
-      this.deepAddItemIntoArray('headers', { id: uid(), key: '', value: '' });
+      this.addItemIntoArray('headers', { id: uid(), key: '', value: '' });
     },
   },
 };

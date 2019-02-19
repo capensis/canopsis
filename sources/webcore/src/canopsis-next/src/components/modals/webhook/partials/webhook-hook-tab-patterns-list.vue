@@ -68,6 +68,7 @@ export default {
       this.showModal({
         name: MODALS.createEventFilterRulePattern,
         config: {
+          pattern: this.patterns[index],
           action: pattern => this.updateItemInArray(index, pattern),
         },
       });

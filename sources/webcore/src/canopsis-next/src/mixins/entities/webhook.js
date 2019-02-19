@@ -27,16 +27,16 @@ export default {
       this.addSuccessPopup({ text: this.$t('modals.webhook.create.success') });
     },
 
-    async duplicateWebhookWithPopup(data) {
-      await this.createWebhook({ data });
-      this.refreshWebhooksList();
-      this.addSuccessPopup({ text: this.$t('modals.webhook.duplicate.success') });
-    },
-
-    async editEventFilterRuleWithPopup(id, data) {
+    async editWebhookWithPopup(id, data) {
       await this.editWebhook({ id, data });
       this.refreshWebhooksList();
       this.addSuccessPopup({ text: this.$t('modals.webhook.edit.success') });
+    },
+
+    async removeWebhookWithPopup(id) {
+      await this.removeWebhook({ id });
+      this.refreshWebhooksList();
+      this.addSuccessPopup({ text: this.$t('modals.webhook.remove.success') });
     },
   },
 };

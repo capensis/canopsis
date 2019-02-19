@@ -37,6 +37,12 @@ export default ({
       },
     },
     actions: {
+      /**
+       *
+       * @param {ActionContext} context
+       * @param {Object} [params={}] - Query params of request
+       * @returns {Promise.<void>}
+       */
       async fetchList({ commit, dispatch }, { params } = {}) {
         try {
           commit(types.FETCH_LIST, { params });
@@ -57,30 +63,50 @@ export default ({
         }
       },
 
+      /**
+       * Fetch list with previous fetching params
+       *
+       * @param {ActionContext} context
+       * @returns {Promise<AxiosPromise>}
+       */
       fetchListWithPreviousParams({ dispatch, state }) {
         return dispatch('fetchList', {
           params: state.fetchingParams,
         });
       },
 
+      /**
+       * Create entity by data
+       *
+       * @param {ActionContext} context
+       * @param {Object} data - Entity data
+       * @returns {Promise<AxiosPromise>}
+       */
       create(context, { data }) {
         return request.post(route, data);
       },
 
+      /**
+       * Edit entity by id and data
+       *
+       * @param {ActionContext} context
+       * @param {string} id - Id of entity
+       * @param {Object} data - Entity data
+       * @returns {Promise<AxiosPromise>}
+       */
       edit(context, { id, data }) {
         return request.put(`${route}/${id}`, data);
       },
 
-      async remove({ dispatch }, { id } = {}) {
-        try {
-          await request.delete(`${route}/${id}`);
-          await dispatch('entities/removeFromStore', {
-            id,
-            type: entityType,
-          }, { root: true });
-        } catch (err) {
-          console.error(err);
-        }
+      /**
+       * Remove entity by id
+       *
+       * @param {ActionContext} context
+       * @param {string} id - Id of entity
+       * @returns {Promise<AxiosPromise>}
+       */
+      async remove(context, { id } = {}) {
+        return request.delete(`${route}/${id}`);
       },
     },
   }, module);
