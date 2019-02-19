@@ -149,12 +149,16 @@ router.beforeResolve((to, from, next) => {
     const { requiresRight } = to.meta;
     const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
     const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
+
     const checkProcess = (user) => {
       if (checkUserAccess(user, rightId, rightMask)) {
         next();
       } else {
         store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
-        next(false);
+
+        next({
+          name: 'home',
+        });
       }
     };
 
