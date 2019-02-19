@@ -21,7 +21,7 @@
               div(v-for="action in availableActions", :key="action.name")
                 v-tooltip(top)
                   v-btn(
-                    slot="activator",
+                  slot="activator",
                   @click.stop="action.action(action.name)",
                   :disabled="!isActionBtnEnable(action.name)",
                   depressed,
