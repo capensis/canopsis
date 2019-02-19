@@ -19,14 +19,17 @@
             v-layout(row, align-center)
               div {{ $t('common.actionsLabel') }}:
               div(v-for="action in availableActions", :key="action.name")
-                v-btn(
-                @click.stop="action.action(action.name)",
-                :disabled="!isActionBtnEnable(action.name)",
-                depressed,
-                small,
-                light,
-                )
-                  v-icon {{ action.icon }}
+                v-tooltip(top)
+                  v-btn(
+                  slot="activator",
+                  @click.stop="action.action(action.name)",
+                  :disabled="!isActionBtnEnable(action.name)",
+                  depressed,
+                  small,
+                  light,
+                  )
+                    v-icon {{ action.icon }}
+                  span {{ action.tooltip }}
             div(v-html="compiledTemplate")
 </template>
 
@@ -71,31 +74,37 @@ export default {
       actions: [
         {
           name: EVENT_ENTITY_TYPES.ack,
+          tooltip: this.$t(`common.actions.${EVENT_ENTITY_TYPES.ack}`),
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           action: this.prepareAckAction,
         },
         {
           name: EVENT_ENTITY_TYPES.declareTicket,
+          tooltip: this.$t(`common.actions.${EVENT_ENTITY_TYPES.declareTicket}`),
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
           action: this.prepareDeclareTicketAction,
         },
         {
           name: EVENT_ENTITY_TYPES.validate,
+          tooltip: this.$t(`common.actions.${EVENT_ENTITY_TYPES.validate}`),
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.validate].icon,
           action: this.prepareValidateAction,
         },
         {
           name: EVENT_ENTITY_TYPES.invalidate,
+          tooltip: this.$t(`common.actions.${EVENT_ENTITY_TYPES.invalidate}`),
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.invalidate].icon,
           action: this.prepareInvalidateAction,
         },
         {
           name: EVENT_ENTITY_TYPES.pause,
+          tooltip: this.$t(`common.actions.${EVENT_ENTITY_TYPES.pause}`),
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pause].icon,
           action: this.preparePauseAction,
         },
         {
           name: EVENT_ENTITY_TYPES.play,
+          tooltip: this.$t(`common.actions.${EVENT_ENTITY_TYPES.play}`),
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
           action: this.preparePlayAction,
         },
