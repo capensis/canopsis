@@ -19,14 +19,17 @@
             v-layout(v-if="availableActions.length", row, align-center)
               div {{ $t('common.actionsLabel') }}:
               div(v-for="action in availableActions", :key="action.eventType")
-                v-btn(
-                @click.stop="action.action",
-                :disabled="!isActionBtnEnable(action.eventType)",
-                depressed,
-                small,
-                light,
-                )
-                  v-icon {{ action.icon }}
+                v-tooltip(top)
+                  v-btn(
+                  slot="activator",
+                  @click.stop="action.action",
+                  :disabled="!isActionBtnEnable(action.eventType)",
+                  depressed,
+                  small,
+                  light,
+                  )
+                    v-icon {{ action.icon }}
+                  span {{ $t(`common.actions.${action.eventType}`) }}
             div(v-html="compiledTemplate")
 </template>
 

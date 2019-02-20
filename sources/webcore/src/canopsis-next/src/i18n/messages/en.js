@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
@@ -73,10 +73,15 @@ export default {
     search: 'Search',
     actions: {
       close: 'Close',
-      acknowledge: 'Acknowledge',
       acknowledgeAndReport: 'Acknowledge and report an incident',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.validate]: 'Validate',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Play',
     },
     times: {
       second: 'second | seconds',
