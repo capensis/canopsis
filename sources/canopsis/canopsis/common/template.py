@@ -48,8 +48,11 @@ class Template(Compiler):
         _compiler._pybars_['helpers'][name] = handler
 
     def __call__(self, context):
-        compiled = self.compile(self.source)
-        return u''.join(compiled(context))
+        precompiled = self.precompile(self.source)
+        template = self.template(precompiled)
+        finaltemplate = template(context)
+
+        return u''.join(finaltemplate)
 
     def _helper_foreach(self, this, options, items, sortKey=None):
         result = []
