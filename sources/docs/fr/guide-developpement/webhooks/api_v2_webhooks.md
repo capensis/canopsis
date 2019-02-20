@@ -1,5 +1,8 @@
 # API Webhooks
 
+!!! note
+    Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
+
 L'API Webhooks permet de consulter, créer et supprimer des Webhooks.
 
 ### Creation de Webhook
