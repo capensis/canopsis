@@ -111,5 +111,3 @@ Le moteur axe par défaut ne contient pas ce plugin gérant les webhooks. Pour p
 
 Le plugin webhook se trouve dans l'image `engine-axe-cat`.
 
-!!! note
-    Il est déconseillé d'utiliser l'option `-autoDeclareTickets` qui est **dépréciée** depuis la version 3.10.0 et l'ajout des webhooks.
