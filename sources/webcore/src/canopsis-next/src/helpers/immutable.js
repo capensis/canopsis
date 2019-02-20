@@ -5,11 +5,13 @@ import { get, clone, setWith, unset, isFunction } from 'lodash';
  *
  * @param {Object|Array} obj - Object will be copied and copy will be updated
  * @param {string|Array} path - Path to field or item
- * @param {*} value - New field or item value
+ * @param {*} value - New field or item value or customizer function
  * @return {Object|Array}
  */
 export function setIn(obj, path, value) {
-  return setWith(clone(obj), path, value, clone);
+  const preparedValue = isFunction(value) ? value(get(obj, path)) : value;
+
+  return setWith(clone(obj), path, preparedValue, clone);
 }
 
 /**
@@ -24,10 +26,11 @@ export function setInSeveral(obj, pathsValuesMap) {
   const clonedObject = clone(obj);
 
   Object.keys(pathsValuesMap).forEach((path) => {
-    const value = isFunction(pathsValuesMap[path]) ? pathsValuesMap[path](get(obj, path)) : pathsValuesMap[path];
+    const preparedValue = isFunction(pathsValuesMap[path]) ?
+      pathsValuesMap[path](get(obj, path)) : pathsValuesMap[path];
     let currentPath = '';
 
-    setWith(clonedObject, path, value, (customizerValue, key) => {
+    setWith(clonedObject, path, preparedValue, (customizerValue, key) => {
       currentPath += `.${key}`;
 
       if (alreadyClonedPaths[currentPath]) {
@@ -41,18 +44,6 @@ export function setInSeveral(obj, pathsValuesMap) {
   });
 
   return clonedObject;
-}
-
-/**
- * Immutable method for deep updating object field or array item by customizer function
- *
- * @param {Object|Array} obj - Object will be copied and copy will be updated
- * @param {string|Array} path - Path to field or item
- * @param {function} [customizer=v => v] - Customizer for updated item
- * @return {Object|Array}
- */
-export function setInWith(obj, path, customizer = v => v) {
-  return setWith(clone(obj), path, customizer(get(obj, path)), clone);
 }
 
 /**
@@ -92,7 +83,7 @@ export function removeIn(obj, path, index) {
 
 export default {
   setIn,
-  setInWith,
+  setInSeveral,
   unsetIn,
   addIn,
   removeIn,

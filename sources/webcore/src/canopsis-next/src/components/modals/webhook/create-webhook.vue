@@ -51,11 +51,13 @@ export default {
     webhookToForm(webhook) {
       return setInSeveral(webhook, {
         'request.headers': objectToTextPairs,
+        declare_ticket: objectToTextPairs,
       });
     },
     formToWebhook(form) {
       return setInSeveral(form, {
         'request.headers': textPairsToObject,
+        declare_ticket: textPairsToObject,
       });
     },
   },
@@ -79,7 +81,7 @@ export default {
         headers: [],
         payload: '{}',
       },
-      declare_ticket: {},
+      declare_ticket: [],
     };
 
     return {
