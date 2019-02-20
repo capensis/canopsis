@@ -10,6 +10,17 @@ peuvent-être ajoutées et modifiées avec l'[API webhooks](../../guide-developp
 
 Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
 
+## Activation des webhooks
+
+Les webhooks sont implémentés sous la forme d'un plugin à ajouter dans le moteur `axe`. Ce plugin n'est disponible qu'avec une installation CAT de Canopsis.
+
+Dans une installation Docker, vous devez remplacer l'image par défaut `canopsis/engine-axe` par l'image `canopsis/engine-axe-cat`.
+
+Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé :
+```
+engine-axe -postProcessorsDirectory /plugins/axepostprocessor
+```
+
 ## Définition d'un webhook
 
 Une règle est un document JSON contenant les paramètres suivants :
@@ -108,6 +119,4 @@ Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Dat
 Le moteur axe par défaut ne contient pas ce plugin gérant les webhooks. Pour pouvoir utiliser les webhooks, il faut :
 - compiler le plugin webhooks dans le répertoire contenant le plugin webhooks `CGO_ENABLED=1 go build -buildmode=plugin -o webhookPlugin.so main.go`
 - lancer le moteur axe avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`. Sauf configuration spécifique, `webhookPlugin.so` se trouve dans `/plugins/axepostprocessor`.
-
-Le plugin webhook se trouve dans l'image `engine-axe-cat`.
 
