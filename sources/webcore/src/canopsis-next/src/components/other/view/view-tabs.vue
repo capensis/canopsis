@@ -30,7 +30,7 @@
         small,
         flat,
         icon,
-        @click.stop="showUpdateTabModal(tab)"
+        @click.prevent="showUpdateTabModal(tab)"
         )
           v-icon(small) edit
         v-btn(
@@ -38,7 +38,7 @@
         small,
         flat,
         icon,
-        @click.stop="showDuplicateTabModal(tab)"
+        @click.prevent="showDuplicateTabModal(tab)"
         )
           v-icon(small) file_copy
         v-btn(
@@ -46,7 +46,7 @@
         small,
         flat,
         icon,
-        @click.stop="showDeleteTabModal(tab)"
+        @click.prevent="showDeleteTabModal(tab)"
         )
           v-icon(small) delete
     template(v-if="$scopedSlots.default")
