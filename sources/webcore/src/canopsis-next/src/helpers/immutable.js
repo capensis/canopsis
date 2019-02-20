@@ -1,4 +1,4 @@
-import { get, clone, setWith, unset } from 'lodash';
+import { get, clone, setWith, unset, isFunction } from 'lodash';
 
 /**
  * Immutable method for deep updating object field or array item
@@ -16,7 +16,7 @@ export function setIn(obj, path, value) {
  * Immutable method for deep updating object fields
  *
  * @param {Object|Array} obj - Object will be copied and copy will be updated
- * @param {Object} pathsValuesMap - Map for paths and values ex: { 'a.b.c': 'value', 'a.b.y': 'another value' }
+ * @param {Object} pathsValuesMap - Map for paths and values ex: { 'a.b.c': 'value', 'a.b.y': val => val }
  * @return {Object|Array}
  */
 export function setInSeveral(obj, pathsValuesMap) {
@@ -24,18 +24,19 @@ export function setInSeveral(obj, pathsValuesMap) {
   const clonedObject = clone(obj);
 
   Object.keys(pathsValuesMap).forEach((path) => {
+    const value = isFunction(pathsValuesMap[path]) ? pathsValuesMap[path](get(obj, path)) : pathsValuesMap[path];
     let currentPath = '';
 
-    setWith(clonedObject, path, pathsValuesMap[path], (value, key) => {
+    setWith(clonedObject, path, value, (customizerValue, key) => {
       currentPath += `.${key}`;
 
       if (alreadyClonedPaths[currentPath]) {
-        return value;
+        return customizerValue;
       }
 
       alreadyClonedPaths[currentPath] = true;
 
-      return clone(value);
+      return clone(customizerValue);
     });
   });
 

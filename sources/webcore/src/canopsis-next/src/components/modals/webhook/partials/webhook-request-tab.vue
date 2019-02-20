@@ -21,34 +21,13 @@
         :error-messages="errors.collect('request.url')",
         @input="updateField('url', $event)"
         )
-    v-layout(
-    v-for="(header, index) in request.headers",
-    :key="header.id",
-    justify-space-between,
-    align-center
+    text-pairs(
+    :items="request.headers",
+    :title="'Headers'",
+    :textLabel="'Header key'",
+    :valueLabel="'Header value'",
+    @input="updateField('headers', $event)"
     )
-      v-flex.pa-1
-        v-text-field(
-        :value="header.key",
-        label="Header key",
-        :name="`headers[${index}].key`",
-        :error-messages="errors.collect(`headers[${index}].key`)"
-        v-validate="'required'",
-        @input="updateField(`headers[${index}].key`, $event)"
-        )
-      v-flex.pa-1
-        v-text-field(
-        :value="header.value",
-        label="Header value",
-        :name="`headers[${index}].value`",
-        :error-messages="errors.collect(`headers[${index}].value`)"
-        v-validate="'required'",
-        @input="updateField(`headers[${index}].value`, $event)"
-        )
-      v-btn(icon, @click="removeItemFromArray('headers', index)")
-        v-icon close
-    v-layout
-      v-btn(color="primary", @click="addHeader") Add header
     v-layout
       v-flex
         v-textarea(
@@ -62,13 +41,14 @@
 </template>
 
 <script>
-import uid from '@/helpers/uid';
+import formMixin from '@/mixins/form';
 
-import formDeepMixin from '@/mixins/form/deep';
+import TextPairs from '@/components/forms/fields/text-pairs.vue';
 
 export default {
   inject: ['$validator'],
-  mixins: [formDeepMixin],
+  components: { TextPairs },
+  mixins: [formMixin],
   model: {
     prop: 'request',
     event: 'input',
@@ -86,11 +66,6 @@ export default {
         'POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'CONNECT', 'OPTIONS', 'TRACE',
       ],
     };
-  },
-  methods: {
-    addHeader() {
-      this.addItemIntoArray('headers', { id: uid(), key: '', value: '' });
-    },
   },
 };
 </script>

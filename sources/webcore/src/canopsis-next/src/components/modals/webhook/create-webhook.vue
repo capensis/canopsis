@@ -25,8 +25,8 @@ import { cloneDeep, intersection } from 'lodash';
 
 import { MODALS, WEBHOOK_TRIGGERS } from '@/constants';
 
-import uid from '@/helpers/uid';
-import { setInWith, setInSeveral } from '@/helpers/immutable';
+import { setInSeveral } from '@/helpers/immutable';
+import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -49,16 +49,14 @@ export default {
   },
   filters: {
     webhookToForm(webhook) {
-      return setInWith(webhook, 'request.headers', headers =>
-        Object.keys(headers).map(key => ({ key, id: uid(), value: headers[key] })));
+      return setInSeveral(webhook, {
+        'request.headers': objectToTextPairs,
+      });
     },
     formToWebhook(form) {
-      return setInWith(form, 'request.headers', headers =>
-        headers.reduce((acc, header) => {
-          acc[header.key] = header.value;
-
-          return acc;
-        }, {}));
+      return setInSeveral(form, {
+        'request.headers': textPairsToObject,
+      });
     },
   },
   mixins: [modalInnerMixin],
