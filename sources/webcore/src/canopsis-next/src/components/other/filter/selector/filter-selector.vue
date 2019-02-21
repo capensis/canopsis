@@ -34,7 +34,7 @@
           v-list-tile-content
             v-list-tile-title
               span {{ item[itemText] }}
-              v-icon.ml-2(v-if="item.locked", :color="tile.props.value ? parent.color : ''", small) lock
+              v-icon.ml-2(:color="tile.props.value ? parent.color : ''", small) {{ item.locked ? 'lock' : 'person' }}
     v-flex(v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
