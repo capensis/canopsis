@@ -888,16 +888,14 @@ export default {
         requestUrl: 'Request URL',
       },
     },
-
     tabs: {
       hook: {
         title: 'Hook',
         fields: {
           triggers: 'Triggers',
-          eventPatters: 'Event patterns',
-          alarmPatters: 'Alarm patterns',
-          entityPatters: 'Entity patterns',
-
+          eventPatterns: 'Event patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
         },
       },
       request: {

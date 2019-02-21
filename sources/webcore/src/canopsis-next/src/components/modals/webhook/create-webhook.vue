@@ -9,11 +9,11 @@
         v-tab {{ $t('webhook.tabs.request.title') }}
         v-tab(:disabled="hasBlockedTriggers") {{ $t('webhook.tabs.declareTicket.title') }}
         v-tab-item
-          webhook-hook-tab(v-model="form.hook", :hasBlockedTriggers="hasBlockedTriggers")
+          create-webhook-hook-tab(v-model="form.hook", :hasBlockedTriggers="hasBlockedTriggers")
         v-tab-item
-          webhook-request-tab(v-model="form.request")
+          create-webhook-request-tab(v-model="form.request")
         v-tab-item
-          webhook-declare-ticket-tab(v-model="form.declare_ticket")
+          create-webhook-declare-ticket-tab(v-model="form.declare_ticket")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -30,9 +30,9 @@ import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import WebhookHookTab from './partials/webhook-hook-tab.vue';
-import WebhookRequestTab from './partials/webhook-request-tab.vue';
-import WebhookDeclareTicketTab from './partials/webhook-declare-ticket-tab.vue';
+import CreateWebhookHookTab from './partials/create-webhook-hook-tab.vue';
+import CreateWebhookRequestTab from './partials/create-webhook-request-tab.vue';
+import CreateWebhookDeclareTicketTab from './partials/create-webhook-declare-ticket-tab.vue';
 
 /**
  * Modal to create widget
@@ -43,9 +43,9 @@ export default {
     validator: 'new',
   },
   components: {
-    WebhookHookTab,
-    WebhookRequestTab,
-    WebhookDeclareTicketTab,
+    CreateWebhookHookTab,
+    CreateWebhookRequestTab,
+    CreateWebhookDeclareTicketTab,
   },
   filters: {
     webhookToForm(webhook) {

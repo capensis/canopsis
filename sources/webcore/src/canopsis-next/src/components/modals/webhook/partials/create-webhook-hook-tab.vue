@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    h2 {{ $t('modals.createWebhook.tabs.hook.title') }}
+    h2 {{ $t('webhook.tabs.hook.title') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-select(
@@ -41,7 +41,7 @@ import { WEBHOOK_TRIGGERS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
-import WebhookHookTabPatternsList from './webhook-hook-tab-patterns-list.vue';
+import WebhookHookTabPatternsList from './create-webhook-hook-tab-patterns-list.vue';
 
 export default {
   inject: ['$validator'],
