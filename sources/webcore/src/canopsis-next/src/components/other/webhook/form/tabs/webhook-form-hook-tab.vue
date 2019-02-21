@@ -6,6 +6,7 @@
         v-select(
         :value="hook.triggers",
         :items="availableTriggers",
+        :disabled="disabled",
         :label="$t('webhook.tabs.hook.fields.triggers')",
         :error-messages="errors.collect('triggers')",
         v-validate="'required'",
@@ -20,18 +21,21 @@
           v-tab {{ $t('webhook.tabs.hook.fields.alarmPatterns') }}
           v-tab {{ $t('webhook.tabs.hook.fields.entityPatterns') }}
           v-tab-item(:disabled="hasBlockedTriggers")
-            webhook-hook-tab-patterns-list(
+            patterns-list(
             :patterns="hook.event_pattern",
+            :disabled="disabled",
             @input="updateField('event_pattern', $event)"
             )
           v-tab-item
-            webhook-hook-tab-patterns-list(
+            patterns-list(
             :patterns="hook.alarm_pattern",
+            :disabled="disabled",
             @input="updateField('alarm_pattern', $event)"
             )
           v-tab-item
-            webhook-hook-tab-patterns-list(
+            patterns-list(
             :patterns="hook.entity_pattern",
+            :disabled="disabled",
             @input="updateField('entity_pattern', $event)"
             )
 </template>
@@ -41,11 +45,11 @@ import { WEBHOOK_TRIGGERS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
-import WebhookHookTabPatternsList from './create-webhook-hook-tab-patterns-list.vue';
+import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],
-  components: { WebhookHookTabPatternsList },
+  components: { PatternsList },
   mixins: [formMixin],
   model: {
     prop: 'hook',
@@ -57,6 +61,10 @@ export default {
       required: true,
     },
     hasBlockedTriggers: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

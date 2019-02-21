@@ -6,6 +6,7 @@
         v-select(
         :value="request.method",
         :items="availableMethods",
+        :disabled="disabled",
         :label="$t('webhook.tabs.request.fields.method')",
         v-validate="'required'",
         name="request.method",
@@ -15,6 +16,7 @@
       v-flex(xs6).pa-1
         v-text-field(
         v-model="request.url",
+        :disabled="disabled",
         :label="$t('webhook.tabs.request.fields.url')",
         v-validate="'required'",
         name="request.url",
@@ -23,6 +25,7 @@
         )
     text-pairs(
     :items="request.headers",
+    :disabled="disabled",
     :title="$t('webhook.tabs.request.fields.headers')",
     :textLabel="$t('webhook.tabs.request.fields.headerKey')",
     :valueLabel="$t('webhook.tabs.request.fields.headerValue')",
@@ -32,6 +35,8 @@
       v-flex
         v-textarea(
         v-model="request.payload",
+        :disabled="disabled",
+        :read-only="disabled",
         :label="$t('webhook.tabs.request.fields.payload')",
         v-validate="'required'",
         name="request.payload",
@@ -57,6 +62,10 @@ export default {
     request: {
       type: Object,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

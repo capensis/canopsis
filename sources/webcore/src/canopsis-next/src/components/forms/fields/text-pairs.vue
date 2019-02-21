@@ -3,7 +3,7 @@
     v-flex(v-show="title", xs12)
       h4.ml-1 {{ title }}
     v-flex(xs12)
-      slot(name="no-data")
+      slot(v-if="!items.length", name="no-data")
       v-layout(
       v-for="(item, index) in items",
       :key="item[itemKey]",
@@ -14,6 +14,7 @@
           v-text-field(
           :value="item[itemText]",
           :label="textLabel",
+          :disabled="disabled",
           :name="getTextFieldName(index)",
           :error-messages="getErrorMessages(getTextFieldName(index))",
           v-validate="textValidationRules",
@@ -23,14 +24,15 @@
           v-text-field(
           :value="item[itemValue]",
           :label="valueLabel",
+          :disabled="disabled",
           :name="getValueFieldName(index)",
           :error-messages="getErrorMessages(getValueFieldName(index))",
           v-validate="valueValidationRules",
           @input="updateFieldInArrayItem(index, itemValue, $event)"
           )
-        v-btn(icon, @click="removeItemFromArray(index)")
+        v-btn(v-if="!disabled", icon, @click="removeItemFromArray(index)")
           v-icon close
-    v-flex(xs12)
+    v-flex(v-if="!disabled", xs12)
       v-layout
         v-btn.ml-1(color="primary", @click="addNewItem") {{ addButtonLabel || $t('common.add') }}
 </template>
@@ -91,6 +93,10 @@ export default {
     addButtonLabel: {
       type: String,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     itemCreator: {
       type: Function,

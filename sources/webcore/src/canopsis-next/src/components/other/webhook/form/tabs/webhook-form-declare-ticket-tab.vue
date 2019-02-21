@@ -5,6 +5,7 @@
     :textLabel="$t('webhook.tabs.declareTicket.fields.text')",
     :valueLabel="$t('webhook.tabs.declareTicket.fields.value')",
     :items="declareTicket",
+    :disabled="disabled",
     @input="$emit('input', $event)"
     )
 </template>
@@ -22,6 +23,10 @@ export default {
     declareTicket: {
       type: Array,
       default: () => [],
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };

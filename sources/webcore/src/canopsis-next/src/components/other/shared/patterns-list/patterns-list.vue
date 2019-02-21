@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    slot(v-if="!patterns.length", name="no-data")
     v-layout(
     v-for="(pattern, index) in patterns",
     :key="`${getPatternString(pattern)}${index}`",
@@ -7,7 +8,7 @@
     wrap,
     align-center
     )
-      v-flex(xs11)
+      v-flex(:class="disabled ? 'xs12' : 'xs11'")
         v-textarea(
         :value="getPatternString(pattern)",
         rows="7",
@@ -15,14 +16,14 @@
         readonly,
         disabled
         )
-      v-flex.text-xs-center(xs1)
+      v-flex.text-xs-center(v-if="!disabled", xs1)
         div
           v-btn(icon, @click="showEditPatternModal(index)")
             v-icon edit
         div
           v-btn(color="error", icon, @click="showRemovePatternModal(index)")
             v-icon delete
-    v-btn(color="primary", @click="showCreatePatternModal") {{ $t('common.add') }}
+    v-btn(v-if="!disabled", color="primary", @click="showCreatePatternModal") {{ $t('common.add') }}
 </template>
 
 <script>
@@ -41,6 +42,10 @@ export default {
     patterns: {
       type: Array,
       default: () => [],
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

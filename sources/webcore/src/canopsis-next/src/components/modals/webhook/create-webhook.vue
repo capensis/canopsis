@@ -4,16 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
     v-card-text
-      v-tabs(fixed-tabs)
-        v-tab {{ $t('webhook.tabs.hook.title') }}
-        v-tab {{ $t('webhook.tabs.request.title') }}
-        v-tab(:disabled="hasBlockedTriggers") {{ $t('webhook.tabs.declareTicket.title') }}
-        v-tab-item
-          create-webhook-hook-tab(v-model="form.hook", :hasBlockedTriggers="hasBlockedTriggers")
-        v-tab-item
-          create-webhook-request-tab(v-model="form.request")
-        v-tab-item
-          create-webhook-declare-ticket-tab(v-model="form.declare_ticket")
+      webhook-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -21,18 +12,16 @@
 </template>
 
 <script>
-import { cloneDeep, intersection } from 'lodash';
+import { cloneDeep } from 'lodash';
 
-import { MODALS, WEBHOOK_TRIGGERS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { setInSeveral } from '@/helpers/immutable';
-import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import webhookFormFiltersMixin from '@/mixins/webhook/form-filters';
 
-import CreateWebhookHookTab from './partials/create-webhook-hook-tab.vue';
-import CreateWebhookRequestTab from './partials/create-webhook-request-tab.vue';
-import CreateWebhookDeclareTicketTab from './partials/create-webhook-declare-ticket-tab.vue';
+import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
 
 /**
  * Modal to create widget
@@ -42,26 +31,8 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    CreateWebhookHookTab,
-    CreateWebhookRequestTab,
-    CreateWebhookDeclareTicketTab,
-  },
-  filters: {
-    webhookToForm(webhook) {
-      return setInSeveral(webhook, {
-        'request.headers': objectToTextPairs,
-        declare_ticket: objectToTextPairs,
-      });
-    },
-    formToWebhook(form) {
-      return setInSeveral(form, {
-        'request.headers': textPairsToObject,
-        declare_ticket: textPairsToObject,
-      });
-    },
-  },
-  mixins: [modalInnerMixin],
+  components: { WebhookForm },
+  mixins: [modalInnerMixin, webhookFormFiltersMixin],
   data() {
     const { webhook } = this.modal.config;
     const defaultForm = {
@@ -95,14 +66,6 @@ export default {
       }
 
       return this.$t('modals.createWebhook.create.title');
-    },
-
-    hasBlockedTriggers() {
-      return intersection(this.form.hook.triggers, [
-        WEBHOOK_TRIGGERS.resolve,
-        WEBHOOK_TRIGGERS.cancel,
-        WEBHOOK_TRIGGERS.unsnooze,
-      ]).length > 0;
     },
   },
   methods: {
