@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * If entity has parent we should use this processStrategy

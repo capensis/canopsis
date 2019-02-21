@@ -15,13 +15,11 @@
           v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
     :view="view",
-    :value="value",
     :tabs.sync="tabs",
     :isTabsChanged="isTabsChanged",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
     :updateViewMethod="data => updateViewMethod(data)",
-    @input="$emit('input', $event)"
     )
       view-tab-rows(
       slot-scope="props",
@@ -30,7 +28,7 @@
 </template>
 
 <script>
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
 
 import ViewTabs from './view-tabs.vue';
 import ViewTabRows from './view-tab-rows.vue';
@@ -41,10 +39,6 @@ export default {
     ViewTabRows,
   },
   props: {
-    value: {
-      type: Number,
-      default: null,
-    },
     view: {
       type: Object,
       required: true,
@@ -89,17 +83,13 @@ export default {
     cancel() {
       this.tabs = [...this.view.tabs];
     },
-    async submit() {
-      const activeTab = this.view.tabs[this.value];
-      const activeTabIndex = this.tabs.findIndex(tab => activeTab._id === tab._id);
 
-      await this.updateViewMethod({
+    async submit() {
+      this.updateViewMethod({
         ...this.view,
 
         tabs: this.tabs,
       });
-
-      this.$emit('input', activeTabIndex);
     },
   },
 };

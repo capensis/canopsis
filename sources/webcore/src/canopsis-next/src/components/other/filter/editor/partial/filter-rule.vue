@@ -32,19 +32,51 @@
         flat
         )
       v-flex.pa-1(xs12, md4)
-        v-text-field.my-2(
-        v-show="isShownTextField",
-        :value="rule.input",
-        @input="updateField('input', $event)",
-        solo-inverted,
-        hide-details,
-        single-line,
-        flat
-        )
+        v-layout.my-2(align-center, v-show="isShownInputField")
+          v-flex(xs3)
+            v-select(
+            :items="types",
+            :value="inputType",
+            solo-inverted,
+            hide-details,
+            dense,
+            flat,
+            @input="updateInputTypeField"
+            )
+              template(slot="selection", slot-scope="{ parent, item, index }")
+                v-icon.type-icon(small) {{ getInputTypeIcon(item.value) }}
+              template(slot="item", slot-scope="{ item }")
+                v-list-tile-avatar.small-avatar
+                  v-icon.type-icon(small) {{ getInputTypeIcon(item.value) }}
+                v-list-tile-content
+                  v-list-tile-title {{ item.text }}
+          v-flex(xs9)
+            v-text-field.input-field(
+            v-if="isInputTypeText",
+            :type="rule.inputType === $constants.FILTER_INPUT_TYPES.number ? 'number' : 'text'",
+            :value="rule.input",
+            @input="updateInputField",
+            solo-inverted,
+            hide-details,
+            single-line,
+            flat
+            )
+            v-switch.ma-0.ml-3.pa-0.switch-field(
+            v-else,
+            :inputValue="rule.input",
+            :label="switchLabel",
+            @change="updateField('input', $event)",
+            solo-inverted,
+            hide-details,
+            single-line,
+            flat
+            )
 </template>
 
 <script>
-import { FILTER_OPERATORS } from '@/constants';
+import { isBoolean, isNumber } from 'lodash';
+
+import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
@@ -82,8 +114,45 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      types: [
+        { text: 'String', value: FILTER_INPUT_TYPES.string },
+        { text: 'Number', value: FILTER_INPUT_TYPES.number },
+        { text: 'Boolean', value: FILTER_INPUT_TYPES.boolean },
+      ],
+    };
+  },
   computed: {
-    isShownTextField() {
+    switchLabel() {
+      return String(this.rule.input);
+    },
+
+    inputType() {
+      if (isBoolean(this.rule.input)) {
+        return FILTER_INPUT_TYPES.boolean;
+      } else if (isNumber(this.rule.input)) {
+        return FILTER_INPUT_TYPES.number;
+      }
+
+      return FILTER_INPUT_TYPES.string;
+    },
+
+    isInputTypeText() {
+      return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.inputType);
+    },
+
+    getInputTypeIcon() {
+      const TYPES_ICONS_MAP = {
+        [FILTER_INPUT_TYPES.string]: 'title',
+        [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
+        [FILTER_INPUT_TYPES.boolean]: 'toggle_on',
+      };
+
+      return type => TYPES_ICONS_MAP[type];
+    },
+
+    isShownInputField() {
       return ![
         FILTER_OPERATORS.isEmpty,
         FILTER_OPERATORS.isNotEmpty,
@@ -92,5 +161,49 @@ export default {
       ].includes(this.rule.operator);
     },
   },
+  methods: {
+    updateInputField(value) {
+      const isInputTypeNumber = this.inputType === FILTER_INPUT_TYPES.number;
+
+      this.updateField('input', isInputTypeNumber ? Number(value) : value);
+    },
+    updateInputTypeField(value) {
+      switch (value) {
+        case FILTER_INPUT_TYPES.number:
+          this.updateField('input', Number(this.rule.input));
+          break;
+        case FILTER_INPUT_TYPES.boolean:
+          this.updateField('input', Boolean(this.rule.input));
+          break;
+        case FILTER_INPUT_TYPES.string:
+          this.updateField('input', String(this.rule.input));
+          break;
+      }
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+  .input-field {
+    border-left: solid 1px #cccccc;
+  }
+
+  .type-icon {
+    color: inherit;
+    opacity: .6;
+  }
+
+  .small-avatar {
+    min-width: 30px;
+
+    & /deep/ .v-avatar {
+      width: 20px!important;
+      height: 20px!important;
+    }
+  }
+
+  .switch-field /deep/ .v-label {
+    text-transform: capitalize;
+  }
+</style>

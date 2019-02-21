@@ -2,28 +2,35 @@
   v-tabs.view-tabs(
   ref="tabs",
   :key="vTabsKey",
-  :value="value",
-  :class="{ hidden: this.tabs.length < 2, 'tabs-editing': isEditingMode }",
+  :value="$route.fullPath"
+  :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
-  dark,
-  @change="$emit('input', $event)"
+  dark
   )
     draggable.d-flex(
+    v-if="tabs.length",
     :value="tabs",
     :options="draggableOptions",
     @end="onDragEnd",
     @input="$emit('update:tabs', $event)"
     )
-      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
+      v-tab.draggable-item(
+      v-for="tab in tabs",
+      :key="tab._id",
+      :disabled="isTabsChanged",
+      :to="getTabHrefById(tab._id)",
+      exact,
+      ripple
+      )
         span {{ tab.title }}
         v-btn(
         v-show="hasUpdateAccess && isEditingMode",
         small,
         flat,
         icon,
-        @click.stop="showUpdateTabModal(tab)"
+        @click.prevent="showUpdateTabModal(tab)"
         )
           v-icon(small) edit
         v-btn(
@@ -31,11 +38,24 @@
         small,
         flat,
         icon,
-        @click.stop="showDeleteTabModal(tab)"
+        @click.prevent="showDuplicateTabModal(tab)"
+        )
+          v-icon(small) file_copy
+        v-btn(
+        v-show="hasUpdateAccess && isEditingMode",
+        small,
+        flat,
+        icon,
+        @click.prevent="showDeleteTabModal(tab)"
         )
           v-icon(small) delete
-    v-tabs-items(v-if="$scopedSlots.default", active-class="active-view-tab")
-      v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
+    template(v-if="$scopedSlots.default")
+      v-tab-item(
+      v-for="tab in tabs",
+      :key="tab._id",
+      :value="getTabHrefById(tab._id)",
+      lazy
+      )
         slot(
         :tab="tab",
         :isEditingMode="isEditingMode",
@@ -50,12 +70,21 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
+import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
+
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 export default {
   components: { Draggable },
-  mixins: [modalMixin, vuetifyTabsMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    vuetifyTabsMixin,
+    entitiesUserPreferenceMixin,
+  ],
   props: {
     view: {
       type: Object,
@@ -64,10 +93,6 @@ export default {
     tabs: {
       type: Array,
       required: true,
-    },
-    value: {
-      type: Number,
-      default: null,
     },
     hasUpdateAccess: {
       type: Boolean,
@@ -94,6 +119,13 @@ export default {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
         disabled: !this.isEditingMode,
+      };
+    },
+    getTabHrefById() {
+      return (id) => {
+        const { href } = this.$router.resolve({ query: { tabId: id } }, this.$route);
+
+        return href;
       };
     },
   },
@@ -129,32 +161,72 @@ export default {
       });
     },
 
-    showDeleteTabModal(tab) {
+    showDuplicateTabModal(tab) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: MODALS.textFieldEditor,
         config: {
-          action: async () => {
-            const view = {
-              ...this.view,
-              tabs: this.view.tabs.filter(viewTab => viewTab._id !== tab._id),
-            };
-
-            await this.updateViewMethod(view);
+          title: this.$t('modals.viewTab.duplicate.title'),
+          field: {
+            name: 'text',
+            label: this.$t('modals.viewTab.fields.title'),
+            validationRules: 'required',
           },
+          action: title => this.duplicateTabAction(tab, title),
         },
       });
     },
 
-    updateTab(newTab) {
+    showDeleteTabModal(tab) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.deleteTab(tab._id),
+        },
+      });
+    },
+
+    async duplicateTabAction(tab, title) {
+      const newTab = {
+        ...generateCopyOfViewTab(tab),
+
+        title,
+      };
+
+      const widgetsIdsMappings = getViewsTabsWidgetsIdsMappings(tab, newTab);
+
+      await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
+
+      return this.addTab(newTab);
+    },
+
+    updateTab(tab) {
       const view = {
         ...this.view,
         tabs: this.view.tabs.map((viewTab) => {
-          if (viewTab._id === newTab._id) {
-            return newTab;
+          if (viewTab._id === tab._id) {
+            return tab;
           }
 
           return viewTab;
         }),
+      };
+
+      return this.updateViewMethod(view);
+    },
+
+    addTab(tab) {
+      const view = {
+        ...this.view,
+        tabs: [...this.view.tabs, tab],
+      };
+
+      return this.updateViewMethod(view);
+    },
+
+    deleteTab(tabId) {
+      const view = {
+        ...this.view,
+        tabs: this.view.tabs.filter(viewTab => viewTab._id !== tabId),
       };
 
       return this.updateViewMethod(view);

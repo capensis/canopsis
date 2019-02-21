@@ -4,7 +4,14 @@
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
-        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
+        pagination(
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="alarmsMeta.total",
+        type="top",
+        @input="updateQueryPage"
+        )
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
@@ -48,7 +55,7 @@
         template(slot="items", slot-scope="props")
           tr
             td
-              v-checkbox(primary, hide-details, v-model="props.selected")
+              v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
             v-for="column in columns",
             @click="props.expanded = !props.expanded"
@@ -60,16 +67,19 @@
           time-line(:alarmProps="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="alarmsMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total",
+          @input="updateQueryPage"
+          )
         v-spacer
         v-flex(xs2)
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import pick from 'lodash/pick';
-import isEmpty from 'lodash/isEmpty';
+import { omit, pick, isEmpty } from 'lodash';
 
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
@@ -86,6 +96,7 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
@@ -116,6 +127,7 @@ export default {
     modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
     widgetFilterSelectMixin,
     widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,

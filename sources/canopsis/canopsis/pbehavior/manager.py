@@ -24,11 +24,11 @@ Managing PBehavior.
 
 from calendar import timegm
 from datetime import datetime
+from dateutil import tz, rrule
 from json import loads, dumps
 from time import time
 from uuid import uuid4
 from six import string_types
-from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
 import pytz
@@ -117,14 +117,17 @@ class PBehavior(BasePBehavior):
     TYPE = 'type_'
     REASON = 'reason'
     TIMEZONE = 'timezone'
+    EXDATE = 'exdate'
 
     DEFAULT_TYPE = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE,
+               EXDATE)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
-                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
+                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
+                        EXDATE)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -216,7 +219,8 @@ class PBehaviorManager(object):
             tstart, tstop, rrule='',
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None):
+            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
+            exdate=None):
         """
         Method creates pbehavior record
 
@@ -238,6 +242,14 @@ class PBehaviorManager(object):
             that has generated the pbehavior
         :param str type_: associated type_ for this pbh
         :param str reason: associated reason for this pbh
+        :param str timezone: the timezone of the new pbehabior. If no timezone
+        are given, use the default one. See the pbehavior documentation
+        for more information.
+        :param list of str| str exdate: a list of string representation of a date
+        following this pattern "YYYY/MM/DD HH:MM:00 TIMEZONE". The hour use the
+        24 hours clock system and the timezone is the name of the timezone. The
+        month, the day of the month, the hour, the minute and second are
+        zero-padded.
         :raises ValueError: invalid RRULE
         :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
@@ -246,6 +258,9 @@ class PBehaviorManager(object):
 
         if timezone is None:
             timezone = self.default_tz
+
+        if exdate is None:
+            exdate = []
 
         # this line allow us to raise an exception pytz.UnknownTimeZoneError,
         # if the timezone defined in the pbehabior configuration file is wrong
@@ -257,6 +272,9 @@ class PBehaviorManager(object):
             enabled = False
         else:
             raise ValueError("The enabled value does not match a boolean")
+
+        if not isinstance(exdate, list):
+            exdate = [exdate]
 
         check_valid_rrule(rrule)
 
@@ -286,10 +304,10 @@ class PBehaviorManager(object):
             PBehavior.CONNECTOR_NAME: connector_name,
             PBehavior.TYPE: type_,
             PBehavior.REASON: reason,
-            PBehavior.TIMEZONE: timezone
+            PBehavior.TIMEZONE: timezone,
+            PBehavior.EXDATE: exdate,
+            PBehavior.EIDS: []
         }
-        if PBehavior.EIDS not in pb_kwargs:
-            pb_kwargs[PBehavior.EIDS] = []
 
         data = PBehavior(**pb_kwargs)
         if not data.comments or not isinstance(data.comments, list):
@@ -538,73 +556,89 @@ class PBehaviorManager(object):
             pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
             self.pb_storage.put_element(element=pbehavior)
 
-    def check_active_pbehavior(self, timestamp, pbehavior):
+    def _check_active_simple_pbehavior(self, timestamp, pbh):
+        """ Check if a pbehavior without a rrule is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
         """
-        For a given pbehavior (as dict) check that the given timestamp is active
-        using either:
-
-        the rrule, if any, from the pbehavior + tstart and tstop to define
-        start and stop times.
-
-        tstart and tstop alone if no rrule is available.
-
-        All dates and times are computed using UTC timezone, so check that your
-        timestamp was exported using UTC.
-
-        :param int timestamp: timestamp to check
-        :param dict pbehavior: the pbehavior
-        :rtype bool:
-        :returns: pbehavior is currently active or not
-        """
-        fromts = datetime.utcfromtimestamp
-        tstart = pbehavior[PBehavior.TSTART]
-        tstop = pbehavior[PBehavior.TSTOP]
-        pbh_tz = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
-
-        try:
-            tz_object = pytz.timezone(pbh_tz)
-        except pytz.UnknownTimeZoneError:
-            self.logger.error("Can not parse the timezone : {}.".format(pbh_tz))
-            raise
-
-        if not isinstance(tstart, (int, float)):
-            return False
-        if not isinstance(tstop, (int, float)):
-            return False
-
-        dttstart = fromts(tstart).replace(tzinfo=pytz.UTC)
-        dttstop = fromts(tstop).replace(tzinfo=pytz.UTC)
-
-        pbh_duration = tstop - tstart
-
-        dtts = fromts(timestamp).replace(tzinfo=pytz.UTC)
-        dtts = dtts.astimezone(pytz.timezone(pbh_tz))
-        # ddts_offset contains the current timestamp minus the duration of
-        # the pbhevior, so the computation of the rrules occurences
-        # will include the running occurence. Thus the current pbehavior
-        # will be detected.
-        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=pytz.UTC)
-        dtts_offset = dtts_offset.astimezone(tz_object)
-
-        rrule = pbehavior['rrule']
-        if rrule:
-            dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
-            if dt is None:
-                return False
-
-            delta = dttstop - dttstart
-
-            if dt <= dtts <= dt + delta:
-                return True
-
-            return False
-
-        else:
-            if dtts >= dttstart and dtts <= dttstop:
-                return True
-            return False
+        if pbh[PBehavior.TSTART] <= timestamp <= pbh[PBehavior.TSTOP]:
+            return True
 
         return False
+
+    @staticmethod
+    def __convert_timestamp(timestamp, timezone):
+        """Convert a pbehavior timestamp defined in the timezone to a datetime
+        in the same timezone.
+        :param timestamp:"""
+
+        return datetime.fromtimestamp(timestamp, tz.gettz(timezone))
+
+    def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
+        """ Check if a pbehavior with a rrule is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
+        :raise ValueError: if the pbehavior.exdate is invalid. Or if the
+        date of an occurence of the pbehavior is not a valid date.
+        """
+
+        tz_name = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
+
+        rec_set = rrule.rruleset()
+
+        # convert the timestamp to a datetime in the pbehavior's timezone
+        now = self.__convert_timestamp(timestamp, tz_name)
+
+        start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
+        stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
+
+        if PBehavior.EXDATE in pbehavior and\
+           isinstance(pbehavior[PBehavior.EXDATE], list):
+            for date in pbehavior[PBehavior.EXDATE]:
+                exdate = self.__convert_timestamp(date, tz_name)
+                rec_set.exdate(exdate)
+
+        duration = stop - start  # pbehavior duration
+
+        rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
+                                     dtstart=start))
+
+        rec_start = rec_set.before(now)
+
+        self.logger.debug("Recurence start : {}".format(rec_start))
+        # No recurrence found
+        if rec_start is None:
+            return False
+
+        self.logger.debug("Timestamp       : {}".format(now))
+        self.logger.debug("Recurence stop  : {}".format(rec_start + duration))
+
+        if rec_start <= now <= rec_start + duration:
+            return True
+
+        return False
+
+    def check_active_pbehavior(self, timestamp, pbehavior):
+        """ Check if a pbehavior is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
+        :raise ValueError: if the pbehavior.exdate is invalid. Or if the
+        date of an occurence of the pbehavior is not a valid date.
+        """
+        if PBehavior.RRULE not in pbehavior or\
+           pbehavior[PBehavior.RRULE] is None or\
+           pbehavior[PBehavior.RRULE] == "":
+            return self._check_active_simple_pbehavior(timestamp, pbehavior)
+        else:
+            if PBehavior.EXDATE not in pbehavior:
+                pbehavior[PBehavior.EXDATE] = []
+            return self._check_active_reccuring_pbehavior(timestamp, pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
@@ -659,7 +693,7 @@ class PBehaviorManager(object):
             dt_list = [tstart, tstop]
             if pbehavior['rrule'] is not None:
                 dt_list = list(
-                    rrulestr(pbehavior['rrule'], dtstart=tstart).between(
+                    rrule.rrulestr(pbehavior['rrule'], dtstart=tstart).between(
                         tstart, tstop, inc=True
                     )
                 )
@@ -814,7 +848,7 @@ class PBehaviorManager(object):
         :param Dict[str, Any] pbehavior:
         :rtype: List[Tuple[int, int]]
         """
-        rrule = pbehavior[PBehavior.RRULE]
+        rrule_str = pbehavior[PBehavior.RRULE]
         tstart = pbehavior[PBehavior.TSTART]
         tstop = pbehavior[PBehavior.TSTOP]
 
@@ -832,7 +866,7 @@ class PBehaviorManager(object):
         dtafter = datetime.utcfromtimestamp(after).replace(tzinfo=tz)
         dtbefore = datetime.utcfromtimestamp(before).replace(tzinfo=tz)
 
-        if not rrule:
+        if not rrule_str:
             # The only interval where the pbehavior is active is
             # [dttstart, dttstop]. Ensure that it is included in
             # [after, before], and convert the datetimes to timestamps.
@@ -847,7 +881,7 @@ class PBehaviorManager(object):
         else:
             # Get all the intervals that intersect with the [after, before]
             # interval.
-            interval_starts = rrulestr(rrule, dtstart=dttstart).between(
+            interval_starts = rrule.rrulestr(rrule_str, dtstart=dttstart).between(
                 dtafter - delta, dtbefore, inc=False)
             for interval_start in interval_starts:
                 interval_end = interval_start + delta

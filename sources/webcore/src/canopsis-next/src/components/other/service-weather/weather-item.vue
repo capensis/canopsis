@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
   :class="getItemClasses",
-  :style="{ height: itemHeight + 'em'}",
+  :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
   tile,
   @click.native="showAdditionalInfoModal"
   )
@@ -11,16 +11,16 @@
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
-        v-btn.pauseIcon.white(v-if="watcher.active_pb_some && !watcher.active_pb_all", fab, icon, small)
-          v-icon pause
-
+        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
+          v-icon(color="white") {{ secondaryIcon }}
 </template>
 
 <script>
-import find from 'lodash/find';
+import { find } from 'lodash';
 
 import {
   MODALS,
+  USERS_RIGHTS,
   WIDGET_TYPES,
   WATCHER_STATES_COLORS,
   WATCHER_PBEHAVIOR_COLOR,
@@ -33,6 +33,7 @@ import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
 import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
@@ -40,7 +41,7 @@ import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
 export default {
-  mixins: [modalMixin, popupMixin, entitiesWatcherEntityMixin],
+  mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -58,11 +59,20 @@ export default {
     },
   },
   computed: {
+    hasMoreInfosAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
+    },
+    hasAlarmsListAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
+    },
     isPaused() {
       return this.watcher.active_pb_all;
     },
     hasWatcherPbehavior() {
       return this.watcher.active_pb_watcher;
+    },
+    isPbehavior() {
+      return this.watcher.pbehavior.some(pbehavior => pbehavior.isActive);
     },
     format() {
       if (!this.isPaused && !this.hasWatcherPbehavior) {
@@ -87,21 +97,25 @@ export default {
         icon = WEATHER_ICONS.outOfSurveillance;
       }
 
-      if (this.isPaused && !this.hasWatcherPbehavior) {
-        icon = WEATHER_ICONS.pause;
-      }
-
       return {
         color: WATCHER_PBEHAVIOR_COLOR,
         icon,
       };
+    },
+    secondaryIcon() {
+      if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
+        return WEATHER_ICONS.maintenance;
+      } else if (this.watcher.pbehavior.every(value => value.type_ === PBEHAVIOR_TYPES.outOfSurveillance)) {
+        return WEATHER_ICONS.outOfSurveillance;
+      }
+
+      return WEATHER_ICONS.pause;
     },
     compiledTemplate() {
       return compile(this.template, { entity: this.watcher });
     },
     getItemClasses() {
       return [
-        this.format.color,
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
@@ -115,16 +129,17 @@ export default {
       return (
         this.watcher.alerts_not_ack
         && !this.hasWatcherPbehavior
-        && !this.isPaused
-        && !this.watcher.active_pb_some
+        && !this.isPbehavior
       );
     },
   },
   methods: {
     showAdditionalInfoModal() {
-      if (this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList) {
+      const isAlarmListModalType = this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
+
+      if (isAlarmListModalType && this.hasAlarmsListAccess) {
         this.showAlarmListModal();
-      } else {
+      } else if (!isAlarmListModalType && this.hasMoreInfosAccess) {
         this.showMainInfoModal();
       }
     },
@@ -205,7 +220,7 @@ export default {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1em;
+    line-height: 1.2em;
   }
 
   @keyframes blink {
@@ -225,5 +240,6 @@ export default {
     position: absolute;
     right: 0.2em;
     top: 0;
+    z-index: 1;
   }
 </style>

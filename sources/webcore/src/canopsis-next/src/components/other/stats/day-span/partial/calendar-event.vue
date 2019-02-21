@@ -1,5 +1,5 @@
 <script>
-import get from 'lodash/get';
+import { get } from 'lodash';
 import { DsCalendarEvent } from 'dayspan-vuetify/src/components';
 
 export default {

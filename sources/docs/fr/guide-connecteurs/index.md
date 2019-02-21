@@ -1,6 +1,6 @@
-# Présentation
+# Connecteurs Canopsis
 
-Voici le listing des connecteurs qui peuvent fournir des évènements entrants à Canopsis.
+Voici la liste des connecteurs qui peuvent fournir des évènements entrants à Canopsis.
 
 # Sommaire
 
