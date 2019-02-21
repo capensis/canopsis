@@ -83,6 +83,9 @@ export function generateWidgetByType(type) {
         sort: {
           order: 'ASC',
         },
+        alarmsStateFilter: {
+          opened: true,
+        },
       };
       break;
 

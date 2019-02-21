@@ -48,7 +48,9 @@ export default {
     },
   },
   created() {
-    this.$validator.attach('stats', 'required', {
+    this.$validator.attach({
+      name: 'stats',
+      rules: 'required',
       getter: () => Object.values(this.stats),
       context: () => this,
     });

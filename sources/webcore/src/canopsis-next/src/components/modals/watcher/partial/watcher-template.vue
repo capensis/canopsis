@@ -7,14 +7,11 @@
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { MODALS } from '@/constants';
-
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import WatcherEntity from './entity.vue';
 
 export default {
-  name: MODALS.watcher,
   components: {
     VRuntimeTemplate,
     WatcherEntity,

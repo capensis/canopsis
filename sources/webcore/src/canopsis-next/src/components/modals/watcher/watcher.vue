@@ -34,30 +34,22 @@
 <script>
 import { pick, mapValues } from 'lodash';
 
-import VRuntimeTemplate from 'v-runtime-template';
-
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
-import weatherEventMixin from '@/mixins/weather-event-actions';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-
-import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/inner';
+import eventActionsMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: {
-    VRuntimeTemplate,
-    WatcherTemplate,
-  },
+  components: { WatcherTemplate },
   mixins: [
-    weatherEventMixin,
-    entitiesPbehaviorMixin,
     modalInnerMixin,
-    entitiesWatcherMixin,
+    eventActionsMixin,
+    entitiesPbehaviorMixin,
     entitiesWatcherEntityMixin,
   ],
   data() {
@@ -69,7 +61,7 @@ export default {
   },
   computed: {
     watcher() {
-      return this.getWatcher(this.config.watcherId);
+      return this.config.watcher;
     },
   },
   mounted() {
@@ -87,7 +79,7 @@ export default {
       ...infoAttributes,
     };
 
-    this.fetchWatcherEntitiesList({ watcherId: this.config.watcherId });
+    this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
   },
   methods: {
     addEventToQueue(event) {
