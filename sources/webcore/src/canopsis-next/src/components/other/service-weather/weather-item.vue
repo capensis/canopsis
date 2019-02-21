@@ -148,7 +148,7 @@ export default {
       this.showModal({
         name: MODALS.watcher,
         config: {
-          watcherId: this.watcher.entity_id,
+          watcher: this.watcher,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
         },
