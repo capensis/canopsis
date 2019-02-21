@@ -1,13 +1,10 @@
 export default {
   methods: {
     updateRecordsPerPage(limit) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
-        itemsPerPage: limit,
+      this.updateLockedQuery({
+        id: this.widget._id,
+        query: { limit },
       });
-
-      this.query = { ...this.query, limit };
     },
   },
 };

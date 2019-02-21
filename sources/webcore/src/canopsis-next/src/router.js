@@ -173,8 +173,10 @@ router.beforeResolve((to, from, next) => {
   }
 });
 
-router.afterEach(() => {
-  store.dispatch('entities/sweep');
+router.afterEach((to, from) => {
+  if (to.path !== from.path) {
+    store.dispatch('entities/sweep');
+  }
 });
 
 export default router;

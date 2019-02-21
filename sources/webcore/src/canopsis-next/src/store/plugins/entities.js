@@ -55,8 +55,8 @@ const entitiesModule = {
      * @param {Object.<string, Object>} entities - Object of entities
      */
     [internalTypes.ENTITIES_REPLACE](state, entities) {
-      Object.keys(entities).forEach((type) => {
-        Vue.set(state, type, entities[type]);
+      Object.keys(state).forEach((type) => {
+        Vue.set(state, type, entities[type] || {});
       });
     },
 
