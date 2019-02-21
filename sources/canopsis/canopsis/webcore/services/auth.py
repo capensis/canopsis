@@ -210,4 +210,34 @@ def exports(ws):
 
     @ws.application.get('/api/v2/auth_infos')
     def auth_infos():
-        return gen_json(ws.config["auth"]["providers"])
+        cservices = {
+            'webserver': {provider: 1 for provider in ws.providers},
+        }
+
+        records = ws.db.find(
+            {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
+            namespace='object'
+        )
+
+        for cservice in records:
+            cservice = cservice.dump()
+            cname = cservice['crecord_name']
+            cservices[cname] = cservice
+
+            ws.logger.info(u'found cservices type {}'.format(cname))
+
+            if cname == 'casconfig':
+                cservice['server'] = cservice['server'].rstrip('/')
+                cservice['service'] = cservice['service'].rstrip('/')
+                ws.logger.info(u'cas config : server {}, service {}'.format(
+                    cservice['server'],
+                    cservice['service'],
+                ))
+
+        if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
+            result = ws.db.find({'_id': "canopsis"}, namespace='default_saml2')
+
+            cservices["saml2config"] = {
+                "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
+
+        return gen_json(cservices)
