@@ -1,12 +1,12 @@
 <template lang="pug">
   div
-    h2 Hook
+    h2 {{ $t('modals.createWebhook.tabs.hook.title') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-select(
         :value="hook.triggers",
         :items="availableTriggers",
-        label="Triggers",
+        :label="$t('webhook.tabs.hook.fields.triggers')",
         :error-messages="errors.collect('triggers')",
         v-validate="'required'",
         name="triggers",
@@ -16,9 +16,9 @@
         )
       v-flex(xs12)
         v-tabs(v-model="activeHookTab", fixed-tabs)
-          v-tab(:disabled="hasBlockedTriggers") Events patterns
-          v-tab Alarms patterns
-          v-tab Entities patterns
+          v-tab(:disabled="hasBlockedTriggers") {{ $t('webhook.tabs.hook.fields.eventPatterns') }}
+          v-tab {{ $t('webhook.tabs.hook.fields.alarmPatterns') }}
+          v-tab {{ $t('webhook.tabs.hook.fields.entityPatterns') }}
           v-tab-item(:disabled="hasBlockedTriggers")
             webhook-hook-tab-patterns-list(
             :patterns="hook.event_pattern",

@@ -2,12 +2,12 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Title
+        span.headline {{ title }}
     v-card-text
       v-tabs(fixed-tabs)
-        v-tab Hook
-        v-tab Request
-        v-tab(:disabled="hasBlockedTriggers") Declare ticket
+        v-tab {{ $t('webhook.tabs.hook.title') }}
+        v-tab {{ $t('webhook.tabs.request.title') }}
+        v-tab(:disabled="hasBlockedTriggers") {{ $t('webhook.tabs.declareTicket.title') }}
         v-tab-item
           webhook-hook-tab(v-model="form.hook", :hasBlockedTriggers="hasBlockedTriggers")
         v-tab-item
@@ -89,6 +89,14 @@ export default {
     };
   },
   computed: {
+    title() {
+      if (this.config.webhook) {
+        return this.$t('modals.createWebhook.edit.title');
+      }
+
+      return this.$t('modals.createWebhook.create.title');
+    },
+
     hasBlockedTriggers() {
       return intersection(this.form.hook.triggers, [
         WEBHOOK_TRIGGERS.resolve,

@@ -640,6 +640,14 @@ export default {
         title: 'Title',
       },
     },
+    createWebhook: {
+      create: {
+        title: 'Create webhook',
+      },
+      edit: {
+        title: 'Edit webhook',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -870,5 +878,46 @@ export default {
     },
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
+  },
+  webhook: {
+    title: 'Webhooks',
+    table: {
+      headers: {
+        id: 'ID',
+        requestMethod: 'Request method',
+        requestUrl: 'Request URL',
+      },
+    },
+
+    tabs: {
+      hook: {
+        title: 'Hook',
+        fields: {
+          triggers: 'Triggers',
+          eventPatters: 'Event patterns',
+          alarmPatters: 'Alarm patterns',
+          entityPatters: 'Entity patterns',
+
+        },
+      },
+      request: {
+        title: 'Request',
+        fields: {
+          method: 'Method',
+          url: 'URL',
+          headers: 'Headers',
+          headerKey: 'Header key',
+          headerValue: 'Header value',
+          payload: 'Payload',
+        },
+      },
+      declareTicket: {
+        title: 'Declare ticket',
+        fields: {
+          text: 'Key',
+          value: 'Value',
+        },
+      },
+    },
   },
 };

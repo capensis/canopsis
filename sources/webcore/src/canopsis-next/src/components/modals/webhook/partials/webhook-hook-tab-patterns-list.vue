@@ -22,7 +22,7 @@
         div
           v-btn(color="error", icon, @click="showRemovePatternModal(index)")
             v-icon delete
-    v-btn(color="primary", @click="showCreatePatternModal") Add pattern
+    v-btn(color="primary", @click="showCreatePatternModal") {{ $t('common.add') }}
 </template>
 
 <script>
