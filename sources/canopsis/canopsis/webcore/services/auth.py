@@ -208,6 +208,6 @@ def exports(ws):
         session.delete()
         redirect('/')
 
-    @ws.application.get('/auth_infos')
+    @ws.application.get('/api/v2/auth_infos')
     def auth_infos():
         return gen_json(ws.config["auth"]["providers"])
