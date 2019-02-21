@@ -39,7 +39,6 @@ import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/c
 import modalInnerMixin from '@/mixins/modal/inner';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import WatcherTemplate from './partial/watcher-template.vue';
@@ -51,7 +50,6 @@ export default {
     modalInnerMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
-    entitiesWatcherMixin,
     entitiesWatcherEntityMixin,
   ],
   data() {
@@ -63,7 +61,7 @@ export default {
   },
   computed: {
     watcher() {
-      return this.getWatcher(this.config.watcherId);
+      return this.config.watcher;
     },
   },
   mounted() {
@@ -81,7 +79,7 @@ export default {
       ...infoAttributes,
     };
 
-    this.fetchWatcherEntitiesList({ watcherId: this.config.watcherId });
+    this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
   },
   methods: {
     addEventToQueue(event) {
