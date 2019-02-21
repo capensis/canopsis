@@ -20,6 +20,7 @@ import { find } from 'lodash';
 
 import {
   MODALS,
+  USERS_RIGHTS,
   WIDGET_TYPES,
   WATCHER_STATES_COLORS,
   WATCHER_PBEHAVIOR_COLOR,
@@ -32,6 +33,7 @@ import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
 import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
@@ -39,7 +41,7 @@ import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
 export default {
-  mixins: [modalMixin, popupMixin, entitiesWatcherEntityMixin],
+  mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -57,6 +59,12 @@ export default {
     },
   },
   computed: {
+    hasMoreInfosAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
+    },
+    hasAlarmsListAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
+    },
     isPaused() {
       return this.watcher.active_pb_all;
     },
@@ -127,9 +135,11 @@ export default {
   },
   methods: {
     showAdditionalInfoModal() {
-      if (this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList) {
+      const isAlarmListModalType = this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
+
+      if (isAlarmListModalType && this.hasAlarmsListAccess) {
         this.showAlarmListModal();
-      } else {
+      } else if (!isAlarmListModalType && this.hasMoreInfosAccess) {
         this.showMainInfoModal();
       }
     },

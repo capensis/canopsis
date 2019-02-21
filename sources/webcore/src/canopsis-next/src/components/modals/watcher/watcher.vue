@@ -34,29 +34,23 @@
 <script>
 import { pick, mapValues } from 'lodash';
 
-import VRuntimeTemplate from 'v-runtime-template';
-
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
-import weatherEventMixin from '@/mixins/weather-event-actions';
+import modalInnerMixin from '@/mixins/modal/inner';
+import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
-import modalInnerMixin from '@/mixins/modal/inner';
 
 import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: {
-    VRuntimeTemplate,
-    WatcherTemplate,
-  },
+  components: { WatcherTemplate },
   mixins: [
-    weatherEventMixin,
-    entitiesPbehaviorMixin,
     modalInnerMixin,
+    eventActionsMixin,
+    entitiesPbehaviorMixin,
     entitiesWatcherMixin,
     entitiesWatcherEntityMixin,
   ],

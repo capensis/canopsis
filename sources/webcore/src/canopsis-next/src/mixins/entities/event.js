@@ -1,11 +1,11 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import authMixin from './auth';
-
 const { mapActions } = createNamespacedHelpers('event');
 
+/**
+ * @mixin
+ */
 export default {
-  mixins: [authMixin],
   methods: {
     ...mapActions({
       createEventAction: 'create',

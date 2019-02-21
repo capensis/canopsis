@@ -474,6 +474,19 @@ export const USERS_RIGHTS = {
         addFilter: 'crudcontext_addFilter',
       },
     },
+    weather: {
+      actions: {
+        entityAck: 'serviceweather_entityAck',
+        entityDeclareTicket: 'serviceweather_entityDeclareTicket',
+        entityValidate: 'serviceweather_entityValidate',
+        entityInvalidate: 'serviceweather_entityInvalidate',
+        entityPause: 'serviceweather_entityPause',
+        entityPlay: 'serviceweather_entityPlay',
+
+        moreInfos: 'serviceweather_moreInfos',
+        alarmsList: 'serviceweather_alarmsList',
+      },
+    },
   },
 };
 
@@ -509,6 +522,17 @@ export const WIDGETS_ACTIONS_TYPES = {
     editFilter: 'editFilter',
     addFilter: 'addFilter',
   },
+  weather: {
+    entityAck: 'entityAck',
+    entityDeclareTicket: 'entityDeclareTicket',
+    entityValidate: 'entityValidate',
+    entityInvalidate: 'entityInvalidate',
+    entityPause: 'entityPause',
+    entityPlay: 'entityPlay',
+
+    moreInfos: 'moreInfos',
+    alarmsList: 'alarmsList',
+  },
 };
 
 export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
@@ -540,6 +564,18 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.context.listFilters]: USERS_RIGHTS.business.context.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.context.editFilter]: USERS_RIGHTS.business.context.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.context.addFilter]: USERS_RIGHTS.business.context.actions.addFilter,
+  },
+
+  weather: {
+    [WIDGETS_ACTIONS_TYPES.weather.entityAck]: USERS_RIGHTS.business.weather.actions.entityAck,
+    [WIDGETS_ACTIONS_TYPES.weather.entityDeclareTicket]: USERS_RIGHTS.business.weather.actions.entityDeclareTicket,
+    [WIDGETS_ACTIONS_TYPES.weather.entityValidate]: USERS_RIGHTS.business.weather.actions.entityValidate,
+    [WIDGETS_ACTIONS_TYPES.weather.entityInvalidate]: USERS_RIGHTS.business.weather.actions.entityInvalidate,
+    [WIDGETS_ACTIONS_TYPES.weather.entityPause]: USERS_RIGHTS.business.weather.actions.entityPause,
+    [WIDGETS_ACTIONS_TYPES.weather.entityPlay]: USERS_RIGHTS.business.weather.actions.entityPlay,
+
+    [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
+    [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
   },
 };
 
