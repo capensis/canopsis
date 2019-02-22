@@ -18,9 +18,10 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [Python] Make the snow2canopsis wait the API to start
  - [Python] Fix performance issue on the stat API when they are too many entities
  - [Python] Allow the user to strip the string used in the email2canopsis template
+ - [Python] Fix a crash that prevent the correct rendering the PBehavior through the API
  - [UI] Show the active view on leftbar
  - [UI] Change Text editor library (from QuillJS to Jodit)
- - [UI] Fix bugs with filter editor + Add a variable type selector on it 
+ - [UI] Fix bugs with filter editor + Add a variable type selector on it
  - [UI - Tabs] Fix bug with the actions buttons
  - [UI - Views] Add active tab into URL
  - [UI - Login] Redirect when access to view is forbidden
