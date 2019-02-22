@@ -19,17 +19,20 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [Python] Fix performance issue on the stat API when they are too many entities
  - [Python] Allow the user to strip the string used in the email2canopsis template
  - [UI] Show the active view on leftbar
- - [UI - AlarmList] Automatic filter when displaying 'resolved' alarms
- - [UI - AlarmList] Open/Resolved setting
- - [UI - AlarmsList] Optimize widget performance
- - [UI - Context] Bug - "More infos" tabs are invisible
- - [UI - legacy - Weather] Send a correct event keepstate when the validate button is clicked
- - [UI - Login] Redirect when access to view is forbidden
- - [UI - Service Weather] Keep an entity expanded during a periodic refresh
- - [UI - Service Weather] Add a periodic refresh setting
+ - [UI] Change Text editor library (from QuillJS to Jodit)
+ - [UI] Fix bugs with filter editor + Add a variable type selector on it 
  - [UI - Tabs] Fix bug with the actions buttons
  - [UI - Views] Add active tab into URL
- - [UI - Weather] Rights
+ - [UI - Login] Redirect when access to view is forbidden
+ - [UI - AlarmsList] Automatic filter when displaying 'resolved' alarms
+ - [UI - AlarmsList] Fix Open/Resolved setting
+ - [UI - AlarmsList] Optimize widget performance
+ - [UI - Context] Bug - "More infos" tabs are invisible
+ - [UI - Service Weather] Rights
+ - [UI - Service Weather] Keep an entity expanded during a periodic refresh
+ - [UI - Service Weather] Add a periodic refresh setting
+ - [UI - Service Weather] Tooltips on actions
+ - [UI - legacy - Weather] Send a correct event keepstate when the validate button is clicked
 
 ## Canopsis 3.10.0 - Due date : 2019-02-08
 
