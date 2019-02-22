@@ -134,7 +134,7 @@ def exports(ws):
         except CollectionError as ce:
             ws.logger.error('Watcherng creation error : {}'.format(ce))
             return gen_json_error(
-                {'description': 'Error while creating an watcher'},
+                {'description': 'Error while creating a watcher'},
                 HTTP_ERROR
             )
 
@@ -166,7 +166,7 @@ def exports(ws):
         except CollectionError as ce:
             ws.logger.error('Watcherng update error : {}'.format(ce))
             return gen_json_error(
-                {'description': 'Error while updating an watcher'},
+                {'description': 'Error while updating a watcher'},
                 HTTP_ERROR
             )
 
