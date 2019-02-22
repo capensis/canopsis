@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { defaultItemCreator } from '@/helpers/text-pairs';
+import { defaultTextPairCreator } from '@/helpers/text-pairs';
 
 import formArrayMixin from '@/mixins/form/array';
 
@@ -100,7 +100,7 @@ export default {
     },
     itemCreator: {
       type: Function,
-      default: defaultItemCreator,
+      default: defaultTextPairCreator,
     },
   },
   computed: {

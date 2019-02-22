@@ -1,6 +1,5 @@
 <template lang="pug">
   div
-    h2 {{ $t('webhook.tabs.declareTicket.title') }}
     text-pairs(
     :textLabel="$t('webhook.tabs.declareTicket.fields.text')",
     :valueLabel="$t('webhook.tabs.declareTicket.fields.value')",

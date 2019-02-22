@@ -1,6 +1,5 @@
 <template lang="pug">
   div
-    h2 {{ $t('webhook.tabs.hook.title') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-select(

@@ -1,6 +1,5 @@
 <template lang="pug">
   div
-    h2 {{ $t('webhook.tabs.request.title') }}
     v-layout(justify-space-between, align-center)
       v-flex(xs6).pa-1
         v-select(

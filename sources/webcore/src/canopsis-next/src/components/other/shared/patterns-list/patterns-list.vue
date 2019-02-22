@@ -1,6 +1,10 @@
 <template lang="pug">
   div
     slot(v-if="!patterns.length", name="no-data")
+      v-alert.ma-2(
+      :value="true",
+      type="info"
+      ) {{ disabled ? $t('patternsList.noDataDisabled') : $t('patternsList.noData') }}
     v-layout(
     v-for="(pattern, index) in patterns",
     :key="`${getPatternString(pattern)}${index}`",

@@ -879,6 +879,10 @@ export default {
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
   },
+  patternsList: {
+    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
+  },
   webhook: {
     title: 'Webhooks',
     table: {
