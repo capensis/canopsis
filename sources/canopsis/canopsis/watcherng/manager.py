@@ -54,7 +54,7 @@ class WatcherManager(object):
 
         :rtype: List[Dict[str, Any]]
         """
-        return list(self.__collection.find({'type':'watcher'}))
+        return list(self.__collection.find({'type': 'watcher'}))
 
     def get_watcher_by_id(self, wid):
         """
@@ -63,7 +63,7 @@ class WatcherManager(object):
         :param str rule_id: the id of the watcher.
         :rtype: Dict[str, Any]
         """
-        return self.__collection.find_one({'_id': wid})
+        return self.__collection.find_one({'_id': wid, 'type': 'watcher'})
 
     def create_watcher(self, watcher):
         """
