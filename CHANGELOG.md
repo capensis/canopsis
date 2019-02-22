@@ -12,13 +12,13 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
  - [Documentation] Add webhook documentation
  - [Docmentation] Add libreNMS documentation
- - [Go] Add the watcher inside the context graph and update the impact and depencies.
+ - [Go] Add watchers to the context graph and update their impacts and dependencies
  - [Python] Fix memory leak inside the snmp engine
- - [Python] Fix the bug that prevent the python-ldap package to be installed
- - [Python] Make the snow2canopsis wait the API to start
- - [Python] Fix performance issue on the stat API when they are too many entities
- - [Python] Allow the user to strip the string used in the email2canopsis template
- - [Python] Fix a crash that prevent the correct rendering the PBehavior through the API
+ - [Python] Fix the bug that prevents the python-ldap package from being installed
+ - [Python] Make snow2canopsis wait for the webserver to start
+ - [Python] Fix performance issue with the stat API when there are too many entities
+ - [Python] Allow the user to strip the string used in the email2canopsis templates
+ - [Python] Fix a crash that prevents the correct rendering of the PBehaviors through the API
  - [UI] Show the active view on leftbar
  - [UI] Change Text editor library (from QuillJS to Jodit)
  - [UI] Fix bugs with filter editor + Add a variable type selector on it
