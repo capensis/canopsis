@@ -186,6 +186,11 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    tabs: {
+      filter: 'Filter',
+      eids: 'Eids',
+      comments: 'Comments',
+    },
   },
   settings: {
     titles: {
