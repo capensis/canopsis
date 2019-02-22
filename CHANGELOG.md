@@ -8,6 +8,29 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.11.0 - Due date : 2019-02-22
+
+ - [Documentation] Add webhook documentation
+ - [Docmentation] Add libreNMS documentation
+ - [Go] Add the watcher inside the context graph and update the impact and depencies.
+ - [Python] Fix memory leak inside the snmp engine
+ - [Python] Fix the bug that prevent the python-ldap package to be installed
+ - [Python] Make the snow2canopsis wait the API to start
+ - [Python] Fix performance issue on the stat API when they are too many entities
+ - [Python] Allow the user to strip the string used in the email2canopsis template
+ - [UI] Show the active view on leftbar
+ - [UI - AlarmList] Automatic filter when displaying 'resolved' alarms
+ - [UI - AlarmList] Open/Resolved setting
+ - [UI - AlarmsList] Optimize widget performance
+ - [UI - Context] Bug - "More infos" tabs are invisible
+ - [UI - legacy - Weather] Send a correct event keepstate when the validate button is clicked
+ - [UI - Login] Redirect when access to view is forbidden
+ - [UI - Service Weather] Keep an entity expanded during a periodic refresh
+ - [UI - Service Weather] Add a periodic refresh setting
+ - [UI - Tabs] Fix bug with the actions buttons
+ - [UI - Views] Add active tab into URL
+ - [UI - Weather] Rights
+
 ## Canopsis 3.10.0 - Due date : 2019-02-08
 
  - [Documentation] Update Service Weather documentation
