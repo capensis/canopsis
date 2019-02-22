@@ -9,14 +9,13 @@ L'ensemble des procédures décrites doivent être réalisées avec l'utilisateu
 Canopsis peut être installé sur l'un des environnements Linux suivants (architecture x86-64) :
 
 *  CentOS 7 ;
-*  Debian 8 (« *jessie* ») ;
 *  ou Debian 9 (« *stretch* »).
+
+**Note :** Canopsis n'assure plus de compatibilité avec Debian 8 (« *jessie* ») depuis la version X.Y.Z.
 
 ## Installation des paquets
 
-### Sur Debian 8 et Debian 9
-
-La procédure est identique pour Debian 8 et Debian 9.
+### Sur Debian 9
 
 Application des dernières mises à jour de votre système :
 ```sh

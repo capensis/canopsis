@@ -81,7 +81,6 @@ function ensure_env() {
 
     if [ "${CANOPSIS_DISTRIBUTION}" = "" ]; then
         echo "CANOPSIS_DISTRIBUTION is empty: give \"all\" to build on all systems, or:"
-        echo "debian-8"
         echo "debian-9"
         echo "centos-7"
         exit 5

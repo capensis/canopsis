@@ -11,9 +11,6 @@ source ${CPS_HOME}/venv-ansible/bin/activate
 source /etc/os-release
 
 pyopenssl="pyOpenSSL"
-if [ "${VERSION_ID}" = "8" ]&&[ "${ID}" = "debian" ]; then
-    pyopenssl="pyOpenSSL==17.5.0"
-fi
 
 pip install -U setuptools pip
 
