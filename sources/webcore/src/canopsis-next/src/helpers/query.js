@@ -87,7 +87,7 @@ export function convertWeatherWidgetToQuery(widget) {
     filter: widget.parameters.mfilter.filter,
   };
 
-  return query;
+  return { ...query, ...convertSortToQuery(widget) };
 }
 
 export function convertStatsHistogramToQuery(widget) {
