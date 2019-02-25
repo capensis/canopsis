@@ -30,10 +30,12 @@
                   )
                     v-icon {{ action.icon }}
                   span {{ $t(`common.actions.${action.eventType}`) }}
-            div(v-html="compiledTemplate")
+            v-runtime-template(:template="compiledTemplate")
 </template>
 
 <script>
+import Handlebars from 'handlebars';
+import VRuntimeTemplate from 'v-runtime-template';
 import { find, isNull, pickBy } from 'lodash';
 
 import {
@@ -46,13 +48,20 @@ import {
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
 } from '@/constants';
-import { compile } from '@/helpers/handlebars';
+
+import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
 
+import EntityLinks from './entity-links.vue';
+
 export default {
+  components: {
+    VRuntimeTemplate,
+    EntityLinks,
+  },
   mixins: [
     authMixin,
     modalMixin,
@@ -215,6 +224,21 @@ export default {
     isActionBtnEnable() {
       return action => !this.actionsClicked.includes(action);
     },
+  },
+  beforeCreate() {
+    registerHelper('links', ({ hash }) => {
+      const { links, cat_name: catName } = this.entity.linklist.find(item => item.cat_name === hash.type) || {};
+
+      return new Handlebars.SafeString(`
+        <div>
+          <h2>${catName}</h2>
+          <entity-links links="${links}" />
+        </div>
+      `);
+    });
+  },
+  beforeDestroy() {
+    unregisterHelper('links');
   },
 };
 </script>
