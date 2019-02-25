@@ -15,7 +15,8 @@ Un pbehavior se caractérise par les informations suivantes.
 | `tstop` | int | Timestamp fournissant la date de fin du pbehavior, recalculée à partir de la `rrule` si présente. |
 | `type_` | string | Optionnel. Type de pbehavior (pause, maintenance…). |
 | `reason` | string | Optionnel. Raison pour laquelle ce pbehavior a été posé. |
-| `timezone` | string | Timezone dans laquelle le pbehavior doit s'exécuter.
+| `timezone` | string | Timezone dans laquelle le pbehavior doit s'exécuter. |
+| `exdate` | array | Yes | La liste des occurrences à ignorer sous forme de timestamps |
 
 Un exemple d'évènement pbehavior brut :
 ```js
@@ -37,7 +38,10 @@ Un exemple d'évènement pbehavior brut :
    "connector" : string,
    "connector_name" : string,
    "author" : string,
-   "timezone" : string
+   "timezone" : string,
+   "exdate" : [
+      1592471125
+   ]
 }
 ```
 
@@ -56,9 +60,14 @@ Event de type pbehavior : créé à partir des champs cités en introduction
 ## Timezone
 
 L'exécution de chaque pbehavior se fait dans une timezone particulière.
-Lorsqu'un pbehavior ne contient pas de champ timezone, la timezone utilisé
+Lorsqu'un pbehavior ne contient pas de champ timezone, la timezone utilisée
 sera celle définie dans le fichier de configuration `etc/pbehavior/manager.conf`
 sous le champ `default_timezone`.
 
 Si le fichier de configuration n'existe pas ou si le champ `default_timezone`
-n'existe pas, la timezone `Europe/Paris` sera utilisé.
+n'existe pas, la timezone `Europe/Paris` sera utilisée.
+
+## Exdate
+Il est possible d'empêcher l'exécution d'une occurrence d'un pbehavior, à l'aide
+du champ exdate. Exdate est une liste de timestamp correspondant à au début
+d'une occurence à empêcher.

@@ -12,7 +12,8 @@
 </template>
 
 <script>
-import set from 'lodash/set';
+import { set } from 'lodash';
+
 import modalMixin from '@/mixins/modal';
 
 export default {

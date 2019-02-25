@@ -26,11 +26,12 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 | Moteur         | Description                                                                      | CAT ?              |
 |:---------------|:---------------------------------------------------------------------------------|:------------------:|
+| action         | Applique des actions définies par l'utilisateur.                                 |                    |
 | axe            | Gère le cycle de vie des alarmes.                                                |                    |
+| [axe@**webhooks**](../webhooks/index.md)   | Gère le système de webhooks vers des services externes.                                                | ✅                 |
 | che            | Supprime les évènements invalides, gère le contexte, et enrichit les évènements. |                    |
 | heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.       |                    |
 | stat           | Calcule des statistiques sur les états des alarmes.                              |                    |
-| action         | Applique des actions définies par l'utilisateur.                                 |                    |
 
 ### Moteurs Python
 
@@ -45,7 +46,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | canopsis-engine@**metric-metric**.service                      | Stocke les données de métrologie des évènements.         |                    |
 | canopsis-engine@**dynamic-pbehavior**.service                  | Gère les périodes de maintenance.                        |                    |
 | canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches.        |                    |
-| **snmp**                                                       | Gère les traps SNMP.                                     | ✅             |
+| [canopsis-engine-cat@**snmp**](moteur-snmp.md)                                                       | Gère les traps SNMP.                                     | ✅             |
 | canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données.           |                    |
 | canopsis-engine@**task_importctx-task_importctx**.service      | Gestionnaire des imports de données en masse.            |                    |
 | [canopsis-engine-cat@**task_ackcentreon-task_ackcentreon**.service](moteur-task_ackcentreon.md)      | ACK descendants vers Centreon.            | ✅ |
@@ -56,16 +57,30 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 ## Flags & Usage
 
+### Utilisation de engine-action
+
+```
+  -d    debug
+  -version
+        version infos
+```
+
 ### Utilisation de engine-axe
 
 ```
+  -autoDeclareTickets
+        Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
   -featureStatEvents
         Envoie les évènements de statistiques
+  -postProcessorsDirectory
+        Le répetoire contenant les plugins de post-traitement (par défaut ".")
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
+  -publishQueue
+        Publie les événements sur cette queue. (par défaut "Engine_action")
   -version
         version infos
 ```
@@ -79,6 +94,8 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         Active la création de context graph. Activé par défaut.
         WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
   -d    debug
+  -dataSourceDirectory
+        The path of the directory containing the event filter's data source plugins. (default ".")
   -enrichContext
         Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
         WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
@@ -90,10 +107,26 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         Print event on processing error
   -processEvent
         enable event processing. enabled by default. (default true)
-  -publishQueue string
-        Publish event to this queue. (default "Engine_event_filter")
+  -publishQueue
+        Publie les événements sur cette queue. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
+  -version
+        version infos
+```
+
+### Utilisation de engine-heartbeat
+
+```
+  -d    debug
+  -version
+        version infos
+```
+
+### Utilisation de engine-stat
+
+```
+  -d    debug
   -version
         version infos
 ```

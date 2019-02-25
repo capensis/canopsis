@@ -7,11 +7,15 @@
           v-icon close
     v-divider
     v-card-text
-      div(v-html="compiledTemplate")
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
-          div.mt-2(v-for="watcherEntity in watcherEntities")
-            watcher-entity(:entity="watcherEntity", :template="config.entityTemplate", @addEvent="addEventToQueue")
+          watcher-template(
+          :watcher="watcher",
+          :watcherEntities="watcherEntities",
+          :modalTemplate="config.modalTemplate",
+          :entityTemplate="config.entityTemplate",
+          @addEvent="addEventToQueue"
+          )
       v-fade-transition
         v-layout(v-show="watcherEntitiesPending", column)
           v-flex(xs12)
@@ -28,32 +32,24 @@
 </template>
 
 <script>
-import pick from 'lodash/pick';
-import mapValues from 'lodash/mapValues';
+import { pick, mapValues } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
-import { compile } from '@/helpers/handlebars';
-import weatherEventMixin from '@/mixins/weather-event-actions';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-
-import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/inner';
+import eventActionsMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
-import WatcherEntity from './partial/entity.vue';
-
+import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: {
-    WatcherEntity,
-  },
+  components: { WatcherTemplate },
   mixins: [
-    weatherEventMixin,
-    entitiesPbehaviorMixin,
     modalInnerMixin,
-    entitiesWatcherMixin,
+    eventActionsMixin,
+    entitiesPbehaviorMixin,
     entitiesWatcherEntityMixin,
   ],
   data() {
@@ -65,10 +61,7 @@ export default {
   },
   computed: {
     watcher() {
-      return this.getWatcher(this.config.watcherId);
-    },
-    compiledTemplate() {
-      return compile(this.config.modalTemplate, { entity: this.watcher });
+      return this.config.watcher;
     },
   },
   mounted() {
@@ -86,7 +79,7 @@ export default {
       ...infoAttributes,
     };
 
-    this.fetchWatcherEntitiesList({ watcherId: this.config.watcherId });
+    this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
   },
   methods: {
     addEventToQueue(event) {

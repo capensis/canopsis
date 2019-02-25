@@ -16,6 +16,7 @@
     "dayspan-vuetify": "^0.2.6",
     "deep-freeze": "^0.0.1",
     "handlebars": "^4.0.11",
+    "jodit": "^3.2.38",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.5",
     "moment": "^2.22.2",
@@ -27,8 +28,9 @@
     "sha1": "^1.1.1",
     "uid": "^0.0.2",
     "uuid": "^3.3.2",
+    "v-runtime-template": "^1.5.2",
     "vee-validate": "^2.0.6",
-    "vue": "^2.5.13",
+    "vue": "^2.5.21",
     "vue-chartjs": "^3.4.0",
     "vue-clipboard2": "^0.2.1",
     "vue-color": "^2.6.0",
@@ -36,7 +38,7 @@
     "vue-fullscreen": "^2.1.3",
     "vue-i18n": "^7.6.0",
     "vue-mq": "^0.2.1",
-    "vue-quill-editor": "^3.0.6",
+    "vue-resize-text": "^0.1.0",
     "vue-router": "^3.0.1",
     "vuedraggable": "^2.17.0",
     "vuetify": "^1.3.15",
@@ -53,6 +55,8 @@
     "axios-mock-adapter": "^1.16.0",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.0.4",
+    "babel-plugin-lodash": "^3.3.4",
+    "husky": "^1.3.1",
     "jest-localstorage-mock": "^2.2.0",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.7.2",
@@ -63,15 +67,18 @@
     "sass-loader": "^6.0.6",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
-    "vue-template-compiler": "^2.5.13"
+    "vue-cli-plugin-webpack-bundle-analyzer": "^1.2.0",
+    "vue-template-compiler": "^2.5.21"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
   ],
-  "gitHooks": {
-    "pre-commit": "lint-staged"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.js": [

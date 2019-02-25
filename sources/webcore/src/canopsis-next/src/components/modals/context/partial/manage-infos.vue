@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
@@ -75,7 +77,11 @@ export default {
   },
   computed: {
     items() {
-      return Object.values(this.infos);
+      return Object.keys(this.infos).map(key => ({
+        name: key,
+        description: this.infos[key].description,
+        value: this.infos[key].value,
+      }));
     },
   },
   methods: {
@@ -85,7 +91,7 @@ export default {
         config: {
           infos: this.infos,
           title: this.$t('modals.addEntityInfo.addTitle'),
-          action: info => this.updateField(info.name, { ...info }),
+          action: info => this.updateField(info.name, omit(info, ['name'])),
         },
       });
     },
@@ -97,7 +103,7 @@ export default {
           infos: this.infos,
           editingInfo: info,
           title: this.$t('modals.addEntityInfo.editTitle'),
-          action: editedInfo => this.updateAndMoveField(info.name, editedInfo.name, { ...editedInfo }),
+          action: editedInfo => this.updateAndMoveField(info.name, editedInfo.name, omit(editedInfo, ['name'])),
         },
       });
     },

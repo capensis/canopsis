@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * Sort an array of objects by a property whith string value

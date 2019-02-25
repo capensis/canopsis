@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import pullAt from 'lodash/pullAt';
+import { pullAt } from 'lodash';
 
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
@@ -41,7 +41,9 @@ export default {
     },
   },
   created() {
-    this.$validator.attach('groups', 'required', {
+    this.$validator.attach({
+      name: 'groups',
+      rules: 'required',
       getter: () => this.groups,
       context: () => this,
     });

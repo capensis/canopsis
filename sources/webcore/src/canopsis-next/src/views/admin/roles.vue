@@ -25,17 +25,18 @@
               v-btn.ma-0(v-if="hasUpdateAnyRoleAccess", @click="showEditRoleModal(props.item._id)", icon)
                 v-icon edit
               v-btn.ma-0(v-if="hasDeleteAnyRoleAccess", @click="showRemoveRoleModal(props.item._id)", icon)
-                v-icon(color="red darken-4") delete
+                v-icon(color="error") delete
     .fab(v-if="hasCreateAnyRoleAccess")
-      v-tooltip(left)
-        v-btn.secondary(slot="activator", fab, dark, @click.stop="showCreateRoleModal")
-          v-icon add
-        span {{ $t('modals.createRole.title') }}
-
+      v-layout(column)
+        refresh-btn(@click="fetchList")
+        v-tooltip(left)
+          v-btn(slot="activator", fab, color="primary", @click.stop="showCreateRoleModal")
+            v-icon add
+          span {{ $t('modals.createRole.title') }}
 </template>
 
 <script>
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -44,7 +45,12 @@ import modalMixin from '@/mixins/modal';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
+import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+
 export default {
+  components: {
+    RefreshBtn,
+  },
   mixins: [
     popupMixin,
     modalMixin,
@@ -95,6 +101,7 @@ export default {
         },
       });
     },
+
     showRemoveSelectedRolesModal() {
       this.showModal({
         name: MODALS.confirmation,
@@ -113,6 +120,7 @@ export default {
         },
       });
     },
+
     showEditRoleModal(roleId) {
       this.showModal({
         name: MODALS.createRole,
@@ -122,11 +130,13 @@ export default {
         },
       });
     },
+
     showCreateRoleModal() {
       this.showModal({
         name: MODALS.createRole,
       });
     },
+
     fetchList() {
       const {
         rowsPerPage, page, sortBy, descending,
@@ -140,7 +150,6 @@ export default {
         },
       });
     },
-
   },
 };
 </script>

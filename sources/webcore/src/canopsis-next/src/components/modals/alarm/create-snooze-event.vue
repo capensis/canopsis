@@ -31,9 +31,10 @@
 <script>
 import moment from 'moment';
 
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to put a snooze on an alarm
@@ -44,7 +45,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     const availableTypes = [
       { key: 'minutes', text: 'common.times.minute' },
@@ -73,7 +74,7 @@ export default {
           this.form.durationType,
         ).asSeconds();
 
-        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.snooze, this.items, { duration });
+        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
 
         this.hideModal();
       }

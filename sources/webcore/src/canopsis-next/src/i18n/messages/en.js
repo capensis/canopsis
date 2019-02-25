@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
@@ -73,10 +73,15 @@ export default {
     search: 'Search',
     actions: {
       close: 'Close',
-      acknowledge: 'Acknowledge',
       acknowledgeAndReport: 'Acknowledge and report an incident',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.validate]: 'Validate',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Play',
     },
     times: {
       second: 'second | seconds',
@@ -89,8 +94,6 @@ export default {
     },
   },
   user: {
-    firstName: 'First name',
-    lastName: 'Last name',
     role: 'Role',
     defaultView: 'Default view',
   },
@@ -363,10 +366,12 @@ export default {
       success: {
         create: 'New view created !',
         edit: 'View successfully edited !',
+        delete: 'View successfully deleted !',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        delete: 'View deletion failed...',
       },
       errors: {
         rightCreating: 'Error on right creating',
@@ -416,6 +421,7 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
+        comment: 'Comment',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },
@@ -631,6 +637,9 @@ export default {
       edit: {
         title: 'Edit tab',
       },
+      duplicate: {
+        title: 'Duplicate tab',
+      },
       fields: {
         title: 'Title',
       },
@@ -804,7 +813,7 @@ export default {
       },
     },
     errors: {
-      invalidJSON: 'Invalid JSON',
+      invalidJSON: 'We can\'t parse this filter to Visual Editor',
       required: 'You need to add at least one valid rule',
     },
   },

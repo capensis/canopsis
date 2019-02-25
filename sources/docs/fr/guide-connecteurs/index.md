@@ -1,12 +1,12 @@
-# Présentation
+# Connecteurs Canopsis
 
-Voici le listing des connecteurs qui peuvent fournir des évènements entrants à Canopsis.
+Voici la liste des connecteurs qui peuvent fournir des évènements entrants à Canopsis.
 
 # Sommaire
 
 ## Base de données
 
-### Mysql, PostgeSQL, Oracle, DB2, MSSQL 
+### Mysql, PostgeSQL, Oracle, DB2, MSSQL
 [connector-sql2canopsis](Base-de-donnees/Mysql-MariaDB-PostgreSQL-Oracle.md)  
 
 ## Infrastructure
@@ -14,7 +14,10 @@ Voici le listing des connecteurs qui peuvent fournir des évènements entrants �
 ### Logstash
 [logstash2canopsis](Infrastructure/Logstash.md)  
 
-### SNMPtrap
+### Mail /!\ Documentation CAT /!\
+[email2canopsis](Infrastructure/Mail.md)  
+
+### SNMPtrap /!\ Documentation CAT /!\
 [SNMPtrap - snmp2canopsis](Infrastructure/SNMPtrap.md)  
 
 ###  SNMPtrap_Custom /!\ Documentation CAT /!\

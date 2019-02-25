@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
@@ -9,6 +9,7 @@ export default {
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
     addTab: 'Ajouter un onglet',
+    addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
     name: 'Nom',
@@ -72,10 +73,15 @@ export default {
     search: 'Recherche',
     actions: {
       close: 'Fermer',
-      acknowledge: 'Acquitter',
       acknowledgeAndReport: 'Acquitter et signaler un incident',
       saveChanges: 'Sauvegarder',
       reportIncident: 'Signaler un incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.validate]: 'Valider',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
     },
     times: {
       second: 'seconde | secondes',
@@ -88,8 +94,6 @@ export default {
     },
   },
   user: {
-    firstName: 'Prénom',
-    lastName: 'Nom',
     role: 'Role',
     defaultView: 'Vue par défaut',
   },
@@ -355,10 +359,12 @@ export default {
       success: {
         create: 'Nouvelle vue créée !',
         edit: 'Vue éditée avec succès !',
+        delete: 'Vue supprimée avec succès !',
       },
       fail: {
         create: 'Erreur dans la création de la vue...',
         edit: 'Erreur dans l\'édition de la vue...',
+        delete: 'Erreur dans la suppression de la vue...',
       },
     },
     createAckEvent: {
@@ -397,14 +403,14 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Ajouter un comportement périodique à ces éléments ?',
+      title: 'Ajouter un comportement périodique',
       fields: {
         name: 'Nom',
         start: 'Début',
         stop: 'Fin',
         reason: 'Raison',
         type: 'Type',
-        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique ?',
+        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
       },
     },
     createPause: {

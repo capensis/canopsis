@@ -1,6 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-import isObject from 'lodash/isObject';
-import cloneDeep from 'lodash/cloneDeep';
+import { isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
 import uid from '@/helpers/uid';
@@ -16,20 +14,25 @@ function ruleOperatorAndInput(rule) {
   };
 
   const ruleValue = Object.values(rule)[0];
-  const operator = Object.keys(ruleValue)[0];
 
   /**
    * Switch to determine if it's a short syntax for '$eq' and '$eq:'''
    */
-  if (typeof ruleValue === 'string') {
-    if (Object.values(rule)[0] === '') {
+  if (!isObject(ruleValue)) {
+    if (ruleValue === '') {
       parsedRule.operator = FILTER_OPERATORS.isEmpty;
     } else {
       const [input] = Object.values(rule);
-      parsedRule.input = input;
-      parsedRule.operator = FILTER_OPERATORS.equal;
+      if (isNull(input)) {
+        parsedRule.operator = FILTER_OPERATORS.isNull;
+      } else {
+        parsedRule.operator = FILTER_OPERATORS.equal;
+        parsedRule.input = input;
+      }
     }
-  } else if (typeof ruleValue === 'object') {
+  } else {
+    const operator = Object.keys(ruleValue)[0];
+
     /**
      * Switch to determine the right operator, and then assign the right input value
      */
@@ -79,6 +82,7 @@ function ruleOperatorAndInput(rule) {
       }
     }
   }
+
   return parsedRule;
 }
 

@@ -25,7 +25,6 @@
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-filters(
-          v-model="settings.widget.parameters.filters",
           :filters.sync="settings.widget.parameters.filters",
           hideSelect
           )
@@ -48,7 +47,7 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 
 import { SIDE_BARS } from '@/constants';
 
@@ -104,6 +103,15 @@ export default {
       const { widget } = this.settings;
 
       return this.prepareWidgetWithAlarmParametersSettings(widget);
+    },
+
+    prepareWidgetQuery(newQuery, oldQuery) {
+      return {
+        tstart: oldQuery.tstart,
+        tstop: oldQuery.tstop,
+
+        ...newQuery,
+      };
     },
   },
 };

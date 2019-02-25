@@ -1,9 +1,6 @@
-import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
-import isEmpty from 'lodash/isEmpty';
+import { omit, isEqual, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import Pagination from '@/components/tables/pagination.vue';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import dateIntervals from '@/helpers/date-intervals';
@@ -13,9 +10,6 @@ import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/qu
  * @mixin Add query logic
  */
 export default {
-  components: {
-    Pagination,
-  },
   mixins: [queryMixin, entitiesUserPreferenceMixin],
   props: {
     tabId: {

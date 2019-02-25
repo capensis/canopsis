@@ -1,9 +1,7 @@
-import omit from 'lodash/omit';
-import isUndefined from 'lodash/isUndefined';
-import isEmpty from 'lodash/isEmpty';
+import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
 
 import { prepareMainFilterToQueryFilter } from './filter';
 
@@ -35,7 +33,7 @@ export function convertSortToQuery({ parameters }) {
  */
 export function convertAlarmWidgetToQuery(widget) {
   const {
-    alarmsStateFilter,
+    alarmsStateFilter = {},
     widgetColumns,
     itemsPerPage,
     mainFilter,
@@ -43,6 +41,8 @@ export function convertAlarmWidgetToQuery(widget) {
 
   const query = {
     page: 1,
+    opened: alarmsStateFilter.opened || false,
+    resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
   };
 
@@ -50,14 +50,8 @@ export function convertAlarmWidgetToQuery(widget) {
     query.filter = mainFilter.filter;
   }
 
-  if (alarmsStateFilter) {
-    if (!isUndefined(alarmsStateFilter.opened)) {
-      query.opened = alarmsStateFilter.opened;
-    }
-
-    if (!isUndefined(alarmsStateFilter.resolved)) {
-      query.resolved = alarmsStateFilter.resolved;
-    }
+  if (query.resolved) {
+    query.interval = LIVE_REPORTING_INTERVALS.last30Days;
   }
 
   if (widgetColumns) {
@@ -86,6 +80,14 @@ export function convertContextWidgetToQuery(widget) {
   };
 
   return { ...query, ...convertSortToQuery(widget) };
+}
+
+export function convertWeatherWidgetToQuery(widget) {
+  const query = {
+    filter: widget.parameters.mfilter.filter,
+  };
+
+  return query;
 }
 
 export function convertStatsHistogramToQuery(widget) {
@@ -243,6 +245,8 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.weather:
+      return convertWeatherWidgetToQuery(widget);
     case WIDGET_TYPES.statsHistogram:
       return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:

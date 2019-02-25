@@ -31,13 +31,8 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import TextEditor from '@/components/other/text-editor/text-editor.vue';
-
 export default {
   name: MODALS.infoPopupSetting,
-  components: {
-    TextEditor,
-  },
   mixins: [modalInnerMixin],
   data() {
     return {

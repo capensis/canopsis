@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Cookies from 'js-cookie';
-import isEmpty from 'lodash/isEmpty';
-import isFunction from 'lodash/isFunction';
+import { isEmpty, isFunction } from 'lodash';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
@@ -143,12 +142,16 @@ router.beforeResolve((to, from, next) => {
     const { requiresRight } = to.meta;
     const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
     const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
+
     const checkProcess = (user) => {
       if (checkUserAccess(user, rightId, rightMask)) {
         next();
       } else {
         store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
-        next(false);
+
+        next({
+          name: 'home',
+        });
       }
     };
 
@@ -168,6 +171,10 @@ router.beforeResolve((to, from, next) => {
   } else {
     next();
   }
+});
+
+router.afterEach(() => {
+  store.dispatch('entities/sweep');
 });
 
 export default router;

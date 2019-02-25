@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import find from 'lodash/find';
+import { find } from 'lodash';
 
 import { MODALS } from '@/constants';
 

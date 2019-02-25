@@ -1,17 +1,12 @@
 <template lang="pug">
   div
-    view-tabs(
+    view-tabs-wrapper(
     v-if="view",
-    v-model="activeTabIndex",
     :view="view",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateView({ id, data })"
+    :updateViewMethod="data => updateView({ id, data })",
     )
-      view-tab-rows(
-      slot-scope="props",
-      v-bind="props",
-      )
     .fab
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
@@ -53,13 +48,12 @@
 </template>
 
 <script>
-import isNull from 'lodash/isNull';
-
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
 import ViewTabs from '@/components/other/view/view-tabs.vue';
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
+import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -71,6 +65,7 @@ export default {
   components: {
     ViewTabs,
     ViewTabRows,
+    ViewTabsWrapper,
   },
   mixins: [
     authMixin,
@@ -87,10 +82,9 @@ export default {
   },
   data() {
     return {
-      isVSpeedDialOpen: false,
-      activeTabIndex: null,
       isEditingMode: false,
       isFullScreenMode: false,
+      isVSpeedDialOpen: false,
     };
   },
   computed: {
@@ -99,26 +93,44 @@ export default {
     },
 
     activeTab() {
+      const { tabId } = this.$route.query;
+
       if (this.view.tabs && this.view.tabs.length) {
-        if (isNull(this.activeTabIndex)) {
+        if (!tabId) {
           return this.view.tabs[0];
         }
 
-        return this.view.tabs[this.activeTabIndex];
+        return this.view.tabs.find(tab => tab._id === tabId) || null;
       }
 
       return null;
     },
   },
+
   created() {
     document.addEventListener('keydown', this.keyDownListener);
     this.fetchView({ id: this.id });
+    this.registerViewOnceWatcher();
   },
+
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
   },
+
   methods: {
+    registerViewOnceWatcher() {
+      const unwatch = this.$watch('view', (view) => {
+        const { tabId } = this.$route.query;
+
+        if (!tabId && view.tabs && view.tabs.length) {
+          this.$router.replace({ query: { tabId: view.tabs[0]._id } });
+        }
+
+        unwatch();
+      });
+    },
+
     keyDownListener(event) {
       if (event.key === 'Enter' && event.altKey) {
         this.toggleFullScreenMode();

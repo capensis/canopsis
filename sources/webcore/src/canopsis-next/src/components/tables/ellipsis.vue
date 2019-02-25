@@ -1,13 +1,15 @@
 <template lang="pug">
   div
-    template(v-if="text.length <= maxLetters")
-      span(@click.stop="textClicked") {{ text }}
-    template(v-else)
-      span(@click.stop="textClicked") {{ text.substr(0, maxLetters) }}
-      v-menu(v-model="isFullTextMenuOpen", :close-on-content-click="false", :open-on-click="false")
-        span.ml-1(slot="activator", small, depressed, @click.stop="openFullTextMenu") ...
-        v-card(dark)
-          v-card-title {{ text }}
+    span(@click.stop="textClicked") {{ shortenedText }}
+    v-menu(
+    v-if="!isShort",
+    v-model="isFullTextMenuOpen",
+    :close-on-content-click="false",
+    :open-on-click="false"
+    )
+      span.ml-1(slot="activator", small, depressed, @click.stop="openFullTextMenu") ...
+      v-card(dark)
+        v-card-title {{ text }}
 </template>
 
 <script>
@@ -28,6 +30,18 @@ export default {
     return {
       isFullTextMenuOpen: false,
     };
+  },
+  computed: {
+    isShort() {
+      return this.text.length <= this.maxLetters;
+    },
+    shortenedText() {
+      if (this.isShort) {
+        return this.text;
+      }
+
+      return this.text.substr(0, this.maxLetters);
+    },
   },
   methods: {
     textClicked() {
