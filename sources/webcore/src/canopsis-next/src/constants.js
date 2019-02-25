@@ -470,6 +470,7 @@ export const USERS_RIGHTS = {
         deleteEntity: 'crudcontext_delete',
         pbehaviorAdd: 'crudcontext_pbehavior',
         pbehaviorList: 'crudcontext_listPbehavior',
+        pbehaviorDelete: 'crudcontext_deletePbehavior',
 
         listFilters: 'crudcontext_listFilters',
         editFilter: 'crudcontext_editFilter',
@@ -518,6 +519,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     deleteEntity: 'deleteEntity',
     pbehaviorAdd: 'pbehaviorAdd',
     pbehaviorList: 'pbehaviorList',
+    pbehaviorDelete: 'pbehaviorDelete',
     variablesHelp: 'variablesHelp',
 
     listFilters: 'listFilters',
@@ -562,6 +564,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.context.deleteEntity]: USERS_RIGHTS.business.context.actions.deleteEntity,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorAdd]: USERS_RIGHTS.business.context.actions.pbehaviorAdd,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorList]: USERS_RIGHTS.business.context.actions.pbehaviorList,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorDelete]: USERS_RIGHTS.business.context.actions.pbehaviorDelete,
 
     [WIDGETS_ACTIONS_TYPES.context.listFilters]: USERS_RIGHTS.business.context.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.context.editFilter]: USERS_RIGHTS.business.context.actions.editFilter,
