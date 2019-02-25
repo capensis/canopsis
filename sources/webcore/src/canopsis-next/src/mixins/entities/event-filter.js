@@ -8,8 +8,8 @@ export default {
   mixins: [popupMixin],
   computed: {
     ...mapGetters({
-      getEventFilterRulePending: 'pending',
-      items: 'items',
+      eventFilterRulesPending: 'pending',
+      eventFilterRules: 'items',
     }),
   },
   methods: {
