@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import { pullAt } from 'lodash';
+import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
-import formMixin from '@/mixins/form';
+import formArrayMixin from '@/mixins/form/array';
 
 export default {
   inject: ['$validator'],
-  mixins: [modalMixin, formMixin],
+  mixins: [modalMixin, formArrayMixin],
   model: {
     prop: 'groups',
     event: 'input',
@@ -51,38 +51,28 @@ export default {
   methods: {
     addGroup() {
       this.showModal({
-        name: this.$constants.MODALS.manageHistogramGroups,
+        name: MODALS.manageHistogramGroups,
         config: {
           title: 'modals.manageHistogramGroups.title.add',
-          action: (newGroup) => {
-            this.$emit('input', [...this.groups, newGroup]);
-          },
+          action: newGroup => this.addItemIntoArray(newGroup),
         },
       });
     },
     editGroup(group, index) {
       this.showModal({
-        name: this.$constants.MODALS.manageHistogramGroups,
+        name: MODALS.manageHistogramGroups,
         config: {
           title: 'modals.manageHistogramGroups.title.edit',
           group,
-          action: (newGroup) => {
-            const groups = [...this.groups];
-            groups[index] = newGroup;
-            this.$emit('input', groups);
-          },
+          action: newGroup => this.updateItemInArray(index, newGroup),
         },
       });
     },
     deleteGroup(index) {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
-          action: () => {
-            const groups = [...this.groups];
-            pullAt(groups, index);
-            this.$emit('input', groups);
-          },
+          action: () => this.removeItemFromArray(index),
         },
       });
     },

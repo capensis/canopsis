@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ $t(config.title) }}
+        span.headline {{ config.title }}
     v-form
       v-container
         v-card.mb-2
@@ -30,13 +30,13 @@
                 v-list-tile(slot="activator") {{ $t('common.options') }}
                 template(v-for="option in options")
                   v-switch(
-                  v-show="option === 'recursive'"
+                  v-show="option === 'recursive'",
                   :label="$t('common.recursive')",
                   v-model="form.parameters.recursive",
                   hide-details
                   )
                   v-select(
-                  v-show="option === 'states'"
+                  v-show="option === 'states'",
                   :placeholder="$t('common.states')",
                   :items="stateTypes",
                   v-model="form.parameters.states",
@@ -45,7 +45,7 @@
                   hide-details
                   )
                   v-combobox(
-                  v-show="option === 'authors'"
+                  v-show="option === 'authors'",
                   :placeholder="$t('common.authors')",
                   v-model="form.parameters.authors",
                   hide-details,
@@ -65,8 +65,9 @@
 </template>
 
 <script>
+import { MODALS, STATS_TYPES, ENTITIES_STATES } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/inner';
-import { MODALS } from '@/constants';
 
 export default {
   name: MODALS.addStat,
@@ -77,11 +78,10 @@ export default {
   data() {
     return {
       form: {
-        stat: this.$constants.STATS_TYPES.alarmsCreated,
+        stat: STATS_TYPES.alarmsCreated,
         title: '',
         trend: true,
-        parameters: {
-        },
+        parameters: {},
       },
       error: '',
     };
@@ -91,17 +91,18 @@ export default {
      * Get stats different types from constant, and return an object with stat's value and stat's translated title
      */
     statsTypes() {
-      return Object.values(this.$constants.STATS_TYPES)
+      return Object.values(STATS_TYPES)
         .map(item => ({ value: item.value, text: this.$t(`stats.types.${item.value}`), options: item.options }));
     },
     stateTypes() {
-      return Object.keys(this.$constants.ENTITIES_STATES)
-        .map(item => ({ value: this.$constants.ENTITIES_STATES[item], text: item }));
+      return Object.keys(ENTITIES_STATES)
+        .map(item => ({ value: ENTITIES_STATES[item], text: item }));
     },
     options() {
       if (this.form.stat) {
         return this.form.stat.options;
       }
+
       return [];
     },
   },

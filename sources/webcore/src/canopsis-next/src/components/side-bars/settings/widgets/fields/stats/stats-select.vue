@@ -25,13 +25,16 @@
 </template>
 
 <script>
-import { omit, set, unset } from 'lodash';
+import { omit } from 'lodash';
+
+import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
-  mixins: [modalMixin],
+  mixins: [modalMixin, formMixin],
   model: {
     prop: 'stats',
     event: 'input',
@@ -58,43 +61,39 @@ export default {
   methods: {
     openAddStatModal() {
       this.showModal({
-        name: this.$constants.MODALS.addStat,
+        name: MODALS.addStat,
         config: {
-          title: 'modals.addStat.title.add',
+          title: this.$t('modals.addStat.title.add'),
           action: (stat) => {
-            const newValue = { ...this.stats };
-            const newStat = omit(stat, ['title', 'parameters', 'stat']);
-            newStat.stat = stat.stat.value;
-            newStat.parameters = {};
-            stat.stat.options.forEach((option) => {
-              newStat.parameters[option] = stat.parameters[option];
-            });
-            this.$emit('input', set(newValue, stat.title, newStat));
+            const newStat = {
+              ...omit(stat, ['title', 'parameters', 'stat']),
+
+              stat: stat.stat.value,
+              parameters: stat.stat.options.reduce((acc, option) => {
+                acc[option] = stat.parameters[option];
+
+                return acc;
+              }, {}),
+            };
+
+            this.updateField(stat.title, newStat);
           },
         },
       });
     },
 
-    deleteStat(stat) {
-      const newValue = { ...this.stats };
-      unset(newValue, stat);
-      this.$emit('input', newValue);
+    deleteStat(statTitle) {
+      this.removeField(statTitle);
     },
 
     editStat(statTitle, stat) {
       this.showModal({
-        name: this.$constants.MODALS.addStat,
+        name: MODALS.addStat,
         config: {
-          title: 'modals.addStat.title.edit',
+          title: this.$t('modals.addStat.title.edit'),
           stat,
           statTitle,
-          action: (newStat) => {
-            // Delete the stat that we want to edit
-            const newValue = { ...this.stats };
-            unset(newValue, statTitle);
-            // Set the edited stat in newValue object, and send it to parent with input event
-            this.$emit('input', set(newValue, newStat.title, omit(newStat, ['title'])));
-          },
+          action: newStat => this.updateAndMoveField(statTitle, newStat.title, omit(newStat, ['title'])),
         },
       });
     },
