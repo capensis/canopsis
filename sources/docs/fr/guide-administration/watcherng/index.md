@@ -5,24 +5,13 @@ Les watchers nouvelle génération sont une fonctionnalité du moteur `axe` perm
 Les watchers sont définis dans la collection MongoDB `default_entities`, et
 peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/watcherng/api_v2_watcherng.md).
 
-Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
+Des exemples pratiques d'utilisation des watchers sont disponibles dans la partie [Exemples](#exemples).
 
-## Activation des webhooks
-
-Les webhooks sont implémentés sous la forme d'un plugin à ajouter dans le moteur `axe`. Ce plugin n'est disponible qu'avec une installation CAT de Canopsis.
-
-Dans une installation Docker, vous devez remplacer l'image par défaut `canopsis/engine-axe` par l'image `canopsis/engine-axe-cat`.
-
-Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé :
-```
-engine-axe -postProcessorsDirectory /plugins/axepostprocessor
-```
-
-## Définition d'un webhook
+## Définition d'un watcher
 
 Une règle est un document JSON contenant les paramètres suivants :
 
- - `_id` (optionnel): l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `_id` (optionnel): l'identifiant du watcher (généré automatiquement ou choisi par l'utilisateur).
  - `name` (requis) : Le nom du watcher, qui sera utilisé dans la météo de services
  - `entities` (requis) : La liste des patterns permettant de filtrer les entités surveillées. Le format des patterns est le même que pour l'[event-filter](../event-filter/index.md).
  - `state` (requis) : Un document contenant :
