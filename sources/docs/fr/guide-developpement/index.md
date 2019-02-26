@@ -65,8 +65,8 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 
   * Pbehavior
   * Event-filter
-  * [Healthcheck](./healthcheck/api_v2_healthcheck.md)
-  * [Webhook](./webhooks/api_v2_webhooks.md)
-  * [Watcher NG](./watcherng/api_v2_watcherng.md)
+  * [Healthcheck](healthcheck/api_v2_healthcheck.md)
+  * [Webhooks](webhooks/api_v2_webhooks.md)
+  * [Watcher NG](watcherng/api_v2_watcherng.md)
 
 # Gestion de la documentation

@@ -55,4 +55,5 @@ export const API_ROUTES = {
     remove: '/account/delete/role',
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
+  webhook: '/api/v2/webhook',
 };

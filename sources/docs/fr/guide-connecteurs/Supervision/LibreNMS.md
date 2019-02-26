@@ -1,4 +1,4 @@
-# Connecteur LibreNMS
+# Connecteur LibreNMS vers Canopsis
 
 ## Fonctionnement général
 
@@ -14,11 +14,9 @@ Voici le processus complet d'une vérification LibreNMS menant à une alerte :
 ## Installation et configuration
 
 !!! note
-    Le module php `bcmath` est nécéssaire pour le bon fonctionnement du
-connecteur.
+    Le module PHP `bcmath` est nécéssaire pour le bon fonctionnement du connecteur.
 
-Le connecteur est installé par défaut lors d'une installation de LibreNMS à
-l'adresse `/opt/librenms/LibreNMS/Alert/Transport/Canopsis.php` :
+Le connecteur est installé par défaut lors d'une installation de LibreNMS dans `/opt/librenms/LibreNMS/Alert/Transport/Canopsis.php` :
 
 ```php
 <?php
@@ -143,12 +141,11 @@ class Canopsis extends Transport
 
 Les principales modifications à apporter seront dans la variable `msg_body`:
 
-* `connector` et `connector_name` correspondent à la valeur affichée dans la colonne éponyme de la webUI Canopsis.
-* `component` donne par défaut le nom d'hôte ayant déclenché l’alerte.
-* `resource` donne par défaut le nom de l'alarme défini dans LibreNMS.
+*  `connector` et `connector_name` correspondent à la valeur affichée dans la colonne éponyme de la webUI Canopsis.
+*  `component` donne par défaut le nom d'hôte ayant déclenché l’alerte.
+*  `resource` donne par défaut le nom de l'alarme défini dans LibreNMS.
 
-Ci-dessous une liste non exhaustive des différentes variables pouvant être
-utilisées :
+Ci-dessous une liste non exhaustive des différentes variables pouvant être utilisées :
 
 ```
     $obj['hostname']
@@ -168,9 +165,7 @@ utilisées :
 
 ```
 
-Pour une meilleure lisibilité des alarmes, il est conseillé lors de la définition
-de l’alarme dans LibreNMS de lui donner un nom explicite et de changer la
-variable output à `"output" => $obj['title']`
+Pour une meilleure lisibilité des alarmes, il est conseillé lors de la définition de l’alarme dans LibreNMS de lui donner un nom explicite et de changer la variable output à `"output" => $obj['title']`
 
 ## Utilisation dans LibreNMS
 

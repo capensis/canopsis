@@ -71,7 +71,12 @@ def __format_pbehavior(pbehavior):
     rrule["rrule"] = pbehavior["rrule"]
 
     if pbehavior["rrule"] is not None:
-        freq = get_rrule_freq(pbehavior["rrule"])
+
+        rrule_str = pbehavior["rrule"]
+        if rrule_str[0:6] == "RRULE:":
+            rrule_str = rrule_str[6:]
+
+        freq = get_rrule_freq(rrule_str)
 
         if freq == "SECONDLY":
             rrule["text"] = EVERY.format("second")

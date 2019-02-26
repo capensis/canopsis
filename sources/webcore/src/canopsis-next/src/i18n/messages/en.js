@@ -71,6 +71,7 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    webhooks: 'Webhooks',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -186,6 +187,11 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    tabs: {
+      filter: 'Filter',
+      eids: 'Eids',
+      comments: 'Comments',
+    },
   },
   settings: {
     titles: {
@@ -644,6 +650,14 @@ export default {
         title: 'Title',
       },
     },
+    createWebhook: {
+      create: {
+        title: 'Create webhook',
+      },
+      edit: {
+        title: 'Edit webhook',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -874,5 +888,48 @@ export default {
     },
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
+  },
+  patternsList: {
+    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
+  },
+  webhook: {
+    title: 'Webhooks',
+    table: {
+      headers: {
+        id: 'ID',
+        requestMethod: 'Request method',
+        requestUrl: 'Request URL',
+      },
+    },
+    tabs: {
+      hook: {
+        title: 'Hook',
+        fields: {
+          triggers: 'Triggers',
+          eventPatterns: 'Event patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
+        },
+      },
+      request: {
+        title: 'Request',
+        fields: {
+          method: 'Method',
+          url: 'URL',
+          headers: 'Headers',
+          headerKey: 'Header key',
+          headerValue: 'Header value',
+          payload: 'Payload',
+        },
+      },
+      declareTicket: {
+        title: 'Declare ticket',
+        fields: {
+          text: 'Key',
+          value: 'Value',
+        },
+      },
+    },
   },
 };

@@ -10,45 +10,21 @@
       v-menu(bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ $t('common.exploitation') }}
         v-list.pb-0
-          v-list-tile
+          v-list-tile(v-for="(link, index) in exploitationLinks", :key="`exploitation-${index}`")
             v-list-tile-title
-              router-link(:to="{ name: 'exploitation-event-filter' }")
+              router-link(:to="link.route")
                 v-layout(justify-space-between)
-                  span.black--text {{ $t('eventFilter.title') }}
-                  v-icon.ml-2 list
-          v-list-tile
-            v-list-tile-title
-              router-link(:to="{ name: 'exploitation-pbehaviors' }")
-                v-layout(justify-space-between)
-                  span.black--text {{ $t('common.pbehaviors') }}
-                  v-icon pause
+                  span.black--text {{ link.text }}
+                  v-icon.ml-2 {{ link.icon }}
       v-menu(bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ $t('common.administration') }}
         v-list.pb-0
-          v-list-tile
+          v-list-tile(v-for="(link, index) in administrationLinks", :key="`administration-${index}`")
             v-list-tile-title
-              router-link(:to="{ name: 'admin-rights' }")
+              router-link(:to="link.route")
                 v-layout(justify-space-between)
-                  span.black--text {{ $t('common.rights') }}
-                  v-icon verified_user
-          v-list-tile
-            v-list-tile-title
-              router-link(:to="{ name: 'admin-users' }")
-                v-layout(justify-space-between)
-                  span.black--text {{ $t('common.users') }}
-                  v-icon people
-          v-list-tile
-            v-list-tile-title
-              router-link(:to="{ name: 'admin-roles' }")
-                v-layout(justify-space-between)
-                  span.black--text {{ $t('common.roles') }}
-                  v-icon supervised_user_circle
-          v-list-tile
-            v-list-tile-title
-              router-link(:to="{ name: 'admin-parameters' }")
-                v-layout(justify-space-between)
-                  span.black--text {{ $t('common.parameters') }}
-                  v-icon settings
+                  span.black--text {{ link.text }}
+                  v-icon.ml-2 {{ link.icon }}
       v-menu(bottom, offset-y, offset-x)
         v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
         v-list.pb-0
@@ -103,6 +79,21 @@ import GroupsTopBar from './groups-top-bar.vue';
 export default {
   components: { GroupsTopBar },
   mixins: [appMixin, authMixin, modalMixin, entitiesViewMixin, entitiesUserMixin],
+  data() {
+    return {
+      exploitationLinks: [
+        { route: { name: 'exploitation-event-filter' }, text: this.$t('eventFilter.title'), icon: 'list' },
+        { route: { name: 'exploitation-pbehaviors' }, text: this.$t('common.pbehaviors'), icon: 'pause' },
+        { route: { name: 'exploitation-webhooks' }, text: this.$t('common.webhooks'), icon: '$vuetify.icons.webhook' },
+      ],
+      administrationLinks: [
+        { route: { name: 'admin-rights' }, text: this.$t('common.rights'), icon: 'verified_user' },
+        { route: { name: 'admin-users' }, text: this.$t('common.users'), icon: 'people' },
+        { route: { name: 'admin-roles' }, text: this.$t('common.roles'), icon: 'supervised_user_circle' },
+        { route: { name: 'admin-parameters' }, text: this.$t('common.parameters'), icon: 'settings' },
+      ],
+    };
+  },
   computed: {
     defaultViewTitle() {
       const userDefaultView = this.getViewById(this.currentUser.defaultview);
