@@ -94,6 +94,9 @@ Considérons l'événement suivant :
 }
 ````
 
+Chose importante, les attributs pris en charge sont inscrits [ici](../../../guide-administration/event-filter/#champs-des-evenements).  
+Dans notre cas, l'attribut **groupe** est personalisé et sera donc positionné *automatiquement* dans un dictionnaire *extrainfos*.  
+
 On commence à ajouter une règle via le menu adéquat
 
 ![Menu Event-filter ](./img/event_filter_menu.png "Menu Event-filter")  
@@ -112,6 +115,13 @@ Dernière étape, nous allons récupérer le contenu de l'attribut **groupe** et
     Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire.  
     Une règle de [copie d'entité](../../../guide-administration/event-filter/#ajout-dinformations-a-lentite) doit être présente
 
+Le résultat pourra être observé sur un bac à alarmes par exemple :  
+
+
+![Nom des colonnes ](./img/event_filter_nom_colonnes.png "Nom des colonnes")
+![Bac à alarmes ](./img/event_filter_baa.png "Bac à alarmes")
+
+
 ## Enrichissement via référentiels externes
 
 ## Annexes
@@ -120,7 +130,12 @@ Dernière étape, nous allons récupérer le contenu de l'attribut **groupe** et
 
 De manière générale, vous pouvez consulter le contenu de la base de données qui porte les entités, le `contexte`.  
 Pour cela, vous devez instancier un widget **Explorateur de contexte** et effectuer une recherche sur l'entité voulue.  
+
 Voici un exemple avec **ressource-doc1**.  
 
 ![Contexte ](./img/consulter_contexte.png "Consulter le contexte ")
+
+Puis avec **ressource-doc2**.  
+
+![Contexte ](./img/consulter_contexte2.png "Consulter le contexte ")
 
