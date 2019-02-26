@@ -124,6 +124,10 @@ Le résultat pourra être observé sur un bac à alarmes par exemple :
 
 ## Enrichissement via référentiels externes
 
+L'enrichissement par référentiel externe passe par le développement d'un *driver* dont le métier est de synchroniser un référentiel tiers avec le contexte Canopsis.  
+Dans l'édition CAT de Canopsis, il est notamment possible d'interconnecter les outils **Service Now** et **iTop**.  
+Pour plus d'informations, n'hésitez pas à nous consulter.
+
 ## Annexes
 
 ### Consulter le contexte
