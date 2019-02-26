@@ -1,0 +1,63 @@
+# Watcher
+
+Les watchers nouvelle génération sont une fonctionnalité du moteur `axe` permettant de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
+
+Les watchers sont définis dans la collection MongoDB `default_entities`, et
+peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/watcherng/api_v2_watcherng.md).
+
+Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
+
+## Activation des webhooks
+
+Les webhooks sont implémentés sous la forme d'un plugin à ajouter dans le moteur `axe`. Ce plugin n'est disponible qu'avec une installation CAT de Canopsis.
+
+Dans une installation Docker, vous devez remplacer l'image par défaut `canopsis/engine-axe` par l'image `canopsis/engine-axe-cat`.
+
+Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé :
+```
+engine-axe -postProcessorsDirectory /plugins/axepostprocessor
+```
+
+## Définition d'un webhook
+
+Une règle est un document JSON contenant les paramètres suivants :
+
+ - `_id` (optionnel): l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `name` (requis) : Le nom du watcher, qui sera utilisé dans la météo de services
+ - `entities` (requis) : La liste des patterns permettant de filtrer les entités surveillées. Le format des patterns est le même que pour l'[event-filter](../event-filter/index.md).
+ - `state` (requis) : Un document contenant :
+    - `method` (requis) : Le nom de la méthode de calcul de l'état du watcher en fonction des alarmes ouvertes sur les entités. Actuellement, seule la méthode `worst` est implémentée
+    - Les différents paramètres des méthodes ci-dessus
+- `output_template` (requis) : Le template utilisé par le watcher pour déterminer la sortie de l'alarme
+
+### Méthodes
+
+Actuellement, seule la méthode `worst` est implémentée.
+- `worst` : L'état du watcher est l'état de la pire alarme ouverte sur les entités surveillées.
+
+### Templates
+
+L'`output_template` est une chaîne de caractère contenant, entre autres, un accès à un compte des alarmes selon leur état. Les comptes sont accessibles dans la variable `{{.State}}`, et les différents comptes d'états sont `.Info`, `.Minor`, `.Major`, et `.Critical`.  
+Un exemple de sortie avec un compte des alarmes dans l'état `Minor` serait donc : `Alarmes mineures : {{.State.Minor}}`.  
+
+### Exemples
+
+```json
+{
+    "_id": "h4z25rzg6rt-64rge354-5re4g",
+    "name": "Client Capensis",
+    "entities": [{
+        "infos": {
+            "customer": {
+                "value": "capensis"
+            }
+        }
+    }, {
+        "_id": {"regex_match": ".+/comp"}
+    }],
+    "state": {
+        "method": "worst",
+    },
+    "output_template": "Alarmes critiques : {{.State.Critical}}"
+}
+```
