@@ -2,8 +2,8 @@
 
 ## Routes disponibles
 
-[Action](./action/api_v2_action.md)
-[Healthcheck](./healthcheck/api_v2_healthcheck.md)
-[Heartbeat](./heartbeat/api_v2_heartbeat.md)
-[Webhook](./action/api_v2_webhooks.md)
-[Watcher NG](./action/api_v2_watcherng.md)
+*  [Action](action/api_v2_action.md)
+*  [Healthcheck](healthcheck/api_v2_healthcheck.md)
+*  [Heartbeat](heartbeat/api_v2_heartbeat.md)
+*  [Webhooks](webhooks/api_v2_webhooks.md)
+*  [Watcher NG](watcherng/api_v2_watcherng.md)

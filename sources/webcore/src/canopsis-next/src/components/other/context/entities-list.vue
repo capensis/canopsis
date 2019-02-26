@@ -22,7 +22,7 @@
         @update:condition="updateSelectedCondition"
         )
       v-flex.ml-4
-        mass-actions-panel(:itemsIds="selected")
+        mass-actions-panel(:itemsIds="selectedIds")
       v-flex
         context-fab(v-if="hasAccessToCreateEntity")
     no-columns-table(v-if="!hasColumns")
@@ -140,6 +140,10 @@ export default {
     };
   },
   computed: {
+    selectedIds() {
+      return this.selected.map(item => item._id);
+    },
+
     headers() {
       if (this.hasColumns) {
         return [...this.columns, { text: '', sortable: false }];
