@@ -30,7 +30,8 @@
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
           v-model="settings.widget.parameters.sort",
-          :columns="sortColumns"
+          :columns="sortColumns",
+          :columnsLabel="$t('settings.orderBy')"
           )
           v-divider
           field-weather-template(
