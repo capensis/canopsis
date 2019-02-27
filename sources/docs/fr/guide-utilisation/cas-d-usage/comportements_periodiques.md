@@ -78,3 +78,20 @@ Etant donné que ces entités constituent de manière exhaustive l'application *
 Dans le cas ou toutes les entités d'une application en sont pas en maintenance, le picto suivant est présenté :
 
 ![Maintenance ERP partielle](./img/pbh_maintenance_entites_1.png "Maintenance ERP partielle")  
+
+## Coté bac à alarmes
+
+Les points ci-avants font un focus sur la météo de service.  
+L'idée de ce paragraphe est de montrer les impacts des comportements périodiques sur le bac à alarmes.  
+
+Pour le moment il n'existe pas de *renderer* sur l'interface graphique pour montrer un picto des alarmes dont l'entité est en maintenance.  
+Cependant, il est possible d'appliquer des filtres sur les comportements périodiques actifs ou non.  
+
+Sur un bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) : 
+
+![Filtre comportement actif](./img/pbh_filtre_actif.png "Filtre comportement actif")  
+
+Puis au niveau exploitation :
+
+![Filtre comportement actif](./img/pbh_filtre_actif_baa.png "Filtre comportement actif")  
+
