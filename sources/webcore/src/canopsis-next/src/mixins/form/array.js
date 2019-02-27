@@ -1,10 +1,10 @@
-import formComputedPropertiesMixin, { eventKeyComputed, formKeyComputed } from './internal/computed-properties';
+import baseFormMixin, { modelPropKeyComputed, modelEventKeyComputed } from './base';
 
 /**
  * @mixin Form mixin
  */
 export default {
-  mixins: [formComputedPropertiesMixin],
+  mixins: [baseFormMixin],
   methods: {
     /**
      * Emit event to parent with new array with new item
@@ -12,7 +12,7 @@ export default {
      * @param {*} value
      */
     addItemIntoArray(value) {
-      this.$emit(this[eventKeyComputed], [...this[this[formKeyComputed]], value]);
+      this.$emit(this[modelEventKeyComputed], [...this[this[modelPropKeyComputed]], value]);
     },
 
     /**
@@ -22,11 +22,11 @@ export default {
      * @param {*} value
      */
     updateItemInArray(index, value) {
-      const items = [...this[this[formKeyComputed]]];
+      const items = [...this[this[modelPropKeyComputed]]];
 
       items[index] = value;
 
-      this.$emit(this[eventKeyComputed], items);
+      this.$emit(this[modelEventKeyComputed], items);
     },
 
     /**
@@ -38,7 +38,7 @@ export default {
      */
     updateFieldInArrayItem(index, fieldName, value) {
       this.updateItemInArray(index, {
-        ...this[this[formKeyComputed]][index],
+        ...this[this[modelPropKeyComputed]][index],
         [fieldName]: value,
       });
     },
@@ -49,7 +49,7 @@ export default {
      * @param {number} index
      */
     removeItemFromArray(index) {
-      this.$emit(this[eventKeyComputed], this[this[formKeyComputed]].filter((v, i) => i !== index));
+      this.$emit(this[modelEventKeyComputed], this[this[modelPropKeyComputed]].filter((v, i) => i !== index));
     },
   },
 };
