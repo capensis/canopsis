@@ -66,7 +66,18 @@ Pour personaliser le rendu du widget, il existe 3 niveaux de templates :
 
 Dans ces templates, vous pouvez utiliser la notation **handlebars** pour accéder aux variables de vos entités.  
 
+La tuile :
+
 ![Template tuile](./img/mds_widget_template_tuile.png "Widget template tuile")  
+
+
+La modale :
+
+![Template modale](./img/mds_widget_template_modale.png "Widget template modale")  
+
+!!! note
+    Notez le helper *entities* qui est fourni directement par Canopsis et qui vous permet d'itérer sur l'ensemble des sous-éléments de l'observateur.
+
 
 Le rendu final sera 
 
