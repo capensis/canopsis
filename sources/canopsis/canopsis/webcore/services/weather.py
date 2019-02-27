@@ -376,7 +376,8 @@ def exports(ws):
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
             enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
-            enriched_entity["mfilter"] = watcher["mfilter"]
+            # using get instead of direct access to accomodate for new watchers
+            enriched_entity["mfilter"] = watcher.get("mfilter", {})
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
                 alarm_dict
@@ -422,14 +423,17 @@ def exports(ws):
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         # Find entities with the watcher filter
-        try:
-            query = json.loads(watcher_entity['mfilter'])
-        except (ValueError, KeyError, TypeError):
-            json_error = {
-                "name": "filter_not_found",
-                "description": "impossible to load the desired filter"
-            }
-            return gen_json_error(json_error, HTTP_NOT_FOUND)
+        if "entities" in watcher_entity:
+            query = {"_id":{"$in": watcher_entity.get('depends', [])}}
+        else:
+            try:
+                query = json.loads(watcher_entity['mfilter'])
+            except (ValueError, KeyError, TypeError):
+                json_error = {
+                    "name": "filter_not_found",
+                    "description": "impossible to load the desired filter"
+                }
+                return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         query["enabled"] = True
 
