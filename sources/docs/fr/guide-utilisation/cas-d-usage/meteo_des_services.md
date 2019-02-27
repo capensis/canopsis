@@ -104,6 +104,10 @@ Vous pouvez publier des événements sur ces 3 scénarios (avec par exemple le [
 
 Les résultats observés seront alors : 
 
-
 ![Résultats](./img/mds_resultat1.png "Résultats")  
 ![Résultats](./img/mds_resultat2.png "Résultats")  
+
+
+Depuis cette modale, vous pourrez au final exécuter les [actions adéquates](/guide-utilisation/interface/widgets/meteo-des-services/#les-actions) de prise en charge des alarmes.  
+
+![Actions](./img/mds_actions.png "Actions")  
