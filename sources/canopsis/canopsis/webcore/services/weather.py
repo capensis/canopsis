@@ -377,6 +377,7 @@ def exports(ws):
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
             enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
             # using get instead of direct access to accomodate for new watchers
+            # new watchers don't have mfilter field, thus get permits to have both new and old watchers
             enriched_entity["mfilter"] = watcher.get("mfilter", {})
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
@@ -423,6 +424,8 @@ def exports(ws):
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         # Find entities with the watcher filter
+        # when entities is in watcher_entity, the watcher is handled in go engines
+        # thus the mfilter query is not needed and not present as well
         if "entities" in watcher_entity:
             query = {"_id":{"$in": watcher_entity.get('depends', [])}}
         else:
