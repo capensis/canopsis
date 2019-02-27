@@ -89,6 +89,8 @@ Cependant, il est possible d'appliquer des filtres sur les comportements périod
 
 Sur un bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) : 
 
+Le point important concernant l'attribut *fictif* `has_active_pb` qui est un booléen.
+
 ![Filtre comportement actif](./img/pbh_filtre_actif.png "Filtre comportement actif")  
 
 Puis au niveau exploitation :
