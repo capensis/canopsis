@@ -32,9 +32,12 @@
         flat
         )
       v-flex.pa-1(xs12, md4)
-        text-field.my-2(
+        mixed-field.my-2(
         v-show="isShownInputField",
         :value="rule.input",
+        solo-inverted,
+        hide-details,
+        flat,
         @input="updateField('input', $event)"
         )
 </template>
@@ -46,7 +49,7 @@ import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
-import TextField from '@/components/forms/fields/mixed-field.vue';
+import MixedField from '@/components/forms/fields/mixed-field.vue';
 
 /**
  * Component representing a rule in MongoDB filter
@@ -61,7 +64,7 @@ import TextField from '@/components/forms/fields/mixed-field.vue';
  * @event deleteRule#click
  */
 export default {
-  components: { TextField },
+  components: { MixedField },
   mixins: [formMixin],
   model: {
     prop: 'rule',

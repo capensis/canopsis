@@ -153,7 +153,7 @@ export default {
 
 <style lang="scss" scoped>
   .text-pairs {
-    &:not(.text-pairs-disabled) .text-pair {
+    &:not(.text-pairs__disabled) .text-pair {
       position: relative;
       padding-right: 50px;
 

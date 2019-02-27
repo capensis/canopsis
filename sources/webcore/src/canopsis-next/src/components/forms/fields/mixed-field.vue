@@ -1,10 +1,14 @@
 <template lang="pug">
-  .mixed-field
+  .mixed-field(:class="{ 'mixed-field__solo-inverted': soloInverted }")
     v-select.mixed-field__type-selector(
     :items="types",
     :value="inputType",
     :disabled="disabled",
-    @input="updateType",
+    :solo-inverted="soloInverted",
+    :hide-details="hideDetails"
+    :flat="flat",
+    dense,
+    @input="updateType"
     )
       template(slot="selection", slot-scope="{ parent, item, index }")
         v-icon.mixed-field__type-selector-icon(small) {{ getInputTypeIcon(item.value) }}
@@ -19,9 +23,13 @@
     :value="value",
     :name="name",
     :disabled="disabled",
+    :solo-inverted="soloInverted",
+    :hide-details="hideDetails"
+    :flat="flat",
     :error-messages="collectedErrorMessages",
     v-validate="validationRules",
     single-line,
+    dense,
     @input="updateTextFieldValue",
     )
     v-switch.ma-0.ml-3.mixed-field__switch(
@@ -58,6 +66,18 @@ export default {
       default: null,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    soloInverted: {
+      type: Boolean,
+      default: false,
+    },
+    flat: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },
@@ -137,9 +157,14 @@ export default {
     position: relative;
     padding-left: 45px;
 
-    &__text {
-      /*border-left: solid 1px #cccccc;*/
+    &__solo-inverted {
+      padding-left: 60px;
 
+      &.mixed-field__switch {
+      }
+    }
+
+    &__text {
       & /deep/ input {
         padding-left: 5px;
       }
@@ -151,6 +176,10 @@ export default {
       & /deep/ .v-label {
         text-transform: capitalize;
       }
+
+      .mixed-field__solo-inverted & {
+        padding: 12px 0;
+      }
     }
 
     &__type-selector {
@@ -159,6 +188,10 @@ export default {
       margin: 0;
       left: 0;
       top: 0;
+
+      &.v-text-field--solo-inverted {
+        width: 59px;
+      }
 
       & /deep/ .v-input__slot {
         padding-right: 5px;
