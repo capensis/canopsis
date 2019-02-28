@@ -47,6 +47,23 @@ Le champ `hook` représente les conditions d'activation d'un webhook. Il contien
 
 Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `"ackremove"`, `"cancel"`, `"uncancel"`, `"declareticket"`, `"assocticket"`, `"snooze"`, `"unsnooze"`, `"resolve"`, `"done"`, et `"comment"`.
 
+| Nom                      | Description                                              |
+|:-------------------------|:---------------------------------------------------------|
+| `"ack"`                  | Acquittement d'une alerte                                |
+| `"ackremove"`            | Suppression de l'acquittement                            |
+| `"assocticket"`          | Asociation d'un ticket à l'alarme                        |
+| `"cancel"`               | Annulation de l'évènement                                |
+| `"create"`               | Création de l'évènement                                  |
+| `"comment"`              | Envoi d'un commentaire                                   |
+| `"declareticket"`        | Déclaration d'un ticket à l'alarme                       |
+| `"done"`                 | Fin de l'alarme                                          |
+| `"resolve"`              | Résolution de l'alarme                                   |
+| `"snooze"`               | Report de l'alarme                                       |
+| `"statedec"`             | Diminution de la criticité de l'alarme                   |
+| `"stateinc"`             | Augmentation de la criticité de l'alarme                 |
+| `"uncancel"`             | Retablissement de l'alarme                               |
+| `"unsnooze"`             | Fin du report de l'alarme                                |
+
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `event_patterns` (tableaux de patterns d'évènements).
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
