@@ -2,7 +2,7 @@
   div
     v-fade-transition
       view-tabs-wrapper(
-      v-if="view && ready",
+      v-if="isViewTabsReady",
       :view="view",
       :isEditingMode="isEditingMode",
       :hasUpdateAccess="hasUpdateAccess",
@@ -83,7 +83,6 @@ export default {
   },
   data() {
     return {
-      ready: false,
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
@@ -107,6 +106,10 @@ export default {
 
       return null;
     },
+
+    isViewTabsReady() {
+      return this.view && this.$route.query.tabId;
+    },
   },
 
   created() {
@@ -129,8 +132,6 @@ export default {
           if (!tabId && view.tabs && view.tabs.length) {
             this.$router.replace({ query: { tabId: view.tabs[0]._id } });
           }
-
-          this.ready = true;
 
           unwatch();
         }
