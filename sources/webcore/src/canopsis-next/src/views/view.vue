@@ -2,7 +2,7 @@
   div
     v-fade-transition
       view-tabs-wrapper(
-      v-if="ready",
+      v-if="view && ready",
       :view="view",
       :isEditingMode="isEditingMode",
       :hasUpdateAccess="hasUpdateAccess",
