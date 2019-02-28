@@ -4,6 +4,13 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
     v-card-text
+      v-text-field(
+      v-model="form._id",
+      :label="$t('modals.createWebhook.fields.id')"
+      )
+        v-tooltip(slot="append", left)
+          v-icon(slot="activator") help_outline
+          span {{ $t('modals.createWebhook.tooltips.id') }}
       webhook-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)

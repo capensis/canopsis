@@ -657,6 +657,12 @@ export default {
       edit: {
         title: 'Edit webhook',
       },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
+      },
     },
   },
   tables: {
