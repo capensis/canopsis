@@ -3,10 +3,12 @@
     v-select.mixed-field__type-selector(
     :items="types",
     :value="inputType",
+    :label="label",
     :disabled="disabled",
     :solo-inverted="soloInverted",
-    :hide-details="hideDetails"
     :flat="flat",
+    :error-messages="errorMessages",
+    hide-details,
     dense,
     @input="updateType"
     )
@@ -26,8 +28,7 @@
     :solo-inverted="soloInverted",
     :hide-details="hideDetails"
     :flat="flat",
-    :error-messages="collectedErrorMessages",
-    v-validate="validationRules",
+    :error-messages="errorMessages",
     single-line,
     dense,
     @input="updateTextFieldValue",
@@ -50,6 +51,15 @@ import { FILTER_INPUT_TYPES } from '@/constants';
 import formBaseMixin from '@/mixins/form/base';
 
 export default {
+  $_veeValidate: {
+    name() {
+      return this.name;
+    },
+
+    value() {
+      return this.value;
+    },
+  },
   inject: ['$validator'],
   mixins: [formBaseMixin],
   props: {
@@ -61,7 +71,7 @@ export default {
       type: String,
       default: null,
     },
-    validationRules: {
+    label: {
       type: String,
       default: null,
     },
@@ -80,6 +90,10 @@ export default {
     hideDetails: {
       type: Boolean,
       default: false,
+    },
+    errorMessages: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -108,14 +122,6 @@ export default {
 
     isInputTypeText() {
       return [FILTER_INPUT_TYPES.number, FILTER_INPUT_TYPES.string].includes(this.inputType);
-    },
-
-    collectedErrorMessages() {
-      if (this.name && this.errors) {
-        return this.errors.collect(this.name);
-      }
-
-      return [];
     },
 
     getInputTypeIcon() {
@@ -167,6 +173,14 @@ export default {
     &__text {
       & /deep/ input {
         padding-left: 5px;
+      }
+
+      & /deep/ .v-text-field__details {
+        margin-left: -45px;
+
+        .mixed-field__solo-inverted & {
+          margin-left: -60px;
+        }
       }
     }
 

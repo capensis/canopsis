@@ -36,7 +36,8 @@
           :value="item[itemValue]",
           :name="getValueFieldName(index)",
           :disabled="disabled",
-          :validationRules="valueValidationRules",
+          :error-messages="getCollectedErrorMessages(getValueFieldName(index))",
+          v-validate="valueValidationRules",
           @input="updateFieldInArrayItem(index, itemValue, $event)"
           )
         .text-pair__delete-button
