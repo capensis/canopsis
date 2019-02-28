@@ -1,6 +1,6 @@
 # Comportements périodiques
 
-Vous avez la possibilité dans Canopsis de définir des périodes de temps pendants lesquelles des changements de comportements sont nécessaires : 
+Vous avez la possibilité dans Canopsis de définir des périodes de temps pendant lesquelles des changements de comportements sont nécessaires : 
 
 * Plage de service d'une application : vous souhaitez repérer visuellement les applications qui doivent rendre un service à un moment donné
 * Maintenance : vous ne souhaitez pas montrer aux pilotes d'exploitation des alarmes qui concernent des entités déclarées en maintenance
@@ -27,9 +27,8 @@ Nous considérons l'application `ERP` (sous forme d'observateur) composée des e
 ### Définition de la plage de service
 
 Dans l'explorateur de contexte, vous recherchez votre observateur ERP.  
-Vous ajouter un comportement périodique ![Action comportement periodique](./img/pbh_action.png "Action comportement périodique")  
+Vous ajoutez un comportement périodique ![Action comportement periodique](./img/pbh_action.png "Action comportement périodique")  
 
-Pour définir une plage de service, Canopsis utilise le mécanisme inverse. Il est donc nécessaire de définir les plages hors service.  
 Pour fabriquer une plage 5 jours/7 de 8h à 19h15, vous devez créer :
 
 * Une plage récurrente de 19h15 à 00h
@@ -52,7 +51,7 @@ En dehors des plages de services, la tuile de météo se comporte ainsi :
 En parallèle des plages de services, vous pouvez déclarer des entités en maintenance ou en pause par exemple.  
 Vous avez la possibilité d'effectuer ces opérations :
 
-* Depuis le bac à alarmes : dans ce cas, la mise en maintenance se fait de manière unitaire (ou en muli mais ciblé) sur des alarmes existantes
+* Depuis le bac à alarmes : dans ce cas, la mise en maintenance se fait de manière unitaire (ou en multi mais ciblé) sur des alarmes existantes
 * Depuis l'explorateur de contexte : dans ce cas, la mise en maintenance se fait de manière unitaire sur des entités quelconques
 * Depuis le panneau d'exploitation des comportements périodiques : dans ce cas, la mise en maintenance s'effectue à partir d'un filtre
 
@@ -75,7 +74,7 @@ Etant donné que ces entités constituent de manière exhaustive l'application *
 
 ![Maintenance ERP](./img/pbh_maintenance_erp.png "Maintenance ERP")  
 
-Dans le cas ou toutes les entités d'une application en sont pas en maintenance, le picto suivant est présenté :
+Dans le cas ou toutes les entités d'une application ne sont pas en maintenance, le picto suivant est présenté :
 
 ![Maintenance ERP partielle](./img/pbh_maintenance_entites_1.png "Maintenance ERP partielle")  
 
