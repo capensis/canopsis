@@ -374,24 +374,15 @@ class PBehaviorManager(object):
             **not** be updated.
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
-        pb_value = self.get(_id)
-
-        if pb_value is None:
-            raise ValueError("The id does not match any pebahvior")
-
-        check_valid_rrule(kwargs.get('rrule', ''))
-
-        pbehavior = PBehavior(**self.get(_id))
-        new_data = {k: v for k, v in kwargs.items() if v is not None}
-        pbehavior.update(**new_data)
+        data = self.__get_and_check_pbehavior(_id, **kwargs)
 
         result = self.pb_storage.put_element(
-            element=new_data, _id=_id
+            element=data["new_data"], _id=_id
         )
 
         if (PBehaviorManager._UPDATE_FLAG in result and
                 result[PBehaviorManager._UPDATE_FLAG]):
-            return pbehavior.to_dict()
+            return data["pbehavior"].to_dict()
         return None
 
     def update_v2(self, _id, **kwargs):
@@ -402,6 +393,17 @@ class PBehaviorManager(object):
             **not** be updated.
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
+        pbehavior = self.__get_and_check_pbehavior(_id, **kwargs)["pbehavior"]
+
+        result = self.pb_store.update(
+            {'_id': pbehavior._id or _id}, pbehavior.to_dict(), upsert=False)
+
+        if (PBehaviorManager._UPDATE_FLAG in result and
+                result[PBehaviorManager._UPDATE_FLAG]):
+            return pbehavior.to_dict()
+        return None
+
+    def __get_and_check_pbehavior(self, _id, **kwargs):
         pb_value = self.get(_id)
 
         if pb_value is None:
@@ -413,13 +415,7 @@ class PBehaviorManager(object):
         new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
-        result = self.pb_store.update(
-            {'_id': pbehavior._id or _id}, pbehavior.to_dict(), upsert=False)
-
-        if (PBehaviorManager._UPDATE_FLAG in result and
-                result[PBehaviorManager._UPDATE_FLAG]):
-            return pbehavior.to_dict()
-        return None
+        return {"pbehavior": pbehavior, "new_data": new_data}
 
     def upsert(self, pbehavior):
         """

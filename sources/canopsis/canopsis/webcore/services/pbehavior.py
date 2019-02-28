@@ -124,6 +124,32 @@ def check_values(data):
     data["enabled"] = cfg_to_bool(data["enabled"])
 
 
+def create_params(_id, name=None, filter_=None, tstart=None, tstop=None,
+                  rrule=None, enabled=None, comments=None, connector=None,
+                  connector_name=None, author=None, type_=None, reason=None,
+                  timezone=None, exdate=None):
+    if exdate is None:
+        exdate = []
+
+    params = {
+        PBehavior.NAME: name,
+        PBehavior.FILTER: filter_,
+        PBehavior.AUTHOR: author,
+        PBehavior.TSTART: tstart,
+        PBehavior.TSTOP: tstop,
+        PBehavior.RRULE: rrule,
+        PBehavior.ENABLED: enabled,
+        PBehavior.COMMENTS: comments,
+        PBehavior.CONNECTOR: connector,
+        PBehavior.CONNECTOR_NAME: connector_name,
+        PBehavior.TYPE: type_,
+        PBehavior.REASON: reason,
+        PBehavior.TIMEZONE: timezone,
+        PBehavior.EXDATE: exdate
+    }
+    return params
+
+
 class RouteHandlerPBehavior(object):
     """
     Passthrough class with few checks from the route to the pbehavior
@@ -227,68 +253,24 @@ class RouteHandlerPBehavior(object):
 
         return self.pb_manager.read(_id)
 
-    def update(self, _id, name=None, filter_=None, tstart=None, tstop=None,
-               rrule=None, enabled=None, comments=None, connector=None,
-               connector_name=None, author=None, type_=None, reason=None,
-               timezone=None, exdate=None):
+    def update(self, _id, **kwargs):
         """
         Update pbehavior fields. Fields to None will **not** be updated.
 
         :param str _id: pbehavior id
         """
-        if exdate is None:
-            exdate = []
-
-        params = {
-            PBehavior.NAME: name,
-            PBehavior.FILTER: filter_,
-            PBehavior.AUTHOR: author,
-            PBehavior.TSTART: tstart,
-            PBehavior.TSTOP: tstop,
-            PBehavior.RRULE: rrule,
-            PBehavior.ENABLED: enabled,
-            PBehavior.COMMENTS: comments,
-            PBehavior.CONNECTOR: connector,
-            PBehavior.CONNECTOR_NAME: connector_name,
-            PBehavior.TYPE: type_,
-            PBehavior.REASON: reason,
-            PBehavior.TIMEZONE: timezone,
-            PBehavior.EXDATE: exdate
-        }
+        params = create_params(_id, **kwargs)
         check_values(params)
-
         return self.pb_manager.update(_id, **params)
 
-    def update_v2(self, _id, name=None, filter_=None, tstart=None, tstop=None,
-                  rrule=None, enabled=None, comments=None, connector=None,
-                  connector_name=None, author=None, type_=None, reason=None,
-                  timezone=None, exdate=None):
+    def update_v2(self, _id, **kwargs):
         """
         Update pbehavior fields. Fields to None will **not** be updated.
 
         :param str _id: pbehavior id
         """
-        if exdate is None:
-            exdate = []
-
-        params = {
-            PBehavior.NAME: name,
-            PBehavior.FILTER: filter_,
-            PBehavior.AUTHOR: author,
-            PBehavior.TSTART: tstart,
-            PBehavior.TSTOP: tstop,
-            PBehavior.RRULE: rrule,
-            PBehavior.ENABLED: enabled,
-            PBehavior.COMMENTS: comments,
-            PBehavior.CONNECTOR: connector,
-            PBehavior.CONNECTOR_NAME: connector_name,
-            PBehavior.TYPE: type_,
-            PBehavior.REASON: reason,
-            PBehavior.TIMEZONE: timezone,
-            PBehavior.EXDATE: exdate
-        }
+        params = create_params(_id, **kwargs)
         check_values(params)
-
         return self.pb_manager.update_v2(_id, **params)
 
     def delete(self, _id):
