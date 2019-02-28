@@ -85,7 +85,7 @@ import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
+import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
