@@ -9,7 +9,7 @@ export default {
     /**
      * Update full model
      *
-     * @param model
+     * @param {*} model
      */
     updateModel(model) {
       this.$emit(this[modelEventKeyComputed], model);

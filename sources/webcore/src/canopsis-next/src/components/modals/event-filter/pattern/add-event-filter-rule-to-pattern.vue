@@ -19,7 +19,7 @@
         name="value",
         v-validate="'required'",
         :error-messages="errors.collect('value')"
-        :label="$t('modals.eventFilterRule.value')",
+        :label="$t('modals.eventFilterRule.value')"
         )
         template(v-else)
           v-layout(align-center, justify-center)
