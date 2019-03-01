@@ -73,6 +73,8 @@ Par exemple, pour afficher l'ensemble des entités d'un observateur de météo, 
 Dans d'autres cas, soit le helper n'est pas encore développé, soit il ne le sera pas.  
 Vous avez donc la possibilité d'utiliser *handlebars* pour personnaliser vos affichages.  
 
+### Itérer sur des éléments de tableau
+
 Voici un exemple concrèt de représentation.
 
 !!! note
@@ -134,3 +136,24 @@ Voici le template de la modale :
 L'affichage associé sera au final : 
 
 ![Affichage pbh](./img/templates_affichage_pbh.png "Affichage pbh")  
+
+
+### Afficher des images dans une tuile de météo
+
+Si vous souhaitez afficher des pictos applicatifs sur une tuile de météo, vous pouvez utiliser *handlebars*.  
+
+![Picto tuile](./img/templates_picto_tuile.png "Picto tuile")  
+
+Le template handlebars associé est le suivant : 
+
+````
+{{#if entity.infos.picto.value}}
+<img src="{{entity.infos.picto.value}}" width="200px">
+{{/if}}
+````
+
+Cela suppose que l'attribut `picto` de votre entité porte un png encodé en base64.  
+
+````
+data:image/png;base64,iVBORw0KGgoA ... ==
+````
