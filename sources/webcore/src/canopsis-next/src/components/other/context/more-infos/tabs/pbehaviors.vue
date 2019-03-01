@@ -100,12 +100,8 @@ export default {
         },
       });
     },
-    async fetchItems() {
-      await this.fetchPbehaviorsByEntityId({ id: this.itemId });
-
-      if (this.pbehaviorItems) {
-        this.items = [...this.pbehaviorItems];
-      }
+    fetchItems() {
+      this.fetchPbehaviorsByEntityId({ id: this.itemId });
     },
   },
 };

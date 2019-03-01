@@ -15,28 +15,47 @@ export default {
   methods: {
     ...mapActions({
       fetchEventFilterRulesList: 'fetchList',
-      refreshEventFilterList: 'fetchListWithPreviousParams',
-      removeEventFilterRule: 'remove',
+      refreshEventFilterRulesList: 'fetchListWithPreviousParams',
       createEventFilterRule: 'create',
-      editEventFilterRule: 'edit',
+      updateEventFilterRule: 'update',
+      removeEventFilterRule: 'remove',
     }),
 
-    async createEventFilterRuleWithPopup(rule) {
-      await this.createEventFilterRule({ data: rule });
-      this.refreshEventFilterList();
-      this.addSuccessPopup({ text: this.$t('modals.eventFilterRule.create.success') });
+    async createEventFilterRuleWithPopup(data) {
+      await this.createEventFilterRule({ data });
+
+      this.refreshEventFilterRulesListWithSuccessPopup({
+        text: this.$t('modals.eventFilterRule.create.success'),
+      });
     },
 
-    async duplicateEventFilterRuleWithPopup(rule) {
-      await this.createEventFilterRule({ data: rule });
-      this.refreshEventFilterList();
-      this.addSuccessPopup({ text: this.$t('modals.eventFilterRule.duplicate.success') });
+    async duplicateEventFilterRuleWithPopup(data) {
+      await this.createEventFilterRule({ data });
+
+      this.refreshEventFilterRulesListWithSuccessPopup({
+        text: this.$t('modals.eventFilterRule.duplicate.success'),
+      });
     },
 
-    async editEventFilterRuleWithPopup(ruleId, editedRule) {
-      await this.editEventFilterRule({ id: ruleId, data: editedRule });
-      this.refreshEventFilterList();
-      this.addSuccessPopup({ text: this.$t('modals.eventFilterRule.edit.success') });
+    async updateEventFilterRuleWithPopup(id, data) {
+      await this.updateEventFilterRule({ id, data });
+
+      this.refreshEventFilterRulesListWithSuccessPopup({
+        text: this.$t('modals.eventFilterRule.edit.success'),
+      });
+    },
+
+    async removeEventFilterRuleWithPopup(id) {
+      await this.removeEventFilterRule({ id });
+
+      this.refreshEventFilterRulesListWithSuccessPopup({
+        text: this.$t('modals.eventFilterRule.remove.success'),
+      });
+    },
+
+    refreshEventFilterRulesListWithSuccessPopup(popup) {
+      this.refreshEventFilterRulesList();
+      this.addSuccessPopup(popup);
     },
   },
 };

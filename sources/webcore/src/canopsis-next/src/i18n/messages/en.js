@@ -617,6 +617,9 @@ export default {
         title: 'Edit an event filter rule',
         success: 'Rule successfully edited !',
       },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
       priority: 'Priority',
       editPattern: 'Edit pattern',
       advanced: 'Advanced',
