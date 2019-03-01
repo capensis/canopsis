@@ -34,6 +34,7 @@ export default {
     end: 'End',
     recursive: 'Recursive',
     states: 'States',
+    state: 'State',
     sla: 'Sla',
     authors: 'Authors',
     stat: 'Stat',
@@ -174,6 +175,16 @@ export default {
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
+      },
+    },
+    timeLine: {
+      titlePaths: {
+        by: 'by',
+      },
+      stateCounter: {
+        header: 'Cropped State (since last change of status)',
+        stateIncreased: 'State increased',
+        stateDecreased: 'State decreases',
       },
     },
     infoPopup: 'Info popup',

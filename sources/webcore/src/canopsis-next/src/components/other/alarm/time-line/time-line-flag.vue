@@ -12,7 +12,7 @@ import { formatState, formatStatus, formatEvent } from '@/helpers/state-and-stat
  * @module alarm
  *
  * @prop {Object} step - step object
- * @prop {Boolean} [isCroppedState] - Boolean to determine if there's a cropped state or not
+ * @prop {Boolean} [cropped] - Boolean to determine if there's a cropped state or not
  */
 export default {
   props: {
@@ -20,15 +20,11 @@ export default {
       type: Object,
       required: true,
     },
-    isCroppedState: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     style() {
       if (this.step._t.startsWith('status')) {
-        return formatStatus(this.step.val, this.isCroppedState);
+        return formatStatus(this.step.val);
       }
 
       if (this.step._t.startsWith('state')) {

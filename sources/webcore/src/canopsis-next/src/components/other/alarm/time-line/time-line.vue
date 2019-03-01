@@ -6,42 +6,17 @@
           .date {{ day | date('short', true) }}
         .timeline-item
           .time {{ step.t | date('H:mm:SS', true) }}
-          div(v-if="step._t !== 'statecounter'")
-            flag.flag(:type="stepType(step._t)", :step="step")
-            .card
-              .header
-                alarm-chips.chips(v-if="stepType(step._t) !== $constants.ENTITY_INFOS_TYPE.action",
-                :value="step.val", :type="stepType(step._t)")
-                p  &nbsp {{ step._t | stepTitle(step.a) }}
-              .content
-                p {{ step.m }}
-          div(v-else)
-            flag.flag(isCroppedState)
-            .header
-              p Cropped State (since last change of status)
-            .content
-              table
-                tr
-                  td State increased :
-                  td {{ step.val.stateinc }}
-                tr
-                  td State decreases :
-                  td {{ step.val.statedec }}
-                tr(v-for="(value, state) in stateSteps(step.val)")
-                  td State {{ stateName(state) }} :
-                  td {{ value }}
+          time-line-flag.flag(:step="step")
+          time-line-card(:step="step")
 </template>
 
 <script>
 import moment from 'moment';
-import { pickBy, orderBy, groupBy } from 'lodash';
+import { orderBy, groupBy } from 'lodash';
 
-import { ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE } from '@/constants';
+import TimeLineFlag from '@/components/other/alarm/time-line/time-line-flag.vue';
+import TimeLineCard from '@/components/other/alarm/time-line/time-line-card.vue';
 
-import { stepTitle } from '@/helpers/timeline';
-
-import Flag from '@/components/other/alarm/time-line/time-line-flag.vue';
-import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 
 /**
@@ -52,10 +27,7 @@ import entitiesAlarmMixin from '@/mixins/entities/alarm';
    * @prop {alarmProp} [alarmProps] - Properties of an alarm
    */
 export default {
-  components: { AlarmChips, Flag },
-  filters: {
-    stepTitle,
-  },
+  components: { TimeLineFlag, TimeLineCard },
   mixins: [entitiesAlarmMixin],
   props: {
     alarmProps: {
@@ -68,33 +40,23 @@ export default {
       const alarm = this.getAlarmItem(this.alarmProps._id);
 
       if (alarm && alarm.v.steps) {
-        const orderedSteps = orderBy(alarm.v.steps, ['t'], 'desc');
+        const orderedSteps = orderBy(alarm.v.steps.concat({
+          a: 'system',
+          _t: 'statecounter',
+          m: '',
+          t: 1541411224,
+          val: {
+            'state:2': 1,
+            'state:0': 1,
+            statedec: 1,
+            stateinc: 1,
+          },
+        }), ['t'], 'desc');
 
         return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
       }
 
       return {};
-    },
-
-    stepType() {
-      return (type) => {
-        if (type.startsWith('status')) {
-          return ENTITY_INFOS_TYPE.status;
-        } else if (type.startsWith('state')) {
-          return ENTITY_INFOS_TYPE.state;
-        }
-
-        return ENTITY_INFOS_TYPE.action;
-      };
-    },
-
-    stateName(state) {
-      const stateValue = parseInt(state.replace('state:', ''), 10);
-      return ENTITIES_STATES_STYLES[stateValue].text;
-    },
-
-    stateSteps(steps) {
-      return pickBy(steps, (value, key) => key.startsWith('state:'));
     },
   },
   mounted() {
@@ -164,38 +126,5 @@ export default {
   .date {
     top: 4px;
     left: -11px;
-  }
-
-  .content {
-    padding-left: 20px;
-    padding-top: 20px;
-    overflow-wrap: break-word;
-    width: 90%;
-  }
-
-  .header {
-    color: #686868;
-    display: flex;
-    align-items: baseline;
-    font-weight: bold;
-    border-bottom: solid 1px $border_line;
-    padding-left: 5px;
-    padding-top: 5px;
-
-
-    .chips {
-      font-size: 15px;
-      height: 25px;
-    }
-
-    p {
-      font-size: 15px;
-    }
-  }
-
-  p {
-    overflow-wrap: break-word;
-    text-overflow: ellipsis;
-    width: 90%;
   }
 </style>
