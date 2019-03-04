@@ -18,8 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import uuid
+
+from canopsis.event import forger
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection
+from canopsis.common.collection import MongoCollection, CollectionError
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
 
 class WatcherManager(object):
     """
@@ -28,11 +34,12 @@ class WatcherManager(object):
 
     COLLECTION = "default_entities"
 
-    def __init__(self, mongo_collection):
+    def __init__(self, mongo_collection, logger):
         """
         :param mongo_collection: `pymongo.collection.Collection` object.
         """
         super(WatcherManager, self).__init__()
+        self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
         self.__collection = mongo_collection
 
     @classmethod
@@ -73,7 +80,30 @@ class WatcherManager(object):
         :rtype: str
         :raises: CollectionError if the creation fails.
         """
-        return self.__collection.insert(watcher)
+        if watcher is None or not isinstance(watcher, dict):
+            raise CollectionError('Nothing to create')
+
+        if watcher['type'] != 'watcher':
+            raise CollectionError('Entity is not a watcher')
+
+        if 'entities' not in watcher or 'state' not in watcher or 'output_template' not in watcher:
+            raise CollectionError('Watcher is missing important specific fields')
+
+        if '_id' not in watcher:
+            watcher['_id'] = str(uuid.uuid4())
+
+        wid = self.__collection.insert(watcher)
+
+        event = forger(
+            connector="watcher",
+            connector_name="watcher",
+            event_type="updatewatcher",
+            source_type="component",
+            component=wid)
+        self.amqp_pub.canopsis_event(event)
+
+
+        return wid
 
     def update_watcher_by_id(self, watcher, wid):
         """
@@ -85,7 +115,21 @@ class WatcherManager(object):
         :rtype: bool
         :raises: CollectionError if the update fails.
         """
-        resp = self.__collection.update(query={'_id': wid}, document=watcher)
+
+
+        if watcher is None or not isinstance(watcher, dict):
+            raise CollectionError('Nothing to update')
+
+        resp = self.__collection.update(query={'_id': wid, "type": "watcher"}, document=watcher)
+
+        event = forger(
+            connector="watcher",
+            connector_name="watcher",
+            event_type="updatewatcher",
+            source_type="component",
+            component=wid)
+        self.amqp_pub.canopsis_event(event)
+
         return self.__collection.is_successfull(resp)
 
     def delete_watcher_by_id(self, wid):
@@ -97,5 +141,5 @@ class WatcherManager(object):
         :rtype: bool
         :raises: CollectionError if the deletion fails.
         """
-        resp = self.__collection.remove({'_id': wid})
+        resp = self.__collection.remove({'_id': wid, "type": "watcher"})
         return self.__collection.is_successfull(resp)

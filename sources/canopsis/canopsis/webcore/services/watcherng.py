@@ -18,26 +18,19 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import uuid
 from bottle import request
 
 from pymongo.errors import PyMongoError
-
-from canopsis.event import forger
 
 from canopsis.common.collection import CollectionError
 from canopsis.watcherng import WatcherManager
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_NOT_FOUND, HTTP_ERROR)
-from canopsis.common.amqp import AmqpPublisher
-from canopsis.common.amqp import get_default_connection as \
-    get_default_amqp_conn
 
 
 def exports(ws):
 
     watcher_manager = WatcherManager(WatcherManager.default_collection())
-    amqp_pub = AmqpPublisher(get_default_amqp_conn(), ws.logger)
 
     @ws.application.get(
         '/api/v2/watcherng'
@@ -104,33 +97,8 @@ def exports(ws):
                 HTTP_ERROR
             )
 
-        if watcher is None or not isinstance(watcher, dict):
-            return gen_json_error(
-                {'description': 'Nothing to create'}, HTTP_ERROR)
-
-        if watcher['type'] != 'watcher':
-            return gen_json_error(
-                {'description': 'Entity is not a watcher'}, HTTP_ERROR)
-
-        if 'entities' not in watcher or 'state' not in watcher or 'output_template' not in watcher:
-            return gen_json_error(
-                {'description': 'Watcher is missing important specific fields'}, HTTP_ERROR)
-
-        if '_id' not in watcher:
-            watcher['_id'] = str(uuid.uuid4())
-
         try:
-            wid = watcher_manager.create_watcher(watcher)
-
-            event = forger(
-                connector="watcher",
-                connector_name="watcher",
-                event_type="updatewatcher",
-                source_type="component",
-                component=wid)
-            amqp_pub.canopsis_event(event)
-
-            return wid
+            return watcher_manager.create_watcher(watcher)
         except CollectionError as ce:
             ws.logger.error('Watcherng creation error : {}'.format(ce))
             return gen_json_error(
@@ -157,10 +125,6 @@ def exports(ws):
                 HTTP_ERROR
             )
 
-        if watcher is None or not isinstance(watcher, dict):
-            return gen_json_error(
-                {'description': 'Nothing to update'}, HTTP_ERROR)
-
         try:
             ok = watcher_manager.update_watcher_by_id(watcher, watcher_id)
         except CollectionError as ce:
@@ -175,14 +139,6 @@ def exports(ws):
                 {'description': 'Failed to update watcher'},
                 HTTP_ERROR
             )
-
-        event = forger(
-            connector="watcher",
-            connector_name="watcher",
-            event_type="updatewatcher",
-            source_type="component",
-            component=watcher_id)
-        amqp_pub.canopsis_event(event)
 
         return gen_json({})
 
