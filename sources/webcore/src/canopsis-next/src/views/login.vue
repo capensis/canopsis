@@ -46,16 +46,19 @@
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
                 v-flex(xs2 px-2)
                   v-btn.primary(type="submit") {{ $t('common.connect') }}
+          v-divider
+          div {{ frontendServiceItem.login_footer }}
 </template>
 
 <script>
 import authMixin from '@/mixins/auth';
+import userInterfaceMixin from '@/mixins/entities/frontend-service';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [authMixin],
+  mixins: [authMixin, userInterfaceMixin],
   data() {
     return {
       hasServerError: false,

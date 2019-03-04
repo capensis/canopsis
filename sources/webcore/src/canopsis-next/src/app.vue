@@ -17,6 +17,7 @@ import Modals from '@/components/modals/index.vue';
 import Popups from '@/components/popups/index.vue';
 
 import authMixin from '@/mixins/auth';
+import userInterfaceMixin from '@/mixins/entities/frontend-service';
 
 import '@/assets/styles/main.scss';
 
@@ -27,7 +28,7 @@ export default {
     Modals,
     Popups,
   },
-  mixins: [authMixin],
+  mixins: [authMixin, userInterfaceMixin],
   data() {
     return {
       pending: true,
@@ -43,7 +44,10 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchCurrentUser();
+    await Promise.all([
+      this.fetchCurrentUser(),
+      this.fetchFrontendService(),
+    ]);
 
     this.pending = false;
   },

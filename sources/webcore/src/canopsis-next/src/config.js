@@ -56,4 +56,5 @@ export const API_ROUTES = {
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
   webhook: '/api/v2/webhook',
+  frontendService: '/rest/object/frontend/cservice.frontend',
 };

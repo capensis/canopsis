@@ -881,6 +881,9 @@ export default {
         topBar: 'Top bar',
       },
     },
+    loginFooter: {
+      title: 'Login footer',
+    },
   },
   view: {
     errors: {
