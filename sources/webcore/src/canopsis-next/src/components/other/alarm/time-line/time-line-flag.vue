@@ -12,7 +12,6 @@ import { formatState, formatStatus, formatEvent } from '@/helpers/state-and-stat
  * @module alarm
  *
  * @prop {Object} step - step object
- * @prop {Boolean} [cropped] - Boolean to determine if there's a cropped state or not
  */
 export default {
   props: {
