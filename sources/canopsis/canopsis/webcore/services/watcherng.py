@@ -30,7 +30,7 @@ from canopsis.webcore.utils import (gen_json, gen_json_error,
 
 def exports(ws):
 
-    watcher_manager = WatcherManager(WatcherManager.default_collection())
+    watcher_manager = WatcherManager(WatcherManager.default_collection(), ws.logger)
 
     @ws.application.get(
         '/api/v2/watcherng'
