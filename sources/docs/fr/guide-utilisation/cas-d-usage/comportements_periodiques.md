@@ -3,7 +3,7 @@
 Vous avez la possibilité dans Canopsis de définir des périodes de temps pendant lesquelles des changements de comportements sont nécessaires : 
 
 * Plage de service d'une application : vous souhaitez repérer visuellement les applications qui doivent rendre un service à un moment donné
-* Maintenance : vous ne souhaitez pas montrer aux pilotes d'exploitation des alarmes qui concernent des entités déclarées en maintenance
+* Maintenance : vous souhaitez déclarer en maintenance des entités pour que leurs alarmes ne remontent pas visuellement
 * Pause : vous souhaitez mettre en *pause* une application pour un temps indeterminé
 
 Cette fonctionnalité porte le nom de `periodic behavior`.
@@ -16,7 +16,7 @@ Cette fonctionnalité porte le nom de `periodic behavior`.
     * mettre en maintenance une entité
 
 
-### Au préalable
+### Contexte du cas d'usage
 
 Nous considérons l'application `ERP` (sous forme d'observateur) composée des entités *Comptabilite* et *Gestion*.
 
@@ -75,25 +75,27 @@ Etant donné que ces entités constituent de manière exhaustive l'application *
 
 ![Maintenance ERP](./img/pbh_maintenance_erp.png "Maintenance ERP")  
 
-Dans le cas ou toutes les entités d'une application ne sont pas en maintenance, le picto suivant est présenté :
+Dans le cas où toutes les entités d'une application ne sont pas en maintenance, le picto suivant est présenté :
 
 ![Maintenance ERP partielle](./img/pbh_maintenance_entites_1.png "Maintenance ERP partielle")  
 
 ## Coté bac à alarmes
 
-Les points ci-avants font un focus sur la météo de service.  
-L'idée de ce paragraphe est de montrer les impacts des comportements périodiques sur le bac à alarmes.  
+Jusqu'ici nous nous sommes concentrés sur la météo de service.
+Le but de ce paragraphe est de montrer les impacts des comportements périodiques sur le bac à alarmes.  
 
 Pour le moment il n'existe pas de *renderer* sur l'interface graphique pour montrer un picto des alarmes dont l'entité est en maintenance.  
 Cependant, il est possible d'appliquer des filtres sur les comportements périodiques actifs ou non.  
 
 Sur un bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) : 
 
-Le point important concernant l'attribut *fictif* `has_active_pb` qui est un booléen.
+![Ajout filtre](./img/pbh_ajout_filtre.png "Ajout filtre")  
+
+Le point important concerne l'attribut *fictif* `has_active_pb` qui est un booléen.
 
 ![Filtre comportement actif](./img/pbh_filtre_actif.png "Filtre comportement actif")  
 
-Puis au niveau exploitation :
+Puis au niveau exploitation, sélectionnez le filtre nouvellement créé : 
 
 ![Filtre comportement actif](./img/pbh_filtre_actif_baa.png "Filtre comportement actif")  
 
