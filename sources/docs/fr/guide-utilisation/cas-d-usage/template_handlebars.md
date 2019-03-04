@@ -43,6 +43,48 @@ Seul l'affiche se fait par l'intermédiaire d'un bouton d'action
 
 ![Plus d'infos](./img/templates_plusdinfos.png "Plus d'infos")  
 
+Couplé avec des exemples fournis sur le site [vuetify](https://vuetifyjs.com/en/components), vous pouvez obtenir ce type de résultat : 
+
+![Résultats pllus d'infos](./img/templates_resultats_plusdinfos.png "Résultats plus d'infos")  
+
+Le template associé est dans ce cas le suivant :
+
+````
+<div class="v-card__text">
+ <div class="v-tabs" data-booted="true">
+  <div class="v-tabs__bar theme--dark cyan">
+   <div class="v-tabs__wrapper">
+    <div class="v-tabs__container">
+     <div class="v-tabs__slider-wrapper" style="left: 0px; width: 68px;">
+      <div class="v-tabs__slider yellow"><br></div>
+     </div>
+     <div class="v-tabs__div">
+      <a class="v-tabs__item">
+      {{ entity.name }}
+      </a>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="v-window">
+   <div class="v-window__container">
+    <div class="v-window-item">
+     <div class="v-card v-card--flat v-sheet theme--light">
+      <div class="v-card__text">
+       <strong>Identifiant&nbsp;de l'alarme :</strong> {{ alarm.v.display_name}}<br>
+       <strong>Composant impacté :</strong> {{ alarm.v.component }}<br>
+       <strong>Source :</strong> {{ alarm.v.connector_name }} (Type : {{ alarm.v.connector }})<br>
+       <strong>Détails de l'alarme :</strong> {{ alarm.v.state.m }}<br>
+       <strong>Date de création de l'alarme&nbsp;:</strong>{{timestamp alarm.v.creation_date }}</div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+````
+
 ### Variables
 
 Au dela de ces fonctionnalités, vous pouvez connaitre l'ensemble des variables qui sont mises à disposition de chaque alarme en utilisant le mode *édition*.  
