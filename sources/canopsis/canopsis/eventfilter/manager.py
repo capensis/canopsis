@@ -73,13 +73,13 @@ class RuleManager(object):
         :raises: InvalidRuleError if the rule is invalid. CollectionError if
         the creation fails.
         """
-        rule_id = str(uuid4())
+        if RuleField.id not in rule:
+            rule[RuleField.id] = str(uuid4())
 
-        rule[RuleField.id] = rule_id
-        self.validate(rule_id, rule)
+        self.validate(rule[RuleField.id], rule)
 
         self.rule_collection.insert(rule)
-        return rule_id
+        return rule[RuleField.id]
 
     def remove_with_id(self, rule_id):
         """
@@ -125,6 +125,11 @@ class RuleManager(object):
         :raises: InvalidRuleError if it is invalid.
         """
         # Validate id field
+        if not isinstance(rule.get(RuleField.id, rule_id), basestring):
+            raise InvalidRuleError(
+                'The {0} field should be a string.'.format(
+                    RuleField.id))
+
         if rule.get(RuleField.id, rule_id) != rule_id:
             raise InvalidRuleError(
                 'The {0} field should not be modified.'.format(RuleField.id))
