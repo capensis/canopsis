@@ -40,18 +40,7 @@ export default {
       const alarm = this.getAlarmItem(this.alarmProps._id);
 
       if (alarm && alarm.v.steps) {
-        const orderedSteps = orderBy(alarm.v.steps.concat({
-          a: 'system',
-          _t: 'statecounter',
-          m: '',
-          t: 1541411224,
-          val: {
-            'state:2': 1,
-            'state:0': 1,
-            statedec: 1,
-            stateinc: 1,
-          },
-        }), ['t'], 'desc');
+        const orderedSteps = orderBy(alarm.v.steps, ['t'], 'desc');
 
         return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
       }
@@ -99,7 +88,7 @@ export default {
   }
 
   .timeline-item {
-    padding: 3em 2em 0em;
+    padding: 3em 2em 0;
     position: relative;
     border-left: 2px solid $border_line;
 
