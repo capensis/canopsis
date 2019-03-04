@@ -51,12 +51,13 @@ En dehors des plages de services, la tuile de météo se comporte ainsi :
 En parallèle des plages de services, vous pouvez déclarer des entités en maintenance ou en pause par exemple.  
 Vous avez la possibilité d'effectuer ces opérations :
 
-* Depuis le bac à alarmes : dans ce cas, la mise en maintenance se fait de manière unitaire (ou en multi mais ciblé) sur des alarmes existantes
+* Depuis le bac à alarmes : dans ce cas, la mise en maintenance se fait de manière unitaire (En sélectionnant individuellement la ou les alarmes concernées).
 * Depuis l'explorateur de contexte : dans ce cas, la mise en maintenance se fait de manière unitaire sur des entités quelconques
 * Depuis le panneau d'exploitation des comportements périodiques : dans ce cas, la mise en maintenance s'effectue à partir d'un filtre
 
 !!! note
-    Vous souhaitez mettre en maintenance les entités qui composent l'application ERP
+    Vous souhaitez mettre en maintenance les entités qui composent l'application ERP.  
+    Nous utilisons dans l'exemple la méthode *Depuis le panneau d'exploitation des comportements périodiques*
 
 Pour cela, RDV sur le panneau d'exploitation *Comportement périodiques*  
 Vous ajoutez un comportement avec un filtre qui sélectionne les entités de *ERP*
