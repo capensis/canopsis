@@ -1,6 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import popupMixin from '@/mixins/popup';
+import { mapActionsWith, mapActionsWithPopup } from '@/helpers/store';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('eventFilterRule');
 
@@ -16,10 +17,13 @@ export default {
     ...mapActions({
       fetchEventFilterRulesList: 'fetchList',
       refreshEventFilterRulesList: 'fetchListWithPreviousParams',
-      createEventFilterRule: 'create',
-      updateEventFilterRule: 'update',
-      removeEventFilterRule: 'remove',
     }),
+
+    ...mapActionsWith(mapActionsWithPopup(mapActions({
+      createEventFilterRuleWithPopupWithRefresh: 'create',
+      updateEventFilterRuleWithPopupWithRefresh: 'update',
+      removeEventFilterRuleWithPopupWithRefresh: 'remove',
+    })), 'refreshEventFilterRulesList'),
 
     async createEventFilterRuleWithPopup(data) {
       await this.createEventFilterRule({ data });

@@ -9,7 +9,7 @@ import schemas from '@/store/schemas';
  * @param data
  * @returns {{entitiesToMerge: {}, entitiesToDelete: {}}}
  */
-export function prepareEntitiesToDelete({ type, data }) {
+export default function prepareEntitiesToDelete({ type, data }) {
   const schema = schemas[type];
   const id = data[schema.idAttribute];
 
@@ -58,7 +58,3 @@ export function prepareEntitiesToDelete({ type, data }) {
     entitiesToDelete,
   };
 }
-
-export default {
-  prepareEntitiesToDelete,
-};

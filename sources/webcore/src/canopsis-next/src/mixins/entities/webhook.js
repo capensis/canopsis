@@ -10,8 +10,6 @@ function mapActionsWith(actions, success, error) {
     acc[key] = async function mappedActionWithCalledAfter(...args) {
       try {
         let result;
-        let actionArgs = args;
-        let successArgs = [];
         let successWithContext;
 
         if (success) {
@@ -22,25 +20,18 @@ function mapActionsWith(actions, success, error) {
           }
         }
 
-        if (successWithContext && successWithContext.length) {
-          actionArgs = args.slice(successWithContext.length);
-          successArgs = args.slice(0, successWithContext.length);
-        }
-
-
         if (isFunction(value)) {
-          result = await value.apply(this, actionArgs);
+          result = await value.apply(this, args);
         } else if (isString(value)) {
-          result = await this[value](...actionArgs);
+          result = await this[value](...args);
         }
 
         if (successWithContext) {
-          await successWithContext(...successArgs);
+          return successWithContext(key, result);
         }
 
         return result;
       } catch (err) {
-        let errorArgs = [];
         let errorWithContext;
 
         if (error) {
@@ -51,12 +42,8 @@ function mapActionsWith(actions, success, error) {
           }
         }
 
-        if (errorWithContext && errorWithContext.length) {
-          errorArgs = args.slice(0, errorWithContext.length);
-        }
-
         if (errorWithContext) {
-          await errorWithContext(...errorArgs);
+          return errorWithContext(err);
         }
 
         throw err;
@@ -67,19 +54,15 @@ function mapActionsWith(actions, success, error) {
   }, {});
 }
 
-function mapActionsWithPopup(actions) {
-  return mapActionsWith(actions, async function success(popups) {
-    let successPopup;
-
-    if (popups) {
-      successPopup = popups.success ? popups.success : popups;
-    } else {
-      successPopup = { text: this.$t('success.default') };
-    }
+function mapActionsWithPopup(actions, messages) {
+  return mapActionsWith(actions, async function success(actionKey, result) {
+    const text = messages[actionKey] && messages[actionKey].success ? messages[actionKey].success.apply(this) : this.$t('success.default');
 
     if (this.addSuccessPopup) {
-      await this.addSuccessPopup(successPopup);
+      await this.addSuccessPopup({ text });
     }
+
+    return result;
   }, async function error(popups) {
     const errorPopup = popups && popups.error ? popups.error : { text: this.$t('errors.default') };
 
@@ -88,6 +71,37 @@ function mapActionsWithPopup(actions) {
     }
   });
 }
+
+function create(messages = {}) {
+  return actions => mapActionsWithPopup(actions, messages);
+}
+
+const mapActionsWithPopupNew = create({
+  createWebhookWithPopupWithRefresh: {
+    success() {
+      return 'Created!';
+    },
+    error() {
+      return 'Create error!';
+    },
+  },
+  updateWebhookWithPopupWithRefresh: {
+    success() {
+      return 'LOLOLO';
+    },
+    error() {
+      return 'Update error!';
+    },
+  },
+  removeWebhookWithPopupWithRefresh: {
+    success() {
+      return 'Removed!';
+    },
+    error() {
+      return 'Remove error!';
+    },
+  },
+});
 
 export default {
   mixins: [popupMixin],
@@ -103,7 +117,7 @@ export default {
       refreshWebhooksList: 'fetchListWithPreviousParams',
     }),
 
-    ...mapActionsWith(mapActionsWithPopup(mapActions({
+    ...mapActionsWith(mapActionsWithPopupNew(mapActions({
       createWebhookWithPopupWithRefresh: 'create',
       updateWebhookWithPopupWithRefresh: 'update',
       removeWebhookWithPopupWithRefresh: 'remove',
