@@ -14,21 +14,6 @@ C'est à dire que l'état d'une entité de type watcher dépendra de l'état des
 
 Le but d'un watcher est de donner une visibilité accrue et claire sur l'état d'un groupe d'entités, afin de détecter un changement d'état positif ou négatif sur les alarmes liées aux entités du groupe surveillé.
 
-Son fonctionnement interne est le suivant :  
-
-**Initialisation**  
-- A sa création, le watcher récupère les entités surveillées, et met à jour les champs `impact` des entités avec son `_id`, ainsi que son champ `depends` avec les `_id` des entités surveillées.  
-- Lorsqu'une entité est créée, les watchers mettent automatiquement leurs dépendances ainsi que celles de l'entité à jour, comme lors de leur création.
-
-**Calcul de l'état**
-A chaque top de l'engine axe, chaque watcher recalcule son état. Pour calculer son état, chaque watcher :  
-- Récupère ses entités surveillées.
-- Récupère les alarmes ouvertes sur ces entités.
-- Garde un compte de chaque état d'alarme, respectivement `Info`, `Minor`, `Major` et `Critical`.
-- Applique l'algorithme présent dans le champ `state.method` avec les éventuels paramètres afin de calculer l'état.
-- Calcule sa sortie en fonction de l'`output_template`.
-- Envoie un évènement de type `check` à `axe` contenant l'état calculé `state` et la sortie `output` afin que le moteur puisse prendre en compte ces changements.
-
 ## Définition d'un watcher
 
 Un watcher est un document JSON contenant les paramètres suivants :
