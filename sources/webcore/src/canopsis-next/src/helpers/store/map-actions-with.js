@@ -1,12 +1,10 @@
 import { isFunction, isString } from 'lodash';
 
-export default function (actions, success, error) {
+export default function mapActionsWith(actions, success, error) {
   return Object.entries(actions).reduce((acc, [key, value]) => {
     acc[key] = async function mappedActionWithCalledAfter(...args) {
       try {
         let result;
-        let actionArgs = args;
-        let successArgs = [];
         let successWithContext;
 
         if (success) {
@@ -17,25 +15,18 @@ export default function (actions, success, error) {
           }
         }
 
-        if (successWithContext && successWithContext.length) {
-          actionArgs = args.slice(successWithContext.length);
-          successArgs = args.slice(0, successWithContext.length);
-        }
-
-
         if (isFunction(value)) {
-          result = await value.apply(this, actionArgs);
+          result = await value.apply(this, args);
         } else if (isString(value)) {
-          result = await this[value](...actionArgs);
+          result = await this[value](...args);
         }
 
         if (successWithContext) {
-          await successWithContext(...successArgs);
+          return successWithContext(key, result);
         }
 
         return result;
       } catch (err) {
-        let errorArgs = [];
         let errorWithContext;
 
         if (error) {
@@ -46,12 +37,8 @@ export default function (actions, success, error) {
           }
         }
 
-        if (errorWithContext && errorWithContext.length) {
-          errorArgs = args.slice(0, errorWithContext.length);
-        }
-
         if (errorWithContext) {
-          await errorWithContext(...errorArgs);
+          return errorWithContext(key, err);
         }
 
         throw err;
@@ -60,4 +47,9 @@ export default function (actions, success, error) {
 
     return acc;
   }, {});
+}
+
+export function createMapActionsWith(success, error) {
+  return (actions, prioritySuccess, priorityError) =>
+    mapActionsWith(actions, prioritySuccess || success, priorityError || error);
 }
