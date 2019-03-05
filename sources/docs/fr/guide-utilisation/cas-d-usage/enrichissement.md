@@ -56,7 +56,7 @@ Une option du moteur **che** va vous permettre de systématiser cette prise en c
 Ainsi, l'attribut **client** sera ajouté dans la champ **infos** de l'entité correspondante.  
 Pour rendre cette valeur visible sur l'interface de Canopsis, il faut ensuite l'ajouter manuellement. Pour cela, 2 solutions : 
 
-* Plus d'infos / Info popup / Template de manière générale : **{{ entity.infos.client.value }}**
+* Pour un widget de manière générale (Plus d'infos / Info popup / Template) : **{{ entity.infos.client.value }}**
 * Pour une colonne de bac à alarmes : **entity.infos.client.value**
 
 ![Nom des colonnes ](./img/enrichissement_evenement_colonnes.png "Nom des colonnes ") 
