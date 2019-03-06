@@ -1,7 +1,7 @@
 # Notifications vers un outil tiers
 
-Canopsis est capable de *réagir* en fonction de critères objectifs de notifier un outil tiers en appelant une API HTTP.  
-Ce guide vous propose d'intergir avec Mattermost et avec Logstash.  
+Canopsis est capable de *réagir* en fonction de critères objectifs afin de notifier un outil tiers en appelant une API HTTP.  
+Ce guide vous propose d'interagir avec Mattermost et avec Logstash.  
 
 !!! Warning
     Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs GO dans l'édition CAT de Canopsis.  
@@ -87,7 +87,7 @@ output {
 Prenons le cas d'usage suivant : 
 
 !!! note ""
-    Je souhaite envoyer un message HTTP à Logstash epuis Canopsis dans les cas suivants :
+    Je souhaite envoyer un message HTTP à Logstash depuis Canopsis dans les cas suivants :
     Création d'alarme, Mise à jour d'état, Ack d'un utilisateur
 
 Pour cela, RDV sur le menu des **webhooks**

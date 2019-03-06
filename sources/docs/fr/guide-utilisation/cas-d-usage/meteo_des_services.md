@@ -8,7 +8,7 @@ L'interface Canopsis utilise des *tuiles* pour représenter ces états.
 Une tuile correspond à l'état d'un *observateur*, qui est calculé selon des règles.  
 
 !!! note
-    Nous souhaitons représneter l'état de l'application *E-Commerce* sur une météo des services.
+    Nous souhaitons représenter l'état de l'application *E-Commerce* sur une météo des services.
     Cette application est dépendante de 3 scénarios applicatifs : 
     
     * Accès plate-forme
@@ -42,8 +42,8 @@ On nomme l'observateur et on positionne son filtre de sélection.
 
 ![Définition de l'observateur](./img/mds_observateur_creation2.png "Définition de l'observateur")  
 
-On ajoute des informations *administratives* à l'observateur.  
-Notez l'attribut **affichage_tv** dont on se servira plus tard sur le widget météo.
+On crée un attribut qui nous servira plus tard sur le widget météo. Ici, on a choisi de le nommer affichage_tv et d'en faire une valeur.  
+On crée un attribut application_label qui nous servira plus tard à mieux repérer notre observateur. Ici, on a choisi de lui donner "Plateforme E-Commerce" comme valeur.
 
 ![Définition de l'observateur](./img/mds_observateur_creation3.png "Définition de l'observateur")  
 

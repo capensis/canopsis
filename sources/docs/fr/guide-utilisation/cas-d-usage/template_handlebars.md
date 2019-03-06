@@ -1,7 +1,7 @@
 # Personnalisation des affichages via des templates handlebars
 
-Dans l'interface graphique de Canopsis, il est possible dans bon nombre d'endroits de personnaliser les affichages en utilisant un éditeur HTML, des variables.  
-Pour faciliter les tâches de l'administrateur, Canopsis met à disposition i
+Dans l'interface graphique de Canopsis, il est possible en de multiples endroits de personnaliser les affichages en utilisant un éditeur HTML couplé à des variables.  
+Pour faciliter les tâches de l'administrateur, Canopsis met à disposition :
 
 * les helpers *built in* [handlebars](https://handlebarsjs.com/)
 * des helpers handlebars spécifiques à Canopsis
@@ -21,7 +21,7 @@ Pour pallier cette limite, 2 mécanismes sont mis à disposition :
 ### Info popup
 
 Les infos popup permettent d'afficher un popup contenant des données lors du clic sur un élément de colonne.  
-Toutes les colonnes affichées sont elligibles au système.  
+Toutes les colonnes affichées sont éligibles au système.  
 
 Dans les paramètres du widget bac à alarmes :
 
@@ -39,11 +39,11 @@ Le rendu s'effectue au clic sur la colonne *Nom du connecteur* comme précisé d
 ### Plus d'infos
 
 Il existe un second mécanisme, *Plus d'infos*, dont le fonctionnement est identique à *Info popup*.  
-Seul l'affiche se fait par l'intermédiaire d'un bouton d'action
+Seul l'affichage se fait par l'intermédiaire d'un bouton d'action
 
 ![Plus d'infos](./img/templates_plusdinfos.png "Plus d'infos")  
 
-Couplé avec des exemples fournis sur le site [vuetify](https://vuetifyjs.com/en/components), vous pouvez obtenir ce type de résultat : 
+Couplé avec des exemples fournis sur le site [vuetify](https://vuetifyjs.com/en/getting-started/quick-start), vous pouvez obtenir ce type de résultat : 
 
 ![Résultats pllus d'infos](./img/templates_resultats_plusdinfos.png "Résultats plus d'infos")  
 
@@ -117,13 +117,13 @@ Vous avez donc la possibilité d'utiliser *handlebars* pour personnaliser vos af
 
 ### Itérer sur des éléments de tableau
 
-Voici un exemple concrèt de représentation.
+Voici un exemple concret de représentation.
 
 !!! note
     Vous souhaitez afficher les commentaires associés à un comportement périodique sur une modale de météo de service
 
 
-La structure dont on veut afficher des données est la suivante  :
+La structure dont on veut afficher les données est la suivante  :
 
 ````
 "watcher_pbehavior": [
