@@ -28,7 +28,7 @@ jest.mock('@/i18n', () => ({
   t: key => key,
 }));
 
-describe('Alarm module', () => {
+describe('Entities alarm module actions', () => {
   const axiosMockAdapter = new AxiosMockAdapter(request);
 
   beforeEach(() => {
