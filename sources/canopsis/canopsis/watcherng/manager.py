@@ -129,10 +129,7 @@ class WatcherManager(object):
         :rtype: bool
         :raises: CollectionError if the update fails.
         """
-        try:
-            self.check_watcher_fields(watcher)
-        except CollectionError as e:
-            raise e
+        self.check_watcher_fields(watcher)
 
         resp = self.__collection.update(query={'_id': wid, "type": "watcher"},
                                         document=watcher)
