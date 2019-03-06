@@ -30,7 +30,7 @@ from canopsis.common.amqp import get_default_connection as \
 
 class WatcherManager(object):
     """
-    Manager for the watchers
+    Manager for the new generation of watchers written in golang
     """
 
     COLLECTION = "default_entities"
@@ -38,6 +38,7 @@ class WatcherManager(object):
     def __init__(self, mongo_collection, amqp_pub):
         """
         :param mongo_collection: `pymongo.collection.Collection` object.
+        :param amqp_pub: `canopsis.common.amqp.AmqpPublisher` object.
         """
         super(WatcherManager, self).__init__()
         self.amqp_pub = amqp_pub
@@ -59,6 +60,12 @@ class WatcherManager(object):
         return (MongoCollection(collection), amqp_pub)
 
     def check_watcher_fields(self, watcher):
+        """
+        Checks if the provided watcher has valid fields and is valid.
+
+        :raises: CollectionError if the watcher does not have valid fields
+                                  or is not valid.
+        """
         if watcher is None or not isinstance(watcher, dict):
             raise CollectionError('Nothing to create/update')
 
@@ -95,10 +102,7 @@ class WatcherManager(object):
         :rtype: str
         :raises: CollectionError if the creation fails.
         """
-        try:
-            self.check_watcher_fields(watcher)
-        except CollectionError as e:
-            raise e
+        self.check_watcher_fields(watcher)
 
         if '_id' not in watcher:
             watcher['_id'] = str(uuid.uuid4())
