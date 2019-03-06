@@ -27,6 +27,7 @@ from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
 
+
 class WatcherManager(object):
     """
     Manager for the watchers
@@ -49,7 +50,8 @@ class WatcherManager(object):
 
         ! Do not use in tests !
 
-        :rtype: (canopsis.common.collection.MongoCollection, canopsis.common.amqp.AmqpPublisher)
+        :rtype: (canopsis.common.collection.MongoCollection,
+                 canopsis.common.amqp.AmqpPublisher)
         """
         store = MongoStore.get_default()
         collection = store.get_collection(name=cls.COLLECTION)
@@ -63,9 +65,10 @@ class WatcherManager(object):
         if watcher['type'] != 'watcher':
             raise CollectionError('Entity is not a watcher')
 
-        if 'entities' not in watcher or 'state' not in watcher or 'output_template' not in watcher:
-            raise CollectionError('Watcher is missing important specific fields')
-
+        if 'entities' not in watcher or \
+           'state' not in watcher or \
+           'output_template' not in watcher:
+            raise CollectionError('Watcher is missing specific fields')
 
     def get_watcher_list(self):
         """
@@ -110,7 +113,6 @@ class WatcherManager(object):
             component=wid)
         self.amqp_pub.canopsis_event(event)
 
-
         return wid
 
     def update_watcher_by_id(self, watcher, wid):
@@ -128,7 +130,8 @@ class WatcherManager(object):
         except CollectionError as e:
             raise e
 
-        resp = self.__collection.update(query={'_id': wid, "type": "watcher"}, document=watcher)
+        resp = self.__collection.update(query={'_id': wid, "type": "watcher"},
+                                        document=watcher)
 
         event = forger(
             connector="watcher",
