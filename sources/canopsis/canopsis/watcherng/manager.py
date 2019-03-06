@@ -34,26 +34,38 @@ class WatcherManager(object):
 
     COLLECTION = "default_entities"
 
-    def __init__(self, mongo_collection, logger):
+    def __init__(self, mongo_collection, amqp_pub):
         """
         :param mongo_collection: `pymongo.collection.Collection` object.
         """
         super(WatcherManager, self).__init__()
-        self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
+        self.amqp_pub = amqp_pub
         self.__collection = mongo_collection
 
     @classmethod
-    def default_collection(cls):
+    def provide_default_basics(cls, logger):
         """
         Returns the default collection for the manager.
 
         ! Do not use in tests !
 
-        :rtype: canopsis.common.collection.MongoCollection
+        :rtype: (canopsis.common.collection.MongoCollection, canopsis.common.amqp.AmqpPublisher)
         """
         store = MongoStore.get_default()
         collection = store.get_collection(name=cls.COLLECTION)
-        return MongoCollection(collection)
+        amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
+        return (MongoCollection(collection), amqp_pub)
+
+    def check_watcher_fields(self, watcher):
+        if watcher is None or not isinstance(watcher, dict):
+            raise CollectionError('Nothing to create/update')
+
+        if watcher['type'] != 'watcher':
+            raise CollectionError('Entity is not a watcher')
+
+        if 'entities' not in watcher or 'state' not in watcher or 'output_template' not in watcher:
+            raise CollectionError('Watcher is missing important specific fields')
+
 
     def get_watcher_list(self):
         """
@@ -80,14 +92,10 @@ class WatcherManager(object):
         :rtype: str
         :raises: CollectionError if the creation fails.
         """
-        if watcher is None or not isinstance(watcher, dict):
-            raise CollectionError('Nothing to create')
-
-        if watcher['type'] != 'watcher':
-            raise CollectionError('Entity is not a watcher')
-
-        if 'entities' not in watcher or 'state' not in watcher or 'output_template' not in watcher:
-            raise CollectionError('Watcher is missing important specific fields')
+        try:
+            self.check_watcher_fields(watcher)
+        except CollectionError as e:
+            raise e
 
         if '_id' not in watcher:
             watcher['_id'] = str(uuid.uuid4())
@@ -115,10 +123,10 @@ class WatcherManager(object):
         :rtype: bool
         :raises: CollectionError if the update fails.
         """
-
-
-        if watcher is None or not isinstance(watcher, dict):
-            raise CollectionError('Nothing to update')
+        try:
+            self.check_watcher_fields(watcher)
+        except CollectionError as e:
+            raise e
 
         resp = self.__collection.update(query={'_id': wid, "type": "watcher"}, document=watcher)
 
