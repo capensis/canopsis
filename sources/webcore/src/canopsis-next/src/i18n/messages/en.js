@@ -656,9 +656,14 @@ export default {
     createWebhook: {
       create: {
         title: 'Create webhook',
+        success: 'Webhook successfully created !',
       },
       edit: {
         title: 'Edit webhook',
+        success: 'Webhook successfully edited !',
+      },
+      remove: {
+        success: 'Webhook successfully removed !',
       },
     },
   },
