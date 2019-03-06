@@ -18,6 +18,7 @@ import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
+import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
 
 Vue.use(Router);
 
@@ -101,6 +102,12 @@ const routes = [
     path: '/exploitation/event-filter',
     name: 'exploitation-event-filter',
     component: ExploitationEventFilter,
+    meta: requiresLoginMeta,
+  },
+  {
+    path: '/exploitation/webhooks',
+    name: 'exploitation-webhooks',
+    component: ExploitationWebhooks,
     meta: requiresLoginMeta,
   },
 ];

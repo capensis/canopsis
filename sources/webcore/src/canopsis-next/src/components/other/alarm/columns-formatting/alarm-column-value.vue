@@ -71,7 +71,7 @@ export default {
     },
     popupTextContent() {
       if (this.popupData) {
-        return compile(this.popupData.template, { alarm: this.alarm });
+        return compile(this.popupData.template, { alarm: this.alarm, entity: this.alarm.entity || {} });
       }
       return '';
     },

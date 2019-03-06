@@ -75,6 +75,8 @@ export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribu
 
 export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
 
+export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -90,4 +92,5 @@ export default {
   [ENTITIES_TYPES.user]: userSchema,
   [ENTITIES_TYPES.role]: roleSchema,
   [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
+  [ENTITIES_TYPES.webhook]: webhookSchema,
 };
