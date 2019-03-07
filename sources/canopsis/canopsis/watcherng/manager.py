@@ -63,6 +63,8 @@ class WatcherManager(object):
         """
         Checks if the provided watcher has valid fields and is valid.
 
+        :returns: Updated watcher
+        :rtype: dict
         :raises: CollectionError if the watcher does not have valid fields
                                   or is not valid.
         """
@@ -72,10 +74,28 @@ class WatcherManager(object):
         if watcher['type'] != 'watcher':
             raise CollectionError('Entity is not a watcher')
 
+        if 'name' not in watcher:
+            raise CollectionError('Watcher is missing name')
+
         if 'entities' not in watcher or \
            'state' not in watcher or \
            'output_template' not in watcher:
             raise CollectionError('Watcher is missing specific fields')
+
+        if 'depends' not in watcher:
+            watcher["depends"] = []
+        if 'enabled' not in watcher:
+            watcher["enabled"] = True
+        if 'enable_history' not in watcher:
+            watcher["enable_history"] = []
+        if 'impact' not in watcher:
+            watcher["impact"] = []
+        if 'measurements' not in watcher:
+            watcher["measurements"] = None
+        if 'infos' not in watcher:
+            watcher["infos"] = {}
+        return watcher
+
 
     def get_watcher_list(self):
         """
@@ -102,7 +122,7 @@ class WatcherManager(object):
         :rtype: str
         :raises: CollectionError if the creation fails.
         """
-        self.check_watcher_fields(watcher)
+        watcher = self.check_watcher_fields(watcher)
 
         if '_id' not in watcher:
             watcher['_id'] = str(uuid.uuid4())
@@ -129,7 +149,7 @@ class WatcherManager(object):
         :rtype: bool
         :raises: CollectionError if the update fails.
         """
-        self.check_watcher_fields(watcher)
+        watcher = self.check_watcher_fields(watcher)
 
         resp = self.__collection.update(query={'_id': wid, "type": "watcher"},
                                         document=watcher)
