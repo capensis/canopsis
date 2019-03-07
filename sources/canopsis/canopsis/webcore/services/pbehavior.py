@@ -124,6 +124,32 @@ def check_values(data):
     data["enabled"] = cfg_to_bool(data["enabled"])
 
 
+def create_params(_id, name=None, filter_=None, tstart=None, tstop=None,
+                  rrule=None, enabled=None, comments=None, connector=None,
+                  connector_name=None, author=None, type_=None, reason=None,
+                  timezone=None, exdate=None):
+    if exdate is None:
+        exdate = []
+
+    params = {
+        PBehavior.NAME: name,
+        PBehavior.FILTER: filter_,
+        PBehavior.AUTHOR: author,
+        PBehavior.TSTART: tstart,
+        PBehavior.TSTOP: tstop,
+        PBehavior.RRULE: rrule,
+        PBehavior.ENABLED: enabled,
+        PBehavior.COMMENTS: comments,
+        PBehavior.CONNECTOR: connector,
+        PBehavior.CONNECTOR_NAME: connector_name,
+        PBehavior.TYPE: type_,
+        PBehavior.REASON: reason,
+        PBehavior.TIMEZONE: timezone,
+        PBehavior.EXDATE: exdate
+    }
+    return params
+
+
 class RouteHandlerPBehavior(object):
     """
     Passthrough class with few checks from the route to the pbehavior
@@ -227,37 +253,25 @@ class RouteHandlerPBehavior(object):
 
         return self.pb_manager.read(_id)
 
-    def update(self, _id, name=None, filter_=None, tstart=None, tstop=None,
-               rrule=None, enabled=None, comments=None, connector=None,
-               connector_name=None, author=None, type_=None, reason=None,
-               timezone=None, exdate=None):
+    def update(self, _id, **kwargs):
         """
         Update pbehavior fields. Fields to None will **not** be updated.
 
         :param str _id: pbehavior id
         """
-        if exdate is None:
-            exdate = []
-
-        params = {
-            PBehavior.NAME: name,
-            PBehavior.FILTER: filter_,
-            PBehavior.AUTHOR: author,
-            PBehavior.TSTART: tstart,
-            PBehavior.TSTOP: tstop,
-            PBehavior.RRULE: rrule,
-            PBehavior.ENABLED: enabled,
-            PBehavior.COMMENTS: comments,
-            PBehavior.CONNECTOR: connector,
-            PBehavior.CONNECTOR_NAME: connector_name,
-            PBehavior.TYPE: type_,
-            PBehavior.REASON: reason,
-            PBehavior.TIMEZONE: timezone,
-            PBehavior.EXDATE: exdate
-        }
+        params = create_params(_id, **kwargs)
         check_values(params)
-
         return self.pb_manager.update(_id, **params)
+
+    def update_v2(self, _id, **kwargs):
+        """
+        Update pbehavior fields. Fields to None will **not** be updated.
+
+        :param str _id: pbehavior id
+        """
+        params = create_params(_id, **kwargs)
+        check_values(params)
+        return self.pb_manager.update_v2(_id, **params)
 
     def delete(self, _id):
         """
@@ -390,6 +404,54 @@ def exports(ws):
         except TypeError:
             return gen_json_error(
                 {'description': 'The fields name, filter, author, tstart, tstop are required.'},
+                HTTP_ERROR
+            )
+        except ValueError as exc:
+            return gen_json_error(
+                {'description': '{}'.format(exc.message)},
+                HTTP_ERROR
+            )
+
+    @ws.application.put('/api/v2/pbehavior/<pbehavior_id:id_filter>')
+    def update_v2(pbehavior_id):
+        """
+        Update a pbehavior.
+
+        :raises ValueError: invalid keys sent.
+        """
+        try:
+            elements = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+
+        if elements is None:
+            return gen_json_error(
+                {'description': 'nothing to update'},
+                HTTP_ERROR
+            )
+
+        invalid_keys = []
+
+        # keep compatibility with APIv1
+        if 'filter' in elements:
+            elements['filter_'] = elements.pop('filter')
+
+        for key in elements.keys():
+            if key not in VALID_PBEHAVIOR_PARAMS:
+                invalid_keys.append(key)
+                elements.pop(key)
+        if len(invalid_keys) != 0:
+            ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
+
+        try:
+            return rhpb.update_v2(pbehavior_id, **elements)
+        except TypeError as te:
+            return gen_json_error(
+                {'description': str(
+                    'The fields name, filter, author, tstart, tstop are required.')},
                 HTTP_ERROR
             )
         except ValueError as exc:

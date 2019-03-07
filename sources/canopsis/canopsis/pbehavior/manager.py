@@ -202,7 +202,8 @@ class PBehaviorManager(object):
         # this line allow us to raise an exception pytz.UnknownTimeZoneError,
         # if the timezone defined in the pbehabior configuration file is wrong
         pytz.timezone(self.default_tz)
-        self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
+        self.pb_store = MongoCollection(
+            MongoStore.get_default().get_collection('default_pbehavior'))
         self.currently_active_pb = set()
 
     def get(self, _id, query=None):
@@ -373,6 +374,36 @@ class PBehaviorManager(object):
             **not** be updated.
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
+        data = self.__get_and_check_pbehavior(_id, **kwargs)
+
+        result = self.pb_storage.put_element(
+            element=data["new_data"], _id=_id
+        )
+
+        if (PBehaviorManager._UPDATE_FLAG in result and
+                result[PBehaviorManager._UPDATE_FLAG]):
+            return data["pbehavior"].to_dict()
+        return None
+
+    def update_v2(self, _id, **kwargs):
+        """
+        Update pbehavior record
+        :param str _id: pbehavior id
+        :param dict kwargs: values pbehavior fields. If a field is None, it will
+            **not** be updated.
+        :raises ValueError: invalid RRULE or no pbehavior with given _id
+        """
+        pbehavior = self.__get_and_check_pbehavior(_id, **kwargs)["pbehavior"]
+
+        result = self.pb_store.update(
+            {'_id': pbehavior._id or _id}, pbehavior.to_dict(), upsert=False)
+
+        if (PBehaviorManager._UPDATE_FLAG in result and
+                result[PBehaviorManager._UPDATE_FLAG]):
+            return pbehavior.to_dict()
+        return None
+
+    def __get_and_check_pbehavior(self, _id, **kwargs):
         pb_value = self.get(_id)
 
         if pb_value is None:
@@ -384,14 +415,7 @@ class PBehaviorManager(object):
         new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
-        result = self.pb_storage.put_element(
-            element=new_data, _id=_id
-        )
-
-        if (PBehaviorManager._UPDATE_FLAG in result and
-                result[PBehaviorManager._UPDATE_FLAG]):
-            return pbehavior.to_dict()
-        return None
+        return {"pbehavior": pbehavior, "new_data": new_data}
 
     def upsert(self, pbehavior):
         """
@@ -403,7 +427,8 @@ class PBehaviorManager(object):
         :rtype: bool, dict
         :returns: success, update result
         """
-        r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
+        r = self.pb_store.update(
+            {'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
 
         if r.get('updatedExisting', False) and r.get('nModified') == 1:
             return True, r
@@ -749,7 +774,8 @@ class PBehaviorManager(object):
                 if self.check_active_pbehavior(now, pb):
                     results.append(pb)
             except ValueError as exept:
-                self.logger.exception("Can't check if the pbehavior is active.")
+                self.logger.exception(
+                    "Can't check if the pbehavior is active.")
 
         return results
 
@@ -785,7 +811,8 @@ class PBehaviorManager(object):
         for active_pb in active_pbehaviors:
             active_pbehaviors_ids.add(active_pb['_id'])
 
-        varying_pbs = active_pbehaviors_ids.symmetric_difference(self.currently_active_pb)
+        varying_pbs = active_pbehaviors_ids.symmetric_difference(
+            self.currently_active_pb)
         self.currently_active_pb = active_pbehaviors_ids
 
         return list(varying_pbs)
@@ -944,7 +971,6 @@ class PBehaviorManager(object):
 
         # Order them chronologically (by start date)
         intervals.sort(key=lambda a: a[0])
-
 
         # Yield the first interval without any active pbehavior
         merged_interval_start, merged_interval_end = intervals[0]
