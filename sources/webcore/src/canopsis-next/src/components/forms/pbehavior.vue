@@ -144,7 +144,7 @@ export default {
         };
 
         if (this.rRuleObject) {
-          data.rrule = this.rRuleObject.toString();
+          data.rrule = this.rRuleObject.toString().replace(/.*RRULE:/, '');
         }
 
         if (this.commentMessage !== '') {
