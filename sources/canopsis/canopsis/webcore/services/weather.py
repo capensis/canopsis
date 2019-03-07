@@ -356,7 +356,10 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['linklist'] = tmp_links
-            enriched_entity['state'] = {'val': watcher.get('state', 0)}
+            if isinstance(watcher.get('state', 0), int):
+                enriched_entity['state'] = {'val': watcher.get('state', 0)}
+            else:
+                enriched_entity['state'] = {'val': 0}
 
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
