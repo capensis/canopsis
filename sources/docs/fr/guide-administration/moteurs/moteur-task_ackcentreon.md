@@ -71,6 +71,9 @@ Renseignez ensuite les informations demandées :
 
 Le moteur `event_filter` (Python) doit exécuter le job `ack_centreon` lorsqu'il reçoit un évènement de type `ack` ou `ackremove` (pause et suppression d'un ACK).
 
+!!! note
+    Le moteur `event_filter` Python est requis pour `task_ackcentreon`, même dans un environnement Go.
+
 Il faut, pour cela, [créer une règle d'`event_filter`](moteur-event_filter.md) avec le filtre suivant :
 
 ```json

@@ -293,6 +293,8 @@ export const types = {
   ENTITIES_DELETE: `${entitiesModuleName}/${internalTypes.ENTITIES_DELETE}`,
 };
 
+export { default as createEntityModule } from './create-entity-module';
+
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);
 };

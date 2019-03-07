@@ -28,6 +28,8 @@ import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calen
 import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
+import WebhookIcon from '@/components/icons/webhook.vue';
+
 Vue.use(VueResizeText);
 Vue.use(filters);
 Vue.use(Vuetify, {
@@ -35,6 +37,11 @@ Vue.use(Vuetify, {
   theme: {
     primary: '#2fab63',
     secondary: '#2b3e4f',
+  },
+  icons: {
+    webhook: {
+      component: WebhookIcon,
+    },
   },
 });
 Vue.use(VueFullScreen);
