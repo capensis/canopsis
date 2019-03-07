@@ -1,6 +1,9 @@
+import './bootstrap';
+
+/* eslint-disable import/first */
+import Vue from 'vue';
 import moment from 'moment';
 import deepFreeze from 'deep-freeze';
-import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
 import enValidationMessages from 'vee-validate/dist/locale/en';
@@ -29,6 +32,7 @@ import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
+/* eslint-enable import/first */
 
 Vue.use(VueResizeText);
 Vue.use(filters);
