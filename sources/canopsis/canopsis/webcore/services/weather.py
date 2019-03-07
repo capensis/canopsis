@@ -361,7 +361,10 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['linklist'] = tmp_links
-            enriched_entity['state'] = {'val': watcher.get('state', 0)}
+            if isinstance(watcher.get('state', 0), int):
+                enriched_entity['state'] = {'val': watcher.get('state', 0)}
+            else:
+                enriched_entity['state'] = {'val': 0}
 
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
@@ -381,7 +384,9 @@ def exports(ws):
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
             enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
-            enriched_entity["mfilter"] = watcher["mfilter"]
+            # using get instead of direct access to accomodate for new watchers
+            # new watchers don't have mfilter field, thus get permits to have both new and old watchers
+            enriched_entity["mfilter"] = watcher.get("mfilter", {})
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
                 alarm_dict
@@ -427,14 +432,19 @@ def exports(ws):
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         # Find entities with the watcher filter
-        try:
-            query = json.loads(watcher_entity['mfilter'])
-        except (ValueError, KeyError, TypeError):
-            json_error = {
-                "name": "filter_not_found",
-                "description": "impossible to load the desired filter"
-            }
-            return gen_json_error(json_error, HTTP_NOT_FOUND)
+        # when entities is in watcher_entity, the watcher is handled in go engines
+        # thus the mfilter query is not needed and not present as well
+        if "entities" in watcher_entity:
+            query = {"_id":{"$in": watcher_entity.get('depends', [])}}
+        else:
+            try:
+                query = json.loads(watcher_entity['mfilter'])
+            except (ValueError, KeyError, TypeError):
+                json_error = {
+                    "name": "filter_not_found",
+                    "description": "impossible to load the desired filter"
+                }
+                return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         query["enabled"] = True
 
