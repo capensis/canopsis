@@ -212,6 +212,33 @@ def get_active_pbehaviors_on_watchers(watchers,
     return active_pb_on_watchers, active_watcher_pbehaviors
 
 
+def is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_pbehaviors):
+
+    watcher_alarm = alarm_dict.get(watcher["_id"], None)
+    if watcher_alarm is None:
+        return False
+
+    entities_alarm = {}
+    entities_pbh = {}
+    for key in watcher["depends"]:
+        entities_alarm[key] = alarm_dict.get(key, None)
+        entities_pbh[key] = active_pbehaviors.get(key, None)
+
+    w_pbh = active_watchers_pbehaviors[watcher["_id"]]
+    if len(w_pbh) != 0:
+        return False
+
+    for entity in entities_alarm:
+        if entities_alarm[entity] is None:
+            continue
+
+        if entities_alarm[entity]["ack"] is None:
+            if entities_pbh[entity] is None:
+                return True
+
+    return False
+
+
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
     """
     get the next run of alarm filter
@@ -389,8 +416,9 @@ def exports(ws):
             enriched_entity["mfilter"] = watcher.get("mfilter", {})
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
-                alarm_dict
+                alarm_dict,
             )
+            enriched_entity['action_required'] = is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_pbehaviors)
             wstatus = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["active_pb_some"] = wstatus[0]
             enriched_entity["active_pb_all"] = wstatus[1]
