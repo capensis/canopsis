@@ -556,6 +556,13 @@
         "desc": "Rights on context: List Pbehaviors"
     },
     {
+        "_id": "crudcontext_deletePbehavior",
+        "loader_id": "crudcontext_deletePbehavior",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_deletePbehavior",
+        "desc": "Rights on context: Delete Pbehaviors"
+    },
+    {
         "_id": "crudcontext_listFilters",
         "loader_id": "crudcontext_listFilters",
         "crecord_type": "action",

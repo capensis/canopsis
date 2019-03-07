@@ -254,6 +254,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "crudcontext_deletePbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
         "crudcontext_listFilters": {
             "checksum": 1,
             "desc": ""
