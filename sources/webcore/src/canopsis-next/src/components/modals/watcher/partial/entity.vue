@@ -30,12 +30,10 @@
                   )
                     v-icon {{ action.icon }}
                   span {{ $t(`common.actions.${action.eventType}`) }}
-            v-runtime-template(:template="compiledTemplate")
+            entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
-import Handlebars from 'handlebars';
-import VRuntimeTemplate from 'v-runtime-template';
 import { find, isNull, pickBy } from 'lodash';
 
 import {
@@ -49,18 +47,15 @@ import {
   WIDGETS_ACTIONS_TYPES,
 } from '@/constants';
 
-import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
-
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
 
-import EntityLinks from './entity-links.vue';
+import EntityTemplate from './entity-template.vue';
 
 export default {
   components: {
-    VRuntimeTemplate,
-    EntityLinks,
+    EntityTemplate,
   },
   mixins: [
     authMixin,
@@ -188,10 +183,6 @@ export default {
       return this.entity.pbehavior.filter(value => value.isActive).length;
     },
 
-    compiledTemplate() {
-      return compile(this.template, { entity: this.entity });
-    },
-
     isPaused() {
       return this.entity.pbehavior.some(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
     },
@@ -224,21 +215,6 @@ export default {
     isActionBtnEnable() {
       return action => !this.actionsClicked.includes(action);
     },
-  },
-  beforeCreate() {
-    registerHelper('links', ({ hash }) => {
-      const { links, cat_name: catName } = this.entity.linklist.find(item => item.cat_name === hash.type) || {};
-
-      return new Handlebars.SafeString(`
-        <div>
-          <h2>${catName}</h2>
-          <entity-links links="${links}" />
-        </div>
-      `);
-    });
-  },
-  beforeDestroy() {
-    unregisterHelper('links');
   },
 };
 </script>
