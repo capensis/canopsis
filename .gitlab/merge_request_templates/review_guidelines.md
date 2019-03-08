@@ -25,6 +25,7 @@ These previous steps are just the minimal and required steps to test the related
 - [ ] The documentations about the feature/component is created/updated
 - [ ] A new entry in the canopsis/canopsis `CHANGELOG` and `notes de version` is added
 - [ ] The unit tests associated must be created/updated and they must pass
+- [ ] If the current `Merge Request` is a bugfix, a unit test must be written to check if the bug is correctly fix
 - [ ] The associated issue must be linked to the current
 - [ ] The process to test the current `Merge Request` is written.
 - [ ] The `Merge Request` must be reviewed
