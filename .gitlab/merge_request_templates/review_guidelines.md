@@ -29,9 +29,9 @@ These previous steps are just the minimal and required steps to test the related
 - [ ] The process to test the current `Merge Request` is written.
 - [ ] The `Merge Request` must be reviewed
 - [ ] Python:
-  - [ ] The sources must be PEP8 compliant
+  - [ ] The sources must be PEP 8 and PEP 257 compliant
+  - [ ] The docstring documentation must follow [sphinx](https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#info-field-lists) format
 - [ ] Golang:
-  - [ ] The sources must be formated with gofmt
   - [ ] The import must be cleaned with goimport
 - [ ] Javascript:
   - [ ] The sources must respect the `Airbnb JavaScript Style Guide`
