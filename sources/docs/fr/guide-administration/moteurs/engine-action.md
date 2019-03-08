@@ -1,10 +1,10 @@
-# Engine Action
+# Action
 
-L'engine action permet de déclencher des actions conditionnellement à des alarmes.
+Le moteur action permet de déclencher des actions conditionnellement à des alarmes.
 
 ## Fonctionnement
 
-La queue de l'engine est placée juste après l'engine Axe.
+La queue du moteur est placée juste après le moteur Axe.
 
 Une action se déclenche si un des champs d'une alarme (désigné dans `fields`) va correspondre à une regex (`regex`, voir [re2 syntax](https://github.com/google/re2/wiki/Syntax)).
 
