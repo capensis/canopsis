@@ -3,7 +3,7 @@
     v-layout(v-if="!pending")
       navigation#main-navigation(v-if="$route.name !== 'login'")
       v-content#main-content
-        router-view(:key="routeViewKey")
+        router-view(:key="$route.fullPath")
     side-bars
     modals
     popups
@@ -32,15 +32,6 @@ export default {
     return {
       pending: true,
     };
-  },
-  computed: {
-    routeViewKey() {
-      if (this.$route.name === 'view') {
-        return this.$route.path;
-      }
-
-      return this.$router.fullPath;
-    },
   },
   async mounted() {
     await this.fetchCurrentUser();
