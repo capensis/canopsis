@@ -1,6 +1,6 @@
 # Action
 
-Le moteur action permet de déclencher des actions conditionnellement à des alarmes.
+Le moteur action permet de déclencher des actions conditionnellement sur des alarmes.
 
 ## Fonctionnement
 
