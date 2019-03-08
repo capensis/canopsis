@@ -8,16 +8,13 @@ La queue du moteur est placée juste après le moteur Axe.
 
 Une action se déclenche si un des champs d'une alarme (désigné dans `fields`) va correspondre à une regex (`regex`, voir [re2 syntax](https://github.com/google/re2/wiki/Syntax)).
 
-Pour un [PBehavior](../../guide-developpement/PBehavior/index.md), il va être posé en fonction du paramétrage (`parameters`) de l'action.
-
-C'est également ce moteur qui va poser des snooze automatiques sur les alarmes, en fonction des champs `fields` et `regex`. Si l'alarme correspond à ces champs, qu'elle n'a pas déjà été snoozed et qu'elle a été créée il y a moins de `duration` secondes, alors un snooze sera posé sur l'alarme de manière automatique.
-
-!!! attention
-    Les valeurs dans le tableau des `fields` est sensible à la casse, il faut utiliser les majuscules (`Resource`, `Component`, etc).
+Les types d'actions disponibles sont :
+* `pbehavior`, qui va poser un [PBehavior](../../guide-developpement/PBehavior/index.md);
+* `snooze`, qui va poser des snooze automatiques sur les alarmes lors de leur création.
 
 ## Collection
 
-Les actions sont stockées dans la collection Mongo `default_action` (voir [API Action](../../guide-developpement/action/api_v2_action.md) pour la création d'actions). Par exemple, avec un pbehavior:
+Les actions sont stockées dans la collection Mongo `default_action` (voir [API Action](../../guide-developpement/action/api_v2_action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un pbehavior, le champ `type` vaut `pbehavior` :
 
 ```json
 {
@@ -53,6 +50,5 @@ Un exemple d'action concernant le snooze automatique (le `type` d'action est don
 }
 ```
 
-!!! note
-    Si le système de [webhooks](../webhooks/index.md) est utilisé, il est vivement conseillé de créer un webhook contenant le trigger `unsnooze`. Ce webhook va gérer les alarmes à la fin de leur snooze.
-
+!!! attention
+    Les valeurs dans le tableau des `fields` sont sensibles à la casse, il faut utiliser les majuscules (`Resource`, `Component`, etc).
