@@ -105,7 +105,7 @@ class HealthcheckManager(object):
         self.check_amqp_limit_size = int(section.get(ConfName.CHECK_AMQP_LIMIT_SIZE, ""))
         self.check_amqp_queues = section.get(ConfName.CHECK_AMQP_QUEUES, [])
         self.check_collections = section.get(ConfName.CHECK_COLLECTIONS, [])
-        self.check_engines = section.get(ConfName.CHECK_ENGINES, [])
+        self.check_engines_list = section.get(ConfName.CHECK_ENGINES, [])
         self.check_ts_db = section.get(ConfName.CHECK_TS_DB, "")
         self.check_webserver = section.get(ConfName.CHECK_WEBSERVER, "")
         self.systemctl_engine_prefix = section.get(ConfName.SYSTEMCTL_ENGINE_PREFIX, "")
@@ -260,7 +260,7 @@ class HealthcheckManager(object):
         if not check_process_status(name=self.check_webserver):
             return ServiceState(message='Webserver is not running')  # Derp
 
-        for engine in self.check_engines:
+        for engine in self.check_engines_list:
             if not check_engine_status(name=engine):
                 msg = 'Engine {} is not running'.format(engine)  # f-strings
                 return ServiceState(message=msg)
