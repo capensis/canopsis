@@ -159,12 +159,12 @@
         v-flex(xs2)
           strong {{ $t('rRule.stringLabel') }}
         v-flex(xs10)
-          p {{ rRuleObject.toString() }}
+          p {{ rRuleString }}
       v-layout(row)
         v-flex(xs2)
           strong {{ $t('rRule.textLabel') }}
         v-flex(xs10)
-          p {{ rRuleObject.toText() }}
+          p {{ rRuleText }}
       v-layout(row)
         v-alert(:value="errors.has('rRule')", type="error")
           span {{ errors.first('rRule') }}
@@ -236,6 +236,15 @@ export default {
       },
     };
   },
+  computed: {
+    rRuleString() {
+      return this.rRuleObject.toString();
+    },
+
+    rRuleText() {
+      return this.rRuleObject.toText();
+    },
+  },
   watch: {
     showRRule(value) {
       if (!value) {
@@ -277,7 +286,7 @@ export default {
           this.errors.remove('rRule');
 
           if (this.showRRule) {
-            this.$emit('input', this.rRuleObject);
+            this.$emit('input', this.rRuleString);
           }
         }
       } catch (err) {

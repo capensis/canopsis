@@ -16,6 +16,7 @@ export const ENTITIES_TYPES = {
   user: 'user',
   role: 'role',
   eventFilterRule: 'eventFilterRule',
+  webhook: 'webhook',
 };
 
 export const MODALS = {
@@ -60,6 +61,7 @@ export const MODALS = {
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
+  createWebhook: 'create-webhook',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -562,10 +564,24 @@ export const USERS_RIGHTS = {
         deleteEntity: 'crudcontext_delete',
         pbehaviorAdd: 'crudcontext_pbehavior',
         pbehaviorList: 'crudcontext_listPbehavior',
+        pbehaviorDelete: 'crudcontext_deletePbehavior',
 
         listFilters: 'crudcontext_listFilters',
         editFilter: 'crudcontext_editFilter',
         addFilter: 'crudcontext_addFilter',
+      },
+    },
+    weather: {
+      actions: {
+        entityAck: 'serviceweather_entityAck',
+        entityDeclareTicket: 'serviceweather_entityDeclareTicket',
+        entityValidate: 'serviceweather_entityValidate',
+        entityInvalidate: 'serviceweather_entityInvalidate',
+        entityPause: 'serviceweather_entityPause',
+        entityPlay: 'serviceweather_entityPlay',
+
+        moreInfos: 'serviceweather_moreInfos',
+        alarmsList: 'serviceweather_alarmsList',
       },
     },
   },
@@ -597,11 +613,23 @@ export const WIDGETS_ACTIONS_TYPES = {
     deleteEntity: 'deleteEntity',
     pbehaviorAdd: 'pbehaviorAdd',
     pbehaviorList: 'pbehaviorList',
+    pbehaviorDelete: 'pbehaviorDelete',
     variablesHelp: 'variablesHelp',
 
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
+  },
+  weather: {
+    entityAck: 'entityAck',
+    entityDeclareTicket: 'entityDeclareTicket',
+    entityValidate: 'entityValidate',
+    entityInvalidate: 'entityInvalidate',
+    entityPause: 'entityPause',
+    entityPlay: 'entityPlay',
+
+    moreInfos: 'moreInfos',
+    alarmsList: 'alarmsList',
   },
 };
 
@@ -630,10 +658,23 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.context.deleteEntity]: USERS_RIGHTS.business.context.actions.deleteEntity,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorAdd]: USERS_RIGHTS.business.context.actions.pbehaviorAdd,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorList]: USERS_RIGHTS.business.context.actions.pbehaviorList,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorDelete]: USERS_RIGHTS.business.context.actions.pbehaviorDelete,
 
     [WIDGETS_ACTIONS_TYPES.context.listFilters]: USERS_RIGHTS.business.context.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.context.editFilter]: USERS_RIGHTS.business.context.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.context.addFilter]: USERS_RIGHTS.business.context.actions.addFilter,
+  },
+
+  weather: {
+    [WIDGETS_ACTIONS_TYPES.weather.entityAck]: USERS_RIGHTS.business.weather.actions.entityAck,
+    [WIDGETS_ACTIONS_TYPES.weather.entityDeclareTicket]: USERS_RIGHTS.business.weather.actions.entityDeclareTicket,
+    [WIDGETS_ACTIONS_TYPES.weather.entityValidate]: USERS_RIGHTS.business.weather.actions.entityValidate,
+    [WIDGETS_ACTIONS_TYPES.weather.entityInvalidate]: USERS_RIGHTS.business.weather.actions.entityInvalidate,
+    [WIDGETS_ACTIONS_TYPES.weather.entityPause]: USERS_RIGHTS.business.weather.actions.entityPause,
+    [WIDGETS_ACTIONS_TYPES.weather.entityPlay]: USERS_RIGHTS.business.weather.actions.entityPlay,
+
+    [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
+    [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
   },
 };
 
@@ -736,3 +777,22 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';
+
+export const WEBHOOK_TRIGGERS = {
+  create: 'create',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  statusinc: 'statusinc',
+  statusdec: 'statusdec',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  cancel: 'cancel',
+  uncancel: 'uncancel',
+  comment: 'comment',
+  done: 'done',
+  declareticket: 'declareticket',
+  assocticket: 'assocticket',
+  snooze: 'snooze',
+  unsnooze: 'unsnooze',
+  resolve: 'resolve',
+};

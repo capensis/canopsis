@@ -2,10 +2,11 @@
   div
     view-tabs-wrapper(
     v-if="view",
+    v-model="activeTabIndex",
     :view="view",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateView({ id, data })",
+    :updateViewMethod="data => updateView({ id, data })"
     )
     .fab
       v-tooltip(left)
@@ -48,6 +49,8 @@
 </template>
 
 <script>
+import { isNull } from 'lodash';
+
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
@@ -82,6 +85,7 @@ export default {
   },
   data() {
     return {
+      activeTabIndex: null,
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
@@ -93,44 +97,26 @@ export default {
     },
 
     activeTab() {
-      const { tabId } = this.$route.query;
-
       if (this.view.tabs && this.view.tabs.length) {
-        if (!tabId) {
+        if (isNull(this.activeTabIndex)) {
           return this.view.tabs[0];
         }
 
-        return this.view.tabs.find(tab => tab._id === tabId) || null;
+        return this.view.tabs[this.activeTabIndex];
       }
 
       return null;
     },
   },
-
   created() {
     document.addEventListener('keydown', this.keyDownListener);
     this.fetchView({ id: this.id });
-    this.registerViewOnceWatcher();
   },
-
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
   },
-
   methods: {
-    registerViewOnceWatcher() {
-      const unwatch = this.$watch('view', (view) => {
-        const { tabId } = this.$route.query;
-
-        if (!tabId && view.tabs && view.tabs.length) {
-          this.$router.replace({ query: { tabId: view.tabs[0]._id } });
-        }
-
-        unwatch();
-      });
-    },
-
     keyDownListener(event) {
       if (event.key === 'Enter' && event.altKey) {
         this.toggleFullScreenMode();

@@ -7,7 +7,7 @@ repver="${ID}-${VERSION_ID}"
 
 source ${CPS_HOME}/bin/activate
 
-pip install -r /sources/canopsis/requirements.txt -b /tmp/pipbuild
+LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 pip install -r /sources/canopsis/requirements.txt -b /tmp/pipbuild
 
 rm -rf /tmp/pipbuild
 rm -rf ~/.cache

@@ -71,7 +71,12 @@ def __format_pbehavior(pbehavior):
     rrule["rrule"] = pbehavior["rrule"]
 
     if pbehavior["rrule"] is not None:
-        freq = get_rrule_freq(pbehavior["rrule"])
+
+        rrule_str = pbehavior["rrule"]
+        if rrule_str[0:6] == "RRULE:":
+            rrule_str = rrule_str[6:]
+
+        freq = get_rrule_freq(rrule_str)
 
         if freq == "SECONDLY":
             rrule["text"] = EVERY.format("second")
@@ -205,6 +210,33 @@ def get_active_pbehaviors_on_watchers(watchers,
         active_watcher_pbehaviors[watcher['_id']] = tmp_wpbh
 
     return active_pb_on_watchers, active_watcher_pbehaviors
+
+
+def is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_pbehaviors):
+
+    watcher_alarm = alarm_dict.get(watcher["_id"], None)
+    if watcher_alarm is None:
+        return False
+
+    entities_alarm = {}
+    entities_pbh = {}
+    for key in watcher["depends"]:
+        entities_alarm[key] = alarm_dict.get(key, None)
+        entities_pbh[key] = active_pbehaviors.get(key, None)
+
+    w_pbh = active_watchers_pbehaviors[watcher["_id"]]
+    if len(w_pbh) != 0:
+        return False
+
+    for entity in entities_alarm:
+        if entities_alarm[entity] is None:
+            continue
+
+        if entities_alarm[entity]["ack"] is None:
+            if entities_pbh[entity] is None:
+                return True
+
+    return False
 
 
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
@@ -356,7 +388,10 @@ def exports(ws):
             enriched_entity['sla_text'] = ''  # when sla
             enriched_entity['display_name'] = watcher['name']
             enriched_entity['linklist'] = tmp_links
-            enriched_entity['state'] = {'val': watcher.get('state', 0)}
+            if isinstance(watcher.get('state', 0), int):
+                enriched_entity['state'] = {'val': watcher.get('state', 0)}
+            else:
+                enriched_entity['state'] = {'val': 0}
 
             if tmp_alarm != []:
                 enriched_entity['state'] = tmp_alarm['state']
@@ -376,11 +411,14 @@ def exports(ws):
 
             enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
             enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
-            enriched_entity["mfilter"] = watcher["mfilter"]
+            # using get instead of direct access to accomodate for new watchers
+            # new watchers don't have mfilter field, thus get permits to have both new and old watchers
+            enriched_entity["mfilter"] = watcher.get("mfilter", {})
             enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
                 watcher['depends'],
-                alarm_dict
+                alarm_dict,
             )
+            enriched_entity['action_required'] = is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_pbehaviors)
             wstatus = watcher_status(watcher, merged_pbehaviors_eids)
             enriched_entity["active_pb_some"] = wstatus[0]
             enriched_entity["active_pb_all"] = wstatus[1]
@@ -422,14 +460,19 @@ def exports(ws):
             return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         # Find entities with the watcher filter
-        try:
-            query = json.loads(watcher_entity['mfilter'])
-        except (ValueError, KeyError, TypeError):
-            json_error = {
-                "name": "filter_not_found",
-                "description": "impossible to load the desired filter"
-            }
-            return gen_json_error(json_error, HTTP_NOT_FOUND)
+        # when entities is in watcher_entity, the watcher is handled in go engines
+        # thus the mfilter query is not needed and not present as well
+        if "entities" in watcher_entity:
+            query = {"_id":{"$in": watcher_entity.get('depends', [])}}
+        else:
+            try:
+                query = json.loads(watcher_entity['mfilter'])
+            except (ValueError, KeyError, TypeError):
+                json_error = {
+                    "name": "filter_not_found",
+                    "description": "impossible to load the desired filter"
+                }
+                return gen_json_error(json_error, HTTP_NOT_FOUND)
 
         query["enabled"] = True
 

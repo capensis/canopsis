@@ -2,8 +2,8 @@ import { omit } from 'lodash';
 
 import uid from '@/helpers/uid';
 
-const eventKeyComputed = uid('eventKey');
-const formKeyComputed = uid('formKey');
+const eventKeyComputed = uid('_eventKey');
+const formKeyComputed = uid('_formKey');
 
 /**
  * @mixin Form mixin
