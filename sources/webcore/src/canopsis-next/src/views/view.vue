@@ -5,7 +5,7 @@
     :view="view",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateView({ id, data })",
+    :updateViewMethod="data => updateView({ id, data })"
     )
     .fab
       v-tooltip(left)
