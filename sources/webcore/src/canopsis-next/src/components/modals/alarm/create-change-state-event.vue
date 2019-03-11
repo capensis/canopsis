@@ -34,9 +34,10 @@
 </template>
 
 <script>
+import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to create a 'change-state' event
@@ -47,28 +48,28 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
       form: {
         output: '',
-        state: this.$constants.ENTITIES_STATES.ok,
+        state: ENTITIES_STATES.ok,
       },
     };
   },
   computed: {
     buttons() {
-      return Object.keys(this.$constants.ENTITIES_STATES);
+      return Object.keys(ENTITIES_STATES);
     },
     states() {
-      return this.$constants.ENTITIES_STATES;
+      return ENTITIES_STATES;
     },
     colorsMap() {
       return {
-        [this.$constants.ENTITIES_STATES.ok]: 'green',
-        [this.$constants.ENTITIES_STATES.minor]: 'yellow',
-        [this.$constants.ENTITIES_STATES.major]: 'orange',
-        [this.$constants.ENTITIES_STATES.critical]: 'error',
+        [ENTITIES_STATES.ok]: 'green',
+        [ENTITIES_STATES.minor]: 'yellow',
+        [ENTITIES_STATES.major]: 'orange',
+        [ENTITIES_STATES.critical]: 'error',
       };
     },
   },
@@ -80,7 +81,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.changeState, this.items, this.form);
+        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
 
         this.hideModal();
       }

@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
-import eventActionsMixin from '@/mixins/event-actions';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
@@ -11,7 +11,7 @@ import convertObjectFieldToTreeBranch from '@/helpers/treeview';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [modalMixin, eventActionsMixin],
+  mixins: [modalMixin, eventActionsAlarmMixin],
   methods: {
     showActionModal(name) {
       return () => this.showModal({

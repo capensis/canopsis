@@ -8,6 +8,55 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.12.0 - Due date : 2019-03-11
+
+ - [Documentation] Added documentation for common use cases
+ - [Documentation] Added documentation for go watchers
+ - [Documentation] Added documentation for action engine
+ - [Go] Added watcher service
+ - [Go] Added state change counters to alarms
+ - [Go] Added snooze action to action engine
+ - [Python] Added action_required field to the service weather API
+ - [Python] Added API route to update pbehaviors
+ - [Python] Added API for go watchers
+ - [UI] Fixed pbehavior creation with RRULE
+ - [UI] Integrated external libraries
+ - [UI] Reverted addition of the active tab id into the URL (waiting for a bug fix on this functionnality)
+ - [UI - Exploitation] Added Webhooks CRUD view
+ - [UI - Exploitation] Improved style on Pbehaviors CRUD view
+ - [UI - Alarms list] Added access to 'entity' variable on info popup template
+ - [UI - Context] Fixed pbehavior mass deletion
+ - [UI - Context] Added a right to manage access to 'Delete pbehavior' action
+ - [UI - Service Weather] Changed tile blinking condition
+ - [UI - Service Weather] Added rights
+
+# Canopsis 3.11.0 - Due date : 2019-02-22
+
+ - [Documentation] Add webhook documentation
+ - [Docmentation] Add libreNMS documentation
+ - [Go] Add watchers to the context graph and update their impacts and dependencies
+ - [Python] Fix memory leak inside the snmp engine
+ - [Python] Fix the bug that prevents the python-ldap package from being installed
+ - [Python] Make snow2canopsis wait for the webserver to start
+ - [Python] Fix performance issue with the stat API when there are too many entities
+ - [Python] Allow the user to strip the string used in the email2canopsis templates
+ - [Python] Fix a crash that prevents the correct rendering of the PBehaviors through the API
+ - [UI] Show the active view on leftbar
+ - [UI] Change Text editor library (from QuillJS to Jodit)
+ - [UI] Fix bugs with filter editor + Add a variable type selector on it
+ - [UI - Tabs] Fix bug with the actions buttons
+ - [UI - Views] Add active tab into URL
+ - [UI - Login] Redirect when access to view is forbidden
+ - [UI - AlarmsList] Automatic filter when displaying 'resolved' alarms
+ - [UI - AlarmsList] Fix Open/Resolved setting
+ - [UI - AlarmsList] Optimize widget performance
+ - [UI - Context] Bug - "More infos" tabs are invisible
+ - [UI - Service Weather] Rights
+ - [UI - Service Weather] Keep an entity expanded during a periodic refresh
+ - [UI - Service Weather] Add a periodic refresh setting
+ - [UI - Service Weather] Tooltips on actions
+ - [UI - legacy - Weather] Send a correct event keepstate when the validate button is clicked
+
 ## Canopsis 3.10.0 - Due date : 2019-02-08
 
  - [Documentation] Update Service Weather documentation

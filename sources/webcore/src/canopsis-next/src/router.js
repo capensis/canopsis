@@ -18,6 +18,7 @@ import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
+import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
 
 Vue.use(Router);
 
@@ -103,6 +104,12 @@ const routes = [
     component: ExploitationEventFilter,
     meta: requiresLoginMeta,
   },
+  {
+    path: '/exploitation/webhooks',
+    name: 'exploitation-webhooks',
+    component: ExploitationWebhooks,
+    meta: requiresLoginMeta,
+  },
 ];
 
 const router = new Router({
@@ -142,12 +149,16 @@ router.beforeResolve((to, from, next) => {
     const { requiresRight } = to.meta;
     const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
     const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
+
     const checkProcess = (user) => {
       if (checkUserAccess(user, rightId, rightMask)) {
         next();
       } else {
         store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
-        next(false);
+
+        next({
+          name: 'home',
+        });
       }
     };
 

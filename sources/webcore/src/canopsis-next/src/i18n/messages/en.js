@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
 
 export default {
   common: {
@@ -71,12 +71,18 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    webhooks: 'Webhooks',
     actions: {
       close: 'Close',
-      acknowledge: 'Acknowledge',
       acknowledgeAndReport: 'Acknowledge and report an incident',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.validate]: 'Validate',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Play',
     },
     times: {
       second: 'second | seconds',
@@ -181,6 +187,11 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    tabs: {
+      filter: 'Filter',
+      eids: 'Eids',
+      comments: 'Comments',
+    },
   },
   settings: {
     titles: {
@@ -639,6 +650,14 @@ export default {
         title: 'Title',
       },
     },
+    createWebhook: {
+      create: {
+        title: 'Create webhook',
+      },
+      edit: {
+        title: 'Edit webhook',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -808,7 +827,7 @@ export default {
       },
     },
     errors: {
-      invalidJSON: 'Invalid JSON',
+      invalidJSON: 'We can\'t parse this filter to Visual Editor',
       required: 'You need to add at least one valid rule',
     },
   },
@@ -869,5 +888,48 @@ export default {
     },
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
+  },
+  patternsList: {
+    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
+  },
+  webhook: {
+    title: 'Webhooks',
+    table: {
+      headers: {
+        id: 'ID',
+        requestMethod: 'Request method',
+        requestUrl: 'Request URL',
+      },
+    },
+    tabs: {
+      hook: {
+        title: 'Hook',
+        fields: {
+          triggers: 'Triggers',
+          eventPatterns: 'Event patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
+        },
+      },
+      request: {
+        title: 'Request',
+        fields: {
+          method: 'Method',
+          url: 'URL',
+          headers: 'Headers',
+          headerKey: 'Header key',
+          headerValue: 'Header value',
+          payload: 'Payload',
+        },
+      },
+      declareTicket: {
+        title: 'Declare ticket',
+        fields: {
+          text: 'Key',
+          value: 'Value',
+        },
+      },
+    },
   },
 };

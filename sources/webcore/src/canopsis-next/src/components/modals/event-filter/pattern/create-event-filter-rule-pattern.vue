@@ -46,7 +46,7 @@ export default {
     };
   },
   mounted() {
-    this.pattern = cloneDeep(this.config.pattern);
+    this.pattern = cloneDeep(this.config.pattern || {});
   },
   methods: {
     submit() {

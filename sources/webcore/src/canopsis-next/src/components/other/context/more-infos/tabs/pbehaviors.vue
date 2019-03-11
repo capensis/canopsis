@@ -18,17 +18,19 @@
           td {{ props.item.reason }}
           td {{ props.item.rrule }}
           td
-            v-btn(@click="deletePbehavior(props.item._id)", icon, small)
+            v-btn(v-if="hasAccessToDeletePbehavior", @click="deletePbehavior(props.item._id)", icon, small)
               v-icon(color="error") delete
 </template>
 
 <script>
+import { MODALS, USERS_RIGHTS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import pbehaviorEntityMixin from '@/mixins/entities/pbehavior';
-import { MODALS } from '@/constants';
 
 export default {
-  mixins: [modalMixin, pbehaviorEntityMixin],
+  mixins: [authMixin, modalMixin, pbehaviorEntityMixin],
   props: {
     itemId: {
       type: String,
@@ -85,6 +87,11 @@ export default {
       ],
     };
   },
+  computed: {
+    hasAccessToDeletePbehavior() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.pbehaviorDelete);
+    },
+  },
   mounted() {
     this.fetchItems();
   },
@@ -100,12 +107,8 @@ export default {
         },
       });
     },
-    async fetchItems() {
-      await this.fetchPbehaviorsByEntityId({ id: this.itemId });
-
-      if (this.pbehaviorItems) {
-        this.items = [...this.pbehaviorItems];
-      }
+    fetchItems() {
+      this.fetchPbehaviorsByEntityId({ id: this.itemId });
     },
   },
 };

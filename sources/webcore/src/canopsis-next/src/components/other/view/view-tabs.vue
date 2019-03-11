@@ -2,35 +2,28 @@
   v-tabs.view-tabs(
   ref="tabs",
   :key="vTabsKey",
-  :value="$route.fullPath"
+  :value="value",
   :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
-  dark
+  dark,
+  @change="$emit('input', $event)"
   )
     draggable.d-flex(
-    v-if="tabs.length",
     :value="tabs",
     :options="draggableOptions",
     @end="onDragEnd",
     @input="$emit('update:tabs', $event)"
     )
-      v-tab.draggable-item(
-      v-for="tab in tabs",
-      :key="tab._id",
-      :disabled="isTabsChanged",
-      :to="getTabHrefById(tab._id)",
-      exact,
-      ripple
-      )
+      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
         span {{ tab.title }}
         v-btn(
         v-show="hasUpdateAccess && isEditingMode",
         small,
         flat,
         icon,
-        @click.stop="showUpdateTabModal(tab)"
+        @click.prevent="showUpdateTabModal(tab)"
         )
           v-icon(small) edit
         v-btn(
@@ -38,7 +31,7 @@
         small,
         flat,
         icon,
-        @click.stop="showDuplicateTabModal(tab)"
+        @click.prevent="showDuplicateTabModal(tab)"
         )
           v-icon(small) file_copy
         v-btn(
@@ -46,16 +39,11 @@
         small,
         flat,
         icon,
-        @click.stop="showDeleteTabModal(tab)"
+        @click.prevent="showDeleteTabModal(tab)"
         )
           v-icon(small) delete
-    template(v-if="$scopedSlots.default")
-      v-tab-item(
-      v-for="tab in tabs",
-      :key="tab._id",
-      :value="getTabHrefById(tab._id)",
-      lazy
-      )
+    v-tabs-items(v-if="$scopedSlots.default", active-class="active-view-tab")
+      v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
         slot(
         :tab="tab",
         :isEditingMode="isEditingMode",
@@ -93,6 +81,10 @@ export default {
     tabs: {
       type: Array,
       required: true,
+    },
+    value: {
+      type: Number,
+      default: null,
     },
     hasUpdateAccess: {
       type: Boolean,
