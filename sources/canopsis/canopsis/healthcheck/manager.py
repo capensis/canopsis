@@ -103,9 +103,9 @@ class HealthcheckManager(object):
         section = parser.get(ConfName.SECT_HC)
 
         self.check_amqp_limit_size = int(section.get(ConfName.CHECK_AMQP_LIMIT_SIZE, ""))
-        self.check_amqp_queues = section.get(ConfName.CHECK_AMQP_QUEUES, [])
-        self.check_collections = section.get(ConfName.CHECK_COLLECTIONS, [])
-        self.check_engines_list = section.get(ConfName.CHECK_ENGINES, [])
+        self.check_amqp_queues = section.get(ConfName.CHECK_AMQP_QUEUES, "").split(",")
+        self.check_collections = section.get(ConfName.CHECK_COLLECTIONS, "").split(",")
+        self.check_engines_list = section.get(ConfName.CHECK_ENGINES, "").split(",")
         self.check_ts_db = section.get(ConfName.CHECK_TS_DB, "")
         self.check_webserver = section.get(ConfName.CHECK_WEBSERVER, "")
         self.systemctl_engine_prefix = section.get(ConfName.SYSTEMCTL_ENGINE_PREFIX, "")
