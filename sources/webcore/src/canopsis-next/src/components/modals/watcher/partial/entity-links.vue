@@ -1,9 +1,11 @@
 <template lang="pug">
-  div
+  div.mt-1
     div(v-for="(link, index) in filteredLinks", :key="`links-${index}`")
       div(v-for="(item, itemIndex) in link.links", :key="`links-item-${index}-${itemIndex}`")
-        span {{ link.cat_name }} {{ itemIndex + 1 }}
-        a(:href="item", target="_blank") link
+        v-divider(light)
+        div.pa-2.text-xs-right
+          span.category.mr-2 {{ link.cat_name }} {{ itemIndex + 1 }}
+          a(:href="item", target="_blank") {{ $t('common.link') }}
 </template>
 
 <script>
@@ -30,3 +32,12 @@ export default {
 };
 </script>
 
+<style lang="scss" scoped>
+  .category {
+    display: inline-block;
+
+    &:first-letter {
+      text-transform: uppercase;
+    }
+  }
+</style>

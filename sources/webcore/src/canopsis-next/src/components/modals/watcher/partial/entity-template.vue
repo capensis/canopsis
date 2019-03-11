@@ -28,18 +28,22 @@ export default {
   },
   computed: {
     compiledTemplate() {
-      return `<div>${compile(this.template, { entity: this.watcher })}</div>`;
+      return `<div>${compile(this.template, { entity: this.entity })}</div>`;
     },
   },
   beforeCreate() {
-    registerHelper('links', ({ hash }) => new Handlebars.SafeString(`
+    registerHelper('links', ({ hash }) => {
+      const category = hash.category ? `'${hash.category}'` : null;
+
+      return new Handlebars.SafeString(`
         <div>
           <entity-links
           :links="entity.linklist"
-          category="${hash.category}"
+          :category="${category}"
           ></entity-links>
         </div>
-      `));
+      `);
+    });
   },
   beforeDestroy() {
     unregisterHelper('links');
