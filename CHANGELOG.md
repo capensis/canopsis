@@ -8,7 +8,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
-# Canopsis 3.12.0 - Due date : 2019-03-08
+# Canopsis 3.12.0 - Due date : 2019-03-11
 
  - [Documentation] Added documentation for common use cases
  - [Documentation] Added documentation for go watchers
