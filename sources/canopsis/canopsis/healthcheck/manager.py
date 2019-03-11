@@ -20,8 +20,26 @@ from canopsis.common.collection import MongoCollection
 from canopsis.common.influx import InfluxDBClient
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.redis_store import RedisStore
+from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
 from canopsis.models.healthcheck import Healthcheck, ServiceState
+
+
+CONF_PATH = 'etc/healthcheck/manager.conf'
+
+
+class ConfName(object):
+    """List of values used for the configuration"""
+
+    SECT_HC = "HEALTHCHECK"
+
+    CHECK_AMQP_LIMIT_SIZE = "check_amqp_limit_size"
+    CHECK_AMQP_QUEUES = "check_amqp_queues"
+    CHECK_COLLECTIONS = "check_collections"
+    CHECK_ENGINES = "check_engines"
+    CHECK_TS_DB = "check_ts_db"
+    CHECK_WEBSERVER = "check_webserver"
+    SYSTEMCTL_ENGINE_PREFIX = "systemctl_engine_prefix"
 
 
 def check_engine_status(name):
@@ -73,31 +91,6 @@ class HealthcheckManager(object):
     """
     LOG_PATH = 'var/log/healthcheck.log'
 
-    CHECK_AMQP_LIMIT_SIZE = 100000
-    CHECK_AMQP_QUEUES = [
-        'Engine_alerts',
-        'Engine_cleaner_events',
-        'Engine_context-graph',
-        'Engine_event_filter',
-        'Engine_pbehavior',
-        'task_importctx',
-    ]
-    # TODO: check Go queues too
-    CHECK_COLLECTIONS = ['default_entities', 'periodical_alarm']
-    CHECK_ENGINES = [
-        'cleaner-cleaner_events',
-        'dynamic-alerts',
-        'dynamic-context-graph',
-        'dynamic-pbehavior',
-        'dynamic-watcher',
-        'event_filter-event_filter',
-        'task_importctx-task_importctx'
-    ]
-    # TODO: check Go engines too
-    CHECK_TS_DB = 'canopsis'
-    CHECK_WEBSERVER = 'canopsis-webserver'
-    SYSTEMCTL_ENGINE_PREFIX = 'canopsis-engine@'
-
     def __init__(self, logger):
         self.logger = logger
 
@@ -105,6 +98,17 @@ class HealthcheckManager(object):
         self.cache_store = RedisStore.get_default()
         self.amqp_url, self.amqp_exchange = AmqpConnection.parse_conf()
         self.ts_client = InfluxDBClient.from_configuration(self.logger)
+
+        parser = Configuration.load(CONF_PATH, Ini)
+        section = parser.get(ConfName.SECT_HC)
+
+        self.check_amqp_limit_size = int(section.get(ConfName.CHECK_AMQP_LIMIT_SIZE, ""))
+        self.check_amqp_queues = section.get(ConfName.CHECK_AMQP_QUEUES, [])
+        self.check_collections = section.get(ConfName.CHECK_COLLECTIONS, [])
+        self.check_engines = section.get(ConfName.CHECK_ENGINES, [])
+        self.check_ts_db = section.get(ConfName.CHECK_TS_DB, "")
+        self.check_webserver = section.get(ConfName.CHECK_WEBSERVER, "")
+        self.systemctl_engine_prefix = section.get(ConfName.SYSTEMCTL_ENGINE_PREFIX, "")
 
     @classmethod
     def provide_default_basics(cls):
@@ -147,7 +151,7 @@ class HealthcheckManager(object):
             return ServiceState(message='Cannot read consumers on API')
 
         consumed_queues = [q['queue']['name'] for q in r.json()]
-        for queue in self.CHECK_AMQP_QUEUES:
+        for queue in self.check_amqp_queues:
             if queue not in consumed_queues:
                 msg = 'No consumer for queue {}'.format(queue)
                 return ServiceState(message=msg)
@@ -158,7 +162,7 @@ class HealthcheckManager(object):
             return ServiceState(message='Cannot read queues on API')
 
         queues = {q['name']: q for q in r.json()}
-        for queue in self.CHECK_AMQP_QUEUES:
+        for queue in self.check_amqp_queues:
             if queue not in queues.keys():
                 msg = 'Missing queue {}'.format(queue)
                 return ServiceState(message=msg)
@@ -168,7 +172,7 @@ class HealthcheckManager(object):
                 return ServiceState(message=msg)
 
             length = queues[queue]['backing_queue_status']['len']
-            if length > self.CHECK_AMQP_LIMIT_SIZE:
+            if length > self.check_amqp_limit_size:
                 msg = ('Queue {} is overloaded ({} ready messages)'
                        .format(queue, length))
                 return ServiceState(message=msg)
@@ -225,7 +229,7 @@ class HealthcheckManager(object):
         :rtype: ServiceState
         """
         existing_cols = self.db_store.client.collection_names()
-        for collection_name in self.CHECK_COLLECTIONS:
+        for collection_name in self.check_collections:
             # Existence test
             if collection_name not in existing_cols:
                 msg = 'Missing collection {}'.format(collection_name)
@@ -247,16 +251,16 @@ class HealthcheckManager(object):
 
         :rtype: ServiceState
         """
-        if not check_checkable(name=self.SYSTEMCTL_ENGINE_PREFIX):
+        if not check_checkable(name=self.systemctl_engine_prefix):
             msg = 'Dockerised environment. Engines Not Checked.'
             ss = ServiceState(message=msg)
             ss.state = True
             return ss
 
-        if not check_process_status(name=self.CHECK_WEBSERVER):
+        if not check_process_status(name=self.check_webserver):
             return ServiceState(message='Webserver is not running')  # Derp
 
-        for engine in self.CHECK_ENGINES:
+        for engine in self.check_engines:
             if not check_engine_status(name=engine):
                 msg = 'Engine {} is not running'.format(engine)  # f-strings
                 return ServiceState(message=msg)
@@ -270,8 +274,8 @@ class HealthcheckManager(object):
         :rtype: ServiceState
         """
         dbs = [d['name'] for d in self.ts_client.get_list_database()]
-        if self.CHECK_TS_DB not in dbs:
-            msg = 'Missing database {}'.format(self.CHECK_TS_DB)
+        if self.check_ts_db not in dbs:
+            msg = 'Missing database {}'.format(self.check_ts_db)
             return ServiceState(message=msg)
 
         measurements = self.ts_client.get_list_measurements()
