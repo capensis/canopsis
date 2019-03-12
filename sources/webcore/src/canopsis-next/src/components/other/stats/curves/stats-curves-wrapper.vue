@@ -53,20 +53,24 @@ export default {
       return labels;
     },
     datasets() {
-      const data = Object.keys(this.statsValues).reduce((acc, stat) => {
-        const values = this.statsValues[stat].sum.map(value => value.value);
-        acc.push({
-          data: values,
-          label: stat,
-          borderColor: this.widget.parameters.statsColors ? this.widget.parameters.statsColors[stat] : '#DDDDDD',
-          backgroundColor: 'transparent',
-        });
-        return acc;
-      }, []);
+      if (this.statsValues) {
+        const data = Object.keys(this.statsValues).reduce((acc, stat) => {
+          const values = this.statsValues[stat].sum.map(value => value.value);
+          acc.push({
+            data: values,
+            label: stat,
+            borderColor: this.widget.parameters.statsColors ? this.widget.parameters.statsColors[stat] : '#DDDDDD',
+            backgroundColor: 'transparent',
+          });
+          return acc;
+        }, []);
 
-      return {
-        data,
-      };
+        return {
+          data,
+        };
+      }
+
+      return {};
     },
   },
   methods: {
@@ -110,7 +114,7 @@ export default {
       params.duration = `${periodValue}${periodUnit.toLowerCase()}`;
       params.periods = Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue);
       params.stats = stats;
-      params.mfilter = mfilter;
+      params.mfilter = JSON.parse(mfilter.filter);
       params.tstop = tstop.startOf('h').unix();
 
       const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
