@@ -42,7 +42,6 @@ export const MODALS = {
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
-  manageHistogramGroups: 'manage-histogram-groups',
   alarmsList: 'alarms-list',
   addStat: 'add-stat',
   colorPicker: 'color-picker',

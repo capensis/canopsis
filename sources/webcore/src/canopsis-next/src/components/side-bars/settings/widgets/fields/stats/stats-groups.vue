@@ -4,27 +4,43 @@
       .font-italic.caption.ml-1 ({{ $t('settings.statsGroups.required') }})
     v-container
       v-alert(:value="errors.has('groups')", type="error") {{ $t('settings.statsGroups.required') }}
-      v-btn(@click="addGroup") {{ $t('settings.statsGroups.manageGroups') }}
+      v-btn(@click="showAddGroupModal") {{ $t('settings.statsGroups.manageGroups') }}
       v-list.secondary(dark)
         v-list-tile(v-for="(group, index) in groups", :key="index")
           v-list-tile-content {{ group.title }}
           v-list-tile-action
             v-layout
-              v-btn.primary.mx-1(@click="editGroup(group, index)", fab, small, depressed)
+              v-btn.primary.mx-1(@click="showEditGroupModal(group, index)", fab, small, depressed)
                 v-icon edit
-              v-btn.error(@click.stop="deleteGroup(index)", fab, small, depressed)
+              v-btn.error(@click.stop="showDeleteGroupModal(index)", fab, small, depressed)
                 v-icon delete
 </template>
 
 <script>
-import { pullAt } from 'lodash';
+import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
-import formMixin from '@/mixins/form';
+import formMixinArray from '@/mixins/form/array';
 
 export default {
   inject: ['$validator'],
-  mixins: [modalMixin, formMixin],
+  filters: {
+    groupToFilter(group = {}) {
+      return {
+        title: group.title || '',
+        filter: group.filter && group.filter.filter ? group.filter.filter : {},
+      };
+    },
+    filterToGroup(filter = {}) {
+      return {
+        title: filter.title || '',
+        filter: {
+          filter: filter.filter || {},
+        },
+      };
+    },
+  },
+  mixins: [modalMixin, formMixinArray],
   model: {
     prop: 'groups',
     event: 'input',
@@ -49,40 +65,35 @@ export default {
     });
   },
   methods: {
-    addGroup() {
+    showAddGroupModal() {
+      const defaultFilter = { title: '', filter: {} };
+
       this.showModal({
-        name: this.$constants.MODALS.manageHistogramGroups,
+        name: MODALS.createFilter,
         config: {
-          title: 'modals.manageHistogramGroups.title.add',
-          action: (newGroup) => {
-            this.$emit('input', [...this.groups, newGroup]);
-          },
+          title: this.$t('modals.manageHistogramGroups.title.add'),
+          filter: defaultFilter,
+          action: newFilter => this.addItemIntoArray(this.$options.filters.filterToGroup(newFilter)),
         },
       });
     },
-    editGroup(group, index) {
+
+    showEditGroupModal(group, index) {
       this.showModal({
-        name: this.$constants.MODALS.manageHistogramGroups,
+        name: MODALS.createFilter,
         config: {
-          title: 'modals.manageHistogramGroups.title.edit',
-          group,
-          action: (newGroup) => {
-            const groups = [...this.groups];
-            groups[index] = newGroup;
-            this.$emit('input', groups);
-          },
+          title: this.$t('modals.manageHistogramGroups.title.edit'),
+          filter: this.$options.filters.groupToFilter(group),
+          action: newFilter => this.updateItemInArray(index, this.$options.filters.filterToGroup(newFilter)),
         },
       });
     },
-    deleteGroup(index) {
+
+    showDeleteGroupModal(index) {
       this.showModal({
-        name: this.$constants.MODALS.confirmation,
+        name: MODALS.confirmation,
         config: {
-          action: () => {
-            const groups = [...this.groups];
-            pullAt(groups, index);
-            this.$emit('input', groups);
-          },
+          action: () => this.removeItemFromArray(index),
         },
       });
     },

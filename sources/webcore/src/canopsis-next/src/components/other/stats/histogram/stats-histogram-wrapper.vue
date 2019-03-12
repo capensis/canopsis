@@ -4,7 +4,8 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { get, omit, isString } from 'lodash';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -52,10 +53,17 @@ export default {
   methods: {
     fetchList() {
       this.widget.parameters.groups.map(async (group) => {
+        let filter = get(group, 'filter.filter', {});
+
+        if (isString(filter)) {
+          filter = JSON.parse(filter);
+        }
+
         const stat = await this.fetchStatsListWithoutStore({
           params: {
             ...omit(this.widget.parameters, ['groups', 'statsColors']),
-            mfilter: group.filter || {},
+
+            mfilter: filter,
           },
           aggregate: ['sum'],
         });
