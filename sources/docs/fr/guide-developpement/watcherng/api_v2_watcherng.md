@@ -19,6 +19,7 @@ Crée un nouveau watcher à partir du corps de la requête.
 {
     "_id": "h4z25rzg6rt-64rge354-5re4g",
     "name": "Client Capensis",
+    "type": "watcher",
     "entities": [{
         "infos": {
             "customer": {
@@ -29,7 +30,7 @@ Crée un nouveau watcher à partir du corps de la requête.
         "_id": {"regex_match": ".+/comp"}
     }],
     "state": {
-        "method": "worst",
+        "method": "worst"
     },
     "output_template": "Alarmes critiques : {{.State.Critical}}"
 }
@@ -40,7 +41,7 @@ Crée un nouveau watcher à partir du corps de la requête.
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
-}' 'http://<Canopsis_URL>/api/v2/watcher'
+}' 'http://<Canopsis_URL>/api/v2/watcherng'
 ```
 
 #### Réponse en cas de réussite
@@ -105,7 +106,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 Supprime un watcher en fonction de son `id`.
 
-**URL** : `/api/v2/watcher/<watcher>`
+**URL** : `/api/v2/watcherng/<watcher>`
 
 **Méthode** : `DELETE`
 
@@ -116,7 +117,7 @@ Supprime un watcher en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le watcher avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/watcher/h4z25rzg6rt-64rge354-5re4g'
+curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
 ```
 
 #### Réponse en cas de réussite
@@ -155,7 +156,7 @@ Récupère un ou plusieurs watchers présent en base.
 
 #### Récupération d'un watcher par id
 
-**URL** : `/api/v2/watcher/<watcher_id>`
+**URL** : `/api/v2/watcherng/<watcher_id>`
 
 **Méthode** : `GET`
 
@@ -166,7 +167,7 @@ Récupère un ou plusieurs watchers présent en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le watcher avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcher/h4z25rzg6rt-64rge354-5re4g'
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
 ```
 
 ##### Réponse en cas de réussite
@@ -181,6 +182,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcher/h4z25rzg6rt-64rge
 {
     "_id": "h4z25rzg6rt-64rge354-5re4g",
     "name": "Client Capensis",
+    "type": "watcher",
     "entities": [{
         "infos": {
             "customer": {
@@ -191,7 +193,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcher/h4z25rzg6rt-64rge
         "_id": {"regex_match": ".+/comp"}
     }],
     "state": {
-        "method": "worst",
+        "method": "worst"
     },
     "output_template": "Alarmes critiques : {{.State.Critical}}"
 }
@@ -230,7 +232,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcher/h4z25rzg6rt-64rge
 
 Récupère tous les watchers stocké en base
 
-**URL** : `/api/v2/watcher`
+**URL** : `/api/v2/watcherng`
 
 **Méthode** : `GET`
 
@@ -241,7 +243,7 @@ Récupère tous les watchers stocké en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les webhooks :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcher'
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng'
 ```
 
 ##### Réponse en cas de réussite
