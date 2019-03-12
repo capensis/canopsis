@@ -1,12 +1,13 @@
 <template lang="pug">
   div
-    view-tabs-wrapper(
-    v-if="view",
-    :view="view",
-    :isEditingMode="isEditingMode",
-    :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateView({ id, data })",
-    )
+    v-fade-transition
+      view-tabs-wrapper(
+      v-if="isViewTabsReady",
+      :view="view",
+      :isEditingMode="isEditingMode",
+      :hasUpdateAccess="hasUpdateAccess",
+      :updateViewMethod="data => updateView({ id, data })",
+      )
     .fab
       v-tooltip(left)
         v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
@@ -105,6 +106,10 @@ export default {
 
       return null;
     },
+
+    isViewTabsReady() {
+      return this.view && this.$route.query.tabId;
+    },
   },
 
   created() {
@@ -121,13 +126,15 @@ export default {
   methods: {
     registerViewOnceWatcher() {
       const unwatch = this.$watch('view', (view) => {
-        const { tabId } = this.$route.query;
+        if (view) {
+          const { tabId } = this.$route.query;
 
-        if (!tabId && view.tabs && view.tabs.length) {
-          this.$router.replace({ query: { tabId: view.tabs[0]._id } });
+          if (!tabId && view.tabs && view.tabs.length) {
+            this.$router.replace({ query: { tabId: view.tabs[0]._id } });
+          }
+
+          unwatch();
         }
-
-        unwatch();
       });
     },
 
