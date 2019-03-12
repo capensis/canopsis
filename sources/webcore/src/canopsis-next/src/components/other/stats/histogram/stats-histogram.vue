@@ -4,6 +4,8 @@ import { Bar } from 'vue-chartjs';
 export default {
   extends: Bar,
   props: {
+    ...Bar.props,
+
     labels: {
       type: Array,
     },
@@ -12,6 +14,13 @@ export default {
     },
   },
   computed: {
+    options() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+      };
+    },
+
     chartData() {
       return {
         labels: this.labels,
@@ -22,12 +31,12 @@ export default {
   watch: {
     chartData(value, oldValue) {
       if (value !== oldValue) {
-        this.renderChart(value);
+        this.renderChart(value, this.options);
       }
     },
   },
   mounted() {
-    this.renderChart(this.chartData);
+    this.renderChart(this.chartData, this.options);
   },
 };
 </script>

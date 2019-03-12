@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.stats-wrapper
     stats-histogram(:labels="labels", :datasets="datasets")
 </template>
 
@@ -73,4 +73,3 @@ export default {
   },
 };
 </script>
-
