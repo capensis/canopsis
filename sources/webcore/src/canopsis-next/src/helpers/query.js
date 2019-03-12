@@ -97,8 +97,17 @@ export function convertWeatherWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsCurvesWidgetToQuery(widget) {
+  const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
+    acc[stat] = {
+      ...widget.parameters.stats[stat],
+      stat: widget.parameters.stats[stat].stat.value,
+    };
+    return acc;
+  }, {});
+
   return {
     ...widget.parameters,
+    stats: statsList,
   };
 }
 

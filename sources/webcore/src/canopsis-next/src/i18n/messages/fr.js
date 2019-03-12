@@ -568,6 +568,7 @@ export default {
         add: 'Ajouter une statistique',
         edit: 'Editer une statistique',
       },
+      slaRequired: "La paramètre 'SLA' est obligatoire",
     },
     group: {
       create: {
