@@ -90,6 +90,18 @@ export function convertWeatherWidgetToQuery(widget) {
   return query;
 }
 
+/**
+ * This function converts widget with type 'StatsCurves' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsCurvesWidgetToQuery(widget) {
+  return {
+    ...widget.parameters,
+  };
+}
+
 export function convertStatsHistogramToQuery(widget) {
   return widget.parameters.groups.map(group =>
     ({
@@ -247,6 +259,8 @@ export function convertWidgetToQuery(widget) {
       return convertContextWidgetToQuery(widget);
     case WIDGET_TYPES.weather:
       return convertWeatherWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCurves:
+      return convertStatsCurvesWidgetToQuery(widget);
     case WIDGET_TYPES.statsHistogram:
       return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:

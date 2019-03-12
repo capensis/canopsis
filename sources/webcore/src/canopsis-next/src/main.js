@@ -13,6 +13,7 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
+import Chart from 'vue2-frappe';
 
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
@@ -34,6 +35,7 @@ import VExpansionPanelContent from '@/components/tables/v-expansion-panel-conten
 import WebhookIcon from '@/components/icons/webhook.vue';
 /* eslint-enable import/first */
 
+Vue.use(Chart);
 Vue.use(VueResizeText);
 Vue.use(filters);
 Vue.use(Vuetify, {
@@ -48,6 +50,7 @@ Vue.use(Vuetify, {
     },
   },
 });
+
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {

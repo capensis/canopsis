@@ -10,41 +10,30 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-stat-end-date-select(
-      :title="$t('settings.tstop')",
-      v-model="settings.widget.parameters.tstop",
-      :duration="settings.widget.parameters.duration"
-      )
-      v-divider
-      field-duration(v-model="settings.widget.parameters.duration", :title="$t('common.step')")
-      v-divider
-      field-periods-number(v-model="settings.widget.parameters.periods")
+      field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
-      v-list-group
-        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-stats-colors(
-          :stats="settings.widget.parameters.stats",
-          v-model="settings.widget.parameters.statsColors"
-          )
+      field-filter-editor(v-model="settings.widget.parameters.mfilter")
       v-divider
+      field-stats-colors(
+      :stats="settings.widget.parameters.stats",
+      v-model="settings.widget.parameters.statsColors"
+      )
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
 
-import entitiesStatsMixin from '@/mixins/entities/stats';
-import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
+
+import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/stats/duration.vue';
-import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
-import FieldPeriodsNumber from './fields/stats/periods-number.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatsSelect from './fields/stats/stats-select.vue';
 import FieldStatsColors from './fields/stats/stats-colors.vue';
 
@@ -56,13 +45,12 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldDuration,
-    FieldStatEndDateSelect,
-    FieldPeriodsNumber,
+    FieldFilterEditor,
+    FieldDateInterval,
     FieldStatsSelect,
     FieldStatsColors,
   },
-  mixins: [entitiesStatsMixin, widgetSettingsMixin],
+  mixins: [widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 

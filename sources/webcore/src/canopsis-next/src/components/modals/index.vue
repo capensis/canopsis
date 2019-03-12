@@ -45,6 +45,7 @@ import Watcher from './watcher/watcher.vue';
 import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
 import AddStat from './stats/add-stat.vue';
+import StatsDateInterval from './stats/stats-date-interval.vue';
 import AlarmsList from './alarm/alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
@@ -93,6 +94,7 @@ export default {
     CreateWatcherDeclareTicketEvent,
     CreateWatcherPauseEvent,
     AddStat,
+    StatsDateInterval,
     AlarmsList,
     CreateUser,
     CreateRole,
@@ -114,6 +116,7 @@ export default {
         [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.watcher]: { maxWidth: 920, lazy: true },
+        [MODALS.statsDateInterval]: { maxWidth: 920, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

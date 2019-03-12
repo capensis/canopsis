@@ -66,7 +66,7 @@
 
 <script>
 import modalInnerMixin from '@/mixins/modal/inner';
-import { MODALS } from '@/constants';
+import { MODALS, STATS_TYPES, ENTITIES_STATES } from '@/constants';
 
 export default {
   name: MODALS.addStat,
@@ -77,7 +77,7 @@ export default {
   data() {
     return {
       form: {
-        stat: this.$constants.STATS_TYPES.alarmsCreated,
+        stat: STATS_TYPES.alarmsCreated,
         title: '',
         trend: true,
         parameters: {
@@ -91,12 +91,12 @@ export default {
      * Get stats different types from constant, and return an object with stat's value and stat's translated title
      */
     statsTypes() {
-      return Object.values(this.$constants.STATS_TYPES)
+      return Object.values(STATS_TYPES)
         .map(item => ({ value: item.value, text: this.$t(`stats.types.${item.value}`), options: item.options }));
     },
     stateTypes() {
-      return Object.keys(this.$constants.ENTITIES_STATES)
-        .map(item => ({ value: this.$constants.ENTITIES_STATES[item], text: item }));
+      return Object.keys(ENTITIES_STATES)
+        .map(item => ({ value: ENTITIES_STATES[item], text: item }));
     },
     options() {
       if (this.form.stat) {

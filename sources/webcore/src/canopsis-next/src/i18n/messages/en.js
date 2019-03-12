@@ -1,4 +1,11 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import {
+  ENTITIES_STATES,
+  ENTITIES_STATUSES,
+  EVENT_ENTITY_TYPES,
+  STATS_TYPES,
+  STATS_CRITICITY,
+  STATS_QUICK_RANGES,
+} from '@/constants';
 
 export default {
   common: {
@@ -235,6 +242,29 @@ export default {
         [STATS_CRITICITY.minor]: 'minor',
         [STATS_CRITICITY.major]: 'major',
         [STATS_CRITICITY.critical]: 'critical',
+      },
+    },
+    statsDateInterval: {
+      monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
+      quickRanges: {
+        [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
+        [STATS_QUICK_RANGES.last7Days.value]: 'Last 7 days',
+        [STATS_QUICK_RANGES.last30Days.value]: 'Last 30 days',
+        [STATS_QUICK_RANGES.last1Year.value]: 'Last 1 year',
+        [STATS_QUICK_RANGES.yesterday.value]: 'Yesterday',
+        [STATS_QUICK_RANGES.previousWeek.value]: 'Previous week',
+        [STATS_QUICK_RANGES.previousMonth.value]: 'Previous month',
+        [STATS_QUICK_RANGES.today.value]: 'Today',
+        [STATS_QUICK_RANGES.todaySoFar.value]: 'Today so far',
+        [STATS_QUICK_RANGES.thisWeek.value]: 'This week',
+        [STATS_QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
+        [STATS_QUICK_RANGES.thisMonth.value]: 'This month',
+        [STATS_QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
+        [STATS_QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+        [STATS_QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+        [STATS_QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+        [STATS_QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+        [STATS_QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
       },
     },
     statsNumbers: {
