@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.stats-wrapper
     stats-curves(v-if="!pending", :labels="labels", :datasets="datasets.data")
     v-layout(v-else, justify-center)
       v-progress-circular(
@@ -114,7 +114,7 @@ export default {
       params.duration = `${periodValue}${periodUnit.toLowerCase()}`;
       params.periods = Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue);
       params.stats = stats;
-      params.mfilter = JSON.parse(mfilter.filter);
+      params.mfilter = mfilter.filter ? JSON.parse(mfilter.filter) : {};
       params.tstop = tstop.startOf('h').unix();
 
       const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
