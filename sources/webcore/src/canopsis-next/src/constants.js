@@ -46,6 +46,7 @@ export const MODALS = {
   alarmsList: 'alarms-list',
   addStat: 'add-stat',
   statsDateInterval: 'stats-date-interval',
+  statsDisplayMode: 'stats-display-mode',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
   textFieldEditor: 'text-field-editor',
@@ -476,6 +477,11 @@ export const STATS_QUICK_RANGES = {
     start: 'now-24h',
     stop: 'now',
   },
+};
+
+export const STATS_DISPLAY_MODE = {
+  value: 'value',
+  criticity: 'criticity',
 };
 
 export const WIDGET_MAX_SIZE = 12;

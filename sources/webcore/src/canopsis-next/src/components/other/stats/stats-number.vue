@@ -1,39 +1,40 @@
 <template lang="pug">
   div
     v-card
-      v-card-title
-        v-layout(justify-center)
-          h2 {{ widget.parameters.stat.title }}
-      v-data-iterator(
+      v-data-table(
         :items="stats",
-        content-tag="v-layout",
-        rows-per-page-text="",
-        row,
-        wrap,
+        :headers="tableHeaders",
+        :pagination.sync="pagination",
+        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
       )
-        v-flex(
-          slot="item",
-          slot-scope="props",
+        template(
+          slot="items",
+          slot-scope="{ item }",
           xs12,
         )
-          v-list(dense)
-            v-list-tile
-              v-list-tile-content
-                ellipsis(:text="props.item.entity.name")
-              v-list-tile-content.align-end
-                v-layout(align-center)
-                  v-chip(:style="{ backgroundColor: getChipColor(props.item.value) }")
-                    div.body-1 {{ getChipText(props.item.value) }}
-                  div.caption
-                    template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
-                    template(v-else) - {{ props.item.trend }}
+          td {{ item.entity.name }}
+          td
+            v-layout(align-center)
+              v-chip.px-1(:style="{ backgroundColor: getChipColor(item.value) }", color="white--text")
+                div.body-1.font-weight-bold {{ getChipText(item.value) }}
+              div.caption
+                template(v-if="item.trend >= 0") + {{ item.trend }}
+                template(v-else) - {{ item.trend }}
 </template>
 
 <script>
-import Ellipsis from '@/components/tables/ellipsis.vue';
+import moment from 'moment';
+
+import { PAGINATION_LIMIT } from '@/config';
+import { STATS_DISPLAY_MODE, STATS_CRITICITY } from '@/constants';
+
+import { parseStringToDateInterval } from '@/helpers/date-intervals';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+
+import Ellipsis from '@/components/tables/ellipsis.vue';
 
 export default {
   components: {
@@ -53,34 +54,55 @@ export default {
   data() {
     return {
       stats: [],
+      pagination: {
+        sortBy: 'value',
+        descending: true,
+        rowsPerPage: PAGINATION_LIMIT,
+      },
+      tableHeaders: [
+        {
+          text: 'Entity',
+          value: 'entity.name',
+          sortable: true,
+        },
+        {
+          text: 'Value',
+          value: 'value',
+          sortable: true,
+        },
+      ],
     };
   },
   computed: {
     getChipColor() {
       return (value) => {
-        const { yesNoMode, criticityLevels, statColors } = this.widget.parameters;
-
-        if (yesNoMode) {
-          return value === 0 ? statColors.ok : statColors.critical;
-        }
+        const { colors, criticityLevels } = this.widget.parameters.displayMode.parameters;
 
         if (value < criticityLevels.minor) {
-          return statColors.ok;
+          return colors.ok;
         } else if (value < criticityLevels.major) {
-          return statColors.minor;
+          return colors.minor;
         } else if (value < criticityLevels.critical) {
-          return statColors.major;
+          return colors.major;
         }
 
-        return statColors.critical;
+        return colors.critical;
       };
     },
     getChipText() {
       return (value) => {
-        const { yesNoMode } = this.widget.parameters;
+        const { mode, parameters } = this.widget.parameters.displayMode;
+        const { criticityLevels } = parameters;
 
-        if (yesNoMode) {
-          return value === 0 ? this.$t('common.no') : this.$t('common.yes');
+        if (mode === STATS_DISPLAY_MODE.criticity) {
+          if (value < criticityLevels.minor) {
+            return STATS_CRITICITY.ok;
+          } else if (value < criticityLevels.major) {
+            return STATS_CRITICITY.minor;
+          } else if (value < criticityLevels.critical) {
+            return STATS_CRITICITY.major;
+          }
+          return STATS_CRITICITY.critical;
         }
 
         return value;
@@ -88,11 +110,55 @@ export default {
     },
   },
   methods: {
+    // Determine if tstart and tstop are valid Dates or Dynamic Date strings (Ex: 'now')
+    dateParse(date, type) {
+      if (!moment(date).isValid()) {
+        try {
+          return parseStringToDateInterval(date, type);
+        } catch (err) {
+          // TODO: DISPLAY AN ALERT TO THE USER
+          console.warn(err);
+          return err;
+        }
+      } else {
+        return moment(date);
+      }
+    },
+
     async fetchList() {
-      const query = { ...this.query };
+      const params = {};
+      const {
+        dateInterval,
+        mfilter,
+        stat,
+        trend,
+      } = this.getQuery();
+      const { periodValue } = dateInterval;
+      let { periodUnit, tstart, tstop } = dateInterval;
+
+      tstart = this.dateParse(tstart, 'start');
+      tstop = this.dateParse(tstop, 'stop');
+
+
+      if (periodUnit === 'm') {
+        periodUnit = periodUnit.toUpperCase();
+        // If period unit is 'month', we need to put the dates at the first day of the month, at 00:00 UTC
+        const monthlyRoundedTstart = moment.tz(tstart, moment.tz.guess()).startOf('month');
+        // Add the difference between the local date, and the UTC one.
+        tstart = monthlyRoundedTstart.add(monthlyRoundedTstart.utcOffset(), 'm');
+        const monthlyRoundedTstop = moment.tz(tstop, moment.tz.guess()).startOf('month');
+        // Add the difference between the local date, and the UTC one.
+        tstop = monthlyRoundedTstop.add(monthlyRoundedTstop.utcOffset(), 'm');
+      }
+
+      params.duration = `${periodValue}${periodUnit.toLowerCase()}`;
+      params.stat = stat;
+      params.mfilter = mfilter.filter ? JSON.parse(mfilter.filter) : {};
+      params.tstop = tstop.startOf('h').unix();
+      params.trend = trend;
 
       this.stats = await this.fetchStatValuesWithoutStore({
-        params: query,
+        params,
       });
     },
   },

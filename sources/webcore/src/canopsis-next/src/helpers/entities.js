@@ -3,7 +3,7 @@ import { get, omit } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
+import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, STATS_DISPLAY_MODE, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
 
 import uuid from './uuid';
 
@@ -183,23 +183,29 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.statsNumber:
       specialParameters = {
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
         mfilter: {},
         stat: {},
-        yesNoMode: false,
-        criticityLevels: {
-          minor: 20,
-          major: 30,
-          critical: 40,
-        },
-        statColors: {
-          ok: '#66BB6A',
-          minor: '#FFEE58',
-          major: '#FFA726',
-          critical: '#FF7043',
+        displayMode: {
+          type: STATS_DISPLAY_MODE.criticity,
+          parameters: {
+            criticityLevels: {
+              minor: 20,
+              major: 30,
+              critical: 40,
+            },
+            colors: {
+              ok: '#66BB6A',
+              minor: '#FFEE58',
+              major: '#FFA726',
+              critical: '#FF7043',
+            },
+          },
         },
       };
       break;
