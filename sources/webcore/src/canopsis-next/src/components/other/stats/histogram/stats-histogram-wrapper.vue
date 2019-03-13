@@ -55,7 +55,7 @@ export default {
         const stat = await this.fetchStatsListWithoutStore({
           params: {
             ...omit(this.widget.parameters, ['groups', 'statsColors']),
-            mfilter: group.filter || {},
+            mfilter: group.filter.filter ? JSON.parse(group.filter.filter) : {},
           },
           aggregate: ['sum'],
         });
