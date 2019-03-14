@@ -481,6 +481,8 @@ export const STATS_QUICK_RANGES = {
   },
 };
 
+export const STATS_DEFAULT_COLOR = '#DDDDDD';
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;

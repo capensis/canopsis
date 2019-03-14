@@ -13,8 +13,8 @@
             label="Period value"
             )
           v-select.pt-0(
-          :items="periodUnits",
           v-model="periodUnit",
+          :items="periodUnits",
           label="Period unit",
           )
         v-alert.mb-2(
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS } from '@/constants';
+import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
 
 import { dateParse } from '@/helpers/date-intervals';
 
@@ -59,19 +59,19 @@ export default {
       periodUnits: [
         {
           text: this.$tc('common.times.hour'),
-          value: 'h',
+          value: STATS_DURATION_UNITS.hour,
         },
         {
           text: this.$tc('common.times.day'),
-          value: 'd',
+          value: STATS_DURATION_UNITS.day,
         },
         {
           text: this.$tc('common.times.week'),
-          value: 'w',
+          value: STATS_DURATION_UNITS.week,
         },
         {
           text: this.$tc('common.times.month'),
-          value: 'm',
+          value: STATS_DURATION_UNITS.month,
         },
       ],
       errors: [],
@@ -88,7 +88,10 @@ export default {
 
       this.periodValue = periodValue;
       this.periodUnit = periodUnit;
-      this.dateForm = { ...this.dateForm, tstart, tstop };
+      this.dateForm = {
+        tstart,
+        tstop,
+      };
     }
   },
   methods: {
@@ -103,8 +106,8 @@ export default {
         const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
         const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
 
-        if (convertedTstop.isBefore(convertedTstart)) {
-          this.errors.push('Tstop before tstart');
+        if (convertedTstop.isSameOrBefore(convertedTstart)) {
+          this.errors.push('Tstop should be more than tstart');
           return false;
         }
       } catch (err) {

@@ -79,17 +79,19 @@ export default {
         return activeRange;
       },
       set(range) {
-        let tstart = range.start;
-        let tstop = range.stop;
+        if (range.value !== this.range.value) {
+          let tstart = range.start;
+          let tstop = range.stop;
 
-        if (!tstop || !tstart) {
-          const now = moment().format(DATETIME_FORMATS.picker);
+          if (!tstop || !tstart) {
+            const now = moment().format(DATETIME_FORMATS.picker);
 
-          tstart = now;
-          tstop = now;
+            tstart = now;
+            tstop = now;
+          }
+
+          this.$emit('input', { tstart, tstop });
         }
-
-        this.$emit('input', { tstart, tstop });
       },
     },
     quickRanges() {

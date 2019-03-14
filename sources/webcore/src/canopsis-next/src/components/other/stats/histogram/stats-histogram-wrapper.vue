@@ -1,18 +1,29 @@
 <template lang="pug">
   div.stats-wrapper
-    stats-histogram(:labels="labels", :datasets="datasets")
+    progress-overlay(:pending="pending")
+    v-fade-transition
+      stats-histogram(:labels="labels", :datasets="datasets")
 </template>
 
 <script>
-import { get, omit, isString } from 'lodash';
+import moment from 'moment';
+import { get, isString } from 'lodash';
+
+import { DATETIME_FORMATS, STATS_DURATION_UNITS, STATS_DEFAULT_COLOR } from '@/constants';
+
+import { dateParse } from '@/helpers/date-intervals';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
 import StatsHistogram from './stats-histogram.vue';
 
 export default {
   components: {
+    ProgressOverlay,
     StatsHistogram,
   },
   mixins: [entitiesStatsMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
@@ -24,52 +35,95 @@ export default {
   },
   data() {
     return {
-      stats: {},
+      pending: true,
+      stats: null,
     };
   },
   computed: {
     labels() {
-      return Object.keys(this.stats);
+      if (this.stats) {
+        const stats = Object.keys(this.stats);
+
+        /**
+        'start' correspond to the beginning timestamp.
+        It's the same for all stats, that's why we can just take the first.
+        We then give it to the date filter, to display it with a date format
+        */
+        return this.stats[stats[0]].sum.map(value => this.$options.filters.date(value.end, 'long', true));
+      }
+
+      return [];
     },
     datasets() {
-      return Object.keys(this.widget.parameters.stats).map((stat) => {
-        const data = Object.values(this.stats).reduce((acc, group) => {
-          if (group.aggregations) {
-            acc.push(group.aggregations[stat].sum);
-          }
+      if (this.stats) {
+        return Object.keys(this.stats).reduce((acc, stat) => {
+          const values = this.stats[stat].sum.map(value => value.value);
 
+          acc.push({
+            data: values,
+            label: stat,
+            backgroundColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
+          });
           return acc;
         }, []);
+      }
 
-        return {
-          data,
-          label: stat,
-          backgroundColor: this.widget.parameters.statsColors ? this.widget.parameters.statsColors[stat] : '#DDDDDD',
-        };
-      });
+      return [];
     },
 
   },
   methods: {
-    fetchList() {
-      this.widget.parameters.groups.map(async (group) => {
-        let filter = get(group, 'filter.filter', {});
+    getQuery() {
+      const { dateInterval, stats, mfilter } = this.query;
+      const { periodValue } = dateInterval;
+      let { periodUnit, tstart, tstop } = dateInterval;
+      let filter = get(mfilter, 'filter', {});
 
-        if (isString(filter)) {
-          filter = JSON.parse(filter);
-        }
+      if (isString(filter)) {
+        filter = JSON.parse(filter);
+      }
 
-        const stat = await this.fetchStatsListWithoutStore({
-          params: {
-            ...omit(this.widget.parameters, ['groups', 'statsColors']),
+      tstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
+      tstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
 
-            mfilter: filter,
-          },
-          aggregate: ['sum'],
-        });
-        this.$set(this.stats, group.title, stat);
+      if (periodUnit === STATS_DURATION_UNITS.month) {
+        periodUnit = periodUnit.toUpperCase();
+
+        /**
+         * If period unit is 'month', we need to put the dates at the first day of the month, at 00:00 UTC
+         * And add the difference between the local date, and the UTC one.
+         */
+        tstart = moment.utc(tstart).startOf('month').tz(moment.tz.guess());
+        tstop = moment.utc(tstop).startOf('month').tz(moment.tz.guess());
+      }
+
+      return {
+        stats,
+
+        mfilter: filter,
+        duration: `${periodValue}${periodUnit.toLowerCase()}`,
+        periods: Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue),
+        tstop: tstop.startOf('h').unix(),
+      };
+    },
+
+    async fetchList() {
+      this.pending = true;
+
+      const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
+        params: this.getQuery(),
+        aggregate: ['sum'],
       });
+
+      this.stats = aggregations;
+      this.pending = false;
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .stats-wrapper {
+    position: relative;
+  }
+</style>

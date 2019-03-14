@@ -269,9 +269,8 @@ export function convertWidgetToQuery(widget) {
     case WIDGET_TYPES.weather:
       return convertWeatherWidgetToQuery(widget);
     case WIDGET_TYPES.statsCurves:
-      return convertStatsCurvesWidgetToQuery(widget);
     case WIDGET_TYPES.statsHistogram:
-      return convertStatsHistogramToQuery(widget);
+      return convertStatsCurvesWidgetToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:

@@ -18,6 +18,18 @@ export default {
       return {
         responsive: true,
         maintainAspectRatio: false,
+        tooltips: {
+          mode: 'index',
+          intersect: false,
+        },
+        scales: {
+          xAxes: [{
+            stacked: true,
+          }],
+          yAxes: [{
+            stacked: true,
+          }],
+        },
       };
     },
 

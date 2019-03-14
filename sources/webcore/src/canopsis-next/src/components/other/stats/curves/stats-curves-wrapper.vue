@@ -1,6 +1,6 @@
 <template lang="pug">
   div.stats-wrapper
-    stats-curves(v-if="!pending", :labels="labels", :datasets="datasets.data")
+    stats-curves(v-if="!pending", :labels="labels", :datasets="datasets")
     v-layout(v-else, justify-center)
       v-progress-circular(
       indeterminate,
@@ -12,7 +12,7 @@
 import { get, isString } from 'lodash';
 import moment from 'moment';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, STATS_DURATION_UNITS, STATS_DEFAULT_COLOR } from '@/constants';
 import { dateParse } from '@/helpers/date-intervals';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
@@ -56,23 +56,19 @@ export default {
     },
     datasets() {
       if (this.statsValues) {
-        const data = Object.keys(this.statsValues).reduce((acc, stat) => {
+        return Object.keys(this.statsValues).reduce((acc, stat) => {
           const values = this.statsValues[stat].sum.map(value => value.value);
           acc.push({
             data: values,
             label: stat,
-            borderColor: this.widget.parameters.statsColors ? this.widget.parameters.statsColors[stat] : '#DDDDDD',
+            borderColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
             backgroundColor: 'transparent',
           });
           return acc;
         }, []);
-
-        return {
-          data,
-        };
       }
 
-      return {};
+      return [];
     },
   },
   methods: {
@@ -89,15 +85,15 @@ export default {
       tstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
       tstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
 
-      if (periodUnit === 'm') {
+      if (periodUnit === STATS_DURATION_UNITS.month) {
         periodUnit = periodUnit.toUpperCase();
-        // If period unit is 'month', we need to put the dates at the first day of the month, at 00:00 UTC
-        const monthlyRoundedTstart = moment.tz(tstart, moment.tz.guess()).startOf('month');
-        // Add the difference between the local date, and the UTC one.
-        tstart = monthlyRoundedTstart.add(monthlyRoundedTstart.utcOffset(), 'm');
-        const monthlyRoundedTstop = moment.tz(tstop, moment.tz.guess()).startOf('month');
-        // Add the difference between the local date, and the UTC one.
-        tstop = monthlyRoundedTstop.add(monthlyRoundedTstop.utcOffset(), 'm');
+
+        /**
+         * If period unit is 'month', we need to put the dates at the first day of the month, at 00:00 UTC
+         * And add the difference between the local date, and the UTC one.
+         */
+        tstart = moment.utc(tstart).startOf('month').tz(moment.tz.guess());
+        tstop = moment.utc(tstop).startOf('month').tz(moment.tz.guess());
       }
 
       return {
