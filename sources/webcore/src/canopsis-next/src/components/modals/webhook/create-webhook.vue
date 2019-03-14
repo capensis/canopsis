@@ -38,8 +38,8 @@ export default {
     const defaultForm = {
       hook: {
         triggers: [],
-        event_pattern: [],
-        alarm_pattern: [],
+        event_patterns: [],
+        alarm_patterns: [],
         entity_pattern: [],
       },
       request: {
@@ -75,7 +75,7 @@ export default {
       if (isValid) {
         if (this.config.action) {
           const preparedForm = this.hasBlockedTriggers ? setInSeveral(this.form, {
-            'hook.event_pattern': [],
+            'hook.event_patterns': [],
             declare_ticket: {},
           }) : this.form;
 
