@@ -3,7 +3,14 @@ import { get, omit } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, STATS_DISPLAY_MODE, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
+import {
+  WIDGET_TYPES,
+  STATS_CALENDAR_COLORS,
+  STATS_TYPES,
+  STATS_DURATION_UNITS,
+  STATS_DISPLAY_MODE,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+} from '@/constants';
 
 import uuid from './uuid';
 
@@ -190,13 +197,21 @@ export function generateWidgetByType(type) {
           tstop: 'now/d',
         },
         mfilter: {},
-        stat: {},
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
+        },
         limit: 10,
         sortOrder: 'DESC',
         displayMode: {
           type: STATS_DISPLAY_MODE.criticity,
           parameters: {
             criticityLevels: {
+              ok: 0,
               minor: 20,
               major: 30,
               critical: 40,

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-card
+    v-card(v-if="!pending")
       v-data-table(
         :items="stats",
         :headers="tableHeaders",
@@ -19,6 +19,11 @@
                 div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
               div.caption
                 template(v-if="item[query.stat.title].trend >= 0") + {{ item[query.stat.title].trend }}
+    v-layout(v-else, justify-center)
+      v-progress-circular(
+      indeterminate,
+      color="primary",
+      )
 </template>
 
 <script>
@@ -52,6 +57,7 @@ export default {
   },
   data() {
     return {
+      pending: false,
       stats: [],
       pagination: {
         sortBy: 'value',
@@ -125,6 +131,7 @@ export default {
     },
 
     async fetchList() {
+      this.pending = true;
       const params = {};
       const {
         dateInterval,
@@ -166,6 +173,8 @@ export default {
       this.stats = await this.fetchStatValuesWithoutStore({
         params,
       });
+
+      this.pending = false;
     },
   },
 };

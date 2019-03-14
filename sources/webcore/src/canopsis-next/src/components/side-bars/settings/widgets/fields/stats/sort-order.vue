@@ -1,6 +1,6 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") Sort Order
+    v-list-tile(slot="activator") {{ $t('settings.statsNumbers.sortOrder') }}
     v-container
       v-select(
       :value="value",

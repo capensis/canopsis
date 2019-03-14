@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { find } from 'lodash';
+
 import { MODALS, STATS_DISPLAY_MODE } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -62,7 +64,8 @@ export default {
   },
   mounted() {
     if (this.config.displayMode) {
-      this.form = { ...this.config.displayMode };
+      const mode = find(STATS_DISPLAY_MODE, displayMode => displayMode === this.config.displayMode.type);
+      this.form = { ...this.config.displayMode, mode };
     }
   },
   methods: {
