@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.stats-wrapper
     stats-curves(v-if="!pending", :labels="labels", :datasets="datasets.data")
     v-layout(v-else, justify-center)
       v-progress-circular(
@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { get, isString } from 'lodash';
 import moment from 'moment';
 
 import { DATETIME_FORMATS } from '@/constants';
@@ -54,32 +55,39 @@ export default {
       return labels;
     },
     datasets() {
-      const data = Object.keys(this.statsValues).reduce((acc, stat) => {
-        const values = this.statsValues[stat].sum.map(value => value.value);
-        acc.push({
-          data: values,
-          label: stat,
-          borderColor: this.widget.parameters.statsColors ? this.widget.parameters.statsColors[stat] : '#DDDDDD',
-          backgroundColor: 'transparent',
-        });
-        return acc;
-      }, []);
+      if (this.statsValues) {
+        const data = Object.keys(this.statsValues).reduce((acc, stat) => {
+          const values = this.statsValues[stat].sum.map(value => value.value);
+          acc.push({
+            data: values,
+            label: stat,
+            borderColor: this.widget.parameters.statsColors ? this.widget.parameters.statsColors[stat] : '#DDDDDD',
+            backgroundColor: 'transparent',
+          });
+          return acc;
+        }, []);
 
-      return {
-        data,
-      };
+        return {
+          data,
+        };
+      }
+
+      return {};
     },
   },
   methods: {
     getQuery() {
-      const query = {};
-      const { dateInterval, mfilter, stats } = this.query;
+      const { dateInterval, stats, mfilter } = this.query;
       const { periodValue } = dateInterval;
       let { periodUnit, tstart, tstop } = dateInterval;
+      let filter = get(mfilter, 'filter', {});
+
+      if (isString(filter)) {
+        filter = JSON.parse(filter);
+      }
 
       tstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
       tstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
-
 
       if (periodUnit === 'm') {
         periodUnit = periodUnit.toUpperCase();
@@ -92,13 +100,14 @@ export default {
         tstop = monthlyRoundedTstop.add(monthlyRoundedTstop.utcOffset(), 'm');
       }
 
-      query.duration = `${periodValue}${periodUnit.toLowerCase()}`;
-      query.periods = Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue);
-      query.stats = stats;
-      query.mfilter = mfilter;
-      query.tstop = tstop.startOf('h').unix();
+      return {
+        stats,
 
-      return query;
+        mfilter: filter,
+        duration: `${periodValue}${periodUnit.toLowerCase()}`,
+        periods: Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue),
+        tstop: tstop.startOf('h').unix(),
+      };
     },
 
     async fetchList() {

@@ -587,6 +587,7 @@ export default {
         add: 'Add a stat',
         edit: 'Edit a stat',
       },
+      slaRequired: 'SLA parameter is required',
     },
     group: {
       create: {

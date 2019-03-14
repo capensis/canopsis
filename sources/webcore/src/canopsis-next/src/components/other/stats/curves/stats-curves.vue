@@ -4,6 +4,8 @@ import { Line } from 'vue-chartjs';
 export default {
   extends: Line,
   props: {
+    ...Line.props,
+
     labels: {
       type: Array,
     },
@@ -18,16 +20,23 @@ export default {
         datasets: this.datasets,
       };
     },
+    options() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+      };
+    },
+
   },
   watch: {
     chartData(value, oldValue) {
       if (value !== oldValue) {
-        this.renderChart(value);
+        this.renderChart(value, this.options);
       }
     },
   },
   mounted() {
-    this.renderChart(this.chartData);
+    this.renderChart(this.chartData, this.options);
   },
 };
 </script>
