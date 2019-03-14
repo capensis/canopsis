@@ -40,7 +40,7 @@ export default {
         triggers: [],
         event_patterns: [],
         alarm_patterns: [],
-        entity_pattern: [],
+        entity_patterns: [],
       },
       request: {
         method: '',
