@@ -1,0 +1,670 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: rabbitmq
+  name: rabbitmq
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: rabbitmq
+    spec:
+      volumes:
+      - name: rabbitmqdata
+        emptyDir: {}
+      containers:
+      - env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: cpsrabbit
+        - name: RABBITMQ_DEFAULT_PASS
+          value: canopsis
+        - name: RABBITMQ_DEFAULT_VHOST
+          value: canopsis
+        image: 'rabbitmq:3-management'
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672
+        volumeMounts:
+        - name: rabbitmqdata
+          mountPath: /var/lib/rabbitmq
+          #resources:
+          #limits:
+          #memory: "2147483648"
+      restartPolicy: Always
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: task-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /Datas/mongo1
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pv-claim
+  labels:
+    app: mongopv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  labels:
+    appdb: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      appdb: mongodb
+  template:
+    metadata:
+      labels:
+        appdb: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: 'mongo:3.6-jessie'
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodbdata
+          mountPath: /data/db
+        - name: dumpdata
+          mountPath: /dump/dumpdata
+        - name: docker-mongo
+          mountPath: /docker-entrypoint-initdb.d
+        args:
+          - "--wiredTigerCacheSizeGB"
+          - "2560"
+        envFrom:
+        - configMapRef:
+            name: mongodb-compose-mongo-env
+      volumes:
+      - name: mongodbdata
+        persistentVolumeClaim:
+          claimName: mongo-pv-claim
+      - name: dumpdata
+        emptyDir: {}
+      - name: docker-mongo
+        hostPath:
+          path: /Datas/Test-kubernetes/docker/mongo
+          #resources:
+          #limits:
+          #memory: "3221225472"
+          #restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: influxdb
+  name: influxdb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: influxdb
+    spec:
+      volumes:
+      - name: influxdbdata
+        emptyDir: {}
+      containers:
+      - env:
+        - name: INFLUXDB_DB
+          value: canopsis
+        - name: INFLUXDB_ADMIN_USER
+          value: admin
+        - name: INFLUXDB_ADMIN_PASSWORD
+          value: admin
+        - name: INFLUXDB_USER
+          value: cpsinflux
+        - name: INFLUXDB_USER_PASSWORD
+          value: canopsis
+        image: 'influxdb:1.5-alpine'
+        name: influxdb
+        ports:
+        - containerPort: 8086
+        - containerPort: 4444
+          protocol: UDP
+        - containerPort: 8083
+        volumeMounts:
+        - name: influxdbdata
+          mountPath: /var/lib/influxdb
+          #resources:
+          #limits:
+          #memory: "3221225472"
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: redis
+  name: redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: redis
+    spec:
+      containers:
+      - image: 'redis:4.0'
+        name: redis
+        ports:
+        - containerPort: 6379
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    io.kompose.service: provisionning
+  name: provisionning
+spec:
+  containers:
+  - name: provisionning
+    image: 'canopsis/canopsis-prov:3.12.0'
+    envFrom:
+    - configMapRef:
+        name: compose-env
+  restartPolicy: Never
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: pbehavior
+  name: pbehavior
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: pbehavior
+    spec:
+      containers:
+      - name: pbehavior
+        image: 'canopsis/canopsis-core:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        env:
+        - name: ENGINE_NAME
+          value: pbehavior
+        - name: ENGINE_MODULE
+          value: canopsis.engines.dynamic
+          #resources:
+          #limits:
+          #memory: "209715200"
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: watcher
+  name: watcher
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: watcher
+    spec:
+      containers:
+      - name: watcher
+        image: 'canopsis/canopsis-core:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        env:
+        - name: ENGINE_NAME
+          value: watcher
+        - name: ENGINE_MODULE
+          value: canopsis.engines.dynamic
+          #resources:
+          #limits:
+          #memory: "209715200"
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: action
+  name: action
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: action
+    spec:
+      containers:
+      - name: action
+        image: 'canopsis/engine-action:3.12.0'
+        args:
+        - /engine-action
+        envFrom:
+        - configMapRef:
+            name: compose-env
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: heartbeat
+  name: heartbeat
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: heartbeat
+    spec:
+      containers:
+      - name: heartbeat
+        image: 'canopsis/engine-heartbeat:3.12.0'
+        args:
+        - /engine-heartbeat
+        envFrom:
+        - configMapRef:
+            name: compose-env
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: axe
+  name: axe
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: axe
+    spec:
+      volumes:
+      - name: axedata
+        emptyDir: {}
+      containers:
+      - name: axe
+        image: 'canopsis/engine-axe:3.12.0'
+        args:
+        - /engine-axe
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        volumeMounts:
+        - name: axedata
+          mountPath: /testdata/
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: che
+  name: che
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: che
+    spec:
+      containers:
+      - name: che
+        image: 'canopsis/engine-che:3.12.0'
+        args:
+        - /engine-che
+        - -publishQueue
+        - Engine_axe
+        envFrom:
+        - configMapRef:
+            name: compose-env
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: scheduler
+  name: scheduler
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: scheduler
+    spec:
+      containers:
+      - name: scheduler
+        image: 'canopsis/canopsis-core:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        env:
+        - name: ENGINE_NAME
+          value: scheduler
+        - name: ENGINE_MODULE
+          value: canopsis.engines.scheduler
+          #resources:
+          #limits:
+          #memory: "209715200"
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: task-mail
+  name: task-mail
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: task-mail
+    spec:
+      containers:
+      - name: task-mail
+        image: 'canopsis/canopsis-core:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        env:
+        - name: ENGINE_NAME
+          value: task_mail
+        - name: ENGINE_MODULE
+          value: canopsis.engines.task_mail
+          #resources:
+          #limits:
+          #memory: "209715200"
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: task-importctx
+  name: task-importctx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: task-importctx
+    spec:
+      volumes:
+      - name: importctxdata
+        emptyDir: {}
+      containers:
+      - name: task-importctx
+        image: 'canopsis/canopsis-core:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        env:
+        - name: ENGINE_NAME
+          value: task_importctx
+        - name: ENGINE_MODULE
+          value: canopsis.engines.task_importctx
+        volumeMounts:
+        - name: importctxdata
+          mountPath: /opt/canopsis/tmp
+          #resources:
+          #limits:
+          #memory: "209715200"
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: metric
+  name: metric
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: metric
+    spec:
+      containers:
+      - name: metric
+        image: 'canopsis/canopsis-core:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        env:
+        - name: ENGINE_NAME
+          value: metric
+        - name: ENGINE_MODULE
+          value: canopsis.engines.metric
+          #resources:
+          #limits:
+          #memory: "209715200"
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: webserver
+  name: webserver
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: webserver
+    spec:
+      volumes:
+      - name: importctxdata
+        emptyDir: {}
+      - name: dumpdata
+        emptyDir: {}
+      containers:
+      - name: webserver
+        image: 'canopsis/canopsis-core:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+        env:
+        - name: CPS_WEBSERVER
+          value: "1"
+        ports:
+        - containerPort: 8082
+        volumeMounts:
+        - name: importctxdata
+          mountPath: /opt/canopsis/tmp
+        - name: dumpdata
+          mountPath: /opt/canopsis/var/www/src/canopsis/dumpdata
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: init
+  name: init
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: init
+    spec:
+      containers:
+      - name: init
+        image: 'canopsis/init:3.12.0'
+        envFrom:
+        - configMapRef:
+            name: compose-env
+      restartPolicy: Always
+---
+apiVersion: v1
+data:
+  CPS_AMQP_URL: amqp://cpsrabbit:canopsis@rabbitmq/canopsis
+  CPS_MONGO_URL: mongodb://cpsmongo:canopsis@mongodb/canopsis
+  CPS_REDIS_URL: redis://redis:6379/0
+  CPS_INFLUX_URL: influxdb://cpsinflux:canopsis@influxdb/canopsis
+  MONGODB_HOST: mongodb
+kind: ConfigMap
+metadata:
+  name: compose-env
+---
+apiVersion: v1
+data:
+  MONGO_INITDB_ROOT_USERNAME: root
+  MONGO_INITDB_ROOT_PASSWORD: root
+  MONGO_INITDB_DATABASE: canopsis
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mongodb-compose-mongo-env
+  name: mongodb-compose-mongo-env
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: influxdb
+  name: influxdb
+spec:
+  type: NodePort
+  ports:
+  - name: "8086"
+    port: 8086
+    protocol: TCP
+  - name: "4444"
+    port: 4444
+    protocol: UDP
+  - name: "8083"
+    port: 8083
+    protocol: TCP
+  selector:
+    io.kompose.service: influxdb
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  ports:
+  - port: 27017
+    protocol: TCP
+  selector:
+    appdb: mongodb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: rabbitmq
+  name: rabbitmq
+spec:
+  type: NodePort
+  ports:
+  - name: "5672"
+    port: 5672
+    protocol: TCP
+  - name: "15672"
+    port: 15672
+    protocol: TCP
+  selector:
+    io.kompose.service: rabbitmq
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: redis
+  name: redis
+spec:
+  type: NodePort
+  ports:
+  - name: "6379"
+    port: 6379
+    protocol: TCP
+  selector:
+    io.kompose.service: redis
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+data:
+  CPS_AMQP_URL: amqp://cpsrabbit:canopsis@rabbitmq/canopsis
+  CPS_MONGO_URL: mongodb://cpsmongo:canopsis@mongodb/canopsis
+  CPS_REDIS_URL: redis://redis:6379/0
+  CPS_INFLUX_URL: influxdb://cpsinflux:canopsis@influxdb/canopsis
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: webserver-compose-env
+  name: webserver-compose-env
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: webserver
+  name: webserver
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8082
+  selector:
+    io.kompose.service: webserver
+status:
+  loadBalancer: {}
