@@ -146,3 +146,13 @@ export function parseStringToDateInterval(dateString, type) {
 
   throw new Error('Date string pattern not recognized');
 }
+
+export function dateParse(date, type, format) {
+  const momentDate = moment(date, format);
+
+  if (!momentDate.isValid()) {
+    return parseStringToDateInterval(date, type);
+  }
+
+  return momentDate;
+}

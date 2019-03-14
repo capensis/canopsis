@@ -130,17 +130,6 @@ export function generateWidgetByType(type) {
       };
       break;
     case WIDGET_TYPES.statsHistogram:
-      specialParameters = {
-        mfilter: {},
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        groups: [],
-        stats: {},
-        statsColors: {},
-      };
-      break;
     case WIDGET_TYPES.statsCurves:
       specialParameters = {
         mfilter: {},

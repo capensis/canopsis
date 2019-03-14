@@ -11,7 +11,8 @@
 <script>
 import moment from 'moment';
 
-import { parseStringToDateInterval } from '@/helpers/date-intervals';
+import { DATETIME_FORMATS } from '@/constants';
+import { dateParse } from '@/helpers/date-intervals';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -70,30 +71,14 @@ export default {
     },
   },
   methods: {
-    // Determine if tstart and tstop are valid Dates or Dynamic Date strings (Ex: 'now')
-    dateParse(date, type) {
-      if (!moment(date).isValid()) {
-        try {
-          return parseStringToDateInterval(date, type);
-        } catch (err) {
-          // TODO: DISPLAY AN ALERT TO THE USER
-          console.warn(err);
-          return err;
-        }
-      } else {
-        return moment(date);
-      }
-    },
-
-    async fetchList() {
-      this.pending = true;
-      const params = {};
-      const { dateInterval, mfilter, stats } = this.getQuery();
+    getQuery() {
+      const query = {};
+      const { dateInterval, mfilter, stats } = this.query;
       const { periodValue } = dateInterval;
       let { periodUnit, tstart, tstop } = dateInterval;
 
-      tstart = this.dateParse(tstart, 'start');
-      tstop = this.dateParse(tstop, 'stop');
+      tstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
+      tstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
 
 
       if (periodUnit === 'm') {
@@ -107,14 +92,20 @@ export default {
         tstop = monthlyRoundedTstop.add(monthlyRoundedTstop.utcOffset(), 'm');
       }
 
-      params.duration = `${periodValue}${periodUnit.toLowerCase()}`;
-      params.periods = Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue);
-      params.stats = stats;
-      params.mfilter = mfilter;
-      params.tstop = tstop.startOf('h').unix();
+      query.duration = `${periodValue}${periodUnit.toLowerCase()}`;
+      query.periods = Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue);
+      query.stats = stats;
+      query.mfilter = mfilter;
+      query.tstop = tstop.startOf('h').unix();
+
+      return query;
+    },
+
+    async fetchList() {
+      this.pending = true;
 
       const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
-        params,
+        params: this.getQuery(),
         aggregate: ['sum'],
       });
 

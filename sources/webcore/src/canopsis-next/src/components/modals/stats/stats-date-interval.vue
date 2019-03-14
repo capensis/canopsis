@@ -34,11 +34,9 @@
 </template>
 
 <script>
-import moment from 'moment';
+import { MODALS, DATETIME_FORMATS } from '@/constants';
 
-import { MODALS } from '@/constants';
-
-import { parseStringToDateInterval } from '@/helpers/date-intervals';
+import { dateParse } from '@/helpers/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -102,8 +100,8 @@ export default {
       const { tstart, tstop } = this.dateForm;
 
       try {
-        const convertedTstart = moment(tstart).isValid() ? moment(tstart) : parseStringToDateInterval(tstart, 'start');
-        const convertedTstop = moment(tstop).isValid() ? moment(tstop) : parseStringToDateInterval(tstop, 'stop');
+        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
+        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
 
         if (convertedTstop.isBefore(convertedTstart)) {
           this.errors.push('Tstop before tstart');

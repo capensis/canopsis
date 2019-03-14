@@ -321,6 +321,7 @@ export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
+  picker: 'DD/MM/YYYY hh:mm',
 };
 
 export const STATS_TYPES = {
@@ -385,6 +386,9 @@ export const STATS_CRITICITY = {
 };
 
 export const STATS_QUICK_RANGES = {
+  custom: {
+    value: 'custom',
+  },
   last2Days: {
     value: 'last2Days',
     start: 'now-2d',

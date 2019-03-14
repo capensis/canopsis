@@ -247,6 +247,7 @@ export default {
     statsDateInterval: {
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
       quickRanges: {
+        [STATS_QUICK_RANGES.custom.value]: 'Custom',
         [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
         [STATS_QUICK_RANGES.last7Days.value]: 'Last 7 days',
         [STATS_QUICK_RANGES.last30Days.value]: 'Last 30 days',
