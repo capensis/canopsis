@@ -15,11 +15,10 @@
           td {{ item.entity.name }}
           td
             v-layout(align-center)
-              v-chip.px-1(:style="{ backgroundColor: getChipColor(item.value) }", color="white--text")
-                div.body-1.font-weight-bold {{ getChipText(item.value) }}
+              v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
+                div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
               div.caption
-                template(v-if="item.trend >= 0") + {{ item.trend }}
-                template(v-else) - {{ item.trend }}
+                template(v-if="item[query.stat.title].trend >= 0") + {{ item[query.stat.title].trend }}
 </template>
 
 <script>
@@ -131,7 +130,8 @@ export default {
         dateInterval,
         mfilter,
         stat,
-        trend,
+        limit,
+        sortOrder,
       } = this.getQuery();
       const { periodValue } = dateInterval;
       let { periodUnit, tstart, tstop } = dateInterval;
@@ -151,11 +151,17 @@ export default {
         tstop = monthlyRoundedTstop.add(monthlyRoundedTstop.utcOffset(), 'm');
       }
 
+      const stats = {};
+      stats[stat.title] = { parameters: stat.parameters, stat: stat.stat.value, trend: true };
+
+
       params.duration = `${periodValue}${periodUnit.toLowerCase()}`;
-      params.stat = stat;
+      params.stats = stats;
       params.mfilter = mfilter.filter ? JSON.parse(mfilter.filter) : {};
       params.tstop = tstop.startOf('h').unix();
-      params.trend = trend;
+      params.limit = limit;
+      params.sort_column = stat.title;
+      params.sort_order = sortOrder.toLowerCase();
 
       this.stats = await this.fetchStatValuesWithoutStore({
         params,

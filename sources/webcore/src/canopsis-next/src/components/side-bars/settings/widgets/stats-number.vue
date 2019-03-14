@@ -18,6 +18,10 @@
       v-divider
       field-stat-display-mode(v-model="settings.widget.parameters.displayMode")
       v-divider
+      field-number(v-model="settings.widget.parameters.limit", title="Limit")
+      v-divider
+      field-sort-order(v-model="settings.widget.parameters.sortOrder")
+      v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -33,6 +37,8 @@ import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';
 import FieldStatDisplayMode from './fields/stats/stat-display-mode.vue';
+import FieldNumber from './fields/common/number.vue';
+import FieldSortOrder from './fields/stats/sort-order.vue';
 
 export default {
   name: SIDE_BARS.statsNumberSettings,
@@ -46,6 +52,8 @@ export default {
     FieldFilterEditor,
     FieldStatSelector,
     FieldStatDisplayMode,
+    FieldNumber,
+    FieldSortOrder,
   },
   mixins: [widgetSettingsMixin],
   data() {

@@ -191,6 +191,8 @@ export function generateWidgetByType(type) {
         },
         mfilter: {},
         stat: {},
+        limit: 10,
+        sortOrder: 'DESC',
         displayMode: {
           type: STATS_DISPLAY_MODE.criticity,
           parameters: {
