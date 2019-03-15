@@ -274,6 +274,8 @@ export default {
       yesNoMode: 'Yes/No mode',
       defaultStat: 'Default: Alarms created',
       sortOrder: 'Sort order',
+      displayMode: 'Display Mode',
+      selectAColor: 'Select a color',
     },
     infoPopup: {
       title: 'Info popup',

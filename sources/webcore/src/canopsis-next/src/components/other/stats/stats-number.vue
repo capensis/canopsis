@@ -30,7 +30,7 @@
 import moment from 'moment';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { STATS_DISPLAY_MODE, STATS_CRITICITY } from '@/constants';
+import { STATS_DISPLAY_MODE, STATS_CRITICITY, SORT_ORDERS } from '@/constants';
 
 import { parseStringToDateInterval } from '@/helpers/date-intervals';
 
@@ -66,12 +66,12 @@ export default {
       },
       tableHeaders: [
         {
-          text: 'Entity',
+          text: this.$t('common.entity'),
           value: 'entity.name',
           sortable: true,
         },
         {
-          text: 'Value',
+          text: this.$t('common.value'),
           value: 'value',
           sortable: true,
         },
@@ -168,7 +168,7 @@ export default {
       params.tstop = tstop.startOf('h').unix();
       params.limit = limit;
       params.sort_column = stat.title;
-      params.sort_order = sortOrder.toLowerCase();
+      params.sort_order = sortOrder ? sortOrder.toLowerCase() : SORT_ORDERS.desc.toLowerCase();
 
       this.stats = await this.fetchStatValuesWithoutStore({
         params,

@@ -12,6 +12,8 @@
 <script>
 import formMixin from '@/mixins/form';
 
+import { SORT_ORDERS } from '@/constants';
+
 /**
 * Component to select the default sort order on settings
 *
@@ -24,13 +26,13 @@ export default {
   props: {
     value: {
       type: String,
-      default: 'ASC',
+      default: SORT_ORDERS.asc,
     },
   },
-  data() {
-    return {
-      orders: ['ASC', 'DESC'],
-    };
+  computed: {
+    orders() {
+      return Object.values(SORT_ORDERS);
+    },
   },
 };
 </script>

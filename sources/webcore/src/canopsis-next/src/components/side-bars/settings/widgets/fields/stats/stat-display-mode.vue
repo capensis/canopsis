@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
-      div.subheading Display mode
+      div.subheading {{ $t('settings.statsNumbers.displayMode') }}
         .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
       div
         v-btn.primary(

@@ -3,6 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
     v-container
       v-select(
+      v-if="!withoutColumns",
       :value="value.column",
       :items="columns",
       :label="$t('settings.columnName')",
@@ -11,14 +12,16 @@
       @change="updateField('column', $event)"
       )
       v-select(
-      :value="value.order",
-      @input="updateField('order', $event)",
+      :value="selectedOrder",
+      @input="updateValue",
       :items="orders"
       )
 </template>
 
 <script>
 import formMixin from '@/mixins/form';
+
+import { SORT_ORDERS } from '@/constants';
 
 /**
 * Component to select the default column to sort on settings
@@ -31,21 +34,38 @@ export default {
   mixins: [formMixin],
   props: {
     value: {
-      type: Object,
-      default: () => ({
-        column: '',
-        order: 'ASC',
-      }),
+      type: [Object, String],
+      required: true,
     },
     columns: {
       type: Array,
       default: () => [],
     },
+    withoutColumns: {
+      type: Boolean,
+      default: false,
+    },
   },
-  data() {
-    return {
-      orders: ['ASC', 'DESC'],
-    };
+  computed: {
+    orders() {
+      return Object.values(SORT_ORDERS);
+    },
+    selectedOrder() {
+      if (typeof this.value === 'string') {
+        return SORT_ORDERS[this.value.toLowerCase()];
+      }
+
+      return this.value.order ? SORT_ORDERS[this.value.order.toLowerCase()] : SORT_ORDERS.desc;
+    },
+  },
+  methods: {
+    updateValue(value) {
+      if (typeof this.value === 'string') {
+        this.$emit('input', value);
+      } else {
+        this.updateField('order', value);
+      }
+    },
   },
 };
 </script>

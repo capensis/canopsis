@@ -10,6 +10,7 @@ import {
   STATS_DURATION_UNITS,
   STATS_DISPLAY_MODE,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  SORT_ORDERS,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -206,7 +207,7 @@ export function generateWidgetByType(type) {
           trend: false,
         },
         limit: 10,
-        sortOrder: 'DESC',
+        sortOrder: SORT_ORDERS.desc,
         displayMode: {
           type: STATS_DISPLAY_MODE.criticity,
           parameters: {

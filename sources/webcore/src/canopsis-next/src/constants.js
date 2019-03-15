@@ -484,6 +484,21 @@ export const STATS_DISPLAY_MODE = {
   criticity: 'criticity',
 };
 
+export const STATS_DISPLAY_MODE_PARAMETERS = {
+  criticityLevels: {
+    ok: 0,
+    minor: 10,
+    major: 20,
+    critical: 30,
+  },
+  colors: {
+    ok: '#66BB6A',
+    minor: '#FFEE58',
+    major: '#FFA726',
+    critical: '#FF7043',
+  },
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
@@ -783,6 +798,11 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';
+
+export const SORT_ORDERS = {
+  asc: 'ASC',
+  desc: 'DESC',
+};
 
 export const WEBHOOK_TRIGGERS = {
   create: 'create',
