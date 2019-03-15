@@ -17,44 +17,37 @@ microk8s.enable dns
 
 
 
+## Installation de heml
+
+```bash
+sudo snap install heml --classic
+heml init
+```
+
+
+
 # Déploiement du cluster k8s
 
 ⚠️❗Par défaut, le volume docker-mongo mappe le répertoire **/Datas/Test-kubernetes/docker/mongo** ❗⚠️
 
-Il faut donc penser à modifier le fichier **deploy-cano.yaml** pour pointer vers le chemin complet du dossier **docker/mongo**
+Il faut donc modifier la variable **MONGO_VOLUME** pour pointer vers le chemin complet du dossier **docker/mongo** de votre clone
 
 ```vim
-108    - name: docker-mongo         
-109       hostPath:                                                                
-110           path: /Datas/Test-kubernetes/docker/mongo
+vim canopsis/values.yaml
+
+MONGO_VOLUME: Datas/Test-kubernetes/docker/mongo
 ```
 
-⚠️❗Par défaut, le PersistentVolume **task-pv-volume** mappe le répertoire **/Datas/mongo1** ❗⚠️
+⚠️❗Par défaut, le PersistentVolume **task-pv-volume** mappe le répertoire **/tmp/mongo1** ❗⚠️
 
-Il faut donc penser à modifier le fichier **deploy-cano.yaml** pour pointer vers le chemin complet du dossier **docker/mongo**
+Si vous souhaitez modifier le path du volume persistent, il faut modifier la variable **MONGO_PERSISTENT_VOLUME** dans le fichier **canopsis/values.yaml**
 
-```
-38 kind: PersistentVolume                         
-39 apiVersion: v1                                 
-40  metadata:                                      
-41   name: task-pv-volume                         
-42   labels:                                      
-43     type: local                                
-44 spec:                                          
-45   storageClassName: manual                     
-46   accessModes:                                 
-47     - ReadWriteOnce                            
-48   capacity:                                    
-49     storage: 1Gi                               
-50   hostPath:                                    
-51     path: /Datas/mongo1                        
-52     type: DirectoryOrCreate
-```
+
 
 Une fois les modifications effectuées, on peut déployer le cluster:
 
 ```bash
-microk8s.kubectl create -f deploy-cano.yaml
+helm install --name canopsis ./canopsis
 ```
 
 

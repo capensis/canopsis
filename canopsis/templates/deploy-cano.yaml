@@ -22,7 +22,7 @@ spec:
           value: canopsis
         - name: RABBITMQ_DEFAULT_VHOST
           value: canopsis
-        image: 'rabbitmq:3-management'
+        image: "rabbitmq:{{ .Values.RABBITMQ_TAG }}"
         name: rabbitmq
         ports:
         - containerPort: 5672
@@ -48,7 +48,7 @@ spec:
   capacity:
     storage: 1Gi
   hostPath:
-    path: /Datas/mongo1
+    path: "{{ .Values.MONGO_PERSISTENT_VOLUME }}"
     type: DirectoryOrCreate
 ---
 apiVersion: v1
@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: 'mongo:3.6-jessie'
+        image: "mongo:{{ .Values.MONGO_TAG }}"
         ports:
         - containerPort: 27017
         volumeMounts:
@@ -107,7 +107,7 @@ spec:
         emptyDir: {}
       - name: docker-mongo
         hostPath:
-          path: /Datas/Test-kubernetes/docker/mongo
+          path: "{{ .Values.MONGO_VOLUME }}"
           #resources:
           #limits:
           #memory: "3221225472"
@@ -141,7 +141,7 @@ spec:
           value: cpsinflux
         - name: INFLUXDB_USER_PASSWORD
           value: canopsis
-        image: 'influxdb:1.5-alpine'
+        image: "influxdb:{{ .Values.INFLUX_TAG }}"
         name: influxdb
         ports:
         - containerPort: 8086
@@ -170,7 +170,7 @@ spec:
         io.kompose.service: redis
     spec:
       containers:
-      - image: 'redis:4.0'
+      - image: "redis:{{ .Values.REDIS_TAG }}"
         name: redis
         ports:
         - containerPort: 6379
@@ -185,7 +185,7 @@ metadata:
 spec:
   containers:
   - name: provisionning
-    image: 'canopsis/canopsis-prov:3.12.0'
+    image: "canopsis/canopsis-prov:{{ .Values.CANOPSIS_IMAGE_TAG }}"
     envFrom:
     - configMapRef:
         name: compose-env
@@ -206,7 +206,7 @@ spec:
     spec:
       containers:
       - name: pbehavior
-        image: 'canopsis/canopsis-core:3.12.0'
+        image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
@@ -235,7 +235,7 @@ spec:
     spec:
       containers:
       - name: watcher
-        image: 'canopsis/canopsis-core:3.12.0'
+        image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
@@ -264,7 +264,7 @@ spec:
     spec:
       containers:
       - name: action
-        image: 'canopsis/engine-action:3.12.0'
+        image: "canopsis/engine-action:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         args:
         - /engine-action
         envFrom:
@@ -287,7 +287,7 @@ spec:
     spec:
       containers:
       - name: heartbeat
-        image: 'canopsis/engine-heartbeat:3.12.0'
+        image: "canopsis/engine-heartbeat:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         args:
         - /engine-heartbeat
         envFrom:
@@ -313,7 +313,7 @@ spec:
         emptyDir: {}
       containers:
       - name: axe
-        image: 'canopsis/engine-axe:3.12.0'
+        image: "canopsis/engine-axe:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         args:
         - /engine-axe
         envFrom:
@@ -339,7 +339,7 @@ spec:
     spec:
       containers:
       - name: che
-        image: 'canopsis/engine-che:3.12.0'
+        image: "canopsis/engine-che:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         args:
         - /engine-che
         - -publishQueue
@@ -364,7 +364,7 @@ spec:
     spec:
       containers:
       - name: scheduler
-        image: 'canopsis/canopsis-core:3.12.0'
+        image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
@@ -393,7 +393,7 @@ spec:
     spec:
       containers:
       - name: task-mail
-        image: 'canopsis/canopsis-core:3.12.0'
+        image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
@@ -425,7 +425,7 @@ spec:
         emptyDir: {}
       containers:
       - name: task-importctx
-        image: 'canopsis/canopsis-core:3.12.0'
+        image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
@@ -457,7 +457,7 @@ spec:
     spec:
       containers:
       - name: metric
-        image: 'canopsis/canopsis-core:3.12.0'
+        image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
@@ -491,7 +491,7 @@ spec:
         emptyDir: {}
       containers:
       - name: webserver
-        image: 'canopsis/canopsis-core:3.12.0'
+        image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
@@ -522,7 +522,7 @@ spec:
     spec:
       containers:
       - name: init
-        image: 'canopsis/init:3.12.0'
+        image: "canopsis/init:{{ .Values.CANOPSIS_IMAGE_TAG }}"
         envFrom:
         - configMapRef:
             name: compose-env
