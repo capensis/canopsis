@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Stats - Date interval
+        span.headline {{ $t('modals.statsDateInterval.title') }}
     v-card-text
       v-container
         v-layout
@@ -10,12 +10,12 @@
             v-text-field.pt-0(
             type="number",
             v-model="periodValue",
-            label="Period value"
+            :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
           v-select.pt-0(
           v-model="periodUnit",
           :items="periodUnits",
-          label="Period unit",
+          :label="$t('modals.statsDateInterval.fields.periodUnit')"
           )
         v-alert.mb-2(
         v-if="periodUnit === 'm'", type="info", value="true"
@@ -103,8 +103,8 @@ export default {
       const { tstart, tstop } = this.dateForm;
 
       try {
-        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
-        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
+        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
+        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
 
         if (convertedTstop.isSameOrBefore(convertedTstart)) {
           this.errors.push('Tstop should be more than tstart');

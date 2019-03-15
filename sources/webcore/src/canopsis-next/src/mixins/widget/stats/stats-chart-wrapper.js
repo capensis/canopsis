@@ -49,8 +49,8 @@ export default {
         filter = JSON.parse(filter);
       }
 
-      tstart = dateParse(tstart, 'start', DATETIME_FORMATS.picker);
-      tstop = dateParse(tstop, 'stop', DATETIME_FORMATS.picker);
+      tstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
+      tstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
 
       if (periodUnit === STATS_DURATION_UNITS.month) {
         periodUnit = periodUnit.toUpperCase();

@@ -321,7 +321,9 @@ export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
-  picker: 'DD/MM/YYYY hh:mm',
+  dateTimePicker: 'DD/MM/YYYY HH:mm',
+  datePicker: 'DD/MM/YYYY',
+  timePicker: 'HH:mm',
 };
 
 export const STATS_TYPES = {

@@ -19,19 +19,19 @@
           year-first,
           )
       template(v-else)
-        date-time-picker(@input="updateValue", :value="dateObject", roundHours)
+        date-time-picker-field(:value="dateObject", roundHours, @input="updateValue")
 </template>
 
 <script>
 import moment from 'moment-timezone';
 
 import DatePicker from '@/components/forms/fields/date-picker/date-picker.vue';
-import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
+import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 
 export default {
   components: {
     DatePicker,
-    DateTimePicker,
+    DateTimePickerField,
   },
   props: {
     value: {

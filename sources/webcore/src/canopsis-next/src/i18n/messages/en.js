@@ -9,6 +9,7 @@ import {
 
 export default {
   common: {
+    ok: 'Ok',
     undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
@@ -79,6 +80,8 @@ export default {
     forbidden: 'Forbidden',
     search: 'Search',
     webhooks: 'Webhooks',
+    startDate: 'Start date',
+    endDate: 'End date',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -696,6 +699,13 @@ export default {
       },
       remove: {
         success: 'Webhook successfully removed !',
+      },
+    },
+    statsDateInterval: {
+      title: 'Stats - Date interval',
+      fields: {
+        periodValue: 'Period value',
+        periodUnit: 'Period unit',
       },
     },
   },
