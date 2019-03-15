@@ -92,7 +92,10 @@ export default {
       const query = { ...this.query };
 
       this.stats = await this.fetchStatValuesWithoutStore({
-        params: query,
+        params: {
+          ...query,
+          mfilter: query.mfilter && query.mfilter.filter ? JSON.parse(query.mfilter.filter) : {},
+        },
       });
     },
   },

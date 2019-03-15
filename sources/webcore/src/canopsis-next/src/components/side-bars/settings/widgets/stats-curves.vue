@@ -12,6 +12,8 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
+      field-filter-editor(v-model="settings.widget.parameters.mfilter")
+      v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter")
