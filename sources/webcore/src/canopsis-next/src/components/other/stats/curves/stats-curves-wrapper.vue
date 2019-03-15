@@ -62,8 +62,13 @@ export default {
   },
   methods: {
     async fetchList() {
+      const { mfilter } = this.getQuery();
+
       const stats = await this.fetchStatsEvolutionWithoutStore({
-        params: omit(this.widget.parameters, ['statsColors']),
+        params: {
+          ...omit(this.widget.parameters, ['statsColors']),
+          mfilter: mfilter && mfilter.filter ? JSON.parse(mfilter.filter) : {},
+        },
         aggregate: ['sum'],
       });
       this.stats = stats;

@@ -20,6 +20,8 @@
       v-divider
       field-periods-number(v-model="settings.widget.parameters.periods")
       v-divider
+      field-filter-editor(v-model="settings.widget.parameters.mfilter")
+      v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
       v-list-group
@@ -44,6 +46,7 @@ import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDuration from './fields/stats/duration.vue';
 import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldPeriodsNumber from './fields/stats/periods-number.vue';
 import FieldStatsSelect from './fields/stats/stats-select.vue';
 import FieldStatsColors from './fields/stats/stats-colors.vue';
@@ -58,6 +61,7 @@ export default {
     FieldTitle,
     FieldDuration,
     FieldStatEndDateSelect,
+    FieldFilterEditor,
     FieldPeriodsNumber,
     FieldStatsSelect,
     FieldStatsColors,

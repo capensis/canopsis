@@ -91,11 +91,11 @@ export function convertWeatherWidgetToQuery(widget) {
 }
 
 export function convertStatsHistogramToQuery(widget) {
-  return widget.parameters.groups.map(group =>
-    ({
-      ...omit(widget.parameters, ['groups', 'statsColors']),
-      mfilter: group.filter || {},
-    }));
+  return { ...widget.parameters };
+}
+
+export function convertStatsCurvesToQuery(widget) {
+  return { ...widget.parameters };
 }
 
 /**
@@ -105,7 +105,10 @@ export function convertStatsHistogramToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
-  return { ...widget.parameters };
+  return {
+    ...widget.parameters,
+    mfilter: widget.parameters.mfilter && widget.parameters.mfilter ? JSON.parse(widget.parameters.mfilter.filter) : {},
+  };
 }
 
 /**
@@ -249,6 +252,8 @@ export function convertWidgetToQuery(widget) {
       return convertWeatherWidgetToQuery(widget);
     case WIDGET_TYPES.statsHistogram:
       return convertStatsHistogramToQuery(widget);
+    case WIDGET_TYPES.statsCurves:
+      return convertStatsCurvesToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
