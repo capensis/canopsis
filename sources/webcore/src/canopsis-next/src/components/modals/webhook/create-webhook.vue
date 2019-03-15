@@ -74,20 +74,10 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
-          const data = {
-            ...this.form,
-            hook: {
-              ...this.form.hook,
-              event_patterns: this.form.hook.event_patterns.length ? this.form.hook.event_patterns : null,
-              alarm_patterns: this.form.hook.alarm_patterns.length ? this.form.hook.alarm_patterns : null,
-              entity_patterns: this.form.hook.entity_patterns.length ? this.form.hook.entity_patterns : null,
-            },
-          };
-
-          const preparedForm = this.hasBlockedTriggers ? setInSeveral(data, {
+          const preparedForm = this.hasBlockedTriggers ? setInSeveral(this.form, {
             'hook.event_patterns': null,
             declare_ticket: {},
-          }) : data;
+          }) : this.form;
 
           await this.config.action(this.$options.filters.formToWebhook(preparedForm));
         }
