@@ -210,7 +210,7 @@ export function generateWidgetByType(type) {
         limit: 10,
         sortOrder: SORT_ORDERS.desc,
         displayMode: {
-          type: STATS_DISPLAY_MODE.criticity,
+          mode: STATS_DISPLAY_MODE.criticity,
           parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
         },
       };

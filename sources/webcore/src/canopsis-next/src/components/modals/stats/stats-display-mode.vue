@@ -44,22 +44,17 @@ export default {
   name: MODALS.statsDisplayMode,
   mixins: [modalInnerMixin],
   data() {
+    const { displayMode } = this.modal.config;
+
     return {
-      form: {
-        mode: STATS_DISPLAY_MODE.criticity,
-        parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
-      },
+      form: displayMode ||
+        { mode: STATS_DISPLAY_MODE.criticity, parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS) },
     };
   },
   computed: {
     displayModes() {
       return Object.values(STATS_DISPLAY_MODE);
     },
-  },
-  mounted() {
-    if (this.config.displayMode) {
-      this.form = { ...cloneDeep(this.config.displayMode), mode: this.config.displayMode.type };
-    }
   },
   methods: {
     openColorPickerModal(level) {
