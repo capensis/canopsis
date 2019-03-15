@@ -41,6 +41,7 @@ export default {
     comment: 'Comment',
     end: 'End',
     recursive: 'Recursive',
+    select: 'Select',
     states: 'States',
     sla: 'Sla',
     authors: 'Authors',
@@ -59,6 +60,7 @@ export default {
     label: 'Label',
     field: 'Field',
     value: 'Value',
+    limit: 'Limit',
     add: 'Add',
     create: 'Create',
     delete: 'Delete',
@@ -82,6 +84,7 @@ export default {
     webhooks: 'Webhooks',
     startDate: 'Start date',
     endDate: 'End date',
+    link: 'link',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -274,6 +277,10 @@ export default {
     statsNumbers: {
       title: 'Stats numbers',
       yesNoMode: 'Yes/No mode',
+      defaultStat: 'Default: Alarms created',
+      sortOrder: 'Sort order',
+      displayMode: 'Display Mode',
+      selectAColor: 'Select a color',
     },
     infoPopup: {
       title: 'Info popup',

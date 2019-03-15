@@ -1,9 +1,18 @@
 import moment from 'moment';
-import { get, omit } from 'lodash';
+import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
+import {
+  WIDGET_TYPES,
+  STATS_CALENDAR_COLORS,
+  STATS_TYPES,
+  STATS_DURATION_UNITS,
+  STATS_DISPLAY_MODE,
+  STATS_DISPLAY_MODE_PARAMETERS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  SORT_ORDERS,
+} from '@/constants';
 
 import uuid from './uuid';
 
@@ -172,23 +181,26 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.statsNumber:
       specialParameters = {
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        mfilter: {},
-        stat: {},
-        yesNoMode: false,
-        criticityLevels: {
-          minor: 20,
-          major: 30,
-          critical: 40,
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
         },
-        statColors: {
-          ok: '#66BB6A',
-          minor: '#FFEE58',
-          major: '#FFA726',
-          critical: '#FF7043',
+        mfilter: {},
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
+        },
+        limit: 10,
+        sortOrder: SORT_ORDERS.desc,
+        displayMode: {
+          mode: STATS_DISPLAY_MODE.criticity,
+          parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
         },
       };
       break;

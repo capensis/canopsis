@@ -46,6 +46,7 @@ import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ti
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
 import AddStat from './stats/add-stat.vue';
 import StatsDateInterval from './stats/stats-date-interval.vue';
+import StatsDisplayMode from './stats/stats-display-mode.vue';
 import AlarmsList from './alarm/alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
@@ -95,6 +96,7 @@ export default {
     CreateWatcherPauseEvent,
     AddStat,
     StatsDateInterval,
+    StatsDisplayMode,
     AlarmsList,
     CreateUser,
     CreateRole,

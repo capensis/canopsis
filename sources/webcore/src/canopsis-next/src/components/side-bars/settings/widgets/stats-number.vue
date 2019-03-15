@@ -10,22 +10,21 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-duration(v-model="settings.widget.parameters.duration", :title="$t('settings.duration')")
-      v-divider
-      field-stat-end-date-select(
-      v-model="settings.widget.parameters.tstop",
-      :duration="settings.widget.parameters.duration"
-      )
+      field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter")
       v-divider
       field-stat-selector(v-model="settings.widget.parameters.stat")
       v-divider
-      field-yes-no-mode(v-model="settings.widget.parameters.yesNoMode")
-      v-divider
-      field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
-      v-divider
-      field-levels-colors-selector(v-model="settings.widget.parameters.statColors")
+      v-list-group
+        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-stat-display-mode(v-model="settings.widget.parameters.displayMode")
+          v-divider
+          field-number(v-model="settings.widget.parameters.limit", :title="$t('common.limit')")
+          v-divider
+          field-default-sort(withoutColumns, v-model="settings.widget.parameters.sortOrder")
+          v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -37,13 +36,12 @@ import { SIDE_BARS } from '@/constants';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/stats/duration.vue';
-import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
+import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';
-import FieldYesNoMode from './fields/stats/yes-no-mode.vue';
-import FieldCriticityLevels from './fields/stats/criticity-levels.vue';
-import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue';
+import FieldStatDisplayMode from './fields/stats/stat-display-mode.vue';
+import FieldNumber from './fields/common/number.vue';
+import FieldDefaultSort from './fields/common/default-sort.vue';
 
 export default {
   name: SIDE_BARS.statsNumberSettings,
@@ -53,13 +51,12 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldDuration,
-    FieldStatEndDateSelect,
+    FieldDateInterval,
     FieldFilterEditor,
     FieldStatSelector,
-    FieldYesNoMode,
-    FieldCriticityLevels,
-    FieldLevelsColorsSelector,
+    FieldStatDisplayMode,
+    FieldNumber,
+    FieldDefaultSort,
   },
   mixins: [widgetSettingsMixin],
   data() {

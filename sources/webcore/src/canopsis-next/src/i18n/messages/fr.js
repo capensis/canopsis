@@ -40,6 +40,7 @@ export default {
     comment: 'Commentaire',
     end: 'Fin',
     recursive: 'Recursif',
+    select: 'Sélectionner',
     states: 'Etats',
     sla: 'Sla',
     authors: 'Auteurs',
@@ -58,6 +59,7 @@ export default {
     label: 'Label',
     field: 'Champs',
     value: 'Valeur',
+    limit: 'Limite',
     add: 'Ajouter',
     create: 'Créer',
     delete: 'Supprimer',
@@ -257,6 +259,10 @@ export default {
     statsNumbers: {
       title: 'Cellule de stats',
       yesNoMode: 'Mode Oui/Non',
+      defaultStat: 'Défaut: Alarmes créées',
+      sortOrder: 'Sens de tri',
+      displayMode: 'Mode d\'affichage',
+      selectAColor: 'Sélectionner une couleur',
     },
     infoPopup: {
       title: 'Info popup',

@@ -112,11 +112,7 @@ export function convertStatsCurvesWidgetToQuery(widget) {
 }
 
 export function convertStatsHistogramToQuery(widget) {
-  return widget.parameters.groups.map(group =>
-    ({
-      ...omit(widget.parameters, ['groups', 'statsColors']),
-      mfilter: group.filter || {},
-    }));
+  return { ...widget.parameters };
 }
 
 /**
@@ -126,7 +122,10 @@ export function convertStatsHistogramToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
-  return { ...widget.parameters };
+  return {
+    ...widget.parameters,
+    mfilter: widget.parameters.mfilter && widget.parameters.mfilter ? JSON.parse(widget.parameters.mfilter.filter) : {},
+  };
 }
 
 /**
