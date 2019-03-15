@@ -1,9 +1,0 @@
-{
-    "type": "object",
-    "properties": {
-        "jobs_uuid": {
-            "type": "string",
-            "required": true
-        }
-    }
-}

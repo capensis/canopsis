@@ -1,3 +1,0 @@
----
-- name: Taking care of database migration
-  shell: "{{ canopsis_home }}/bin/canopsinit"

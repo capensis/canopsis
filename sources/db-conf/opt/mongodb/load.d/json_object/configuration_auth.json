@@ -1,7 +1,0 @@
-{
-    "services" : [],
-    "crecord_name" : "authconfiguration",
-    "loader_id": "cservice.authconfiguration",
-    "loader_no_update": true,
-    "_id": "cservice.authconfiguration"
-}
