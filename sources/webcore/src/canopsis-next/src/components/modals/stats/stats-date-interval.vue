@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       periodValue: 1,
-      periodUnit: 'h',
+      periodUnit: STATS_DURATION_UNITS.hour,
       dateForm: {
         tstart: 'now+1d',
         tstop: 'now+2d',
