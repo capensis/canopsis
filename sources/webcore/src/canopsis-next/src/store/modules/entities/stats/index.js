@@ -1,4 +1,4 @@
-import { omit, set } from 'lodash';
+import { set } from 'lodash';
 
 import i18n from '@/i18n';
 
@@ -10,7 +10,7 @@ export default {
   actions: {
     async fetchItemValuesWithoutStore({ dispatch }, { params }) {
       try {
-        const data = await request.post(`${API_ROUTES.stats}/${params.stat.stat.value}`, { ...omit(params, ['stat']), parameters: params.stat.parameters });
+        const data = await request.post(`${API_ROUTES.stats}`, params);
 
         return data.values;
       } catch (err) {
