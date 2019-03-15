@@ -17,11 +17,11 @@ microk8s.enable dns
 
 
 
-## Installation de heml
+## Installation de helm
 
 ```bash
-sudo snap install heml --classic
-heml init
+sudo snap install helm --classic
+helm init
 ```
 
 
