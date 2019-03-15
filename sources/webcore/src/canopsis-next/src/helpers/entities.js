@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { get, omit } from 'lodash';
+import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
@@ -9,6 +9,7 @@ import {
   STATS_TYPES,
   STATS_DURATION_UNITS,
   STATS_DISPLAY_MODE,
+  STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SORT_ORDERS,
 } from '@/constants';
@@ -210,20 +211,7 @@ export function generateWidgetByType(type) {
         sortOrder: SORT_ORDERS.desc,
         displayMode: {
           type: STATS_DISPLAY_MODE.criticity,
-          parameters: {
-            criticityLevels: {
-              ok: 0,
-              minor: 20,
-              major: 30,
-              critical: 40,
-            },
-            colors: {
-              ok: '#66BB6A',
-              minor: '#FFEE58',
-              major: '#FFA726',
-              critical: '#FF7043',
-            },
-          },
+          parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
         },
       };
       break;

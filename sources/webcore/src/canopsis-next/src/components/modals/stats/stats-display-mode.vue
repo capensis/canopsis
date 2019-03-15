@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS, STATS_DISPLAY_MODE, STATS_DISPLAY_MODE_PARAMETERS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -45,7 +47,7 @@ export default {
     return {
       form: {
         mode: STATS_DISPLAY_MODE.criticity,
-        parameters: STATS_DISPLAY_MODE_PARAMETERS,
+        parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
       },
     };
   },
@@ -56,7 +58,7 @@ export default {
   },
   mounted() {
     if (this.config.displayMode) {
-      this.form = { ...this.config.displayMode, mode: this.config.displayMode.type };
+      this.form = { ...cloneDeep(this.config.displayMode), mode: this.config.displayMode.type };
     }
   },
   methods: {
