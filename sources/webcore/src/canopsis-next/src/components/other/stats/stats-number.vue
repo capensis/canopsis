@@ -37,7 +37,6 @@ import { parseStringToDateInterval } from '@/helpers/date-intervals';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import widgetPaginationMixin from '@/mixins/widget/pagination';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -51,7 +50,6 @@ export default {
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
-    widgetPaginationMixin,
   ],
   props: {
     widget: {
@@ -68,7 +66,6 @@ export default {
         descending: true,
         rowsPerPage: PAGINATION_LIMIT,
       },
-      totalItems: 0,
       tableHeaders: [
         {
           text: this.$t('common.entity'),
@@ -178,8 +175,6 @@ export default {
       this.stats = await this.fetchStatValuesWithoutStore({
         params,
       });
-
-      this.totalItems = limit;
 
       this.pending = false;
     },
