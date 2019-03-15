@@ -94,7 +94,7 @@ export default {
       this.stats = await this.fetchStatValuesWithoutStore({
         params: {
           ...query,
-          mfilter: query.mfilter.filter ? JSON.parse(query.mfilter.filter) : {},
+          mfilter: query.mfilter && query.mfilter.filter ? JSON.parse(query.mfilter.filter) : {},
         },
       });
     },

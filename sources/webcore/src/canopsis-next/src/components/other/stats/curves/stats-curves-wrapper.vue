@@ -67,7 +67,7 @@ export default {
       const stats = await this.fetchStatsEvolutionWithoutStore({
         params: {
           ...omit(this.widget.parameters, ['statsColors']),
-          mfilter: mfilter.filter ? JSON.parse(mfilter.filter) : {},
+          mfilter: mfilter && mfilter.filter ? JSON.parse(mfilter.filter) : {},
         },
         aggregate: ['sum'],
       });

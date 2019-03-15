@@ -105,7 +105,10 @@ export function convertStatsCurvesToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsTableWidgetToQuery(widget) {
-  return { ...widget.parameters, mfilter: JSON.parse(widget.parameters.mfilter.filter) };
+  return {
+    ...widget.parameters,
+    mfilter: widget.parameters.mfilter && widget.parameters.mfilter ? JSON.parse(widget.parameters.mfilter.filter) : {},
+  };
 }
 
 /**
