@@ -35,7 +35,7 @@ Il faut donc modifier la variable **MONGO_VOLUME** pour pointer vers le chemin c
 ```vim
 vim canopsis/values.yaml
 
-MONGO_VOLUME: Datas/Test-kubernetes/docker/mongo
+MONGO_VOLUME: /Datas/Test-kubernetes/docker/mongo
 ```
 
 ⚠️❗Par défaut, le PersistentVolume **task-pv-volume** mappe le répertoire **/tmp/mongo1** ❗⚠️
