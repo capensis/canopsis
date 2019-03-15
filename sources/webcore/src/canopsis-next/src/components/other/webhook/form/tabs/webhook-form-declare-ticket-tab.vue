@@ -5,6 +5,8 @@
     :valueLabel="$t('webhook.tabs.declareTicket.fields.value')",
     :items="declareTicket",
     :disabled="disabled",
+    valueValidationRules="required",
+    mixed,
     @input="$emit('input', $event)"
     )
 </template>

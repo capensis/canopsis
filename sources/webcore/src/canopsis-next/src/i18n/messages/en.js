@@ -81,6 +81,7 @@ export default {
     forbidden: 'Forbidden',
     search: 'Search',
     webhooks: 'Webhooks',
+    link: 'link',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -654,6 +655,9 @@ export default {
         title: 'Edit an event filter rule',
         success: 'Rule successfully edited !',
       },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
       priority: 'Priority',
       editPattern: 'Edit pattern',
       advanced: 'Advanced',
@@ -690,9 +694,14 @@ export default {
     createWebhook: {
       create: {
         title: 'Create webhook',
+        success: 'Webhook successfully created !',
       },
       edit: {
         title: 'Edit webhook',
+        success: 'Webhook successfully edited !',
+      },
+      remove: {
+        success: 'Webhook successfully removed !',
       },
     },
   },

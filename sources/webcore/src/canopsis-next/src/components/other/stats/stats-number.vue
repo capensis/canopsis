@@ -166,7 +166,7 @@ export default {
 
       params.duration = `${periodValue}${periodUnit.toLowerCase()}`;
       params.stats = stats;
-      params.mfilter = mfilter.filter ? JSON.parse(mfilter.filter) : {};
+      params.mfilter = mfilter && mfilter.filter ? JSON.parse(mfilter.filter) : {};
       params.tstop = tstop.startOf('h').unix();
       params.limit = limit;
       params.sort_column = stat.title;

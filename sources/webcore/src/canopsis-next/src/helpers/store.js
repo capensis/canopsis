@@ -1,6 +1,7 @@
-import { get } from 'lodash';
+import { get, merge } from 'lodash';
 
 import schemas from '@/store/schemas';
+import { SCHEMA_EMBEDDED_KEY } from '@/config';
 
 /**
  * Helper for entities preparation for delete
@@ -13,21 +14,21 @@ export function prepareEntitiesToDelete({ type, data }) {
   const schema = schemas[type];
   const id = data[schema.idAttribute];
 
-  const entitiesToMerge = {};
-  const entitiesToDelete = {
+  let entitiesToMerge = {};
+  let entitiesToDelete = {
     [schema.key]: {
       [id]: {},
     },
   };
 
   const prepareChild = (entity, childSchema) => {
-    const parents = get(entity, '_embedded.parents', []);
+    const parents = get(entity, `${SCHEMA_EMBEDDED_KEY}.parents`, []);
 
     if (parents.length <= 1) {
       const result = prepareEntitiesToDelete({ type: childSchema.key, data: entity });
 
-      Object.assign(entitiesToMerge, result.entitiesToMerge);
-      Object.assign(entitiesToDelete, result.entitiesToDelete);
+      entitiesToMerge = merge(entitiesToMerge, result.entitiesToMerge);
+      entitiesToDelete = merge(entitiesToDelete, result.entitiesToDelete);
     } else {
       if (!entitiesToMerge[childSchema.key]) {
         entitiesToMerge[childSchema.key] = {};
@@ -35,8 +36,10 @@ export function prepareEntitiesToDelete({ type, data }) {
 
       entitiesToMerge[childSchema.key][entity[childSchema.idAttribute]] = {
         ...entity,
-        _embedded: {
-          ...entity._embedded,
+
+        [SCHEMA_EMBEDDED_KEY]: {
+          ...entity[SCHEMA_EMBEDDED_KEY],
+
           parents: parents.filter(v => v.id !== id || (v.id === id && v.type !== type)),
         },
       };
@@ -59,6 +62,31 @@ export function prepareEntitiesToDelete({ type, data }) {
   };
 }
 
+/**
+ * Create deep clone of schema instance with `SCHEMA_EMBEDDED_KEY=true` for returning `SCHEMA_EMBEDDED_KEY` key
+ *
+ * @param schema
+ * @return {any}
+ */
+export function cloneSchemaWithEmbedded(schema) {
+  const newSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema);
+
+  newSchema.schema = Object.keys(newSchema.schema).reduce((acc, key) => {
+    if (Array.isArray(newSchema.schema[key])) {
+      acc[key] = [cloneSchemaWithEmbedded(newSchema.schema[key][0])];
+    } else {
+      acc[key] = cloneSchemaWithEmbedded(newSchema.schema[key]);
+    }
+
+    return acc;
+  }, {});
+
+  newSchema[SCHEMA_EMBEDDED_KEY] = true;
+
+  return newSchema;
+}
+
 export default {
   prepareEntitiesToDelete,
+  cloneSchemaWithEmbedded,
 };

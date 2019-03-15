@@ -4,7 +4,8 @@ import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
 import schemas from '@/store/schemas';
-import { prepareEntitiesToDelete } from '@/helpers/store';
+import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from '@/helpers/store';
+import { SCHEMA_EMBEDDED_KEY } from '@/config';
 
 const entitiesModuleName = 'entities';
 
@@ -17,20 +18,26 @@ const internalTypes = {
 
 let registeredGetters = [];
 
-const entitiesModule = {
+export const entitiesModule = {
   namespaced: true,
   getters: {
     getItem(state) {
-      return (type, id) => {
+      return (type, id, withEmbedded) => {
+        let schema = schemas[type];
+
         if (typeof type !== 'string') {
           throw new Error('[entities/getItem] Missing required argument.');
+        }
+
+        if (withEmbedded) {
+          schema = cloneSchemaWithEmbedded(schema);
         }
 
         if (!state[type] || !id) {
           return null;
         }
 
-        return denormalize(id, schemas[type], state);
+        return denormalize(id, schema, state);
       };
     },
     getList(state) {
@@ -260,8 +267,8 @@ const entitiesModule = {
      * @param {string} payload.type - Type of entity for deletion
      */
     removeFromStore({ commit, getters, state }, { id, type }) {
-      const data = getters.getItem(type, id);
-      const parents = get(data, '_embedded.parents', []);
+      const data = getters.getItem(type, id, true);
+      const parents = get(data, `${SCHEMA_EMBEDDED_KEY}.parents`, []);
 
       const {
         entitiesToMerge,
@@ -290,6 +297,7 @@ const entitiesModule = {
 export const types = {
   ENTITIES_UPDATE: `${entitiesModuleName}/${internalTypes.ENTITIES_UPDATE}`,
   ENTITIES_MERGE: `${entitiesModuleName}/${internalTypes.ENTITIES_MERGE}`,
+  ENTITIES_REPLACE: `${entitiesModuleName}/${internalTypes.ENTITIES_REPLACE}`,
   ENTITIES_DELETE: `${entitiesModuleName}/${internalTypes.ENTITIES_DELETE}`,
 };
 
