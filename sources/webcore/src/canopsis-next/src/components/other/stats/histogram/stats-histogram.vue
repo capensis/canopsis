@@ -1,54 +1,57 @@
+<template lang="pug">
+  div.stats-wrapper
+    progress-overlay(:pending="pending", :opacity="1", backgroundColor="grey lighten-5")
+    v-fade-transition
+      stats-histogram-chart(:labels="labels", :datasets="datasets")
+</template>
+
 <script>
-import { Bar } from 'vue-chartjs';
+import { get } from 'lodash';
+
+import { STATS_DEFAULT_COLOR } from '@/constants';
+
+import entitiesStatsMixin from '@/mixins/entities/stats';
+import widgetQueryMixin from '@/mixins/widget/query';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
+
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
+import StatsHistogramChart from './stats-histogram-chart.vue';
 
 export default {
-  extends: Bar,
-  props: {
-    ...Bar.props,
-
-    labels: {
-      type: Array,
-    },
-    datasets: {
-      type: Array,
-    },
+  components: {
+    ProgressOverlay,
+    StatsHistogramChart,
   },
+  mixins: [
+    entitiesStatsMixin,
+    widgetQueryMixin,
+    entitiesUserPreferenceMixin,
+    widgetStatsChartWrapperMixin,
+  ],
   computed: {
-    options() {
-      return {
-        responsive: true,
-        maintainAspectRatio: false,
-        tooltips: {
-          mode: 'index',
-          intersect: false,
-        },
-        scales: {
-          xAxes: [{
-            stacked: true,
-          }],
-          yAxes: [{
-            stacked: true,
-          }],
-        },
-      };
-    },
+    datasets() {
+      if (this.stats) {
+        return Object.keys(this.stats).reduce((acc, stat) => {
+          acc.push({
+            label: stat,
+            data: this.stats[stat].sum.map(value => value.value),
+            backgroundColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
+          });
 
-    chartData() {
-      return {
-        labels: this.labels,
-        datasets: this.datasets,
-      };
-    },
-  },
-  watch: {
-    chartData(value, oldValue) {
-      if (value !== oldValue) {
-        this.renderChart(value, this.options);
+          return acc;
+        }, []);
       }
+
+      return [];
     },
-  },
-  mounted() {
-    this.renderChart(this.chartData, this.options);
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .stats-wrapper {
+    position: relative;
+  }
+</style>

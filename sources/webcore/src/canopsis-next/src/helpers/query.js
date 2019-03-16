@@ -96,7 +96,7 @@ export function convertWeatherWidgetToQuery(widget) {
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertStatsCurvesWidgetToQuery(widget) {
+export function convertStatsChartWidgetToQuery(widget) {
   const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
     acc[stat] = {
       ...widget.parameters.stats[stat],
@@ -107,12 +107,9 @@ export function convertStatsCurvesWidgetToQuery(widget) {
 
   return {
     ...widget.parameters,
+
     stats: statsList,
   };
-}
-
-export function convertStatsHistogramToQuery(widget) {
-  return { ...widget.parameters };
 }
 
 /**
@@ -166,8 +163,25 @@ export function convertStatsCalendarWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsNumberWidgetToQuery(widget) {
-  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']);
+  const { stat } = widget.parameters;
+  const query = {
+    ...omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']),
+
+    trend: true,
+  };
+
+  if (stat) {
+    query.stats = {
+      [stat.title]: {
+        parameters: stat.parameters,
+        stat: stat.stat.value,
+        trend: true,
+      },
+    };
+  }
+
   query.trend = true;
+
   return query;
 }
 
@@ -269,7 +283,7 @@ export function convertWidgetToQuery(widget) {
       return convertWeatherWidgetToQuery(widget);
     case WIDGET_TYPES.statsCurves:
     case WIDGET_TYPES.statsHistogram:
-      return convertStatsCurvesWidgetToQuery(widget);
+      return convertStatsChartWidgetToQuery(widget);
     case WIDGET_TYPES.statsTable:
       return convertStatsTableWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
