@@ -122,7 +122,7 @@ class PBehavior(BasePBehavior):
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
                CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE,
-               EXDATE)
+               EXDATE, ID)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
@@ -205,13 +205,16 @@ class PBehaviorManager(object):
         self.collection = pb_collection
         self.currently_active_pb = set()
 
-    def get(self, _id):
+    def get(self, _id, query=None):
         """Get pbehavior by id.
 
         :param str id: pbehavior id
         :param dict query: filtering options
         """
-        return self.collection.find_one({"_id": _id})
+        if _id is None:
+            return list(self.collection.find({}))
+
+        return self.collection.find_one({"_id": _id}, query)
 
     def create(
             self,
@@ -292,7 +295,7 @@ class PBehaviorManager(object):
                     raise ValueError("The message field is missing")
 
         pb_kwargs = {
-            PBehavior.ID: str(uuid4),
+            PBehavior.ID: str(uuid4()),
             PBehavior.NAME: name,
             PBehavior.FILTER: filter,
             PBehavior.AUTHOR: author,
@@ -373,10 +376,8 @@ class PBehaviorManager(object):
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
         data = self.__get_and_check_pbehavior(_id, **kwargs)
-
-        result = self.colletion.put_element(
-            element=data["new_data"], _id=_id
-        )
+        data["new_data"]["_id"] = _id
+        result = self.collection.update(data["new_data"])
 
         if (PBehaviorManager._UPDATE_FLAG in result and
                 result[PBehaviorManager._UPDATE_FLAG]):
@@ -505,7 +506,7 @@ class PBehaviorManager(object):
         """
         pbehavior = self.get(
             pbehavior_id,
-            query={PBehavior.COMMENTS: {'$elemMatch': {'_id': _id}}}
+            {PBehavior.COMMENTS: {'$elemMatch': {'_id': _id}}}
         )
         if not pbehavior:
             return None
@@ -538,7 +539,7 @@ class PBehaviorManager(object):
         result = self.collection.update(
             {'_id': pbehavior_id},
             {'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
-            multi=False, cache=False
+            multi=False
         )
 
         return self._check_response(result)
@@ -1025,4 +1026,4 @@ class PBehaviorManager(object):
 
         :rtype: Iterator[Dict[str, Any]]
         """
-        return self.colletion.find({PBehavior.ENABLED: True})
+        return self.collection.find({PBehavior.ENABLED: True})
