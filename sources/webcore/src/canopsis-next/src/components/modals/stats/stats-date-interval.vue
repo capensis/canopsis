@@ -107,7 +107,7 @@ export default {
         const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
 
         if (convertedTstop.isSameOrBefore(convertedTstart)) {
-          this.errors.push(this.$t('modals.statsDateInterval.errors.tstopShouldBeMoreThanTstart'));
+          this.errors.push(this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'));
           return false;
         }
       } catch (err) {

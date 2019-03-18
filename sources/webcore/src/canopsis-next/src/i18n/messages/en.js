@@ -715,7 +715,7 @@ export default {
         periodUnit: 'Period unit',
       },
       errors: {
-        tstopShouldBeMoreThanTstart: 'Tstop should be more than tstart',
+        endDateLessOrEqualStartDate: 'End date should be after start date',
       },
     },
   },
