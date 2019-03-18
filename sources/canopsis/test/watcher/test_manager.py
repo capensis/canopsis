@@ -18,6 +18,8 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 # from canopsis.context_graph.process import create_entity
 from canopsis.logger.logger import Logger, OutputNull
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.statsng.event_publisher import StatEventPublisher
@@ -177,9 +179,14 @@ class ComputeState(BaseTest):
 
     def setUp(self):
         super(ComputeState, self).setUp()
-        pbehavior_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testpbehavior://'
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection("default_testpbehavior")
+        pb_collection = MongoCollection(collection)
+
+        self.real_alerts_storage = Middleware.get_middleware_by_uri(
+            'mongodb-periodical-testalarm://'
         )
+
         filter_storage = Middleware.get_middleware_by_uri(
             'storage-default-testalarmfilter://'
         )
@@ -205,7 +212,7 @@ class ComputeState(BaseTest):
 
         self.pbm = PBehaviorManager(config=config,
                                     logger=logger,
-                                    pb_storage=pbehavior_storage)
+                                    pb_collection=pb_collection)
         self.pbm.context = self.context_graph_manager
         self.manager.pbehavior_manager = self.pbm
 
@@ -251,7 +258,8 @@ class ComputeState(BaseTest):
 
     def tearDown(self):
         super(ComputeState, self).tearDown()
-        self.pbm.pb_storage.remove_elements()
+        # self.pbm.collection.remove({})
+
 
     def test_compute_state_issue427(self):
         # Aka: state desyncro
@@ -268,7 +276,7 @@ class ComputeState(BaseTest):
 
         # Creating pbehavior on it
         now = datetime.utcnow()
-        self.pbm.create(
+        result = self.pbm.create(
             name='addam',
             filter=loads('{"name": "morticia"}'),
             author='addams',
@@ -277,6 +285,7 @@ class ComputeState(BaseTest):
             rrule=None,
             enabled=True
         )
+
         self.pbm.compute_pbehaviors_filters()
 
         res = self.manager.get_watcher(watcher_id)
@@ -285,6 +294,9 @@ class ComputeState(BaseTest):
         self.manager.compute_watchers()
 
         res = self.manager.get_watcher(watcher_id)
+        with open("/tmp/plop.log", "a") as fd:
+            fd.write("Pbehavior insert {}\n".format(result))
+            fd.write("watcher   state  {}\n".format(res))
         self.assertEqual(res['state'], 0)
 
         sleep(3)
@@ -293,6 +305,8 @@ class ComputeState(BaseTest):
 
         res = self.manager.get_watcher(watcher_id)
         self.assertEqual(res['state'], self.state)
+        # self.real_alerts_storage.remove_elements({"d": 'addams'})
+        # self.real_alerts_storage.remove_elements({"d": 'an_id'})
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"
