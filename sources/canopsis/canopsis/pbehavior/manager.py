@@ -208,6 +208,11 @@ class PBehaviorManager(object):
     def get(self, _id, query=None):
         """Get pbehavior by id.
 
+        When _id is None, all the pbehaviors are returned. This behavior
+        should be considered deprecated, and is only kept for backward
+        compatibility. You probably want to use the get_enabled_pbehaviors
+        method instead.
+
         :param str id: pbehavior id
         :param dict query: filtering options
         """
