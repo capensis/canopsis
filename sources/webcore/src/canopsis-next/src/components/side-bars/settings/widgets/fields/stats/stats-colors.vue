@@ -6,9 +6,10 @@
         v-flex
           div {{ key }}:
         v-flex
-          v-btn(@click="showColorPickerModal(key)") {{ $t('settings.statsColor.pickColor') }}
-        v-flex
-          div.py-2.text-xs-center(:style="{ backgroundColor: value[key] }") {{ value[key] }}
+          v-btn(
+          :style="{ backgroundColor: value[key] }",
+          @click="showColorPickerModal(key)"
+          ) {{ $t('settings.statsColor.pickColor') }}
 </template>
 
 <script>

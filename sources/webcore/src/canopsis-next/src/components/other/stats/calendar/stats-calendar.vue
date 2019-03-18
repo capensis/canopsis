@@ -30,15 +30,15 @@ import { get, omit, pick, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { MODALS, WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '../../../../constants';
+import { MODALS, WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
 
-import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '../../../../helpers/dayspan';
-import { generateWidgetByType } from '../../../../helpers/entities';
+import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
+import { generateWidgetByType } from '@/helpers/entities';
 
-import modalMixin from '../../../../mixins/modal';
-import widgetQueryMixin from '../../../../mixins/widget/query';
+import modalMixin from '@/mixins/modal';
+import widgetQueryMixin from '@/mixins/widget/query';
 
-import ProgressOverlay from '../../../layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import DsCalendar from './day-span/calendar.vue';
 

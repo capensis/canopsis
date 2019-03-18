@@ -6,15 +6,10 @@
       :headers="columns",
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     )
-      template(slot="headers", slot-scope="{ headers }")
-        th {{ $t('common.entity') }}
-        th(v-for="header in headers", :key="header.value") {{ header.value }}
       template(slot="items", slot-scope="{ item }")
         td {{ item.entity.name }}
         td(v-for="(property, key) in widget.parameters.stats")
-          template(
-          v-if="item[key] && item[key].value !== undefined && item[key].value !== null"
-          )
+          template(v-if="isStatNotEmpty(item[key])")
             td
               div {{ item[key].value }}
                 sub {{ item[key].trend }}
@@ -22,6 +17,8 @@
 </template>
 
 <script>
+import { isUndefined, isNull } from 'lodash';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -52,8 +49,21 @@ export default {
     };
   },
   computed: {
+    isStatNotEmpty() {
+      return stat => stat && !isUndefined(stat.value) && !isNull(stat.value);
+    },
     columns() {
-      return Object.keys(this.widget.parameters.stats).map(item => ({ value: item }));
+      return [
+        {
+          text: this.$t('common.entity'),
+          value: 'entity.name',
+        },
+
+        ...Object.keys(this.widget.parameters.stats).map(item => ({
+          text: item,
+          value: `${item}.value`,
+        })),
+      ];
     },
   },
   methods: {
@@ -77,11 +87,11 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const stats = await this.fetchStatsListWithoutStore({
+      const { values } = await this.fetchStatsListWithoutStore({
         params: this.getQuery(),
       });
 
-      this.stats = stats.values;
+      this.stats = values;
       this.pending = false;
     },
   },

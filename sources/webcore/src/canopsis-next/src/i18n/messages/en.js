@@ -714,6 +714,9 @@ export default {
         periodValue: 'Period value',
         periodUnit: 'Period unit',
       },
+      errors: {
+        tstopShouldBeMoreThanTstart: 'Tstop should be more than tstart',
+      },
     },
   },
   tables: {
