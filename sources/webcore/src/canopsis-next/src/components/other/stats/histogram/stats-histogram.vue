@@ -1,8 +1,7 @@
 <template lang="pug">
   div.stats-wrapper
-    progress-overlay(:pending="pending", :opacity="1", backgroundColor="grey lighten-5")
-    v-fade-transition
-      stats-histogram-chart(:labels="labels", :datasets="datasets")
+    progress-overlay(:pending="pending")
+    stats-histogram-chart(:labels="labels", :datasets="datasets")
 </template>
 
 <script>

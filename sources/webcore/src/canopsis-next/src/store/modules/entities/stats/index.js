@@ -1,5 +1,3 @@
-import { set } from 'lodash';
-
 import i18n from '@/i18n';
 
 import request from '@/services/request';
@@ -20,31 +18,29 @@ export default {
       }
     },
 
-    async fetchListWithoutStore({ dispatch }, { params, aggregate }) {
+    async fetchListWithoutStore({ dispatch }, { params }) {
       try {
-        if (aggregate) {
-          Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
-        }
-
-        return await request.post(API_ROUTES.stats, { ...params });
+        return request.post(API_ROUTES.stats, params);
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
-        return [];
+        return {
+          aggregations: {},
+          values: [],
+        };
       }
     },
 
-    async fetchEvolutionWithoutStore({ dispatch }, { params, aggregate }) {
+    async fetchEvolutionWithoutStore({ dispatch }, { params }) {
       try {
-        if (aggregate) {
-          Object.keys(params.stats).forEach(stat => set(params.stats[stat], 'aggregate', aggregate));
-        }
-
-        return await request.post(`${API_ROUTES.stats}/evolution`, { ...params });
+        return request.post(`${API_ROUTES.stats}/evolution`, params);
       } catch (err) {
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
-        return [];
+        return {
+          aggregations: {},
+          values: [],
+        };
       }
     },
   },

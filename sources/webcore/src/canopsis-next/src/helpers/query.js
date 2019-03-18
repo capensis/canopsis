@@ -91,12 +91,12 @@ export function convertWeatherWidgetToQuery(widget) {
 }
 
 /**
- * This function converts widget with type 'StatsCurves' to query Object
+ * This function converts widget with type stats field to query Object
  *
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertStatsChartWidgetToQuery(widget) {
+export function convertWidgetStatsParameterToQuery(widget) {
   const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
     acc[stat] = {
       ...widget.parameters.stats[stat],
@@ -109,19 +109,6 @@ export function convertStatsChartWidgetToQuery(widget) {
     ...widget.parameters,
 
     stats: statsList,
-  };
-}
-
-/**
- * This function converts widget with type 'StatsTable' to query Object
- *
- * @param {Object} widget
- * @returns {{}}
- */
-export function convertStatsTableWidgetToQuery(widget) {
-  return {
-    ...widget.parameters,
-    mfilter: widget.parameters.mfilter && widget.parameters.mfilter ? JSON.parse(widget.parameters.mfilter.filter) : {},
   };
 }
 
@@ -283,13 +270,12 @@ export function convertWidgetToQuery(widget) {
       return convertWeatherWidgetToQuery(widget);
     case WIDGET_TYPES.statsCurves:
     case WIDGET_TYPES.statsHistogram:
-      return convertStatsChartWidgetToQuery(widget);
     case WIDGET_TYPES.statsTable:
-      return convertStatsTableWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
+      return convertWidgetStatsParameterToQuery(widget);
     case WIDGET_TYPES.statsNumber:
       return convertStatsNumberWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCalendar:
+      return convertStatsCalendarWidgetToQuery(widget);
     default:
       return {};
   }

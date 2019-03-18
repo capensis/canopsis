@@ -1,6 +1,7 @@
 <template lang="pug">
   div
-    v-card(v-if="!pending")
+    progress-overlay(:pending="pending")
+    v-card
       v-data-table(
         :items="stats",
         :headers="tableHeaders",
@@ -19,11 +20,6 @@
                 div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
               div.caption
                 template(v-if="item[query.stat.title].trend >= 0") + {{ item[query.stat.title].trend }}
-    v-layout(v-else, justify-center)
-      v-progress-circular(
-      indeterminate,
-      color="primary",
-      )
 </template>
 
 <script>
@@ -35,14 +31,15 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
-
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
+    ProgressOverlay,
   },
   mixins: [
     entitiesStatsMixin,
@@ -140,10 +137,11 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      this.stats = await this.fetchStatValuesWithoutStore({
+      const { values } = await this.fetchStatsListWithoutStore({
         params: this.getQuery(),
       });
 
+      this.stats = values;
       this.pending = false;
     },
   },

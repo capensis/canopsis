@@ -1,11 +1,7 @@
 <template lang="pug">
   div.stats-wrapper
-    stats-curves-chart(v-if="!pending", :labels="labels", :datasets="datasets")
-    v-layout(v-else, justify-center)
-      v-progress-circular(
-      indeterminate,
-      color="primary",
-      )
+    progress-overlay(:pending="pending")
+    stats-curves-chart(:labels="labels", :datasets="datasets")
 </template>
 
 <script>
@@ -18,10 +14,13 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
 import StatsCurvesChart from './stats-curves-chart.vue';
 
 export default {
   components: {
+    ProgressOverlay,
     StatsCurvesChart,
   },
   mixins: [

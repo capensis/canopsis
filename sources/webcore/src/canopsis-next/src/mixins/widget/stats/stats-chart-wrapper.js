@@ -37,22 +37,30 @@ export default {
   methods: {
     getQuery() {
       const {
-        stats,
         mfilter,
         tstart,
         tstop,
         periodUnit,
         periodValue,
         duration,
+        stats = {},
       } = this.getStatsQuery();
 
       return {
-        stats,
         duration,
         mfilter,
 
         periods: Math.ceil((tstop.diff(tstart, periodUnit) + 1) / periodValue),
         tstop: tstop.startOf('h').unix(),
+        stats: Object.entries(stats).reduce((acc, [key, value]) => {
+          acc[key] = {
+            ...value,
+
+            aggregate: ['sum'],
+          };
+
+          return acc;
+        }, {}),
       };
     },
 
@@ -61,7 +69,6 @@ export default {
 
       const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
         params: this.getQuery(),
-        aggregate: ['sum'],
       });
 
       this.stats = aggregations;
