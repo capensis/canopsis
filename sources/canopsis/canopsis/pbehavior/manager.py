@@ -377,7 +377,9 @@ class PBehaviorManager(object):
         """
         data = self.__get_and_check_pbehavior(_id, **kwargs)
         data["new_data"]["_id"] = _id
-        result = self.collection.update(data["new_data"])
+        result = self.collection.update(
+            {PBehavior.ID: _id},
+            {'$set': data["new_data"]})
 
         if (PBehaviorManager._UPDATE_FLAG in result and
                 result[PBehaviorManager._UPDATE_FLAG]):
@@ -583,7 +585,7 @@ class PBehaviorManager(object):
             )
 
             eids = [e['_id'] for e in entities]
-            self.collection.update({"_id": pbehavior},
+            self.collection.update({"_id": pbehavior[PBehavior.ID]},
                                    {"$set": {PBehavior.EIDS: eids}},
                                    upsert=False, multi=False)
 
