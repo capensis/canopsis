@@ -74,7 +74,7 @@ ADD docker/files/entrypoint.sh /
 #  * Security: the user must not be able to change runtime files.
 #  * Image size: docker is dumb, until --squash is stable.
 RUN mkdir -p ./etc/init.d && \
-    mkdir -p var/log/engines && \
+    mkdir -p var/log/engines var/log/webserver && \
     mkdir -p var/cache/canopsis && \
     mkdir -p tmp && \
     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \

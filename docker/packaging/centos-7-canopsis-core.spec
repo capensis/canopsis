@@ -26,6 +26,7 @@ ln -s /opt/canopsis/bin/canoctl %{buildroot}/usr/bin/canoctl
 # ensure logs are clean
 rm -rf %{buildroot}/opt/canopsis/var/log
 mkdir -p %{buildroot}/opt/canopsis/var/log/engines
+mkdir -p %{buildroot}/opt/canopsis/var/log/webserver
 
 rm -rf %{buildroot}/opt/canopsis/.npm
 rm -rf %{buildroot}/opt/canopsis/pip-selfcheck.json

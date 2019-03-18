@@ -85,7 +85,7 @@ class EnsureAuthenticated(object):
 class WebServer():
 
     CONF_PATH = 'etc/webserver.conf'
-    LOG_FILE = root_path + '/var/log/webserver.log'
+    LOG_FILE = root_path + '/var/log/webserver/webserver.log'
 
     @property
     def application(self):

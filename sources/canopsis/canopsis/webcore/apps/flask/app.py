@@ -45,7 +45,7 @@ def _init(app):
     0: skip webservice
     1: load webservice
     """
-    logfile_handler = logging.FileHandler(os.path.join(root_path, 'var/log/webserver.log'))
+    logfile_handler = logging.FileHandler(os.path.join(root_path, 'var/log/webserver/webserver.log'))
     app.logger.addHandler(logfile_handler)
     app.logger.setLevel(logging.INFO)
 

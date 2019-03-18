@@ -61,6 +61,7 @@ class PostInstall(setup_install):
 
     def run(self):
         self._makedirs('var/log/engines')
+        self._makedirs('var/log/webserver')
         self._makedirs('var/cache/canopsis')
         self._makedirs('tmp')
         self._makedirs('etc')
