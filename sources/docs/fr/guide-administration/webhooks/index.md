@@ -32,8 +32,8 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `triggers` (requis) : Liste de triggers. Au moins un de ces triggers doit avoir eu lieu pour que le webhook soit appelé.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
-       - `username` : nom d'utilisateur employé pour l'authentification HTTP
-       - `password` : mot de passé employé pour l'authentification HTTP
+       - `username` (optionnel) : nom d'utilisateur employé pour l'authentification HTTP
+       - `password` (optionnel) : mot de passé employé pour l'authentification HTTP
      - `headers` (optionnel) : les en-têtes de la requête
      - `method` (requis) : méthode HTTP
      - `payload` (requis) : le corps de la requête qui sera envoyé. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier json. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
