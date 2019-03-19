@@ -67,8 +67,11 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
+import { MODALS, STATS_TYPES, STATS_OPTIONS, ENTITIES_STATES } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/inner';
-import { MODALS, STATS_TYPES, ENTITIES_STATES } from '@/constants';
 
 export default {
   name: MODALS.addStat,
@@ -111,14 +114,14 @@ export default {
       const selectedStat = Object.values(STATS_TYPES)
         .find(stat => stat.value === this.config.stat.stat.value) || STATS_TYPES.alarmsCreated;
 
-      this.form = { ...this.config.stat, stat: selectedStat, title: this.config.statTitle };
+      this.form = { ...cloneDeep(this.config.stat), stat: cloneDeep(selectedStat), title: this.config.statTitle };
     }
   },
   methods: {
     async submit() {
       let isFormValid = await this.$validator.validateAll();
 
-      if (this.form.stat.options.find(option => option === 'sla') && !this.form.parameters.sla) {
+      if (this.form.stat.options.find(option => option === STATS_OPTIONS.sla) && !this.form.parameters.sla) {
         isFormValid = false;
         this.error = this.$t('modals.addStat.slaRequired');
       }

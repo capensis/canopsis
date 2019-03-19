@@ -15,7 +15,7 @@
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-default-sort(
+          field-default-sort-column(
           v-model="settings.widget.parameters.sort",
           :columns="settings.widget.parameters.widgetColumns"
           )
@@ -57,7 +57,7 @@ import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDefaultSort from './fields/common/default-sort.vue';
+import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
@@ -77,7 +77,7 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldDefaultSort,
+    FieldDefaultSortColumn,
     FieldColumns,
     FieldPeriodicRefresh,
     FieldDefaultElementsPerPage,

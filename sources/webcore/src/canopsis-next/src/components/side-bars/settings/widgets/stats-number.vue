@@ -23,7 +23,7 @@
           v-divider
           field-number(v-model="settings.widget.parameters.limit", :title="$t('common.limit')")
           v-divider
-          field-default-sort(withoutColumns, v-model="settings.widget.parameters.sortOrder")
+          field-sort-order(v-model="settings.widget.parameters.sortOrder")
           v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -41,7 +41,7 @@ import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';
 import FieldStatDisplayMode from './fields/stats/stat-display-mode.vue';
 import FieldNumber from './fields/common/number.vue';
-import FieldDefaultSort from './fields/common/default-sort.vue';
+import FieldSortOrder from './fields/stats/sort-order.vue';
 
 export default {
   name: SIDE_BARS.statsNumberSettings,
@@ -56,7 +56,7 @@ export default {
     FieldStatSelector,
     FieldStatDisplayMode,
     FieldNumber,
-    FieldDefaultSort,
+    FieldSortOrder,
   },
   mixins: [widgetSettingsMixin],
   data() {

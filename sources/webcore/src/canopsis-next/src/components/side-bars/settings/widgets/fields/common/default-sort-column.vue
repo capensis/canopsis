@@ -3,7 +3,6 @@
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
     v-container
       v-select(
-      v-if="!withoutColumns",
       :value="value.column",
       :items="columns",
       :label="$t('settings.columnName')",
@@ -12,8 +11,8 @@
       @change="updateField('column', $event)"
       )
       v-select(
-      :value="selectedOrder",
-      @input="updateValue",
+      :value="value.order",
+      @input="updateField('order', $event)",
       :items="orders"
       )
 </template>
@@ -34,37 +33,20 @@ export default {
   mixins: [formMixin],
   props: {
     value: {
-      type: [Object, String],
-      required: true,
+      type: Object,
+      default: () => ({
+        column: '',
+        order: 'ASC',
+      }),
     },
     columns: {
       type: Array,
       default: () => [],
     },
-    withoutColumns: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     orders() {
       return Object.values(SORT_ORDERS);
-    },
-    selectedOrder() {
-      if (typeof this.value === 'string') {
-        return SORT_ORDERS[this.value.toLowerCase()];
-      }
-
-      return this.value.order ? SORT_ORDERS[this.value.order.toLowerCase()] : SORT_ORDERS.desc;
-    },
-  },
-  methods: {
-    updateValue(value) {
-      if (typeof this.value === 'string') {
-        this.$emit('input', value);
-      } else {
-        this.updateField('order', value);
-      }
     },
   },
 };

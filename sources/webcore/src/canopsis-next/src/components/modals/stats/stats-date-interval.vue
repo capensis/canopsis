@@ -20,7 +20,7 @@
         v-alert.mb-2(
         v-if="periodUnit === 'm'", type="info", value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
-        stats-date-selector.my-1(v-model="dateForm", :periodUnit="periodUnit", @input="resetValidation")
+        stats-date-selector.my-1(v-model="form", :periodUnit="periodUnit", @input="resetValidation")
       v-alert(
       value="errors",
       type="error",
@@ -52,7 +52,7 @@ export default {
     return {
       periodValue: 1,
       periodUnit: STATS_DURATION_UNITS.hour,
-      dateForm: {
+      form: {
         tstart: 'now+1d',
         tstop: 'now+2d',
       },
@@ -88,7 +88,7 @@ export default {
 
       this.periodValue = periodValue;
       this.periodUnit = periodUnit;
-      this.dateForm = {
+      this.form = {
         tstart,
         tstop,
       };
@@ -100,7 +100,7 @@ export default {
     },
 
     validate() {
-      const { tstart, tstop } = this.dateForm;
+      const { tstart, tstop } = this.form;
 
       try {
         const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
@@ -124,8 +124,8 @@ export default {
           this.config.action({
             periodValue: this.periodValue,
             periodUnit: this.periodUnit,
-            tstart: this.dateForm.tstart,
-            tstop: this.dateForm.tstop,
+            tstart: this.form.tstart,
+            tstop: this.form.tstop,
           });
         }
 

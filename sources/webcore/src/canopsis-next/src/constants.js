@@ -327,34 +327,41 @@ export const DATETIME_FORMATS = {
   timePicker: 'HH:mm',
 };
 
+export const STATS_OPTIONS = {
+  recursive: 'recursive',
+  states: 'states',
+  authors: 'authors',
+  sla: 'sla',
+};
+
 export const STATS_TYPES = {
   alarmsCreated: {
     value: 'alarms_created',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   alarmsResolved: {
     value: 'alarms_resolved',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   alarmsCanceled: {
     value: 'alarms_canceled',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   ackTimeSla: {
     value: 'ack_time_sla',
-    options: ['recursive', 'states', 'authors', 'sla'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],
   },
   resolveTimeSla: {
     value: 'resolve_time_sla',
-    options: ['recursive', 'states', 'authors', 'sla'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],
   },
   timeInState: {
     value: 'time_in_state',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   stateRate: {
     value: 'state_rate',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   mtbf: {
     value: 'mtbf',
@@ -366,11 +373,11 @@ export const STATS_TYPES = {
   },
   ongoingAlarms: {
     value: 'ongoing_alarms',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   currentOngoingAlarms: {
     value: 'current_ongoing_alarms',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
 };
 
