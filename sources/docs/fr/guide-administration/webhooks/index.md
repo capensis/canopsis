@@ -53,7 +53,7 @@ Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
-#### Templates
+### Templates
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
 
