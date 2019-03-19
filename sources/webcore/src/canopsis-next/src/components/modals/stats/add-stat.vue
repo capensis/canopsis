@@ -30,14 +30,14 @@
             v-card-text
               template(v-for="option in form.stat.options")
                 v-switch(
-                v-if="option === 'recursive'"
+                v-if="option === $constants.STATS_OPTIONS.recursive"
                 :label="$t('common.recursive')",
                 v-model="form.parameters.recursive",
                 hide-details,
                 color="primary"
                 )
                 v-select(
-                v-if="option === 'states'"
+                v-else-if="option === $constants.STATS_OPTIONS.states"
                 :placeholder="$t('common.states')",
                 :items="stateTypes",
                 v-model="form.parameters.states",
@@ -46,7 +46,7 @@
                 hide-details
                 )
                 v-combobox(
-                v-if="option === 'authors'"
+                v-else-if="option === $constants.STATS_OPTIONS.authors"
                 :placeholder="$t('common.authors')",
                 v-model="form.parameters.authors",
                 hide-details,
@@ -54,7 +54,7 @@
                 multiple
                 )
                 v-text-field(
-                v-if="option === 'sla'",
+                v-else-if="option === $constants.STATS_OPTIONS.sla",
                 :placeholder="$t('common.sla')",
                 v-model="form.parameters.sla",
                 hide-details
@@ -118,6 +118,10 @@ export default {
     }
   },
   methods: {
+    updateParameter(parameter, value) {
+      this.$set(this.form.parameters, parameter, value);
+    },
+
     async submit() {
       let isFormValid = await this.$validator.validateAll();
 
