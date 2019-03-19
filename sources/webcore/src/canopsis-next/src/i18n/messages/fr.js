@@ -850,5 +850,7 @@ export default {
     },
     deleteRow: 'Supprimer la ligne',
     deleteWidget: 'Supprimer le widget',
+    fullScreen: 'Plein écran',
+    fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
   },
 };
