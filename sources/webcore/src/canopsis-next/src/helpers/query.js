@@ -90,24 +90,25 @@ export function convertWeatherWidgetToQuery(widget) {
   return query;
 }
 
-export function convertStatsHistogramToQuery(widget) {
-  return { ...widget.parameters };
-}
-
-export function convertStatsCurvesToQuery(widget) {
-  return { ...widget.parameters };
-}
-
 /**
- * This function converts widget with type 'StatsTable' to query Object
+ * This function converts widget with type stats field to query Object
  *
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertStatsTableWidgetToQuery(widget) {
+export function convertWidgetStatsParameterToQuery(widget) {
+  const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
+    acc[stat] = {
+      ...widget.parameters.stats[stat],
+      stat: widget.parameters.stats[stat].stat.value,
+    };
+    return acc;
+  }, {});
+
   return {
     ...widget.parameters,
-    mfilter: widget.parameters.mfilter && widget.parameters.mfilter ? JSON.parse(widget.parameters.mfilter.filter) : {},
+
+    stats: statsList,
   };
 }
 
@@ -149,8 +150,25 @@ export function convertStatsCalendarWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsNumberWidgetToQuery(widget) {
-  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']);
+  const { stat } = widget.parameters;
+  const query = {
+    ...omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']),
+
+    trend: true,
+  };
+
+  if (stat) {
+    query.stats = {
+      [stat.title]: {
+        parameters: stat.parameters,
+        stat: stat.stat.value,
+        trend: true,
+      },
+    };
+  }
+
   query.trend = true;
+
   return query;
 }
 
@@ -250,16 +268,14 @@ export function convertWidgetToQuery(widget) {
       return convertContextWidgetToQuery(widget);
     case WIDGET_TYPES.weather:
       return convertWeatherWidgetToQuery(widget);
-    case WIDGET_TYPES.statsHistogram:
-      return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsCurves:
-      return convertStatsCurvesToQuery(widget);
+    case WIDGET_TYPES.statsHistogram:
     case WIDGET_TYPES.statsTable:
-      return convertStatsTableWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
+      return convertWidgetStatsParameterToQuery(widget);
     case WIDGET_TYPES.statsNumber:
       return convertStatsNumberWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCalendar:
+      return convertStatsCalendarWidgetToQuery(widget);
     default:
       return {};
   }
