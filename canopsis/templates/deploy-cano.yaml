@@ -1,3 +1,16 @@
+apiVersion: v1
+data:
+  .dockerconfigjson: ***REMOVED***
+kind: Secret
+metadata:
+  creationTimestamp: "2019-03-19T16:27:07Z"
+  name: regcred
+  namespace: default
+  resourceVersion: "556014"
+  selfLink: /api/v1/namespaces/default/secrets/regcred
+  uid: ***REMOVED***
+type: kubernetes.io/dockerconfigjson
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -236,6 +249,8 @@ spec:
       containers:
       - name: watcher
         image: "canopsis/canopsis-core:{{ .Values.CANOPSIS_IMAGE_TAG }}"
+      imagePullSecrets:
+      - name: regcred
         envFrom:
         - configMapRef:
             name: compose-env
@@ -265,6 +280,8 @@ spec:
       containers:
       - name: action
         image: "canopsis/engine-action:{{ .Values.CANOPSIS_IMAGE_TAG }}"
+      imagePullSecrets:
+      - name: regcred
         args:
         - /engine-action
         envFrom:
@@ -288,6 +305,8 @@ spec:
       containers:
       - name: heartbeat
         image: "canopsis/engine-heartbeat:{{ .Values.CANOPSIS_IMAGE_TAG }}"
+      imagePullSecrets:
+      - name: regcred
         args:
         - /engine-heartbeat
         envFrom:
@@ -314,6 +333,8 @@ spec:
       containers:
       - name: axe
         image: "canopsis/engine-axe:{{ .Values.CANOPSIS_IMAGE_TAG }}"
+      imagePullSecrets:
+      - name: regcred
         args:
         - /engine-axe
         envFrom:
@@ -340,6 +361,8 @@ spec:
       containers:
       - name: che
         image: "canopsis/engine-che:{{ .Values.CANOPSIS_IMAGE_TAG }}"
+      imagePullSecrets:
+      - name: regcred
         args:
         - /engine-che
         - -publishQueue
@@ -523,6 +546,8 @@ spec:
       containers:
       - name: init
         image: "canopsis/init:{{ .Values.CANOPSIS_IMAGE_TAG }}"
+      imagePullSecrets:
+      - name: regcred
         envFrom:
         - configMapRef:
             name: compose-env
