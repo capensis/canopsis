@@ -13,13 +13,13 @@ Des exemples pratiques d'utilisation des webhooks sont disponibles dans la parti
 
 Les webhooks sont implémentés sous la forme d'un plugin à ajouter dans le moteur `axe`. Ce plugin n'est disponible qu'avec une installation CAT de Canopsis.
 
-Dans une installation Docker, l'image `canopsis/engine-axe-cat` remplace l'image par défaut `canopsis/engine-axe`. Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé :
-```bash
-engine-axe -postProcessorsDirectory /plugins/axepostprocessor
-```
+### Activation avec Docker
 
-Le moteur axe par défaut ne contient pas ce plugin gérant les webhooks. Pour pouvoir utiliser les webhooks, il faut :
+Dans une installation Docker, l'image `canopsis/engine-axe-cat` remplace l'image par défaut `canopsis/engine-axe`. Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé : `engine-axe -postProcessorsDirectory /plugins/axepostprocessor`
 
+### Activation par paquets
+
+Pour pouvoir utiliser les webhooks avec une installation par paquets, il faut :
 *  compiler le plugin webhooks dans le répertoire contenant le plugin webhooks `CGO_ENABLED=1 go build -buildmode=plugin -o webhookPlugin.so main.go`
 *  lancer le moteur `axe` avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`. Sauf configuration spécifique, `webhookPlugin.so` se trouve dans `/plugins/axepostprocessor`.
 
