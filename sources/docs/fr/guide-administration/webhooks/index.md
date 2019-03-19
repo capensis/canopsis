@@ -32,9 +32,11 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `triggers` (requis) : Liste de triggers. Au moins un de ces triggers doit avoir eu lieu pour que le webhook soit appelé.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
+       - `username` : nom d'utilisateur employé pour l'authentification HTTP
+       - `password` : mot de passé employé pour l'authentification HTTP
      - `headers` (optionnel) : les en-têtes de la requête
      - `method` (requis) : méthode HTTP
-     - `payload` (requis) : le corps de la requête qui sera envoyé. Le payload peut être personnalisé grâce aux [Templates](#templates).
+     - `payload` (requis) : le corps de la requête qui sera envoyé. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier json. Le payload peut être personnalisé grâce aux [Templates](#templates).
      - `url` (requis) : l'url du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
  - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme.
      - `ticket_id` est le mom du champs de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
@@ -101,6 +103,10 @@ Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Dat
     },
     "request" : {
         "method" : "PUT",
+        "auth" : {
+            "username" : "ABC",
+            "password" : "a!(b)-c_"
+        },
         "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
         "headers" : {
             "Content-type" : "application/json"
