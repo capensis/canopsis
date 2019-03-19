@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Stats - Date interval
+        span.headline {{ $t('modals.statsDateInterval.title') }}
     v-card-text
       v-container
         v-layout
@@ -10,12 +10,12 @@
             v-text-field.pt-0(
             type="number",
             v-model="periodValue",
-            label="Period value"
+            :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
           v-select.pt-0(
-          :items="periodUnits",
           v-model="periodUnit",
-          label="Period unit",
+          :items="periodUnits",
+          :label="$t('modals.statsDateInterval.fields.periodUnit')"
           )
         v-alert.mb-2(
         v-if="periodUnit === 'm'", type="info", value="true"
@@ -34,11 +34,9 @@
 </template>
 
 <script>
-import moment from 'moment';
+import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
 
-import { MODALS } from '@/constants';
-
-import { parseStringToDateInterval } from '@/helpers/date-intervals';
+import { dateParse } from '@/helpers/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -53,7 +51,7 @@ export default {
   data() {
     return {
       periodValue: 1,
-      periodUnit: 'h',
+      periodUnit: STATS_DURATION_UNITS.hour,
       dateForm: {
         tstart: 'now+1d',
         tstop: 'now+2d',
@@ -61,19 +59,19 @@ export default {
       periodUnits: [
         {
           text: this.$tc('common.times.hour'),
-          value: 'h',
+          value: STATS_DURATION_UNITS.hour,
         },
         {
           text: this.$tc('common.times.day'),
-          value: 'd',
+          value: STATS_DURATION_UNITS.day,
         },
         {
           text: this.$tc('common.times.week'),
-          value: 'w',
+          value: STATS_DURATION_UNITS.week,
         },
         {
           text: this.$tc('common.times.month'),
-          value: 'm',
+          value: STATS_DURATION_UNITS.month,
         },
       ],
       errors: [],
@@ -90,7 +88,10 @@ export default {
 
       this.periodValue = periodValue;
       this.periodUnit = periodUnit;
-      this.dateForm = { ...this.dateForm, tstart, tstop };
+      this.dateForm = {
+        tstart,
+        tstop,
+      };
     }
   },
   methods: {
@@ -102,11 +103,11 @@ export default {
       const { tstart, tstop } = this.dateForm;
 
       try {
-        const convertedTstart = moment(tstart).isValid() ? moment(tstart) : parseStringToDateInterval(tstart, 'start');
-        const convertedTstop = moment(tstop).isValid() ? moment(tstop) : parseStringToDateInterval(tstop, 'stop');
+        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
+        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
 
-        if (convertedTstop.isBefore(convertedTstart)) {
-          this.errors.push('Tstop before tstart');
+        if (convertedTstop.isSameOrBefore(convertedTstart)) {
+          this.errors.push(this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'));
           return false;
         }
       } catch (err) {

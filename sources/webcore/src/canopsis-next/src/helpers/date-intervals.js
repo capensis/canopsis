@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+import { STATS_DURATION_UNITS } from '@/constants';
+
 /**
  * Helper to calculate time intervals
  */
@@ -70,79 +72,47 @@ export default {
  *
  * @param {String} dateString
  * @param {String} type
- * @returns {moment}
+ * @returns {Moment}
  */
 export function parseStringToDateInterval(dateString, type) {
-  let operator = null;
-  let deltaValue = 0;
-  let deltaUnit = null;
-  let roundUnit = null;
-  let preparedDateString = dateString.toLowerCase().trim();
+  const preparedDateString = dateString.toLowerCase().trim();
+  const matches = preparedDateString.match(/^now(([+--])(\d+)([hdwmy]{1}))?(\/([hdwmy]{1}))?$/);
 
-  if (preparedDateString.match(/^now/)) {
-    preparedDateString = preparedDateString.substring(3);
-  } else {
-    throw new Error('Date string pattern not recognized');
-  }
+  if (matches) {
+    const result = moment().utc();
+    const operator = matches[2];
+    const deltaValue = matches[3];
+    const roundUnit = matches[6];
+    let deltaUnit = matches[4];
 
-  if (!preparedDateString) {
-    return moment().utc();
-  } else if (preparedDateString.match(/\/[hdwmy]{1}$/) && preparedDateString.match(/^[+--]\d+[hdwmy]{1}/)) {
-    [operator] = preparedDateString;
-    roundUnit = preparedDateString.slice(-1);
-    deltaUnit = preparedDateString.slice(-3, -2);
-    deltaValue = preparedDateString.slice(1, -3);
+    const roundMethod = type === 'start' ? 'startOf' : 'endOf';
+    const deltaMethod = operator === '+' ? 'add' : 'subtract';
 
-    if (deltaUnit === 'm') {
-      deltaUnit = deltaUnit.toUpperCase();
+    if (roundUnit) {
+      result[roundMethod](roundUnit);
     }
 
-    if (type === 'start') {
-      return operator === '+' ?
-        moment().utc().startOf(roundUnit).add(deltaValue, deltaUnit) :
-        moment().utc().startOf(roundUnit).subtract(deltaValue, deltaUnit);
+
+    if (deltaValue && deltaUnit) {
+      if (deltaUnit === STATS_DURATION_UNITS.month) {
+        deltaUnit = deltaUnit.toUpperCase();
+      }
+
+      result[deltaMethod](deltaValue, deltaUnit);
     }
 
-    if (type === 'stop') {
-      return operator === '+' ?
-        moment().utc().endOf(roundUnit).add(deltaValue, deltaUnit) :
-        moment().utc().endOf(roundUnit).subtract(deltaValue, deltaUnit);
-    }
-  } else if (preparedDateString.match(/^[+--]\d+[hdwmy]{1}$/)) {
-    [operator] = preparedDateString;
-    deltaUnit = preparedDateString.slice(-1);
-    deltaValue = preparedDateString.slice(1, -1);
-
-    if (deltaUnit === 'm') {
-      deltaUnit = deltaUnit.toUpperCase();
-    }
-
-    if (type === 'start') {
-      return operator === '+' ?
-        moment().utc().add(deltaValue, deltaUnit) :
-        moment().utc().subtract(deltaValue, deltaUnit);
-    }
-
-    if (type === 'stop') {
-      return operator === '+' ?
-        moment().utc().add(deltaValue, deltaUnit) :
-        moment().utc().subtract(deltaValue, deltaUnit);
-    }
-  } else if (preparedDateString.match(/^\/[hdwmy]{1}$/)) {
-    roundUnit = preparedDateString.slice(-1);
-
-    if (roundUnit === 'm') {
-      roundUnit = roundUnit.toUpperCase();
-    }
-
-    if (type === 'start') {
-      return moment().utc().startOf(roundUnit);
-    }
-
-    if (type === 'stop') {
-      return moment().utc().endOf(roundUnit);
-    }
+    return result;
   }
 
   throw new Error('Date string pattern not recognized');
+}
+
+export function dateParse(date, type, format) {
+  const momentDate = moment(date, format, true);
+
+  if (!momentDate.isValid()) {
+    return parseStringToDateInterval(date, type);
+  }
+
+  return momentDate;
 }

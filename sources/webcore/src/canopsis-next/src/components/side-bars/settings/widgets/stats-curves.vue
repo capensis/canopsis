@@ -16,7 +16,7 @@
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter")
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
       field-stats-colors(
       :stats="settings.widget.parameters.stats",

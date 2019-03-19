@@ -9,6 +9,7 @@ import {
 
 export default {
   common: {
+    ok: 'Ok',
     undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
@@ -81,6 +82,8 @@ export default {
     forbidden: 'Forbidden',
     search: 'Search',
     webhooks: 'Webhooks',
+    startDate: 'Start date',
+    endDate: 'End date',
     link: 'link',
     actions: {
       close: 'Close',
@@ -250,6 +253,7 @@ export default {
     statsDateInterval: {
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
       quickRanges: {
+        [STATS_QUICK_RANGES.custom.value]: 'Custom',
         [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
         [STATS_QUICK_RANGES.last7Days.value]: 'Last 7 days',
         [STATS_QUICK_RANGES.last30Days.value]: 'Last 30 days',
@@ -702,6 +706,16 @@ export default {
       },
       remove: {
         success: 'Webhook successfully removed !',
+      },
+    },
+    statsDateInterval: {
+      title: 'Stats - Date interval',
+      fields: {
+        periodValue: 'Period value',
+        periodUnit: 'Period unit',
+      },
+      errors: {
+        endDateLessOrEqualStartDate: 'End date should be after start date',
       },
     },
   },

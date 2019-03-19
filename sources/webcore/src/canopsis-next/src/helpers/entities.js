@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
@@ -139,17 +138,6 @@ export function generateWidgetByType(type) {
       };
       break;
     case WIDGET_TYPES.statsHistogram:
-      specialParameters = {
-        mfilter: {},
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        groups: [],
-        stats: {},
-        statsColors: {},
-      };
-      break;
     case WIDGET_TYPES.statsCurves:
       specialParameters = {
         mfilter: {},
@@ -165,16 +153,17 @@ export function generateWidgetByType(type) {
       break;
     case WIDGET_TYPES.statsTable:
       specialParameters = {
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        stats: {},
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
         mfilter: {},
+        stat: {},
+        limit: 10,
       };
       break;
-
-
     case WIDGET_TYPES.statsCalendar:
       specialParameters = {
         filters: [],

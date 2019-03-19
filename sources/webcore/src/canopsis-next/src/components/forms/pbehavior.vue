@@ -14,18 +14,18 @@
           data-vv-name="name"
           )
         v-layout(row)
-          date-time-picker(
+          date-time-picker-field(
           :label="$t('modals.createPbehavior.fields.start')",
           v-model="form.tstart",
-          name="tstart",
-          rules="required",
+          v-validate="'required'",
+          name="tstart"
           )
         v-layout(row)
-          date-time-picker(
+          date-time-picker-field(
           :label="$t('modals.createPbehavior.fields.stop')",
           v-model="form.tstop",
+          v-validate="'required'",
           name="tstop",
-          rules="required"
           )
         v-layout(v-if="!filter", row)
           v-btn.primary(type="button", @click="showCreateFilterModal") Filter
@@ -70,7 +70,7 @@ import { MODALS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 
-import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
+import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
 
 /**
@@ -78,7 +78,7 @@ import RRuleForm from '@/components/forms/rrule.vue';
  */
 export default {
   inject: ['$validator'],
-  components: { DateTimePicker, RRuleForm },
+  components: { DateTimePickerField, RRuleForm },
   mixins: [authMixin, modalMixin],
   props: {
     serverError: {

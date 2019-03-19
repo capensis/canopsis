@@ -45,10 +45,13 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     const { displayMode } = this.modal.config;
+    const defaultDisplayMode = {
+      mode: STATS_DISPLAY_MODE.criticity,
+      parameters: STATS_DISPLAY_MODE_PARAMETERS,
+    };
 
     return {
-      form: displayMode ||
-        { mode: STATS_DISPLAY_MODE.criticity, parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS) },
+      form: cloneDeep(displayMode || defaultDisplayMode),
     };
   },
   computed: {
@@ -72,9 +75,9 @@ export default {
     async submit() {
       if (this.config.action) {
         await this.config.action(this.form);
-
-        this.hideModal();
       }
+
+      this.hideModal();
     },
   },
 };

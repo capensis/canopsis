@@ -1,6 +1,7 @@
 <template lang="pug">
   div
-    v-card(v-if="!pending")
+    progress-overlay(:pending="pending")
+    v-card
       v-data-table(
         :items="stats",
         :headers="tableHeaders",
@@ -10,7 +11,7 @@
         template(
           slot="items",
           slot-scope="{ item }",
-          xs12,
+          xs12
         )
           td {{ item.entity.name }}
           td
@@ -19,37 +20,32 @@
                 div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
               div.caption
                 template(v-if="item[query.stat.title].trend >= 0") + {{ item[query.stat.title].trend }}
-    v-layout(v-else, justify-center)
-      v-progress-circular(
-      indeterminate,
-      color="primary",
-      )
 </template>
 
 <script>
-import moment from 'moment';
-
 import { PAGINATION_LIMIT } from '@/config';
 import { STATS_DISPLAY_MODE, STATS_CRITICITY, SORT_ORDERS } from '@/constants';
-
-import { parseStringToDateInterval } from '@/helpers/date-intervals';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
+    ProgressOverlay,
   },
   mixins: [
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
+    widgetStatsQueryMixin,
   ],
   props: {
     widget: {
@@ -117,65 +113,35 @@ export default {
     },
   },
   methods: {
-    // Determine if tstart and tstop are valid Dates or Dynamic Date strings (Ex: 'now')
-    dateParse(date, type) {
-      if (!moment(date).isValid()) {
-        try {
-          return parseStringToDateInterval(date, type);
-        } catch (err) {
-          // TODO: DISPLAY AN ALERT TO THE USER
-          console.warn(err);
-          return err;
-        }
-      } else {
-        return moment(date);
-      }
+    getQuery() {
+      const { sortOrder, stat, limit = PAGINATION_LIMIT } = this.query;
+      const {
+        stats,
+        mfilter,
+        tstop,
+        duration,
+      } = this.getStatsQuery();
+
+      return {
+        duration,
+        stats,
+        mfilter,
+        limit,
+
+        tstop: tstop.startOf('h').unix(),
+        sort_column: stat.title,
+        sort_order: sortOrder ? sortOrder.toLowerCase() : SORT_ORDERS.desc.toLowerCase(),
+      };
     },
 
     async fetchList() {
       this.pending = true;
-      const params = {};
-      const {
-        dateInterval,
-        mfilter,
-        stat,
-        limit,
-        sortOrder,
-      } = this.getQuery();
-      const { periodValue } = dateInterval;
-      let { periodUnit, tstart, tstop } = dateInterval;
 
-      tstart = this.dateParse(tstart, 'start');
-      tstop = this.dateParse(tstop, 'stop');
-
-
-      if (periodUnit === 'm') {
-        periodUnit = periodUnit.toUpperCase();
-        // If period unit is 'month', we need to put the dates at the first day of the month, at 00:00 UTC
-        const monthlyRoundedTstart = moment.tz(tstart, moment.tz.guess()).startOf('month');
-        // Add the difference between the local date, and the UTC one.
-        tstart = monthlyRoundedTstart.add(monthlyRoundedTstart.utcOffset(), 'm');
-        const monthlyRoundedTstop = moment.tz(tstop, moment.tz.guess()).startOf('month');
-        // Add the difference between the local date, and the UTC one.
-        tstop = monthlyRoundedTstop.add(monthlyRoundedTstop.utcOffset(), 'm');
-      }
-
-      const stats = {};
-      stats[stat.title] = { parameters: stat.parameters, stat: stat.stat.value, trend: true };
-
-
-      params.duration = `${periodValue}${periodUnit.toLowerCase()}`;
-      params.stats = stats;
-      params.mfilter = mfilter && mfilter.filter ? JSON.parse(mfilter.filter) : {};
-      params.tstop = tstop.startOf('h').unix();
-      params.limit = limit;
-      params.sort_column = stat.title;
-      params.sort_order = sortOrder ? sortOrder.toLowerCase() : SORT_ORDERS.desc.toLowerCase();
-
-      this.stats = await this.fetchStatValuesWithoutStore({
-        params,
+      const { values } = await this.fetchStatsListWithoutStore({
+        params: this.getQuery(),
       });
 
+      this.stats = values;
       this.pending = false;
     },
   },

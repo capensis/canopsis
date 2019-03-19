@@ -44,7 +44,6 @@ import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
-import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
 import StatsDateInterval from './stats/stats-date-interval.vue';
 import StatsDisplayMode from './stats/stats-display-mode.vue';
@@ -95,7 +94,6 @@ export default {
     Watcher,
     CreateWatcherDeclareTicketEvent,
     CreateWatcherPauseEvent,
-    ManageHistogramGroups,
     AddStat,
     StatsDateInterval,
     StatsDisplayMode,
@@ -120,7 +118,6 @@ export default {
         [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.watcher]: { maxWidth: 920, lazy: true },
-        [MODALS.statsDateInterval]: { maxWidth: 920, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

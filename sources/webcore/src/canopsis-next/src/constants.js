@@ -42,7 +42,6 @@ export const MODALS = {
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
-  manageHistogramGroups: 'manage-histogram-groups',
   alarmsList: 'alarms-list',
   addStat: 'add-stat',
   statsDateInterval: 'stats-date-interval',
@@ -323,6 +322,9 @@ export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
+  dateTimePicker: 'DD/MM/YYYY HH:mm',
+  datePicker: 'DD/MM/YYYY',
+  timePicker: 'HH:mm',
 };
 
 export const STATS_TYPES = {
@@ -387,6 +389,9 @@ export const STATS_CRITICITY = {
 };
 
 export const STATS_QUICK_RANGES = {
+  custom: {
+    value: 'custom',
+  },
   last2Days: {
     value: 'last2Days',
     start: 'now-2d',
@@ -478,6 +483,8 @@ export const STATS_QUICK_RANGES = {
     stop: 'now',
   },
 };
+
+export const STATS_DEFAULT_COLOR = '#DDDDDD';
 
 export const STATS_DISPLAY_MODE = {
   value: 'value',

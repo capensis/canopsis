@@ -1,41 +1,51 @@
+<template lang="pug">
+  div.stats-wrapper
+    progress-overlay(:pending="pending")
+    stats-curves-chart(:labels="labels", :datasets="datasets")
+</template>
+
 <script>
-import { Line } from 'vue-chartjs';
+import { get } from 'lodash';
+
+import { STATS_DEFAULT_COLOR } from '@/constants';
+
+import entitiesStatsMixin from '@/mixins/entities/stats';
+import widgetQueryMixin from '@/mixins/widget/query';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
+
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
+import StatsCurvesChart from './stats-curves-chart.vue';
 
 export default {
-  extends: Line,
-  props: {
-    ...Line.props,
-    labels: {
-      type: Array,
-    },
-    datasets: {
-      type: Array,
-    },
+  components: {
+    ProgressOverlay,
+    StatsCurvesChart,
   },
+  mixins: [
+    entitiesStatsMixin,
+    widgetQueryMixin,
+    entitiesUserPreferenceMixin,
+    widgetStatsChartWrapperMixin,
+  ],
   computed: {
-    chartData() {
-      return {
-        labels: this.labels,
-        datasets: this.datasets,
-      };
-    },
-    options() {
-      return {
-        responsive: true,
-        maintainAspectRatio: false,
-      };
-    },
+    datasets() {
+      if (this.stats) {
+        return Object.keys(this.stats).reduce((acc, stat) => {
+          acc.push({
+            label: stat,
+            data: this.stats[stat].sum.map(value => value.value),
+            borderColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
+            backgroundColor: 'transparent',
+          });
 
-  },
-  watch: {
-    chartData(value, oldValue) {
-      if (value !== oldValue) {
-        this.renderChart(value, this.options);
+          return acc;
+        }, []);
       }
+
+      return [];
     },
-  },
-  mounted() {
-    this.renderChart(this.chartData, this.options);
   },
 };
 </script>
