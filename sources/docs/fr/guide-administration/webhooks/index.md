@@ -57,9 +57,52 @@ Le champ `hook` représente les conditions d'activation d'un webhook. Il contien
 
 Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `"ackremove"`, `"cancel"`, `"uncancel"`, `"declareticket"`, `"assocticket"`, `"snooze"`, `"unsnooze"`, `"resolve"`, `"done"`, et `"comment"`.
 
+| Nom                      | Description                                              |
+|:-------------------------|:---------------------------------------------------------|
+| `"ack"`                  | Acquittement d'une alerte                                |
+| `"ackremove"`            | Suppression de l'acquittement                            |
+| `"assocticket"`          | Asociation d'un ticket à l'alarme                        |
+| `"cancel"`               | Annulation de l'évènement                                |
+| `"create"`               | Création de l'évènement                                  |
+| `"comment"`              | Envoi d'un commentaire                                   |
+| `"declareticket"`        | Déclaration d'un ticket à l'alarme                       |
+| `"done"`                 | Fin de l'alarme                                          |
+| `"resolve"`              | Résolution de l'alarme                                   |
+| `"snooze"`               | Report de l'alarme                                       |
+| `"statedec"`             | Diminution de la criticité de l'alarme                   |
+| `"stateinc"`             | Augmentation de la criticité de l'alarme                 |
+| `"uncancel"`             | Retablissement de l'alarme                               |
+| `"unsnooze"`             | Fin du report de l'alarme                                |
+
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
+
+Par exemple, ce webhook va être activé si le trigger reçu par le moteur correspond à `"stateinc"` ou `"statedec"` ET que l'évènement ait comme `connector` soit `zabbix`, soit `shinken` ET que dans l'entité, l'`output` corresponde à l'expression régulière `MemoryDisk.*`.
+
+```json
+{
+    "hook" : {
+
+        "triggers" : ["stateinc", "statedec"],
+
+        "event_patterns" : [
+            {"connector" : "zabbix"},
+            {"connector" : "shinken"}
+        ],
+
+        "entity_patterns" : [
+            {"infos" :
+                {"output" :
+                    {
+                        "value": {"regex_match": "MemoryDisk.*"}
+                    }
+                }
+            }
+        ],
+    }
+}
+```
 
 ### Templates
 
@@ -132,5 +175,3 @@ Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Dat
     }
 }
 ```
-
-
