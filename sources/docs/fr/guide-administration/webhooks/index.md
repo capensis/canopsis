@@ -36,7 +36,7 @@ Une règle est un document JSON contenant les paramètres suivants :
        - `password` : mot de passé employé pour l'authentification HTTP
      - `headers` (optionnel) : les en-têtes de la requête
      - `method` (requis) : méthode HTTP
-     - `payload` (requis) : le corps de la requête qui sera envoyé. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier json. Le payload peut être personnalisé grâce aux [Templates](#templates).
+     - `payload` (requis) : le corps de la requête qui sera envoyé. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier json. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
      - `url` (requis) : l'url du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
  - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme.
      - `ticket_id` est le mom du champs de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
@@ -53,9 +53,13 @@ Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
-### Templates
+#### Templates
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
+
+Ils doivent être positionnés juste avant le corps du message.
+
+Ils se distinguent du corps du message par le fait qu'ils sont entourés de doubles accolades (ex : `{{ $comp := .Alarm.Value.Component }}`), contrairement au corps du message qui lui est entouré de simples accolades (ex: `{\"component\": \"{{$comp}}\"}`).
 
 `{{ .Alarm }}` permet d'accéder aux propriétés d'une alarme, de même que `{{ .Event }}` pour un évènement et `{{ .Entity }}` pour une entité.
 
@@ -74,6 +78,8 @@ Pour plus d'informations, vous pouvez consulter la [documentaion officielle de G
 Si `declare_ticket` est défini, les données récupérées du service externe sont stockées dans l'alarme et un step `declareticket` est ajouté à l'alarme.
 
 Dans `declare_ticket`, le champ `ticket_id` définit le champ où se trouve l'identifiant du ticket créé via le service externe. Par exemple, si l'API retourne l'id dans le champ `numberTicket`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "numberTicket"`.
+
+Si l'API renvoie une réponse sous forme de json imbriqué, il faut prendre en compte le chemin d'accès. Par exemple, si l'API retourne une réponse de type ` {"result": {"number": "numéro d’incident"}}`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "result.number"`.
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
