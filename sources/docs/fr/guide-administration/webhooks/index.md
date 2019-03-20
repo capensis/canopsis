@@ -44,8 +44,6 @@ Une règle est un document JSON contenant les paramètres suivants :
  - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme.
      - `ticket_id` est le mom du champs de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
 
-Si la variable d'environnement `CPS_CERTIFICATES_DIRECTORY` est définie, et qu'il s'agit d'un chemin vers un dossier existant, les fichiers de ce dossier sont ajoutés aux certificats SSL de confiance pour les requêtes effectuées par le service de webhooks.
-
 Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certifcats de confiance;
