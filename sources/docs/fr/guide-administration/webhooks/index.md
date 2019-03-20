@@ -46,7 +46,7 @@ Une règle est un document JSON contenant les paramètres suivants :
 
 Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL;
-- `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certifcats de confiance;
+- `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance;
 - `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
 ### Activation d'un webhook
@@ -59,7 +59,7 @@ Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `
 |:-------------------------|:---------------------------------------------------------|
 | `"ack"`                  | Acquittement d'une alerte                                |
 | `"ackremove"`            | Suppression de l'acquittement                            |
-| `"assocticket"`          | Asociation d'un ticket à l'alarme                        |
+| `"assocticket"`          | Association d'un ticket à l'alarme                       |
 | `"cancel"`               | Annulation de l'évènement                                |
 | `"create"`               | Création de l'évènement                                  |
 | `"comment"`              | Envoi d'un commentaire                                   |
@@ -76,7 +76,7 @@ Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
-Par exemple, ce webhook va être activé si le trigger reçu par le moteur correspond à `"stateinc"` ou `"statedec"` ET que l'évènement ait comme `connector` soit `zabbix`, soit `shinken` ET que dans l'entité, l'`output` corresponde à l'expression régulière `MemoryDisk.*`.
+Par exemple, ce webhook va être activé si le trigger reçu par le moteur correspond à `"stateinc"` ou `"statedec"` ET que l'évènement a comme `connector` soit `zabbix`, soit `shinken` ET si dans l'entité, l'`output` correspond à l'expression régulière `MemoryDisk.*`.
 
 ```json
 {
