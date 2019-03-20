@@ -16,6 +16,8 @@
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
+      field-text-editor(v-model="settings.widget.parameters.template", :title="$t('settings.templateEditor')")
+      v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -31,9 +33,10 @@ import FieldTitle from './fields/common/title.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatsSelect from './fields/stats/stats-select.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
 
 export default {
-  name: SIDE_BARS.statsTableSettings,
+  name: SIDE_BARS.statsTextSettings,
   $_veeValidate: {
     validator: 'new',
   },
@@ -43,6 +46,7 @@ export default {
     FieldDateInterval,
     FieldStatsSelect,
     FieldFilterEditor,
+    FieldTextEditor,
   },
   mixins: [widgetSettingsMixin],
   data() {

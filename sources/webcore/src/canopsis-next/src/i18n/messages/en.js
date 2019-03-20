@@ -216,6 +216,7 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
+      statsTextSettings: 'Stats text settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -344,6 +345,7 @@ export default {
         alarmList: 'Alarm list',
       },
     },
+    templateEditor: 'Template',
   },
   modals: {
     contextInfos: {
@@ -583,6 +585,9 @@ export default {
         },
         statsNumber: {
           title: 'Stats number',
+        },
+        statsText: {
+          title: 'Stats text',
         },
       },
     },

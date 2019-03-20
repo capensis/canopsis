@@ -197,6 +197,7 @@ export const WIDGET_TYPES = {
   statsTable: 'StatsTable',
   statsCalendar: 'StatsCalendar',
   statsNumber: 'StatsNumber',
+  statsText: 'StatsText',
 };
 
 export const SIDE_BARS = {
@@ -208,6 +209,7 @@ export const SIDE_BARS = {
   statsTableSettings: 'stats-table-settings',
   statsCalendarSettings: 'stats-calendar-settings',
   statsNumberSettings: 'stats-number-settings',
+  statsTextSettings: 'stats-text-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -219,6 +221,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
+  [WIDGET_TYPES.statsText]: SIDE_BARS.statsTextSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {

@@ -160,8 +160,7 @@ export function generateWidgetByType(type) {
           tstop: 'now/d',
         },
         mfilter: {},
-        stat: {},
-        limit: 10,
+        stats: {},
       };
       break;
     case WIDGET_TYPES.statsCalendar:
@@ -202,6 +201,19 @@ export function generateWidgetByType(type) {
           mode: STATS_DISPLAY_MODE.criticity,
           parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
         },
+      };
+      break;
+    case WIDGET_TYPES.statsText:
+      specialParameters = {
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
+        mfilter: {},
+        stats: {},
+        template: '',
       };
       break;
   }

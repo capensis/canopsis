@@ -271,6 +271,7 @@ export function convertWidgetToQuery(widget) {
     case WIDGET_TYPES.statsCurves:
     case WIDGET_TYPES.statsHistogram:
     case WIDGET_TYPES.statsTable:
+    case WIDGET_TYPES.statsText:
       return convertWidgetStatsParameterToQuery(widget);
     case WIDGET_TYPES.statsNumber:
       return convertStatsNumberWidgetToQuery(widget);

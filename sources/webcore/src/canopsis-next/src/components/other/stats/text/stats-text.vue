@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    progress-overlay(:pending="pending")
     v-runtime-template(:template="compiledTemplate")
 </template>
 
@@ -7,58 +8,47 @@
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { STATS_DURATION_UNITS } from '@/constants';
-
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
+import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
-import StatsTextStat from './stats-text-stat.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
+import StatsTextStatTemplate from './stats-text-stat-template.vue';
 
 export default {
-  components: { VRuntimeTemplate, StatsTextStat },
-  mixins: [entitiesStatsMixin, widgetStatsQueryMixin],
+  components: { VRuntimeTemplate, ProgressOverlay, StatsTextStatTemplate },
+  mixins: [
+    widgetQueryMixin,
+    entitiesStatsMixin,
+    widgetStatsQueryMixin,
+  ],
   props: {
-    template: {
-      type: String,
-      default: '',
+    widget: {
+      type: Object,
+      required: true,
     },
   },
   data() {
     return {
-      query: {
-        mfilter: {},
-        dateInterval: {
-          periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
-        },
-        stats: {},
-        statsColors: {},
-      },
-      stats: [],
-      compiledTemplate: '',
+      pending: true,
+      stats: {},
     };
   },
-  watch: {
-    template: {
-      immediate: true,
-      handler() {
-        this.stats = [];
-        this.compiledTemplate = `<div>${compile(this.template)}</div>`;
-        this.fetchList();
-      },
+  computed: {
+    compiledTemplate() {
+      return `<div>${compile(this.widget.parameters.template)}</div>`;
     },
   },
   beforeCreate() {
     registerHelper('stat', ({ hash }) => {
       const statName = hash.name;
 
-      this.stats.push(statName);
-
-      return new Handlebars.SafeString(`<stats-text-stat name="${statName}"></stats-text-stat>`);
+      return new Handlebars.SafeString(`
+        <stats-text-stat-template name="${statName}" :stats="stats"></stats-text-stat-template>
+      `);
     });
   },
   beforeDestroy() {
@@ -69,16 +59,18 @@ export default {
       const {
         mfilter,
         tstop,
+        stats,
         duration,
       } = this.getStatsQuery();
 
       return {
         duration,
         mfilter,
-
         tstop: tstop.startOf('h').unix(),
-        stats: this.stats.reduce((acc, key) => {
+        stats: Object.entries(stats).reduce((acc, [key, value]) => {
           acc[key] = {
+            ...value,
+
             aggregate: ['sum'],
           };
 
@@ -88,11 +80,14 @@ export default {
     },
 
     async fetchList() {
-      const response = await this.fetchStatsListWithoutStore({
+      this.pending = true;
+
+      const { aggregations } = await this.fetchStatsListWithoutStore({
         params: this.getQuery(),
       });
 
-      console.warn('fetch LIST', [...this.stats], response);
+      this.stats = aggregations;
+      this.pending = false;
     },
   },
 };

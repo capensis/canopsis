@@ -16,6 +16,7 @@ import StatsCurvesSettings from './settings/widgets/stats-curves.vue';
 import StatsTableSettings from './settings/widgets/stats-table.vue';
 import StatsCalendarSettings from './settings/widgets/stats-calendar.vue';
 import StatsNumberSettings from './settings/widgets/stats-number.vue';
+import StatsTextSettings from './settings/widgets/stats-text.vue';
 
 /**
  * Wrapper for all side-bars
@@ -31,6 +32,7 @@ export default {
     StatsTableSettings,
     StatsCalendarSettings,
     StatsNumberSettings,
+    StatsTextSettings,
   },
   mixins: [sideBarInnerMixin],
   data() {

@@ -47,6 +47,7 @@ import StatsCurves from '@/components/other/stats/curves/stats-curves.vue';
 import StatsTable from '@/components/other/stats/stats-table.vue';
 import StatsCalendar from '@/components/other/stats/calendar/stats-calendar.vue';
 import StatsNumber from '@/components/other/stats/stats-number.vue';
+import StatsText from '@/components/other/stats/text/stats-text.vue';
 
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
@@ -62,6 +63,7 @@ export default {
     StatsTable,
     StatsCalendar,
     StatsNumber,
+    StatsText,
   },
   mixins: [
     popupMixin,
@@ -97,6 +99,7 @@ export default {
         [WIDGET_TYPES.statsTable]: 'stats-table',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
         [WIDGET_TYPES.statsNumber]: 'stats-number',
+        [WIDGET_TYPES.statsText]: 'stats-text',
       },
     };
   },
