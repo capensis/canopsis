@@ -1,9 +1,15 @@
 <template lang="pug">
-  h2 lololo
+  span {{ name }}
 </template>
 
 <script>
-export default {
 
+export default {
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+  },
 };
 </script>
