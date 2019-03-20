@@ -6,7 +6,9 @@
     v-card-text
       v-text-field(
       v-model="form._id",
-      :label="$t('modals.createWebhook.fields.id')"
+      :label="$t('modals.createWebhook.fields.id')",
+      :readonly="isDisabledIdField",
+      :disabled="isDisabledIdField"
       )
         v-tooltip(slot="append", left)
           v-icon(slot="activator") help_outline
@@ -73,6 +75,9 @@ export default {
       }
 
       return this.$t('modals.createWebhook.create.title');
+    },
+    isDisabledIdField() {
+      return !!this.config.webhook;
     },
   },
   methods: {
