@@ -68,12 +68,11 @@ export default {
         {
           text: this.$t('common.entity'),
           value: 'entity.name',
-          sortable: true,
+          sortable: false,
         },
         {
           text: this.$t('common.value'),
           value: 'value',
-          sortable: true,
         },
       ],
     };
