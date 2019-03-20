@@ -76,7 +76,7 @@ Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
-Par exemple, ce webhook va être activé si le trigger reçu par le moteur correspond à `"stateinc"` ou `"statedec"` ET que l'évènement a comme `connector` soit `zabbix`, soit `shinken` ET si dans l'entité, l'`output` correspond à l'expression régulière `MemoryDisk.*`.
+Par exemple, ce webhook va être activé si le trigger reçu par le moteur correspond à `stateinc` ou `statedec` ET si l'évènement a comme `connector` soit `zabbix`, soit `shinken` ET si dans l'entité, l'`output` correspond à l'expression régulière `MemoryDisk.*`.
 
 ```json
 {
