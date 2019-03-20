@@ -72,6 +72,7 @@ export default {
     forbidden: 'Forbidden',
     search: 'Search',
     webhooks: 'Webhooks',
+    emptyObject: 'Empty object',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
