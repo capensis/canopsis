@@ -6,37 +6,42 @@
         v-flex
           div {{ key }}:
         v-flex
-          v-btn(@click="showColorPickerModal(key)") {{ $t('settings.statsColor.pickColor') }}
-        v-flex
-          div.py-2.text-xs-center(:style="{ backgroundColor: value[key] }") {{ value[key] }}
+          v-btn(
+          :style="{ backgroundColor: value[key] }",
+          @click="showColorPickerModal(key)"
+          ) {{ $t('settings.statsColor.pickColor') }}
 </template>
 
 <script>
-import { set } from 'lodash';
+import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [modalMixin],
+  mixins: [modalMixin, formMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     stats: {
       type: Object,
+      default: () => ({}),
     },
   },
   methods: {
     showColorPickerModal(key) {
-      const newVal = { ...this.value };
       this.showModal({
-        name: this.$constants.MODALS.colorPicker,
+        name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
-          action: color => this.$emit('input', set(newVal, key, color)),
+          color: this.value[key],
+          action: color => this.updateField(key, color),
         },
       });
     },

@@ -63,8 +63,7 @@ export default {
           title: 'modals.addStat.title.add',
           action: (stat) => {
             const newValue = { ...this.stats };
-            const newStat = omit(stat, ['title', 'parameters', 'stat']);
-            newStat.stat = stat.stat.value;
+            const newStat = omit(stat, ['title', 'parameters']);
             newStat.parameters = {};
             stat.stat.options.forEach((option) => {
               newStat.parameters[option] = stat.parameters[option];
