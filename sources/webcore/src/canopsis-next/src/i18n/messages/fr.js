@@ -861,6 +861,7 @@ export default {
     enabled: 'Activé',
     actions: 'Actions',
     actionsRequired: 'Veuillez ajouter au moins une action',
+    id: 'Id',
   },
   layout: {
     sideBar: {

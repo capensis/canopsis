@@ -922,6 +922,7 @@ export default {
     enabled: 'Enabled',
     actions: 'Actions',
     actionsRequired: 'Please add at least one action',
+    id: 'Id',
   },
   layout: {
     sideBar: {
