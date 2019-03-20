@@ -58,8 +58,10 @@ export default {
       pending: false,
       stats: [],
       pagination: {
+        page: 1,
         sortBy: 'value',
         descending: true,
+        totalItems: 0,
         rowsPerPage: PAGINATION_LIMIT,
       },
       tableHeaders: [
@@ -77,6 +79,25 @@ export default {
     };
   },
   computed: {
+    vDataTablePagination: {
+      get() {
+        const { sortOrder, limit = PAGINATION_LIMIT } = this.query;
+
+        return {
+          page: 1,
+          totalItems: this.stats.length,
+          rowsPerPage: limit,
+          sortBy: 'value',
+          descending: sortOrder && sortOrder.toUpperCase() === SORT_ORDERS.desc,
+        };
+      },
+      set(value) {
+        this.query = {
+          ...this.query,
+          ...value,
+        };
+      },
+    },
     getChipColor() {
       return (value) => {
         const { colors, criticityLevels } = this.widget.parameters.displayMode.parameters;
@@ -114,7 +135,6 @@ export default {
   },
   methods: {
     getQuery() {
-      const { sortOrder, stat, limit = PAGINATION_LIMIT } = this.query;
       const {
         stats,
         mfilter,
@@ -126,11 +146,8 @@ export default {
         duration,
         stats,
         mfilter,
-        limit,
 
         tstop: tstop.startOf('h').unix(),
-        sort_column: stat.title,
-        sort_order: sortOrder ? sortOrder.toLowerCase() : SORT_ORDERS.desc.toLowerCase(),
       };
     },
 
@@ -142,6 +159,13 @@ export default {
       });
 
       this.stats = values;
+      this.pagination = {
+        ...this.pagination,
+
+        rowsPerPage: this.query.limit || PAGINATION_LIMIT,
+        totalItems: values.length,
+      };
+
       this.pending = false;
     },
   },
