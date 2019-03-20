@@ -717,6 +717,12 @@ export default {
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
+      },
     },
   },
   tables: {
