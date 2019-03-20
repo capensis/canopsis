@@ -116,8 +116,9 @@ def get_ok_ko(influx_client, entity_id):
     """
     query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
                 "event_state_history WHERE \"eid\"='{}'"
-    query_last = "SELECT LAST(\"ko\") FROM event_state_history WHERE " \
-                 "\"eid\"='{}' and \"ko\"=1"
+    query_last_event = "SELECT LAST(\"ko\") FROM event_state_history WHERE " \
+                       "\"eid\"='{}'"
+    query_last_ko = query_last_event + " and \"ko\"=1"
 
 
     # Why did I use a double '\' ? It's simple, for some mystical reason,
@@ -136,7 +137,16 @@ def get_ok_ko(influx_client, entity_id):
         stats["ok"] = data["ok"]
         stats["ko"] = data["ko"]
 
-    result = influx_client.query(query_last.format(entity_id))
+    result = influx_client.query(query_last_event.format(entity_id))
+    data = list(result.get_points())
+    if len(data) > 0:
+        data = data[0]
+        time = data["time"]
+        time = time.replace("T", " ")
+        time = time.replace("Z", "")
+        stats["last_event"] = time
+
+    result = influx_client.query(query_last_ko.format(entity_id))
     data = list(result.get_points())
     if len(data) > 0:
         data = data[0]
@@ -144,8 +154,6 @@ def get_ok_ko(influx_client, entity_id):
         time = time.replace("T", " ")
         time = time.replace("Z", "")
         stats["last_ko"] = time
-
-
 
     if len(stats) > 0:
         return stats
