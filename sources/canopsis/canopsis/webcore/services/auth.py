@@ -208,7 +208,7 @@ def exports(ws):
         session.delete()
         redirect('/')
 
-    @ws.application.get('/api/v2/internal/login/login_info')
+    @ws.application.get('/api/internal/login/login_info')
     def internal_login_info():
         cservices = {
             'webserver': {provider: 1 for provider in ws.providers},
