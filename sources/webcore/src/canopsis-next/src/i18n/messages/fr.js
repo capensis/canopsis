@@ -80,6 +80,7 @@ export default {
     administration: 'Administration',
     forbidden: 'Accès refusé',
     search: 'Recherche',
+    webhooks: 'Webhooks',
     actions: {
       close: 'Fermer',
       acknowledgeAndReport: 'Acquitter et signaler un incident',
@@ -860,8 +861,10 @@ export default {
     priority: 'Priorité',
     enabled: 'Activé',
     actions: 'Actions',
+    externalDatas: 'Données externes',
     actionsRequired: 'Veuillez ajouter au moins une action',
     id: 'Id',
+    idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   },
   layout: {
     sideBar: {

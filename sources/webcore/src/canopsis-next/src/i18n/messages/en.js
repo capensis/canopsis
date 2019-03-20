@@ -921,8 +921,10 @@ export default {
     priority: 'Priority',
     enabled: 'Enabled',
     actions: 'Actions',
+    externalDatas: 'External datas',
     actionsRequired: 'Please add at least one action',
     id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
   layout: {
     sideBar: {

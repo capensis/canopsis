@@ -5,7 +5,13 @@
         span.headline {{ config.title }}
     v-card-text
       v-form
+        v-layout(align-center)
+          v-text-field(:disabled="isEditing", v-model="form.id", :label="$t('eventFilter.id')")
+          v-tooltip(v-if="!isEditing", top)
+            v-icon(slot="activator") help
+            span {{ $t('eventFilter.idHelp') }}
         v-select(:items="ruleTypes", v-model="form.type", :label="$t('common.type')")
+        v-textarea(v-model="form.description", :label="$t('common.description')")
         v-text-field(v-model.number="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
         v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
@@ -33,7 +39,7 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 import { MODALS, EVENT_FILTER_RULE_TYPES, EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -48,7 +54,9 @@ export default {
     return {
       ruleTypes: Object.values(EVENT_FILTER_RULE_TYPES),
       form: {
+        id: '',
         type: EVENT_FILTER_RULE_TYPES.drop,
+        description: '',
         pattern: {},
         priority: 0,
         enabled: true,
@@ -61,10 +69,17 @@ export default {
       },
     };
   },
+  computed: {
+    isEditing() {
+      return !!this.config.rule;
+    },
+  },
   mounted() {
     if (this.config.rule) {
       const {
+        _id: id,
         type,
+        description,
         pattern,
         priority,
         enabled,
@@ -75,7 +90,9 @@ export default {
       } = cloneDeep(this.config.rule);
 
       this.form = {
+        id,
         type,
+        description,
         pattern,
         priority,
         enabled,
@@ -134,7 +151,8 @@ export default {
 
         if (isFormValid) {
           this.config.action({
-            ...this.form,
+            ...omit(this.form, ['id']),
+            _id: this.form.id,
             actions: this.enrichmentOptions.actions,
             external_data: this.enrichmentOptions.externalData,
             on_success: this.enrichmentOptions.onSuccess,
@@ -143,7 +161,7 @@ export default {
           this.hideModal();
         }
       } else {
-        this.config.action({ ...this.form });
+        this.config.action({ ...omit(this.form, ['id']), _id: this.form.id });
         this.hideModal();
       }
     },
