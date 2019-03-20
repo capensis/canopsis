@@ -1,11 +1,10 @@
 <template lang="pug">
   div.mt-1
-    div(v-for="(link, index) in filteredLinks", :key="`links-${index}`")
-      div(v-for="(item, itemIndex) in link.links", :key="`links-item-${index}-${itemIndex}`")
-        v-divider(light)
-        div.pa-2.text-xs-right
-          span.category.mr-2 {{ link.cat_name }} {{ itemIndex + 1 }}
-          a(:href="item", target="_blank") {{ $t('common.link') }}
+    span.category.mr-2 {{ category || $t('common.links') }}
+    v-divider(light)
+    div(v-for="(link, index) in linkList", :key="`links-${index}`")
+      div.pa-2.text-xs-right
+        a(:href="link.link", target="_blank") {{ link.label }}
 </template>
 
 <script>
@@ -21,12 +20,32 @@ export default {
     },
   },
   computed: {
-    filteredLinks() {
-      if (this.category) {
-        return this.links.filter(({ cat_name: catName }) => catName === this.category);
-      }
+    /*
+    * The linkbuilders used to return the links directly as
+    * strings. They can now also return objects with the
+    * properties 'label' and 'link', allowing to change the link's
+    * label.
+    * The following code converts the "legacy" representation
+    * (strings) into the "new" representation, so they can be
+    * displayed in the same manner by the template.
+    */
+    linkList() {
+      const filteredLinks = this.category ?
+        this.links.filter(({ cat_name: catName }) => catName === this.category) :
+        this.links;
 
-      return this.links;
+      return filteredLinks[0].links.reduce((acc, link, index) => {
+        if (typeof link === 'object' && link.link && link.label) {
+          acc.push(link);
+        } else {
+          acc.push({
+            label: `${this.category} - ${index}`,
+            link,
+          });
+        }
+
+        return acc;
+      }, []);
     },
   },
 };

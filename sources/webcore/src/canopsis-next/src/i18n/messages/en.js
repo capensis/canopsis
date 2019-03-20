@@ -84,7 +84,7 @@ export default {
     webhooks: 'Webhooks',
     startDate: 'Start date',
     endDate: 'End date',
-    link: 'link',
+    links: 'Links',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',

@@ -80,6 +80,7 @@ export default {
     administration: 'Administration',
     forbidden: 'Accès refusé',
     search: 'Recherche',
+    links: 'Liens',
     actions: {
       close: 'Fermer',
       acknowledgeAndReport: 'Acquitter et signaler un incident',
