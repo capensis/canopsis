@@ -14,13 +14,28 @@
         )
       v-flex(xs6).pa-1
         v-text-field(
-        v-model="request.url",
+        :value="request.url",
         :disabled="disabled",
         :label="$t('webhook.tabs.request.fields.url')",
         v-validate="'required'",
         name="request.url",
         :error-messages="errors.collect('request.url')",
         @input="updateField('url', $event)"
+        )
+    v-layout(justify-space-between, align-center)
+      v-flex(xs6).pa-1
+        v-text-field(
+        :value="request.auth.username",
+        :disabled="disabled",
+        :label="$t('webhook.tabs.request.fields.username')",
+        @input="updateField('auth.username', $event)"
+        )
+      v-flex(xs6).pa-1
+        v-text-field(
+        :value="request.auth.password",
+        :disabled="disabled",
+        :label="$t('webhook.tabs.request.fields.password')",
+        @input="updateField('auth.password', $event)"
         )
     text-pairs(
     :items="request.headers",
@@ -33,7 +48,7 @@
     v-layout
       v-flex
         v-textarea(
-        v-model="request.payload",
+        :value="request.payload",
         :disabled="disabled",
         :read-only="disabled",
         :label="$t('webhook.tabs.request.fields.payload')",

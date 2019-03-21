@@ -985,6 +985,8 @@ export default {
         fields: {
           method: 'Method',
           url: 'URL',
+          username: 'Username',
+          password: 'Password',
           headers: 'Headers',
           headerKey: 'Header key',
           headerValue: 'Header value',

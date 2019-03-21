@@ -1,6 +1,5 @@
-import { omit } from 'lodash';
-
 import uid from '@/helpers/uid';
+import { setIn, unsetIn } from '@/helpers/immutable';
 
 const eventKeyComputed = uid('_eventKey');
 const formKeyComputed = uid('_formKey');
@@ -33,7 +32,7 @@ export default {
      * @param {*} value
      */
     updateField(fieldName, value) {
-      this.$emit(this[eventKeyComputed], { ...this[this[formKeyComputed]], [fieldName]: value });
+      this.$emit(this[eventKeyComputed], setIn(this[this[formKeyComputed]], fieldName, value));
     },
 
     /**
@@ -45,10 +44,13 @@ export default {
      * @param {*} value
      */
     updateAndMoveField(fieldName, newFieldName, value) {
-      this.$emit(
-        this[eventKeyComputed],
-        { ...omit(this[this[formKeyComputed]], fieldName), [newFieldName]: value },
-      );
+      if (fieldName === newFieldName) {
+        this.updateField(fieldName, value);
+      } else {
+        const result = unsetIn(this[this[formKeyComputed]], fieldName);
+
+        this.$emit(this[eventKeyComputed], setIn(result, newFieldName, value));
+      }
     },
 
     /**
@@ -57,7 +59,7 @@ export default {
      * @param {string} fieldName
      */
     removeField(fieldName) {
-      this.$emit(this[eventKeyComputed], omit(this[this[formKeyComputed]], [fieldName]));
+      this.$emit(this[eventKeyComputed], unsetIn(this[this[formKeyComputed]], fieldName));
     },
 
     /**

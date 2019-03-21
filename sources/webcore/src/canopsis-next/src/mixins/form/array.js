@@ -1,4 +1,4 @@
-import baseFormMixin, { modelPropKeyComputed, modelEventKeyComputed } from './base';
+import baseFormMixin, { modelPropKeyComputed } from './base';
 
 /**
  * @mixin Form mixin
@@ -12,7 +12,7 @@ export default {
      * @param {*} value
      */
     addItemIntoArray(value) {
-      this.$emit(this[modelEventKeyComputed], [...this[this[modelPropKeyComputed]], value]);
+      this.updateModel([...this[this[modelPropKeyComputed]], value]);
     },
 
     /**
@@ -26,7 +26,7 @@ export default {
 
       items[index] = value;
 
-      this.$emit(this[modelEventKeyComputed], items);
+      this.updateModel(items);
     },
 
     /**
@@ -49,7 +49,7 @@ export default {
      * @param {number} index
      */
     removeItemFromArray(index) {
-      this.$emit(this[modelEventKeyComputed], this[this[modelPropKeyComputed]].filter((v, i) => i !== index));
+      this.updateModel(this[this[modelPropKeyComputed]].filter((v, i) => i !== index));
     },
   },
 };
