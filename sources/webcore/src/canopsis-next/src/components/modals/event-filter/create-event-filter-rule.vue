@@ -6,7 +6,7 @@
     v-card-text
       v-form
         v-layout(align-center)
-          v-text-field(:disabled="isEditing", v-model="form.id", :label="$t('eventFilter.id')")
+          v-text-field(:disabled="isEditing", v-model="form._id", :label="$t('eventFilter.id')")
           v-tooltip(v-if="!isEditing", top)
             v-icon(slot="activator") help
             span {{ $t('eventFilter.idHelp') }}
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { MODALS, EVENT_FILTER_RULE_TYPES, EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -54,7 +54,7 @@ export default {
     return {
       ruleTypes: Object.values(EVENT_FILTER_RULE_TYPES),
       form: {
-        id: '',
+        _id: '',
         type: EVENT_FILTER_RULE_TYPES.drop,
         description: '',
         pattern: {},
@@ -77,7 +77,7 @@ export default {
   mounted() {
     if (this.config.rule) {
       const {
-        _id: id,
+        _id,
         type,
         description,
         pattern,
@@ -90,7 +90,7 @@ export default {
       } = cloneDeep(this.config.rule);
 
       this.form = {
-        id,
+        _id,
         type,
         description,
         pattern,
@@ -151,8 +151,7 @@ export default {
 
         if (isFormValid) {
           this.config.action({
-            ...omit(this.form, ['id']),
-            _id: this.form.id,
+            ...this.form,
             actions: this.enrichmentOptions.actions,
             external_data: this.enrichmentOptions.externalData,
             on_success: this.enrichmentOptions.onSuccess,
@@ -161,7 +160,7 @@ export default {
           this.hideModal();
         }
       } else {
-        this.config.action({ ...omit(this.form, ['id']), _id: this.form.id });
+        this.config.action({ ...this.form });
         this.hideModal();
       }
     },

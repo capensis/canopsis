@@ -3,10 +3,10 @@
     progress-overlay(:pending="pending")
     v-card
       v-data-table(
-        :items="stats",
-        :headers="tableHeaders",
-        :pagination.sync="pagination",
-        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
+      :items="stats",
+      :headers="tableHeaders",
+      :pagination.sync="pagination",
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
       )
         template(
           slot="items",
@@ -58,25 +58,39 @@ export default {
       pending: false,
       stats: [],
       pagination: {
+        page: 1,
         sortBy: 'value',
         descending: true,
+        totalItems: 0,
         rowsPerPage: PAGINATION_LIMIT,
       },
-      tableHeaders: [
-        {
-          text: this.$t('common.entity'),
-          value: 'entity.name',
-          sortable: true,
-        },
-        {
-          text: this.$t('common.value'),
-          value: 'value',
-          sortable: true,
-        },
-      ],
     };
   },
   computed: {
+    statColumn() {
+      const { stat } = this.query;
+
+      if (stat) {
+        return `${stat.title}.value`;
+      }
+
+      return 'value';
+    },
+
+    tableHeaders() {
+      return [
+        {
+          text: this.$t('common.entity'),
+          value: 'entity.name',
+          sortable: false,
+        },
+        {
+          text: this.$t('common.value'),
+          value: this.statColumn,
+        },
+      ];
+    },
+
     getChipColor() {
       return (value) => {
         const { colors, criticityLevels } = this.widget.parameters.displayMode.parameters;
@@ -114,7 +128,6 @@ export default {
   },
   methods: {
     getQuery() {
-      const { sortOrder, stat, limit = PAGINATION_LIMIT } = this.query;
       const {
         stats,
         mfilter,
@@ -126,15 +139,14 @@ export default {
         duration,
         stats,
         mfilter,
-        limit,
 
         tstop: tstop.startOf('h').unix(),
-        sort_column: stat.title,
-        sort_order: sortOrder ? sortOrder.toLowerCase() : SORT_ORDERS.desc.toLowerCase(),
       };
     },
 
     async fetchList() {
+      const { limit, sortOrder } = this.query;
+
       this.pending = true;
 
       const { values } = await this.fetchStatsListWithoutStore({
@@ -142,6 +154,14 @@ export default {
       });
 
       this.stats = values;
+      this.pagination = {
+        page: 1,
+        sortBy: this.statColumn,
+        totalItems: values.length,
+        rowsPerPage: limit || PAGINATION_LIMIT,
+        descending: sortOrder === SORT_ORDERS.desc,
+      };
+
       this.pending = false;
     },
   },

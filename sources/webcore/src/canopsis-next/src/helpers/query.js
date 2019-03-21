@@ -152,7 +152,12 @@ export function convertStatsCalendarWidgetToQuery(widget) {
 export function convertStatsNumberWidgetToQuery(widget) {
   const { stat } = widget.parameters;
   const query = {
-    ...omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']),
+    ...omit(widget.parameters, [
+      'statColors',
+      'criticityLevels',
+      'yesNoMode',
+      'statName',
+    ]),
 
     trend: true,
   };

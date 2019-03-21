@@ -84,7 +84,7 @@ export default {
     webhooks: 'Webhooks',
     startDate: 'Start date',
     endDate: 'End date',
-    link: 'link',
+    links: 'Links',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -713,9 +713,13 @@ export default {
       fields: {
         periodValue: 'Period value',
         periodUnit: 'Period unit',
+        id: 'ID',
       },
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
       },
     },
   },

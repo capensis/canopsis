@@ -81,6 +81,7 @@ export default {
     forbidden: 'Accès refusé',
     search: 'Recherche',
     webhooks: 'Webhooks',
+    links: 'Liens',
     actions: {
       close: 'Fermer',
       acknowledgeAndReport: 'Acquitter et signaler un incident',
