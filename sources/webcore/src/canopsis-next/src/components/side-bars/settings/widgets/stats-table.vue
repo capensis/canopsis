@@ -14,7 +14,7 @@
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
-      field-stats-select(v-model="settings.widget.parameters.stats")
+      field-stats-selector(v-model="settings.widget.parameters.stats")
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -30,7 +30,7 @@ import widgetSettingsMixin from '@/mixins/widget/settings';
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
-import FieldStatsSelect from './fields/stats/stats-select.vue';
+import FieldStatsSelector from './fields/stats/stats-selector.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 
 export default {
@@ -42,7 +42,7 @@ export default {
     FieldRowGridSize,
     FieldTitle,
     FieldDateInterval,
-    FieldStatsSelect,
+    FieldStatsSelector,
     FieldFilterEditor,
   },
   mixins: [widgetSettingsMixin],

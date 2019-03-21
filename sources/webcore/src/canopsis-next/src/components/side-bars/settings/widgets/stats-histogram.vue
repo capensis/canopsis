@@ -12,7 +12,7 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
-      field-stats-select(v-model="settings.widget.parameters.stats")
+      field-stats-selector(v-model="settings.widget.parameters.stats")
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
@@ -33,7 +33,7 @@ import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
-import FieldStatsSelect from './fields/stats/stats-select.vue';
+import FieldStatsSelector from './fields/stats/stats-selector.vue';
 import FieldStatsColors from './fields/stats/stats-colors.vue';
 
 export default {
@@ -46,7 +46,7 @@ export default {
     FieldTitle,
     FieldFilterEditor,
     FieldDateInterval,
-    FieldStatsSelect,
+    FieldStatsSelector,
     FieldStatsColors,
   },
   mixins: [widgetSettingsMixin],
