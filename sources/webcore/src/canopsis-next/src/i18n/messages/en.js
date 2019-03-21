@@ -724,9 +724,13 @@ export default {
       fields: {
         periodValue: 'Period value',
         periodUnit: 'Period unit',
+        id: 'ID',
       },
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
       },
     },
   },
@@ -932,7 +936,10 @@ export default {
     priority: 'Priority',
     enabled: 'Enabled',
     actions: 'Actions',
+    externalDatas: 'External datas',
     actionsRequired: 'Please add at least one action',
+    id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
   layout: {
     sideBar: {
