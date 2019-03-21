@@ -3,10 +3,10 @@
     progress-overlay(:pending="pending")
     v-card
       v-data-table(
-        :items="stats",
-        :headers="tableHeaders",
-        :pagination.sync="pagination",
-        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
+      :items="stats",
+      :headers="tableHeaders",
+      :pagination.sync="pagination",
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
       )
         template(
           slot="items",
@@ -64,7 +64,21 @@ export default {
         totalItems: 0,
         rowsPerPage: PAGINATION_LIMIT,
       },
-      tableHeaders: [
+    };
+  },
+  computed: {
+    statColumn() {
+      const { stat } = this.query;
+
+      if (stat) {
+        return `${stat.title}.value`;
+      }
+
+      return 'value';
+    },
+
+    tableHeaders() {
+      return [
         {
           text: this.$t('common.entity'),
           value: 'entity.name',
@@ -72,31 +86,11 @@ export default {
         },
         {
           text: this.$t('common.value'),
-          value: 'value',
+          value: this.statColumn,
         },
-      ],
-    };
-  },
-  computed: {
-    vDataTablePagination: {
-      get() {
-        const { sortOrder, limit = PAGINATION_LIMIT } = this.query;
-
-        return {
-          page: 1,
-          totalItems: this.stats.length,
-          rowsPerPage: limit,
-          sortBy: 'value',
-          descending: sortOrder && sortOrder.toUpperCase() === SORT_ORDERS.desc,
-        };
-      },
-      set(value) {
-        this.query = {
-          ...this.query,
-          ...value,
-        };
-      },
+      ];
     },
+
     getChipColor() {
       return (value) => {
         const { colors, criticityLevels } = this.widget.parameters.displayMode.parameters;
@@ -151,6 +145,8 @@ export default {
     },
 
     async fetchList() {
+      const { limit, sortOrder } = this.query;
+
       this.pending = true;
 
       const { values } = await this.fetchStatsListWithoutStore({
@@ -159,10 +155,11 @@ export default {
 
       this.stats = values;
       this.pagination = {
-        ...this.pagination,
-
-        rowsPerPage: this.query.limit || PAGINATION_LIMIT,
+        page: 1,
+        sortBy: this.statColumn,
         totalItems: values.length,
+        rowsPerPage: limit || PAGINATION_LIMIT,
+        descending: sortOrder === SORT_ORDERS.desc,
       };
 
       this.pending = false;
