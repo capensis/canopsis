@@ -597,7 +597,7 @@ export default {
         add: 'Add a stat',
         edit: 'Edit a stat',
       },
-      slaRequired: 'SLA parameter is required',
+      slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
     },
     group: {
       create: {
@@ -707,6 +707,12 @@ export default {
       remove: {
         success: 'Webhook successfully removed !',
       },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
+      },
     },
     statsDateInterval: {
       title: 'Stats - Date interval',
@@ -716,12 +722,6 @@ export default {
       },
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
-      },
-      fields: {
-        id: 'ID',
-      },
-      tooltips: {
-        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
       },
     },
   },
