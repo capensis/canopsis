@@ -8,6 +8,28 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.12.0 - Due date : 2019-03-11
+
+ - [Documentation] Added documentation for common use cases
+ - [Documentation] Added documentation for go watchers
+ - [Documentation] Added documentation for action engine
+ - [Go] Added watcher service
+ - [Go] Added state change counters to alarms
+ - [Go] Added snooze action to action engine
+ - [Python] Added action_required field to the service weather API
+ - [Python] Added API route to update pbehaviors
+ - [Python] Added API for go watchers
+ - [UI] Fixed pbehavior creation with RRULE
+ - [UI] Integrated external libraries
+ - [UI] Reverted addition of the active tab id into the URL (waiting for a bug fix on this functionnality)
+ - [UI - Exploitation] Added Webhooks CRUD view
+ - [UI - Exploitation] Improved style on Pbehaviors CRUD view
+ - [UI - Alarms list] Added access to 'entity' variable on info popup template
+ - [UI - Context] Fixed pbehavior mass deletion
+ - [UI - Context] Added a right to manage access to 'Delete pbehavior' action
+ - [UI - Service Weather] Changed tile blinking condition
+ - [UI - Service Weather] Added rights
+
 # Canopsis 3.11.0 - Due date : 2019-02-22
 
  - [Documentation] Add webhook documentation

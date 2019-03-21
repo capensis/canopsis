@@ -10,9 +10,14 @@ export default {
       });
     },
     formToWebhook(form) {
+      const patternsCustomizer = value => (value && value.length ? value : null);
+
       return setInSeveral(form, {
-        'request.headers': textPairsToObject,
         declare_ticket: textPairsToObject,
+        'request.headers': textPairsToObject,
+        'hook.event_patterns': patternsCustomizer,
+        'hook.alarm_patterns': patternsCustomizer,
+        'hook.entity_patterns': patternsCustomizer,
       });
     },
   },

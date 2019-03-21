@@ -1,20 +1,15 @@
 <template lang="pug">
   div
+    progress-overlay(:pending="pending")
     v-data-table(
       :items="stats",
       :headers="columns",
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     )
-      v-progress-linear(slot="progress", color="primary", indeterminate)
-      template(slot="headers", slot-scope="{ headers }")
-        th {{ $t('common.entity') }}
-        th(v-for="header in headers", :key="header.value") {{ header.value }}
       template(slot="items", slot-scope="{ item }")
         td {{ item.entity.name }}
         td(v-for="(property, key) in widget.parameters.stats")
-          template(
-          v-if="item[key] && item[key].value !== undefined && item[key].value !== null"
-          )
+          template(v-if="isStatNotEmpty(item[key])")
             td
               div {{ item[key].value }}
                 sub {{ item[key].trend }}
@@ -22,17 +17,25 @@
 </template>
 
 <script>
+import { isUndefined, isNull } from 'lodash';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
-import StatsNumber from './stats-number.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 export default {
   components: {
-    StatsNumber,
+    ProgressOverlay,
   },
-  mixins: [entitiesStatsMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
+  mixins: [
+    entitiesStatsMixin,
+    widgetQueryMixin,
+    entitiesUserPreferenceMixin,
+    widgetStatsQueryMixin,
+  ],
   props: {
     widget: {
       type: Object,
@@ -41,23 +44,55 @@ export default {
   },
   data() {
     return {
+      pending: true,
       stats: [],
     };
   },
   computed: {
+    isStatNotEmpty() {
+      return stat => stat && !isUndefined(stat.value) && !isNull(stat.value);
+    },
     columns() {
-      return Object.keys(this.widget.parameters.stats).map(item => ({ value: item }));
+      return [
+        {
+          text: this.$t('common.entity'),
+          value: 'entity.name',
+        },
+
+        ...Object.keys(this.widget.parameters.stats).map(item => ({
+          text: item,
+          value: `${item}.value`,
+        })),
+      ];
     },
   },
   methods: {
-    async fetchList() {
-      const query = { ...this.query };
+    getQuery() {
+      const {
+        stats,
+        mfilter,
+        tstop,
+        duration,
+      } = this.getStatsQuery();
 
-      const stats = await this.fetchStatsListWithoutStore({
-        params: query,
+      return {
+        duration,
+        stats,
+        mfilter,
+
+        tstop: tstop.startOf('h').unix(),
+      };
+    },
+
+    async fetchList() {
+      this.pending = true;
+
+      const { values } = await this.fetchStatsListWithoutStore({
+        params: this.getQuery(),
       });
 
-      this.stats = stats.values;
+      this.stats = values;
+      this.pending = false;
     },
   },
 };

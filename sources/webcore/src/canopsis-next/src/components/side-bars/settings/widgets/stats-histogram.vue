@@ -10,24 +10,16 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-stat-end-date-select(
-      v-model="settings.widget.parameters.tstop",
-      :duration="settings.widget.parameters.duration"
-      )
-      v-divider
-      field-duration(v-model="settings.widget.parameters.duration", :title="$t('settings.duration')")
-      v-divider
-      field-stats-groups(v-model="settings.widget.parameters.groups")
+      field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
       field-stats-select(v-model="settings.widget.parameters.stats")
       v-divider
-      v-list-group
-        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-stats-colors(
-          :stats="settings.widget.parameters.stats",
-          v-model="settings.widget.parameters.statsColors"
-          )
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
+      v-divider
+      field-stats-colors(
+      :stats="settings.widget.parameters.stats",
+      v-model="settings.widget.parameters.statsColors"
+      )
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -39,9 +31,8 @@ import { SIDE_BARS } from '@/constants';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/stats/duration.vue';
-import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
-import FieldStatsGroups from './fields/stats/stats-groups.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatsSelect from './fields/stats/stats-select.vue';
 import FieldStatsColors from './fields/stats/stats-colors.vue';
 
@@ -53,11 +44,10 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldDuration,
-    FieldStatsGroups,
+    FieldFilterEditor,
+    FieldDateInterval,
     FieldStatsSelect,
     FieldStatsColors,
-    FieldStatEndDateSelect,
   },
   mixins: [widgetSettingsMixin],
   data() {

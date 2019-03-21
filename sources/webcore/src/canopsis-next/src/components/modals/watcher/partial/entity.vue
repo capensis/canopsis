@@ -30,7 +30,7 @@
                   )
                     v-icon {{ action.icon }}
                   span {{ $t(`common.actions.${action.eventType}`) }}
-            div(v-html="compiledTemplate")
+            entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
@@ -46,13 +46,17 @@ import {
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
 } from '@/constants';
-import { compile } from '@/helpers/handlebars';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
 
+import EntityTemplate from './entity-template.vue';
+
 export default {
+  components: {
+    EntityTemplate,
+  },
   mixins: [
     authMixin,
     modalMixin,
@@ -177,10 +181,6 @@ export default {
       }
 
       return this.entity.pbehavior.filter(value => value.isActive).length;
-    },
-
-    compiledTemplate() {
-      return compile(this.template, { entity: this.entity });
     },
 
     isPaused() {
