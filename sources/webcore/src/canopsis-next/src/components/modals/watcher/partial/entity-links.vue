@@ -39,9 +39,14 @@ export default {
         return filteredLinks[0].links.reduce((acc, link, index) => {
           if (typeof link === 'object' && link.link && link.label) {
             acc.push(link);
+          } else if (this.category) {
+            acc.push({
+              label: `${this.category} - ${index}`,
+              link,
+            });
           } else {
             acc.push({
-              label: this.category ? `${this.category} - ${index}` : `${this.$t('common.link')} - ${index}`,
+              label: `${this.$t('common.link')} - ${index}`,
               link,
             });
           }
