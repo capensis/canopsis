@@ -42,9 +42,10 @@ export const MODALS = {
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
-  manageHistogramGroups: 'manage-histogram-groups',
   alarmsList: 'alarms-list',
   addStat: 'add-stat',
+  statsDateInterval: 'stats-date-interval',
+  statsDisplayMode: 'stats-display-mode',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
   textFieldEditor: 'text-field-editor',
@@ -321,36 +322,46 @@ export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
+  dateTimePicker: 'DD/MM/YYYY HH:mm',
+  datePicker: 'DD/MM/YYYY',
+  timePicker: 'HH:mm',
+};
+
+export const STATS_OPTIONS = {
+  recursive: 'recursive',
+  states: 'states',
+  authors: 'authors',
+  sla: 'sla',
 };
 
 export const STATS_TYPES = {
   alarmsCreated: {
     value: 'alarms_created',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   alarmsResolved: {
     value: 'alarms_resolved',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   alarmsCanceled: {
     value: 'alarms_canceled',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   ackTimeSla: {
     value: 'ack_time_sla',
-    options: ['recursive', 'states', 'authors', 'sla'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],
   },
   resolveTimeSla: {
     value: 'resolve_time_sla',
-    options: ['recursive', 'states', 'authors', 'sla'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],
   },
   timeInState: {
     value: 'time_in_state',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   stateRate: {
     value: 'state_rate',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   mtbf: {
     value: 'mtbf',
@@ -362,11 +373,11 @@ export const STATS_TYPES = {
   },
   ongoingAlarms: {
     value: 'ongoing_alarms',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   currentOngoingAlarms: {
     value: 'current_ongoing_alarms',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
 };
 
@@ -382,6 +393,124 @@ export const STATS_CRITICITY = {
   minor: 'minor',
   major: 'major',
   critical: 'critical',
+};
+
+export const STATS_QUICK_RANGES = {
+  custom: {
+    value: 'custom',
+  },
+  last2Days: {
+    value: 'last2Days',
+    start: 'now-2d',
+    stop: 'now',
+  },
+  last7Days: {
+    value: 'last7Days',
+    start: 'now-7d',
+    stop: 'now',
+  },
+  last30Days: {
+    value: 'last30Days',
+    start: 'now-30d',
+    stop: 'now',
+  },
+  last1Year: {
+    value: 'last1Year',
+    start: 'now-1y',
+    stop: 'now',
+  },
+  yesterday: {
+    value: 'yesterday',
+    start: 'now-1d/d',
+    stop: 'now-1d/d',
+  },
+  previousWeek: {
+    value: 'previousWeek',
+    start: 'now-1w/w',
+    stop: 'now-1w/w',
+  },
+  previousMonth: {
+    value: 'previousMonth',
+    start: 'now-1m/m',
+    stop: 'now-1m/m',
+  },
+  today: {
+    value: 'today',
+    start: 'now/d',
+    stop: 'now/d',
+  },
+  todaySoFar: {
+    value: 'todaySoFar',
+    start: 'now/d',
+    stop: 'now',
+  },
+  thisWeek: {
+    value: 'thisWeek',
+    start: 'now/w',
+    stop: 'now/w',
+  },
+  thisWeekSoFar: {
+    value: 'thisWeekSoFar',
+    start: 'now/w',
+    stop: 'now',
+  },
+  thisMonth: {
+    value: 'thisMonth',
+    start: 'now/m',
+    stop: 'now/m',
+  },
+  thisMonthSoFar: {
+    value: 'thisMonthSoFar',
+    start: 'now/m',
+    stop: 'now',
+  },
+  last1Hour: {
+    value: 'last1Hour',
+    start: 'now-1h',
+    stop: 'now',
+  },
+  last3Hour: {
+    value: 'last3Hour',
+    start: 'now-3h',
+    stop: 'now',
+  },
+  last6Hour: {
+    value: 'last6Hour',
+    start: 'now-6h',
+    stop: 'now',
+  },
+  last12Hour: {
+    value: 'last12Hour',
+    start: 'now-12h',
+    stop: 'now',
+  },
+  last24Hour: {
+    value: 'last24Hour',
+    start: 'now-24h',
+    stop: 'now',
+  },
+};
+
+export const STATS_DEFAULT_COLOR = '#DDDDDD';
+
+export const STATS_DISPLAY_MODE = {
+  value: 'value',
+  criticity: 'criticity',
+};
+
+export const STATS_DISPLAY_MODE_PARAMETERS = {
+  criticityLevels: {
+    ok: 0,
+    minor: 10,
+    major: 20,
+    critical: 30,
+  },
+  colors: {
+    ok: '#66BB6A',
+    minor: '#FFEE58',
+    major: '#FFA726',
+    critical: '#FF7043',
+  },
 };
 
 export const WIDGET_MAX_SIZE = 12;
@@ -422,27 +551,9 @@ export const USERS_RIGHTS_TYPES = {
 export const USERS_RIGHTS = {
   technical: {
     view: 'models_userview',
-    selector: 'models_selector',
     role: 'models_role',
     action: 'models_action',
-    filter: 'models_filter',
-    curve: 'models_curve',
-    account: 'models_account',
     user: 'models_user',
-    serie: 'models_serie',
-    topology: 'models_topology',
-    profile: 'models_profile',
-    derogation: 'models_derogation',
-    event: 'models_event',
-    eventlog: 'models_eventlog',
-    job: 'models_job',
-    taskmail: 'models_taskmail',
-    taskdataclean: 'models_taskdataclean',
-    tasklinklist: 'models_tasklinklist',
-    taskfile: 'models_taskfile',
-    taskshell: 'models_taskshell',
-    taskackcentreon: 'models_taskackcentreon',
-    taskreporting: 'models_taskreporting',
   },
   business: {
     alarmsList: {
@@ -470,6 +581,7 @@ export const USERS_RIGHTS = {
         deleteEntity: 'crudcontext_delete',
         pbehaviorAdd: 'crudcontext_pbehavior',
         pbehaviorList: 'crudcontext_listPbehavior',
+        pbehaviorDelete: 'crudcontext_deletePbehavior',
 
         listFilters: 'crudcontext_listFilters',
         editFilter: 'crudcontext_editFilter',
@@ -518,6 +630,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     deleteEntity: 'deleteEntity',
     pbehaviorAdd: 'pbehaviorAdd',
     pbehaviorList: 'pbehaviorList',
+    pbehaviorDelete: 'pbehaviorDelete',
     variablesHelp: 'variablesHelp',
 
     listFilters: 'listFilters',
@@ -562,6 +675,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.context.deleteEntity]: USERS_RIGHTS.business.context.actions.deleteEntity,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorAdd]: USERS_RIGHTS.business.context.actions.pbehaviorAdd,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorList]: USERS_RIGHTS.business.context.actions.pbehaviorList,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorDelete]: USERS_RIGHTS.business.context.actions.pbehaviorDelete,
 
     [WIDGETS_ACTIONS_TYPES.context.listFilters]: USERS_RIGHTS.business.context.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.context.editFilter]: USERS_RIGHTS.business.context.actions.editFilter,
@@ -680,6 +794,11 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
 };
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';
+
+export const SORT_ORDERS = {
+  asc: 'ASC',
+  desc: 'DESC',
+};
 
 export const WEBHOOK_TRIGGERS = {
   create: 'create',

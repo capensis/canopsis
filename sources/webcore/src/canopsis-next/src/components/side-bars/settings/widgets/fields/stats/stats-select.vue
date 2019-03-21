@@ -66,9 +66,8 @@ export default {
           title: this.$t('modals.addStat.title.add'),
           action: (stat) => {
             const newStat = {
-              ...omit(stat, ['title', 'parameters', 'stat']),
+              ...omit(stat, ['title', 'parameters']),
 
-              stat: stat.stat.value,
               parameters: stat.stat.options.reduce((acc, option) => {
                 acc[option] = stat.parameters[option];
 

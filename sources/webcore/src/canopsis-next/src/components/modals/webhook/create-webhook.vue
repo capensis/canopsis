@@ -4,6 +4,15 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
     v-card-text
+      v-text-field(
+      v-model="form._id",
+      :label="$t('modals.createWebhook.fields.id')",
+      :readonly="isDisabledIdField",
+      :disabled="isDisabledIdField"
+      )
+        v-tooltip(slot="append", left)
+          v-icon(slot="activator") help_outline
+          span {{ $t('modals.createWebhook.tooltips.id') }}
       webhook-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
@@ -38,9 +47,9 @@ export default {
     const defaultForm = {
       hook: {
         triggers: [],
-        event_pattern: [],
-        alarm_pattern: [],
-        entity_pattern: [],
+        event_patterns: [],
+        alarm_patterns: [],
+        entity_patterns: [],
       },
       request: {
         method: '',
@@ -67,6 +76,9 @@ export default {
 
       return this.$t('modals.createWebhook.create.title');
     },
+    isDisabledIdField() {
+      return !!this.config.webhook;
+    },
   },
   methods: {
     async submit() {
@@ -75,7 +87,7 @@ export default {
       if (isValid) {
         if (this.config.action) {
           const preparedForm = this.hasBlockedTriggers ? setInSeveral(this.form, {
-            'hook.event_pattern': [],
+            'hook.event_patterns': null,
             declare_ticket: {},
           }) : this.form;
 

@@ -125,7 +125,7 @@ export default {
       return (id) => {
         const { href } = this.$router.resolve({ query: { tabId: id } }, this.$route);
 
-        return href;
+        return href.replace('#', '');
       };
     },
   },

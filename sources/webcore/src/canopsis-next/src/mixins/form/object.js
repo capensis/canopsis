@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import formComputedPropertiesMixin, { eventKeyComputed, formKeyComputed } from './internal/computed-properties';
+import formComputedPropertiesMixin, { modelPropKeyComputed, modelEventKeyComputed } from './internal/computed-properties';
 
 /**
  * @mixin Form mixin
@@ -15,7 +15,7 @@ export default {
      * @param {*} value
      */
     updateField(fieldName, value) {
-      this.$emit(this[eventKeyComputed], { ...this[this[formKeyComputed]], [fieldName]: value });
+      this.$emit(this[modelEventKeyComputed], { ...this[this[modelPropKeyComputed]], [fieldName]: value });
     },
 
     /**
@@ -28,8 +28,8 @@ export default {
      */
     updateAndMoveField(fieldName, newFieldName, value) {
       this.$emit(
-        this[eventKeyComputed],
-        { ...omit(this[this[formKeyComputed]], fieldName), [newFieldName]: value },
+        this[modelEventKeyComputed],
+        { ...omit(this[this[modelPropKeyComputed]], fieldName), [newFieldName]: value },
       );
     },
 
@@ -39,7 +39,7 @@ export default {
      * @param {string} fieldName
      */
     removeField(fieldName) {
-      this.$emit(this[eventKeyComputed], omit(this[this[formKeyComputed]], [fieldName]));
+      this.$emit(this[modelEventKeyComputed], omit(this[this[modelPropKeyComputed]], [fieldName]));
     },
   },
 };

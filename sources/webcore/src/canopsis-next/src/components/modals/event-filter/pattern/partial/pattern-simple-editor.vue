@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { isString } from 'lodash';
+import { isObject } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     isSimpleRule(rule) {
-      return isString(rule);
+      return !isObject(rule);
     },
 
     deleteRule(rule) {
