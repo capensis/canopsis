@@ -40,14 +40,16 @@
           :columns="settings.widget.parameters.widgetColumns",
           )
           v-divider
-          field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
+          field-text-editor(
+          v-model="settings.widget.parameters.moreInfoTemplate",
+          :title="$t('settings.moreInfosModal')"
+          )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import get from 'lodash/get';
-import cloneDeep from 'lodash/cloneDeep';
+import { get, cloneDeep } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';
@@ -65,7 +67,7 @@ import FieldDefaultElementsPerPage from './fields/common/default-elements-per-pa
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldMoreInfo from './fields/alarm/more-info.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -85,7 +87,7 @@ export default {
     FieldOpenedResolvedFilter,
     FieldFilters,
     FieldInfoPopup,
-    FieldMoreInfo,
+    FieldTextEditor,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {

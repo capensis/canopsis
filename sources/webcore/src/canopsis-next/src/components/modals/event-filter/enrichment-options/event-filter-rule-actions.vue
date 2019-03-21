@@ -15,16 +15,16 @@
             item-text="value",
             :label="$t('common.type')",
             )
-            v-text-field(
-            v-for="option in form.type.options",
-            :key="option.value"
+            component(
+            v-for="option in form.type.options"
+            :is="getComponentByOption(option)"
+            :key="option.value",
             v-model="form[option.value]",
             :label="option.text",
-            name="value",
-            v-validate="`${isRequired(form.type, option) ? 'required': ''}`",
-            :error-messages="errors.collect('value')"
+            :name="option.value",
+            :error-messages="errors.collect(option.value)",
+            v-validate="getValidationRulesByOption(option)"
             )
-          v-divider
           v-btn.primary(@click="addAction") {{ $t('common.add') }}
     v-container
       h2 {{ $t('modals.eventFilterRule.actions') }}
@@ -50,12 +50,13 @@
 
 <script>
 import Draggable from 'vuedraggable';
-import cloneDeep from 'lodash/cloneDeep';
-import pick from 'lodash/pick';
+import { cloneDeep, pick } from 'lodash';
 
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+
+import MixedField from '@/components/forms/fields/mixed-field.vue';
 
 export default {
   name: MODALS.eventFilterRuleActions,
@@ -64,6 +65,7 @@ export default {
   },
   components: {
     Draggable,
+    MixedField,
   },
   mixins: [modalInnerMixin],
   data() {
@@ -80,6 +82,14 @@ export default {
         to: '',
       },
     };
+  },
+  computed: {
+    getComponentByOption() {
+      return (option = {}) => (option.value === 'value' ? 'mixed-field' : 'v-text-field');
+    },
+    getValidationRulesByOption() {
+      return (option = {}) => option.required && 'required';
+    },
   },
   mounted() {
     if (this.config.actions) {

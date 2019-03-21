@@ -14,7 +14,8 @@
 6. [Comportements périodiques](#comportements-periodiques)
 
 ### Guide exploitant
-1. [Paramètres du widget](#parametres-du-widget)
+1. [Aide sur les variables](#aide-variables)
+2. [Paramètres du widget](#parametres-du-widget)
 
 ## Guide utilisateur
 
@@ -131,6 +132,18 @@ Pour ajouter un comportement périodique sur un entité, cliquez sur l'icône ![
 Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. La première icône permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"). Une fenêtre de création de comportement périodique apparaît alors.
 
 ## Guide exploitant
+
+### Aide - Variables
+
+Durant la configuration de votre widget Exporateur de contexte, notamment la liste des colonnes, il vous sera possible d'accéder à des variables concernant les entités.
+
+Afin de connaitre les variables disponibles, une modale d'aide est disponible.
+
+Pour y accéder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
+
+Un bouton d'action supplémentaire "Liste des variables disponibles" apparaît alors pour chaque entité du tableau.
+
+Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles dans vos différents paramètres. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
 
 ### Paramètres du widget
 

@@ -4,7 +4,14 @@
       v-flex
         context-search(:query.sync="query")
       v-flex
-        pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
+        pagination(
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="contextEntitiesMeta.total",
+        type="top",
+        @input="updateQueryPage"
+        )
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
@@ -15,7 +22,7 @@
         @update:condition="updateSelectedCondition"
         )
       v-flex.ml-4
-        mass-actions-panel(:itemsIds="selected")
+        mass-actions-panel(:itemsIds="selectedIds")
       v-flex
         context-fab(v-if="hasAccessToCreateEntity")
     no-columns-table(v-if="!hasColumns")
@@ -53,14 +60,18 @@
           more-infos(:item="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="contextEntitiesMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="contextEntitiesMeta.total",
+          @input="updateQueryPage"
+          )
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import isString from 'lodash/isString';
+import { omit, isString } from 'lodash';
 
 import { USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
@@ -74,7 +85,9 @@ import FilterSelector from '@/components/other/filter/selector/filter-selector.v
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import MoreInfos from './more-infos/more-infos.vue';
@@ -99,7 +112,6 @@ export default {
     RecordsPerPage,
     NoColumnsTable,
     FilterSelector,
-
     MoreInfos,
     ContextFab,
     ActionsPanel,
@@ -109,7 +121,9 @@ export default {
     authMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
     widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
   ],
   props: {
@@ -128,6 +142,10 @@ export default {
     };
   },
   computed: {
+    selectedIds() {
+      return this.selected.map(item => item._id);
+    },
+
     headers() {
       if (this.hasColumns) {
         return [...this.columns, { text: '', sortable: false }];

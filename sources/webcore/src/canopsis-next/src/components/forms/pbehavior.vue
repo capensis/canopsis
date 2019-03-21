@@ -14,25 +14,25 @@
           data-vv-name="name"
           )
         v-layout(row)
-          date-time-picker(
+          date-time-picker-field(
           :label="$t('modals.createPbehavior.fields.start')",
           v-model="form.tstart",
-          name="tstart",
-          rules="required",
+          v-validate="'required'",
+          name="tstart"
           )
         v-layout(row)
-          date-time-picker(
+          date-time-picker-field(
           :label="$t('modals.createPbehavior.fields.stop')",
           v-model="form.tstop",
+          v-validate="'required'",
           name="tstop",
-          rules="required"
           )
         v-layout(v-if="!filter", row)
           v-btn.primary(type="button", @click="showCreateFilterModal") Filter
         r-rule-form(@input="changeRRule")
         v-layout(row)
           v-combobox(
-          label="Reason",
+          :label="$t('modals.createPbehavior.fields.reason')",
           v-model="form.reason",
           :items="selectItems.reasons",
           :error-messages="errors.collect('reason')",
@@ -41,12 +41,17 @@
           )
         v-layout(row)
           v-select(
-          label="Type",
+          :label="$t('modals.createPbehavior.fields.type')",
           v-model="form.type_",
           :items="selectItems.types",
           :error-messages="errors.collect('type')",
           name="type",
           v-validate="'required'"
+          )
+        v-layout(row)
+          v-textarea(
+          :label="$t('modals.createPbehavior.fields.comment')",
+          v-model="commentMessage",
           )
         v-layout(row)
           v-alert(:value="serverError", type="error")
@@ -65,7 +70,7 @@ import { MODALS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 
-import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
+import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
 
 /**
@@ -73,7 +78,7 @@ import RRuleForm from '@/components/forms/rrule.vue';
  */
 export default {
   inject: ['$validator'],
-  components: { DateTimePicker, RRuleForm },
+  components: { DateTimePickerField, RRuleForm },
   mixins: [authMixin, modalMixin],
   props: {
     serverError: {
@@ -88,6 +93,7 @@ export default {
   data() {
     return {
       rRuleObject: null,
+      commentMessage: '',
       form: {
         name: '',
         tstart: new Date(),
@@ -138,7 +144,14 @@ export default {
         };
 
         if (this.rRuleObject) {
-          data.rrule = this.rRuleObject.toString();
+          data.rrule = this.rRuleObject.toString().replace(/.*RRULE:/, '');
+        }
+
+        if (this.commentMessage !== '') {
+          data.comments = [{
+            author: this.currentUser.crecord_name,
+            message: this.commentMessage,
+          }];
         }
 
         this.$emit('submit', data);

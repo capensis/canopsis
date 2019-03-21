@@ -22,6 +22,21 @@ export default {
     };
   },
   computed: {
+    getViewLink() {
+      return (view = {}) => {
+        const link = {
+          name: 'view',
+          params: { id: view._id },
+        };
+
+        if (view.tabs && view.tabs.length) {
+          link.query = { tabId: view.tabs[0]._id };
+        }
+
+        return link;
+      };
+    },
+
     checkUpdateViewAccessById() {
       return viewId => this.checkUpdateAccess(viewId) && this.hasUpdateAnyViewAccess;
     },
@@ -32,6 +47,11 @@ export default {
 
     getAvailableViewsForGroup() {
       return group => group.views.filter(view => this.checkReadAccess(view._id));
+    },
+
+    checkViewEditButtonAccessById() {
+      return id =>
+        (this.checkUpdateViewAccessById(id) || this.checkDeleteViewAccessById(id)) && this.isEditingMode;
     },
   },
   mounted() {

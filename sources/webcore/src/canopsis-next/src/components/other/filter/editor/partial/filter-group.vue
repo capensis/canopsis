@@ -55,8 +55,7 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import cloneDeep from 'lodash/cloneDeep';
+import { omit, cloneDeep } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 

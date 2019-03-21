@@ -5,7 +5,7 @@
     :key="key",
     :modal="modal",
     :index="index",
-    :dialogProps="dialogPropsMap[modal.name] || defaultDialogProps",
+    :dialogProps="dialogProps(modal)",
     )
       component(:is="modal.name", :modal="modal")
 </template>
@@ -44,8 +44,9 @@ import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
-import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
+import StatsDateInterval from './stats/stats-date-interval.vue';
+import StatsDisplayMode from './stats/stats-display-mode.vue';
 import AlarmsList from './alarm/alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
@@ -55,6 +56,7 @@ import CreateEventFilterRulePattern from './event-filter/pattern/create-event-fi
 import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
+import CreateWebhook from './webhook/create-webhook.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -92,8 +94,9 @@ export default {
     Watcher,
     CreateWatcherDeclareTicketEvent,
     CreateWatcherPauseEvent,
-    ManageHistogramGroups,
     AddStat,
+    StatsDateInterval,
+    StatsDisplayMode,
     AlarmsList,
     CreateUser,
     CreateRole,
@@ -103,6 +106,7 @@ export default {
     AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
+    CreateWebhook,
   },
   data() {
     return {
@@ -111,12 +115,23 @@ export default {
         [MODALS.createWidget]: { maxWidth: 500, lazy: true },
         [MODALS.alarmsList]: { fullscreen: true, lazy: true },
         [MODALS.createFilter]: { maxWidth: 920, lazy: true },
+        [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
+        [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
+        [MODALS.watcher]: { maxWidth: 920, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
   },
   computed: {
     ...modalMapGetters(['modals']),
+
+    dialogProps() {
+      return modal => ({
+        ...this.defaultDialogProps,
+        ...this.dialogPropsMap[modal.name],
+        ...modal.dialogProps,
+      });
+    },
   },
 };
 </script>

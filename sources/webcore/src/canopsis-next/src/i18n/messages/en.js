@@ -1,7 +1,15 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import {
+  ENTITIES_STATES,
+  ENTITIES_STATUSES,
+  EVENT_ENTITY_TYPES,
+  STATS_TYPES,
+  STATS_CRITICITY,
+  STATS_QUICK_RANGES,
+} from '@/constants';
 
 export default {
   common: {
+    ok: 'Ok',
     undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
@@ -33,6 +41,7 @@ export default {
     comment: 'Comment',
     end: 'End',
     recursive: 'Recursive',
+    select: 'Select',
     states: 'States',
     sla: 'Sla',
     authors: 'Authors',
@@ -51,6 +60,7 @@ export default {
     label: 'Label',
     field: 'Field',
     value: 'Value',
+    limit: 'Limit',
     add: 'Add',
     create: 'Create',
     delete: 'Delete',
@@ -71,12 +81,21 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    webhooks: 'Webhooks',
+    startDate: 'Start date',
+    endDate: 'End date',
+    links: 'Links',
     actions: {
       close: 'Close',
-      acknowledge: 'Acknowledge',
       acknowledgeAndReport: 'Acknowledge and report an incident',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.validate]: 'Validate',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Play',
     },
     times: {
       second: 'second | seconds',
@@ -89,8 +108,6 @@ export default {
     },
   },
   user: {
-    firstName: 'First name',
-    lastName: 'Last name',
     role: 'Role',
     defaultView: 'Default view',
   },
@@ -183,6 +200,11 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    tabs: {
+      filter: 'Filter',
+      eids: 'Eids',
+      comments: 'Comments',
+    },
   },
   settings: {
     titles: {
@@ -194,6 +216,7 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
+      textSettings: 'Text settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -228,9 +251,37 @@ export default {
         [STATS_CRITICITY.critical]: 'critical',
       },
     },
+    statsDateInterval: {
+      monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
+      quickRanges: {
+        [STATS_QUICK_RANGES.custom.value]: 'Custom',
+        [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
+        [STATS_QUICK_RANGES.last7Days.value]: 'Last 7 days',
+        [STATS_QUICK_RANGES.last30Days.value]: 'Last 30 days',
+        [STATS_QUICK_RANGES.last1Year.value]: 'Last 1 year',
+        [STATS_QUICK_RANGES.yesterday.value]: 'Yesterday',
+        [STATS_QUICK_RANGES.previousWeek.value]: 'Previous week',
+        [STATS_QUICK_RANGES.previousMonth.value]: 'Previous month',
+        [STATS_QUICK_RANGES.today.value]: 'Today',
+        [STATS_QUICK_RANGES.todaySoFar.value]: 'Today so far',
+        [STATS_QUICK_RANGES.thisWeek.value]: 'This week',
+        [STATS_QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
+        [STATS_QUICK_RANGES.thisMonth.value]: 'This month',
+        [STATS_QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
+        [STATS_QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+        [STATS_QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+        [STATS_QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+        [STATS_QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+        [STATS_QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
+      },
+    },
     statsNumbers: {
       title: 'Stats numbers',
       yesNoMode: 'Yes/No mode',
+      defaultStat: 'Default: Alarms created',
+      sortOrder: 'Sort order',
+      displayMode: 'Display Mode',
+      selectAColor: 'Select a color',
     },
     infoPopup: {
       title: 'Info popup',
@@ -294,6 +345,7 @@ export default {
         alarmList: 'Alarm list',
       },
     },
+    templateEditor: 'Template',
   },
   modals: {
     contextInfos: {
@@ -363,10 +415,12 @@ export default {
       success: {
         create: 'New view created !',
         edit: 'View successfully edited !',
+        delete: 'View successfully deleted !',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        delete: 'View deletion failed...',
       },
       errors: {
         rightCreating: 'Error on right creating',
@@ -416,6 +470,7 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
+        comment: 'Comment',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
       },
     },
@@ -531,6 +586,9 @@ export default {
         statsNumber: {
           title: 'Stats number',
         },
+        text: {
+          title: 'Text',
+        },
       },
     },
     manageHistogramGroups: {
@@ -544,6 +602,7 @@ export default {
         add: 'Add a stat',
         edit: 'Edit a stat',
       },
+      slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
     },
     group: {
       create: {
@@ -605,6 +664,9 @@ export default {
         title: 'Edit an event filter rule',
         success: 'Rule successfully edited !',
       },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
       priority: 'Priority',
       editPattern: 'Edit pattern',
       advanced: 'Advanced',
@@ -631,8 +693,44 @@ export default {
       edit: {
         title: 'Edit tab',
       },
+      duplicate: {
+        title: 'Duplicate tab',
+      },
       fields: {
         title: 'Title',
+      },
+    },
+    createWebhook: {
+      create: {
+        title: 'Create webhook',
+        success: 'Webhook successfully created !',
+      },
+      edit: {
+        title: 'Edit webhook',
+        success: 'Webhook successfully edited !',
+      },
+      remove: {
+        success: 'Webhook successfully removed !',
+      },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
+      },
+    },
+    statsDateInterval: {
+      title: 'Stats - Date interval',
+      fields: {
+        periodValue: 'Period value',
+        periodUnit: 'Period unit',
+        id: 'ID',
+      },
+      errors: {
+        endDateLessOrEqualStartDate: 'End date should be after start date',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
       },
     },
   },
@@ -804,7 +902,7 @@ export default {
       },
     },
     errors: {
-      invalidJSON: 'Invalid JSON',
+      invalidJSON: 'We can\'t parse this filter to Visual Editor',
       required: 'You need to add at least one valid rule',
     },
   },
@@ -838,7 +936,10 @@ export default {
     priority: 'Priority',
     enabled: 'Enabled',
     actions: 'Actions',
+    externalDatas: 'External datas',
     actionsRequired: 'Please add at least one action',
+    id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
   layout: {
     sideBar: {
@@ -865,5 +966,50 @@ export default {
     },
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
+    fullScreen: 'Full screen',
+    fullScreenShortcut: 'Alt + Enter / Command + Enter',
+  },
+  patternsList: {
+    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
+  },
+  webhook: {
+    title: 'Webhooks',
+    table: {
+      headers: {
+        id: 'ID',
+        requestMethod: 'Request method',
+        requestUrl: 'Request URL',
+      },
+    },
+    tabs: {
+      hook: {
+        title: 'Hook',
+        fields: {
+          triggers: 'Triggers',
+          eventPatterns: 'Event patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
+        },
+      },
+      request: {
+        title: 'Request',
+        fields: {
+          method: 'Method',
+          url: 'URL',
+          headers: 'Headers',
+          headerKey: 'Header key',
+          headerValue: 'Header value',
+          payload: 'Payload',
+        },
+      },
+      declareTicket: {
+        title: 'Declare ticket',
+        fields: {
+          text: 'Key',
+          value: 'Value',
+        },
+      },
+    },
   },
 };

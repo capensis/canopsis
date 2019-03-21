@@ -14,7 +14,8 @@
 
 ### Guide exploitant
 
-1. [Paramètres du widget](#parametres-du-widget)
+1. [Aide sur les variables](#aide-variables)
+2. [Paramètres du widget](#parametres-du-widget)
 
 ## Guide utilisateur
 
@@ -72,7 +73,7 @@ Le filtre par période permet de filtre les alarmes en ne conservant que les ala
 
 Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/period-filter.png "Filtre par période") présente à droite du sélecteur de filtre. Une fenêtre apparaît.
 
-![Modal filtre par période](./img/modal-filtre-periode.png "Modal filtre par période")
+![modale filtre par période](./img/modal-filtre-periode.png "modale filtre par période")
 
 Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
 Cliquez ensuite sur 'Appliquer'.
@@ -97,6 +98,20 @@ Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à aff
 Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
 
 ## Guide exploitant
+
+### Aide - Variables
+
+Durant la configuration de votre widget Bac à alarmes, notamment paramètres "Info popup", et "Fenêtre Plus d'infos", il vous sera possible d'accéder à des variables concernant les alarmes et les entités.
+
+Exemple: Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", l'état de l'alarme.
+
+Afin de connaitre les variables disponibles, une modale d'aide est disponible.
+
+Pour y accèder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
+
+Un bouton d'action supplémentaire "Liste des variables disponibles" apparaît alors pour chaque alarme.
+
+Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles dans vos différents paramètres. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
 
 ### Paramètres du widget
 
@@ -152,12 +167,12 @@ Ce paramètre permet de définir quels colonnes seront affichées dans le bac à
 Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
 Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
 
-Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'alarme et de l'entité concernée par l'alarme peuvent être utilisés, en préfixant le nom du champ par "alarm" ou "entity".
+Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'alarme et de l'entité concernée par l'alarme peuvent être utilisés.
 
 Exemple : Pour ajouter une colonne ayant pour label "Composant" et pour valeur le nom du composant, renseignez les champs comme suit :
 
 *  Label : "Composant"
-*  Valeur : "alarm.component"
+*  Valeur : "alarm.v.component"
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
@@ -202,8 +217,8 @@ Une case info popup vide apparaît.
 Cette case comporte deux champs :
 
 *  Colonne : Ce champ permet de définir sur quelle colonne l'info popup sera disponible. Il faut ici entrer la **valeur** de la colonne, et non son nom.
-Exemple : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "v.connector" et non "Connecteur".
-*  Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template l'état de l'alarme, ajoutez au template `{{ alarm.state.val }}`.
+Exemple : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "alarm.v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "alarm.v.connector" et non "Connecteur".
+*  Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template l'état de l'alarme, ajoutez au template `{{ alarm.v.state.val }}`.
 
 Vous pouvez ajouter autant d'info popup que vous le souhaitez.
 
@@ -219,4 +234,4 @@ Deux variables sont disponibles ici, 'alarm' et 'entity'.
 
 En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme ou de l'entité concernée par cette alarme.
 
-Exemple : Pour afficher l'état de l'alarme, ajoutez `{{ alarm.state.val }}`.
+Exemple : Pour afficher l'état de l'alarme, ajoutez `{{ alarm.v.state.val }}`.

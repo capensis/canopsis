@@ -12,6 +12,9 @@ export default {
       mergeQuery: 'merge',
       removeQuery: 'remove',
 
+      updateLockedQuery: 'updateLocked',
+      removeLockedQuery: 'removeLocked',
+
       forceUpdateQuery: 'forceUpdate',
     }),
   },

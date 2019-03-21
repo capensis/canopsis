@@ -1,5 +1,4 @@
-import isObject from 'lodash/isObject';
-import isArray from 'lodash/isArray';
+import { isObject, isArray } from 'lodash';
 
 export default function convertObjectFieldToTreeBranch(branch, branchName, prevPath = '') {
   const children = Object.keys(branch).reduce((acc, field) => {

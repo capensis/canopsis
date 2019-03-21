@@ -19,6 +19,7 @@
           )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
+          v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
             v-model="settings.widget_preferences.mainFilter",
@@ -34,8 +35,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import cloneDeep from 'lodash/cloneDeep';
+import { get, cloneDeep } from 'lodash';
 
 import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
 

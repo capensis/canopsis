@@ -72,8 +72,7 @@
 
 <script>
 import sha1 from 'sha1';
-import omit from 'lodash/omit';
-import pick from 'lodash/pick';
+import { omit, pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 

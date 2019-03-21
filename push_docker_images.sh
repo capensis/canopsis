@@ -19,7 +19,7 @@ for engine in {"core","cat","prov","cat-prov"}; do
 done
 # Go engines
 if [ "${push_go}" = "Y" ]||[ "${push_go}" = "y" ]; then
-    for engine in {"init", "engine-axe","engine-che","engine-heartbeat","engine-stat","engine-watcher","engine-action"}; do
+    for engine in {"init","engine-axe","engine-che","engine-heartbeat","engine-stat","engine-watcher","engine-action"}; do
         docker push canopsis/$engine:${CANOPSIS_TAG}
     done
 fi
@@ -28,6 +28,6 @@ if [ "${push_pe}" = "Y" ]||[ "${push_pe}" = "y" ]; then
     docker push canopsis/init-pe:${CANOPSIS_TAG}
     docker push canopsis/canopsis-cat-pe:${CANOPSIS_TAG}
     docker push canopsis/canopsis-cat-pe:longoutput-${CANOPSIS_TAG}
-    #docker push canopsis/canopsis-connector-email2canopsis-pe:${CANOPSIS_TAG}
+    docker push canopsis/canopsis-connector-email2canopsis-pe:${CANOPSIS_TAG}
     #docker push canopsis/canopsis-connector-snmp2canopsis-pe:${CANOPSIS_TAG}
 fi

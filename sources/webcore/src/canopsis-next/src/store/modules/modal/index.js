@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import uid from '@/helpers/uid';

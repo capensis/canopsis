@@ -5,12 +5,12 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '../../../../constants';
+import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import authMixin from '../../../../mixins/auth';
-import widgetActionsPanelAlarmMixin from '../../../../mixins/widget/actions-panel/alarm';
+import authMixin from '@/mixins/auth';
+import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
 
-import SharedMassActionsPanel from '../../shared/actions-panel/mass-actions-panel.vue';
+import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 

@@ -1,15 +1,14 @@
-# Sommaire
+# Installation de Canopsis
 
+## Pré-requis
 
-## Installation
-  
-- [Installation avec un paquets Deb/Rpm](installation-paquets.md)
-- [Installation avec un conteneurs Docker](installation-conteneurs.md)  
+*  [Pré-requis réseau et de sécurité](pre-requis-parefeu-et-selinux.md)
 
-## Sécurité 
+## Méthodes d'installation de Canopsis
 
-- [Configuration des ports réseaux à partir de la matrice des flux](pre-requis-parefeu-et-selinux.md)  
+*  [Installation avec un paquet Debian ou CentOS](installation-paquets.md)
+*  [Installation avec Docker](installation-conteneurs.md)
 
-## Premier login
+## Première connexion à Canopsis
 
-- [Crédentials](premiere-connexion.md)
+*  [Accès et identifiants Canopsis par défaut](premiere-connexion.md)

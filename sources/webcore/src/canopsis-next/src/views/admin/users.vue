@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 import { MODALS } from '@/constants';
 
