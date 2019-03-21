@@ -597,7 +597,7 @@ export default {
         add: 'Add a stat',
         edit: 'Edit a stat',
       },
-      slaRequired: 'SLA parameter is required',
+      slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
     },
     group: {
       create: {

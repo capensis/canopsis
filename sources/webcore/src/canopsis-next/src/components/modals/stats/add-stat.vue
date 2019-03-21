@@ -55,11 +55,16 @@
                 )
                 v-text-field(
                 v-else-if="option === $constants.STATS_OPTIONS.sla",
-                :placeholder="$t('common.sla')",
                 v-model="form.parameters.sla",
-                hide-details
+                v-validate="{ required: true, regex: /^(<|>|<=|>=)\\s*\\d+$/ }",
+                :placeholder="$t('common.sla')",
+                :error-messages="errors.collect('sla')",
+                :hide-details="!errors.has('sla')"
+                name="sla"
                 )
-        v-alert(:value="errors.has('sla')", type="error") {{ $t('modals.addStat.slaRequired') }}
+                  v-tooltip(slot="append", left)
+                    v-icon(slot="activator", dark) help_outline
+                    span {{ $t('modals.addStat.slaTooltip') }}
         v-divider
         v-layout.py-1(justify-end)
           v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -67,9 +72,11 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 
-import { MODALS, STATS_TYPES, STATS_OPTIONS, ENTITIES_STATES } from '@/constants';
+import { MODALS, STATS_TYPES, ENTITIES_STATES } from '@/constants';
+
+import { setIn } from '@/helpers/immutable';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -104,18 +111,6 @@ export default {
         .map(item => ({ value: ENTITIES_STATES[item], text: item }));
     },
   },
-  created() {
-    this.$validator.attach({
-      name: 'sla',
-      rules: 'required:true',
-      getter: () => {
-        const hasSlaOption = this.form.stat.options.find(option => option === STATS_OPTIONS.sla);
-
-        return !hasSlaOption || !(hasSlaOption && !this.form.parameters.sla);
-      },
-      context: () => this,
-    });
-  },
   mounted() {
     if (!this.config.withTrend) {
       this.form.trend = false;
@@ -134,7 +129,9 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          const preparedForm = setIn(this.form, 'parameters', parameters => pick(parameters, this.form.stat.options));
+
+          await this.config.action(preparedForm);
         }
 
         this.hideModal();
