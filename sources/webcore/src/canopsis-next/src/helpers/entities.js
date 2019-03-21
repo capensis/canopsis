@@ -203,7 +203,7 @@ export function generateWidgetByType(type) {
         },
       };
       break;
-    case WIDGET_TYPES.statsText:
+    case WIDGET_TYPES.text:
       specialParameters = {
         dateInterval: {
           periodValue: 1,

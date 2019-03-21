@@ -8,18 +8,18 @@
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
+import { compile, registerHelper, unregisterHelper } from '../../../helpers/handlebars';
 
-import widgetQueryMixin from '@/mixins/widget/query';
-import entitiesStatsMixin from '@/mixins/entities/stats';
-import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetQueryMixin from '../../../mixins/widget/query';
+import entitiesStatsMixin from '../../../mixins/entities/stats';
+import widgetStatsQueryMixin from '../../../mixins/widget/stats/stats-query';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import ProgressOverlay from '../../layout/progress/progress-overlay.vue';
 
-import StatsTextStatTemplate from './stats-text-stat-template.vue';
+import TextStatTemplate from './text-stat-template.vue';
 
 export default {
-  components: { VRuntimeTemplate, ProgressOverlay, StatsTextStatTemplate },
+  components: { VRuntimeTemplate, ProgressOverlay, TextStatTemplate },
   mixins: [
     widgetQueryMixin,
     entitiesStatsMixin,
@@ -47,7 +47,7 @@ export default {
       const statName = hash.name;
 
       return new Handlebars.SafeString(`
-        <stats-text-stat-template name="${statName}" :stats="stats"></stats-text-stat-template>
+        <text-stat-template name="${statName}" :stats="stats"></text-stat-template>
       `);
     });
   },

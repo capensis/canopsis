@@ -216,7 +216,7 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
-      statsTextSettings: 'Stats text settings',
+      textSettings: 'Text settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -586,8 +586,8 @@ export default {
         statsNumber: {
           title: 'Stats number',
         },
-        statsText: {
-          title: 'Stats text',
+        text: {
+          title: 'Text',
         },
       },
     },

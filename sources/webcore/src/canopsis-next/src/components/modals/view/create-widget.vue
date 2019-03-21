@@ -79,8 +79,8 @@ export default {
           icon: 'table_chart',
         },
         {
-          title: this.$t('modals.widgetCreation.types.statsText.title'),
-          value: WIDGET_TYPES.statsText,
+          title: this.$t('modals.widgetCreation.types.text.title'),
+          value: WIDGET_TYPES.text,
           icon: 'view_headline',
         },
       ],

@@ -36,7 +36,7 @@ import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 
 export default {
-  name: SIDE_BARS.statsTextSettings,
+  name: SIDE_BARS.textSettings,
   $_veeValidate: {
     validator: 'new',
   },

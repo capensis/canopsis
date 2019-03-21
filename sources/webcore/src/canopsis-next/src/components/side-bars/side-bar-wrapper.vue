@@ -51,7 +51,7 @@ export default {
         [SIDE_BARS.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
         [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
         [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
-        [SIDE_BARS.statsTextSettings]: this.$t('settings.titles.statsTextSettings'),
+        [SIDE_BARS.textSettings]: this.$t('settings.titles.textSettings'),
       };
 
       return this.sideBarConfig.sideBarTitle || TITLES_MAP[this.sideBarName];
