@@ -21,7 +21,7 @@
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-stat-display-mode(v-model="settings.widget.parameters.displayMode")
           v-divider
-          field-number(v-model="settings.widget.parameters.limit", :title="$t('common.limit')")
+          field-default-elements-per-page(v-model="settings.widget.parameters.limit")
           v-divider
           field-sort-order(v-model="settings.widget.parameters.sortOrder")
           v-divider
@@ -40,7 +40,7 @@ import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';
 import FieldStatDisplayMode from './fields/stats/stat-display-mode.vue';
-import FieldNumber from './fields/common/number.vue';
+import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldSortOrder from './fields/stats/sort-order.vue';
 
 export default {
@@ -55,7 +55,7 @@ export default {
     FieldFilterEditor,
     FieldStatSelector,
     FieldStatDisplayMode,
-    FieldNumber,
+    FieldDefaultElementsPerPage,
     FieldSortOrder,
   },
   mixins: [widgetSettingsMixin],
