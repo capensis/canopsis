@@ -12,42 +12,41 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
-      field-stats-selector(v-model="settings.widget.parameters.stats")
-      v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
-      field-stats-colors(
-      :stats="settings.widget.parameters.stats",
-      v-model="settings.widget.parameters.statsColors"
-      )
+      field-stats-selector(v-model="settings.widget.parameters.stats")
+      v-divider
+      field-text-editor(v-model="settings.widget.parameters.template", :title="$t('settings.templateEditor')")
+      v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
 
-import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
+
+import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatsSelector from './fields/stats/stats-selector.vue';
-import FieldStatsColors from './fields/stats/stats-colors.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
 
 export default {
-  name: SIDE_BARS.statsHistogramSettings,
+  name: SIDE_BARS.textSettings,
   $_veeValidate: {
     validator: 'new',
   },
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldFilterEditor,
     FieldDateInterval,
     FieldStatsSelector,
-    FieldStatsColors,
+    FieldFilterEditor,
+    FieldTextEditor,
   },
   mixins: [widgetSettingsMixin],
   data() {
@@ -61,5 +60,5 @@ export default {
     };
   },
 };
-</script>
 
+</script>

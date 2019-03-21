@@ -39,14 +39,15 @@
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import AlarmsList from '@/components/other/alarm/alarms-list.vue';
-import EntitiesList from '@/components/other/context/entities-list.vue';
-import Weather from '@/components/other/service-weather/weather.vue';
-import StatsHistogram from '@/components/other/stats/histogram/stats-histogram.vue';
-import StatsCurves from '@/components/other/stats/curves/stats-curves.vue';
-import StatsTable from '@/components/other/stats/stats-table.vue';
-import StatsCalendar from '@/components/other/stats/calendar/stats-calendar.vue';
-import StatsNumber from '@/components/other/stats/stats-number.vue';
+import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
+import EntitiesListWidget from '@/components/other/context/entities-list.vue';
+import WeatherWidget from '@/components/other/service-weather/weather.vue';
+import StatsHistogramWidget from '@/components/other/stats/histogram/stats-histogram.vue';
+import StatsCurvesWidget from '@/components/other/stats/curves/stats-curves.vue';
+import StatsTableWidget from '@/components/other/stats/stats-table.vue';
+import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calendar.vue';
+import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
+import TextWidget from '@/components/other/text/text.vue';
 
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
@@ -54,14 +55,15 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
   components: {
-    AlarmsList,
-    EntitiesList,
-    Weather,
-    StatsHistogram,
-    StatsCurves,
-    StatsTable,
-    StatsCalendar,
-    StatsNumber,
+    AlarmsListWidget,
+    EntitiesListWidget,
+    WeatherWidget,
+    StatsHistogramWidget,
+    StatsCurvesWidget,
+    StatsTableWidget,
+    StatsCalendarWidget,
+    StatsNumberWidget,
+    TextWidget,
   },
   mixins: [
     popupMixin,
@@ -89,14 +91,15 @@ export default {
   data() {
     return {
       widgetsComponentsMap: {
-        [WIDGET_TYPES.alarmList]: 'alarms-list',
-        [WIDGET_TYPES.context]: 'entities-list',
-        [WIDGET_TYPES.weather]: 'weather',
-        [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
-        [WIDGET_TYPES.statsCurves]: 'stats-curves',
-        [WIDGET_TYPES.statsTable]: 'stats-table',
-        [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
-        [WIDGET_TYPES.statsNumber]: 'stats-number',
+        [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
+        [WIDGET_TYPES.context]: 'entities-list-widget',
+        [WIDGET_TYPES.weather]: 'weather-widget',
+        [WIDGET_TYPES.statsHistogram]: 'stats-histogram-widget',
+        [WIDGET_TYPES.statsCurves]: 'stats-curves-widget',
+        [WIDGET_TYPES.statsTable]: 'stats-table-widget',
+        [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
+        [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
+        [WIDGET_TYPES.text]: 'text-widget',
       },
     };
   },
