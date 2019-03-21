@@ -1,13 +1,15 @@
 <template lang="pug">
   v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
-      div.subheading {{$t('settings.moreInfosModal')}}
+      div.subheading {{ title }}
       v-layout(justify-end)
         v-btn.primary(
         small,
         @click="openTextEditorModal"
-        ) {{ $t('common.create') }}/{{ $t('common.edit') }}
-        v-btn.error(v-if="value", small, @click="deleteMoreInfoTemplate")
+        )
+          span(v-show="isValueEmpty") {{ $t('common.create') }}
+          span(v-show="!isValueEmpty") {{ $t('common.edit') }}
+        v-btn.error(v-show="!isValueEmpty", small, @click="deleteMoreInfoTemplate")
           v-icon delete
 </template>
 
@@ -22,6 +24,15 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+  },
+  computed: {
+    isValueEmpty() {
+      return !this.value || !this.value.length;
     },
   },
   methods: {

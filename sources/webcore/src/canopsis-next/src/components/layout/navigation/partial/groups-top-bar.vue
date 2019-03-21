@@ -26,7 +26,7 @@
           v-list-tile(
           v-for="view in getAvailableViewsForGroup(group)",
           :key="view._id",
-          :to="{ name: 'view', params: { id: view._id } }",
+          :to="getViewLink(view)"
           )
             v-list-tile-title
               span {{ view.title }}

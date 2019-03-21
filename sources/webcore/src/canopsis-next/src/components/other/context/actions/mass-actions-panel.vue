@@ -64,6 +64,10 @@ export default {
         config: {
           itemsType: ENTITIES_TYPES.entity,
           itemsIds: this.itemsIds,
+          popups: {
+            success: { text: this.$t('success.default') },
+            error: { text: this.$t('errors.default') },
+          },
         },
       });
     },

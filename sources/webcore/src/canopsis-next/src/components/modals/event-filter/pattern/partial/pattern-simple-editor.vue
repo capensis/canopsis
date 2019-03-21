@@ -24,6 +24,7 @@
 
 <script>
 import { isObject } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
