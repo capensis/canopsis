@@ -34,18 +34,23 @@ export default {
         this.links.filter(({ cat_name: catName }) => catName === this.category) :
         this.links;
 
-      return filteredLinks[0].links.reduce((acc, link, index) => {
-        if (typeof link === 'object' && link.link && link.label) {
-          acc.push(link);
-        } else {
-          acc.push({
-            label: `${this.category} - ${index}`,
-            link,
-          });
-        }
 
-        return acc;
-      }, []);
+      if (filteredLinks.length) {
+        return filteredLinks[0].links.reduce((acc, link, index) => {
+          if (typeof link === 'object' && link.link && link.label) {
+            acc.push(link);
+          } else {
+            acc.push({
+              label: this.category ? `${this.category} - ${index}` : `${this.$t('common.link')} - ${index}`,
+              link,
+            });
+          }
+
+          return acc;
+        }, []);
+      }
+
+      return [];
     },
   },
 };
