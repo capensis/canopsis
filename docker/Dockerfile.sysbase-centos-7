@@ -10,7 +10,7 @@ ENV CPS_USER canopsis
 ENV CPS_GROUP canopsis
 
 COPY docker/files/systemd/canopsis* /usr/lib/systemd/system/
-COPY docker/files/systemd/centos/canopsis-webserver.service /usr/lib/systemd/system/
+COPY docker/files/systemd/centos7/canopsis-webserver.service /usr/lib/systemd/system/
 COPY docker/files/vimrc /root/.vimrc
 COPY docker/files/bashrc /root/.bashrc
 
