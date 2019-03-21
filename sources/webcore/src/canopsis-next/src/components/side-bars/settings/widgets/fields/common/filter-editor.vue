@@ -2,17 +2,21 @@
   v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
       div.subheading {{ $t('settings.filterEditor') }}
-        .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
+        .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optionnal') }})
       div
         v-btn.primary(
         small,
         @click="openFilterModal"
-        ) {{ $t('common.create') }}/{{ $t('common.edit') }}
-        v-btn.error(small, @click="deleteFilter")
+        )
+          span(v-show="isValueEmpty") {{ $t('common.create') }}
+          span(v-show="!isValueEmpty") {{ $t('common.edit') }}
+        v-btn.error(v-show="!isValueEmpty", small, @click="deleteFilter")
           v-icon delete
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
@@ -27,6 +31,15 @@ export default {
     hiddenFields: {
       type: Array,
       default: () => [],
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    isValueEmpty() {
+      return isEmpty(this.value);
     },
   },
   methods: {
