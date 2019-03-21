@@ -216,6 +216,7 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
+      textSettings: 'Text settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -344,6 +345,7 @@ export default {
         alarmList: 'Alarm list',
       },
     },
+    templateEditor: 'Template',
   },
   modals: {
     contextInfos: {
@@ -584,6 +586,9 @@ export default {
         statsNumber: {
           title: 'Stats number',
         },
+        text: {
+          title: 'Text',
+        },
       },
     },
     manageHistogramGroups: {
@@ -597,7 +602,7 @@ export default {
         add: 'Add a stat',
         edit: 'Edit a stat',
       },
-      slaRequired: 'SLA parameter is required',
+      slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
     },
     group: {
       create: {
@@ -707,6 +712,12 @@ export default {
       remove: {
         success: 'Webhook successfully removed !',
       },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
+      },
     },
     statsDateInterval: {
       title: 'Stats - Date interval',
@@ -716,12 +727,6 @@ export default {
       },
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
-      },
-      fields: {
-        id: 'ID',
-      },
-      tooltips: {
-        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
       },
     },
   },
@@ -927,7 +932,10 @@ export default {
     priority: 'Priority',
     enabled: 'Enabled',
     actions: 'Actions',
+    externalDatas: 'External datas',
     actionsRequired: 'Please add at least one action',
+    id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
   layout: {
     sideBar: {

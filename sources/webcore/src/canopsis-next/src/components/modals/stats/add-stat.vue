@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ $t(config.title) }}
+        span.headline {{ config.title }}
     v-form
       v-container
         v-container.pt-0(fluid)
@@ -55,11 +55,16 @@
                 )
                 v-text-field(
                 v-else-if="option === $constants.STATS_OPTIONS.sla",
-                :placeholder="$t('common.sla')",
                 v-model="form.parameters.sla",
-                hide-details
+                v-validate="{ required: true, regex: /^(<|>|<=|>=)\\s*\\d+$/ }",
+                :placeholder="$t('common.sla')",
+                :error-messages="errors.collect('sla')",
+                :hide-details="!errors.has('sla')"
+                name="sla"
                 )
-        v-alert(:value="error", type="error") {{ error }}
+                  v-tooltip(slot="append", left)
+                    v-icon(slot="activator", dark) help_outline
+                    span {{ $t('modals.addStat.slaTooltip') }}
         v-divider
         v-layout.py-1(justify-end)
           v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -67,9 +72,11 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 
-import { MODALS, STATS_TYPES, STATS_OPTIONS, ENTITIES_STATES } from '@/constants';
+import { MODALS, STATS_TYPES, ENTITIES_STATES } from '@/constants';
+
+import { setIn } from '@/helpers/immutable';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -89,7 +96,6 @@ export default {
           recursive: true,
         },
       },
-      error: '',
     };
   },
   computed: {
@@ -118,20 +124,16 @@ export default {
     }
   },
   methods: {
-    updateParameter(parameter, value) {
-      this.$set(this.form.parameters, parameter, value);
-    },
-
     async submit() {
-      let isFormValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-      if (this.form.stat.options.find(option => option === STATS_OPTIONS.sla) && !this.form.parameters.sla) {
-        isFormValid = false;
-        this.error = this.$t('modals.addStat.slaRequired');
-      }
+      if (isFormValid) {
+        if (this.config.action) {
+          const preparedForm = setIn(this.form, 'parameters', parameters => pick(parameters, this.form.stat.options));
 
-      if (isFormValid && this.config.action) {
-        await this.config.action(this.form);
+          await this.config.action(preparedForm);
+        }
+
         this.hideModal();
       }
     },
