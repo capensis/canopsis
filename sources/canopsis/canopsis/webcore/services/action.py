@@ -92,7 +92,7 @@ def exports(ws):
             return gen_json_error({'description': 'failed to create action'},
                                   HTTP_ERROR)
 
-        return gen_json({})
+        return gen_json({'_id': element['_id']})
 
     @ws.application.put(
         '/api/v2/actions/<action_id:id_filter>'
