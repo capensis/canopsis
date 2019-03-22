@@ -57,8 +57,6 @@ export default {
       const popups = this.config.popups || {};
 
       try {
-        this.serverError = null;
-
         const payload = { data };
 
         if (this.forEntities) {
@@ -76,7 +74,10 @@ export default {
         this.hideModal();
       } catch (err) {
         if (err.description) {
-          this.serverError = err.description;
+          this.errors.add({
+            field: 'server',
+            msg: err.description,
+          });
         }
 
         if (popups.error) {

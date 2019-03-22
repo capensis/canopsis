@@ -23,9 +23,9 @@
         v-layout(row)
           date-time-picker-field(
           v-model="form.tstop",
-          v-validate="'required'",
+          v-validate="tstopRules",
           :label="$t('modals.createPbehavior.fields.stop')",
-          name="tstop",
+          name="tstop"
           )
         v-layout(v-if="!filter", row)
           v-btn.primary(type="button", @click="showCreateFilterModal") Filter
@@ -33,7 +33,7 @@
         v-layout(row)
           v-combobox(
           v-model="form.reason",
-          v-validate="'required'"
+          v-validate="'required'",
           :label="$t('modals.createPbehavior.fields.reason')",
           :items="reasons",
           :error-messages="errors.collect('reason')",
@@ -42,20 +42,24 @@
         v-layout(row)
           v-select(
           v-model="form.type_",
-          v-validate="'required'"
+          v-validate="'required'",
           :label="$t('modals.createPbehavior.fields.type')",
           :items="types",
           :error-messages="errors.collect('type')",
           name="type",
           )
         v-layout(row)
+          strong Comments
+        v-layout(v-for="(comment, key) in comments", :key="key", row)
           v-textarea(
           :label="$t('modals.createPbehavior.fields.comment')",
-          v-model="commentMessage",
+          :value="comment.message"
           )
         v-layout(row)
-          v-alert(:value="serverError", type="error")
-            span {{ serverError }}
+          v-btn.primary(type="button", @click="addComment") Add comment
+        v-layout(row)
+          v-alert(:value="errors.has('server')", type="error")
+            span {{ errors.first('server') }}
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="cancel", depressed, flat) {{ $t('common.cancel') }}
@@ -66,7 +70,9 @@
 import moment from 'moment';
 import { cloneDeep } from 'lodash';
 
-import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES } from '@/constants';
+import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
+
+import uid from '@/helpers/uid';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -92,11 +98,26 @@ export default {
         rrule: pbehavior.rrule || null,
       };
     },
+
+    pbehaviorToComments(pbehavior = {}) {
+      const comments = pbehavior.comments || [];
+
+      return comments.reduce((acc, comment) => {
+        acc[uid()] = comment;
+
+        return acc;
+      }, {});
+    },
+
     formToPbehavior() {
 
     },
   },
   mixins: [authMixin, modalMixin],
+  model: {
+    prop: 'pbehavior',
+    event: 'input',
+  },
   props: {
     serverError: {
       type: String,
@@ -106,26 +127,52 @@ export default {
       type: Object,
       default: null,
     },
-    value: {
+    pbehavior: {
       type: Object,
       default: null,
     },
   },
   data() {
+    const pbehavior = this.pbehavior || {};
+
     return {
       commentMessage: '',
-      form: this.$options.filters.pbehaviorToForm(this.value),
+      form: this.$options.filters.pbehaviorToForm(pbehavior),
+      comments: this.$options.filters.pbehaviorToComments(pbehavior),
+      commentsActions: {
+        create: [],
+        remove: [],
+      },
     };
   },
   computed: {
     reasons() {
       return Object.values(PAUSE_REASONS);
     },
+
     types() {
       return Object.values(PBEHAVIOR_TYPES);
     },
+
+    tstopRules() {
+      const rules = { required: true };
+
+      if (this.form.tstart) {
+        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
+        rules.date_format = 'DD/MM/YYYY hh:mm';
+      }
+
+      return rules;
+    },
   },
   methods: {
+    addComment() {
+      this.$set(this.comments, uid(), {
+        message: '',
+        author: this.currentUser.crecord_name,
+      });
+    },
+
     showCreateFilterModal() {
       this.showModal({
         name: MODALS.createFilter,

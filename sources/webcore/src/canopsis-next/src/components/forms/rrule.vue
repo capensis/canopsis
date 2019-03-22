@@ -336,7 +336,10 @@ export default {
         });
 
         if (!this.errors.has('rRule') && !this.rRuleObject.isFullyConvertibleToText()) {
-          this.errors.add('rRule', this.$t('rRule.errors.main'));
+          this.errors.add({
+            field: 'rRule',
+            msg: this.$t('rRule.errors.main'),
+          });
         } else {
           this.errors.remove('rRule');
 
