@@ -1,6 +1,6 @@
 # Tableau de statistiques
 
-// INSERER IMAGE TABLEAU DE STATS
+![Tableau de statistiques](./img/table.png "Tableau de statistiques")
 
 ## Sommaire
 ### Guide utilisateur
@@ -15,11 +15,9 @@
 
 ### Présentation du widget
 
-Le widget tableau de statistiques se présente sous la formce d'un tableeau. Chaque ligne de ce tableau correspond à une entité, et aux statistiques associées à cette entité. La première colonne est non configurable. Celle-ci présente, pour chaque ligne, le nom de l'entité. Chacune des colonnes qui suit correpond à une statistique.
+Le widget tableau de statistiques se présente sous la forme d'un tableeau. Chaque ligne de ce tableau correspond à une entité, et aux statistiques associées à cette entité. La première colonne est non configurable. Celle-ci présente, pour chaque ligne, le nom de l'entité. Chacune des colonnes qui suit correpond à une statistique.
 
 Le tableau présente entre 1 et n statistiques. Les statistiques affichées sont configurées depuis le panneau de paramètres du widget (voir [paramètres du widget](#parametres-du-widget)).
-
-Une tendance par rapport à la période précédente peut être affichée à droite de la valeur de la statistique (voir [paramètres du widget](#parametres-du-widget)).
 
 ## Guide exploitant
 
@@ -27,11 +25,9 @@ Une tendance par rapport à la période précédente peut être affichée à dro
 
 1. Taille du widget (*requis*)
 2. Titre (*optionnel*)
-3. Durée (*requis*)
-4. Date de fin (*requis*)
+3. Interval de date (*requis*)
+4. Filtre (*optionnel*)
 5. Sélecteur de statistique (*requis*)
-6. Paramètres avancés
-    1. Editeur de filtre (*optionnel*)
 
 #### Taille du widget (*requis*)
 
@@ -50,24 +46,68 @@ Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus
 
 Un champ de texte vous permet de définir ce titre.
 
-#### Durée (*requis*)
+#### Interval de date (*requis*)
 
-Ce paramètre permet de définir la durée à prendre en compte pour le calcul des statistiques.
+Ce paramètre permet de définir l'interval de date pour lequel les statistiques doivent être affichées.
 
-Exemple: Une durée de 2 mois permet de calculer les statistiques concernant les 2 mois précédents la [date de fin](#date-de-fin-requis).
+Par défaut l'interval correspond aux statistiques du jour.
 
-Valeur par défaut: 1 jour.
+##### Période
 
-#### Date de fin (*requis*)
+Les deux champs de périodes correspondent à l'interval entre 2 valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement de statistiques.
 
-Ce paramètre permet de définir la date de fin de calcul des statistiques pour ce widget.
+Exemple: 
 
-Exemple: Si la [durée](#duree-requis) a été paramètrée à 2 mois, et la date de fin au 01 Septembre 2018, les statistiques affichées correspondront aux valeurs pour la période allant du 01 Juillet 2018 au 01 Septembre 2018.
+- Si l'interval sélectionné est 'Dernière année', une période raisonnable serait de '1 mois'. 
+- Si l'interval sélectionné est 'Aujourd'hui jusqu'à maintenant', une période raisonnable serait de '1 heure'.
 
-Les dates disponibles dépendent de l'unité de [durée](#duree-requis) sélectionnée.
+##### Interval
 
-- Pour une durée en mois, la date de fin ne peut être que le premier jours d'un mois, à 00:00 GMT.
-- Pour toutes les autres unités de durée, la date de fin doit correspondre à une heure pleine. Ex: 17/01/2019 18:00.
+Trois champs permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques.
+
+- Les deux champs à gauche permettent de sélectionner directement des dates de début et de fin
+- Le champs de droite permet d'avoir accès à des intervals de temps pré-construits.
+
+A l'intérieur des champs de sélection de date (gauche), il est possible :
+
+- De sélectionner une date fixe, en cliquant sur l'icone de calendrier, puis en sélectionnant la date voulue
+- De sélectionner une date 'dynamique'
+
+###### Langage de sélection de date dynamique
+
+- Le champs doit toujours commencer par le mot clé 'now', faisant référence à la date actuelle
+- Ce mot clé now peut être suivi directement de modificateurs. Ces modificateurs sont de la forme :
+
+    * Opérateur: '+' ou '-'
+    * Valeur: Nombre d'unités à ajouter/soustraire
+    * Unité: 'h' pour 'heures, 'd' pour 'jours', 'm' pour 'mois' et 'y' pour 'année
+
+- A la suite du modificateur peut s'ajouter un opérateur permettant d'arrondir la valeur au début/à la fin de l'unité voulu. Cet opérateur se présente sous la forme: '/unité'. Cet arrondis se fera à la valeur inférieur pour la date de début, à la valeur supérieur pour la date de fin.
+
+Exemples: 
+
+- 'now-7d' -> 'La date d'aujourd'hui moins 7 jours'
+- 'now-2m' -> 'La date d'aujourd'hui moins 2 mois'
+- 'now-7d/d'
+
+    * Si cette valeur correspond à une date de début -> 'La date d'aujourd'hui moins 7 jours, arrondie au début de la journée'
+    * Si cette valeur correspond à une date de fin -> 'La date d'aujourd'hui moins 7 jours, arrondie à la fin de la journée'
+
+
+##### Intervals pré-définis
+
+Le champ de droite vous permet de sélectionner parmis un panel d'intervals de dates pré-définis, afin de ne pas avoir à entrer manuellement l'interval voulu dans les champs de gauche.
+
+#### Filtre (*optionnel*)
+
+Ce paramètre vous permet de définir le filtre à appliquer à la sélection d'entité. Il permet de ne sélectionner que les entités pour lesquels on souhaite afficher les statistiques.
+
+Pour créer un filtre, ou éditer le filtre deja présent, cliquez sur le bouton ```Créer/Editer```.
+Pour supprimer le filtre deja existant, cliquez sur le bouton situé à droite du bouton d'édition/création.
+
+Au clic sur le bouton ```Créer/Editer```, une fenêtre d'édition de filtre s'ouvre. Une fois le nom du filtre, et le filtre lui-même renseignés, cliquez sur le bouton ```Envoyer``` pour le sauvegarder.
+
+Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](../../../filtres).
 
 #### Sélecteur de statistiques (*requis*)
 
@@ -79,7 +119,8 @@ Pour ajouter une statistique, cliquez sur le bouton ```Ajouter une statistique``
 
 Une fenêtre s'ouvre.
 
-// INSERER IMAGE MODAL AJOUT DE STAT
+![Modale ajout de statistique](./img/add-stat.png "Modale ajout de statistique")
+
 
 Cette fenêtre vous permet de définir la statistique souhaitée.
 
@@ -96,17 +137,6 @@ Cliquez sur le bouton ```Envoyer``` pour ajouter cette statistique.
 
 La liste des statistiques ajoutées au widget est visible depuis le panneau de paramètres du widget. Un bouton vous permet ici d'éditer la statistique, ou de la supprimer de la liste.
 
-// INSERER IMAGE LISTE STATS
+![Liste de statistiques](./img/stats-list.png "Liste de statistiques")
 
-#### Paramètres avancés
 
-##### Editeur de filtres (*optionnel*)
-
-Ce paramètre vous permet de définir le filtre à appliquer à la sélection d'entité. Il permet de ne sélectionner que les entités pour lesquels on souhaite afficher les statistiques.
-
-Pour créer un filtre, ou éditer le filtre deja présent, cliquez sur le bouton ```Créer/Editer```.
-Pour supprimer le filtre deja existant, cliquez sur le bouton situé à droite du bouton d'édition/création.
-
-Au clic sur le bouton ```Créer/Editer```, une fenêtre d'édition de filtre s'ouvre. Une fois le nom du filtre, et le filtre lui-même renseignés, cliquez sur le bouton ```Envoyer``` pour le sauvegarder.
-
-Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](../../../filtres).
