@@ -22,13 +22,14 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.common.redis_store import RedisStore
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
+from canopsis.common.enumerations import FastEnum
 from canopsis.models.healthcheck import Healthcheck, ServiceState
 
 
 CONF_PATH = 'etc/healthcheck/manager.conf'
 
 
-class ConfName(object):
+class ConfName(FastEnum):
     """List of values used for the configuration"""
 
     SECT_HC = "HEALTHCHECK"

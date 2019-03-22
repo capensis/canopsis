@@ -25,9 +25,9 @@ Les paramètres sont :
 
 - `check_amqp_limit_size` : Le nombre maximum de messages dans une queue RabbitMQ, au delà la queue est considérée comme surchargée.
 - `check_amqp_queues` : La liste, séparée par des virgules et sans espaces, des queues de RabbitMQ qui seront surveillées.
-- `check_collections` : La liste, séparée par des virgules et sans espaces, des collections MongoDB qui seront surveillées.
+- `check_collections` : La liste, séparée par des virgules et sans espaces, des collections MongoDB dont l'existence sera surveillée.
 - `check_engines` : La liste, séparée par des virgules et sans espaces, des moteurs, Python comme Go, qui seront surveillés.
-- `check_ts_db` : Le nom de la table utilisée par la base de données de stats.
+- `check_ts_db` : Le nom de la base de données de stats.
 - `check_webserver` : Le nom utilisé dans le système pour le webserver de Canopsis.
 - `systemctl_engine_prefix` : Le préfixe utilisé dans `systemctl` pour les différents moteurs de Canopsis.
 
