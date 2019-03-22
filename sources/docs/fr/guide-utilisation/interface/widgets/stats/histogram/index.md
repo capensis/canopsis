@@ -1,6 +1,6 @@
 # Histogramme de statistiques
 
-// INSERER IMAGE HISTOGRAMME
+![Histogramme de statistiques](./img/histogram.png "Histogramme de statistiques")
 
 ## Sommaire
 ### Guide utilisateur
@@ -17,7 +17,7 @@
 
 Le widget Histogramme de statistiques vous permet de représenter un ensemble de statistiques, sous forme d'histogramme.
 
-Il vous permet d'afficher les statistiques souhaitées pour un ou plusieurs groupes, représentants tout ou partie des entités présentes dans Canopsis.
+Il vous permet d'afficher les statistiques souhaitées pour une ou plusieurs statistiques, sur une période définie.
 
 ## Guide exploitant
 
@@ -25,12 +25,10 @@ Il vous permet d'afficher les statistiques souhaitées pour un ou plusieurs grou
 
 1. Taille du widget (*requis*)
 2. Titre (*optionnel*)
-3. Date de fin (*requis*)
-4. Durée (*requis*)
-5. Groupes de statistiques (*requis*)
-6. Sélecteur de statistique (*requis*)
-7. Paramètres avancés
-    1. Couleurs des statistiques (*optionnel*)
+3. Interval de date (*requis*)
+4. Sélecteur de statistique (*requis*)
+5. Filtre (*optionnel*)
+6. Couleurs des statistiques (*optionnel*)
 
 #### Taille du widget (*requis*)
 
@@ -49,47 +47,56 @@ Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus
 
 Un champ de texte vous permet de définir ce titre.
 
-#### Date de fin (*requis*)
+#### Interval de date (*requis*)
 
-Ce paramètre permet de définir la date de fin de calcul des statistiques pour ce widget.
+Ce paramètre permet de définir l'interval de dates pour lequel les statistiques doivent être affichées.
 
-Exemple: Si la [durée](#duree-requis) a été paramètrée à 2 mois, et la date de fin au 01 Septembre 2018, les statistiques affichées correspondront aux valeurs pour la période allant du 01 Juillet 2018 au 01 Septembre 2018.
+Par défaut l'interval correspond aux statistiques du jour.
 
-Les dates disponibles dépendent de l'unité de [durée](#duree-requis) sélectionnée.
+##### Période
 
-- Pour une durée en mois, la date de fin ne peut être que le premier jours d'un mois, à 00:00 GMT.
-- Pour toutes les autres unités de durée, la date de fin doit correspondre à une heure pleine. Ex: 17/01/2019 18:00.
+Les deux champs de période correspondent à l'interval entre deux valeurs des statistiques. Sur l'histogramme, cela se traduira par le temps écoulé entre deux points de calcul des statistiques.
 
-#### Durée (*requis*)
+**Pour éviter un temps d'affichage des statistiques trop long, il convient de sélectionner une période suffisament grande, comparée à l'interval choisie**
 
-Ce paramètre permet de définir la durée à prendre en compte pour le calcul des statistiques.
+Exemple: Pour une interval correspondant à une année entière, le temps d'affichage des statistiques heure par heure se verra considérablement augmenté. Alors que l'affichage des statistiques mois par mois prendra, lui, un temps beaucoup plus raisonnable.
 
-Exemple: Une durée de 2 mois permet de calculer les statistiques concernant les 2 mois précédents la [date de fin](#date-de-fin-requis).
+##### Interval
 
-Valeur par défaut: 1 jour.
+Deux permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
 
-#### Groupes de statistiques (*requis*)
+A l'intérieur des champs de sélection de date (gauche), il est possible :
 
-Ce paramètre vous permet de créer des groupes. Les statistiques pourront alors êtres organisées dans l'histogramme. Chaque statistique sera affiché pour chacun des groupes.
+- De sélectionner une date fixe, en cliquant sur l'icone de calendrier, puis en sélectionnant la date voulue
+- De sélectionner une date 'dynamique'
 
-Ces groupes sont constitués d'un nom, et d'un filtre.
+###### Langage de sélection de date dynamique
 
-Ex: Affichage de 2 statistiques, pour 2 groupes différents.
+- Le champ doit toujours commencer par le mot clé 'now', faisant référence à la date actuelle
+- Ce mot clé now peut être suivi directement de modificateurs. Ces modificateurs sont de la forme :
 
-// INSERER IMAGE
+    * Opérateur: '+' ou '-'
+    * Valeur: Nombre d'unités à ajouter/soustraire
+    * Unité: 'h' pour 'heures, 'd' pour 'jours', 'm' pour 'mois' et 'y' pour 'année
 
-Les groupes sont utiles nottament pour afficher les statistiques souhaitées, en les regroupant par sous-parties de votre SI.
+- A la suite du modificateur peut s'ajouter un opérateur permettant d'arrondir la valeur au début/à la fin de l'unité voulu. Cet opérateur se présente sous la forme: '/unité'. Cet arrondis se fera à la valeur inférieur pour la date de début, à la valeur supérieur pour la date de fin.
 
-**Il est obligatoire d'ajouter au moins un groupe**
+Exemples: 
 
-Pour ajouter un groupe, cliquez sur le boutton ```Ajouter un groupe```. Une fenêtre s'ouvre alors vous demandant de renseigner le nom du groupe. Un bouton ```Editeur de filtre``` est également présent, vous permettant de définir le filtre à appliquer afin de sélectionner les entités appartenants à ce groupe. Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](../../../filtres).
-Cliquez sur ```Sauvegarder``` pour terminer l'ajout du groupe.
+- 'now-7d' -> 'La date d'aujourd'hui moins 7 jours'
+- 'now-2m' -> 'La date d'aujourd'hui moins 2 mois'
+- 'now-7d/d'
 
-La liste des groupes ajoutés apparaît alors dans le panneau de paramètres du widget. Chaque groupe dispose d'un bouton d'édition, ainsi que d'un bouton de suppression.
+    * Si cette valeur correspond à une date de début -> 'La date d'aujourd'hui moins 7 jours, arrondie au début de la journée'
+    * Si cette valeur correspond à une date de fin -> 'La date d'aujourd'hui moins 7 jours, arrondie à la fin de la journée'
+
+##### Intervals prédéfinis
+
+Le champ de droite vous permet de sélectionner parmis un panel d'intervals de dates prédéfinis, afin de ne pas avoir à entrer manuellement l'interval voulu dans les champs de gauche.
 
 #### Sélecteur de statistiques (*requis*)
 
-Ce paramètre permet de définir les statistiques à afficher dans le tableau. Chaque statistique se verra affecter une colonne du tableau.
+Ce paramètre permet de définir les statistiques à afficher dans l'histogramme.
 
 **Il est obligatoire d'ajouter au moins une statistique**
 
@@ -97,13 +104,13 @@ Pour ajouter une statistique, cliquez sur le bouton ```Ajouter une statistique``
 
 Une fenêtre s'ouvre.
 
-// INSERER IMAGE MODAL AJOUT DE STAT
+![Modale ajout de statistique](../img/add-stat.png "Modale ajout de statistique")
+
 
 Cette fenêtre vous permet de définir la statistique souhaitée.
 
 - Statistique à afficher (voir [liste des statstiques disponibles](../index.md#les-statistiques-disponibles)).
 - Titre associé à cette statistique.
-- Tendance: Permet de définir si vous souhaitez récupérer et afficher la tendance par rapport à la période précédente, pour chaque valeur.
 - Options: Liste d'options concernant la statistique sélectionnée. Les options varient selon la type de statistique voulue :
     - ```Recursif```: Si l'option est activée, permet de calculer la statistique sur l'entité, ainsi que sur ses dépendances, et les dépendances de ses dépendances, etc...
     - ```Etats```: Permet de ne prendre en compte que les alarmes avec le/les état(s) (ok, mineure, majeure ou critique) sélectionné(s).
@@ -114,11 +121,20 @@ Cliquez sur le bouton ```Envoyer``` pour ajouter cette statistique.
 
 La liste des statistiques ajoutées au widget est visible depuis le panneau de paramètres du widget. Un bouton vous permet ici d'éditer la statistique, ou de la supprimer de la liste.
 
-// INSERER IMAGE LISTE STATS
+![Liste de statistiques](../img/stats-list.png "Liste de statistiques")
 
-#### Paramètres avancés
+#### Filtre (*optionnel*)
 
-##### Couleurs des statistiques (*optionnel*)
+Ce paramètre vous permet de définir le filtre à appliquer à la sélection d'entité. Il permet de ne sélectionner que les entités pour lesquels on souhaite afficher les statistiques.
+
+Pour créer un filtre, ou éditer le filtre deja présent, cliquez sur le bouton ```Créer/Editer```.
+Pour supprimer le filtre deja existant, cliquez sur le bouton situé à droite du bouton d'édition/création.
+
+Au clic sur le bouton ```Créer/Editer```, une fenêtre d'édition de filtre s'ouvre. Une fois le nom du filtre, et le filtre lui-même renseignés, cliquez sur le bouton ```Envoyer``` pour le sauvegarder.
+
+Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](../../../filtres).
+
+#### Couleurs des statistiques (*optionnel*)
 
 Ce paramètre vous permet de définir la couleur que vous souhaitée affiché pour chacune des statistiques sélectionnées.
 

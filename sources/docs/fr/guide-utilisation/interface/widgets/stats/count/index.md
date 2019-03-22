@@ -1,6 +1,6 @@
 # Compteur de statistiques
 
-// INSERER IMAGE COMPTEUR
+![Compteur de statistiques](./img/count.png "Compteur de statistiques")
 
 ## Sommaire
 ### Guide utilisateur
@@ -23,13 +23,13 @@ Le widget Compteur de statistiques vous permet d'afficher les valeurs d'une stat
 
 1. Taille du widget (*requis*)
 2. Titre (*optionnel*)
-3. Durée (*requis*)
-4. Date de fin (*requis*)
-5. Editeur de filtres (*optionnel*)
-6. Sélecteur de statistique (*requis*)
-7. Mode Oui/Non (*requis*)
-8. Niveaux de criticité (*requis*)
-9. Sélecteur de couleurs
+3. Interval de date (*requis*)
+4. Editeur de filtres (*optionnel*)
+5. Sélecteur de statistique (*requis*)
+6. Paramètres avancés
+    1. Mode d'affichage
+    2. Nombre d'éléments par page par défaut
+    3. Sens de tri
 
 #### Taille du widget (*requis*)
 
@@ -48,24 +48,53 @@ Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus
 
 Un champ de texte vous permet de définir ce titre.
 
-#### Durée (*requis*)
+#### Interval de date (*requis*)
 
-Ce paramètre permet de définir la durée à prendre en compte pour le calcul des statistiques.
+Ce paramètre permet de définir l'interval de dates pour lequel les statistiques doivent être affichées.
 
-Exemple: Une durée de 2 mois permet de calculer les statistiques concernant les 2 mois précédents la [date de fin](#date-de-fin-requis).
+Par défaut l'interval correspond aux statistiques du jour.
 
-Valeur par défaut: 1 jour.
+##### Période
 
-#### Date de fin (*requis*)
+Les deux champs de période correspondent à l'interval entre deux valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement des statistiques.
 
-Ce paramètre permet de définir la date de fin de calcul des statistiques pour ce widget.
+Exemple: 
 
-Exemple: Si la [durée](#duree-requis) a été paramètrée à 2 mois, et la date de fin au 01 Septembre 2018, les statistiques affichées correspondront aux valeurs pour la période allant du 01 Juillet 2018 au 01 Septembre 2018.
+- Si l'interval sélectionné est 'Dernière année', une période raisonnable serait de '1 mois'. 
+- Si l'interval sélectionné est 'Aujourd'hui jusqu'à maintenant', une période raisonnable serait de '1 heure'.
 
-Les dates disponibles dépendent de l'unité de [durée](#duree-requis) sélectionnée.
+##### Interval
 
-- Pour une durée en mois, la date de fin ne peut être que le premier jours d'un mois, à 00:00 GMT.
-- Pour toutes les autres unités de durée, la date de fin doit correspondre à une heure pleine. Ex: 17/01/2019 18:00.
+Deux permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
+
+A l'intérieur des champs de sélection de date (gauche), il est possible :
+
+- De sélectionner une date fixe, en cliquant sur l'icone de calendrier, puis en sélectionnant la date voulue
+- De sélectionner une date 'dynamique'
+
+###### Langage de sélection de date dynamique
+
+- Le champ doit toujours commencer par le mot clé 'now', faisant référence à la date actuelle
+- Ce mot clé now peut être suivi directement de modificateurs. Ces modificateurs sont de la forme :
+
+    * Opérateur: '+' ou '-'
+    * Valeur: Nombre d'unités à ajouter/soustraire
+    * Unité: 'h' pour 'heures, 'd' pour 'jours', 'm' pour 'mois' et 'y' pour 'année
+
+- A la suite du modificateur peut s'ajouter un opérateur permettant d'arrondir la valeur au début/à la fin de l'unité voulu. Cet opérateur se présente sous la forme: '/unité'. Cet arrondis se fera à la valeur inférieur pour la date de début, à la valeur supérieur pour la date de fin.
+
+Exemples: 
+
+- 'now-7d' -> 'La date d'aujourd'hui moins 7 jours'
+- 'now-2m' -> 'La date d'aujourd'hui moins 2 mois'
+- 'now-7d/d'
+
+    * Si cette valeur correspond à une date de début -> 'La date d'aujourd'hui moins 7 jours, arrondie au début de la journée'
+    * Si cette valeur correspond à une date de fin -> 'La date d'aujourd'hui moins 7 jours, arrondie à la fin de la journée'
+
+##### Intervals prédéfinis
+
+Le champ de droite vous permet de sélectionner parmis un panel d'intervals de dates prédéfinis, afin de ne pas avoir à entrer manuellement l'interval voulu dans les champs de gauche.
 
 ##### Editeur de filtres (*optionnel*)
 
@@ -78,23 +107,23 @@ Au clic sur le bouton ```Créer/Editer```, une fenêtre d'édition de filtre s'o
 
 Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](../../../filtres).
 
-#### Sélecteur de statistique (*requis*)
+#### Sélecteur de statistiques (*requis*)
 
-Ce paramètre permet de définir la statistiques à afficher dans le compteur. 
+Ce paramètre permet de définir les statistiques à afficher.
 
-**Il est obligatoire d'ajouter une statistique**
+**Il est obligatoire d'ajouter au moins une statistique**
 
-Pour ajouter une statistique, cliquez sur le bouton ```Sélecteur de stat```.
+Pour ajouter une statistique, cliquez sur le bouton ```Ajouter une statistique```.
 
 Une fenêtre s'ouvre.
 
-// INSERER IMAGE MODAL AJOUT DE STAT
+![Modale ajout de statistique](../img/add-stat.png "Modale ajout de statistique")
+
 
 Cette fenêtre vous permet de définir la statistique souhaitée.
 
 - Statistique à afficher (voir [liste des statstiques disponibles](../index.md#les-statistiques-disponibles)).
 - Titre associé à cette statistique.
-- Tendance: Permet de définir si vous souhaitez récupérer et afficher la tendance par rapport à la période précédente, pour chaque valeur.
 - Options: Liste d'options concernant la statistique sélectionnée. Les options varient selon la type de statistique voulue :
     - ```Recursif```: Si l'option est activée, permet de calculer la statistique sur l'entité, ainsi que sur ses dépendances, et les dépendances de ses dépendances, etc...
     - ```Etats```: Permet de ne prendre en compte que les alarmes avec le/les état(s) (ok, mineure, majeure ou critique) sélectionné(s).
@@ -103,32 +132,28 @@ Cette fenêtre vous permet de définir la statistique souhaitée.
 
 Cliquez sur le bouton ```Envoyer``` pour ajouter cette statistique.
 
-#### Mode Oui/Non (*requis*)
+La liste des statistiques ajoutées au widget est visible depuis le panneau de paramètres du widget. Un bouton vous permet ici d'éditer la statistique, ou de la supprimer de la liste.
 
-Ce paramètre permet de basculer entre l'affichage de la valeur de la statistique, et un affichage Oui (si la valeur est égale à 0) ou Non (si la valeur est différente de 0).
+![Liste de statistiques](../img/stats-list.png "Liste de statistiques")
 
-Ce mode est désactivé par défaut.
+#### Paramètres avancés
 
-#### Niveaux de criticité (*requis*)
+##### Mode d'affichage
 
-Ce paramètre permet de configurer à partir de quelle valeur la valeur d'une statistique est considérée comme mineur/majeure ou critique.
+Ce paramètre permet de configurer la manière dont les valeurs de la statistique doivent êtres formatées. En effet, il est possible dans le widget Compteur de statistique, de formater les valeur de la statistique de deux manières :
 
-Le niveau de criticité permet de modifier, combinée au paramètre [sélecteur de couleurs](), la couleur à afficher pour la statistique, en fonction de sa valeur.
+- Valeur: Le mode 'valeur' permet d'afficher simplement la valeur de la statistique. Ces valeurs seront affichées avec une couleur de fond selon les seuils définis. Pour changer les seuils de valeurs, modifiez les valeur des champs "Valeur". Pour modifier les couleurs associés à ces seuils, cliquez sur le bouton 'Sélectionner une couleur'.
 
-Les valeurs par défaut sont :
+- Criticité: Le mode 'criticité' permet d'afficher la criticité de la valeur de la statistique: 'Ok', 'Mineur', 'Majeure' ou 'Critique'. Ces valeurs seront affichées avec une couleur de fond selon les seuils définis. Pour changer les seuils de valeurs, modifiez les valeur des champs "Valeur". Pour modifier les couleurs associés à ces seuils, cliquez sur le bouton 'Sélectionner une couleur'.
 
-- Ok: Entre 0 et 20
-- Mineur: Entre 20 et 30
-- Majeur: Entre 30 et 40
-- Critique: Supérieur à 40
+Une fois les seuils et les couleurs associées sélectionnées, cliquez sur le bouton 'Envoyer'.
 
-#### Sélecteur de couleurs (*requis*)
+##### Nombre d'éléments par page par défaut
 
-Ce paramètre permet d'affecter une couleur à chaque [niveau de criticité]().
+Ce paramètre permet de définir le nombre d'éléments à afficher par défaut sur chaque page du compteur de statistique. 
 
-Cela permet, d'un seul coup d'oeil, d'identifier les valeurs selon leur niveau de criticité.
+##### Sens de tri
 
-Pour modifier une des couleurs définies par défaut, cliquez sur le bouton correspondant à un niveau de criticité. Une fenêtre s'ouvre, vous donnant accès à plusieurs méthodes de choix de la couleur.
+Ce paramètre permet de définir le sens par défaut dans lequel les valeurs seront affichées.
 
-Une fois la couleur sélectionnée, cliquez sur ```Envoyer```.
-Votre couleur apparaît maintenant dans le menu de paramètres du widget !
+Par défaut, elles seront affichées par ordre décroissant.

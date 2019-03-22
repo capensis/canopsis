@@ -15,7 +15,7 @@
 
 ### Présentation du widget
 
-Le widget tableau de statistiques se présente sous la forme d'un tableeau. Chaque ligne de ce tableau correspond à une entité, et aux statistiques associées à cette entité. La première colonne est non configurable. Celle-ci présente, pour chaque ligne, le nom de l'entité. Chacune des colonnes qui suit correpond à une statistique.
+Le widget tableau de statistiques se présente sous la forme d'un tableau. Chaque ligne de ce tableau correspond à une entité, et aux statistiques associées à cette entité. La première colonne est non configurable. Celle-ci présente, pour chaque ligne, le nom de l'entité. Chacune des colonnes qui suit correpond à une statistique.
 
 Le tableau présente entre 1 et n statistiques. Les statistiques affichées sont configurées depuis le panneau de paramètres du widget (voir [paramètres du widget](#parametres-du-widget)).
 
@@ -48,13 +48,13 @@ Un champ de texte vous permet de définir ce titre.
 
 #### Interval de date (*requis*)
 
-Ce paramètre permet de définir l'interval de date pour lequel les statistiques doivent être affichées.
+Ce paramètre permet de définir l'interval de dates pour lequel les statistiques doivent être affichées.
 
 Par défaut l'interval correspond aux statistiques du jour.
 
 ##### Période
 
-Les deux champs de périodes correspondent à l'interval entre 2 valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement de statistiques.
+Les deux champs de période correspondent à l'interval entre deux valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement des statistiques.
 
 Exemple: 
 
@@ -63,10 +63,7 @@ Exemple:
 
 ##### Interval
 
-Trois champs permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques.
-
-- Les deux champs à gauche permettent de sélectionner directement des dates de début et de fin
-- Le champs de droite permet d'avoir accès à des intervals de temps pré-construits.
+Deux permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
 
 A l'intérieur des champs de sélection de date (gauche), il est possible :
 
@@ -75,7 +72,7 @@ A l'intérieur des champs de sélection de date (gauche), il est possible :
 
 ###### Langage de sélection de date dynamique
 
-- Le champs doit toujours commencer par le mot clé 'now', faisant référence à la date actuelle
+- Le champ doit toujours commencer par le mot clé 'now', faisant référence à la date actuelle
 - Ce mot clé now peut être suivi directement de modificateurs. Ces modificateurs sont de la forme :
 
     * Opérateur: '+' ou '-'
@@ -93,10 +90,9 @@ Exemples:
     * Si cette valeur correspond à une date de début -> 'La date d'aujourd'hui moins 7 jours, arrondie au début de la journée'
     * Si cette valeur correspond à une date de fin -> 'La date d'aujourd'hui moins 7 jours, arrondie à la fin de la journée'
 
+##### Intervals prédéfinis
 
-##### Intervals pré-définis
-
-Le champ de droite vous permet de sélectionner parmis un panel d'intervals de dates pré-définis, afin de ne pas avoir à entrer manuellement l'interval voulu dans les champs de gauche.
+Le champ de droite vous permet de sélectionner parmis un panel d'intervals de dates prédéfinis, afin de ne pas avoir à entrer manuellement l'interval voulu dans les champs de gauche.
 
 #### Filtre (*optionnel*)
 
@@ -119,14 +115,13 @@ Pour ajouter une statistique, cliquez sur le bouton ```Ajouter une statistique``
 
 Une fenêtre s'ouvre.
 
-![Modale ajout de statistique](./img/add-stat.png "Modale ajout de statistique")
+![Modale ajout de statistique](../img/add-stat.png "Modale ajout de statistique")
 
 
 Cette fenêtre vous permet de définir la statistique souhaitée.
 
 - Statistique à afficher (voir [liste des statstiques disponibles](../index.md#les-statistiques-disponibles)).
 - Titre associé à cette statistique.
-- Tendance: Permet de définir si vous souhaitez récupérer et afficher la tendance par rapport à la période précédente, pour chaque valeur.
 - Options: Liste d'options concernant la statistique sélectionnée. Les options varient selon la type de statistique voulue :
     - ```Recursif```: Si l'option est activée, permet de calculer la statistique sur l'entité, ainsi que sur ses dépendances, et les dépendances de ses dépendances, etc...
     - ```Etats```: Permet de ne prendre en compte que les alarmes avec le/les état(s) (ok, mineure, majeure ou critique) sélectionné(s).
@@ -137,6 +132,6 @@ Cliquez sur le bouton ```Envoyer``` pour ajouter cette statistique.
 
 La liste des statistiques ajoutées au widget est visible depuis le panneau de paramètres du widget. Un bouton vous permet ici d'éditer la statistique, ou de la supprimer de la liste.
 
-![Liste de statistiques](./img/stats-list.png "Liste de statistiques")
+![Liste de statistiques](../img/stats-list.png "Liste de statistiques")
 
 
