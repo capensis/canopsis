@@ -4,26 +4,26 @@
       v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')")
     template(v-if="showRRule")
       v-layout(row)
-        v-tabs.r-rule-tabs(v-model="activeTab", centered)
+        v-tabs.r-rule-tabs(v-model="activeTab", centered, fixed-tabs)
           v-tab(href="#simple") {{ $t('rRule.tabs.simple') }}
           v-tab(href="#advanced") {{ $t('rRule.tabs.advanced') }}
-          v-tab-item(id="simple")
+          v-tab-item(value="simple")
             div
               div
                 v-select(
                 :label="$t('rRule.fields.freq')",
                 v-model="form.rRuleOptions.freq",
-                :items="selectItems.frequencies",
+                :items="frequencies",
                 @input="changeRRuleOption"
                 )
               div
                 v-select(
                 :label="$t('rRule.fields.byweekday')",
                 v-model="form.rRuleOptions.byweekday",
-                :items="selectItems.weekDays",
-                @input="changeRRuleOption",
+                :items="weekDays",
                 multiple,
-                chips
+                chips,
+                @input="changeRRuleOption",
                 )
               div
                 v-text-field(
@@ -39,20 +39,20 @@
                 v-model="form.rRuleOptions.interval",
                 @input="changeRRuleOption"
                 )
-          v-tab-item(id="advanced")
+          v-tab-item(value="advanced")
             div
               div
                 v-select(
                 :label="$t('rRule.fields.wkst')",
                 v-model="form.rRuleOptions.wkst",
-                :items="selectItems.weekDays",
+                :items="weekDays",
                 @input="changeRRuleOption"
                 )
               div
                 v-select(
                 :label="$t('rRule.fields.bymonth')",
                 v-model="form.rRuleOptions.bymonth",
-                :items="selectItems.months",
+                :items="months",
                 @input="changeRRuleOption",
                 multiple,
                 chips
@@ -65,7 +65,7 @@
                     v-model="form.advancedRRuleOptions.bysetpos",
                     :error-messages="errors.collect('bysetpos')",
                     :hint="$t('rRule.advancedHint')",
-                    @input="changeRRuleAdvancedOption",
+                    @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="bysetpos",
                     persistent-hint,
@@ -79,7 +79,7 @@
                     v-model="form.advancedRRuleOptions.bymonthday",
                     :error-messages="errors.collect('bymonthday')",
                     :hint="$t('rRule.advancedHint')",
-                    @input="changeRRuleAdvancedOption",
+                    @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="bymonthday",
                     persistent-hint
@@ -93,7 +93,7 @@
                     v-model="form.advancedRRuleOptions.byyearday",
                     :error-messages="errors.collect('byyearday')",
                     :hint="$t('rRule.advancedHint')",
-                    @input="changeRRuleAdvancedOption",
+                    @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="byyearday",
                     persistent-hint
@@ -107,7 +107,7 @@
                     v-model="form.advancedRRuleOptions.byweekno",
                     :error-messages="errors.collect('byweekno')",
                     :hint="$t('rRule.advancedHint')",
-                    @input="changeRRuleAdvancedOption",
+                    @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="byweekno",
                     persistent-hint
@@ -121,7 +121,7 @@
                     v-model="form.advancedRRuleOptions.byhour",
                     :error-messages="errors.collect('byhour')",
                     :hint="$t('rRule.advancedHint')",
-                    @input="changeRRuleAdvancedOption",
+                    @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="byhour",
                     persistent-hint
@@ -135,7 +135,7 @@
                     v-model="form.advancedRRuleOptions.byminute",
                     :error-messages="errors.collect('byminute')",
                     :hint="$t('rRule.advancedHint')",
-                    @input="changeRRuleAdvancedOption",
+                    @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="byminute",
                     persistent-hint
@@ -149,7 +149,7 @@
                     v-model="form.advancedRRuleOptions.bysecond",
                     :error-messages="errors.collect('bysecond')",
                     :hint="$t('rRule.advancedHint')",
-                    @input="changeRRuleAdvancedOption",
+                    @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="bysecond",
                     persistent-hint
@@ -171,8 +171,8 @@
 </template>
 
 <script>
-import RRule from 'rrule';
-import { mapValues, pickBy } from 'lodash';
+import { RRule, rrulestr } from 'rrule';
+import { mapValues, pickBy, isArray } from 'lodash';
 
 /**
  * RRule form component
@@ -182,58 +182,128 @@ import { mapValues, pickBy } from 'lodash';
  */
 export default {
   inject: ['$validator'],
+  filters: {
+    rRuleToFormOptions(rRule) {
+      const { origOptions } = rRule;
+
+      return {
+        freq: origOptions.freq || '',
+        count: origOptions.count || '',
+        interval: origOptions.interval || '',
+        byweekday: origOptions.byweekday ? origOptions.byweekday.map(v => v.weekday) : [],
+        wkst: origOptions.wkst ? origOptions.wkst.weekday : '',
+        bymonth: origOptions.bymonth || [],
+      };
+    },
+
+    rRuleToFormAdvancedOptions(rRule) {
+      const { origOptions } = rRule;
+      const optionPreparer = (v) => {
+        if (v) {
+          return (isArray(v) ? v.join(',') : String(v));
+        }
+
+        return '';
+      };
+
+      return {
+        bysetpos: optionPreparer(origOptions.bysetpos),
+        bymonthday: optionPreparer(origOptions.bymonthday),
+        byyearday: optionPreparer(origOptions.byyearday),
+        byweekno: optionPreparer(origOptions.byweekno),
+        byhour: optionPreparer(origOptions.byhour),
+        byminute: optionPreparer(origOptions.byminute),
+        bysecond: optionPreparer(origOptions.bysecond),
+      };
+    },
+
+    formOptionsToRRuleOptions(options) {
+      return pickBy(options, v => v !== '');
+    },
+
+    formAdvancedOptionsToRRuleOptions(options) {
+      return mapValues(options, o => o.split(',').filter(v => v));
+    },
+  },
+  props: {
+    value: {
+      type: String,
+      default: null,
+    },
+  },
   data() {
-    const rRuleOptions = {
-      freq: RRule.DAILY,
-    };
+    let rRule;
+
+    if (this.value) {
+      try {
+        rRule = rrulestr(this.value);
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+
+    if (!rRule) {
+      rRule = new RRule({
+        freq: RRule.DAILY,
+      });
+    }
 
     return {
       activeTab: 'simple',
-      showRRule: false,
-      rRuleObject: new RRule(rRuleOptions),
-      advancedFieldRegex:
-        /^(-?(?:[1-9]|[1-9]\d|[12]\d\d|3[0-6][0-6]?))(,-?(?:[1-9]|[1-9]\d|[12]\d\d|3[0-6][0-6]?))*,?$/,
+      showRRule: !!this.value,
+      rRuleObject: rRule,
       form: {
-        rRuleOptions,
-        advancedRRuleOptions: {},
-      },
-      selectItems: {
-        frequencies: [
-          { text: 'Secondly', value: RRule.SECONDLY },
-          { text: 'Minutely', value: RRule.MINUTELY },
-          { text: 'Hourly', value: RRule.HOURLY },
-          { text: 'Daily', value: RRule.DAILY },
-          { text: 'Weekly', value: RRule.WEEKLY },
-          { text: 'Monthly', value: RRule.MONTHLY },
-          { text: 'Yearly', value: RRule.YEARLY },
-        ],
-        weekDays: [
-          { text: 'Monday', value: RRule.MO.weekday },
-          { text: 'Tuesday', value: RRule.TU.weekday },
-          { text: 'Wednesday', value: RRule.WE.weekday },
-          { text: 'Thursday', value: RRule.TH.weekday },
-          { text: 'Friday', value: RRule.FR.weekday },
-          { text: 'Saturday', value: RRule.SA.weekday },
-          { text: 'Sunday', value: RRule.SU.weekday },
-        ],
-        months: [
-          { text: 'January', value: 1 },
-          { text: 'February', value: 2 },
-          { text: 'March', value: 3 },
-          { text: 'April', value: 4 },
-          { text: 'May', value: 5 },
-          { text: 'June', value: 6 },
-          { text: 'July', value: 7 },
-          { text: 'August', value: 8 },
-          { text: 'September', value: 9 },
-          { text: 'October', value: 10 },
-          { text: 'November', value: 11 },
-          { text: 'December', value: 12 },
-        ],
+        rRuleOptions: this.$options.filters.rRuleToFormOptions(rRule),
+        advancedRRuleOptions: this.$options.filters.rRuleToFormAdvancedOptions(rRule),
       },
     };
   },
   computed: {
+    advancedFieldRegex() {
+      return /^(-?(?:[1-9]|[1-9]\d|[12]\d\d|3[0-6][0-6]?))(,-?(?:[1-9]|[1-9]\d|[12]\d\d|3[0-6][0-6]?))*,?$/;
+    },
+
+    frequencies() {
+      return [
+        { text: 'Secondly', value: RRule.SECONDLY },
+        { text: 'Minutely', value: RRule.MINUTELY },
+        { text: 'Hourly', value: RRule.HOURLY },
+        { text: 'Daily', value: RRule.DAILY },
+        { text: 'Weekly', value: RRule.WEEKLY },
+        { text: 'Monthly', value: RRule.MONTHLY },
+        { text: 'Yearly', value: RRule.YEARLY },
+      ];
+    },
+
+    weekDays() {
+      return [
+        { text: 'Monday', value: RRule.MO.weekday },
+        { text: 'Tuesday', value: RRule.TU.weekday },
+        { text: 'Wednesday', value: RRule.WE.weekday },
+        { text: 'Thursday', value: RRule.TH.weekday },
+        { text: 'Friday', value: RRule.FR.weekday },
+        { text: 'Saturday', value: RRule.SA.weekday },
+        { text: 'Sunday', value: RRule.SU.weekday },
+      ];
+    },
+
+    months() {
+      return [
+        { text: 'January', value: 1 },
+        { text: 'February', value: 2 },
+        { text: 'March', value: 3 },
+        { text: 'April', value: 4 },
+        { text: 'May', value: 5 },
+        { text: 'June', value: 6 },
+        { text: 'July', value: 7 },
+        { text: 'August', value: 8 },
+        { text: 'September', value: 9 },
+        { text: 'October', value: 10 },
+        { text: 'November', value: 11 },
+        { text: 'December', value: 12 },
+      ];
+    },
+
     rRuleString() {
       return this.rRuleObject.toString();
     },
@@ -253,29 +323,17 @@ export default {
     },
   },
   methods: {
-    changeRRuleAdvancedOption() {
-      this.form.rRule = {
-        ...this.form.rRuleOptions,
-        ...mapValues(this.form.advancedRRuleOptions, options => options.split(',').filter(v => v)),
-      };
-
-      this.changeRRuleOption();
-    },
     /**
      * For each changes in the form we call this function.
-     * If RRule isn't valid then add error message to invisible RRule field
+     * If RRule isn't valid then add error message to visible RRule field
      * Else remove errors and $emit changes
      */
     changeRRuleOption() {
       try {
-        this.form.rRule = {
-          ...this.form.rRule,
-          ...this.form.rRuleOptions,
-        };
-
-        const correctOptions = pickBy(this.form.rRule, v => v !== '');
-
-        this.rRuleObject = new RRule(correctOptions);
+        this.rRuleObject = new RRule({
+          ...this.$options.filters.formOptionsToRRuleOptions(this.form.rRuleOptions),
+          ...this.$options.filters.formAdvancedOptionsToRRuleOptions(this.form.advancedRRuleOptions),
+        });
 
         if (!this.errors.has('rRule') && !this.rRuleObject.isFullyConvertibleToText()) {
           this.errors.add('rRule', this.$t('rRule.errors.main'));
@@ -283,7 +341,7 @@ export default {
           this.errors.remove('rRule');
 
           if (this.showRRule) {
-            this.$emit('input', this.rRuleString);
+            this.$emit('input', this.rRuleString.replace(/.*RRULE:/, ''));
           }
         }
       } catch (err) {

@@ -7,46 +7,46 @@
       v-card-text
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createPbehavior.fields.name')",
-          :error-messages="errors.collect('name')",
           v-model="form.name",
           v-validate="'required'",
-          data-vv-name="name"
+          :label="$t('modals.createPbehavior.fields.name')",
+          :error-messages="errors.collect('name')",
+          name="name"
           )
         v-layout(row)
           date-time-picker-field(
-          :label="$t('modals.createPbehavior.fields.start')",
           v-model="form.tstart",
           v-validate="'required'",
+          :label="$t('modals.createPbehavior.fields.start')",
           name="tstart"
           )
         v-layout(row)
           date-time-picker-field(
-          :label="$t('modals.createPbehavior.fields.stop')",
           v-model="form.tstop",
           v-validate="'required'",
+          :label="$t('modals.createPbehavior.fields.stop')",
           name="tstop",
           )
         v-layout(v-if="!filter", row)
           v-btn.primary(type="button", @click="showCreateFilterModal") Filter
-        r-rule-form(@input="changeRRule")
+        r-rule-form(v-model="form.rrule")
         v-layout(row)
           v-combobox(
-          :label="$t('modals.createPbehavior.fields.reason')",
           v-model="form.reason",
-          :items="selectItems.reasons",
+          v-validate="'required'"
+          :label="$t('modals.createPbehavior.fields.reason')",
+          :items="reasons",
           :error-messages="errors.collect('reason')",
           name="reason",
-          v-validate="'required'"
           )
         v-layout(row)
           v-select(
-          :label="$t('modals.createPbehavior.fields.type')",
           v-model="form.type_",
-          :items="selectItems.types",
+          v-validate="'required'"
+          :label="$t('modals.createPbehavior.fields.type')",
+          :items="types",
           :error-messages="errors.collect('type')",
           name="type",
-          v-validate="'required'"
           )
         v-layout(row)
           v-textarea(
@@ -64,8 +64,9 @@
 
 <script>
 import moment from 'moment';
+import { cloneDeep } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -79,6 +80,22 @@ import RRuleForm from '@/components/forms/rrule.vue';
 export default {
   inject: ['$validator'],
   components: { DateTimePickerField, RRuleForm },
+  filters: {
+    pbehaviorToForm(pbehavior = {}) {
+      return {
+        name: pbehavior.name || '',
+        tstart: pbehavior.tstart ? new Date(pbehavior.tstart * 1000) : new Date(),
+        tstop: pbehavior.tstop ? new Date(pbehavior.tstop * 1000) : new Date(),
+        filter: cloneDeep(this.filter || {}),
+        type_: pbehavior.type_ || '',
+        reason: pbehavior.reason || '',
+        rrule: pbehavior.rrule || null,
+      };
+    },
+    formToPbehavior() {
+
+    },
+  },
   mixins: [authMixin, modalMixin],
   props: {
     serverError: {
@@ -89,30 +106,26 @@ export default {
       type: Object,
       default: null,
     },
+    value: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
-      rRuleObject: null,
       commentMessage: '',
-      form: {
-        name: '',
-        tstart: new Date(),
-        tstop: new Date(),
-        filter: this.filter,
-        type_: '',
-        reason: '',
-      },
-      selectItems: {
-        reasons: ['Problème Habilitation', 'Problème Robot', 'Problème Scénario', 'Autre'],
-        types: ['Pause', 'Maintenance', 'Hors plage horaire de surveillance'],
-      },
+      form: this.$options.filters.pbehaviorToForm(this.value),
     };
   },
-  methods: {
-    changeRRule(value) {
-      this.rRuleObject = value;
+  computed: {
+    reasons() {
+      return Object.values(PAUSE_REASONS);
     },
-
+    types() {
+      return Object.values(PBEHAVIOR_TYPES);
+    },
+  },
+  methods: {
     showCreateFilterModal() {
       this.showModal({
         name: MODALS.createFilter,
@@ -142,10 +155,6 @@ export default {
           tstart: moment(this.form.tstart).unix(),
           tstop: moment(this.form.tstop).unix(),
         };
-
-        if (this.rRuleObject) {
-          data.rrule = this.rRuleObject.toString().replace(/.*RRULE:/, '');
-        }
 
         if (this.commentMessage !== '') {
           data.comments = [{

@@ -2,6 +2,7 @@
   pbehavior-form(
   :server-error="serverError",
   :filter="filter",
+  :value="config.pbehavior",
   @submit="submit",
   @cancel="hideModal",
   )
