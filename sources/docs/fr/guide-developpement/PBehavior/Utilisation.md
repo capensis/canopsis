@@ -160,7 +160,46 @@ Response: a status object
 
 ## Update un pbeahvior
 
-Il n'y a actuellement aucune méthode pour mettre à jour un comportement en place. Il est nécessaire de supprimer et de recréer un comportement pour mettre à jour son contenu.
+#### URL
+
+  `PUT /api/v2/pbehavior/<pbehavior_id>`
+
+#### PUT exemple
+
+JSON :
+
+```json
+{
+    "name": "country_roads",
+    "author": "john denver",
+    "filter": {"_id": "take_me_home"},
+    "rrule": "",
+    "tstart": 0,
+    "tstop": 1000
+}
+```
+
+Réponse : le pbevior modifié
+
+```json
+{
+    "filter": "{\"_id\": \"take_me_home\"}",
+    "name": "country_roads",
+    "author": "john denver",
+    "enabled": true,
+    "type_": "generic",
+    "comments": null,
+    "connector": "canopsis",
+    "reason": "",
+    "connector_name": "canopsis",
+    "eids": [],
+    "tstart": 0,
+    "tstop": 1000,
+    "timezone": "Europe/Paris",
+    "rrule": "",
+    "exdate": []
+}
+```
 
 ## Forcer le calcul de pbehaviors
 

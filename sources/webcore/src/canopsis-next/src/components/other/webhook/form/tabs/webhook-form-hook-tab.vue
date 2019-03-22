@@ -21,21 +21,21 @@
           v-tab {{ $t('webhook.tabs.hook.fields.entityPatterns') }}
           v-tab-item(:disabled="hasBlockedTriggers")
             patterns-list(
-            :patterns="hook.event_pattern",
+            :patterns="hook.event_patterns",
             :disabled="disabled",
-            @input="updateField('event_pattern', $event)"
+            @input="updateField('event_patterns', $event)"
             )
           v-tab-item
             patterns-list(
-            :patterns="hook.alarm_pattern",
+            :patterns="hook.alarm_patterns",
             :disabled="disabled",
-            @input="updateField('alarm_pattern', $event)"
+            @input="updateField('alarm_patterns', $event)"
             )
           v-tab-item
             patterns-list(
-            :patterns="hook.entity_pattern",
+            :patterns="hook.entity_patterns",
             :disabled="disabled",
-            @input="updateField('entity_pattern', $event)"
+            @input="updateField('entity_patterns', $event)"
             )
 </template>
 

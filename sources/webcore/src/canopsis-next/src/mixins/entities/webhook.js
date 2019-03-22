@@ -16,27 +16,9 @@ export default {
     ...mapActions({
       fetchWebhooksList: 'fetchList',
       refreshWebhooksList: 'fetchListWithPreviousParams',
-      removeWebhook: 'remove',
       createWebhook: 'create',
-      editWebhook: 'edit',
+      updateWebhook: 'update',
+      removeWebhook: 'remove',
     }),
-
-    async createWebhookWithPopup(data) {
-      await this.createWebhook({ data });
-      this.refreshWebhooksList();
-      this.addSuccessPopup({ text: this.$t('modals.webhook.create.success') });
-    },
-
-    async editWebhookWithPopup(id, data) {
-      await this.editWebhook({ id, data });
-      this.refreshWebhooksList();
-      this.addSuccessPopup({ text: this.$t('modals.webhook.edit.success') });
-    },
-
-    async removeWebhookWithPopup(id) {
-      await this.removeWebhook({ id });
-      this.refreshWebhooksList();
-      this.addSuccessPopup({ text: this.$t('modals.webhook.remove.success') });
-    },
   },
 };

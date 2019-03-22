@@ -20,7 +20,6 @@ export default {
   namespaced: true,
   state: {
     allIds: [],
-    error: '',
     pending: false,
     meta: {},
   },
@@ -28,7 +27,6 @@ export default {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getList'](ENTITIES_TYPES.pbehavior, state.allIds),
-    error: state => state.error,
     pending: state => state.pending,
     meta: state => state.meta,
   },
@@ -47,12 +45,11 @@ export default {
     [types.FETCH_BY_ID](state) {
       state.pending = true;
     },
-    [types.FETCH_BY_ID_COMPLETED](state, ids) {
-      state.allIds = ids;
+    [types.FETCH_BY_ID_COMPLETED](state, { allIds }) {
+      state.allIds = allIds;
       state.pending = false;
     },
-    [types.FETCH_BY_ID_FAILED](state, err) {
-      state.error = err;
+    [types.FETCH_BY_ID_FAILED](state) {
       state.pending = false;
     },
   },
@@ -86,7 +83,7 @@ export default {
           route: `${API_ROUTES.pbehaviorById}/${id}`,
           schema: [schemas.pbehavior],
         }, { root: true });
-        commit(types.FETCH_BY_ID_COMPLETED, normalizedData.result);
+        commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
         console.warn(err);

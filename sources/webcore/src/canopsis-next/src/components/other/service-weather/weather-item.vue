@@ -126,11 +126,7 @@ export default {
       return 4 + this.widget.parameters.heightFactor;
     },
     isBlinking() {
-      return (
-        this.watcher.alerts_not_ack
-        && !this.hasWatcherPbehavior
-        && !this.isPbehavior
-      );
+      return this.watcher.action_required;
     },
   },
   methods: {

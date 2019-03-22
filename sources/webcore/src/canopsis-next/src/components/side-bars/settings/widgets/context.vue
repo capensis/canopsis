@@ -19,6 +19,7 @@
           )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
+          v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
             v-model="settings.widget_preferences.mainFilter",

@@ -78,3 +78,4 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.9.0](../../notes-de-version/3.9.0.md)
 *  [3.10.0](../../notes-de-version/3.10.0.md)
 *  [3.11.0](../../notes-de-version/3.11.0.md)
+*  [3.12.0](../../notes-de-version/3.12.0.md)

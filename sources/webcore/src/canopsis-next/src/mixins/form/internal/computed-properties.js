@@ -1,14 +1,14 @@
-import uid from '../../../helpers/uid';
+import uid from '@/helpers/uid';
 
-export const eventKeyComputed = uid('_eventKey');
-export const formKeyComputed = uid('_formKey');
+export const modelPropKeyComputed = uid('_modelProp');
+export const modelEventKeyComputed = uid('_modelEventKey');
 
 /**
  * @mixin Form mixin
  */
 export default {
   computed: {
-    [formKeyComputed]() {
+    [modelPropKeyComputed]() {
       if (this.$options.model && this.$options.model.prop) {
         return this.$options.model.prop;
       }
@@ -16,7 +16,7 @@ export default {
       return 'value';
     },
 
-    [eventKeyComputed]() {
+    [modelEventKeyComputed]() {
       if (this.$options.model && this.$options.model.event) {
         return this.$options.model.event;
       }

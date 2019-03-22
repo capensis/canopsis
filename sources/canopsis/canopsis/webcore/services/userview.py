@@ -19,10 +19,7 @@
 # ---------------------------------
 
 from canopsis.common.ws import route
-from canopsis.check.manager import CheckManager
 from canopsis.webcore.services.rest import delete_records
-
-manager = CheckManager()
 
 
 def exports(ws):

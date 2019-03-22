@@ -1,7 +1,7 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-import { childProcessStrategy, childMergeStrategy } from '@/helpers/schema';
+import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
@@ -13,13 +13,7 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   pbehaviors: [pbehaviorSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: entity =>
-    ({
-      ...entity,
-      _embedded: {
-        type: ENTITIES_TYPES.alarm,
-      },
-    }),
+  processStrategy: parentProcessStrategy,
 });
 
 export const entitySchema = new schema.Entity(
@@ -27,13 +21,7 @@ export const entitySchema = new schema.Entity(
   {},
   {
     idAttribute: '_id',
-    processStrategy: entity =>
-      ({
-        ...entity,
-        _embedded: {
-          type: ENTITIES_TYPES.entity,
-        },
-      }),
+    processStrategy: parentProcessStrategy,
   },
 );
 

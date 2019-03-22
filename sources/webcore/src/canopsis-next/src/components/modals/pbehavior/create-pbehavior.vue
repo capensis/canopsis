@@ -12,6 +12,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
+import popupMixin from '@/mixins/popup';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 
 import PbehaviorForm from '@/components/forms/pbehavior.vue';
@@ -27,7 +28,7 @@ export default {
     validator: 'new',
   },
   components: { PbehaviorForm },
-  mixins: [modalInnerItemsMixin],
+  mixins: [popupMixin, modalInnerItemsMixin],
   data() {
     return {
       serverError: null,
@@ -52,6 +53,8 @@ export default {
     ...pbehaviorMapActions({ createPbehavior: 'create' }),
 
     async submit(data) {
+      const popups = this.config.popups || {};
+
       try {
         this.serverError = null;
 
@@ -64,10 +67,19 @@ export default {
 
         await this.createPbehavior(payload);
 
+
+        if (popups.success) {
+          await this.addSuccessPopup(popups.success);
+        }
+
         this.hideModal();
       } catch (err) {
         if (err.description) {
           this.serverError = err.description;
+        }
+
+        if (popups.error) {
+          await this.addErrorPopup(popups.error);
         }
       }
     },
