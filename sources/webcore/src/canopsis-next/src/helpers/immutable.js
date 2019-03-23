@@ -54,7 +54,11 @@ export function setInSeveral(obj, pathsValuesMap) {
  * @return {Object|Array}
  */
 export function unsetIn(obj, path) {
-  return unset(setIn(obj, path, get(obj, path)), path);
+  const newObj = setIn(obj, path, get(obj, path));
+
+  unset(newObj, path);
+
+  return newObj;
 }
 
 /**

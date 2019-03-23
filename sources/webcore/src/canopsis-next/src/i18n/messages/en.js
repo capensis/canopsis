@@ -993,6 +993,8 @@ export default {
         fields: {
           method: 'Method',
           url: 'URL',
+          authSwitch: 'Do you need auth fields?',
+          auth: 'Auth',
           username: 'Username',
           password: 'Password',
           headers: 'Headers',

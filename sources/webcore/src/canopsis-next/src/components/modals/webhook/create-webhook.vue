@@ -54,10 +54,6 @@ export default {
       request: {
         method: '',
         url: '',
-        auth: {
-          username: '',
-          password: '',
-        },
         headers: [],
         payload: '{}',
       },
