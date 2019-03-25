@@ -85,8 +85,8 @@ Concernant `overall`, par défaut, tous les services sont pris en compte pour ca
 
 ### Ce qui est vérifié
 
-* amqp : la connection est ouverte, le channel aussi, et il est possible de publier un message. On vérifie aussi qu'une liste de queues existe bien, qu'il y a au moins un Consumer dessus, et que la queue est active et non saturée (> 100 000 messages en attente) ;
-* cache: la connection est fonctionnelle et il est possible de faire un ECHO ;
-* database: la connection fonctionne et il est possible de lire dans une liste de collections ;
+* amqp : la connexion est ouverte, le channel aussi, et il est possible de publier un message. On vérifie aussi qu'une liste de queues existe bien, qu'il y a au moins un Consumer dessus, et que la queue est active et non saturée (> 100 000 messages en attente) ;
+* cache: la connexion est fonctionnelle et il est possible de faire un ECHO ;
+* database: la connexion fonctionne et il est possible de lire dans une liste de collections ;
 * engines : hors docker, vérifie par systemctl que les engines de bases (python) sont "running" ;
 * time series : vérifie que la database existe et que l'on peut lire des measurements.

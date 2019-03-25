@@ -49,6 +49,12 @@ Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `cano
 ```sh
 su - canopsis
 (canopsis) canopsinit
+(canopsis) exit
+```
+
+S'assurer que toute modification des unités systemd soit bien prise en compte (à nouveau en `root`) :
+```sh
+systemctl daemon-reload
 ```
 
 Puis, redémarrer l'ensemble des moteurs Canopsis :
@@ -79,3 +85,4 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.10.0](../../notes-de-version/3.10.0.md)
 *  [3.11.0](../../notes-de-version/3.11.0.md)
 *  [3.12.0](../../notes-de-version/3.12.0.md)
+*  [3.13.0](../../notes-de-version/3.13.0.md)
