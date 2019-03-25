@@ -4,7 +4,7 @@
 
 ### Version de Docker
 
-Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 18.06 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux hébergés par votre distribution.
+Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 18.06 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux proposés par votre distribution.
 
 Une fois Docker CE installé, vous devez ensuite [installer Docker compose](https://docs.docker.com/compose/install/#install-compose).
 
