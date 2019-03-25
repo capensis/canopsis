@@ -7,6 +7,8 @@ import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { types as entitiesTypes } from '@/store/plugins/entities';
 
+import commentModule from './comment';
+
 const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
@@ -18,6 +20,7 @@ const types = {
 
 export default {
   namespaced: true,
+  modules: { comment: commentModule },
   state: {
     allIds: [],
     pending: false,
@@ -54,6 +57,15 @@ export default {
     },
   },
   actions: {
+    async fetchItemAndUpdateInStore({ dispatch }, { id } = {}) {
+      await dispatch('entities/fetch', {
+        route: API_ROUTES.pbehavior.list,
+        schema: [schemas.pbehavior],
+        params: { _id: id },
+        dataPreparer: d => d.data,
+      }, { root: true });
+    },
+
     async fetchList({ dispatch, commit }, { params } = {}) {
       try {
         commit(types.FETCH_LIST);
@@ -117,6 +129,14 @@ export default {
 
         throw err;
       }
+    },
+
+    async update({ dispatch }, { data, id }) {
+      await dispatch('entities/update', {
+        route: `${API_ROUTES.pbehavior.pbehavior}/${id}`,
+        schema: schemas.pbehavior,
+        body: data,
+      }, { root: true });
     },
 
     async remove({ dispatch }, { id }) {

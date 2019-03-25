@@ -3,7 +3,15 @@ import { schema } from 'normalizr';
 import { ENTITIES_TYPES } from '@/constants';
 import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
 
-export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
+export const pbehaviorCommentSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorComment, {}, {
+  idAttribute: '_id',
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
+
+export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {
+  comments: [pbehaviorCommentSchema],
+}, {
   idAttribute: '_id',
   processStrategy: childProcessStrategy,
   mergeStrategy: childMergeStrategy,
@@ -71,6 +79,7 @@ export default {
   [ENTITIES_TYPES.watcher]: watcherSchema,
   [ENTITIES_TYPES.watcherEntity]: watcherEntitySchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
+  [ENTITIES_TYPES.pbehaviorComment]: pbehaviorCommentSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.group]: groupSchema,
   [ENTITIES_TYPES.view]: viewSchema,

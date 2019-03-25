@@ -13,6 +13,7 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import widgetActionsPanelContextMixin from '@/mixins/widget/actions-panel/context';
 
 import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
@@ -32,6 +33,7 @@ export default {
     modalMixin,
     entitiesWatcherMixin,
     entitiesContextEntityMixin,
+    entitiesPbehaviorMixin,
     widgetActionsPanelContextMixin,
   ],
   props: {
@@ -163,11 +165,24 @@ export default {
     },
 
     showAddPbehaviorModal() {
+      const parents = [this.item._id];
+      const parentsType = ENTITIES_TYPES.entity;
+      const pbehavior = {
+        filter: {
+          _id: { $in: [...parents] },
+        },
+      };
+
       this.showModal({
         name: MODALS.createPbehavior,
         config: {
-          itemsType: ENTITIES_TYPES.entity,
-          itemsIds: [this.item._id],
+          pbehavior,
+
+          action: data => this.createPbehavior({
+            data,
+            parents,
+            parentsType,
+          }),
         },
       });
     },

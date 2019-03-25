@@ -50,11 +50,17 @@
           )
         v-layout(row)
           strong Comments
-        v-layout(v-for="(comment, key) in comments", :key="key", row)
-          v-textarea(
-          :label="$t('modals.createPbehavior.fields.comment')",
-          :value="comment.message"
-          )
+        v-layout(v-for="(comment, key) in comments", :key="key", row, wrap, allign-center)
+          v-flex(xs11)
+            v-textarea(
+            :disabled="!!comment._id",
+            :label="$t('modals.createPbehavior.fields.message')",
+            :value="comment.message",
+            @input="updateCommentMessage(key, $event)"
+            )
+          v-flex(xs1)
+            v-btn(color="error", icon, @click="removeComment(key)")
+              v-icon delete
         v-layout(row)
           v-btn.primary(type="button", @click="addComment") Add comment
         v-layout(row)
@@ -70,7 +76,7 @@
 import moment from 'moment';
 import { cloneDeep } from 'lodash';
 
-import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
+import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
 
@@ -92,7 +98,7 @@ export default {
         name: pbehavior.name || '',
         tstart: pbehavior.tstart ? new Date(pbehavior.tstart * 1000) : new Date(),
         tstop: pbehavior.tstop ? new Date(pbehavior.tstop * 1000) : new Date(),
-        filter: cloneDeep(this.filter || {}),
+        filter: cloneDeep(pbehavior.filter || {}),
         type_: pbehavior.type_ || '',
         reason: pbehavior.reason || '',
         rrule: pbehavior.rrule || null,
@@ -109,8 +115,14 @@ export default {
       }, {});
     },
 
-    formToPbehavior() {
+    formToPbehavior(form) {
+      return {
+        ...form,
 
+        comments: [],
+        tstart: moment(form.tstart).unix(),
+        tstop: moment(form.tstop).unix(),
+      };
     },
   },
   mixins: [authMixin, modalMixin],
@@ -129,20 +141,13 @@ export default {
     },
     pbehavior: {
       type: Object,
-      default: null,
+      default: () => ({}),
     },
   },
   data() {
-    const pbehavior = this.pbehavior || {};
-
     return {
-      commentMessage: '',
-      form: this.$options.filters.pbehaviorToForm(pbehavior),
-      comments: this.$options.filters.pbehaviorToComments(pbehavior),
-      commentsActions: {
-        create: [],
-        remove: [],
-      },
+      form: this.$options.filters.pbehaviorToForm(this.pbehavior),
+      comments: this.$options.filters.pbehaviorToComments(this.pbehavior),
     };
   },
   computed: {
@@ -158,14 +163,21 @@ export default {
       const rules = { required: true };
 
       if (this.form.tstart) {
-        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = 'DD/MM/YYYY hh:mm';
+        rules.after = [this.form.tstart];
       }
 
       return rules;
     },
   },
   methods: {
+    removeComment(key) {
+      this.$delete(this.comments, key);
+    },
+
+    updateCommentMessage(key, value) {
+      this.$set(this.comments[key], 'message', value);
+    },
+
     addComment() {
       this.$set(this.comments, uid(), {
         message: '',
@@ -177,7 +189,6 @@ export default {
       this.showModal({
         name: MODALS.createFilter,
         config: {
-          title: 'Pbehavior filter',
           hiddenFields: ['title'],
           filter: {
             filter: this.form.filter || {},
@@ -195,22 +206,12 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        const data = {
-          ...this.form,
+        const pbehavior = this.$options.filters.formToPbehavior(this.form);
 
-          author: this.currentUser.crecord_name,
-          tstart: moment(this.form.tstart).unix(),
-          tstop: moment(this.form.tstop).unix(),
-        };
+        pbehavior.author = this.currentUser.crecord_name;
+        pbehavior.comments = Object.values(this.comments);
 
-        if (this.commentMessage !== '') {
-          data.comments = [{
-            author: this.currentUser.crecord_name,
-            message: this.commentMessage,
-          }];
-        }
-
-        this.$emit('submit', data);
+        this.$emit('submit', pbehavior);
       }
     },
   },

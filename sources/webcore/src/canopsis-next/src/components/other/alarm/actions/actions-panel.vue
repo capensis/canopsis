@@ -73,7 +73,7 @@ export default {
           type: alarmsListActionsTypes.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
-          method: this.showActionModal(MODALS.createPbehavior),
+          method: this.showAddPbehaviorModal,
         },
         snooze: {
           type: alarmsListActionsTypes.snooze,
@@ -115,13 +115,13 @@ export default {
           type: alarmsListActionsTypes.moreInfos,
           icon: 'more_horiz',
           title: this.$t('alarmList.actions.titles.moreInfos'),
-          method: this.showMoreInfosModal(),
+          method: this.showMoreInfosModal,
         },
         variablesHelp: {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
           title: this.$t('alarmList.actions.titles.variablesHelp'),
-          method: this.showVariablesHelperModal(),
+          method: this.showVariablesHelperModal,
         },
       },
     };

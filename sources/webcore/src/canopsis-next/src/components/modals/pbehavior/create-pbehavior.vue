@@ -1,24 +1,18 @@
 <template lang="pug">
   pbehavior-form(
-  :server-error="serverError",
-  :filter="filter",
-  :value="config.pbehavior",
+  :pbehavior="config.pbehavior",
   @submit="submit",
   @cancel="hideModal",
   )
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import modalInnerMixin from '@/mixins/modal/inner';
 
 import PbehaviorForm from '@/components/forms/pbehavior.vue';
-
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 
 /**
  * Modal to create a pbehavior
@@ -29,61 +23,14 @@ export default {
     validator: 'new',
   },
   components: { PbehaviorForm },
-  mixins: [popupMixin, modalInnerItemsMixin],
-  data() {
-    return {
-      serverError: null,
-    };
-  },
-  computed: {
-    forEntities() {
-      return this.config.itemsIds && this.config.itemsType;
-    },
-
-    filter() {
-      if (this.forEntities) {
-        return {
-          _id: { $in: this.items.map(v => v._id) },
-        };
-      }
-
-      return null;
-    },
-  },
+  mixins: [modalInnerMixin],
   methods: {
-    ...pbehaviorMapActions({ createPbehavior: 'create' }),
-
     async submit(data) {
-      const popups = this.config.popups || {};
-
-      try {
-        const payload = { data };
-
-        if (this.forEntities) {
-          payload.parents = this.items;
-          payload.parentsType = this.config.itemsType;
-        }
-
-        await this.createPbehavior(payload);
-
-
-        if (popups.success) {
-          await this.addSuccessPopup(popups.success);
-        }
-
-        this.hideModal();
-      } catch (err) {
-        if (err.description) {
-          this.errors.add({
-            field: 'server',
-            msg: err.description,
-          });
-        }
-
-        if (popups.error) {
-          await this.addErrorPopup(popups.error);
-        }
+      if (this.config.action) {
+        await this.config.action(data);
       }
+
+      this.hideModal();
     },
   },
 };

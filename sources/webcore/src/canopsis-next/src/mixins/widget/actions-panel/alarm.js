@@ -4,6 +4,7 @@ import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/
 
 import modalMixin from '@/mixins/modal';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import convertObjectFieldToTreeBranch from '@/helpers/treeview';
 
@@ -11,12 +12,34 @@ import convertObjectFieldToTreeBranch from '@/helpers/treeview';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [modalMixin, eventActionsAlarmMixin],
+  mixins: [modalMixin, eventActionsAlarmMixin, entitiesPbehaviorMixin],
   methods: {
     showActionModal(name) {
       return () => this.showModal({
         name,
         config: this.modalConfig,
+      });
+    },
+
+    showAddPbehaviorModal() {
+      const { itemsIds: parents, itemsType: parentsType } = this.modalConfig;
+      const pbehavior = {
+        filter: {
+          _id: { $in: [...parents] },
+        },
+      };
+
+      this.showModal({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior,
+
+          action: data => this.createPbehavior({
+            data,
+            parents,
+            parentsType,
+          }),
+        },
       });
     },
 
@@ -52,7 +75,7 @@ export default {
         variables.push(entityFields);
       }
 
-      return () => this.showModal({
+      this.showModal({
         name: MODALS.variablesHelp,
         config: {
           ...this.modalConfig,

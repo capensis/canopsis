@@ -18,6 +18,7 @@ export default {
       fetchPbehaviorsList: 'fetchList',
       fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore',
       createPbehavior: 'create',
+      updatePbehavior: 'update',
       removePbehavior: 'remove',
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',
     }),

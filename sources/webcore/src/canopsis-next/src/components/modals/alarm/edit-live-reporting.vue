@@ -39,7 +39,7 @@
 <script>
 import moment from 'moment';
 
-import { MODALS, LIVE_REPORTING_INTERVALS, DATETIME_FORMATS } from '@/constants';
+import { MODALS, LIVE_REPORTING_INTERVALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -79,8 +79,7 @@ export default {
       const rules = { required: true };
 
       if (this.tstart) {
-        rules.after = [moment(this.tstart).format(DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = DATETIME_FORMATS.dateTimePicker;
+        rules.after = [this.tstart];
       }
 
       return rules;
