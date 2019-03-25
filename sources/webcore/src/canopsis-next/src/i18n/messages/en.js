@@ -39,6 +39,7 @@ export default {
     by: 'By',
     date: 'Date',
     comment: 'Comment',
+    comments: 'Comments',
     end: 'End',
     recursive: 'Recursive',
     select: 'Select',
@@ -85,6 +86,7 @@ export default {
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
+    filter: 'Filter',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -472,6 +474,9 @@ export default {
         type: 'Type',
         message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+      },
+      buttons: {
+        addComment: 'Add comment',
       },
     },
     createPause: {
