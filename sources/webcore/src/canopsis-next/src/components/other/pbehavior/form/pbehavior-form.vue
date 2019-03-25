@@ -46,7 +46,7 @@
       :items="types",
       :error-messages="errors.collect('type')",
       name="type",
-      @input="updateField('type', $event)"
+      @input="updateField('type_', $event)"
       )
 </template>
 
@@ -60,9 +60,6 @@ import modalMixin from '@/mixins/modal';
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
 
-/**
- * Modal to create a pbehavior
- */
 export default {
   inject: ['$validator'],
   components: { DateTimePickerField, RRuleForm },

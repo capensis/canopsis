@@ -26,9 +26,6 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 import PbehaviorCommentsForm from '@/components/other/pbehavior/form/pbehavior-comments-form.vue';
 
-/**
- * Modal to create a pbehavior
- */
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
@@ -89,7 +86,7 @@ export default {
         const pbehavior = this.$options.filters.formToPbehavior(this.form);
         pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.comments);
 
-        if (!this.config.pbehavior) {
+        if (this.config.pbehavior) {
           pbehavior.author = this.currentUser.crecord_name;
         }
 

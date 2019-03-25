@@ -21,30 +21,8 @@ export default {
       });
     },
 
-    showAddPbehaviorModal() {
-      const { itemsIds: parents, itemsType: parentsType } = this.modalConfig;
-      const pbehavior = {
-        filter: {
-          _id: { $in: [...parents] },
-        },
-      };
-
-      this.showModal({
-        name: MODALS.createPbehavior,
-        config: {
-          pbehavior,
-
-          action: data => this.createPbehavior({
-            data,
-            parents,
-            parentsType,
-          }),
-        },
-      });
-    },
-
     showMoreInfosModal() {
-      return () => this.showModal({
+      this.showModal({
         name: MODALS.moreInfos,
         config: {
           ...this.modalConfig,
