@@ -165,24 +165,15 @@ export default {
     },
 
     showAddPbehaviorModal() {
-      const parents = [this.item._id];
-      const parentsType = ENTITIES_TYPES.entity;
-      const pbehavior = {
-        filter: {
-          _id: { $in: [...parents] },
-        },
-      };
-
       this.showModal({
         name: MODALS.createPbehavior,
         config: {
-          pbehavior,
-
-          action: data => this.createPbehavior({
-            data,
-            parents,
-            parentsType,
-          }),
+          pbehavior: {
+            filter: {
+              _id: { $in: [this.item._id] },
+            },
+          },
+          action: data => this.createPbehavior({ data }),
         },
       });
     },

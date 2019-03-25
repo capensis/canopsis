@@ -5,7 +5,6 @@ export const ENTITIES_TYPES = {
   watcherEntity: 'watcherEntity',
   weather: 'weather',
   pbehavior: 'pbehavior',
-  pbehaviorComment: 'pbehaviorComment',
   event: 'event',
   userPreference: 'userPreference',
   group: 'group',

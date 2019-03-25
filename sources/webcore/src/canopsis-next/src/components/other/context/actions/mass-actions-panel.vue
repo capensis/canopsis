@@ -3,7 +3,9 @@
 </template>
 
 <script>
-import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -12,6 +14,8 @@ import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
+
+const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 /**
  * Panel regrouping mass actions icons
@@ -56,6 +60,11 @@ export default {
       ],
     };
   },
+  computed: {
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
+  },
   methods: {
     showDeleteEntitiesModal() {
       this.showModal({
@@ -67,25 +76,16 @@ export default {
     },
 
     showAddPbehaviorsModal() {
-      const parents = this.itemsIds;
-      const parentsType = ENTITIES_TYPES.entity;
-      const pbehavior = {
-        filter: {
-          _id: { $in: [...parents] },
-        },
-      };
-
       this.showModal({
         name: MODALS.createPbehavior,
         config: {
-          pbehavior,
-
+          pbehavior: {
+            filter: {
+              _id: { $in: this.itemsIds },
+            },
+          },
           action: async (data) => {
-            await this.createPbehavior({
-              data,
-              parents,
-              parentsType,
-            });
+            await this.createPbehavior({ data });
 
             this.addSuccessPopup({ text: this.$t('success.default') });
           },

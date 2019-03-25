@@ -57,15 +57,6 @@ export default {
     },
   },
   actions: {
-    async fetchItemAndUpdateInStore({ dispatch }, { id } = {}) {
-      await dispatch('entities/fetch', {
-        route: API_ROUTES.pbehavior.list,
-        schema: [schemas.pbehavior],
-        params: { _id: id },
-        dataPreparer: d => d.data,
-      }, { root: true });
-    },
-
     async fetchList({ dispatch, commit }, { params } = {}) {
       try {
         commit(types.FETCH_LIST);
@@ -95,9 +86,11 @@ export default {
           route: `${API_ROUTES.pbehaviorById}/${id}`,
           schema: [schemas.pbehavior],
         }, { root: true });
+
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
+
         console.warn(err);
       }
     },
