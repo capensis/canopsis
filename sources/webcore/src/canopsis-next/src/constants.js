@@ -132,6 +132,7 @@ export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.minor]: '#ff9900',
   [ENTITIES_STATES.major]: '#ff9900',
   [ENTITIES_STATES.critical]: '#f56954',
+  invalid: '#232323',
 };
 
 export const PBEHAVIOR_TYPES = {
@@ -156,6 +157,7 @@ export const WEATHER_ICONS = {
   maintenance: 'build',
   outOfSurveillance: 'brightness_3',
   pause: 'pause',
+  invalid: 'error',
 };
 
 export const WATCHER_PBEHAVIOR_COLOR = '#808080';

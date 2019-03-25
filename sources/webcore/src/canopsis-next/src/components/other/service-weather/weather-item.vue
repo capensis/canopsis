@@ -52,6 +52,7 @@ export default {
     },
     widget: {
       type: Object,
+      required: true,
     },
     isEditingMode: {
       type: Boolean,
@@ -76,11 +77,21 @@ export default {
     },
     format() {
       if (!this.isPaused && !this.hasWatcherPbehavior) {
-        const state = this.watcher.state.val;
+        if (
+          this.watcher.state
+          && typeof this.watcher.state.val !== 'undefined'
+          && WEATHER_ICONS[this.watcher.state.val]
+          && WATCHER_STATES_COLORS[this.watcher.state.val]
+        ) {
+          return {
+            icon: WEATHER_ICONS[this.watcher.state.val],
+            color: WATCHER_STATES_COLORS[this.watcher.state.val],
+          };
+        }
 
         return {
-          icon: WEATHER_ICONS[state],
-          color: WATCHER_STATES_COLORS[state],
+          icon: WEATHER_ICONS.invalid,
+          color: WATCHER_STATES_COLORS.invalid,
         };
       }
 
