@@ -190,4 +190,16 @@ describe('Weather Item', () => {
 
     expect(wrapper.vm.format.icon).toBe(WEATHER_ICONS.maintenance);
   });
+
+  it('blinks correctly', () => {
+    const watcherInfosContainer = wrapper.find('div');
+
+    expect(wrapper.vm.isBlinking).toBeFalsy();
+    expect(watcherInfosContainer.classes()).not.toContain('blinking');
+
+    wrapper.setProps({ watcher: { action_required: true } });
+
+    expect(wrapper.vm.isBlinking).toBeTruthy();
+    expect(watcherInfosContainer.classes()).toContain('blinking');
+  });
 });
