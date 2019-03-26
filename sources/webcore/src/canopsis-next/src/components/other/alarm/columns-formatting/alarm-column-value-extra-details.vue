@@ -60,7 +60,7 @@
             div {{ $t('common.type') }}: {{ pbehavior.type_ }}
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
-            div {{ $t('common.comment') }}:
+            div(v-if="pbehavior.comments.length") {{ $tc('common.comment', pbehavior.comments.length) }}:
               div.ml-2(
               v-for="comment in pbehavior.comments",
               :key="comment._id"

@@ -38,7 +38,7 @@ export default {
     parameters: 'Parameters',
     by: 'By',
     date: 'Date',
-    comment: 'Comment',
+    comment: 'Comment | Comments',
     end: 'End',
     recursive: 'Recursive',
     select: 'Select',
