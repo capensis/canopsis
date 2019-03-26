@@ -1,12 +1,12 @@
-import { omit } from 'lodash';
+import { setIn, unsetIn } from '@/helpers/immutable';
 
-import formComputedPropertiesMixin, { modelPropKeyComputed, modelEventKeyComputed } from './internal/computed-properties';
+import baseFormMixin, { modelPropKeyComputed } from './base';
 
 /**
  * @mixin Form mixin
  */
 export default {
-  mixins: [formComputedPropertiesMixin],
+  mixins: [baseFormMixin],
   methods: {
     /**
      * Emit event to parent with new object and with updated field
@@ -15,7 +15,7 @@ export default {
      * @param {*} value
      */
     updateField(fieldName, value) {
-      this.$emit(this[modelEventKeyComputed], { ...this[this[modelPropKeyComputed]], [fieldName]: value });
+      this.updateModel(setIn(this[this[modelPropKeyComputed]], fieldName, value));
     },
 
     /**
@@ -27,10 +27,13 @@ export default {
      * @param {*} value
      */
     updateAndMoveField(fieldName, newFieldName, value) {
-      this.$emit(
-        this[modelEventKeyComputed],
-        { ...omit(this[this[modelPropKeyComputed]], fieldName), [newFieldName]: value },
-      );
+      if (fieldName === newFieldName) {
+        this.updateField(fieldName, value);
+      } else {
+        const result = unsetIn(this[this[modelPropKeyComputed]], fieldName);
+
+        this.updateModel(setIn(result, newFieldName, value));
+      }
     },
 
     /**
@@ -39,7 +42,7 @@ export default {
      * @param {string} fieldName
      */
     removeField(fieldName) {
-      this.$emit(this[modelEventKeyComputed], omit(this[this[modelPropKeyComputed]], [fieldName]));
+      this.updateModel(unsetIn(this[this[modelPropKeyComputed]], fieldName));
     },
   },
 };

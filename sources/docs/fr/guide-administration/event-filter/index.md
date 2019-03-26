@@ -13,6 +13,10 @@ partie [Exemples](#exemples).
 
 Une règle est un document JSON contenant les paramètres suivants :
 
+ - `_id` (optionnel) : un identifiant unique (généré automatiquement s'il n'est
+   pas défini par l'utilisateur).
+ - `description` (optionnel) : une description de la règle de la règle, donnée
+   par l'utilisateur.
  - `type` (requis) : le type de la règle (voir [Types de
    règles](#types-de-règles) pour plus de détails).
  - `pattern` (optionnel) : un pattern permettant de sélectionner les évènements
@@ -414,6 +418,7 @@ les évènements.
 
 ```javascript
 {
+    "description": "Conversion de 192.168.0.1 en example.com",
     "type": "enrichment",
     "pattern": {
         "component": "192.168.0.1"
@@ -441,6 +446,7 @@ de l'event-filter dès que son output a été traduit.
 
 ```json
 {
+    "description": "Traduction du message de CPU critique",
     "type": "enrichment",
     "pattern": {
         "output": {"regex_match": "Warning: CPU Load is critical \\((?P<load>.*)%\\)"}
@@ -460,6 +466,7 @@ de l'event-filter dès que son output a été traduit.
 
 ```json
 {
+    "description": "Traduction du message de disque presque plein",
     "type": "enrichment",
     "pattern": {
         "output": {"regex_match": "Warning: The disk (?P<disk>.*) is almost full \\((?P<load>[\\.0-9]*)% used\\)"}

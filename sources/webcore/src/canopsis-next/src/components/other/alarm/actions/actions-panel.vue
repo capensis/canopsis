@@ -192,7 +192,7 @@ export default {
         config: {
           pbehavior: {
             filter: {
-              _id: { $in: [this.item._id] },
+              _id: { $in: [this.item.d] },
             },
           },
           action: data => this.createPbehavior({

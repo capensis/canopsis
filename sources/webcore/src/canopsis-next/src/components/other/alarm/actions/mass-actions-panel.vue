@@ -99,7 +99,7 @@ export default {
         config: {
           pbehavior: {
             filter: {
-              _id: { $in: this.itemsIds },
+              _id: { $in: this.items.map(item => item.d) },
             },
           },
           action: data => this.createPbehavior({

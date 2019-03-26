@@ -48,7 +48,7 @@ yum install yum-utils epel-release
 yum update
 ```
 
-Installation d'une version plus récente de Python 2.7 (pré-requis pour le `webserver` Canopsis en environnement CentOS 7), [depuis SCL](https://www.softwarecollections.org/en/scls/rhscl/python27/) :
+Installation d'une version plus récente de Python 2.7 (pré-requis pour le `webserver` Canopsis en environnement CentOS 7, depuis Canopsis 3.13.0), [depuis SCL](https://www.softwarecollections.org/en/scls/rhscl/python27/) :
 ```sh
 yum install centos-release-scl
 yum install python27

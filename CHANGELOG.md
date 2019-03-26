@@ -8,6 +8,46 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.13.1 - Due date : 2019-03-26
+
+ - VERSION.txt and CHANGELOG.md had not been updated for 3.13.0
+
+# Canopsis 3.13.0 - Due date : 2019-03-25
+
+ - [Documentation] Fixed documentation for go watchers
+ - [Documentation] Revised documentation for webhooks
+ - [Documentation] Fixed curl example in heartbeat documentation
+ - [Go] Fixed flapping status in axe engine
+ - [Go] Added webhook templates for automatic snoozing
+ - [Go] Added event-filter patterns on alarms
+ - [Go] Added possibility of using http and https proxy for axe
+ - [Go] Fixed nested tickets handling in webhooks
+ - [Go] Fixed missing certificates error
+ - [Go] Added flapping periods counter for alarms
+ - [Python] Fixed missing type error in watcherng route
+ - [Python] Added hook field in action crud
+ - [Python] Added flapping periods counter for alarms
+ - [Python] Fixed pbehavior unwanted re-creation
+ - [Python] Fixed pybars3 updating problem for centos7
+ - [Python] Added configuration file for healthcheck api
+ - [UI] Add tab's id into URL
+ - [UI] Add rights on 'create widget' and 'create tab' actions 
+ - [UI] Fix - View display when double click
+ - [UI] Refactor form mixin
+ - [UI] Fix - Slide to first tab animation when entering a view
+ - [UI] Refactor Vuex modules
+ - [UI - Rights] Styles improvments
+ - [UI - ListAlarm] Add a 'links' column
+ - [UI - Context] Add success/failure popup when creation mass pbehaviors
+ - [UI - Service weather] Add links renderer
+ - [UI - Stats] Refactor stats widgets 
+ - [UI - Stats] Add customizable text widget
+ - [UI - Exploitation] Add type selector on Exploitation forms
+ - [UI - CRUD Pbehaviors] Styles improvments
+ - [UI - CRUD Webhooks] Add an optionnal 'id' field
+ - [UI - CRUD Event filter] Add 'id' and 'description' fields
+ - [Packaging] Fix webserver compatibility with CentOS 7
+
 # Canopsis 3.12.0 - Due date : 2019-03-11
 
  - [Documentation] Added documentation for common use cases

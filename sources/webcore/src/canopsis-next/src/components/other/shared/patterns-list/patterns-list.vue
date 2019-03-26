@@ -1,20 +1,20 @@
 <template lang="pug">
   div
-    slot(v-if="!patterns.length", name="no-data")
+    slot(v-if="isPatternsEmpty", name="no-data")
       v-alert.ma-2(
       :value="true",
       type="info"
       ) {{ disabled ? $t('patternsList.noDataDisabled') : $t('patternsList.noData') }}
     v-layout(
     v-for="(pattern, index) in patterns",
-    :key="`${getPatternString(pattern)}${index}`",
+    :key="`${$options.filters.json(pattern)}${index}`",
     row,
     wrap,
     align-center
     )
       v-flex(:class="disabled ? 'xs12' : 'xs11'")
         v-textarea(
-        :value="getPatternString(pattern)",
+        :value="pattern | json",
         rows="7",
         no-resize,
         readonly,
@@ -53,14 +53,8 @@ export default {
     },
   },
   computed: {
-    getPatternString() {
-      return (pattern) => {
-        if (pattern) {
-          return JSON.stringify(pattern, null, 4);
-        }
-
-        return '{}';
-      };
+    isPatternsEmpty() {
+      return !this.patterns || !this.patterns.length;
     },
   },
   methods: {

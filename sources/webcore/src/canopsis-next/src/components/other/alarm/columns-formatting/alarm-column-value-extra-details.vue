@@ -78,7 +78,7 @@ export default {
   computed: {
     pbehaviors() {
       return this.alarm.pbehaviors.filter((value) => {
-        const now = Date.now();
+        const now = Date.now() / 1000;
 
         return value.tstart <= now && now < value.tstop;
       });
