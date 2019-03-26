@@ -39,6 +39,7 @@ class InvalidRuleError(Exception):
     """
     An InvalidRuleError is an exception that is raised when a rule is invalid.
     """
+
     def __init__(self, message):
         super(InvalidRuleError, self).__init__(message)
         self.message = message
@@ -48,6 +49,7 @@ class RuleManager(object):
     """
     Manager for event filter rules.
     """
+
     def __init__(self, logger):
         self.logger = logger
         self.rule_collection = MongoCollection(
@@ -73,7 +75,11 @@ class RuleManager(object):
         :raises: InvalidRuleError if the rule is invalid. CollectionError if
         the creation fails.
         """
-        if rule.get(RuleField.id) is None:
+        # Here we test, respectively, that id is not none, nor empty,
+        # nor has spaces in it
+        if rule.get(RuleField.id) is None or \
+                not rule.get(RuleField.id) or \
+                rule.get(RuleField.id).find(" ") != -1:
             rule[RuleField.id] = str(uuid4())
 
         self.validate(rule[RuleField.id], rule)
