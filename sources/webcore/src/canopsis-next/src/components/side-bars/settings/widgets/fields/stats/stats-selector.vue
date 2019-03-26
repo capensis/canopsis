@@ -55,21 +55,6 @@ export default {
         this.$validator.validate('stats', value);
       }
     },
-    required: {
-      immediate: true,
-      handler(value, oldValue) {
-        if (!oldValue && value) {
-          this.$validator.attach({
-            name: 'stats',
-            rules: 'required',
-            getter: () => Object.values(this.stats),
-            context: () => this,
-          });
-        } else {
-          this.$validator.detach('stats');
-        }
-      },
-    },
   },
   created() {
     if (this.required) {
