@@ -73,7 +73,7 @@ class RuleManager(object):
         :raises: InvalidRuleError if the rule is invalid. CollectionError if
         the creation fails.
         """
-        if not rule.get(RuleField.id):
+        if rule.get(RuleField.id) is None:
             rule[RuleField.id] = str(uuid4())
 
         self.validate(rule[RuleField.id], rule)
