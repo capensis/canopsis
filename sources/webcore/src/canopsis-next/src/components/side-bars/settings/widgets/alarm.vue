@@ -20,7 +20,7 @@
           :columns="settings.widget.parameters.widgetColumns"
           )
           v-divider
-          field-columns(v-model="settings.widget.parameters.widgetColumns")
+          field-columns(v-model="settings.widget.parameters.widgetColumns", withHtml)
           v-divider
           field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
           v-divider

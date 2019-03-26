@@ -13,6 +13,7 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
+import sanitizeHTML from 'sanitize-html';
 
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
@@ -121,6 +122,7 @@ if (process.env.NODE_ENV === 'development') {
 
 Vue.prototype.$constants = deepFreeze(constants);
 Vue.prototype.$config = deepFreeze(config);
+Vue.prototype.$sanitize = sanitizeHTML;
 
 new Vue({
   router,

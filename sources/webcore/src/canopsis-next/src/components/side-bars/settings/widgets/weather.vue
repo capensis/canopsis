@@ -17,7 +17,7 @@
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns")
+          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns", withHtml)
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider

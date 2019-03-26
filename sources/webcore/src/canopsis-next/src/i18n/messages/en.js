@@ -346,6 +346,9 @@ export default {
       },
     },
     templateEditor: 'Template',
+    columns: {
+      isHtml: 'Is it HTML?',
+    },
   },
   modals: {
     contextInfos: {
