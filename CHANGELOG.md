@@ -8,6 +8,12 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.13.2 - Due date : 2019-03-26
+
+ - [Go] Adding a description field in event filter rules
+ - [Python] Adding a description field in event filter rules
+ - [UI - CRUD Webhooks] Added authentification fields
+
 # Canopsis 3.13.1 - Due date : 2019-03-26
 
  - VERSION.txt and CHANGELOG.md had not been updated for 3.13.0
