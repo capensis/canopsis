@@ -86,3 +86,4 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.11.0](../../notes-de-version/3.11.0.md)
 *  [3.12.0](../../notes-de-version/3.12.0.md)
 *  [3.13.0](../../notes-de-version/3.13.0.md)
+*  [3.13.1](../../notes-de-version/3.13.1.md)
