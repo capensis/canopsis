@@ -58,6 +58,8 @@
           v-model="form.ui_language",
           :items="languages"
           )
+        v-layout(row, v-if="!isNew")
+          div {{ $t('common.authKey') }}: {{ user.authkey }}
         v-layout(row)
           v-switch(
             color="primary",

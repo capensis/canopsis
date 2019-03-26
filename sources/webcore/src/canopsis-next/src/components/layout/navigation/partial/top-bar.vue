@@ -51,6 +51,12 @@
                 v-btn(@click.stop="editDefaultView", small, fab, icon, depressed)
                   v-icon edit
           v-divider
+          v-list-tile
+            v-list-tile-title
+              v-layout(align-center)
+                div {{ $t('common.authKey') }}:
+                  span.caption.font-italic  {{ currentUser.authkey }}
+          v-divider
           v-list-tile(@click.prevent="logout")
             v-list-tile-title
               v-layout(align-center)
