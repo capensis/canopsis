@@ -38,7 +38,7 @@ export default {
     parameters: 'Parameters',
     by: 'By',
     date: 'Date',
-    comment: 'Comment | Comments',
+    comment: 'Comment',
     end: 'End',
     recursive: 'Recursive',
     select: 'Select',
@@ -472,6 +472,9 @@ export default {
         type: 'Type',
         comment: 'Comment',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+      },
+      success: {
+        create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
     },
     createPause: {

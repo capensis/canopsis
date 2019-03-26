@@ -450,6 +450,9 @@ export default {
         type: 'Type',
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
       },
+      success: {
+        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
+      },
     },
     createPause: {
       title: 'Mettre en pause',
