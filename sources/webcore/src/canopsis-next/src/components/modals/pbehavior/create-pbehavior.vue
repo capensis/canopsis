@@ -10,7 +10,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS } from '@/constants';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import popupMixin from '@/mixins/popup';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
@@ -41,6 +41,11 @@ export default {
 
     filter() {
       if (this.forEntities) {
+        if (this.forEntities === ENTITIES_TYPES.alarm) {
+          return {
+            _id: { $in: this.items.map(v => v.d) },
+          };
+        }
         return {
           _id: { $in: this.items.map(v => v._id) },
         };
