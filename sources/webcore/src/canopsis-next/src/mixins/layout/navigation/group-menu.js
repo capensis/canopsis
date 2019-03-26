@@ -57,10 +57,6 @@ export default {
       return viewId => this.checkDeleteAccess(viewId) && this.hasDeleteAnyViewAccess;
     },
 
-    getAvailableViewsForGroup() {
-      return group => group.views.filter(view => this.checkReadAccess(view._id));
-    },
-
     checkViewEditButtonAccessById() {
       return id =>
         (this.checkUpdateViewAccessById(id) || this.checkDeleteViewAccessById(id)) && this.isEditingMode;
