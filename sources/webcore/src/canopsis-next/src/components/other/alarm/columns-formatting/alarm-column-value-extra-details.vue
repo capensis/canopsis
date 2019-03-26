@@ -52,12 +52,20 @@
         small,
         slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.pbehaviorAdd].icon }}
-        div.text-md-center
+        div
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div(v-for="pbehavior in pbehaviors")
-            div {{ pbehavior.name }}
+            div.mt-2.font-weight-bold {{ pbehavior.name }}
+            div {{ $t('common.author') }}: {{ pbehavior.author }}
+            div {{ $t('common.type') }}: {{ pbehavior.type_ }}
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
+            div {{ $t('common.comment') }}:
+              div.ml-2(
+              v-for="comment in pbehavior.comments",
+              :key="comment._id"
+              ) - {{ comment.author }}: {{ comment.message }}
+            v-divider
 </template>
 
 <script>
