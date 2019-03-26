@@ -52,6 +52,7 @@ export default {
     rights: 'Rights',
     username: 'Username',
     password: 'Password',
+    authKey: 'Auth. key',
     connect: 'Connect',
     optionnal: 'optionnal',
     logout: 'Logout',
