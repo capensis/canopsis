@@ -20,13 +20,15 @@
 
 from urllib import quote_plus
 
-from bottle import redirect, response, HTTPError
+
+from bottle import request, static_file, redirect, response, HTTPError
 
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
 from canopsis.webcore.services import rights as rights_module
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_FORBIDDEN
 from canopsis.auth.check import check
+from canopsis.userinterface.manager import UserInterfaceManager
 
 # The USER_FIELDS list contains the names of the keys of the user dictionary
 # that are returned in JSON when the authentication is successful.
@@ -209,7 +211,7 @@ def exports(ws):
         redirect('/')
 
     @ws.application.get('/api/internal/login/login_info')
-    def internal_login_info():
+    def get_internal_login_info():
         cservices = {
             'webserver': {provider: 1 for provider in ws.providers},
         }
@@ -241,3 +243,11 @@ def exports(ws):
                 "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
 
         return gen_json(cservices)
+
+    @ws.application.post('/api/internal/login/login_info')
+    def update_internal_login_info():
+
+        user_interface_manager = UserInterfaceManager(
+            *UserInterfaceManager.provide_default_basics())
+
+        return gen_json(user_interface_manager.get().to_dict())
