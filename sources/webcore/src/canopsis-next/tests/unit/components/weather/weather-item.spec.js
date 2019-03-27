@@ -202,4 +202,10 @@ describe('Weather Item', () => {
     expect(wrapper.vm.isBlinking).toBeTruthy();
     expect(watcherInfosContainer.classes()).toContain('blinking');
   });
+
+  it('contains the right text', () => {
+    const watcherNameContainer = wrapper.find('.watcherName');
+
+    expect(watcherNameContainer.text()).toBe('Watcher');
+  });
 });
