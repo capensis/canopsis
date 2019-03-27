@@ -71,6 +71,9 @@ class WatcherManager(object):
         if watcher is None or not isinstance(watcher, dict):
             raise CollectionError('Nothing to create/update')
 
+        if 'type' not in watcher:
+            watcher["type"] = 'watcher'
+
         if watcher['type'] != 'watcher':
             raise CollectionError('Entity is not a watcher')
 

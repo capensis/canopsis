@@ -189,6 +189,9 @@ class RouteHandlerPBehavior(object):
         if exdate is None:
             exdate = []
 
+        if comments is None:
+            comments = []
+
         data = {
             PBehavior.NAME: name,
             PBehavior.FILTER: filter_,
@@ -493,7 +496,7 @@ def exports(ws):
         """
         Update a pbehavior.
         """
-        return rhpb.update(
+        return rhpb.update_v2(
             _id=_id,
             name=name,
             filter_=filter,

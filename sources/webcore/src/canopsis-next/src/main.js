@@ -25,8 +25,8 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
-import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-event.vue';
-import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
+import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
+import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
 import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
@@ -48,6 +48,7 @@ Vue.use(Vuetify, {
     },
   },
 });
+
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {
@@ -105,6 +106,13 @@ Vue.use(VeeValidate, {
 });
 
 Vue.config.productionTip = false;
+
+/**
+ * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
+ */
+window.addEventListener('unhandledrejection', () => {
+  store.dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') });
+});
 
 if (process.env.NODE_ENV === 'development') {
   Vue.config.devtools = true;

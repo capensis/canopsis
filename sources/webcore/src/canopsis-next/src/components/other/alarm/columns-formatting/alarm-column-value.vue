@@ -23,6 +23,7 @@ import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
+import Links from '@/components/other/alarm/columns-formatting/alarm-column-value-links.vue';
 import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
@@ -38,6 +39,7 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 export default {
   components: {
     State,
+    Links,
     ExtraDetails,
     Ellipsis,
   },
@@ -94,6 +96,12 @@ export default {
         'v.state.val': {
           bind: {
             is: 'state',
+            alarm: this.alarm,
+          },
+        },
+        links: {
+          bind: {
+            is: 'links',
             alarm: this.alarm,
           },
         },

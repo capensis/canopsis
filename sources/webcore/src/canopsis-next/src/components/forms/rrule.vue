@@ -174,8 +174,6 @@
 import RRule from 'rrule';
 import { mapValues, pickBy } from 'lodash';
 
-import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
-
 /**
  * RRule form component
  *
@@ -184,7 +182,6 @@ import DateTimePicker from '@/components/forms/fields/date-time-picker.vue';
  */
 export default {
   inject: ['$validator'],
-  components: { DateTimePicker },
   data() {
     const rRuleOptions = {
       freq: RRule.DAILY,

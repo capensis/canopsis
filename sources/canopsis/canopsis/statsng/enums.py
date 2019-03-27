@@ -57,6 +57,7 @@ class StatCounters(FastEnum):
     alarms_canceled = 'alarms_canceled'
     alarms_resolved = 'alarms_resolved'
     downtimes = 'downtimes'
+    flapping_periods = 'flapping_periods'
 
 
 class StatDurations(FastEnum):

@@ -13,13 +13,13 @@
         v-validate="'required'",
         :error-messages="errors.collect('field')"
         )
-        v-text-field(
-        v-if="!form.advancedMode"
+        mixed-field(
+        v-if="!form.advancedMode",
         v-model="form.value",
-        :label="$t('modals.eventFilterRule.value')",
         name="value",
         v-validate="'required'",
         :error-messages="errors.collect('value')"
+        :label="$t('modals.eventFilterRule.value')"
         )
         template(v-else)
           v-layout(align-center, justify-center)
@@ -34,19 +34,18 @@
           v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
             v-flex(xs3)
               v-select(
-              :items="getAvailableOperators(field)",
+              :items="getAvailableOperatorsForRule(field)",
               v-model="field.key",
               name="fieldKey",
               v-validate="'required'",
               :error-messages="errors.collect('fieldKey')"
               )
-            v-flex(xs9)
-              v-text-field(
+            v-flex.pl-1(xs9)
+              mixed-field(
               v-model="field.value",
               name="fieldValue",
-              :type="field.key === 'regex' ? 'text' : 'number'"
-              v-validate="'required'",
-              :error-messages="errors.collect('fieldValue')"
+              :error-messages="errors.collect('fieldValue')",
+              v-validate="'required'"
               )
             v-flex
               v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
@@ -57,12 +56,18 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import MixedField from '@/components/forms/fields/mixed-field.vue';
+
 export default {
+  name: MODALS.addEventFilterRuleToPattern,
   $_veeValidate: {
     validator: 'new',
   },
+  components: { MixedField },
   mixins: [modalInnerMixin],
   data() {
     return {
@@ -78,6 +83,14 @@ export default {
   computed: {
     availableOperators() {
       return this.operators.filter(operator => !this.form.advancedRuleFields.find(({ key }) => key === operator));
+    },
+
+    getAvailableOperatorsForRule() {
+      return (rule) => {
+        const rules = this.form.advancedRuleFields.filter(({ key }) => key !== rule.key);
+
+        return this.operators.filter(operator => !rules.find(({ key }) => key === operator));
+      };
     },
   },
   mounted() {
@@ -107,12 +120,6 @@ export default {
 
     deleteAdvancedRuleField(field) {
       this.form.advancedRuleFields = this.form.advancedRuleFields.filter(({ key }) => key !== field.key);
-    },
-
-    getAvailableOperators(rule) {
-      const rules = this.form.advancedRuleFields.filter(({ key }) => key !== rule.key);
-
-      return this.operators.filter(operator => !rules.find(({ key }) => key === operator));
     },
 
     async submit() {

@@ -51,6 +51,18 @@
                 v-btn(@click.stop="editDefaultView", small, fab, icon, depressed)
                   v-icon edit
           v-divider
+          v-list-tile(two-line)
+            v-list-tile-content
+              v-layout(align-center)
+                v-flex
+                  div {{ $t('common.authKey') }}:
+                v-flex
+                  div.px-1.caption.font-italic {{ currentUser.authkey }}
+                v-tooltip(left)
+                  v-btn(@click.stop="$copyText(currentUser.authkey)", slot="activator", small, fab, icon, depressed)
+                    v-icon file_copy
+                  span {{ $t('modals.variablesHelp.copyToClipboard') }}
+          v-divider
           v-list-tile(@click.prevent="logout")
             v-list-tile-title
               v-layout(align-center)
