@@ -61,12 +61,11 @@
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
             div(
-            v-if="pbehavior.comments && pbehavior.comments.length"
+            v-show="pbehavior.comments && pbehavior.comments.length",
+            v-for="comment in pbehavior.comments",
+            :key="comment._id",
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
-              div.ml-2(
-              v-for="comment in pbehavior.comments",
-              :key="comment._id"
-              ) - {{ comment.author }}: {{ comment.message }}
+              div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
 </template>
 

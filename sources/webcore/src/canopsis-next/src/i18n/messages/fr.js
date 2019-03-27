@@ -37,7 +37,7 @@ export default {
     parameters: 'Paramètres',
     by: 'Par',
     date: 'Date',
-    comment: 'Commentaire',
+    comment: 'Commentaire | Commentaires',
     end: 'Fin',
     recursive: 'Recursif',
     select: 'Sélectionner',
