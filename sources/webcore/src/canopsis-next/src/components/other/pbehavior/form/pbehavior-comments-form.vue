@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      strong {{ $t('common.comments') }}
+      strong {{ $tc('common.comment', comments.length) }}
     v-layout(v-for="(comment, index) in comments", :key="comment.key", row, wrap, allign-center)
       v-flex(xs11)
         v-textarea(

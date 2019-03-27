@@ -37,7 +37,7 @@ export default {
     parameters: 'Paramètres',
     by: 'Par',
     date: 'Date',
-    comment: 'Commentaire',
+    comment: 'Commentaire | Commentaires',
     end: 'Fin',
     recursive: 'Recursif',
     select: 'Sélectionner',
@@ -51,6 +51,7 @@ export default {
     rights: 'Droits',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
+    authKey: 'Auth. key',
     connect: 'Connexion',
     optionnal: 'Optionnel',
     logout: 'Se déconnecter',
@@ -449,6 +450,9 @@ export default {
         reason: 'Raison',
         type: 'Type',
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
+      },
+      success: {
+        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
       },
     },
     createPause: {

@@ -38,8 +38,7 @@ export default {
     parameters: 'Parameters',
     by: 'By',
     date: 'Date',
-    comment: 'Comment',
-    comments: 'Comments',
+    comment: 'Comment | Comments',
     end: 'End',
     recursive: 'Recursive',
     select: 'Select',
@@ -53,6 +52,7 @@ export default {
     rights: 'Rights',
     username: 'Username',
     password: 'Password',
+    authKey: 'Auth. key',
     connect: 'Connect',
     optionnal: 'optionnal',
     logout: 'Logout',
@@ -477,6 +477,9 @@ export default {
       },
       buttons: {
         addComment: 'Add comment',
+      },
+      success: {
+        create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
     },
     createPause: {
