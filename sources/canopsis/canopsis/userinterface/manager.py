@@ -36,8 +36,8 @@ class UserInterfaceManager(object):
     UserInterface managment.
     """
     LOG_PATH = 'var/log/configuration.log'
-
     COLLECTION = 'configuration'
+    __DOCUMENT_ID = "user_interface"
 
     def __init__(self, logger, mongo_collection):
         self.logger = logger
@@ -67,14 +67,14 @@ class UserInterfaceManager(object):
         :param str query: a ticketapi config query string
         :rtype: TicektApi or None
         """
-        record = self.collection.find_one(query={"_id": "user_interface"})
+        record = self.collection.find_one(query={"_id": self.__DOCUMENT_ID})
         if not record:
             return
 
         ticket_api = UserInterface(**record)
         return ticket_api
 
-    def update_id(self, id_, ticketapi):
+    def update_id(self, query=None, ticketapi):
         """
         Update a ticketapi config.
 
@@ -82,7 +82,11 @@ class UserInterfaceManager(object):
         :param dict ticketapi: a ticketapi config as a dict
         :rtype: bool
         """
-        query = {"_id": "user_interface"}
-        resp = self.collection.update(query=query, document=ticketapi)
+        if query is None:
+            resp = self.collection.update(
+                query={"_id": self.__DOCUMENT_ID}, document=ticketapi, upsert=True)
+        else:
+            resp = self.collection.update(
+                query={"_id": self.__DOCUMENT_ID}, update=ticketapi, upsert=True)
 
         return self.collection.is_successfull(resp)

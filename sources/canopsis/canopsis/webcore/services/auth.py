@@ -29,6 +29,8 @@ from canopsis.webcore.services import rights as rights_module
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_FORBIDDEN
 from canopsis.auth.check import check
 from canopsis.userinterface.manager import UserInterfaceManager
+from canopsis.version import CanopsisVersionManager
+from canopsis.common.mongo_store import MongoStore
 
 # The USER_FIELDS list contains the names of the keys of the user dictionary
 # that are returned in JSON when the authentication is successful.
@@ -212,6 +214,8 @@ def exports(ws):
 
     @ws.application.get('/api/internal/login/login_info')
     def get_internal_login_info():
+        login_info = {}
+
         cservices = {
             'webserver': {provider: 1 for provider in ws.providers},
         }
@@ -242,7 +246,25 @@ def exports(ws):
             cservices["saml2config"] = {
                 "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
 
-        return gen_json(cservices)
+        login_info["auth"] = cservices
+
+        user_interface_manager = UserInterfaceManager(
+            *UserInterfaceManager.provide_default_basics())
+
+        user_interface = user_interface_manager.get()
+
+        if user_interface is not None:
+            login_info["user_interface"] = user_interface.to_dict()
+
+        vStore = MongoStore.get_default()
+        vCollection = \
+            vStore.get_collection(name=CanopsisVersionManager.COLLECTION)
+        vDocument = CanopsisVersionManager(vCollection).\
+            find_canopsis_version_document()
+
+        login_info[CanopsisVersionManager.VERSION_FIELD] = vDocument[CanopsisVersionManager.VERSION_FIELD]
+
+        return gen_json(login_info)
 
     @ws.application.post('/api/internal/login/login_info')
     def update_internal_login_info():
