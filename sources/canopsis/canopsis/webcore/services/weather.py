@@ -258,7 +258,7 @@ def is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_p
         if entities_alarm[entity] is None:
             continue
 
-        if entities_alarm[entity]["ack"] is None:
+        if entities_alarm[entity].get("ack", None) is None:
             if entities_pbh[entity] is None:
                 return True
 
