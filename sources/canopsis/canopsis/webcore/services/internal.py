@@ -112,10 +112,8 @@ def exports(ws):
 
         return gen_json(cservices)
 
-    @ws.application.post('/api/internal/login/login_info/interface')
-    @ws.application.put('/api/internal/login/login_info/interface')
-    @ws.application.post('/api/internal/app_info/interface')
-    @ws.application.put('/api/internal/app_info/interface')
+    @ws.application.post('/api/internal/user_interface')
+    @ws.application.put('/api/internal/user_interface')
     def update_internal_interface():
         try:
             interface = request.json
@@ -145,8 +143,7 @@ def exports(ws):
             HTTP_ERROR
         )
 
-    @ws.application.delete('/api/internal/login/login_info/interface')
-    @ws.application.delete('/api/internal/app_info/interface')
+    @ws.application.delete('/api/internal/user_interface')
     def delete_internal_interface():
         user_interface_manager = UserInterfaceManager(
             *UserInterfaceManager.provide_default_basics())
