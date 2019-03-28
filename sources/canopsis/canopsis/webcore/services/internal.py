@@ -99,14 +99,17 @@ def exports(ws):
         cservices.update(get_version())
         return gen_json(cservices)
 
-    @ws.application.get('/api/internal/app_info/interface')
+    @ws.application.get('/api/internal/app_info')
     def get_internal_app_info():
         cservices = {}
-        cservices.update(get_user_interface())
+        user_interface = get_user_interface().get("user_interface", None)
+        if user_interface is not None:
+            for key in user_interface.keys():
+                if key not in ['app_title', 'logo']:
+                    user_interface.pop(key)
+            cservices.update(user_interface)
         cservices.update(get_version())
-        for key in cservices.keys():
-            if key not in ['app_title', 'logo', 'version']:
-                cservices.pop(key)
+
         return gen_json(cservices)
 
     @ws.application.post('/api/internal/login/login_info/interface')
