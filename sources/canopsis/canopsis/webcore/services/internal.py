@@ -138,7 +138,12 @@ def exports(ws):
         user_interface_manager = UserInterfaceManager(
             *UserInterfaceManager.provide_default_basics())
 
-        return gen_json(user_interface_manager.update(interface))
+        if len(interface) > 0:
+            return gen_json(user_interface_manager.update(interface))
+        return gen_json_error(
+            {'description': 'nothing to insert'},
+            HTTP_ERROR
+        )
 
     @ws.application.delete('/api/internal/login/login_info/interface')
     @ws.application.delete('/api/internal/app_info/interface')
