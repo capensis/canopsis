@@ -74,7 +74,7 @@ class UserInterfaceManager(object):
         ticket_api = UserInterface(**record)
         return ticket_api
 
-    def update_id(self, query=None, ticketapi):
+    def update_id(self, query, ticketapi):
         """
         Update a ticketapi config.
 
