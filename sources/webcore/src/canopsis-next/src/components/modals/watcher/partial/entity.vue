@@ -74,6 +74,10 @@ export default {
     template: {
       type: String,
     },
+    isWatcherOnPbehavior: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
@@ -123,7 +127,7 @@ export default {
   },
   computed: {
     color() {
-      if (this.hasActivePbehavior) {
+      if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
         return WATCHER_PBEHAVIOR_COLOR;
       }
 
