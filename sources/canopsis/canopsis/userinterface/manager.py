@@ -74,7 +74,7 @@ class UserInterfaceManager(object):
         ticket_api = UserInterface(**record)
         return ticket_api
 
-    def update_id(self, query, ticketapi):
+    def update(self, interface):
         """
         Update a ticketapi config.
 
@@ -82,11 +82,7 @@ class UserInterfaceManager(object):
         :param dict ticketapi: a ticketapi config as a dict
         :rtype: bool
         """
-        if query is None:
-            resp = self.collection.update(
-                query={"_id": self.__DOCUMENT_ID}, document=ticketapi, upsert=True)
-        else:
-            resp = self.collection.update(
-                query={"_id": self.__DOCUMENT_ID}, update=ticketapi, upsert=True)
+        resp = self.collection.update({"_id": self.__DOCUMENT_ID}, {
+                                      '$set': interface}, upsert=True)
 
         return self.collection.is_successfull(resp)

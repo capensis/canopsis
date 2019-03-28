@@ -26,11 +26,15 @@ from bottle import request, static_file, redirect, response, HTTPError
 from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
 from canopsis.webcore.services import rights as rights_module
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_FORBIDDEN
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.auth.check import check
 from canopsis.userinterface.manager import UserInterfaceManager
 from canopsis.version import CanopsisVersionManager
 from canopsis.common.mongo_store import MongoStore
+
+VALID_USER_INTERFACE_PARAMS = [
+    'app_title', 'footer', 'logo'
+]
 
 
 def exports(ws):
@@ -94,19 +98,42 @@ def exports(ws):
     @ws.application.get('/api/internal/login/login_info')
     def get_internal_login_info():
         cservices = {}
-
         cservices.update(get_login_config())
-
         cservices.update(get_user_interface())
-
         cservices.update(get_version())
-
         return gen_json(cservices)
 
-    @ws.application.post('/api/internal/login/login_info')
-    def update_internal_login_info():
+    @ws.application.get('/api/internal/app_info/interface')
+    def get_internal_app_info():
+        cservices = {}
+        cservices.update(get_user_interface())
+        cservices.update(get_version())
+        return gen_json(cservices)
+
+    @ws.application.post('/api/internal/login/login_info/interface')
+    @ws.application.put('/api/internal/login/login_info/interface')
+    @ws.application.post('/api/internal/app_info/interface')
+    @ws.application.put('/api/internal/app_info/interface')
+    def update_internal_interface():
+        try:
+            interface = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+
+        if interface is None:
+            return gen_json_error(
+                {'description': 'nothing to insert'},
+                HTTP_ERROR
+            )
+
+        for key in interface.keys():
+            if key not in VALID_USER_INTERFACE_PARAMS:
+                interface.pop(key)
 
         user_interface_manager = UserInterfaceManager(
             *UserInterfaceManager.provide_default_basics())
 
-        return gen_json(user_interface_manager.get().to_dict())
+        return gen_json(user_interface_manager.update(interface))
