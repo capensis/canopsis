@@ -69,7 +69,7 @@ def exports(ws):
             login_config["saml2config"] = {
                 "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
 
-        return login_config
+        return {"login_config": login_config}
 
     def get_user_interface():
         user_interface_manager = UserInterfaceManager(
@@ -139,3 +139,11 @@ def exports(ws):
             *UserInterfaceManager.provide_default_basics())
 
         return gen_json(user_interface_manager.update(interface))
+
+    @ws.application.delete('/api/internal/login/login_info/interface')
+    @ws.application.delete('/api/internal/app_info/interface')
+    def delete_internal_interface():
+        user_interface_manager = UserInterfaceManager(
+            *UserInterfaceManager.provide_default_basics())
+
+        return gen_json(user_interface_manager.delete())

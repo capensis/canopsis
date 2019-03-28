@@ -86,3 +86,14 @@ class UserInterfaceManager(object):
                                       '$set': interface}, upsert=True)
 
         return self.collection.is_successfull(resp)
+
+    def delete(self):
+        """
+        Update a ticketapi config.
+
+        :param str id_: a ticketapi config _id
+        :param dict ticketapi: a ticketapi config as a dict
+        :rtype: bool
+        """
+        resp = self.collection.remove({"_id": self.__DOCUMENT_ID})
+        return self.collection.is_successfull(resp)
