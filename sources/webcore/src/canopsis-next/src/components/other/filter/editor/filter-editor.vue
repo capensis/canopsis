@@ -27,7 +27,7 @@
             v-alert(:value="parseError", type="error") {{ parseError }}
         v-btn(
         :disabled="!isRequestStringChanged || errors.has('requestString')",
-        @click="parse"
+        @click="parseRequestStringToFilter"
         ) {{ $t('common.parse') }}
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>
@@ -185,7 +185,7 @@ export default {
       }
     },
 
-    parse() {
+    parseRequestStringToFilter() {
       try {
         this.parseError = '';
         this.errors.remove('requestString');
