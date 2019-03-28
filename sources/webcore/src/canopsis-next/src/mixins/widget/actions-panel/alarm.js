@@ -5,7 +5,7 @@ import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/
 import modalMixin from '@/mixins/modal';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
-import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -44,18 +44,20 @@ export default {
     showVariablesHelperModal() {
       const variables = [];
 
-      const alarmFields = convertObjectFieldToTreeBranch(omit(this.item, ['entity']), 'alarm');
+      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity']), 'alarm');
+
       variables.push(alarmFields);
 
       if (this.item.entity) {
-        const entityFields = convertObjectFieldToTreeBranch(this.item.entity, 'entity');
+        const entityFields = convertObjectToTreeview(this.item.entity, 'entity');
         variables.push(entityFields);
       }
 
-      return () => this.showModal({
+      this.showModal({
         name: MODALS.variablesHelp,
         config: {
           ...this.modalConfig,
+
           variables,
         },
       });
