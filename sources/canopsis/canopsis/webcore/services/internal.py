@@ -18,16 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from urllib import quote_plus
 
+from bottle import request
 
-from bottle import request, static_file, redirect, response, HTTPError
-
-from canopsis.common.ws import route
 from canopsis.webcore.services import session as session_module
 from canopsis.webcore.services import rights as rights_module
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
-from canopsis.auth.check import check
 from canopsis.userinterface.manager import UserInterfaceManager
 from canopsis.version import CanopsisVersionManager
 from canopsis.common.mongo_store import MongoStore
@@ -108,6 +104,9 @@ def exports(ws):
         cservices = {}
         cservices.update(get_user_interface())
         cservices.update(get_version())
+        for key in cservices.keys():
+            if key not in ['app_title', 'logo', 'version']:
+                cservices.pop(key)
         return gen_json(cservices)
 
     @ws.application.post('/api/internal/login/login_info/interface')
