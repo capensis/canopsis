@@ -51,7 +51,8 @@
 </template>
 
 <script>
-import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES } from '@/constants';
+import moment from 'moment';
+import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import formMixin from '@/mixins/form';
@@ -87,7 +88,8 @@ export default {
       const rules = { required: true };
 
       if (this.form.tstart) {
-        rules.after = [this.form.tstart];
+        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
+        rules.date_format = DATETIME_FORMATS.dateTimePicker;
       }
 
       return rules;

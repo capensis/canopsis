@@ -1020,4 +1020,11 @@ export default {
       },
     },
   },
+  validation: {
+    custom: {
+      tstop: {
+        after: 'The {0} should be after than {1}',
+      },
+    },
+  },
 };

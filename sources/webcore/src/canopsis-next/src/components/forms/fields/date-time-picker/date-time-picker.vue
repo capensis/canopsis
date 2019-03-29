@@ -119,7 +119,7 @@ export default {
       const newValue = new Date(this.value ? this.value.getTime() : null);
       const [hours, minutes] = time.split(':');
 
-      newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0);
+      newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0, 0, 0);
 
       this.$emit('input', newValue);
     },
@@ -133,7 +133,9 @@ export default {
       newValue.setDate(parseInt(day, 10));
 
       if (!this.value) {
-        newValue.setHours(0, 0);
+        newValue.setHours(0, 0, 0, 0);
+      } else {
+        newValue.setSeconds(0, 0);
       }
 
       this.$emit('input', newValue);

@@ -34,6 +34,7 @@ export default {
   filters: {
     pbehaviorToForm(pbehavior = {}) {
       return {
+        author: pbehavior.author || '',
         name: pbehavior.name || '',
         tstart: pbehavior.tstart ? new Date(pbehavior.tstart * 1000) : new Date(),
         tstop: pbehavior.tstop ? new Date(pbehavior.tstop * 1000) : new Date(),
@@ -84,10 +85,11 @@ export default {
 
       if (isValid) {
         const pbehavior = this.$options.filters.formToPbehavior(this.form);
+
         pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.comments);
 
-        if (this.config.pbehavior) {
-          pbehavior.author = this.currentUser.crecord_name;
+        if (!pbehavior.author) {
+          pbehavior.author = this.currentUser._id;
         }
 
         if (this.config.action) {
