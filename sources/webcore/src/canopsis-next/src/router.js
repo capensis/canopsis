@@ -96,19 +96,34 @@ const routes = [
     path: '/exploitation/pbehaviors',
     name: 'exploitation-pbehaviors',
     component: ExploitationPbehaviors,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.pbehavior,
+      },
+    },
   },
   {
     path: '/exploitation/event-filter',
     name: 'exploitation-event-filter',
     component: ExploitationEventFilter,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.eventFilter,
+      },
+    },
   },
   {
     path: '/exploitation/webhooks',
     name: 'exploitation-webhooks',
     component: ExploitationWebhooks,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.webhook,
+      },
+    },
   },
 ];
 

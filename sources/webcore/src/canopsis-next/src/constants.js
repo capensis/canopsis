@@ -557,6 +557,11 @@ export const USERS_RIGHTS = {
     role: 'models_role',
     action: 'models_action',
     user: 'models_user',
+    exploitation: {
+      eventFilter: 'models_exploitation_eventFilter',
+      pbehavior: 'models_exploitation_pbehavior',
+      webhook: 'models_exploitation_webhook',
+    },
   },
   business: {
     alarmsList: {
