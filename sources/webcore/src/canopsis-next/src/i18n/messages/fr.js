@@ -94,6 +94,7 @@ export default {
       [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
     },
     times: {
       second: 'seconde | secondes',
