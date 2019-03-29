@@ -39,7 +39,7 @@ export default {
     addComment() {
       this.addItemIntoArray({
         key: uid(),
-        author: this.currentUser.crecord_name,
+        author: this.currentUser._id,
         message: '',
       });
     },
