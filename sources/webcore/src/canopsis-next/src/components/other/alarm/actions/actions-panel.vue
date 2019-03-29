@@ -121,7 +121,7 @@ export default {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
           title: this.$t('alarmList.actions.titles.variablesHelp'),
-          method: this.showVariablesHelperModal(),
+          method: this.showVariablesHelperModal,
         },
       },
     };

@@ -7,7 +7,7 @@ import { pickBy } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -173,7 +173,7 @@ export default {
     },
 
     showVariablesHelpModal() {
-      const entitiesFields = convertObjectFieldToTreeBranch(this.item, 'entity');
+      const entitiesFields = convertObjectToTreeview(this.item, 'entity');
       const variables = [entitiesFields];
 
       this.showModal({
