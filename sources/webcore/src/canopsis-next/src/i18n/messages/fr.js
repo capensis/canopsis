@@ -216,6 +216,7 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
+    isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
