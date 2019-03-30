@@ -1,7 +1,7 @@
 [Unit]
 Description=Canopsis Engine CAT %i
 After=network.target
-Documentation=http://www.canopsis.org/wp-content/themes/canopsis/doc/
+Documentation=https://doc.canopsis.net
 
 [Service]
 User=canopsis
