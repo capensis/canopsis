@@ -5,6 +5,10 @@ stages:
   - packaging
   - publish
 
+branches:
+  only:
+    - ci/new_ci
+
 prebuild:
   stage: prebuild
   tags: ["canopsis"]
