@@ -9,7 +9,7 @@ TAG:=develop
 DISTRIBUTIONS=debian8,debian9,centos7 # Every GNU/Linux distribution supported by Canopsis
 DOCKER_DISTRIB="debian9" # The GNU/Linux distribution use as foundation for the official Canopsis Docker image
 PACKAGE_REV="1"
-REGISTRY_NAME="registry.gitlabci.capen.sis"
+REGISTRY_NAME="gitlab.canopsis.net"
 
 # It's trick to allow subst to replace a comma.
 .comma:=,
@@ -36,7 +36,7 @@ docker_push:
 		else \
 			export image_tag=$$distrib-${TAG}; \
 		fi; \
-		docker tag canopsis/canopsis:$$image_tag ${REGISTRY_NAME}/root/canopsis::$$image_tag
+		docker tag canopsis/canopsis:$$image_tag ${REGISTRY_NAME}/root/canopsis::$$image_tag ; \
 	done
 
 packages:
@@ -57,6 +57,18 @@ packages:
                            --user=0 canopsis/canopsis:$$image_tag ; \
         done
 
+clean_images:
+	echo "Clean ...."; \
+	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
+		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
+			export image_tag=${TAG}; \
+		else \
+			export image_tag=$$distrib-${TAG}; \
+		fi; \
+		docker image rm canopsis/canopsis:$$image_tag ; \
+	done	
+	echo "Clean done."
+
 all: packages
 
 help:
@@ -70,6 +82,15 @@ help:
 	@echo "           - To build the debian9 and centos7 images"
 	@echo "           make docker_images DISTRIBUTIONS=debian9,centos7"
 	@echo "           - To build the debian8 images"
+	@echo "           make docker_images DISTRIBUTIONS=debian8"
+	@echo "   * clean: Clean docker images."
+	@echo "       - DISTRIBUTIONS: a coma separated list of GNU/Linux distribution."
+	@echo "       Currently, debian8, debian9 and centos7 are supported. By default,"
+	@echo "       only the debian9 images are clean"
+	@echo "       Example:"
+	@echo "           - To clean the debian9 and centos7 images"
+	@echo "           make docker_images DISTRIBUTIONS=debian9,centos7"
+	@echo "           - To clean the debian8 images"
 	@echo "           make docker_images DISTRIBUTIONS=debian8"
 	@echo "   * packages: Builds the canopsis-core package. The package will be stored"
 	@echo "   in the 'build' directory."

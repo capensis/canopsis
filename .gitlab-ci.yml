@@ -5,7 +5,6 @@ stages:
   - packaging
   - publish
 
-
 prebuild:
   stage: prebuild
   tags: ["canopsis"]
@@ -33,10 +32,9 @@ build_docker_debian9:
     - ci/new_ci
   before_script:
 
-#  script: make docker_images DISTRIBUTIONS=debian9
-  script: echo build docker
+  script: make docker_images DISTRIBUTIONS=debian9
 
-  after_script:
+  after_script: make clean_images DISTRIBUTIONS=debian9
 
 #build_docker_centos7:
 #  stage: build
