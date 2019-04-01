@@ -88,6 +88,7 @@ export default {
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
+    filter: 'Filter',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -475,8 +476,11 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
-        comment: 'Comment',
+        message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+      },
+      buttons: {
+        addComment: 'Add comment',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
@@ -1018,6 +1022,13 @@ export default {
           text: 'Key',
           value: 'Value',
         },
+      },
+    },
+  },
+  validation: {
+    custom: {
+      tstop: {
+        after: 'The {0} should be after than {1}',
       },
     },
   },

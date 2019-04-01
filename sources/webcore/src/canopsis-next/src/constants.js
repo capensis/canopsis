@@ -329,6 +329,8 @@ export const DATETIME_FORMATS = {
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   datePicker: 'DD/MM/YYYY',
   timePicker: 'HH:mm',
+
+  dateTimePickerForValidation: 'dd/MM/yyyy HH:mm',
 };
 
 export const STATS_OPTIONS = {

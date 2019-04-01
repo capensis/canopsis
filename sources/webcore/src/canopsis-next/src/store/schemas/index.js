@@ -16,14 +16,12 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   processStrategy: parentProcessStrategy,
 });
 
-export const entitySchema = new schema.Entity(
-  ENTITIES_TYPES.entity,
-  {},
-  {
-    idAttribute: '_id',
-    processStrategy: parentProcessStrategy,
-  },
-);
+export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
+  pbehaviors: [pbehaviorSchema],
+}, {
+  idAttribute: '_id',
+  processStrategy: parentProcessStrategy,
+});
 
 export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
 

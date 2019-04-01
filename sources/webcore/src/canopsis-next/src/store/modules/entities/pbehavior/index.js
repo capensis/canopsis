@@ -4,6 +4,8 @@ import schemas from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
+import commentModule from './comment';
+
 const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
@@ -15,6 +17,7 @@ const types = {
 
 export default {
   namespaced: true,
+  modules: { comment: commentModule },
   state: {
     allIds: [],
     pending: false,
@@ -80,9 +83,11 @@ export default {
           route: `${API_ROUTES.pbehaviorById}/${id}`,
           schema: [schemas.pbehavior],
         }, { root: true });
+
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
+
         console.warn(err);
       }
     },
@@ -98,6 +103,14 @@ export default {
 
         throw err;
       }
+    },
+
+    async update({ dispatch }, { data, id }) {
+      await dispatch('entities/update', {
+        route: `${API_ROUTES.pbehavior.pbehavior}/${id}`,
+        schema: schemas.pbehavior,
+        body: data,
+      }, { root: true });
     },
 
     async remove({ dispatch }, { id }) {

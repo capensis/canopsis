@@ -4,6 +4,7 @@ import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/
 
 import modalMixin from '@/mixins/modal';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -11,7 +12,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [modalMixin, eventActionsAlarmMixin],
+  mixins: [modalMixin, eventActionsAlarmMixin, entitiesPbehaviorMixin],
   methods: {
     showActionModal(name) {
       return () => this.showModal({
@@ -31,7 +32,7 @@ export default {
     },
 
     showMoreInfosModal() {
-      return () => this.showModal({
+      this.showModal({
         name: MODALS.moreInfos,
         config: {
           ...this.modalConfig,
