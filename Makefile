@@ -9,7 +9,7 @@ TAG:=develop
 DISTRIBUTIONS=debian8,debian9,centos7 # Every GNU/Linux distribution supported by Canopsis
 DOCKER_DISTRIB="debian9" # The GNU/Linux distribution use as foundation for the official Canopsis Docker image
 PACKAGE_REV="1"
-REGISTRY_NAME="gitlab.canopsis.net"
+REGISTRY_NAME="git.canopsis.net"
 
 # It's trick to allow subst to replace a comma.
 .comma:=,
@@ -36,7 +36,8 @@ docker_push:
 		else \
 			export image_tag=$$distrib-${TAG}; \
 		fi; \
-		docker tag canopsis/canopsis:$$image_tag ${REGISTRY_NAME}/root/canopsis::$$image_tag ; \
+		docker tag canopsis/canopsis:$$image_tag ${REGISTRY_NAME}/canopsis/canopsis::$$image_tag ; \
+		#docker push ${REGISTRY_NAME}/canopsis/canopsis::$$image_tag ; \
 	done
 
 packages:
@@ -57,6 +58,7 @@ packages:
                            --user=0 canopsis/canopsis:$$image_tag ; \
         done
 
+clean_images: DISTRIBUTIONS=debian9
 clean_images:
 	echo "Clean ...."; \
 	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \

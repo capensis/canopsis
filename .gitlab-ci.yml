@@ -15,16 +15,6 @@ prebuild:
     - docker -v
     - git --no-pager show
 
-#build_docker_debian8:
-#  stage: build
-#  tags: ["canopsis"]
-#
-#  before_script:
-#
-#  script: make docker_images DISTRIBUTIONS=debian8
-#
-#  after_script:
-
 build_docker_debian9:
   stage: build
   tags: ["canopsis"]
@@ -35,15 +25,18 @@ build_docker_debian9:
   script:
     - make docker_images DISTRIBUTIONS=debian9
 
-  after_script: 
-    - make clean_images DISTRIBUTIONS=debian9
+#  after_script: 
+#    - make clean_images DISTRIBUTIONS=debian9
 
-#build_docker_centos7:
-#  stage: build
-#  tags: ["canopsis"]
-#
-#  before_script:
-#
-#  script: make docker_images DISTRIBUTIONS=centos7
-#
-#  after_script:
+publish:
+  stage: publish
+  tags: ["canopsis"]
+
+  before_script:
+    - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin git.canopsis.net
+
+  script:
+    - make docker_push DISTRIBUTIONS=debian9
+
+  after_script:
+    - make clean_images DISTRIBUTIONS=debian9
