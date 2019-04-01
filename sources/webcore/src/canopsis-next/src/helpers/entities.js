@@ -83,6 +83,7 @@ export function generateWidgetByType(type) {
         ...alarmsListDefaultParameters,
 
         viewFilters: [],
+        mainFilter: null,
         infoPopups: [],
         periodicRefresh: {
           enabled: false,
@@ -101,6 +102,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
+        mainFilter: null,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),

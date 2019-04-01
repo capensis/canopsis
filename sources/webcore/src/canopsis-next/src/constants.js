@@ -61,6 +61,7 @@ export const MODALS = {
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
+  filtersList: 'filters-list',
   createWebhook: 'create-webhook',
 };
 

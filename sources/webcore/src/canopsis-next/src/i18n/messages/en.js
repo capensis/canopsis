@@ -82,6 +82,7 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    filters: 'Filters',
     webhooks: 'Webhooks',
     emptyObject: 'Empty object',
     startDate: 'Start date',
