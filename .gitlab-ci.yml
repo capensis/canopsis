@@ -32,9 +32,11 @@ build_docker_debian9:
     - ci/new_ci
   before_script:
 
-  script: make docker_images DISTRIBUTIONS=debian9
+  script:
+    - make docker_images DISTRIBUTIONS=debian9
 
-  after_script: make clean_images DISTRIBUTIONS=debian9
+  after_script: 
+    - make clean_images DISTRIBUTIONS=debian9
 
 #build_docker_centos7:
 #  stage: build
