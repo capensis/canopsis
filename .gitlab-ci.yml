@@ -29,7 +29,8 @@ build_docker_debian9:
 
   before_script:
 
-  script: make docker_images DISTRIBUTIONS=debian9
+#  script: make docker_images DISTRIBUTIONS=debian9
+  script: echo build docker
 
   after_script:
 
