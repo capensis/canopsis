@@ -123,7 +123,7 @@ export default {
           action: this.preparePlayAction,
         },
         cancel: {
-          type: weatherActionsTypes.cancel,
+          type: weatherActionsTypes.entityCancel,
           eventType: EVENT_ENTITY_TYPES.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           action: this.prepareCancelAction,
