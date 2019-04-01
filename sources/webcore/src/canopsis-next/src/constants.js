@@ -559,6 +559,11 @@ export const USERS_RIGHTS = {
     role: 'models_role',
     action: 'models_action',
     user: 'models_user',
+    exploitation: {
+      eventFilter: 'models_exploitation_eventFilter',
+      pbehavior: 'models_exploitation_pbehavior',
+      webhook: 'models_exploitation_webhook',
+    },
   },
   business: {
     alarmsList: {
@@ -649,6 +654,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityInvalidate: 'entityInvalidate',
     entityPause: 'entityPause',
     entityPlay: 'entityPlay',
+    entityCancel: 'entityCancel',
 
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
@@ -791,6 +797,8 @@ export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
 };
 
 export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
+
+export const WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT = 'MDS_AUTOREMOVE_BYPAUSE';
 
 export const WEATHER_ACK_EVENT_OUTPUT = {
   ack: 'MDS_ACKNOWLEDGE',

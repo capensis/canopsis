@@ -38,6 +38,7 @@ export function generateWidgetByType(type) {
     itemsPerPage: PAGINATION_LIMIT,
     infoPopups: [],
     moreInfoTemplate: '',
+    isAckNoteRequired: false,
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),

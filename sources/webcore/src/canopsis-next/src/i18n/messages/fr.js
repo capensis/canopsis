@@ -94,6 +94,7 @@ export default {
       [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
     },
     times: {
       second: 'seconde | secondes',
@@ -216,6 +217,7 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
+    isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',

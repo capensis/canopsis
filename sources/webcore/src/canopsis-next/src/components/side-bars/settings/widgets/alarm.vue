@@ -44,6 +44,11 @@
           v-model="settings.widget.parameters.moreInfoTemplate",
           :title="$t('settings.moreInfosModal')"
           )
+          v-divider
+          field-switcher(
+          v-model="settings.widget.parameters.isAckNoteRequired",
+          :title="$t('settings.isAckNoteRequired')",
+          )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -68,6 +73,7 @@ import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue
 import FieldFilters from './fields/common/filters.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -88,6 +94,7 @@ export default {
     FieldFilters,
     FieldInfoPopup,
     FieldTextEditor,
+    FieldSwitcher,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {

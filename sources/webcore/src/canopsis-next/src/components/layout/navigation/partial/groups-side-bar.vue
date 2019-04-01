@@ -18,7 +18,7 @@
     focusable,
     dark
     )
-      v-expansion-panel-content.secondary.white--text(v-for="group in groups", :key="group._id")
+      v-expansion-panel-content.secondary.white--text(v-for="group in availableGroups", :key="group._id")
         div.panel-header(slot="header")
           span(:title="group.name") {{ group.name }}
           v-btn(
@@ -30,7 +30,7 @@
           )
             v-icon(small) edit
         v-card(
-        v-for="view in getAvailableViewsForGroup(group)",
+        v-for="view in group.views",
         :key="view._id",
         :color="getColor(view._id)",
         )
@@ -107,9 +107,11 @@ export default {
         }
       },
     },
+
     isViewActive() {
       return viewId => this.$route.params.id && this.$route.params.id === viewId;
     },
+
     getColor() {
       return id => (this.isViewActive(id) ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1');
     },

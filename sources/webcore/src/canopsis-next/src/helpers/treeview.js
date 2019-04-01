@@ -1,23 +1,42 @@
 import { isObject, isArray } from 'lodash';
 
-export default function convertObjectFieldToTreeBranch(branch, branchName, prevPath = '') {
-  const children = Object.keys(branch).reduce((acc, field) => {
-    if (isArray(branch[field]) || !isObject(branch[field])) {
-      const path = prevPath ? `${prevPath}.${branchName}.${field}` : `${branchName}.${field}`;
+/**
+ * Convert object to tree view object
+ *
+ * @param parent - Object
+ * @param parentKey - Key of object
+ * @param [parentPath=''] - Path to parent
+ * @param [isParentArray=false] - Is parent converted array into object
+ * @return {{children: [string, any], name: *}}
+ */
+export function convertObjectToTreeview(parent, parentKey, parentPath = '', isParentArray = false) {
+  const basePath = !parentPath ? parentKey : parentPath;
+
+  const children = Object.entries(parent).reduce((acc, [key, value]) => {
+    const path = isParentArray ? `${basePath}.[${key}]` : `${basePath}.${key}`;
+
+    if (isArray(value)) {
       acc.push({
-        name: field,
-        value: branch[field],
-        path,
-        isArray: isArray(branch[field]),
+        ...convertObjectToTreeview({ ...value }, key, path, true),
+
+        isArray: true,
       });
+    } else if (isObject(value)) {
+      acc.push(convertObjectToTreeview(value, key, path));
     } else {
-      const path = prevPath ? `${prevPath}.${branchName}` : `${branchName}`;
-      acc.push(convertObjectFieldToTreeBranch(branch[field], field, path));
+      acc.push({
+        name: key,
+        value,
+        path,
+      });
     }
 
     return acc;
   }, []);
 
-  return { name: branchName, children };
+  return { name: parentKey, children };
 }
 
+export default {
+  convertObjectToTreeview,
+};

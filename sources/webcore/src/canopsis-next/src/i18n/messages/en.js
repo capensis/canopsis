@@ -83,6 +83,7 @@ export default {
     forbidden: 'Forbidden',
     search: 'Search',
     webhooks: 'Webhooks',
+    emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
@@ -98,6 +99,7 @@ export default {
       [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Play',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
     },
     times: {
       second: 'second | seconds',
@@ -233,6 +235,7 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
+    isAckNoteRequired: 'Note field required when ack ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -906,7 +909,8 @@ export default {
       },
     },
     errors: {
-      invalidJSON: 'We can\'t parse this filter to Visual Editor',
+      cantParseToVisualEditor: 'We can\'t parse this filter to Visual Editor',
+      invalidJSON: 'Invalid JSON',
       required: 'You need to add at least one valid rule',
     },
   },

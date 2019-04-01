@@ -8,6 +8,17 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.14.0 - Due date : 2019-03-28
+
+ - [Python] Fix service weather 500 error when using Go watchers
+ - [UI] Display user auth key in top bar
+ - [UI - ListAlarm] Add type, author and comments on pbehavior extra details
+ - [UI - ListAlarm] Fix immediate pbehavior displaying + Comment display condition
+ - [UI - Rights] Fix rights behavior between sidebar and topbar
+ - [UI - Service Weather] Make all entities in the "More infos" modal grey when a watcher is on pbehavior
+ - [UI - Text widget] Don't force a stat to be selected, so that this widget can be used as a simple text widget too
+ - [UIv2 - Service Weather] Fixed links renderer function
+
 # Canopsis 3.13.2 - Due date : 2019-03-26
 
  - [Go] Adding a description field in event filter rules

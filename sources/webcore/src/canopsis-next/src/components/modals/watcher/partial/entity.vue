@@ -74,6 +74,10 @@ export default {
     template: {
       type: String,
     },
+    isWatcherOnPbehavior: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
@@ -118,12 +122,18 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
           action: this.preparePlayAction,
         },
+        cancel: {
+          type: weatherActionsTypes.cancel,
+          eventType: EVENT_ENTITY_TYPES.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          action: this.prepareCancelAction,
+        },
       },
     };
   },
   computed: {
     color() {
-      if (this.hasActivePbehavior) {
+      if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
         return WATCHER_PBEHAVIOR_COLOR;
       }
 
@@ -201,6 +211,10 @@ export default {
 
       if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);
+      }
+
+      if (this.entity.alarm_display_name) {
+        actions.push(filteredActionsMap.cancel);
       }
 
       if (this.isPaused) {

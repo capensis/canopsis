@@ -14,7 +14,7 @@
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
-      field-stats-selector(v-model="settings.widget.parameters.stats")
+      field-stats-selector(v-model="settings.widget.parameters.stats", required)
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
