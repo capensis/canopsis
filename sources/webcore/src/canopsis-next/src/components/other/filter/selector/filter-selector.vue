@@ -34,7 +34,11 @@
           v-list-tile-content
             v-list-tile-title
               span {{ item[itemText] }}
-              v-icon.ml-2(:color="tile.props.value ? parent.color : ''", small) {{ item.locked ? 'lock' : 'person' }}
+              v-icon.ml-2(
+              v-show="!hideSelectIcon",
+              :color="tile.props.value ? parent.color : ''",
+              small
+              ) {{ item.locked ? 'lock' : 'person' }}
     v-flex(v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
@@ -93,6 +97,10 @@ export default {
       default: FILTER_DEFAULT_VALUES.condition,
     },
     hideSelect: {
+      type: Boolean,
+      default: false,
+    },
+    hideSelectIcon: {
       type: Boolean,
       default: false,
     },

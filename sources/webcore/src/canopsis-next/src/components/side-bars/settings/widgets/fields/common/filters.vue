@@ -10,6 +10,7 @@
       :hideSelect="hideSelect",
       :hasAccessToAddFilter="hasAccessToAddFilter",
       :hasAccessToEditFilter="hasAccessToEditFilter",
+      hideSelectIcon,
       long,
       @input="$emit('input', $event)",
       @update:condition="$emit('update:condition', $event)",
