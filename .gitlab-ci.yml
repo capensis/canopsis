@@ -33,7 +33,8 @@ publish:
   tags: ["canopsis"]
 
   before_script:
-    - echo | set /p="$REGISTRY_PASSWORD" | docker login git.canopsis.net --username "$REGISTRY_USER" --password-stdin
+#    - echo | set /p="$REGISTRY_PASSWORD" | docker login git.canopsis.net --username "$REGISTRY_USER" --password-stdin
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD git.canopsis.net
 
   script:
     - make docker_push DISTRIBUTIONS=debian9
