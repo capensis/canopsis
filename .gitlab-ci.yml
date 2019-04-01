@@ -5,13 +5,12 @@ stages:
   - packaging
   - publish
 
-branches:
-  only:
-    - ci/new_ci
 
 prebuild:
   stage: prebuild
   tags: ["canopsis"]
+  only:
+    - ci/new_ci
   script:
     - uname -a
     - docker -v
@@ -30,7 +29,8 @@ prebuild:
 build_docker_debian9:
   stage: build
   tags: ["canopsis"]
-
+  only:
+    - ci/new_ci
   before_script:
 
 #  script: make docker_images DISTRIBUTIONS=debian9
