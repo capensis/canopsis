@@ -55,7 +55,7 @@ export default {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
-          method: this.showActionModal(MODALS.createAckEvent),
+          method: this.showAckModal,
         },
         fastAck: {
           type: alarmsListActionsTypes.fastAck,
@@ -121,7 +121,7 @@ export default {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
           title: this.$t('alarmList.actions.titles.variablesHelp'),
-          method: this.showVariablesHelperModal(),
+          method: this.showVariablesHelperModal,
         },
       },
     };

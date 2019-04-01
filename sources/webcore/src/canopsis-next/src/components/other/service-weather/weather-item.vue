@@ -38,7 +38,7 @@ import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
-import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 export default {
   mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
@@ -126,11 +126,7 @@ export default {
       return 4 + this.widget.parameters.heightFactor;
     },
     isBlinking() {
-      return (
-        this.watcher.alerts_not_ack
-        && !this.hasWatcherPbehavior
-        && !this.isPbehavior
-      );
+      return this.watcher.action_required;
     },
   },
   methods: {
@@ -193,7 +189,7 @@ export default {
     },
 
     showVariablesHelpModal() {
-      const entityFields = convertObjectFieldToTreeBranch(this.watcher, 'entity');
+      const entityFields = convertObjectToTreeview(this.watcher, 'entity');
       const variables = [entityFields];
 
       this.showModal({

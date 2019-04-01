@@ -53,7 +53,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => Promise.all(this.itemsIds.map(item => this.removeContextEntity({ id: item._id }))),
+          action: () => Promise.all(this.itemsIds.map(id => this.removeContextEntity({ id }))),
         },
       });
     },
@@ -64,6 +64,10 @@ export default {
         config: {
           itemsType: ENTITIES_TYPES.entity,
           itemsIds: this.itemsIds,
+          popups: {
+            success: { text: this.$t('success.default') },
+            error: { text: this.$t('errors.default') },
+          },
         },
       });
     },

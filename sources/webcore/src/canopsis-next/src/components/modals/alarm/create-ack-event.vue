@@ -15,7 +15,7 @@
           :label="$t('modals.createAckEvent.fields.ticket')",
           :error-messages="errors.collect('ticket')",
           v-model="form.ticket",
-          v-validate="rules",
+          v-validate="'required'",
           data-vv-name="ticket"
           )
         v-layout(row)
@@ -23,7 +23,7 @@
           :label="$t('modals.createAckEvent.fields.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
-          v-validate="rules",
+          v-validate="'required'",
           data-vv-name="output",
           )
         v-layout(row)
@@ -38,7 +38,7 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit", :disabled="errors.any()") {{ $t('common.actions.ack') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
       v-btn.warning(
       @click.prevent="submitWithDeclare",
       ) {{ $t('common.actions.acknowledgeAndReport') }}
@@ -66,18 +66,12 @@ export default {
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
-      showValidationErrors: false,
       ack_resources: false,
       form: {
         ticket: '',
         output: '',
       },
     };
-  },
-  computed: {
-    rules() {
-      return this.showValidationErrors ? 'required' : '';
-    },
   },
   methods: {
     async create(withDeclare) {
@@ -112,10 +106,17 @@ export default {
     },
 
     async submit() {
-      this.showValidationErrors = false;
       this.errors.clear();
 
-      await this.create();
+      if (this.config && this.config.isNoteRequired) {
+        const formIsValid = await this.$validator.validate('output');
+
+        if (formIsValid) {
+          await this.create();
+        }
+      } else {
+        await this.create();
+      }
     },
   },
 };

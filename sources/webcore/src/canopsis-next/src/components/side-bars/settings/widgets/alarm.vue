@@ -40,7 +40,15 @@
           :columns="settings.widget.parameters.widgetColumns",
           )
           v-divider
-          field-more-info(v-model="settings.widget.parameters.moreInfoTemplate")
+          field-text-editor(
+          v-model="settings.widget.parameters.moreInfoTemplate",
+          :title="$t('settings.moreInfosModal')"
+          )
+          v-divider
+          field-switcher(
+          v-model="settings.widget.parameters.isAckNoteRequired",
+          :title="$t('settings.isAckNoteRequired')",
+          )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -64,7 +72,8 @@ import FieldDefaultElementsPerPage from './fields/common/default-elements-per-pa
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldMoreInfo from './fields/alarm/more-info.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -84,7 +93,8 @@ export default {
     FieldOpenedResolvedFilter,
     FieldFilters,
     FieldInfoPopup,
-    FieldMoreInfo,
+    FieldTextEditor,
+    FieldSwitcher,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
