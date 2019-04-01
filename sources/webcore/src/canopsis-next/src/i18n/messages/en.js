@@ -234,6 +234,7 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
+    isAckNoteRequired: 'Note field required when ack ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',

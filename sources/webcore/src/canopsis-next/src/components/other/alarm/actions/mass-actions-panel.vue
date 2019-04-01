@@ -45,7 +45,7 @@ export default {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
-          method: this.showActionModal(MODALS.createAckEvent),
+          method: this.showAckModal,
         },
         {
           type: alarmsListActionsTypes.fastAck,

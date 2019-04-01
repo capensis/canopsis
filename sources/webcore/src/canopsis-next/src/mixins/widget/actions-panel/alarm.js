@@ -20,6 +20,16 @@ export default {
       });
     },
 
+    showAckModal() {
+      this.showModal({
+        name: MODALS.createAckEvent,
+        config: {
+          ...this.modalConfig,
+          isNoteRequired: this.widget.parameters.isAckNoteRequired,
+        },
+      });
+    },
+
     showMoreInfosModal() {
       return () => this.showModal({
         name: MODALS.moreInfos,
