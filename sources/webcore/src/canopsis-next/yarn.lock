@@ -11051,7 +11051,7 @@ uuid@^3.0.1, uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
-v-runtime-template@^1.5.2:
+v-runtime-template@1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/v-runtime-template/-/v-runtime-template-1.5.2.tgz#1260a329980ae8a37ffcc6c73bdab5858393b5f8"
   integrity sha512-cYXqoMx02V8ffNr6SeL3v30xN6E9gT+EK63kIZS6ikpoSxBRtsZTXSO3TbWsVGb3cKenDNw9PfYHmY3WQxxhLA==
