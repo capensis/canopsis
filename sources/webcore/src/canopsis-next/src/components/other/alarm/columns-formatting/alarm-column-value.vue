@@ -24,6 +24,7 @@ import popupMixin from '@/mixins/popup';
 
 import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
 import Links from '@/components/other/alarm/columns-formatting/alarm-column-value-links.vue';
+import Link from '@/components/other/alarm/columns-formatting/alarm-column-value-link.vue';
 import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
@@ -40,6 +41,7 @@ export default {
   components: {
     State,
     Links,
+    Link,
     ExtraDetails,
     Ellipsis,
   },
@@ -115,6 +117,15 @@ export default {
 
       if (PROPERTIES_COMPONENTS_MAP[this.column.value]) {
         return PROPERTIES_COMPONENTS_MAP[this.column.value];
+      }
+
+      if (this.column.value.startsWith('links.')) {
+        return {
+          bind: {
+            is: 'link',
+            link: this.$options.filters.get(this.alarm, this.column.value),
+          },
+        };
       }
 
       return {
