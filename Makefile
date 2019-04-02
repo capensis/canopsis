@@ -36,8 +36,8 @@ docker_push:
 		else \
 			export image_tag=$$distrib-${TAG}; \
 		fi; \
-		docker tag canopsis/canopsis:$$image_tag ${REGISTRY_NAME}/canopsis/canopsis::$$image_tag ; \
-		#docker push ${REGISTRY_NAME}/canopsis/canopsis::$$image_tag ; \
+		docker tag canopsis/canopsis:$$image_tag ${REGISTRY_NAME}/canopsis/canopsis:$$image_tag ; \
+		docker push ${REGISTRY_NAME}/canopsis/canopsis:$$image_tag ; \
 	done
 
 packages:

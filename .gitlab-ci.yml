@@ -28,17 +28,18 @@ build_docker_debian9:
 #  after_script: 
 #    - make clean_images DISTRIBUTIONS=debian9
 
-#publish:
-#  stage: publish
-#  tags: ["canopsis"]
-#
-#  before_script:
-#    - echo "publish ..."
+publish:
+  stage: publish
+  tags: ["canopsis"]
+
+  before_script:
+    - echo "publish ..."
 #    - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" git.canopsis.net --password-stdin
-#    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD git.canopsis.net
-#
-#  script:
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD git.canopsis.net
+
+  script:
 #    - make docker_push DISTRIBUTIONS=debian9
+    - echo "push..."
 #
 #  after_script:
 #    - make clean_images DISTRIBUTIONS=debian9
