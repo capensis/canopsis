@@ -19,9 +19,6 @@ Dans cet exemple, il s'agit de */var/www/html/canopsis-uiv3*
 yarn install && yarn build --mode standalone --dest /var/www/html/canopsis-uiv3
 ````
 
-!!! Note
-    Vous pouvez cloner la branche develop également qui présentera des fonctionnalités plus récentes
-
 ## Configuration du serveur web
 
 Il est nécessaire de service l'application fraichement déployée et d'y appliquer une configuration de *reverse proxy* vers les APIs Canopsis.  
