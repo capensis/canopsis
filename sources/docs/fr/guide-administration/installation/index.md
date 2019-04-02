@@ -12,3 +12,7 @@
 ## Première connexion à Canopsis
 
 *  [Accès et identifiants Canopsis par défaut](premiere-connexion.md)
+
+## Installation de l'UIv3 Canopsis
+
+*  [Mode Standalone](installation-uiv3-standalone.md)
