@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 import DateTimePicker from './date-time-picker.vue';
 
 /**
@@ -43,7 +45,11 @@ import DateTimePicker from './date-time-picker.vue';
 export default {
   $_veeValidate: {
     value() {
-      return this.value;
+      if (!this.value) {
+        return this.value;
+      }
+
+      return moment(this.value).startOf('minute').toDate();
     },
 
     name() {

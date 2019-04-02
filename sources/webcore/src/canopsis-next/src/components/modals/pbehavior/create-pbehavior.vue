@@ -42,6 +42,7 @@ export default {
         type_: pbehavior.type_ || '',
         reason: pbehavior.reason || '',
         rrule: pbehavior.rrule || '',
+        exdate: pbehavior.exdate ? pbehavior.exdate.map(unix => new Date(unix * 1000)) : [],
       };
     },
 
@@ -62,6 +63,7 @@ export default {
         comments: [],
         tstart: moment(form.tstart).unix(),
         tstop: moment(form.tstop).unix(),
+        exdate: form.exdate.map(date => moment(date).unix()),
       };
     },
 
