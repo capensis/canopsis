@@ -1,91 +1,102 @@
 <template lang="pug">
-  pbehavior-form(
-  :server-error="serverError",
-  :filter="filter",
-  @submit="submit",
-  @cancel="hideModal",
-  )
+  v-card
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t('modals.createPbehavior.title') }}
+    v-card-text
+      pbehavior-form(v-model="form")
+      pbehavior-comments-form(v-model="comments")
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import moment from 'moment';
+import { cloneDeep, omit } from 'lodash';
 
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import uid from '@/helpers/uid';
 
-import PbehaviorForm from '@/components/forms/pbehavior.vue';
+import authMixin from '@/mixins/auth';
+import modalInnerMixin from '@/mixins/modal/inner';
 
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
+import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
+import PbehaviorCommentsForm from '@/components/other/pbehavior/form/pbehavior-comments-form.vue';
 
-/**
- * Modal to create a pbehavior
- */
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PbehaviorForm },
-  mixins: [popupMixin, modalInnerItemsMixin],
+  filters: {
+    pbehaviorToForm(pbehavior = {}) {
+      return {
+        author: pbehavior.author || '',
+        name: pbehavior.name || '',
+        tstart: pbehavior.tstart ? new Date(pbehavior.tstart * 1000) : new Date(),
+        tstop: pbehavior.tstop ? new Date(pbehavior.tstop * 1000) : new Date(),
+        filter: cloneDeep(pbehavior.filter || {}),
+        type_: pbehavior.type_ || '',
+        reason: pbehavior.reason || '',
+        rrule: pbehavior.rrule || '',
+      };
+    },
+
+    pbehaviorToComments(pbehavior = {}) {
+      const comments = pbehavior.comments || [];
+
+      return comments.map(comment => ({
+        ...comment,
+
+        key: uid(),
+      }));
+    },
+
+    formToPbehavior(form) {
+      return {
+        ...form,
+
+        comments: [],
+        tstart: moment(form.tstart).unix(),
+        tstop: moment(form.tstop).unix(),
+      };
+    },
+
+    commentsToPbehaviorComments(comments) {
+      return comments.map(comment => omit(comment, ['key']));
+    },
+  },
+  components: { PbehaviorForm, PbehaviorCommentsForm },
+  mixins: [authMixin, modalInnerMixin],
   data() {
+    const { pbehavior = {} } = this.modal.config;
+
     return {
-      serverError: null,
+      form: this.$options.filters.pbehaviorToForm(pbehavior),
+      comments: this.$options.filters.pbehaviorToComments(pbehavior),
     };
   },
-  computed: {
-    forEntities() {
-      return this.config.itemsIds && this.config.itemsType;
-    },
-
-    filter() {
-      if (this.forEntities) {
-        if (this.forEntities === ENTITIES_TYPES.alarm) {
-          return {
-            _id: { $in: this.items.map(v => v.d) },
-          };
-        }
-        return {
-          _id: { $in: this.items.map(v => v._id) },
-        };
-      }
-
-      return null;
-    },
-  },
   methods: {
-    ...pbehaviorMapActions({ createPbehavior: 'create' }),
+    async submit() {
+      const isValid = await this.$validator.validateAll();
 
-    async submit(data) {
-      const popups = this.config.popups || {};
+      if (isValid) {
+        const pbehavior = this.$options.filters.formToPbehavior(this.form);
 
-      try {
-        this.serverError = null;
+        pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.comments);
 
-        const payload = { data };
-
-        if (this.forEntities) {
-          payload.parents = this.items;
-          payload.parentsType = this.config.itemsType;
+        if (!pbehavior.author) {
+          pbehavior.author = this.currentUser._id;
         }
 
-        await this.createPbehavior(payload);
-
-
-        if (popups.success) {
-          await this.addSuccessPopup(popups.success);
+        if (this.config.action) {
+          await this.config.action(pbehavior);
         }
 
         this.hideModal();
-      } catch (err) {
-        if (err.description) {
-          this.serverError = err.description;
-        }
-
-        if (popups.error) {
-          await this.addErrorPopup(popups.error);
-        }
       }
     },
   },

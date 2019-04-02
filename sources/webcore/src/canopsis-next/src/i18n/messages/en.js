@@ -82,10 +82,13 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    filters: 'Filters',
     webhooks: 'Webhooks',
+    emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
+    filter: 'Filter',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -97,6 +100,7 @@ export default {
       [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Play',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
     },
     times: {
       second: 'second | seconds',
@@ -232,6 +236,7 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
+    isAckNoteRequired: 'Note field required when ack ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -471,8 +476,11 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
-        comment: 'Comment',
+        message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+      },
+      buttons: {
+        addComment: 'Add comment',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
@@ -902,7 +910,8 @@ export default {
       },
     },
     errors: {
-      invalidJSON: 'We can\'t parse this filter to Visual Editor',
+      cantParseToVisualEditor: 'We can\'t parse this filter to Visual Editor',
+      invalidJSON: 'Invalid JSON',
       required: 'You need to add at least one valid rule',
     },
   },
@@ -1013,6 +1022,13 @@ export default {
           text: 'Key',
           value: 'Value',
         },
+      },
+    },
+  },
+  validation: {
+    custom: {
+      tstop: {
+        after: 'The {0} should be after than {1}',
       },
     },
   },

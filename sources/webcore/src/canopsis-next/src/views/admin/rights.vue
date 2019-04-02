@@ -304,6 +304,7 @@ export default {
       ]);
 
       const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
+      const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
       const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
 
       this.groupedRights = rights.reduce((acc, right) => {
@@ -316,7 +317,7 @@ export default {
 
             desc: right.desc.replace(view._id, view.name),
           });
-        } else if (Object.values(USERS_RIGHTS.technical).indexOf(rightId) !== -1) {
+        } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
           acc.technical.push(right);
         } else if (Object.values(allBusinessRightsIds).indexOf(rightId) !== -1) {
           acc.business.push(right);

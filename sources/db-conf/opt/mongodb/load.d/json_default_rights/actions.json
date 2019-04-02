@@ -514,6 +514,13 @@
         "desc": "Service weather: Access to 'Pause' action"
     },
     {
+        "_id": "serviceweather_entityCancel",
+        "loader_id": "serviceweather_entityCancel",
+        "crecord_name": "serviceweather_entityCancel",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Cancel' action"
+    },
+    {
         "_id": "crudcontext_createEntity",
         "loader_id": "crudcontext_createEntity",
         "crecord_type": "action",

@@ -61,6 +61,7 @@ export const MODALS = {
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
+  filtersList: 'filters-list',
   createWebhook: 'create-webhook',
 };
 
@@ -328,6 +329,8 @@ export const DATETIME_FORMATS = {
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   datePicker: 'DD/MM/YYYY',
   timePicker: 'HH:mm',
+
+  dateTimePickerForValidation: 'dd/MM/yyyy HH:mm',
 };
 
 export const STATS_OPTIONS = {
@@ -557,6 +560,11 @@ export const USERS_RIGHTS = {
     role: 'models_role',
     action: 'models_action',
     user: 'models_user',
+    exploitation: {
+      eventFilter: 'models_exploitation_eventFilter',
+      pbehavior: 'models_exploitation_pbehavior',
+      webhook: 'models_exploitation_webhook',
+    },
   },
   business: {
     alarmsList: {
@@ -599,6 +607,7 @@ export const USERS_RIGHTS = {
         entityInvalidate: 'serviceweather_entityInvalidate',
         entityPause: 'serviceweather_entityPause',
         entityPlay: 'serviceweather_entityPlay',
+        entityCancel: 'serviceweather_entityCancel',
 
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
@@ -647,6 +656,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityInvalidate: 'entityInvalidate',
     entityPause: 'entityPause',
     entityPlay: 'entityPlay',
+    entityCancel: 'entityCancel',
 
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
@@ -692,6 +702,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.entityInvalidate]: USERS_RIGHTS.business.weather.actions.entityInvalidate,
     [WIDGETS_ACTIONS_TYPES.weather.entityPause]: USERS_RIGHTS.business.weather.actions.entityPause,
     [WIDGETS_ACTIONS_TYPES.weather.entityPlay]: USERS_RIGHTS.business.weather.actions.entityPlay,
+    [WIDGETS_ACTIONS_TYPES.weather.entityCancel]: USERS_RIGHTS.business.weather.actions.entityCancel,
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
@@ -789,6 +800,8 @@ export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
 };
 
 export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
+
+export const WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT = 'MDS_AUTOREMOVE_BYPAUSE';
 
 export const WEATHER_ACK_EVENT_OUTPUT = {
   ack: 'MDS_ACKNOWLEDGE',

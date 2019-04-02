@@ -3,6 +3,7 @@ import {
   EVENT_ENTITY_TYPES,
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_RIGHTS_ACTIONS_MAP,
+  WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -68,6 +69,11 @@ export default {
               comment: pause.comment,
               reason: pause.reason,
             });
+            this.addCancelActionToQueue({
+              entity: this.entity,
+              output: WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT,
+              fromSystem: true,
+            });
             this.actionsClicked.push(EVENT_ENTITY_TYPES.pause);
           },
         },
@@ -77,6 +83,19 @@ export default {
     preparePlayAction() {
       this.addPlayActionToQueue({ entity: this.entity });
       this.actionsClicked.push(EVENT_ENTITY_TYPES.play);
+    },
+
+    prepareCancelAction() {
+      this.showModal({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.createCancelEvent.fields.output'),
+          action: (output) => {
+            this.addCancelActionToQueue({ entity: this.entity, output });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.cancel);
+          },
+        },
+      });
     },
   },
 };

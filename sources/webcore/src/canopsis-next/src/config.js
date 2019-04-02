@@ -38,6 +38,11 @@ export const API_ROUTES = {
   pbehavior: {
     pbehavior: '/api/v2/pbehavior',
     list: '/pbehavior/read',
+    comment: {
+      create: '/pbehavior/comment/create',
+      update: '/pbehavior/comment/update',
+      delete: '/pbehavior/comment/delete',
+    },
   },
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, isString } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
@@ -12,7 +12,15 @@ export function prepareMainFilterToQueryFilter(
   let filter;
 
   if (Array.isArray(filterObject) && filterObject.length) {
-    filter = { [condition]: filterObject.map(item => JSON.parse(item.filter)) };
+    filter = {
+      [condition]: filterObject.map((item) => {
+        if (isString(item.filter)) {
+          return JSON.parse(item.filter);
+        }
+
+        return item.filter || {};
+      }),
+    };
   } else if (!Array.isArray(filterObject)) {
     filter = get(filterObject, 'filter');
   }

@@ -130,5 +130,21 @@ export default {
     addPlayActionToQueue({ entity }) {
       this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.play, data: entity });
     },
+
+    /**
+     * Call emit addEvent for cancel entity event
+     *
+     * @param {Object} entity
+     * @param {string} output
+     */
+    addCancelActionToQueue({ entity, output, fromSystem = false }) {
+      const data = {
+        ...this.prepareData(EVENT_ENTITY_TYPES.cancel, entity),
+        author: fromSystem ? 'System' : this.currentUser.crecord_name,
+        output,
+      };
+
+      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.cancel, data });
+    },
   },
 };

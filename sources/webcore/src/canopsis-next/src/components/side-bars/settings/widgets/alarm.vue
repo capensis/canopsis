@@ -28,9 +28,9 @@
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
-            v-model="settings.widget_preferences.mainFilter",
-            :filters.sync="settings.widget_preferences.viewFilters",
-            :condition.sync="settings.widget_preferences.mainFilterCondition",
+            v-model="settings.widget.parameters.mainFilter",
+            :filters.sync="settings.widget.parameters.viewFilters",
+            :condition.sync="settings.widget.parameters.mainFilterCondition",
             :hasAccessToAddFilter="hasAccessToAddFilter",
             :hasAccessToEditFilter="hasAccessToEditFilter"
             )
@@ -44,6 +44,11 @@
           v-model="settings.widget.parameters.moreInfoTemplate",
           :title="$t('settings.moreInfosModal')"
           )
+          v-divider
+          field-switcher(
+          v-model="settings.widget.parameters.isAckNoteRequired",
+          :title="$t('settings.isAckNoteRequired')",
+          )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -52,7 +57,7 @@
 import { get, cloneDeep } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { SIDE_BARS, USERS_RIGHTS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
@@ -68,6 +73,7 @@ import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue
 import FieldFilters from './fields/common/filters.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -88,6 +94,7 @@ export default {
     FieldFilters,
     FieldInfoPopup,
     FieldTextEditor,
+    FieldSwitcher,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
@@ -99,8 +106,6 @@ export default {
         widget: this.prepareAlarmWidgetSettings(cloneDeep(widget), true),
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,
-          viewFilters: [],
-          mainFilter: {},
         },
       },
     };
@@ -123,9 +128,6 @@ export default {
 
     this.settings.widget_preferences = {
       itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
-      viewFilters: get(widgetPreference, 'viewFilters', []),
-      mainFilter: get(widgetPreference, 'mainFilter', {}),
-      mainFilterCondition: get(widgetPreference, 'mainFilterCondition', FILTER_DEFAULT_VALUES.condition),
     };
   },
   methods: {

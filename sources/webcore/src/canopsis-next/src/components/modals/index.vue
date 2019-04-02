@@ -56,6 +56,7 @@ import CreateEventFilterRulePattern from './event-filter/pattern/create-event-fi
 import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
+import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
@@ -106,6 +107,7 @@ export default {
     AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
+    FiltersList,
     CreateWebhook,
   },
   data() {

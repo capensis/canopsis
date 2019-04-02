@@ -17,7 +17,7 @@
         v-flex(xs12)
           date-time-picker-field(
           v-model="tstart",
-          v-validate="'required'"
+          v-validate="'required'",
           :label="$t('modals.liveReporting.tstart')",
           name="tstart",
           clearable
@@ -74,6 +74,7 @@ export default {
     isCustomRangeEnabled() {
       return this.selectedInterval === LIVE_REPORTING_INTERVALS.custom;
     },
+
     tstopRules() {
       const rules = { required: true };
 
