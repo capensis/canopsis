@@ -29,8 +29,8 @@ build_docker_debian8:
   script:
     - make docker_images DISTRIBUTIONS=$DISTRIBUTION
 
-  after_script:
-    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
+#  after_script:
+#    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
 build_docker_debian9:
   stage: build
@@ -44,8 +44,8 @@ build_docker_debian9:
   script:
     - make docker_images DISTRIBUTIONS=$DISTRIBUTION
 
-  after_script: 
-    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
+#  after_script: 
+#    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
 build_docker_centos7:
   stage: build
@@ -59,8 +59,8 @@ build_docker_centos7:
   script:
     - make docker_images DISTRIBUTIONS=$DISTRIBUTION
 
-  after_script:
-    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
+#  after_script:
+#    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
 test-unit:
   stage: test
