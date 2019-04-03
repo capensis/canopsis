@@ -94,7 +94,7 @@ test-functionnal:
 
 doc:
   stage: doc
-
+  tags: ["canopsis"]
   script:
     - echo "build and publish doc."
 
