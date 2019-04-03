@@ -4,6 +4,7 @@ stages:
   - test
   - packaging
   - publish
+  - clean
 
 prebuild:
   stage: prebuild
@@ -14,6 +15,19 @@ prebuild:
     - uname -a
     - docker -v
     - git --no-pager show
+
+build_docker_debian8:
+  stage: build
+  tags: ["canopsis"]
+  only:
+    - feat-simpler_build
+  before_script:
+
+  script:
+    - make docker_images DISTRIBUTIONS=debian9
+
+  after_script:
+    - make clean_images DISTRIBUTIONS=debian9
 
 build_docker_debian9:
   stage: build
@@ -27,6 +41,41 @@ build_docker_debian9:
 
   after_script: 
     - make clean_images DISTRIBUTIONS=debian9
+
+build_docker_centos7:
+  stage: build
+  tags: ["canopsis"]
+  only:
+    - feat-simpler_build
+  before_script:
+
+  script:
+    - make docker_images DISTRIBUTIONS=centos7
+
+  after_script:
+    - make clean_images DISTRIBUTIONS=centos7
+
+test-unit:
+  stage: test
+  tags: ["canopsis"]
+  script: echo "TODO unit tests"
+
+  after_script:
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
+    - docker volume prune -f
+
+test-functionnal:
+  stage: test
+  tags: ["canopsis"]
+  script: echo "TODO functionnal tests"
+
+  after_script:
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
+    - docker volume prune -f
 
 #publish:
 #  stage: publish
