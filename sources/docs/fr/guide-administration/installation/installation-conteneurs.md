@@ -13,7 +13,7 @@ Vérifier votre version du noyau à l'aide de la commande suivante :
 uname -r
 ```
 
-Si vous obtenez une version inférieure à 4.4, veuillez utiliser un noyau plus récent : soit avec une distribution plus à jour, ou bien à l'aide d'[ELRepo](http://elrepo.org/tiki/kernel-lt) pour CentOS, par exemple.
+Si vous obtenez une version inférieure à 4.4, veuillez utiliser un noyau plus récent : soit avec une distribution plus à jour, ou bien à l'aide d'[ELRepo](https://elrepo.org/tiki/kernel-lt) pour CentOS, par exemple.
 
 ### Version de Docker
 
