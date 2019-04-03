@@ -7,7 +7,7 @@ stages:
   - doc
   - clean
 
-varaibles:
+variables:
   DISTRIBUTION: debian9  
 
 prebuild:
