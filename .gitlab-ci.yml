@@ -4,6 +4,7 @@ stages:
   - test
   - packaging
   - publish
+  - doc
   - clean
 
 prebuild:
@@ -90,3 +91,18 @@ test-functionnal:
 #
 #  after_script:
 #    - make clean_images DISTRIBUTIONS=debian9
+
+doc:
+  stage: doc
+
+  script:
+    - echo "build and publish doc."
+
+clean:
+  stage: clean
+  only:
+    - feat-simpler_build
+
+  script:
+    - make clean_images
+
