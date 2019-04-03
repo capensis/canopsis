@@ -78,15 +78,70 @@ test-functionnal:
     - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
     - docker volume prune -f
 
-#publish:
-#  stage: publish
-#  tags: ["canopsis"]
-#
+build_package-debian8:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variables:
+    DISTRIBUTION: debian8
+
+#  before_script:
+#    - make init_canopsis-next
+
+  script:
+    - echo "build packages for debian8"
+#    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
+#    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+#  after_script:
+#    - make delete_canopsis-next
+
+build_package-debian9:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variables:
+    DISTRIBUTION: debian9
+
+#  before_script:
+#    - make init_canopsis-next
+
+  script:
+    - echo "build packages for debian 9"
+#    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
+#    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+#  after_script:
+#    - make delete_canopsis-next
+
+build_package-centos7:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variables:
+    DISTRIBUTION: centos7
+
+#  before_script:
+#    - make init_canopsis-next
+
+  script:
+    - echo "build package for centos7"
+#    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
+#    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+#  after_script:
+#    - make delete_canopsis-next
+
+publish:
+  stage: publish
+  tags: ["canopsis"]
+
 #  before_script:
 #    - echo "publish ..."
 #    - docker login -u $CI_REGISTRY_USER -p "$CI_REGISTRY_PASSWORD" git.canopsis.net
 #
-#  script:
+  script:
+    - echo "publish docker images and packages"
 #    - make docker_push DISTRIBUTIONS=debian9
 #
 #  after_script:
