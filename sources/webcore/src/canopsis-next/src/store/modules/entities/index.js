@@ -11,6 +11,7 @@ import rightModule from './right';
 import eventFilterRuleModule from './event-filter-rule';
 import versionModule from './version';
 import webhookModule from './webhook';
+import infoModule from './info';
 
 export default {
   alarm: alarmModule,
@@ -26,4 +27,5 @@ export default {
   eventFilterRule: eventFilterRuleModule,
   version: versionModule,
   webhook: webhookModule,
+  info: infoModule,
 };
