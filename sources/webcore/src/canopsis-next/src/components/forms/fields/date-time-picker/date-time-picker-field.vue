@@ -50,7 +50,9 @@ export default {
         return this.value;
       }
 
-      return moment(this.value).startOf('minute').toDate();
+      const startOfValue = this.useSeconds ? 'second' : 'minute';
+
+      return moment(this.value).startOf(startOfValue).toDate();
     },
 
     name() {
