@@ -91,7 +91,7 @@ def exports(ws):
 
         return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
 
-    @ws.application.get('/api/internal/login/login_info')
+    @ws.application.get('/api/internal/login/login_info', skip=ws.skip_login)
     def get_internal_login_info():
         cservices = {}
         cservices.update(get_login_config())
