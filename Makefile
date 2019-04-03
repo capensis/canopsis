@@ -58,6 +58,24 @@ packages:
                            --user=0 canopsis/canopsis:$$image_tag ; \
         done
 
+packages2:
+	echo "Building packages" ; \
+	for distrib in $(subst ${.comma}, ,${DISTRIBUTIONS}) ; do \
+		echo "*** Building " $$distrib " package"; \
+		if [ "$$distrib" = ${DOCKER_DISTRIB} ]; then \
+			export image_tag=${TAG}; \
+		else \
+			export image_tag=$$distrib-${TAG}; \
+		fi; \
+		docker run -e FIX_OWNERSHIP=`id -u`:`id -g` \
+                           -e CANOPSIS_PACKAGE_TAG=${TAG} \
+                           -e CANOPSIS_PACKAGE_REL=${PACKAGE_REV} \
+                           -v `pwd`/ci/packaging/:/packaging \
+                           -v `pwd`/build/:/packages/ \
+                           --entrypoint "/packaging/create_package.sh" \
+                           --user=0 canopsis/canopsis:$$image_tag ; \
+	done
+
 clean_images: DISTRIBUTIONS=debian9
 clean_images:
 	echo "Clean ...."; \
@@ -67,7 +85,7 @@ clean_images:
 		else \
 			export image_tag=$$distrib-${TAG}; \
 		fi; \
-		docker image rm canopsis/canopsis:$$image_tag ; \
+#		docker image rm canopsis/canopsis:$$image_tag ; \
 	done	
 	echo "Clean done."
 

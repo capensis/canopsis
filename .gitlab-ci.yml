@@ -109,6 +109,11 @@ build_package-debian9:
   variables:
     DISTRIBUTION: debian9
 
+  artifacts:
+    paths:
+      - build/*
+#    expire_in: 1 week
+
 #  before_script:
 #    - make init_canopsis-next
 
@@ -116,6 +121,7 @@ build_package-debian9:
     - echo "build packages for debian 9"
 #    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
 #    - make packages DISTRIBUTIONS=$DISTRIBUTION
+    - make packages2 DISTRIBUTIONS=$DISTRIBUTION
 
 #  after_script:
 #    - make delete_canopsis-next
@@ -127,13 +133,18 @@ build_package-centos7:
   variables:
     DISTRIBUTION: centos7
 
+  artifacts:
+    paths:
+      - build/* 
+#    expire_in: 1 week
+
 #  before_script:
 #    - make init_canopsis-next
 
   script:
     - echo "build package for centos7"
 #    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
-#    - make packages DISTRIBUTIONS=$DISTRIBUTION
+#    - make packages2 DISTRIBUTIONS=$DISTRIBUTION
 
 #  after_script:
 #    - make delete_canopsis-next
