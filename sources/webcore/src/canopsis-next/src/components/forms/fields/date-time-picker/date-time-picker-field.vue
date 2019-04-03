@@ -14,7 +14,7 @@
       readonly,
       :label="label",
       :error-messages="errorMessages",
-      :value="value | date('dateTimePicker', true)",
+      :value="value | date(useSeconds ? 'dateTimePickerWithSeconds' : 'dateTimePicker', true)",
       :append-icon="clearable ? 'close' : ''",
       @click:append="clear"
       )
@@ -22,6 +22,7 @@
     :value="value",
     :roundHours="roundHours",
     :opened="opened",
+    :useSeconds="useSeconds",
     @input="$emit('input', $event)"
     )
 </template>
@@ -76,6 +77,10 @@ export default {
       default: null,
     },
     roundHours: {
+      type: Boolean,
+      default: false,
+    },
+    useSeconds: {
       type: Boolean,
       default: false,
     },

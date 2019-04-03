@@ -327,10 +327,10 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
+  dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
   datePicker: 'DD/MM/YYYY',
   timePicker: 'HH:mm',
-
-  dateTimePickerForValidation: 'dd/MM/yyyy HH:mm',
+  timePickerWithSeconds: 'HH:mm:ss',
 };
 
 export const STATS_OPTIONS = {

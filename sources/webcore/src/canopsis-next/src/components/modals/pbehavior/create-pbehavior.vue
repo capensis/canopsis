@@ -81,7 +81,7 @@ export default {
     },
 
     exdateToPbehaviorExdate(exdate) {
-      return exdate.map(({ value }) => moment(value).unix());
+      return exdate.filter(({ value }) => value).map(({ value }) => moment(value).unix());
     },
   },
   components: {

@@ -1,21 +1,27 @@
 <template lang="pug">
   div
     .v-picker__title.primary.text-xs-center
-      span.v-date-time-picker-title
+      span.v-date-time-picker-title(:class="{ 'use-seconds': useSeconds }")
         span.v-picker__title__btn(
         @click="showDateTab",
         :class="{ 'v-picker__title__btn--active': isActiveDateTab }"
         ) {{ value | date('datePicker', true, '--/--/----') }}
         span &nbsp;
         span.v-picker__title__btn(
-        @click="showHourTabInTimeTab",
-        :class="{ 'v-picker__title__btn--active': isActiveHourTab }"
+        :class="{ 'v-picker__title__btn--active': isActiveHoursTab }",
+        @click="showHoursTabInTimeTab"
         ) {{ value | date('HH', true, '--') }}
         span :
         span.v-picker__title__btn(
-        @click="showMinuteTabInTimeTab",
-        :class="{ 'v-picker__title__btn--active': isActiveMinuteTab }"
+        :class="{ 'v-picker__title__btn--active': isActiveMinutesTab }",
+        @click="showMinutesTabInTimeTab"
         ) {{ value | date('mm', true, '--') }}
+        template(v-if="useSeconds")
+          span :
+          span.v-picker__title__btn(
+          :class="{ 'v-picker__title__btn--active': isActiveSecondsTab }",
+          @click="showSecondsTabInTimeTab"
+          ) {{ value | date('ss', true, '--') }}
     div.date-time-picker__body
       v-fade-transition
         v-date-picker(
@@ -25,14 +31,15 @@
         color="primary",
         no-title,
         @input="updateDate",
-        @change="showHourTabInTimeTab",
+        @change="showHoursTabInTimeTab",
         )
       v-fade-transition
         v-time-picker(
         v-show="isActiveTimeTab",
-        ref="timePicker"
-        :value="value | date('timePicker', true, null)",
-        :allowed-minutes="allowedMinutes"
+        ref="timePicker",
+        :value="value | date('timePickerWithSeconds', true, null)",
+        :allowed-minutes="allowedMinutes",
+        :useSeconds="useSeconds",
         color="primary",
         format="24hr",
         no-title,
@@ -73,6 +80,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    useSeconds: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -88,12 +99,16 @@ export default {
       return this.activeTab === TABS.time;
     },
 
-    isActiveHourTab() {
+    isActiveHoursTab() {
       return this.isActiveTimeTab && this.$refs.timePicker.selectingHour;
     },
 
-    isActiveMinuteTab() {
-      return this.isActiveTimeTab && !this.$refs.timePicker.selectingHour;
+    isActiveMinutesTab() {
+      return this.isActiveTimeTab && this.$refs.timePicker.selectingMinute;
+    },
+
+    isActiveSecondsTab() {
+      return this.isActiveTimeTab && this.$refs.timePicker.selectingSecond;
     },
 
     allowedMinutes() {
@@ -114,11 +129,11 @@ export default {
     },
   },
   methods: {
-    updateTime(time = '00:00') {
+    updateTime(time = '00:00:00') {
       const newValue = new Date(this.value ? this.value.getTime() : null);
-      const [hours, minutes] = time.split(':');
+      const [hours = 0, minutes = 0, seconds = 0] = time.split(':');
 
-      newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0, 0, 0);
+      newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0, parseInt(seconds, 10) || 0, 0);
 
       this.$emit('input', newValue);
     },
@@ -127,12 +142,12 @@ export default {
       const newValue = new Date(this.value ? this.value.getTime() : null);
       const [year, month, day] = date.split('-');
 
-      newValue.setFullYear(parseInt(year, 10));
-      newValue.setMonth(parseInt(month, 10) - 1);
-      newValue.setDate(parseInt(day, 10));
+      newValue.setFullYear(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
 
       if (!this.value) {
         newValue.setHours(0, 0, 0, 0);
+      } else if (this.useSeconds) {
+        newValue.setMilliseconds(0);
       } else {
         newValue.setSeconds(0, 0);
       }
@@ -148,7 +163,7 @@ export default {
       this.activeTab = TABS.time;
     },
 
-    showHourTabInTimeTab() {
+    showHoursTabInTimeTab() {
       /**
        * Change to vuetify hour tab
        */
@@ -156,11 +171,19 @@ export default {
       this.showTimeTab();
     },
 
-    showMinuteTabInTimeTab() {
+    showMinutesTabInTimeTab() {
       /**
        * Change to vuetify minute tab
        */
       this.$refs.timePicker.selecting = 2;
+      this.showTimeTab();
+    },
+
+    showSecondsTabInTimeTab() {
+      /**
+       * Change to vuetify minute tab
+       */
+      this.$refs.timePicker.selecting = 3;
       this.showTimeTab();
     },
   },
@@ -185,6 +208,10 @@ export default {
       line-height: 50px;
       font-size: 30px;
       font-weight: 500;
+
+      &.use-seconds {
+        font-size: 27px;
+      }
     }
 
     .v-tabs__container--centered .v-tabs__div,
