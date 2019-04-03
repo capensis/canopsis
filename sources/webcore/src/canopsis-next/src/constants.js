@@ -582,6 +582,7 @@ export const USERS_RIGHTS = {
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
+        userFilter: 'listalarm_userFilter',
       },
     },
     context: {
@@ -597,6 +598,7 @@ export const USERS_RIGHTS = {
         listFilters: 'crudcontext_listFilters',
         editFilter: 'crudcontext_editFilter',
         addFilter: 'crudcontext_addFilter',
+        userFilter: 'crudcontext_userFilter',
       },
     },
     weather: {

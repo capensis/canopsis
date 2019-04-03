@@ -19,6 +19,8 @@
         :lockedFilters="widgetViewFilters"
         :value="mainFilter",
         :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
         @input="updateSelectedFilter",
         @update:condition="updateSelectedCondition",
         @update:filters="updateFilters"
@@ -166,6 +168,10 @@ export default {
 
     hasAccessToEditFilter() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.userFilter);
     },
   },
   methods: {
