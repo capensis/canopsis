@@ -60,7 +60,6 @@ const TABS = {
  * @event value#input
  */
 export default {
-  inject: ['$validator'],
   props: {
     value: {
       type: Date,

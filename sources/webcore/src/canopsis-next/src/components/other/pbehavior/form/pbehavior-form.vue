@@ -27,10 +27,7 @@
       )
     v-layout(row)
       v-btn.primary(type="button", @click="showCreateFilterModal") {{ $t('common.filter') }}
-    v-layout(row)
-      r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
-    v-layout(row)
-      pbehavior-exdate-form(v-model="form.exdate")
+    r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
     v-layout(row)
       v-combobox(
       v-validate="'required'",
@@ -63,14 +60,12 @@ import modalMixin from '@/mixins/modal';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
-import PbehaviorExdateForm from './pbehavior-exdate-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     DateTimePickerField,
     RRuleForm,
-    PbehaviorExdateForm,
   },
   mixins: [authMixin, formMixin, modalMixin],
   model: {
