@@ -21,6 +21,7 @@ tools/catag/vendor
 .Spotlight-V100
 .Trashes
 .vscode
+*.swp
 
 # python wheels
 *.whl

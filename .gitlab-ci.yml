@@ -7,6 +7,9 @@ stages:
   - doc
   - clean
 
+varaibles:
+  DISTRIBUTION: debian9  
+
 prebuild:
   stage: prebuild
   tags: ["canopsis"]
@@ -25,10 +28,10 @@ build_docker_debian8:
   before_script:
 
   script:
-    - make docker_images DISTRIBUTIONS=debian9
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
 
   after_script:
-    - make clean_images DISTRIBUTIONS=debian9
+    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
 build_docker_debian9:
   stage: build
@@ -38,10 +41,10 @@ build_docker_debian9:
   before_script:
 
   script:
-    - make docker_images DISTRIBUTIONS=debian9
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
 
   after_script: 
-    - make clean_images DISTRIBUTIONS=debian9
+    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
 build_docker_centos7:
   stage: build
@@ -51,10 +54,10 @@ build_docker_centos7:
   before_script:
 
   script:
-    - make docker_images DISTRIBUTIONS=centos7
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
 
   after_script:
-    - make clean_images DISTRIBUTIONS=centos7
+    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
 test-unit:
   stage: test
@@ -82,8 +85,8 @@ build_package-debian8:
   stage: packaging
   tags: ["canopsis"]
 
-  variables:
-    DISTRIBUTION: debian8
+##  variables:
+##    DISTRIBUTION: debian8
 
 #  before_script:
 #    - make init_canopsis-next
@@ -100,8 +103,8 @@ build_package-debian9:
   stage: packaging
   tags: ["canopsis"]
 
-  variables:
-    DISTRIBUTION: debian9
+##  variables:
+##    DISTRIBUTION: debian9
 
 #  before_script:
 #    - make init_canopsis-next
@@ -118,8 +121,8 @@ build_package-centos7:
   stage: packaging
   tags: ["canopsis"]
 
-  variables:
-    DISTRIBUTION: centos7
+##  variables:
+##    DISTRIBUTION: centos7
 
 #  before_script:
 #    - make init_canopsis-next
@@ -142,10 +145,10 @@ publish:
 #
   script:
     - echo "publish docker images and packages"
-#    - make docker_push DISTRIBUTIONS=debian9
+#    - make docker_push DISTRIBUTIONS=$DISTRIBUTION
 #
 #  after_script:
-#    - make clean_images DISTRIBUTIONS=debian9
+#    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
 doc:
   stage: doc
@@ -160,5 +163,5 @@ clean:
     - feat-simpler_build
 
   script:
-    - make clean_images
+    - make clean_images DISTRIBUTIONS=$DISTRIBUTION
 
