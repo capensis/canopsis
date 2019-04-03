@@ -9,7 +9,7 @@ prebuild:
   stage: prebuild
   tags: ["canopsis"]
   only:
-    - ci/new_ci
+    - feat-simpler_build
   script:
     - uname -a
     - docker -v
@@ -19,7 +19,7 @@ build_docker_debian9:
   stage: build
   tags: ["canopsis"]
   only:
-    - ci/new_ci
+    - feat-simpler_build
   before_script:
 
   script:
