@@ -1,11 +1,12 @@
 <template lang="pug">
   div
-    v-layout(wrap, justify-center)
-      v-list
-        v-list-tile(v-for="(filter, index) in filters", :key="filter.value")
-          v-list-tile-content {{ filter.title }}
+    v-list
+      v-list-tile.pa-0(v-for="(filter, index) in filters", :key="filter.value")
+        v-layout
+          v-flex(xs12)
+            v-list-tile-content {{ filter.title }}
           v-list-tile-action(v-if="hasAccessToEditFilter")
-            div
+            v-layout
               v-btn.ma-1(icon, @click="showEditFilterModal(index)")
                 v-icon edit
               v-btn.ma-1(icon, @click="showDeleteFilterModal(index)")

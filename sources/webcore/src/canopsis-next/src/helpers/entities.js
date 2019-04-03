@@ -280,9 +280,9 @@ export function generateView() {
  */
 export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
-    _id: `${widget._id}_${user.crecord_name}`,
+    _id: `${widget._id}_${user._id}`,
     widget_preferences: {},
-    crecord_name: user.crecord_name,
+    crecord_name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
     crecord_type: 'userpreferences',

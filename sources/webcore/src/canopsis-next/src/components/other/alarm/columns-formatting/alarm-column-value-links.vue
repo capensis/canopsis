@@ -1,20 +1,17 @@
-<template lang="pug" functional>
+<template lang="pug">
   div
     div(
-    v-for="(links, linksKey) in props.alarm.links",
+    v-for="(link, key) in alarm.links",
     :key="key"
     )
-      a(
-      v-for="(link, index) in links",
-      :key="`${key}-${index}`",
-      :href="link",
-      target="_blank",
-      @click.stop=""
-      ) {{ linksKey }}
+      alarm-column-value-link(:link="link")
 </template>
 
 <script>
+import AlarmColumnValueLink from './alarm-column-value-link.vue';
+
 export default {
+  components: { AlarmColumnValueLink },
   props: {
     alarm: {
       type: Object,
