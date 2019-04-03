@@ -1,0 +1,103 @@
+stages:
+  - build
+  - test
+  - packaging
+  - publish
+
+build_docker:
+  stage: build
+  tags: ["canopsis"]
+
+  before_script:
+    - uname -a
+    - docker -v
+    - git --no-pager show
+    - make init_canopsis-next
+
+  script: make docker_images
+
+  after_script:
+    - make delete_canopsis-next
+
+test-unit:
+  stage: test
+  tags: ["canopsis"]
+  script: echo "TODO unit tests"
+
+  after_script:
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
+    - docker volume prune -f
+
+test-functionnal:
+  stage: test
+  tags: ["canopsis"]
+  script: echo "TODO functionnal tests"
+
+  after_script:
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
+    - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
+    - docker volume prune -f
+
+build_package-debian8:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variables:
+    DISTRIBUTION: debian8
+
+  before_script:
+    - make init_canopsis-next
+
+  script:
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
+    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+  after_script:
+    - make delete_canopsis-next
+
+build_package-debian9:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variables:
+    DISTRIBUTION: debian9
+
+  before_script:
+    - make init_canopsis-next
+
+  script:
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
+    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+  after_script:
+    - make delete_canopsis-next
+
+build_package-centos7:
+  stage: packaging
+  tags: ["canopsis"]
+
+  variables:
+    DISTRIBUTION: centos7
+
+  before_script:
+    - make init_canopsis-next
+
+  script:
+    - make docker_images DISTRIBUTIONS=$DISTRIBUTION
+    - make packages DISTRIBUTIONS=$DISTRIBUTION
+
+  after_script:
+    - make delete_canopsis-next
+
+publish-docker:
+  stage: publish
+  tags: ["canopsis"]
+  script: echo "TODO push docker"
+
+publish-packages:
+  stage: publish
+  tags: ["canopsis"]
+  script: echo "TODO push packages"
