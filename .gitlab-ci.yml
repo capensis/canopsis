@@ -25,8 +25,8 @@ build_docker_debian9:
   script:
     - make docker_images DISTRIBUTIONS=debian9
 
-#  after_script: 
-#    - make clean_images DISTRIBUTIONS=debian9
+  after_script: 
+    - make clean_images DISTRIBUTIONS=debian9
 
 #publish:
 #  stage: publish
