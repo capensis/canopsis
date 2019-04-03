@@ -155,6 +155,7 @@ doc:
 
 clean:
   stage: clean
+  tags: ["canopsis"]
   only:
     - feat-simpler_build
 
