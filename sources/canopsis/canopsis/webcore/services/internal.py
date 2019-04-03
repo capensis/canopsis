@@ -33,6 +33,28 @@ VALID_USER_INTERFACE_PARAMS = [
 ]
 
 
+def get_user_interface():
+    user_interface_manager = UserInterfaceManager(
+        *UserInterfaceManager.provide_default_basics())
+
+    user_interface = user_interface_manager.get()
+
+    if user_interface is not None:
+        return {"user_interface": user_interface.to_dict()}
+
+    return {"user_interface": None}
+
+
+def get_version():
+    store = MongoStore.get_default()
+    version_collection = \
+        store.get_collection(name=CanopsisVersionManager.COLLECTION)
+    document = CanopsisVersionManager(version_collection).\
+        find_canopsis_version_document()
+
+    return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
+
+
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
@@ -70,26 +92,6 @@ def exports(ws):
                 "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
 
         return {"login_config": login_config}
-
-    def get_user_interface():
-        user_interface_manager = UserInterfaceManager(
-            *UserInterfaceManager.provide_default_basics())
-
-        user_interface = user_interface_manager.get()
-
-        if user_interface is not None:
-            return {"user_interface": user_interface.to_dict()}
-
-        return {"user_interface": None}
-
-    def get_version():
-        store = MongoStore.get_default()
-        version_collection = \
-            store.get_collection(name=CanopsisVersionManager.COLLECTION)
-        document = CanopsisVersionManager(version_collection).\
-            find_canopsis_version_document()
-
-        return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
 
     @ws.application.get('/api/internal/login/login_info', skip=ws.skip_login)
     def get_internal_login_info():
