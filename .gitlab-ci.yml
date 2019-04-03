@@ -7,9 +7,6 @@ stages:
   - doc
   - clean
 
-variables:
-  DISTRIBUTION: debian9  
-
 prebuild:
   stage: prebuild
   tags: ["canopsis"]
@@ -23,6 +20,8 @@ prebuild:
 build_docker_debian8:
   stage: build
   tags: ["canopsis"]
+  variables:
+    DISTRIBUTION: debian8
   only:
     - feat-simpler_build
   before_script:
@@ -36,6 +35,8 @@ build_docker_debian8:
 build_docker_debian9:
   stage: build
   tags: ["canopsis"]
+  variables:
+    DISTRIBUTION: debian9
   only:
     - feat-simpler_build
   before_script:
@@ -49,6 +50,8 @@ build_docker_debian9:
 build_docker_centos7:
   stage: build
   tags: ["canopsis"]
+  variables:
+    DISTRIBUTION: centos7
   only:
     - feat-simpler_build
   before_script:
@@ -85,8 +88,8 @@ build_package-debian8:
   stage: packaging
   tags: ["canopsis"]
 
-##  variables:
-##    DISTRIBUTION: debian8
+  variables:
+    DISTRIBUTION: debian8
 
 #  before_script:
 #    - make init_canopsis-next
@@ -103,8 +106,8 @@ build_package-debian9:
   stage: packaging
   tags: ["canopsis"]
 
-##  variables:
-##    DISTRIBUTION: debian9
+  variables:
+    DISTRIBUTION: debian9
 
 #  before_script:
 #    - make init_canopsis-next
@@ -121,8 +124,8 @@ build_package-centos7:
   stage: packaging
   tags: ["canopsis"]
 
-##  variables:
-##    DISTRIBUTION: centos7
+  variables:
+    DISTRIBUTION: centos7
 
 #  before_script:
 #    - make init_canopsis-next
@@ -159,6 +162,8 @@ doc:
 clean:
   stage: clean
   tags: ["canopsis"]
+  variables:
+    DISTRIBUTION: debian8, debian9, centos7
   only:
     - feat-simpler_build
 
