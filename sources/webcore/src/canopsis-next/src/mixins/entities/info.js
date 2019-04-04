@@ -11,6 +11,7 @@ export default {
       version: 'version',
       logo: 'logo',
       appTitle: 'appTitle',
+      footer: 'footer',
     }),
   },
   methods: {

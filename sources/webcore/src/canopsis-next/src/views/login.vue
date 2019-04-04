@@ -11,12 +11,13 @@
           v-card
             v-card-title.primary.white--text.elevation-3
               v-layout(justify-space-between, align-center)
-                v-toolbar-title {{ $t('common.login') }} - {{ appTitle }}
+                v-toolbar-title {{ $t('common.login') }}
+                  span(v-if="appTitle") - {{ appTitle }}
                 img.px-2(v-if="logo", src="@/assets/canopsis.png")
             v-layout(row, wrap)
               v-flex(xs12)
                 v-layout(justify-center)
-                  img.my-4.logo(:src="logo")
+                  img.my-4.logo(:src="appLogo")
               v-flex(xs12)
                 v-form.py-2(@submit.prevent="submit")
                   v-flex(px-3)
@@ -60,7 +61,7 @@ import VRuntimeTemplate from 'v-runtime-template';
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import canopsisLogo from '@/assets/canopsis-green.png';
+import logo from '@/assets/canopsis-green.png';
 
 export default {
   $_veeValidate: {
@@ -80,12 +81,12 @@ export default {
     };
   },
   computed: {
-    logo() {
+    appLogo() {
       if (this.logo) {
         return this.logo;
       }
 
-      return canopsisLogo;
+      return logo;
     },
   },
   async mounted() {

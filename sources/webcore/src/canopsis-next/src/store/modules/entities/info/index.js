@@ -12,11 +12,13 @@ export default {
     version: '',
     logo: '',
     appTitle: '',
+    footer: '',
   },
   getters: {
     version: state => state.version,
     logo: state => state.logo,
     appTitle: state => state.appTitle,
+    footer: state => state.footer,
   },
   mutations: {
     [types.FETCH_LOGIN_INFOS](state, {
@@ -25,9 +27,10 @@ export default {
     }) {
       state.version = version;
       state.logo = userInterface.logo;
-      state.appTitle = userInterface.appTitle;
+      state.appTitle = userInterface.app_title;
+      state.footer = userInterface.footer;
     },
-    [types.FETCH_LOGIN_INFOS](state, {
+    [types.FETCH_APP_INFOS](state, {
       version,
       logo,
       appTitle,
@@ -55,7 +58,7 @@ export default {
       try {
         const { version, logo, app_title: appTitle } = await request.get(API_ROUTES.infos.app);
 
-        commit(types.FETCH_LOGIN_INFOS, { version, logo, appTitle });
+        commit(types.FETCH_APP_INFOS, { version, logo, appTitle });
       } catch (err) {
         console.error(err);
       }
