@@ -51,13 +51,11 @@
                     v-layout
                       v-btn.primary(type="submit") {{ $t('common.connect') }}
                 v-divider
-                v-runtime-template(:template="footer")
+                div(v-html="footer")
       div.version.pr-2.mb-2 {{ version }}
 </template>
 
 <script>
-import VRuntimeTemplate from 'v-runtime-template';
-
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -66,9 +64,6 @@ import logo from '@/assets/canopsis-green.png';
 export default {
   $_veeValidate: {
     validator: 'new',
-  },
-  components: {
-    VRuntimeTemplate,
   },
   mixins: [authMixin, entitiesInfoMixin],
   data() {

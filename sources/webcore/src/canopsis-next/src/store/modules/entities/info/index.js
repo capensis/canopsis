@@ -26,9 +26,9 @@ export default {
       userInterface,
     }) {
       state.version = version;
-      state.logo = userInterface.logo;
-      state.appTitle = userInterface.app_title;
-      state.footer = userInterface.footer;
+      state.logo = userInterface.logo || '';
+      state.appTitle = userInterface.app_title || '';
+      state.footer = userInterface.footer || '';
     },
     [types.FETCH_APP_INFOS](state, {
       version,
