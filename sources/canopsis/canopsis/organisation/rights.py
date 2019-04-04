@@ -22,6 +22,9 @@ from logging import ERROR
 from uuid import uuid4
 from copy import deepcopy
 
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
+
 from canopsis.common.middleware import Middleware
 from canopsis.mongo.core import MongoCursor
 
@@ -33,6 +36,11 @@ class Rights(Middleware):
         """
         super(Rights, self).__init__()
         self._storage = Middleware.get_middleware_by_uri('mongodb-default-rights://')
+
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection(self.RIGHTS_COLLECTION)
+        self._collection = MongoCollection(collection)
+
         self._configure()
 
     # Generic getter
