@@ -10,14 +10,13 @@ const localVue = createLocalVue();
 
 localVue.use(Vuetify);
 
+const factory = (options = {}) => shallowMount(Ellipsis, { localVue, ...options });
+
 describe('Ellipsis', () => {
   it('Text letters count less then EXPAND_DEFAULT_MAX_LETTERS', () => {
     const text = generateString(EXPAND_DEFAULT_MAX_LETTERS - 1);
 
-    const wrapper = shallowMount(Ellipsis, {
-      localVue,
-      propsData: { text },
-    });
+    const wrapper = factory({ propsData: { text } });
 
     expect(wrapper.text()).toBe(text);
     expect(wrapper.find('v-menu-stub').exists()).toBeFalsy();
@@ -27,10 +26,7 @@ describe('Ellipsis', () => {
     const text = generateString(EXPAND_DEFAULT_MAX_LETTERS + 1);
     const shortenText = text.substr(0, EXPAND_DEFAULT_MAX_LETTERS);
 
-    const wrapper = shallowMount(Ellipsis, {
-      localVue,
-      propsData: { text },
-    });
+    const wrapper = factory({ propsData: { text } });
 
     expect(wrapper.find('div > span').text()).toBe(shortenText);
     expect(wrapper.find('v-menu-stub > span').text()).toBe('...');
@@ -41,10 +37,7 @@ describe('Ellipsis', () => {
     const maxLetters = 5;
     const text = generateString(maxLetters - 1);
 
-    const wrapper = shallowMount(Ellipsis, {
-      localVue,
-      propsData: { text, maxLetters },
-    });
+    const wrapper = factory({ propsData: { text, maxLetters } });
 
     expect(wrapper.text()).toBe(text);
   });
@@ -54,10 +47,7 @@ describe('Ellipsis', () => {
     const text = generateString(maxLetters + 1);
     const shortenText = text.substr(0, maxLetters);
 
-    const wrapper = shallowMount(Ellipsis, {
-      localVue,
-      propsData: { text, maxLetters },
-    });
+    const wrapper = factory({ propsData: { text, maxLetters } });
 
     expect(wrapper.find('div > span').text()).toBe(shortenText);
     expect(wrapper.find('v-menu-stub > span').text()).toBe('...');
@@ -67,10 +57,7 @@ describe('Ellipsis', () => {
   it('Click on dots with text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
     const text = generateString(EXPAND_DEFAULT_MAX_LETTERS + 1);
 
-    const wrapper = shallowMount(Ellipsis, {
-      localVue,
-      propsData: { text },
-    });
+    const wrapper = factory({ propsData: { text } });
 
     wrapper.find('v-menu-stub > span').trigger('click');
 
@@ -80,10 +67,7 @@ describe('Ellipsis', () => {
   it('Click on text with text letters count less then EXPAND_DEFAULT_MAX_LETTERS', () => {
     const text = generateString(EXPAND_DEFAULT_MAX_LETTERS - 1);
 
-    const wrapper = shallowMount(Ellipsis, {
-      localVue,
-      propsData: { text },
-    });
+    const wrapper = factory({ propsData: { text } });
 
     wrapper.find('div > span').trigger('click');
 
@@ -94,10 +78,7 @@ describe('Ellipsis', () => {
   it('Click on text with text letters count more then EXPAND_DEFAULT_MAX_LETTERS', () => {
     const text = generateString(EXPAND_DEFAULT_MAX_LETTERS + 1);
 
-    const wrapper = shallowMount(Ellipsis, {
-      localVue,
-      propsData: { text },
-    });
+    const wrapper = factory({ propsData: { text } });
 
     wrapper.find('div > span').trigger('click');
 

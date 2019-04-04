@@ -1,4 +1,4 @@
-<template lang="pug">
+<template lang="pug" functional>
   .v-table__overflow
     table.v-datatable.v-table.theme--light
       tbody
