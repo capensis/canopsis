@@ -20,7 +20,7 @@
           tr
             td
               v-checkbox(v-model="props.selected", primary, hide-details)
-            td {{ props.item.crecord_name }}
+            td {{ props.item._id }}
             td
               v-btn.ma-0(v-if="hasUpdateAnyRoleAccess", @click="showEditRoleModal(props.item._id)", icon)
                 v-icon edit
@@ -63,7 +63,7 @@ export default {
       headers: [
         {
           text: this.$t('tables.rolesList.name'),
-          value: 'crecord_name',
+          value: '_id',
         },
         {
           text: this.$t('tables.rolesList.actions'),

@@ -52,12 +52,21 @@
         small,
         slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.pbehaviorAdd].icon }}
-        div.text-md-center
+        div
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div(v-for="pbehavior in pbehaviors")
-            div {{ pbehavior.name }}
+            div.mt-2.font-weight-bold {{ pbehavior.name }}
+            div {{ $t('common.author') }}: {{ pbehavior.author }}
+            div {{ $t('common.type') }}: {{ pbehavior.type_ }}
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
+            div(
+            v-show="pbehavior.comments && pbehavior.comments.length",
+            v-for="comment in pbehavior.comments",
+            :key="comment._id",
+            ) {{ $tc('common.comment', pbehavior.comments.length) }}:
+              div.ml-2 - {{ comment.author }}: {{ comment.message }}
+            v-divider
 </template>
 
 <script>
@@ -78,7 +87,7 @@ export default {
   computed: {
     pbehaviors() {
       return this.alarm.pbehaviors.filter((value) => {
-        const now = Date.now();
+        const now = Date.now() / 1000;
 
         return value.tstart <= now && now < value.tstop;
       });

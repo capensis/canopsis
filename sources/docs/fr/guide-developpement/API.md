@@ -6,3 +6,4 @@
 *  [Healthcheck](healthcheck/api_v2_healthcheck.md)
 *  [Heartbeat](heartbeat/api_v2_heartbeat.md)
 *  [Webhooks](webhooks/api_v2_webhooks.md)
+*  [Watcher NG](watcherng/api_v2_watcherng.md)

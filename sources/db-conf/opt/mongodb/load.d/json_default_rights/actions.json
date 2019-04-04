@@ -458,6 +458,69 @@
         "desc": "Rights on listalarm: add filter"
     },
     {
+        "_id": "serviceweather_moreInfos",
+        "loader_id": "serviceweather_moreInfos",
+        "crecord_name": "serviceweather_moreInfos",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'More infos' modal"
+    },
+    {
+        "_id": "serviceweather_alarmsList",
+        "loader_id": "serviceweather_alarmsList",
+        "crecord_name": "serviceweather_alarmsList",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Alarms list' modal"
+    },
+    {
+        "_id": "serviceweather_entityAck",
+        "loader_id": "serviceweather_entityAck",
+        "crecord_name": "serviceweather_entityAck",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Ack' action"
+    },
+    {
+        "_id": "serviceweather_entityDeclareTicket",
+        "loader_id": "serviceweather_entityDeclareTicket",
+        "crecord_name": "serviceweather_entityDeclareTicket",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Declare ticket' action"
+    },
+    {
+        "_id": "serviceweather_entityValidate",
+        "loader_id": "serviceweather_entityValidate",
+        "crecord_name": "serviceweather_entityValidate",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Validate' action"
+    },
+    {
+        "_id": "serviceweather_entityInvalidate",
+        "loader_id": "serviceweather_entityInvalidate",
+        "crecord_name": "serviceweather_entityInvalidate",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Invalidate' action"
+    },
+    {
+        "_id": "serviceweather_entityPlay",
+        "loader_id": "serviceweather_entityPlay",
+        "crecord_name": "serviceweather_entityPlay",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Play' action"
+    },
+    {
+        "_id": "serviceweather_entityPause",
+        "loader_id": "serviceweather_entityPause",
+        "crecord_name": "serviceweather_entityPause",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Pause' action"
+    },
+    {
+        "_id": "serviceweather_entityCancel",
+        "loader_id": "serviceweather_entityCancel",
+        "crecord_name": "serviceweather_entityCancel",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Cancel' action"
+    },
+    {
         "_id": "crudcontext_createEntity",
         "loader_id": "crudcontext_createEntity",
         "crecord_type": "action",
@@ -498,6 +561,13 @@
         "crecord_type": "action",
         "crecord_name": "crudcontext_listPbehavior",
         "desc": "Rights on context: List Pbehaviors"
+    },
+    {
+        "_id": "crudcontext_deletePbehavior",
+        "loader_id": "crudcontext_deletePbehavior",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_deletePbehavior",
+        "desc": "Rights on context: Delete Pbehaviors"
     },
     {
         "_id": "crudcontext_listFilters",

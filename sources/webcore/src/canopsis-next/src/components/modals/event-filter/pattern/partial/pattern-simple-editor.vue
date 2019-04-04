@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { isObject } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
@@ -46,11 +48,7 @@ export default {
   },
   methods: {
     isSimpleRule(rule) {
-      if (typeof rule === 'string') {
-        return true;
-      }
-
-      return false;
+      return !isObject(rule);
     },
 
     deleteRule(rule) {

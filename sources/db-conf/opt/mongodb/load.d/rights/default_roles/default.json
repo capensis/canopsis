@@ -198,6 +198,42 @@
             "checksum": 1,
             "desc": ""
         },
+        "serviceweather_moreInfos": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_alarmsList": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityAck": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityDeclareTicket": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityValidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityInvalidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityPlay": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityPause": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityCancel": {
+            "checksum": 1,
+            "desc": ""
+        },
         "crudcontext_createEntity": {
             "checksum": 1,
             "desc": ""
@@ -219,6 +255,10 @@
             "desc": ""
         },
         "crudcontext_listPbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_deletePbehavior": {
             "checksum": 1,
             "desc": ""
         },

@@ -44,8 +44,9 @@ import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
-import ManageHistogramGroups from './stats/manage-histogram-groups.vue';
 import AddStat from './stats/add-stat.vue';
+import StatsDateInterval from './stats/stats-date-interval.vue';
+import StatsDisplayMode from './stats/stats-display-mode.vue';
 import AlarmsList from './alarm/alarms-list.vue';
 import CreateUser from './admin/create-user.vue';
 import CreateRole from './admin/create-role.vue';
@@ -55,6 +56,7 @@ import CreateEventFilterRulePattern from './event-filter/pattern/create-event-fi
 import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
+import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
@@ -93,8 +95,9 @@ export default {
     Watcher,
     CreateWatcherDeclareTicketEvent,
     CreateWatcherPauseEvent,
-    ManageHistogramGroups,
     AddStat,
+    StatsDateInterval,
+    StatsDisplayMode,
     AlarmsList,
     CreateUser,
     CreateRole,
@@ -104,6 +107,7 @@ export default {
     AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
+    FiltersList,
     CreateWebhook,
   },
   data() {

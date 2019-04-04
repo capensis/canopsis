@@ -22,9 +22,12 @@ import { get } from 'lodash';
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
-import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
-import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+
+import AlarmColumnValueState from './alarm-column-value-state.vue';
+import AlarmColumnValueLinks from './alarm-column-value-links.vue';
+import AlarmColumnValueLink from './alarm-column-value-link.vue';
+import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 
 /**
  * Component to format alarms list columns
@@ -37,9 +40,11 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
  */
 export default {
   components: {
-    State,
-    ExtraDetails,
     Ellipsis,
+    AlarmColumnValueState,
+    AlarmColumnValueLinks,
+    AlarmColumnValueLink,
+    AlarmColumnValueExtraDetails,
   },
   mixins: [
     popupMixin,
@@ -93,13 +98,19 @@ export default {
       const PROPERTIES_COMPONENTS_MAP = {
         'v.state.val': {
           bind: {
-            is: 'state',
+            is: 'alarm-column-value-state',
+            alarm: this.alarm,
+          },
+        },
+        links: {
+          bind: {
+            is: 'alarm-column-value-links',
             alarm: this.alarm,
           },
         },
         extra_details: {
           bind: {
-            is: 'extra-details',
+            is: 'alarm-column-value-extra-details',
             alarm: this.alarm,
           },
         },
@@ -107,6 +118,15 @@ export default {
 
       if (PROPERTIES_COMPONENTS_MAP[this.column.value]) {
         return PROPERTIES_COMPONENTS_MAP[this.column.value];
+      }
+
+      if (this.column.value.startsWith('links.')) {
+        return {
+          bind: {
+            is: 'alarm-column-value-link',
+            link: this.$options.filters.get(this.alarm, this.column.value),
+          },
+        };
       }
 
       return {

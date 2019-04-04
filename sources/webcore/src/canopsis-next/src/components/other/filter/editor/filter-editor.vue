@@ -14,14 +14,21 @@
       v-tab-item
         v-textarea(
         v-model="requestString",
+        v-validate="'json'",
         :label="$t('filterEditor.tabs.advancedEditor')",
+        :error-messages="errors.collect('requestString')"
+        data-vv-validate-on="none",
+        name="requestString",
         rows="10",
         @input="updateRequestString"
         )
         v-layout(justify-center)
           v-flex(xs10 md-6)
             v-alert(:value="parseError", type="error") {{ parseError }}
-        v-btn(@click="parse", :disabled="!isRequestStringChanged") {{ $t('common.parse') }}
+        v-btn(
+        :disabled="!isRequestStringChanged || errors.has('requestString')",
+        @click="parseRequestStringToFilter"
+        ) {{ $t('common.parse') }}
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>
 
@@ -88,7 +95,7 @@ export default {
       data.activeTab = 1;
       data.requestString = isString(this.value) ? this.value : JSON.stringify(this.value);
       data.isRequestStringChanged = true;
-      data.parseError = this.$t('filterEditor.errors.invalidJSON');
+      data.parseError = this.$t('filterEditor.errors.cantParseToVisualEditor');
     }
 
     return data;
@@ -118,7 +125,18 @@ export default {
     },
   },
   created() {
-    if (this.required && this.$validator) {
+    if (this.required) {
+      this.$validator.extend('json', {
+        getMessage: () => this.$t('filterEditor.errors.invalidJSON'),
+        validate: (value) => {
+          try {
+            return !!JSON.parse(value);
+          } catch (err) {
+            return false;
+          }
+        },
+      });
+
       this.$validator.attach({
         name: 'filter',
         rules: 'required:true',
@@ -138,41 +156,65 @@ export default {
       const preparedFilter = parseFilterToRequest(value);
 
       this.filter = value;
+      this.requestString = this.$options.filters.json(preparedFilter);
 
-      this.$emit('input', isString(this.value) ? JSON.stringify(preparedFilter) : preparedFilter);
+      this.$emit('input', isString(this.value) ? this.requestString : preparedFilter);
 
-      if (this.required && this.$validator && this.errors.has('filter')) {
+      if (this.required && this.errors.has('filter')) {
         this.$validator.validate('filter');
       }
     },
 
     updateRequestString(requestString) {
-      if (!this.isRequestStringChanged) {
-        this.isRequestStringChanged = true;
-      }
+      try {
+        this.errors.remove('requestString');
 
-      this.$emit('input', requestString);
+        if (!this.isRequestStringChanged) {
+          this.isRequestStringChanged = true;
+        }
+
+        this.$emit('input', isString(this.value) ? requestString : JSON.parse(requestString));
+      } catch (err) {
+        console.warn(err);
+      }
     },
 
     openAdvancedTab() {
       if (!this.isRequestStringChanged) {
-        this.requestString = JSON.stringify(this.request, undefined, 4);
+        this.requestString = this.$options.filters.json(this.request);
       }
     },
 
-    parse() {
-      this.parseError = '';
-
+    parseRequestStringToFilter() {
       try {
+        this.parseError = '';
+        this.errors.remove('requestString');
+
         if (this.requestString !== '') {
-          this.updateFilter(parseGroupToFilter(JSON.parse(this.requestString)));
+          this.updateFilter(parseGroupToFilter(this.parseRequestStringToObject()));
         } else {
-          this.requestString = JSON.stringify(this.request, undefined, 4);
+          this.requestString = this.$options.filters.json(this.request);
         }
 
         this.isRequestStringChanged = false;
       } catch (err) {
-        this.parseError = this.$t('filterEditor.errors.invalidJSON');
+        if (!this.errors.has('requestString')) {
+          this.parseError = this.$t('filterEditor.errors.cantParseToVisualEditor');
+        }
+      }
+    },
+
+    parseRequestStringToObject() {
+      try {
+        return JSON.parse(this.requestString);
+      } catch (err) {
+        this.errors.add({
+          field: 'requestString',
+          msg: this.$t('filterEditor.errors.invalidJSON'),
+          rule: 'json',
+        });
+
+        throw err;
       }
     },
   },

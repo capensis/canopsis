@@ -1,7 +1,8 @@
 <template lang="pug">
   v-select.select.pa-0(
-  :items="$config.PAGINATION_PER_PAGE_VALUES",
-  v-model="limit",
+  :items="items",
+  :value="value",
+  @input="$emit('input', $event)"
   hide-details,
   single-line,
   dense,
@@ -9,28 +10,25 @@
 </template>
 
 <script>
+import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
+
 /**
  * Component to select number of items per page on lists
  *
- * @prop {Object} query - Object containing widget query information
+ * @prop {number} [value=PAGINATION_LIMIT] - Current value
+ * @prop {Array} [items=PAGINATION_PER_PAGE_VALUES] - Items for selection
  *
  * @event query#update
  */
 export default {
   props: {
-    query: {
-      type: Object,
-      required: true,
+    value: {
+      type: Number,
+      default: PAGINATION_LIMIT,
     },
-  },
-  computed: {
-    limit: {
-      get() {
-        return this.query.limit || this.$config.PAGINATION_LIMIT;
-      },
-      set(limit) {
-        this.$emit('update:query', { ...this.query, page: 1, limit });
-      },
+    items: {
+      type: Array,
+      default: () => [...PAGINATION_PER_PAGE_VALUES],
     },
   },
 };

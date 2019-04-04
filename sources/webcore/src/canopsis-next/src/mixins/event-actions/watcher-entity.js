@@ -17,7 +17,7 @@ export default {
      */
     prepareData(eventType, item) {
       return {
-        author: this.currentUser.crecord_name,
+        author: this.currentUser._id,
         component: item.component || WEATHER_EVENT_DEFAULT_ENTITY,
         connector: item.connector || WEATHER_EVENT_DEFAULT_ENTITY,
         connector_name: item.connector_name || WEATHER_EVENT_DEFAULT_ENTITY,
@@ -104,9 +104,9 @@ export default {
      */
     addPauseActionToQueue({ entity, comment, reason }) {
       const data = {
-        author: this.currentUser.crecord_name,
+        author: this.currentUser._id,
         comments: [{
-          author: this.currentUser.crecord_name,
+          author: this.currentUser._id,
           message: comment,
         }],
         filter: {
@@ -129,6 +129,22 @@ export default {
      */
     addPlayActionToQueue({ entity }) {
       this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.play, data: entity });
+    },
+
+    /**
+     * Call emit addEvent for cancel entity event
+     *
+     * @param {Object} entity
+     * @param {string} output
+     */
+    addCancelActionToQueue({ entity, output, fromSystem = false }) {
+      const data = {
+        ...this.prepareData(EVENT_ENTITY_TYPES.cancel, entity),
+        author: fromSystem ? 'System' : this.currentUser._id,
+        output,
+      };
+
+      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.cancel, data });
     },
   },
 };

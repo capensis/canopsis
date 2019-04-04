@@ -18,17 +18,38 @@
           td {{ props.item.reason }}
           td {{ props.item.rrule }}
           td
-            v-btn(@click="deletePbehavior(props.item._id)", icon, small)
-              v-icon(color="error") delete
+            template(v-if="hasAccessToDeletePbehavior")
+              v-btn(
+              icon,
+              small,
+              @click.stop="showEditPbehaviorModal(props.item)"
+              )
+                v-icon edit
+              v-btn(
+              icon,
+              small,
+              @click="showDeletePbehaviorModal(props.item._id)"
+              )
+                v-icon(color="error") delete
 </template>
 
 <script>
+import { MODALS, USERS_RIGHTS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
-import pbehaviorEntityMixin from '@/mixins/entities/pbehavior';
-import { MODALS } from '@/constants';
+import popupMixin from '@/mixins/popup';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
-  mixins: [modalMixin, pbehaviorEntityMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    popupMixin,
+    entitiesPbehaviorMixin,
+    entitiesPbehaviorCommentMixin,
+  ],
   props: {
     itemId: {
       type: String,
@@ -85,27 +106,48 @@ export default {
       ],
     };
   },
+  computed: {
+    hasAccessToDeletePbehavior() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.pbehaviorDelete);
+    },
+  },
   mounted() {
     this.fetchItems();
   },
   methods: {
-    async deletePbehavior(itemId) {
+    showEditPbehaviorModal(pbehavior) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: MODALS.createPbehavior,
         config: {
-          action: async () => {
-            await this.removePbehavior({ id: itemId });
-            await this.fetchItems();
+          pbehavior,
+
+          action: async (data) => {
+            const { comments, ...preparedData } = data;
+
+            await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
+            await this.updateSeveralPbehaviorComments({ pbehavior, comments });
+
+            this.fetchItems();
+            this.addSuccessPopup({ text: this.$t('success.default') });
           },
         },
       });
     },
-    async fetchItems() {
-      await this.fetchPbehaviorsByEntityId({ id: this.itemId });
 
-      if (this.pbehaviorItems) {
-        this.items = [...this.pbehaviorItems];
-      }
+    showDeletePbehaviorModal(pbehaviorId) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removePbehavior({ id: pbehaviorId });
+
+            this.fetchItems();
+          },
+        },
+      });
+    },
+    fetchItems() {
+      this.fetchPbehaviorsByEntityId({ id: this.itemId });
     },
   },
 };

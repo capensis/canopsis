@@ -7,12 +7,13 @@ import { pickBy } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import widgetActionsPanelContextMixin from '@/mixins/widget/actions-panel/context';
 
 import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
@@ -32,6 +33,7 @@ export default {
     modalMixin,
     entitiesWatcherMixin,
     entitiesContextEntityMixin,
+    entitiesPbehaviorMixin,
     widgetActionsPanelContextMixin,
   ],
   props: {
@@ -166,14 +168,18 @@ export default {
       this.showModal({
         name: MODALS.createPbehavior,
         config: {
-          itemsType: ENTITIES_TYPES.entity,
-          itemsIds: [this.item._id],
+          pbehavior: {
+            filter: {
+              _id: { $in: [this.item._id] },
+            },
+          },
+          action: data => this.createPbehavior({ data }),
         },
       });
     },
 
     showVariablesHelpModal() {
-      const entitiesFields = convertObjectFieldToTreeBranch(this.item, 'entity');
+      const entitiesFields = convertObjectToTreeview(this.item, 'entity');
       const variables = [entitiesFields];
 
       this.showModal({

@@ -54,7 +54,7 @@ export default {
       }
 
       const preparedData = {
-        author: this.currentUser.crecord_name,
+        author: this.currentUser._id,
         id: item.id,
         connector: item.v.connector,
         connector_name: item.v.connector_name,
