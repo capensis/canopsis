@@ -19,6 +19,15 @@
         "models_user" : {
             "checksum" : 15
         },
+        "models_exploitation_eventFilter": {
+            "checksum": 15
+        },
+        "models_exploitation_pbehavior": {
+            "checksum": 15
+        },
+        "models_exploitation_webhook": {
+            "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
