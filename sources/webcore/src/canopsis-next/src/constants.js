@@ -17,6 +17,7 @@ export const ENTITIES_TYPES = {
   role: 'role',
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
+  snmpRule: 'snmpRule',
 };
 
 export const MODALS = {

@@ -63,6 +63,8 @@ export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilte
 
 export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idAttribute: '_id' });
 
+export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -79,4 +81,5 @@ export default {
   [ENTITIES_TYPES.role]: roleSchema,
   [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
   [ENTITIES_TYPES.webhook]: webhookSchema,
+  [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
 };
