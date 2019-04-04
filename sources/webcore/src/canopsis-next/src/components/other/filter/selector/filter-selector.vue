@@ -130,22 +130,16 @@ export default {
     },
 
     preparedFilters() {
-      let preparedFilters;
+      const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
+      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
 
-      if (this.hasAccessToUserFilter) {
-        preparedFilters = [...this.filters];
-
-        if (this.lockedFilters.length) {
-          return preparedFilters.concat(
-            { divider: true },
-            this.lockedFilters.map(filter => ({ ...filter, locked: true })),
-          );
-        }
-      } else {
-        preparedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
+      if (preparedFilters.length && preparedLockedFilters.length) {
+        return preparedFilters.concat({ divider: true }, preparedLockedFilters);
+      } else if (preparedFilters.length) {
+        return preparedFilters;
       }
 
-      return preparedFilters;
+      return preparedLockedFilters;
     },
   },
   methods: {
