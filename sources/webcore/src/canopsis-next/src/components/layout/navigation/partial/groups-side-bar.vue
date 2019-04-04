@@ -7,11 +7,8 @@
   app,
   )
     div.brand.ma-0.secondary.lighten-1
-      v-layout(justify-center, align-center)
-        v-flex.text-xs-center(xs11)
-          img.my-1(src="@/assets/canopsis.png")
-        v-flex.version.white--text.caption
-          div {{ version }}
+      img.logo(:src="appLogo")
+      div.version {{ version }}
     v-expansion-panel.panel(
     v-if="hasReadAnyViewAccess",
     expand,
@@ -69,9 +66,11 @@
 <script>
 import { groupSchema } from '@/store/schemas';
 
-import versionMixin from '@/mixins/entities/version';
+import entitiesInfoMixin from '@/mixins/entities/info';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 import registrableMixin from '@/mixins/registrable';
+
+import logo from '@/assets/canopsis.png';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
 
@@ -85,7 +84,7 @@ import GroupsSettingsButton from './groups-settings-button.vue';
 export default {
   components: { GroupsSettingsButton },
   mixins: [
-    versionMixin,
+    entitiesInfoMixin,
     layoutNavigationGroupMenuMixin,
 
     registrableMixin([groupSchema], 'groups'),
@@ -115,9 +114,14 @@ export default {
     getColor() {
       return id => (this.isViewActive(id) ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1');
     },
-  },
-  mounted() {
-    this.fetchVersion();
+
+    appLogo() {
+      if (this.logo) {
+        return this.logo;
+      }
+
+      return logo;
+    },
   },
 };
 </script>
@@ -143,8 +147,11 @@ export default {
   }
 
   .brand {
-    height: 48px;
+    max-height: 48px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 0.5em 0;
   }
 
   .version {
@@ -152,6 +159,8 @@ export default {
     bottom: 0;
     right: 0;
     padding-right: 0.5em;
+    color: white;
+    font-size: 0.8em;
   }
 
   .panel-header {
@@ -199,5 +208,12 @@ export default {
       display: inline-block;
       vertical-align: middle;
     }
+  }
+
+  .logo {
+    max-width: 100%;
+    max-height: 48px;
+    height: auto;
+    width: auto;
   }
 </style>

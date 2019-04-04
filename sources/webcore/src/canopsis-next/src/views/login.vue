@@ -9,13 +9,14 @@
       v-layout(justify-center, align-center, row)
         v-flex(xs11, md6, lg4)
           v-card
+            v-card-title.primary.white--text.elevation-3
+              v-layout(justify-space-between, align-center)
+                v-toolbar-title {{ $t('common.login') }} - {{ appTitle }}
+                img.px-2(v-if="logo", src="@/assets/canopsis.png")
             v-layout(row, wrap)
               v-flex(xs12)
-                v-toolbar.primary.white--text
-                  v-toolbar-title {{ $t('common.login') }}
-              v-flex(xs12)
                 v-layout(justify-center)
-                  img.my-4(src="@/assets/canopsis-green.png")
+                  img.my-4.logo(:src="logo")
               v-flex(xs12)
                 v-form.py-2(@submit.prevent="submit")
                   v-flex(px-3)
@@ -48,16 +49,25 @@
                   v-flex(xs2 px-2)
                     v-layout
                       v-btn.primary(type="submit") {{ $t('common.connect') }}
+                v-divider
+                v-runtime-template(:template="footer")
       div.version.pr-2.mb-2 {{ version }}
 </template>
 
 <script>
+import VRuntimeTemplate from 'v-runtime-template';
+
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
+
+import canopsisLogo from '@/assets/canopsis-green.png';
 
 export default {
   $_veeValidate: {
     validator: 'new',
+  },
+  components: {
+    VRuntimeTemplate,
   },
   mixins: [authMixin, entitiesInfoMixin],
   data() {
@@ -68,6 +78,15 @@ export default {
         password: '',
       },
     };
+  },
+  computed: {
+    logo() {
+      if (this.logo) {
+        return this.logo;
+      }
+
+      return canopsisLogo;
+    },
   },
   async mounted() {
     this.fetchLoginInfos();
@@ -108,5 +127,12 @@ export default {
     bottom: 0.5em;
     color: white;
     font-weight: bold;
+  }
+
+  .logo {
+    width: auto;
+    height: auto;
+    max-width: 15em;
+    max-height: 15em;
   }
 </style>

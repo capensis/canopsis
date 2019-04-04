@@ -3,52 +3,61 @@ import request from '@/services/request';
 
 const types = {
   FETCH_LOGIN_INFOS: 'FETCH_LOGIN_INFOS',
-  FETCH_LOGIN_INFOS_COMPLETED: 'FETCH_LOGIN_INFOS_COMPLETED',
-  FETCH_LOGIN_INFOS_FAILED: 'FETCH_LOGIN_INFOS_FAILED',
+  FETCH_APP_INFOS: 'FETCH_APP_INFOS',
 };
 
 export default {
   namespaced: true,
   state: {
     version: '',
-    loginConfig: {},
-    userInterface: {},
+    logo: '',
+    appTitle: '',
   },
   getters: {
     version: state => state.version,
+    logo: state => state.logo,
+    appTitle: state => state.appTitle,
   },
   mutations: {
-    [types.FETCH_LOGIN_INFOS]() {
-
-    },
-    [types.FETCH_LOGIN_INFOS_COMPLETED](state, {
+    [types.FETCH_LOGIN_INFOS](state, {
       version,
       userInterface,
-      loginConfig,
     }) {
       state.version = version;
-      state.userInterface = userInterface;
-      state.loginConfig = loginConfig;
+      state.logo = userInterface.logo;
+      state.appTitle = userInterface.appTitle;
     },
-    [types.FETCH_LOGIN_INFOS_FAILED]() {
-
+    [types.FETCH_LOGIN_INFOS](state, {
+      version,
+      logo,
+      appTitle,
+    }) {
+      state.version = version;
+      state.logo = logo;
+      state.appTitle = appTitle;
     },
   },
   actions: {
     async fetchLoginInfos({ commit }) {
-      commit(types.FETCH_LOGIN_INFOS);
-
       try {
         const {
           version,
           user_interface: userInterface,
-          login_config: loginConfig,
         } = await request.get(API_ROUTES.infos.login);
 
-        commit(types.FETCH_LOGIN_INFOS_COMPLETED, { version, userInterface, loginConfig });
+        commit(types.FETCH_LOGIN_INFOS, { version, userInterface });
       } catch (err) {
-        commit(types.FETCH_LOGIN_INFOS_FAILED, err);
-        console.warn(err);
+        console.error(err);
+      }
+    },
+
+    async fetchAppInfos({ commit }) {
+      try {
+        const { version, logo, app_title: appTitle } = await request.get(API_ROUTES.infos.app);
+
+        commit(types.FETCH_LOGIN_INFOS, { version, logo, appTitle });
+      } catch (err) {
+        console.error(err);
       }
     },
   },
