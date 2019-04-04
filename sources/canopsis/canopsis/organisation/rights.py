@@ -30,6 +30,8 @@ from canopsis.mongo.core import MongoCursor
 
 class Rights(Middleware):
 
+    RIGHTS_COLLECTION = "default-rights"
+
     def __init__(self, *args, **kwargs):
         """
         NONE of arguments are used.
@@ -44,11 +46,28 @@ class Rights(Middleware):
         self._configure()
 
     # Generic getter
-    def get_from_storage(self, s_type):
-        def get_from_storage_(elem):
-            return self._storage.get_elements(
-                ids=elem, query={'crecord_type': s_type})
-        return get_from_storage_
+    def _generic_get(self, filter_):
+        return self._storage.find_one(filter_)
+
+    def get_profile(self, filter_):
+        filter_["crecord_type"] = "profile"
+        return self._generic_get(filter_)
+
+    def get_action(self, filter_):
+        filter_["crecord_type"] = "action"
+        return self._generic_get(filter_)
+
+    def get_group(self, filter_):
+        filter_["crecord_type"] = "group"
+        return self._generic_get(filter_)
+
+    def get_role(self, filter_):
+        filter_["crecord_type"] = "role"
+        return self._generic_get(filter_)
+
+    def get_user(self, filter_):
+        filter_["crecord_type"] = "user"
+        return self._generic_get(filter_)
 
     def get_users(self, projection={'_id': 1}):
         return self._storage.get_elements(
@@ -63,12 +82,6 @@ class Rights(Middleware):
         self.role_storage = self._storage
         self.action_storage = self._storage
         self.user_storage = self._storage
-
-        self.get_profile = self.get_from_storage('profile')
-        self.get_action = self.get_from_storage('action')
-        self.get_group = self.get_from_storage('group')
-        self.get_role = self.get_from_storage('role')
-        self.get_user = self.get_from_storage('user')
 
         self.actions = {
             'remove': {
