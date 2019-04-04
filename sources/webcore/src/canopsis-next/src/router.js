@@ -19,6 +19,7 @@ import AdminParameters from '@/views/admin/parameters.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
+import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 
 Vue.use(Router);
 
@@ -122,6 +123,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.webhook,
+      },
+    },
+  },
+  {
+    path: '/exploitation/snmp-rules',
+    name: 'exploitation-snmp-rules',
+    component: ExploitationSnmpRules,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.webhook, // TODO: fix it
       },
     },
   },
