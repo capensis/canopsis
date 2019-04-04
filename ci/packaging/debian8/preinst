@@ -1,0 +1,5 @@
+#!/bin/bash
+grep canopsis /etc/passwd
+if [ ! "\$?" = "0" ]; then
+useradd -d /opt/canopsis -M -s /bin/bash canopsis
+fi
