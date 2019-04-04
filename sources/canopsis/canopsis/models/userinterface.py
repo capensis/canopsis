@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 class UserInterface(object):
 
     """
-    Representation of a ticketApiConfig element.
+    Representation of an user interface element.
     """
 
     # Keys as seen in db

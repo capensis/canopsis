@@ -33,68 +33,71 @@ VALID_USER_INTERFACE_PARAMS = [
 ]
 
 
+def get_user_interface():
+    user_interface_manager = UserInterfaceManager(
+        *UserInterfaceManager.provide_default_basics())
+
+    user_interface = user_interface_manager.get()
+
+    if user_interface is not None:
+        return {"user_interface": user_interface.to_dict()}
+
+    return {"user_interface": None}
+
+
+def get_version():
+    store = MongoStore.get_default()
+    version_collection = \
+        store.get_collection(name=CanopsisVersionManager.COLLECTION)
+    document = CanopsisVersionManager(version_collection).\
+        find_canopsis_version_document()
+
+    return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
+
+
+def get_login_config(ws):
+    login_config = {
+        'webserver': {provider: 1 for provider in ws.providers},
+    }
+
+    records = ws.db.find(
+        {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
+        namespace='object'
+    )
+
+    for login_service in records:
+        login_service = login_service.dump()
+        login_service_name = login_service['crecord_name']
+        login_config[login_service_name] = login_service
+
+        ws.logger.info(
+            u'found cservices type {}'.format(login_service_name))
+
+        if login_service_name == 'casconfig':
+            login_service['server'] = login_service['server'].rstrip('/')
+            login_service['service'] = login_service['service'].rstrip('/')
+            ws.logger.info(u'cas config : server {}, service {}'.format(
+                login_service['server'],
+                login_service['service'],
+            ))
+
+    if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
+        result = ws.db.find({'_id': "canopsis"}, namespace='default_saml2')
+
+        login_config["saml2config"] = {
+            "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
+
+    return {"login_config": login_config}
+
+
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
 
-    def get_login_config():
-        login_config = {
-            'webserver': {provider: 1 for provider in ws.providers},
-        }
-
-        records = ws.db.find(
-            {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
-            namespace='object'
-        )
-
-        for login_service in records:
-            login_service = login_service.dump()
-            login_service_name = login_service['crecord_name']
-            login_config[login_service_name] = login_service
-
-            ws.logger.info(
-                u'found cservices type {}'.format(login_service_name))
-
-            if login_service_name == 'casconfig':
-                login_service['server'] = login_service['server'].rstrip('/')
-                login_service['service'] = login_service['service'].rstrip('/')
-                ws.logger.info(u'cas config : server {}, service {}'.format(
-                    login_service['server'],
-                    login_service['service'],
-                ))
-
-        if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
-            result = ws.db.find({'_id': "canopsis"}, namespace='default_saml2')
-
-            login_config["saml2config"] = {
-                "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
-
-        return {"login_config": login_config}
-
-    def get_user_interface():
-        user_interface_manager = UserInterfaceManager(
-            *UserInterfaceManager.provide_default_basics())
-
-        user_interface = user_interface_manager.get()
-
-        if user_interface is not None:
-            return {"user_interface": user_interface.to_dict()}
-
-        return {"user_interface": None}
-
-    def get_version():
-        store = MongoStore.get_default()
-        version_collection = \
-            store.get_collection(name=CanopsisVersionManager.COLLECTION)
-        document = CanopsisVersionManager(version_collection).\
-            find_canopsis_version_document()
-
-        return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
-
-    @ws.application.get('/api/internal/login/login_info')
+    @ws.application.get('/api/internal/login/login_info', skip=ws.skip_login)
     def get_internal_login_info():
         cservices = {}
-        cservices.update(get_login_config())
+        cservices.update(get_login_config(ws))
         cservices.update(get_user_interface())
         cservices.update(get_version())
         return gen_json(cservices)
