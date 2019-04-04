@@ -1,5 +1,0 @@
-#!/bin/bash
-chmod +x /opt/canopsis/bin/*
-chown -R canopsis:canopsis /opt/canopsis/var/log
-chown -R canopsis:canopsis /opt/canopsis/var/cache
-chown -R canopsis:canopsis /opt/canopsis/tmp
