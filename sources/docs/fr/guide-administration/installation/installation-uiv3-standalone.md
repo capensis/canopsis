@@ -3,12 +3,18 @@
 Ce guide vous permet de déployer l'interface graphique de Canopsis de manière indépendante du backend Canopsis.  
 
 !!! warning
-    Cette méthode de déploiement est valable pour des versions de l'uiv3 >= 3.15.0
+    La compatibilité de l'UIv3 et des APIs Canopsis est assurée dans chaque version.
+    Le fait de déployer une UIv3 et des APIs Canopsis de version différente vous explose à des incompatibilités, des incohérences de comportements et, de manière générale, à des effets de bord
+
+!!! note 
+    Cette méthode de déploiement est valable pour des versions de Canopsis >= 3.15.0
 
 ## Récupération des sources et build de l'UIv3
 
+Vous devez déterminer la version que vous souhaitez déployer, 3.15.0 dans notre exemple.
+
 ````
-git clone https://git.canopsis.net/canopsis/canopsis.git -b master
+git clone https://git.canopsis.net/canopsis/canopsis.git -b 3.15.0
 cd canopsis/sources/webcore/src/canopsis-next/
 ````
 
