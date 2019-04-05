@@ -6,12 +6,10 @@ L'ensemble des procédures décrites doivent être réalisées avec l'utilisateu
 
 ## Pré-requis
 
-Canopsis peut être installé sur l'un des environnements Linux suivants (architecture x86-64) :
+Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch* ») ou sur CentOS 7.
 
-*  CentOS 7 ;
-*  ou Debian 9 (« *stretch* »).
-
-**Note :** Canopsis n'assure plus de compatibilité avec Debian 8 (« *jessie* ») depuis la version X.Y.Z.
+!!! attention
+    Les prochaines versions de Canopsis ne seront bientôt plus compatibles avec **Debian 8** (« *jessie* »). Pensez à mettre à jour votre environnement vers Debian 9 pour continuer de profiter des mises à jour de l'outil.
 
 ## Installation des paquets
 
@@ -45,6 +43,12 @@ Activation d'EPEL et application des dernières mises à jour de votre système�
 ```sh
 yum install yum-utils epel-release
 yum update
+```
+
+Installation d'une version plus récente de Python 2.7 (pré-requis pour le `webserver` Canopsis en environnement CentOS 7, depuis Canopsis 3.13.0), [depuis SCL](https://www.softwarecollections.org/en/scls/rhscl/python27/) :
+```sh
+yum install centos-release-scl
+yum install python27
 ```
 
 Ajout du dépôt Canopsis (qui permettra aussi de récupérer les mises à jour) :

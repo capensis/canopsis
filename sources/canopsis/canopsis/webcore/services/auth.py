@@ -20,6 +20,7 @@
 
 from urllib import quote_plus
 
+
 from bottle import redirect, response, HTTPError
 
 from canopsis.common.ws import route

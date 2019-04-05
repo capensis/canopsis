@@ -58,6 +58,12 @@
           v-model="form.ui_language",
           :items="languages"
           )
+        v-layout(row, align-center, v-if="!isNew")
+          div {{ $t('common.authKey') }}: {{ user.authkey }}
+          v-tooltip(left)
+            v-btn(@click.stop="$copyText(user.authkey)", slot="activator", small, fab, icon, depressed)
+              v-icon file_copy
+            span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
           v-switch(
             color="primary",

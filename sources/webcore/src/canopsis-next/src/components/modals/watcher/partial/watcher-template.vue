@@ -46,6 +46,7 @@ export default {
       return new Handlebars.SafeString(`
         <div class="mt-2" v-for="watcherEntity in watcherEntities">
           <watcher-entity
+          :isWatcherOnPbehavior="watcher.active_pb_watcher"
           :entity="watcherEntity"
           :template="entityTemplate"
           entityNameField="${entityNameField}"

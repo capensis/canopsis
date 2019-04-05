@@ -39,7 +39,7 @@ export default {
         return this.$route.path;
       }
 
-      return this.$router.fullPath;
+      return this.$route.fullPath;
     },
   },
   async mounted() {

@@ -10,7 +10,13 @@
       )
         template(slot="prepend", slot-scope="props", v-if="props.item.isArray")
           div.caption.font-italic (Array)
-        template(slot="append", slot-scope="props", v-if="!props.item.children")
+        template(slot="label", slot-scope="props")
+          div {{ props.item.name }}
+            span.pl-1(v-if="props.leaf") :
+              ellipsis.pl-1.d-inline-block.grey--text.body-1(:text="String(props.item.value)")
+            span.pl-1(v-else-if="!props.leaf && !(props.item.children && props.item.children.length)") :
+              .pl-1.d-inline-block.grey--text.text--darken-1.body-1.font-italic {{ $t('common.emptyObject') }}
+        template(slot="append", slot-scope="props", v-if="props.leaf")
           v-tooltip(left)
             v-btn(@click="copyPathToClipBoard(props.item.path)", slot="activator", small, icon)
               v-icon file_copy
@@ -20,12 +26,14 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import modalInnerMixin from '@/mixins/modal/inner';
 import popupMixin from '@/mixins/popup';
+import Ellipsis from '@/components/tables/ellipsis.vue';
 
 export default {
   name: MODALS.variablesHelp,
-  mixins: [modalInnerItemsMixin, popupMixin],
+  components: { Ellipsis },
+  mixins: [modalInnerMixin, popupMixin],
   methods: {
     async copyPathToClipBoard(itemPath) {
       try {

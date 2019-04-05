@@ -15,14 +15,18 @@
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
-        :items="viewFilters",
+        :filters="viewFilters",
+        :lockedFilters="widgetViewFilters"
         :value="mainFilter",
         :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
         @input="updateSelectedFilter",
-        @update:condition="updateSelectedCondition"
+        @update:condition="updateSelectedCondition",
+        @update:filters="updateFilters"
         )
       v-flex.ml-4
-        mass-actions-panel(:itemsIds="selected")
+        mass-actions-panel(:itemsIds="selectedIds")
       v-flex
         context-fab(v-if="hasAccessToCreateEntity")
     no-columns-table(v-if="!hasColumns")
@@ -67,7 +71,7 @@
           @input="updateQueryPage"
           )
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
@@ -87,6 +91,7 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import MoreInfos from './more-infos/more-infos.vue';
@@ -122,6 +127,7 @@ export default {
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
   ],
   props: {
@@ -140,6 +146,10 @@ export default {
     };
   },
   computed: {
+    selectedIds() {
+      return this.selected.map(item => item._id);
+    },
+
     headers() {
       if (this.hasColumns) {
         return [...this.columns, { text: '', sortable: false }];
@@ -158,6 +168,10 @@ export default {
 
     hasAccessToEditFilter() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.userFilter);
     },
   },
   methods: {

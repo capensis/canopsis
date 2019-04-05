@@ -30,7 +30,7 @@
                   )
                     v-icon {{ action.icon }}
                   span {{ $t(`common.actions.${action.eventType}`) }}
-            div(v-html="compiledTemplate")
+            entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
@@ -46,13 +46,17 @@ import {
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
 } from '@/constants';
-import { compile } from '@/helpers/handlebars';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
 
+import EntityTemplate from './entity-template.vue';
+
 export default {
+  components: {
+    EntityTemplate,
+  },
   mixins: [
     authMixin,
     modalMixin,
@@ -69,6 +73,10 @@ export default {
     },
     template: {
       type: String,
+    },
+    isWatcherOnPbehavior: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -114,12 +122,18 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
           action: this.preparePlayAction,
         },
+        cancel: {
+          type: weatherActionsTypes.entityCancel,
+          eventType: EVENT_ENTITY_TYPES.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          action: this.prepareCancelAction,
+        },
       },
     };
   },
   computed: {
     color() {
-      if (this.hasActivePbehavior) {
+      if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
         return WATCHER_PBEHAVIOR_COLOR;
       }
 
@@ -179,10 +193,6 @@ export default {
       return this.entity.pbehavior.filter(value => value.isActive).length;
     },
 
-    compiledTemplate() {
-      return compile(this.template, { entity: this.entity });
-    },
-
     isPaused() {
       return this.entity.pbehavior.some(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
     },
@@ -201,6 +211,10 @@ export default {
 
       if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);
+      }
+
+      if (this.entity.alarm_display_name) {
+        actions.push(filteredActionsMap.cancel);
       }
 
       if (this.isPaused) {

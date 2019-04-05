@@ -25,13 +25,13 @@ import time
 import unittest
 
 import xmlrunner
-from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common import root_path
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
-from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.manager import PBehaviorManager
 
 from base import BaseTest
@@ -54,15 +54,16 @@ class LoggerMock():
 class TestReader(BaseTest):
     def setUp(self):
         super(TestReader, self).setUp()
-        self.pb_storage = Middleware.get_middleware_by_uri(
-            PBehaviorManager.PB_STORAGE_URI
-        )
+
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection("default_testpbehavior")
+        pb_coll = MongoCollection(collection)
 
         self.logger = Logger.get('alertsreader', '/tmp/null')
         conf = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
         self.pbehavior_manager = PBehaviorManager(config=conf,
                                                   logger=self.logger,
-                                                  pb_storage=self.pb_storage)
+                                                  pb_collection=pb_coll)
 
         self.reader = AlertsReader(config=conf,
                                    logger=self.logger,
@@ -80,7 +81,7 @@ class TestReader(BaseTest):
     def tearDown(self):
         """Teardown"""
         super(TestReader, self).setUp()
-        self.pb_storage.remove_elements()
+        self.pbehavior_manager.delete(_filter={})
 
     def test__translate_key(self):
         cases = [
