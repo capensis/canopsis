@@ -25,7 +25,7 @@ import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/inner';
 
 export default {
-  name: MODALS.createWatcherDeclareTicketEvent,
+  name: MODALS.createWatcherAssocTicketEvent,
   $_veeValidate: {
     validator: 'new',
   },

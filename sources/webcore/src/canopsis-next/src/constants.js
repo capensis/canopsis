@@ -32,7 +32,7 @@ export const MODALS = {
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',
   watcher: 'watcher',
-  createWatcherDeclareTicketEvent: 'create-watcher-declare-ticket-event',
+  createWatcherAssocTicketEvent: 'create-watcher-assoc-ticket-event',
   createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
@@ -653,7 +653,7 @@ export const WIDGETS_ACTIONS_TYPES = {
   },
   weather: {
     entityAck: 'entityAck',
-    entityDeclareTicket: 'entityDeclareTicket',
+    entityAssocTicket: 'entityAssocTicket',
     entityValidate: 'entityValidate',
     entityInvalidate: 'entityInvalidate',
     entityPause: 'entityPause',
