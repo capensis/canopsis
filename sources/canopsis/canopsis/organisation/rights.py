@@ -70,10 +70,7 @@ class Rights(Middleware):
         return self._generic_get(filter_)
 
     def get_users(self, projection={'_id': 1}):
-        return self._storage.get_elements(
-            query={'crecord_type': 'user'},
-            projection=projection
-        )
+        return self._collection.find({'crecord_type': 'user'}, projection)
 
     def _configure(self):
         # avoid missing attributes
@@ -101,9 +98,10 @@ class Rights(Middleware):
                 }
             }
 
-    # Add an action to the referenced action
     def add(self, a_id, a_desc):
         """
+        Add an action to the referenced action
+
         Args:
             a_id: id of the action to reference
             a_desc: description of the action to reference
@@ -113,29 +111,33 @@ class Rights(Middleware):
             ``None`` otherwise
         """
 
-        return self._storage.put_element(
-            element={
+        return self._collection.insert(
+            {
                 'crecord_name': a_id,
                 'crecord_type': 'action',
-                'desc': a_desc
-            }, _id=a_id
+                'desc': a_desc,
+                '_id': a_id
+            }
         )
 
-    # Delete an action from the reference list
     def delete_action(self, a_id):
         """
+        Delete an action from the reference list
+
         Args:
             a_id: id of the action to be deleted
         Returns:
             See MongoStorage
         """
 
-        return self._storage.remove_elements(a_id)
+        return self._storage.remove(a_id)
 
-    # Check if an entity has the flags for a specific rigjt
-    # The entity must have a rights field with a rights maps within
+
     def check(self, entity, right_id, checksum):
         """
+        Check if an entity has the flags for a specific right the entity must
+        have a rights field with a rights maps within.
+
         Args:
             entity: entity to be checked
             right_id: right to be checked
@@ -158,11 +160,11 @@ class Rights(Middleware):
 
         return False
 
-    # Check if an user has the flags for a specific right
-    # Each of the user's entities (Role, Profile, and Groups)
-    # will be checked
     def check_rights(self, u_name, right_id, checksum):
         """
+        Check if an user has the flags for a specific right each of the user's
+        entities (Role, Profile, and Groups) will be checked.
+
         Args:
             u_name: user to be checked
             right_id: right to be checked
