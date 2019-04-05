@@ -67,4 +67,7 @@ export const API_ROUTES = {
     list: '/snmprule',
     create: '/snmprule/put',
   },
+  snmpMib: {
+    distinct: '/snmpmibdistinct',
+  },
 };

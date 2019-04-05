@@ -64,6 +64,7 @@ export const MODALS = {
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
+  createSnmpRule: 'create-snmp-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {

@@ -1,0 +1,35 @@
+<template lang="pug">
+  v-card
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline Create SNMP rule
+    v-card-text
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+</template>
+
+<script>
+import { MODALS } from '@/constants';
+
+import modalInnerMixin from '@/mixins/modal/inner';
+
+export default {
+  name: MODALS.createSnmpRule,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  mixins: [modalInnerMixin],
+  data() {
+    return {
+      form: {},
+    };
+  },
+  methods: {
+    submit() {
+      // TO DO SOMETHING
+    },
+  },
+};
+</script>
