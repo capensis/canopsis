@@ -5,57 +5,67 @@
   d-flex,
   align-center
   )
-    v-layout(justify-center, align-center, row)
-      v-flex(xs11, md6, lg4)
-        v-card
-          v-layout(row, wrap)
-            v-flex(xs12)
-              v-toolbar.primary.white--text
+    div
+      v-layout(justify-center, align-center, row)
+        v-flex(xs11, md6, lg4)
+          v-card
+            v-card-title.primary.white--text.elevation-3
+              v-layout(justify-space-between, align-center)
                 v-toolbar-title {{ $t('common.login') }}
-            v-flex(xs12)
-              v-layout(justify-center)
-                img.my-4(src="@/assets/canopsis-green.png")
-            v-flex(xs12)
-              v-form.py-2(@submit.prevent="submit")
-                v-flex(px-3)
-                  v-text-field(
-                  :label="$t('common.username')",
-                  :error-messages="errors.collect('username')",
-                  v-model="form.username",
-                  v-validate="'required'",
-                  color="primary",
-                  name="username",
-                  autofocus,
-                  clearable,
-                  outline
-                  )
-                v-flex(px-3)
-                  v-text-field(
-                  :label="$t('common.password')",
-                  :error-messages="errors.collect('password')",
-                  v-model="form.password",
-                  v-validate="'required'",
-                  color="primary",
-                  name="password",
-                  type="password",
-                  clearable,
-                  outline
-                  )
-                v-flex.px-3.py-2
-                  v-alert(:value="hasServerError", type="error")
-                    span {{ $t('login.errors.incorrectEmailOrPassword') }}
-                v-flex(xs2 px-2)
-                  v-btn.primary(type="submit") {{ $t('common.connect') }}
+                  span(v-if="appTitle") - {{ appTitle }}
+                img.px-2(v-if="logo", src="@/assets/canopsis.png")
+            v-layout(row, wrap)
+              v-flex(xs12)
+                v-layout(justify-center)
+                  img.my-4.logo(:src="appLogo")
+              v-flex(xs12)
+                v-form.py-2(@submit.prevent="submit")
+                  v-flex(px-3)
+                    v-text-field(
+                    :label="$t('common.username')",
+                    :error-messages="errors.collect('username')",
+                    v-model="form.username",
+                    v-validate="'required'",
+                    color="primary",
+                    name="username",
+                    autofocus,
+                    clearable,
+                    outline
+                    )
+                  v-flex(px-3)
+                    v-text-field(
+                    :label="$t('common.password')",
+                    :error-messages="errors.collect('password')",
+                    v-model="form.password",
+                    v-validate="'required'",
+                    color="primary",
+                    name="password",
+                    type="password",
+                    clearable,
+                    outline
+                    )
+                  v-flex.px-3.py-2
+                    v-alert(:value="hasServerError", type="error")
+                      span {{ $t('login.errors.incorrectEmailOrPassword') }}
+                  v-flex(xs2 px-2)
+                    v-layout
+                      v-btn.primary(type="submit") {{ $t('common.connect') }}
+                v-divider
+                div(v-html="footer")
+      div.version.pr-2.mb-2 {{ version }}
 </template>
 
 <script>
 import authMixin from '@/mixins/auth';
+import entitiesInfoMixin from '@/mixins/entities/info';
+
+import logo from '@/assets/canopsis-green.png';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [authMixin],
+  mixins: [authMixin, entitiesInfoMixin],
   data() {
     return {
       hasServerError: false,
@@ -64,6 +74,18 @@ export default {
         password: '',
       },
     };
+  },
+  computed: {
+    appLogo() {
+      if (this.logo) {
+        return this.logo;
+      }
+
+      return logo;
+    },
+  },
+  async mounted() {
+    this.fetchLoginInfos();
   },
   methods: {
     async submit() {
@@ -93,3 +115,20 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .version {
+    position: absolute;
+    right: 0.5em;
+    bottom: 0.5em;
+    color: white;
+    font-weight: bold;
+  }
+
+  .logo {
+    width: auto;
+    height: auto;
+    max-width: 15em;
+    max-height: 15em;
+  }
+</style>

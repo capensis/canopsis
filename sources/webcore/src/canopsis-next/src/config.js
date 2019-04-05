@@ -70,4 +70,8 @@ export const API_ROUTES = {
   snmpMib: {
     distinct: '/snmpmibdistinct',
   },
+  infos: {
+    login: '/api/internal/login/login_info',
+    app: '/api/internal/app_info',
+  },
 };

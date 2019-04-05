@@ -19,6 +19,15 @@
         "models_user" : {
             "checksum" : 15
         },
+        "models_exploitation_eventFilter": {
+            "checksum": 15
+        },
+        "models_exploitation_pbehavior": {
+            "checksum": 15
+        },
+        "models_exploitation_webhook": {
+            "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
@@ -194,6 +203,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_userFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
         "listalarm_done": {
             "checksum": 1,
             "desc": ""
@@ -271,6 +284,10 @@
             "desc": ""
         },
         "crudcontext_addFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_userFilter": {
             "checksum": 1,
             "desc": ""
         },

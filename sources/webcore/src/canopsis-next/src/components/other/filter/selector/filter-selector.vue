@@ -39,14 +39,12 @@
               :color="tile.props.value ? parent.color : ''",
               small
               ) {{ item.locked ? 'lock' : 'person' }}
-    v-flex(v-bind="flexProps.list")
+    v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
       filters-list(
       v-else,
       :filters="filters",
-      :hasAccessToAddFilter="hasAccessToAddFilter",
-      :hasAccessToEditFilter="hasAccessToEditFilter",
       @create:filter="createFilter",
       @update:filter="updateFilter",
       @delete:filter="deleteFilter"
@@ -112,6 +110,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    hasAccessToUserFilter: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     flexProps() {
@@ -128,16 +130,16 @@ export default {
     },
 
     preparedFilters() {
-      const preparedFilters = [...this.filters];
+      const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
+      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
 
-      if (this.lockedFilters.length) {
-        return preparedFilters.concat(
-          { divider: true },
-          this.lockedFilters.map(filter => ({ ...filter, locked: true })),
-        );
+      if (preparedFilters.length && preparedLockedFilters.length) {
+        return preparedFilters.concat({ divider: true }, preparedLockedFilters);
+      } else if (preparedFilters.length) {
+        return preparedFilters;
       }
 
-      return preparedFilters;
+      return preparedLockedFilters;
     },
   },
   methods: {

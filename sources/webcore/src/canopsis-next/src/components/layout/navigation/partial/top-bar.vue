@@ -5,6 +5,7 @@
     app,
   )
     v-toolbar-side-icon.ml-2.white--text(v-if="isShownGroupsSideBar", @click="$emit('toggleSideBar')")
+    v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
     v-toolbar-items
       v-menu(v-show="exploitationLinks.length", bottom, offset-y)
@@ -80,6 +81,7 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import entitiesViewMixin from '@/mixins/entities/view/index';
 import entitiesUserMixin from '@/mixins/entities/user';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 import GroupsTopBar from './groups-top-bar.vue';
 
@@ -96,6 +98,7 @@ export default {
     modalMixin,
     entitiesViewMixin,
     entitiesUserMixin,
+    entitiesInfoMixin,
   ],
   computed: {
     defaultViewTitle() {

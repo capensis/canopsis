@@ -8,6 +8,27 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.15.0 - Due date : 2019-04-04
+
+ - [Packaging] Deprecate Debian 8 support
+ - [Documentation] Added pbehavior helper documentation
+ - [Go] Allowed to have fast ack and ack on the same alarm
+ - [Python] Added route with login, app and user interface informations
+ - [Python] Fixed missing field error in service weather when using go watchers
+ - [Python] Changed login info route to allow requests while not logged in
+ - [UI] Fix - Display filter with long names
+ - [UI] Add possibility to display custom logo/app title
+ - [UI] Add variables values into helpers modals
+ - [UI] Add users personal filters in Listalarm and Context widgets
+ - [UI] Add possibility to insert images in text editor
+ - [UI] Fix - Use user's id instead of crecord\_name
+ - [UI - Filter editor] Fix - Automatic filter update when modifying it on advanced editor
+ - [UI - Rights] Add rights for exploitation views
+ - [UI - Service weather] Add cancel action
+ - [UI - List alarm] Add a setting to require note field when sending an ack event
+ - [UI - List alarm] Fix - Links not clickable
+ - [UI - CRUD Pbehaviors] Add pbehaviors edition
+
 # Canopsis 3.14.0 - Due date : 2019-03-28
 
  - [Python] Fix service weather 500 error when using Go watchers
