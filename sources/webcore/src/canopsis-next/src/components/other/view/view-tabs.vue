@@ -2,28 +2,35 @@
   v-tabs.view-tabs(
   ref="tabs",
   :key="vTabsKey",
-  :value="value",
+  :value="$route.fullPath"
   :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",
   slider-color="primary",
-  dark,
-  @change="$emit('input', $event)"
+  dark
   )
     draggable.d-flex(
+    v-if="tabs.length",
     :value="tabs",
     :options="draggableOptions",
     @end="onDragEnd",
     @input="$emit('update:tabs', $event)"
     )
-      v-tab.draggable-item(v-if="tabs.length", v-for="tab in tabs", :key="tab._id", :disabled="isTabsChanged", ripple)
+      v-tab.draggable-item(
+      v-for="tab in tabs",
+      :key="tab._id",
+      :disabled="isTabsChanged",
+      :to="getTabHrefById(tab._id)",
+      exact,
+      ripple
+      )
         span {{ tab.title }}
         v-btn(
         v-show="hasUpdateAccess && isEditingMode",
         small,
         flat,
         icon,
-        @click.stop="showUpdateTabModal(tab)"
+        @click.prevent="showUpdateTabModal(tab)"
         )
           v-icon(small) edit
         v-btn(
@@ -31,7 +38,7 @@
         small,
         flat,
         icon,
-        @click.stop="showDuplicateTabModal(tab)"
+        @click.prevent="showDuplicateTabModal(tab)"
         )
           v-icon(small) file_copy
         v-btn(
@@ -39,11 +46,16 @@
         small,
         flat,
         icon,
-        @click.stop="showDeleteTabModal(tab)"
+        @click.prevent="showDeleteTabModal(tab)"
         )
           v-icon(small) delete
-    v-tabs-items(v-if="$scopedSlots.default", active-class="active-view-tab")
-      v-tab-item(v-for="tab in tabs", :key="tab._id", lazy)
+    template(v-if="$scopedSlots.default")
+      v-tab-item(
+      v-for="tab in tabs",
+      :key="tab._id",
+      :value="getTabHrefById(tab._id)",
+      lazy
+      )
         slot(
         :tab="tab",
         :isEditingMode="isEditingMode",
@@ -53,25 +65,17 @@
 </template>
 
 <script>
-import omit from 'lodash/omit';
 import Draggable from 'vuedraggable';
-import { createNamespacedHelpers } from 'vuex';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
-import {
-  generateViewTab,
-  generateViewRow,
-  generateWidgetByType,
-  generateUserPreferenceByWidgetAndUser,
-} from '@/helpers/entities';
+import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
-
-const { mapActions: userPreferenceMapActions } = createNamespacedHelpers('userPreference');
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 export default {
   components: { Draggable },
@@ -79,6 +83,7 @@ export default {
     authMixin,
     modalMixin,
     vuetifyTabsMixin,
+    entitiesUserPreferenceMixin,
   ],
   props: {
     view: {
@@ -88,10 +93,6 @@ export default {
     tabs: {
       type: Array,
       required: true,
-    },
-    value: {
-      type: Number,
-      default: null,
     },
     hasUpdateAccess: {
       type: Boolean,
@@ -120,6 +121,13 @@ export default {
         disabled: !this.isEditingMode,
       };
     },
+    getTabHrefById() {
+      return (id) => {
+        const { href } = this.$router.resolve({ query: { tabId: id } }, this.$route);
+
+        return href.replace('#', '');
+      };
+    },
   },
   watch: {
     isEditingMode() {
@@ -133,11 +141,6 @@ export default {
     },
   },
   methods: {
-    ...userPreferenceMapActions({
-      createUserPreference: 'create',
-      fetchUserPreferenceByWidgetIdWithoutStore: 'fetchItemByWidgetIdWithoutStore',
-    }),
-
     showUpdateTabModal(tab) {
       this.showModal({
         name: MODALS.textFieldEditor,
@@ -183,54 +186,17 @@ export default {
     },
 
     async duplicateTabAction(tab, title) {
-      const widgetsIdsMap = {};
       const newTab = {
-        ...generateViewTab(),
+        ...generateCopyOfViewTab(tab),
 
         title,
-        rows: tab.rows.map(row => ({
-          ...generateViewRow(),
-
-          title: row.title,
-          widgets: row.widgets.map((widget) => {
-            const newWidget = generateWidgetByType(widget.type);
-
-            widgetsIdsMap[widget._id] = newWidget._id;
-
-            return {
-              ...newWidget,
-              ...omit(widget, ['_id']),
-            };
-          }),
-        })),
       };
 
-      await this.copyUserPreferencesForWidgets(widgetsIdsMap);
+      const widgetsIdsMappings = getViewsTabsWidgetsIdsMappings(tab, newTab);
+
+      await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
 
       return this.addTab(newTab);
-    },
-
-    async copyUserPreferencesForWidgets(widgetsIdsMap) {
-      const oldWidgetsIds = Object.keys(widgetsIdsMap);
-      const userPreferences = await Promise.all(oldWidgetsIds.map(widgetId =>
-        this.fetchUserPreferenceByWidgetIdWithoutStore({ widgetId })));
-
-
-      return Promise.all(userPreferences.map((userPreference) => {
-        if (!userPreference) {
-          return Promise.resolve();
-        }
-
-        const newWidgetId = widgetsIdsMap[userPreference.widget_id];
-        const newUserPreference = generateUserPreferenceByWidgetAndUser({ _id: newWidgetId }, this.currentUser);
-
-        return this.createUserPreference({
-          userPreference: {
-            ...newUserPreference,
-            ...omit(userPreference, ['_id', 'widget_id']),
-          },
-        });
-      }));
     },
 
     updateTab(tab) {

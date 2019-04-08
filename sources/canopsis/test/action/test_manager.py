@@ -39,6 +39,7 @@ class TestActionManager(unittest.TestCase):
         self.id_ = 'testid'
         self.action = {
             "_id": self.id_,
+            "hook": None,
             "type": "pbehavior",
             "fields": ["Resource"],
             "regex": ".*wine.*",
@@ -77,6 +78,7 @@ class TestActionManager(unittest.TestCase):
 
         res = self.manager.get_id(self.id_)
         self.assertIsNone(res)
+
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

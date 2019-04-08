@@ -9,8 +9,9 @@ import roleModule from './role';
 import userModule from './user';
 import rightModule from './right';
 import eventFilterRuleModule from './event-filter-rule';
-import versionModule from './version';
 import authProtocolModule from './authProtocol';
+import webhookModule from './webhook';
+import infoModule from './info';
 
 export default {
   alarm: alarmModule,
@@ -24,6 +25,7 @@ export default {
   user: userModule,
   right: rightModule,
   eventFilterRule: eventFilterRuleModule,
-  version: versionModule,
   authProtocol: authProtocolModule,
+  webhook: webhookModule,
+  info: infoModule,
 };

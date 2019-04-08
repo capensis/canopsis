@@ -26,10 +26,12 @@
 </template>
 
 <script>
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to associate a ticket to an alarm
@@ -43,7 +45,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
       form: {
@@ -57,7 +59,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
+        await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
 
         this.hideModal();
       }

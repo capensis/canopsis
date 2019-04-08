@@ -15,7 +15,7 @@
           :label="$t('modals.createAckEvent.fields.ticket')",
           :error-messages="errors.collect('ticket')",
           v-model="form.ticket",
-          v-validate="rules",
+          v-validate="'required'",
           data-vv-name="ticket"
           )
         v-layout(row)
@@ -23,7 +23,7 @@
           :label="$t('modals.createAckEvent.fields.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
-          v-validate="rules",
+          v-validate="'required'",
           data-vv-name="output",
           )
         v-layout(row)
@@ -38,17 +38,19 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit", :disabled="errors.any()") {{ $t('common.actions.acknowledge') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
       v-btn.warning(
       @click.prevent="submitWithDeclare",
       ) {{ $t('common.actions.acknowledgeAndReport') }}
 </template>
 
 <script>
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to create an ack event
@@ -61,10 +63,9 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
-      showValidationErrors: false,
       ack_resources: false,
       form: {
         ticket: '',
@@ -72,14 +73,9 @@ export default {
       },
     };
   },
-  computed: {
-    rules() {
-      return this.showValidationErrors ? 'required' : '';
-    },
-  },
   methods: {
     async create(withDeclare) {
-      const ackEventData = this.prepareData(this.$constants.EVENT_ENTITY_TYPES.ack, this.items, this.form);
+      const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
 
       await this.createEventAction({
         data: ackEventData,
@@ -87,7 +83,7 @@ export default {
 
       if (withDeclare) {
         const declareTicketEventData =
-          this.prepareData(this.$constants.EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
+          this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
 
         await this.createEventAction({
           data: declareTicketEventData,
@@ -110,10 +106,17 @@ export default {
     },
 
     async submit() {
-      this.showValidationErrors = false;
       this.errors.clear();
 
-      await this.create();
+      if (this.config && this.config.isNoteRequired) {
+        const formIsValid = await this.$validator.validate('output');
+
+        if (formIsValid) {
+          await this.create();
+        }
+      } else {
+        await this.create();
+      }
     },
   },
 };

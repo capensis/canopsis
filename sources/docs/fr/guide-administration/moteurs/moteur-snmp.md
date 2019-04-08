@@ -3,6 +3,8 @@
 !!! attention
     Ce moteur n'est disponible que dans l'édition CAT de Canopsis.
 
+    À noter aussi que ce moteur n'est actuellement pas fonctionnel en environnement Debian 8 ([bug #1456](https://git.canopsis.net/canopsis/canopsis/issues/1456)).
+
 Le moteur `snmp` permet de traiter les traps SNMP récupérés par le connecteur `snmp2canopsis` selon des règles prédéfinies par l'utilisateur.
 
 ## Fonctionnement
@@ -41,7 +43,7 @@ systemctl start canopsis-engine-cat@snmp
 
 Pour créer des règles de transformations il faut se logger sur la page dédiée sur l'UIv2 :
 
-http://<canopsis_addr:port>/en/static/canopsis/index.html#/userview/view.snmprule
+http://CANOPSIS_ADDR:PORT/en/static/canopsis/index.html#/userview/view.snmprule
 
 Une règle de transformation consiste à convertir des `OID` en valeurs compréhensibles et associer les attributs nécessaires à un message Canopsis.
 

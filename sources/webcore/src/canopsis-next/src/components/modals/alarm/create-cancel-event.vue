@@ -26,10 +26,12 @@
 </template>
 
 <script>
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to cancel an alarm
@@ -43,7 +45,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
       form: {
@@ -57,7 +59,7 @@ export default {
     },
 
     eventType() {
-      return this.config.eventType || this.$constants.EVENT_ENTITY_TYPES.cancel;
+      return this.config.eventType || EVENT_ENTITY_TYPES.cancel;
     },
   },
   methods: {
@@ -67,7 +69,7 @@ export default {
       if (isFormValid) {
         const data = { ...this.form };
 
-        if (this.eventType === this.$constants.EVENT_ENTITY_TYPES.cancel) {
+        if (this.eventType === EVENT_ENTITY_TYPES.cancel) {
           data.cancel = 1;
         }
 

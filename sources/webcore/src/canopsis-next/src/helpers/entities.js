@@ -1,11 +1,26 @@
-import moment from 'moment';
+import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
+import {
+  WIDGET_TYPES,
+  STATS_CALENDAR_COLORS,
+  STATS_TYPES,
+  STATS_DURATION_UNITS,
+  STATS_DISPLAY_MODE,
+  STATS_DISPLAY_MODE_PARAMETERS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  SORT_ORDERS,
+} from '@/constants';
 
 import uuid from './uuid';
 
+/**
+ * Generate widget by type
+ *
+ * @param {string} type
+ * @returns {Object}
+ */
 export function generateWidgetByType(type) {
   const widget = {
     type,
@@ -23,6 +38,7 @@ export function generateWidgetByType(type) {
     itemsPerPage: PAGINATION_LIMIT,
     infoPopups: [],
     moreInfoTemplate: '',
+    isAckNoteRequired: false,
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),
@@ -67,6 +83,7 @@ export function generateWidgetByType(type) {
         ...alarmsListDefaultParameters,
 
         viewFilters: [],
+        mainFilter: null,
         infoPopups: [],
         periodicRefresh: {
           enabled: false,
@@ -75,6 +92,9 @@ export function generateWidgetByType(type) {
         sort: {
           order: 'ASC',
         },
+        alarmsStateFilter: {
+          opened: true,
+        },
       };
       break;
 
@@ -82,6 +102,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
+        mainFilter: null,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),
@@ -120,40 +141,31 @@ export function generateWidgetByType(type) {
       };
       break;
     case WIDGET_TYPES.statsHistogram:
+    case WIDGET_TYPES.statsCurves:
       specialParameters = {
         mfilter: {},
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        groups: [],
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
         stats: {},
         statsColors: {},
       };
       break;
-    case WIDGET_TYPES.statsCurves:
-      specialParameters = {
-        mfilter: {},
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        periods: 2,
-        stats: {},
-      };
-      break;
     case WIDGET_TYPES.statsTable:
       specialParameters = {
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        stats: {},
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
         mfilter: {},
+        stats: {},
       };
       break;
-
-
     case WIDGET_TYPES.statsCalendar:
       specialParameters = {
         filters: [],
@@ -171,24 +183,40 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.statsNumber:
       specialParameters = {
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
         mfilter: {},
-        stat: {},
-        yesNoMode: false,
-        criticityLevels: {
-          minor: 20,
-          major: 30,
-          critical: 40,
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
         },
-        statColors: {
-          ok: '#66BB6A',
-          minor: '#FFEE58',
-          major: '#FFA726',
-          critical: '#FF7043',
+        limit: 10,
+        sortOrder: SORT_ORDERS.desc,
+        displayMode: {
+          mode: STATS_DISPLAY_MODE.criticity,
+          parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
         },
+      };
+      break;
+    case WIDGET_TYPES.text:
+      specialParameters = {
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
+        mfilter: {},
+        stats: {},
+        template: '',
       };
       break;
   }
@@ -198,6 +226,11 @@ export function generateWidgetByType(type) {
   return widget;
 }
 
+/**
+ * Generate view row
+ *
+ * @returns {Object}
+ */
 export function generateViewRow() {
   return {
     _id: uuid('view-row'),
@@ -206,6 +239,11 @@ export function generateViewRow() {
   };
 }
 
+/**
+ * Generate view tab
+ *
+ * @returns {Object}
+ */
 export function generateViewTab() {
   return {
     _id: uuid('view-tab'),
@@ -214,6 +252,11 @@ export function generateViewTab() {
   };
 }
 
+/**
+ * Generate view
+ *
+ * @returns {Object}
+ */
 export function generateView() {
   const defaultTab = { ...generateViewTab(), title: 'Default' };
 
@@ -228,17 +271,29 @@ export function generateView() {
   };
 }
 
+/**
+ * Generate user preference by widget and user objects
+ *
+ * @param {Object} widget
+ * @param {Object} user
+ * @returns {Object}
+ */
 export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
-    _id: `${widget._id}_${user.crecord_name}`,
+    _id: `${widget._id}_${user._id}`,
     widget_preferences: {},
-    crecord_name: user.crecord_name,
+    crecord_name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
     crecord_type: 'userpreferences',
   };
 }
 
+/**
+ * Generate user
+ *
+ * @returns {Object}
+ */
 export function generateUser() {
   return {
     crecord_write_time: null,
@@ -264,6 +319,11 @@ export function generateUser() {
   };
 }
 
+/**
+ * Generate role
+ *
+ * @returns {Object}
+ */
 export function generateRole() {
   return {
     crecord_write_time: null,
@@ -276,6 +336,11 @@ export function generateRole() {
   };
 }
 
+/**
+ * Generate right
+ *
+ * @returns {Object}
+ */
 export function generateRight() {
   return {
     crecord_creation_time: null,
@@ -290,12 +355,90 @@ export function generateRight() {
   };
 }
 
+/**
+ * Generate role right by checksum
+ *
+ * @param {number} checksum
+ * @returns {Object}
+ */
 export function generateRoleRightByChecksum(checksum) {
   return {
     checksum,
     crecord_type: 'right',
   };
 }
+
+/**
+ * Generate copy of view tab
+ *
+ * @param {Object} tab
+ * @returns {Object}
+ */
+export function generateCopyOfViewTab(tab) {
+  return {
+    ...generateViewTab(),
+
+    rows: tab.rows.map(row => ({
+      ...generateViewRow(),
+
+      title: row.title,
+      widgets: row.widgets.map(widget => ({
+        ...generateWidgetByType(widget.type),
+        ...omit(widget, ['_id']),
+      })),
+    })),
+  };
+}
+
+/**
+ * Generate copy of view
+ *
+ * @param {Object} view
+ * @returns {Object}
+ */
+export function generateCopyOfView(view) {
+  return {
+    ...generateView(),
+    ...omit(view, ['_id', 'tabs']),
+
+    tabs: view.tabs.map(tab => ({
+      ...generateCopyOfViewTab(tab),
+
+      ...omit(tab, ['_id', 'rows']),
+    })),
+  };
+}
+
+/**
+ * Get mappings for widgets ids from old tab to new tab
+ *
+ * @param {Object} oldTab
+ * @param {Object} newTab
+ * @returns {Array.<{ oldId: number, newId: number }>}
+ */
+export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
+  return oldTab.rows.reduce((acc, row, rowIndex) => {
+    const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
+      oldId: widget._id,
+      newId: get(newTab, `rows.${rowIndex}.widgets.${widgetIndex}._id`, null),
+    }));
+
+    return acc.concat(widgetsIds);
+  }, []);
+}
+
+/**
+ * Get mappings for widgets from old view to new view
+ *
+ * @param {Object} oldView
+ * @param {Object} newView
+ * @returns {Array.<{ oldId: number, newId: number }>}
+ */
+export function getViewsWidgetsIdsMappings(oldView, newView) {
+  return oldView.tabs.reduce((acc, tab, index) =>
+    acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
+}
+
 
 export default {
   generateWidgetByType,
@@ -306,4 +449,9 @@ export default {
   generateRole,
   generateRight,
   generateRoleRightByChecksum,
+  generateCopyOfViewTab,
+  generateCopyOfView,
+
+  getViewsTabsWidgetsIdsMappings,
+  getViewsWidgetsIdsMappings,
 };

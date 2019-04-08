@@ -47,7 +47,7 @@ si la règle est invalide.
 ## Supprimer une règle
 
 ```
-DEL /api/v2/eventfilter/rules/<rule_id>
+DELETE /api/v2/eventfilter/rules/<rule_id>
 ```
 
 Supprime la règle dont l'id vaut `<rule_id>`, ou renvoie une erreur si
@@ -114,7 +114,7 @@ canopsis, et `root:root` par les identifiants de l'administrateur.
 ## Supprimer une règle
 
 ```shell
-curl -X DEL -u root:root 'https://<hostname>/api/v2/eventfilter/rules/<rule_id>'
+curl -X DELETE -u root:root 'https://<hostname>/api/v2/eventfilter/rules/<rule_id>'
 ```
 
 `<hostname>` est à remplacer par le nom de domaine ou l'adresse IP du serveur

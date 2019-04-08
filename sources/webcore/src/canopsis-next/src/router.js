@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Cookies from 'js-cookie';
-import isEmpty from 'lodash/isEmpty';
-import isFunction from 'lodash/isFunction';
+import { isEmpty, isFunction } from 'lodash';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
@@ -19,6 +18,7 @@ import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
+import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
 
 Vue.use(Router);
 
@@ -96,13 +96,34 @@ const routes = [
     path: '/exploitation/pbehaviors',
     name: 'exploitation-pbehaviors',
     component: ExploitationPbehaviors,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.pbehavior,
+      },
+    },
   },
   {
     path: '/exploitation/event-filter',
     name: 'exploitation-event-filter',
     component: ExploitationEventFilter,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.eventFilter,
+      },
+    },
+  },
+  {
+    path: '/exploitation/webhooks',
+    name: 'exploitation-webhooks',
+    component: ExploitationWebhooks,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.webhook,
+      },
+    },
   },
 ];
 
@@ -143,12 +164,16 @@ router.beforeResolve((to, from, next) => {
     const { requiresRight } = to.meta;
     const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
     const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
+
     const checkProcess = (user) => {
       if (checkUserAccess(user, rightId, rightMask)) {
         next();
       } else {
         store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
-        next(false);
+
+        next({
+          name: 'home',
+        });
       }
     };
 
@@ -167,6 +192,12 @@ router.beforeResolve((to, from, next) => {
     }
   } else {
     next();
+  }
+});
+
+router.afterEach((to, from) => {
+  if (to.path !== from.path) {
+    store.dispatch('entities/sweep');
   }
 });
 

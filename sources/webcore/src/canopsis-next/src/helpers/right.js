@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 export function checkUserAccess(user, rightId, rightMask) {
   const checksum = get(user, ['rights', rightId, 'checksum'], 0);

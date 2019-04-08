@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.container.text-xs-center(v-if="meta.total")
+  div.container.text-xs-center(v-if="total")
     ul.v-pagination(v-if="type === 'top'")
       li
         button.v-pagination__navigation(
@@ -8,66 +8,69 @@
         @click="previous"
         )
           v-icon chevron_left
-      span {{ currentPage }}
+      span {{ page }}
       span /
       span {{ totalPages }}
       li
         button.v-pagination__navigation(
-        :disabled="currentPage >= totalPages",
+        :disabled="page >= totalPages",
         :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
         @click="next"
         )
           v-icon chevron_right
     div(v-else)
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
-      |  {{ last }} {{ $t('common.of') }} {{ meta.total }} {{ $t('common.entries') }}
-      v-pagination(v-model="currentPage", :total-visible="$config.PAGINATION_TOTAL_VISIBLE" :length="totalPages")
+      |  {{ last }} {{ $t('common.of') }} {{ total }} {{ $t('common.entries') }}
+      v-pagination(
+      :value="page",
+      :total-visible="$config.PAGINATION_TOTAL_VISIBLE",
+      :length="totalPages",
+      @input="updatePage"
+      )
 </template>
 
 <script>
+import { PAGINATION_LIMIT } from '@/config';
+
 /**
  * Pagination component
  *
- * @prop {String} type - 'Top' or 'Bottom, to determine
+ * @prop {Object} page - Current page
+ * @prop {Number} limit - Elements per page
+ * @prop {Number} total - Total items
+ * @prop {string} type - 'Top' or 'Bottom, to determine
  * if it's a top pagination (with less infos), or a bottom pagination
- * @prop {Object} meta - Object containing meta information (Ex : total number of items)
- * @prop {Number} query - Object containing widget query information
  *
- * @event query#update
+ * @event input
  */
 export default {
+  model: {
+    prop: 'page',
+    event: 'input',
+  },
   props: {
+    page: {
+      type: Number,
+      default: 1,
+    },
+    limit: {
+      type: Number,
+      default: PAGINATION_LIMIT,
+    },
+    total: {
+      type: Number,
+      default: 0,
+    },
     type: {
       type: String,
       validator: value => ['top', 'bottom'].indexOf(value) !== -1,
       default: 'bottom',
     },
-    meta: {
-      type: Object,
-      default: () => ({
-        total: 0,
-        first: 0,
-        last: 0,
-      }),
-    },
-    query: {
-      type: Object,
-      required: true,
-    },
   },
   computed: {
-    currentPage: {
-      get() {
-        return this.query.page || 1;
-      },
-      set(page) {
-        this.$emit('update:query', { ...this.query, page });
-      },
-    },
-
     totalPages() {
-      if (this.meta.total) {
-        return Math.ceil(this.meta.total / this.query.limit) || 0;
+      if (this.total) {
+        return Math.ceil(this.total / this.limit) || 0;
       }
 
       return 0;
@@ -77,41 +80,37 @@ export default {
      * Calculate first item nb to display on pagination, in case it's not given by the backend
      */
     first() {
-      if (this.meta.first) {
-        return this.meta.first;
-      }
-
-      return 1 + (this.query.limit * (this.query.page - 1));
+      return 1 + (this.limit * (this.page - 1));
     },
 
     /**
      * Calculate last item nb to display on pagination, in case it's not given by the backend
      */
     last() {
-      if (this.meta.last) {
-        return this.meta.last;
-      }
+      const calculatedLast = this.page * this.limit;
 
-      const calculatedLast = this.query.page * this.query.limit;
-
-      return calculatedLast > this.meta.total ? this.meta.total : calculatedLast;
+      return calculatedLast > this.total ? this.total : calculatedLast;
     },
 
     isPreviousPageDisabled() {
-      return this.currentPage <= 1;
+      return this.page <= 1;
     },
 
     isNextPageDisabled() {
-      return this.currentPage >= this.totalPages;
+      return this.page >= this.totalPages;
     },
   },
   methods: {
     previous() {
-      this.currentPage = this.currentPage - 1;
+      this.updatePage(this.page - 1);
     },
 
     next() {
-      this.currentPage = this.currentPage + 1;
+      this.updatePage(this.page + 1);
+    },
+
+    updatePage(page) {
+      this.$emit('input', page);
     },
   },
 };

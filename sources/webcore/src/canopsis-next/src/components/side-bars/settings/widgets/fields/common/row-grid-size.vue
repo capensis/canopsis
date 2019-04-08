@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 import { generateViewRow } from '@/helpers/entities';
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';

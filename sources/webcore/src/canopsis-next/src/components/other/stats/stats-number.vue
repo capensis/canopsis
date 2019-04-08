@@ -1,48 +1,51 @@
 <template lang="pug">
   div
+    progress-overlay(:pending="pending")
     v-card
-      v-card-title
-        v-layout(justify-center)
-          h2 {{ widget.parameters.stat.title }}
-      v-data-iterator(
-        :items="stats",
-        content-tag="v-layout",
-        rows-per-page-text="",
-        row,
-        wrap,
+      v-data-table(
+      :items="stats",
+      :headers="tableHeaders",
+      :pagination.sync="pagination",
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
       )
-        v-flex(
-          slot="item",
-          slot-scope="props",
-          xs12,
+        template(
+          slot="items",
+          slot-scope="{ item }",
+          xs12
         )
-          v-list(dense)
-            v-list-tile
-              v-list-tile-content
-                ellipsis(:text="props.item.entity.name")
-              v-list-tile-content.align-end
-                v-layout(align-center)
-                  v-chip(:style="{ backgroundColor: getChipColor(props.item.value) }")
-                    div.body-1 {{ getChipText(props.item.value) }}
-                  div.caption
-                    template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
-                    template(v-else) - {{ props.item.trend }}
+          td {{ item.entity.name }}
+          td
+            v-layout(align-center)
+              v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
+                div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
+              div.caption
+                template(v-if="item[query.stat.title].trend >= 0") + {{ item[query.stat.title].trend }}
 </template>
 
 <script>
-import Ellipsis from '@/components/tables/ellipsis.vue';
+import { PAGINATION_LIMIT } from '@/config';
+import { STATS_DISPLAY_MODE, STATS_CRITICITY, SORT_ORDERS } from '@/constants';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+
+import Ellipsis from '@/components/tables/ellipsis.vue';
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
+    RecordsPerPage,
+    ProgressOverlay,
   },
   mixins: [
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
+    widgetStatsQueryMixin,
   ],
   props: {
     widget: {
@@ -52,35 +55,71 @@ export default {
   },
   data() {
     return {
+      pending: false,
       stats: [],
+      pagination: {
+        page: 1,
+        sortBy: 'value',
+        descending: true,
+        totalItems: 0,
+        rowsPerPage: PAGINATION_LIMIT,
+      },
     };
   },
   computed: {
+    statColumn() {
+      const { stat } = this.query;
+
+      if (stat) {
+        return `${stat.title}.value`;
+      }
+
+      return 'value';
+    },
+
+    tableHeaders() {
+      return [
+        {
+          text: this.$t('common.entity'),
+          value: 'entity.name',
+          sortable: false,
+        },
+        {
+          text: this.$t('common.value'),
+          value: this.statColumn,
+        },
+      ];
+    },
+
     getChipColor() {
       return (value) => {
-        const { yesNoMode, criticityLevels, statColors } = this.widget.parameters;
-
-        if (yesNoMode) {
-          return value === 0 ? statColors.ok : statColors.critical;
-        }
+        const { colors, criticityLevels } = this.widget.parameters.displayMode.parameters;
 
         if (value < criticityLevels.minor) {
-          return statColors.ok;
+          return colors.ok;
         } else if (value < criticityLevels.major) {
-          return statColors.minor;
+          return colors.minor;
         } else if (value < criticityLevels.critical) {
-          return statColors.major;
+          return colors.major;
         }
 
-        return statColors.critical;
+        return colors.critical;
       };
     },
     getChipText() {
       return (value) => {
-        const { yesNoMode } = this.widget.parameters;
+        const { mode, parameters } = this.widget.parameters.displayMode;
+        const { criticityLevels } = parameters;
 
-        if (yesNoMode) {
-          return value === 0 ? this.$t('common.no') : this.$t('common.yes');
+        if (mode === STATS_DISPLAY_MODE.criticity) {
+          if (value < criticityLevels.minor) {
+            return STATS_CRITICITY.ok;
+          } else if (value < criticityLevels.major) {
+            return STATS_CRITICITY.minor;
+          } else if (value < criticityLevels.critical) {
+            return STATS_CRITICITY.major;
+          }
+          return STATS_CRITICITY.critical;
         }
 
         return value;
@@ -88,14 +127,50 @@ export default {
     },
   },
   methods: {
-    async fetchList() {
-      const query = { ...this.query };
+    getQuery() {
+      const {
+        stats,
+        mfilter,
+        tstop,
+        duration,
+      } = this.getStatsQuery();
 
-      this.stats = await this.fetchStatValuesWithoutStore({
-        params: query,
+      return {
+        duration,
+        stats,
+        mfilter,
+
+        tstop: tstop.startOf('h').unix(),
+      };
+    },
+
+    async fetchList() {
+      const { limit, sortOrder } = this.query;
+
+      this.pending = true;
+
+      const { values } = await this.fetchStatsListWithoutStore({
+        params: this.getQuery(),
       });
+
+      this.stats = values;
+      this.pagination = {
+        page: 1,
+        sortBy: this.statColumn,
+        totalItems: values.length,
+        rowsPerPage: limit || PAGINATION_LIMIT,
+        descending: sortOrder === SORT_ORDERS.desc,
+      };
+
+      this.pending = false;
     },
   },
 };
 </script>
 
+<style lang="scss">
+  .theme--light.v-datatable .v-datatable__actions {
+    display: flex;
+    justify-content: center;
+  }
+</style>

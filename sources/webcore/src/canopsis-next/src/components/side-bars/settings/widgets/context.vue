@@ -19,13 +19,14 @@
           )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
+          v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
-            v-model="settings.widget_preferences.mainFilter",
-            :filters.sync="settings.widget_preferences.viewFilters",
-            :condition.sync="settings.widget_preferences.mainFilterCondition",
+            v-model="settings.widget.parameters.mainFilter",
+            :filters.sync="settings.widget.parameters.viewFilters",
+            :condition.sync="settings.widget.parameters.mainFilterCondition",
             :hasAccessToAddFilter="hasAccessToAddFilter",
-            :hasAccessToEditFilter="hasAccessToEditFilter"
+            :hasAccessToEditFilter="hasAccessToEditFilter",
             )
             v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
@@ -34,8 +35,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
-import cloneDeep from 'lodash/cloneDeep';
+import { get, cloneDeep } from 'lodash';
 
 import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
 
