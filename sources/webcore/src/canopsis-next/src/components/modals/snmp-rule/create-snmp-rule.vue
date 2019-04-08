@@ -4,13 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline Create SNMP rule
     v-card-text
-      v-autocomplete(
-      label="oid",
-      :items="items",
-      :loading="loading",
-      hide-no-data,
-      return-object
-      )
+      snmp-rule-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
@@ -22,11 +16,14 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
+
 export default {
   name: MODALS.createSnmpRule,
   $_veeValidate: {
     validator: 'new',
   },
+  components: { SnmpRuleForm },
   mixins: [modalInnerMixin],
   data() {
     return {
@@ -56,7 +53,7 @@ export default {
           regex: '',
           formatter: '',
         },
-        state: null,
+        state: {},
         _id: null,
       },
       items: [],

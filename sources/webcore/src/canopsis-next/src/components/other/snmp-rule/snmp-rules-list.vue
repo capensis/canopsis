@@ -42,9 +42,9 @@
           td
             v-layout
               v-flex
-                v-btn(icon, small)
+                v-btn(icon, small, @click="showEditSnmpRuleModal(props.item)")
                   v-icon edit
-                v-btn.error--text(icon, small)
+                v-btn.error--text(icon, small, @click="showDeleteSelectedSnmpRuleModal(props.item._id)")
                   v-icon(color="error") delete
 </template>
 

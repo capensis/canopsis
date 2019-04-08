@@ -7,18 +7,7 @@
       v-card-text
         v-container
           v-layout(row)
-            v-btn-toggle(
-            v-model="form.state",
-            v-validate="'required'",
-            data-vv-name="state"
-            )
-              v-btn(
-              v-for="button in buttons",
-              :key="button",
-              :value="states[button]",
-              :color="colorsMap[states[button]]",
-              depressed
-              ) {{ $t(`modals.createChangeStateEvent.states.${button}`) }}
+            state-criticity-field(v-model="form.state")
           v-layout.mt-4(row)
             v-text-field(
             :label="$t('modals.createChangeStateEvent.fields.output')",
@@ -39,6 +28,8 @@ import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
+import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
+
 /**
  * Modal to create a 'change-state' event
  */
@@ -48,6 +39,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  components: { StateCriticityField },
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
@@ -56,22 +48,6 @@ export default {
         state: ENTITIES_STATES.ok,
       },
     };
-  },
-  computed: {
-    buttons() {
-      return Object.keys(ENTITIES_STATES);
-    },
-    states() {
-      return ENTITIES_STATES;
-    },
-    colorsMap() {
-      return {
-        [ENTITIES_STATES.ok]: 'green',
-        [ENTITIES_STATES.minor]: 'yellow',
-        [ENTITIES_STATES.major]: 'orange',
-        [ENTITIES_STATES.critical]: 'error',
-      };
-    },
   },
   mounted() {
     this.form.state = this.firstItem.v.state.val;
