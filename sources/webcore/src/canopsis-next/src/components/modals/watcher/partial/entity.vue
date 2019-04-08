@@ -93,7 +93,7 @@ export default {
           action: this.prepareAckAction,
         },
         assocTicket: {
-          type: weatherActionsTypes.entityAssociateTicket,
+          type: weatherActionsTypes.entityAssocTicket,
           eventType: EVENT_ENTITY_TYPES.assocTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           action: this.prepareAssocTicketAction,

@@ -604,7 +604,7 @@ export const USERS_RIGHTS = {
     weather: {
       actions: {
         entityAck: 'serviceweather_entityAck',
-        entityDeclareTicket: 'serviceweather_entityDeclareTicket',
+        entityAssocTicket: 'serviceweather_entityAssocTicket',
         entityValidate: 'serviceweather_entityValidate',
         entityInvalidate: 'serviceweather_entityInvalidate',
         entityPause: 'serviceweather_entityPause',
@@ -699,7 +699,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
 
   weather: {
     [WIDGETS_ACTIONS_TYPES.weather.entityAck]: USERS_RIGHTS.business.weather.actions.entityAck,
-    [WIDGETS_ACTIONS_TYPES.weather.entityDeclareTicket]: USERS_RIGHTS.business.weather.actions.entityDeclareTicket,
+    [WIDGETS_ACTIONS_TYPES.weather.entityAssocTicket]: USERS_RIGHTS.business.weather.actions.entityAssocTicket,
     [WIDGETS_ACTIONS_TYPES.weather.entityValidate]: USERS_RIGHTS.business.weather.actions.entityValidate,
     [WIDGETS_ACTIONS_TYPES.weather.entityInvalidate]: USERS_RIGHTS.business.weather.actions.entityInvalidate,
     [WIDGETS_ACTIONS_TYPES.weather.entityPause]: USERS_RIGHTS.business.weather.actions.entityPause,
