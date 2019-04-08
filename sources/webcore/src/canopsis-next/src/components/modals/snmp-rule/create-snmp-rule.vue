@@ -4,6 +4,13 @@
       v-layout(justify-space-between, align-center)
         span.headline Create SNMP rule
     v-card-text
+      v-autocomplete(
+      label="oid",
+      :items="items",
+      :loading="loading",
+      hide-no-data,
+      return-object
+      )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
@@ -23,7 +30,38 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
-      form: {},
+      form: {
+        oid: {
+          oid: '',
+          mibName: '',
+          moduleName: '',
+        },
+        component: {
+          value: '',
+          regex: '',
+          formatter: '',
+        },
+        connector_name: {
+          value: '',
+          regex: '',
+          formatter: '',
+        },
+        output: {
+          value: '',
+          regex: '',
+          formatter: '',
+        },
+        resource: {
+          value: '',
+          regex: '',
+          formatter: '',
+        },
+        state: null,
+        _id: null,
+      },
+      items: [],
+      loading: false,
+      search: '',
     };
   },
   methods: {

@@ -23,7 +23,7 @@ export default createEntityModule({
         commit(types.FETCH_LIST, { params });
 
         const { normalizedData } = await dispatch('entities/fetch', {
-          params,
+          body: params,
           method: 'POST',
           route: API_ROUTES.snmpRule.list,
           dataPreparer: d => d.data,
