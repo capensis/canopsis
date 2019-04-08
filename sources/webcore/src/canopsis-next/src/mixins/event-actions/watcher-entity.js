@@ -46,19 +46,19 @@ export default {
     },
 
     /**
-     * Call emit addEvent for declare entity ticker event
+     * Call emit addEvent for associate ticket event
      *
      * @param {Object} entity
      * @param {string} ticket
      */
-    addDeclareTicketActionToQueue({ entity, ticket }) {
+    addAssocTicketActionToQueue({ entity, ticket }) {
       const data = {
-        ...this.prepareData(EVENT_ENTITY_TYPES.declareTicket, entity),
+        ...this.prepareData(EVENT_ENTITY_TYPES.assocTicket, entity),
 
         ticket,
       };
 
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.declareTicket, data });
+      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.assocTicket, data });
     },
 
     /**

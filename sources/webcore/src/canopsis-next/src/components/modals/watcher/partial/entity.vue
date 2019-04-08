@@ -92,11 +92,11 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           action: this.prepareAckAction,
         },
-        declareTicket: {
-          type: weatherActionsTypes.entityDeclareTicket,
-          eventType: EVENT_ENTITY_TYPES.declareTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
-          action: this.prepareDeclareTicketAction,
+        assocTicket: {
+          type: weatherActionsTypes.entityAssocTicket,
+          eventType: EVENT_ENTITY_TYPES.assocTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          action: this.prepareAssocTicketAction,
         },
         validate: {
           type: weatherActionsTypes.entityValidate,
@@ -203,7 +203,7 @@ export default {
 
     availableActions() {
       const { filteredActionsMap } = this;
-      const actions = [filteredActionsMap.declareTicket];
+      const actions = [filteredActionsMap.assocTicket];
 
       if (this.entity.state.val === ENTITIES_STATES.major) {
         actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);

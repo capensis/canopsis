@@ -95,6 +95,7 @@ export default {
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
     },
     times: {
       second: 'seconde | secondes',

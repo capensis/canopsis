@@ -42,7 +42,7 @@ import CreateView from './view/create-view.vue';
 import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
-import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
+import CreateWatcherAssocTicketEvent from './watcher/create-watcher-assoc-ticket-event.vue';
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
 import AddStat from './stats/add-stat.vue';
 import StatsDateInterval from './stats/stats-date-interval.vue';
@@ -93,7 +93,7 @@ export default {
     CreateFilter,
     CreateGroup,
     Watcher,
-    CreateWatcherDeclareTicketEvent,
+    CreateWatcherAssocTicketEvent,
     CreateWatcherPauseEvent,
     AddStat,
     StatsDateInterval,

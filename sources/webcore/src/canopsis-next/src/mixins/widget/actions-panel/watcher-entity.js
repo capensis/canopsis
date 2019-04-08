@@ -34,14 +34,14 @@ export default {
       this.actionsClicked.push(EVENT_ENTITY_TYPES.ack);
     },
 
-    prepareDeclareTicketAction() {
+    prepareAssocTicketAction() {
       this.showModal({
-        name: MODALS.createWatcherDeclareTicketEvent,
+        name: MODALS.createWatcherAssocTicketEvent,
         config: {
           action: (ticket) => {
             this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-            this.addDeclareTicketActionToQueue({ entity: this.entity, ticket });
-            this.actionsClicked.push(EVENT_ENTITY_TYPES.declareTicket);
+            this.addAssocTicketActionToQueue({ entity: this.entity, ticket });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.assocTicket);
           },
         },
       });

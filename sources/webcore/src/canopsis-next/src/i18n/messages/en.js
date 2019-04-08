@@ -101,6 +101,7 @@ export default {
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Play',
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
     },
     times: {
       second: 'second | seconds',
