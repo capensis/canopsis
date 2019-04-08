@@ -29,6 +29,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    widget: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;

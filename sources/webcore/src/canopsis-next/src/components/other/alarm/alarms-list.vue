@@ -35,7 +35,7 @@
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
-        mass-actions-panel(:itemsIds="selectedIds")
+        mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
