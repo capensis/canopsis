@@ -1,8 +1,6 @@
 <template lang="pug">
   div
-    v-layout(row, wrap)
-      v-flex(xs12)
-        .body-2 oid
+    snmp-rule-form-field(label="oid")
       v-flex.pr-1(xs6)
         v-autocomplete.pt-0(
         placeholder="Select a mib module",
@@ -10,6 +8,7 @@
         :search-input.sync="search",
         :loading="loading",
         hide-no-data,
+        hide-details,
         @input="selectModule"
         )
       v-flex.pl-1(xs6)
@@ -17,46 +16,63 @@
         :items="anotherItems",
         item-text="name",
         return-object,
+        hide-details,
         offset-y,
         @input="selectSubModule"
         )
-    snmp-rule-form-field(
+    snmp-rule-form-vars-field(
     :value="form.output",
     :items="anotherAnotherItems",
     label="output",
+    large,
     @input="updateField('output', $event)"
     )
-    snmp-rule-form-field(
+    snmp-rule-form-vars-field(
     :value="form.resource",
+    :items="anotherAnotherItems",
     label="resource",
+    large,
     @input="updateField('resource', $event)"
     )
-    snmp-rule-form-field(
+    snmp-rule-form-vars-field(
     :value="form.component",
+    :items="anotherAnotherItems",
     label="component",
+    large,
     @input="updateField('component', $event)"
     )
-    snmp-rule-form-field(
+    snmp-rule-form-vars-field(
     :value="form.connector_name",
+    :items="anotherAnotherItems",
     label="connector_name",
+    large,
     @input="updateField('connector_name', $event)"
+    )
+    snmp-rule-form-field(label="state")
+      v-flex(xs12)
+        v-switch(label="To custom")
+    v-divider(light)
+    v-layout(row, wrap)
+      v-flex(xs12)
+        state-criticity-field(:value="form.state.state")
+    snmp-rule-form-vars-field(
+    label="Define matching snmp var",
+    :value="{}",
+    :items="anotherAnotherItems",
+    @input="updateField('state.stateoid', $event)"
     )
     v-layout(row, wrap)
       v-flex(xs12)
-        .body-2 state
-      v-flex(xs12)
-        v-switch(label="To custom")
-      v-flex(xs12)
-        state-criticity-field(:value="form.state.state")
-      v-flex(xs12)
-        v-text-field(placeholder="Snmp vars match field")
-      v-flex(xs12)
-        v-layout(row, wrap)
+        v-layout(v-for="(state, key) in $constants.ENTITIES_STATES", :key="key", row, wrap, align-center)
           v-flex(xs2)
-            v-chip(color="green", label)
-              strong CRITICAL
+            v-chip(:style="{ backgroundColor: $constants.ENTITIES_STATES_STYLES[state].color }", label)
+              strong.tt-uppercase {{ $t(`modals.createChangeStateEvent.states.${key}`) }}
           v-flex(xs10)
-            v-text-field(placeholder="write template")
+            v-text-field(
+            :value="form.state[key]",
+            placeholder="write template",
+            @input="updateField(`state.${key}`, $event)"
+            )
 </template>
 
 <script>
@@ -66,9 +82,10 @@ import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 import SnmpRuleFormField from './snmp-rule-form-field.vue';
+import SnmpRuleFormVarsField from './snmp-rule-form-vars-field.vue';
 
 export default {
-  components: { StateCriticityField, SnmpRuleFormField },
+  components: { StateCriticityField, SnmpRuleFormField, SnmpRuleFormVarsField },
   mixins: [formMixin, entitiesSnmpMibMixin],
   model: {
     prop: 'form',
@@ -135,3 +152,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .tt-uppercase {
+    text-transform: uppercase;
+  }
+</style>
