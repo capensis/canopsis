@@ -54,7 +54,12 @@
           v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
+            div(v-if="column.value === 'enabled'")
+              v-icon(
+              :color="props.item.enabled ? 'primary' : 'error'"
+              ) {{ props.item.enabled ? 'check' : 'clear' }}
             ellipsis(
+            v-else,
             :text="props.item | get(column.value, null, '')",
             :maxLetters="column.maxLetters"
             )
