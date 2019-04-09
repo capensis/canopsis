@@ -3,19 +3,29 @@
     v-flex(v-show="label", xs12)
       .body-2 {{ label }}
     v-flex(xs12)
-      v-text-field.pt-0(
-      :value="value.value",
-      placeholder="Snmp vars match field",
-      hide-details,
-      @input="updateField('value', $event)"
-      )
-        template(slot="append")
-          v-btn(
-          :class="{ active: isVisible }",
-          icon,
-          @click="toggleVisibility"
+      v-autocomplete(:items="items")
+      v-menu(:items="items", full-width, offset-y, max-height="300")
+        v-text-field.pt-0(
+        slot="activator",
+        :value="value.value",
+        placeholder="Snmp vars match field",
+        hide-details,
+        @input="updateField('value', $event)"
+        )
+          template(slot="append")
+            v-btn(
+            :class="{ active: isVisible }",
+            icon,
+            @click.stop="toggleVisibility"
+            )
+              v-icon attach_file
+        v-list
+          v-list-tile(
+          v-for="(item, index) in items",
+          :key="index",
+          @click="updateSelectableInput(item)"
           )
-            v-icon attach_file
+            v-list-tile-title {{ item }}
     v-expand-transition
       v-flex(v-show="isVisible", xs12)
         v-text-field(
@@ -42,13 +52,17 @@ export default {
     event: 'input',
   },
   props: {
-    label: {
-      type: String,
-      default: '',
-    },
     value: {
       type: Object,
       required: true,
+    },
+    items: {
+      type: Array,
+      default: () => [],
+    },
+    label: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -59,6 +73,10 @@ export default {
   methods: {
     toggleVisibility() {
       this.isVisible = !this.isVisible;
+    },
+
+    updateSelectableInput(item) {
+      this.updateField('value', `${this.value.value}{{ ${item} }}`);
     },
   },
 };

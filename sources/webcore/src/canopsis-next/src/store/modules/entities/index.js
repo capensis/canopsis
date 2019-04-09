@@ -11,7 +11,8 @@ import rightModule from './right';
 import eventFilterRuleModule from './event-filter-rule';
 import webhookModule from './webhook';
 import infoModule from './info';
-import snmpRuleModule from './snmp-rule';
+import snmpRuleModule from './snmp/rule';
+import snmpMibModule from './snmp/mib';
 
 export default {
   alarm: alarmModule,
@@ -28,4 +29,5 @@ export default {
   webhook: webhookModule,
   info: infoModule,
   snmpRule: snmpRuleModule,
+  snmpMib: snmpMibModule,
 };
