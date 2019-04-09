@@ -66,4 +66,7 @@ La fonction `js`, qui renvoie une chaîne de caractères échappée, peut être 
 
 ## Exemples
 
+### Templates pour URL
+
+### Templates pour payload
 TBD
