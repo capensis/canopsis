@@ -1,0 +1,1 @@
+# Structure d'une alarme
