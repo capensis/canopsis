@@ -95,15 +95,39 @@ Puis une nouvelle instance de ```Router``` (de la librairie ```vue-router```) es
 
 ### /assets
 
+Ce dossier contient les feuilles de style globales du projet, ainsi que les images utilisées.
+
 ### /components
+
+Ce dossier contient les composants du projet.
+
+Il est divisé en sous-dossier permettant de trier les composants en fonction de leur utilisation.
 
 ### /filters
 
+Ce dossier contient les différents filtres utilisés dans les templates.
+
+Ces filtres permettent d'appliquer une fonction Javascript sur une/des valeur(s), dans un template.
+
 ### /helpers
+
+Ce dossier contient les différents helpers utilisés dans les templates.
+
+Les helpers sont des fonctions Javascript, destinées à êtres utilisées à plusieurs reprises dans le code.
 
 ### /i18n
 
+Ce dossier contient les traductions.
+
+Le fichier ```index.js``` ajoute ces traductions à l'instance courante de ```Vue```.
+
+Les traductions elles-mêmes se situent dans le dossier ```messages```. Chaque fichier correspond ici à une langue.
+
 ### /mixins
+
+Ce dossier contient les différents mixins.
+
+Les mixins permettent de réutiliser des fonctionnalités dans plusieurs composants.
 
 ### /services
 
