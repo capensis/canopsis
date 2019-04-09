@@ -38,6 +38,10 @@ Voici une liste des principales données et la manière de la récupérer.
 
 Une fois qu'on possède les variables nécessaires, la seconde étape est la génération du texte.
 
+Pour mieux comprendre comment fonctionne la génération et comment utiliser les variables, plusieurs exemples seront présentés.
+
+### Génération simple, sans transformation
+
 Dans un cas simple, on peut utilise directement les variables pour générer le texte.
 
 ### Exemples
