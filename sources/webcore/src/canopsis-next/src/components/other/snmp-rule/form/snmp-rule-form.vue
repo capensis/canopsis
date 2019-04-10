@@ -1,29 +1,12 @@
 <template lang="pug">
   div
-    snmp-rule-form-field(label="oid")
-      v-flex.pr-1(xs6)
-        v-autocomplete.pt-0(
-        placeholder="Select a mib module",
-        :value="form.oid.moduleName",
-        :items="modules",
-        :search-input.sync="search",
-        :loading="loading",
-        hide-no-data,
-        hide-details,
-        @change="selectModule"
-        )
-      v-flex.pl-1(xs6)
-        v-select.pt-0(
-        :value="form.oid.mibName",
-        :items="moduleMibs",
-        item-text="name",
-        loading,
-        hide-details,
-        offset-y,
-        @input="updateField('oid.mibName', $event)"
-        )
+    snmp-rule-form-module-form(
+    :form="form.oid",
+    :moduleMibs.sync="moduleMibs",
+    @input="updateField('oid', $event)"
+    )
     v-layout(v-if="selectedModuleMib", row, wrap)
-      v-alert(:value="selectedModuleMib", color="grey darken-1", outline) {{ selectedModuleMib.description }}
+      v-alert(:value="selectedModuleMib", color="grey darken-1") {{ selectedModuleMib.description }}
     snmp-rule-form-vars-field(
     :value="form.output",
     :items="selectedModuleMibObjects",
@@ -63,12 +46,15 @@
 import formMixin from '@/mixins/form';
 import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
+import SnmpRuleFormModuleForm from './snmp-rule-form-module-form.vue';
 import SnmpRuleFormStateForm from './snmp-rule-form-state-form.vue';
 import SnmpRuleFormField from './snmp-rule-form-field.vue';
 import SnmpRuleFormVarsField from './snmp-rule-form-vars-field.vue';
 
 export default {
-  components: { SnmpRuleFormStateForm, SnmpRuleFormField, SnmpRuleFormVarsField },
+  components: {
+    SnmpRuleFormModuleForm, SnmpRuleFormStateForm, SnmpRuleFormField, SnmpRuleFormVarsField,
+  },
   mixins: [formMixin, entitiesSnmpMibMixin],
   model: {
     prop: 'form',
@@ -82,18 +68,6 @@ export default {
   },
   data() {
     return {
-      menuProps: {
-        closeOnClick: false,
-        closeOnContentClick: false,
-        openOnClick: true,
-      },
-      search: '',
-      items: [],
-      anotherItems: [],
-      anotherAnotherItems: [],
-      loading: false,
-
-      modules: [],
       moduleMibs: [],
     };
   },
@@ -108,48 +82,6 @@ export default {
       }
 
       return [];
-    },
-  },
-  watch: {
-    async search(value) {
-      this.loading = true;
-
-      const { data } = await this.fetchSnmpMibDistinctList({
-        params: {
-          limit: 10,
-          projection: 'moduleName',
-          query: {
-            nodetype: 'notification',
-            moduleName: { $regex: `.*${value || ''}.*`, $options: 'i' },
-          },
-        },
-      });
-
-      this.modules = data;
-
-      this.loading = false;
-    },
-  },
-  async mounted() {
-    if (this.form.oid.moduleName) {
-      await this.selectModule(this.form.oid.moduleName);
-    }
-  },
-  methods: {
-    async selectModule(module) {
-      this.updateField('oid.moduleName', module);
-
-      const { data } = await this.fetchSnmpMibList({
-        params: {
-          limit: 0,
-          query: {
-            nodetype: 'notification',
-            moduleName: module,
-          },
-        },
-      });
-
-      this.moduleMibs = data;
     },
   },
 };

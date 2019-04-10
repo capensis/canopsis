@@ -5,8 +5,9 @@ const { mapActions, mapGetters } = createNamespacedHelpers('snmpRule');
 export default {
   computed: {
     ...mapGetters({
-      snmpRulesPending: 'pending',
       snmpRules: 'items',
+      snmpRulesMeta: 'meta',
+      snmpRulesPending: 'pending',
     }),
   },
   methods: {

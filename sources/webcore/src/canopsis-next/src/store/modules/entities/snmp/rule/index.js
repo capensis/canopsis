@@ -4,7 +4,6 @@ import { ENTITIES_TYPES } from '@/constants';
 import request from '@/services/request';
 
 import { snmpRuleSchema } from '@/store/schemas';
-import { createEntityModule } from '@/store/plugins/entities';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -12,17 +11,39 @@ export const types = {
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
-export default createEntityModule({
-  types,
-  route: API_ROUTES.snmpRule.list,
-  entityType: ENTITIES_TYPES.snmpRule,
-}, {
+export default {
+  namespaced: true,
+  state: {
+    allIds: [],
+    meta: {},
+    pending: false,
+  },
+  getters: {
+    items: (state, getters, rootState, rootGetters) =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.snmpRule, state.allIds),
+
+    meta: state => state.meta,
+    pending: state => state.pending,
+  },
+  mutations: {
+    [types.FETCH_LIST](state) {
+      state.pending = true;
+    },
+    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
+      state.pending = false;
+      state.allIds = allIds;
+      state.meta = meta;
+    },
+    [types.FETCH_LIST_FAILED](state) {
+      state.pending = false;
+    },
+  },
   actions: {
     async fetchList({ commit, dispatch }, { params } = {}) {
       try {
         commit(types.FETCH_LIST, { params });
 
-        const { normalizedData } = await dispatch('entities/fetch', {
+        const { data, normalizedData } = await dispatch('entities/fetch', {
           body: params,
           method: 'POST',
           route: API_ROUTES.snmpRule.list,
@@ -32,6 +53,9 @@ export default createEntityModule({
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
+          meta: {
+            total: data.total,
+          },
         });
       } catch (err) {
         console.error(err);
@@ -47,4 +71,4 @@ export default createEntityModule({
       return request.delete(API_ROUTES.snmpRule.list, { data });
     },
   },
-});
+};
