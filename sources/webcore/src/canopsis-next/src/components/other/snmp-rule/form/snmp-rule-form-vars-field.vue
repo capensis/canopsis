@@ -5,7 +5,7 @@
         v-text-field.pt-0(
         slot="activator",
         :value="value.value",
-        placeholder="Snmp vars match field",
+        label="Snmp vars match field",
         hide-details,
         @input="updateField('value', $event)"
         )
@@ -27,13 +27,13 @@
       v-flex(v-show="isVisible", xs12)
         v-text-field(
         :value="value.regex",
-        placeholder="Regex",
+        label="Regex",
         hide-details,
         @input="updateField('regex', $event)"
         )
         v-text-field(
         :value="value.formatter",
-        placeholder="Format (capture group with \\x)",
+        label="Format (capture group with \\x)",
         hide-details,
         @input="updateField('formatter', $event)"
         )

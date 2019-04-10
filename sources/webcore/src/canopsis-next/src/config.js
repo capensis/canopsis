@@ -70,6 +70,7 @@ export const API_ROUTES = {
   snmpMib: {
     list: '/snmpmib',
     distinct: '/snmpmibdistinct',
+    upload: '/uploadmib',
   },
   infos: {
     login: '/api/internal/login/login_info',

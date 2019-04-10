@@ -1,3 +1,5 @@
+import qs from 'qs';
+
 import { API_ROUTES } from '@/config';
 
 import request from '@/services/request';
@@ -17,6 +19,17 @@ export default {
 
     fetchDistinctList(context, { params = {} } = {}) {
       return request.post(API_ROUTES.snmpMib.distinct, params);
+    },
+
+    upload(context, { data } = {}) {
+      return request.post(API_ROUTES.snmpMib.upload, qs.stringify({
+        filecontent: JSON.stringify([{
+          filename: 'concatenatedMibFiles',
+          data,
+        }]),
+      }), {
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      });
     },
   },
 };
