@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { cloneDeep, unset } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -86,18 +86,6 @@ export default {
             'hook.event_patterns': null,
             declare_ticket: {},
           }) : this.form;
-
-          if (!preparedForm.hook.event_patterns || !preparedForm.hook.event_patterns.length) {
-            unset(preparedForm, 'hook.event_patterns');
-          }
-
-          if (!preparedForm.hook.alarm_patterns || !preparedForm.hook.alarm_patterns.length) {
-            unset(preparedForm, 'hook.alarm_patterns');
-          }
-
-          if (!preparedForm.hook.entity_patterns || !preparedForm.hook.entity_patterns.length) {
-            unset(preparedForm, 'hook.entity_patterns');
-          }
 
           await this.config.action(this.$options.filters.formToWebhook(preparedForm));
         }
