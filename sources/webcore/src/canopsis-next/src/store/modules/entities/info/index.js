@@ -13,22 +13,34 @@ export default {
     logo: '',
     appTitle: '',
     footer: '',
+    isLDAPAuthentEnabled: false,
+    isCASAuthentEnabled: false,
+    casConfig: {},
   },
   getters: {
     version: state => state.version,
     logo: state => state.logo,
     appTitle: state => state.appTitle,
     footer: state => state.footer,
+    isLDAPAuthentEnabled: state => state.isLDAPAuthentEnabled,
+    isCASAuthentEnabled: state => state.isCASAuthentEnabled,
+    casConfig: state => state.casConfig,
   },
   mutations: {
     [types.FETCH_LOGIN_INFOS](state, {
       version,
       userInterface = {},
+      loginConfig = {},
     }) {
       state.version = version;
       state.logo = userInterface.logo;
       state.appTitle = userInterface.app_title;
       state.footer = userInterface.footer;
+
+      state.isLDAPAuthentEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
+      state.isCASAuthentEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
+
+      state.casConfig = loginConfig.casconfig;
     },
     [types.FETCH_APP_INFOS](state, {
       version,
@@ -46,9 +58,10 @@ export default {
         const {
           version,
           user_interface: userInterface,
+          login_config: loginConfig,
         } = await request.get(API_ROUTES.infos.login);
 
-        commit(types.FETCH_LOGIN_INFOS, { version, userInterface });
+        commit(types.FETCH_LOGIN_INFOS, { version, userInterface, loginConfig });
       } catch (err) {
         console.error(err);
       }

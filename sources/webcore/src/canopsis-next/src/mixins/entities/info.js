@@ -12,6 +12,9 @@ export default {
       logo: 'logo',
       appTitle: 'appTitle',
       footer: 'footer',
+      isLDAPAuthentEnabled: 'isLDAPAuthentEnabled',
+      isCASAuthentEnabled: 'isCASAuthentEnabled',
+      casConfig: 'casConfig',
     }),
   },
   methods: {

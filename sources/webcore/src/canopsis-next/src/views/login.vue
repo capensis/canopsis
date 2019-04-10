@@ -14,44 +14,58 @@
                 v-toolbar-title {{ $t('common.login') }}
                   span(v-if="appTitle") - {{ appTitle }}
                 img.px-2(v-if="logo", src="@/assets/canopsis.png")
-            v-layout(row, wrap)
-              v-flex(xs12)
-                v-layout(justify-center)
-                  img.my-4.logo(:src="appLogo")
-              v-flex(xs12)
-                v-form.py-2(@submit.prevent="submit")
-                  v-flex(px-3)
-                    v-text-field(
-                    :label="$t('common.username')",
-                    :error-messages="errors.collect('username')",
-                    v-model="form.username",
-                    v-validate="'required'",
-                    color="primary",
-                    name="username",
-                    autofocus,
-                    clearable,
-                    outline
-                    )
-                  v-flex(px-3)
-                    v-text-field(
-                    :label="$t('common.password')",
-                    :error-messages="errors.collect('password')",
-                    v-model="form.password",
-                    v-validate="'required'",
-                    color="primary",
-                    name="password",
-                    type="password",
-                    clearable,
-                    outline
-                    )
-                  v-flex.px-3.py-2
-                    v-alert(:value="hasServerError", type="error")
-                      span {{ $t('login.errors.incorrectEmailOrPassword') }}
-                  v-flex(xs2 px-2)
-                    v-layout
-                      v-btn.primary(type="submit") {{ $t('common.connect') }}
-                v-divider
-                div(v-html="footer")
+            v-tabs(v-model="activeTab", slider-color="primary")
+              v-tab Standard / LDAP
+              v-tab(v-if="isCASAuthentEnabled") CAS
+              v-tab-item
+                v-layout(row, wrap)
+                  v-flex(xs12)
+                    v-layout(justify-center)
+                      img.my-4.logo(:src="appLogo")
+                  v-flex(xs12)
+                    v-form.py-2(@submit.prevent="submit")
+                      v-flex(px-3)
+                        v-text-field(
+                        :label="$t('common.username')",
+                        :error-messages="errors.collect('username')",
+                        v-model="form.username",
+                        v-validate="'required'",
+                        color="primary",
+                        name="username",
+                        autofocus,
+                        clearable,
+                        outline
+                        )
+                      v-flex(px-3)
+                        v-text-field(
+                        :label="$t('common.password')",
+                        :error-messages="errors.collect('password')",
+                        v-model="form.password",
+                        v-validate="'required'",
+                        color="primary",
+                        name="password",
+                        type="password",
+                        clearable,
+                        outline
+                        )
+                      v-flex.px-3.py-2
+                        v-alert(:value="hasServerError", type="error")
+                          span {{ $t('login.errors.incorrectEmailOrPassword') }}
+                      v-flex(xs2 px-2)
+                        v-layout
+                          v-btn.primary(type="submit") {{ $t('common.connect') }}
+              v-tab-item
+                    v-layout(row, wrap)
+                      v-flex(xs12)
+                        v-layout(justify-center)
+                          img.my-4.logo(:src="appLogo")
+                      v-flex(xs12)
+                        v-layout(justify-center)
+                          a(:href="casHref")
+                            v-btn.my-4(color="primary") Login with CAS
+            v-divider
+            v-flex(xs12)
+              div(v-html="footer")
       div.version.pr-2.mb-2 {{ version }}
 </template>
 
@@ -73,6 +87,7 @@ export default {
         username: '',
         password: '',
       },
+      activeTab: 0,
     };
   },
   computed: {
@@ -82,6 +97,13 @@ export default {
       }
 
       return logo;
+    },
+    casHref() {
+      if (this.casConfig) {
+        return `${this.casConfig.server}/login?service=${this.casConfig.service}/logged_in`;
+      }
+
+      return null;
     },
   },
   async mounted() {
