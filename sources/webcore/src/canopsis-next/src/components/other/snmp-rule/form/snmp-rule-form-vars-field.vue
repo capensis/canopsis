@@ -71,7 +71,7 @@ export default {
   },
   data() {
     return {
-      isVisible: false,
+      isVisible: this.value.regex || this.value.format,
     };
   },
   methods: {

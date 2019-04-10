@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -26,44 +28,56 @@ export default {
   components: { SnmpRuleForm },
   mixins: [modalInnerMixin],
   data() {
-    return {
-      form: {
-        oid: {
-          oid: '',
-          mibName: '',
-          moduleName: '',
-        },
-        component: {
-          value: '',
-          regex: '',
-          formatter: '',
-        },
-        connector_name: {
-          value: '',
-          regex: '',
-          formatter: '',
-        },
-        output: {
-          value: '',
-          regex: '',
-          formatter: '',
-        },
-        resource: {
-          value: '',
-          regex: '',
-          formatter: '',
-        },
-        state: {},
-        _id: null,
+    const defaultSnmpRule = {
+      oid: {
+        oid: '',
+        mibName: '',
+        moduleName: '',
       },
-      items: [],
-      loading: false,
-      search: '',
+      component: {
+        value: '',
+        regex: '',
+        formatter: '',
+      },
+      connector_name: {
+        value: '',
+        regex: '',
+        formatter: '',
+      },
+      output: {
+        value: '',
+        regex: '',
+        formatter: '',
+      },
+      resource: {
+        value: '',
+        regex: '',
+        formatter: '',
+      },
+      state: {
+        type: '',
+      },
+    };
+
+    return {
+      form: this.modal.config.snmpRule ? cloneDeep(this.modal.config.snmpRule) : defaultSnmpRule,
     };
   },
   methods: {
-    submit() {
-      // TO DO SOMETHING
+    async submit() {
+      if (this.config.action) {
+        const preparedData = this.form;
+
+        if (preparedData._id) {
+          preparedData.id = preparedData._id;
+        }
+
+        await this.config.action({
+          document: preparedData,
+        });
+      }
+
+      this.hideModal();
     },
   },
 };

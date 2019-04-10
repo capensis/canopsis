@@ -40,8 +40,11 @@ export default createEntityModule({
         throw err;
       }
     },
-    create(context, data) {
+    create(context, { data } = {}) {
       return request.post(API_ROUTES.snmpRule.create, data);
+    },
+    remove(context, { data = {} } = {}) {
+      return request.delete(API_ROUTES.snmpRule.list, { data });
     },
   },
 });

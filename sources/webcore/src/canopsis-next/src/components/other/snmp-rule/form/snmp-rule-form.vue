@@ -4,88 +4,71 @@
       v-flex.pr-1(xs6)
         v-autocomplete.pt-0(
         placeholder="Select a mib module",
-        :items="items",
+        :value="form.oid.moduleName",
+        :items="modules",
         :search-input.sync="search",
         :loading="loading",
         hide-no-data,
         hide-details,
-        @input="selectModule"
+        @change="selectModule"
         )
       v-flex.pl-1(xs6)
         v-select.pt-0(
-        :items="anotherItems",
+        :value="form.oid.mibName",
+        :items="moduleMibs",
         item-text="name",
-        return-object,
+        loading,
         hide-details,
         offset-y,
-        @input="selectSubModule"
+        @input="updateField('oid.mibName', $event)"
         )
+    v-layout(v-if="selectedModuleMib", row, wrap)
+      v-alert(:value="selectedModuleMib", color="grey darken-1", outline) {{ selectedModuleMib.description }}
     snmp-rule-form-vars-field(
     :value="form.output",
-    :items="anotherAnotherItems",
+    :items="selectedModuleMibObjects",
     label="output",
     large,
     @input="updateField('output', $event)"
     )
     snmp-rule-form-vars-field(
     :value="form.resource",
-    :items="anotherAnotherItems",
+    :items="selectedModuleMibObjects",
     label="resource",
     large,
     @input="updateField('resource', $event)"
     )
     snmp-rule-form-vars-field(
     :value="form.component",
-    :items="anotherAnotherItems",
+    :items="selectedModuleMibObjects",
     label="component",
     large,
     @input="updateField('component', $event)"
     )
     snmp-rule-form-vars-field(
     :value="form.connector_name",
-    :items="anotherAnotherItems",
+    :items="selectedModuleMibObjects",
     label="connector_name",
     large,
     @input="updateField('connector_name', $event)"
     )
-    snmp-rule-form-field(label="state")
-      v-flex(xs12)
-        v-switch(label="To custom")
-    v-divider(light)
-    v-layout(row, wrap)
-      v-flex(xs12)
-        state-criticity-field(:value="form.state.state")
-    snmp-rule-form-vars-field(
-    label="Define matching snmp var",
-    :value="{}",
-    :items="anotherAnotherItems",
-    @input="updateField('state.stateoid', $event)"
+    snmp-rule-form-state-form(
+    :form="form.state",
+    :items="selectedModuleMibObjects",
+    @input="updateField('state', $event)"
     )
-    v-layout(row, wrap)
-      v-flex(xs12)
-        v-layout(v-for="(state, key) in $constants.ENTITIES_STATES", :key="key", row, wrap, align-center)
-          v-flex(xs2)
-            v-chip(:style="{ backgroundColor: $constants.ENTITIES_STATES_STYLES[state].color }", label)
-              strong.tt-uppercase {{ $t(`modals.createChangeStateEvent.states.${key}`) }}
-          v-flex(xs10)
-            v-text-field(
-            :value="form.state[key]",
-            placeholder="write template",
-            @input="updateField(`state.${key}`, $event)"
-            )
 </template>
 
 <script>
 import formMixin from '@/mixins/form';
 import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
-import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
-
+import SnmpRuleFormStateForm from './snmp-rule-form-state-form.vue';
 import SnmpRuleFormField from './snmp-rule-form-field.vue';
 import SnmpRuleFormVarsField from './snmp-rule-form-vars-field.vue';
 
 export default {
-  components: { StateCriticityField, SnmpRuleFormField, SnmpRuleFormVarsField },
+  components: { SnmpRuleFormStateForm, SnmpRuleFormField, SnmpRuleFormVarsField },
   mixins: [formMixin, entitiesSnmpMibMixin],
   model: {
     prop: 'form',
@@ -109,7 +92,23 @@ export default {
       anotherItems: [],
       anotherAnotherItems: [],
       loading: false,
+
+      modules: [],
+      moduleMibs: [],
     };
+  },
+  computed: {
+    selectedModuleMib() {
+      return this.moduleMibs.find(({ name }) => name === this.form.oid.mibName);
+    },
+
+    selectedModuleMibObjects() {
+      if (this.selectedModuleMib) {
+        return Object.keys(this.selectedModuleMib.objects);
+      }
+
+      return [];
+    },
   },
   watch: {
     async search(value) {
@@ -126,13 +125,20 @@ export default {
         },
       });
 
-      this.items = data;
+      this.modules = data;
 
       this.loading = false;
     },
   },
+  async mounted() {
+    if (this.form.oid.moduleName) {
+      await this.selectModule(this.form.oid.moduleName);
+    }
+  },
   methods: {
     async selectModule(module) {
+      this.updateField('oid.moduleName', module);
+
       const { data } = await this.fetchSnmpMibList({
         params: {
           limit: 0,
@@ -143,11 +149,7 @@ export default {
         },
       });
 
-      this.anotherItems = data;
-    },
-
-    selectSubModule(subModule) {
-      this.anotherAnotherItems = Object.keys(subModule.objects);
+      this.moduleMibs = data;
     },
   },
 };
