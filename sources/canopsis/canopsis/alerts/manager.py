@@ -740,7 +740,7 @@ class Alerts(object):
         value = alarm.get(self.alerts_storage.VALUE)
 
         if self.record_last_event_date:
-            value[AlarmField.last_event_date.value] = int(time())
+            value[AlarmField.last_event_date.value] = event.get('timestamp', int(time()))
 
         old_state = get_last_state(value, ts=event['timestamp'])
 
@@ -812,7 +812,7 @@ class Alerts(object):
         now = int(time())
         value = alarm.get(self.alerts_storage.VALUE)
         new_value, status = task(self, value, state, event)
-        new_value[AlarmField.last_update_date.value] = now
+        new_value[AlarmField.last_update_date.value] = event.get("timestamp", now)
 
         entity_id = alarm[self.alerts_storage.DATA_ID]
         try:
@@ -871,9 +871,10 @@ class Alerts(object):
                 'alerts.systemaction.status_decrease', cacheonly=True
             )
 
+        now = int(time())
         value = alarm.get(self.alerts_storage.VALUE)
         new_value = task(self, value, status, event)
-        new_value[AlarmField.last_update_date.value] = int(time())
+        new_value[AlarmField.last_update_date.value] = event.get("timestamp", now)
 
         alarm[self.alerts_storage.VALUE] = new_value
 
@@ -918,7 +919,7 @@ class Alerts(object):
                 'resource': event.get('resource', None),
                 AlarmField.initial_output.value: event.get('output', ''),
                 AlarmField.creation_date.value: int(time()),
-                AlarmField.last_update_date.value: int(time()),
+                AlarmField.last_update_date.value: event.get('timestamp', int(time())),
                 AlarmField.state.value: None,
                 AlarmField.status.value: None,
                 AlarmField.ack.value: None,
