@@ -16,7 +16,7 @@
         filter-selector(
         :label="$t('settings.selectAFilter')",
         :filters="viewFilters",
-        :lockedFilters="widgetViewFilters"
+        :lockedFilters="widgetViewFilters",
         :value="mainFilter",
         :condition="mainFilterCondition",
         :hasAccessToEditFilter="hasAccessToEditFilter",
@@ -66,7 +66,7 @@
           td
             actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          more-infos(:item="props.item")
+          more-infos(:item="props.item", :tabId="tabId")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
