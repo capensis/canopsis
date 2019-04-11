@@ -89,6 +89,7 @@ export default {
     endDate: 'End date',
     links: 'Links',
     filter: 'Filter',
+    occurrence: 'Occurrence | Occurrences',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
