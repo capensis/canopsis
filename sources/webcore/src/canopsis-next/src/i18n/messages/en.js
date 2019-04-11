@@ -479,9 +479,11 @@ export default {
         type: 'Type',
         message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+        exdate: 'Exdates',
       },
       buttons: {
         addComment: 'Add comment',
+        addExdate: 'Add exdate',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
@@ -820,8 +822,8 @@ export default {
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Rrule',
-    stringLabel: 'Summary',
+    textLabel: 'Summary',
+    stringLabel: 'Rrule',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
