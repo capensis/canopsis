@@ -133,7 +133,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresRight: {
-        id: USERS_RIGHTS.technical.exploitation.webhook, // TODO: fix it
+        id: USERS_RIGHTS.technical.exploitation.snmpRule,
       },
     },
   },

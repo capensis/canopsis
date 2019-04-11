@@ -566,6 +566,7 @@ export const USERS_RIGHTS = {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
+      snmpRule: 'models_exploitation_snmpRule',
     },
   },
   business: {
@@ -837,4 +838,9 @@ export const WEBHOOK_TRIGGERS = {
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',
+};
+
+export const SNMP_STATE_TYPES = {
+  simple: 'simple',
+  template: 'template',
 };

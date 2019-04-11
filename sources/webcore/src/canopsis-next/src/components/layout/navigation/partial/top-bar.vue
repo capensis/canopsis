@@ -130,7 +130,7 @@ export default {
           route: { name: 'exploitation-snmp-rules' },
           text: 'SNMP rules', // TODO: fix it
           icon: 'assignment',
-          right: USERS_RIGHTS.technical.exploitation.webhook, // TODO: fix it
+          right: USERS_RIGHTS.technical.exploitation.snmpRule,
         },
       ];
 

@@ -6,30 +6,33 @@
     @input="updateField('oid', $event)"
     )
     v-layout(v-if="selectedModuleMib", row, wrap)
-      v-alert(:value="selectedModuleMib", color="grey darken-1") {{ selectedModuleMib.description }}
-    snmp-rule-form-vars-field(
-    :value="form.output",
+      v-alert.mt-3(
+      :value="selectedModuleMib.description",
+      color="grey darken-1"
+      ) {{ selectedModuleMib.description }}
+    snmp-rule-form-module-mib-objects-form(
+    :form="form.output",
     :items="selectedModuleMibObjects",
     label="output",
     large,
     @input="updateField('output', $event)"
     )
-    snmp-rule-form-vars-field(
-    :value="form.resource",
+    snmp-rule-form-module-mib-objects-form(
+    :form="form.resource",
     :items="selectedModuleMibObjects",
     label="resource",
     large,
     @input="updateField('resource', $event)"
     )
-    snmp-rule-form-vars-field(
-    :value="form.component",
+    snmp-rule-form-module-mib-objects-form(
+    :form="form.component",
     :items="selectedModuleMibObjects",
     label="component",
     large,
     @input="updateField('component', $event)"
     )
-    snmp-rule-form-vars-field(
-    :value="form.connector_name",
+    snmp-rule-form-module-mib-objects-form(
+    :form="form.connector_name",
     :items="selectedModuleMibObjects",
     label="connector_name",
     large,
@@ -44,18 +47,18 @@
 
 <script>
 import formMixin from '@/mixins/form';
-import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
 import SnmpRuleFormModuleForm from './snmp-rule-form-module-form.vue';
+import SnmpRuleFormModuleMibObjectsForm from './snmp-rule-form-module-mib-objects-form.vue';
 import SnmpRuleFormStateForm from './snmp-rule-form-state-form.vue';
-import SnmpRuleFormField from './snmp-rule-form-field.vue';
-import SnmpRuleFormVarsField from './snmp-rule-form-vars-field.vue';
 
 export default {
   components: {
-    SnmpRuleFormModuleForm, SnmpRuleFormStateForm, SnmpRuleFormField, SnmpRuleFormVarsField,
+    SnmpRuleFormModuleForm,
+    SnmpRuleFormModuleMibObjectsForm,
+    SnmpRuleFormStateForm,
   },
-  mixins: [formMixin, entitiesSnmpMibMixin],
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -86,9 +89,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .tt-uppercase {
-    text-transform: uppercase;
-  }
-</style>

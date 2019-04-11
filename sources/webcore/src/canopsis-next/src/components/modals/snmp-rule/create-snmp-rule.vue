@@ -14,7 +14,7 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, SNMP_STATE_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -28,34 +28,24 @@ export default {
   components: { SnmpRuleForm },
   mixins: [modalInnerMixin],
   data() {
+    const defaultModuleMibObjectForm = {
+      value: '',
+      regex: '',
+      formatter: '',
+    };
+
     const defaultSnmpRule = {
       oid: {
         oid: '',
         mibName: '',
         moduleName: '',
       },
-      component: {
-        value: '',
-        regex: '',
-        formatter: '',
-      },
-      connector_name: {
-        value: '',
-        regex: '',
-        formatter: '',
-      },
-      output: {
-        value: '',
-        regex: '',
-        formatter: '',
-      },
-      resource: {
-        value: '',
-        regex: '',
-        formatter: '',
-      },
+      component: { ...defaultModuleMibObjectForm },
+      connector_name: { ...defaultModuleMibObjectForm },
+      output: { ...defaultModuleMibObjectForm },
+      resource: { ...defaultModuleMibObjectForm },
       state: {
-        type: '',
+        type: SNMP_STATE_TYPES.simple,
       },
     };
 
