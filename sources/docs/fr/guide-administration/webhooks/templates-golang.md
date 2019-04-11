@@ -32,7 +32,7 @@ Voici une liste des principales données et la manière de la récupérer.
 | `abc` dans l'entité | `{{ .Entity.Infos.abc.Value }}`     |
 
 !!! attention
-    Le champ dans les informations d'entité sont sensibles à la casse. Par exemple un champ `switch` dans l'entité sera traduit en `{{ .Entity.Infos.switch.Value }}`.
+    Les champs enrichis depuis un événement ou via l'event filter se retrouvent au niveau de l'entité et sont sensibles à la casse. Par exemple un champ enrichi intitulé `switch` dans l'entité sera traduit en `{{ .Entity.Infos.switch.Value }}`.
 
 ## Génération de texte
 
@@ -60,11 +60,11 @@ La condition `{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{
 
 Ici, nous avons utilisé le `or` et le `eq`, mais il est possible de tester les conditions avec `and`, `not`, `ne` (not equal), `lt` (less than), `le` (less than or equal), `gt` (greater than) ou `ge` (greater than or equal).
 
-### Caractères spéciaux
+### Fonctionnalité `json`
 
-La fonction `js`, qui renvoie une chaîne de caractères échappée, peut être également mentionnée. Si, par exemple, la valeur dans `{{ .Event.Output }}` contient des caractères spéciaux comme des guillemets ou des backslashs, `{{ .Event.Output | js }}` permet d'échapper ces caractères.
+Une fonctionnalité pas présente de base dans les templates Go mais implémentée dans Canopsis est la fonction `json`. Cette fonction va transformer un champ en un élément directement insérable dans un fichier JSON.
 
-La fonction `json` TBD.
+Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by someone"`, directement avec les guillemets et donc insérable dans un JSON.
 
 ## Exemples
 
@@ -129,5 +129,25 @@ On définit trois variables que sont `$comp`, `$reso` et `$val` puis on complèt
     "ressource":"HDD",
     "parity": "even",
     "value": 2
+}
+```
+
+#### Avec variables et la fonction `json`
+
+Comme on a vu précédemment, la fonction `json` renvoie un contenu déjà compatible au format JSON. Ainsi, il est inutile besoin d'ajouter des `\"` autour des variables. Les constantes ont toujours besoin des guillemets, comme le montre l'exemple suivant.
+
+```json
+{
+    "payload" : "{\"message\": {{.Alarm.Value.State.Message | json }} , \"value\": {{ .Alarm.Value.State.Value | json }}, \"type\": \"JSON\" }"
+}
+```
+
+Ici, le type vaut tout le temps `"JSON"` et la présence des guillemets est obligatoire sous peine de créer un payload invalide.
+
+```json
+{
+    "message": "127.0.0.1",
+    "value": 2,
+    "type": "JSON"
 }
 ```
