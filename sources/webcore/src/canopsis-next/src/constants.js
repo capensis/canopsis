@@ -17,6 +17,7 @@ export const ENTITIES_TYPES = {
   role: 'role',
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
+  snmpRule: 'snmpRule',
 };
 
 export const MODALS = {
@@ -63,6 +64,7 @@ export const MODALS = {
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
+  createSnmpRule: 'create-snmp-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -564,6 +566,7 @@ export const USERS_RIGHTS = {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
+      snmpRule: 'models_exploitation_snmpRule',
     },
   },
   business: {
@@ -835,4 +838,9 @@ export const WEBHOOK_TRIGGERS = {
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',
+};
+
+export const SNMP_STATE_TYPES = {
+  simple: 'simple',
+  template: 'template',
 };

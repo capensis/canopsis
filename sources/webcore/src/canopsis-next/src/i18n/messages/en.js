@@ -744,6 +744,47 @@ export default {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
     },
+    createSnmpRule: {
+      create: {
+        title: 'Create SNMP rule',
+      },
+      edit: {
+        title: 'Edit SNMP rule',
+      },
+      fields: {
+        oid: {
+          title: 'oid',
+          labels: {
+            module: 'Select a mib module',
+          },
+        },
+        output: {
+          title: 'output',
+        },
+        resource: {
+          title: 'resource',
+        },
+        component: {
+          title: 'component',
+        },
+        connectorName: {
+          title: 'connector_name',
+        },
+        state: {
+          title: 'state',
+          labels: {
+            toCustom: 'To custom',
+            defineVar: 'Define matching snmp var',
+            writeTemplate: 'Write template',
+          },
+        },
+        moduleMibObjects: {
+          vars: 'Snmp vars match field',
+          regex: 'Regex',
+          formatter: 'Format (capture group with \\x)',
+        },
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -952,6 +993,11 @@ export default {
     actionsRequired: 'Please add at least one action',
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+  },
+  snmpRules: {
+    title: 'SNMP rules',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
   },
   layout: {
     sideBar: {

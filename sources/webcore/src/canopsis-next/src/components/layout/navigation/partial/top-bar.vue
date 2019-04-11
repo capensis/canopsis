@@ -126,6 +126,12 @@ export default {
           icon: '$vuetify.icons.webhook',
           right: USERS_RIGHTS.technical.exploitation.webhook,
         },
+        {
+          route: { name: 'exploitation-snmp-rules' },
+          text: this.$t('snmpRules.title'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.exploitation.snmpRule,
+        },
       ];
 
       return links.filter(({ right }) => !right || this.checkReadAccess(right));

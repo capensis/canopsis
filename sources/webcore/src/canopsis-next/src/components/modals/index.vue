@@ -58,6 +58,7 @@ import EventFilterRuleActions from './event-filter/enrichment-options/event-filt
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
 import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
+import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -109,6 +110,7 @@ export default {
     EventFilterRuleExternalData,
     FiltersList,
     CreateWebhook,
+    CreateSnmpRule,
   },
   data() {
     return {
