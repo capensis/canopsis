@@ -994,6 +994,7 @@ export default {
   snmpRules: {
     title: 'SNMP rules',
     uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
   },
   layout: {
     sideBar: {
