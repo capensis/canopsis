@@ -64,9 +64,70 @@ Ici, nous avons utilisé le `or` et le `eq`, mais il est possible de tester les 
 
 La fonction `js`, qui renvoie une chaîne de caractères échappée, peut être également mentionnée. Si, par exemple, la valeur dans `{{ .Event.Output }}` contient des caractères spéciaux comme des guillemets ou des backslashs, `{{ .Event.Output | js }}` permet d'échapper ces caractères.
 
+La fonction `json` TBD.
+
 ## Exemples
+
+Cette section présente différents exemples de templates pour les liens et pour les payloads, accompagnés d'explications.
 
 ### Templates pour URL
 
 ### Templates pour payload
-TBD
+
+#### Sans variables
+
+```json
+{
+    "payload" : "{\"caller_id\":1337,\"category\":\"test\",\"subcategory\":\"webhook\",\"company\":\"capensis\",\"contact_type\":\"canopsis\"}"
+}
+```
+
+Ce premier exemple va envoyer toujours le même payload simple, sans utilisation de variables. Le service externe recevra :
+
+```json
+{
+    "caller_id":1337,
+    "category":"test",
+    "subcategory":"webhook",
+    "company":"capensis",
+    "contact_type":"canopsis"
+}
+```
+
+A noter l'absence de `\"` autour de l'id 1337, comme on souhaite l'envoyer comme un nombre et non comme une chaîne de caractères.
+
+#### Avec variables
+
+```json
+{
+    "payload" : "{{ $c := .Alarm.Value.Component }} {{ $r := .Alarm.Value.Resource }} {\"component\":\"{{$c}}\",\"ressource\":\"{{$r}}\"}"
+}
+```
+
+Ici, le payload sera différent en fonction du composant et de la ressource. Le payload pourra ressembler à ça
+
+```json
+{
+    "component":"127.0.0.1",
+    "ressource":"HDD"
+}
+```
+
+#### Avec variables et fonctions
+
+```json
+{
+    "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}\"even\"{{else}}\"odd\"{{end}},  \"value\": {{$val}} }"
+}
+```
+
+On définit trois variables que sont `$comp`, `$reso` et `$val` puis on complète le champ `parity` du payload en regardant la valeur de `$val`. Dans le cas où `$val` vaut 2, alors le payload envoyé sera :
+
+```json
+{
+    "component":"127.0.0.1",
+    "ressource":"HDD",
+    "parity": "even",
+    "value": 2
+}
+```
