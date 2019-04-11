@@ -1,10 +1,11 @@
 <template lang="pug">
   div.mt-1
-    span.category.mr-2 {{ category || $t('common.links') }}
-    v-divider(light)
-    div(v-for="(link, index) in linkList", :key="`links-${index}`")
-      div.pa-2.text-xs-right
-        a(:href="link.link", target="_blank") {{ link.label }}
+    div(v-for="category in linkList", :key="category.cat_name")
+      span.category.mr-2 {{ category.cat_name }}
+      v-divider(light)
+      div(v-for="(link, index) in category.links", :key="`links-${index}`")
+        div.pa-2.text-xs-right
+          a(:href="link.link", target="_blank") {{ link.label }}
 </template>
 
 <script>
@@ -30,22 +31,29 @@ export default {
     * displayed in the same manner by the template.
     */
     linkList() {
-      const filteredLinks = this.category ?
+      const links = this.category ?
         this.links.filter(({ cat_name: catName }) => catName === this.category) :
         this.links;
 
-      return filteredLinks[0].links.reduce((acc, link, index) => {
-        if (typeof link === 'object' && link.link && link.label) {
-          acc.push(link);
-        } else {
-          acc.push({
-            label: `${this.category} - ${index}`,
-            link,
-          });
-        }
+      return links.map((category) => {
+        const categoryLinks = category.links.reduce((acc, link, index) => {
+          if (typeof link === 'object' && link.link && link.label) {
+            acc.push(link);
+          } else {
+            acc.push({
+              label: `${category.cat_name} - ${index}`,
+              link,
+            });
+          }
 
-        return acc;
-      }, []);
+          return acc;
+        }, []);
+
+        return {
+          cat_name: category.cat_name,
+          links: categoryLinks,
+        };
+      });
     },
   },
 };
