@@ -25,6 +25,7 @@ from canopsis.alerts.status import (
     compute_status, OFF, CANCELED, get_previous_step, is_keeped_state)
 from canopsis.statsng.enums import StatDurations
 from canopsis.task.core import register_task
+from canopsis.alerts import DEFAULT_AUTHOR
 
 SNOOZE_DEFAULT_DURATION = 300
 
@@ -280,7 +281,7 @@ def state_increase(manager, alarm, state, event):
     step = {
         '_t': 'stateinc',
         't': event['timestamp'],
-        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': state
     }
@@ -303,7 +304,7 @@ def state_decrease(manager, alarm, state, event):
     step = {
         '_t': 'statedec',
         't': event['timestamp'],
-        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': state
     }
@@ -326,7 +327,7 @@ def status_increase(manager, alarm, status, event):
     step = {
         '_t': 'statusinc',
         't': event['timestamp'],
-        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': status
     }
@@ -342,11 +343,10 @@ def status_decrease(manager, alarm, status, event):
     """
     Called when the system detects a status decrease on an alarm.
     """
-
     step = {
         '_t': 'statusdec',
         't': event['timestamp'],
-        'a': '{0}.{1}'.format(event['connector'], event['connector_name']),
+        'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': status
     }

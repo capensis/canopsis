@@ -1,6 +1,5 @@
 import Vue from 'vue';
-import merge from 'lodash/merge';
-import get from 'lodash/get';
+import { merge, get } from 'lodash';
 
 import request from '@/services/request';
 import i18n from '@/i18n';

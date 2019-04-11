@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2018 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+
+# Append the following triple-quoted code to your .bashrc to see
+# the Canopsis version in your shell prompt.
+"""
+if [ -x "$(command -v canopsis-version)" ]; then
+     export PS1='(\u `canopsis-version`)[\u@\h \W]\$ '
+fi
+"""
+
+
+import sys
+
+from canopsis.version import get_version_file_path, read_version_file
+from canopsis.common import root_path
+
+
+def main():
+    """
+    Print Canopsis version to STDOUT or nothing if version file not found.
+    """
+    try:
+        canopsis_version = read_version_file(get_version_file_path(root_path))
+    except Exception:
+        print >> sys.stdout, "NO VERSION AVAILABLE"
+        sys.stdout.flush()
+    else:
+        print >>sys.stdout, canopsis_version
+        sys.stdout.flush()
+
+
+if __name__ == '__main__':
+    main()

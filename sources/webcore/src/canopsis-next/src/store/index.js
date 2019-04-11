@@ -1,6 +1,17 @@
+/**
+ * @typedef {Object} VuexActionContext
+ * @property {Object} state
+ * @property {Object} rootState
+ * @property {Object} getters
+ * @property {Object} rootGetters
+ * @property {function} commit
+ * @property {function} dispatch
+ */
+
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import appModule from './modules/app';
 import authModule from './modules/auth';
 import i18nModule from './modules/i18n';
 import modalModule from './modules/modal';
@@ -26,6 +37,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
+    app: appModule,
     auth: authModule,
     i18n: i18nModule,
     modal: modalModule,

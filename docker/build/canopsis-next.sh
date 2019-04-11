@@ -9,3 +9,4 @@ npm install
 NODE_ENV=production npm run build
 
 cp -ar dist/* /dist/
+chown $FIX_OWNER -R /dist/

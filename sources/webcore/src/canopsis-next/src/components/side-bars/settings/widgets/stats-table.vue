@@ -8,30 +8,29 @@
       @createRow="createRow"
       )
       v-divider
-      field-title(v-model="settings.widget.title")
+      field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-duration(v-model="settings.widget.parameters.duration")
+      field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
-      field-date-time-select(:title="$t('settings.tstop')", name="tstop", v-model="settings.widget.parameters.tstop")
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
-      field-stats-select(v-model="settings.widget.parameters.stats")
+      field-stats-selector(v-model="settings.widget.parameters.stats", required)
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter")
-    v-btn(@click="submit", color="green darken-4 white--text", depressed) {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep';
-import { PAGINATION_LIMIT } from '@/config';
+import { cloneDeep } from 'lodash';
+
 import { SIDE_BARS } from '@/constants';
+
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
-import FieldRowGridSize from '../partial/fields/row-grid-size.vue';
-import FieldTitle from '../partial/fields/title.vue';
-import FieldDuration from '../partial/fields/duration.vue';
-import FieldDateTimeSelect from '../partial/fields/date-time-select.vue';
-import FieldStatsSelect from '../partial/fields/stats-select.vue';
-import FieldFilterEditor from '../partial/fields/filter-editor.vue';
+import FieldRowGridSize from './fields/common/row-grid-size.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDateInterval from './fields/stats/date-interval.vue';
+import FieldStatsSelector from './fields/stats/stats-selector.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
 
 export default {
   name: SIDE_BARS.statsTableSettings,
@@ -41,9 +40,8 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldDuration,
-    FieldDateTimeSelect,
-    FieldStatsSelect,
+    FieldDateInterval,
+    FieldStatsSelector,
     FieldFilterEditor,
   },
   mixins: [widgetSettingsMixin],
@@ -54,9 +52,6 @@ export default {
       settings: {
         rowId,
         widget: cloneDeep(widget),
-        widget_preferences: {
-          itemsPerPage: PAGINATION_LIMIT,
-        },
       },
     };
   },

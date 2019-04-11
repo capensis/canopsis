@@ -1,0 +1,14 @@
+<div style="position: absolute; left: 50%;display:none;z-index:1000;" class="popupinfo">
+    <div style="position: relative; left: -50%;">
+        <div class="text-center alert alert-info alert-dismissable">
+            <i class="fa fa-info"></i>
+            <button {{action 'hide'}} type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div class="recordinfopopuphandle">
+                <b>info</b><hr/>
+            </div>
+            <div class="recordinfopopupcontent">
+                {{view columnTemplate contextBinding=clickedAlarm}}
+            </div>
+        </div>
+    </div>       
+</div>

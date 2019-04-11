@@ -1,16 +1,34 @@
 <template lang="pug">
-  v-container
+  div
     v-layout.white(justify-space-between, align-center)
-      v-flex(xs12, md4)
+      v-flex
         context-search(:query.sync="query")
-      v-flex.ml-4(xs4)
-        v-btn(v-show="selected.length", @click.stop="deleteEntities", icon, small)
-          v-icon delete
-      v-flex(xs2)
-        v-btn(icon, @click.prevent="showSettings")
-          v-icon settings
-      v-flex(xs2)
-        context-fab
+      v-flex
+        pagination(
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="contextEntitiesMeta.total",
+        type="top",
+        @input="updateQueryPage"
+        )
+      v-flex(v-if="hasAccessToListFilters")
+        filter-selector(
+        :label="$t('settings.selectAFilter')",
+        :filters="viewFilters",
+        :lockedFilters="widgetViewFilters"
+        :value="mainFilter",
+        :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
+        @input="updateSelectedFilter",
+        @update:condition="updateSelectedCondition",
+        @update:filters="updateFilters"
+        )
+      v-flex.ml-4
+        mass-actions-panel(:itemsIds="selectedIds")
+      v-flex
+        context-fab(v-if="hasAccessToCreateEntity")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -26,7 +44,7 @@
       )
         template(slot="progress")
           v-fade-transition
-            v-progress-linear(height="2", indeterminate)
+            v-progress-linear(height="2", indeterminate, color="primary")
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
@@ -36,42 +54,55 @@
           v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
+            div(v-if="column.value === 'enabled'")
+              v-icon(
+              :color="props.item.enabled ? 'primary' : 'error'"
+              ) {{ props.item.enabled ? 'check' : 'clear' }}
             ellipsis(
+            v-else,
             :text="props.item | get(column.value, null, '')",
             :maxLetters="column.maxLetters"
             )
           td
-            v-btn(@click.stop="editEntity(props.item)", icon, small)
-              v-icon edit
-            v-btn(@click.stop="deleteEntity(props.item)", icon, small)
-              v-icon delete
+            actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="contextEntitiesMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="contextEntitiesMeta.total",
+          @input="updateQueryPage"
+          )
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
-import omit from 'lodash/omit';
+import { omit, isString } from 'lodash';
 
+import { USERS_RIGHTS } from '@/constants';
+import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
+
+import Ellipsis from '@/components/tables/ellipsis.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import Ellipsis from '@/components/tables/ellipsis.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
+import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
-import { MODALS, ENTITIES_TYPES, SIDE_BARS } from '@/constants';
-import modalMixin from '@/mixins/modal/modal';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
+import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
+import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
+import MoreInfos from './more-infos/more-infos.vue';
 import ContextFab from './actions/context-fab.vue';
-import MoreInfos from './more-infos.vue';
+import ActionsPanel from './actions/actions-panel.vue';
+import MassActionsPanel from './actions/mass-actions-panel.vue';
 
 /**
  * Entities list
@@ -85,28 +116,32 @@ import MoreInfos from './more-infos.vue';
  */
 export default {
   components: {
+    Ellipsis,
     ContextSearch,
     RecordsPerPage,
-    MoreInfos,
-    Ellipsis,
-    ContextFab,
     NoColumnsTable,
+    FilterSelector,
+    MoreInfos,
+    ContextFab,
+    ActionsPanel,
+    MassActionsPanel,
   },
   mixins: [
-    modalMixin,
-    sideBarMixin,
+    authMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
+    widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
-    entitiesUserPreferenceMixin,
   ],
   props: {
     widget: {
       type: Object,
       required: true,
     },
-    rowId: {
-      type: String,
+    isEditingMode: {
+      type: Boolean,
       required: true,
     },
   },
@@ -116,12 +151,32 @@ export default {
     };
   },
   computed: {
+    selectedIds() {
+      return this.selected.map(item => item._id);
+    },
+
     headers() {
       if (this.hasColumns) {
         return [...this.columns, { text: '', sortable: false }];
       }
 
       return [];
+    },
+
+    hasAccessToCreateEntity() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.createEntity);
+    },
+
+    hasAccessToListFilters() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.listFilters);
+    },
+
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.userFilter);
     },
   },
   methods: {
@@ -130,7 +185,9 @@ export default {
         'page',
         'sortKey',
         'sortDir',
-        'selectedTypes',
+        'mainFilter',
+        'searchFilter',
+        'typesFilter',
       ]);
 
       query.start = ((this.query.page - 1) * this.query.limit) || 0;
@@ -142,63 +199,23 @@ export default {
         }];
       }
 
-      if (!query._filter) {
-        const selectedTypes = this.userPreference.widget_preferences.selectedTypes || [];
+      const filters = ['mainFilter', 'searchFilter', 'typesFilter'].reduce((acc, filterKey) => {
+        const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
 
-        if (selectedTypes.length) {
-          query._filter = JSON.stringify({
-            $or: selectedTypes.map(type => ({ type })),
-          });
-        } else {
-          delete query._filter;
+        if (queryFilter) {
+          acc.push(queryFilter);
         }
+
+        return acc;
+      }, []);
+
+      if (filters.length) {
+        query._filter = {
+          $and: filters,
+        };
       }
 
       return query;
-    },
-    editEntity(item) {
-      if (item.type === ENTITIES_TYPES.watcher) {
-        this.showModal({
-          name: MODALS.createWatcher,
-          config: {
-            title: 'modals.createWatcher.editTitle',
-            item,
-          },
-        });
-      } else {
-        this.showModal({
-          name: MODALS.createEntity,
-          config: {
-            title: 'modals.createEntity.editTitle',
-            item,
-          },
-        });
-      }
-    },
-    deleteEntity(item) {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => this.removeContextEntity({ id: item._id }),
-        },
-      });
-    },
-    deleteEntities() {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => Promise.all(this.selected.map(item => this.removeContextEntity({ id: item._id }))),
-        },
-      });
-    },
-    showSettings() {
-      this.showSideBar({
-        name: SIDE_BARS.contextSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
     },
     fetchList() {
       if (this.hasColumns) {
@@ -207,6 +224,14 @@ export default {
           params: this.getQuery(),
         });
       }
+    },
+
+    updateQueryBySelectedFilterAndCondition(filter, condition) {
+      this.query = {
+        ...this.query,
+
+        mainFilter: prepareMainFilterToQueryFilter(filter, condition),
+      };
     },
   },
 };

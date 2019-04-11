@@ -1,31 +1,16 @@
 <template lang="pug">
-  div
-    div(v-show="$options.filters.mq($mq, { l: true })")
-      actions-panel-item(
-      v-for="(action, index) in actions",
-      v-bind="action",
-      :key="`multiple-${index}`"
-      )
-    div(v-show="$options.filters.mq($mq, { m: true, l: false })")
-      v-menu(bottom, left, @click.native.stop)
-        v-btn(icon slot="activator")
-          v-icon more_vert
-        v-list
-          actions-panel-item(
-          v-for="(action, index) in actions",
-          v-bind="action",
-          isDropDown,
-          :key="`mobile-multiple-${index}`"
-          )
+  shared-mass-actions-panel(:actions="filteredActions")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import actionsPanelMixin from '@/mixins/actions-panel';
-import { EVENT_ENTITY_TYPES, ENTITIES_TYPES, MODALS } from '@/constants';
+import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import ActionsPanelItem from './actions-panel-item.vue';
+import authMixin from '@/mixins/auth';
+import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
+
+import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -37,41 +22,67 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
-  components: { ActionsPanelItem },
-  mixins: [actionsPanelMixin],
+  components: { SharedMassActionsPanel },
+  mixins: [authMixin, widgetActionsPanelAlarmMixin],
   props: {
     itemsIds: {
       type: Array,
+      default: () => [],
+    },
+    widget: {
+      type: Object,
       required: true,
     },
   },
   data() {
+    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
     return {
       actions: [
         {
-          type: 'pbehavior',
-          method: this.showActionModal(MODALS.createPbehavior),
+          type: alarmsListActionsTypes.pbehaviorAdd,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
+          title: this.$t('alarmList.actions.titles.pbehavior'),
+          method: this.showAddPbehaviorModal,
         },
         {
-          type: 'fastAck',
+          type: alarmsListActionsTypes.ack,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
+          title: this.$t('alarmList.actions.titles.ack'),
+          method: this.showAckModal,
+        },
+        {
+          type: alarmsListActionsTypes.fastAck,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          title: this.$t('alarmList.actions.titles.fastAck'),
           method: this.createAckEvent,
         },
         {
-          type: 'ack',
-          method: this.showActionModal(MODALS.createAckEvent),
+          type: alarmsListActionsTypes.ackRemove,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
+          title: this.$t('alarmList.actions.titles.ackRemove'),
+          method: this.showAckRemoveModal,
         },
         {
-          type: 'ackRemove',
-          method: this.showAckRemoveModal,
+          type: alarmsListActionsTypes.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          title: this.$t('alarmList.actions.titles.cancel'),
+          method: this.showActionModal(MODALS.createCancelEvent),
         },
       ],
     };
   },
   computed: {
-    ...entitiesMapGetters(['getList']),
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
+
+    filteredActions() {
+      return this.actions.filter(this.actionsAccessFilterHandler);
+    },
 
     items() {
-      return this.getList(ENTITIES_TYPES.alarm, this.itemsIds);
+      return this.getEntitiesList(ENTITIES_TYPES.alarm, this.itemsIds);
     },
 
     modalConfig() {
@@ -84,6 +95,24 @@ export default {
   methods: {
     createAckEvent() {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
+    },
+
+    showAddPbehaviorModal() {
+      this.showModal({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior: {
+            filter: {
+              _id: { $in: this.items.map(item => item.d) },
+            },
+          },
+          action: data => this.createPbehavior({
+            data,
+            parents: this.items,
+            parentsType: ENTITIES_TYPES.alarm,
+          }),
+        },
+      });
     },
   },
 };

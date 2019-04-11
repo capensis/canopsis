@@ -1,34 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import canopsis.common
 import unittest
-import configparser
 from canopsis.common import root_path
 from canopsis.common.amqp import AmqpPublisher, AmqpConnection
 import xmlrunner
-
-
-DEFAULT_AMQP_URL = 'amqp://guest:guest@localhost/'
-DEFAULT_AMQP_EXCHANGE = 'test'
-DEFAULT_CONF_FILE = "etc/amqp.conf"
+from mock import Mock
 
 
 class TestAmqp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config = configparser.RawConfigParser()
-        config.read(os.path.join(canopsis.common.root_path, DEFAULT_CONF_FILE))
-
-        cls.amqp_url = "amqp://{0}:{1}@{2}:{3}/{4}".format(
-            config["master"]["userid"],
-            config["master"]["password"],
-            config["master"]["host"],
-            config["master"]["port"],
-            config["master"]["virtual_host"])
-        cls.amqp_exname = config["master"]["exchange_name"]
+        cls.amqp_url, cls.amqp_exname = AmqpConnection.parse_conf()
 
         cls.event = {
             'connector': 'test_amqp',
@@ -64,21 +48,21 @@ class TestAmqpPublisher(TestAmqp):
 
     def test_canopsis_event(self):
         with AmqpConnection(self.amqp_url) as ac:
-            amqp_pub = AmqpPublisher(ac)
+            amqp_pub = AmqpPublisher(ac, Mock())
             amqp_pub.canopsis_event(self.event, self.amqp_exname)
 
     def test_bad_canopsis_event_raises(self):
         event = {}
 
         with AmqpConnection(self.amqp_url) as ac:
-            amqp_pub = AmqpPublisher(ac)
+            amqp_pub = AmqpPublisher(ac, Mock())
             with self.assertRaises(KeyError):
                 amqp_pub.canopsis_event(event, self.amqp_exname)
 
     def test_json_document(self):
         jdoc = {'bla': 'bla'}
         with AmqpConnection(self.amqp_url) as ac:
-            amqp_pub = AmqpPublisher(ac)
+            amqp_pub = AmqpPublisher(ac, Mock())
             amqp_pub.json_document(jdoc, self.amqp_exname, '#')
 
 

@@ -1,9 +1,9 @@
-import get from 'lodash/get';
-import isUndefined from 'lodash/isUndefined';
-import isEmpty from 'lodash/isEmpty';
+import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
+
+import { prepareMainFilterToQueryFilter } from './filter';
 
 /**
  * WIDGET CONVERTERS
@@ -33,7 +33,7 @@ export function convertSortToQuery({ parameters }) {
  */
 export function convertAlarmWidgetToQuery(widget) {
   const {
-    alarmsStateFilter,
+    alarmsStateFilter = {},
     widgetColumns,
     itemsPerPage,
     mainFilter,
@@ -41,6 +41,8 @@ export function convertAlarmWidgetToQuery(widget) {
 
   const query = {
     page: 1,
+    opened: alarmsStateFilter.opened || false,
+    resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
   };
 
@@ -48,14 +50,8 @@ export function convertAlarmWidgetToQuery(widget) {
     query.filter = mainFilter.filter;
   }
 
-  if (alarmsStateFilter) {
-    if (!isUndefined(alarmsStateFilter.opened)) {
-      query.opened = alarmsStateFilter.opened;
-    }
-
-    if (!isUndefined(alarmsStateFilter.resolved)) {
-      query.resolved = alarmsStateFilter.resolved;
-    }
+  if (query.resolved) {
+    query.interval = LIVE_REPORTING_INTERVALS.last30Days;
   }
 
   if (widgetColumns) {
@@ -72,20 +68,111 @@ export function convertAlarmWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertContextWidgetToQuery(widget) {
+  const {
+    itemsPerPage,
+    selectedTypes,
+  } = widget.parameters;
+
   const query = {
     page: 1,
-    limit: get(widget, 'parameters.itemsPerPage', PAGINATION_LIMIT),
-    selectedTypes: get(widget, 'parameters.selectedTypes', []),
+    limit: itemsPerPage || PAGINATION_LIMIT,
+    selectedTypes,
   };
 
   return { ...query, ...convertSortToQuery(widget) };
 }
 
+export function convertWeatherWidgetToQuery(widget) {
+  const query = {
+    filter: widget.parameters.mfilter.filter,
+  };
+
+  return query;
+}
+
 /**
+ * This function converts widget with type stats field to query Object
  *
+ * @param {Object} widget
+ * @returns {{}}
  */
-export function convertStatsTableWidgetToQuery(widget) {
-  const query = { ...widget.parameters };
+export function convertWidgetStatsParameterToQuery(widget) {
+  const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
+    acc[stat] = {
+      ...widget.parameters.stats[stat],
+      stat: widget.parameters.stats[stat].stat.value,
+    };
+    return acc;
+  }, {});
+
+  return {
+    ...widget.parameters,
+
+    stats: statsList,
+  };
+}
+
+/**
+ * This function converts widget with type 'StatsCalendar' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsCalendarWidgetToQuery(widget) {
+  const {
+    filters,
+    alarmsStateFilter,
+    considerPbehaviors,
+  } = widget.parameters;
+
+  const query = {
+    considerPbehaviors,
+    filters: filters || [],
+  };
+
+  if (alarmsStateFilter) {
+    if (!isUndefined(alarmsStateFilter.opened)) {
+      query.opened = alarmsStateFilter.opened;
+    }
+
+    if (!isUndefined(alarmsStateFilter.resolved)) {
+      query.resolved = alarmsStateFilter.resolved;
+    }
+  }
+
+  return query;
+}
+
+/**
+ * This function converts widget with type 'Stats number' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsNumberWidgetToQuery(widget) {
+  const { stat } = widget.parameters;
+  const query = {
+    ...omit(widget.parameters, [
+      'statColors',
+      'criticityLevels',
+      'yesNoMode',
+      'statName',
+    ]),
+
+    trend: true,
+  };
+
+  if (stat) {
+    query.stats = {
+      [stat.title]: {
+        parameters: stat.parameters,
+        stat: stat.stat.value,
+        trend: true,
+      },
+    };
+  }
+
+  query.trend = true;
 
   return query;
 }
@@ -102,13 +189,18 @@ export function convertStatsTableWidgetToQuery(widget) {
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   const query = {};
+  const {
+    itemsPerPage,
+    mainFilter,
+    mainFilterCondition,
+  } = widgetPreferences;
 
-  if (widgetPreferences.itemsPerPage) {
-    query.limit = widgetPreferences.itemsPerPage;
+  if (itemsPerPage) {
+    query.limit = itemsPerPage;
   }
 
-  if (!isEmpty(widgetPreferences.mainFilter)) {
-    query.filter = widgetPreferences.mainFilter.filter;
+  if (!isEmpty(mainFilter)) {
+    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   return query;
@@ -120,11 +212,30 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  return {
-    limit: get(widgetPreferences, 'itemsPerPage', PAGINATION_LIMIT),
-    selectedTypes: get(widgetPreferences, 'selectedTypes', []),
-  };
+export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences = {} }) {
+  const query = {};
+  const {
+    itemsPerPage,
+    mainFilter,
+    mainFilterCondition,
+    selectedTypes,
+  } = widgetPreferences;
+
+  if (itemsPerPage) {
+    query.limit = itemsPerPage;
+  }
+
+  if (!isEmpty(mainFilter)) {
+    query.mainFilter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
+  }
+
+  if (!isEmpty(selectedTypes)) {
+    query.typesFilter = {
+      $or: selectedTypes.map(type => ({ type })),
+    };
+  }
+
+  return query;
 }
 
 /**
@@ -160,8 +271,17 @@ export function convertWidgetToQuery(widget) {
       return convertAlarmWidgetToQuery(widget);
     case WIDGET_TYPES.context:
       return convertContextWidgetToQuery(widget);
+    case WIDGET_TYPES.weather:
+      return convertWeatherWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCurves:
+    case WIDGET_TYPES.statsHistogram:
     case WIDGET_TYPES.statsTable:
-      return convertStatsTableWidgetToQuery(widget);
+    case WIDGET_TYPES.text:
+      return convertWidgetStatsParameterToQuery(widget);
+    case WIDGET_TYPES.statsNumber:
+      return convertStatsNumberWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCalendar:
+      return convertStatsCalendarWidgetToQuery(widget);
     default:
       return {};
   }

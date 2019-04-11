@@ -1,59 +1,36 @@
 <template lang="pug">
   v-card
     v-card-text
-      .title.text-xs-center.my-2 {{ $t('modals.createEntity.infosList') }}
-      v-list(v-if="infosNames.length")
-        v-list-group.my-1(
-        v-for="(info, infoName) in infos",
-        :key="infoName"
-        )
-          v-list-tile(slot="activator")
-            v-list-tile-content
-              v-list-tile-title {{ infoName }}
-            v-list-tile-action
-              v-btn(icon, flat, @click.stop="removeField(infoName)")
-                v-icon delete
-          v-list-tile(@click="")
-            v-list-tile-content
-              v-list-tile-title {{ $t('common.description') }} : {{ info.description }}
-              v-list-tile-title {{ $t('common.value') }} : {{ info.value }}
-      v-card-text(v-else) {{ $t('modals.createEntity.noInfos') }}
-      v-form
-        .title.text-xs-center.my-2 {{ $t('modals.createEntity.addInfos') }}
-        v-layout
-          v-text-field(
-          :label="$t('common.name')",
-          v-model="form.name",
-          v-validate="'required|unique-name'",
-          data-vv-name="name",
-          :error-messages="errors.collect('name')"
-          )
-          v-text-field(
-          :label="$t('common.description')",
-          v-model="form.description",
-          v-validate="'required'",
-          data-vv-name="description",
-          :error-messages="errors.collect('description')"
-          )
-          v-text-field(
-          :label="$t('common.value')",
-          v-model="form.value",
-          v-validate="'required'",
-          data-vv-name="value",
-          :error-messages="errors.collect('value')"
-          )
-          v-btn(icon, flat, @click="addInfo")
+      v-layout(justify-end)
+        v-tooltip(left)
+          v-btn(@click="showAddInfoModal", slot="activator", color="secondary", icon)
             v-icon add
+          span {{ $t('modals.createEntity.manageInfos.addInfo') }}
+      v-data-table(
+      :items="items",
+      item-key="name",
+      :headers="tableHeaders",
+      :no-data-text="$t('modals.createEntity.manageInfos.noInfos')",
+      )
+        template(slot="items", slot-scope="props")
+          td {{ props.item.name }}
+          td {{ props.item.description }}
+          td {{ props.item.value }}
+          td
+            v-layout
+              v-btn.mx-0(@click="showEditInfoModal(props.item)", icon, small)
+                v-icon(color="primary") edit
+              v-btn.mx-0(@click="removeField(props.item.name)", icon, small)
+                v-icon(color="error") delete
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
+import { omit } from 'lodash';
 
-const getDefaultFormData = () => ({
-  name: '',
-  description: '',
-  value: '',
-});
+import { MODALS } from '@/constants';
+
+import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 
 /**
  * Form to manipulation with infos
@@ -61,10 +38,8 @@ const getDefaultFormData = () => ({
  * @prop {Object} infos - infos from parent
  */
 export default {
-  $_veeValidate: {
-    validator: 'new',
-  },
   mixins: [
+    modalMixin,
     formMixin,
   ],
   model: {
@@ -79,36 +54,58 @@ export default {
   },
   data() {
     return {
-      form: getDefaultFormData(),
+      tableHeaders: [
+        {
+          text: this.$t('common.name'),
+          value: 'name',
+        },
+        {
+          text: this.$t('common.description'),
+          value: 'description',
+        },
+        {
+          text: this.$t('common.value'),
+          value: 'value',
+        },
+        {
+          text: this.$t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+        },
+      ],
     };
   },
   computed: {
-    infosNames() {
-      return Object.keys(this.infos);
+    items() {
+      return Object.keys(this.infos).map(key => ({
+        name: key,
+        description: this.infos[key].description,
+        value: this.infos[key].value,
+      }));
     },
-  },
-  created() {
-    this.createUniqueValidationRule();
   },
   methods: {
-    async addInfo() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        this.updateField(this.form.name, { ...this.form });
-        this.resetForm();
-      }
-    },
-
-    createUniqueValidationRule() {
-      this.$validator.extend('unique-name', {
-        getMessage: () => this.$t('validator.unique'),
-        validate: value => !this.infosNames.includes(value),
+    showAddInfoModal() {
+      this.showModal({
+        name: MODALS.addEntityInfo,
+        config: {
+          infos: this.infos,
+          title: this.$t('modals.addEntityInfo.addTitle'),
+          action: info => this.updateField(info.name, omit(info, ['name'])),
+        },
       });
     },
 
-    resetForm() {
-      this.form = getDefaultFormData();
+    showEditInfoModal(info) {
+      this.showModal({
+        name: MODALS.addEntityInfo,
+        config: {
+          infos: this.infos,
+          editingInfo: info,
+          title: this.$t('modals.addEntityInfo.editTitle'),
+          action: editedInfo => this.updateAndMoveField(info.name, editedInfo.name, omit(editedInfo, ['name'])),
+        },
+      });
     },
   },
 };

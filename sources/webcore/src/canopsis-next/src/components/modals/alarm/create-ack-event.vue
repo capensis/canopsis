@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card
-    v-card-title
-      span.headline {{ $t('modals.createAckEvent.title') }}
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t('modals.createAckEvent.title') }}
     v-card-text
       v-container
         v-layout(row align-center)
@@ -14,17 +15,16 @@
           :label="$t('modals.createAckEvent.fields.ticket')",
           :error-messages="errors.collect('ticket')",
           v-model="form.ticket",
-          v-validate="rules",
+          v-validate="'required'",
           data-vv-name="ticket"
           )
         v-layout(row)
-          v-text-field(
+          v-textarea(
           :label="$t('modals.createAckEvent.fields.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
-          v-validate="rules",
+          v-validate="'required'",
           data-vv-name="output",
-          multi-line
           )
         v-layout(row)
           v-tooltip(top)
@@ -35,19 +35,22 @@
             )
               span(slot-name="label") {{  }}
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
-    v-card-actions
-      v-btn(@click.prevent="submit", color="primary") {{ $t('common.actions.acknowledge') }}
-      v-btn(
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
+      v-btn.warning(
       @click.prevent="submitWithDeclare",
-      color="warning"
       ) {{ $t('common.actions.acknowledgeAndReport') }}
 </template>
 
 <script>
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
-import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
+
+import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to create an ack event
@@ -60,21 +63,15 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
-      showValidationErrors: false,
       ack_resources: false,
       form: {
         ticket: '',
         output: '',
       },
     };
-  },
-  computed: {
-    rules() {
-      return this.showValidationErrors ? 'required' : '';
-    },
   },
   methods: {
     async create(withDeclare) {
@@ -85,7 +82,8 @@ export default {
       });
 
       if (withDeclare) {
-        const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
+        const declareTicketEventData =
+          this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
 
         await this.createEventAction({
           data: declareTicketEventData,
@@ -108,10 +106,17 @@ export default {
     },
 
     async submit() {
-      this.showValidationErrors = false;
       this.errors.clear();
 
-      await this.create();
+      if (this.config && this.config.isNoteRequired) {
+        const formIsValid = await this.$validator.validate('output');
+
+        if (formIsValid) {
+          await this.create();
+        }
+      } else {
+        await this.create();
+      }
     },
   },
 };

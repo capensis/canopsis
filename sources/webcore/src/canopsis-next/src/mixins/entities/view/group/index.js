@@ -15,6 +15,8 @@ export default {
     ...mapActions({
       fetchGroupsList: 'fetchList',
       createGroup: 'create',
+      updateGroup: 'update',
+      removeGroup: 'remove',
     }),
   },
 };

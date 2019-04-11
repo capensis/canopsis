@@ -13,3 +13,22 @@
     }
   }
 }
+
+.v-tabs__div {
+  max-width: none;
+}
+
+.fab {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.wf-loading, .wf-inactive {
+  .v-icon {
+    max-width: 24px !important;
+    max-height: 24px !important;
+    overflow: hidden !important;
+  }
+}

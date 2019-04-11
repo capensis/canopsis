@@ -60,6 +60,7 @@ fi
 /opt/canopsis/tmp
 /opt/canopsis/var
 /opt/canopsis/.vimrc
+/opt/canopsis/VERSION.txt
 
 %defattr(0755, canopsis, canopsis, 0755)
 /opt/canopsis/bin/
@@ -81,4 +82,3 @@ fi
 /usr/lib/systemd/system/canopsis-*
 
 %changelog
-

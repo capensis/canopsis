@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# generate documentation relative to the brick code.
+# ./builDoc --> then see the doc in doc/code
+
+./node_modules/.bin/jsdoc -c jsdoc.json .

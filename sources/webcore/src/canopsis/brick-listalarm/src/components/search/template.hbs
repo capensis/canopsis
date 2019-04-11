@@ -1,0 +1,19 @@
+<div class='input-group input-group-sm'>
+    <span class="input-group-btn">
+        <button {{action 'openSearchDoc'}} class="btn btn-default btn-flat">
+            <span class="fa fa-book"></span>
+        </button>
+    </span>
+    {{input insert-newline='search' value=value class="form-control inlineInput" placeholder=(tr 'Search') type="text"}}
+    <span class="input-group-btn">
+        <button {{action 'resetValue'}} class="btn btn-default btn-flat">
+            <span class="glyphicon glyphicon-remove-circle"></span>
+        </button>
+        <button {{action 'search'}} class="btn btn-primary btn-flat">
+            <span class="fa fa-search"></span>
+        </button>
+    </span>
+    {{#unless isValid}}
+    <p class='search-invalid-message'>Invalid search query</p>
+    {{/unless}}
+</div>

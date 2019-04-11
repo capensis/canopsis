@@ -1,10 +1,9 @@
 <template lang="pug">
 v-speed-dial.d-inline-block(
   direction="left",
-  :open-on-hover="true",
   transition="scale-transition"
   )
-  v-btn(slot="activator", color="green darken-3", dark, fab, small)
+  v-btn.primary(slot="activator", dark, fab, small)
     v-icon add
     v-icon close
   v-tooltip(v-for="button in buttons", :key="button.label", top)
@@ -14,9 +13,11 @@ v-speed-dial.d-inline-block(
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal/modal';
 import { MODALS } from '@/constants';
-import entityMixin from '@/mixins/entities/context-entity';
+
+import modalMixin from '@/mixins/modal';
+import entitiesWatcherMixin from '@/mixins/entities/watcher';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 /**
  * Buttons to open the modal to add entities
@@ -26,7 +27,8 @@ import entityMixin from '@/mixins/entities/context-entity';
 export default {
   mixins: [
     modalMixin,
-    entityMixin,
+    entitiesWatcherMixin,
+    entitiesContextEntityMixin,
   ],
   data() {
     return {
@@ -51,7 +53,8 @@ export default {
       this.showModal({
         name: MODALS.createEntity,
         config: {
-          title: 'modals.createEntity.createTitle',
+          title: this.$t('modals.createEntity.createTitle'),
+          action: entity => this.createContextEntityWithPopup(entity),
         },
       });
     },
@@ -59,7 +62,8 @@ export default {
       this.showModal({
         name: MODALS.createWatcher,
         config: {
-          title: 'modals.createWatcher.createTitle',
+          title: this.$t('modals.createWatcher.createTitle'),
+          action: watcher => this.createWatcherWithPopup(watcher),
         },
       });
     },

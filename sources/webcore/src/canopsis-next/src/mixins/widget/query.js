@@ -1,8 +1,9 @@
-import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
+import { omit, isEqual, isEmpty } from 'lodash';
 
-import Pagination from '@/components/tables/pagination.vue';
+import { PAGINATION_LIMIT } from '@/config';
+import { SORT_ORDERS } from '@/constants';
 import queryMixin from '@/mixins/query';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import dateIntervals from '@/helpers/date-intervals';
 import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
 
@@ -10,10 +11,13 @@ import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/qu
  * @mixin Add query logic
  */
 export default {
-  components: {
-    Pagination,
+  mixins: [queryMixin, entitiesUserPreferenceMixin],
+  props: {
+    tabId: {
+      type: String,
+      required: true,
+    },
   },
-  mixins: [queryMixin],
   computed: {
     query: {
       get() {
@@ -26,7 +30,7 @@ export default {
 
     vDataTablePagination: {
       get() {
-        const descending = this.query.sortDir !== null ? this.query.sortDir === 'DESC' : null;
+        const descending = this.query.sortDir !== null ? this.query.sortDir === SORT_ORDERS.desc : null;
 
         return { sortBy: this.query.sortKey, descending };
       },
@@ -38,15 +42,24 @@ export default {
           this.query = {
             ...this.query,
             sortKey: value.sortBy,
-            sortDir: value.descending ? 'DESC' : 'ASC',
+            sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
           };
         }
       },
     },
+
+    tabQueryNonce() {
+      return this.getQueryNonceById(this.tabId);
+    },
   },
   watch: {
     query(value, oldValue) {
-      if (!isEqual(value, oldValue)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
+        this.fetchList();
+      }
+    },
+    tabQueryNonce(value, oldValue) {
+      if (value > oldValue) {
         this.fetchList();
       }
     },
@@ -59,8 +72,11 @@ export default {
       ...convertWidgetToQuery(this.widget),
       ...convertUserPreferenceToQuery(this.userPreference),
     };
-
-    await this.fetchList(); // TODO: remove it when we will finish settings integration for weather
+  },
+  destroyed() {
+    this.removeQuery({
+      id: this.widget._id,
+    });
   },
   methods: {
     getQuery() {
@@ -71,7 +87,7 @@ export default {
         'sortDir',
       ]);
 
-      const { page, interval } = this.query;
+      const { page, interval, limit = PAGINATION_LIMIT } = this.query;
 
       if (interval && interval !== 'custom') {
         try {
@@ -89,8 +105,8 @@ export default {
         query.sort_dir = this.query.sortDir;
       }
 
-      query.limit = this.query.limit;
-      query.skip = ((page - 1) * this.query.limit) || 0;
+      query.limit = limit;
+      query.skip = ((page - 1) * limit) || 0;
 
       return query;
     },

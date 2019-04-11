@@ -1,11 +1,11 @@
 <template lang="pug">
-  v-dialog(v-model="isOpen", :hide-overlay="index !== 0", v-bind="dialogProps")
+  v-dialog(v-model="isOpen", v-bind="dialogProps")
     // @slot use this slot default
     slot
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal/modal';
+import modalMixin from '@/mixins/modal';
 
 /**
  * Wrapper for each modal window

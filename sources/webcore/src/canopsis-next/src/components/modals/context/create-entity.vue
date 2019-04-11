@@ -1,8 +1,9 @@
 <template lang="pug">
   v-card
-    v-card-title.green.darken-3.white--text
-      h2 {{ $t(config.title) }}
-    v-tabs
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ config.title }}
+    v-tabs(slider-color="primary")
       v-tab(
       v-for="tab in tabs",
       :key="tab.name",
@@ -13,14 +14,19 @@
         create-form(v-model="form")
       v-tab-item
         manage-infos(v-model="form.infos")
-    v-card-actions
-      v-btn.green.darken-3.white--text(@click.prevent="submit") {{ $t('common.submit') }}
+    v-divider
+    v-layout.pa-2(justify-end)
+      v-btn(@click="hideModal", depressed, flat, v-if="!submitting") {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
 <script>
-
-import modalInnerMixin from '@/mixins/modal/modal-inner';
 import { MODALS } from '@/constants';
+
+import uuid from '@/helpers/uuid';
+
+import popupMixin from '@/mixins/popup';
+import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import CreateForm from './partial/create-entity-form.vue';
@@ -39,6 +45,7 @@ export default {
     ManageInfos,
   },
   mixins: [
+    popupMixin,
     modalInnerMixin,
     entitiesContextEntityMixin,
   ],
@@ -63,7 +70,6 @@ export default {
         { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
       ],
       showValidationErrors: true,
-      enabled: true,
       form: {
         name: '',
         description: '',
@@ -73,11 +79,16 @@ export default {
         impact: [],
         infos: {},
       },
+      submitting: false,
     };
   },
   mounted() {
     if (this.config.item) {
       this.form = { ...this.config.item };
+    }
+
+    if (this.config.isDuplicating) {
+      this.form.name = '';
     }
   },
   methods: {
@@ -88,19 +99,27 @@ export default {
       this.form.dependencies = entities.map(entity => entity._id);
     },
     async submit() {
+      this.submitting = true;
       const formIsValid = await this.$validator.validateAll();
       if (formIsValid) {
-        if (this.config.item) {
-          await this.updateContextEntity({ data: this.form });
-        } else {
-          const formData = { ...this.form, _id: this.form.name };
-          await this.createContextEntity({ data: formData });
+        const formData = { ...this.form };
+
+        if (!this.config.item || this.config.isDuplicating) {
+          formData._id = uuid('entity');
         }
+        try {
+          await this.config.action(formData);
 
-        this.refreshContextEntitiesLists();
+          this.refreshContextEntitiesLists();
 
-        this.hideModal();
+          this.hideModal();
+        } catch (err) {
+          console.error(err);
+          this.addErrorPopup({ text: this.$t('error.default') });
+        }
       }
+
+      this.submitting = false;
     },
 
   },

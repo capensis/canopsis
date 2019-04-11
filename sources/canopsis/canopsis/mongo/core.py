@@ -46,60 +46,9 @@ class MongoDataBase(DataBase):
             port=port, host=host, *args, **kwargs
         )
 
-        self.read_preference = read_preference
-
-    @property
-    def read_preference(self):
-        return self._read_preference
-
-    @read_preference.setter
-    def read_preference(self, value):
-        pass
-
     def _connect(self, *args, **kwargs):
-        result = None
-        from canopsis.confng import Configuration, Ini
-
-        mongo_cfg = Configuration.load(MongoStore.CONF_PATH, Ini)[MongoStore.CONF_CAT]
-
-        self._user = mongo_cfg['user']
-        self._pwd = mongo_cfg['pwd']
-        self._host = mongo_cfg['host']
-        self._db = mongo_cfg['db']
-        self._port = int(mongo_cfg['port'])
-        self._replicaset = mongo_cfg.get('replicaset')
-        self._read_preference = getattr(
-            ReadPreference,
-            mongo_cfg.get('read_preference', 'SECONDARY_PREFERRED'),
-            ReadPreference.SECONDARY_PREFERRED
-        )
-
         result = MongoStore.get_default()
-        if True:
-            self._database = result.client
-
-            if result.authenticated:
-                self.logger.debug('Already connected and authenticated on {}:{} /rs:{}'.format(
-                    self._host, self._port, self._replicaset
-                ))
-
-            else:
-                try:
-                    result.authenticate()
-                    self.logger.info(
-                        "Connected on {}:{} /rs:{}".format(
-                            self._host, self._port, self._replicaset
-                        )
-                    )
-                except PyMongoError as ex:
-                    self.logger.error(
-                        'Impossible to authenticate {} on {}:{} /rs:{}'.format(
-                            self._user, self._host, self._port, self._replicaset
-                        )
-                    )
-                    self.disconnect()
-                    result = None
-
+        self._database = result.client
         self._conn = result
         return result
 
@@ -572,7 +521,7 @@ class MongoStorage(MongoDataBase, Storage):
             # get pymongo raw collection
             backend = self._get_backend(backend=table).collection
             backend_command = getattr(backend, command)
-            result = backend_command(*args, **kwargs)
+            result = MongoStore.hr(backend_command, *args, **kwargs)
 
         except NetworkTimeout:
             self.logger.warning(

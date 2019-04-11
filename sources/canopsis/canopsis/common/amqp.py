@@ -1,14 +1,38 @@
 # -*- coding: utf-8 -*-
+# --------------------------------
+# Copyright (c) 2018 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+from __future__ import unicode_literals
+
+import configparser
 import json
 import os
 import time
 
 import pika
 
+from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.event import get_routingkey
 
 DIRECT_EXCHANGE_NAME = 'amq.direct'
+DEFAULT_CONF_FILE = "etc/amqp.conf"
 
 
 class AmqpPublishError(Exception):
@@ -51,6 +75,28 @@ class AmqpConnection(object):
 
         return self._connection
 
+    @classmethod
+    def parse_conf(self):
+        """
+        Read config file and return parsed informations.
+
+        :returns: amqp url and the exchange name
+        :rtype: string, string
+        """
+        config = configparser.RawConfigParser()
+        config.read(os.path.join(root_path, DEFAULT_CONF_FILE))
+
+        url = "amqp://{0}:{1}@{2}:{3}/{4}".format(
+            config["master"]["userid"],
+            config["master"]["password"],
+            config["master"]["host"],
+            config["master"]["port"],
+            config["master"]["virtual_host"]
+        )
+        exname = config["master"]["exchange_name"]
+
+        return url, exname
+
     def connect(self):
         """
         If connection is already made, disconnect then connect.
@@ -63,6 +109,7 @@ class AmqpConnection(object):
         """
         self.disconnect()
         parameters = pika.URLParameters(self._url)
+        parameters.heartbeat = 3600
         self._connection = pika.BlockingConnection(parameters)
         self._channel = self._connection.channel()
 
@@ -101,7 +148,7 @@ class AmqpPublisher(object):
 
     evt = {...}
     with AmqpConnection(url) as apc:
-        pub = AmqpPublisher(apc)
+        pub = AmqpPublisher(apc, logger)
         pub.canopsis_event(evt)
 
     or:
@@ -109,18 +156,20 @@ class AmqpPublisher(object):
     apc = AmqpConnection(url)
     apc.connect()
 
-    pub = AmqpPublisher(apc)
+    pub = AmqpPublisher(apc, logger)
     pub.canopsis_event(evt)
 
     apc.disconnect()
 
     """
 
-    def __init__(self, connection):
+    def __init__(self, connection, logger):
         """
-        :type connection: AmqpConnection
+        :param connection AmqpConnection:
+        :param logger Logger:
         """
         self.connection = connection
+        self.logger = logger
         self._json_props = pika.BasicProperties(
             content_type='application/json')
 
@@ -158,6 +207,9 @@ class AmqpPublisher(object):
                 pika.exceptions.ConnectionClosed,
                 pika.exceptions.ChannelClosed
             ):
+                self.logger.exception(
+                    "Failed to publish the following event ({}/{} retries)\n"
+                    "{}".format(retry, retries, jdoc))
                 try:
                     self.connection.connect()
                 except pika.exceptions.ConnectionClosed:

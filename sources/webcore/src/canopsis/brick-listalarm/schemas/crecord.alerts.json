@@ -1,0 +1,185 @@
+{
+    "type": "object",
+    "properties": {
+        "alarms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "t": {
+                  "type": "number"
+                },
+                "_id": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "v": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "a": {
+                          "type": "string"
+                        },
+                        "_t": {
+                          "type": "string"
+                        },
+                        "m": {
+                          "type": "string"
+                        },
+                        "t": {
+                          "type": "number"
+                        },
+                        "val": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "resolved": {
+                      "type": "object"
+                    },
+                    "resource": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "type": "object"
+                    },
+                    "ack": {
+                      "type": "object",
+                      "properties": {
+                        "a": {
+                          "type": "string"
+                        },
+                        "_t": {
+                          "type": "string"
+                        },
+                        "m": {
+                          "type": "string"
+                        },
+                        "t": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "pbehaviors": {
+                      "type": "object"
+                    },
+                    "linklist": {
+                      "type": "object",
+                      "properties": {
+                        "event_links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string"
+                              },
+                              "label": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "computed_links": {
+                          "type": "array"
+                        }
+                      }
+                    },
+                    "component": {
+                      "type": "string"
+                    },
+                    "connector": {
+                      "type": "string"
+                    },
+                    "snooze": {
+                      "type": "object"
+                    },
+                    "state": {
+                      "type": "object",
+                      "properties": {
+                        "a": {
+                          "type": "string"
+                        },
+                        "_t": {
+                          "type": "string"
+                        },
+                        "m": {
+                          "type": "string"
+                        },
+                        "t": {
+                          "type": "number"
+                        },
+                        "val": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "connector_name": {
+                      "type": "string"
+                    },
+                    "steps": {
+                      "type": "array"
+                    },
+                    "cancel": {
+                      "type": "object",
+                      "properties": {
+                        "a": {
+                          "type": "string"
+                        },
+                        "_t": {
+                          "type": "string"
+                        },
+                        "m": {
+                          "type": "string"
+                        },
+                        "t": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "done": {
+                      "type": "object",
+                      "properties": {
+                        "a": {
+                          "type": "string"
+                        },
+                        "_t": {
+                          "type": "string"
+                        },
+                        "m": {
+                          "type": "string"
+                        },
+                        "t": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "output": {
+                      "type": "string"
+                    },
+                    "ticket": {
+                      "type": "object"
+                    },
+                    "hard_limit": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+        },
+        "total": {
+          "type": "number"
+        },
+        "last": {
+          "type": "number"
+        },
+        "first": {
+          "type": "number"
+        }
+    }
+}

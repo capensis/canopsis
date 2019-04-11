@@ -23,12 +23,12 @@ Managing PBehavior.
 """
 
 from calendar import timegm
-from datetime import datetime, timedelta
+from datetime import datetime
+from dateutil import tz, rrule
 from json import loads, dumps
 from time import time
 from uuid import uuid4
 from six import string_types
-from dateutil.rrule import rrulestr
 from pymongo import DESCENDING
 
 import pytz
@@ -39,7 +39,6 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
-from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.utils import check_valid_rrule
 
 
@@ -102,7 +101,7 @@ class PBehavior(BasePBehavior):
     """
     PBehavior class.
     """
-
+    ID = "_id"
     NAME = 'name'
     FILTER = 'filter'
     COMMENTS = 'comments'
@@ -116,14 +115,18 @@ class PBehavior(BasePBehavior):
     AUTHOR = 'author'
     TYPE = 'type_'
     REASON = 'reason'
+    TIMEZONE = 'timezone'
+    EXDATE = 'exdate'
 
     DEFAULT_TYPE = 'generic'
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
-               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
+               CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE,
+               EXDATE, ID)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
-                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON)
+                        CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
+                        EXDATE)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -155,7 +158,7 @@ class PBehaviorManager(object):
     PBehavior manager class.
     """
 
-    PB_STORAGE_URI = 'mongodb-default-pbehavior://'
+    PB_COLLECTION = 'default_pbehavior'
     LOG_PATH = 'var/log/pbehaviormanager.log'
     LOG_NAME = 'pbehaviormanager'
     CONF_PATH = 'etc/pbehavior/manager.conf'
@@ -176,37 +179,14 @@ class PBehaviorManager(object):
         :rtype: Union[dict, logging.Logger, canopsis.storage.core.Storage]
         """
         logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
-        pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection(cls.PB_COLLECTION)
+        mongo_collection = MongoCollection(collection)
         config = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
 
-        return config, logger, pb_storage
+        return config, logger, mongo_collection
 
-    # FIXME : this is an ugly hack. This should not exist
-    @staticmethod
-    def parse_offset(offset):
-        """
-        Return a timedelta from a time offset from utc.
-        :param string offset: a string that respect the following format ±00:00
-        or ±0000.
-        :return timedelta: the offset from utc is a timedelta object
-        """
-        minus = offset[0] == "-"
-
-        if offset[3] == ":":
-            offset = offset[1:].split(":")
-        else:
-            offset = [offset[1:3], offset[3:5]]
-
-        hours = int(offset[0])
-        minutes = int(offset[1])
-
-        if minus:
-            hours = -hours
-            minutes = -minutes
-
-        return timedelta(hours=hours, minutes=minutes)
-
-    def __init__(self, config, logger, pb_storage):
+    def __init__(self, config, logger, pb_collection):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -215,23 +195,31 @@ class PBehaviorManager(object):
         kwargs = {"logger": logger}
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
-        self.pb_storage = pb_storage
-        # FIXME : this is an ugly hack. This should not exist.
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
-        str_offset = self.config_data.get("offset_from_utc", "+00:00")
-        self.offset_from_utc = self.parse_offset(str_offset)
-        self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
-
+        self.default_tz = self.config_data.get("default_timezone",
+                                               "Europe/Paris")
+        # this line allow us to raise an exception pytz.UnknownTimeZoneError,
+        # if the timezone defined in the pbehabior configuration file is wrong
+        pytz.timezone(self.default_tz)
+        self.collection = pb_collection
         self.currently_active_pb = set()
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
 
+        When _id is None, all the pbehaviors are returned. This behavior
+        should be considered deprecated, and is only kept for backward
+        compatibility. You probably want to use the get_enabled_pbehaviors
+        method instead.
+
         :param str id: pbehavior id
         :param dict query: filtering options
         """
-        return self.pb_storage.get_elements(ids=_id, query=query)
+        if _id is None:
+            return list(self.collection.find({}))
+
+        return self.collection.find_one({"_id": _id}, query)
 
     def create(
             self,
@@ -239,7 +227,8 @@ class PBehaviorManager(object):
             tstart, tstop, rrule='',
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
-            type_=PBehavior.DEFAULT_TYPE, reason=''):
+            type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
+            exdate=None):
         """
         Method creates pbehavior record
 
@@ -261,10 +250,29 @@ class PBehaviorManager(object):
             that has generated the pbehavior
         :param str type_: associated type_ for this pbh
         :param str reason: associated reason for this pbh
+        :param str timezone: the timezone of the new pbehabior. If no timezone
+        are given, use the default one. See the pbehavior documentation
+        for more information.
+        :param list of str| str exdate: a list of string representation of a date
+        following this pattern "YYYY/MM/DD HH:MM:00 TIMEZONE". The hour use the
+        24 hours clock system and the timezone is the name of the timezone. The
+        month, the day of the month, the hour, the minute and second are
+        zero-padded.
         :raises ValueError: invalid RRULE
+        :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
         :rtype: str
         """
+
+        if timezone is None:
+            timezone = self.default_tz
+
+        if exdate is None:
+            exdate = []
+
+        # this line allow us to raise an exception pytz.UnknownTimeZoneError,
+        # if the timezone defined in the pbehabior configuration file is wrong
+        pytz.timezone(timezone)
 
         if enabled in [True, "True", "true"]:
             enabled = True
@@ -272,6 +280,9 @@ class PBehaviorManager(object):
             enabled = False
         else:
             raise ValueError("The enabled value does not match a boolean")
+
+        if not isinstance(exdate, list):
+            exdate = [exdate]
 
         check_valid_rrule(rrule)
 
@@ -289,21 +300,23 @@ class PBehaviorManager(object):
                     raise ValueError("The message field is missing")
 
         pb_kwargs = {
-            'name': name,
-            'filter': filter,
-            'author': author,
-            'tstart': tstart,
-            'tstop': tstop,
-            'rrule': rrule,
-            'enabled': enabled,
-            'comments': comments,
-            'connector': connector,
-            'connector_name': connector_name,
+            PBehavior.ID: str(uuid4()),
+            PBehavior.NAME: name,
+            PBehavior.FILTER: filter,
+            PBehavior.AUTHOR: author,
+            PBehavior.TSTART: tstart,
+            PBehavior.TSTOP: tstop,
+            PBehavior.RRULE: rrule,
+            PBehavior.ENABLED: enabled,
+            PBehavior.COMMENTS: comments,
+            PBehavior.CONNECTOR: connector,
+            PBehavior.CONNECTOR_NAME: connector_name,
             PBehavior.TYPE: type_,
-            'reason': reason
+            PBehavior.REASON: reason,
+            PBehavior.TIMEZONE: timezone,
+            PBehavior.EXDATE: exdate,
+            PBehavior.EIDS: []
         }
-        if PBehavior.EIDS not in pb_kwargs:
-            pb_kwargs[PBehavior.EIDS] = []
 
         data = PBehavior(**pb_kwargs)
         if not data.comments or not isinstance(data.comments, list):
@@ -311,7 +324,7 @@ class PBehaviorManager(object):
         else:
             for comment in data.comments:
                 comment.update({'_id': str(uuid4())})
-        result = self.pb_storage.put_element(element=data.to_dict())
+        result = self.collection.insert(data.to_dict())
 
         return result
 
@@ -335,9 +348,7 @@ class PBehaviorManager(object):
         else:
             id_ = [id_]
 
-        cursor = self.pb_storage.get_elements(
-            query={PBehavior.EIDS: {"$in": id_}}
-        )
+        cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}})
 
         pbehaviors = []
 
@@ -369,6 +380,36 @@ class PBehaviorManager(object):
             **not** be updated.
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
+        data = self.__get_and_check_pbehavior(_id, **kwargs)
+        data["new_data"]["_id"] = _id
+        result = self.collection.update(
+            {PBehavior.ID: _id},
+            {'$set': data["new_data"]})
+
+        if (PBehaviorManager._UPDATE_FLAG in result and
+                result[PBehaviorManager._UPDATE_FLAG]):
+            return data["pbehavior"].to_dict()
+        return None
+
+    def update_v2(self, _id, **kwargs):
+        """
+        Update pbehavior record
+        :param str _id: pbehavior id
+        :param dict kwargs: values pbehavior fields. If a field is None, it will
+            **not** be updated.
+        :raises ValueError: invalid RRULE or no pbehavior with given _id
+        """
+        pbehavior = self.__get_and_check_pbehavior(_id, **kwargs)["pbehavior"]
+
+        result = self.collection.update(
+            {'_id': pbehavior._id or _id}, pbehavior.to_dict(), upsert=False)
+
+        if (PBehaviorManager._UPDATE_FLAG in result and
+                result[PBehaviorManager._UPDATE_FLAG]):
+            return pbehavior.to_dict()
+        return None
+
+    def __get_and_check_pbehavior(self, _id, **kwargs):
         pb_value = self.get(_id)
 
         if pb_value is None:
@@ -380,14 +421,7 @@ class PBehaviorManager(object):
         new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
-        result = self.pb_storage.put_element(
-            element=new_data, _id=_id
-        )
-
-        if (PBehaviorManager._UPDATE_FLAG in result and
-                result[PBehaviorManager._UPDATE_FLAG]):
-            return pbehavior.to_dict()
-        return None
+        return {"pbehavior": pbehavior, "new_data": new_data}
 
     def upsert(self, pbehavior):
         """
@@ -399,7 +433,8 @@ class PBehaviorManager(object):
         :rtype: bool, dict
         :returns: success, update result
         """
-        r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
+        r = self.collection.update(
+            {'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
 
         if r.get('updatedExisting', False) and r.get('nModified') == 1:
             return True, r
@@ -414,17 +449,23 @@ class PBehaviorManager(object):
         :param str _id: pbehavior id
         """
 
-        result = self.pb_storage.remove_elements(
-            ids=_id, _filter=_filter
-        )
+        if _id is None and _filter is None:
+            raise ValueError("_id and _filter is None, this will erase every"
+                             "pbehaviors.")
+        filter_ = {}
+        if _filter is not None:
+            filter_ = _filter
+
+        if _id is not None:
+            filter_["_id"] = _id
+
+        result = self.collection.remove(filter_)
 
         return self._check_response(result)
 
     def _update_pbehavior(self, pbehavior_id, query):
-        result = self.pb_storage._update(
-            spec={'_id': pbehavior_id},
-            document=query,
-            multi=False, cache=False
+        result = self.collection.update(
+            {'_id': pbehavior_id}, query, multi=False
         )
         return result
 
@@ -472,7 +513,7 @@ class PBehaviorManager(object):
         """
         pbehavior = self.get(
             pbehavior_id,
-            query={PBehavior.COMMENTS: {'$elemMatch': {'_id': _id}}}
+            {PBehavior.COMMENTS: {'$elemMatch': {'_id': _id}}}
         )
         if not pbehavior:
             return None
@@ -484,10 +525,10 @@ class PBehaviorManager(object):
         comment = Comment(**_comments[0])
         comment.update(**kwargs)
 
-        result = self.pb_storage._update(
-            spec={'_id': pbehavior_id, 'comments._id': _id},
-            document={'$set': {'comments.$': comment.to_dict()}},
-            multi=False, cache=False
+        result = self.collection.update(
+            {'_id': pbehavior_id, 'comments._id': _id},
+            {'$set': {'comments.$': comment.to_dict()}},
+            multi=False
         )
 
         if (PBehaviorManager._UPDATE_FLAG in result and
@@ -502,10 +543,10 @@ class PBehaviorManager(object):
         :param str pbehavior_id: pbehavior id
         :param str _id: comment id
         """
-        result = self.pb_storage._update(
-            spec={'_id': pbehavior_id},
-            document={'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
-            multi=False, cache=False
+        result = self.collection.update(
+            {'_id': pbehavior_id},
+            {'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
+            multi=False
         )
 
         return self._check_response(result)
@@ -521,7 +562,7 @@ class PBehaviorManager(object):
         :rtype: list of dict
         """
         res = list(
-            self.pb_storage._backend.find(
+            self.collection.find(
                 {PBehavior.EIDS: {'$in': [entity_id]}},
                 sort=[(PBehavior.TSTART, DESCENDING)]
             )
@@ -533,9 +574,8 @@ class PBehaviorManager(object):
         """
         Compute all filters and update eids attributes.
         """
-        pbehaviors = self.pb_storage.get_elements(
-            query={PBehavior.FILTER: {'$exists': True}}
-        )
+        pbehaviors = self.collection.find(
+            {PBehavior.FILTER: {'$exists': True}})
 
         for pbehavior in pbehaviors:
 
@@ -549,92 +589,94 @@ class PBehaviorManager(object):
                 query=query
             )
 
-            pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
-            self.pb_storage.put_element(element=pbehavior)
+            eids = [e['_id'] for e in entities]
+            self.collection.update({"_id": pbehavior[PBehavior.ID]},
+                                   {"$set": {PBehavior.EIDS: eids}},
+                                   upsert=False, multi=False)
 
-    def check_active_pbehavior(self, timestamp, pbehavior):
+    def _check_active_simple_pbehavior(self, timestamp, pbh):
+        """ Check if a pbehavior without a rrule is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
         """
-        For a given pbehavior (as dict) check that the given timestamp is active
-        using either:
-
-        the rrule, if any, from the pbehavior + tstart and tstop to define
-        start and stop times.
-
-        tstart and tstop alone if no rrule is available.
-
-        All dates and times are computed using UTC timezone, so check that your
-        timestamp was exported using UTC.
-
-        :param int timestamp: timestamp to check
-        :param dict pbehavior: the pbehavior
-        :rtype bool:
-        :returns: pbehavior is currently active or not
-        """
-        fromts = datetime.utcfromtimestamp
-        tstart = pbehavior[PBehavior.TSTART]
-        tstop = pbehavior[PBehavior.TSTOP]
-
-        if not isinstance(tstart, (int, float)):
-            return False
-        if not isinstance(tstop, (int, float)):
-            return False
-
-        tz = pytz.UTC
-        dttstart = fromts(tstart).replace(tzinfo=tz)
-        dttstop = fromts(tstop).replace(tzinfo=tz)
-
-        pbh_duration = tstop - tstart
-
-        dtts = fromts(timestamp).replace(tzinfo=tz)
-        # ddts_offset contains the current timestamp minus the duration of
-        # the pbhevior, so the computation of the rrules occurences
-        # will include the running occurence. Thus the current pbehavior
-        # will be detected.
-        dtts_offset = fromts(timestamp - pbh_duration).replace(tzinfo=tz)
-
-        rrule = pbehavior['rrule']
-        if rrule:
-            # compute the minimal date from which to start generating
-            # dates from the rrule.
-            # a complementary date (missing_date) is computed and added
-            # at index 0 of the generated dt_list to ensure we manage
-            # dates at boundaries.
-            dt_tstart_date = dtts_offset.date()
-            dt_tstart_time = dttstart.time().replace(tzinfo=tz)
-            dt_dtstart = datetime.combine(dt_tstart_date, dt_tstart_time)
-
-            # dates in dt_list at 0 and 1 indexes can be equal, so we generate
-            # three dates to ensure [1] - [2] will give a non-zero timedelta
-            # object.
-
-            dt = rrulestr(rrule, dtstart=dttstart).after(dtts_offset)
-            if dt is None:
-                return False
-
-            # FIXME : this is an ugly hack. This should not exist
-            substract_day = False
-            new_dtts = dtts - self.offset_from_utc
-
-            if dtts.day != new_dtts.day:
-                substract_day = True
-
-            delta = dttstop - dttstart
-
-            if substract_day:
-                # FIXME : this is an ugly hack. This should not exist
-                dt = dt.replace(day=dt.day - 1)
-
-            if dt <= dtts <= dt + delta:
-                return True
-
-            return False
-
-        else:
-            if dtts >= dttstart and dtts <= dttstop:
-                return True
-            return False
+        if pbh[PBehavior.TSTART] <= timestamp <= pbh[PBehavior.TSTOP]:
+            return True
 
         return False
+
+    @staticmethod
+    def __convert_timestamp(timestamp, timezone):
+        """Convert a pbehavior timestamp defined in the timezone to a datetime
+        in the same timezone.
+        :param timestamp:"""
+
+        return datetime.fromtimestamp(timestamp, tz.gettz(timezone))
+
+    def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
+        """ Check if a pbehavior with a rrule is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
+        :raise ValueError: if the pbehavior.exdate is invalid. Or if the
+        date of an occurence of the pbehavior is not a valid date.
+        """
+
+        tz_name = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
+
+        rec_set = rrule.rruleset()
+
+        # convert the timestamp to a datetime in the pbehavior's timezone
+        now = self.__convert_timestamp(timestamp, tz_name)
+
+        start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
+        stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
+
+        if PBehavior.EXDATE in pbehavior and\
+           isinstance(pbehavior[PBehavior.EXDATE], list):
+            for date in pbehavior[PBehavior.EXDATE]:
+                exdate = self.__convert_timestamp(date, tz_name)
+                rec_set.exdate(exdate)
+
+        duration = stop - start  # pbehavior duration
+
+        rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
+                                     dtstart=start))
+
+        rec_start = rec_set.before(now)
+
+        self.logger.debug("Recurence start : {}".format(rec_start))
+        # No recurrence found
+        if rec_start is None:
+            return False
+
+        self.logger.debug("Timestamp       : {}".format(now))
+        self.logger.debug("Recurence stop  : {}".format(rec_start + duration))
+
+        if rec_start <= now <= rec_start + duration:
+            return True
+
+        return False
+
+    def check_active_pbehavior(self, timestamp, pbehavior):
+        """ Check if a pbehavior is active at the given time.
+
+        :param int timestamp: the number a second this 1970/01/01 00:00:00
+        :param dict pbehavior: a pbehavior as a dict.
+        :return bool: True if the boolean is active, false otherwise
+        :raise ValueError: if the pbehavior.exdate is invalid. Or if the
+        date of an occurence of the pbehavior is not a valid date.
+        """
+        if PBehavior.RRULE not in pbehavior or\
+           pbehavior[PBehavior.RRULE] is None or\
+           pbehavior[PBehavior.RRULE] == "":
+            return self._check_active_simple_pbehavior(timestamp, pbehavior)
+        else:
+            if PBehavior.EXDATE not in pbehavior:
+                pbehavior[PBehavior.EXDATE] = []
+            return self._check_active_reccuring_pbehavior(timestamp, pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
@@ -663,7 +705,7 @@ class PBehaviorManager(object):
             return None
         event = self.context.get_event(entity)
 
-        pbehaviors = self.pb_storage.get_elements(
+        pbehaviors = self.collection.find(
             query={
                 PBehavior.NAME: {'$in': pb_names},
                 PBehavior.EIDS: {'$in': [entity_id]}
@@ -689,7 +731,7 @@ class PBehaviorManager(object):
             dt_list = [tstart, tstop]
             if pbehavior['rrule'] is not None:
                 dt_list = list(
-                    rrulestr(pbehavior['rrule'], dtstart=tstart).between(
+                    rrule.rrulestr(pbehavior['rrule'], dtstart=tstart).between(
                         tstart, tstop, inc=True
                     )
                 )
@@ -734,15 +776,18 @@ class PBehaviorManager(object):
         self.check_active_pbehavior
         """
         now = int(time())
-        query = {}
 
-        ret_val = list(self.pb_storage.get_elements(query=query))
+        ret_val = list(self.collection.find({}))
 
         results = []
 
         for pb in ret_val:
-            if self.check_active_pbehavior(now, pb):
-                results.append(pb)
+            try:
+                if self.check_active_pbehavior(now, pb):
+                    results.append(pb)
+            except ValueError as exept:
+                self.logger.exception(
+                    "Can't check if the pbehavior is active.")
 
         return results
 
@@ -756,7 +801,7 @@ class PBehaviorManager(object):
         now = int(time())
         query = {PBehavior.TYPE: {'$in': types}}
 
-        ret_val = list(self.pb_storage.get_elements(query=query))
+        ret_val = list(self.collection.find(query))
 
         results = []
 
@@ -778,7 +823,8 @@ class PBehaviorManager(object):
         for active_pb in active_pbehaviors:
             active_pbehaviors_ids.add(active_pb['_id'])
 
-        varying_pbs = active_pbehaviors_ids.symmetric_difference(self.currently_active_pb)
+        varying_pbs = active_pbehaviors_ids.symmetric_difference(
+            self.currently_active_pb)
         self.currently_active_pb = active_pbehaviors_ids
 
         return list(varying_pbs)
@@ -792,9 +838,7 @@ class PBehaviorManager(object):
         retype: int
         """
         new_pbs = self.get_varying_pbehavior_list()
-        new_pbs_full = list(self.pb_storage._backend.find(
-            {'_id': {'$in': new_pbs}}
-        ))
+        new_pbs_full = list(self.collection.find({'_id': {'$in': new_pbs}}))
 
         merged_eids = []
         for pbehaviour in new_pbs_full:
@@ -841,7 +885,7 @@ class PBehaviorManager(object):
         :param Dict[str, Any] pbehavior:
         :rtype: List[Tuple[int, int]]
         """
-        rrule = pbehavior[PBehavior.RRULE]
+        rrule_str = pbehavior[PBehavior.RRULE]
         tstart = pbehavior[PBehavior.TSTART]
         tstop = pbehavior[PBehavior.TSTOP]
 
@@ -859,7 +903,7 @@ class PBehaviorManager(object):
         dtafter = datetime.utcfromtimestamp(after).replace(tzinfo=tz)
         dtbefore = datetime.utcfromtimestamp(before).replace(tzinfo=tz)
 
-        if not rrule:
+        if not rrule_str:
             # The only interval where the pbehavior is active is
             # [dttstart, dttstop]. Ensure that it is included in
             # [after, before], and convert the datetimes to timestamps.
@@ -874,7 +918,7 @@ class PBehaviorManager(object):
         else:
             # Get all the intervals that intersect with the [after, before]
             # interval.
-            interval_starts = rrulestr(rrule, dtstart=dttstart).between(
+            interval_starts = rrule.rrulestr(rrule_str, dtstart=dttstart).between(
                 dtafter - delta, dtbefore, inc=False)
             for interval_start in interval_starts:
                 interval_end = interval_start + delta
@@ -938,7 +982,6 @@ class PBehaviorManager(object):
         # Order them chronologically (by start date)
         intervals.sort(key=lambda a: a[0])
 
-
         # Yield the first interval without any active pbehavior
         merged_interval_start, merged_interval_end = intervals[0]
         yield (
@@ -990,6 +1033,4 @@ class PBehaviorManager(object):
 
         :rtype: Iterator[Dict[str, Any]]
         """
-        return self.pb_storage._backend.find({
-            PBehavior.ENABLED: True
-        })
+        return self.collection.find({PBehavior.ENABLED: True})

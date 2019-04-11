@@ -1,7 +1,7 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-import { childProcessStrategy, childMergeStrategy } from '@/helpers/schema';
+import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
@@ -13,16 +13,15 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   pbehaviors: [pbehaviorSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: entity =>
-    ({
-      ...entity,
-      _embedded: {
-        type: ENTITIES_TYPES.alarm,
-      },
-    }),
+  processStrategy: parentProcessStrategy,
 });
 
-export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {}, { idAttribute: '_id' });
+export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
+  pbehaviors: [pbehaviorSchema],
+}, {
+  idAttribute: '_id',
+  processStrategy: parentProcessStrategy,
+});
 
 export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
 
@@ -38,12 +37,16 @@ export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
   idAttribute: '_id',
 });
 
-export const rowSchema = new schema.Entity(ENTITIES_TYPES.row, {
+export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
   widgets: [widgetSchema],
 }, { idAttribute: '_id' });
 
+export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
+  rows: [viewRowSchema],
+}, { idAttribute: '_id' });
+
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
-  rows: [rowSchema],
+  tabs: [viewTabSchema],
 }, { idAttribute: '_id' });
 
 export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
@@ -51,6 +54,14 @@ export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
 }, {
   idAttribute: '_id',
 });
+
+export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribute: '_id' });
+
+export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
+
+export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
+
+export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idAttribute: '_id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -61,6 +72,11 @@ export default {
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.group]: groupSchema,
   [ENTITIES_TYPES.view]: viewSchema,
-  [ENTITIES_TYPES.row]: rowSchema,
+  [ENTITIES_TYPES.viewRow]: viewRowSchema,
+  [ENTITIES_TYPES.viewTab]: viewTabSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
+  [ENTITIES_TYPES.user]: userSchema,
+  [ENTITIES_TYPES.role]: roleSchema,
+  [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
+  [ENTITIES_TYPES.webhook]: webhookSchema,
 };

@@ -346,6 +346,30 @@
         "desc": "Rights on task: Dataclean"
     },
     {
+        "_id": "models_exploitation_eventFilter",
+        "loader_id": "models_exploitation_eventFilter",
+        "crecord_name": "models_exploitation_eventFilter",
+        "crecord_type": "action",
+        "desc": "Exploitation: Event filter",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_pbehavior",
+        "loader_id": "models_exploitation_pbehavior",
+        "crecord_name": "models_exploitation_pbehavior",
+        "crecord_type": "action",
+        "desc": "Exploitation: Pbehaviors",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_webhook",
+        "loader_id": "models_exploitation_webhook",
+        "crecord_name": "models_exploitation_webhook",
+        "crecord_type": "action",
+        "desc": "Exploitation: Webhooks",
+        "type": "CRUD"
+    },
+    {
         "_id" : "listalarm_ack",
         "loader_id" : "listalarm_ack",
         "crecord_name" : "listalarm_ack",
@@ -458,12 +482,183 @@
         "desc": "Rights on listalarm: add filter"
     },
     {
+        "_id": "listalarm_userFilter",
+        "loader_id": "listalarm_userFilter",
+        "crecord_name": "listalarm_userFilter",
+        "crecord_type": "action",
+        "desc": "Rights on listalarm: User filter"
+    },
+    {
+        "_id": "serviceweather_moreInfos",
+        "loader_id": "serviceweather_moreInfos",
+        "crecord_name": "serviceweather_moreInfos",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'More infos' modal"
+    },
+    {
+        "_id": "serviceweather_alarmsList",
+        "loader_id": "serviceweather_alarmsList",
+        "crecord_name": "serviceweather_alarmsList",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Alarms list' modal"
+    },
+    {
+        "_id": "serviceweather_entityAck",
+        "loader_id": "serviceweather_entityAck",
+        "crecord_name": "serviceweather_entityAck",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Ack' action"
+    },
+    {
+        "_id": "serviceweather_entityDeclareTicket",
+        "loader_id": "serviceweather_entityDeclareTicket",
+        "crecord_name": "serviceweather_entityDeclareTicket",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Declare ticket' action"
+    },
+    {
+        "_id": "serviceweather_entityValidate",
+        "loader_id": "serviceweather_entityValidate",
+        "crecord_name": "serviceweather_entityValidate",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Validate' action"
+    },
+    {
+        "_id": "serviceweather_entityInvalidate",
+        "loader_id": "serviceweather_entityInvalidate",
+        "crecord_name": "serviceweather_entityInvalidate",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Invalidate' action"
+    },
+    {
+        "_id": "serviceweather_entityPlay",
+        "loader_id": "serviceweather_entityPlay",
+        "crecord_name": "serviceweather_entityPlay",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Play' action"
+    },
+    {
+        "_id": "serviceweather_entityPause",
+        "loader_id": "serviceweather_entityPause",
+        "crecord_name": "serviceweather_entityPause",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Pause' action"
+    },
+    {
+        "_id": "serviceweather_entityCancel",
+        "loader_id": "serviceweather_entityCancel",
+        "crecord_name": "serviceweather_entityCancel",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Cancel' action"
+    },
+    {
+        "_id": "crudcontext_createEntity",
+        "loader_id": "crudcontext_createEntity",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_createEntity",
+        "desc": "Rights on context: create entity"
+    },
+    {
+        "_id": "crudcontext_edit",
+        "loader_id": "crudcontext_edit",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_edit",
+        "desc": "Rights on context: edit entity"
+    },
+    {
+        "_id": "crudcontext_duplicate",
+        "loader_id": "crudcontext_duplicate",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_duplicate",
+        "desc": "Rights on context: duplicate entity"
+    },
+    {
+        "_id": "crudcontext_delete",
+        "loader_id": "crudcontext_delete",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_delete",
+        "desc": "Rights on context: delete entity"
+    },
+    {
+        "_id": "crudcontext_pbehavior",
+        "loader_id": "crudcontext_pbehavior",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_pbehavior",
+        "desc": "Rights on context: pbehavior"
+    },
+    {
+        "_id": "crudcontext_listPbehavior",
+        "loader_id": "crudcontext_listPbehavior",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_listPbehavior",
+        "desc": "Rights on context: List Pbehaviors"
+    },
+    {
+        "_id": "crudcontext_deletePbehavior",
+        "loader_id": "crudcontext_deletePbehavior",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_deletePbehavior",
+        "desc": "Rights on context: Delete Pbehaviors"
+    },
+    {
+        "_id": "crudcontext_listFilters",
+        "loader_id": "crudcontext_listFilters",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_listFilters",
+        "desc": "Rights on context: List filters"
+    },
+    {
+        "_id": "crudcontext_editFilter",
+        "loader_id": "crudcontext_editFilter",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_editFilter",
+        "desc": "Rights on context: Edit filter"
+    },
+    {
+        "_id": "crudcontext_addFilter",
+        "loader_id": "crudcontext_addFilter",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_addFilter",
+        "desc": "Rights on context: Add filter"
+    },
+    {
+        "_id": "crudcontext_userFilter",
+        "loader_id": "crudcontext_userFilter",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_userFilter",
+        "desc": "Rights on context: User filter"
+    },
+    {
         "_id" : "view_current_alarms",
         "loader_id" : "view_current_alarms",
         "crecord_type" : "action",
         "type" : "RW",
         "crecord_name" : "view_current_alarms",
         "desc" : "Rights on view: current alarms"
+    },
+    {
+        "_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+        "loader_id" : "875df4c2-027b-4549-8add-e20ed7ff7d4f",
+        "crecord_write_time" : 1543852261,
+        "crecord_type" : "action",
+        "enable" : true,
+        "type" : "RW",
+        "checksum" : 15,
+        "crecord_creation_time" : 1543852261,
+        "crecord_name" : null,
+        "desc" : "Rights on view: alarmes en cours"
+    },
+    {
+        "_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
+        "loader_id" : "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8",
+        "crecord_write_time" : 1543852261,
+        "crecord_type" : "action",
+        "enable" : true,
+        "type" : "RW",
+        "checksum" : 15,
+        "crecord_creation_time" : 1543852261,
+        "crecord_name" : null,
+        "desc" : "Rights on view: alarmes resolues"
     },
     {
         "_id" : "view_history_alarms",
@@ -515,5 +710,47 @@
         "crecord_type" : "action",
         "desc": "Rights on view: no rights",
         "type": "RW"
+    },
+    {
+        "_id" : "showview_view_filters",
+        "loader_id" : "showview_view_filters",
+        "crecord_name": "showview_view_filters",
+        "crecord_type" : "action",
+        "desc": "Access to view.filters menu"
+    },
+    {
+        "_id" : "showview_view_context",
+        "loader_id" : "showview_view_context",
+        "crecord_name": "showview_view_context",
+        "crecord_type" : "action",
+        "desc": "Access to view.context menu"
+    },
+    {
+        "_id" : "showview_view_selectors",
+        "loader_id" : "showview_view_selectors",
+        "crecord_name": "showview_view_selectors",
+        "crecord_type" : "action",
+        "desc": "Access to view.selectors menu"
+    },
+    {
+        "_id" : "showview_view_series",
+        "loader_id" : "showview_view_series",
+        "crecord_name": "showview_view_series",
+        "crecord_type" : "action",
+        "desc": "Access to view.series menu"
+    },
+    {
+        "_id" : "showview_view_jobs",
+        "loader_id" : "showview_view_jobs",
+        "crecord_name": "showview_view_jobs",
+        "crecord_type" : "action",
+        "desc": "Access to view.jobs menu"
+    },
+    {
+        "_id" : "showview_view_notifications",
+        "loader_id" : "showview_view_notifications",
+        "crecord_name": "showview_view_notifications",
+        "crecord_type" : "action",
+        "desc": "Access to view.notifications menu"
     }
 ]

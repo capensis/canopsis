@@ -5,6 +5,12 @@ import pbehaviorModule from './pbehavior';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
+import roleModule from './role';
+import userModule from './user';
+import rightModule from './right';
+import eventFilterRuleModule from './event-filter-rule';
+import webhookModule from './webhook';
+import infoModule from './info';
 
 export default {
   alarm: alarmModule,
@@ -14,4 +20,10 @@ export default {
   userPreference: userPreferenceModule,
   view: viewModule,
   stats: statsModule,
+  role: roleModule,
+  user: userModule,
+  right: rightModule,
+  eventFilterRule: eventFilterRuleModule,
+  webhook: webhookModule,
+  info: infoModule,
 };

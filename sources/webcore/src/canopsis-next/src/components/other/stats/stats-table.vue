@@ -1,82 +1,98 @@
 <template lang="pug">
-  v-container(fluid)
-    v-layout(justify-end)
-      v-btn(icon, @click="showSettings")
-        v-icon settings
+  div
+    progress-overlay(:pending="pending")
     v-data-table(
       :items="stats",
       :headers="columns",
-      :rows-per-page-items="rowsPerPageItems"
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     )
-      v-progress-linear(slot="progress", color="blue", indeterminate)
-      template(slot="headers", slot-scope="{ headers }")
-        th {{ $t('common.entity') }}
-        th(v-for="header in headers", :key="header.value") {{ header.value }}
       template(slot="items", slot-scope="{ item }")
         td {{ item.entity.name }}
         td(v-for="(property, key) in widget.parameters.stats")
-          template(
-          v-if="item[key] && item[key].value !== undefined && item[key].value !== null"
-          )
+          template(v-if="isStatNotEmpty(item[key])")
             td
-              stats-number(:item="item[key]")
+              div {{ item[key].value }}
+                sub {{ item[key].trend }}
           div(v-else) {{ $t('tables.noData') }}
 </template>
 
 <script>
-import { PAGINATION_PER_PAGE_VALUES } from '@/config';
-import { SIDE_BARS } from '@/constants';
+import { isUndefined, isNull } from 'lodash';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
-import StatsNumber from './stats-number.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 export default {
   components: {
-    StatsNumber,
+    ProgressOverlay,
   },
-  mixins: [entitiesStatsMixin, sideBarMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
+  mixins: [
+    entitiesStatsMixin,
+    widgetQueryMixin,
+    entitiesUserPreferenceMixin,
+    widgetStatsQueryMixin,
+  ],
   props: {
     widget: {
       type: Object,
       required: true,
     },
-    rowId: {
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
+      pending: true,
       stats: [],
     };
   },
   computed: {
-    columns() {
-      return Object.keys(this.widget.parameters.stats).map(item => ({ value: item }));
+    isStatNotEmpty() {
+      return stat => stat && !isUndefined(stat.value) && !isNull(stat.value);
     },
-    rowsPerPageItems() {
-      return PAGINATION_PER_PAGE_VALUES;
+    columns() {
+      return [
+        {
+          text: this.$t('common.entity'),
+          value: 'entity.name',
+        },
+
+        ...Object.keys(this.widget.parameters.stats).map(item => ({
+          text: item,
+          value: `${item}.value`,
+        })),
+      ];
     },
   },
   methods: {
-    showSettings() {
-      this.showSideBar({
-        name: SIDE_BARS.statsTableSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
-        },
-      });
-    },
-    async fetchList() {
-      const query = { ...this.query };
+    getQuery() {
+      const {
+        stats,
+        mfilter,
+        tstop,
+        duration,
+      } = this.getStatsQuery();
 
-      this.stats = await this.fetchStatsListWithoutStore({
-        params: query,
+      return {
+        duration,
+        stats,
+        mfilter,
+
+        tstop: tstop.startOf('h').unix(),
+      };
+    },
+
+    async fetchList() {
+      this.pending = true;
+
+      const { values } = await this.fetchStatsListWithoutStore({
+        params: this.getQuery(),
       });
+
+      this.stats = values;
+      this.pending = false;
     },
   },
 };

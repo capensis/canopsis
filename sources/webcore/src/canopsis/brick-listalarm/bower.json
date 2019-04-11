@@ -1,0 +1,27 @@
+{
+  "name": "brick-listalarm",
+  "description": "Alarms widget for Canopsis",
+  "version": "0.1.0",
+  "authors": [
+	"Team Canopsis <maintainers@canopsis.org>"
+  ],
+  "main": "init.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "canopsis"
+  ],
+  "license": "AGPL-3.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    ".",
+    "test",
+    "tests"
+  ],
+  "envMode": "",
+  "devDependencies": {}
+
+}

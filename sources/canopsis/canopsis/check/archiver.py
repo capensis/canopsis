@@ -85,7 +85,8 @@ class Archiver(Middleware):
         self.collection = self.storage.get_backend(namespace)
 
         if amqp_pub is None:
-            self.amqp_pub = AmqpPublisher(get_default_amqp_connection())
+            self.amqp_pub = AmqpPublisher(
+                get_default_amqp_connection(), self.logger)
 
         self.reset_stealthy_event_duration = time()
         self.reset_stats()

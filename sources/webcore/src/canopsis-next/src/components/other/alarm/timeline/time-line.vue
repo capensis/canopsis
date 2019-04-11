@@ -9,7 +9,7 @@
           flag.flag(:type="stepType(step._t)", :step="step")
           .card
             .header
-              alarm-chips.chips(v-if="stepType(step._t) !== ENTITY_INFOS_TYPE.action",
+              alarm-chips.chips(v-if="stepType(step._t) !== $constants.ENTITY_INFOS_TYPE.action",
                                 :value="step.val", :type="stepType(step._t)")
               p  &nbsp {{ step._t | stepTitle(step.a) }}
             .content
@@ -32,16 +32,15 @@
 </template>
 
 <script>
-import pickBy from 'lodash/pickBy';
 import moment from 'moment';
+import { pickBy } from 'lodash';
+
 import { stepTitle, stepType } from '@/helpers/timeline';
 
 import Flag from '@/components/other/alarm/timeline/timeline-flag.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 import { numericSortObject } from '@/helpers/sorting';
-import { ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE } from '@/constants';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-
 
 /**
    * Component for the timeline of an alarm, on the alarmslist
@@ -64,11 +63,6 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      ENTITY_INFOS_TYPE,
-    };
-  },
   computed: {
     steps() {
       const alarm = this.getAlarmItem(this.alarmProps._id);
@@ -80,7 +74,7 @@ export default {
     },
     stateName(state) {
       const stateValue = parseInt(state.replace('state:', ''), 10);
-      return ENTITIES_STATES_STYLES[stateValue].text;
+      return this.$constants.ENTITIES_STATES_STYLES[stateValue].text;
     },
     stateSteps(steps) {
       return pickBy(steps, (value, key) => key.startsWith('state:'));

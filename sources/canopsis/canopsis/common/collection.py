@@ -114,7 +114,7 @@ class MongoCollection(object):
         :param dict query: a mongo search query
         :param dict document: the document to update
         :param bool upsert: do insert if the document does not already exist
-        :raises: BSONError, PyMongoError, OperationFailure, TypeError
+        :raises: CollectionError
         :rtype: dict
         """
         try:
@@ -145,7 +145,7 @@ class MongoCollection(object):
         self.logger.error(message)
         raise CollectionError(message)
 
-    def remove(self, query={}, *args, **kwargs):
+    def remove(self, query=None, *args, **kwargs):
         """
         Remove an element in the collection.
 
@@ -153,6 +153,7 @@ class MongoCollection(object):
         :raises: OperationFailure
         :rtype: dict
         """
+        query = query or {}
         try:
             return self._hr(self.collection.remove, query, *args, **kwargs)
 

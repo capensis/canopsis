@@ -1,0 +1,12 @@
+{
+  "name": "querybuilder-editablekey",
+  "_release": "0ebc86e8d4",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "0ebc86e8d4a99b03d619bd1b32fa2ed5df89ffc4"
+  },
+  "_source": "https://git.canopsis.net/gpluchon/querybuilder-editablekey.git",
+  "_target": "*",
+  "_originalSource": "https://git.canopsis.net/gpluchon/querybuilder-editablekey.git"
+}

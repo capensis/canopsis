@@ -95,9 +95,6 @@ canopsis_engines:
     module: task_mail
     name: task_mail
   -
-    module: ticket
-    name: ticket
-  -
     module: dynamic
     name: watcher
     state: stopped

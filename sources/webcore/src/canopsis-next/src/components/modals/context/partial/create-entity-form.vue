@@ -20,7 +20,7 @@ div
       )
     v-layout(row)
       v-switch(
-        color="green darken-3"
+        color="primary",
         :label="$t('common.enabled')",
         :input-value="form.enabled",
         @change="updateField('enabled', $event)"

@@ -43,6 +43,8 @@ RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 COPY sources/webcore /sources/webcore
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
 
+COPY VERSION.txt /${CPS_HOME}/
+
 ## Canopsis Core Image
 FROM canopsis/canopsis-sysbase:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
 
@@ -77,13 +79,6 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p tmp && \
     sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
     chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
-
-# Copy UI bricks as root
-COPY docker/bricks/ ${CPS_HOME}/var/www/src/canopsis/
-RUN . ${CPS_HOME}/bin/activate && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-querybuilder && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-listalarm && \
-    python /${CPS_HOME}/bin/brickmanager enable brick-timeline
 
 # Ansible
 COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible

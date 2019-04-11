@@ -76,7 +76,7 @@ def exports(ws):
             sort_key='opened',
             sort_dir='DESC',
             skip=0,
-            limit=50,
+            limit=None,
             with_steps=False,
             natural_search=False,
             active_columns=None,

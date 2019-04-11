@@ -1,8 +1,10 @@
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { userPreferenceSchema } from '@/store/schemas';
+import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -16,18 +18,11 @@ export default {
   getters: {
     getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
       const currentUser = rootGetters['auth/currentUser'];
-      const id = `${widget._id}_${currentUser.crecord_name}`;
+      const id = `${widget._id}_${currentUser._id}`;
       const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, id);
 
       if (!userPreference) {
-        return {
-          _id: id,
-          widget_preferences: {},
-          crecord_name: currentUser.crecord_name,
-          widget_id: widget._id,
-          widgetXtype: widget.type,
-          crecord_type: 'userpreferences',
-        };
+        return generateUserPreferenceByWidgetAndUser(widget, currentUser);
       }
 
       return userPreference;
@@ -82,12 +77,34 @@ export default {
         params: {
           limit: 1,
           filter: {
-            crecord_name: currentUser.crecord_name,
+            crecord_name: currentUser._id,
             widget_id: widgetId,
-            _id: `${widgetId}_${currentUser.crecord_name}`,
+            _id: `${widgetId}_${currentUser._id}`,
           },
         },
       });
+    },
+
+    /**
+     * This action fetches user preference item by widget id without store
+     *
+     * @param {function} rootGetters
+     * @param {string|number} widgetId
+     */
+    async fetchItemByWidgetIdWithoutStore({ rootGetters }, { widgetId }) {
+      const currentUser = rootGetters['auth/currentUser'];
+      const params = {
+        limit: 1,
+        filter: {
+          crecord_name: currentUser._id,
+          widget_id: widgetId,
+          _id: `${widgetId}_${currentUser._id}`,
+        },
+      };
+
+      const { data: [item] } = await request.get(API_ROUTES.userPreferences, { params });
+
+      return item;
     },
 
     /**

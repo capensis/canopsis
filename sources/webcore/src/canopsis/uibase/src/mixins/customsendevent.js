@@ -134,6 +134,9 @@ Ember.Application.initializer({
                         if(get(record, 'ticket')) {
                             post_event.ticket = get(record, 'ticket');
                         }
+                        if(get(record, 'ack_resources')) {
+                            post_event.ack_resources = get(record, 'ack_resources');
+                        }
                         post_events.push(post_event);
                         //processes ui event as they are processed by backoffice in order to get direct render
                         if (!safe_mode) {

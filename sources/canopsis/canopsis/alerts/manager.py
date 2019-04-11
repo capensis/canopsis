@@ -32,6 +32,7 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
+from canopsis.alerts import DEFAULT_AUTHOR
 from canopsis.alarms.models import AlarmState
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
@@ -43,6 +44,7 @@ from canopsis.check import Check
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
+from canopsis.common.collection import MongoCollection
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import ensure_iterable, gen_id
@@ -69,7 +71,6 @@ DEFAULT_EXTRA_FIELDS = 'domain,perimeter'
 # if set to True, the last_event_date will be updated on each event that
 # triggers the alarm
 DEFAULT_RECORD_LAST_EVENT_DATE = False
-DEFAULT_FILTER_AUTHOR = 'system'
 
 DEFAULT_FLAPPING_INTERVAL = 0
 DEFAULT_FLAPPING_FREQ = 0
@@ -141,7 +142,7 @@ class Alerts(object):
         self.update_longoutput_fields = alerts_.get("update_long_output",
                                                     False)
         filter_ = self.config.get(self.FILTER_CAT, {})
-        self.filter_author = filter_.get('author', DEFAULT_FILTER_AUTHOR)
+        self.filter_author = filter_.get('author', DEFAULT_AUTHOR)
         self.lock_manager = AlertLockRedisSentinel(
             *AlertLockRedisSentinel.provide_default_basics()
         )
@@ -165,7 +166,8 @@ class Alerts(object):
         conf_store = Configuration.load(MongoStore.CONF_PATH, Ini)
 
         mongo = MongoStore(config=conf_store)
-        config_collection = mongo.get_collection(name=cls.CONFIG_COLLECTION)
+        config_collection = MongoCollection(
+            mongo.get_collection(name=cls.CONFIG_COLLECTION))
         filter_ = {'crecord_type': 'statusmanagement'}
         config_data = EtherealData(collection=config_collection,
                                    filter_=filter_)
@@ -180,7 +182,7 @@ class Alerts(object):
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
 
-        amqp_pub = AmqpPublisher(get_default_amqp_conn())
+        amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
         event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
@@ -550,10 +552,19 @@ class Alerts(object):
         value[AlarmField.output.value] = event["output"]
 
         if value.get(AlarmField.long_output.value, "") != event["long_output"]:
-            value[AlarmField.long_output.value] = event["long_output"]
 
             if AlarmField.long_output_history.value not in value:
                 value[AlarmField.long_output_history.value] = []
+
+            if len(value[AlarmField.long_output_history.value]) == 0:
+                message = "Initial long_output set to \"{}\".".format(
+                    event["long_output"])
+            else:
+                message = "Update long_output from \"{0}\" to \"{1}\".".format(
+                    value[AlarmField.long_output.value],
+                    event["long_output"])
+
+            value[AlarmField.long_output.value] = event["long_output"]
 
             value[AlarmField.long_output_history.value].append(
                 event[AlarmField.long_output.value]
@@ -564,9 +575,9 @@ class Alerts(object):
                 value[AlarmField.long_output_history.value] = new_hist
 
             value[AlarmField.steps.value].append({
-                "a": value["state"]["a"],
+                "a": event.get(self.AUTHOR, self.filter_author),
                 "_t": "long_output",
-                "m": "update long_output to {}.".format(event["long_output"]),
+                "m": message,
                 "t": int(time()),
                 "val": value["state"]["val"]
             })
@@ -633,7 +644,6 @@ class Alerts(object):
 
             value = self.check_hard_limit(value)
 
-
             self.update_current_alarm(alarm, value)
 
             if is_new_alarm:
@@ -643,7 +653,7 @@ class Alerts(object):
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
                               event=event,
-                              author=event.get(self.AUTHOR, None),
+                              author=event.get(self.AUTHOR, self.filter_author),
                               entity_id=entity_id)
         self.lock_manager.unlock(entity_id)
 
@@ -698,7 +708,7 @@ class Alerts(object):
         elif '.crop' in name:
             new_value = task(self, value, diff_counter)
         else:
-            self.logger.warning('Unkown task type for {}'.format(name))
+            self.logger.warning('Unknown task type for {}'.format(name))
             return
 
         # Some tasks return two values (a value and a status)
@@ -1246,8 +1256,16 @@ class Alerts(object):
                 'connector': value['connector'],
                 'connector_name': value['connector_name'],
                 'output': lifter.output(message),
-                'event_type': Check.EVENT_TYPE
+                'event_type': Check.EVENT_TYPE,
+                'component': value["component"]
             }
+
+            if value["resource"] is not None:
+                event["source_type"] = "resource"
+                event["resource"] = value["resource"]
+            else:
+                event["source_type"] = "component"
+
             vstate = AlarmField.state.value
 
             # Execute each defined action

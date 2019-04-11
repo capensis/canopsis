@@ -1,0 +1,26 @@
+.brick-timeline-title {
+    color: #3c8dbc !important;
+}
+
+
+.brick-timeline-badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    font-size: 14px;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: #777;
+    border-radius: 10px;
+
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+    border-collapse:collapse;
+    border-top-left-radius:10px;
+    border-top-right-radius:10px;
+}

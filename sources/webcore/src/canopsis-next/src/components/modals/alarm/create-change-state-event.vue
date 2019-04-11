@@ -1,8 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     v-card
-      v-card-title.green.darken-3.white--text
-        span.headline {{ $t('modals.createChangeStateEvent.title') }}
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ $t('modals.createChangeStateEvent.title') }}
       v-card-text
         v-container
           v-layout(row)
@@ -26,14 +27,17 @@
             v-validate="'required'",
             data-vv-name="output"
             )
-      v-card-actions
-        v-btn.green.darken-3.white--text(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
-import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, ENTITIES_STATES, MODALS } from '@/constants';
+import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
+
+import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to create a 'change-state' event
@@ -44,7 +48,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
       form: {

@@ -1,0 +1,26 @@
+
+{
+  "Fast Ack": "Fast Ack",
+  "Ack": "Ack",
+  "Cancel ack": "Cancel ack",
+  "Restore alarm": "Restore alarm",
+  "ack": "Ack",
+  "fastack": "Fast ack",
+  "cancelack": "Cancel ack",
+  "declareanincident": "Declare incident",
+  "assignticketnumber": "Assign ticket number",
+  "pbehavior": "Periodical behavior",
+  "removealarm": "Cancel alarm",
+  "changecriticity": "Change criticity",
+  "restorealarm": "Restore alarm",
+  "snoozealarm": "Snooze alarm",
+  "donealarm": "Mark as Done",
+  "Since": "Since",
+  "Snooze": "Snooze",
+  "Ticket declared": "Ticket declared",
+  "Periodic behavior": "Periodic behavior",
+  "List periodic behaviors": "List periodic behaviors",
+  "Apply PBehavior": "Apply PBehavior",
+  "No reccurence": "No reccurence",
+  "Done": "Done"
+}

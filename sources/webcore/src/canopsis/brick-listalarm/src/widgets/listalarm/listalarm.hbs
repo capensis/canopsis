@@ -1,0 +1,132 @@
+
+<div class="pull-left">
+    {{#component-selectionactions action='massAction'}}
+    {{/component-selectionactions}}
+
+</div>
+
+<div class="pull-right btn-group" data-toggle="btn-toggle">
+    {{!--2 / 6--}}
+    {{#unless controller.hasOnePage}}
+        <div class="pull-right" style="padding-left:4px">
+            {{#unless controller.isFirstPage}}
+                <span class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                        <span class="glyphicon glyphicon-step-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </button>
+                </span>
+            {{/unless}}
+            <span style="float:left; padding:4px">
+                {{controller.currentPage}} / {{controller.totalPages}}
+            </span>
+            {{#unless controller.isLastPage}}
+                <span class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                        <span class="glyphicon glyphicon-step-forward"></span>
+                    </button>
+                </span>
+            {{/unless}}
+        </div>
+    {{/unless}}
+</div>
+<div style="clear:both; padding-top:4px"></div>
+
+
+
+    {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+    {{/component-search}}
+
+    <div class="pull-left dataTables_filter" style='margin-top:0'>
+        {{view Ember.Select
+            content=controller.itemsPerPagePropositions
+            value=controller.itemsPerPagePropositionSelected
+            class="inlineInput form-control input-sm"
+        }}
+        {{tr 'records per page'}}
+    </div>
+{{#if controller.login.rights.listalarm_listFilters.checksum}}
+    <div class="pull-right btn-group" data-toggle="btn-toggle">
+        {{#each filter in controller.filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active"}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+            </span>
+        {{/each}}
+        {{#each filter in controller.custom_filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "selectFilter" filter}}>
+                {{filter.title}}
+                    {{#if controller.login.rights.listalarm_editFilter.checksum}}
+                        <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                        <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{/if}}
+            </span>
+        {{/each}}
+        {{#each filter in controller.user_filters}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+                    {{#if controller.login.rights.listalarm_editFilter.checksum}}
+                        <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                        <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{/if}}
+            </span>
+        {{/each}}
+        {{#if controller.mixinOptions.customfilterlist.can_mix_filters}}
+            {{#each operator in controller.customFilterOperators}}
+                <button {{bind-attr class=":btn operator.active:btn-primary:btn-default :btn-sm operator.active:active"}} {{action "setActiveOperator" operator}}>{{operator.display}}</button>
+            {{/each}}
+        {{/if}}
+        {{#if controller.login.rights.listalarm_addFilter.checksum}}
+            <button type="button" class="btn btn-primary btn-sm btn-add-customfilter" {{action "addUserFilter"}} data-col="all">
+                <i class="fa fa-plus"></i> {{tr 'Add filter'}}
+            </button>
+        {{/if}}
+    </div>
+{{/if}}
+
+<div style="clear:both; padding-top:4px"></div>
+
+{{#component-alarmtable saction='sendCustomAction' action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+{{/component-alarmtable}}
+
+
+<div style='padding-bottom: 30px;'>
+{{!--pagination info--}}
+<div class="pull-left btn-group">
+    {{tr 'Showing'}} {{controller.paginationFirstItemIndex}} {{tr 'to'}} {{controller.paginationLastItemIndexx}} {{tr 'of'}} {{controller.itemsTotal}} {{tr 'entries'}}
+</div>
+
+{{!--2 / 6--}}
+{{#unless controller.hasOnePage}}
+    <div class="pull-right btn-group" style="padding-left:4px;">
+        {{#unless controller.isFirstPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+            </span>
+        {{/unless}}
+        <span style="float:left; padding:4px">
+            {{controller.currentPage}} / {{controller.totalPages}}
+        </span>
+        {{#unless controller.isLastPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+            </span>
+        {{/unless}}
+    </div>
+{{/unless}}
+
+</div>

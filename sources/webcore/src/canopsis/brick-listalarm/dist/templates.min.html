@@ -1,0 +1,735 @@
+<script type="text/x-handlebars" data-template-name="components/component-alarmactions"><div class='actions-wrapper'>
+  <div class="actions-parent" style="display:flex">
+
+    {{#each action in availableActions}}
+            {{#if action.isPbhList}}
+                  {{#component-tooltip content="List periodic behaviors"}}
+                      <button {{bind-attr data-target=pBehaviorListActionIdHash}} data-toggle="modal" type="button" class="btn btn-xs btn-default">
+                          <i class='fa fa-list'></i>
+                      </button>
+                  {{/component-tooltip}}
+            {{else}}
+                <button {{action 'sendAction' action}} {{bind-attr title=action.translation}} type="button" class="btn btn-xs btn-default">
+                    <i {{bind-attr class=action.class}}></i>
+                </button>
+            {{/if}}
+    {{/each}}
+  </div>
+  <!-- Modal -->
+<div {{bind-attr id=pBehaviorListActionId}} class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        <h5 class="modal-title">Pbehaviors</h5>
+      </div>
+      <div class="modal-body">
+        {{#component-pbehaviorslist alarm=alarm}}
+        {{/component-pbehaviorslist}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmraw"><td style='padding-left: 0;'>
+    {{component-checkbox checked=alarm.isSelected class="toggle"}}
+</td>
+
+<td>
+    <span {{action 'expand'}} {{bind-attr class=expandClass}} style='cursor: pointer;'></span>
+</td>
+{{#each field in fields}}
+    {{#component-alarmtd alarm=alarm field=field action='tdClick'}}
+    {{/component-alarmtd}}
+{{/each}}
+
+{{#component-alarmactions alarm=alarm action='sendAction'}}
+{{/component-alarmactions}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmstate"><div class="form-group">
+    <div class="radio">
+        <label>
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="opened" checked=CheckBoxAlarmStateOpen}}
+            {{/component-radio}}
+            opened
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            {{#component-radio name="alarmStateSelecation" selectionBinding="state" value="resolved" checked=CheckBoxAlarmStatusResolved}}
+            {{/component-radio}}
+            resolved
+        </label>
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmtable">{{#each tmpl in Ember.columnTemplates}}
+  {{#component-popupinfo columnName=tmpl.columnName clickedField=clickedField clickedAlarm=clickedAlarm updater=updater}}
+  {{/component-popupinfo}}
+{{/each}}
+
+<div class="box-body" style='overflow-x: scroll;'>
+    <div class="table-responsive">
+        <table class="table no-margin">
+            <thead>
+                <tr>
+                    <th style='padding-left: 0;'>
+                        {{component-checkbox checked=isAllChecked class="toggle"}}
+                    </th>
+
+                    <th>
+                        {{!--timeline--}}
+                    </th>
+                    {{#each field in fields}}
+                        {{#if field.isSortable}}
+                            <th {{action 'click' field}}>{{field.humanName}} <i {{bind-attr class=":fa field.isASC:fa-caret-down:fa-caret-up"}} aria-hidden="true"></i></th>
+                        {{else}}
+                            <th {{action 'click' field}}>{{field.humanName}}</th>
+                        {{/if}}
+                    {{/each}}
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each alarm in alarms}}
+                    {{#component-alarmraw alarm=alarm fields=controller.fields action='tdClick' saction='sendAction'}}
+                    {{/component-alarmraw}}
+
+                    {{#if alarm.isExpanded}}
+                        <tr>
+                            <td {{bind-attr colspan=columnsAmount}}>
+                                {{#component-timeline timelineData=alarm}}
+                                {{/component-timeline}}
+                            </td>
+                        </tr>
+                    {{/if}}
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-alarmtd">{{#if hasRenderer}}
+  {{component-renderer rendererType=renderer value=value}}
+{{else}}
+  {{value}}
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-columntemplate"><div class="form-inline">
+    <div class="form-group">
+        Column name: {{input value=column class="form-control" type="text"}}
+    </div>
+    <div class="form-group">
+        Template: {{summernote-editor content=template}}
+    </div>
+</div></script>
+<script type="text/x-handlebars" data-template-name="components/component-customtimeline"><td {{bind-attr colspan=fieldsAmount}}>
+  <div class="row" style="background-color: #f5f5f5;">
+    <div class="col-md-12">
+      <!-- The time line -->
+      <ul class="timeline">
+
+        {{#each steps as |step|}}
+          <li class="time-label">
+            <span class="bg-red">
+              {{step.date}}
+            </span>
+          </li>
+          <!-- /.timeline-label -->
+          <!-- timeline item -->
+          <li>
+            <i {{bind-attr class=":fa step.icon step.color"}}></i>
+
+            <div class="timeline-item">
+              <span class="time">
+                <i class="fa fa-clock-o"></i> {{step.time}}
+              </span>
+
+              <h3 class="timeline-header">
+                {{#if step.state}}
+                  <span {{bind-attr class=":brick-timeline-badge step.color"}}>  {{step.state}}
+                  </span>
+                {{/if}}
+                {{#if step.status}}
+                  <span class="brick-timeline-badge">  {{step.status}}
+                  </span>
+                {{/if}}
+                <span ></span>
+                <span class="brick-timeline-title">{{step.name}}</span>    {{step.a}}
+                {{#if step.until}}
+                  (until {{step.until}})
+                {{/if}}
+              </h3>
+
+              <div class="timeline-body">
+                {{step.m}}
+              </div>
+  {{!--             <div class="timeline-footer">
+                <a class="btn btn-primary btn-xs">Read more</a>
+                <a class="btn btn-danger btn-xs">Delete</a>
+              </div> --}}
+            </div>
+          </li>
+          <!-- END timeline item -->
+        {{/each}}
+      
+        <li>
+          <i class="fa fa-dot-circle-o bg-gray"></i>
+        </li>
+      </ul>
+    </div>
+    <!-- /.col -->
+  </div>
+
+
+</td></script>
+<script type="text/x-handlebars" data-template-name="components/component-pbehaviorslist"><table class="table">
+    <thead>
+      <tr>
+        <th>name</th>
+        <th>author</th>
+        <th>connector</th>
+        <th>connector_name</th>
+        <th>isEnabled</th>
+        <th>begins</th>
+        <th>ends</th>
+        <th>type</th>
+        <th>reason</th>
+        <th>rrule</th>
+        <th>actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {{#each pbehavior in pbehaviors}}
+        <tr>
+          <td>{{pbehavior.name}}</td>
+          <td>{{pbehavior.author}}</td>
+          <td>{{pbehavior.connector}}</td>
+          <td>{{pbehavior.connector_name}}</td>
+          <td>{{pbehavior.enabled}}</td>
+          <td>{{dateFormat pbehavior.tstart}}</td>
+          <td>{{dateFormat pbehavior.tstop}}</td>
+          <td>{{pbehavior.type_}}</td>
+          <td>{{pbehavior.reason}}</td>
+          <td>{{pbehavior.rrule}}</td>
+          <td>
+              <div class="actions-parent" style="display:flex">
+                  <button {{action 'deletePbehavior' pbehavior}} type="button" class="btn btn-xs btn-default">
+                    <i class='fa fa-trash'></i>
+                  </button>  
+              </div>
+          </td>
+          
+        </tr>
+      {{/each}}
+
+    </tbody>
+  </table>
+
+
+
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-popupinfo"><div style="position: absolute; left: 50%;display:none;z-index:1000;" class="popupinfo">
+    <div style="position: relative; left: -50%;">
+        <div class="text-center alert alert-info alert-dismissable">
+            <i class="fa fa-info"></i>
+            <button {{action 'hide'}} type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div class="recordinfopopuphandle">
+                <b>info</b><hr/>
+            </div>
+            <div class="recordinfopopupcontent">
+                {{view columnTemplate contextBinding=clickedAlarm}}
+            </div>
+        </div>
+    </div>       
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-radio"></script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererack">{{#each prop in propertiesMap}}
+    {{prop.key}}: {{prop.value}}<br>
+{{/each}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererextradetails">{{# if hasAck }}
+  <div>
+    {{#component-tooltip content=acktooltip htmlEnabled=true noTranslation=true}}
+        <span class="badge bg-purple">
+            <i class="fa fa-check"></i>
+        </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasTicket }}
+  <div>
+    {{#component-tooltip content=tickettooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-blue">
+        <i class="fa fa-ticket"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasSnooze }}
+  <div>
+    {{#component-tooltip content=snoozetooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-red">
+        <i class="fa fa-clock-o"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasDone }}
+  <div>
+    {{#component-tooltip content=donetooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-olive">
+        <i class="fa fa-check-square"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasActivePBehavior }}
+  <div>
+    {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-aqua">
+        <i class="fa fa-code-fork"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererlinks"><ul>
+{{#each category in categories}}
+    <li><a href="{{unbound category.[1]}}" target="_blank">{{unbound category.[0]}}</a></li>
+{{/each}}
+</ul>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererpbehaviors">{{#each pbeh in pbehMap}}
+    {{pbeh}}<br>
+{{/each}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstate"><span {{bind-attr class=spanClass}}>{{caption}}</span>
+{{#if isChangedByUser}}
+  <span {{bind-attr class=spanClass}}>
+    <i class="fa fa-male"></i>
+  </span>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstatetimestamp">{{absoluteTimeSince timestamp}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstatus"><span>{{status}}</span>
+{{#if isCanceled}}
+  <span>
+    <i class="fa fa-male"></i>
+  </span>
+{{/if}}
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-rendererstatusval">{{status}}</script>
+<script type="text/x-handlebars" data-template-name="components/component-search"><div class='input-group input-group-sm'>
+    <span class="input-group-btn">
+        <button {{action 'openSearchDoc'}} class="btn btn-default btn-flat">
+            <span class="fa fa-book"></span>
+        </button>
+    </span>
+    {{input insert-newline='search' value=value class="form-control inlineInput" placeholder=(tr 'Search') type="text"}}
+    <span class="input-group-btn">
+        <button {{action 'resetValue'}} class="btn btn-default btn-flat">
+            <span class="glyphicon glyphicon-remove-circle"></span>
+        </button>
+        <button {{action 'search'}} class="btn btn-primary btn-flat">
+            <span class="fa fa-search"></span>
+        </button>
+    </span>
+    {{#unless isValid}}
+    <p class='search-invalid-message'>Invalid search query</p>
+    {{/unless}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-selectionactions"><div class="pull-left">
+	 {{#if availableAction}}
+	     {{tr 'Selection'}} :
+		 {{/if}}
+    {{#each action in availableAction}}
+      <button class="btn btn-default btn-sm" {{action 'sendAction' action}} >
+          <span {{bind-attr class=action.class}}></span>
+          {{tr action.caption}}
+      </button>
+    {{/each}}
+</div>
+</script>
+<script type="text/x-handlebars" data-template-name="components/component-selectioncheckbox"><div id="ember8909" class="ember-view toggle">
+    <div class="icheckbox_minimal-grey" style="position: relative;">
+        <input id="ember8910" class="ember-view ember-checkbox toggle" type="checkbox" style="position: absolute; opacity: 0;">
+        <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
+    </div>
+</div>
+
+<div id="ember7542" class="ember-view toggle">
+    <div class="icheckbox_minimal-grey checked" style="position: relative;">
+        <input id="ember7543" class="ember-view ember-checkbox toggle" type="checkbox" style="position: absolute; opacity: 0;">
+        <ins  class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
+    </div>
+</div></script>
+<script type="text/x-handlebars" data-template-name="editor-pair">{{!*
+ * @editor pair
+}}
+{{component-columntemplate content=attr.value}}</script>
+<script type="text/x-handlebars" data-template-name="editor-radio">{{!*
+ * @editor radio
+}}
+{{component-alarmstate content=attr.value}}</script>
+<script type="text/x-handlebars" data-template-name="snoozeform">{{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">Debug informations</h3>
+        </div>
+        <div class="panel-body">
+            inspectedItemType: {{inspectedItemType}}
+        </div>
+    </div>
+{{/if}}
+<p>
+    {{#if controller.categories}}
+        {{partialslot slot=controller._partials.toolbar tagName="ul" classNames="nav navbar-nav pull-right"}}
+    {{else}}
+        <div class="callout callout-danger">
+            <h4>
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                 {{tr 'Schema not editable'}}
+            </h4>
+            <p>
+                {{tr 'This schema is not editable'}}.
+                {{#if controller.controllers.application.runtimeConfiguration.DEBUG}}
+                    <div>TODO warn administrators that the schema does not have categories.</div>
+                {{/if}}
+            </p>
+        </div>
+    {{/if}}
+    {{#unless controller.onePageDisplay}}
+        <ul class="nav nav-tabs">
+            {{#each category in controller.categories}}
+                {{#if category.keys.length}}
+                    <li {{bind-attr class="category.isDefault:active"}} id="{{unbound category.slug}}_tab"><a href="#{{unbound category.slug}}" data-toggle="tab">{{unbound tr category.title}}</a></li>
+                {{/if}}
+            {{/each}}
+        </ul>
+    {{/unless}}
+    <!-- Tab panes -->
+    <div class="tab-content">
+        {{#each category in controller.categories}}
+            {{#if category.keys.length}}
+                {{#if controller.onePageDisplay}}
+                    <center>
+                        <h4>{{tr category.title}}</h4>
+                    </center>
+                    {{#each attr in category.keys}}
+                        {{#if attr.model.options.readOnly}}
+                            <div>
+                                {{#if attr.model.options.title}}
+                                    <span class="label" style="color:black">
+                                        <b>
+                                            {{tr attr.model.options.title}}
+                                        </b>
+                                    </span>
+                                {{else}}
+                                    {{#if attr.field}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.field}}
+                                            </b>
+                                        </span>
+                                    {{/if}}
+                                {{/if}}
+                            {{component-renderer attr=attr record=controller.formContext value=attr.value}}
+                            </div>
+                        {{else}}
+                            {{#unless attr.model.options.hiddenInForm}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            {{tr attr.model.options.title}}
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                {{tr attr.field}}
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
+                                </div>
+                            {{/unless}}
+                        {{/if}}
+                    {{/each}}
+                    <hr/>
+                {{else}}
+                    {{#if category.isDefault}}
+                        <div class="tab-pane active" id="{{unbound category.slug}}">
+                        {{#each attr in category.keys}}
+                            {{#if attr.model.options.readOnly}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                   {{component-renderer attr=attr record=controller.formContext value=attr.value}}
+                                </div>
+                            {{else}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
+                                </div>
+                            {{/if}}
+                        {{/each}}
+                        </div>
+                    {{else}}
+                        <div class="tab-pane" id="{{unbound category.slug}}">
+                        {{#each attr in category.keys}}
+                            {{#if attr.model.options.readOnly}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-renderer attr=attr record=controller.formContext}}
+                                </div>
+                            {{else}}
+                                <div>
+                                    {{#if attr.model.options.title}}
+                                        <span class="label" style="color:black">
+                                            <b>
+                                                {{tr attr.model.options.title}}
+                                            </b>
+                                        </span>
+                                    {{else}}
+                                        {{#if attr.field}}
+                                            <span class="label" style="color:black">
+                                                <b>
+                                                    {{tr attr.field}}
+                                                </b>
+                                            </span>
+                                        {{/if}}
+                                    {{/if}}
+                                    {{component-editor attr=attr form=this editorOverrides=controller.controllers.application.frontendConfig.editors}}
+                                </div>
+                            {{/if}}
+                        {{/each}}
+                        </div>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        {{/each}}
+    </div>
+</p></script>
+<script type="text/x-handlebars" data-template-name="_infos_hostgroups_value">{{listalarm_ellipsis value 8 "hostgroups"}}
+</script>
+<script type="text/x-handlebars" data-template-name="_v_ack">{{#component-rendererack value=value}}
+{{/component-rendererack}}</script>
+<script type="text/x-handlebars" data-template-name="_v_creation_date">{{timestampfulldate value}}</script>
+<script type="text/x-handlebars" data-template-name="_v_current_state_duration">{{durationFromTimestamp value}}</script>
+<script type="text/x-handlebars" data-template-name="_v_duration">{{durationFromTimestamp value}}</script>
+<script type="text/x-handlebars" data-template-name="_v_extra_details">{{#component-rendererextradetails value=value}}
+{{/component-rendererextradetails}}</script>
+<script type="text/x-handlebars" data-template-name="_v_last_event_date">{{timestamp value 'r'}}
+
+</script>
+<script type="text/x-handlebars" data-template-name="_v_last_update_date">{{timestampfulldate value}}
+
+</script>
+<script type="text/x-handlebars" data-template-name="_v_links">{{#component-rendererlinks value=value}}
+{{/component-rendererlinks}}
+</script>
+<script type="text/x-handlebars" data-template-name="_v_pbehaviors">{{#component-rendererpbehaviors value=value}}
+{{/component-rendererpbehaviors}}</script>
+<script type="text/x-handlebars" data-template-name="_v_resolved">{{timestamp value}}</script>
+<script type="text/x-handlebars" data-template-name="_v_state">{{#component-rendererstate value=value}}
+{{/component-rendererstate}}
+</script>
+<script type="text/x-handlebars" data-template-name="_v_state_m">{{listalarm_ellipsis value 100 "output"}}
+</script>
+<script type="text/x-handlebars" data-template-name="_v_state_t">{{timestamp value 'r'}}
+
+</script>
+<script type="text/x-handlebars" data-template-name="_v_status">{{#component-rendererstatus value=value}}
+{{/component-rendererstatus}}</script>
+<script type="text/x-handlebars" data-template-name="_v_status_val">{{#component-rendererstatusval value=value}}
+{{/component-rendererstatusval}}</script>
+<script type="text/x-handlebars" data-template-name="renderer-listalarm_ellipsis">{{!* * @renderer object }} {{listalarm_ellipsis value attr.options.nbChar name}}
+</script>
+<script type="text/x-handlebars" data-template-name="listalarm">
+<div class="pull-left">
+    {{#component-selectionactions action='massAction'}}
+    {{/component-selectionactions}}
+
+</div>
+
+<div class="pull-right btn-group" data-toggle="btn-toggle">
+    {{!--2 / 6--}}
+    {{#unless controller.hasOnePage}}
+        <div class="pull-right" style="padding-left:4px">
+            {{#unless controller.isFirstPage}}
+                <span class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                        <span class="glyphicon glyphicon-step-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </button>
+                </span>
+            {{/unless}}
+            <span style="float:left; padding:4px">
+                {{controller.currentPage}} / {{controller.totalPages}}
+            </span>
+            {{#unless controller.isLastPage}}
+                <span class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                        <span class="glyphicon glyphicon-step-forward"></span>
+                    </button>
+                </span>
+            {{/unless}}
+        </div>
+    {{/unless}}
+</div>
+<div style="clear:both; padding-top:4px"></div>
+
+
+
+    {{#component-search action='search' value=controller.searchText isValid=controller.isValidSearchText}}
+    {{/component-search}}
+
+    <div class="pull-left dataTables_filter" style='margin-top:0'>
+        {{view Ember.Select
+            content=controller.itemsPerPagePropositions
+            value=controller.itemsPerPagePropositionSelected
+            class="inlineInput form-control input-sm"
+        }}
+        {{tr 'records per page'}}
+    </div>
+{{#if controller.login.rights.listalarm_listFilters.checksum}}
+    <div class="pull-right btn-group" data-toggle="btn-toggle">
+        {{#each filter in controller.filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active"}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+            </span>
+        {{/each}}
+        {{#each filter in controller.custom_filters_list}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "selectFilter" filter}}>
+                {{filter.title}}
+                    {{#if controller.login.rights.listalarm_editFilter.checksum}}
+                        <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                        <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{/if}}
+            </span>
+        {{/each}}
+        {{#each filter in controller.user_filters}}
+            <span type="button" {{bind-attr class=":btn filter.isActive:btn-primary:btn-default :btn-sm :editable filter.isActive:active "}} data-col="all" {{action "setFilter" filter}}>
+                {{filter.title}}
+                    {{#if controller.login.rights.listalarm_editFilter.checksum}}
+                        <small class="badge bg-blue" {{action "editFilter" filter}}> <i class="fa fa-wrench"></i></small>
+                        <small class="badge bg-orange" {{action "removeFilter" filter}}> <i class="fa fa-minus"></i></small>
+                    {{/if}}
+            </span>
+        {{/each}}
+        {{#if controller.mixinOptions.customfilterlist.can_mix_filters}}
+            {{#each operator in controller.customFilterOperators}}
+                <button {{bind-attr class=":btn operator.active:btn-primary:btn-default :btn-sm operator.active:active"}} {{action "setActiveOperator" operator}}>{{operator.display}}</button>
+            {{/each}}
+        {{/if}}
+        {{#if controller.login.rights.listalarm_addFilter.checksum}}
+            <button type="button" class="btn btn-primary btn-sm btn-add-customfilter" {{action "addUserFilter"}} data-col="all">
+                <i class="fa fa-plus"></i> {{tr 'Add filter'}}
+            </button>
+        {{/if}}
+    </div>
+{{/if}}
+
+<div style="clear:both; padding-top:4px"></div>
+
+{{#component-alarmtable saction='sendCustomAction' action='updateSortField' defaultSortColumn=controller.sortColumn sortOrder=controller.default_sort_column.direction alarms=controller.alarms fields=controller.fields}}
+{{/component-alarmtable}}
+
+
+<div style='padding-bottom: 30px;'>
+{{!--pagination info--}}
+<div class="pull-left btn-group">
+    {{tr 'Showing'}} {{controller.paginationFirstItemIndex}} {{tr 'to'}} {{controller.paginationLastItemIndexx}} {{tr 'of'}} {{controller.itemsTotal}} {{tr 'entries'}}
+</div>
+
+{{!--2 / 6--}}
+{{#unless controller.hasOnePage}}
+    <div class="pull-right btn-group" style="padding-left:4px;">
+        {{#unless controller.isFirstPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "firstPage"}}>
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "prevPage"}}>
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+            </span>
+        {{/unless}}
+        <span style="float:left; padding:4px">
+            {{controller.currentPage}} / {{controller.totalPages}}
+        </span>
+        {{#unless controller.isLastPage}}
+            <span class="btn-group">
+                <button type="button" class="btn btn-sm btn-default" {{action "nextPage"}}>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" {{action "lastPage"}}>
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+            </span>
+        {{/unless}}
+    </div>
+{{/unless}}
+
+</div>
+</script>

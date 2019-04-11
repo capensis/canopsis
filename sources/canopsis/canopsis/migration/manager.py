@@ -30,13 +30,15 @@ from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.confng import Configuration, Json
 from canopsis.logger import Logger
+from canopsis.version import CanopsisVersionManager
 
 DEFAULT_MODULES = ['canopsis.migration.purge.PurgeModule',
                    'canopsis.migration.indexes.IndexesModule',
                    'canopsis.migration.jsonloader.JSONLoaderModule',
                    'canopsis.migration.rights.RightsModule',
                    'canopsis.migration.views.ViewsModule',
-                   'canopsis.migration.perfdata.PerfdataModule']
+                   'canopsis.migration.perfdata.PerfdataModule',
+                   'canopsis.migration.heartbeat.HeartbeatModule']
 DEFAULT_ASK_TIMEOUT = 30
 DEFAULT_VERSION_INFO = '~/var/lib/canopsis/migration.json'
 
@@ -50,7 +52,7 @@ class MigrationTool(object):
     CATEGORY = 'MIGRATION'
     FLAG_COLLECTION = "initialized"
 
-    def __init__(self, modules=None):
+    def __init__(self, modules=None, canopsis_version=None):
 
         self.logger = Logger.get('migrationtool', self.LOG_PATH)
         self.config = Configuration.load(MigrationTool.CONF_PATH, Json)
@@ -61,8 +63,23 @@ class MigrationTool(object):
 
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
+        self.__canopsis_version = canopsis_version
+
+    def __put_canopsis_version_document(self):
+        """
+        Put Canopsis version document if a ``__canopsis_version`` attribute
+        is set.
+        """
+        if self.__canopsis_version:
+            store = MongoStore.get_default()
+            collection = \
+                store.get_collection(CanopsisVersionManager.COLLECTION)
+            CanopsisVersionManager(collection)\
+                .put_canopsis_version_document(self.__canopsis_version)
 
     def fill(self, init=None, yes=False, reinit_auth=False):
+        self.__put_canopsis_version_document()
+
         tools = []
 
         for module in self.modules:
@@ -99,8 +116,8 @@ class MigrationTool(object):
 
         if init is None and reinit_auth is False:
             data = {
-                "_id" : "initialized",
-                "at" : str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+                "_id": "initialized",
+                "at": str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))
             }
             print("The canopsis initialization flag did not exist in the "
                   "database. So canopsinit will (re?)initialized the "
@@ -121,8 +138,8 @@ class MigrationTool(object):
 
         if init is True:
             coll.insert({"_id": self.FLAG_COLLECTION,
-                         "at": str(time.strftime("%a, %d %b %Y %H:%M:%S +0000"))})
-
+                         "at": str(time.strftime(
+                             "%a, %d %b %Y %H:%M:%S +0000"))})
 
 
 class MigrationModule(object):

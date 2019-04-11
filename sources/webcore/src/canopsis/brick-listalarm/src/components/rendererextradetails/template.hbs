@@ -1,0 +1,53 @@
+{{# if hasAck }}
+  <div>
+    {{#component-tooltip content=acktooltip htmlEnabled=true noTranslation=true}}
+        <span class="badge bg-purple">
+            <i class="fa fa-check"></i>
+        </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasTicket }}
+  <div>
+    {{#component-tooltip content=tickettooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-blue">
+        <i class="fa fa-ticket"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasSnooze }}
+  <div>
+    {{#component-tooltip content=snoozetooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-red">
+        <i class="fa fa-clock-o"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasDone }}
+  <div>
+    {{#component-tooltip content=donetooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-olive">
+        <i class="fa fa-check-square"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}
+
+
+{{# if hasActivePBehavior }}
+  <div>
+    {{#component-tooltip content=pbehaviortooltip htmlEnabled=true noTranslation=true}}
+      <span class="badge bg-aqua">
+        <i class="fa fa-code-fork"></i>
+      </span>
+    {{/component-tooltip}}
+  </div>
+{{/ if}}

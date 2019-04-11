@@ -1,35 +1,41 @@
 <template lang="pug">
-  v-container
-    v-layout.white(wrap, justify-space-between, align-center)
+  div
+    v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
-        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
-      v-flex
-        v-select(
+        pagination(
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="alarmsMeta.total",
+        type="top",
+        @input="updateQueryPage"
+        )
+      v-flex(v-if="hasAccessToListFilters")
+        filter-selector(
         :label="$t('settings.selectAFilter')",
-        :items="viewFilters",
-        @input="updateSelectedFilter",
+        :filters="viewFilters",
+        :lockedFilters="widgetViewFilters"
         :value="mainFilter",
-        item-text="title",
-        item-value="filter",
-        return-object,
-        clearable
+        :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
+        @input="updateSelectedFilter",
+        @update:condition="updateSelectedCondition",
+        @update:filters="updateFilters"
         )
       v-flex
-        v-chip(
+        v-chip.primary.white--text(
         v-if="query.interval",
         @input="removeHistoryFilter",
         close,
         label,
-        color="blue darken-4 white--text"
         ) {{ $t(`modals.liveReporting.${query.interval}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
-          v-icon(:color="query.interval ? 'blue' : 'black'") schedule
-        v-btn(icon, @click="showSettings")
-          v-icon settings
-      v-flex.px-3
-        mass-actions-panel(v-show="selected.length", :itemsIds="selectedIds")
+          v-icon(:color="query.interval ? 'primary' : 'black'") schedule
+      v-flex.px-3(v-show="selected.length", xs12)
+        mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -47,35 +53,39 @@
       )
         template(slot="progress")
           v-fade-transition
-            v-progress-linear(height="2", indeterminate)
+            v-progress-linear(height="2", indeterminate, color="primary")
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
           tr
             td
-              v-checkbox(primary, hide-details, v-model="props.selected")
+              v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
             v-for="column in columns",
             @click="props.expanded = !props.expanded"
             )
               alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
             td
-              actions-panel(:item="props.item", :widget="widget")
+              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           time-line(:alarmProps="props.item")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="alarmsMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total",
+          @input="updateQueryPage"
+          )
         v-spacer
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
-import omit from 'lodash/omit';
-import isEmpty from 'lodash/isEmpty';
+import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, SIDE_BARS } from '@/constants';
+import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -84,15 +94,17 @@ import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.v
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
+import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
-import modalMixin from '@/mixins/modal/modal';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
+import authMixin from '@/mixins/auth';
+import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
-
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
+import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 /**
  * Alarm-list component
@@ -112,24 +124,31 @@ export default {
     ActionsPanel,
     AlarmColumnValue,
     NoColumnsTable,
+    FilterSelector,
   },
   mixins: [
+    authMixin,
     modalMixin,
-    sideBarMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
+    widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    entitiesUserPreferenceMixin,
   ],
   props: {
     widget: {
       type: Object,
       required: true,
     },
-    rowId: {
+    isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    tabId: {
       type: String,
-      required: true,
+      default: '',
     },
   },
   data() {
@@ -149,15 +168,17 @@ export default {
 
       return [];
     },
-    mainFilter() {
-      const { mainFilter } = this.userPreference.widget_preferences;
 
-      return isEmpty(mainFilter) ? null : mainFilter;
+    hasAccessToListFilters() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
-    viewFilters() {
-      const { viewFilters } = this.userPreference.widget_preferences;
 
-      return isEmpty(viewFilters) ? [] : viewFilters;
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
   methods: {
@@ -169,17 +190,8 @@ export default {
       this.showModal({
         name: MODALS.editLiveReporting,
         config: {
-          updateQuery: params => this.query = { ...this.query, ...params },
-        },
-      });
-    },
-
-    showSettings() {
-      this.showSideBar({
-        name: SIDE_BARS.alarmSettings,
-        config: {
-          widget: this.widget,
-          rowId: this.rowId,
+          ...pick(this.query, ['interval', 'tstart', 'tstop']),
+          action: params => this.query = { ...this.query, ...params },
         },
       });
     },
@@ -196,24 +208,6 @@ export default {
           widgetId: this.widget._id,
           params: query,
         });
-      }
-    },
-
-    updateSelectedFilter(value) {
-      this.createUserPreference({
-        userPreference: {
-          ...this.userPreference,
-          widget_preferences: {
-            ...this.userPreference.widget_preferences,
-            mainFilter: value || {},
-          },
-        },
-      });
-
-      if (value && value.filter) {
-        this.query = { ...this.query, filter: value.filter };
-      } else {
-        this.query = { ...this.query, filter: undefined };
       }
     },
   },

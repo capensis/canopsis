@@ -28,7 +28,7 @@ export CANOPSIS_SKIP_GO=${CANOPSIS_SKIP_GO:="0"}
 
 # By default, pull, commit and push sources/webcore/src/canopsis-next from
 # the canopsis/canopsis-next repository.
-export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="1"}
+export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="0"}
 
 # Only avoid undefined variable error
 export GOPATH=${GOPATH:=""}

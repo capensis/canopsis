@@ -1,0 +1,13 @@
+{
+  "name": "doT",
+  "homepage": "https://github.com/olado/doT",
+  "_release": "195025f060",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "195025f06055761f6da3a900251382e788c42d0e"
+  },
+  "_source": "git://github.com/olado/doT.git",
+  "_target": "master",
+  "_originalSource": "doT"
+}

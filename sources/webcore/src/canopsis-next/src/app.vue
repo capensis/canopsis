@@ -1,9 +1,9 @@
 <template lang="pug">
   v-app#app
-    v-layout
-      navigation(v-if="$route.name !== 'login'")
-      v-content(v-if="!currentUserPending")
-        router-view(:key="$route.fullPath")
+    v-layout(v-if="!pending")
+      navigation#main-navigation(v-if="$route.name !== 'login'")
+      v-content#main-content
+        router-view(:key="routeViewKey")
     side-bars
     modals
     popups
@@ -28,8 +28,40 @@ export default {
     Popups,
   },
   mixins: [authMixin],
-  mounted() {
-    this.fetchCurrentUser();
+  data() {
+    return {
+      pending: true,
+    };
+  },
+  computed: {
+    routeViewKey() {
+      if (this.$route.name === 'view') {
+        return this.$route.path;
+      }
+
+      return this.$route.fullPath;
+    },
+  },
+  async mounted() {
+    await this.fetchCurrentUser();
+
+    this.pending = false;
   },
 };
 </script>
+
+<style lang="scss">
+  #app {
+    &.-fullscreen {
+      width: 100%;
+
+      #main-navigation {
+        display: none;
+      }
+
+      #main-content {
+        padding: 0!important;
+      }
+    }
+  }
+</style>

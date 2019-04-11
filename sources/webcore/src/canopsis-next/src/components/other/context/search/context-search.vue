@@ -1,20 +1,13 @@
 <template lang="pug">
-  v-toolbar.toolbar(dense, flat)
-    v-text-field(
-    label="Search",
-    v-model="searchingText",
-    @keyup.enter="submit",
-    hide-details,
-    single-line,
-    )
-    v-btn(icon @click="submit")
-      v-icon search
-    v-btn(icon @click="clear")
-      v-icon clear
+  search-field(v-model="searchingText", @submit="submit", @clear="clear")
 </template>
 
 <script>
+import { getContextSearchByText } from '@/helpers/widget-search';
+
 import searchMixin from '@/mixins/search';
+
+import SearchField from '@/components/forms/fields/search-field.vue';
 
 /**
  * Search component for the entities list
@@ -22,23 +15,18 @@ import searchMixin from '@/mixins/search';
  * @module context
  */
 export default {
+  components: { SearchField },
   mixins: [searchMixin],
   data() {
     return {
       searchingText: '',
-      requestParam: '_filter',
+      requestParam: 'searchFilter',
     };
   },
   computed: {
     requestData() {
-      return this.$options.filters.formatContextSearch(this.searchingText);
+      return getContextSearchByText(this.searchingText);
     },
   },
 };
 </script>
-
-<style scoped>
-  .toolbar {
-    background-color: white;
-  }
-</style>

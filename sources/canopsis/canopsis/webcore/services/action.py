@@ -74,7 +74,7 @@ def exports(ws):
             return gen_json_error(
                 {'description': 'nothing to insert'}, HTTP_ERROR)
         try:
-            Action(**element)
+            Action(**Action.convert_keys(element))
         except TypeError:
             return gen_json_error(
                 {'description': 'invalid action format'}, HTTP_ERROR)
@@ -92,7 +92,7 @@ def exports(ws):
             return gen_json_error({'description': 'failed to create action'},
                                   HTTP_ERROR)
 
-        return gen_json({})
+        return gen_json({'_id': element['_id']})
 
     @ws.application.put(
         '/api/v2/actions/<action_id:id_filter>'
@@ -117,7 +117,7 @@ def exports(ws):
             return gen_json_error(
                 {'description': 'wrong update dict'}, HTTP_ERROR)
         try:
-            Action(**element)
+            Action(**Action.convert_keys(element))
         except TypeError:
             return gen_json_error(
                 {'description': 'invalid action format'}, HTTP_ERROR)

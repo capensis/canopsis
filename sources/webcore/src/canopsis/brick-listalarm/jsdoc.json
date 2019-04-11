@@ -1,0 +1,14 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc", "closure"]
+    },
+    "source": {
+        "exclude": ["./lib", "./node_modules", "./pictures"]
+    },
+    "opts": {
+        "encoding": "utf8",
+        "destination": "./doc/code",
+        "recurse": true
+    }
+}

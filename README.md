@@ -1,50 +1,31 @@
-<a href="http://www.canopsis.org" >
-    <img src="https://github.com/capensis/canopsis/wiki/images/logo_canopsis.png"/>
-</a>
+# Canopsis, open-source hypervision
 
-[![pipeline status](https://git.canopsis.net/canopsis/canopsis/badges/develop/pipeline.svg)](https://git.canopsis.net/canopsis/canopsis/commits/develop)
+[![Pipeline status](https://git.canopsis.net/canopsis/canopsis/badges/develop/pipeline.svg)](https://git.canopsis.net/canopsis/canopsis/commits/develop)
 
-## What is Canopsis ?
+## About
 
-[Canopsis](http://canopsis.org) is an open-source [hypervisor](http://www.capensis.fr/solutions/hypervision/) whose goal is to <a href="https://github.com/capensis/canopsis/wiki/consolidation" target="_blank">aggregate/consolidate</a> information and events (containing <a href="https://github.com/capensis/canopsis/wiki/metrics">metrics</a> of different types such as performance, availability, etc.) coming from multiple sources to create a global solution for <a href="https://github.com/capensis/canopsis/wiki/Dashboard" target="_blank">monitoring</a> and <a href="https://github.com/capensis/canopsis/wiki/engines" target="_blank">administrating</a> resources.
+[Canopsis](http://www.canopsis.com) is a modular open-source technology whose goal is to **centralize**, **process** and **report** multiple sources of information, metrics and events into a single platform for monitoring and managing resources.
 
-Built to last on top of [proven Open Source technologies by and for all IT professionals](http://www.capensis.fr/solutions/supervision/). It is an event based architecture and it is modular by design. Plug your infrastructure tools like `Syslog`, `Nagios`, [`Shinken`](https://github.com/naparuba/shinken), `...` to [Canopsis](http://canopsis.org) and you're ready to go.
+[Multiple connectors](https://doc.canopsis.net/guide-connecteurs/) can be plugged in Canopsis, such as Icinga, Nagios®, Centreon, Zabbix, Logstash, SNMP, and more.
 
-A <a href="https://github.com/capensis/canopsis/wiki/Glossary" target="_blank">Glossary</a> page is also given for better descriptions about canopsis concepts.
+A demo is available at: [demo.canopsis.net](http://demo.canopsis.net).
 
-## How to try ?
+[![Canopsis UI](screenshot.png)](http://www.canopsis.com)
 
-You can try Canopsis on demo platform:
-* Master branch (stable): http://sakura.canopsis.net
-* Devel branch (unstable): http://sakura-devel.canopsis.net
+## Installation
 
-## How to install ?
+Canopsis can be installed through [Debian or CentOS packages](https://doc.canopsis.net/guide-administration/installation/installation-paquets/), or with [Docker images](https://doc.canopsis.net/guide-administration/installation/installation-conteneurs/).
 
-For a standalone version of Canopsis on CentOS 7 and Debian 8 (Jessie), you can use the [auto deploy](/STANDALONE-DEPLOY.md).
+## Documentation
 
-For a custom install, you can still use packages and follow [this documentation](/doc/docs/fr/guide_administrateur/package_install.md).
+Documentation is available (in French) at: [doc.canopsis.net](https://doc.canopsis.net).
 
-## How to use ?
+## Contributing
 
-To know more about Canopsis, have a look at <a href="https://canopsis.readthedocs.io" target="_blank">this documentation</a>
+Canopsis is built with Python, Go and Vue.js. This open-source edition is licensed under the GNU AGPLv3.
 
-## Other links
+Commercial offers are also available on [canopsis.com](http://www.canopsis.com).
 
-* <a href="http://www.canopsis.org" target="_blank">Community</a>
-* <a href="http://forums.monitoring-fr.org/index.php?board=127.0" target="_blank">Forum (french)</a>
+Main development is coordinated on [git.canopsis.net](https://git.canopsis.net/canopsis/canopsis), and then mirrored on [GitHub](https://github.com/capensis/canopsis).
 
-## Tested dependencies
-
-The following software versions have been tested to play nice with Canopsis: 
-
-
-|Software  | Canopsis 2.3 | Canopsis  >=2.5.7 |
-|----------|--------------|-------------------|
-|Rabbit    | 3.6.9        | 3.6.9             |
-|Erlang    | 19.3         | 19.3              |
-|MongoDB   | <= 3.4.10    | 3.4.10            |
-|InfluxDB  | 1.2.2        | 1.2.2             |
-|Python    | 2.7.13       | 2.7.13            |
-|Gunicorn  | 19.7.1       | 19.7.1            |
-|HAProxy   | 1.5.18       | 1.5.18            |
-
+© 2011–2019 Capensis

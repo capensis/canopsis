@@ -1,8 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     v-card
-      v-card-title
-        span.headline {{ $t(title) }}
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ title }}
       v-card-text
         v-container
           v-layout(row)
@@ -18,15 +19,19 @@
             v-validate="'required'",
             data-vv-name="output"
             )
-      v-card-actions
-        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
+      v-divider
+      v-layout.py-1(justify-end)
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
-import modalInnerItemsMixin from '@/mixins/modal/modal-inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { EVENT_ENTITY_TYPES, MODALS } from '@/constants';
+
+import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to cancel an alarm
@@ -40,7 +45,7 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
       form: {
@@ -50,7 +55,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || 'modals.createCancelEvent.title';
+      return this.config.title || this.$t('modals.createCancelEvent.title');
     },
 
     eventType() {

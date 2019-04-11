@@ -30,6 +30,7 @@ from canopsis.alerts.enums import AlarmField
 from canopsis.alerts.filter import AlarmFilter
 from canopsis.alerts.manager import Alerts
 from canopsis.check import Check
+from canopsis.common.collection import MongoCollection
 from canopsis.common.ethereal_data import EtherealData
 from canopsis.common.utils import merge_two_dicts
 from canopsis.confng import Configuration, Ini
@@ -76,8 +77,9 @@ class BaseTest(TestCase):
 
         conf = Configuration.load(Alerts.CONF_PATH, Ini)
         filter_ = {'crecord_type': 'statusmanagement'}
-        self.config_data = EtherealData(collection=self.config_storage._backend,
-                                        filter_=filter_)
+        self.config_data = EtherealData(
+            collection=MongoCollection(self.config_storage._backend),
+            filter_=filter_)
 
         self.event_publisher = Mock(spec=StatEventPublisher)
 
