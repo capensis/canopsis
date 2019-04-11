@@ -7,15 +7,15 @@
         :input-value="form.type",
         :false-value="$constants.SNMP_STATE_TYPES.simple",
         :true-value="$constants.SNMP_STATE_TYPES.template",
-        label="To custom",
+        :label="$t('modals.createSnmpRule.fields.state.labels.toCustom')",
         @change="updateTypeField"
         )
     v-divider(light)
     template(v-if="isTemplate")
       snmp-rule-form-module-mib-objects-form(
-      label="Define matching snmp var",
       :form="form.stateoid",
       :items="items",
+      :label="$t('modals.createSnmpRule.fields.state.labels.defineVar')",
       @input="updateField('stateoid', $event)"
       )
       v-layout(row, wrap)
@@ -27,7 +27,7 @@
             v-flex(xs10)
               v-text-field(
               :value="form[key]",
-              placeholder="write template",
+              :placeholder="$t('modals.createSnmpRule.fields.state.labels.writeTemplate')",
               @input="updateField(key, $event)"
               )
     template(v-else)

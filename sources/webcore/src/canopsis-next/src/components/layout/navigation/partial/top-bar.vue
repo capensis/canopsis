@@ -128,7 +128,7 @@ export default {
         },
         {
           route: { name: 'exploitation-snmp-rules' },
-          text: 'SNMP rules', // TODO: fix it
+          text: this.$t('snmpRules.title'),
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.snmpRule,
         },

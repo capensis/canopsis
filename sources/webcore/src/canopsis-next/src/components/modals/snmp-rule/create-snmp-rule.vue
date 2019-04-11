@@ -2,13 +2,13 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Create SNMP rule
+        span.headline {{ title }}
     v-card-text
       snmp-rule-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
-      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+      v-btn.primary(@click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -22,9 +22,6 @@ import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
 export default {
   name: MODALS.createSnmpRule,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: { SnmpRuleForm },
   mixins: [modalInnerMixin],
   data() {
@@ -52,6 +49,15 @@ export default {
     return {
       form: this.modal.config.snmpRule ? cloneDeep(this.modal.config.snmpRule) : defaultSnmpRule,
     };
+  },
+  computed: {
+    title() {
+      if (this.config.snmpRule) {
+        return this.$t('modals.createSnmpRule.edit.title');
+      }
+
+      return this.$t('modals.createSnmpRule.create.title');
+    },
   },
   methods: {
     async submit() {

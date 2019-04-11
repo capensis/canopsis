@@ -7,7 +7,7 @@
           v-text-field.vars-input.pt-0(
           slot="activator",
           :value="form.value",
-          label="Snmp vars match field",
+          :label="$t('modals.createSnmpRule.fields.moduleMibObjects.vars')",
           hide-details,
           @input="updateField('value', $event)"
           )
@@ -29,13 +29,13 @@
         v-flex(v-show="isVisible", xs12)
           v-text-field(
           :value="form.regex",
-          label="Regex",
+          :label="$t('modals.createSnmpRule.fields.moduleMibObjects.regex')",
           hide-details,
           @input="updateField('regex', $event)"
           )
           v-text-field(
           :value="form.formatter",
-          label="Format (capture group with \\x)",
+          :label="$t('modals.createSnmpRule.fields.moduleMibObjects.formatter')",
           hide-details,
           @input="updateField('formatter', $event)"
           )

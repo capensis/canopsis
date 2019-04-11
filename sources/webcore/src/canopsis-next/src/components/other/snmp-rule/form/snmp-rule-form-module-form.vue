@@ -1,14 +1,14 @@
 <template lang="pug">
   div
-    snmp-rule-form-field(label="oid")
+    snmp-rule-form-field-title(:label="$t('modals.createSnmpRule.fields.oid.title')")
     v-layout(row, wrap)
       v-flex.pr-1(xs6)
         v-autocomplete.pt-0(
-        placeholder="Select a mib module",
         :value="form.moduleName",
         :items="modules",
         :search-input.sync="searchInput",
         :loading="modulesPending",
+        :placeholder="$t('modals.createSnmpRule.fields.oid.labels.module')",
         hide-no-data,
         hide-details,
         @change="selectModule"
@@ -29,10 +29,10 @@
 import formMixin from '@/mixins/form';
 import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
-import SnmpRuleFormField from './snmp-rule-form-field-title.vue';
+import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
 
 export default {
-  components: { SnmpRuleFormField },
+  components: { SnmpRuleFormFieldTitle },
   mixins: [formMixin, entitiesSnmpMibMixin],
   model: {
     prop: 'form',
