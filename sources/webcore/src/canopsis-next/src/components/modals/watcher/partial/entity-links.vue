@@ -1,11 +1,12 @@
 <template lang="pug">
   div.mt-1
     div(v-for="category in linkList", :key="category.cat_name")
-      span.category.mr-2 {{ category.cat_name }}
-      v-divider(light)
-      div(v-for="(link, index) in category.links", :key="`links-${index}`")
-        div.pa-2.text-xs-right
-          a(:href="link.link", target="_blank") {{ link.label }}
+      template(v-if="category.links.length")
+        span.category.mr-2 {{ category.cat_name }}
+        v-divider(light)
+        div(v-for="(link, index) in category.links", :key="`links-${index}`")
+          div.pa-2.text-xs-right
+            a(:href="link.link", target="_blank") {{ link.label }}
 </template>
 
 <script>
