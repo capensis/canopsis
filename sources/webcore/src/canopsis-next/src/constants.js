@@ -836,3 +836,7 @@ export const WEBHOOK_TRIGGERS = {
   unsnooze: 'unsnooze',
   resolve: 'resolve',
 };
+
+export const EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex'];
+
+export const WEBHOOK_EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
