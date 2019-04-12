@@ -16,12 +16,13 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import linksMixin from '@/mixins/links';
 
 import AlarmColumnValueLink from './alarm-column-value-link.vue';
 
 export default {
   components: { AlarmColumnValueLink },
+  mixins: [linksMixin],
   props: {
     links: {
       type: Object,
@@ -35,21 +36,8 @@ export default {
   },
   computed: {
     linkList() {
-      const links = cloneDeep(this.links);
-
-      return Object.keys(links).reduce((acc, category) => {
-        const categoryLinks = links[category].map((link, index) => {
-          if (typeof link === 'object' && link.link && link.label) {
-            return link;
-          }
-
-          return {
-            label: `${category} - ${index}`,
-            link,
-          };
-        });
-
-        acc[category] = categoryLinks;
+      return Object.entries(this.links).reduce((acc, [category, categoryLinks]) => {
+        acc[category] = this.harmonizeLinks(categoryLinks, category);
 
         return acc;
       }, {});

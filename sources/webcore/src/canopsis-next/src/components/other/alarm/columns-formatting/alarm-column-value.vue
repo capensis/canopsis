@@ -122,15 +122,15 @@ export default {
 
       if (this.column.value.startsWith('links.')) {
         const category = this.column.value.slice(6);
-
-        const links = {};
-
-        links[category] = this.$options.filters.get(this.alarm, this.column.value) || [];
+        const links = {
+          [category]: this.$options.filters.get(this.alarm, this.column.value, null, []),
+        };
 
         return {
           bind: {
-            is: 'alarm-column-value-links',
             links,
+
+            is: 'alarm-column-value-links',
           },
         };
       }

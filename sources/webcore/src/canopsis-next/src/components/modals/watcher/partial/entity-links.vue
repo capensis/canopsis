@@ -10,7 +10,10 @@
 </template>
 
 <script>
+import linksMixin from '@/mixins/links';
+
 export default {
+  mixins: [linksMixin],
   props: {
     links: {
       type: Array,
@@ -22,33 +25,15 @@ export default {
     },
   },
   computed: {
-    /*
-    * The linkbuilders used to return the links directly as
-    * strings. They can now also return objects with the
-    * properties 'label' and 'link', allowing to change the link's
-    * label.
-    * The following code converts the "legacy" representation
-    * (strings) into the "new" representation, so they can be
-    * displayed in the same manner by the template.
-    */
-    linkList() {
-      const links = this.category ?
+    filteredLinks() {
+      return this.category ?
         this.links.filter(({ cat_name: catName }) => catName === this.category) :
         this.links;
+    },
 
-      return links.map((category) => {
-        const categoryLinks = category.links.reduce((acc, link, index) => {
-          if (typeof link === 'object' && link.link && link.label) {
-            acc.push(link);
-          } else {
-            acc.push({
-              label: `${category.cat_name} - ${index}`,
-              link,
-            });
-          }
-
-          return acc;
-        }, []);
+    linkList() {
+      return this.filteredLinks.map((category) => {
+        const categoryLinks = this.harmonizeLinks(category.links, category.cat_name);
 
         return {
           cat_name: category.cat_name,
