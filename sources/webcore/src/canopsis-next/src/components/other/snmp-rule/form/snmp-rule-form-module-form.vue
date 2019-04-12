@@ -11,17 +11,19 @@
         :placeholder="$t('modals.createSnmpRule.fields.oid.labels.module')",
         hide-no-data,
         hide-details,
-        @change="selectModule"
+        @change="selectModuleAndFirstMib"
         )
       v-flex.pl-1(xs6)
         v-select.pt-0(
-        :value="form.mibName",
+        :value="form.oid",
         :items="moduleMibs",
         :loading="moduleMibsPending",
+        :menu-props="{ offsetY: true }",
         item-text="name",
+        item-value="oid",
+        return-object,
         hide-details,
-        offset-y,
-        @input="updateField('mibName', $event)"
+        @input="selectModuleMib"
         )
 </template>
 
@@ -63,7 +65,7 @@ export default {
   },
   async mounted() {
     if (this.form.moduleName) {
-      await this.selectModule(this.form.moduleName);
+      await this.selectModule(this.form.moduleName, true);
     }
   },
   methods: {
@@ -85,6 +87,14 @@ export default {
       this.modulesPending = false;
     },
 
+    async selectModuleAndFirstMib(module) {
+      const data = await this.selectModule(module);
+
+      if (data && data.length) {
+        this.selectModuleMib(data[0]);
+      }
+    },
+
     async selectModule(module) {
       this.moduleMibsPending = true;
 
@@ -101,8 +111,23 @@ export default {
       });
 
       this.$emit('update:moduleMibs', data);
-
       this.moduleMibsPending = false;
+
+      return data;
+    },
+
+    selectModuleMib(moduleMib) {
+      const model = { ...this.form };
+
+      if (moduleMib) {
+        model.mibName = moduleMib.name;
+        model.oid = moduleMib.oid;
+      } else {
+        model.mibName = '';
+        model.oid = '';
+      }
+
+      this.updateModel(model);
     },
   },
 };
