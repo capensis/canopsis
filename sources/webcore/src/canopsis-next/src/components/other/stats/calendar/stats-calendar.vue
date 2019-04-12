@@ -264,6 +264,7 @@ export default {
 
     .multiple {
       & /deep/ .ds-calendar-event-menu {
+        position: relative;
         height: 20px;
 
         .ds-ev-title {
