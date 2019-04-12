@@ -13,12 +13,11 @@
         div.watcherName.pt-3(v-html="compiledTemplate")
         v-btn.pauseIcon(icon)
           v-icon(color="white") {{ secondaryIcon }}
-        v-btn(
+        v-btn.see-alarms-btn(
         v-if="isBothModalType && hasAlarmsListAccess",
-        icon,
+        flat,
         @click.stop="showAlarmListModal"
-        )
-          v-icon(color="white") {{ secondaryIcon }}
+        ) See alarms
 </template>
 
 <script>
@@ -125,12 +124,18 @@ export default {
     },
 
     itemClasses() {
-      return [
+      const classes = [
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
         `ml-${this.widget.parameters.margin.left}`,
       ];
+
+      if (this.isBothModalType && this.hasAlarmsListAccess) {
+        classes.push('v-card__with-see-alarms-btn');
+      }
+
+      return classes;
     },
 
     itemHeight() {
@@ -222,6 +227,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .v-card__with-see-alarms-btn {
+    padding-bottom: 18px;
+
+    .see-alarms-btn {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: .6em;
+      height: 18px;
+      color: white;
+      margin: 0;
+      background-color: rgba(0, 0, 0, .07);
+
+      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
+        background-color: rgba(0, 0, 0, .5);
+      }
+    }
+
+    .pauseIcon {
+      bottom: 12px;
+    }
+  }
+
   .pauseIcon {
     position: absolute;
     right: 0;
