@@ -13,8 +13,8 @@ export default {
     logo: '',
     appTitle: '',
     footer: '',
-    isLDAPAuthentEnabled: false,
-    isCASAuthentEnabled: false,
+    isLDAPAuthEnabled: false,
+    isCASAuthEnabled: false,
     casConfig: {},
   },
   getters: {
@@ -22,8 +22,8 @@ export default {
     logo: state => state.logo,
     appTitle: state => state.appTitle,
     footer: state => state.footer,
-    isLDAPAuthentEnabled: state => state.isLDAPAuthentEnabled,
-    isCASAuthentEnabled: state => state.isCASAuthentEnabled,
+    isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
+    isCASAuthEnabled: state => state.isCASAuthEnabled,
     casConfig: state => state.casConfig,
   },
   mutations: {
@@ -37,8 +37,8 @@ export default {
       state.appTitle = userInterface.app_title;
       state.footer = userInterface.footer;
 
-      state.isLDAPAuthentEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
-      state.isCASAuthentEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
+      state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
+      state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
 
       state.casConfig = loginConfig.casconfig;
     },

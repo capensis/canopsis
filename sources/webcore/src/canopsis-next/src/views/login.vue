@@ -8,8 +8,7 @@
         v-card
           v-card-title.primary.white--text
             v-layout(justify-space-between, align-center)
-              h3(v-if="!isLDAPAuthentEnabled") {{ $t('common.login') }}
-              h3(v-else) {{ $t('common.login') }} ({{ $t('login.standard') }}/{{ $t('login.LDAP') }})
+              h3 {{ title }}
               img.secondaryLogo(v-if="logo", src="@/assets/canopsis.png")
           v-card-text
             v-form.mt-3(@submit.prevent="submit")
@@ -45,10 +44,10 @@
                   v-btn.primary(type="submit") {{ $t('common.connect') }}
                   v-btn.my-4(
                   :href="casHref",
-                  v-if="isCASAuthentEnabled",
+                  v-if="isCASAuthEnabled",
                   color="secondary",
                   small
-                  ) {{ casConfig && casConfig.title ? casConfig.title : $t('login.loginWithCAS') }}
+                  ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.version.pr-2.mb-2 {{ version }}
 </template>
 
@@ -87,6 +86,10 @@ export default {
       }
 
       return canopsisLogo;
+    },
+
+    title() {
+      return this.isLDAPAuthEnabled ? `${this.$t('login.standard')}/${this.$t('login.LDAP')}` : this.$t('common.login');
     },
   },
   async mounted() {
