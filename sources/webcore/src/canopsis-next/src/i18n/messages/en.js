@@ -350,6 +350,7 @@ export default {
       fields: {
         moreInfo: 'More info',
         alarmList: 'Alarm list',
+        both: 'Both',
       },
     },
     templateEditor: 'Template',

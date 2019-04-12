@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
-  :class="getItemClasses",
+  :class="itemClasses",
   :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
   tile,
   @click.native="showAdditionalInfoModal"
@@ -11,7 +11,13 @@
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
-        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
+        v-btn.pauseIcon(icon)
+          v-icon(color="white") {{ secondaryIcon }}
+        v-btn(
+        v-if="isBothModalType && hasAlarmsListAccess",
+        icon,
+        @click.stop="showAlarmListModal"
+        )
           v-icon(color="white") {{ secondaryIcon }}
 </template>
 
@@ -62,18 +68,19 @@ export default {
     hasMoreInfosAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
     },
+
     hasAlarmsListAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
     },
+
     isPaused() {
       return this.watcher.active_pb_all;
     },
+
     hasWatcherPbehavior() {
       return this.watcher.active_pb_watcher;
     },
-    isPbehavior() {
-      return this.watcher.pbehavior.some(pbehavior => pbehavior.isActive);
-    },
+
     format() {
       if (!this.isPaused && !this.hasWatcherPbehavior) {
         const state = this.watcher.state.val;
@@ -102,6 +109,7 @@ export default {
         icon,
       };
     },
+
     secondaryIcon() {
       if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
         return WEATHER_ICONS.maintenance;
@@ -111,10 +119,12 @@ export default {
 
       return WEATHER_ICONS.pause;
     },
+
     compiledTemplate() {
       return compile(this.template, { entity: this.watcher });
     },
-    getItemClasses() {
+
+    itemClasses() {
       return [
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
@@ -122,20 +132,28 @@ export default {
         `ml-${this.widget.parameters.margin.left}`,
       ];
     },
+
     itemHeight() {
       return 4 + this.widget.parameters.heightFactor;
     },
+
     isBlinking() {
       return this.watcher.action_required;
+    },
+
+    isBothModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.both;
+    },
+
+    isAlarmListModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
     },
   },
   methods: {
     showAdditionalInfoModal() {
-      const isAlarmListModalType = this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
-
-      if (isAlarmListModalType && this.hasAlarmsListAccess) {
+      if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
         this.showAlarmListModal();
-      } else if (!isAlarmListModalType && this.hasMoreInfosAccess) {
+      } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
         this.showMainInfoModal();
       }
     },
