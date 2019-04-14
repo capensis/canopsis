@@ -203,24 +203,26 @@ export default {
 
     availableActions() {
       const { filteredActionsMap } = this;
-      const actions = [filteredActionsMap.assocTicket];
-
-      if (this.entity.state.val === ENTITIES_STATES.major) {
-        actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
-      }
+      const actions = [];
 
       if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);
       }
 
-      if (this.entity.alarm_display_name) {
-        actions.push(filteredActionsMap.cancel);
+      if (this.entity.state.val === ENTITIES_STATES.major) {
+        actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
       }
+
+      actions.push(filteredActionsMap.assocTicket);
 
       if (this.isPaused) {
         actions.push(filteredActionsMap.play);
       } else {
         actions.push(filteredActionsMap.pause);
+      }
+
+      if (this.entity.alarm_display_name) {
+        actions.push(filteredActionsMap.cancel);
       }
 
       return actions.filter(action => !!action);
