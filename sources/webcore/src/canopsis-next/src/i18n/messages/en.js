@@ -1092,4 +1092,7 @@ export default {
       },
     },
   },
+  serviceWeather: {
+    seeAlarms: 'See alarms',
+  },
 };

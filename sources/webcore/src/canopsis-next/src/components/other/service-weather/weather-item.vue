@@ -11,13 +11,13 @@
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
-        v-btn.pauseIcon(icon)
+        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
         v-if="isBothModalType && hasAlarmsListAccess",
         flat,
         @click.stop="showAlarmListModal"
-        ) See alarms
+        ) {{ $t('serviceWeather.seeAlarms') }}
 </template>
 
 <script>
@@ -227,15 +227,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  $seeAlarmBtnHeight: 18px;
+
   .v-card__with-see-alarms-btn {
-    padding-bottom: 18px;
+    padding-bottom: $seeAlarmBtnHeight;
 
     .see-alarms-btn {
       position: absolute;
       bottom: 0;
       width: 100%;
       font-size: .6em;
-      height: 18px;
+      height: $seeAlarmBtnHeight;
       color: white;
       margin: 0;
       background-color: rgba(0, 0, 0, .07);
@@ -243,10 +245,6 @@ export default {
       &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
         background-color: rgba(0, 0, 0, .5);
       }
-    }
-
-    .pauseIcon {
-      bottom: 12px;
     }
   }
 
