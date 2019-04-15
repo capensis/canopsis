@@ -1,6 +1,9 @@
 # Authentification
 
 - [LDAP](#ldap)
+    - [Activation du support LDAP](#activation)  
+    - [Configuration](#configuration)  
+    - [Utilisation](#utilisation)  
 - [SAML2](#saml2)  
 	- [Paramétrage ldP](#paramétrage-idp)  
 	- [Création du paramètrage côté Canopsis](#création-du-paramétrage-côté-canopsis)  
@@ -44,8 +47,9 @@ Voici un listing de paramètres nécessaires à la configuration LDAP :
 
 | Attribut     | Description                                                  | Exemple  |
 | ------------ | ------------------------------------------------------------ | -------- |
-| host         | Adresse du serveur LDAP                                      | srv-ldap |
-| port         | Port d'écoute du serveur LDAP                                | 389      |
+| ldap_uri     | Chaine de connexion LDAP                                     | ldaps://ldap.local |
+| host         | Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations* | srv-ldap |
+| port         | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations* | 389 |
 | admin_dn     | DN de l'utilisateur permettant l'authentification sur l'annuaire | uid=mon_user,ou=mon_org,dc=dom,dc=com |
 | admin_passwd | Mot de passe de l'utilisateur DN                             |          |
 | ufilter      | Filtre utilisateur. La valeur de l'utilisateur est présentée dans une variable notée **%s** | uid=%s |
@@ -73,6 +77,9 @@ La configuration se fait dans un fichier *json* : **ldapconfig.json**
 "id":"cservice.ldapconfig"
 }
 ````
+
+!!! Note
+    Vous pouvez remplacez les attributs **host** ET **port** par **ldap_uri**
 
 La requête suivante permet de poster cette configuration.  
 
