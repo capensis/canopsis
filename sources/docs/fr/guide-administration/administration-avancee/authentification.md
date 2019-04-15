@@ -21,6 +21,75 @@ Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
+### Activation
+
+Pour activer l'authentification *ldap*, le service doit être activé dans la configuration du serveur web.  
+Le fichier à modifier est "etc/webserver.conf".  
+Le service **canopsis.auth.ldap** est à ajouter aux providers d'authentification.
+
+````
+[auth]
+providers = canopsis.auth.authkey,canopsis.auth.ldap
+````
+
+Un redémarrage du serveur web est nécessaire.
+
+### Configuration
+
+La configuration de l'authentification se fait au moyen d'un requête sur l'API.  
+Vous devez rédiger un fichier de configuration et le poster sur l'API.  
+
+Voici un listing de paramètres nécessaires à la configuration LDAP :  
+
+
+| Attribut     | Description                                                  | Exemple  |
+| ------------ | ------------------------------------------------------------ | -------- |
+| host         | Adresse du serveur LDAP                                      | srv-ldap |
+| port         | Port d'écoute du serveur LDAP                                | 389      |
+| admin_dn     | DN de l'utilisateur permettant l'authentification sur l'annuaire | uid=mon_user,ou=mon_org,dc=dom,dc=com |
+| admin_passwd | Mot de passe de l'utilisateur DN                             |          |
+| ufilter      | Filtre utilisateur. La valeur de l'utilisateur est présentée dans une variable notée **%s** | uid=%s |
+| default_role | Rôle par défaut au moment de la première connexion           | visualisation |
+| attrs        | Translation d'attributs. Un utilisateur Canopsis dispose des attributs firstname, lastname, mail | "mail": "mail", "firstname": "givenName", "lastname" : "sn" |
+
+La configuration se fait dans un fichier *json* : **ldapconfig.json**
+
+````
+{
+"crecord_type":"ldapconfig",
+"crecord_name":"ldapconfig",
+"admin_dn":"uid=mon_user,ou=mon_org,dc=dom,dc=com",
+"ufilter":"uid=%s",
+"default_role":"visualisation",
+"user_dn":"ou=mon_org,dc=dom,dc=com",
+"admin_passwd":"***",
+"host":"x.x.x.x",
+"attrs":{
+  "mail":"mail",
+  "firstname":"givenName",
+  "lastname":"sn"
+},
+"port":389,
+"id":"cservice.ldapconfig"
+}
+````
+
+La requête suivante permet de poster cette configuration.  
+
+````
+curl -X POST -H "Content-type: application/json" -d @ldapconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/ldapconfig/cservice.ldapconfig'
+````
+
+Le résultat renvoyé doit être de type : 
+
+````
+{"total": 1, "data": [{"..."}], "success": true}
+````
+
+### Utilisation
+
+A ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis.  
+Le profil d'affectation sera celui spécifié dans la configuration.
 
 ## SAML2
 
