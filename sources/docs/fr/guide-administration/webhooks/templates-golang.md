@@ -66,7 +66,7 @@ En plus des fontions de base pour tester la valeur des variables, il existe plus
 
 #### `urlquery`
 
-`urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt dans l'adresse du service externe dépend de l'alarme : par exemple `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
+`urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket que le contenu contient des caractères spéciaux : par exemple `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
 
 #### `json` et `json_unquote`
 
@@ -94,17 +94,23 @@ Cette section présente différents exemples de templates pour les liens et pour
 
 Pas de variables, l'adresse du service externe sera toujours la même : `http://127.0.0.1:8069/post`
 
-#### Sans variables
+#### Avec variables
 
 ```json
 {
-    "url" : "http://127.0.0.1:8069/post"
+    "url" : "http://127.0.0.1:8069/edit/{{.Alarm.Value.Ticket.Value}}"
 }
 ```
 
-Pas de variables, l'adresse du service externe sera toujours la même : `http://127.0.0.1:8069/post`
+Ici l'adresse sera généré en fonction de la variable, ici le numéro de ticket.
 
-### Avec variables
+```json
+{
+    "url" : "http://127.0.0.1:8069/edit/fecf03f3599769ea0"
+}
+```
+
+### Templates pour payload
 
 #### Sans variables
 
