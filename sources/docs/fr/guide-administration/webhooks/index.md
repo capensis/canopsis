@@ -53,7 +53,7 @@ Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont util
 
 Le champ `hook` représente les conditions d'activation d'un webhook. Il contient obligatoirement `triggers` qui est un tableau de triggers et éventuellement des `patterns` sur les alarmes, les entités et les évènements.
 
-Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `"ackremove"`, `"cancel"`, `"uncancel"`, `"declareticket"`, `"assocticket"`, `"snooze"`, `"unsnooze"`, `"resolve"`, `"done"`, et `"comment"`.
+Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"uncancel"`, et `"unsnooze"`.
 
 | Nom                      | Description                                              |
 |:-------------------------|:---------------------------------------------------------|
@@ -61,8 +61,9 @@ Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `
 | `"ackremove"`            | Suppression de l'acquittement                            |
 | `"assocticket"`          | Association d'un ticket à l'alarme                       |
 | `"cancel"`               | Annulation de l'évènement                                |
-| `"create"`               | Création de l'évènement                                  |
+| `"changestate"`          | Modification et verrouillage de la criticité de l'alarme |
 | `"comment"`              | Envoi d'un commentaire                                   |
+| `"create"`               | Création de l'évènement                                  |
 | `"declareticket"`        | Déclaration d'un ticket à l'alarme                       |
 | `"done"`                 | Fin de l'alarme                                          |
 | `"resolve"`              | Résolution de l'alarme                                   |
