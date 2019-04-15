@@ -58,17 +58,24 @@ class LDAPBackend(BaseBackend):
         config = self.get_config()
 
         if not config:
-            self.logger.error("LDAP configuration not found")
+            self.logger.info("LDAP configuration not found")
             return False
 
         user = request.params.get("username", default=None)
         password = request.params.get("password", default=None)
 
-        self.logger.debug("Connecting to LDAP server: {0}:{1}".format(
-            config["host"], config["port"]
-        ))
 
-        conn = ldap.open(config["host"], config["port"])
+        if config["ldap_uri"]:
+            self.logger.info("Connecting to LDAP URI: {0}".format(
+                config["ldap_uri"]
+            ))
+            conn = ldap.initialize(config["ldap_uri"])
+        else:
+            self.logger.info("Connecting to LDAP server: {0}:{1}".format(
+                config["host"], config["port"]
+            ))
+            conn = ldap.open(config["host"], config["port"])
+
         conn.set_option(ldap.OPT_REFERRALS, 0)
         conn.set_option(ldap.OPT_NETWORK_TIMEOUT, ldap.OPT_NETWORK_TIMEOUT)
 
@@ -151,3 +158,4 @@ class LDAPBackend(BaseBackend):
 
 def get_backend(ws):
     return LDAPBackend(ws)
+
