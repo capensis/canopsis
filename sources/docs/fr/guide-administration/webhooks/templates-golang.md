@@ -60,11 +60,23 @@ La condition `{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{
 
 Ici, nous avons utilisé le `or` et le `eq`, mais il est possible de tester les conditions avec `and`, `not`, `ne` (not equal), `lt` (less than), `le` (less than or equal), `gt` (greater than) ou `ge` (greater than or equal).
 
-### Fonctionnalité `json`
+### Transformation des variables
 
-Une fonctionnalité pas présente de base dans les templates Go mais implémentée dans Canopsis est la fonction `json`. Cette fonction va transformer un champ en un élément directement insérable dans un fichier JSON.
+En plus des fontions de base pour tester la valeur des variables, il existe plusieurs fonctions pour transformer le contenu de la variable.
+
+#### `urlquery`
+
+`urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt dans l'adresse du service externe dépend de l'alarme : par exemple `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
+
+#### `json` et `json_unquote`
+
+Une fonctionnalité pas présente de base dans les templates Go mais implémentée dans Canopsis est la fonction `json`, ainsi que sa variante `json_unquote`. Ces fonctions vont transformer un champ en un élément directement insérable dans un fichier JSON et en conservant le contenu exact. Les caractères spéciaux dans les chaînes de caractères seront envoyés en tant que tel, sans traitement pas les engines Go.
+
+`json_unquote` va retirer les guillemets si le résultat est une chaîne de caractères, sinon il retourne la même chose que `json`.
 
 Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by someone"`, directement avec les guillemets et donc insérable dans un JSON.
+
+`json_unquote` va lui générer la chaîne `ACK by someone` qui n'est pas utilisable directement dans un JSON mais qui peut servir pour créer des textes plus complexes. `\"Voici un message : '{{ .Alarm.Value.ACK.Message | json_unquote }}'\"` va donner par exemples `"Voici un message : 'ACK by someone'"`.
 
 ## Exemples
 
@@ -72,7 +84,27 @@ Cette section présente différents exemples de templates pour les liens et pour
 
 ### Templates pour URL
 
-### Templates pour payload
+#### Sans variables
+
+```json
+{
+    "url" : "http://127.0.0.1:8069/post"
+}
+```
+
+Pas de variables, l'adresse du service externe sera toujours la même : `http://127.0.0.1:8069/post`
+
+#### Sans variables
+
+```json
+{
+    "url" : "http://127.0.0.1:8069/post"
+}
+```
+
+Pas de variables, l'adresse du service externe sera toujours la même : `http://127.0.0.1:8069/post`
+
+### Avec variables
 
 #### Sans variables
 
