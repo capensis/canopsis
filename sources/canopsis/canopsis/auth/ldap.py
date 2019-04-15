@@ -58,20 +58,20 @@ class LDAPBackend(BaseBackend):
         config = self.get_config()
 
         if not config:
-            self.logger.info("LDAP configuration not found")
+            self.logger.error("LDAP configuration not found")
             return False
 
         user = request.params.get("username", default=None)
         password = request.params.get("password", default=None)
 
 
-        if config["ldap_uri"]:
-            self.logger.info("Connecting to LDAP URI: {0}".format(
+        if config.get("ldap_uri"):
+            self.logger.debug("Connecting to LDAP URI: {0}".format(
                 config["ldap_uri"]
             ))
             conn = ldap.initialize(config["ldap_uri"])
         else:
-            self.logger.info("Connecting to LDAP server: {0}:{1}".format(
+            self.logger.debug("Connecting to LDAP server: {0}:{1}".format(
                 config["host"], config["port"]
             ))
             conn = ldap.open(config["host"], config["port"])
