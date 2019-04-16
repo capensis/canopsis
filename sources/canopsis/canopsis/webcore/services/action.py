@@ -73,6 +73,14 @@ def exports(ws):
         if element is None or not isinstance(element, dict):
             return gen_json_error(
                 {'description': 'nothing to insert'}, HTTP_ERROR)
+
+        # If element.get(...) fails, it returns None, which is evaluated as False
+        # Empty elements such as {}, [] and "" are also evaluated to False
+        # So element.get() will check if each value exists AND if the value isn't empty
+        if element.get("hook") and (element.get("fields") or element.get("regex")):
+            return gen_json_error(
+                {'description': 'Sent data has a hook and fields/regex defined at the same time'}, HTTP_ERROR)
+
         try:
             Action(**Action.convert_keys(element))
         except TypeError:
