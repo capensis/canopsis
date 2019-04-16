@@ -1,17 +1,28 @@
+import { find, omit } from 'lodash';
+
 import {
   MODALS,
   EVENT_ENTITY_TYPES,
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_RIGHTS_ACTIONS_MAP,
   WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT,
+  PBEHAVIOR_TYPES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import eventActionsWatcherEntityMixin from '@/mixins/event-actions/watcher-entity';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
-  mixins: [authMixin, modalMixin, eventActionsWatcherEntityMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    eventActionsWatcherEntityMixin,
+    entitiesPbehaviorMixin,
+    entitiesPbehaviorCommentMixin,
+  ],
   methods: {
     /**
      * Filter for available entity actions
@@ -93,6 +104,22 @@ export default {
           action: (output) => {
             this.addCancelActionToQueue({ entity: this.entity, output });
             this.actionsClicked.push(EVENT_ENTITY_TYPES.cancel);
+          },
+        },
+      });
+    },
+
+    prepareEditPbehaviorCommentsAction() {
+      const pbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.pause }) || {};
+
+      this.showModal({
+        name: MODALS.editPbehaviorComment,
+        config: {
+          title: 'Edit comments',
+          comments: pbehavior.comments,
+          action: async (comments) => {
+            const newComments = await comments.map(comment => omit(comment, ['key']));
+            await this.updateSeveralPbehaviorComments({ pbehavior, comments: newComments });
           },
         },
       });

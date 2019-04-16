@@ -16,27 +16,35 @@
                 v-icon(small) {{ icon.icon }}
         v-card(color="white black--text")
           v-card-text
-            v-layout(v-if="availableActions.length", row, align-center)
-              div {{ $t('common.actionsLabel') }}:
-              div(v-for="action in availableActions", :key="action.eventType")
-                v-tooltip(top)
-                  v-btn(
-                  slot="activator",
-                  @click.stop="action.action",
-                  :disabled="!isActionBtnEnable(action.eventType)",
-                  depressed,
-                  small,
-                  light,
-                  )
-                    v-icon {{ action.icon }}
-                  span {{ $t(`common.actions.${action.eventType}`) }}
+            v-layout(justify-space-between)
+              v-layout(v-if="availableActions.length", row, align-center)
+                div {{ $t('common.actionsLabel') }}:
+                div(v-for="action in availableActions", :key="action.eventType")
+                  v-tooltip(top)
+                    v-btn(
+                    slot="activator",
+                    @click.stop="action.action",
+                    :disabled="!isActionBtnEnable(action.eventType)",
+                    depressed,
+                    small,
+                    light,
+                    )
+                      v-icon {{ action.icon }}
+                    span {{ $t(`common.actions.${action.eventType}`) }}
+              v-menu(bottom, offset-y, @click.native.stop, open-on-hover)
+                v-btn(small, slot="activator")
+                  v-icon(small) comment
+                v-list
+                  v-list-tile(v-for="pbehavior in pausePbehaviors", :key="pbehavior._id")
+                    v-list-tile-title(@click="() => showEditCommentsModal(pbehavior)") {{ pbehavior._id }}
             entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
-import { find, isNull, pickBy } from 'lodash';
+import { find, isNull, pickBy, omit } from 'lodash';
 
 import {
+  MODALS,
   WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
   WEATHER_ICONS,
@@ -50,6 +58,8 @@ import {
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import EntityTemplate from './entity-template.vue';
 
@@ -61,8 +71,14 @@ export default {
     authMixin,
     modalMixin,
     widgetActionPanelWatcherEntityMixin,
+    entitiesPbehaviorCommentMixin,
+    entitiesWatcherEntityMixin,
   ],
   props: {
+    watcherId: {
+      type: String,
+      required: true,
+    },
     entity: {
       type: Object,
       required: true,
@@ -228,6 +244,26 @@ export default {
 
     isActionBtnEnable() {
       return action => !this.actionsClicked.includes(action);
+    },
+
+    pausePbehaviors() {
+      return this.entity.pbehavior.filter(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
+    },
+  },
+  methods: {
+    showEditCommentsModal(pbehavior) {
+      this.showModal({
+        name: MODALS.editPbehaviorComments,
+        config: {
+          title: 'Edit comments',
+          comments: pbehavior.comments,
+          action: async (comments) => {
+            const newComments = await comments.map(comment => omit(comment, ['key']));
+            await this.updateSeveralPbehaviorComments({ pbehavior, comments: newComments });
+            await this.fetchWatcherEntitiesList({ watcherId: this.watcherId });
+          },
+        },
+      });
     },
   },
 };
