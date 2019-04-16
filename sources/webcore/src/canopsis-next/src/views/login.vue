@@ -1,65 +1,61 @@
 <template lang="pug">
-  v-container.secondary(
-  fill-height,
-  fluid,
-  d-flex,
-  align-center
-  )
-    div
-      v-layout(justify-center, align-center, row)
-        v-flex(xs11, md6, lg4)
-          v-card
-            v-card-title.primary.white--text.elevation-3
-              v-layout(justify-space-between, align-center)
-                v-toolbar-title {{ $t('common.login') }}
-                  span(v-if="appTitle") - {{ appTitle }}
-                img.px-2(v-if="logo", src="@/assets/canopsis.png")
-            v-layout(row, wrap)
-              v-flex(xs12)
-                v-layout(justify-center)
-                  img.my-4.logo(:src="appLogo")
-              v-flex(xs12)
-                v-form.py-2(@submit.prevent="submit")
-                  v-flex(px-3)
-                    v-text-field(
-                    :label="$t('common.username')",
-                    :error-messages="errors.collect('username')",
-                    v-model="form.username",
-                    v-validate="'required'",
-                    color="primary",
-                    name="username",
-                    autofocus,
-                    clearable,
-                    outline
-                    )
-                  v-flex(px-3)
-                    v-text-field(
-                    :label="$t('common.password')",
-                    :error-messages="errors.collect('password')",
-                    v-model="form.password",
-                    v-validate="'required'",
-                    color="primary",
-                    name="password",
-                    type="password",
-                    clearable,
-                    outline
-                    )
-                  v-flex.px-3.py-2
-                    v-alert(:value="hasServerError", type="error")
-                      span {{ $t('login.errors.incorrectEmailOrPassword') }}
-                  v-flex(xs2 px-2)
-                    v-layout
-                      v-btn.primary(type="submit") {{ $t('common.connect') }}
-                v-divider
-                div(v-html="footer")
-      div.version.pr-2.mb-2 {{ version }}
+  v-container.secondary(fluid)
+    v-layout.container(fill-height, justify-center)
+      v-flex(md6, v-if="$options.filters.mq($mq, { md: true, l: true })")
+        v-layout(justify-center, align-center)
+          img.mainLogo(:src="appLogo")
+      v-flex(xs10 md4)
+        v-card
+          v-card-title.primary.white--text
+            v-layout(justify-space-between, align-center)
+              h3 {{ title }}
+              img.secondaryLogo(v-if="logo", src="@/assets/canopsis.png")
+          v-card-text
+            v-form.mt-3(@submit.prevent="submit")
+              v-flex
+                v-text-field(
+                :label="$t('common.username')",
+                :error-messages="errors.collect('username')",
+                v-model="form.username",
+                v-validate="'required'",
+                color="primary",
+                name="username",
+                autofocus,
+                clearable,
+                outline
+                )
+              v-flex
+                v-text-field(
+                :label="$t('common.password')",
+                :error-messages="errors.collect('password')",
+                v-model="form.password",
+                v-validate="'required'",
+                color="primary",
+                name="password",
+                type="password",
+                clearable,
+                outline
+                )
+              v-flex.px-3(v-if="hasServerError")
+                v-alert(:value="hasServerError", type="error")
+                  span {{ $t('login.errors.incorrectEmailOrPassword') }}
+              v-flex
+                v-layout(justify-space-between, align-center)
+                  v-btn.primary(type="submit") {{ $t('common.connect') }}
+                  v-btn.my-4(
+                  :href="casHref",
+                  v-if="isCASAuthEnabled",
+                  color="secondary",
+                  small
+                  ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
+    div.version.pr-2.mb-2 {{ version }}
 </template>
 
 <script>
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import logo from '@/assets/canopsis-green.png';
+import canopsisLogo from '@/assets/canopsis.png';
 
 export default {
   $_veeValidate: {
@@ -73,15 +69,27 @@ export default {
         username: '',
         password: '',
       },
+      activeTab: 0,
     };
   },
   computed: {
+    casHref() {
+      if (this.casConfig) {
+        return `${this.casConfig.server}/login?service=${this.casConfig.service}/logged_in`;
+      }
+
+      return null;
+    },
     appLogo() {
       if (this.logo) {
         return this.logo;
       }
 
-      return logo;
+      return canopsisLogo;
+    },
+
+    title() {
+      return this.isLDAPAuthEnabled ? `${this.$t('login.standard')}/${this.$t('login.LDAP')}` : this.$t('common.login');
     },
   },
   async mounted() {
@@ -117,6 +125,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .container {
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   .version {
     position: absolute;
     right: 0.5em;
@@ -125,10 +140,15 @@ export default {
     font-weight: bold;
   }
 
-  .logo {
-    width: auto;
-    height: auto;
-    max-width: 15em;
-    max-height: 15em;
+  .mainLogo {
+    max-width: 80%;
+    max-height: 20em;
+    object-fit: scale-down;
+  }
+
+  .secondaryLogo {
+    max-width: 40%;
+    max-height: 4em;
+    object-fit: scale-down;
   }
 </style>

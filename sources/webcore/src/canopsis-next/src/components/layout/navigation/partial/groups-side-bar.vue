@@ -212,8 +212,7 @@ export default {
 
   .logo {
     max-width: 100%;
-    max-height: 48px;
-    height: auto;
-    width: auto;
+    max-height: 100%;
+    object-fit: scale-down;
   }
 </style>

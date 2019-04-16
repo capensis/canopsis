@@ -164,6 +164,9 @@ export default {
     entities: 'entities',
   },
   login: {
+    standard: 'Standard',
+    LDAP: 'LDAP',
+    loginWithCAS: 'Login with CAS',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
     },
