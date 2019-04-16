@@ -66,7 +66,7 @@ En plus des fontions de base pour tester la valeur des variables, il existe plus
 
 #### `urlquery`
 
-`urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket que le contenu contient des caractères spéciaux : par exemple `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
+`urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
 
 #### `json` et `json_unquote`
 
@@ -76,7 +76,7 @@ Une fonctionnalité pas présente de base dans les templates Go mais implément�
 
 Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by someone"`, directement avec les guillemets et donc insérable dans un JSON.
 
-`json_unquote` va lui générer la chaîne `ACK by someone` qui n'est pas utilisable directement dans un JSON mais qui peut servir pour créer des textes plus complexes. `\"Voici un message : '{{ .Alarm.Value.ACK.Message | json_unquote }}'\"` va donner par exemples `"Voici un message : 'ACK by someone'"`.
+`json_unquote` va lui générer la chaîne `ACK by someone` qui n'est pas utilisable directement dans un JSON mais qui peut servir pour créer des textes plus complexes. `\"Voici un message : '{{ .Alarm.Value.ACK.Message | json_unquote }}'\"` va donner par exemple `"Voici un message : 'ACK by someone'"`.
 
 ## Exemples
 
@@ -132,7 +132,7 @@ Ce premier exemple va envoyer toujours le même payload simple, sans utilisation
 }
 ```
 
-A noter l'absence de `\"` autour de l'id 1337, comme on souhaite l'envoyer comme un nombre et non comme une chaîne de caractères.
+À noter l'absence de `\"` autour de l'id 1337, comme on souhaite l'envoyer comme un nombre et non comme une chaîne de caractères.
 
 #### Avec variables
 
