@@ -29,7 +29,7 @@ from canopsis.version import CanopsisVersionManager
 from canopsis.common.mongo_store import MongoStore
 
 VALID_USER_INTERFACE_PARAMS = [
-    'app_title', 'footer', 'logo'
+    'app_title', 'footer',  'login_page_description', 'logo'
 ]
 
 
