@@ -21,6 +21,8 @@ from __future__ import unicode_literals
 
 from bottle import request
 
+from pymongo.errors import PyMongoError
+
 from canopsis.action.manager import ActionManager
 from canopsis.common.collection import CollectionError
 from canopsis.common.converters import id_filter
@@ -33,6 +35,26 @@ def exports(ws):
     ws.application.router.add_filter('id_filter', id_filter)
 
     action_manager = ActionManager(*ActionManager.provide_default_basics())
+
+    @ws.application.get(
+        '/api/v2/actions'
+    )
+    def get_action_list():
+        """
+        Return the list of all actions.
+
+        :returns: <Action>
+        :rtype: list
+        """
+        try:
+            actions = action_manager.get_action_list()
+        except PyMongoError:
+            return gen_json_error(
+                {"description": "Can not retrieve the actions list from "
+                                "database, contact your administrator."},
+                HTTP_ERROR)
+
+        return gen_json(actions)
 
     @ws.application.get(
         '/api/v2/actions/<action_id:id_filter>'
