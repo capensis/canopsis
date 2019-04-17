@@ -17,6 +17,7 @@ export const ENTITIES_TYPES = {
   role: 'role',
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
+  snmpRule: 'snmpRule',
 };
 
 export const MODALS = {
@@ -63,6 +64,7 @@ export const MODALS = {
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
+  createSnmpRule: 'create-snmp-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -327,10 +329,10 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
+  dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
   datePicker: 'DD/MM/YYYY',
   timePicker: 'HH:mm',
-
-  dateTimePickerForValidation: 'dd/MM/yyyy HH:mm',
+  timePickerWithSeconds: 'HH:mm:ss',
 };
 
 export const STATS_OPTIONS = {
@@ -564,6 +566,7 @@ export const USERS_RIGHTS = {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
+      snmpRule: 'models_exploitation_snmpRule',
     },
   },
   business: {
@@ -840,3 +843,8 @@ export const WEBHOOK_TRIGGERS = {
 export const EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex'];
 
 export const WEBHOOK_EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
+
+export const SNMP_STATE_TYPES = {
+  simple: 'simple',
+  template: 'template',
+};

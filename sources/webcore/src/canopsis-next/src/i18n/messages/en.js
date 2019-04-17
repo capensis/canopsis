@@ -164,6 +164,9 @@ export default {
     entities: 'entities',
   },
   login: {
+    standard: 'Standard',
+    LDAP: 'LDAP',
+    loginWithCAS: 'Login with CAS',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
     },
@@ -479,9 +482,11 @@ export default {
         type: 'Type',
         message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+        exdate: 'Exdates',
       },
       buttons: {
         addComment: 'Add comment',
+        addExdate: 'Add exdate',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
@@ -742,6 +747,47 @@ export default {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
     },
+    createSnmpRule: {
+      create: {
+        title: 'Create SNMP rule',
+      },
+      edit: {
+        title: 'Edit SNMP rule',
+      },
+      fields: {
+        oid: {
+          title: 'oid',
+          labels: {
+            module: 'Select a mib module',
+          },
+        },
+        output: {
+          title: 'output',
+        },
+        resource: {
+          title: 'resource',
+        },
+        component: {
+          title: 'component',
+        },
+        connectorName: {
+          title: 'connector_name',
+        },
+        state: {
+          title: 'state',
+          labels: {
+            toCustom: 'To custom',
+            defineVar: 'Define matching snmp var',
+            writeTemplate: 'Write template',
+          },
+        },
+        moduleMibObjects: {
+          vars: 'Snmp vars match field',
+          regex: 'Regex',
+          formatter: 'Format (capture group with \\x)',
+        },
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -820,8 +866,8 @@ export default {
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Rrule',
-    stringLabel: 'Summary',
+    textLabel: 'Summary',
+    stringLabel: 'Rrule',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
@@ -950,6 +996,11 @@ export default {
     actionsRequired: 'Please add at least one action',
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+  },
+  snmpRules: {
+    title: 'SNMP rules',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
   },
   layout: {
     sideBar: {

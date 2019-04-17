@@ -2,7 +2,7 @@
   v-tabs.visible(v-model="activeTab", color="secondary lighten-1", dark, slider-color="primary", centered)
     v-tab(v-for="(tab, index) in tabs", :key="index") {{ tab }}
     v-tab-item
-      pbehaviors-list(:itemId="item._id")
+      pbehaviors-list(:itemId="item._id", :tabId="tabId")
     v-tab-item
       impact-depends(:impact="item.impact", :depends="item.depends")
     v-tab-item
@@ -23,6 +23,10 @@ export default {
   props: {
     item: {
       type: Object,
+      required: true,
+    },
+    tabId: {
+      type: String,
       required: true,
     },
   },

@@ -63,6 +63,15 @@ export const API_ROUTES = {
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
   webhook: '/api/v2/webhook',
+  snmpRule: {
+    list: '/snmprule',
+    create: '/snmprule/put',
+  },
+  snmpMib: {
+    list: '/snmpmib',
+    distinct: '/snmpmibdistinct',
+    upload: '/uploadmib',
+  },
   infos: {
     login: '/api/internal/login/login_info',
     app: '/api/internal/app_info',

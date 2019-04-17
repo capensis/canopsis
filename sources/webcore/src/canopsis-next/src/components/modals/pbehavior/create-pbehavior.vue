@@ -5,7 +5,8 @@
         span.headline {{ $t('modals.createPbehavior.title') }}
     v-card-text
       pbehavior-form(v-model="form")
-      pbehavior-comments-form(v-model="comments")
+      pbehavior-exdates-form.mt-2(v-show="form.rrule", v-model="exdate")
+      pbehavior-comments-form.mt-2(v-model="comments")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
@@ -24,6 +25,7 @@ import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
+import PbehaviorExdatesForm from '@/components/other/pbehavior/form/pbehavior-exdates-form.vue';
 import PbehaviorCommentsForm from '@/components/other/pbehavior/form/pbehavior-comments-form.vue';
 
 export default {
@@ -55,6 +57,15 @@ export default {
       }));
     },
 
+    pbehaviorToExdate(pbehavior = {}) {
+      const exdate = pbehavior.exdate || [];
+
+      return exdate.map(unix => ({
+        value: new Date(unix * 1000),
+        key: uid(),
+      }));
+    },
+
     formToPbehavior(form) {
       return {
         ...form,
@@ -68,14 +79,23 @@ export default {
     commentsToPbehaviorComments(comments) {
       return comments.map(comment => omit(comment, ['key']));
     },
+
+    exdateToPbehaviorExdate(exdate) {
+      return exdate.filter(({ value }) => value).map(({ value }) => moment(value).unix());
+    },
   },
-  components: { PbehaviorForm, PbehaviorCommentsForm },
+  components: {
+    PbehaviorForm,
+    PbehaviorExdatesForm,
+    PbehaviorCommentsForm,
+  },
   mixins: [authMixin, modalInnerMixin],
   data() {
     const { pbehavior = {} } = this.modal.config;
 
     return {
       form: this.$options.filters.pbehaviorToForm(pbehavior),
+      exdate: this.$options.filters.pbehaviorToExdate(pbehavior),
       comments: this.$options.filters.pbehaviorToComments(pbehavior),
     };
   },
@@ -87,6 +107,7 @@ export default {
         const pbehavior = this.$options.filters.formToPbehavior(this.form);
 
         pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.comments);
+        pbehavior.exdate = this.$options.filters.exdateToPbehaviorExdate(this.exdate);
 
         if (!pbehavior.author) {
           pbehavior.author = this.currentUser._id;

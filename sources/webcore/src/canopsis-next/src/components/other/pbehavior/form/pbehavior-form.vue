@@ -63,7 +63,10 @@ import RRuleForm from '@/components/forms/rrule.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimePickerField, RRuleForm },
+  components: {
+    DateTimePickerField,
+    RRuleForm,
+  },
   mixins: [authMixin, formMixin, modalMixin],
   model: {
     prop: 'form',
