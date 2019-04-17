@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { find, isNull, pickBy, omit } from 'lodash';
+import { find, isNull, pickBy } from 'lodash';
 
 import {
   CRUD_ACTIONS,
@@ -255,21 +255,6 @@ export default {
     },
   },
   methods: {
-    showEditCommentsModal(pbehavior) {
-      this.showModal({
-        name: MODALS.editPbehaviorComments,
-        config: {
-          title: 'Edit comments',
-          comments: pbehavior.comments,
-          action: async (comments) => {
-            const newComments = await comments.map(comment => omit(comment, ['key']));
-            await this.updateSeveralPbehaviorComments({ pbehavior, comments: newComments });
-            await this.fetchWatcherEntitiesList({ watcherId: this.watcherId });
-          },
-        },
-      });
-    },
-
     showPbehaviorsListModal() {
       this.showModal({
         name: MODALS.pbehaviorList,

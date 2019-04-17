@@ -42,7 +42,6 @@ export const MODALS = {
   watcher: 'watcher',
   createWatcherAssocTicketEvent: 'create-watcher-assoc-ticket-event',
   createWatcherPauseEvent: 'create-watcher-pause-event',
-  editPbehaviorComments: 'edit-pbehavior-comments',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
