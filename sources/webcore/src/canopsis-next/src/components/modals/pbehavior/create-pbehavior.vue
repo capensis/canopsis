@@ -15,7 +15,7 @@
 
 <script>
 import moment from 'moment';
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep, omit, isObject } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -35,6 +35,12 @@ export default {
   },
   filters: {
     pbehaviorToForm(pbehavior = {}) {
+      let rrule = pbehavior.rrule || '';
+
+      if (pbehavior.rrule && isObject(pbehavior.rrule)) {
+        ({ rrule } = pbehavior.rrule);
+      }
+
       return {
         author: pbehavior.author || '',
         name: pbehavior.name || '',
@@ -43,7 +49,7 @@ export default {
         filter: cloneDeep(pbehavior.filter || {}),
         type_: pbehavior.type_ || '',
         reason: pbehavior.reason || '',
-        rrule: pbehavior.rrule || '',
+        rrule,
       };
     },
 

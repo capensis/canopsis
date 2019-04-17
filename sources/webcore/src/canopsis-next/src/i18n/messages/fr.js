@@ -528,6 +528,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervals d\'éxécution',
       actionPending: 'action(s) en attente',
+      refreshEntities: 'Refraichir la liste des entités',
+      editPbehaviors: 'Editer les pbehaviors',
     },
     filter: {
       create: {

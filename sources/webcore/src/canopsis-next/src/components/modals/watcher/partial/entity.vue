@@ -17,26 +17,26 @@
         v-card(color="white black--text")
           v-card-text
             v-layout(justify-space-between)
-              v-layout(v-if="availableActions.length", row, align-center)
-                div {{ $t('common.actionsLabel') }}:
-                div(v-for="action in availableActions", :key="action.eventType")
-                  v-tooltip(top)
-                    v-btn(
-                    slot="activator",
-                    @click.stop="action.action",
-                    :disabled="!isActionBtnEnable(action.eventType)",
-                    depressed,
-                    small,
-                    light,
-                    )
-                      v-icon {{ action.icon }}
-                    span {{ $t(`common.actions.${action.eventType}`) }}
-              v-menu(bottom, offset-y, @click.native.stop, open-on-hover)
-                v-btn(small, slot="activator")
-                  v-icon(small) comment
-                v-list
-                  v-list-tile(v-for="pbehavior in pausePbehaviors", :key="pbehavior._id")
-                    v-list-tile-title(@click="() => showEditCommentsModal(pbehavior)") {{ pbehavior._id }}
+              v-flex(xs11)
+                v-layout(justify-space-between)
+                  v-layout(v-if="availableActions.length", row, align-center)
+                    div {{ $t('common.actionsLabel') }}:
+                    div(v-for="action in availableActions", :key="action.eventType")
+                      v-tooltip(top)
+                        v-btn(
+                        slot="activator",
+                        @click.stop="action.action",
+                        :disabled="!isActionBtnEnable(action.eventType)",
+                        depressed,
+                        small,
+                        light,
+                        )
+                          v-icon {{ action.icon }}
+                        span {{ $t(`common.actions.${action.eventType}`) }}
+              v-tooltip(top)
+                v-btn(small, @click="showPbehaviorsListModal", slot="activator")
+                  v-icon(small) edit
+                span {{ $t('modals.watcher.editPbehaviors') }}
             entity-template(:entity="entity", :template="template")
 </template>
 
@@ -44,6 +44,7 @@
 import { find, isNull, pickBy, omit } from 'lodash';
 
 import {
+  CRUD_ACTIONS,
   MODALS,
   WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
@@ -99,6 +100,7 @@ export default {
     const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
     return {
+      menu: false,
       state: this.entity.state.val,
       actionsClicked: [],
       actionsMap: {
@@ -267,6 +269,17 @@ export default {
         },
       });
     },
+
+    showPbehaviorsListModal() {
+      this.showModal({
+        name: MODALS.pbehaviorList,
+        config: {
+          pbehaviors: this.pausePbehaviors,
+          entityId: this.entity.entity_id,
+          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+        },
+      });
+    },
   },
 };
 </script>
@@ -287,5 +300,9 @@ export default {
 
   .entityName {
     line-height: 1.5em;
+  }
+
+  .pbehavior {
+    cursor: pointer;
   }
 </style>

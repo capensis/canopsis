@@ -559,6 +559,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
       actionPending: 'action(s) pending',
+      refreshEntities: 'Refresh entities list',
+      editPbehaviors: 'Edit pbehaviors',
     },
     filter: {
       create: {

@@ -44,7 +44,7 @@ import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
 import CreateWatcherAssocTicketEvent from './watcher/create-watcher-assoc-ticket-event.vue';
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
-import EditPbehaviorComments from './watcher/edit-pbehavior-comments.vue';
+import EditPbehaviorComments from './pbehavior/edit-pbehavior-comments.vue';
 import AddStat from './stats/add-stat.vue';
 import StatsDateInterval from './stats/stats-date-interval.vue';
 import StatsDisplayMode from './stats/stats-display-mode.vue';

@@ -1,3 +1,10 @@
+export const CRUD_ACTIONS = {
+  create: 'create',
+  read: 'read',
+  update: 'update',
+  delete: 'delete',
+};
+
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',

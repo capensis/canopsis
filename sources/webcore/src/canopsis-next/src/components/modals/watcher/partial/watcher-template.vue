@@ -44,7 +44,7 @@ export default {
       const entityNameField = hash.name || 'entity.name';
 
       return new Handlebars.SafeString(`
-        <div class="mt-2" v-for="watcherEntity in watcherEntities">
+        <div class="mt-2" v-for="watcherEntity in watcherEntities" :key="watcherEntity._id">
           <watcher-entity
           :watcherId="watcher.entity_id"
           :isWatcherOnPbehavior="watcher.active_pb_watcher"

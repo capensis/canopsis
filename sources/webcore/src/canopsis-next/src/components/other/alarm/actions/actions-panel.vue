@@ -85,7 +85,7 @@ export default {
           type: alarmsListActionsTypes.pbehaviorList,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
           title: this.$t('alarmList.actions.titles.pbehaviorList'),
-          method: this.showActionModal(MODALS.pbehaviorList),
+          method: this.showPbehaviorsListModal,
         },
         declareTicket: {
           type: alarmsListActionsTypes.declareTicket,
