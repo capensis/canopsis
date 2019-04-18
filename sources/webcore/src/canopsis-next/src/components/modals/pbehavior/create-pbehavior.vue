@@ -35,7 +35,7 @@ export default {
   },
   filters: {
     pbehaviorToForm(pbehavior = {}) {
-      let rrule = pbehavior.rrule || '';
+      let rrule = pbehavior.rrule || null;
 
       if (pbehavior.rrule && isObject(pbehavior.rrule)) {
         ({ rrule } = pbehavior.rrule);
@@ -83,7 +83,7 @@ export default {
     },
 
     commentsToPbehaviorComments(comments) {
-      return comments.map(comment => omit(comment, ['key']));
+      return comments.map(comment => omit(comment, ['key', 'ts']));
     },
 
     exdateToPbehaviorExdate(exdate) {

@@ -33,7 +33,7 @@
                         )
                           v-icon {{ action.icon }}
                         span {{ $t(`common.actions.${action.eventType}`) }}
-              v-tooltip(v-if="hasActivePbehavior", top)
+              v-tooltip(v-if="hasActivePbehavior && hasAccessToManagePbehaviors", top)
                 v-btn(small, @click="showPbehaviorsListModal", slot="activator")
                   v-icon(small) edit
                 span {{ $t('modals.watcher.editPbehaviors') }}
@@ -54,6 +54,7 @@ import {
   ENTITIES_STATES,
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
+  USERS_RIGHTS,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -227,11 +228,11 @@ export default {
         actions.push(filteredActionsMap.ack);
       }
 
+      actions.push(filteredActionsMap.assocTicket);
+
       if (this.entity.state.val === ENTITIES_STATES.major) {
         actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
       }
-
-      actions.push(filteredActionsMap.assocTicket);
 
       if (this.isPaused) {
         actions.push(filteredActionsMap.play);
@@ -252,6 +253,10 @@ export default {
 
     pausePbehaviors() {
       return this.entity.pbehavior.filter(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
+    },
+
+    hasAccessToManagePbehaviors() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.entityManagePbehaviors);
     },
   },
   methods: {
