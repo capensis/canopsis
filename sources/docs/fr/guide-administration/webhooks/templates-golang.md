@@ -78,6 +78,9 @@ Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by s
 
 `json_unquote` va lui générer la chaîne `ACK by someone` qui n'est pas utilisable directement dans un JSON mais qui peut servir pour créer des textes plus complexes. `\"Voici un message : '{{ .Alarm.Value.ACK.Message | json_unquote }}'\"` va donner par exemple `"Voici un message : 'ACK by someone'"`.
 
+!!! note
+    `json` et `json_unquote` sont disponibles uniquement dans les templates des [webhooks](index.md), pas ceux de l'event-filter.
+
 ## Exemples
 
 Cette section présente différents exemples de templates pour les liens et pour les payloads, accompagnés d'explications.
