@@ -1,3 +1,10 @@
+export const CRUD_ACTIONS = {
+  create: 'create',
+  read: 'read',
+  update: 'update',
+  delete: 'delete',
+};
+
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
@@ -613,6 +620,7 @@ export const USERS_RIGHTS = {
         entityPause: 'serviceweather_entityPause',
         entityPlay: 'serviceweather_entityPlay',
         entityCancel: 'serviceweather_entityCancel',
+        entityManagePbehaviors: 'serviceweather_entityManagePbehaviors',
 
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
@@ -708,6 +716,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.entityPause]: USERS_RIGHTS.business.weather.actions.entityPause,
     [WIDGETS_ACTIONS_TYPES.weather.entityPlay]: USERS_RIGHTS.business.weather.actions.entityPlay,
     [WIDGETS_ACTIONS_TYPES.weather.entityCancel]: USERS_RIGHTS.business.weather.actions.entityCancel,
+    [WIDGETS_ACTIONS_TYPES.weather.entityManagePbehaviors]:
+      USERS_RIGHTS.business.weather.actions.entityManagePbehaviors,
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
