@@ -55,6 +55,7 @@ import {
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
   USERS_RIGHTS,
+  ENTITIES_STATUSES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -198,6 +199,13 @@ export default {
         extraIcons.push({
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           color: 'blue',
+        });
+      }
+
+      if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
+        extraIcons.push({
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          color: 'grey darken-1',
         });
       }
 
