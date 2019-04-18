@@ -5,7 +5,7 @@
         v-layout(justify-space-between, align-center)
           span.headline {{ $t('alarmList.actions.titles.pbehaviorList') }}
       v-card-text
-        v-data-table(:headers="headers", :items="pbehaviors", disable-initial-sort)
+        v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
           template(slot="items", slot-scope="props")
             td(v-for="key in fields")
               span(
@@ -84,6 +84,13 @@ export default {
 
         return acc;
       }, []);
+    },
+    filteredPbehaviors() {
+      if (this.modal.config.onlyActive) {
+        return this.pbehaviors.filter(value => value.isActive);
+      }
+
+      return this.pbehaviors;
     },
   },
   mounted() {

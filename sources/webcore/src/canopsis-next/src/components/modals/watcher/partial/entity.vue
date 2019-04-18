@@ -33,7 +33,7 @@
                         )
                           v-icon {{ action.icon }}
                         span {{ $t(`common.actions.${action.eventType}`) }}
-              v-tooltip(top)
+              v-tooltip(v-if="hasActivePbehavior", top)
                 v-btn(small, @click="showPbehaviorsListModal", slot="activator")
                   v-icon(small) edit
                 span {{ $t('modals.watcher.editPbehaviors') }}
@@ -261,6 +261,7 @@ export default {
         config: {
           pbehaviors: this.pausePbehaviors,
           entityId: this.entity.entity_id,
+          onlyActive: true,
           availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
