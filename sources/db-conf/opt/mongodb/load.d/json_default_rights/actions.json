@@ -552,6 +552,13 @@
         "desc": "Service weather: Access to 'Cancel' action"
     },
     {
+        "_id": "serviceweather_entityManagePbehaviors",
+        "loader_id": "serviceweather_entityManagePbehaviors",
+        "crecord_name": "serviceweather_entityManagePbehaviors",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to pbehaviors management"
+    },
+    {
         "_id": "crudcontext_createEntity",
         "loader_id": "crudcontext_createEntity",
         "crecord_type": "action",
