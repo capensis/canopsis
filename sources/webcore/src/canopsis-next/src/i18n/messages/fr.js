@@ -3,7 +3,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from
 export default {
   common: {
     undefined: 'Non définie',
-    entity: 'Entitée',
+    entity: 'Entité',
     watcher: 'Observateur',
     pbehaviors: 'Comportements périodiques',
     widget: 'Widget',
