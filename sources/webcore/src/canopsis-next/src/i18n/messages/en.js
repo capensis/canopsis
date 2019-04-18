@@ -724,7 +724,7 @@ export default {
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
+      main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',
