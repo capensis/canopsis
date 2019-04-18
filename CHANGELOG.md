@@ -8,6 +8,23 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.16.0 - Due date : 2019-04-18
+
+ - [Documentation] Add documentation for LDAP authentication
+ - [Documentation] Add required kernel version for docker installation
+ - [Documentation] Improve webhooks documentation
+ - [Go] Add json and json_unquote functions to webhooks templates
+ - [Go] Fix last_update_date, which was not updated by axe
+ - [Go] Fix the computation of watchers' dependencies
+ - [Go] Fix the conversion of large numbers to strings in webhooks
+ - [Go] Fix CI by preventing the tests from being run in parallel
+ - [Go] Add statechange trigger
+ - [Python] Fix the webhook API, which returned invalid JSON
+ - [Python] Fix the action API, which rejected valid actions
+ - [Python] Add route that returns all the actions
+ - [Python] Add login_page_description to the login_info route
+ - [Python] Add ldap_uri in LDAP configuration
+
 # Canopsis 3.15.0 - Due date : 2019-04-04
 
  - [Packaging] Deprecate Debian 8 support
@@ -69,7 +86,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [Python] Fixed pybars3 updating problem for centos7
  - [Python] Added configuration file for healthcheck api
  - [UI] Add tab's id into URL
- - [UI] Add rights on 'create widget' and 'create tab' actions 
+ - [UI] Add rights on 'create widget' and 'create tab' actions
  - [UI] Fix - View display when double click
  - [UI] Refactor form mixin
  - [UI] Fix - Slide to first tab animation when entering a view
@@ -78,7 +95,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - ListAlarm] Add a 'links' column
  - [UI - Context] Add success/failure popup when creation mass pbehaviors
  - [UI - Service weather] Add links renderer
- - [UI - Stats] Refactor stats widgets 
+ - [UI - Stats] Refactor stats widgets
  - [UI - Stats] Add customizable text widget
  - [UI - Exploitation] Add type selector on Exploitation forms
  - [UI - CRUD Pbehaviors] Styles improvments
