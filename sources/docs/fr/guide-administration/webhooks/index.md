@@ -107,19 +107,7 @@ Par exemple, ce webhook va être activé si le trigger reçu par le moteur corre
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
 
-Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même. La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourés de doubles accolades.
-
-Les variables stockent des informations sur les alarmes, les événements et les entités. `{{ .Alarm }}` permet d'accéder aux propriétés d'une alarme, de même que `{{ .Event }}` pour un évènement et `{{ .Entity }}` pour une entité. Ces trois éléments contiennent plusieurs propriétés qu'on peut utiliser pour créer des chaînes dynamiques. Par exemple, `"Component : {{ .Alarm.Value.Component }}` va créer la chaîne de caractères `"Component : comp"` si le nom du component est `comp`.
-
-Dans l'exemple suivant, `{{ $comp := .Alarm.Value.Component }}{{ $res := .Alarm.Value.Resource }}http://mon-api.xyz/{{$comp}}/{{$res}}`, on déclare d'abord deux variables, `$comp` et `$res`. Ensuite, on utilise ces deux variables pour générer l'adress URL que va appeler le moteur axe, par exemple `http://mon-api.xyz/nom-du-component/nom-de-la-ressource`.
-
-On peut également générer du texte en fonction de l'état de la variable. Dans le cas suivant `"{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}"`, on obtiendra `"http://127.0.0.1:5000/even"` si le statut de l'alarm vaut 0, 2 ou 4, `"http://127.0.0.1:5000/odd"` sinon.
-
-De même façon que le `or` et le `eq`, il est possible de tester les conditions avec `and`, `not`, `ne` (not equal), `lt` (less than), `le` (less than or equal), `gt` (greater than) ou `ge` (greater than or equal).
-
-La fonction `js`, qui renvoie une chaîne de caractères échappée, peut être également mentionnée. Si, par exemple, la valeur dans `{{ .Event.Output }}` contient des caractères spéciaux comme des guillemets ou des backslashs, `{{ .Event.Output | js }}` permet d'échapper ces caractères.
-
-Pour plus d'informations, vous pouvez consulter la [documentaion officielle de Go sur les templates](https://golang.org/pkg/text/template).
+Pour plus d'informations, vous pouvez consulter la [documentaion sur les templates](templates-golang.md).
 
 ### Données externes
 
