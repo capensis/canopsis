@@ -113,7 +113,9 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 **Exemple du corps de la réponse** :
 
 ```json
-"declare_external_ticket"
+{
+    "_id": "declare_external_ticket"
+}
 ```
 
 #### Réponse en cas d'erreur
