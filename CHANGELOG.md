@@ -8,7 +8,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
-# Canopsis 3.16.0 - Due date : 2019-04-18
+# Canopsis 3.16.0 - Due date : 2019-04-19
 
  - [Documentation] Add documentation for LDAP authentication
  - [Documentation] Add required kernel version for docker installation
