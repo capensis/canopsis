@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import formArrayMixin from '@/mixins/form/array';
@@ -46,6 +46,10 @@ export default {
     patterns: {
       type: Array,
       default: () => [],
+    },
+    operators: {
+      type: Array,
+      default: () => EVENT_FILTER_RULE_OPERATORS,
     },
     disabled: {
       type: Boolean,
@@ -62,6 +66,7 @@ export default {
       this.showModal({
         name: MODALS.createEventFilterRulePattern,
         config: {
+          operators: this.operators,
           action: pattern => this.addItemIntoArray(pattern),
         },
       });
@@ -72,6 +77,7 @@ export default {
         name: MODALS.createEventFilterRulePattern,
         config: {
           pattern: this.patterns[index],
+          operators: this.operators,
           action: pattern => this.updateItemInArray(index, pattern),
         },
       });
