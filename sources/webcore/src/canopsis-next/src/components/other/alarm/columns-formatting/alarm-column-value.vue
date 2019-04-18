@@ -138,7 +138,7 @@ export default {
       return {
         bind: {
           is: 'ellipsis',
-          text: this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, ''),
+          text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
         },
         on: {
           textClicked: this.showInfoPopup,
