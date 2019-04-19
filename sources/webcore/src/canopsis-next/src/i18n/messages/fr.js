@@ -154,7 +154,7 @@ export default {
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
-        changeState: 'Changer lz criticité',
+        changeState: 'Changer la criticité',
         moreInfos: 'Plus d\'infos',
         variablesHelp: 'Liste des variables disponibles',
       },
@@ -201,7 +201,7 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     columnNames: 'Nom des colonnes',
     periodicRefresh: 'Rafraichissement périodique',
-    defaultNumberOfElementsPerPage: 'Nombre d\'élements/de pages par défaut',
+    defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
     elementsPerPage: 'Élements par page',
     filterOnOpenResolved: 'Filtre sur Open/Resolved',
     open: 'Ouverte',
@@ -301,7 +301,7 @@ export default {
     },
     createEntity: {
       createTitle: 'Créer une entité',
-      editTitle: 'Editer une entité',
+      editTitle: 'Éditer une entité',
       duplicateTitle: 'Dupliquer une entité',
       manageInfos: {
         infosList: 'Informations',
@@ -322,7 +322,7 @@ export default {
       },
       success: {
         create: 'Entité créée avec succès !',
-        edit: 'Entité editée avec succès !',
+        edit: 'Entité éditée avec succès !',
         duplicate: 'Entité dupliquée avec succès !',
       },
     },
@@ -333,13 +333,13 @@ export default {
       displayName: 'Nom',
       success: {
         create: 'Observateur créé avec succès !',
-        edit: 'Observateur edité avec succès !',
+        edit: 'Observateur édité avec succès !',
         duplicate: 'Observateur dupliqué avec succès !',
       },
     },
     addEntityInfo: {
       addTitle: 'Ajouter une information',
-      editTitle: 'Editer une information',
+      editTitle: 'Éditer une information',
     },
     view: {
       select: {
@@ -373,7 +373,7 @@ export default {
       errors: {
         rightCreating: 'Erreur sur les droits de création',
         rightRemoving: 'Erreur sur les droits de suppression',
-      }
+      },
     },
     createAckEvent: {
       title: 'Acquitter',
@@ -544,7 +544,7 @@ export default {
     addStat: {
       title: {
         add: 'Ajouter une statistique',
-        edit: 'Editer une statistique',
+        edit: 'Éditer une statistique',
       },
     },
     group: {
@@ -580,10 +580,10 @@ export default {
       title: 'Éditer un utilisateur',
     },
     createRole: {
-      title: 'Créer un rôle',
+      title: 'Créer un rôle ',
     },
     editRole: {
-      title: 'Éditer un role',
+      title: 'Éditer un rôle',
     },
     createRight: {
       title: 'Créer les droits',
@@ -610,13 +610,13 @@ export default {
       editPattern: 'Éditer le pattern',
       advanced: 'Avancée',
       addAField: 'Ajouter un champ',
-      simpleEditor: 'Editeur simple',
+      simpleEditor: 'Éditeur simple',
       field: 'Champ',
       value: 'Valeur',
-      advancedEditor: 'Editeur avancé',
+      advancedEditor: 'Éditeur avancé',
       comparisonRules: 'Règles de comparaison',
       enrichmentOptions: 'Options d\'enrichissement',
-      editActions: 'Editer les actions',
+      editActions: 'Éditer les actions',
       addAction: 'Ajouter une action',
       actions: 'Actions',
       from: 'Depuis',
@@ -652,7 +652,7 @@ export default {
       connectorName: 'Nom du connecteur',
       component: 'Composant',
       resource: 'Ressource',
-      output: 'Sortie',
+      output: 'Message',
       lastUpdateDate: 'Date de dernière modification',
       creationDate: 'Date de création',
       duration: 'Durée',
@@ -670,7 +670,7 @@ export default {
       connectorName: 'Nom du connecteur',
       enabled: 'Actif',
       tstart: 'Démarre',
-      tstop: 'Fini',
+      tstop: 'Finit',
       type_: 'Type',
       reason: 'Raison',
       rrule: 'Rrule',
@@ -856,7 +856,7 @@ export default {
       title: 'Type d\'affichage de la barre de vues',
       items: {
         sideBar: 'Barre latérale',
-        topBar: 'Barre d\entête',
+        topBar: 'Barre d\'entête',
       },
     },
   },

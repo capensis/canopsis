@@ -487,7 +487,7 @@ export default {
       application_label: 'Description',
       target_platform: 'Environment',
       scenario_label: 'Label',
-      scenario_probe_name: 'SondeProbe',
+      scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
       actionPending: 'action(s) pending',
     },
