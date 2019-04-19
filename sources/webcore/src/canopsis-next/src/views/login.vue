@@ -1,7 +1,7 @@
 <template lang="pug">
   div.mainContainer.secondary
     div.contentContainer
-      div User text
+      div.description(v-html="description")
       div.loginContainer
         v-card
           v-card-title.primary.white--text
@@ -34,17 +34,20 @@
                 clearable,
                 outline
                 )
-              v-flex.px-3(v-if="hasServerError")
+              v-flex(v-if="hasServerError")
                 v-alert(:value="hasServerError", type="error")
                   span {{ $t('login.errors.incorrectEmailOrPassword') }}
-              v-flex
+              v-flex.mt-4
                 v-layout(justify-space-between, align-center)
-                  v-btn(type="submit", color="primary") {{ $t('common.connect') }}
-        v-card.mt-2
+                  v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
+        v-card.mt-2(v-if="!isCASAuthEnabled",)
           v-card-text
             div.pa-3
               div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
-              v-btn(color="primary") {{ $t('common.connect') }}
+              v-btn.my-4(
+              :href="casHref",
+              color="primary",
+              ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.secondary.darken-1.footer
       a(href="https://doc.canopsis.net/") Documentation
       a(href="https://www.capensis.fr/canopsis/") Canopsis.com
@@ -143,19 +146,27 @@ export default {
   }
 
   .contentContainer {
-    min-height: 600px;
+    height: 580px;
     width: 60%;
     margin: auto;
-    // background-color: white;
 
     display: flex;
-    justify-content: space-between;
-  }
 
-  .loginContainer {
-    flex-grow: 0.5;
-    display: flex;
-    flex-flow: column;
+    .description {
+      max-height: 100%;
+      width: 90%;
+      overflow: hidden;
+      color: white;
+    }
+
+    .loginContainer {
+      width: 90%;
+      height: 100%;
+      flex-grow: 0.5;
+      display: flex;
+      flex-flow: column;
+      justify-content: space-between;
+    }
   }
 
   .secondaryLogo {

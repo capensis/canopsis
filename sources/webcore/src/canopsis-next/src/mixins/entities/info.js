@@ -12,6 +12,7 @@ export default {
       logo: 'logo',
       appTitle: 'appTitle',
       footer: 'footer',
+      description: 'description',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
