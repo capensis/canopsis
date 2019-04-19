@@ -172,6 +172,9 @@ export default {
     },
     infoPopup: 'Info popup',
   },
+  weather: {
+    moreInfos: 'More info',
+  },
   pbehaviors: {
     connector: 'Connector',
     connectorName: 'Connector name',
@@ -479,12 +482,12 @@ export default {
       ticketing: 'Ticketing',
       application_crit_label: 'Criticality',
       product_line: 'Product line',
-      service_period: 'Plage surveillanc',
+      service_period: 'Monitoring timespan',
       isInCarat: 'Cartographic repository',
       application_label: 'Description',
       target_platform: 'Environment',
       scenario_label: 'Label',
-      scenario_probe_name: 'Sonde',
+      scenario_probe_name: 'SondeProbe',
       scenario_calendar: 'Range of execution',
       actionPending: 'action(s) pending',
     },
@@ -686,7 +689,7 @@ export default {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
       [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
       [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {

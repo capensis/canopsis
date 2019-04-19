@@ -108,6 +108,15 @@ export default {
         infos: 'Infos',
       },
     },
+    actions: {
+      titles: {
+        editEntity: 'Éditer l\'entité',
+        duplicateEntity: 'Dupliquer l\'entité',
+        deleteEntity: 'Supprimer l\'entité',
+        pbehavior: 'Comportement périodique',
+        variablesHelp: 'Liste des variables disponibles',
+      },
+    },
   },
   search: {
     advancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
@@ -361,6 +370,10 @@ export default {
         edit: 'Erreur lors de  l\'édition de la vue...',
         delete: 'Erreur lors de la suppression de la vue...',
       },
+      errors: {
+        rightCreating: 'Erreur sur les droits de création',
+        rightRemoving: 'Erreur sur les droits de suppression',
+      }
     },
     createAckEvent: {
       title: 'Acquitter',
@@ -572,6 +585,14 @@ export default {
     editRole: {
       title: 'Éditer un role',
     },
+    createRight: {
+      title: 'Créer les droits',
+      fields: {
+        id: 'ID',
+        description: 'Description',
+        type: 'Type',
+      },
+    },
     eventFilterRule: {
       create: {
         title: 'Créer une règle',
@@ -582,7 +603,7 @@ export default {
         success: 'Règle créée avec succès !',
       },
       edit: {
-        title: 'Editer une règle',
+        title: 'Éditer une règle',
         success: 'Règle éditée avec succès !',
       },
       priority: 'Priorité',
