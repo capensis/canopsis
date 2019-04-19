@@ -55,6 +55,7 @@ import {
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
   USERS_RIGHTS,
+  ENTITIES_STATUSES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -201,6 +202,13 @@ export default {
         });
       }
 
+      if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
+        extraIcons.push({
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          color: 'grey darken-1',
+        });
+      }
+
       return extraIcons;
     },
 
@@ -240,7 +248,10 @@ export default {
         actions.push(filteredActionsMap.pause);
       }
 
-      if (this.entity.alarm_display_name) {
+      if (
+        this.entity.alarm_display_name &&
+        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
+      ) {
         actions.push(filteredActionsMap.cancel);
       }
 
