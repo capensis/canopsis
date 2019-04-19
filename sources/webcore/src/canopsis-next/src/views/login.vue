@@ -1,17 +1,15 @@
 <template lang="pug">
-  v-container.secondary(fluid)
-    v-layout.container(fill-height, justify-center)
-      v-flex(md6, v-if="$options.filters.mq($mq, { md: true, l: true })")
-        v-layout(justify-center, align-center)
-          img.mainLogo(:src="appLogo")
-      v-flex(xs10 md4)
+  div.mainContainer.secondary
+    div.contentContainer
+      div User text
+      div.loginContainer
         v-card
           v-card-title.primary.white--text
             v-layout(justify-space-between, align-center)
               h3 {{ title }}
-              img.secondaryLogo(v-if="logo", src="@/assets/canopsis.png")
+              img.secondaryLogo(src="@/assets/canopsis.png")
           v-card-text
-            v-form.mt-3(@submit.prevent="submit")
+            v-form.mt-3.pa-3(@submit.prevent="submit")
               v-flex
                 v-text-field(
                 :label="$t('common.username')",
@@ -41,14 +39,17 @@
                   span {{ $t('login.errors.incorrectEmailOrPassword') }}
               v-flex
                 v-layout(justify-space-between, align-center)
-                  v-btn.primary(type="submit") {{ $t('common.connect') }}
-                  v-btn.my-4(
-                  :href="casHref",
-                  v-if="isCASAuthEnabled",
-                  color="secondary",
-                  small
-                  ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
-    div.version.pr-2.mb-2 {{ version }}
+                  v-btn(type="submit", color="primary") {{ $t('common.connect') }}
+        v-card.mt-2
+          v-card-text
+            div.pa-3
+              div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
+              v-btn(color="primary") {{ $t('common.connect') }}
+    div.secondary.darken-1.footer
+      a(href="https://doc.canopsis.net/") Documentation
+      a(href="https://www.capensis.fr/canopsis/") Canopsis.com
+      a(:href="changeLogHref") Notes de version
+      div.version {{ version }}
 </template>
 
 <script>
@@ -79,6 +80,13 @@ export default {
       }
 
       return null;
+    },
+    changeLogHref() {
+      if (this.version) {
+        return `https://doc.canopsis.net/notes-de-versions/${this.version}/`;
+      }
+
+      return 'https://doc.canopsis.net/';
     },
     appLogo() {
       if (this.logo) {
@@ -125,30 +133,57 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .container {
+  .mainContainer {
     min-height: 100vh;
-    width: 100%;
+    min-width: 100%;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-flow: column;
   }
 
-  .version {
-    position: absolute;
-    right: 0.5em;
-    bottom: 0.5em;
-    color: white;
-    font-weight: bold;
+  .contentContainer {
+    min-height: 600px;
+    width: 60%;
+    margin: auto;
+    // background-color: white;
+
+    display: flex;
+    justify-content: space-between;
   }
 
-  .mainLogo {
-    max-width: 80%;
-    max-height: 20em;
-    object-fit: scale-down;
+  .loginContainer {
+    flex-grow: 0.5;
+    display: flex;
+    flex-flow: column;
   }
 
   .secondaryLogo {
-    max-width: 40%;
-    max-height: 4em;
+    max-width: 30%;
+    max-height: 3em;
     object-fit: scale-down;
+  }
+
+  .footer {
+    position: relative;
+    color: white;
+    height: 7em;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      padding: 0 2em;
+    }
+
+    .version {
+      line-height: 7em;
+      position: absolute;
+      right: 0.5em;
+      bottom: 0;
+    }
   }
 </style>
