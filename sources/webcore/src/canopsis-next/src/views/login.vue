@@ -1,53 +1,52 @@
 <template lang="pug">
   div.mainContainer.secondary
-    div.contentContainer
-      div.description(v-html="description")
-      div.loginContainer
-        v-card
-          v-card-title.primary.white--text
-            v-layout(justify-space-between, align-center)
-              h3 {{ title }}
-              img.secondaryLogo(src="@/assets/canopsis.png")
-          v-card-text
-            v-form.mt-3.pa-3(@submit.prevent="submit")
-              v-flex
-                v-text-field(
-                :label="$t('common.username')",
-                :error-messages="errors.collect('username')",
-                v-model="form.username",
-                v-validate="'required'",
-                color="primary",
-                name="username",
-                autofocus,
-                clearable,
-                outline
-                )
-              v-flex
-                v-text-field(
-                :label="$t('common.password')",
-                :error-messages="errors.collect('password')",
-                v-model="form.password",
-                v-validate="'required'",
-                color="primary",
-                name="password",
-                type="password",
-                clearable,
-                outline
-                )
-              v-flex(v-if="hasServerError")
-                v-alert(:value="hasServerError", type="error")
-                  span {{ $t('login.errors.incorrectEmailOrPassword') }}
-              v-flex.mt-4
-                v-layout(justify-space-between, align-center)
-                  v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
-        v-card.mt-2(v-if="!isCASAuthEnabled",)
-          v-card-text
-            div.pa-3
-              div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
-              v-btn.my-4(
-              :href="casHref",
+    div.description(v-html="description")
+    div.loginContainer
+      v-card
+        v-card-title.primary.white--text
+          v-layout(justify-space-between, align-center)
+            h3 {{ title }}
+            img.secondaryLogo(src="@/assets/canopsis.png")
+        v-card-text
+          v-form.mt-3.pa-3(@submit.prevent="submit")
+            v-flex
+              v-text-field(
+              :label="$t('common.username')",
+              :error-messages="errors.collect('username')",
+              v-model="form.username",
+              v-validate="'required'",
               color="primary",
-              ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
+              name="username",
+              autofocus,
+              clearable,
+              outline
+              )
+            v-flex
+              v-text-field(
+              :label="$t('common.password')",
+              :error-messages="errors.collect('password')",
+              v-model="form.password",
+              v-validate="'required'",
+              color="primary",
+              name="password",
+              type="password",
+              clearable,
+              outline
+              )
+            v-flex
+              v-layout(justify-space-between, align-center)
+                v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
+                v-flex(v-if="hasServerError", xs9)
+                  v-alert(:value="hasServerError", type="error")
+                    span {{ $t('login.errors.incorrectEmailOrPassword') }}
+      v-card.mt-2(v-show="!isCASAuthEnabled",)
+        v-card-text
+          div.pa-3
+            div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
+            v-btn.my-4(
+            :href="casHref",
+            color="primary",
+            ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.secondary.darken-1.footer
       a(href="https://doc.canopsis.net/") Documentation
       a(href="https://www.capensis.fr/canopsis/") Canopsis.com
@@ -137,45 +136,49 @@ export default {
 
 <style lang="scss" scoped>
   .mainContainer {
-    min-height: 100vh;
     min-width: 100%;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-flow: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: grid;
+
+    grid-template-columns: auto 30% 1% 30% auto;
+    grid-template-rows: 10% 65% 15% 10%;
+
+    grid-template-areas:
+      ". . . . ."
+      ". description . form ."
+      ". . . . ."
+      "footer footer footer footer footer";
   }
 
-  .contentContainer {
-    height: 580px;
-    width: 60%;
-    margin: auto;
+  .description {
+    grid-area: description;
 
+    max-height: 100%;
+    width: 100%;
+    overflow: hidden;
+    color: white;
+  }
+
+  .loginContainer {
+    grid-area: form;
+
+    width: 100%;
+    max-height: 100%;
+    flex-grow: 0.5;
     display: flex;
-
-    .description {
-      max-height: 100%;
-      width: 90%;
-      overflow: hidden;
-      color: white;
-    }
-
-    .loginContainer {
-      width: 90%;
-      height: 100%;
-      flex-grow: 0.5;
-      display: flex;
-      flex-flow: column;
-      justify-content: space-between;
-    }
+    flex-flow: column;
+    justify-content: space-between;
   }
 
   .secondaryLogo {
-    max-width: 30%;
-    max-height: 3em;
+    max-width: 35%;
+    max-height: 4em;
     object-fit: scale-down;
   }
 
   .footer {
+    grid-area: footer;
     position: relative;
     color: white;
     height: 7em;
