@@ -37,7 +37,7 @@
               v-layout(justify-space-between, align-center)
                 v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
                 v-flex(v-if="hasServerError", xs9)
-                  v-alert(:value="hasServerError", type="error")
+                  v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
       v-card.mt-2(v-show="!isCASAuthEnabled",)
         v-card-text
@@ -142,7 +142,7 @@ export default {
     display: grid;
 
     grid-template-columns: auto 30% 1% 30% auto;
-    grid-template-rows: 10% 65% 15% 10%;
+    grid-template-rows: 15% 60% 15% 10%;
 
     grid-template-areas:
       ". . . . ."

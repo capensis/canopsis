@@ -152,7 +152,7 @@ export default {
     LDAP: 'LDAP',
     loginWithCAS: 'Se connecter avec CAS',
     errors: {
-      incorrectEmailOrPassword: 'Mot de passe/Email incorrect',
+      incorrectEmailOrPassword: 'Mot de passe / Email incorrect',
     },
   },
   alarmList: {
