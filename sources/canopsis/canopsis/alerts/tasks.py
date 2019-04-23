@@ -40,7 +40,8 @@ def acknowledge(manager, alarm, author, message, event):
         '_t': 'ack',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     first_ack = not alarm.get(AlarmField.ack.value)
@@ -84,7 +85,8 @@ def unacknowledge(manager, alarm, author, message, event):
         '_t': 'ackremove',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.ack.value] = None
@@ -103,7 +105,8 @@ def cancel(manager, alarm, author, message, event):
         '_t': 'cancel',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.canceled.value] = step
@@ -122,7 +125,8 @@ def comment(manager, alarm, author, message, event):
         '_t': 'comment',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.comment.value] = step
@@ -141,7 +145,8 @@ def restore(manager, alarm, author, message, event):
         '_t': 'uncancel',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     canceled = alarm[AlarmField.canceled.value]
@@ -181,7 +186,8 @@ def declare_ticket(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': event.get('ticket', None),
-        'val': event.get('ticket', None)
+        'val': event.get('ticket', None),
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.ticket.value] = step
@@ -201,6 +207,7 @@ def done(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.done.value] = step
@@ -220,7 +227,8 @@ def associate_ticket(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': event.get('ticket', None),
-        'val': event['ticket']
+        'val': event['ticket'],
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.ticket.value] = step
@@ -241,7 +249,8 @@ def change_state(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
-        'val': event['state']
+        'val': event['state'],
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.state.value] = step
@@ -263,7 +272,8 @@ def snooze(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
-        'val': until
+        'val': until,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.snooze.value] = step
