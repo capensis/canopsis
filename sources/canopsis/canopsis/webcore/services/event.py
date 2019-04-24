@@ -32,6 +32,15 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
 
 
+def get_role():
+    """
+    Find current user, or return None
+    """
+    session = request.environ.get('beaker.session')
+    user = session.get('user', {})
+
+    return user.get('role', None)
+
 def send_events(ws, events, exchange='canopsis.events'):
     events = ensure_iterable(events)
 
@@ -40,6 +49,16 @@ def send_events(ws, events, exchange='canopsis.events'):
     retry_events = []
 
     for event in events:
+
+        author = event.get("author")
+        event_type = event.get("event_type")
+
+        if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket', 'done', 'assocticket', 'changestate', 'keepstate', 'snooze']:
+            try:
+                event['role'] = get_role()
+            except Exception as e:
+                ws.logger.error('Error while retrieving role for author {} : {}'.format(author, e))
+
         try:
             ws.amqp_pub.canopsis_event(event, exchange)
             sent_events.append(event)
