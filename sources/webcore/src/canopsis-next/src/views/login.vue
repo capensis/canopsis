@@ -1,6 +1,13 @@
 <template lang="pug">
   div.mainContainer.secondary
-    div.description(v-html="description")
+    div.description
+      div(v-if="description", v-html="description")
+      v-layout.descriptionText(v-else, wrap, justify-center, align-center)
+        v-flex.text-xs-center(xs6)
+          img.mainLogo(src="@/assets/canopsis.png")
+        v-flex.title.mt-4(
+        xs12
+        ) Outil de centralisation, de traitement et de présentation de l'ensemble des événements du SI.
     div.loginContainer
       v-card
         v-card-title.primary.white--text
@@ -140,23 +147,37 @@ export default {
     min-height: 100vh;
     overflow-x: hidden;
     display: grid;
+    align-items: center;
 
-    grid-template-columns: auto 30% 1% 30% auto;
-    grid-template-rows: 15% 60% 15% 10%;
+    grid-template-columns: auto 80% auto;
+    grid-template-rows: 15% auto auto 15% auto;
 
     grid-template-areas:
-      ". . . . ."
-      ". description . form ."
-      ". . . . ."
-      "footer footer footer footer footer";
+      ". . ."
+      ". description ."
+      ". form ."
+      ". . ."
+      "footer footer footer";
+
+    @media (min-width: 900px) {
+      grid-template-columns: auto 30% 1% 30% auto;
+      grid-template-rows: 15% auto 15% auto;
+
+      grid-template-areas:
+        ". . . . ."
+        ". description . form ."
+        ". . . . ."
+        "footer footer footer footer footer";
+    }
   }
 
   .description {
     grid-area: description;
-
+    min-height: 40em;
     max-height: 100%;
     width: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     color: white;
   }
 
@@ -164,11 +185,16 @@ export default {
     grid-area: form;
 
     width: 100%;
-    max-height: 100%;
+    min-height: 40em;
     flex-grow: 0.5;
     display: flex;
     flex-flow: column;
-    justify-content: space-between;
+  }
+
+  .mainLogo {
+    max-width: 80%;
+    max-height: 5em;
+    object-fit: scale-down;
   }
 
   .secondaryLogo {
@@ -181,7 +207,7 @@ export default {
     grid-area: footer;
     position: relative;
     color: white;
-    height: 7em;
+    min-height: 5em;
     margin-top: auto;
     display: flex;
     justify-content: center;
@@ -194,7 +220,7 @@ export default {
     }
 
     .version {
-      line-height: 7em;
+      line-height: 5em;
       position: absolute;
       right: 0.5em;
       bottom: 0;
