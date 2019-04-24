@@ -50,14 +50,12 @@ def send_events(ws, events, exchange='canopsis.events'):
 
     for event in events:
 
-        author = event.get("author")
         event_type = event.get("event_type")
-
         if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket', 'done', 'assocticket', 'changestate', 'keepstate', 'snooze']:
             try:
                 event['role'] = get_role()
             except Exception as e:
-                ws.logger.error('Error while retrieving role for author {} : {}'.format(author, e))
+                ws.logger.error('Error while retrieving role : {}'.format(e))
 
         try:
             ws.amqp_pub.canopsis_event(event, exchange)
