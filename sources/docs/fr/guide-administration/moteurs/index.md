@@ -71,7 +71,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -autoDeclareTickets
         Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
   -autoRecomputeWatchers
-        Recalcule automatiquement l'état des watchets chaque minute.
+        Recalcule automatiquement l'état des watchers chaque minute.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
@@ -86,6 +86,8 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -version
         version infos
 ```
+
+Le flag `autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur axe.  
 
 ### Utilisation de engine-che
 
