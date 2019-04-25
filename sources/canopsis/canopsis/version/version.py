@@ -24,6 +24,8 @@ import os
 
 VERSION_FILE = "VERSION.txt"
 
+CANOPSIS_EDITION_ARG = '--canopsis_edition'
+CANOPSIS_STACK_ARG = '--canopsis_stack'
 CANOPSIS_VERSION_ARG = '--canopsis-version'
 
 __VERSION_PATTERN = re.compile(r'(\d+\.\d+\.\d+)')
