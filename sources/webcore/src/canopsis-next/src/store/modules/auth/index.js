@@ -70,6 +70,10 @@ export default {
 
         const { data: [currentUser] } = await request.get(API_ROUTES.currentUser);
 
+        if (currentUser.ui_language) {
+          dispatch('i18n/setLocale', currentUser.ui_language, { root: true });
+        }
+
         return commit(types.FETCH_USER_COMPLETED, currentUser);
       } catch (err) {
         dispatch('logout');
