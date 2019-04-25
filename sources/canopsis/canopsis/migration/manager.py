@@ -72,7 +72,7 @@ class MigrationTool(object):
         Put Canopsis version document if a ``__canopsis_version`` attribute
         is set.
         """
-        if self.__canopsis_edition and self.__canopsis_stack and self.__canopsis_version:
+        if self.__canopsis_version:
             store = MongoStore.get_default()
             collection = \
                 store.get_collection(CanopsisVersionManager.COLLECTION)
