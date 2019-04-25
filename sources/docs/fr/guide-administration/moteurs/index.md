@@ -70,6 +70,8 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ```
   -autoDeclareTickets
         Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
+  -autoRecomputeWatchers
+        Recalcule automatiquement l'état des watchets chaque minute.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
