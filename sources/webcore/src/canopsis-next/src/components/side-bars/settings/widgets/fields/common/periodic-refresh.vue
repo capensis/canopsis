@@ -29,7 +29,7 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => ({ enabled: false, interval: '10' }),
+      default: () => ({ enabled: false, interval: '60' }),
     },
   },
   data() {

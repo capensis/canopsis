@@ -902,4 +902,7 @@ export default {
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
   },
+  serviceWeather: {
+    seeAlarms: 'Voir les alarmes',
+  },
 };

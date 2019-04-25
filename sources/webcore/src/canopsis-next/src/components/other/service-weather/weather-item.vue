@@ -240,7 +240,7 @@ export default {
       height: $seeAlarmBtnHeight;
       color: white;
       margin: 0;
-      background-color: rgba(0, 0, 0, .07);
+      background-color: rgba(0, 0, 0, .2);
 
       &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
         background-color: rgba(0, 0, 0, .5);
@@ -251,7 +251,7 @@ export default {
   .pauseIcon {
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: 1em;
     cursor: inherit;
   }
 
