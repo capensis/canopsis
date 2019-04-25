@@ -26,7 +26,7 @@
               v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
             td
               div
-                v-btn(v-if="hasUpdateAnyUserAccess", @click="showEditUserModal(props.item._id)", icon)
+                v-btn(v-if="hasUpdateAnyUserAccess", @click="showEditUserModal(props.item)", icon)
                   v-icon edit
                 v-btn(v-if="hasDeleteAnyUserAccess", @click="showRemoveUserModal(props.item._id)", icon)
                   v-icon(color="red darken-4") delete
@@ -40,13 +40,16 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
+import sha1 from 'sha1';
+import { isEmpty, omit, cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
+
+import { generateUser } from '@/helpers/entities';
 
 import RefreshBtn from '@/components/other/view/refresh-btn.vue';
 
@@ -116,12 +119,23 @@ export default {
       });
     },
 
-    showEditUserModal(id) {
+    showEditUserModal(user) {
       this.showModal({
         name: MODALS.createUser,
         config: {
           title: this.$t('modals.editUser.title'),
-          userId: id,
+          user,
+          action: async (data) => {
+            const editedUser = cloneDeep(user);
+
+            if (data.password && data.password !== '') {
+              editedUser.shadowpasswd = sha1(data.password);
+            }
+
+            await this.createUser({ data: { ...editedUser, ...omit(data, ['password']) } });
+
+            await this.fetchUsersListWithPreviousParams();
+          },
         },
       });
     },
@@ -129,6 +143,25 @@ export default {
     showCreateUserModal() {
       this.showModal({
         name: MODALS.createUser,
+        config: {
+          action: async (data) => {
+            const user = { ...generateUser() };
+
+            if (data.password && data.password !== '') {
+              user.shadowpasswd = sha1(data.password);
+            }
+
+            await this.createUser({ data: { ...user, ...omit(data, ['password']) } });
+
+            const requests = [this.fetchUsersListWithPreviousParams()];
+
+            if (user._id === this.currentUser._id) {
+              requests.push(this.fetchCurrentUser());
+            }
+
+            await Promise.all(requests);
+          },
+        },
       });
     },
 

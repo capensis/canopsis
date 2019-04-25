@@ -59,7 +59,7 @@
           :items="languages"
           )
         v-layout(row, align-center, v-if="!isNew")
-          div {{ $t('common.authKey') }}: {{ user.authkey }}
+          div {{ $t('common.authKey') }}: {{ config.user.authkey }}
           v-tooltip(left)
             v-btn(@click.stop="$copyText(user.authkey)", slot="activator", small, fab, icon, depressed)
               v-icon file_copy
@@ -77,12 +77,9 @@
 </template>
 
 <script>
-import sha1 from 'sha1';
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
-
-import { generateUser } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -127,10 +124,6 @@ export default {
       return this.config.title || this.$t('modals.createUser.title');
     },
 
-    user() {
-      return this.config.userId ? this.getUserById(this.config.userId) : null;
-    },
-
     passwordRules() {
       if (this.isNew) {
         return 'required';
@@ -139,14 +132,14 @@ export default {
       return null;
     },
     isNew() {
-      return !this.user;
+      return !this.config.user;
     },
   },
   async mounted() {
     await this.fetchRolesList({ params: { limit: 0 } });
 
     if (!this.isNew) {
-      this.form = pick(this.user, [
+      this.form = pick(this.config.user, [
         '_id',
         'firstname',
         'lastname',
@@ -165,7 +158,12 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const formData = this.isNew ? { ...generateUser() } : { ...this.user };
+        if (this.config.action) {
+          await this.config.action(this.form);
+        }
+
+        /*
+        const formData = this.isNew ? { ...generateUser() } : { ...this.modal.config.user };
 
         if (this.form.password && this.form.password !== '') {
           formData.shadowpasswd = sha1(this.form.password);
@@ -180,6 +178,7 @@ export default {
         }
 
         await Promise.all(requests);
+        */
 
         this.hideModal();
       }

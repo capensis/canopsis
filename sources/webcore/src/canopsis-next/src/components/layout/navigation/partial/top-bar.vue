@@ -29,18 +29,14 @@
       v-menu(bottom, offset-y, offset-x)
         v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
         v-list.pb-0
-          template(v-if="currentUser.firstname && currentUser.lastname")
-            v-list-tile
-              v-list-tile-title
-                p {{ currentUser.firstname }} {{ currentUser.lastname }}
-            v-divider
           v-list-tile
-            v-list-tile-title
-              v-layout
-                div {{ $t('user.role') }} :
-                div.px-1 {{ currentUser.role }}
-          v-divider
-          v-list-tile(two-line)
+            v-list-tile-content
+              v-btn.ma-0.pa-1(flat, @click.prevent="showEditUserModal")
+                v-layout(align-center)
+                  v-icon person
+                  div.ml-2 Voir le profil
+          //v-divider
+          // v-list-tile(two-line)
             v-list-tile-content
               v-layout(align-center)
                 v-flex
@@ -51,29 +47,20 @@
                   div.px-1.font-italic {{ $t('common.undefined') }}
                 v-btn(@click.stop="editDefaultView", small, fab, icon, depressed)
                   v-icon edit
-          v-divider
-          v-list-tile(two-line)
+          v-list-tile
             v-list-tile-content
-              v-layout(align-center)
-                v-flex
-                  div {{ $t('common.authKey') }}:
-                v-flex
-                  div.px-1.caption.font-italic {{ currentUser.authkey }}
-                v-tooltip(left)
-                  v-btn(@click.stop="$copyText(currentUser.authkey)", slot="activator", small, fab, icon, depressed)
-                    v-icon file_copy
-                  span {{ $t('modals.variablesHelp.copyToClipboard') }}
-          v-divider
-          v-list-tile(@click.prevent="logout")
-            v-list-tile-title
-              v-layout(align-center)
-                div.error--text {{ $t('common.logout') }}
-                v-icon.pl-1(color="error") exit_to_app
+              v-btn.ma-0.pa-1.error--text(flat, @click.prevent="logout")
+                v-layout(align-center)
+                  v-icon exit_to_app
+                  div.ml-2 {{ $t('common.logout') }}
     template(v-if="isShownGroupsTopBar", slot="extension")
       groups-top-bar
 </template>
 
 <script>
+import sha1 from 'sha1';
+import { omit, cloneDeep } from 'lodash';
+
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import appMixin from '@/mixins/app';
@@ -168,6 +155,27 @@ export default {
     },
   },
   methods: {
+    showEditUserModal() {
+      this.showModal({
+        name: MODALS.createUser,
+        config: {
+          title: this.$t('modals.editUser.title'),
+          user: this.currentUser,
+          action: async (data) => {
+            const editedUser = cloneDeep(this.currentUser);
+
+            if (data.password && data.password !== '') {
+              editedUser.shadowpasswd = sha1(data.password);
+            }
+
+            await this.createUser({ data: { ...editedUser, ...omit(data, ['password']) } });
+
+            await this.fetchCurrentUser();
+          },
+        },
+      });
+    },
+
     editDefaultView() {
       this.showModal({
         name: MODALS.selectView,
