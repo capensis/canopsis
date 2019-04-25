@@ -27,6 +27,7 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.userinterface.manager import UserInterfaceManager
 from canopsis.version import CanopsisVersionManager
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
     'app_title', 'footer',  'login_page_description', 'logo'
@@ -105,6 +106,32 @@ def exports(ws):
         cservices.update(get_user_interface())
         cservices.update(get_version())
         return gen_json(cservices)
+
+    @ws.application.post('/api/internal/properties')
+    def update_canopsis_properties():
+        try:
+            doc = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+
+        store = MongoStore.get_default()
+        version_collection = store.get_collection(
+            name=CanopsisVersionManager.COLLECTION)
+
+        try:
+            resp = CanopsisVersionManager(version_collection).\
+                put_canopsis_document(doc.get("edition"),
+                                      doc.get("stack"), None)
+            return gen_json(resp)
+        except CollectionError as ce:
+            ws.logger.error('Update edition/stack error: {}'.format(ce))
+            return gen_json_error(
+                {'description': 'Error while updating edition/stack values'},
+                HTTP_ERROR
+            )
 
     @ws.application.get('/api/internal/app_info')
     def get_internal_app_info():
