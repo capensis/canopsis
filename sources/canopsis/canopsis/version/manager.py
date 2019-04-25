@@ -28,6 +28,8 @@ class CanopsisVersionManager(object):
     """
 
     COLLECTION = "configuration"
+    EDITION_FIELD = "edition"
+    STACK_FIELD = "stack"
     VERSION_FIELD = "version"
     __DOCUMENT_ID = "canopsis_version"
 
@@ -38,7 +40,7 @@ class CanopsisVersionManager(object):
         """
         self.__collection = MongoCollection(collection)
 
-    def find_canopsis_version_document(self):
+    def find_canopsis_document(self):
         """
         Find Canopsis version document.
 
@@ -50,7 +52,7 @@ class CanopsisVersionManager(object):
             '_id': self.__DOCUMENT_ID
         })
 
-    def put_canopsis_version_document(self, version):
+    def put_canopsis_document(self, version, stack, edition):
         """
         Put Canopsis version document (upsert).
 
@@ -64,7 +66,9 @@ class CanopsisVersionManager(object):
             },
             {
                 '_id': self.__DOCUMENT_ID,
-                self.VERSION_FIELD: version
+                self.VERSION_FIELD: version,
+                self.EDITION_FIELD: edition,
+                self.STACK_FIELD: stack
             },
             upsert=True
         )

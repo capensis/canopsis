@@ -50,9 +50,13 @@ def get_version():
     version_collection = \
         store.get_collection(name=CanopsisVersionManager.COLLECTION)
     document = CanopsisVersionManager(version_collection).\
-        find_canopsis_version_document()
+        find_canopsis_document()
 
-    return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
+    return {
+        CanopsisVersionManager.EDITION_FIELD: document[CanopsisVersionManager.EDITION_FIELD],
+        CanopsisVersionManager.STACK_FIELD: document[CanopsisVersionManager.STACK_FIELD],
+        CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]
+    }
 
 
 def get_login_config(ws):
