@@ -12,11 +12,18 @@
       v-card
         v-card-title.primary.white--text
           v-layout(justify-space-between, align-center)
-            h3 {{ title }}
+            h3 {{ $t('common.login') }}
             img.secondaryLogo(src="@/assets/canopsis.png")
         v-card-text
-          v-form.mt-3.pa-3(@submit.prevent="submit")
-            v-flex
+          v-form.pa-2(@submit.prevent="submit")
+            v-tooltip.ma-1(right, v-if="isLDAPAuthEnabled")
+              v-icon(slot="activator") help
+              v-layout(wrap)
+                v-flex(xs12) {{ $t('login.connectionProtocols') }}
+                ul
+                  li {{ $t('login.standard') }}
+                  li(v-if="isLDAPAuthEnabled") {{ $t('login.LDAP') }}
+            v-flex.mt-1
               v-text-field(
               :label="$t('common.username')",
               :error-messages="errors.collect('username')",
@@ -46,7 +53,7 @@
                 v-flex(v-if="hasServerError", xs9)
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
-      v-card.mt-2(v-show="!isCASAuthEnabled",)
+      v-card.mt-2(v-show="isCASAuthEnabled")
         v-card-text
           div.pa-3
             div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
@@ -55,17 +62,17 @@
             color="primary",
             ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.secondary.darken-1.footer
-      a(href="https://doc.canopsis.net/") Documentation
-      a(href="https://www.capensis.fr/canopsis/") Canopsis.com
-      a(:href="changeLogHref") Notes de version
+      a(:href="$constants.CANOPSIS_DOCUMENTATION") {{ $t('login.documentation') }}
+      a(:href="$constants.CANOPSIS_WEBSITE") Canopsis.com
+      a(:href="changeLogHref") {{ $t('login.changelog') }}
       div.version {{ version }}
 </template>
 
 <script>
+import { CANOPSIS_DOCUMENTATION } from '@/constants';
+
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
-
-import canopsisLogo from '@/assets/canopsis.png';
 
 export default {
   $_veeValidate: {
@@ -79,7 +86,6 @@ export default {
         username: '',
         password: '',
       },
-      activeTab: 0,
     };
   },
   computed: {
@@ -92,21 +98,10 @@ export default {
     },
     changeLogHref() {
       if (this.version) {
-        return `https://doc.canopsis.net/notes-de-versions/${this.version}/`;
+        return `${CANOPSIS_DOCUMENTATION}/notes-de-version/${this.version}/`;
       }
 
-      return 'https://doc.canopsis.net/';
-    },
-    appLogo() {
-      if (this.logo) {
-        return this.logo;
-      }
-
-      return canopsisLogo;
-    },
-
-    title() {
-      return this.isLDAPAuthEnabled ? `${this.$t('login.standard')}/${this.$t('login.LDAP')}` : this.$t('common.login');
+      return CANOPSIS_DOCUMENTATION;
     },
   },
   async mounted() {
@@ -161,7 +156,7 @@ export default {
 
     @media (min-width: 900px) {
       grid-template-columns: auto 30% 1% 30% auto;
-      grid-template-rows: 15% auto 15% auto;
+      grid-template-rows: auto auto auto auto;
 
       grid-template-areas:
         ". . . . ."
@@ -173,7 +168,7 @@ export default {
 
   .description {
     grid-area: description;
-    min-height: 40em;
+    min-height: 20em;
     max-height: 100%;
     width: 100%;
     overflow-x: hidden;
@@ -185,7 +180,7 @@ export default {
     grid-area: form;
 
     width: 100%;
-    min-height: 40em;
+    min-height: 20em;
     flex-grow: 0.5;
     display: flex;
     flex-flow: column;
@@ -215,7 +210,7 @@ export default {
 
     a {
       color: inherit;
-      text-decoration: underline;
+      text-decoration: none;
       padding: 0 2em;
     }
 
@@ -224,6 +219,8 @@ export default {
       position: absolute;
       right: 0.5em;
       bottom: 0;
+      text-decoration: underline;
+      font-weight: bold;
     }
   }
 </style>

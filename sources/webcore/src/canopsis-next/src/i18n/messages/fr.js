@@ -151,6 +151,9 @@ export default {
     standard: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Se connecter avec CAS',
+    documentation: 'Documentation',
+    changelog: 'Notes de version',
+    connectionProtocols: 'Modes de connexion',
     errors: {
       incorrectEmailOrPassword: 'Mot de passe / Email incorrect',
     },
