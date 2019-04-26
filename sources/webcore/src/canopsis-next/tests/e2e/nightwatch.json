@@ -1,0 +1,24 @@
+{
+  "globals_path" : "./vars/canopsisEnv.js",
+  "src_folders" : ["./canopsis/auth"],
+  "output_folder" : "reports",
+  "src_folders": ["specs"],
+  "custom_commands_path" : "./canopsis/common",
+  "test_settings": {
+    "default": {
+      "screenshots": {
+        "enabled": true,
+        "on_failure": true,
+        "path": "screenshots"
+      },
+      "videos": {
+        "enabled": true,
+        "delete_on_success": true,
+        "path": "videos"
+      },
+      "launch_url": "http://demo.canopsis.net",
+      "selenium_host": "chromedriver"
+    }
+  }
+}
+
