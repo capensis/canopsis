@@ -210,3 +210,21 @@ Ici, le type vaut tout le temps `"JSON"` et la présence des guillemets est obli
     "type": "JSON"
 }
 ```
+
+#### Fonctions en série
+
+Enfin, on peut enchaîner plusieurs fonctions afin de transformer des variables. Dans le cas cas suivant, on va transformer la variable `.Event.Output` qui vaut `c0ffee - beef- facade      -a5a5a5`.
+
+```json
+{
+    "payload" : "{\"message\": {{ .Event.Output | split \"-\" 2 | trim | json }} }"
+}
+```
+
+On découpe l'output avec `split` qui nous retourne ` facade      `, puis trim enlève les blancs en début et fin de chaîne pour obtenir `facade` et enfin, `json` va rendre `facade` compatible pour un document JSON.
+
+```json
+{
+    "message": "facade"
+}
+```
