@@ -53,7 +53,7 @@
                 v-flex(v-if="hasServerError", xs9)
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
-      v-card.mt-2(v-show="isCASAuthEnabled")
+      v-card.mt-2(v-show="!isCASAuthEnabled")
         v-card-text
           div.pa-3
             div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
@@ -144,8 +144,8 @@ export default {
     display: grid;
     align-items: center;
 
-    grid-template-columns: auto 80% auto;
-    grid-template-rows: 15% auto auto 15% auto;
+    grid-template-columns: 1fr 8fr 1fr;
+    grid-template-rows: 5% auto auto 15% auto;
 
     grid-template-areas:
       ". . ."
@@ -155,7 +155,7 @@ export default {
       "footer footer footer";
 
     @media (min-width: 900px) {
-      grid-template-columns: auto 30% 1% 30% auto;
+      grid-template-columns: auto 40% 1% 40% auto;
       grid-template-rows: auto auto auto auto;
 
       grid-template-areas:
@@ -164,12 +164,16 @@ export default {
         ". . . . ."
         "footer footer footer footer footer";
     }
+
+    @media (min-width: 1200px) {
+      grid-template-columns: auto 30% 3% 30% auto;
+    }
   }
 
   .description {
     grid-area: description;
-    min-height: 20em;
-    max-height: 100%;
+    align-content: center;
+    min-height: 500px;
     width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
@@ -178,12 +182,11 @@ export default {
 
   .loginContainer {
     grid-area: form;
-
     width: 100%;
-    min-height: 20em;
-    flex-grow: 0.5;
+    min-height: 500px;
     display: flex;
     flex-flow: column;
+    justify-content: space-between;
   }
 
   .mainLogo {
