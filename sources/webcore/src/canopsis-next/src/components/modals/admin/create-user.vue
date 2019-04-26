@@ -70,6 +70,9 @@
           :label="$t('modals.createUser.fields.enabled')",
           v-model="form.enable",
           )
+        v-layout(align-center)
+          v-btn(small, color="secondary", @click="openViewSelectModal") Select default view
+          div {{ defaultViewTitle }}
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -85,6 +88,7 @@ import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
+import entitiesViewMixin from '@/mixins/entities/view/index';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
@@ -102,6 +106,7 @@ export default {
     modalInnerMixin,
     entitiesRoleMixin,
     entitiesUserMixin,
+    entitiesViewMixin,
   ],
   data() {
     return {
@@ -116,6 +121,7 @@ export default {
         role: null,
         ui_language: 'fr',
         enable: true,
+        defaultview: '',
       },
     };
   },
@@ -134,6 +140,11 @@ export default {
     isNew() {
       return !this.config.user;
     },
+
+    defaultViewTitle() {
+      const userDefaultView = this.getViewById(this.form.defaultview);
+      return userDefaultView ? userDefaultView.title : null;
+    },
   },
   async mounted() {
     await this.fetchRolesList({ params: { limit: 0 } });
@@ -148,12 +159,24 @@ export default {
         'role',
         'ui_language',
         'enable',
+        'defaultview',
       ]);
     }
 
     this.pending = false;
   },
   methods: {
+    openViewSelectModal() {
+      this.showModal({
+        name: MODALS.selectView,
+        config: {
+          action: (viewId) => {
+            this.form.defaultview = viewId;
+          },
+        },
+      });
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -161,24 +184,6 @@ export default {
         if (this.config.action) {
           await this.config.action(this.form);
         }
-
-        /*
-        const formData = this.isNew ? { ...generateUser() } : { ...this.modal.config.user };
-
-        if (this.form.password && this.form.password !== '') {
-          formData.shadowpasswd = sha1(this.form.password);
-        }
-
-        await this.createUser({ data: { ...formData, ...omit(this.form, ['password']) } });
-
-        const requests = [this.fetchUsersListWithPreviousParams()];
-
-        if (formData._id === this.currentUser._id) {
-          requests.push(this.fetchCurrentUser());
-        }
-
-        await Promise.all(requests);
-        */
 
         this.hideModal();
       }

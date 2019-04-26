@@ -29,7 +29,7 @@
                 v-btn(v-if="hasUpdateAnyUserAccess", @click="showEditUserModal(props.item)", icon)
                   v-icon edit
                 v-btn(v-if="hasDeleteAnyUserAccess", @click="showRemoveUserModal(props.item._id)", icon)
-                  v-icon(color="red darken-4") delete
+                  v-icon(color="error") delete
     .fab(v-if="hasCreateAnyUserAccess")
       v-layout(column)
         refresh-btn(@click="fetchList")

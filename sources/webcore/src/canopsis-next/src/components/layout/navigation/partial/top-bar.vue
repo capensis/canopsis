@@ -35,18 +35,6 @@
                 v-layout(align-center)
                   v-icon person
                   div.ml-2 Voir le profil
-          //v-divider
-          // v-list-tile(two-line)
-            v-list-tile-content
-              v-layout(align-center)
-                v-flex
-                  div {{ $t('user.defaultView') }} :
-                v-flex(v-if="defaultViewTitle")
-                  div.px-1 {{ defaultViewTitle }}
-                v-flex(v-else)
-                  div.px-1.font-italic {{ $t('common.undefined') }}
-                v-btn(@click.stop="editDefaultView", small, fab, icon, depressed)
-                  v-icon edit
           v-list-tile
             v-list-tile-content
               v-btn.ma-0.pa-1.error--text(flat, @click.prevent="logout")
@@ -66,7 +54,6 @@ import { MODALS, USERS_RIGHTS } from '@/constants';
 import appMixin from '@/mixins/app';
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
-import entitiesViewMixin from '@/mixins/entities/view/index';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -83,16 +70,10 @@ export default {
     appMixin,
     authMixin,
     modalMixin,
-    entitiesViewMixin,
     entitiesUserMixin,
     entitiesInfoMixin,
   ],
   computed: {
-    defaultViewTitle() {
-      const userDefaultView = this.getViewById(this.currentUser.defaultview);
-      return userDefaultView ? userDefaultView.title : null;
-    },
-
     exploitationLinks() {
       const links = [
         {
@@ -174,23 +155,6 @@ export default {
           },
         },
       });
-    },
-
-    editDefaultView() {
-      this.showModal({
-        name: MODALS.selectView,
-        config: {
-          action: (viewId) => {
-            const user = { ...this.currentUser, defaultview: viewId };
-
-            return this.editUserAccount(user);
-          },
-        },
-      });
-    },
-    async editUserAccount(data) {
-      await this.createUser({ data });
-      await this.fetchCurrentUser();
     },
   },
 };
