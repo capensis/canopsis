@@ -222,6 +222,7 @@ export default {
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
+    isMultiAckEnabled: 'Ack multiple',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
