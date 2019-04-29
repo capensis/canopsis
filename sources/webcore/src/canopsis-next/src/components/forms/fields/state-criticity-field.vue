@@ -6,7 +6,7 @@
     @change="$emit('input', $event)"
     )
       v-btn(
-      v-for="(state, key) in $constants.ENTITIES_STATES",
+      v-for="(state, key) in stateValues",
       :key="key",
       :value="state",
       :style="{ backgroundColor: $constants.ENTITIES_STATES_STYLES[state].color }",
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { ENTITIES_STATES } from '@/constants';
 
 export default {
   props: {
@@ -25,6 +26,10 @@ export default {
     mandatory: {
       type: Boolean,
       default: false,
+    },
+    stateValues: {
+      type: Array,
+      default: () => ENTITIES_STATES,
     },
   },
 };
