@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import qs from 'qs';
 
 import request from '@/services/request';
 import { API_ROUTES, COOKIE_SESSION_KEY } from '@/config';
@@ -46,7 +47,10 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        await request.post(API_ROUTES.auth, { ...credentials, json_response: true });
+        await request.post(API_ROUTES.auth, qs.stringify({ ...credentials, json_response: true }), {
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        });
+
         commit(types.LOGIN_COMPLETED);
 
         return dispatch('fetchCurrentUser');

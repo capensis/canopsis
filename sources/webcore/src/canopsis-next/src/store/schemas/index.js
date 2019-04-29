@@ -1,7 +1,7 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-import { childProcessStrategy, childMergeStrategy } from '@/helpers/schema';
+import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
@@ -13,29 +13,15 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   pbehaviors: [pbehaviorSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: entity =>
-    ({
-      ...entity,
-      _embedded: {
-        type: ENTITIES_TYPES.alarm,
-      },
-    }),
+  processStrategy: parentProcessStrategy,
 });
 
-export const entitySchema = new schema.Entity(
-  ENTITIES_TYPES.entity,
-  {},
-  {
-    idAttribute: '_id',
-    processStrategy: entity =>
-      ({
-        ...entity,
-        _embedded: {
-          type: ENTITIES_TYPES.entity,
-        },
-      }),
-  },
-);
+export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
+  pbehaviors: [pbehaviorSchema],
+}, {
+  idAttribute: '_id',
+  processStrategy: parentProcessStrategy,
+});
 
 export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
 
@@ -75,6 +61,10 @@ export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribu
 
 export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
 
+export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idAttribute: '_id' });
+
+export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -90,4 +80,6 @@ export default {
   [ENTITIES_TYPES.user]: userSchema,
   [ENTITIES_TYPES.role]: roleSchema,
   [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
+  [ENTITIES_TYPES.webhook]: webhookSchema,
+  [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
 };

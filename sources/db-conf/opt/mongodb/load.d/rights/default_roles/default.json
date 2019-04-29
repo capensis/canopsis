@@ -19,6 +19,15 @@
         "models_user" : {
             "checksum" : 15
         },
+        "models_exploitation_eventFilter": {
+            "checksum": 15
+        },
+        "models_exploitation_pbehavior": {
+            "checksum": 15
+        },
+        "models_exploitation_webhook": {
+            "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
@@ -194,7 +203,51 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_userFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
         "listalarm_done": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_moreInfos": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_alarmsList": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityAck": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityDeclareTicket": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityValidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityInvalidate": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityPlay": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityPause": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityCancel": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityManagePbehaviors": {
             "checksum": 1,
             "desc": ""
         },
@@ -222,6 +275,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "crudcontext_deletePbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
         "crudcontext_listFilters": {
             "checksum": 1,
             "desc": ""
@@ -231,6 +288,10 @@
             "desc": ""
         },
         "crudcontext_addFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "crudcontext_userFilter": {
             "checksum": 1,
             "desc": ""
         },

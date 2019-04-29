@@ -10,7 +10,7 @@
           strong {{ $t('alarmList.actions.iconsTitles.ack') }}
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
-          div(v-if="alarm.v.ack.m") {{ $t('common.comment') }} : {{ alarm.v.ack.m }}
+          div(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
         v-icon.badge.blue.white--text(
@@ -34,7 +34,7 @@
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
           div {{ $t('common.by') }} : {{ alarm.v.canceled.a }}
           div {{ $t('common.date') }} : {{ alarm.v.canceled.t | date('long') }}
-          div(v-if="alarm.v.canceled.m") {{ $t('common.comment') }} : {{ alarm.v.canceled.m }}
+          div(v-if="alarm.v.canceled.m") {{ $tc('common.comment') }} : {{ alarm.v.canceled.m }}
     div(v-if="alarm.v.snooze")
       v-tooltip(top)
         v-icon.badge.pink.white--text(
@@ -52,12 +52,22 @@
         small,
         slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.pbehaviorAdd].icon }}
-        div.text-md-center
+        div
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div(v-for="pbehavior in pbehaviors")
-            div {{ pbehavior.name }}
+            div.mt-2.font-weight-bold {{ pbehavior.name }}
+            div {{ $t('common.author') }}: {{ pbehavior.author }}
+            div {{ $t('common.type') }}: {{ pbehavior.type_ }}
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
+            div(
+            v-show="pbehavior.comments && pbehavior.comments.length",
+            v-for="comment in pbehavior.comments",
+            :key="comment._id",
+            ) {{ $tc('common.comment', pbehavior.comments.length) }}:
+              div {{ pbehavior }}
+              //div.ml-2 - {{ comment.author }}: {{ comment.message }}
+            v-divider
 </template>
 
 <script>
@@ -78,7 +88,7 @@ export default {
   computed: {
     pbehaviors() {
       return this.alarm.pbehaviors.filter((value) => {
-        const now = Date.now();
+        const now = Date.now() / 1000;
 
         return value.tstart <= now && now < value.tstop;
       });

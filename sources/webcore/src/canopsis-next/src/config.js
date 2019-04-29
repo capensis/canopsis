@@ -18,6 +18,8 @@ export const SIDE_BAR_WIDTH = 250;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
 
+export const SCHEMA_EMBEDDED_KEY = '_embedded';
+
 export const MEDIA_QUERIES_BREAKPOINTS = {
   m: 450,
   t: 900,
@@ -36,6 +38,11 @@ export const API_ROUTES = {
   pbehavior: {
     pbehavior: '/api/v2/pbehavior',
     list: '/pbehavior/read',
+    comment: {
+      create: '/pbehavior/comment/create',
+      update: '/pbehavior/comment/update',
+      delete: '/pbehavior/comment/delete',
+    },
   },
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
@@ -55,4 +62,18 @@ export const API_ROUTES = {
     remove: '/account/delete/role',
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
+  webhook: '/api/v2/webhook',
+  snmpRule: {
+    list: '/snmprule',
+    create: '/snmprule/put',
+  },
+  snmpMib: {
+    list: '/snmpmib',
+    distinct: '/snmpmibdistinct',
+    upload: '/uploadmib',
+  },
+  infos: {
+    login: '/api/internal/login/login_info',
+    app: '/api/internal/app_info',
+  },
 };

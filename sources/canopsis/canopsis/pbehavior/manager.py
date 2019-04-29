@@ -39,7 +39,6 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
-from canopsis.common.middleware import Middleware
 from canopsis.pbehavior.utils import check_valid_rrule
 
 
@@ -102,7 +101,7 @@ class PBehavior(BasePBehavior):
     """
     PBehavior class.
     """
-
+    ID = "_id"
     NAME = 'name'
     FILTER = 'filter'
     COMMENTS = 'comments'
@@ -123,7 +122,7 @@ class PBehavior(BasePBehavior):
 
     _FIELDS = (NAME, FILTER, COMMENTS, TSTART, TSTOP, RRULE, ENABLED, EIDS,
                CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON, TIMEZONE,
-               EXDATE)
+               EXDATE, ID)
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
@@ -159,7 +158,7 @@ class PBehaviorManager(object):
     PBehavior manager class.
     """
 
-    PB_STORAGE_URI = 'mongodb-default-pbehavior://'
+    PB_COLLECTION = 'default_pbehavior'
     LOG_PATH = 'var/log/pbehaviormanager.log'
     LOG_NAME = 'pbehaviormanager'
     CONF_PATH = 'etc/pbehavior/manager.conf'
@@ -180,12 +179,14 @@ class PBehaviorManager(object):
         :rtype: Union[dict, logging.Logger, canopsis.storage.core.Storage]
         """
         logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
-        pb_storage = Middleware.get_middleware_by_uri(cls.PB_STORAGE_URI)
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection(cls.PB_COLLECTION)
+        mongo_collection = MongoCollection(collection)
         config = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
 
-        return config, logger, pb_storage
+        return config, logger, mongo_collection
 
-    def __init__(self, config, logger, pb_storage):
+    def __init__(self, config, logger, pb_collection):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -194,7 +195,6 @@ class PBehaviorManager(object):
         kwargs = {"logger": logger}
         self.context = singleton_per_scope(ContextGraph, kwargs=kwargs)
         self.logger = logger
-        self.pb_storage = pb_storage
         self.config = config
         self.config_data = self.config.get(self.PBH_CAT, {})
         self.default_tz = self.config_data.get("default_timezone",
@@ -202,16 +202,24 @@ class PBehaviorManager(object):
         # this line allow us to raise an exception pytz.UnknownTimeZoneError,
         # if the timezone defined in the pbehabior configuration file is wrong
         pytz.timezone(self.default_tz)
-        self.pb_store = MongoCollection(MongoStore.get_default().get_collection('default_pbehavior'))
+        self.collection = pb_collection
         self.currently_active_pb = set()
 
     def get(self, _id, query=None):
         """Get pbehavior by id.
 
+        When _id is None, all the pbehaviors are returned. This behavior
+        should be considered deprecated, and is only kept for backward
+        compatibility. You probably want to use the get_enabled_pbehaviors
+        method instead.
+
         :param str id: pbehavior id
         :param dict query: filtering options
         """
-        return self.pb_storage.get_elements(ids=_id, query=query)
+        if _id is None:
+            return list(self.collection.find({}))
+
+        return self.collection.find_one({"_id": _id}, query)
 
     def create(
             self,
@@ -292,6 +300,7 @@ class PBehaviorManager(object):
                     raise ValueError("The message field is missing")
 
         pb_kwargs = {
+            PBehavior.ID: str(uuid4()),
             PBehavior.NAME: name,
             PBehavior.FILTER: filter,
             PBehavior.AUTHOR: author,
@@ -315,7 +324,7 @@ class PBehaviorManager(object):
         else:
             for comment in data.comments:
                 comment.update({'_id': str(uuid4())})
-        result = self.pb_storage.put_element(element=data.to_dict())
+        result = self.collection.insert(data.to_dict())
 
         return result
 
@@ -339,9 +348,7 @@ class PBehaviorManager(object):
         else:
             id_ = [id_]
 
-        cursor = self.pb_storage.get_elements(
-            query={PBehavior.EIDS: {"$in": id_}}
-        )
+        cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}})
 
         pbehaviors = []
 
@@ -373,6 +380,36 @@ class PBehaviorManager(object):
             **not** be updated.
         :raises ValueError: invalid RRULE or no pbehavior with given _id
         """
+        data = self.__get_and_check_pbehavior(_id, **kwargs)
+        data["new_data"]["_id"] = _id
+        result = self.collection.update(
+            {PBehavior.ID: _id},
+            {'$set': data["new_data"]})
+
+        if (PBehaviorManager._UPDATE_FLAG in result and
+                result[PBehaviorManager._UPDATE_FLAG]):
+            return data["pbehavior"].to_dict()
+        return None
+
+    def update_v2(self, _id, **kwargs):
+        """
+        Update pbehavior record
+        :param str _id: pbehavior id
+        :param dict kwargs: values pbehavior fields. If a field is None, it will
+            **not** be updated.
+        :raises ValueError: invalid RRULE or no pbehavior with given _id
+        """
+        pbehavior = self.__get_and_check_pbehavior(_id, **kwargs)["pbehavior"]
+
+        result = self.collection.update(
+            {'_id': pbehavior._id or _id}, pbehavior.to_dict(), upsert=False)
+
+        if (PBehaviorManager._UPDATE_FLAG in result and
+                result[PBehaviorManager._UPDATE_FLAG]):
+            return pbehavior.to_dict()
+        return None
+
+    def __get_and_check_pbehavior(self, _id, **kwargs):
         pb_value = self.get(_id)
 
         if pb_value is None:
@@ -384,14 +421,7 @@ class PBehaviorManager(object):
         new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
-        result = self.pb_storage.put_element(
-            element=new_data, _id=_id
-        )
-
-        if (PBehaviorManager._UPDATE_FLAG in result and
-                result[PBehaviorManager._UPDATE_FLAG]):
-            return pbehavior.to_dict()
-        return None
+        return {"pbehavior": pbehavior, "new_data": new_data}
 
     def upsert(self, pbehavior):
         """
@@ -403,7 +433,8 @@ class PBehaviorManager(object):
         :rtype: bool, dict
         :returns: success, update result
         """
-        r = self.pb_store.update({'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
+        r = self.collection.update(
+            {'_id': pbehavior._id}, pbehavior.to_dict(), upsert=True)
 
         if r.get('updatedExisting', False) and r.get('nModified') == 1:
             return True, r
@@ -418,17 +449,23 @@ class PBehaviorManager(object):
         :param str _id: pbehavior id
         """
 
-        result = self.pb_storage.remove_elements(
-            ids=_id, _filter=_filter
-        )
+        if _id is None and _filter is None:
+            raise ValueError("_id and _filter is None, this will erase every"
+                             "pbehaviors.")
+        filter_ = {}
+        if _filter is not None:
+            filter_ = _filter
+
+        if _id is not None:
+            filter_["_id"] = _id
+
+        result = self.collection.remove(filter_)
 
         return self._check_response(result)
 
     def _update_pbehavior(self, pbehavior_id, query):
-        result = self.pb_storage._update(
-            spec={'_id': pbehavior_id},
-            document=query,
-            multi=False, cache=False
+        result = self.collection.update(
+            {'_id': pbehavior_id}, query, multi=False
         )
         return result
 
@@ -476,7 +513,7 @@ class PBehaviorManager(object):
         """
         pbehavior = self.get(
             pbehavior_id,
-            query={PBehavior.COMMENTS: {'$elemMatch': {'_id': _id}}}
+            {PBehavior.COMMENTS: {'$elemMatch': {'_id': _id}}}
         )
         if not pbehavior:
             return None
@@ -488,10 +525,10 @@ class PBehaviorManager(object):
         comment = Comment(**_comments[0])
         comment.update(**kwargs)
 
-        result = self.pb_storage._update(
-            spec={'_id': pbehavior_id, 'comments._id': _id},
-            document={'$set': {'comments.$': comment.to_dict()}},
-            multi=False, cache=False
+        result = self.collection.update(
+            {'_id': pbehavior_id, 'comments._id': _id},
+            {'$set': {'comments.$': comment.to_dict()}},
+            multi=False
         )
 
         if (PBehaviorManager._UPDATE_FLAG in result and
@@ -506,10 +543,10 @@ class PBehaviorManager(object):
         :param str pbehavior_id: pbehavior id
         :param str _id: comment id
         """
-        result = self.pb_storage._update(
-            spec={'_id': pbehavior_id},
-            document={'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
-            multi=False, cache=False
+        result = self.collection.update(
+            {'_id': pbehavior_id},
+            {'$pull': {PBehavior.COMMENTS: {'_id': _id}}},
+            multi=False
         )
 
         return self._check_response(result)
@@ -525,7 +562,7 @@ class PBehaviorManager(object):
         :rtype: list of dict
         """
         res = list(
-            self.pb_storage._backend.find(
+            self.collection.find(
                 {PBehavior.EIDS: {'$in': [entity_id]}},
                 sort=[(PBehavior.TSTART, DESCENDING)]
             )
@@ -537,9 +574,8 @@ class PBehaviorManager(object):
         """
         Compute all filters and update eids attributes.
         """
-        pbehaviors = self.pb_storage.get_elements(
-            query={PBehavior.FILTER: {'$exists': True}}
-        )
+        pbehaviors = self.collection.find(
+            {PBehavior.FILTER: {'$exists': True}})
 
         for pbehavior in pbehaviors:
 
@@ -553,8 +589,10 @@ class PBehaviorManager(object):
                 query=query
             )
 
-            pbehavior[PBehavior.EIDS] = [e['_id'] for e in entities]
-            self.pb_storage.put_element(element=pbehavior)
+            eids = [e['_id'] for e in entities]
+            self.collection.update({"_id": pbehavior[PBehavior.ID]},
+                                   {"$set": {PBehavior.EIDS: eids}},
+                                   upsert=False, multi=False)
 
     def _check_active_simple_pbehavior(self, timestamp, pbh):
         """ Check if a pbehavior without a rrule is active at the given time.
@@ -667,7 +705,7 @@ class PBehaviorManager(object):
             return None
         event = self.context.get_event(entity)
 
-        pbehaviors = self.pb_storage.get_elements(
+        pbehaviors = self.collection.find(
             query={
                 PBehavior.NAME: {'$in': pb_names},
                 PBehavior.EIDS: {'$in': [entity_id]}
@@ -738,9 +776,8 @@ class PBehaviorManager(object):
         self.check_active_pbehavior
         """
         now = int(time())
-        query = {}
 
-        ret_val = list(self.pb_storage.get_elements(query=query))
+        ret_val = list(self.collection.find({}))
 
         results = []
 
@@ -749,7 +786,8 @@ class PBehaviorManager(object):
                 if self.check_active_pbehavior(now, pb):
                     results.append(pb)
             except ValueError as exept:
-                self.logger.exception("Can't check if the pbehavior is active.")
+                self.logger.exception(
+                    "Can't check if the pbehavior is active.")
 
         return results
 
@@ -763,7 +801,7 @@ class PBehaviorManager(object):
         now = int(time())
         query = {PBehavior.TYPE: {'$in': types}}
 
-        ret_val = list(self.pb_storage.get_elements(query=query))
+        ret_val = list(self.collection.find(query))
 
         results = []
 
@@ -785,7 +823,8 @@ class PBehaviorManager(object):
         for active_pb in active_pbehaviors:
             active_pbehaviors_ids.add(active_pb['_id'])
 
-        varying_pbs = active_pbehaviors_ids.symmetric_difference(self.currently_active_pb)
+        varying_pbs = active_pbehaviors_ids.symmetric_difference(
+            self.currently_active_pb)
         self.currently_active_pb = active_pbehaviors_ids
 
         return list(varying_pbs)
@@ -799,9 +838,7 @@ class PBehaviorManager(object):
         retype: int
         """
         new_pbs = self.get_varying_pbehavior_list()
-        new_pbs_full = list(self.pb_storage._backend.find(
-            {'_id': {'$in': new_pbs}}
-        ))
+        new_pbs_full = list(self.collection.find({'_id': {'$in': new_pbs}}))
 
         merged_eids = []
         for pbehaviour in new_pbs_full:
@@ -945,7 +982,6 @@ class PBehaviorManager(object):
         # Order them chronologically (by start date)
         intervals.sort(key=lambda a: a[0])
 
-
         # Yield the first interval without any active pbehavior
         merged_interval_start, merged_interval_end = intervals[0]
         yield (
@@ -997,6 +1033,4 @@ class PBehaviorManager(object):
 
         :rtype: Iterator[Dict[str, Any]]
         """
-        return self.pb_storage._backend.find({
-            PBehavior.ENABLED: True
-        })
+        return self.collection.find({PBehavior.ENABLED: True})

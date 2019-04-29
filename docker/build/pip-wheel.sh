@@ -15,6 +15,6 @@ repver="${ID}-${VERSION_ID}"
 mkdir -p /root/wheelrep/${repver}
 cd /root/wheelrep/${repver}
 
-pip wheel -r /sources/canopsis/requirements.txt
+LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 pip wheel -r /sources/canopsis/requirements.txt
 
 chown -R ${1} /root/wheelrep

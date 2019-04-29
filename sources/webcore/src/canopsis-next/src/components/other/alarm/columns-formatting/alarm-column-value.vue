@@ -1,17 +1,19 @@
 <template lang="pug">
-  v-menu(v-model="isInfoPopupOpen", :close-on-content-click="false", :open-on-click="false", offset-y)
-    div(slot="activator")
-      div(v-if="component", :is="component", :alarm="alarm") {{ component.value }}
-      ellipsis(
-      v-else,
-      :text="alarm | get(column.value, columnFilter, '')",
-      :column="column.value",
-      @textClicked="showInfoPopup"
-      )
-    v-card(dark)
-      v-card-title.primary.pa-2.white--text
-        h4 {{ $t('alarmList.infoPopup') }}
-      v-card-text.pa-2(v-html="popupTextContent")
+  div
+    v-menu(
+    v-if="popupData",
+    v-model="isInfoPopupOpen",
+    :close-on-content-click="false",
+    :open-on-click="false",
+    offset-y
+    )
+      div(slot="activator")
+        div(v-bind="component.bind", v-on="component.on")
+      v-card(dark)
+        v-card-title.primary.pa-2.white--text
+          h4 {{ $t('alarmList.infoPopup') }}
+        v-card-text.pa-2(v-html="popupTextContent")
+    div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
 <script>
@@ -20,9 +22,12 @@ import { get } from 'lodash';
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
-import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
-import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+
+import AlarmColumnValueState from './alarm-column-value-state.vue';
+import AlarmColumnValueLinks from './alarm-column-value-links.vue';
+import AlarmColumnValueLink from './alarm-column-value-link.vue';
+import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 
 /**
  * Component to format alarms list columns
@@ -35,9 +40,11 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
  */
 export default {
   components: {
-    State,
-    ExtraDetails,
     Ellipsis,
+    AlarmColumnValueState,
+    AlarmColumnValueLinks,
+    AlarmColumnValueLink,
+    AlarmColumnValueExtraDetails,
   },
   mixins: [
     popupMixin,
@@ -69,7 +76,7 @@ export default {
     },
     popupTextContent() {
       if (this.popupData) {
-        return compile(this.popupData.template, { alarm: this.alarm });
+        return compile(this.popupData.template, { alarm: this.alarm, entity: this.alarm.entity || {} });
       }
       return '';
     },
@@ -89,11 +96,54 @@ export default {
     },
     component() {
       const PROPERTIES_COMPONENTS_MAP = {
-        'v.state.val': 'state',
-        extra_details: 'extra-details',
+        'v.state.val': {
+          bind: {
+            is: 'alarm-column-value-state',
+            alarm: this.alarm,
+          },
+        },
+        links: {
+          bind: {
+            is: 'alarm-column-value-links',
+            links: this.alarm.links,
+          },
+        },
+        extra_details: {
+          bind: {
+            is: 'alarm-column-value-extra-details',
+            alarm: this.alarm,
+          },
+        },
       };
 
-      return PROPERTIES_COMPONENTS_MAP[this.column.value];
+      if (PROPERTIES_COMPONENTS_MAP[this.column.value]) {
+        return PROPERTIES_COMPONENTS_MAP[this.column.value];
+      }
+
+      if (this.column.value.startsWith('links.')) {
+        const category = this.column.value.slice(6);
+        const links = {
+          [category]: this.$options.filters.get(this.alarm, this.column.value, null, []),
+        };
+
+        return {
+          bind: {
+            links,
+
+            is: 'alarm-column-value-links',
+          },
+        };
+      }
+
+      return {
+        bind: {
+          is: 'ellipsis',
+          text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
+        },
+        on: {
+          textClicked: this.showInfoPopup,
+        },
+      };
     },
   },
   methods: {

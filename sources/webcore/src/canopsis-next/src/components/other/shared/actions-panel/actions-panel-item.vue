@@ -1,15 +1,15 @@
-<template lang="pug">
+<template lang="pug" functional>
   span
-    template(v-if="isDropDown")
-      v-list-tile(@click.stop="method")
+    template(v-if="props.isDropDown")
+      v-list-tile(@click.stop="props.method")
         v-list-tile-title
-          v-icon.pr-3(:class="iconClass", left, small) {{ icon }}
-          span.body-1 {{ title }}
+          v-icon.pr-3(:class="props.iconClass", left, small) {{ props.icon }}
+          span.body-1 {{ props.title }}
     template(v-else)
       v-tooltip(bottom)
-        v-btn.mx-1(slot="activator", flat, icon, @click.stop="method")
-          v-icon(:class="iconClass") {{ icon }}
-        span {{ title }}
+        v-btn.mx-1(slot="activator", flat, icon, @click.stop="props.method")
+          v-icon(:class="props.iconClass") {{ props.icon }}
+        span {{ props.title }}
 </template>
 
 
@@ -23,6 +23,7 @@
  * @prop {string} title - Action title
  * @prop {string} icon - Action icon
  * @prop {Function} method - Action to execute when user clicks on the action's icon
+ * @prop {string} [iconClass=''] - Action icon className
  * @prop {boolean} [isDropDown=false] - Boolean to decide whether to show a dropdown with actions, or actions separately
  */
 export default {

@@ -1,4 +1,11 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import {
+  ENTITIES_STATES,
+  ENTITIES_STATUSES,
+  EVENT_ENTITY_TYPES,
+  STATS_TYPES,
+  STATS_CRITICITY,
+  STATS_QUICK_RANGES,
+} from '@/constants';
 
 export default {
   common: {
@@ -30,9 +37,10 @@ export default {
     parameters: 'Paramètres',
     by: 'Par',
     date: 'Date',
-    comment: 'Commentaire',
+    comment: 'Commentaire | Commentaires',
     end: 'Fin',
     recursive: 'Récursif',
+    select: 'Sélectionner',
     states: 'États',
     sla: 'Sla',
     authors: 'Auteurs',
@@ -43,6 +51,7 @@ export default {
     rights: 'Droits',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
+    authKey: 'Auth. key',
     connect: 'Connexion',
     optionnal: 'Optionnel',
     logout: 'Se déconnecter',
@@ -51,6 +60,7 @@ export default {
     label: 'Label',
     field: 'Champs',
     value: 'Valeur',
+    limit: 'Limite',
     add: 'Ajouter',
     create: 'Créer',
     delete: 'Supprimer',
@@ -71,12 +81,21 @@ export default {
     administration: 'Administration',
     forbidden: 'Accès refusé',
     search: 'Recherche',
+    webhooks: 'Webhooks',
+    links: 'Liens',
     actions: {
       close: 'Fermer',
-      acknowledge: 'Acquitter',
       acknowledgeAndReport: 'Acquitter et signaler un incident',
       saveChanges: 'Sauvegarder',
       reportIncident: 'Signaler un incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.validate]: 'Valider',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
     },
     times: {
       second: 'seconde | secondes',
@@ -138,6 +157,9 @@ export default {
     entities: 'entités',
   },
   login: {
+    standard: 'Standard',
+    LDAP: 'LDAP',
+    loginWithCAS: 'Se connecter avec CAS',
     errors: {
       incorrectEmailOrPassword: 'Mot de passe/Email incorrect',
     },
@@ -208,6 +230,8 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
+    isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
+    isMultiAckEnabled: 'Ack multiple',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -228,9 +252,36 @@ export default {
         [STATS_CRITICITY.critical]: 'critique',
       },
     },
+    statsDateInterval: {
+      monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
+      quickRanges: {
+        [STATS_QUICK_RANGES.last2Days.value]: '2 derniers jours',
+        [STATS_QUICK_RANGES.last7Days.value]: '7 derniers jours',
+        [STATS_QUICK_RANGES.last30Days.value]: '30 derniers jours',
+        [STATS_QUICK_RANGES.last1Year.value]: 'Dernière année',
+        [STATS_QUICK_RANGES.yesterday.value]: 'Hier',
+        [STATS_QUICK_RANGES.previousWeek.value]: 'Dernière semaine',
+        [STATS_QUICK_RANGES.previousMonth.value]: 'Dernier mois',
+        [STATS_QUICK_RANGES.today.value]: 'Aujourd\'hui',
+        [STATS_QUICK_RANGES.todaySoFar.value]: 'Aujourd\'hui jusqu\'à maintenant',
+        [STATS_QUICK_RANGES.thisWeek.value]: 'Cette semaine',
+        [STATS_QUICK_RANGES.thisWeekSoFar.value]: 'Cette semaine jusqu\'à maintenant',
+        [STATS_QUICK_RANGES.thisMonth.value]: 'Ce mois',
+        [STATS_QUICK_RANGES.thisMonthSoFar.value]: 'Ce mois jusqu\'à maintenant',
+        [STATS_QUICK_RANGES.last1Hour.value]: 'Dernière heure',
+        [STATS_QUICK_RANGES.last3Hour.value]: '3 dernières heures',
+        [STATS_QUICK_RANGES.last6Hour.value]: '6 dernières heures',
+        [STATS_QUICK_RANGES.last12Hour.value]: '12 dernières heures',
+        [STATS_QUICK_RANGES.last24Hour.value]: '24 dernières heures',
+      },
+    },
     statsNumbers: {
       title: 'Cellule de stats',
       yesNoMode: 'Mode Oui/Non',
+      defaultStat: 'Défaut: Alarmes créées',
+      sortOrder: 'Sens de tri',
+      displayMode: 'Mode d\'affichage',
+      selectAColor: 'Sélectionner une couleur',
     },
     infoPopup: {
       title: 'Info popup',
@@ -420,6 +471,9 @@ export default {
         type: 'Type',
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
       },
+      success: {
+        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
+      },
     },
     createPause: {
       title: 'Mettre en pause',
@@ -488,6 +542,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervalles d\'éxécution',
       actionPending: 'action(s) en attente',
+      refreshEntities: 'Refraichir la liste des entités',
+      editPbehaviors: 'Editer les pbehaviors',
     },
     filter: {
       create: {
@@ -546,6 +602,7 @@ export default {
         add: 'Ajouter une statistique',
         edit: 'Éditer une statistique',
       },
+      slaRequired: "La paramètre 'SLA' est obligatoire",
     },
     group: {
       create: {
@@ -839,7 +896,10 @@ export default {
     priority: 'Priorité',
     enabled: 'Activé',
     actions: 'Actions',
+    externalDatas: 'Données externes',
     actionsRequired: 'Veuillez ajouter au moins une action',
+    id: 'Id',
+    idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   },
   layout: {
     sideBar: {
@@ -866,5 +926,7 @@ export default {
     },
     deleteRow: 'Supprimer la ligne',
     deleteWidget: 'Supprimer le widget',
+    fullScreen: 'Plein écran',
+    fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
   },
 };

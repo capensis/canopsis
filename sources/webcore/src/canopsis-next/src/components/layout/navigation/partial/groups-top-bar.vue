@@ -1,58 +1,59 @@
 <template lang="pug">
   v-layout.secondary.groups-wrapper
     v-tabs(ref="tabs", color="secondary", show-arrows, dark)
-      v-menu(
-      v-for="group in groups",
-      :key="group._id",
-      content-class="group-v-menu-content secondary",
-      close-delay="0",
-      open-on-hover,
-      offset-y,
-      bottom,
-      dark
-      )
-        div.v-btn.v-btn--flat.theme--dark(slot="activator")
-          span {{ group.name }}
-          v-btn(
-          v-show="isEditingMode",
-          depressed,
-          small,
-          icon,
-          @click.stop="showEditGroupModal(group)"
-          )
-            v-icon(small) edit
-          v-icon(dark) arrow_drop_down
-        v-list
-          v-list-tile(
-          v-for="view in getAvailableViewsForGroup(group)",
-          :key="view._id",
-          :to="{ name: 'view', params: { id: view._id } }",
-          )
-            v-list-tile-title
-              span {{ view.title }}
-              v-btn.edit-view-button(
-              v-show="checkViewEditButtonAccessById(view._id)",
-              color="grey darken-2",
-              depressed,
-              small,
-              icon,
-              @click.prevent="showEditViewModal(view)"
-              )
-                v-icon(small) edit
-              v-btn.duplicate-view-button(
-              v-show="isEditingMode",
-              depressed,
-              small,
-              icon,
-              color="grey darken-2",
-              @click.prevent="showDuplicateViewModal(view)"
-              )
-                v-icon(small) file_copy
+      template(v-if="hasReadAnyViewAccess")
+        v-menu(
+        v-for="group in availableGroups",
+        :key="group._id",
+        content-class="group-v-menu-content secondary",
+        close-delay="0",
+        open-on-hover,
+        offset-y,
+        bottom,
+        dark
+        )
+          div.v-btn.v-btn--flat.theme--dark(slot="activator")
+            span {{ group.name }}
+            v-btn(
+            v-show="isEditingMode",
+            depressed,
+            small,
+            icon,
+            @click.stop="showEditGroupModal(group)"
+            )
+              v-icon(small) edit
+            v-icon(dark) arrow_drop_down
+          v-list
+            v-list-tile(
+            v-for="view in group.views",
+            :key="view._id",
+            :to="getViewLink(view)"
+            )
+              v-list-tile-title
+                span {{ view.title }}
+                v-btn.edit-view-button(
+                v-show="checkViewEditButtonAccessById(view._id)",
+                color="grey darken-2",
+                depressed,
+                small,
+                icon,
+                @click.prevent="showEditViewModal(view)"
+                )
+                  v-icon(small) edit
+                v-btn.duplicate-view-button(
+                v-show="isEditingMode",
+                depressed,
+                small,
+                icon,
+                color="grey darken-2",
+                @click.prevent="showDuplicateViewModal(view)"
+                )
+                  v-icon(small) file_copy
     groups-settings-button(
     :isEditingMode="isEditingMode",
-    @toggleEditingMode="toggleEditingMode",
     :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
     :buttonProps="{ fab: true, dark: true, small: true }"
+    @toggleEditingMode="toggleEditingMode",
     )
 </template>
 

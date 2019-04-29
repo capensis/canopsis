@@ -10,6 +10,8 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
+      field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
+      v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hidden-fields="['title']")
       v-divider
       v-list-group
@@ -21,7 +23,10 @@
           v-divider
           field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
           v-divider
-          field-more-info(v-model="settings.widget.parameters.alarmsList.moreInfoTemplate")
+          field-text-editor(
+          v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
+          :title="$t('settings.moreInfosModal')"
+          )
       v-divider
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
@@ -99,6 +104,7 @@ import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
+import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
@@ -107,7 +113,7 @@ import FieldModalType from './fields/weather/modal-type.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldMoreInfo from './fields/alarm/more-info.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
@@ -117,6 +123,7 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
+    FieldPeriodicRefresh,
     FieldFilterEditor,
     FieldWeatherTemplate,
     FieldGridSize,
@@ -125,7 +132,7 @@ export default {
     FieldColumns,
     FieldDefaultElementsPerPage,
     FieldInfoPopup,
-    FieldMoreInfo,
+    FieldTextEditor,
   },
   mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
