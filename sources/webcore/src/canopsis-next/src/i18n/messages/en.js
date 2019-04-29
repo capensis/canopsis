@@ -241,6 +241,7 @@ export default {
     filters: 'Filters',
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
+    isMultiAckEnabled: 'Multiple ack',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
