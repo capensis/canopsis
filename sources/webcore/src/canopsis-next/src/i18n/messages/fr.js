@@ -49,6 +49,7 @@ export default {
     users: 'Utilisateurs',
     roles: 'Roles',
     rights: 'Droits',
+    profile: 'Profil',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     authKey: 'Auth. key',
@@ -110,6 +111,8 @@ export default {
   user: {
     role: 'Role',
     defaultView: 'Vue par défaut',
+    seeProfile: 'Voir le profil',
+    selectDefaultView: 'Sélectionner une vue par défaut',
   },
   context: {
     impacts: 'Impacts',

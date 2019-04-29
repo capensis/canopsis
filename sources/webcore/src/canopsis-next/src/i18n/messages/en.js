@@ -50,6 +50,7 @@ export default {
     users: 'Users',
     roles: 'Roles',
     rights: 'Rights',
+    profile: 'Profile',
     username: 'Username',
     password: 'Password',
     authKey: 'Auth. key',
@@ -116,6 +117,8 @@ export default {
   user: {
     role: 'Role',
     defaultView: 'Default view',
+    seeProfile: 'See profile',
+    selectDefaultView: 'Select default view',
   },
   context: {
     impacts: 'Impacts',

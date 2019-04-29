@@ -34,7 +34,7 @@
               v-btn.ma-0.pa-1(flat, @click.prevent="showEditUserModal")
                 v-layout(align-center)
                   v-icon person
-                  div.ml-2 Voir le profil
+                  div.ml-2 {{ $t('user.seeProfile') }}
           v-list-tile
             v-list-tile-content
               v-btn.ma-0.pa-1.error--text(flat, @click.prevent="logout")
@@ -140,7 +140,7 @@ export default {
       this.showModal({
         name: MODALS.createUser,
         config: {
-          title: 'Profile',
+          title: this.$t('common.profile'),
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
