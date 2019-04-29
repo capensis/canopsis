@@ -200,6 +200,9 @@ export default {
     },
     infoPopup: 'Info popup',
   },
+  weather: {
+    moreInfos: 'More info',
+  },
   pbehaviors: {
     connector: 'Connector',
     connectorName: 'Connector name',
@@ -553,7 +556,7 @@ export default {
       ticketing: 'Ticketing',
       application_crit_label: 'Criticality',
       product_line: 'Product line',
-      service_period: 'Plage surveillanc',
+      service_period: 'Monitoring timespan',
       isInCarat: 'Cartographic repository',
       application_label: 'Description',
       target_platform: 'Environment',
@@ -839,7 +842,7 @@ export default {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
       [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
       [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {
@@ -877,7 +880,7 @@ export default {
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
+      main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',

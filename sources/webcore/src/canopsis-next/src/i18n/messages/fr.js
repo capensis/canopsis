@@ -9,8 +9,8 @@ import {
 
 export default {
   common: {
-    undefined: 'Non définie',
-    entity: 'Entitée',
+    undefined: 'Non défini',
+    entity: 'Entité',
     watcher: 'Observateur',
     pbehaviors: 'Comportements périodiques',
     widget: 'Widget',
@@ -22,7 +22,7 @@ export default {
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
-    submit: 'Envoyer',
+    submit: 'Soumettre',
     cancel: 'Annuler',
     options: 'Options',
     type: 'Type',
@@ -33,21 +33,21 @@ export default {
     yes: 'Oui',
     no: 'Non',
     default: 'Défaut',
-    confirmation: 'Etes-vous sûr(e) ?',
+    confirmation: 'Êtes-vous sûr(e) ?',
     parameters: 'Paramètres',
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
     end: 'Fin',
-    recursive: 'Recursif',
+    recursive: 'Récursif',
     select: 'Sélectionner',
-    states: 'Etats',
+    states: 'États',
     sla: 'Sla',
     authors: 'Auteurs',
     stat: 'Statistique',
     trend: 'Tendance',
     users: 'Utilisateurs',
-    roles: 'Roles',
+    roles: 'Rôles',
     rights: 'Droits',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
@@ -68,8 +68,8 @@ export default {
     edit: 'Éditer',
     parse: 'Compiler',
     home: 'Accueil',
-    step: 'Etape',
-    entries: 'entrées',
+    step: 'Étape',
+    entries: 'Entrées',
     showing: 'Affiche',
     apply: 'Appliquer',
     to: 'à',
@@ -108,7 +108,7 @@ export default {
     },
   },
   user: {
-    role: 'Role',
+    role: 'Rôle',
     defaultView: 'Vue par défaut',
   },
   context: {
@@ -116,8 +116,8 @@ export default {
     dependencies: 'Dépendances',
     moreInfos: {
       type: 'Type',
-      enabled: 'Activée',
-      disabled: 'Désactivée',
+      enabled: 'Activé',
+      disabled: 'Désactivé',
       lastActiveDate: 'Dernière Date d\'Activité',
       infosSearchLabel: 'Rechercher une info',
       tabs: {
@@ -125,6 +125,15 @@ export default {
         pbehaviors: 'Comportements périodiques',
         impactDepends: 'Impacts/Dépendances',
         infos: 'Infos',
+      },
+    },
+    actions: {
+      titles: {
+        editEntity: 'Éditer l\'entité',
+        duplicateEntity: 'Dupliquer l\'entité',
+        deleteEntity: 'Supprimer l\'entité',
+        pbehavior: 'Comportement périodique',
+        variablesHelp: 'Liste des variables disponibles',
       },
     },
   },
@@ -163,18 +172,18 @@ export default {
         ackRemove: 'Annuler ack',
         pbehavior: 'Comportement périodique',
         snooze: 'Snooze',
-        pbehaviorList: 'Lister comportements pédioriques',
+        pbehaviorList: 'Lister les comportements pédioriques',
         declareTicket: 'Déclarer un incident',
-        associateTicket: 'Associer ticket',
-        cancel: 'Annuler alarme',
-        changeState: 'Changer criticité',
+        associateTicket: 'Associer un ticket',
+        cancel: 'Annuler l\'alarme',
+        changeState: 'Changer la criticité',
         moreInfos: 'Plus d\'infos',
         variablesHelp: 'Liste des variables disponibles',
       },
       iconsTitles: {
         ack: 'Ack',
         declareTicket: 'Déclarer un incident',
-        canceled: 'Annulée',
+        canceled: 'Annulé',
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
       },
@@ -214,7 +223,7 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     columnNames: 'Nom des colonnes',
     periodicRefresh: 'Rafraichissement périodique',
-    defaultNumberOfElementsPerPage: 'Nombre d\'élement/page par défaut',
+    defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
     elementsPerPage: 'Élements par page',
     filterOnOpenResolved: 'Filtre sur Open/Resolved',
     open: 'Ouverte',
@@ -232,15 +241,15 @@ export default {
       required: 'Veuillez sélectionner au moins une statistique',
     },
     yesNoMode: 'Mode Oui/Non',
-    selectAFilter: 'Selectionner un filtre',
+    selectAFilter: 'Sélectionner un filtre',
     criticityLevels: 'Niveaux de criticité',
     colorsSelector: {
       title: 'Sélecteur de couleur',
       statsCriticity: {
         [STATS_CRITICITY.ok]: 'ok',
-        [STATS_CRITICITY.minor]: 'minor',
-        [STATS_CRITICITY.major]: 'major',
-        [STATS_CRITICITY.critical]: 'critical',
+        [STATS_CRITICITY.minor]: 'mineur',
+        [STATS_CRITICITY.major]: 'majeur',
+        [STATS_CRITICITY.critical]: 'critique',
       },
     },
     statsDateInterval: {
@@ -304,7 +313,7 @@ export default {
       left: 'Marge - Gauche',
     },
     contextTypeOfEntities: {
-      title: 'Type d\'entitées',
+      title: 'Type d\'entité',
       fields: {
         component: 'Composant',
         connector: 'Connecteur',
@@ -314,7 +323,7 @@ export default {
     },
     statSelector: {
       error: {
-        alreadyExist: 'Une statistique avec ce nom existe déjà.',
+        alreadyExist: 'Une statistique portant ce nom existe déjà.',
       },
     },
     statsGroups: {
@@ -342,9 +351,9 @@ export default {
       title: 'Infos sur l\'entité',
     },
     createEntity: {
-      createTitle: 'Créer une entitée',
-      editTitle: 'Editer une entitée',
-      duplicateTitle: 'Dupliquer une entitée',
+      createTitle: 'Créer une entité',
+      editTitle: 'Éditer une entité',
+      duplicateTitle: 'Dupliquer une entité',
       manageInfos: {
         infosList: 'Informations',
         addInfo: 'Ajouter une information',
@@ -364,24 +373,24 @@ export default {
       },
       success: {
         create: 'Entité créée avec succès !',
-        edit: 'Entité editée avec succès !',
+        edit: 'Entité éditée avec succès !',
         duplicate: 'Entité dupliquée avec succès !',
       },
     },
     createWatcher: {
       createTitle: 'Créer un observateur',
-      editTitle: 'Editer un observateur',
+      editTitle: 'Éditer un observateur',
       duplicateTitle: 'Dupliquer un observateur',
       displayName: 'Nom',
       success: {
         create: 'Observateur créé avec succès !',
-        edit: 'Observateur edité avec succès !',
+        edit: 'Observateur édité avec succès !',
         duplicate: 'Observateur dupliqué avec succès !',
       },
     },
     addEntityInfo: {
       addTitle: 'Ajouter une information',
-      editTitle: 'Editer une information',
+      editTitle: 'Éditer une information',
     },
     view: {
       select: {
@@ -408,9 +417,13 @@ export default {
         delete: 'Vue supprimée avec succès !',
       },
       fail: {
-        create: 'Erreur dans la création de la vue...',
-        edit: 'Erreur dans l\'édition de la vue...',
-        delete: 'Erreur dans la suppression de la vue...',
+        create: 'Erreur lors de la création de la vue...',
+        edit: 'Erreur lors de  l\'édition de la vue...',
+        delete: 'Erreur lors de la suppression de la vue...',
+      },
+      errors: {
+        rightCreating: 'Erreur sur les droits de création',
+        rightRemoving: 'Erreur sur les droits de suppression',
       },
     },
     createAckEvent: {
@@ -481,16 +494,16 @@ export default {
     },
     liveReporting: {
       editLiveReporting: 'Suivi personnalisé',
-      dateInterval: 'Interval de dates',
+      dateInterval: 'Intervalle de dates',
       today: 'Aujourd\'hui',
       yesterday: 'Hier',
       last7Days: '7 derniers jours',
       last30Days: '30 derniers jours',
-      thisMonth: 'Ce mois',
-      lastMonth: 'Mois dernier',
+      thisMonth: 'Ce mois-ci',
+      lastMonth: 'Le mois dernier',
       custom: 'Personnalisé',
-      tstart: 'Démarre',
-      tstop: 'Finis',
+      tstart: 'Démarre le',
+      tstop: 'Finit le',
     },
     moreInfos: {
       moreInfos: 'Plus d\'infos',
@@ -507,14 +520,14 @@ export default {
     },
     variablesHelp: {
       variables: 'Variables',
-      copyToClipboard: 'Copier dans le Presse-papier',
+      copyToClipboard: 'Copier dans le presse-papier',
     },
     watcher: {
       criticity: 'Criticity',
-      organization: 'Organization',
+      organization: 'Organisation',
       numberOk: 'Nombre Ok',
       numberKo: 'Nombre Ko',
-      state: 'State',
+      state: 'État',
       name: 'Nom',
       org: 'Org',
       noData: 'Pas de données',
@@ -522,12 +535,12 @@ export default {
       application_crit_label: 'Criticité',
       product_line: 'Ligne produit',
       service_period: 'Plage de surveillance',
-      isInCarat: 'Cartographic repository',
+      isInCarat: 'Dépôt de la Cartographie',
       application_label: 'Description',
       target_platform: 'Environnement',
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
-      scenario_calendar: 'Intervals d\'éxécution',
+      scenario_calendar: 'Intervalles d\'éxécution',
       actionPending: 'action(s) en attente',
       refreshEntities: 'Refraichir la liste des entités',
       editPbehaviors: 'Editer les pbehaviors',
@@ -537,7 +550,7 @@ export default {
         title: 'Créer un filtre',
       },
       edit: {
-        title: 'Editer',
+        title: 'Éditer un filtre',
       },
       fields: {
         title: 'Nom',
@@ -559,10 +572,10 @@ export default {
           title: 'Explorateur de contexte',
         },
         weather: {
-          title: 'Météo de services',
+          title: 'Météo des services',
         },
         statsHistogram: {
-          title: 'Histogramme de statistiques',
+          title: 'Histogramme des statistiques',
         },
         statsCurves: {
           title: 'Courbes de statistiques',
@@ -581,13 +594,13 @@ export default {
     manageHistogramGroups: {
       title: {
         add: 'Ajouter un groupe',
-        edit: 'Editer un groupe',
+        edit: 'Éditer un groupe',
       },
     },
     addStat: {
       title: {
         add: 'Ajouter une statistique',
-        edit: 'Editer une statistique',
+        edit: 'Éditer une statistique',
       },
       slaRequired: "La paramètre 'SLA' est obligatoire",
     },
@@ -596,7 +609,7 @@ export default {
         title: 'Créer un groupe',
       },
       edit: {
-        title: 'Editer un groupe',
+        title: 'Éditer un groupe',
       },
       fields: {
         name: 'Nom',
@@ -621,13 +634,21 @@ export default {
       },
     },
     editUser: {
-      title: 'Editer un utilisateur',
+      title: 'Éditer un utilisateur',
     },
     createRole: {
-      title: 'Créer un role',
+      title: 'Créer un rôle ',
     },
     editRole: {
-      title: 'Editer un role',
+      title: 'Éditer un rôle',
+    },
+    createRight: {
+      title: 'Créer les droits',
+      fields: {
+        id: 'ID',
+        description: 'Description',
+        type: 'Type',
+      },
     },
     eventFilterRule: {
       create: {
@@ -639,20 +660,20 @@ export default {
         success: 'Règle créée avec succès !',
       },
       edit: {
-        title: 'Editer une règle',
+        title: 'Éditer une règle',
         success: 'Règle éditée avec succès !',
       },
       priority: 'Priorité',
-      editPattern: 'Editer le pattern',
+      editPattern: 'Éditer le pattern',
       advanced: 'Avancée',
       addAField: 'Ajouter un champ',
-      simpleEditor: 'Editeur simple',
+      simpleEditor: 'Éditeur simple',
       field: 'Champ',
       value: 'Valeur',
-      advancedEditor: 'Editeur avancé',
+      advancedEditor: 'Éditeur avancé',
       comparisonRules: 'Règles de comparaison',
       enrichmentOptions: 'Options d\'enrichissement',
-      editActions: 'Editer les actions',
+      editActions: 'Éditer les actions',
       addAction: 'Ajouter une action',
       actions: 'Actions',
       from: 'Depuis',
@@ -666,7 +687,7 @@ export default {
         title: 'Ajouter un onglet',
       },
       edit: {
-        title: 'Editer l\'onglet',
+        title: 'Éditer l\'onglet',
       },
       fields: {
         title: 'Titre',
@@ -676,7 +697,7 @@ export default {
   tables: {
     noData: 'Aucune donnée',
     contextList: {
-      title: 'Liste Context',
+      title: 'Liste Contexte',
       name: 'Nom',
       type: 'Type',
       id: 'Id',
@@ -688,12 +709,12 @@ export default {
       connectorName: 'Nom du connecteur',
       component: 'Composant',
       resource: 'Ressource',
-      output: 'Output',
+      output: 'Message',
       lastUpdateDate: 'Date de dernière modification',
       creationDate: 'Date de création',
       duration: 'Durée',
       state: 'État',
-      status: 'Status',
+      status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
     /**
@@ -706,7 +727,7 @@ export default {
       connectorName: 'Nom du connecteur',
       enabled: 'Actif',
       tstart: 'Démarre',
-      tstop: 'Finis',
+      tstop: 'Finit',
       type_: 'Type',
       reason: 'Raison',
       rrule: 'Rrule',
@@ -724,9 +745,9 @@ export default {
     },
     alarmStates: {
       [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Minor',
-      [ENTITIES_STATES.major]: 'Major',
-      [ENTITIES_STATES.critical]: 'Critical',
+      [ENTITIES_STATES.minor]: 'Mineur',
+      [ENTITIES_STATES.major]: 'Majeur',
+      [ENTITIES_STATES.critical]: 'Critique',
     },
     contextEntities: {
       columns: {
@@ -742,7 +763,7 @@ export default {
       users: {
         columns: {
           username: 'Nom d\'utilisateur',
-          role: 'Role',
+          role: 'Rôle',
           enabled: 'Actif',
         },
       },
@@ -757,43 +778,43 @@ export default {
       advanced: 'Avancé',
     },
     errors: {
-      main: 'La Rrule choisis n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
+      main: 'La Rrule choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
     },
     fields: {
       freq: 'Fréquence',
       until: 'Jusqu\'à',
       byweekday: 'Par jour de la semaine',
       count: 'Répéter',
-      interval: 'Interval',
+      interval: 'Intervalle',
       wkst: 'Semaine de début',
       bymonth: 'Par mois',
       bysetpos: {
         label: 'Par position',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la n-ième occurence de la règle dans l\'interval de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (Lundi, Mardi, Mercredi, Jeudi, Vendredi), va nous donner le dernier jour travaillé de chaque mois',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (Lundi, Mardi, Mercredi, Jeudi, Vendredi), va nous donner le dernier jour travaillé de chaque mois',
       },
       bymonthday: {
         label: 'Par jour du mois',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auxquels s\'appliquera la récurrence.',
       },
       byyearday: {
         label: 'Par jour de l\'année',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auxquels  s\'appliquera la récurrence.',
       },
       byweekno: {
         label: 'Par semaine n°',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine a laquelle appliquer la récurrence. Les numéros de semaines sont ceux de ISO8601, la première semaine de l\'année étant celle contenant au moins 4 jours de cette année',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine auxquelles s\'appliquera la récurrence. Les numéros de semaines sont ceux de ISO8601, la première semaine de l\'année étant celle contenant au moins 4 jours de cette année.',
       },
       byhour: {
         label: 'Par heure',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auxquelles s\'appliquera la récurrence.',
       },
       byminute: {
         label: 'Par minute',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auxquelles s\'appliquera la récurrence.',
       },
       bysecond: {
         label: 'Par seconde',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquellles s\'appliquera la récurrence.',
       },
     },
   },
@@ -890,12 +911,12 @@ export default {
     },
   },
   parameters: {
-    interfaceLanguage: 'Langage de l\'interface',
+    interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {
       title: 'Type d\'affichage de la barre de vues',
       items: {
         sideBar: 'Barre latérale',
-        topBar: 'Barre en haut de la page',
+        topBar: 'Barre d\'entête',
       },
     },
   },
