@@ -47,10 +47,11 @@ yum update
 
 Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour :
 ```sh
-su - canopsis
-(canopsis) canopsinit
-(canopsis) exit
+su - canopsis -c "canopsinit"
 ```
+
+!!! info
+    Si vous obtenez une erreur du type `E11000 duplicate key error collection: canopsis.default_rights index`, exécutez la commande suivante [dans MongoDB](../administration-avancee/connexion-a-la-base-de-donnees.md) : `db.default_rights.remove({"type": "", "loader_id": {$eq: null}})` et lancez `canopsinit` à nouveau.
 
 S'assurer que toute modification des unités systemd soit bien prise en compte (à nouveau en `root`) :
 ```sh
