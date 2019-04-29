@@ -1,13 +1,7 @@
 <template lang="pug">
   div.mainContainer.secondary
     div.description
-      div(v-if="description", v-html="description")
-      v-layout.descriptionText(v-else, wrap, justify-center, align-center)
-        v-flex.text-xs-center(xs6)
-          img.mainLogo(src="@/assets/canopsis.png")
-        v-flex.title.mt-4(
-        xs12
-        ) Outil de centralisation, de traitement et de présentation de l'ensemble des événements du SI.
+      div(v-html="description")
     div.loginContainer
       v-card
         v-card-title.primary.white--text
@@ -53,7 +47,7 @@
                 v-flex(v-if="hasServerError", xs9)
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
-      v-card.mt-2(v-show="!isCASAuthEnabled")
+      v-card.mt-2(v-show="isCASAuthEnabled")
         v-card-text
           div.pa-3
             div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
