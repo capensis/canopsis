@@ -42,11 +42,13 @@
               outline
               )
             v-flex
-              v-layout(justify-space-between, align-center)
+              v-layout.mb-1(justify-space-between, align-center)
                 v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
                 v-flex(v-if="hasServerError", xs9)
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
+              v-divider
+              v-layout(v-if="footer", v-html="footer")
       v-card.mt-2(v-show="isCASAuthEnabled")
         v-card-text
           div.pa-3
@@ -56,9 +58,9 @@
             color="primary",
             ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.secondary.darken-1.footer
-      a(:href="$constants.CANOPSIS_DOCUMENTATION") {{ $t('login.documentation') }}
-      a(:href="$constants.CANOPSIS_WEBSITE") Canopsis.com
-      a(:href="changeLogHref") {{ $t('login.changelog') }}
+      a(:href="$constants.CANOPSIS_DOCUMENTATION", target="_blank") {{ $t('login.documentation') }}
+      a(:href="$constants.CANOPSIS_WEBSITE", target="_blank") Canopsis.com
+      a(:href="changeLogHref", target="_blank") {{ $t('login.changelog') }}
       div.version {{ version }}
 </template>
 
