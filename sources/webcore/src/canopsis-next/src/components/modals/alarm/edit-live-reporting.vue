@@ -17,7 +17,7 @@
         v-flex(xs12)
           date-time-picker-field(
           v-model="tstart",
-          v-validate="'required'",
+          v-validate="tstartRules",
           :label="$t('modals.liveReporting.tstart')",
           name="tstart",
           clearable
@@ -75,12 +75,19 @@ export default {
       return this.selectedInterval === LIVE_REPORTING_INTERVALS.custom;
     },
 
+    tstartRules() {
+      return {
+        required: true,
+        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+      };
+    },
+
     tstopRules() {
       const rules = { required: true };
 
       if (this.tstart) {
         rules.after = [moment(this.tstart).format(DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = DATETIME_FORMATS.dateTimePicker;
+        rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 
       return rules;
