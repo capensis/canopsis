@@ -812,6 +812,7 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   moreInfo: 'more-info',
   alarmList: 'alarm-list',
+  both: 'both',
 };
 
 export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';

@@ -354,6 +354,7 @@ export default {
       fields: {
         moreInfo: 'More info',
         alarmList: 'Alarm list',
+        both: 'Both',
       },
     },
     templateEditor: 'Template',
@@ -1096,5 +1097,8 @@ export default {
         noAccessToRoleDefaultView: 'Access to role default view forbidden.',
       },
     },
+  },
+  serviceWeather: {
+    seeAlarms: 'See alarms',
   },
 };
