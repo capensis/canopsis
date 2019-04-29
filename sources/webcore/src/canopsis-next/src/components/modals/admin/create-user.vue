@@ -12,17 +12,20 @@
           v-model="form._id",
           data-vv-name="username",
           v-validate="'required'",
+          :disabled="onlyUserPrefs",
           :error-messages="errors.collect('username')",
           )
         v-layout(row)
           v-text-field(
           :label="$t('modals.createUser.fields.firstName')",
           v-model="form.firstname",
+          :disabled="onlyUserPrefs",
           )
         v-layout(row)
           v-text-field(
           :label="$t('modals.createUser.fields.lastName')",
           v-model="form.lastname",
+          :disabled="onlyUserPrefs",
           )
         v-layout(row)
           v-text-field(
@@ -31,6 +34,7 @@
           data-vv-name="email",
           v-validate="'required|email'",
           :error-messages="errors.collect('email')",
+          :disabled="onlyUserPrefs",
           )
         v-layout(row)
           v-text-field(
@@ -40,6 +44,7 @@
           data-vv-name="password",
           v-validate="passwordRules",
           :error-messages="errors.collect('password')",
+          :disabled="onlyUserPrefs",
           )
         v-layout(row)
           v-select(
@@ -50,6 +55,7 @@
           item-value="_id",
           data-vv-name="role",
           v-validate="'required'",
+          :disabled="onlyUserPrefs",
           :error-messages="errors.collect('role')",
           )
         v-layout(row)
@@ -66,13 +72,16 @@
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
           v-switch(
-            color="primary",
+          color="primary",
           :label="$t('modals.createUser.fields.enabled')",
+          :disabled="onlyUserPrefs",
           v-model="form.enable",
           )
         v-layout(align-center)
           v-btn(small, color="secondary", @click="openViewSelectModal") Select default view
           div {{ defaultViewTitle }}
+          v-btn(v-if="form.defaultview", icon, @click="clearDefaultView")
+            v-icon(color="error") clear
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -145,6 +154,10 @@ export default {
       const userDefaultView = this.getViewById(this.form.defaultview);
       return userDefaultView ? userDefaultView.title : null;
     },
+
+    onlyUserPrefs() {
+      return this.config.onlyUserPrefs;
+    },
   },
   async mounted() {
     await this.fetchRolesList({ params: { limit: 0 } });
@@ -171,10 +184,14 @@ export default {
         name: MODALS.selectView,
         config: {
           action: (viewId) => {
-            this.form.defaultview = viewId;
+            this.$set(this.form, 'defaultview', viewId);
           },
         },
       });
+    },
+
+    clearDefaultView() {
+      this.$delete(this.form, 'defaultview');
     },
 
     async submit() {

@@ -140,8 +140,9 @@ export default {
       this.showModal({
         name: MODALS.createUser,
         config: {
-          title: this.$t('modals.editUser.title'),
+          title: 'Profile',
           user: this.currentUser,
+          onlyUserPrefs: true,
           action: async (data) => {
             const editedUser = cloneDeep(this.currentUser);
 
