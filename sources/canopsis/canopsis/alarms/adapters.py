@@ -171,6 +171,28 @@ class AlarmAdapter(object):
         for document in self.collection.aggregate(pipeline):
             yield make_alarm_from_mongo(document['last_alarm'])
 
+    def count_ongoing_alarms(self, entities, states):
+        """
+        Returns the number of ongoing alarms.
+
+        This method returns the number of ongoing alarms, filtered by entity
+        ids and states.
+
+        :param entities: A list of entity ids.
+        :param stats: A list of alarm stats.
+        :rtype: int
+        """
+        query = {
+            "d": {"$in": entities},
+            "v.state.val": {"$in": states},
+            "$or": [
+                {"v.resolved": None},
+                {"v.resolved": {"$exists": False}},
+            ]
+        }
+
+        return self.collection.count(query)
+
     def update(self, alarm):
         """
         Update an alarm in db.

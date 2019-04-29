@@ -49,6 +49,11 @@
           v-model="settings.widget.parameters.isAckNoteRequired",
           :title="$t('settings.isAckNoteRequired')",
           )
+          v-divider
+          field-switcher(
+          v-model="settings.widget.parameters.isMultiAckEnabled",
+          :title="$t('settings.isMultiAckEnabled')",
+          )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>

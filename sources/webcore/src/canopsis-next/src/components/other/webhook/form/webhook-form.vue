@@ -96,7 +96,6 @@ export default {
     hasBlockedTriggers() {
       return intersection(this.form.hook.triggers, [
         WEBHOOK_TRIGGERS.resolve,
-        WEBHOOK_TRIGGERS.cancel,
         WEBHOOK_TRIGGERS.unsnooze,
       ]).length > 0;
     },
