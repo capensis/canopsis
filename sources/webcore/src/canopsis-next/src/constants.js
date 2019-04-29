@@ -837,6 +837,7 @@ export const WEBHOOK_TRIGGERS = {
   statedec: 'statedec',
   statusinc: 'statusinc',
   statusdec: 'statusdec',
+  changestate: 'changestate',
   ack: 'ack',
   ackremove: 'ackremove',
   cancel: 'cancel',
