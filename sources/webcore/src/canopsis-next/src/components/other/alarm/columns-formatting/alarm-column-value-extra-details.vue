@@ -65,8 +65,7 @@
             v-for="comment in pbehavior.comments",
             :key="comment._id",
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
-              div {{ pbehavior }}
-              //div.ml-2 - {{ comment.author }}: {{ comment.message }}
+              div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
 </template>
 
