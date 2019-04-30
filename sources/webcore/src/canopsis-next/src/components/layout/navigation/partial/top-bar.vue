@@ -6,6 +6,8 @@
   )
     v-toolbar-side-icon.ml-2.white--text(v-if="isShownGroupsSideBar", @click="$emit('toggleSideBar')")
     img.canopsisLogo(v-else, src="@/assets/canopsis.png")
+    v-layout.version.ml-1(fill-height, align-end)
+      div {{ version }}
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
     v-toolbar-items
@@ -193,6 +195,11 @@ export default {
   .canopsisLogo {
     max-height: 80%;
     margin-left: 1em;
+  }
+
+  .version {
+    color: white;
+    font-size: 0.7em;
   }
 
   a {
