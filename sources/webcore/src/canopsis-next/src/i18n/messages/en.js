@@ -168,7 +168,7 @@ export default {
     LDAP: 'LDAP',
     loginWithCAS: 'Login with CAS',
     documentation: 'Documentation',
-    changelog: 'Changelog',
+    forum: 'Forum',
     connectionProtocols: 'Connection protocols',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',

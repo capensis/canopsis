@@ -60,8 +60,8 @@
     div.secondary.darken-1.footer
       a(:href="$constants.CANOPSIS_DOCUMENTATION", target="_blank") {{ $t('login.documentation') }}
       a(:href="$constants.CANOPSIS_WEBSITE", target="_blank") Canopsis.com
-      a(:href="changeLogHref", target="_blank") {{ $t('login.changelog') }}
-      div.version {{ version }}
+      a(:href="$constants.CANOPSIS_FORUM", target="_blank") {{ $t('login.forum') }}
+      a.version(:href="changeLogHref", target="_blank") {{ version }}
 </template>
 
 <script>
@@ -220,6 +220,9 @@ export default {
       bottom: 0;
       text-decoration: underline;
       font-weight: bold;
+
+      color: inherit;
+      text-decoration: none;
     }
   }
 </style>
