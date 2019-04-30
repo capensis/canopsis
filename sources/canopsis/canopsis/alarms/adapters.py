@@ -152,15 +152,18 @@ class AlarmAdapter(object):
 
         return self.collection.find_one(filter_)
 
-    def count_ongoing_alarms(self, entities, states):
+    def count_ongoing_alarms(self, entities, states, acknowledged=None):
         """
         Returns the number of ongoing alarms.
 
         This method returns the number of ongoing alarms, filtered by entity
-        ids and states.
+        ids, states, and whether or not they have been acknowledged.
 
-        :param entities: A list of entity ids.
-        :param stats: A list of alarm stats.
+        :param List[str] entities: A list of entity ids.
+        :param List[int] states: A list of alarm states.
+        :param Optional[bool] acknowledged: If set and true, only count the
+            alarms that have been acknowledged. If set and false, only count
+            the alarms that have not been acknowledged.
         :rtype: int
         """
         query = {
@@ -171,6 +174,9 @@ class AlarmAdapter(object):
                 {"v.resolved": {"$exists": False}},
             ]
         }
+
+        if acknowledged is not None:
+            query["v.ack"] = {"$exists": acknowledged}
 
         return self.collection.count(query)
 
