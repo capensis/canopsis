@@ -2,6 +2,6 @@
   "_id": "user_interface",
   "loader_id": "user_interface",
   "loader_no_update": true,
-  "login_page_description": "<h1 style='margin-top: 0.5em;'>Hypervisez votre SI</h1><p style='text-align: left; margin-top: 1.5em;'>Canopsis est une solution d’hypervision Open Source couvrant l’ensemble des sources de données de votre SI.<br>Avec l’hypervision Canopsis vous pouvez centraliser, traiter et présenter l'ensemble des événements de votre SI en une console unique.</p>",
+  "login_page": "<h1 style='margin-top: 0.5em; font-size: 40px;'>Hypervisez votre SI</h1><p style='text-align: left; margin-top: 1.5em; font-size: 20px;'>Canopsis est une solution d'hypervision Open Source couvrant l'ensemble des sources de données de votre SI.<br> Avec l'hypervision Canopsis vous pouvez centraliser, traiter et présenter l'ensemble des événements de votre SI en une console unique.</p>",
   "app_title": "Canopsis"  
 }
