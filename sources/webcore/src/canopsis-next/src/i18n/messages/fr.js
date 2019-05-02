@@ -632,7 +632,7 @@ export default {
         lastName: 'Nom',
         email: 'Email',
         password: 'Mot de passe',
-        role: 'Role',
+        role: 'Rôle',
         language: 'Langue de l\'interface par défaut',
         enabled: 'Actif',
       },
@@ -818,7 +818,7 @@ export default {
       },
       bysecond: {
         label: 'Par seconde',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquellles s\'appliquera la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquelles s\'appliquera la récurrence.',
       },
     },
   },
