@@ -13,6 +13,8 @@ export default {
     logo: '',
     appTitle: '',
     footer: '',
+    edition: '',
+    stack: '',
     isLDAPAuthEnabled: false,
     isCASAuthEnabled: false,
     casConfig: {},
@@ -22,6 +24,8 @@ export default {
     logo: state => state.logo,
     appTitle: state => state.appTitle,
     footer: state => state.footer,
+    edition: state => state.edition,
+    stack: state => state.stack,
     isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
     isCASAuthEnabled: state => state.isCASAuthEnabled,
     casConfig: state => state.casConfig,
@@ -46,10 +50,14 @@ export default {
       version,
       logo,
       appTitle,
+      edition,
+      stack,
     }) {
       state.version = version;
       state.logo = logo;
       state.appTitle = appTitle;
+      state.edition = edition;
+      state.stack = stack;
     },
   },
   actions: {
@@ -69,9 +77,24 @@ export default {
 
     async fetchAppInfos({ commit }) {
       try {
-        const { version, logo, app_title: appTitle } = await request.get(API_ROUTES.infos.app);
+        const {
+          version,
+          logo,
+          app_title: appTitle,
+          edition,
+          stack,
+        } = await request.get(API_ROUTES.infos.app);
 
-        commit(types.FETCH_APP_INFOS, { version, logo, appTitle });
+        commit(
+          types.FETCH_APP_INFOS,
+          {
+            version,
+            logo,
+            appTitle,
+            edition,
+            stack,
+          },
+        );
       } catch (err) {
         console.error(err);
       }
