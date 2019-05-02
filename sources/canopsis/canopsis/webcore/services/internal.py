@@ -153,10 +153,14 @@ def exports(ws):
             ok = check_edition_and_stack(
                 ws, doc.get("edition"), doc.get("stack"))
             if ok:
-                resp = CanopsisVersionManager(version_collection).\
+                success = CanopsisVersionManager(version_collection).\
                     put_canopsis_document(doc.get("edition"),
                                           doc.get("stack"), None)
-                return gen_json(resp)
+
+                if not success:
+                    return gen_json_error({'description': 'failed to update edition/stack'},
+                                          HTTP_ERROR)
+                return gen_json({})
             else:
                 err = 'Invalid value(s).'
                 ws.logger.error(err)
