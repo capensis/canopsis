@@ -152,6 +152,25 @@ class AlarmAdapter(object):
 
         return self.collection.find_one(filter_)
 
+    def find_last_alarms(self):
+        """
+        Returns the last alarm for each entity.
+
+        This is a generator that yields the last alarm that was opened for each
+        entity. The alarms may or may not have been resolved.
+
+        :rtype: Iterator[Alarm]
+        """
+        pipeline = [{
+            "$group": {
+                "_id": "$d",
+                "last_alarm": { "$last": "$$ROOT" }
+            }
+        }]
+
+        for document in self.collection.aggregate(pipeline):
+            yield make_alarm_from_mongo(document['last_alarm'])
+
     def count_ongoing_alarms(self, entities, states, acknowledged=None):
         """
         Returns the number of ongoing alarms.
