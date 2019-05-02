@@ -111,6 +111,18 @@ def get_login_config(ws):
     return {"login_config": login_config}
 
 
+def check_edition_and_stack(ws, edition, stack):
+    if edition is not None and edition not in VALID_CANOPSIS_EDITIONS:
+        ws.logger.error("edition is an invalid value : {}".format(edition))
+        return False
+
+    if stack is not None and stack not in VALID_CANOPSIS_STACKS:
+        ws.logger.error("stack is an invalid value : {}".format(stack))
+        return False
+
+    return True
+
+
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
@@ -138,14 +150,15 @@ def exports(ws):
             name=CanopsisVersionManager.COLLECTION)
 
         try:
-
-            if doc.get("edition") in VALID_CANOPSIS_EDITIONS and doc.get("stack") in VALID_CANOPSIS_STACKS:
+            ok = check_edition_and_stack(
+                ws, doc.get("edition"), doc.get("stack"))
+            if ok:
                 resp = CanopsisVersionManager(version_collection).\
                     put_canopsis_document(doc.get("edition"),
                                           doc.get("stack"), None)
                 return gen_json(resp)
             else:
-                err = 'Edition or stack have invalid value(s).'
+                err = 'Invalid value(s).'
                 ws.logger.error(err)
                 return gen_json_error(
                     {'description': err},
