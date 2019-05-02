@@ -7,7 +7,7 @@
       v-card-text
         v-container
           v-layout(row)
-            state-criticity-field(v-model="form.state")
+            state-criticity-field(v-model="form.state", :stateValues="availableStateValues")
           v-layout.mt-4(row)
             v-text-field(
             :label="$t('modals.createChangeStateEvent.fields.output')",
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
@@ -45,9 +47,14 @@ export default {
     return {
       form: {
         output: '',
-        state: ENTITIES_STATES.ok,
+        state: ENTITIES_STATES.major,
       },
     };
+  },
+  computed: {
+    availableStateValues() {
+      return omit(ENTITIES_STATES, ['ok']);
+    },
   },
   mounted() {
     this.form.state = this.firstItem.v.state.val;

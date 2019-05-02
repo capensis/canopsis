@@ -32,14 +32,14 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
 
 
-def get_role():
-    """
-    Find current user, or return None
-    """
-    session = request.environ.get('beaker.session')
-    user = session.get('user', {})
+def is_valid(ws, event):
+    event_type = event.get("event_type")
+    if event_type in ['changestate', 'keepstate'] and event.get('state', None) == 0:
+        ws.logger.error("cannot set state to info with changestate/keepstate")
+        return False
 
-    return user.get('role', None)
+    return True
+
 
 def send_events(ws, events, exchange='canopsis.events'):
     events = ensure_iterable(events)
@@ -49,13 +49,11 @@ def send_events(ws, events, exchange='canopsis.events'):
     retry_events = []
 
     for event in events:
-
-        event_type = event.get("event_type")
-        if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket', 'done', 'assocticket', 'changestate', 'keepstate', 'snooze']:
-            try:
-                event['role'] = get_role()
-            except Exception as e:
-                ws.logger.error('Error while retrieving role : {}'.format(e))
+        if not is_valid(ws, event):
+            ws.logger.error(
+                "event {}/{} is invalid".format(event.get("resource"), event.get("component")))
+            failed_events.append(event)
+            continue
 
         try:
             ws.amqp_pub.canopsis_event(event, exchange)

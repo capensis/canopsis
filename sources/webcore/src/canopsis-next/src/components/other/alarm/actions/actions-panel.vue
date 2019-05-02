@@ -140,6 +140,47 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
+      const actions = [];
+
+      if (this.isEditingMode) {
+        actions.push(filteredActionsMap.variablesHelp);
+      }
+
+      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
+        if (this.item.v.ack) {
+          if (this.widget.parameters.isMultiAckEnabled) {
+            actions.push(filteredActionsMap.ack);
+          }
+
+          actions.push(
+            filteredActionsMap.declareTicket,
+            filteredActionsMap.associateTicket,
+            filteredActionsMap.cancel,
+            filteredActionsMap.ackRemove,
+            filteredActionsMap.snooze,
+            filteredActionsMap.changeState,
+            filteredActionsMap.pbehaviorAdd,
+            filteredActionsMap.pbehaviorList,
+            filteredActionsMap.moreInfos,
+          );
+        } else {
+          actions.push(
+            filteredActionsMap.ack,
+            filteredActionsMap.fastAck,
+            filteredActionsMap.moreInfos,
+          );
+        }
+      }
+
+      const inlineActions = actions.slice(0, 3);
+      const dropDownActions = actions.slice(3);
+
+      return {
+        inline: inlineActions.filter(action => !!action),
+        dropDown: dropDownActions.filter(action => !!action),
+      };
+
+      /*
       let inlineActions = [filteredActionsMap.pbehaviorList];
       let dropDownActions = [];
 
@@ -159,6 +200,10 @@ export default {
             filteredActionsMap.pbehaviorList,
             filteredActionsMap.moreInfos,
           ];
+
+          if (this.widget.parameters.isMultiAckEnabled) {
+            inlineActions.push(filteredActionsMap.ack);
+          }
         } else {
           inlineActions = [
             filteredActionsMap.ack,
@@ -179,6 +224,7 @@ export default {
         inline: inlineActions.filter(action => !!action),
         dropDown: dropDownActions.filter(action => !!action),
       };
+      */
     },
   },
   methods: {

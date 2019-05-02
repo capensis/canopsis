@@ -64,13 +64,24 @@ Ici, nous avons utilisé le `or` et le `eq`, mais il est possible de tester les 
 
 En plus des fontions de base pour tester la valeur des variables, il existe plusieurs fonctions pour transformer le contenu de la variable.
 
+Pour les utiliser, il faut appeler la fonction après la variable comme ceci : `{{ .LaVariable | fonction }}` ou `{{ .LaVariable | fonction param }}` si la fonction a besoin d'autres paramètres.
+
+On peut aussi enchaîner différentes fonctions à la suite si on veut transformer plusieurs fois les variables `{{ .LaVariable | fontion1 | fonction2 paramA paramB | fonction3 paramC }}`.
+
 #### `urlquery`
 
 `urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
 
-#### `json` et `json_unquote`
+#### Fonctionnalités spécifiques à Canopsis
 
-Une fonctionnalité pas présente de base dans les templates Go mais implémentée dans Canopsis est la fonction `json`, ainsi que sa variante `json_unquote`. Ces fonctions vont transformer un champ en un élément directement insérable dans un fichier JSON et en conservant le contenu exact. Les caractères spéciaux dans les chaînes de caractères seront envoyés en tant que tel, sans traitement pas les engines Go.
+Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été implémentées par l'équipe de Canopsis.
+
+!!! note
+    Les fonctions suivantes sont disponibles dans les templates des [webhooks](index.md), pas ceux de l'event-filter.
+
+##### `json` et `json_unquote`
+
+La fonction `json`, ainsi que sa variante `json_unquote` vont transformer un champ en un élément directement insérable dans un fichier JSON et en conservant le contenu exact. Les caractères spéciaux dans les chaînes de caractères seront envoyés en tant que tel, sans traitement pas les engines Go.
 
 `json_unquote` va retirer les guillemets si le résultat est une chaîne de caractères, sinon il retourne la même chose que `json`.
 
@@ -78,8 +89,15 @@ Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by s
 
 `json_unquote` va lui générer la chaîne `ACK by someone` qui n'est pas utilisable directement dans un JSON mais qui peut servir pour créer des textes plus complexes. `\"Voici un message : '{{ .Alarm.Value.ACK.Message | json_unquote }}'\"` va donner par exemple `"Voici un message : 'ACK by someone'"`.
 
-!!! note
-    `json` et `json_unquote` sont disponibles uniquement dans les templates des [webhooks](index.md), pas ceux de l'event-filter.
+##### `split`
+
+`split` va diviser une chaîne de caractères en plusieurs sous-chaînes selon un séparateur et retourner une des ces sous-chaînes à partir d'un indice.
+
+Si par exemple l'output d'un événement vaut `"SERVER#69420#DOWN"`, `{{ .Event.Output | split \"#\" 2 }}` va renvoyer la chaîne `DOWN`. Comme les indices commencent à 0, `SERVER` a pour indice 0, `69420` a pour indice 1 et `DOWN` a pour indice 2.
+
+##### `trim`
+
+La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de caractères. Les blancs pris en compte sont ceux définis par Unicode et ils comprennent l'espace, la tabulation, l'espace insécable ainsi que les caractères de fin de ligne.
 
 ## Exemples
 
@@ -190,5 +208,23 @@ Ici, le type vaut tout le temps `"JSON"` et la présence des guillemets est obli
     "message": "127.0.0.1",
     "value": 2,
     "type": "JSON"
+}
+```
+
+#### Fonctions en série
+
+Enfin, on peut enchaîner plusieurs fonctions afin de transformer des variables. Dans le cas cas suivant, on va transformer la variable `.Event.Output` qui vaut `c0ffee - beef- facade      -a5a5a5`.
+
+```json
+{
+    "payload" : "{\"message\": {{ .Event.Output | split \"-\" 2 | trim | json }} }"
+}
+```
+
+On découpe l'output avec `split` qui nous retourne ` facade      `, puis trim enlève les blancs en début et fin de chaîne pour obtenir `facade` et enfin, `json` va rendre `facade` compatible pour un document JSON.
+
+```json
+{
+    "message": "facade"
 }
 ```
