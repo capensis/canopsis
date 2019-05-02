@@ -32,13 +32,34 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
 
 
-def is_valid(ws, event):
+def check_event(ws, event):
     event_type = event.get("event_type")
     if event_type in ['changestate', 'keepstate'] and event.get('state', None) == 0:
         ws.logger.error("cannot set state to info with changestate/keepstate")
         return False
 
     return True
+
+
+def transform_event(event):
+    new_event = event.copy()
+
+    # Add role in event
+    event_type = new_event.get("event_type")
+    if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket', 'done', 'assocticket', 'changestate', 'keepstate', 'snooze']:
+        new_event['role'] = get_role()
+
+    return new_event
+
+
+def get_role():
+    """
+    Find current user, or return None
+    """
+    session = request.environ.get('beaker.session')
+    user = session.get('user', {})
+
+    return user.get('role', None)
 
 
 def send_events(ws, events, exchange='canopsis.events'):
@@ -49,23 +70,30 @@ def send_events(ws, events, exchange='canopsis.events'):
     retry_events = []
 
     for event in events:
-        if not is_valid(ws, event):
+        if not check_event(ws, event):
             ws.logger.error(
                 "event {}/{} is invalid".format(event.get("resource"), event.get("component")))
             failed_events.append(event)
             continue
 
         try:
-            ws.amqp_pub.canopsis_event(event, exchange)
-            sent_events.append(event)
+            transformed_event = transform_event(event)
+        except Exception as e:
+            ws.logger.error('Failed to transform event : {}'.format(e))
+            failed_events.append(event)
+            continue
+
+        try:
+            ws.amqp_pub.canopsis_event(transformed_event, exchange)
+            sent_events.append(transformed_event)
 
         except KeyError as exc:
             ws.logger.error('bad event: {}'.format(exc))
-            failed_events.append(event)
+            failed_events.append(transformed_event)
 
         except AmqpPublishError as exc:
             ws.logger.error('publish error: {}'.format(exc))
-            retry_events.append(event)
+            retry_events.append(transformed_event)
 
     return {
         'sent_events': sent_events,
