@@ -340,6 +340,7 @@ export const DATETIME_FORMATS = {
   datePicker: 'DD/MM/YYYY',
   timePicker: 'HH:mm',
   timePickerWithSeconds: 'HH:mm:ss',
+  veeValidateDateTimeFormat: 'dd/MM/yyyy HH:mm',
 };
 
 export const STATS_OPTIONS = {
@@ -812,6 +813,7 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   moreInfo: 'more-info',
   alarmList: 'alarm-list',
+  both: 'both',
 };
 
 export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
@@ -837,6 +839,7 @@ export const WEBHOOK_TRIGGERS = {
   statedec: 'statedec',
   statusinc: 'statusinc',
   statusdec: 'statusdec',
+  changestate: 'changestate',
   ack: 'ack',
   ackremove: 'ackremove',
   cancel: 'cancel',

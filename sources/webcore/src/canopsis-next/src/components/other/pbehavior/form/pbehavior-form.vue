@@ -11,7 +11,7 @@
       )
     v-layout(row)
       date-time-picker-field(
-      v-validate="'required'",
+      v-validate="tstartRules",
       :value="form.tstart",
       :label="$t('modals.createPbehavior.fields.start')",
       name="tstart",
@@ -87,12 +87,19 @@ export default {
       return Object.values(PBEHAVIOR_TYPES);
     },
 
+    tstartRules() {
+      return {
+        required: true,
+        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+      };
+    },
+
     tstopRules() {
       const rules = { required: true };
 
       if (this.form.tstart) {
         rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = DATETIME_FORMATS.dateTimePicker;
+        rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 
       return rules;
