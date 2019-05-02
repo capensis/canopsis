@@ -340,6 +340,7 @@ export const DATETIME_FORMATS = {
   datePicker: 'DD/MM/YYYY',
   timePicker: 'HH:mm',
   timePickerWithSeconds: 'HH:mm:ss',
+  veeValidateDateTimeFormat: 'dd/MM/yyyy HH:mm',
 };
 
 export const STATS_OPTIONS = {
