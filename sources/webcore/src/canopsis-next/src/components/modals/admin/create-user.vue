@@ -191,7 +191,7 @@ export default {
     },
 
     clearDefaultView() {
-      this.$delete(this.form, 'defaultview');
+      this.$set(this.form, 'defaultview', '');
     },
 
     async submit() {
