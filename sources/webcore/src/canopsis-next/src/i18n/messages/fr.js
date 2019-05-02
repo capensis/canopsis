@@ -632,6 +632,7 @@ export default {
         lastName: 'Nom',
         email: 'Email',
         password: 'Mot de passe',
+        role: 'Role',
         language: 'Langue de l\'interface par défaut',
         enabled: 'Actif',
       },
@@ -931,6 +932,15 @@ export default {
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+  },
+  home: {
+    popups: {
+      info: {
+        noAccessToDefaultView: 'Accès refusé à la vue par défaut. Redirection vers la vue par défaut de votre rôle.',
+        notSelectedRoleDefaultView: 'Pas de vue par défaut sélectionnée pour votre rôle.',
+        noAccessToRoleDefaultView: 'Accès refusé à la vue par défaut de votre rôle.',
+      },
+    },
   },
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
