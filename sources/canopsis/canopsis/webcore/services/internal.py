@@ -61,11 +61,18 @@ def get_version():
     document = CanopsisVersionManager(version_collection).\
         find_canopsis_document()
 
+    if document is not None:
+        return {
+            CanopsisVersionManager.EDITION_FIELD: document.get(CanopsisVersionManager.EDITION_FIELD, ""),
+            CanopsisVersionManager.STACK_FIELD: document.get(CanopsisVersionManager.STACK_FIELD, ""),
+            CanopsisVersionManager.VERSION_FIELD: document.get(
+                CanopsisVersionManager.VERSION_FIELD, "")
+        }
+
     return {
-        CanopsisVersionManager.EDITION_FIELD: document.get(CanopsisVersionManager.EDITION_FIELD, ""),
-        CanopsisVersionManager.STACK_FIELD: document.get(CanopsisVersionManager.STACK_FIELD, ""),
-        CanopsisVersionManager.VERSION_FIELD: document.get(
-            CanopsisVersionManager.VERSION_FIELD, "")
+        CanopsisVersionManager.EDITION_FIELD: "",
+        CanopsisVersionManager.STACK_FIELD: "",
+        CanopsisVersionManager.VERSION_FIELD: ""
     }
 
 
