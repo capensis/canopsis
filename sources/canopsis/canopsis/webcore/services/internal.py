@@ -33,6 +33,14 @@ VALID_USER_INTERFACE_PARAMS = [
     'app_title', 'footer',  'login_page_description', 'logo'
 ]
 
+VALID_CANOPSIS_EDITIONS = [
+    'cat', 'core'
+]
+
+VALID_CANOPSIS_STACKS = [
+    'go', 'python'
+]
+
 
 def get_user_interface():
     user_interface_manager = UserInterfaceManager(
@@ -54,9 +62,10 @@ def get_version():
         find_canopsis_document()
 
     return {
-        CanopsisVersionManager.EDITION_FIELD: document[CanopsisVersionManager.EDITION_FIELD],
-        CanopsisVersionManager.STACK_FIELD: document[CanopsisVersionManager.STACK_FIELD],
-        CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]
+        CanopsisVersionManager.EDITION_FIELD: document.get(CanopsisVersionManager.EDITION_FIELD, ""),
+        CanopsisVersionManager.STACK_FIELD: document.get(CanopsisVersionManager.STACK_FIELD, ""),
+        CanopsisVersionManager.VERSION_FIELD: document.get(
+            CanopsisVersionManager.VERSION_FIELD, "")
     }
 
 
@@ -122,10 +131,20 @@ def exports(ws):
             name=CanopsisVersionManager.COLLECTION)
 
         try:
-            resp = CanopsisVersionManager(version_collection).\
-                put_canopsis_document(doc.get("edition"),
-                                      doc.get("stack"), None)
-            return gen_json(resp)
+
+            if doc.get("edition") in VALID_CANOPSIS_EDITIONS and doc.get("stack") in VALID_CANOPSIS_STACKS:
+                resp = CanopsisVersionManager(version_collection).\
+                    put_canopsis_document(doc.get("edition"),
+                                          doc.get("stack"), None)
+                return gen_json(resp)
+            else:
+                err = 'Edition or stack have invalid value(s).'
+                ws.logger.error(err)
+                return gen_json_error(
+                    {'description': err},
+                    HTTP_ERROR
+                )
+
         except CollectionError as ce:
             ws.logger.error('Update edition/stack error: {}'.format(ce))
             return gen_json_error(
