@@ -50,8 +50,8 @@ def send_events(ws, events, exchange='canopsis.events'):
 
     for event in events:
         if not is_valid(ws, event):
-            ws.logger.error("event {}/{} is invalid",
-                            event.get("resource"), event.get("component"))
+            ws.logger.error(
+                "event {}/{} is invalid".format(event.get("resource"), event.get("component")))
             failed_events.append(event)
             continue
 
