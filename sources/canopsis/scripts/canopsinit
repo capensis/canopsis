@@ -95,7 +95,7 @@ if __name__ == "__main__":
     COMMANDS[1].append(canopsis_version)
 
     COMMANDS[1].append(CANOPSIS_EDITION_ARG)
-    COMMANDS[1].append(args.canopsis_version)
+    COMMANDS[1].append(args.canopsis_edition)
 
     COMMANDS[1].append(CANOPSIS_STACK_ARG)
     COMMANDS[1].append(args.canopsis_stack)
