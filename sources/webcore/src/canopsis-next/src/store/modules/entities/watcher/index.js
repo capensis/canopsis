@@ -52,11 +52,24 @@ export default {
     },
   },
   actions: {
-    create(context, { data }) {
+    createWatcher(context, { data }) {
       return request.put(API_ROUTES.createEntity, { entity: JSON.stringify(data) });
     },
-    edit(context, { data }) {
+
+    createWatcherNg(context, { data }) {
+      return request.post(API_ROUTES.watcherng, data);
+    },
+
+    editWatcher(context, { data }) {
       return request.put(API_ROUTES.context, { entity: data, _type: WIDGET_TYPES.context });
+    },
+
+    editWatcherNg(context, { data }) {
+      return request.put(`${API_ROUTES.watcherng}/${data._id}`, data);
+    },
+
+    removeWatcherNg() {
+
     },
 
     async fetchList({ dispatch, commit }, { widgetId, params, filter } = {}) {

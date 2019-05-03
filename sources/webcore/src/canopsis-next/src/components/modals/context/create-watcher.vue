@@ -21,12 +21,15 @@
 </template>
 
 <script>
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { omit } from 'lodash';
+
+import { MODALS, ENTITIES_TYPES, CANOPSIS_STACK } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 import CreateForm from './partial/create-watcher-form.vue';
 import ManageInfos from './partial/manage-infos.vue';
@@ -40,7 +43,7 @@ export default {
     CreateForm,
     ManageInfos,
   },
-  mixins: [modalInnerMixin, entitiesContextEntityMixin],
+  mixins: [modalInnerMixin, entitiesContextEntityMixin, entitiesInfoMixin],
   data() {
     const { item } = this.modal.config;
 
@@ -50,6 +53,8 @@ export default {
       infos: {},
       impact: [],
       depends: [],
+      entities: [],
+      output_template: '',
     };
 
     if (item) {
@@ -71,14 +76,27 @@ export default {
 
       if (isFormValid) {
         this.submitting = true;
+        let data = {};
 
-        const data = {
-          ...this.form,
-          _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
-          infos: this.form.infos,
-          display_name: this.form.name,
-          type: ENTITIES_TYPES.watcher,
-        };
+        if (this.stack === CANOPSIS_STACK.go) {
+          data = {
+            ...omit(this.form, ['mfilter', 'impact', 'depends']),
+            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
+            name: this.form.name,
+            type: ENTITIES_TYPES.watcher,
+            state: {
+              method: 'worst',
+            },
+          };
+        } else {
+          data = {
+            ...omit(this.form, ['entities', 'output_template']),
+            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
+            infos: this.form.infos,
+            display_name: this.form.name,
+            type: ENTITIES_TYPES.watcher,
+          };
+        }
 
         try {
           await this.config.action(data);

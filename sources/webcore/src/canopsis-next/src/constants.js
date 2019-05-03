@@ -861,3 +861,13 @@ export const SNMP_STATE_TYPES = {
   simple: 'simple',
   template: 'template',
 };
+
+export const CANOPSIS_STACK = {
+  go: 'go',
+  python: 'python',
+};
+
+export const CANOPSIS_EDITION = {
+  core: 'core',
+  cat: 'cat',
+};
