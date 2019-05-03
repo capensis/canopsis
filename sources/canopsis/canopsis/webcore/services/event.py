@@ -58,7 +58,7 @@ def transform_event(ws, event):
     # Add role in event
     event_type = new_event.get("event_type")
     if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket', 'done', 'assocticket', 'changestate', 'keepstate', 'snooze']:
-        role = get_role()
+        role = get_role(ws)
         new_event['role'] = role
         ws.logger.info(
             u'Role added to the event. event_type = {}, role = {}'.format(event_type, role))
@@ -66,16 +66,28 @@ def transform_event(ws, event):
     return new_event
 
 
-def get_role():
+def get_role(ws):
     """
     Find role of the current user
 
     :returns: the user role in a string, None if the role can't be found.
     """
-    session = request.environ.get('beaker.session')
-    user = session.get('user', {})
+    session = request.environ.get('beaker.session', None)
+    if session is None:
+        ws.logger.warning(u'get_role(): Cannot retrieve beaker.session')
+        return None
 
-    return user.get('role', None)
+    user = session.get('user', None)
+    if user is None:
+        ws.logger.warning(
+            u'get_role(): Cannot retrieve user from beaker.session')
+        return None
+
+    role = user.get('role', None)
+    if role is None:
+        ws.logger.warning(u'get_role(): Cannot retrieve role from user')
+
+    return role
 
 
 def send_events(ws, events, exchange='canopsis.events'):
