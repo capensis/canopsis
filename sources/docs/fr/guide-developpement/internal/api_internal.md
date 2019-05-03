@@ -18,7 +18,7 @@ Pour modifier ces valeurs, il faut passer l'API.
 ```json
 {
     "edition":"cat",
-    "stack":"go
+    "stack":"go"
 }
 ```
 
@@ -27,7 +27,7 @@ Pour modifier ces valeurs, il faut passer l'API.
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "edition":"cat",
-    "stack":"go
+    "stack":"go"
 }' 'http://<Canopsis_URL>/api/internal/properties'
 ```
 
