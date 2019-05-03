@@ -188,6 +188,16 @@ class Watcher:
         except IndexError:
             return None
 
+        # Check if the watcher is a go watcher, which is not compatible with
+        # the python engines. In this case, the watcher state should not be
+        # recomputed because the resulting state would be incorrect and it
+        # would overwrite the watcher's entity, removing required fields.
+        if 'entities' in watcher_entity:
+            self.logger.debug(
+                "Ignoring go watcher {} because it has an 'entities' "
+                "field.".format(watcher_id))
+            return None
+
         entities = watcher_entity['depends']
 
         query = {"_id": {"$in": entities},
