@@ -62,7 +62,8 @@ def acknowledge(manager, alarm, author, message, event):
             creation_date = alarm[AlarmField.creation_date.value]
             ack_time = event['timestamp'] - creation_date
         except KeyError:
-            manager.logger.exception("The alarm does not have a creation date.")
+            manager.logger.exception(
+                "The alarm does not have a creation date.")
         else:
             manager.event_publisher.publish_statduration_event(
                 creation_date,
@@ -293,7 +294,8 @@ def state_increase(manager, alarm, state, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': state
+        'val': state,
+        'role': event.get('role', None) if event.get("author") is not None else None
     }
 
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
@@ -316,7 +318,8 @@ def state_decrease(manager, alarm, state, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': state
+        'val': state,
+        'role': event.get('role', None) if event.get("author") is not None else None
     }
 
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
@@ -339,7 +342,8 @@ def status_increase(manager, alarm, status, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': status
+        'val': status,
+        'role': event.get('role', None) if event.get("author") is not None else None
     }
 
     alarm[AlarmField.status.value] = step
@@ -358,7 +362,8 @@ def status_decrease(manager, alarm, status, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': status
+        'val': status,
+        'role': event.get('role', None) if event.get("author") is not None else None
     }
 
     alarm[AlarmField.status.value] = step
@@ -380,7 +385,8 @@ def update_state_counter(alarm, diff_counter):
     :rtype: dict
     """
 
-    counter_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value]) + 1
+    counter_i = alarm[AlarmField.steps.value].index(
+        alarm[AlarmField.status.value]) + 1
 
     if len(alarm[AlarmField.steps.value]) == counter_i:
         # The last step is the last change of status

@@ -57,7 +57,9 @@ def transform_event(ws, event):
 
     # Add role in event
     event_type = new_event.get("event_type")
-    if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket', 'done', 'assocticket', 'changestate', 'keepstate', 'snooze']:
+    if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket',
+                      'done', 'assocticket', 'changestate', 'keepstate', 'snooze',
+                      'statusinc', 'statusdec', 'stateinc', 'statedec']:
         role = get_role(ws)
         new_event['role'] = role
         ws.logger.info(
