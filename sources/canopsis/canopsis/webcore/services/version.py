@@ -44,7 +44,7 @@ def exports(ws):
             collection = \
                 store.get_collection(name=CanopsisVersionManager.COLLECTION)
             document = CanopsisVersionManager(collection).\
-                find_canopsis_version_document()
+                find_canopsis_document()
         except PyMongoError:
             return gen_json_error(
                 {"description": "can not retrieve the canopsis version from "
