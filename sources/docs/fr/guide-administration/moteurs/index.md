@@ -137,21 +137,11 @@ Le flag `autoRecomputeWatchers` permet de s'assurer que l'état des watchers est
 
 ## Changer le niveau de log d'un moteur
 
-### Avec systemd
+### Moteurs Python avec systemd
 
-Consulter l'état actuel du service :
+Afficher la configuration du moteur avec la commande suivante :
 ```shell
-systemctl status canopsis-engine@dynamic-alerts.service
-```
-Il contient les informations suivantes :
-```shell
-/opt/canopsis/bin/python2 /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l info
-```
-Dans cet exemple le niveau de logs du moteur alerts est "info".
-
-Visualiser ensuite la configuration du service avec la commande suivante :
-```shell
-cat /lib/systemd/system/canopsis-engine@.service
+systemctl cat canopsis-engine@dynamic-alerts.service
 ```
 Le résultat ressemble à ceci :
 ```
@@ -176,37 +166,6 @@ Type=simple
 [Install]
 WantedBy=multi-user.target
 ```
-La ligne qui défini le niveau de log du moteur au démarrage est `Environment=LOGLEVEL=info`.
-
-Avant de modifier la configuration du moteur, copier le fichier de configuration dans le dossier `/etc/systemd/system`.
-```shell
-cp /lib/systemd/system/canopsis-engine@.service /etc/systemd/system/canopsis-engine@.service
-```
-Surcharger ensuite la configuration en modifiant la ligne comme ceci `Environment=LOGLEVEL=debug`.
-
-Enfin recharger systemd pour s'assurer que la nouvelle configuration est bien prise en compte.
-```shell
-systemctl daemon-reload
-```
-Redémarrer le moteur.
-```shell
-systemctl stop canopsis-engine@dynamic-alerts.service
-systemctl start canopsis-engine@dynamic-alerts.service
-```
-Et vérifier son nouveau statut :
-```shell
-systemctl status canopsis-engine@dynamic-alerts.service
-```
-```shell
-/opt/canopsis/bin/python2 /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l debug
-```
-
-#### Méthode alternative (si les manipulations précédentes n'ont pas fonctionné)
-
-Afficher la configuration du moteur avec la commande suivante :
-```shell
-systemctl cat canopsis-engine@dynamic-alerts.service
-```
 Puis éditer cette configuration dans un autre terminal :
 ```shell
 systemctl edit canopsis-engine@dynamic-alerts.service
@@ -218,9 +177,21 @@ Environment=LOGLEVEL=debug
 ```
 Sauvegarder et quitter l'éditeur.
 
-Terminer en rechargeant systemd pour prendre en compte la modification.
+Recharger systemd pour prendre en compte la modification.
 ```shell
 systemctl daemon-reload
+```
+Terminer en redémarrant le moteur.
+```shell
+systemctl stop canopsis-engine@dynamic-alerts.service
+systemctl start canopsis-engine@dynamic-alerts.service
+```
+Et vérifier son nouveau statut :
+```shell
+systemctl status canopsis-engine@dynamic-alerts.service
+```
+```shell
+/opt/canopsis/bin/python2 /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l debug
 ```
 
 # Moteurs obsolètes
