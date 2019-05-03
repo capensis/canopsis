@@ -46,7 +46,7 @@ def is_valid(ws, event):
     return True
 
 
-def transform_event(event):
+def transform_event(ws, event):
     """
     Transform an event according its properties.
 
@@ -58,7 +58,10 @@ def transform_event(event):
     # Add role in event
     event_type = new_event.get("event_type")
     if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket', 'done', 'assocticket', 'changestate', 'keepstate', 'snooze']:
-        new_event['role'] = get_role()
+        role = get_role()
+        new_event['role'] = role
+        ws.logger.info(
+            u'Role added to the event. event_type = {}, role = {}'.format(event_type, role))
 
     return new_event
 
@@ -90,7 +93,7 @@ def send_events(ws, events, exchange='canopsis.events'):
             continue
 
         try:
-            transformed_event = transform_event(event)
+            transformed_event = transform_event(ws, event)
         except Exception as e:
             ws.logger.error('Failed to transform event : {}'.format(e))
             failed_events.append(event)
