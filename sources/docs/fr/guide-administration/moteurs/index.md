@@ -137,6 +137,10 @@ Le flag `autoRecomputeWatchers` permet de s'assurer que l'état des watchers est
 
 ## Changer le niveau de log d'un moteur
 
+Dans le cadre de la résolution d'un incident, ou pour identifier l'origine d'un bug, il peut être nécessaire d'obtenir des logs plus détaillés de la part des moteurs.
+
+Cette documentation explique les étapes à suivre pour passer d'un niveau de log "info" à un niveau "debug".
+
 ### Moteurs Python avec systemd
 
 Afficher la configuration du moteur avec la commande suivante :
@@ -183,16 +187,22 @@ systemctl daemon-reload
 ```
 Terminer en redémarrant le moteur.
 ```shell
-systemctl stop canopsis-engine@dynamic-alerts.service
-systemctl start canopsis-engine@dynamic-alerts.service
+systemctl restart canopsis-engine@dynamic-alerts.service
 ```
 Et vérifier son nouveau statut :
 ```shell
 systemctl status canopsis-engine@dynamic-alerts.service
+
+● canopsis-engine@dynamic-alerts.service - Canopsis Engine dynamic-alerts
+   Loaded: loaded (/etc/systemd/system/canopsis-engine@.service; disabled; vendor preset: disabled)
+   Active: active (running) since ven. 2019-05-03 14:53:21 UTC; 12s ago
+     Docs: https://doc.canopsis.net
+ Main PID: 4479 (engine-launcher)
+   CGroup: /system.slice/system-canopsis\x2dengine.slice/canopsis-engine@dynamic-alerts.service
+           ├─4479 /bin/bash /opt/canopsis/bin/engine-launcher-systemd dynamic-alerts
+           └─4489 /opt/canopsis/bin/python /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l debug
 ```
-```shell
-/opt/canopsis/bin/python2 /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l debug
-```
+Le paramètre `-l debug` visible à la fin de la dernière ligne indique bien que le service est maintenant en niveau de log "debug".
 
 # Moteurs obsolètes
 
