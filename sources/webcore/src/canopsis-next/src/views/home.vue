@@ -25,8 +25,6 @@ export default {
       const { defaultview: defaultViewId } = this.currentUser;
 
       if (!defaultViewId) {
-        this.addRedirectInfoPopup(this.$t('home.popups.info.noDefaultViewSelected'));
-
         await this.redirectToRoleDefaultView();
       } else if (!this.checkReadAccess(defaultViewId)) {
         this.addRedirectInfoPopup(this.$t('home.popups.info.noAccessToDefaultView'));

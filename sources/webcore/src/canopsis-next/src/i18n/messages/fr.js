@@ -49,6 +49,7 @@ export default {
     users: 'Utilisateurs',
     roles: 'Rôles',
     rights: 'Droits',
+    profile: 'Profil',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     authKey: 'Auth. key',
@@ -110,6 +111,8 @@ export default {
   user: {
     role: 'Rôle',
     defaultView: 'Vue par défaut',
+    seeProfile: 'Voir le profil',
+    selectDefaultView: 'Sélectionner une vue par défaut',
   },
   context: {
     impacts: 'Impacts',
@@ -629,6 +632,7 @@ export default {
         lastName: 'Nom',
         email: 'Email',
         password: 'Mot de passe',
+        role: 'Rôle',
         language: 'Langue de l\'interface par défaut',
         enabled: 'Actif',
       },
@@ -814,7 +818,7 @@ export default {
       },
       bysecond: {
         label: 'Par seconde',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquellles s\'appliquera la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquelles s\'appliquera la récurrence.',
       },
     },
   },
@@ -928,6 +932,15 @@ export default {
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+  },
+  home: {
+    popups: {
+      info: {
+        noAccessToDefaultView: 'Accès refusé à la vue par défaut. Redirection vers la vue par défaut de votre rôle.',
+        notSelectedRoleDefaultView: 'Pas de vue par défaut sélectionnée pour votre rôle.',
+        noAccessToRoleDefaultView: 'Accès refusé à la vue par défaut de votre rôle.',
+      },
+    },
   },
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',

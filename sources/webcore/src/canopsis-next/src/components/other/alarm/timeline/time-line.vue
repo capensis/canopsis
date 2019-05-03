@@ -11,7 +11,7 @@
             .header
               alarm-chips.chips(v-if="stepType(step._t) !== $constants.ENTITY_INFOS_TYPE.action",
                                 :value="step.val", :type="stepType(step._t)")
-              p  &nbsp {{ step._t | stepTitle(step.a) }}
+              p  &nbsp {{ step._t | stepTitle(step.a, step.role) }}
             .content
               p {{ step.m }}
         div(v-else)

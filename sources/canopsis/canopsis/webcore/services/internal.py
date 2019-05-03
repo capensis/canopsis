@@ -27,9 +27,18 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.userinterface.manager import UserInterfaceManager
 from canopsis.version import CanopsisVersionManager
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
     'app_title', 'footer',  'login_page_description', 'logo'
+]
+
+VALID_CANOPSIS_EDITIONS = [
+    'cat', 'core'
+]
+
+VALID_CANOPSIS_STACKS = [
+    'go', 'python'
 ]
 
 
@@ -50,9 +59,21 @@ def get_version():
     version_collection = \
         store.get_collection(name=CanopsisVersionManager.COLLECTION)
     document = CanopsisVersionManager(version_collection).\
-        find_canopsis_version_document()
+        find_canopsis_document()
 
-    return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
+    if document is not None:
+        return {
+            CanopsisVersionManager.EDITION_FIELD: document.get(CanopsisVersionManager.EDITION_FIELD, ""),
+            CanopsisVersionManager.STACK_FIELD: document.get(CanopsisVersionManager.STACK_FIELD, ""),
+            CanopsisVersionManager.VERSION_FIELD: document.get(
+                CanopsisVersionManager.VERSION_FIELD, "")
+        }
+
+    return {
+        CanopsisVersionManager.EDITION_FIELD: "",
+        CanopsisVersionManager.STACK_FIELD: "",
+        CanopsisVersionManager.VERSION_FIELD: ""
+    }
 
 
 def get_login_config(ws):
@@ -90,6 +111,18 @@ def get_login_config(ws):
     return {"login_config": login_config}
 
 
+def check_edition_and_stack(ws, edition, stack):
+    if edition is not None and edition not in VALID_CANOPSIS_EDITIONS:
+        ws.logger.error("edition is an invalid value : {}".format(edition))
+        return False
+
+    if stack is not None and stack not in VALID_CANOPSIS_STACKS:
+        ws.logger.error("stack is an invalid value : {}".format(stack))
+        return False
+
+    return True
+
+
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
@@ -101,6 +134,47 @@ def exports(ws):
         cservices.update(get_user_interface())
         cservices.update(get_version())
         return gen_json(cservices)
+
+    @ws.application.post('/api/internal/properties')
+    def update_canopsis_properties():
+        try:
+            doc = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+
+        store = MongoStore.get_default()
+        version_collection = store.get_collection(
+            name=CanopsisVersionManager.COLLECTION)
+
+        try:
+            ok = check_edition_and_stack(
+                ws, doc.get("edition"), doc.get("stack"))
+            if ok:
+                success = CanopsisVersionManager(version_collection).\
+                    put_canopsis_document(doc.get("edition"),
+                                          doc.get("stack"), None)
+
+                if not success:
+                    return gen_json_error({'description': 'failed to update edition/stack'},
+                                          HTTP_ERROR)
+                return gen_json({})
+            else:
+                err = 'Invalid value(s).'
+                ws.logger.error(err)
+                return gen_json_error(
+                    {'description': err},
+                    HTTP_ERROR
+                )
+
+        except CollectionError as ce:
+            ws.logger.error('Update edition/stack error: {}'.format(ce))
+            return gen_json_error(
+                {'description': 'Error while updating edition/stack values'},
+                HTTP_ERROR
+            )
 
     @ws.application.get('/api/internal/app_info')
     def get_internal_app_info():
