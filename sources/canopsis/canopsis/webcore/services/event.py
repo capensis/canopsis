@@ -65,7 +65,9 @@ def transform_event(event):
 
 def get_role():
     """
-    Find current user, or return None
+    Find role of the current user
+
+    :returns: the user role in a string, None if the role can't be found.
     """
     session = request.environ.get('beaker.session')
     user = session.get('user', {})
