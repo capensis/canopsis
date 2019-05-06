@@ -6,7 +6,7 @@
     v-card-text
       v-container
         v-layout
-          v-flex(xs3)
+          v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
             type="number",
             v-model="periodValue",
@@ -49,7 +49,10 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
+    const { hiddenFields = [] } = this.modal.config;
+
     return {
+      hiddenFields,
       periodValue: 1,
       periodUnit: STATS_DURATION_UNITS.hour,
       form: {

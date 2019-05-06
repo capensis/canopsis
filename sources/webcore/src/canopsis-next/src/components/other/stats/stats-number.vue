@@ -132,11 +132,14 @@ export default {
         stats,
         mfilter,
         tstop,
-        duration,
+        periodUnit,
+        tstart,
       } = this.getStatsQuery();
 
+      const durationValue = tstop.diff(tstart, periodUnit);
+
       return {
-        duration,
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
         stats,
         mfilter,
 
