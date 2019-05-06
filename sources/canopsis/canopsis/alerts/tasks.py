@@ -295,7 +295,7 @@ def state_increase(manager, alarm, state, event):
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': state,
-        'role': event.get('role', None) if event.get("author", None) not in [None, DEFAULT_AUTHOR] else None
+        'role': event.get('role', None)
     }
 
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
@@ -319,7 +319,7 @@ def state_decrease(manager, alarm, state, event):
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': state,
-        'role': event.get('role', None) if event.get("author", None) not in [None, DEFAULT_AUTHOR] else None
+        'role': event.get('role', None)
     }
 
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
@@ -343,7 +343,7 @@ def status_increase(manager, alarm, status, event):
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': status,
-        'role': event.get('role', None) if event.get("author", None) not in [None, DEFAULT_AUTHOR] else None
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.status.value] = step
@@ -363,7 +363,7 @@ def status_decrease(manager, alarm, status, event):
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
         'val': status,
-        'role': event.get('role', None) if event.get("author", None) not in [None, DEFAULT_AUTHOR] else None
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.status.value] = step
