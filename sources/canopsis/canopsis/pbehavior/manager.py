@@ -1034,3 +1034,48 @@ class PBehaviorManager(object):
         :rtype: Iterator[Dict[str, Any]]
         """
         return self.collection.find({PBehavior.ENABLED: True})
+
+
+    def _get_last_tstop(self, pbh, now):
+        if PBehavior.RRULE not in pbh or\
+            pbh[PBehavior.RRULE] is None or\
+            pbh[PBehavior.RRULE] == "":
+            #pbh is simple
+            pbh_last_tstop = pbh[PBehavior.TSTOP]
+        else:
+            #pbh is recurrent
+            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+            rec_set = rrule.rruleset()
+            # convert the timestamp to a datetime in the pbehavior's timezone
+            start = self.__convert_timestamp(pbh[PBehavior.TSTART], tz_name)
+            stop = self.__convert_timestamp(pbh[PBehavior.TSTOP], tz_name)
+
+            duration = stop - start  # pbehavior duration
+
+            rec_set.rrule(rrule.rrulestr(pbh[PBehavior.RRULE],
+                                         dtstart=start))
+            # no need to check if before + duration is greater than now
+            # because if it is, then pbh is active and as such won't be
+            # used
+            pbh_last_tstop = rec_set.before(now) + duration
+        return pbh_last_tstop
+
+    def get_ok_ko_timestamp(self, entity_id):
+        #get today at midnight timestamp as base return timestamp
+        #because each alarm ok ko counter is soft-reseted at midnight
+        today_at_midnight = datetime.date.today()
+        ret_timestamp = int(today_at_midnight.strftime("%s"))
+
+        now = int(time())
+
+        for pbh in self.get_pbehaviors(entity_id):
+            if self.check_active_pbehavior(now, pbh):
+                #if a pbh is active, then the ok ko counter 
+                #is supposed to be inactive
+                return now
+            
+            pbh_last_tstop = self._get_last_tstop(pbh, now)
+            if now > pbh_last_tstop > ret_timestamp:
+                #keeping the most recent timestamp that still is in the past
+                ret_timestamp = pbh_last_tstop
+        return ret_timestamp

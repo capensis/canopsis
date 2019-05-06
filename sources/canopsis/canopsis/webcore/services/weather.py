@@ -104,7 +104,7 @@ def __format_pbehavior(pbehavior):
     return pbehavior
 
 
-def get_ok_ko(influx_client, entity_id):
+def get_ok_ko(influx_client, entity_id, timestamp):
     """
     For an entity defined by its id, return the number of OK check and KO
     check.
@@ -115,7 +115,7 @@ def get_ok_ko(influx_client, entity_id):
     the given entity.
     """
     query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
-                "event_state_history WHERE \"eid\"='{}'"
+                "event_state_history WHERE \"eid\"='{}' AND time >= {}s"
     query_last_event = "SELECT LAST(\"ko\") FROM event_state_history WHERE " \
                        "\"eid\"='{}'"
     query_last_ko = query_last_event + " and \"ko\"=1"
@@ -128,7 +128,7 @@ def get_ok_ko(influx_client, entity_id):
     entity_id = entity_id.replace("'", "\\'")
     entity_id = entity_id.replace('"', '\\"')
 
-    result = influx_client.query(query_sum.format(entity_id))
+    result = influx_client.query(query_sum.format(entity_id, timestamp))
 
     stats = {}
     data = list(result.get_points())
@@ -547,6 +547,8 @@ def exports(ws):
             for k, val in raw_entity['links'].items():
                 tmp_links.append({'cat_name': k, 'links': val})
 
+            last_pbh_timestamp = pbehavior_manager.get_ok_ko_timestamp(entity_id)
+
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
             enriched_entity['linklist'] = tmp_links
@@ -556,7 +558,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id)
+            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id, last_pbh_timestamp)
             if current_alarm is not None:
                 enriched_entity['alarm_creation_date'] = current_alarm.get("creation_date")
                 enriched_entity['alarm_display_name'] = current_alarm.get("display_name")
