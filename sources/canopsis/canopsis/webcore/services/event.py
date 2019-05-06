@@ -79,20 +79,10 @@ def get_role(ws):
         ws.logger.warning(u'get_role(): Cannot retrieve beaker.session')
         return None
 
-    if type(session) is not dict:
-        ws.logger.warning(
-            u'get_role(): session doesn\'t have the correct type - {}'.format(type(session)))
-        return None
-
     user = session.get('user', None)
     if user is None:
         ws.logger.warning(
             u'get_role(): Cannot retrieve user from beaker.session')
-        return None
-
-    if type(user) is not dict:
-        ws.logger.warning(
-            u'get_role(): user doesn\'t have the correct type - {}'.format(type(user)))
         return None
 
     role = user.get('role', None)
