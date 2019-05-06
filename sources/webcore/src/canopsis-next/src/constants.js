@@ -139,7 +139,7 @@ export const ENTITIES_STATES_STYLES = {
 
 export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.ok]: '#00a65a',
-  [ENTITIES_STATES.minor]: '#ff9900',
+  [ENTITIES_STATES.minor]: '#ebeb1b',
   [ENTITIES_STATES.major]: '#ff9900',
   [ENTITIES_STATES.critical]: '#f56954',
 };
