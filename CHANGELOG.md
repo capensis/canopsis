@@ -8,6 +8,41 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.17.0 - Due date : 2019-05-07
+
+ - [API] Prevent from sending a changestate or keepstate event with an info state
+ - [API] Add informations to the app_info route
+ - [Documentation] Add details about the event-filter versions in ackcentreon's documentation
+ - [Documentation] Simplify canopsinit command in update guide
+ - [Documentation] canopsinit: document the new --canopsis-edition and --canopsis-stack options
+ - [Go] Compute watcher's state in axe's beat
+ - [Go] Update dependencies to fix CI
+ - [Go] Add split and trim functions to webhooks' templates
+ - [Go] Add support for python pbehaviors
+ - [Go] Add support for python pbehaviors in webhooks
+ - [Go] Add -alwaysFlushEntities option to che
+ - [Python] Fix compatibility issue between the statsng and axe engines
+ - [Python] Add statistics for ongoing alarms with or without an ACK
+ - [Python] Fix current_ongoing_alarms statistic which returned negative values
+ - [Python] Add author's role in timeline
+ - [Python] Add CPS_RECOMPUTE_PBEHAVIORS_ON_NEW_ENTITY option to pbehaviors
+ - [UI] Fix - Pbehavior form validation
+ - [UI] Add missing french translations
+ - [UI] Refactor user profile + Fix user UI language storage
+ - [UI] Refactor Login page style + Add 'login_description' display
+ - [UI - List alarm] Display users roles on timeline
+ - [UI - List alarm] Add a setting to enable multiple ack
+ - [UI - List alarm] Delete 'Info' option on change state action's modal
+ - [UI - List alarm] Fix - Pbehaviors comments display on extra details column
+ - [UI - Context] Fix - Entity mass deletion
+ - [UI - Weather] Add 'Alarm canceled' icon
+ - [UI - Weather] Add possibility to show both "Alarm list" and "More infos" modal
+ - [UI - Weather] Fix - Alarm list modal filter (compatibility with both watchers and watchersNg)
+ - [UI - Webhooks] Fix - Display and edit webhooks with no 'declare_ticket' field
+ - [UI - Webhooks] Add 'changestate' trigger
+ - [UI - Webhooks] Enable 'event_pattern' with 'cancel' trigger
+ - [UI - Webhooks] Add field to specify if webhooks need to be disabled when there's an active pbehavior
+
 # Canopsis 3.16.0 - Due date : 2019-04-19
 
  - [Documentation] Add documentation for LDAP authentication
