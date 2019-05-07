@@ -27,10 +27,9 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
-import FiltersList from '@/components/other/filter/list/filters-list.vue';
 
 export default {
-  components: { FilterSelector, FiltersList },
+  components: { FilterSelector },
   mixins: [authMixin, modalMixin],
   props: {
     filters: {
