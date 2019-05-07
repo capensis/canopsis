@@ -395,6 +395,14 @@ export const STATS_TYPES = {
     value: 'current_ongoing_alarms',
     options: [STATS_OPTIONS.states],
   },
+  currentOngoingAlarmsWithAck: {
+    value: 'current_ongoing_alarms_with_ack',
+    options: [STATS_OPTIONS.states],
+  },
+  currentOngoingAlarmsWithoutAck: {
+    value: 'current_ongoing_alarms_without_ack',
+    options: [STATS_OPTIONS.states],
+  },
 };
 
 export const STATS_DURATION_UNITS = {
