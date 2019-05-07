@@ -27,12 +27,13 @@ Pour pouvoir utiliser les webhooks avec une installation par paquets, il faut :
 
 Une règle est un document JSON contenant les paramètres suivants :
 
- - `_id` (optionnel): l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
      - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](../event-filter/index.md).
      - `triggers` (requis) : Liste de triggers. Au moins un de ces triggers doit avoir eu lieu pour que le webhook soit appelé.
+ - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le webhook si un pbehavior est actif sur l'entité.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
        - `username` (optionnel) : nom d'utilisateur employé pour l'authentification HTTP
@@ -143,6 +144,7 @@ Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Dat
             }
         ]
     },
+    "disable_if_active_pbehavior": true,
     "request" : {
         "method" : "PUT",
         "auth" : {
