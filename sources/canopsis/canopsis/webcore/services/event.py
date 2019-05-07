@@ -56,10 +56,14 @@ def transform_event(ws, event):
     new_event = event.copy()
 
     # Add role in event
-    role = get_role(ws)
-    new_event['role'] = role
-    ws.logger.info(
-        u'Role added to the event. role = {}'.format(role))
+    event_type = new_event.get("event_type")
+    if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket',
+                      'done', 'assocticket', 'changestate', 'keepstate', 'snooze',
+                      'statusinc', 'statusdec', 'stateinc', 'statedec']:
+        role = get_role(ws)
+        new_event['role'] = role
+        ws.logger.info(
+            u'Role added to the event. event_type = {}, role = {}'.format(event_type, role))
 
     return new_event
 
@@ -70,20 +74,35 @@ def get_role(ws):
 
     :returns: the user role in a string, None if the role can't be found.
     """
-    session = request.environ.get('beaker.session', None)
-    if session is None:
-        ws.logger.warning(u'get_role(): Cannot retrieve beaker.session')
+    try:
+        session = request.environ.get('beaker.session', None)
+        if session is None:
+            ws.logger.warning(u'get_role(): Cannot retrieve beaker.session')
+            return None
+    except AttributeError as ae:
+        ws.logger.error(
+            u'get_role(): Error while getting beaker.session')
         return None
 
-    user = session.get('user', None)
-    if user is None:
-        ws.logger.warning(
-            u'get_role(): Cannot retrieve user from beaker.session')
+    try:
+        user = session.get('user', None)
+        if user is None:
+            ws.logger.warning(
+                u'get_role(): Cannot retrieve user field from beaker.session')
+            return None
+    except AttributeError as ae:
+        ws.logger.error(
+            u'get_role(): Error while getting user from beaker.session')
         return None
 
-    role = user.get('role', None)
-    if role is None:
-        ws.logger.warning(u'get_role(): Cannot retrieve role from user')
+    try:
+        role = user.get('role', None)
+        if role is None:
+            ws.logger.warning(u'get_role(): Cannot retrieve role from user')
+    except AttributeError as ae:
+        ws.logger.error(
+            u'get_role(): Error while getting role from user')
+        return None
 
     return role
 
