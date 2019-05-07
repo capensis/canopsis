@@ -222,6 +222,7 @@ export default {
       statsTableSettings: 'Paramètres du tableau de stats',
       statsCalendarSettings: 'Paramètres du calendrier',
       statsNumberSettings: 'Paramètres du compteur de stat',
+      textSettings: 'Paramètres du widget de texte',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
@@ -700,6 +701,25 @@ export default {
         title: 'Titre',
       },
     },
+    createWebhook: {
+      create: {
+        title: 'Créer un webhook',
+        success: 'Webhook créé avec succès !',
+      },
+      edit: {
+        title: 'Edit webhook',
+        success: 'Webhook edité avec succès !',
+      },
+      remove: {
+        success: 'Webhook supprimé avec succès !',
+      },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -908,6 +928,11 @@ export default {
     id: 'Id',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   },
+  snmpRules: {
+    title: 'Règles SNMP',
+    uploadMib: 'Télécharger un fichier MIB',
+    addSnmpRule: 'Ajouter une règle SNMP',
+  },
   layout: {
     sideBar: {
       buttons: {
@@ -935,6 +960,61 @@ export default {
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+  },
+  patternsList: {
+    noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',
+    noDataDisabled: 'Aucun pattern.',
+  },
+  webhook: {
+    title: 'Webhooks',
+    disableIfActivePbehavior: 'Désactivé si un pbehavior est actif',
+    table: {
+      headers: {
+        id: 'ID',
+        requestMethod: 'Requête: Méthode',
+        requestUrl: 'Requête: URL',
+      },
+    },
+    tabs: {
+      hook: {
+        title: 'Hook',
+        fields: {
+          triggers: 'Triggers',
+          eventPatterns: 'Patterns des événements',
+          alarmPatterns: 'Patterns des alarmes',
+          entityPatterns: 'Pattern des entités',
+        },
+      },
+      request: {
+        title: 'Requête',
+        fields: {
+          method: 'Méthode',
+          url: 'URL',
+          authSwitch: 'Authentification ?',
+          auth: 'Auth',
+          username: 'Nom d\'utilisateur',
+          password: 'Mot de passe',
+          headers: 'Headers',
+          headerKey: 'Clé',
+          headerValue: 'Valeur',
+          payload: 'Payload',
+        },
+      },
+      declareTicket: {
+        title: 'Déclarer un ticket',
+        fields: {
+          text: 'Clé',
+          value: 'Valeur',
+        },
+      },
+    },
+  },
+  validation: {
+    custom: {
+      tstop: {
+        after: '{0} Devrait être après le {1}',
+      },
+    },
   },
   home: {
     popups: {
