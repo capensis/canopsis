@@ -1046,7 +1046,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Disable if active pbehavior',
+    disableIfActivePbehavior: 'Disable if a pbehavior is active',
     table: {
       headers: {
         id: 'ID',
