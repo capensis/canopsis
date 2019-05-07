@@ -15,6 +15,7 @@ export default {
     footer: '',
     edition: '',
     stack: '',
+    description: '',
     isLDAPAuthEnabled: false,
     isCASAuthEnabled: false,
     casConfig: {},
@@ -26,6 +27,7 @@ export default {
     footer: state => state.footer,
     edition: state => state.edition,
     stack: state => state.stack,
+    description: state => state.description,
     isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
     isCASAuthEnabled: state => state.isCASAuthEnabled,
     casConfig: state => state.casConfig,
@@ -40,6 +42,7 @@ export default {
       state.logo = userInterface.logo;
       state.appTitle = userInterface.app_title;
       state.footer = userInterface.footer;
+      state.description = userInterface.login_page_description;
 
       state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
       state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;

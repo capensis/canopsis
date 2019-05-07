@@ -45,12 +45,21 @@ yum update
 !!! attention
     La procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée ([Bug #1431](https://git.canopsis.net/canopsis/canopsis/issues/1431)).
 
-Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour :
+Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour.
+
+Si vous utilisez la configuration « moteurs Python uniquement » et « édition Canopsis Core » (qui sont les réglages par défaut), lancer :
 ```sh
 su - canopsis -c "canopsinit"
 ```
 
-S'assurer que toute modification des unités systemd soit bien prise en compte (à nouveau en `root`) :
+**En revanche**, si vous installez une version de Canopsis supérieure ou égale à 3.17.0, et que vous utilisez une configuration « moteurs Go » et « édition Canopsis CAT », lancer :
+```sh
+# Valeurs acceptées : --canopsis-edition core OU cat, --canopsis-stack python OU go.
+# "core" et "python" sont les valeurs par défaut.
+su - canopsis -c "canopsinit --canopsis-edition cat --canopsis-stack go"
+```
+
+S'assurer que toute modification des unités systemd soit bien prise en compte :
 ```sh
 systemctl daemon-reload
 ```

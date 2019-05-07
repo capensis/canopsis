@@ -36,7 +36,6 @@ import {
 
 import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
-import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
@@ -176,12 +175,13 @@ export default {
 
     async showAlarmListModal() {
       try {
-        const initialFilter = JSON.parse(this.watcher.mfilter);
-        const newFilter = prepareFilterWithFieldsPrefix(initialFilter, 'entity.');
         const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+
+        const filter = { $and: [{ 'entity.impact': this.watcher.entity_id }] };
+
         const watcherFilter = {
           title: this.watcher.display_name,
-          filter: newFilter,
+          filter,
         };
 
         const widgetParameters = {

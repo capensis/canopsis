@@ -135,6 +135,75 @@ Le flag `autoRecomputeWatchers` permet de s'assurer que l'état des watchers est
         version infos
 ```
 
+## Changer le niveau de log d'un moteur
+
+Dans le cadre de la résolution d'un incident, ou pour identifier l'origine d'un bug, il peut être nécessaire d'obtenir des logs plus détaillés de la part des moteurs.
+
+Cette documentation explique les étapes à suivre pour passer d'un niveau de log "info" à un niveau "debug".
+
+### Moteurs Python avec systemd
+
+Afficher la configuration du moteur avec la commande suivante :
+```shell
+systemctl cat canopsis-engine@dynamic-alerts.service
+```
+Le résultat ressemble à ceci :
+```
+[Unit]
+Description=Canopsis Engine %i
+After=network.target
+Documentation=https://doc.canopsis.net
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=VIRTUAL_ENV=/opt/canopsis
+Environment=HOME=/opt/canopsis
+Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+Environment=LOGLEVEL=info
+ExecStart=/opt/canopsis/bin/engine-launcher-systemd %i
+PIDFile=/var/run/canopsis-engine-%i.pid
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+```
+Puis éditer cette configuration dans un autre terminal :
+```shell
+systemctl edit canopsis-engine@dynamic-alerts.service
+```
+Une fenêtre d'édition vide s'affiche, copiez les éléments suivants pour surcharger la configuration actuelle :
+```
+[Service]
+Environment=LOGLEVEL=debug
+```
+Sauvegarder et quitter l'éditeur.
+
+Recharger systemd pour prendre en compte la modification.
+```shell
+systemctl daemon-reload
+```
+Terminer en redémarrant le moteur.
+```shell
+systemctl restart canopsis-engine@dynamic-alerts.service
+```
+Et vérifier son nouveau statut :
+```shell
+systemctl status canopsis-engine@dynamic-alerts.service
+
+● canopsis-engine@dynamic-alerts.service - Canopsis Engine dynamic-alerts
+   Loaded: loaded (/etc/systemd/system/canopsis-engine@.service; disabled; vendor preset: disabled)
+   Active: active (running) since ven. 2019-05-03 14:53:21 UTC; 12s ago
+     Docs: https://doc.canopsis.net
+ Main PID: 4479 (engine-launcher)
+   CGroup: /system.slice/system-canopsis\x2dengine.slice/canopsis-engine@dynamic-alerts.service
+           ├─4479 /bin/bash /opt/canopsis/bin/engine-launcher-systemd dynamic-alerts
+           └─4489 /opt/canopsis/bin/python /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l debug
+```
+Le paramètre `-l debug` visible à la fin de la dernière ligne indique bien que le service est maintenant en niveau de log "debug".
+
 # Moteurs obsolètes
 
 *  acknowledgement

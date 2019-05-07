@@ -14,6 +14,7 @@ export default {
       footer: 'footer',
       edition: 'edition',
       stack: 'stack',
+      description: 'description',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
