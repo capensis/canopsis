@@ -121,7 +121,7 @@ export const ENTITIES_STATES_STYLES = {
     icon: 'assistant_photo',
   },
   [ENTITIES_STATES.minor]: {
-    color: 'gold',
+    color: '#FCDC00',
     text: 'minor',
     icon: 'assistant_photo',
   },
@@ -139,7 +139,7 @@ export const ENTITIES_STATES_STYLES = {
 
 export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.ok]: '#00a65a',
-  [ENTITIES_STATES.minor]: '#ebeb1b',
+  [ENTITIES_STATES.minor]: '#fcdc00',
   [ENTITIES_STATES.major]: '#ff9900',
   [ENTITIES_STATES.critical]: '#f56954',
 };
@@ -523,7 +523,7 @@ export const STATS_DISPLAY_MODE_PARAMETERS = {
   },
   colors: {
     ok: '#66BB6A',
-    minor: '#FFEE58',
+    minor: '#FCDC00',
     major: '#FFA726',
     critical: '#FF7043',
   },
@@ -536,7 +536,7 @@ export const WIDGET_MIN_SIZE = 3;
 export const STATS_CALENDAR_COLORS = {
   alarm: {
     ok: '#66BB6A',
-    minor: '#FFEE58',
+    minor: '#FCDC00',
     major: '#FFA726',
     critical: '#FF7043',
   },
