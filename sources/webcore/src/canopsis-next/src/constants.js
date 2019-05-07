@@ -862,6 +862,16 @@ export const SNMP_STATE_TYPES = {
   template: 'template',
 };
 
+export const CANOPSIS_STACK = {
+  go: 'go',
+  python: 'python',
+};
+
+export const CANOPSIS_EDITION = {
+  core: 'core',
+  cat: 'cat',
+};
+
 export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
