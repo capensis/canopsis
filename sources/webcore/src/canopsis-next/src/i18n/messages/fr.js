@@ -235,6 +235,7 @@ export default {
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
     isMultiAckEnabled: 'Ack multiple',
+    isHtmlEnabledOnTimeLine: 'HTML activé dans la time line ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',

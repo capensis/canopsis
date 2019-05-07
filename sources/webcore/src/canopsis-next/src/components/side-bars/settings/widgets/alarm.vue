@@ -54,6 +54,11 @@
           v-model="settings.widget.parameters.isMultiAckEnabled",
           :title="$t('settings.isMultiAckEnabled')",
           )
+          v-divider
+          field-switcher(
+          v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
+          :title="$t('settings.isHtmlEnabledOnTimeLine')",
+          )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>

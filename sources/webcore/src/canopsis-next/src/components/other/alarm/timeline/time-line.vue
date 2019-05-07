@@ -13,7 +13,8 @@
                                 :value="step.val", :type="stepType(step._t)")
               p  &nbsp {{ step._t | stepTitle(step.a, step.role) }}
             .content
-              p {{ step.m }}
+              p(v-if="isHTMLEnabled", v-html="step.m")
+              p(v-else) {{ step.m }}
         div(v-else)
           alarm-flag.flag(isCroppedState)
           .header
@@ -61,6 +62,10 @@ export default {
     alarmProps: {
       type: Object,
       required: true,
+    },
+    isHTMLEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
