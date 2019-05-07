@@ -163,8 +163,11 @@ export default {
     standard: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Se connecter avec CAS',
+    documentation: 'Documentation',
+    forum: 'Forum',
+    connectionProtocols: 'Modes de connexion',
     errors: {
-      incorrectEmailOrPassword: 'Mot de passe/Email incorrect',
+      incorrectEmailOrPassword: 'Mot de passe / Email incorrect',
     },
   },
   alarmList: {
