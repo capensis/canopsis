@@ -14,7 +14,7 @@
       readonly,
       :label="label",
       :error-messages="errorMessages",
-      :value="value | date('dateTimePicker', true)",
+      :value="value | date(useSeconds ? 'dateTimePickerWithSeconds' : 'dateTimePicker', true)",
       :append-icon="clearable ? 'close' : ''",
       @click:append="clear"
       )
@@ -22,11 +22,14 @@
     :value="value",
     :roundHours="roundHours",
     :opened="opened",
+    :useSeconds="useSeconds",
     @input="$emit('input', $event)"
     )
 </template>
 
 <script>
+import moment from 'moment';
+
 import DateTimePicker from './date-time-picker.vue';
 
 /**
@@ -43,7 +46,13 @@ import DateTimePicker from './date-time-picker.vue';
 export default {
   $_veeValidate: {
     value() {
-      return this.value;
+      if (!this.value) {
+        return this.value;
+      }
+
+      const startOfValue = this.useSeconds ? 'second' : 'minute';
+
+      return moment(this.value).startOf(startOfValue).toDate();
     },
 
     name() {
@@ -70,6 +79,10 @@ export default {
       default: null,
     },
     roundHours: {
+      type: Boolean,
+      default: false,
+    },
+    useSeconds: {
       type: Boolean,
       default: false,
     },

@@ -42,7 +42,7 @@ import CreateView from './view/create-view.vue';
 import CreateGroup from './view/create-group.vue';
 import CreateFilter from './common/create-filter.vue';
 import Watcher from './watcher/watcher.vue';
-import CreateWatcherDeclareTicketEvent from './watcher/create-watcher-declare-ticket-event.vue';
+import CreateWatcherAssocTicketEvent from './watcher/create-watcher-assoc-ticket-event.vue';
 import CreateWatcherPauseEvent from './watcher/create-watcher-pause-event.vue';
 import AddStat from './stats/add-stat.vue';
 import StatsDateInterval from './stats/stats-date-interval.vue';
@@ -56,7 +56,9 @@ import CreateEventFilterRulePattern from './event-filter/pattern/create-event-fi
 import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
+import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
+import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -92,7 +94,7 @@ export default {
     CreateFilter,
     CreateGroup,
     Watcher,
-    CreateWatcherDeclareTicketEvent,
+    CreateWatcherAssocTicketEvent,
     CreateWatcherPauseEvent,
     AddStat,
     StatsDateInterval,
@@ -106,7 +108,9 @@ export default {
     AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
+    FiltersList,
     CreateWebhook,
+    CreateSnmpRule,
   },
   data() {
     return {

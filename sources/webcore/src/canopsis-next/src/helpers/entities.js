@@ -38,6 +38,7 @@ export function generateWidgetByType(type) {
     itemsPerPage: PAGINATION_LIMIT,
     infoPopups: [],
     moreInfoTemplate: '',
+    isAckNoteRequired: false,
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),
@@ -82,6 +83,7 @@ export function generateWidgetByType(type) {
         ...alarmsListDefaultParameters,
 
         viewFilters: [],
+        mainFilter: null,
         infoPopups: [],
         periodicRefresh: {
           enabled: false,
@@ -100,6 +102,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
+        mainFilter: null,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),
@@ -277,9 +280,9 @@ export function generateView() {
  */
 export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
-    _id: `${widget._id}_${user.crecord_name}`,
+    _id: `${widget._id}_${user._id}`,
     widget_preferences: {},
-    crecord_name: user.crecord_name,
+    crecord_name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
     crecord_type: 'userpreferences',

@@ -1,11 +1,10 @@
-import { normalize } from 'normalizr';
-
 import request from '@/services/request';
 import i18n from '@/i18n';
 import schemas from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
-import { types as entitiesTypes } from '@/store/plugins/entities';
+
+import commentModule from './comment';
 
 const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -18,6 +17,7 @@ const types = {
 
 export default {
   namespaced: true,
+  modules: { comment: commentModule },
   state: {
     allIds: [],
     pending: false,
@@ -83,40 +83,34 @@ export default {
           route: `${API_ROUTES.pbehaviorById}/${id}`,
           schema: [schemas.pbehavior],
         }, { root: true });
+
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
+
         console.warn(err);
       }
     },
 
-    async create({ commit }, { data, parents, parentsType }) {
+    async create({ dispatch }, { data }) {
       try {
-        const id = await request.post(API_ROUTES.pbehavior.pbehavior, data);
-        const pbehavior = {
-          ...data,
-          enabled: true,
-          _id: id,
-        };
+        await request.post(API_ROUTES.pbehavior.pbehavior, data);
 
-        if (parents && parentsType) {
-          const parentSchema = schemas[parentsType];
-
-          const parentEntities = parents
-            .map(parent => ({
-              ...parent,
-              pbehaviors: parent.pbehaviors ? [...parent.pbehaviors, pbehavior] : [pbehavior],
-            }));
-
-          const { entities } = normalize(parentEntities, [parentSchema]);
-
-          commit(entitiesTypes.ENTITIES_MERGE, entities, { root: true });
-        }
+        await dispatch('popup/add', { type: 'success', text: i18n.t('modals.createPbehavior.success.create') }, { root: true });
       } catch (err) {
         console.error(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         throw err;
       }
+    },
+
+    async update({ dispatch }, { data, id }) {
+      await dispatch('entities/update', {
+        route: `${API_ROUTES.pbehavior.pbehavior}/${id}`,
+        schema: schemas.pbehavior,
+        body: data,
+      }, { root: true });
     },
 
     async remove({ dispatch }, { id }) {

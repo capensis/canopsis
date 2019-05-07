@@ -22,7 +22,7 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

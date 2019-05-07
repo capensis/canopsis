@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
-  :class="getItemClasses",
+  :class="itemClasses",
   :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
   tile,
   @click.native="showAdditionalInfoModal"
@@ -13,6 +13,11 @@
         div.watcherName.pt-3(v-html="compiledTemplate")
         v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
           v-icon(color="white") {{ secondaryIcon }}
+        v-btn.see-alarms-btn(
+        v-if="isBothModalType && hasAlarmsListAccess",
+        flat,
+        @click.stop="showAlarmListModal"
+        ) {{ $t('serviceWeather.seeAlarms') }}
 </template>
 
 <script>
@@ -31,14 +36,13 @@ import {
 
 import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
-import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
-import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 export default {
   mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
@@ -62,18 +66,19 @@ export default {
     hasMoreInfosAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
     },
+
     hasAlarmsListAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
     },
+
     isPaused() {
       return this.watcher.active_pb_all;
     },
+
     hasWatcherPbehavior() {
       return this.watcher.active_pb_watcher;
     },
-    isPbehavior() {
-      return this.watcher.pbehavior.some(pbehavior => pbehavior.isActive);
-    },
+
     format() {
       if (!this.isPaused && !this.hasWatcherPbehavior) {
         const state = this.watcher.state.val;
@@ -102,6 +107,7 @@ export default {
         icon,
       };
     },
+
     secondaryIcon() {
       if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
         return WEATHER_ICONS.maintenance;
@@ -111,31 +117,47 @@ export default {
 
       return WEATHER_ICONS.pause;
     },
+
     compiledTemplate() {
       return compile(this.template, { entity: this.watcher });
     },
-    getItemClasses() {
-      return [
+
+    itemClasses() {
+      const classes = [
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
         `ml-${this.widget.parameters.margin.left}`,
       ];
+
+      if (this.isBothModalType && this.hasAlarmsListAccess) {
+        classes.push('v-card__with-see-alarms-btn');
+      }
+
+      return classes;
     },
+
     itemHeight() {
       return 4 + this.widget.parameters.heightFactor;
     },
+
     isBlinking() {
       return this.watcher.action_required;
+    },
+
+    isBothModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.both;
+    },
+
+    isAlarmListModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
     },
   },
   methods: {
     showAdditionalInfoModal() {
-      const isAlarmListModalType = this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
-
-      if (isAlarmListModalType && this.hasAlarmsListAccess) {
+      if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
         this.showAlarmListModal();
-      } else if (!isAlarmListModalType && this.hasMoreInfosAccess) {
+      } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
         this.showMainInfoModal();
       }
     },
@@ -153,12 +175,13 @@ export default {
 
     async showAlarmListModal() {
       try {
-        const initialFilter = JSON.parse(this.watcher.mfilter);
-        const newFilter = prepareFilterWithFieldsPrefix(initialFilter, 'entity.');
         const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+
+        const filter = { $and: [{ 'entity.impact': this.watcher.entity_id }] };
+
         const watcherFilter = {
           title: this.watcher.display_name,
-          filter: newFilter,
+          filter,
         };
 
         const widgetParameters = {
@@ -189,7 +212,7 @@ export default {
     },
 
     showVariablesHelpModal() {
-      const entityFields = convertObjectFieldToTreeBranch(this.watcher, 'entity');
+      const entityFields = convertObjectToTreeview(this.watcher, 'entity');
       const variables = [entityFields];
 
       this.showModal({
@@ -204,10 +227,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  $seeAlarmBtnHeight: 18px;
+
+  .v-card__with-see-alarms-btn {
+    padding-bottom: $seeAlarmBtnHeight;
+
+    .see-alarms-btn {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: .6em;
+      height: $seeAlarmBtnHeight;
+      color: white;
+      margin: 0;
+      background-color: rgba(0, 0, 0, .2);
+
+      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
+        background-color: rgba(0, 0, 0, .5);
+      }
+    }
+  }
+
   .pauseIcon {
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: 1em;
     cursor: inherit;
   }
 

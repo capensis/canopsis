@@ -14,7 +14,7 @@ export function stepType(title) {
   return ENTITY_INFOS_TYPE.action;
 }
 
-export function stepTitle(title, author) {
+export function stepTitle(title, author, role) {
   let formattedStepTitle = '';
   if (stepType(title) !== ENTITY_INFOS_TYPE.action) {
     formattedStepTitle = title.replace(/(status)|(state)/g, '$& ');
@@ -28,6 +28,11 @@ export function stepTitle(title, author) {
   } else {
     formattedStepTitle += author;
   }
+
+  if (role) {
+    formattedStepTitle += ` (${role})`;
+  }
+
   return capitalize(formattedStepTitle);
 }
 

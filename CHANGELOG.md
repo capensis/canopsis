@@ -8,6 +8,101 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.16.0 - Due date : 2019-04-19
+
+ - [Documentation] Add documentation for LDAP authentication
+ - [Documentation] Add required kernel version for docker installation
+ - [Documentation] Improve webhooks documentation
+ - [Go] Add json and json_unquote functions to webhooks templates
+ - [Go] Fix last_update_date, which was not updated by axe
+ - [Go] Fix the computation of watchers' dependencies
+ - [Go] Fix the conversion of large numbers to strings in webhooks
+ - [Go] Fix CI by preventing the tests from being run in parallel
+ - [Go] Add statechange trigger
+ - [Python] Fix the webhook API, which returned invalid JSON
+ - [Python] Fix the action API, which rejected valid actions
+ - [Python] Add route that returns all the actions
+ - [Python] Add login_page_description to the login_info route
+ - [Python] Add ldap_uri in LDAP configuration
+
+# Canopsis 3.15.0 - Due date : 2019-04-04
+
+ - [Packaging] Deprecate Debian 8 support
+ - [Documentation] Added pbehavior helper documentation
+ - [Go] Allowed to have fast ack and ack on the same alarm
+ - [Python] Added route with login, app and user interface informations
+ - [Python] Fixed missing field error in service weather when using go watchers
+ - [Python] Changed login info route to allow requests while not logged in
+ - [UI] Fix - Display filter with long names
+ - [UI] Add possibility to display custom logo/app title
+ - [UI] Add variables values into helpers modals
+ - [UI] Add users personal filters in Listalarm and Context widgets
+ - [UI] Add possibility to insert images in text editor
+ - [UI] Fix - Use user's id instead of crecord\_name
+ - [UI - Filter editor] Fix - Automatic filter update when modifying it on advanced editor
+ - [UI - Rights] Add rights for exploitation views
+ - [UI - Service weather] Add cancel action
+ - [UI - List alarm] Add a setting to require note field when sending an ack event
+ - [UI - List alarm] Fix - Links not clickable
+ - [UI - CRUD Pbehaviors] Add pbehaviors edition
+
+# Canopsis 3.14.0 - Due date : 2019-03-28
+
+ - [Python] Fix service weather 500 error when using Go watchers
+ - [UI] Display user auth key in top bar
+ - [UI - ListAlarm] Add type, author and comments on pbehavior extra details
+ - [UI - ListAlarm] Fix immediate pbehavior displaying + Comment display condition
+ - [UI - Rights] Fix rights behavior between sidebar and topbar
+ - [UI - Service Weather] Make all entities in the "More infos" modal grey when a watcher is on pbehavior
+ - [UI - Text widget] Don't force a stat to be selected, so that this widget can be used as a simple text widget too
+ - [UIv2 - Service Weather] Fixed links renderer function
+
+# Canopsis 3.13.2 - Due date : 2019-03-26
+
+ - [Go] Adding a description field in event filter rules
+ - [Python] Adding a description field in event filter rules
+ - [UI - CRUD Webhooks] Added authentification fields
+
+# Canopsis 3.13.1 - Due date : 2019-03-26
+
+ - VERSION.txt and CHANGELOG.md had not been updated for 3.13.0
+
+# Canopsis 3.13.0 - Due date : 2019-03-25
+
+ - [Documentation] Fixed documentation for go watchers
+ - [Documentation] Revised documentation for webhooks
+ - [Documentation] Fixed curl example in heartbeat documentation
+ - [Go] Fixed flapping status in axe engine
+ - [Go] Added webhook templates for automatic snoozing
+ - [Go] Added event-filter patterns on alarms
+ - [Go] Added possibility of using http and https proxy for axe
+ - [Go] Fixed nested tickets handling in webhooks
+ - [Go] Fixed missing certificates error
+ - [Go] Added flapping periods counter for alarms
+ - [Python] Fixed missing type error in watcherng route
+ - [Python] Added hook field in action crud
+ - [Python] Added flapping periods counter for alarms
+ - [Python] Fixed pbehavior unwanted re-creation
+ - [Python] Fixed pybars3 updating problem for centos7
+ - [Python] Added configuration file for healthcheck api
+ - [UI] Add tab's id into URL
+ - [UI] Add rights on 'create widget' and 'create tab' actions
+ - [UI] Fix - View display when double click
+ - [UI] Refactor form mixin
+ - [UI] Fix - Slide to first tab animation when entering a view
+ - [UI] Refactor Vuex modules
+ - [UI - Rights] Styles improvments
+ - [UI - ListAlarm] Add a 'links' column
+ - [UI - Context] Add success/failure popup when creation mass pbehaviors
+ - [UI - Service weather] Add links renderer
+ - [UI - Stats] Refactor stats widgets
+ - [UI - Stats] Add customizable text widget
+ - [UI - Exploitation] Add type selector on Exploitation forms
+ - [UI - CRUD Pbehaviors] Styles improvments
+ - [UI - CRUD Webhooks] Add an optionnal 'id' field
+ - [UI - CRUD Event filter] Add 'id' and 'description' fields
+ - [Packaging] Fix webserver compatibility with CentOS 7
+
 # Canopsis 3.12.0 - Due date : 2019-03-11
 
  - [Documentation] Added documentation for common use cases

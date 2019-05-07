@@ -44,19 +44,27 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     stats(value) {
-      this.$validator.validate('stats', value);
+      if (this.required) {
+        this.$validator.validate('stats', value);
+      }
     },
   },
   created() {
-    this.$validator.attach({
-      name: 'stats',
-      rules: 'required',
-      getter: () => Object.values(this.stats),
-      context: () => this,
-    });
+    if (this.required) {
+      this.$validator.attach({
+        name: 'stats',
+        rules: 'required',
+        getter: () => Object.values(this.stats),
+        context: () => this,
+      });
+    }
   },
   methods: {
     showAddStatModal() {

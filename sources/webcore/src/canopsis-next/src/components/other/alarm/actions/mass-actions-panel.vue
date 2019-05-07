@@ -29,6 +29,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    widget: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
@@ -39,13 +43,13 @@ export default {
           type: alarmsListActionsTypes.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
-          method: this.showActionModal(MODALS.createPbehavior),
+          method: this.showAddPbehaviorModal,
         },
         {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
-          method: this.showActionModal(MODALS.createAckEvent),
+          method: this.showAckModal,
         },
         {
           type: alarmsListActionsTypes.fastAck,
@@ -69,14 +73,16 @@ export default {
     };
   },
   computed: {
-    ...entitiesMapGetters(['getList']),
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
 
     filteredActions() {
       return this.actions.filter(this.actionsAccessFilterHandler);
     },
 
     items() {
-      return this.getList(ENTITIES_TYPES.alarm, this.itemsIds);
+      return this.getEntitiesList(ENTITIES_TYPES.alarm, this.itemsIds);
     },
 
     modalConfig() {
@@ -89,6 +95,24 @@ export default {
   methods: {
     createAckEvent() {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
+    },
+
+    showAddPbehaviorModal() {
+      this.showModal({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior: {
+            filter: {
+              _id: { $in: this.items.map(item => item.d) },
+            },
+          },
+          action: data => this.createPbehavior({
+            data,
+            parents: this.items,
+            parentsType: ENTITIES_TYPES.alarm,
+          }),
+        },
+      });
     },
   },
 };

@@ -24,10 +24,12 @@ import { get } from 'lodash';
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
-import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
-import Links from '@/components/other/alarm/columns-formatting/alarm-column-value-links.vue';
-import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+
+import AlarmColumnValueState from './alarm-column-value-state.vue';
+import AlarmColumnValueLinks from './alarm-column-value-links.vue';
+import AlarmColumnValueLink from './alarm-column-value-link.vue';
+import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 
 /**
  * Component to format alarms list columns
@@ -40,10 +42,11 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
  */
 export default {
   components: {
-    State,
-    Links,
-    ExtraDetails,
     Ellipsis,
+    AlarmColumnValueState,
+    AlarmColumnValueLinks,
+    AlarmColumnValueLink,
+    AlarmColumnValueExtraDetails,
   },
   mixins: [
     popupMixin,
@@ -124,19 +127,19 @@ export default {
       const PROPERTIES_COMPONENTS_MAP = {
         'v.state.val': {
           bind: {
-            is: 'state',
+            is: 'alarm-column-value-state',
             alarm: this.alarm,
           },
         },
         links: {
           bind: {
-            is: 'links',
-            alarm: this.alarm,
+            is: 'alarm-column-value-links',
+            links: this.alarm.links,
           },
         },
         extra_details: {
           bind: {
-            is: 'extra-details',
+            is: 'alarm-column-value-extra-details',
             alarm: this.alarm,
           },
         },
@@ -146,10 +149,25 @@ export default {
         return PROPERTIES_COMPONENTS_MAP[this.column.value];
       }
 
+      if (this.column.value.startsWith('links.')) {
+        const category = this.column.value.slice(6);
+        const links = {
+          [category]: this.$options.filters.get(this.alarm, this.column.value, null, []),
+        };
+
+        return {
+          bind: {
+            links,
+
+            is: 'alarm-column-value-links',
+          },
+        };
+      }
+
       return {
         bind: {
           is: 'ellipsis',
-          text: this.value,
+          text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
         },
         on: {
           textClicked: this.showInfoPopup,

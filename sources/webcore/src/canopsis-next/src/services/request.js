@@ -32,7 +32,7 @@ function errorResponseHandler(responseWithError) {
 }
 
 const request = axios.create({
-  baseURL: process.env.NODE_ENV === 'development' ? '/api' : '',
+  baseURL: process.env.NODE_ENV === 'production' ? '' : '/api',
   withCredentials: true,
 });
 

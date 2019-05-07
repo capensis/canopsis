@@ -2,12 +2,12 @@ import { isEmpty, isBoolean } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
-import { prepareMainFilterToQueryFilter } from '@/helpers/filter/index';
+import prepareMainFilterToQueryFilter from '@/helpers/filter';
 
 export default {
   computed: {
     mainFilterCondition() {
-      return this.userPreference.widget_preferences.mainFilterCondition;
+      return this.userPreference.widget_preferences.mainFilterCondition || this.widget.parameters.mainFilterCondition;
     },
 
     mainFilter() {
@@ -21,33 +21,39 @@ export default {
     },
 
     viewFilters() {
-      const viewFilters = this.userPreference.widget_preferences.viewFilters || this.widget.parameters.viewFilters;
+      return this.userPreference.widget_preferences.viewFilters || [];
+    },
 
-      return isEmpty(viewFilters) ? [] : viewFilters;
+    widgetViewFilters() {
+      return this.widget.parameters.viewFilters || [];
     },
   },
   methods: {
-    updateFilterFieldInWidgetPreferences(field, value) {
+    updateFieldsInWidgetPreferences(fields = {}) {
       const hasAccessToEditFilter = this.hasAccessToEditFilter || !isBoolean(this.hasAccessToEditFilter);
 
       if (hasAccessToEditFilter) {
         return this.updateWidgetPreferencesInUserPreference({
           ...this.userPreference.widget_preferences,
-
-          [field]: value,
+          ...fields,
         });
       }
 
       return Promise.resolve();
     },
 
+    updateFilters(viewFilters, mainFilter = this.mainFilter) {
+      this.updateFieldsInWidgetPreferences({ viewFilters, mainFilter });
+      this.updateQueryBySelectedFilterAndCondition(mainFilter, this.mainFilterCondition);
+    },
+
     updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
-      this.updateFilterFieldInWidgetPreferences('mainFilterCondition', condition);
+      this.updateFieldsInWidgetPreferences({ mainFilterCondition: condition });
       this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
     },
 
     updateSelectedFilter(filterObject) {
-      this.updateFilterFieldInWidgetPreferences('mainFilter', filterObject || {});
+      this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {} });
       this.updateQueryBySelectedFilterAndCondition(filterObject, this.mainFilterCondition);
     },
 

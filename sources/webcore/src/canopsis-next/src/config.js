@@ -38,6 +38,11 @@ export const API_ROUTES = {
   pbehavior: {
     pbehavior: '/api/v2/pbehavior',
     list: '/pbehavior/read',
+    comment: {
+      create: '/pbehavior/comment/create',
+      update: '/pbehavior/comment/update',
+      delete: '/pbehavior/comment/delete',
+    },
   },
   pbehaviorById: '/api/v2/pbehavior_byeid',
   event: '/event',
@@ -58,4 +63,17 @@ export const API_ROUTES = {
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
   webhook: '/api/v2/webhook',
+  snmpRule: {
+    list: '/snmprule',
+    create: '/snmprule/put',
+  },
+  snmpMib: {
+    list: '/snmpmib',
+    distinct: '/snmpmibdistinct',
+    upload: '/uploadmib',
+  },
+  infos: {
+    login: '/api/internal/login/login_info',
+    app: '/api/internal/app_info',
+  },
 };
