@@ -13,6 +13,10 @@
         v-tooltip(slot="append", left)
           v-icon(slot="activator") help_outline
           span {{ $t('modals.createWebhook.tooltips.id') }}
+      v-switch(
+      v-model="form.disable_if_active_pbehavior",
+      :label="$t('webhook.disableIfActivePbehavior')",
+      )
       webhook-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
@@ -58,6 +62,7 @@ export default {
         payload: '{}',
       },
       declare_ticket: [],
+      disable_if_active_pbehavior: false,
     };
 
     return {
