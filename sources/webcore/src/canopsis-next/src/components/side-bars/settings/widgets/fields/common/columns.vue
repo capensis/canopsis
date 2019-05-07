@@ -38,7 +38,7 @@
           v-flex(v-if="withHtml", xs11)
             v-switch(
             :label="$t('settings.columns.isHtml')",
-            :value="column.isHtml",
+            :input-value="column.isHtml",
             @change="updateFieldInArrayItem(index, 'isHtml', $event)"
             )
       v-btn(color="primary", @click.prevent="add") {{ $t('common.add') }}
