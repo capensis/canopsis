@@ -143,7 +143,7 @@ export default {
 
   .timeline {
     margin: 0 auto;
-    width: 90%
+    width: 90%;
   }
 
   .timeline-item {
@@ -180,7 +180,10 @@ export default {
     padding-left: 20px;
     padding-top: 20px;
     overflow-wrap: break-word;
+    word-break: break-all;
     width: 90%;
+    max-height: 600px;
+    overflow-y: auto;
   }
 
   .header {
