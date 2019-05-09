@@ -29,6 +29,7 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
             v-model="settings.widget.parameters.mainFilter",
+            :entitiesType="$constants.ENTITIES_TYPES.alarm",
             :filters.sync="settings.widget.parameters.viewFilters",
             :condition.sync="settings.widget.parameters.mainFilterCondition",
             :hasAccessToAddFilter="hasAccessToAddFilter",

@@ -45,6 +45,7 @@
       filters-list(
       v-else,
       :filters="filters",
+      :entitiesType="entitiesType",
       @create:filter="createFilter",
       @update:filter="updateFilter",
       @delete:filter="deleteFilter"

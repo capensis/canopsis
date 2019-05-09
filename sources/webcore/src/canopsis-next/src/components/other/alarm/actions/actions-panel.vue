@@ -179,52 +179,6 @@ export default {
         inline: inlineActions.filter(action => !!action),
         dropDown: dropDownActions.filter(action => !!action),
       };
-
-      /*
-      let inlineActions = [filteredActionsMap.pbehaviorList];
-      let dropDownActions = [];
-
-      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
-        if (this.item.v.ack) {
-          inlineActions = [
-            filteredActionsMap.declareTicket,
-            filteredActionsMap.associateTicket,
-            filteredActionsMap.cancel,
-          ];
-
-          dropDownActions = [
-            filteredActionsMap.ackRemove,
-            filteredActionsMap.snooze,
-            filteredActionsMap.changeState,
-            filteredActionsMap.pbehaviorAdd,
-            filteredActionsMap.pbehaviorList,
-            filteredActionsMap.moreInfos,
-          ];
-
-          if (this.widget.parameters.isMultiAckEnabled) {
-            inlineActions.push(filteredActionsMap.ack);
-          }
-        } else {
-          inlineActions = [
-            filteredActionsMap.ack,
-            filteredActionsMap.fastAck,
-          ];
-
-          dropDownActions = [
-            filteredActionsMap.moreInfos,
-          ];
-        }
-
-        if (this.isEditingMode) {
-          inlineActions.push(filteredActionsMap.variablesHelp);
-        }
-      }
-
-      return {
-        inline: inlineActions.filter(action => !!action),
-        dropDown: dropDownActions.filter(action => !!action),
-      };
-      */
     },
   },
   methods: {
