@@ -251,6 +251,7 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
+    isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -367,6 +368,9 @@ export default {
       },
     },
     templateEditor: 'Template',
+    columns: {
+      isHtml: 'Is it HTML?',
+    },
   },
   modals: {
     contextInfos: {

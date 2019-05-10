@@ -13,7 +13,8 @@
                                 :value="step.val", :type="stepType(step._t)")
               p  &nbsp {{ step._t | stepTitle(step.a, step.role) }}
             .content
-              p {{ step.m }}
+              p(v-if="isHTMLEnabled", v-html="step.m")
+              p(v-else) {{ step.m }}
         div(v-else)
           alarm-flag.flag(isCroppedState)
           .header
@@ -61,6 +62,10 @@ export default {
     alarmProps: {
       type: Object,
       required: true,
+    },
+    isHTMLEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -138,7 +143,7 @@ export default {
 
   .timeline {
     margin: 0 auto;
-    width: 90%
+    width: 90%;
   }
 
   .timeline-item {
@@ -175,7 +180,10 @@ export default {
     padding-left: 20px;
     padding-top: 20px;
     overflow-wrap: break-word;
+    word-break: break-all;
     width: 90%;
+    max-height: 600px;
+    overflow-y: auto;
   }
 
   .header {

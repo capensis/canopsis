@@ -8,7 +8,12 @@ export default {
   computed: {
     columns() {
       if (this.widget.parameters.widgetColumns) {
-        return this.widget.parameters.widgetColumns.map(v => ({ text: v.label, value: v.value }));
+        return this.widget.parameters.widgetColumns.map(({ label, value, ...column }) => ({
+          ...column,
+
+          value,
+          text: label,
+        }));
       }
 
       return [];
