@@ -120,7 +120,7 @@ export default {
           return ['name', 'type'];
 
         case ENTITIES_TYPES.pbehavior:
-          return ['name', 'type_', 'impact', 'depends'];
+          return ['name', 'type', 'impact', 'depends'];
 
         default:
           return [];
