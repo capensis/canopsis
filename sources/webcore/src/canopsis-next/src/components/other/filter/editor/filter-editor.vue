@@ -67,7 +67,7 @@ export default {
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
     required: {
       type: Boolean,
@@ -118,6 +118,9 @@ export default {
 
         case ENTITIES_TYPES.entity:
           return ['name', 'type'];
+
+        case ENTITIES_TYPES.pbehavior:
+          return ['name', 'type', 'impact', 'depends'];
 
         default:
           return [];

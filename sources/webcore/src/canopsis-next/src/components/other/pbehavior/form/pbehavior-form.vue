@@ -52,7 +52,7 @@
 
 <script>
 import moment from 'moment';
-import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
+import { ENTITIES_TYPES, MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import formMixin from '@/mixins/form';
@@ -111,6 +111,7 @@ export default {
         name: MODALS.createFilter,
         config: {
           hiddenFields: ['title'],
+          entitiesType: ENTITIES_TYPES.pbehavior,
           filter: {
             filter: this.form.filter || {},
           },
