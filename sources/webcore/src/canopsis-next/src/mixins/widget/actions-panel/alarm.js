@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP, CRUD_ACTIONS } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
@@ -38,7 +38,6 @@ export default {
           ...this.modalConfig,
           pbehaviors: this.item.pbehaviors,
           entityId: this.item.entity._id,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
     },

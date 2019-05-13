@@ -44,7 +44,6 @@
 import { find, isNull, pickBy } from 'lodash';
 
 import {
-  CRUD_ACTIONS,
   MODALS,
   WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
@@ -278,7 +277,6 @@ export default {
           pbehaviors: this.pausePbehaviors,
           entityId: this.entity.entity_id,
           onlyActive: true,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
     },

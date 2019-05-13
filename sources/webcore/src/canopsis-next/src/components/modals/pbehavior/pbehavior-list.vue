@@ -15,9 +15,9 @@
               span(v-else) {{ props.item[key] }}
             td
               v-btn.mx-0(
-              v-for="action in availableActions",
+              v-for="action in actionsMap",
               :key="action.name",
-              @click="() => action.action(props.item)",
+              @click="action.action(props.item)",
               icon,
               )
                 v-icon {{ action.icon }}
@@ -59,32 +59,21 @@ export default {
     return {
       fields,
       headers,
+      actionsMap: {
+        [CRUD_ACTIONS.delete]: {
+          name: CRUD_ACTIONS.delete,
+          icon: 'delete',
+          action: pbehavior => this.showRemovePbehaviorModal(pbehavior._id),
+        },
+        [CRUD_ACTIONS.update]: {
+          name: CRUD_ACTIONS.update,
+          icon: 'edit',
+          action: pbehavior => this.showEditPbehaviorModal(pbehavior),
+        },
+      },
     };
   },
   computed: {
-    availableActions() {
-      const availableActions = this.modal.config.availableActions || [];
-
-      return availableActions.reduce((acc, action) => {
-        if (action === CRUD_ACTIONS.delete) {
-          acc.push({
-            name: CRUD_ACTIONS.delete,
-            icon: 'delete',
-            action: pbehavior => this.showRemovePbehaviorModal(pbehavior._id),
-          });
-        }
-
-        if (action === CRUD_ACTIONS.update) {
-          acc.push({
-            name: CRUD_ACTIONS.update,
-            icon: 'edit',
-            action: pbehavior => this.showEditPbehaviorModal(pbehavior),
-          });
-        }
-
-        return acc;
-      }, []);
-    },
     filteredPbehaviors() {
       if (this.modal.config.onlyActive) {
         return this.pbehaviors.filter(value => value.isActive);

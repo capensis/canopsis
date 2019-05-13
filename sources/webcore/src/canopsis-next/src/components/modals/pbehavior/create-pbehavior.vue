@@ -38,7 +38,7 @@ export default {
       let rrule = pbehavior.rrule || null;
 
       if (pbehavior.rrule && isObject(pbehavior.rrule)) {
-        ({ rrule } = pbehavior.rrule);
+        rrule = pbehavior.rrule;
       }
 
       return {
