@@ -8,8 +8,8 @@ export default {
   computed: {
     columns() {
       if (this.widget.parameters.widgetColumns) {
-        return this.widget.parameters.widgetColumns.map(({ label, value, ...column }) => ({
-          ...column,
+        return this.widget.parameters.widgetColumns.map(({ label, value, ...columnData }) => ({
+          ...columnData,
 
           value,
           text: label,
