@@ -59,7 +59,7 @@
 import { get, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
-import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } from '@/constants';
+import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
@@ -319,7 +319,10 @@ export default {
           });
         } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
           acc.technical.push(right);
-        } else if (Object.values(allBusinessRightsIds).indexOf(rightId) !== -1) {
+        } else if (
+          Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
+            rightId.includes(USERS_RIGHTS.business.weather.actions[WIDGETS_ACTIONS_TYPES.weather.entityLinks]) ||
+            rightId.includes(USERS_RIGHTS.business.alarmsList.actions[WIDGETS_ACTIONS_TYPES.alarmsList.links])) {
           acc.business.push(right);
         }
 
