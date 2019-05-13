@@ -58,14 +58,14 @@
             color="primary",
             ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.secondary.darken-1.footer
-      a(:href="$constants.CANOPSIS_DOCUMENTATION", target="_blank") {{ $t('login.documentation') }}
-      a(:href="$constants.CANOPSIS_WEBSITE", target="_blank") Canopsis.com
-      a(:href="$constants.CANOPSIS_FORUM", target="_blank") {{ $t('login.forum') }}
+      a(:href="$config.CANOPSIS_DOCUMENTATION", target="_blank") {{ $t('login.documentation') }}
+      a(:href="$config.CANOPSIS_WEBSITE", target="_blank") Canopsis.com
+      a(:href="$config.CANOPSIS_FORUM", target="_blank") {{ $t('login.forum') }}
       a.version(:href="changeLogHref", target="_blank") {{ version }}
 </template>
 
 <script>
-import { CANOPSIS_DOCUMENTATION } from '@/constants';
+import { CANOPSIS_DOCUMENTATION } from '@/config';
 
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';

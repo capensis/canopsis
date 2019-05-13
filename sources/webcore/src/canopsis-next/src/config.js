@@ -78,3 +78,9 @@ export const API_ROUTES = {
     app: '/api/internal/app_info',
   },
 };
+
+export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
+
+export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
+
+export const CANOPSIS_FORUM = 'https://community.capensis.org/';
