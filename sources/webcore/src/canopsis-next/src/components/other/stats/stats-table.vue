@@ -4,7 +4,6 @@
     v-data-table(
     :items="stats",
     :headers="columns",
-    :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
     :pagination.sync="pagination"
     )
       template(slot="items", slot-scope="{ item }")
