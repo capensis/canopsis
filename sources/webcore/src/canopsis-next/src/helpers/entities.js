@@ -166,6 +166,7 @@ export function generateWidgetByType(type) {
         },
         mfilter: {},
         stats: {},
+        sort: {},
       };
       break;
     case WIDGET_TYPES.statsCalendar:

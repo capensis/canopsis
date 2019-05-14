@@ -82,6 +82,12 @@ export function convertContextWidgetToQuery(widget) {
   return { ...query, ...convertSortToQuery(widget) };
 }
 
+/**
+ * This function converts widget with type 'ServiceWeather' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
 export function convertWeatherWidgetToQuery(widget) {
   const query = {
     filter: widget.parameters.mfilter.filter,
