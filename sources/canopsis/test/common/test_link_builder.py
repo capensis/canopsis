@@ -117,11 +117,13 @@ class LinkBuilderTest(unittest.TestCase):
         self.assertDictEqual(res, {})
 
         options = {
-            'base_url': 'http://example.com/{type}'
+            'base_url': 'http://example.com/{type}',
+            'category': 'macat',
+            'label' : 'monlabel'
         }
         res = self.htl_manager.links_for_entity(entity=self.entity,
                                                 options=options)
-        self.assertDictEqual(res, {'links': ['http://example.com/resource']})
+        self.assertDictEqual(res, {'links': {'macat' : [{'link':'http://example.com/resource', 'label' : 'monlabel'}]}})
 
         category = 'alexandrin'
         config = {
@@ -131,18 +133,20 @@ class LinkBuilderTest(unittest.TestCase):
         htl_manager2 = HypertextLinkManager(config={'basic_link_builder': config},
                                             logger=self.logger)
         res = htl_manager2.links_for_entity(entity=self.entity)
-        self.assertDictEqual(res, {category: ['http://example.com/resource']})
+        self.assertDictEqual(res, {'links': {'alexandrin' : [{'link':'http://example.com/resource', 'label' : 'alexandrin'}]}})
 
     def test_links_for_alarm(self):
         # Build a link with entity and alarm informations
         config = {
             'base_url': 'http://example.com/{infos.location}/{alarm.v.component}',
+            'category': 'macat',
+            'label' : 'monlabel'
         }
         conf = {'basic_alarm_link_builder': config}
         htl_manager2 = HypertextLinkManager(config=conf, logger=self.logger)
 
         res = htl_manager2.links_for_entity(entity=self.entity)
-        self.assertDictEqual(res, {'links': ['http://example.com/technodrome/oneil']})
+        self.assertDictEqual(res, {'links': {'macat' : [{'link' : 'http://example.com/technodrome/oneil', 'label' : 'monlabel'}]}})
 
 
 if __name__ == '__main__':
