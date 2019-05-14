@@ -71,7 +71,7 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
                 needle = '_'.join(needles[1:])
                 value = get_sub_key(alarm, '.'.join(needles[1:]))
             else:
-                value = get_sub_key(entity, '.'.join(needles[1:]))
+                value = get_sub_key(entity, '.'.join(needles))
 
             if value is None:
                 raise ValueError()
