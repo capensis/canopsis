@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { get, isUndefined } from 'lodash';
 
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
@@ -168,7 +168,15 @@ export default {
       return {
         bind: {
           is: 'ellipsis',
-          text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
+          text: this.$options.filters.get(this.alarm, this.column.value, (value) => {
+            const filteredValue = this.columnFilter ? this.columnFilter(value) : value;
+
+            if (!isUndefined(filteredValue)) {
+              return String(filteredValue);
+            }
+
+            return filteredValue;
+          }, ''),
         },
         on: {
           textClicked: this.showInfoPopup,
