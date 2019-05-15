@@ -1,6 +1,8 @@
 <script>
 import { Line } from 'vue-chartjs';
 
+import ChartAnnotationPlugin from 'chartjs-plugin-annotation';
+
 export default {
   extends: Line,
   props: {
@@ -34,6 +36,9 @@ export default {
         this.renderChart(value, this.options);
       }
     },
+  },
+  created() {
+    this.addPlugin(ChartAnnotationPlugin);
   },
   mounted() {
     this.renderChart(this.chartData, this.options);
