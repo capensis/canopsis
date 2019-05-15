@@ -11,7 +11,7 @@
         td(v-for="(property, key) in widget.parameters.stats")
           template(v-if="isStatNotEmpty(item[key])")
             td
-              div {{ formattedValue(item[key].value, property.stat.value) }}
+              div {{ getFormattedValue(item[key].value, property.stat.value) }}
                 sub {{ item[key].trend }}
           div(v-else) {{ $t('tables.noData') }}
 </template>
@@ -65,7 +65,7 @@ export default {
         })),
       ];
     },
-    formattedValue() {
+    getFormattedValue() {
       const PROPERTIES_FILTERS_MAP = {
         state_rate: value => this.$options.filters.percentage(value),
         ack_time_sla: value => this.$options.filters.percentage(value),
