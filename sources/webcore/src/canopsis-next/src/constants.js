@@ -634,6 +634,11 @@ export const USERS_RIGHTS = {
   },
 };
 
+export const NOT_COMPLETED_USER_RIGHTS_KEYS = [
+  'business.alarmsList.actions.links',
+  'business.weather.actions.entityLinks',
+];
+
 export const WIDGETS_ACTIONS_TYPES = {
   alarmsList: {
     ack: 'ack',

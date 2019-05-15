@@ -55,7 +55,7 @@ export default {
     hasAccessToCategory() {
       return category => this.checkAccess(`${
         BUSINESS_USER_RIGHTS_ACTIONS_MAP
-          .weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks]}_${category}`);
+          .alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]}_${category}`);
     },
   },
 };

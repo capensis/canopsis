@@ -59,7 +59,7 @@
 import { get, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
-import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES, NOT_COMPLETED_USER_RIGHTS_KEYS } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
@@ -304,6 +304,7 @@ export default {
       ]);
 
       const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
+      const allRightsIds = flatten(USERS_RIGHTS);
       const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
       const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
 
@@ -321,8 +322,8 @@ export default {
           acc.technical.push(right);
         } else if (
           Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
-            rightId.includes(USERS_RIGHTS.business.weather.actions[WIDGETS_ACTIONS_TYPES.weather.entityLinks]) ||
-            rightId.includes(USERS_RIGHTS.business.alarmsList.actions[WIDGETS_ACTIONS_TYPES.alarmsList.links])) {
+          NOT_COMPLETED_USER_RIGHTS_KEYS.some(userRightKey => rightId.startsWith(allRightsIds[userRightKey]))
+        ) {
           acc.business.push(right);
         }
 
