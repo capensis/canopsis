@@ -82,7 +82,7 @@ export default {
         description,
         pattern,
         priority,
-        enabled,
+        enabled = true,
         actions,
         external_data: externalData,
         on_success: onSuccess,
