@@ -90,8 +90,8 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
                 link = self.custom_format(opt['base_url'], entity, alarm)
                 self.logger.debug(link)
 
-                category = 'category'
-                label = 'label'
+                category = 'Liens'
+                label = 'URL'
                 
                 if 'category' in opt:
                     category = opt['category']
