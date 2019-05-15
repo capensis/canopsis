@@ -26,14 +26,14 @@ La configuration de l'URL est dans ce cas :
 **http://uneurl.local/?composant={alarm.v.component}**
 
 La variable **{alarm.v.component}** sera remplacée par le composant impacté par l'alarme.  
-Vous avez également la possibilité d'utiliser une varibale en provenance de l'entité impactée par l'alarme.  
+Vous avez également la possibilité d'utiliser une variable en provenance de l'entité impactée par l'alarme.  
 
 L'URL pourrait être de la forme :  
 **http://uneurl.local/?composant={alarm.v.component}&environnement={infos.env.value}**
 
 !!! Note
     Notez que les variables attachées à l'alarme sont préfixées avec *alarm* tandis que les variables attachées à l'entité ne le sont pas.
-    Par ailleurs, n'éhsitez pas à utiliser le [mécanisme d'enrichissement](../event-filter/) pour utiliser les variables dans le linkbuilder
+    Par ailleurs, n'hésitez pas à utiliser le [mécanisme d'enrichissement](../event-filter/) pour utiliser les variables dans le linkbuilder
 
 Pour aboutir à ce résultat, une configuration doit être insérée via l'API *associativetable*.
 
@@ -49,8 +49,8 @@ Voici la configuration adéquate pour l'exemple précédent.
 }
 ```
 
-* L'attribut **base_url** contient l'URL avec les variables souhaitée.  
-* L'attribut **category** va permettre de regrouper des URLs entre elles
+* L'attribut **base_url** contient l'URL avec les variables souhaitées.  
+* L'attribut **category** va permettre de regrouper des URL entre elles
 * L'attribut **label** permet de donner un nom au lien généré.
 
 !!! Info
@@ -62,8 +62,10 @@ La configuration préalablement établie doit être postée sur l'API de Canopsi
 
 **Envoi de la configuration :**
 
+Considérons que la configuration précédente soit positionnée dans un fichier *basic_link_builder.json*.
+
 ```sh
-curl -H "Content-Type: application/json" -X POST -d @basic_link_builder.json http://user:mdp@IP_Canopsis:Port_Canopsis/api/v2/associativetable/link_builders_settings
+curl -H "Content-Type: application/json" -X POST -u root:root -d @basic_link_builder.json http://IP_CANOPSIS:8082/api/v2/associativetable/link_builders_settings
 ```
 
 Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
@@ -75,7 +77,7 @@ Notez qu'un redémarrage du moteur `webserver` est nécessaire.
 
 ### Visualisation frontend
 
-Les liens sont mis à disposition de l'inteface par l'intermédiaire du helper *links*.  
+Les liens sont mis à disposition de l'interface par l'intermédiaire du helper *links*.  
 Il peut être appelé dans un bac à alarmes ou dans une météo de services.  
 
 
@@ -85,7 +87,7 @@ Dans les paramètres du widget, vous devez ajouter une colonne *links*.
 
 ![baa_parametres](img/baa_parametres.png)
 
-Le fait d'utiliser *links* affcihera l'ensemble des liens disponibles regroupés par catégorie.  
+Le fait d'utiliser *links* affichera l'ensemble des liens disponibles, regroupés par catégorie.  
 
 ![baa](img/baa.png)
 
@@ -104,7 +106,7 @@ Voici un exemple pour le template d'entité.
 
 ![meteo_parametres](img/meteo_parametres.png)
 
-Le fait d'utiliser *links* affcihera l'ensemble des liens disponibles regroupés par catégorie.  
+Le fait d'utiliser *links* affichera l'ensemble des liens disponibles, regroupés par catégorie.  
 
 ![meteo](img/meteo.png)
 
