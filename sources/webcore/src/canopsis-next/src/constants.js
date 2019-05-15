@@ -602,6 +602,8 @@ export const USERS_RIGHTS = {
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
         userFilter: 'listalarm_userFilter',
+
+        links: 'listalarm_links',
       },
     },
     context: {
@@ -631,12 +633,19 @@ export const USERS_RIGHTS = {
         entityCancel: 'serviceweather_entityCancel',
         entityManagePbehaviors: 'serviceweather_entityManagePbehaviors',
 
+        entityLinks: 'serviceweather_entityLinks',
+
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
       },
     },
   },
 };
+
+export const NOT_COMPLETED_USER_RIGHTS_KEYS = [
+  'business.alarmsList.actions.links',
+  'business.weather.actions.entityLinks',
+];
 
 export const WIDGETS_ACTIONS_TYPES = {
   alarmsList: {
@@ -652,6 +661,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     cancel: 'cancel',
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
+
+    links: 'links',
 
     listFilters: 'listFilters',
     editFilter: 'editFilter',
@@ -680,6 +691,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityPlay: 'entityPlay',
     entityCancel: 'entityCancel',
 
+    entityLinks: 'entityLinks',
+
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
   },
@@ -697,6 +710,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.associateTicket]: USERS_RIGHTS.business.alarmsList.actions.associateTicket,
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
@@ -727,6 +742,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.entityCancel]: USERS_RIGHTS.business.weather.actions.entityCancel,
     [WIDGETS_ACTIONS_TYPES.weather.entityManagePbehaviors]:
       USERS_RIGHTS.business.weather.actions.entityManagePbehaviors,
+
+    [WIDGETS_ACTIONS_TYPES.weather.entityLinks]: USERS_RIGHTS.business.weather.actions.entityLinks,
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
