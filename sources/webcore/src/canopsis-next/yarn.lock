@@ -6717,6 +6717,11 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
 
+nightwatch-record@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/nightwatch-record/-/nightwatch-record-0.2.0.tgz#a50ff553ecc0d5d2f589bf2b627ed3f243e86a65"
+  integrity sha1-pQ/1U+zA1dL1ib8rYn7T8kPoamU=
+
 nightwatch@^0.9.21:
   version "0.9.21"
   resolved "https://registry.yarnpkg.com/nightwatch/-/nightwatch-0.9.21.tgz#9e794a7514b4fd5f46602d368e50515232ab9e90"

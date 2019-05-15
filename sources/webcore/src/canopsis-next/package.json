@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "unit": "vue-cli-service test:unit",
-    "e2e": "vue-cli-service test:e2e",
+    "e2e": "vue-cli-service test:e2e --mode=developement --config ./tests/e2e/nightwatch.config.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -63,6 +63,7 @@
     "husky": "^1.3.1",
     "jest-localstorage-mock": "^2.2.0",
     "lint-staged": "^6.0.0",
+    "nightwatch-record": "^0.2.0",
     "node-sass": "^4.7.2",
     "pug": "^2.0.3",
     "pug-loader": "^2.4.0",
