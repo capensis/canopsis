@@ -1000,6 +1000,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Current state',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Current ongoing alarms with ack',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Current ongoing alarms without ack',
     },
   },
   eventFilter: {
