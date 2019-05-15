@@ -23,7 +23,7 @@ Managing PBehavior.
 """
 
 from calendar import timegm
-from datetime import datetime
+from datetime import datetime, date
 from dateutil import tz, rrule
 from json import loads, dumps
 from time import time
@@ -1037,6 +1037,14 @@ class PBehaviorManager(object):
 
 
     def _get_last_tstop(self, pbh, now):
+        """
+        Returns last pbehavior stop timestamp from now
+
+
+        :param Dict[str, Any] pbh: a pbehavior
+        :param int now: a UTC timestamp
+        :rtype: int
+        """
         if PBehavior.RRULE not in pbh or\
             pbh[PBehavior.RRULE] is None or\
             pbh[PBehavior.RRULE] == "":
@@ -1063,7 +1071,7 @@ class PBehaviorManager(object):
     def get_ok_ko_timestamp(self, entity_id):
         #get today at midnight timestamp as base return timestamp
         #because each alarm ok ko counter is soft-reseted at midnight
-        today_at_midnight = datetime.date.today()
+        today_at_midnight = date.today()
         ret_timestamp = int(today_at_midnight.strftime("%s"))
 
         now = int(time())
