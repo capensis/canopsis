@@ -49,10 +49,7 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
-    const { hiddenFields = [] } = this.modal.config;
-
     return {
-      hiddenFields,
       periodValue: 1,
       periodUnit: STATS_DURATION_UNITS.hour,
       form: {
@@ -79,6 +76,11 @@ export default {
       ],
       errors: [],
     };
+  },
+  computed: {
+    hiddenFields() {
+      return this.modal.config.hiddenFields || [];
+    },
   },
   mounted() {
     if (this.config.interval) {

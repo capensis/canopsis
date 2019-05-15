@@ -79,10 +79,10 @@ export default {
       const durationValue = tstop.diff(tstart, periodUnit);
 
       return {
-        duration: `${durationValue}${periodUnit.toLowerCase()}`,
         stats,
         mfilter,
 
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
         tstop: tstop.startOf('h').unix(),
       };
     },
