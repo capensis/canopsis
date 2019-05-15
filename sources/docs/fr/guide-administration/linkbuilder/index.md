@@ -33,6 +33,7 @@ L'URL pourrait être de la forme :
 
 !!! Note
     Notez que les variables attachées à l'alarme sont préfixées avec *alarm* tandis que les variables attachées à l'entité ne le sont pas.
+    Par ailleurs, n'éhsitez pas à utiliser le [mécanisme d'enrichissement](../event-filter/) pour utiliser les variables dans le linkbuilder
 
 Pour aboutir à ce résultat, une configuration doit être insérée via l'API *associativetable*.
 
@@ -52,6 +53,8 @@ Voici la configuration adéquate pour l'exemple précédent.
 * L'attribut **category** va permettre de regrouper des URLs entre elles
 * L'attribut **label** permet de donner un nom au lien généré.
 
+!!! Info
+    Cette configuration est stockée dans la collection **default_associativetable**
 
 ### Mise en œuvre backend
 
