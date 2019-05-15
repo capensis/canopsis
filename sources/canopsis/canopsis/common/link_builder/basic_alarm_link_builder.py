@@ -68,7 +68,6 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
             needle = '_'.join(needles)  # used as a parameter name in format !
             value = ''
             if alarm is not None and needles[0] == 'alarm':
-                needle = '_'.join(needles[1:])
                 value = get_sub_key(alarm, '.'.join(needles[1:]))
             else:
                 value = get_sub_key(entity, '.'.join(needles))
