@@ -17,7 +17,7 @@
         :value="request.url",
         :disabled="disabled",
         :label="$t('webhook.tabs.request.fields.url')",
-        v-validate="'required'",
+        v-validate="'required|url'",
         name="request.url",
         :error-messages="errors.collect('request.url')",
         @input="updateField('url', $event)"

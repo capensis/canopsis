@@ -11,7 +11,7 @@
       )
     v-layout(row)
       date-time-picker-field(
-      v-validate="'required'",
+      v-validate="tstartRules",
       :value="form.tstart",
       :label="$t('modals.createPbehavior.fields.start')",
       name="tstart",
@@ -52,7 +52,7 @@
 
 <script>
 import moment from 'moment';
-import { MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
+import { ENTITIES_TYPES, MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import formMixin from '@/mixins/form';
@@ -63,7 +63,10 @@ import RRuleForm from '@/components/forms/rrule.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimePickerField, RRuleForm },
+  components: {
+    DateTimePickerField,
+    RRuleForm,
+  },
   mixins: [authMixin, formMixin, modalMixin],
   model: {
     prop: 'form',
@@ -84,12 +87,19 @@ export default {
       return Object.values(PBEHAVIOR_TYPES);
     },
 
+    tstartRules() {
+      return {
+        required: true,
+        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+      };
+    },
+
     tstopRules() {
       const rules = { required: true };
 
       if (this.form.tstart) {
         rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = DATETIME_FORMATS.dateTimePicker;
+        rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 
       return rules;
@@ -101,6 +111,7 @@ export default {
         name: MODALS.createFilter,
         config: {
           hiddenFields: ['title'],
+          entitiesType: ENTITIES_TYPES.pbehavior,
           filter: {
             filter: this.form.filter || {},
           },

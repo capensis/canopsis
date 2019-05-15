@@ -11,20 +11,22 @@ from __future__ import unicode_literals
 class UserInterface(object):
 
     """
-    Representation of a ticketApiConfig element.
+    Representation of an user interface element.
     """
 
     # Keys as seen in db
     _ID = '_id'
     APP_TITLE = 'app_title'
     FOOTER = 'footer'
+    LOGIN_PAGE_DESCRIPTION = 'login_page_description'
     LOGO = 'logo'
 
-    def __init__(self, _id, app_title=None, footer=None, logo=None, *args, **kwargs):
+    def __init__(self, _id, app_title=None, footer=None, login_page_description=None, logo=None, *args, **kwargs):
 
         self._id = _id
         self.app_title = app_title
         self.footer = footer
+        self.login_page_description = login_page_description
         self.logo = logo
 
         if args not in [(), None] or kwargs not in [{}, None]:
@@ -45,7 +47,8 @@ class UserInterface(object):
         dictionnary = {
             self.APP_TITLE: self.app_title,
             self.FOOTER: self.footer,
-            self.LOGO: self.logo,
+            self.LOGIN_PAGE_DESCRIPTION: self.login_page_description,
+            self.LOGO: self.logo
         }
 
         return dictionnary

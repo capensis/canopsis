@@ -39,6 +39,8 @@ export function generateWidgetByType(type) {
     infoPopups: [],
     moreInfoTemplate: '',
     isAckNoteRequired: false,
+    isMultiAckEnabled: false,
+    isHtmlEnabledOnTimeLine: false,
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),

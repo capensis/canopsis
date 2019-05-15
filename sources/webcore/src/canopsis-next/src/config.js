@@ -34,6 +34,7 @@ export const API_ROUTES = {
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
+  watcherng: '/api/v2/watcherng',
   weatherWatcher: '/api/v2/weather/watchers',
   pbehavior: {
     pbehavior: '/api/v2/pbehavior',
@@ -63,4 +64,17 @@ export const API_ROUTES = {
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
   webhook: '/api/v2/webhook',
+  snmpRule: {
+    list: '/snmprule',
+    create: '/snmprule/put',
+  },
+  snmpMib: {
+    list: '/snmpmib',
+    distinct: '/snmpmibdistinct',
+    upload: '/uploadmib',
+  },
+  infos: {
+    login: '/api/internal/login/login_info',
+    app: '/api/internal/app_info',
+  },
 };

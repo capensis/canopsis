@@ -20,7 +20,7 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -35,18 +35,18 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
+    const { pattern = {}, operators = EVENT_FILTER_RULE_OPERATORS } = this.modal.config;
+
     return {
+      operators,
+
+      pattern: cloneDeep(pattern),
       activeTab: 0,
       tabs: [
         this.$t('modals.eventFilterRule.simpleEditor'),
         this.$t('modals.eventFilterRule.advancedEditor'),
       ],
-      pattern: {},
-      operators: ['>=', '>', '<', '<=', 'regex'],
     };
-  },
-  mounted() {
-    this.pattern = cloneDeep(this.config.pattern || {});
   },
   methods: {
     submit() {

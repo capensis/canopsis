@@ -39,14 +39,13 @@
               :color="tile.props.value ? parent.color : ''",
               small
               ) {{ item.locked ? 'lock' : 'person' }}
-    v-flex(v-bind="flexProps.list")
+    v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
       filters-list(
       v-else,
       :filters="filters",
-      :hasAccessToAddFilter="hasAccessToAddFilter",
-      :hasAccessToEditFilter="hasAccessToEditFilter",
+      :entitiesType="entitiesType",
       @create:filter="createFilter",
       @update:filter="updateFilter",
       @delete:filter="deleteFilter"
@@ -54,7 +53,7 @@
 </template>
 
 <script>
-import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 
@@ -112,6 +111,15 @@ export default {
       type: Boolean,
       default: true,
     },
+    hasAccessToUserFilter: {
+      type: Boolean,
+      default: true,
+    },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+    },
   },
   computed: {
     flexProps() {
@@ -128,16 +136,16 @@ export default {
     },
 
     preparedFilters() {
-      const preparedFilters = [...this.filters];
+      const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
+      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
 
-      if (this.lockedFilters.length) {
-        return preparedFilters.concat(
-          { divider: true },
-          this.lockedFilters.map(filter => ({ ...filter, locked: true })),
-        );
+      if (preparedFilters.length && preparedLockedFilters.length) {
+        return preparedFilters.concat({ divider: true }, preparedLockedFilters);
+      } else if (preparedFilters.length) {
+        return preparedFilters;
       }
 
-      return preparedFilters;
+      return preparedLockedFilters;
     },
   },
   methods: {

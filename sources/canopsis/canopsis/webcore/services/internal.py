@@ -27,77 +27,154 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.userinterface.manager import UserInterfaceManager
 from canopsis.version import CanopsisVersionManager
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
-    'app_title', 'footer', 'logo'
+    'app_title', 'footer',  'login_page_description', 'logo'
 ]
+
+VALID_CANOPSIS_EDITIONS = [
+    'cat', 'core'
+]
+
+VALID_CANOPSIS_STACKS = [
+    'go', 'python'
+]
+
+
+def get_user_interface():
+    user_interface_manager = UserInterfaceManager(
+        *UserInterfaceManager.provide_default_basics())
+
+    user_interface = user_interface_manager.get()
+
+    if user_interface is not None:
+        return {"user_interface": user_interface.to_dict()}
+
+    return {"user_interface": None}
+
+
+def get_version():
+    store = MongoStore.get_default()
+    version_collection = \
+        store.get_collection(name=CanopsisVersionManager.COLLECTION)
+    document = CanopsisVersionManager(version_collection).\
+        find_canopsis_document()
+
+    if document is not None:
+        return {
+            CanopsisVersionManager.EDITION_FIELD: document.get(CanopsisVersionManager.EDITION_FIELD, ""),
+            CanopsisVersionManager.STACK_FIELD: document.get(CanopsisVersionManager.STACK_FIELD, ""),
+            CanopsisVersionManager.VERSION_FIELD: document.get(
+                CanopsisVersionManager.VERSION_FIELD, "")
+        }
+
+    return {
+        CanopsisVersionManager.EDITION_FIELD: "",
+        CanopsisVersionManager.STACK_FIELD: "",
+        CanopsisVersionManager.VERSION_FIELD: ""
+    }
+
+
+def get_login_config(ws):
+    login_config = {
+        'webserver': {provider: 1 for provider in ws.providers},
+    }
+
+    records = ws.db.find(
+        {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
+        namespace='object'
+    )
+
+    for login_service in records:
+        login_service = login_service.dump()
+        login_service_name = login_service['crecord_name']
+        login_config[login_service_name] = login_service
+
+        ws.logger.info(
+            u'found cservices type {}'.format(login_service_name))
+
+        if login_service_name == 'casconfig':
+            login_service['server'] = login_service['server'].rstrip('/')
+            login_service['service'] = login_service['service'].rstrip('/')
+            ws.logger.info(u'cas config : server {}, service {}'.format(
+                login_service['server'],
+                login_service['service'],
+            ))
+
+    if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
+        result = ws.db.find({'_id': "canopsis"}, namespace='default_saml2')
+
+        login_config["saml2config"] = {
+            "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
+
+    return {"login_config": login_config}
+
+
+def check_edition_and_stack(ws, edition, stack):
+    if edition is not None and edition not in VALID_CANOPSIS_EDITIONS:
+        ws.logger.error("edition is an invalid value : {}".format(edition))
+        return False
+
+    if stack is not None and stack not in VALID_CANOPSIS_STACKS:
+        ws.logger.error("stack is an invalid value : {}".format(stack))
+        return False
+
+    return True
 
 
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
 
-    def get_login_config():
-        login_config = {
-            'webserver': {provider: 1 for provider in ws.providers},
-        }
-
-        records = ws.db.find(
-            {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
-            namespace='object'
-        )
-
-        for login_service in records:
-            login_service = login_service.dump()
-            login_service_name = login_service['crecord_name']
-            login_config[login_service_name] = login_service
-
-            ws.logger.info(
-                u'found cservices type {}'.format(login_service_name))
-
-            if login_service_name == 'casconfig':
-                login_service['server'] = login_service['server'].rstrip('/')
-                login_service['service'] = login_service['service'].rstrip('/')
-                ws.logger.info(u'cas config : server {}, service {}'.format(
-                    login_service['server'],
-                    login_service['service'],
-                ))
-
-        if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
-            result = ws.db.find({'_id': "canopsis"}, namespace='default_saml2')
-
-            login_config["saml2config"] = {
-                "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
-
-        return {"login_config": login_config}
-
-    def get_user_interface():
-        user_interface_manager = UserInterfaceManager(
-            *UserInterfaceManager.provide_default_basics())
-
-        user_interface = user_interface_manager.get()
-
-        if user_interface is not None:
-            return {"user_interface": user_interface.to_dict()}
-
-        return {"user_interface": None}
-
-    def get_version():
-        store = MongoStore.get_default()
-        version_collection = \
-            store.get_collection(name=CanopsisVersionManager.COLLECTION)
-        document = CanopsisVersionManager(version_collection).\
-            find_canopsis_version_document()
-
-        return {CanopsisVersionManager.VERSION_FIELD: document[CanopsisVersionManager.VERSION_FIELD]}
-
-    @ws.application.get('/api/internal/login/login_info')
+    @ws.application.get('/api/internal/login/login_info', skip=ws.skip_login)
     def get_internal_login_info():
         cservices = {}
-        cservices.update(get_login_config())
+        cservices.update(get_login_config(ws))
         cservices.update(get_user_interface())
         cservices.update(get_version())
         return gen_json(cservices)
+
+    @ws.application.post('/api/internal/properties')
+    def update_canopsis_properties():
+        try:
+            doc = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+
+        store = MongoStore.get_default()
+        version_collection = store.get_collection(
+            name=CanopsisVersionManager.COLLECTION)
+
+        try:
+            ok = check_edition_and_stack(
+                ws, doc.get("edition"), doc.get("stack"))
+            if ok:
+                success = CanopsisVersionManager(version_collection).\
+                    put_canopsis_document(doc.get("edition"),
+                                          doc.get("stack"), None)
+
+                if not success:
+                    return gen_json_error({'description': 'failed to update edition/stack'},
+                                          HTTP_ERROR)
+                return gen_json({})
+            else:
+                err = 'Invalid value(s).'
+                ws.logger.error(err)
+                return gen_json_error(
+                    {'description': err},
+                    HTTP_ERROR
+                )
+
+        except CollectionError as ce:
+            ws.logger.error('Update edition/stack error: {}'.format(ce))
+            return gen_json_error(
+                {'description': 'Error while updating edition/stack values'},
+                HTTP_ERROR
+            )
 
     @ws.application.get('/api/internal/app_info')
     def get_internal_app_info():

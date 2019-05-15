@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.secondary.lighten-2(flat)
     v-card-text
-      v-data-table.ma-0.pbehaviorsTable(:items="pbehaviors", :headers="pbehaviorsTableHeaders")
+      v-data-table.ma-0.pbehaviorsTable(:items="pbehaviors", :headers="headers")
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
@@ -39,6 +39,7 @@ import { MODALS, USERS_RIGHTS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
+import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
@@ -47,6 +48,7 @@ export default {
     authMixin,
     modalMixin,
     popupMixin,
+    queryMixin,
     entitiesPbehaviorMixin,
     entitiesPbehaviorCommentMixin,
   ],
@@ -55,10 +57,18 @@ export default {
       type: String,
       required: true,
     },
+    tabId: {
+      type: String,
+      required: true,
+    },
   },
-  data() {
-    return {
-      pbehaviorsTableHeaders: [
+  computed: {
+    hasAccessToDeletePbehavior() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.pbehaviorDelete);
+    },
+
+    headers() {
+      return [
         {
           text: this.$t('common.name'),
           sortable: false,
@@ -103,16 +113,22 @@ export default {
           text: this.$t('common.actionsLabel'),
           sortable: false,
         },
-      ],
-    };
+      ];
+    },
+
+    queryNonce() {
+      return this.getQueryNonceById(this.tabId);
+    },
   },
-  computed: {
-    hasAccessToDeletePbehavior() {
-      return this.checkAccess(USERS_RIGHTS.business.context.actions.pbehaviorDelete);
+  watch: {
+    queryNonce(value, oldValue) {
+      if (value > oldValue) {
+        this.fetchList();
+      }
     },
   },
   mounted() {
-    this.fetchItems();
+    this.fetchList();
   },
   methods: {
     showEditPbehaviorModal(pbehavior) {
@@ -127,7 +143,7 @@ export default {
             await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
             await this.updateSeveralPbehaviorComments({ pbehavior, comments });
 
-            this.fetchItems();
+            this.fetchList();
             this.addSuccessPopup({ text: this.$t('success.default') });
           },
         },
@@ -141,12 +157,12 @@ export default {
           action: async () => {
             await this.removePbehavior({ id: pbehaviorId });
 
-            this.fetchItems();
+            this.fetchList();
           },
         },
       });
     },
-    fetchItems() {
+    fetchList() {
       this.fetchPbehaviorsByEntityId({ id: this.itemId });
     },
   },

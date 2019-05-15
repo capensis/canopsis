@@ -1,3 +1,10 @@
+export const CRUD_ACTIONS = {
+  create: 'create',
+  read: 'read',
+  update: 'update',
+  delete: 'delete',
+};
+
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
@@ -17,6 +24,7 @@ export const ENTITIES_TYPES = {
   role: 'role',
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
+  snmpRule: 'snmpRule',
 };
 
 export const MODALS = {
@@ -32,7 +40,7 @@ export const MODALS = {
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',
   watcher: 'watcher',
-  createWatcherDeclareTicketEvent: 'create-watcher-declare-ticket-event',
+  createWatcherAssocTicketEvent: 'create-watcher-assoc-ticket-event',
   createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
@@ -63,6 +71,7 @@ export const MODALS = {
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
+  createSnmpRule: 'create-snmp-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -112,7 +121,7 @@ export const ENTITIES_STATES_STYLES = {
     icon: 'assistant_photo',
   },
   [ENTITIES_STATES.minor]: {
-    color: 'gold',
+    color: '#FCDC00',
     text: 'minor',
     icon: 'assistant_photo',
   },
@@ -130,7 +139,7 @@ export const ENTITIES_STATES_STYLES = {
 
 export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.ok]: '#00a65a',
-  [ENTITIES_STATES.minor]: '#ff9900',
+  [ENTITIES_STATES.minor]: '#fcdc00',
   [ENTITIES_STATES.major]: '#ff9900',
   [ENTITIES_STATES.critical]: '#f56954',
 };
@@ -327,10 +336,11 @@ export const DATETIME_FORMATS = {
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
+  dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
   datePicker: 'DD/MM/YYYY',
   timePicker: 'HH:mm',
-
-  dateTimePickerForValidation: 'dd/MM/yyyy HH:mm',
+  timePickerWithSeconds: 'HH:mm:ss',
+  veeValidateDateTimeFormat: 'dd/MM/yyyy HH:mm',
 };
 
 export const STATS_OPTIONS = {
@@ -513,7 +523,7 @@ export const STATS_DISPLAY_MODE_PARAMETERS = {
   },
   colors: {
     ok: '#66BB6A',
-    minor: '#FFEE58',
+    minor: '#FCDC00',
     major: '#FFA726',
     critical: '#FF7043',
   },
@@ -526,7 +536,7 @@ export const WIDGET_MIN_SIZE = 3;
 export const STATS_CALENDAR_COLORS = {
   alarm: {
     ok: '#66BB6A',
-    minor: '#FFEE58',
+    minor: '#FCDC00',
     major: '#FFA726',
     critical: '#FF7043',
   },
@@ -564,6 +574,7 @@ export const USERS_RIGHTS = {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
+      snmpRule: 'models_exploitation_snmpRule',
     },
   },
   business: {
@@ -582,6 +593,7 @@ export const USERS_RIGHTS = {
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
+        userFilter: 'listalarm_userFilter',
       },
     },
     context: {
@@ -597,17 +609,19 @@ export const USERS_RIGHTS = {
         listFilters: 'crudcontext_listFilters',
         editFilter: 'crudcontext_editFilter',
         addFilter: 'crudcontext_addFilter',
+        userFilter: 'crudcontext_userFilter',
       },
     },
     weather: {
       actions: {
         entityAck: 'serviceweather_entityAck',
-        entityDeclareTicket: 'serviceweather_entityDeclareTicket',
+        entityAssocTicket: 'serviceweather_entityAssocTicket',
         entityValidate: 'serviceweather_entityValidate',
         entityInvalidate: 'serviceweather_entityInvalidate',
         entityPause: 'serviceweather_entityPause',
         entityPlay: 'serviceweather_entityPlay',
         entityCancel: 'serviceweather_entityCancel',
+        entityManagePbehaviors: 'serviceweather_entityManagePbehaviors',
 
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
@@ -651,7 +665,7 @@ export const WIDGETS_ACTIONS_TYPES = {
   },
   weather: {
     entityAck: 'entityAck',
-    entityDeclareTicket: 'entityDeclareTicket',
+    entityAssocTicket: 'entityAssocTicket',
     entityValidate: 'entityValidate',
     entityInvalidate: 'entityInvalidate',
     entityPause: 'entityPause',
@@ -697,12 +711,14 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
 
   weather: {
     [WIDGETS_ACTIONS_TYPES.weather.entityAck]: USERS_RIGHTS.business.weather.actions.entityAck,
-    [WIDGETS_ACTIONS_TYPES.weather.entityDeclareTicket]: USERS_RIGHTS.business.weather.actions.entityDeclareTicket,
+    [WIDGETS_ACTIONS_TYPES.weather.entityAssocTicket]: USERS_RIGHTS.business.weather.actions.entityAssocTicket,
     [WIDGETS_ACTIONS_TYPES.weather.entityValidate]: USERS_RIGHTS.business.weather.actions.entityValidate,
     [WIDGETS_ACTIONS_TYPES.weather.entityInvalidate]: USERS_RIGHTS.business.weather.actions.entityInvalidate,
     [WIDGETS_ACTIONS_TYPES.weather.entityPause]: USERS_RIGHTS.business.weather.actions.entityPause,
     [WIDGETS_ACTIONS_TYPES.weather.entityPlay]: USERS_RIGHTS.business.weather.actions.entityPlay,
     [WIDGETS_ACTIONS_TYPES.weather.entityCancel]: USERS_RIGHTS.business.weather.actions.entityCancel,
+    [WIDGETS_ACTIONS_TYPES.weather.entityManagePbehaviors]:
+      USERS_RIGHTS.business.weather.actions.entityManagePbehaviors,
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
@@ -797,6 +813,7 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   moreInfo: 'more-info',
   alarmList: 'alarm-list',
+  both: 'both',
 };
 
 export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
@@ -822,6 +839,7 @@ export const WEBHOOK_TRIGGERS = {
   statedec: 'statedec',
   statusinc: 'statusinc',
   statusdec: 'statusdec',
+  changestate: 'changestate',
   ack: 'ack',
   ackremove: 'ackremove',
   cancel: 'cancel',
@@ -834,3 +852,28 @@ export const WEBHOOK_TRIGGERS = {
   unsnooze: 'unsnooze',
   resolve: 'resolve',
 };
+
+export const EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
+
+export const WEBHOOK_EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
+
+export const SNMP_STATE_TYPES = {
+  simple: 'simple',
+  template: 'template',
+};
+
+export const CANOPSIS_STACK = {
+  go: 'go',
+  python: 'python',
+};
+
+export const CANOPSIS_EDITION = {
+  core: 'core',
+  cat: 'cat',
+};
+
+export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
+
+export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
+
+export const CANOPSIS_FORUM = 'https://community.capensis.org/';

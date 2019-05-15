@@ -62,24 +62,24 @@ class UserInterfaceManager(object):
 
     def get(self):
         """
-        Read a ticketapi config.
+        Read a user interface config.
 
-        :param str query: a ticketapi config query string
-        :rtype: TicektApi or None
+        :param str query: an user interface config query string
+        :rtype: UserInterface or None
         """
         record = self.collection.find_one(query={"_id": self.__DOCUMENT_ID})
         if not record:
             return
 
-        ticket_api = UserInterface(**record)
-        return ticket_api
+        user_interface = UserInterface(**record)
+        return user_interface
 
     def update(self, interface):
         """
-        Update a ticketapi config.
+        Update a user interface config.
 
-        :param str id_: a ticketapi config _id
-        :param dict ticketapi: a ticketapi config as a dict
+        :param str id_: an user interface config _id
+        :param dict user_interface: an user interface config as a dict
         :rtype: bool
         """
         resp = self.collection.update({"_id": self.__DOCUMENT_ID}, {
@@ -91,8 +91,8 @@ class UserInterfaceManager(object):
         """
         Update a ticketapi config.
 
-        :param str id_: a ticketapi config _id
-        :param dict ticketapi: a ticketapi config as a dict
+        :param str id_: an user interface config _id
+        :param dict user_interface: an user interface config as a dict
         :rtype: bool
         """
         resp = self.collection.remove({"_id": self.__DOCUMENT_ID})

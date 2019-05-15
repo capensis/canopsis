@@ -348,6 +348,7 @@ class TestManager(BaseTest):
             '_t': 'stateinc',
             'm': 'UT message',
             't': 0,
+            'role': None,
             'val': 2,
         }
 
@@ -355,6 +356,7 @@ class TestManager(BaseTest):
             'a': DEFAULT_AUTHOR,
             '_t': 'statusinc',
             'm': 'UT message',
+            'role': None,
             't': 0,
             'val': 1,
         }
@@ -362,10 +364,14 @@ class TestManager(BaseTest):
         # Make sure no more steps are added
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
 
-        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
-        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.status.value], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][1], expected_status)
 
         alarm = self.manager.change_of_state(alarm, 2, 1, event)
 
@@ -374,14 +380,17 @@ class TestManager(BaseTest):
             '_t': 'statedec',
             'm': 'UT message',
             't': 0,
+            'role': None,
             'val': 1,
         }
 
         # Make sure no more steps are added
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
 
-        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][2], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][2], expected_state)
 
     def test_change_of_status(self):
         alarm_id = '/fake/alarm/id'
@@ -410,13 +419,16 @@ class TestManager(BaseTest):
             '_t': 'statusinc',
             'm': 'UT message',
             't': 0,
+            'role': None,
             'val': 1,
         }
 
-        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.status.value], expected_status)
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 1)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][0], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
 
@@ -447,13 +459,16 @@ class TestManager(BaseTest):
             '_t': 'statusinc',
             'm': 'UT message',
             't': 0,
+            'role': None,
             'val': CANCELED,
         }
 
-        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.status.value], expected_status)
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 1)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][0], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
             alarm['value'][AlarmField.last_update_date.value],
@@ -484,12 +499,15 @@ class TestManager(BaseTest):
             '_t': 'stateinc',
             'm': 'test message',
             't': 0,
+            'role': None,
             'val': 1,
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
-        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.state.value], expected_state)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
             alarm['value'][AlarmField.last_update_date.value],
@@ -514,8 +532,10 @@ class TestManager(BaseTest):
         alarm = self.manager.get_current_alarm(alarm_id)
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
-        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.state.value], expected_state)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
 
@@ -542,12 +562,15 @@ class TestManager(BaseTest):
             '_t': "stateinc",
             'm': 'test message',
             't': 0,
+            'role': None,
             'val': 1,
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][0], expected_state)
-        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.state.value], expected_state)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
             alarm['value'][AlarmField.last_update_date.value],
@@ -577,12 +600,15 @@ class TestManager(BaseTest):
             '_t': 'stateinc',
             'm': 'test message',
             't': 0,
+            'role': None,
             'val': 2,
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][2], expected_state)
-        self.assertEqual(alarm['value'][AlarmField.state.value], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][2], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.state.value], expected_state)
 
         # Testing keeped state
         event1 = {
@@ -663,13 +689,16 @@ class TestManager(BaseTest):
             'a': DEFAULT_AUTHOR,
             '_t': 'statusinc',
             'm': 'test message',
+            'role': None,
             't': 0,
             'val': 1,
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
-        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][1], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
             alarm['value'][AlarmField.last_update_date.value],
@@ -695,8 +724,10 @@ class TestManager(BaseTest):
         alarm = self.manager.get_current_alarm(alarm_id)
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
-        self.assertEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
-        self.assertEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][1], expected_status)
+        self.assertEqual(
+            alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
 
@@ -722,13 +753,16 @@ class TestManager(BaseTest):
             'a': DEFAULT_AUTHOR,
             '_t': 'statusinc',
             'm': 'test message',
+            'role': None,
             't': 0,
             'val': Check.MINOR,
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 2)
-        self.assertDictEqual(alarm['value'][AlarmField.steps.value][1], expected_status)
-        self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertDictEqual(
+            alarm['value'][AlarmField.steps.value][1], expected_status)
+        self.assertDictEqual(
+            alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_called_once_with(
             alarm['value'][AlarmField.last_update_date.value],
@@ -757,13 +791,16 @@ class TestManager(BaseTest):
             'a': DEFAULT_AUTHOR,
             '_t': 'statusdec',
             'm': 'test message',
+            'role': None,
             't': 0,
             'val': Check.OK,
         }
 
         self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 4)
-        self.assertDictEqual(alarm['value'][AlarmField.steps.value][3], expected_status)
-        self.assertDictEqual(alarm['value'][AlarmField.status.value], expected_status)
+        self.assertDictEqual(
+            alarm['value'][AlarmField.steps.value][3], expected_status)
+        self.assertDictEqual(
+            alarm['value'][AlarmField.status.value], expected_status)
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
 
@@ -825,7 +862,8 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager.alerts_storage.VALUE]
 
-        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(
+            alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
@@ -866,7 +904,8 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager.alerts_storage.VALUE]
 
-        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(
+            alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
@@ -911,7 +950,8 @@ class TestManager(BaseTest):
 
         alarm = docalarm[self.manager.alerts_storage.VALUE]
 
-        last_status_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value])
+        last_status_i = alarm[AlarmField.steps.value].index(
+            alarm[AlarmField.status.value])
 
         state_steps = filter(
             lambda step: step['_t'] in ['stateinc', 'statedec'],
@@ -1309,6 +1349,7 @@ class TestManager(BaseTest):
 
         disp_name = alarm['value'][AlarmField.display_name.value]
         self.assertTrue(self.manager.check_if_display_name_exists(disp_name))
+
 
 if __name__ == '__main__':
     main()

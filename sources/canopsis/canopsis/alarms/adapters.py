@@ -152,6 +152,53 @@ class AlarmAdapter(object):
 
         return self.collection.find_one(filter_)
 
+    def find_last_alarms(self):
+        """
+        Returns the last alarm for each entity.
+
+        This is a generator that yields the last alarm that was opened for each
+        entity. The alarms may or may not have been resolved.
+
+        :rtype: Iterator[Alarm]
+        """
+        pipeline = [{
+            "$group": {
+                "_id": "$d",
+                "last_alarm": { "$last": "$$ROOT" }
+            }
+        }]
+
+        for document in self.collection.aggregate(pipeline):
+            yield make_alarm_from_mongo(document['last_alarm'])
+
+    def count_ongoing_alarms(self, entities, states, acknowledged=None):
+        """
+        Returns the number of ongoing alarms.
+
+        This method returns the number of ongoing alarms, filtered by entity
+        ids, states, and whether or not they have been acknowledged.
+
+        :param List[str] entities: A list of entity ids.
+        :param List[int] states: A list of alarm states.
+        :param Optional[bool] acknowledged: If set and true, only count the
+            alarms that have been acknowledged. If set and false, only count
+            the alarms that have not been acknowledged.
+        :rtype: int
+        """
+        query = {
+            "d": {"$in": entities},
+            "v.state.val": {"$in": states},
+            "$or": [
+                {"v.resolved": None},
+                {"v.resolved": {"$exists": False}},
+            ]
+        }
+
+        if acknowledged is not None:
+            query["v.ack"] = {"$exists": acknowledged}
+
+        return self.collection.count(query)
+
     def update(self, alarm):
         """
         Update an alarm in db.

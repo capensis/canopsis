@@ -9,9 +9,17 @@ import {
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import eventActionsWatcherEntityMixin from '@/mixins/event-actions/watcher-entity';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
-  mixins: [authMixin, modalMixin, eventActionsWatcherEntityMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    eventActionsWatcherEntityMixin,
+    entitiesPbehaviorMixin,
+    entitiesPbehaviorCommentMixin,
+  ],
   methods: {
     /**
      * Filter for available entity actions
@@ -34,14 +42,14 @@ export default {
       this.actionsClicked.push(EVENT_ENTITY_TYPES.ack);
     },
 
-    prepareDeclareTicketAction() {
+    prepareAssocTicketAction() {
       this.showModal({
-        name: MODALS.createWatcherDeclareTicketEvent,
+        name: MODALS.createWatcherAssocTicketEvent,
         config: {
           action: (ticket) => {
             this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-            this.addDeclareTicketActionToQueue({ entity: this.entity, ticket });
-            this.actionsClicked.push(EVENT_ENTITY_TYPES.declareTicket);
+            this.addAssocTicketActionToQueue({ entity: this.entity, ticket });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.assocTicket);
           },
         },
       });

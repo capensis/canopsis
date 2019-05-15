@@ -27,12 +27,13 @@ Pour pouvoir utiliser les webhooks avec une installation par paquets, il faut :
 
 Une règle est un document JSON contenant les paramètres suivants :
 
- - `_id` (optionnel): l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
      - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](../event-filter/index.md).
      - `triggers` (requis) : Liste de triggers. Au moins un de ces triggers doit avoir eu lieu pour que le webhook soit appelé.
+ - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le webhook si un pbehavior est actif sur l'entité.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
        - `username` (optionnel) : nom d'utilisateur employé pour l'authentification HTTP
@@ -53,7 +54,7 @@ Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont util
 
 Le champ `hook` représente les conditions d'activation d'un webhook. Il contient obligatoirement `triggers` qui est un tableau de triggers et éventuellement des `patterns` sur les alarmes, les entités et les évènements.
 
-Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `"ackremove"`, `"cancel"`, `"uncancel"`, `"declareticket"`, `"assocticket"`, `"snooze"`, `"unsnooze"`, `"resolve"`, `"done"`, et `"comment"`.
+Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"uncancel"`, et `"unsnooze"`.
 
 | Nom                      | Description                                              |
 |:-------------------------|:---------------------------------------------------------|
@@ -61,8 +62,9 @@ Les triggers possibles sont : `"stateinc"`, `"statedec"`, `"create"`, `"ack"`, `
 | `"ackremove"`            | Suppression de l'acquittement                            |
 | `"assocticket"`          | Association d'un ticket à l'alarme                       |
 | `"cancel"`               | Annulation de l'évènement                                |
-| `"create"`               | Création de l'évènement                                  |
+| `"changestate"`          | Modification et verrouillage de la criticité de l'alarme |
 | `"comment"`              | Envoi d'un commentaire                                   |
+| `"create"`               | Création de l'évènement                                  |
 | `"declareticket"`        | Déclaration d'un ticket à l'alarme                       |
 | `"done"`                 | Fin de l'alarme                                          |
 | `"resolve"`              | Résolution de l'alarme                                   |
@@ -106,19 +108,7 @@ Par exemple, ce webhook va être activé si le trigger reçu par le moteur corre
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
 
-Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même. La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourés de doubles accolades.
-
-Les variables stockent des informations sur les alarmes, les événements et les entités. `{{ .Alarm }}` permet d'accéder aux propriétés d'une alarme, de même que `{{ .Event }}` pour un évènement et `{{ .Entity }}` pour une entité. Ces trois éléments contiennent plusieurs propriétés qu'on peut utiliser pour créer des chaînes dynamiques. Par exemple, `"Component : {{ .Alarm.Value.Component }}` va créer la chaîne de caractères `"Component : comp"` si le nom du component est `comp`.
-
-Dans l'exemple suivant, `{{ $comp := .Alarm.Value.Component }}{{ $res := .Alarm.Value.Resource }}http://mon-api.xyz/{{$comp}}/{{$res}}`, on déclare d'abord deux variables, `$comp` et `$res`. Ensuite, on utilise ces deux variables pour générer l'adress URL que va appeler le moteur axe, par exemple `http://mon-api.xyz/nom-du-component/nom-de-la-ressource`.
-
-On peut également générer du texte en fonction de l'état de la variable. Dans le cas suivant `"{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}"`, on obtiendra `"http://127.0.0.1:5000/even"` si le statut de l'alarm vaut 0, 2 ou 4, `"http://127.0.0.1:5000/odd"` sinon.
-
-De même façon que le `or` et le `eq`, il est possible de tester les conditions avec `and`, `not`, `ne` (not equal), `lt` (less than), `le` (less than or equal), `gt` (greater than) ou `ge` (greater than or equal).
-
-La fonction `js`, qui renvoie une chaîne de caractères échappée, peut être également mentionnée. Si, par exemple, la valeur dans `{{ .Event.Output }}` contient des caractères spéciaux comme des guillemets ou des backslashs, `{{ .Event.Output | js }}` permet d'échapper ces caractères.
-
-Pour plus d'informations, vous pouvez consulter la [documentaion officielle de Go sur les templates](https://golang.org/pkg/text/template).
+Pour plus d'informations, vous pouvez consulter la [documentaion sur les templates](templates-golang.md).
 
 ### Données externes
 
@@ -154,6 +144,7 @@ Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Dat
             }
         ]
     },
+    "disable_if_active_pbehavior": true,
     "request" : {
         "method" : "PUT",
         "auth" : {

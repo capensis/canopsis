@@ -19,6 +19,8 @@
         :lockedFilters="widgetViewFilters"
         :value="mainFilter",
         :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
         @input="updateSelectedFilter",
         @update:condition="updateSelectedCondition",
         @update:filters="updateFilters"
@@ -33,7 +35,7 @@
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
-        mass-actions-panel(:itemsIds="selectedIds")
+        mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -66,7 +68,7 @@
             td
               actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item")
+          time-line(:alarmProps="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
@@ -173,6 +175,10 @@ export default {
 
     hasAccessToEditFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
   methods: {

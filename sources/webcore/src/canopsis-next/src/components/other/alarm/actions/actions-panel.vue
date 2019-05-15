@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { pickBy } from 'lodash';
+import { pickBy, compact } from 'lodash';
 
 import {
   MODALS,
@@ -85,7 +85,7 @@ export default {
           type: alarmsListActionsTypes.pbehaviorList,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
           title: this.$t('alarmList.actions.titles.pbehaviorList'),
-          method: this.showActionModal(MODALS.pbehaviorList),
+          method: this.showPbehaviorsListModal,
         },
         declareTicket: {
           type: alarmsListActionsTypes.declareTicket,
@@ -140,40 +140,42 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
-      let inlineActions = [filteredActionsMap.pbehaviorList];
-      let dropDownActions = [];
+      let actions = [];
+
+      if (this.isEditingMode) {
+        actions.push(filteredActionsMap.variablesHelp);
+      }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
-          inlineActions = [
+          if (this.widget.parameters.isMultiAckEnabled) {
+            actions.push(filteredActionsMap.ack);
+          }
+
+          actions.push(
             filteredActionsMap.declareTicket,
             filteredActionsMap.associateTicket,
             filteredActionsMap.cancel,
-          ];
-
-          dropDownActions = [
             filteredActionsMap.ackRemove,
             filteredActionsMap.snooze,
             filteredActionsMap.changeState,
             filteredActionsMap.pbehaviorAdd,
             filteredActionsMap.pbehaviorList,
             filteredActionsMap.moreInfos,
-          ];
+          );
         } else {
-          inlineActions = [
+          actions.push(
             filteredActionsMap.ack,
             filteredActionsMap.fastAck,
-          ];
-
-          dropDownActions = [
             filteredActionsMap.moreInfos,
-          ];
-        }
-
-        if (this.isEditingMode) {
-          inlineActions.push(filteredActionsMap.variablesHelp);
+          );
         }
       }
+
+      actions = compact(actions);
+
+      const inlineActions = actions.slice(0, 3);
+      const dropDownActions = actions.slice(3);
 
       return {
         inline: inlineActions.filter(action => !!action),

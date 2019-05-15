@@ -50,6 +50,7 @@ export default {
     users: 'Users',
     roles: 'Roles',
     rights: 'Rights',
+    profile: 'Profile',
     username: 'Username',
     password: 'Password',
     authKey: 'Auth. key',
@@ -101,6 +102,7 @@ export default {
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Play',
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
     },
     times: {
       second: 'second | seconds',
@@ -115,6 +117,8 @@ export default {
   user: {
     role: 'Role',
     defaultView: 'Default view',
+    seeProfile: 'See profile',
+    selectDefaultView: 'Select default view',
   },
   context: {
     impacts: 'Impacts',
@@ -163,6 +167,12 @@ export default {
     entities: 'entities',
   },
   login: {
+    standard: 'Standard',
+    LDAP: 'LDAP',
+    loginWithCAS: 'Login with CAS',
+    documentation: 'Documentation',
+    forum: 'Forum',
+    connectionProtocols: 'Connection protocols',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
     },
@@ -195,6 +205,9 @@ export default {
       },
     },
     infoPopup: 'Info popup',
+  },
+  weather: {
+    moreInfos: 'More info',
   },
   pbehaviors: {
     connector: 'Connector',
@@ -237,6 +250,8 @@ export default {
     filters: 'Filters',
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
+    isMultiAckEnabled: 'Multiple ack',
+    isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -349,9 +364,13 @@ export default {
       fields: {
         moreInfo: 'More info',
         alarmList: 'Alarm list',
+        both: 'Both',
       },
     },
     templateEditor: 'Template',
+    columns: {
+      isHtml: 'Is it HTML?',
+    },
   },
   modals: {
     contextInfos: {
@@ -478,9 +497,11 @@ export default {
         type: 'Type',
         message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+        exdate: 'Exdates',
       },
       buttons: {
         addComment: 'Add comment',
+        addExdate: 'Add exdate',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
@@ -545,7 +566,7 @@ export default {
       ticketing: 'Ticketing',
       application_crit_label: 'Criticality',
       product_line: 'Product line',
-      service_period: 'Plage surveillanc',
+      service_period: 'Monitoring timespan',
       isInCarat: 'Cartographic repository',
       application_label: 'Description',
       target_platform: 'Environment',
@@ -553,6 +574,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
       actionPending: 'action(s) pending',
+      refreshEntities: 'Refresh entities list',
+      editPbehaviors: 'Edit pbehaviors',
     },
     filter: {
       create: {
@@ -741,6 +764,47 @@ export default {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
     },
+    createSnmpRule: {
+      create: {
+        title: 'Create SNMP rule',
+      },
+      edit: {
+        title: 'Edit SNMP rule',
+      },
+      fields: {
+        oid: {
+          title: 'oid',
+          labels: {
+            module: 'Select a mib module',
+          },
+        },
+        output: {
+          title: 'output',
+        },
+        resource: {
+          title: 'resource',
+        },
+        component: {
+          title: 'component',
+        },
+        connectorName: {
+          title: 'connector_name',
+        },
+        state: {
+          title: 'state',
+          labels: {
+            toCustom: 'To custom',
+            defineVar: 'Define matching snmp var',
+            writeTemplate: 'Write template',
+          },
+        },
+        moduleMibObjects: {
+          vars: 'Snmp vars match field',
+          regex: 'Regex',
+          formatter: 'Format (capture group with \\x)',
+        },
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -788,7 +852,7 @@ export default {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
       [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
       [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {
@@ -819,14 +883,14 @@ export default {
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Rrule',
-    stringLabel: 'Summary',
+    textLabel: 'Summary',
+    stringLabel: 'Rrule',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
+      main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',
@@ -950,6 +1014,11 @@ export default {
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
+  snmpRules: {
+    title: 'SNMP rules',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
+  },
   layout: {
     sideBar: {
       buttons: {
@@ -984,6 +1053,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
+    disableIfActivePbehavior: 'Disable if a pbehavior is active',
     table: {
       headers: {
         id: 'ID',
@@ -1031,5 +1101,17 @@ export default {
         after: 'The {0} should be after than {1}',
       },
     },
+  },
+  home: {
+    popups: {
+      info: {
+        noAccessToDefaultView: 'Access to default view forbidden. Redirecting to role default view.',
+        notSelectedRoleDefaultView: 'No role default view selected.',
+        noAccessToRoleDefaultView: 'Access to role default view forbidden.',
+      },
+    },
+  },
+  serviceWeather: {
+    seeAlarms: 'See alarms',
   },
 };
