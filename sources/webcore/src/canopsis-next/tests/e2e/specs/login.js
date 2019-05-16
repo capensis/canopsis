@@ -13,7 +13,6 @@ module.exports = {
   'default e2e tests': (browser) => {
     browser.url(process.env.VUE_DEV_SERVER_URL)
       .waitForElementVisible('.v-toolbar__content .v-btn__content')
-      .assert.containsText('.v-toolbar__content .v-btn__content', 'menu')
-      .logout();
+      .assert.containsText('.v-toolbar__content .v-btn__content', 'menu');
   },
 };

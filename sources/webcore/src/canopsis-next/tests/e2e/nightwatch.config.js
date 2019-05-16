@@ -1,9 +1,14 @@
-// http://nightwatchjs.org/gettingstarted#settings-file
+/** http://nightwatchjs.org/gettingstarted#settings-file */
 
 const parh = require('path');
 const deepmerge = require('deepmerge');
+
+/* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
 const chromeDriver = require('chromedriver');
+/* eslint-enable import/no-extraneous-dependencies */
+
+const sel = require('./helpers/sel');
 
 const userOptions = JSON.parse(process.env.VUE_NIGHTWATCH_USER_OPTIONS || '{}');
 
@@ -16,6 +21,11 @@ const seleniumConfig = {
     'webdriver.chrome.driver': chromeDriver.path,
   },
 };
+
+/**
+ * Put sel helper method into global object
+ */
+global.sel = sel;
 
 module.exports = deepmerge({
   src_folders: [parh.resolve('tests', 'e2e', 'specs')],

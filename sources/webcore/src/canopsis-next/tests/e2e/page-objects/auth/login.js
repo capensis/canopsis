@@ -9,8 +9,7 @@ const loginPageCommands = {
   },
 
   verifyPageElementsAfter() {
-    return this.waitForElementVisible('@navigationTopBarButton')
-      .assert.containsText('@navigationTopBarButton', 'menu');
+    return this.waitForElementVisible('@userTopBarDropdownButton');
   },
 
   enterUsername(username) {
@@ -45,11 +44,11 @@ module.exports = {
     return `${process.env.VUE_DEV_SERVER_URL}login`;
   },
   elements: {
-    loginForm: '.loginContainer form',
-    navigationTopBarButton: '.v-toolbar__content .v-btn__content',
-    usernameField: 'input[name=username]',
-    passwordField: 'input[name=password]',
-    submitButton: 'button[type=submit]',
+    loginForm: sel('loginForm'),
+    usernameField: sel('username'),
+    passwordField: sel('password'),
+    submitButton: sel('submitButton'),
+    userTopBarDropdownButton: sel('userTopBarDropdownButton'),
   },
   commands: [loginPageCommands],
 };

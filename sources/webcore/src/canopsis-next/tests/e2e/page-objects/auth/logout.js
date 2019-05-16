@@ -4,7 +4,7 @@ const WAIT_PAUSE = 500;
 
 const logoutPageCommands = {
   clickUserNavigationTopBarButton() {
-    this.waitForElementVisible('@userNavigationTopBarButton')
+    this.waitForElementVisible('@userTopBarDropdownButton')
       .click('@userNavigationTopBarButton')
       .api.pause(WAIT_PAUSE);
 
@@ -25,8 +25,8 @@ module.exports = {
     return process.env.VUE_DEV_SERVER_URL;
   },
   elements: {
-    userNavigationTopBarButton: '.v-toolbar__content .v-toolbar__items .v-menu.v-menu--inline:nth-child(3) .v-btn',
-    logoutButton: '#logout-btn',
+    userTopBarDropdownButton: sel('userTopBarDropdownButton'),
+    logoutButton: sel('logoutButton'),
   },
   commands: [logoutPageCommands],
 };

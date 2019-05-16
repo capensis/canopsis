@@ -7,6 +7,9 @@
   "plugins": [
     "vue"
   ],
+  "globals": {
+    "sel": true,
+  },
   "rules": {
     "default-case": "off",
     "max-len": ["error", { "code": 120, "ignoreStrings": true }],

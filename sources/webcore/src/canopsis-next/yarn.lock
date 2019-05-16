@@ -2829,6 +2829,11 @@ deepmerge@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-2.2.1.tgz#5d3ff22a01c00f645405a2fbc17d0778a1801170"
 
+deepmerge@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-3.2.0.tgz#58ef463a57c08d376547f8869fdc5bcee957f44e"
+  integrity sha512-6+LuZGU7QCNUnAJyX8cIrlzoEgggTM6B7mm+znKOX4t5ltluT9KLjN6g61ECMS0LTsLW7yDpNoxhix5FZcrIow==
+
 default-gateway@^2.6.0:
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/default-gateway/-/default-gateway-2.7.2.tgz#b7ef339e5e024b045467af403d50348db4642d0f"
@@ -9735,6 +9740,11 @@ void-elements@^2.0.1:
 vue-chartjs@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/vue-chartjs/-/vue-chartjs-3.4.0.tgz#669e4453be0676605fc9290b3b581867ccd15c88"
+
+vue-cli-plugin-test-attrs@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-test-attrs/-/vue-cli-plugin-test-attrs-0.1.4.tgz#5148be1e4be75a25ef5197bbc9c086f36565c956"
+  integrity sha512-deYQHfp0YgL2zRTiUX4N8cFXGOGCZLECeM3xuadB/T2iK7BsuEBrRKdpX6WrbtBD+ut4QcCDZHwEvUs8twbsow==
 
 vue-cli-plugin-webpack-bundle-analyzer@^1.2.0:
   version "1.2.0"
