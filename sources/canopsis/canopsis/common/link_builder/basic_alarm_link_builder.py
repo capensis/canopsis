@@ -108,7 +108,7 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
                 return {}
 
             except Exception as err:
-                logger.exception('Unhandled error {} : {}'.format(type(err), err))
+                self.logger.exception('Unhandled error {} : {}'.format(type(err), err))
                 return {}
 
         return {}
