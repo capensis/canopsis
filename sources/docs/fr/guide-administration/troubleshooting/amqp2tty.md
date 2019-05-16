@@ -1,11 +1,13 @@
-# Analyse temps réel des flux issus des connecteurs ou des relais AMQP
+# amqp2tty - Analyse temps réel des flux issus des connecteurs ou des relais AMQP
 
 La commande `amqp2tty` permet de se connecter en ligne de commande sur l'exchange `canopsis.events` et ainsi d'afficher les évènements bruts qui circulent.
 
-La commande affiche les résultats sur le canal d'erreur, si vous souhaitez rechercher des évènements particuliers, il faut rediriger `stderr` vers la sortie standard.
+La commande affiche les résultats sur le canal d'erreur, si vous souhaitez rechercher des évènements particuliers, il faut rediriger `stderr` vers la sortie standard (`2>&1`).
 
-Voici un exemple d'utilisation de la commande. Elle doit être exécutée depuis un nœud Canopsis, idéalement en étant connecté avec l'utilisateur `canopsis` :
-```shell
+## Depuis un environnement paquets
+
+Voici un exemple d'utilisation de la commande, qui cherche des évènements en provenance de Centreon. Elle doit être exécutée depuis un nœud Canopsis, idéalement en étant connecté avec l'utilisateur `canopsis` :
+```sh
 $ /opt/canopsis/bin/amqp2tty 2>&1 | grep -i centreon
 ```
 
@@ -32,4 +34,16 @@ et son résultat :
     "hostgroups": ["HG1"],
     "timestamp": 1528812075
 }
+```
+
+## Depuis un environnement Docker
+
+Dans un environnement Docker, la procédure est la même, tant que vous ciblez un conteneur disposant d'un environnement Python Canopsis.
+
+Par exemple, avec le `webserver` :
+
+```sh
+$ docker exec -ti canopsis_webserver_1 /bin/bash
+
+(canopsis 3.17.0)[canopsis@cff6a539e754 ~]$ amqp2tty 2>&1 | grep -i centreon
 ```
