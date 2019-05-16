@@ -1,17 +1,11 @@
 // For authoring Nightwatch tests, see
 // http://nightwatchjs.org/guide#usage
 
-const nightWatchRecord = require('nightwatch-record');
-
 module.exports = {
-  before(browser, done) {
-    browser.login('root', 'root').perform(() => done());
-  },
-  beforeEach(browser, done) {
-    nightWatchRecord.start(browser, done);
-  },
-  afterEach(browser, done) {
-    nightWatchRecord.stop(browser, done);
+  async before(browser, done) {
+    await browser.login('root', 'root');
+
+    done();
   },
   after(browser, done) {
     browser.end(done);
