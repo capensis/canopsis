@@ -10,8 +10,10 @@
         td {{ item.entity.name }}
         td(v-for="(property, key) in widget.parameters.stats")
           template(v-if="isStatNotEmpty(item[key])")
-            td
-              div {{ item[key].value }}
+            td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
+              alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
+            td(v-else)
+              div {{ getFormattedValue(item[key].value, property.stat.value) }}
                 sub {{ item[key].trend }}
           div(v-else) {{ $t('tables.noData') }}
 </template>
@@ -28,10 +30,12 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 export default {
   components: {
     ProgressOverlay,
+    AlarmChips,
   },
   filters: {
     statValue(name) {
@@ -83,6 +87,23 @@ export default {
         })),
       ];
     },
+    getFormattedValue() {
+      const PROPERTIES_FILTERS_MAP = {
+        state_rate: value => this.$options.filters.percentage(value),
+        ack_time_sla: value => this.$options.filters.percentage(value),
+        resolve_time_sla: value => this.$options.filters.percentage(value),
+        time_in_state: value => this.$options.filters.duration(value),
+        mtbf: value => this.$options.filters.duration(value),
+      };
+
+      return (value, columnValue) => {
+        if (PROPERTIES_FILTERS_MAP[columnValue]) {
+          return PROPERTIES_FILTERS_MAP[columnValue](value);
+        }
+
+        return value;
+      };
+    },
   },
   methods: {
     getQuery() {
@@ -90,20 +111,23 @@ export default {
         stats,
         mfilter,
         tstop,
-        duration,
+        periodUnit,
+        tstart,
       } = this.getStatsQuery();
 
+      const durationValue = tstop.diff(tstart, periodUnit);
+
       return {
-        duration,
         stats,
         mfilter,
 
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
         tstop: tstop.startOf('h').unix(),
       };
     },
 
     async fetchList() {
-      const { sort } = this.widget.parameters;
+      const { sort = {} } = this.widget.parameters;
 
       this.pending = true;
 

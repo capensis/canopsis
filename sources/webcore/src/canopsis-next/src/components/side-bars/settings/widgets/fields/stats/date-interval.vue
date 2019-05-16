@@ -20,6 +20,10 @@ export default {
       type: Object,
       required: true,
     },
+    hiddenFields: {
+      type: Array,
+      default: () => [],
+    },
   },
   methods: {
     showEditModal() {
@@ -27,6 +31,7 @@ export default {
         name: MODALS.statsDateInterval,
         config: {
           interval: this.value,
+          hiddenFields: this.hiddenFields,
           action: date => this.$emit('input', date),
         },
       });

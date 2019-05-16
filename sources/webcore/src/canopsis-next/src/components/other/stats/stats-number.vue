@@ -131,14 +131,17 @@ export default {
         stats,
         mfilter,
         tstop,
-        duration,
+        periodUnit,
+        tstart,
       } = this.getStatsQuery();
 
+      const durationValue = tstop.diff(tstart, periodUnit);
+
       return {
-        duration,
         stats,
         mfilter,
 
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
         tstop: tstop.startOf('h').unix(),
       };
     },
