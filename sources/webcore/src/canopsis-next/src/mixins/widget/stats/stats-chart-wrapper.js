@@ -33,6 +33,34 @@ export default {
     datasets() {
       return [];
     },
+
+    options() {
+      const { annotationLine } = this.widget.parameters;
+      const options = {};
+
+      if (annotationLine && annotationLine.enabled) {
+        options.annotation = {
+          annotations: [{
+            type: 'line',
+            mode: 'horizontal',
+            scaleID: 'y-axis-0',
+            value: annotationLine.value,
+            borderColor: annotationLine.lineColor,
+            borderWidth: 2,
+            label: {
+              enabled: true,
+              position: 'left',
+              fontSize: 10,
+              xPadding: 5,
+              yPadding: 5,
+              content: annotationLine.label,
+              backgroundColor: annotationLine.labelColor,
+            },
+          }],
+        };
+      }
+      return options;
+    },
   },
   methods: {
     getQuery() {

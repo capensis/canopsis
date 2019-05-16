@@ -356,6 +356,14 @@ export default {
       title: 'Stats color',
       pickColor: 'Pick a color',
     },
+    statsAnnotationLine: {
+      title: 'Annotation line',
+      enabled: 'Is enabled?',
+      value: 'Value',
+      label: 'Label',
+      pickLineColor: 'Pick line color',
+      pickLabelColor: 'Pick label color',
+    },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
     },

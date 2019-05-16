@@ -154,6 +154,7 @@ export function generateWidgetByType(type) {
         },
         stats: {},
         statsColors: {},
+        annotationLine: {},
       };
       break;
     case WIDGET_TYPES.statsTable:

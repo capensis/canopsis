@@ -1,7 +1,7 @@
 <template lang="pug">
   div.stats-wrapper
     progress-overlay(:pending="pending")
-    stats-curves-chart(:labels="labels", :datasets="datasets")
+    stats-curves-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
 <script>
