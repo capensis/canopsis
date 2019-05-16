@@ -38,8 +38,6 @@
 </template>
 
 <script>
-import { isObject } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
@@ -55,20 +53,6 @@ export default {
     annotationLine: {
       type: Object,
       default: () => ({}),
-    },
-  },
-  computed: {
-    isAnnotationEnabled: {
-      get() {
-        return isObject(this.annotationLine);
-      },
-      set(value) {
-        if (value) {
-          this.updateModel({});
-        } else {
-          this.updateModel(null);
-        }
-      },
     },
   },
   methods: {
