@@ -10,7 +10,9 @@
         td {{ item.entity.name }}
         td(v-for="(property, key) in widget.parameters.stats")
           template(v-if="isStatNotEmpty(item[key])")
-            td
+            td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
+              alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
+            td(v-else)
               div {{ getFormattedValue(item[key].value, property.stat.value) }}
                 sub {{ item[key].trend }}
           div(v-else) {{ $t('tables.noData') }}
@@ -25,10 +27,12 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 export default {
   components: {
     ProgressOverlay,
+    AlarmChips,
   },
   mixins: [
     entitiesStatsMixin,
