@@ -49,6 +49,10 @@ export default {
             borderWidth: 2,
             label: {
               enabled: true,
+              position: 'left',
+              fontSize: 10,
+              xPadding: 5,
+              yPadding: 5,
               content: annotationLine.label,
               backgroundColor: annotationLine.labelColor,
             },
