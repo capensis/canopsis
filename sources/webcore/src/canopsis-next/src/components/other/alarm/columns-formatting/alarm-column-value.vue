@@ -8,11 +8,13 @@
     offset-y
     )
       div(slot="activator")
-        div(v-bind="component.bind", v-on="component.on")
+        div(v-if="column.isHtml", v-html="sanitizedValue")
+        div(v-else, v-bind="component.bind", v-on="component.on")
       v-card(dark)
         v-card-title.primary.pa-2.white--text
           h4 {{ $t('alarmList.infoPopup') }}
         v-card-text.pa-2(v-html="popupTextContent")
+    div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
@@ -69,17 +71,44 @@ export default {
     };
   },
   computed: {
+    value() {
+      return this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '');
+    },
+
+    sanitizedValue() {
+      try {
+        return this.$sanitize(this.value, {
+          allowedTags: ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+            'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+            'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'span', 'font', 'u'],
+          allowedAttributes: {
+            '*': ['style'],
+            a: ['href', 'name', 'target'],
+            img: ['src', 'alt'],
+            font: ['color', 'size', 'face'],
+          },
+        });
+      } catch (err) {
+        console.warn(err);
+
+        return '';
+      }
+    },
+
     popupData() {
       const popups = get(this.widget.parameters, 'infoPopups', []);
 
       return popups.find(popup => popup.column === this.column.value);
     },
+
     popupTextContent() {
       if (this.popupData) {
         return compile(this.popupData.template, { alarm: this.alarm, entity: this.alarm.entity || {} });
       }
+
       return '';
     },
+
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
         'v.status.val': value => this.$t(`tables.alarmStatus.${value}`),
@@ -94,6 +123,7 @@ export default {
 
       return PROPERTIES_FILTERS_MAP[this.column.value];
     },
+
     component() {
       const PROPERTIES_COMPONENTS_MAP = {
         'v.state.val': {

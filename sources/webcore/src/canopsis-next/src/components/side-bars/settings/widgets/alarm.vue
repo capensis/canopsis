@@ -20,7 +20,7 @@
           :columns="settings.widget.parameters.widgetColumns"
           )
           v-divider
-          field-columns(v-model="settings.widget.parameters.widgetColumns")
+          field-columns(v-model="settings.widget.parameters.widgetColumns", withHtml)
           v-divider
           field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
           v-divider
@@ -29,6 +29,7 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
             v-model="settings.widget.parameters.mainFilter",
+            :entitiesType="$constants.ENTITIES_TYPES.alarm",
             :filters.sync="settings.widget.parameters.viewFilters",
             :condition.sync="settings.widget.parameters.mainFilterCondition",
             :hasAccessToAddFilter="hasAccessToAddFilter",
@@ -53,6 +54,11 @@
           field-switcher(
           v-model="settings.widget.parameters.isMultiAckEnabled",
           :title="$t('settings.isMultiAckEnabled')",
+          )
+          v-divider
+          field-switcher(
+          v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
+          :title="$t('settings.isHtmlEnabledOnTimeLine')",
           )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}

@@ -316,7 +316,7 @@ export default {
     showRRule(value) {
       if (!value) {
         this.errors.remove('rRule');
-        this.$emit('input', '');
+        this.$emit('input', null);
       } else {
         this.changeRRuleOption();
       }

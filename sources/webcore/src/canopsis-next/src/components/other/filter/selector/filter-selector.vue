@@ -45,6 +45,7 @@
       filters-list(
       v-else,
       :filters="filters",
+      :entitiesType="entitiesType",
       @create:filter="createFilter",
       @update:filter="updateFilter",
       @delete:filter="deleteFilter"
@@ -52,7 +53,7 @@
 </template>
 
 <script>
-import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 
@@ -113,6 +114,11 @@ export default {
     hasAccessToUserFilter: {
       type: Boolean,
       default: true,
+    },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
   },
   computed: {

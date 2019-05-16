@@ -4,6 +4,7 @@
     v-container
       filter-selector(
       :label="$t('settings.selectAFilter')",
+      :entitiesType="this.entitiesType",
       :value="value",
       :filters="filters",
       :condition="condition",
@@ -21,16 +22,15 @@
 <script>
 import { isUndefined } from 'lodash';
 
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
-import FiltersList from '@/components/other/filter/list/filters-list.vue';
 
 export default {
-  components: { FilterSelector, FiltersList },
+  components: { FilterSelector },
   mixins: [authMixin, modalMixin],
   props: {
     filters: {
@@ -56,6 +56,11 @@ export default {
     hasAccessToEditFilter: {
       type: Boolean,
       default: true,
+    },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
   },
   methods: {

@@ -13,7 +13,7 @@
             td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
               alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
             td(v-else)
-              div {{ item[key].value }}
+              div {{ getFormattedValue(item[key].value, property.stat.value) }}
                 sub {{ item[key].trend }}
           div(v-else) {{ $t('tables.noData') }}
 </template>
@@ -65,9 +65,26 @@ export default {
 
         ...Object.keys(this.widget.parameters.stats).map(item => ({
           text: item,
-          value: `${item}.value`,
+          value: this.widget.parameters.stats[item].stat.value,
         })),
       ];
+    },
+    getFormattedValue() {
+      const PROPERTIES_FILTERS_MAP = {
+        state_rate: value => this.$options.filters.percentage(value),
+        ack_time_sla: value => this.$options.filters.percentage(value),
+        resolve_time_sla: value => this.$options.filters.percentage(value),
+        time_in_state: value => this.$options.filters.duration(value),
+        mtbf: value => this.$options.filters.duration(value),
+      };
+
+      return (value, columnValue) => {
+        if (PROPERTIES_FILTERS_MAP[columnValue]) {
+          return PROPERTIES_FILTERS_MAP[columnValue](value);
+        }
+
+        return value;
+      };
     },
   },
   methods: {
@@ -76,14 +93,17 @@ export default {
         stats,
         mfilter,
         tstop,
-        duration,
+        periodUnit,
+        tstart,
       } = this.getStatsQuery();
 
+      const durationValue = tstop.diff(tstart, periodUnit);
+
       return {
-        duration,
         stats,
         mfilter,
 
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
         tstop: tstop.startOf('h').unix(),
       };
     },

@@ -239,6 +239,7 @@ export default {
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
     isMultiAckEnabled: 'Ack multiple',
+    isHtmlEnabledOnTimeLine: 'HTML activé dans la time line ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -914,6 +915,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Etat courant',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Nombre d\'alarmes non acquittées actuellement en cours',
     },
   },
   eventFilter: {

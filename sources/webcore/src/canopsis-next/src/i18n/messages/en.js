@@ -251,6 +251,7 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
+    isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -367,6 +368,9 @@ export default {
       },
     },
     templateEditor: 'Template',
+    columns: {
+      isHtml: 'Is it HTML?',
+    },
   },
   modals: {
     contextInfos: {
@@ -996,6 +1000,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Current state',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Current ongoing alarms with ack',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Current ongoing alarms without ack',
     },
   },
   eventFilter: {

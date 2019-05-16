@@ -68,7 +68,7 @@
             td
               actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item")
+          time-line(:alarmProps="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(

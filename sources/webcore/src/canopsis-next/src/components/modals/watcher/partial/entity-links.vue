@@ -1,7 +1,7 @@
 <template lang="pug">
   div.mt-1
     div(v-for="category in linkList", :key="category.cat_name")
-      template(v-if="category.links.length")
+      template(v-if="category.links.length && hasAccessToCategory(category.cat_name)")
         span.category.mr-2 {{ category.cat_name }}
         v-divider(light)
         div(v-for="(link, index) in category.links", :key="`links-${index}`")
@@ -10,10 +10,13 @@
 </template>
 
 <script>
+import { BUSINESS_USER_RIGHTS_ACTIONS_MAP, WIDGETS_ACTIONS_TYPES } from '@/constants';
+
 import linksMixin from '@/mixins/links';
+import authMixin from '@/mixins/auth';
 
 export default {
-  mixins: [linksMixin],
+  mixins: [linksMixin, authMixin],
   props: {
     links: {
       type: Array,
@@ -40,6 +43,12 @@ export default {
           links: categoryLinks,
         };
       });
+    },
+
+    hasAccessToCategory() {
+      return category => this.checkAccess(`${
+        BUSINESS_USER_RIGHTS_ACTIONS_MAP
+          .weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks]}_${category}`);
     },
   },
 };
