@@ -33,11 +33,35 @@ Enfin, l'affectation de *droits* à un *rôle* s'effectue au moyen d'une matrice
 
 ## Interface graphique
 
-Ici on décit le CRUD de chaque élément.  
-Je peux surement rebondir sur le provisionning non ?
+L'interface graphique vous permet d'agir sur les notions d'utilisateurs, de rôles, de droits, et d'assignation.
+
+!!! Note
+    Sachez que les rôles et assignations de droits peuvent être provisionnés de manière automatique.
 
 ### Rôles
+
+Pour gérer les rôles, une vue d'administration est dédiée.
+
+![Menu rôle](./img/menu_role.png)
+
+
+
+Vous obtenez par défaut la liste des rôles existants sur votre outil.
+
+![Roles](./img/role_default.png)
+
+A ce stade vous avez accès aux opérations de création, édition, suppression de rôles.
+
+Pour créer un rôle ![Plus](./img/role_creation_plus.png)
+
+puis saisissez les informations relatives à ce profil dont la vue par défaut des utilisateurs qui hériteront de celui-ci.
+
+![Création](./img/role_creation.png)
+
+
+
 ### Utilisateurs
+
 ### Droits
 
 
