@@ -2,9 +2,9 @@
   div
     progress-overlay(:pending="pending")
     v-data-table(
-      :items="stats",
-      :headers="columns",
-      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
+    :items="stats",
+    :headers="columns",
+    :pagination.sync="pagination"
     )
       template(slot="items", slot-scope="{ item }")
         td {{ item.entity.name }}
@@ -21,6 +21,9 @@
 <script>
 import { isUndefined, isNull } from 'lodash';
 
+import { PAGINATION_LIMIT } from '@/config';
+import { SORT_ORDERS } from '@/constants';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -33,6 +36,11 @@ export default {
   components: {
     ProgressOverlay,
     AlarmChips,
+  },
+  filters: {
+    statValue(name) {
+      return `${name}.value`;
+    },
   },
   mixins: [
     entitiesStatsMixin,
@@ -50,22 +58,32 @@ export default {
     return {
       pending: true,
       stats: [],
+      page: 1,
+      pagination: {
+        page: 1,
+        sortBy: null,
+        descending: true,
+        totalItems: 0,
+        rowsPerPage: PAGINATION_LIMIT,
+      },
     };
   },
   computed: {
     isStatNotEmpty() {
       return stat => stat && !isUndefined(stat.value) && !isNull(stat.value);
     },
+
     columns() {
       return [
         {
           text: this.$t('common.entity'),
           value: 'entity.name',
+          sortable: false,
         },
 
         ...Object.keys(this.widget.parameters.stats).map(item => ({
           text: item,
-          value: this.widget.parameters.stats[item].stat.value,
+          value: this.$options.filters.statValue(item),
         })),
       ];
     },
@@ -109,6 +127,8 @@ export default {
     },
 
     async fetchList() {
+      const { sort = {} } = this.widget.parameters;
+
       this.pending = true;
 
       const { values } = await this.fetchStatsListWithoutStore({
@@ -116,6 +136,15 @@ export default {
       });
 
       this.stats = values;
+
+      this.pagination = {
+        page: 1,
+        sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
+        totalItems: values.length,
+        rowsPerPage: PAGINATION_LIMIT,
+        descending: sort.order === SORT_ORDERS.desc,
+      };
+
       this.pending = false;
     },
   },
