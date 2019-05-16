@@ -118,6 +118,8 @@ export default {
         'v.state.t': value => this.$options.filters.date(value, 'long'),
         'v.status.t': value => this.$options.filters.date(value, 'long'),
         'v.resolved': value => this.$options.filters.date(value, 'long'),
+        'v.duration': value => this.$options.filters.duration(value),
+        'v.current_state_duration': value => this.$options.filters.duration(value),
         t: value => this.$options.filters.date(value, 'long'),
       };
 
