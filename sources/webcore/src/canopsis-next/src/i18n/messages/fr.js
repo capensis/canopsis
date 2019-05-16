@@ -907,6 +907,7 @@ export default {
       [STATS_TYPES.alarmsCreated.value]: 'Alarmes créées',
       [STATS_TYPES.alarmsResolved.value]: 'Alarmes résolues',
       [STATS_TYPES.alarmsCanceled.value]: 'Alarmes annulées',
+      [STATS_TYPES.alarmsAcknowledged.value]: 'Alarmes acquittées',
       [STATS_TYPES.ackTimeSla.value]: 'Taux d\'Ack conforme Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Taux de résolution conforme Sla',
       [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',

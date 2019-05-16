@@ -363,6 +363,10 @@ export const STATS_TYPES = {
     value: 'alarms_canceled',
     options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
+  alarmsAcknowledged: {
+    value: 'alarms_acknowledged',
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
+  },
   ackTimeSla: {
     value: 'ack_time_sla',
     options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],

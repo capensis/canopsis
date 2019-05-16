@@ -1000,6 +1000,7 @@ export default {
       [STATS_TYPES.alarmsCreated.value]: 'Alarms created',
       [STATS_TYPES.alarmsResolved.value]: 'Alarms resolved',
       [STATS_TYPES.alarmsCanceled.value]: 'Alarms canceled',
+      [STATS_TYPES.alarmsAcknowledged.value]: 'Alarms acknowledged',
       [STATS_TYPES.ackTimeSla.value]: 'Ack time Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Resolve time Sla',
       [STATS_TYPES.timeInState.value]: 'Time in state',
