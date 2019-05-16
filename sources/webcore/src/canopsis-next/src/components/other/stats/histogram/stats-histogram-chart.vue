@@ -1,4 +1,5 @@
 <script>
+import { merge } from 'lodash';
 import { Bar } from 'vue-chartjs';
 
 import ChartAnnotationPlugin from 'chartjs-plugin-annotation';
@@ -14,10 +15,14 @@ export default {
     datasets: {
       type: Array,
     },
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
-    options() {
-      return {
+    mergedOptions() {
+      return merge({
         responsive: true,
         maintainAspectRatio: false,
         tooltips: {
@@ -32,21 +37,7 @@ export default {
             stacked: true,
           }],
         },
-        annotation: {
-          annotations: [{
-            type: 'line',
-            mode: 'horizontal',
-            scaleID: 'y-axis-0',
-            value: 1,
-            borderColor: 'rgb(75, 192, 192)',
-            borderWidth: 4,
-            label: {
-              enabled: true,
-              content: 'Test label',
-            },
-          }],
-        },
-      };
+      }, this.options);
     },
 
     chartData() {
@@ -59,7 +50,7 @@ export default {
   watch: {
     chartData(value, oldValue) {
       if (value !== oldValue) {
-        this.renderChart(value, this.options);
+        this.renderChart(value, this.mergedOptions);
       }
     },
   },
@@ -67,7 +58,7 @@ export default {
     this.addPlugin(ChartAnnotationPlugin);
   },
   mounted() {
-    this.renderChart(this.chartData, this.options);
+    this.renderChart(this.chartData, this.mergedOptions);
   },
 };
 </script>
