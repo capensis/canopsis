@@ -810,7 +810,7 @@ class TestGraphRequests(BaseTest):
 
     def setUp(self):
         super(TestGraphRequests, self).setUp()
-        self.manager.collection_name = 'default_testentities'
+        self.manager.COLLECTION_NAME = 'default_testentities'
 
     def test(self):
         ent1 = create_entity(
@@ -1173,7 +1173,7 @@ class TestLeavesRequests(BaseTest):
 
     def setUp(self):
         super(TestLeavesRequests, self).setUp()
-        self.manager.collection_name = 'default_testentities'
+        self.manager.COLLECTION_NAME = 'default_testentities'
 
     def test(self):
         ent1 = create_entity(

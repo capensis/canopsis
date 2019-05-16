@@ -135,6 +135,7 @@ class ContextGraph(object):
     RESOURCE = "resource"
     COMPONENT = "component"
     CONNECTOR = "connector"
+    COLLECTION_NAME = 'default_entities'
 
     @classmethod
     def get_id(cls, event):
@@ -279,8 +280,6 @@ class ContextGraph(object):
         parser = Configuration.load(CONF_PATH, Ini)
         section = parser.get(ConfName.SECT_GCTX)
 
-        self.collection_name = 'default_entities'
-
         self.at_storage = Middleware.get_middleware_by_uri(
             AssociativeTableManager.STORAGE_URI
         )
@@ -288,6 +287,10 @@ class ContextGraph(object):
         self.ent_storage = Middleware.get_middleware_by_uri(
             section.get(ConfName.ENT_STORAGE)
         )
+
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection(self.RIGHTS_COLLECTION)
+        self._collection = MongoCollection(collection)
 
         self.logger = logger
 
@@ -827,7 +830,7 @@ class ContextGraph(object):
 
         glookup = {
             '$graphLookup': {
-                'from': self.collection_name,
+                'from': self.COLLECTION_NAME,
                 'startWith': '$_id',
                 'connectFromField': 'impact',
                 'connectToField': '_id',
@@ -855,7 +858,7 @@ class ContextGraph(object):
 
         glookup = {
             '$graphLookup': {
-                'from': self.collection_name,
+                'from': self.COLLECTION_NAME,
                 'startWith': '$_id',
                 'connectFromField': 'depends',
                 'connectToField': '_id',
