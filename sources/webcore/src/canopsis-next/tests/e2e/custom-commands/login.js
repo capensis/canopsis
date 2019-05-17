@@ -4,8 +4,8 @@ module.exports.command = function login(username, password) {
   this.page.auth.login()
     .navigate()
     .verifyPageElementsBefore()
-    .enterUsername(username)
-    .enterPassword(password)
+    .setUsername(username)
+    .setPassword(password)
     .clickSubmitButton()
     .verifyPageElementsAfter();
 

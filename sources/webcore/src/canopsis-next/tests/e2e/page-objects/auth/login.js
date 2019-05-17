@@ -1,7 +1,5 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
-const WAIT_PAUSE = 500;
-
 const loginPageCommands = {
   verifyPageElementsBefore() {
     return this.waitForElementVisible('@loginForm')
@@ -12,30 +10,16 @@ const loginPageCommands = {
     return this.waitForElementVisible('@userTopBarDropdownButton');
   },
 
-  enterUsername(username) {
-    this.waitForElementVisible('@usernameField')
-      .click('@usernameField')
-      .setValue('@usernameField', username)
-      .api.pause(WAIT_PAUSE);
-
-    return this;
+  setUsername(username) {
+    return this.customSetValue('@usernameField', username);
   },
 
-  enterPassword(password) {
-    this.waitForElementVisible('@passwordField')
-      .click('@passwordField')
-      .setValue('@passwordField', password)
-      .api.pause(WAIT_PAUSE);
-
-    return this;
+  setPassword(password) {
+    return this.customSetValue('@passwordField', password);
   },
 
   clickSubmitButton() {
-    this.waitForElementVisible('@submitButton')
-      .click('@submitButton')
-      .api.pause(WAIT_PAUSE);
-
-    return this;
+    return this.customClick();
   },
 };
 

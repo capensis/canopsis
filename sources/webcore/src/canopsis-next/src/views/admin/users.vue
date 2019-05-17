@@ -34,7 +34,7 @@
       v-layout(column)
         refresh-btn(@click="fetchList")
       v-tooltip(left)
-        v-btn(slot="activator", fab, color="primary", @click.stop="showCreateUserModal")
+        v-btn(slot="activator", fab, color="primary", data-test="addButton", @click.stop="showCreateUserModal")
           v-icon add
         span {{ $t('modals.createUser.title') }}
 </template>
