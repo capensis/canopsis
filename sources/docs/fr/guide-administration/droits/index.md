@@ -31,7 +31,7 @@ Enfin, l'affectation de *droits* à un *rôle* s'effectue au moyen d'une matrice
 
 ![Extrait Matrice](./img/matrice_extrait.png)
 
-## Interface graphique
+## Objets de base
 
 L'interface graphique vous permet d'agir sur les notions d'utilisateurs, de rôles, de droits, et d'assignation.
 
@@ -44,8 +44,6 @@ Pour gérer les rôles, une vue d'administration est dédiée.
 
 ![Menu rôle](./img/menu_role.png)
 
-
-
 Vous obtenez par défaut la liste des rôles existants sur votre outil.
 
 ![Roles](./img/role_default.png)
@@ -54,31 +52,74 @@ A ce stade vous avez accès aux opérations de création, édition, suppression 
 
 Pour créer un rôle ![Plus](./img/role_creation_plus.png)
 
-puis saisissez les informations relatives à ce profil dont la vue par défaut des utilisateurs qui hériteront de celui-ci.
+puis saisissez les informations relatives à ce rôle dont la vue par défaut des utilisateurs qui hériteront de celui-ci.
 
 ![Création](./img/role_creation.png)
 
 
-
 ### Utilisateurs
+
+Pour gérer les utilisateurs, une vue d'administration est dédiée.
+
+![Menu utilisateurs](./img/menu_utilisateurs.png)
+
+Vous obtenez par défaut la liste des utilisateurs existants sur votre outil.
+
+![Utilisateurs](./img/utilisateurs_default.png)
+
+A ce stade vous avez accès aux opérations de création, édition, suppression des utilisateurs.  
+
+!!! Info "Utiliateurs externes"
+    Lorsque Canopsis utilise un système [d'authentification externe](../administration-avancee/authentification.md) (Ldap, SSO), la première authentification réussie créé l'utilisateur de manière automatique.
+
+Pour créer un utilisateur ![Plus](./img/utilisateurs_creation_plus.png)
+
+puis saisissez les informations relatives à cet utilisateur.
+
+![Création](./img/utilisateurs_creation.png)
+
 
 ### Droits
 
+TODO
 
-### Matrice des droits
-Ici une explication de la partie affectation des droits de manière générale.
+## Matrice des droits
 
-## Droits
+La matrice des droits est accéssible par le menu suivant :  
+
+![Menu matrice](./img/menu_matrice.png)
+
+Lorsqu'un droit de type *default* est disponible, le fait de cocher active le droit et le fait de décocher désactive le droit.  
+Pour un droit de type *CRUD*, 4 coches sont disponibles :
+
+* C / Create : Création de l'objet pointé (créer une vue, créer un comportement périodique)
+* R / Replace : N/A
+* U / Update : Possibilité de modifier l'objet pointé
+* D / Delete : Suppression de l'objet pointé
+
+## Liste des droits
 
 Il s'agit ici de lister sous forme de tableau les droits existants et leur impact sur Canopsis
 
 ### Métier
 
-Selon vous, quel pivot je dois prévoir ? 
-
-* Par widget ?
-* Par fonction ?
-* Listing d'actions simple ?
+| Widget        | Droit | Description                               | Signification                          |
+| ------------- | ----- | ----------------------------------------- | -------------------------------------- |
+| Bac à alarmes |       | Rights on listalarm: ack                  | ![ack](./img/droits_listalarm_ack.png) |
+|               |       | Rights on listalarm: fast ack             |                                        |
+|               |       | Rights on listalarm: cancel ack           |                                        |
+|               |       | Rights on listalarm: declare an incident  |                                        |
+|               |       | Rights on listalarm: assign ticket number |                                        |
+|               |       | Rights on listalarm: pbehavior            |                                        |
+|               |       | Rights on listalarm: remove alarm         |                                        |
+|               |       | Rights on listalarm: change state         |                                        |
+|               |       | Rights on listalarm: snooze alarm         |                                        |
+|               |       | Rights on listalarm: list pbehavior       |                                        |
+|               |       | Rights on listalarm: list filters         |                                        |
+|               |       | Rights on listalarm: edit filters         |                                        |
+|               |       | Rights on listalarm: add filter           |                                        |
+|               |       | Rights on listalarm: User filter          |                                        |
+|               |       | listalarm_links                           |                                        |
 
 **Alarmes**
 **Météo**
