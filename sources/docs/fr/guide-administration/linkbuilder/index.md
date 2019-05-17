@@ -133,9 +133,9 @@ Vous devez les insérer par l'intermédiaire du formulaire.
 Voici un récapitulatif des droits à appliquer.  
 
 
-| Widget             | Droits associés                                              | Scope                                                        |
+| Widget             | Droits associés                                              | Portée                                                        |
 | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Bac à alarmes      | listalarm_links                                              | Visualisation de l'ensemble des liens sur le bac à alarmes, quelque soit la catégorie |
+| Bac à alarmes      | listalarm_links                                              | Visualisation de l'ensemble des liens sur le bac à alarmes, quelle que soit la catégorie |
 |                    | listalarm_links_Nom_de_la_Catégorie  (Ex : **listalarm_links_Documentation**) | Visualisation des liens de la catégorie donnée en suffixe (sur le bac à alarmes) |
-| Météo des services | serviceweather_entityLinks                                   | Visualisation de l'ensemble des liens sur la météo des services, quelque soit la catégorie |
+| Météo des services | serviceweather_entityLinks                                   | Visualisation de l'ensemble des liens sur la météo des services, quelle que soit la catégorie |
 |                    | serviceweather_entityLinks_Nom_de_la_Catégorie (Ex : **serviceweather_entityLinks_Gestion des tickets**) | Visualisation des liens de la catégorie donnée en suffixe (sur la météo des services) |
