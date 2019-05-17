@@ -31,13 +31,17 @@ const usersPageCommands = {
   },
 
   setPassword(value) {
-    return this.customSetValue('@usernameField', value);
+    return this.customSetValue('@passwordField', value);
   },
 
   selectRole() {
     return this.customClick('@roleField')
       .waitForElementVisible('@roleItemOption')
       .customClick('@roleItemOption');
+  },
+
+  clickSubmitButton() {
+    return this.customClick('@submitButton');
   },
 };
 
@@ -54,9 +58,10 @@ module.exports = {
     lastNameField: sel('lastName'),
     emailField: sel('email'),
     passwordField: sel('password'),
-    roleField: sel('role'),
     languageField: sel('language'),
-    roleItemOption: '.v-select-list v-list__tile',
+    roleField: `${sel('roleLayout')} .v-input__slot`,
+    roleItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(1) .v-list__tile',
+    submitButton: sel('submitButton'),
   },
   commands: [usersPageCommands],
 };

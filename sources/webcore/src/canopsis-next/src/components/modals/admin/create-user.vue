@@ -51,7 +51,7 @@
           :disabled="onlyUserPrefs",
           data-test="password"
           )
-        v-layout(row)
+        v-layout(data-test="roleLayout", row)
           v-select(
           :label="$t('modals.createUser.fields.role')",
           v-model="form.role",
@@ -66,10 +66,10 @@
           )
         v-layout(row)
           v-select(
+          data-test="language",
           :label="$t('modals.createUser.fields.language')",
           v-model="form.ui_language",
           :items="languages",
-          data-test="language"
           )
         v-layout(row, align-center, v-if="!isNew")
           div {{ $t('common.authKey') }}: {{ config.user.authkey }}
@@ -92,7 +92,7 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+      v-btn.primary(data-test="submitButton", @click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

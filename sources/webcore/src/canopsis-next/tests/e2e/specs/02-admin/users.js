@@ -1,11 +1,9 @@
 // http://nightwatchjs.org/guide#usage
 
-const v = 'asd';
-
 module.exports = {
   async before(browser, done) {
     await browser.maximizeWindow()
-      .login('root', 'root');
+      .finished.login('root', 'root'); // TODO: use from some constants file
 
     done();
   },
@@ -13,18 +11,22 @@ module.exports = {
   after(browser, done) {
     browser.end(done);
   },
+
   'Create new user with some name': (browser) => {
+    const value = 'asd'; // TODO: use from some constants file
+
     browser.page.admin.users()
       .navigate()
       .verifyPageElementsBefore()
-      .verifyCreateUserModal()
       .clickAddButton()
-      .setUsername(v)
-      .setFirstName(v)
-      .setLastName(v)
-      .setEmail('asd@asd.asd')
-      .setPassword(v)
-      .selectRole();
+      .verifyCreateUserModal()
+      .setUsername(value)
+      .setFirstName(value)
+      .setLastName(value)
+      .setEmail(`${value}@${value}.com`)
+      .setPassword(value)
+      .selectRole()
+      .clickSubmitButton();
   },
 
   // 'Edit user with some username': (browser) => {},

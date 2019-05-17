@@ -19,7 +19,7 @@ const loginPageCommands = {
   },
 
   clickSubmitButton() {
-    return this.customClick();
+    return this.customClick('@submitButton');
   },
 };
 
