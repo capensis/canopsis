@@ -8,7 +8,7 @@ La commande affiche les résultats sur le canal d'erreur, si vous souhaitez rech
 
 Voici un exemple d'utilisation de la commande, qui cherche des évènements en provenance de Centreon. Elle doit être exécutée depuis un nœud Canopsis, idéalement en étant connecté avec l'utilisateur `canopsis` :
 ```sh
-$ /opt/canopsis/bin/amqp2tty 2>&1 | grep -i centreon
+/opt/canopsis/bin/amqp2tty 2>&1 | grep -i centreon
 ```
 
 et son résultat :
@@ -40,10 +40,13 @@ et son résultat :
 
 Dans un environnement Docker, la procédure est la même, tant que vous ciblez un conteneur disposant d'un environnement Python Canopsis.
 
-Par exemple, avec le `webserver` :
+On peut, par exemple, exécuter un shell dans le conteneur `webserver` :
 
 ```sh
-$ docker exec -ti canopsis_webserver_1 /bin/bash
+docker exec -ti canopsis_webserver_1 /bin/bash
+```
 
-(canopsis 3.17.0)[canopsis@cff6a539e754 ~]$ amqp2tty 2>&1 | grep -i centreon
+Puis, une fois connecté sur celui-ci, `amqp2tty` sera disponible dans le virtualenv Python :
+```
+amqp2tty 2>&1 | grep -i centreon
 ```
