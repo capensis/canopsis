@@ -75,11 +75,10 @@ Notez qu'un redémarrage du moteur `webserver` est nécessaire.
 !!! Warning
     Les liens sont générés à la volée et ne sont en aucun cas stockés. 
 
-### Visualisation frontend
+## Visualisation frontend
 
-Les liens sont mis à disposition de l'interface par l'intermédiaire du helper *links*.  
-Il peut être appelé dans un bac à alarmes ou dans une météo de services.  
-
+!!! Info "Droits sur les liens"
+    La visualisation des liens est soumise à [certains droits](#droits-associes-aux-liens)
 
 **Bac à alarmes**
 
@@ -118,4 +117,25 @@ Le résultat :
 
 ![baa](img/meteo_cat.png)
 
+Les liens sont mis à disposition de l'interface par l'intermédiaire du helper *links*.  
+Il peut être appelé dans un bac à alarmes ou dans une météo de services.  
 
+## Droits associés aux liens
+
+La visualisation des liens est soumise à des droits.  
+
+Les droits `listalarm_links` et `serviceweather_links` donnent la permission de visualiser l'ensemble des liens présents sur l'entité respectivement sur le widget *Bac à alarmes* et *Météo des services*.  
+
+Il existe en parallèle de cela la possibilité de limiter l'accès aux liens par l'intermédiaire de droits liés aux catégories de liens.  
+Le nom des droits correspondants est fonction des catégories de liens; Ces droits ne peuvent donc pas être pré insérés par le système d'installation.   
+Vous devez les insérer par l'intermédiaire du formulaire.  
+
+Voici un récapitulatif des droits à appliquer.  
+
+
+| Widget             | Droits associés                                              | Scope                                                        |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Bac à alarmes      | listalarm_links                                              | Visualisation de l'ensemble des liens sur le bac à alarmes, quelque soit la catégorie |
+|                    | listalarm_links_Nom_de_la_Catégorie  (Ex : **listalarm_links_Documentation**) | Visualisation des liens de la catégorie donnée en suffixe (sur le bac à alarmes) |
+| Météo des services | serviceweather_entityLinks                                   | Visualisation de l'ensemble des liens sur la météo des services, quelque soit la catégorie |
+|                    | serviceweather_entityLinks_Nom_de_la_Catégorie (Ex : **serviceweather_entityLinks_Gestion des tickets**) | Visualisation des liens de la catégorie donnée en suffixe (sur la météo des services) |
