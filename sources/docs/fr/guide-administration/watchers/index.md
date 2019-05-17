@@ -52,7 +52,7 @@ Les informations disponibles sont :
 Par exemple, l'output d'un watcher avec l'`output_template` suivant :
 
 ```
-Crit : {{.State.Critical}} / Total : {{.Alarms}
+Crit : {{.State.Critical}} / Total : {{.Alarms}}
 ```
 
 sera
