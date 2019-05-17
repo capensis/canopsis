@@ -47,6 +47,6 @@ docker exec -ti canopsis_webserver_1 /bin/bash
 ```
 
 Puis, une fois connecté sur celui-ci, `amqp2tty` sera disponible dans le virtualenv Python :
-```
+```sh
 amqp2tty 2>&1 | grep -i centreon
 ```
