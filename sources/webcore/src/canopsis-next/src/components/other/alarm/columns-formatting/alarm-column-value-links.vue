@@ -49,7 +49,11 @@ export default {
     },
 
     isDisabled() {
-      return Object.values(this.links).every(element => !element.length);
+      return Object.values(this.links).every(element => !element.length) || !this.hasAccessToLinks;
+    },
+
+    hasAccessToLinks() {
+      return this.checkAccess(BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]);
     },
 
     hasAccessToCategory() {
