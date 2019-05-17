@@ -1,4 +1,4 @@
-/** http://nightwatchjs.org/gettingstarted#settings-file */
+// http://nightwatchjs.org/gettingstarted#settings-file
 
 const parh = require('path');
 const deepmerge = require('deepmerge');

@@ -1,4 +1,3 @@
-// For authoring Nightwatch tests, see
 // http://nightwatchjs.org/guide#usage
 
 module.exports.command = function login(username, password) {

@@ -3,16 +3,25 @@
 const WAIT_PAUSE = 500;
 
 const logoutPageCommands = {
+  verifyPageElementsBefore() {
+    return this.waitForElementVisible('@userTopBarDropdownButton');
+  },
+
+  verifyPageElementsAfter() {
+    return this.waitForElementVisible('@loginForm');
+  },
+
   clickUserNavigationTopBarButton() {
     this.waitForElementVisible('@userTopBarDropdownButton')
-      .click('@userNavigationTopBarButton')
+      .click('@userTopBarDropdownButton')
       .api.pause(WAIT_PAUSE);
 
     return this;
   },
 
   clickLogoutButton() {
-    this.waitForElementVisible('@logoutButton')
+    this.waitForElementNotPresent('@activePopup', 15000)
+      .waitForElementVisible('@logoutButton')
       .click('@logoutButton')
       .api.pause(WAIT_PAUSE);
 
@@ -21,12 +30,11 @@ const logoutPageCommands = {
 };
 
 module.exports = {
-  url() {
-    return process.env.VUE_DEV_SERVER_URL;
-  },
   elements: {
     userTopBarDropdownButton: sel('userTopBarDropdownButton'),
     logoutButton: sel('logoutButton'),
+    loginForm: sel('loginForm'),
+    activePopup: `${sel('popupsWrapper')} .v-alert`,
   },
   commands: [logoutPageCommands],
 };

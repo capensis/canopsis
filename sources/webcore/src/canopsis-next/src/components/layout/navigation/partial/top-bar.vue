@@ -41,7 +41,7 @@
                   div.ml-2 {{ $t('user.seeProfile') }}
           v-list-tile
             v-list-tile-content
-              v-btn.ma-0.pa-1.error--text(flat, data-test="logoutButton", @click.prevent="logout")
+              v-btn.ma-0.pa-1.error--text(data-test="logoutButton", flat, @click.prevent="logout")
                 v-layout(align-center)
                   v-icon exit_to_app
                   div.ml-2 {{ $t('common.logout') }}
