@@ -10,9 +10,9 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 # Canopsis 3.18.0 - Due date : 2019-05-17
 
- - [Documentation] Improve the lisibility of the centreon connector reboot procedure
+ - [Documentation] Improve the readability of the centreon connector reboot procedure
  - [Documentation] Improve linkbuilder documentation
- - [Documentation] Add a warning about the lack of support of internet explorer
+ - [Documentation] Add a warning about the lack of support for internet explorer
  - [Documentation] Add a section about the use of `amqp2tty` on a docker environment and package environment
  - [Documentation] Fix search on some patterns
  - [Python] Fix issue in statsng when an entity is deleted
