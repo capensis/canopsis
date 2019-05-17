@@ -37,6 +37,7 @@ export function convertAlarmWidgetToQuery(widget) {
     widgetColumns,
     itemsPerPage,
     mainFilter,
+    mainFilterCondition,
   } = widget.parameters;
 
   const query = {
@@ -47,7 +48,7 @@ export function convertAlarmWidgetToQuery(widget) {
   };
 
   if (!isEmpty(mainFilter)) {
-    query.filter = mainFilter.filter;
+    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   if (query.resolved) {

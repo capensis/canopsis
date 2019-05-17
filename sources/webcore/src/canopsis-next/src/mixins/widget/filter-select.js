@@ -11,7 +11,9 @@ export default {
     },
 
     mainFilter() {
-      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
+      const mainFilter = !isEmpty(this.userPreference.widget_preferences.mainFilter) ?
+        this.userPreference.widget_preferences.mainFilter :
+        this.widget.parameters.mainFilter;
 
       if (Array.isArray(mainFilter)) {
         return mainFilter;
