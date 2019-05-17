@@ -45,7 +45,21 @@ export default {
       });
     },
 
+    /*
+    ** Check if user has access to all links/categories
+    */
+    hasAccessToLinks() {
+      return this.checkAccess(BUSINESS_USER_RIGHTS_ACTIONS_MAP.weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks]);
+    },
+
+    /*
+    ** Check if user has access to a specific links category
+    */
     hasAccessToCategory() {
+      if (this.hasAccessToLinks) {
+        return true;
+      }
+
       return category => this.checkAccess(`${
         BUSINESS_USER_RIGHTS_ACTIONS_MAP
           .weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks]}_${category}`);
