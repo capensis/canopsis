@@ -48,15 +48,28 @@ export default {
       }, {});
     },
 
+    /*
+    ** If there are no links, in every category
+    */
     isDisabled() {
-      return Object.values(this.links).every(element => !element.length) || !this.hasAccessToLinks;
+      return Object.values(this.links).every(element => !element.length);
     },
 
+    /*
+    ** Check if user has access to all links/categories
+    */
     hasAccessToLinks() {
       return this.checkAccess(BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]);
     },
 
+    /*
+    ** Check if user has access to a specific links category
+    */
     hasAccessToCategory() {
+      if (this.hasAccessToLinks) {
+        return true;
+      }
+
       return category => this.checkAccess(`${
         BUSINESS_USER_RIGHTS_ACTIONS_MAP
           .alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]}_${category}`);
