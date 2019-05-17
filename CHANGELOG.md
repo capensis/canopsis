@@ -8,6 +8,38 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.18.0 - Due date : 2019-05-17
+
+ - [Python] Fix issue in statsng when an entity is deleted
+ - [Go] Add new values in watchers' output_template
+ - [Go] Add alarms_acknowledged statistic
+ - [Go] Fix alarms_canceled and ack_time_sla statistics
+ - [Go] Update links with watchers when an entity is modified by the event-filter
+ - [Go] Update alarm's output at each event
+ - [Go] Return an error when an unknown value is used in a template in the event-filter
+ - [Tooling] Fix default login page description
+ - [UI] Fix - Empty Rrule on pbehavior creation
+ - [UI] Refactor Login page style
+ - [UI] Adapt default fields for filter editor on diferent forms
+ - [UI] Add rights to manage access to linklist (Listalarm and Weather widgets)
+ - [UI] Fix - Mix filters
+ - [UI - ListAlarm] Fix - Always keep at least 3 visible actions buttons + Dropdown menu
+ - [UI - ListAlarm] Add setting for each column to enable HTML interpretation + Setting for HTML interpretation on timeline
+ - [UI - ListAlarm] Add format for `duration` and `current_state_duration` columns
+ - [UI - Context] Adapt watcher's creation form to canopsis stack (python/go)
+ - [UI - Weather] Fix - Watcher with minor state's color
+ - [UI - Weather] Fix - Alarm list modal filter computation
+ - [UI - Stats] Fix - Bug on duration select
+ - [UI - Stats] Add new `current_ongoing_alarms_with_ack` and `current_ongoing_alarms_without_ack` stats on stats widgets
+ - [UI - Stats] Add new `alarms_acknowledged` stats on stats widgets
+ - [UI - Stats] Fix - Edit/Delete widget while data are loading
+ - [UI - Stats table] Add format for `current_state` column
+ - [UI - Stats table] Add format for `durations` and `percentage` stats value
+ - [UI - Stats table] Add setting for table's default sorting column
+ - [UI - Calendar] Fix - Display when there's more than one filter
+ - [UI - Webhooks] Add 'Disable if active pbehavior' option to webhook creation/edition form
+ - [UI - EventFilter] Fix - Event filter rules are enable by default (even when there's no `enabled` field)
+
 # Canopsis 3.17.0 - Due date : 2019-05-07
 
  - [API] Prevent from sending a changestate or keepstate event with an info state
@@ -355,7 +387,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Chore]: add some system dependencies to ansible installation
 - [Go]: fix bagoting alarms never closed if cropped
-- [Go]: send axe statistics to stasng engine
+- [Go]: send axe statistics to statsng engine
 - [Python]: change some amqp publishers to pika to prevent odd reconnections
 - [Python]: fix has_active_pb flag no corretly show all linked pbehaviors
 - [Python]: fix pbehavior not corretly handle timezone change (one day gap)
