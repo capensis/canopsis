@@ -81,6 +81,6 @@ s'il y a 60 alarmes en cours dont 12 critiques sur les entités observées.
     "state": {
         "method": "worst",
     },
-    "output_template": "Alarmes critiques : {{.State.Critical}}"
+    "output_template": "Alarmes critiques : {{.State.Critical}}, Alarmes acquittées : {{.Acknowledged}}"
 }
 ```
