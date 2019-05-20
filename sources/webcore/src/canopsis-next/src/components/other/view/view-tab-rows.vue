@@ -47,6 +47,7 @@ import StatsCurvesWidget from '@/components/other/stats/curves/stats-curves.vue'
 import StatsTableWidget from '@/components/other/stats/stats-table.vue';
 import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calendar.vue';
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
+import StatsParetoWidget from '@/components/other/stats/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
 
 import popupMixin from '@/mixins/popup';
@@ -63,6 +64,7 @@ export default {
     StatsTableWidget,
     StatsCalendarWidget,
     StatsNumberWidget,
+    StatsParetoWidget,
     TextWidget,
   },
   mixins: [
@@ -99,6 +101,7 @@ export default {
         [WIDGET_TYPES.statsTable]: 'stats-table-widget',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
         [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
+        [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
         [WIDGET_TYPES.text]: 'text-widget',
       },
     };

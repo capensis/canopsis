@@ -222,6 +222,7 @@ export default {
       statsTableSettings: 'Paramètres du tableau de stats',
       statsCalendarSettings: 'Paramètres du calendrier',
       statsNumberSettings: 'Paramètres du compteur de stat',
+      statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
     },
     advancedSettings: 'Paramètres avancés',
@@ -596,6 +597,12 @@ export default {
         },
         statsNumber: {
           title: 'Compteur de statistiques',
+        },
+        statsPareto: {
+          title: 'Diagramme de Pareto',
+        },
+        text: {
+          title: 'Texte',
         },
       },
     },

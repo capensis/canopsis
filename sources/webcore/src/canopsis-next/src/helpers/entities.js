@@ -210,6 +210,21 @@ export function generateWidgetByType(type) {
         },
       };
       break;
+
+    case WIDGET_TYPES.statsPareto:
+      specialParameters = {
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
+        mfilter: {},
+        stat: {},
+        sort: {},
+      };
+      break;
+
     case WIDGET_TYPES.text:
       specialParameters = {
         dateInterval: {
