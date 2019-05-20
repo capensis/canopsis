@@ -3,7 +3,7 @@
 module.exports = {
   async before(browser, done) {
     await browser.maximizeWindow()
-      .finished.login('root', 'root'); // TODO: use from some constants file
+      .completed.login('root', 'root'); // TODO: use from some constants file
 
     done();
   },

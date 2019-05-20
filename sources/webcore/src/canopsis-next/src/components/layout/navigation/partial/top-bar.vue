@@ -4,7 +4,11 @@
     fixed,
     app,
   )
-    v-toolbar-side-icon.ml-2.white--text(v-if="isShownGroupsSideBar", @click="$emit('toggleSideBar')")
+    v-toolbar-side-icon.ml-2.white--text(
+    v-if="isShownGroupsSideBar",
+    data-test="groupsSideBarButton",
+    @click="$emit('toggleSideBar')"
+    )
     v-layout.topBarBrand(v-else, fill-height, align-center)
       img.canopsisLogo(src="@/assets/canopsis.png")
       v-layout.version.ml-1(fill-height, align-end)

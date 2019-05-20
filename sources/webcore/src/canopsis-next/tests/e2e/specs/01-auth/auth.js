@@ -10,10 +10,10 @@ module.exports = {
   },
 
   'Correct user credentials login': (browser) => {
-    browser.finished.login('root', 'root'); // TODO: use from some constants file
+    browser.completed.login('root', 'root'); // TODO: use from some constants file
   },
 
   'Authorized user logout': (browser) => {
-    browser.finished.logout();
+    browser.completed.logout();
   },
 };

@@ -3,6 +3,7 @@
   v-model="isOpen",
   :width="$config.SIDE_BAR_WIDTH",
   :class="{ editing: isEditingMode }"
+  data-test="groupsSideBar"
   disable-resize-watcher,
   app,
   )
@@ -17,7 +18,7 @@
     )
       v-expansion-panel-content.secondary.white--text(v-for="group in availableGroups", :key="group._id")
         div.panel-header(slot="header")
-          span(:title="group.name") {{ group.name }}
+          span(:title="group.name", :data-test="`group-${group._id}`") {{ group.name }}
           v-btn(
           v-show="isEditingMode",
           depressed,
