@@ -101,3 +101,131 @@ Puis au niveau exploitation, sélectionnez le filtre nouvellement créé :
 Par ailleurs, la colonne *extra_details* embarque un picto de représentation d'un comportement périodique.  
 
 ![Extra_details picto](./img/pbh_picto_extra_details.png "Picto extra details")  
+
+## Quelques filtres courants
+
+Voici une liste de filtres utiles dans des situations de pilotage au quotidien.
+
+**Une ressource**
+
+```json
+{
+    "$and": [
+        {
+            "name": "une_ressource"
+        },
+        {
+            "type": "resource"
+        }
+    ]
+}
+```
+
+**Un ensemble de ressources**
+
+```json
+{
+    "$and": [
+        {
+            "type": "resource"
+        },
+        {
+            "$or": [
+                {
+                    "name": "une_ressource_1"
+                },
+                {
+                    "name": "une_ressource_2"
+                }
+            ]
+        }
+    ]
+} 
+
+```
+
+**Un composant**
+
+```json
+{
+    "$and": [
+        {
+            "name": "un_composant"
+        },
+        {
+            "type": "component"
+        }
+    ]
+}
+```
+
+**Un ensemble de composants**
+
+```json
+{
+    "$and": [
+        {
+            "type": "component"
+        },
+        {
+            "$or": [
+                {
+                    "name": "un_composant_1"
+                },
+                {
+                    "name": "un_composant_2"
+                }
+            ]
+        }
+    ]
+}
+```
+
+**Un composant et ses ressources**
+
+```json
+{
+    "$or": [
+        {
+            "$and": [
+                {
+                    "type": "component"
+                },
+                {
+                    "name": "html"
+                }
+            ]
+        },
+        {
+            "$and": [
+                {
+                    "type": "resource"
+                },
+                {
+                    "impact": {
+                        "$in": [
+                            "html"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
+```
+
+**Une application**
+
+```json
+
+    "$and": [
+        {
+            "impact": {
+                "$in": [
+                    "une_application"
+                ]
+            }
+        }
+    ]
+}
+```
