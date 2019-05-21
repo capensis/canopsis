@@ -168,7 +168,10 @@ class AlarmAdapter(object):
             }
         }]
 
-        for document in self.collection.aggregate(pipeline):
+        # allowDiskUse=true is necessary for environments with a lot of alarms,
+        # to prevent the aggregate from failing with the error "Exceeded memory
+        # limit for $group".
+        for document in self.collection.aggregate(pipeline, allowDiskUse=True):
             yield make_alarm_from_mongo(document['last_alarm'])
 
     def count_ongoing_alarms(self, entities, states, acknowledged=None):
