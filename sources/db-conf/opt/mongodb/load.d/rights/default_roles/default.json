@@ -28,7 +28,7 @@
         "models_exploitation_webhook": {
             "checksum": 15
         },
-        "models_exploitation_snmpRules": {
+        "models_exploitation_snmpRule": {
             "checksum": 15
         },
         "tabs_showeditionmenu" : {
