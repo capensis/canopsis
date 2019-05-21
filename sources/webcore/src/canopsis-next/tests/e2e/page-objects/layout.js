@@ -1,5 +1,5 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
-const util = require('util');
+const el = require('../helpers/el');
 
 const logoutPageCommands = {
   verifyPageElementsBefore() {
@@ -32,15 +32,7 @@ const logoutPageCommands = {
     return this.customClick(this.el('@viewSideBarSelectorById', id));
   },
 
-  el(elementName, data) {
-    const element = this.elements[elementName.slice(1)];
-
-    if (data) {
-      return util.format(element.selector, data);
-    }
-
-    return element.selector;
-  },
+  el,
 };
 
 const groupSideBar = sel('groupsSideBar');
