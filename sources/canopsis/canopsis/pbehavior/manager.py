@@ -1069,6 +1069,13 @@ class PBehaviorManager(object):
         return pbh_last_tstop
 
     def get_ok_ko_timestamp(self, entity_id):
+        """
+        Get the timestamp corresponding either to current day at midnight,
+        or to the last pbehavior stop for that entity_id
+
+        :param str entity_id: the entity id needing the ok ko timestamp
+        :rtype: int
+        """
         #get today at midnight timestamp as base return timestamp
         #because each alarm ok ko counter is soft-reseted at midnight
         today_at_midnight = date.today()
