@@ -220,8 +220,14 @@ export function generateWidgetByType(type) {
           tstop: 'now/d',
         },
         mfilter: {},
-        stat: {},
-        sort: {},
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
+        },
       };
       break;
 

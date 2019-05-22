@@ -47,7 +47,7 @@ import StatsCurvesWidget from '@/components/other/stats/curves/stats-curves.vue'
 import StatsTableWidget from '@/components/other/stats/stats-table.vue';
 import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calendar.vue';
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
-import StatsParetoWidget from '@/components/other/stats/stats-pareto.vue';
+import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
 
 import popupMixin from '@/mixins/popup';

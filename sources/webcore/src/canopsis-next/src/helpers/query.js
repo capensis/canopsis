@@ -185,6 +185,18 @@ export function convertStatsNumberWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts widget with type 'Stats Pareto diagram' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsParetoWidgetToQuery(widget) {
+  const query = { ...widget.parameters };
+
+  return query;
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -287,6 +299,8 @@ export function convertWidgetToQuery(widget) {
       return convertWidgetStatsParameterToQuery(widget);
     case WIDGET_TYPES.statsNumber:
       return convertStatsNumberWidgetToQuery(widget);
+    case WIDGET_TYPES.statsPareto:
+      return convertStatsParetoWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
       return convertStatsCalendarWidgetToQuery(widget);
     default:
