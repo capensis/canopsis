@@ -49,7 +49,7 @@ function build_for_distribution() {
 
         docker tag canopsis/canopsis-core:${full_tag} canopsis/canopsis-core:${tag}
         docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${tag}
-	docker tag canopsis/uiv3:${full_tag} canopsis/uiv3:${tag}
+	    #docker tag canopsis/uiv3:${full_tag} canopsis/uiv3:${tag}
     fi
 
     if [ "${CANOPSIS_DOCKER_MODE}" == "test" ]||[ "${CANOPSIS_DOCKER_MODE}" == "test-ci" ]; then
