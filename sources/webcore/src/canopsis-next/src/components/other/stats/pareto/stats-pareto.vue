@@ -13,7 +13,7 @@ import widgetQueryMixin from '@/mixins/widget/query';
 
 import { dateParse } from '@/helpers/date-intervals';
 
-import { DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
+import { DATETIME_FORMATS, STATS_DURATION_UNITS, SORT_ORDERS } from '@/constants';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
@@ -229,7 +229,7 @@ export default {
 
         duration: `${durationValue}${periodUnit.toLowerCase()}`,
         tstop: tstop.startOf('h').unix(),
-        sort_order: 'desc',
+        sort_order: SORT_ORDERS.desc.toLowerCase(),
         sort_column: this.statTitle,
       };
     },
