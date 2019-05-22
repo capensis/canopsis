@@ -10,7 +10,7 @@ else
     sudo /opt/canopsis/bin/env2cfg
     sudo /entrypoint-prov-sync.sh
     options=""
-    [[ "$CPS_STACK" ]] && options="$options --canopsis-stack $CPS_STACK --canopsis-edition $CPS_EDITION"
-    [[ "$CPS_EDITION" ]] && options="$options --canopsis-stack $CPS_STACK"
+    [[ "$CPS_STACK" ]] && options="$options --canopsis-stack $CPS_STACK"
+    [[ "$CPS_EDITION" ]] && options="$options --canopsis-edition $CPS_EDITION"
     /opt/canopsis/bin/canopsinit $options
 fi
