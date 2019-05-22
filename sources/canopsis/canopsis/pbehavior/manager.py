@@ -614,6 +614,29 @@ class PBehaviorManager(object):
 
         return datetime.fromtimestamp(timestamp, tz.gettz(timezone))
 
+    def _get_reccuring_pbehavior_rruleset(self, pbehavior):
+        """ Gets the rec_set for a reccuring pbehavior
+
+        :param Dict[str, Any] pbehavior: the reccuring pbehavior
+        :rtype: rruleset
+        """
+        tz_name = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
+
+        rec_set = rrule.rruleset()
+
+        start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
+
+        if PBehavior.EXDATE in pbehavior and\
+           isinstance(pbehavior[PBehavior.EXDATE], list):
+            for date in pbehavior[PBehavior.EXDATE]:
+                exdate = self.__convert_timestamp(date, tz_name)
+                rec_set.exdate(exdate)
+
+
+        rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
+                                     dtstart=start))
+        return rec_set
+
     def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
         """ Check if a pbehavior with a rrule is active at the given time.
 
@@ -626,24 +649,15 @@ class PBehaviorManager(object):
 
         tz_name = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
 
-        rec_set = rrule.rruleset()
+        rec_set = self._get_reccuring_pbehavior_rruleset(pbehavior)
 
         # convert the timestamp to a datetime in the pbehavior's timezone
         now = self.__convert_timestamp(timestamp, tz_name)
 
         start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
         stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
-
-        if PBehavior.EXDATE in pbehavior and\
-           isinstance(pbehavior[PBehavior.EXDATE], list):
-            for date in pbehavior[PBehavior.EXDATE]:
-                exdate = self.__convert_timestamp(date, tz_name)
-                rec_set.exdate(exdate)
-
         duration = stop - start  # pbehavior duration
 
-        rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
-                                     dtstart=start))
 
         rec_start = rec_set.before(now)
 
@@ -1035,7 +1049,6 @@ class PBehaviorManager(object):
         """
         return self.collection.find({PBehavior.ENABLED: True})
 
-
     def _get_last_tstop(self, pbh, now):
         """
         Returns last pbehavior stop timestamp from now
@@ -1051,20 +1064,13 @@ class PBehaviorManager(object):
             #pbh is simple
             pbh_last_tstop = pbh[PBehavior.TSTOP]
         else:
-            #pbh is recurrent
             tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
-            rec_set = rrule.rruleset()
             # convert the timestamp to a datetime in the pbehavior's timezone
             start = self.__convert_timestamp(pbh[PBehavior.TSTART], tz_name)
             stop = self.__convert_timestamp(pbh[PBehavior.TSTOP], tz_name)
 
             duration = stop - start  # pbehavior duration
-
-            rec_set.rrule(rrule.rrulestr(pbh[PBehavior.RRULE],
-                                         dtstart=start))
-            # no need to check if before + duration is greater than now
-            # because if it is, then pbh is active and as such won't be
-            # used
+            rec_set = self._get_reccuring_pbehavior_rruleset(pbh)
             pbh_last_tstop = rec_set.before(now) + duration
         return pbh_last_tstop
 
