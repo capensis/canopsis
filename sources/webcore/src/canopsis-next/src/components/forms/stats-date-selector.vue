@@ -93,10 +93,8 @@ export default {
           let tstop = range.stop;
 
           if (!tstop || !tstart) {
-            const now = moment().format(DATETIME_FORMATS.dateTimePicker);
-
-            tstart = now;
-            tstop = now;
+            tstart = moment().startOf('h').format(DATETIME_FORMATS.dateTimePicker);
+            tstop = moment().add(1, 'h').startOf('h').format(DATETIME_FORMATS.dateTimePicker);
           }
 
           this.$emit('input', { tstart, tstop });
