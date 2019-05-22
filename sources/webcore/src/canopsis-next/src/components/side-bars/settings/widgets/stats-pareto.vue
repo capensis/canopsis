@@ -16,11 +16,16 @@
       v-divider
       field-stat-selector(v-model="settings.widget.parameters.stat")
       v-divider
+      field-stats-colors(
+      :stats="stats",
+      v-model="settings.widget.parameters.statsColors"
+      )
+      v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
 import { SIDE_BARS } from '@/constants';
 
@@ -31,6 +36,7 @@ import FieldTitle from './fields/common/title.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatSelector from './fields/stats/stat-selector.vue';
+import FieldStatsColors from './fields/stats/stats-colors.vue';
 
 export default {
   name: SIDE_BARS.statsParetoSettings,
@@ -40,6 +46,7 @@ export default {
     FieldFilterEditor,
     FieldDateInterval,
     FieldStatSelector,
+    FieldStatsColors,
   },
   mixins: [widgetSettingsMixin],
   data() {
@@ -51,6 +58,19 @@ export default {
         widget: cloneDeep(widget),
       },
     };
+  },
+  computed: {
+    stats() {
+      const stats = {
+        Accumulation: {},
+      };
+
+      stats[this.widget.parameters.stat.title] = {
+        ...omit(this.widget.parameters.stat, ['title']),
+      };
+
+      return stats;
+    },
   },
 };
 </script>

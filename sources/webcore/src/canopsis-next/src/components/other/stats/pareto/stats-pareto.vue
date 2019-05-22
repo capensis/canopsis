@@ -42,9 +42,13 @@ export default {
     };
   },
   computed: {
+    statTitle() {
+      return this.widget.parameters.stat.title;
+    },
+
     filteredStats() {
       if (this.stats) {
-        return this.stats.filter(stat => stat[this.widget.parameters.stat.title].value);
+        return this.stats.filter(stat => stat[this.statTitle].value);
       }
 
       return null;
@@ -61,13 +65,13 @@ export default {
     datasets() {
       if (this.stats) {
         const barsData = this.filteredStats
-          .map(stat => stat[this.widget.parameters.stat.title].value);
+          .map(stat => stat[this.statTitle].value);
 
         let sum = 0;
 
         const curveData = this.filteredStats
           .reduce((acc, stat) => {
-            sum += (stat[this.widget.parameters.stat.title].value / this.total) * 100;
+            sum += (stat[this.statTitle].value / this.total) * 100;
             acc.push(Math.round(sum));
             return acc;
           }, []);
@@ -79,13 +83,13 @@ export default {
             data: curveData,
             yAxisID: 'y-axis-2',
             backgroundColor: 'transparent',
-            borderColor: 'red',
+            borderColor: this.widget.parameters.statsColors.Accumulation || 'rgba(0, 0, 0, 0.1)',
           },
           {
-            label: this.widget.parameters.stat.title,
+            label: this.statTitle,
             data: barsData,
             yAxisID: 'y-axis-1',
-            backgroundColor: 'rgba(150, 200, 50, 0.4)',
+            backgroundColor: this.widget.parameters.statsColors[this.statTitle] || 'rgba(0, 0, 0, 0.1)',
           },
         ];
       }
@@ -113,7 +117,7 @@ export default {
               },
               scaleLabel: {
                 display: true,
-                labelString: this.widget.parameters.stat.title,
+                labelString: this.statTitle,
               },
             },
             {
@@ -226,7 +230,7 @@ export default {
         duration: `${durationValue}${periodUnit.toLowerCase()}`,
         tstop: tstop.startOf('h').unix(),
         sort_order: 'desc',
-        sort_column: this.widget.parameters.stat.title,
+        sort_column: this.statTitle,
       };
     },
 
@@ -237,7 +241,7 @@ export default {
         params: this.getQuery(),
       });
 
-      this.total = aggregations[this.widget.parameters.stat.title].sum;
+      this.total = aggregations[this.statTitle].sum;
       this.stats = values;
       this.pending = false;
     },

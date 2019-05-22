@@ -228,6 +228,7 @@ export function generateWidgetByType(type) {
           title: 'Alarmes créées',
           trend: false,
         },
+        statsColors: {},
       };
       break;
 
