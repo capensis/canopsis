@@ -22,7 +22,7 @@
   position: fixed;
   bottom: 0;
   right: 0;
-  z-index: 2;
+  z-index: 5;
 }
 
 .wf-loading, .wf-inactive {
@@ -31,4 +31,8 @@
     max-height: 24px !important;
     overflow: hidden !important;
   }
+}
+
+.v-window__container--is-active {
+  height: 100% !important;
 }

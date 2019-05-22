@@ -21,15 +21,21 @@
 from argparse import ArgumentParser
 
 from canopsis.migration.manager import MigrationTool
-from canopsis.version import CANOPSIS_VERSION_ARG
+from canopsis.version import CANOPSIS_VERSION_ARG, CANOPSIS_STACK_ARG, CANOPSIS_EDITION_ARG
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Canopsis Migration Tool')
     parser.add_argument('--yes', dest='yes', action='store_true')
-    parser.add_argument('--authorize-reinit', dest='reinit', action='store_true')
+    parser.add_argument('--authorize-reinit',
+                        dest='reinit', action='store_true')
     parser.add_argument(CANOPSIS_VERSION_ARG, required=False, default=None,
                         dest='canopsis_version')
+    parser.add_argument(CANOPSIS_EDITION_ARG, required=False,
+                        default="core", dest='canopsis_edition', choices=['cat', 'core'])
+    parser.add_argument(CANOPSIS_STACK_ARG, required=False,
+                        default="python", dest='canopsis_stack', choices=['go', 'python'])
     args = parser.parse_args()
 
-    mgr = MigrationTool(canopsis_version=args.canopsis_version)
+    mgr = MigrationTool(canopsis_version=args.canopsis_version,
+                        canopsis_stack=args.canopsis_stack, canopsis_edition=args.canopsis_edition)
     mgr.fill(yes=args.yes, reinit_auth=args.reinit)

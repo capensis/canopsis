@@ -20,6 +20,8 @@
 <script>
 import formMixin from '@/mixins/form';
 
+import { SORT_ORDERS } from '@/constants';
+
 /**
 * Component to select the default column to sort on settings
 *
@@ -42,10 +44,10 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      orders: ['ASC', 'DESC'],
-    };
+  computed: {
+    orders() {
+      return Object.values(SORT_ORDERS);
+    },
   },
 };
 </script>

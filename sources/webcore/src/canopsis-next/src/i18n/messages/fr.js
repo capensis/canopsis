@@ -1,9 +1,16 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import {
+  ENTITIES_STATES,
+  ENTITIES_STATUSES,
+  EVENT_ENTITY_TYPES,
+  STATS_TYPES,
+  STATS_CRITICITY,
+  STATS_QUICK_RANGES,
+} from '@/constants';
 
 export default {
   common: {
-    undefined: 'Non définie',
-    entity: 'Entitée',
+    undefined: 'Non défini',
+    entity: 'Entité',
     watcher: 'Observateur',
     pbehaviors: 'Comportements périodiques',
     widget: 'Widget',
@@ -15,7 +22,7 @@ export default {
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
-    submit: 'Envoyer',
+    submit: 'Soumettre',
     cancel: 'Annuler',
     options: 'Options',
     type: 'Type',
@@ -26,23 +33,26 @@ export default {
     yes: 'Oui',
     no: 'Non',
     default: 'Défaut',
-    confirmation: 'Etes-vous sûr(e) ?',
+    confirmation: 'Êtes-vous sûr(e) ?',
     parameters: 'Paramètres',
     by: 'Par',
     date: 'Date',
-    comment: 'Commentaire',
+    comment: 'Commentaire | Commentaires',
     end: 'Fin',
-    recursive: 'Recursif',
-    states: 'Etats',
+    recursive: 'Récursif',
+    select: 'Sélectionner',
+    states: 'États',
     sla: 'Sla',
     authors: 'Auteurs',
     stat: 'Statistique',
     trend: 'Tendance',
     users: 'Utilisateurs',
-    roles: 'Roles',
+    roles: 'Rôles',
     rights: 'Droits',
+    profile: 'Profil',
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
+    authKey: 'Auth. key',
     connect: 'Connexion',
     optionnal: 'Optionnel',
     logout: 'Se déconnecter',
@@ -51,6 +61,7 @@ export default {
     label: 'Label',
     field: 'Champs',
     value: 'Valeur',
+    limit: 'Limite',
     add: 'Ajouter',
     create: 'Créer',
     delete: 'Supprimer',
@@ -58,8 +69,8 @@ export default {
     edit: 'Éditer',
     parse: 'Compiler',
     home: 'Accueil',
-    step: 'Etape',
-    entries: 'entrées',
+    step: 'Étape',
+    entries: 'Entrées',
     showing: 'Affiche',
     apply: 'Appliquer',
     to: 'à',
@@ -71,12 +82,21 @@ export default {
     administration: 'Administration',
     forbidden: 'Accès refusé',
     search: 'Recherche',
+    webhooks: 'Webhooks',
+    links: 'Liens',
     actions: {
       close: 'Fermer',
-      acknowledge: 'Acquitter',
       acknowledgeAndReport: 'Acquitter et signaler un incident',
       saveChanges: 'Sauvegarder',
       reportIncident: 'Signaler un incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.validate]: 'Valider',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
     },
     times: {
       second: 'seconde | secondes',
@@ -89,16 +109,18 @@ export default {
     },
   },
   user: {
-    role: 'Role',
+    role: 'Rôle',
     defaultView: 'Vue par défaut',
+    seeProfile: 'Voir le profil',
+    selectDefaultView: 'Sélectionner une vue par défaut',
   },
   context: {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
     moreInfos: {
       type: 'Type',
-      enabled: 'Activée',
-      disabled: 'Désactivée',
+      enabled: 'Activé',
+      disabled: 'Désactivé',
       lastActiveDate: 'Dernière Date d\'Activité',
       infosSearchLabel: 'Rechercher une info',
       tabs: {
@@ -106,6 +128,15 @@ export default {
         pbehaviors: 'Comportements périodiques',
         impactDepends: 'Impacts/Dépendances',
         infos: 'Infos',
+      },
+    },
+    actions: {
+      titles: {
+        editEntity: 'Éditer l\'entité',
+        duplicateEntity: 'Dupliquer l\'entité',
+        deleteEntity: 'Supprimer l\'entité',
+        pbehavior: 'Comportement périodique',
+        variablesHelp: 'Liste des variables disponibles',
       },
     },
   },
@@ -129,8 +160,14 @@ export default {
     entities: 'entités',
   },
   login: {
+    standard: 'Standard',
+    LDAP: 'LDAP',
+    loginWithCAS: 'Se connecter avec CAS',
+    documentation: 'Documentation',
+    forum: 'Forum',
+    connectionProtocols: 'Modes de connexion',
     errors: {
-      incorrectEmailOrPassword: 'Mot de passe/Email incorrect',
+      incorrectEmailOrPassword: 'Mot de passe / Email incorrect',
     },
   },
   alarmList: {
@@ -141,18 +178,18 @@ export default {
         ackRemove: 'Annuler ack',
         pbehavior: 'Comportement périodique',
         snooze: 'Snooze',
-        pbehaviorList: 'Lister comportements pédioriques',
+        pbehaviorList: 'Lister les comportements pédioriques',
         declareTicket: 'Déclarer un incident',
-        associateTicket: 'Associer ticket',
-        cancel: 'Annuler alarme',
-        changeState: 'Changer criticité',
+        associateTicket: 'Associer un ticket',
+        cancel: 'Annuler l\'alarme',
+        changeState: 'Changer la criticité',
         moreInfos: 'Plus d\'infos',
         variablesHelp: 'Liste des variables disponibles',
       },
       iconsTitles: {
         ack: 'Ack',
         declareTicket: 'Déclarer un incident',
-        canceled: 'Annulée',
+        canceled: 'Annulé',
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
       },
@@ -185,6 +222,7 @@ export default {
       statsTableSettings: 'Paramètres du tableau de stats',
       statsCalendarSettings: 'Paramètres du calendrier',
       statsNumberSettings: 'Paramètres du compteur de stat',
+      textSettings: 'Paramètres du widget de texte',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
@@ -192,13 +230,16 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     columnNames: 'Nom des colonnes',
     periodicRefresh: 'Rafraichissement périodique',
-    defaultNumberOfElementsPerPage: 'Nombre d\'élement/page par défaut',
+    defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
     elementsPerPage: 'Élements par page',
     filterOnOpenResolved: 'Filtre sur Open/Resolved',
     open: 'Ouverte',
     resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
+    isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
+    isMultiAckEnabled: 'Ack multiple',
+    isHtmlEnabledOnTimeLine: 'HTML activé dans la time line ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -208,20 +249,47 @@ export default {
       required: 'Veuillez sélectionner au moins une statistique',
     },
     yesNoMode: 'Mode Oui/Non',
-    selectAFilter: 'Selectionner un filtre',
+    selectAFilter: 'Sélectionner un filtre',
     criticityLevels: 'Niveaux de criticité',
     colorsSelector: {
       title: 'Sélecteur de couleur',
       statsCriticity: {
         [STATS_CRITICITY.ok]: 'ok',
-        [STATS_CRITICITY.minor]: 'minor',
-        [STATS_CRITICITY.major]: 'major',
-        [STATS_CRITICITY.critical]: 'critical',
+        [STATS_CRITICITY.minor]: 'mineur',
+        [STATS_CRITICITY.major]: 'majeur',
+        [STATS_CRITICITY.critical]: 'critique',
+      },
+    },
+    statsDateInterval: {
+      monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
+      quickRanges: {
+        [STATS_QUICK_RANGES.last2Days.value]: '2 derniers jours',
+        [STATS_QUICK_RANGES.last7Days.value]: '7 derniers jours',
+        [STATS_QUICK_RANGES.last30Days.value]: '30 derniers jours',
+        [STATS_QUICK_RANGES.last1Year.value]: 'Dernière année',
+        [STATS_QUICK_RANGES.yesterday.value]: 'Hier',
+        [STATS_QUICK_RANGES.previousWeek.value]: 'Dernière semaine',
+        [STATS_QUICK_RANGES.previousMonth.value]: 'Dernier mois',
+        [STATS_QUICK_RANGES.today.value]: 'Aujourd\'hui',
+        [STATS_QUICK_RANGES.todaySoFar.value]: 'Aujourd\'hui jusqu\'à maintenant',
+        [STATS_QUICK_RANGES.thisWeek.value]: 'Cette semaine',
+        [STATS_QUICK_RANGES.thisWeekSoFar.value]: 'Cette semaine jusqu\'à maintenant',
+        [STATS_QUICK_RANGES.thisMonth.value]: 'Ce mois',
+        [STATS_QUICK_RANGES.thisMonthSoFar.value]: 'Ce mois jusqu\'à maintenant',
+        [STATS_QUICK_RANGES.last1Hour.value]: 'Dernière heure',
+        [STATS_QUICK_RANGES.last3Hour.value]: '3 dernières heures',
+        [STATS_QUICK_RANGES.last6Hour.value]: '6 dernières heures',
+        [STATS_QUICK_RANGES.last12Hour.value]: '12 dernières heures',
+        [STATS_QUICK_RANGES.last24Hour.value]: '24 dernières heures',
       },
     },
     statsNumbers: {
       title: 'Cellule de stats',
       yesNoMode: 'Mode Oui/Non',
+      defaultStat: 'Défaut: Alarmes créées',
+      sortOrder: 'Sens de tri',
+      displayMode: 'Mode d\'affichage',
+      selectAColor: 'Sélectionner une couleur',
     },
     infoPopup: {
       title: 'Info popup',
@@ -253,7 +321,7 @@ export default {
       left: 'Marge - Gauche',
     },
     contextTypeOfEntities: {
-      title: 'Type d\'entitées',
+      title: 'Type d\'entité',
       fields: {
         component: 'Composant',
         connector: 'Connecteur',
@@ -263,7 +331,7 @@ export default {
     },
     statSelector: {
       error: {
-        alreadyExist: 'Une statistique avec ce nom existe déjà.',
+        alreadyExist: 'Une statistique portant ce nom existe déjà.',
       },
     },
     statsGroups: {
@@ -291,9 +359,9 @@ export default {
       title: 'Infos sur l\'entité',
     },
     createEntity: {
-      createTitle: 'Créer une entitée',
-      editTitle: 'Editer une entitée',
-      duplicateTitle: 'Dupliquer une entitée',
+      createTitle: 'Créer une entité',
+      editTitle: 'Éditer une entité',
+      duplicateTitle: 'Dupliquer une entité',
       manageInfos: {
         infosList: 'Informations',
         addInfo: 'Ajouter une information',
@@ -313,24 +381,24 @@ export default {
       },
       success: {
         create: 'Entité créée avec succès !',
-        edit: 'Entité editée avec succès !',
+        edit: 'Entité éditée avec succès !',
         duplicate: 'Entité dupliquée avec succès !',
       },
     },
     createWatcher: {
       createTitle: 'Créer un observateur',
-      editTitle: 'Editer un observateur',
+      editTitle: 'Éditer un observateur',
       duplicateTitle: 'Dupliquer un observateur',
       displayName: 'Nom',
       success: {
         create: 'Observateur créé avec succès !',
-        edit: 'Observateur edité avec succès !',
+        edit: 'Observateur édité avec succès !',
         duplicate: 'Observateur dupliqué avec succès !',
       },
     },
     addEntityInfo: {
       addTitle: 'Ajouter une information',
-      editTitle: 'Editer une information',
+      editTitle: 'Éditer une information',
     },
     view: {
       select: {
@@ -357,9 +425,13 @@ export default {
         delete: 'Vue supprimée avec succès !',
       },
       fail: {
-        create: 'Erreur dans la création de la vue...',
-        edit: 'Erreur dans l\'édition de la vue...',
-        delete: 'Erreur dans la suppression de la vue...',
+        create: 'Erreur lors de la création de la vue...',
+        edit: 'Erreur lors de  l\'édition de la vue...',
+        delete: 'Erreur lors de la suppression de la vue...',
+      },
+      errors: {
+        rightCreating: 'Erreur sur les droits de création',
+        rightRemoving: 'Erreur sur les droits de suppression',
       },
     },
     createAckEvent: {
@@ -407,6 +479,9 @@ export default {
         type: 'Type',
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
       },
+      success: {
+        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
+      },
     },
     createPause: {
       title: 'Mettre en pause',
@@ -427,16 +502,16 @@ export default {
     },
     liveReporting: {
       editLiveReporting: 'Suivi personnalisé',
-      dateInterval: 'Interval de dates',
+      dateInterval: 'Intervalle de dates',
       today: 'Aujourd\'hui',
       yesterday: 'Hier',
       last7Days: '7 derniers jours',
       last30Days: '30 derniers jours',
-      thisMonth: 'Ce mois',
-      lastMonth: 'Mois dernier',
+      thisMonth: 'Ce mois-ci',
+      lastMonth: 'Le mois dernier',
       custom: 'Personnalisé',
-      tstart: 'Démarre',
-      tstop: 'Finis',
+      tstart: 'Démarre le',
+      tstop: 'Finit le',
     },
     moreInfos: {
       moreInfos: 'Plus d\'infos',
@@ -453,14 +528,14 @@ export default {
     },
     variablesHelp: {
       variables: 'Variables',
-      copyToClipboard: 'Copier dans le Presse-papier',
+      copyToClipboard: 'Copier dans le presse-papier',
     },
     watcher: {
       criticity: 'Criticity',
-      organization: 'Organization',
+      organization: 'Organisation',
       numberOk: 'Nombre Ok',
       numberKo: 'Nombre Ko',
-      state: 'State',
+      state: 'État',
       name: 'Nom',
       org: 'Org',
       noData: 'Pas de données',
@@ -468,20 +543,22 @@ export default {
       application_crit_label: 'Criticité',
       product_line: 'Ligne produit',
       service_period: 'Plage de surveillance',
-      isInCarat: 'Cartographic repository',
+      isInCarat: 'Dépôt de la Cartographie',
       application_label: 'Description',
       target_platform: 'Environnement',
       scenario_label: 'Label',
       scenario_probe_name: 'Sonde',
-      scenario_calendar: 'Intervals d\'éxécution',
+      scenario_calendar: 'Intervalles d\'éxécution',
       actionPending: 'action(s) en attente',
+      refreshEntities: 'Refraichir la liste des entités',
+      editPbehaviors: 'Editer les pbehaviors',
     },
     filter: {
       create: {
         title: 'Créer un filtre',
       },
       edit: {
-        title: 'Editer',
+        title: 'Éditer un filtre',
       },
       fields: {
         title: 'Nom',
@@ -503,10 +580,10 @@ export default {
           title: 'Explorateur de contexte',
         },
         weather: {
-          title: 'Météo de services',
+          title: 'Météo des services',
         },
         statsHistogram: {
-          title: 'Histogramme de statistiques',
+          title: 'Histogramme des statistiques',
         },
         statsCurves: {
           title: 'Courbes de statistiques',
@@ -525,21 +602,22 @@ export default {
     manageHistogramGroups: {
       title: {
         add: 'Ajouter un groupe',
-        edit: 'Editer un groupe',
+        edit: 'Éditer un groupe',
       },
     },
     addStat: {
       title: {
         add: 'Ajouter une statistique',
-        edit: 'Editer une statistique',
+        edit: 'Éditer une statistique',
       },
+      slaRequired: "La paramètre 'SLA' est obligatoire",
     },
     group: {
       create: {
         title: 'Créer un groupe',
       },
       edit: {
-        title: 'Editer un groupe',
+        title: 'Éditer un groupe',
       },
       fields: {
         name: 'Nom',
@@ -559,18 +637,27 @@ export default {
         lastName: 'Nom',
         email: 'Email',
         password: 'Mot de passe',
+        role: 'Rôle',
         language: 'Langue de l\'interface par défaut',
         enabled: 'Actif',
       },
     },
     editUser: {
-      title: 'Editer un utilisateur',
+      title: 'Éditer un utilisateur',
     },
     createRole: {
-      title: 'Créer un role',
+      title: 'Créer un rôle ',
     },
     editRole: {
-      title: 'Editer un role',
+      title: 'Éditer un rôle',
+    },
+    createRight: {
+      title: 'Créer les droits',
+      fields: {
+        id: 'ID',
+        description: 'Description',
+        type: 'Type',
+      },
     },
     eventFilterRule: {
       create: {
@@ -582,20 +669,20 @@ export default {
         success: 'Règle créée avec succès !',
       },
       edit: {
-        title: 'Editer une règle',
+        title: 'Éditer une règle',
         success: 'Règle éditée avec succès !',
       },
       priority: 'Priorité',
-      editPattern: 'Editer le pattern',
+      editPattern: 'Éditer le pattern',
       advanced: 'Avancée',
       addAField: 'Ajouter un champ',
-      simpleEditor: 'Editeur simple',
+      simpleEditor: 'Éditeur simple',
       field: 'Champ',
       value: 'Valeur',
-      advancedEditor: 'Editeur avancé',
+      advancedEditor: 'Éditeur avancé',
       comparisonRules: 'Règles de comparaison',
       enrichmentOptions: 'Options d\'enrichissement',
-      editActions: 'Editer les actions',
+      editActions: 'Éditer les actions',
       addAction: 'Ajouter une action',
       actions: 'Actions',
       from: 'Depuis',
@@ -609,17 +696,36 @@ export default {
         title: 'Ajouter un onglet',
       },
       edit: {
-        title: 'Editer l\'onglet',
+        title: 'Éditer l\'onglet',
       },
       fields: {
         title: 'Titre',
+      },
+    },
+    createWebhook: {
+      create: {
+        title: 'Créer un webhook',
+        success: 'Webhook créé avec succès !',
+      },
+      edit: {
+        title: 'Edit webhook',
+        success: 'Webhook edité avec succès !',
+      },
+      remove: {
+        success: 'Webhook supprimé avec succès !',
+      },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
       },
     },
   },
   tables: {
     noData: 'Aucune donnée',
     contextList: {
-      title: 'Liste Context',
+      title: 'Liste Contexte',
       name: 'Nom',
       type: 'Type',
       id: 'Id',
@@ -631,12 +737,12 @@ export default {
       connectorName: 'Nom du connecteur',
       component: 'Composant',
       resource: 'Ressource',
-      output: 'Output',
+      output: 'Message',
       lastUpdateDate: 'Date de dernière modification',
       creationDate: 'Date de création',
       duration: 'Durée',
       state: 'État',
-      status: 'Status',
+      status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
     /**
@@ -649,7 +755,7 @@ export default {
       connectorName: 'Nom du connecteur',
       enabled: 'Actif',
       tstart: 'Démarre',
-      tstop: 'Finis',
+      tstop: 'Finit',
       type_: 'Type',
       reason: 'Raison',
       rrule: 'Rrule',
@@ -667,9 +773,9 @@ export default {
     },
     alarmStates: {
       [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Minor',
-      [ENTITIES_STATES.major]: 'Major',
-      [ENTITIES_STATES.critical]: 'Critical',
+      [ENTITIES_STATES.minor]: 'Mineur',
+      [ENTITIES_STATES.major]: 'Majeur',
+      [ENTITIES_STATES.critical]: 'Critique',
     },
     contextEntities: {
       columns: {
@@ -685,7 +791,7 @@ export default {
       users: {
         columns: {
           username: 'Nom d\'utilisateur',
-          role: 'Role',
+          role: 'Rôle',
           enabled: 'Actif',
         },
       },
@@ -700,43 +806,43 @@ export default {
       advanced: 'Avancé',
     },
     errors: {
-      main: 'La Rrule choisis n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
+      main: 'La Rrule choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
     },
     fields: {
       freq: 'Fréquence',
       until: 'Jusqu\'à',
       byweekday: 'Par jour de la semaine',
       count: 'Répéter',
-      interval: 'Interval',
+      interval: 'Intervalle',
       wkst: 'Semaine de début',
       bymonth: 'Par mois',
       bysetpos: {
         label: 'Par position',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la n-ième occurence de la règle dans l\'interval de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (Lundi, Mardi, Mercredi, Jeudi, Vendredi), va nous donner le dernier jour travaillé de chaque mois',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (Lundi, Mardi, Mercredi, Jeudi, Vendredi), va nous donner le dernier jour travaillé de chaque mois',
       },
       bymonthday: {
         label: 'Par jour du mois',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours du mois auxquels s\'appliquera la récurrence.',
       },
       byyearday: {
         label: 'Par jour de l\'année',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux jours de l\'année auxquels  s\'appliquera la récurrence.',
       },
       byweekno: {
         label: 'Par semaine n°',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine a laquelle appliquer la récurrence. Les numéros de semaines sont ceux de ISO8601, la première semaine de l\'année étant celle contenant au moins 4 jours de cette année',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux numéros de semaine auxquelles s\'appliquera la récurrence. Les numéros de semaines sont ceux de ISO8601, la première semaine de l\'année étant celle contenant au moins 4 jours de cette année.',
       },
       byhour: {
         label: 'Par heure',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux heures auxquelles s\'appliquera la récurrence.',
       },
       byminute: {
         label: 'Par minute',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux minutes auxquelles s\'appliquera la récurrence.',
       },
       bysecond: {
         label: 'Par seconde',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auquel appliquer la récurrence.',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, correspondant aux secondes auxquelles s\'appliquera la récurrence.',
       },
     },
   },
@@ -801,6 +907,7 @@ export default {
       [STATS_TYPES.alarmsCreated.value]: 'Alarmes créées',
       [STATS_TYPES.alarmsResolved.value]: 'Alarmes résolues',
       [STATS_TYPES.alarmsCanceled.value]: 'Alarmes annulées',
+      [STATS_TYPES.alarmsAcknowledged.value]: 'Alarmes acquittées',
       [STATS_TYPES.ackTimeSla.value]: 'Taux d\'Ack conforme Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Taux de résolution conforme Sla',
       [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
@@ -809,6 +916,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Etat courant',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Nombre d\'alarmes non acquittées actuellement en cours',
     },
   },
   eventFilter: {
@@ -818,7 +927,15 @@ export default {
     priority: 'Priorité',
     enabled: 'Activé',
     actions: 'Actions',
+    externalDatas: 'Données externes',
     actionsRequired: 'Veuillez ajouter au moins une action',
+    id: 'Id',
+    idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+  },
+  snmpRules: {
+    title: 'Règles SNMP',
+    uploadMib: 'Télécharger un fichier MIB',
+    addSnmpRule: 'Ajouter une règle SNMP',
   },
   layout: {
     sideBar: {
@@ -830,12 +947,12 @@ export default {
     },
   },
   parameters: {
-    interfaceLanguage: 'Langage de l\'interface',
+    interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {
       title: 'Type d\'affichage de la barre de vues',
       items: {
         sideBar: 'Barre latérale',
-        topBar: 'Barre en haut de la page',
+        topBar: 'Barre d\'entête',
       },
     },
   },
@@ -845,5 +962,74 @@ export default {
     },
     deleteRow: 'Supprimer la ligne',
     deleteWidget: 'Supprimer le widget',
+    fullScreen: 'Plein écran',
+    fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+  },
+  patternsList: {
+    noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',
+    noDataDisabled: 'Aucun pattern.',
+  },
+  webhook: {
+    title: 'Webhooks',
+    disableIfActivePbehavior: 'Désactivé si un pbehavior est actif',
+    table: {
+      headers: {
+        id: 'ID',
+        requestMethod: 'Requête: Méthode',
+        requestUrl: 'Requête: URL',
+      },
+    },
+    tabs: {
+      hook: {
+        title: 'Hook',
+        fields: {
+          triggers: 'Triggers',
+          eventPatterns: 'Patterns des événements',
+          alarmPatterns: 'Patterns des alarmes',
+          entityPatterns: 'Pattern des entités',
+        },
+      },
+      request: {
+        title: 'Requête',
+        fields: {
+          method: 'Méthode',
+          url: 'URL',
+          authSwitch: 'Authentification ?',
+          auth: 'Auth',
+          username: 'Nom d\'utilisateur',
+          password: 'Mot de passe',
+          headers: 'Headers',
+          headerKey: 'Clé',
+          headerValue: 'Valeur',
+          payload: 'Payload',
+        },
+      },
+      declareTicket: {
+        title: 'Déclarer un ticket',
+        fields: {
+          text: 'Clé',
+          value: 'Valeur',
+        },
+      },
+    },
+  },
+  validation: {
+    custom: {
+      tstop: {
+        after: '{0} Devrait être après le {1}',
+      },
+    },
+  },
+  home: {
+    popups: {
+      info: {
+        noAccessToDefaultView: 'Accès refusé à la vue par défaut. Redirection vers la vue par défaut de votre rôle.',
+        notSelectedRoleDefaultView: 'Pas de vue par défaut sélectionnée pour votre rôle.',
+        noAccessToRoleDefaultView: 'Accès refusé à la vue par défaut de votre rôle.',
+      },
+    },
+  },
+  serviceWeather: {
+    seeAlarms: 'Voir les alarmes',
   },
 };

@@ -1,7 +1,7 @@
 import { omit, isEqual, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import Pagination from '@/components/tables/pagination.vue';
+import { SORT_ORDERS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import dateIntervals from '@/helpers/date-intervals';
@@ -11,9 +11,6 @@ import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/qu
  * @mixin Add query logic
  */
 export default {
-  components: {
-    Pagination,
-  },
   mixins: [queryMixin, entitiesUserPreferenceMixin],
   props: {
     tabId: {
@@ -33,7 +30,7 @@ export default {
 
     vDataTablePagination: {
       get() {
-        const descending = this.query.sortDir !== null ? this.query.sortDir === 'DESC' : null;
+        const descending = this.query.sortDir !== null ? this.query.sortDir === SORT_ORDERS.desc : null;
 
         return { sortBy: this.query.sortKey, descending };
       },
@@ -45,7 +42,7 @@ export default {
           this.query = {
             ...this.query,
             sortKey: value.sortBy,
-            sortDir: value.descending ? 'DESC' : 'ASC',
+            sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
           };
         }
       },

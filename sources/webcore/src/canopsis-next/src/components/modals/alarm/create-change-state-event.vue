@@ -7,18 +7,7 @@
       v-card-text
         v-container
           v-layout(row)
-            v-btn-toggle(
-            v-model="form.state",
-            v-validate="'required'",
-            data-vv-name="state"
-            )
-              v-btn(
-              v-for="button in buttons",
-              :key="button",
-              :value="states[button]",
-              :color="colorsMap[states[button]]",
-              depressed
-              ) {{ $t(`modals.createChangeStateEvent.states.${button}`) }}
+            state-criticity-field(v-model="form.state", :stateValues="availableStateValues")
           v-layout.mt-4(row)
             v-text-field(
             :label="$t('modals.createChangeStateEvent.fields.output')",
@@ -34,9 +23,14 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
+import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+
+import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 /**
  * Modal to create a 'change-state' event
@@ -47,29 +41,19 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  components: { StateCriticityField },
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
       form: {
         output: '',
-        state: this.$constants.ENTITIES_STATES.ok,
+        state: ENTITIES_STATES.major,
       },
     };
   },
   computed: {
-    buttons() {
-      return Object.keys(this.$constants.ENTITIES_STATES);
-    },
-    states() {
-      return this.$constants.ENTITIES_STATES;
-    },
-    colorsMap() {
-      return {
-        [this.$constants.ENTITIES_STATES.ok]: 'green',
-        [this.$constants.ENTITIES_STATES.minor]: 'yellow',
-        [this.$constants.ENTITIES_STATES.major]: 'orange',
-        [this.$constants.ENTITIES_STATES.critical]: 'error',
-      };
+    availableStateValues() {
+      return omit(ENTITIES_STATES, ['ok']);
     },
   },
   mounted() {
@@ -80,7 +64,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.changeState, this.items, this.form);
+        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
 
         this.hideModal();
       }

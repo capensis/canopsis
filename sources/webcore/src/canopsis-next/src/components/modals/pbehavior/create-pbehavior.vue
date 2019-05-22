@@ -1,74 +1,129 @@
 <template lang="pug">
-  pbehavior-form(
-  :server-error="serverError",
-  :filter="filter",
-  @submit="submit",
-  @cancel="hideModal",
-  )
+  v-card
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t('modals.createPbehavior.title') }}
+    v-card-text
+      pbehavior-form(v-model="form")
+      pbehavior-exdates-form.mt-2(v-show="form.rrule", v-model="exdate")
+      pbehavior-comments-form.mt-2(v-model="comments")
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import moment from 'moment';
+import { cloneDeep, omit, isObject } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import uid from '@/helpers/uid';
 
-import PbehaviorForm from '@/components/forms/pbehavior.vue';
+import authMixin from '@/mixins/auth';
+import modalInnerMixin from '@/mixins/modal/inner';
 
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
+import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
+import PbehaviorExdatesForm from '@/components/other/pbehavior/form/pbehavior-exdates-form.vue';
+import PbehaviorCommentsForm from '@/components/other/pbehavior/form/pbehavior-comments-form.vue';
 
-/**
- * Modal to create a pbehavior
- */
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PbehaviorForm },
-  mixins: [modalInnerItemsMixin],
-  data() {
-    return {
-      serverError: null,
-    };
-  },
-  computed: {
-    forEntities() {
-      return this.config.itemsIds && this.config.itemsType;
-    },
+  filters: {
+    pbehaviorToForm(pbehavior = {}) {
+      let rrule = pbehavior.rrule || null;
 
-    filter() {
-      if (this.forEntities) {
-        return {
-          _id: { $in: this.items.map(v => v._id) },
-        };
+      if (pbehavior.rrule && isObject(pbehavior.rrule)) {
+        ({ rrule } = pbehavior.rrule);
       }
 
-      return null;
+      return {
+        author: pbehavior.author || '',
+        name: pbehavior.name || '',
+        tstart: pbehavior.tstart ? new Date(pbehavior.tstart * 1000) : new Date(),
+        tstop: pbehavior.tstop ? new Date(pbehavior.tstop * 1000) : new Date(),
+        filter: cloneDeep(pbehavior.filter || {}),
+        type_: pbehavior.type_ || '',
+        reason: pbehavior.reason || '',
+        rrule,
+      };
+    },
+
+    pbehaviorToComments(pbehavior = {}) {
+      const comments = pbehavior.comments || [];
+
+      return comments.map(comment => ({
+        ...comment,
+
+        key: uid(),
+      }));
+    },
+
+    pbehaviorToExdate(pbehavior = {}) {
+      const exdate = pbehavior.exdate || [];
+
+      return exdate.map(unix => ({
+        value: new Date(unix * 1000),
+        key: uid(),
+      }));
+    },
+
+    formToPbehavior(form) {
+      return {
+        ...form,
+
+        comments: [],
+        tstart: moment(form.tstart).unix(),
+        tstop: moment(form.tstop).unix(),
+      };
+    },
+
+    commentsToPbehaviorComments(comments) {
+      return comments.map(comment => omit(comment, ['key', 'ts']));
+    },
+
+    exdateToPbehaviorExdate(exdate) {
+      return exdate.filter(({ value }) => value).map(({ value }) => moment(value).unix());
     },
   },
+  components: {
+    PbehaviorForm,
+    PbehaviorExdatesForm,
+    PbehaviorCommentsForm,
+  },
+  mixins: [authMixin, modalInnerMixin],
+  data() {
+    const { pbehavior = {} } = this.modal.config;
+
+    return {
+      form: this.$options.filters.pbehaviorToForm(pbehavior),
+      exdate: this.$options.filters.pbehaviorToExdate(pbehavior),
+      comments: this.$options.filters.pbehaviorToComments(pbehavior),
+    };
+  },
   methods: {
-    ...pbehaviorMapActions({ createPbehavior: 'create' }),
+    async submit() {
+      const isValid = await this.$validator.validateAll();
 
-    async submit(data) {
-      try {
-        this.serverError = null;
+      if (isValid) {
+        const pbehavior = this.$options.filters.formToPbehavior(this.form);
 
-        const payload = { data };
+        pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.comments);
+        pbehavior.exdate = this.$options.filters.exdateToPbehaviorExdate(this.exdate);
 
-        if (this.forEntities) {
-          payload.parents = this.items;
-          payload.parentsType = this.config.itemsType;
+        if (!pbehavior.author) {
+          pbehavior.author = this.currentUser._id;
         }
 
-        await this.createPbehavior(payload);
+        if (this.config.action) {
+          await this.config.action(pbehavior);
+        }
 
         this.hideModal();
-      } catch (err) {
-        if (err.description) {
-          this.serverError = err.description;
-        }
       }
     },
   },

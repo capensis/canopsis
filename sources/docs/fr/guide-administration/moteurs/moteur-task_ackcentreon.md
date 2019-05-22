@@ -7,15 +7,12 @@ Le moteur `task_ackcentreon` permet de *descendre* les ACK positionnés depuis C
 
 Ainsi, lorsqu'un ACK est posé sur Canopsis, l'information est *répliquée* sur le Poller Centreon qui avait généré l'alarme. En utilisation conjointe du [connecteur Centreon](../../guide-connecteurs/Supervision/Centreon.md), la communication est bi-directionnelle.
 
-!!! attention
-    Cette procédure nécessite l'utilisation d'une UIv3 sur un Canopsis ⩾ 3.6.0.
-
 ## Fonctionnement
 
 Voici les différentes étapes permettant d'obtenir le résultat souhaité :
 
 *  Un ACK est posé ou retiré depuis Canopsis
-*  Le moteur [`event_filter`](moteur-event_filter.md) est configuré pour exécuter un job
+*  Le moteur [`event_filter`] (**Python**) est configuré pour exécuter un job
 *  Le job `ackcentreon` est exécuté et suit les étapes suivantes :
     *  Connexion SSH vers le serveur Centreon Central
     *  Demande d'informations via CLAPI (ID du poller qui a généré l'alarme à l'origine)
@@ -67,11 +64,14 @@ Renseignez ensuite les informations demandées :
 *  Chemin CLAPI
 *  Authentification CLAPI
 
-### Ajout d'une règle dans l'Event Filter
+### Ajout d'une règle dans l'event\_filter Python
 
 Le moteur `event_filter` (Python) doit exécuter le job `ack_centreon` lorsqu'il reçoit un évènement de type `ack` ou `ackremove` (pause et suppression d'un ACK).
 
-Il faut, pour cela, [créer une règle d'`event_filter`](moteur-event_filter.md) avec le filtre suivant :
+!!! note
+    Le moteur `event_filter` Python est requis pour `task_ackcentreon`, même dans un environnement Go.
+
+Il faut, pour cela, créer une règle d'`event_filter` Python, avec le filtre suivant :
 
 ```json
 {
@@ -142,7 +142,7 @@ Sur un nœud frontend Canopsis, créer un fichier `enrichentity.json` :
 }
 ```
 
-Cette règle est à envoyer à l'API `eventfilter` de cette manière (adapter les identifiants Canopsis, l'URL et le nom du fichier JSON si nécessaire) :
+Cette règle est à envoyer à l'API `eventfilter` **Go** de cette manière (adapter les identifiants Canopsis, l'URL et le nom du fichier JSON si nécessaire) :
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d @enrichentity.json 'http://localhost:8082/api/v2/eventfilter/rules'

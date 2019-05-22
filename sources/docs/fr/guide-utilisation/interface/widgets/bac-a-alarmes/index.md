@@ -178,6 +178,20 @@ Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix roug
 
 Dans la liste des colonnes sont égalements présentes, pour chaque colonne, des flèches permettant de modifier l'ordre des colonnes. Les colonnes sont présentées dans l'ordre de haut en bas. Pour modifier la place d'une colonne, cliquez sur une des flèches. Pour faire monter/descendre une colonne dans la liste.
 
+Enfin, une option est présente pour chaque colonne, permettant d'activer (ou non) l'interprétation HTML de la valeur présente dans cette colonne.
+
+Exemple: Vous souhaitez afficher la valeur du champ ```output``` des alarmes. Vous ajoutez donc une colonne ayant pour valeur ```alarm.v.output```. Ce champ a pour valeur ```<p style="color: red;">Exemple d'output</p>```. Si l'option ```HTML``` est desactivée, la valeur du champ sera affichée telle quelle. Si elle est activée, le code HTML sera alors interprété.
+
+Il est à noter que seuls certaines balises et attributs sont autorisés dans les colonnes du Bac à alarmes.
+
+- Balises autorisées: ```h3, h4, h5, h6, blockquote, p, a, ul, ol, nl, li, b, i, strong, em, strike, code, hr, br, div, table, thead, caption, tbody, tr, th, td, pre, iframe, span, font, u```
+  
+- Attributs autorisées : 
+    - Pour toutes les balises: ```style```
+    - Pour les balises ```a```: ```href, name, target```
+    - Pour les balises ```img```: ```src, alt```
+    - Pour les balises ```font```: ```color, size, face```
+
 ##### Nombre d'éléments par page par défaut
 
 Ce paramètre permet de définir combien d'éléments seront affichés, par défaut, pour chaque page du bac à alarmes.

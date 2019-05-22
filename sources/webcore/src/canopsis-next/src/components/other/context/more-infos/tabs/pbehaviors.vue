@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.secondary.lighten-2(flat)
     v-card-text
-      v-data-table.ma-0.pbehaviorsTable(:items="pbehaviors", :headers="pbehaviorsTableHeaders")
+      v-data-table.ma-0.pbehaviorsTable(:items="pbehaviors", :headers="headers")
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
@@ -18,26 +18,57 @@
           td {{ props.item.reason }}
           td {{ props.item.rrule }}
           td
-            v-btn(@click="deletePbehavior(props.item._id)", icon, small)
-              v-icon(color="error") delete
+            template(v-if="hasAccessToDeletePbehavior")
+              v-btn(
+              icon,
+              small,
+              @click.stop="showEditPbehaviorModal(props.item)"
+              )
+                v-icon edit
+              v-btn(
+              icon,
+              small,
+              @click="showDeletePbehaviorModal(props.item._id)"
+              )
+                v-icon(color="error") delete
 </template>
 
 <script>
+import { MODALS, USERS_RIGHTS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
-import pbehaviorEntityMixin from '@/mixins/entities/pbehavior';
-import { MODALS } from '@/constants';
+import popupMixin from '@/mixins/popup';
+import queryMixin from '@/mixins/query';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
-  mixins: [modalMixin, pbehaviorEntityMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    popupMixin,
+    queryMixin,
+    entitiesPbehaviorMixin,
+    entitiesPbehaviorCommentMixin,
+  ],
   props: {
     itemId: {
       type: String,
       required: true,
     },
+    tabId: {
+      type: String,
+      required: true,
+    },
   },
-  data() {
-    return {
-      pbehaviorsTableHeaders: [
+  computed: {
+    hasAccessToDeletePbehavior() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.pbehaviorDelete);
+    },
+
+    headers() {
+      return [
         {
           text: this.$t('common.name'),
           sortable: false,
@@ -82,30 +113,57 @@ export default {
           text: this.$t('common.actionsLabel'),
           sortable: false,
         },
-      ],
-    };
+      ];
+    },
+
+    queryNonce() {
+      return this.getQueryNonceById(this.tabId);
+    },
+  },
+  watch: {
+    queryNonce(value, oldValue) {
+      if (value > oldValue) {
+        this.fetchList();
+      }
+    },
   },
   mounted() {
-    this.fetchItems();
+    this.fetchList();
   },
   methods: {
-    async deletePbehavior(itemId) {
+    showEditPbehaviorModal(pbehavior) {
       this.showModal({
-        name: MODALS.confirmation,
+        name: MODALS.createPbehavior,
         config: {
-          action: async () => {
-            await this.removePbehavior({ id: itemId });
-            await this.fetchItems();
+          pbehavior,
+
+          action: async (data) => {
+            const { comments, ...preparedData } = data;
+
+            await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
+            await this.updateSeveralPbehaviorComments({ pbehavior, comments });
+
+            this.fetchList();
+            this.addSuccessPopup({ text: this.$t('success.default') });
           },
         },
       });
     },
-    async fetchItems() {
-      await this.fetchPbehaviorsByEntityId({ id: this.itemId });
 
-      if (this.pbehaviorItems) {
-        this.items = [...this.pbehaviorItems];
-      }
+    showDeletePbehaviorModal(pbehaviorId) {
+      this.showModal({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removePbehavior({ id: pbehaviorId });
+
+            this.fetchList();
+          },
+        },
+      });
+    },
+    fetchList() {
+      this.fetchPbehaviorsByEntityId({ id: this.itemId });
     },
   },
 };

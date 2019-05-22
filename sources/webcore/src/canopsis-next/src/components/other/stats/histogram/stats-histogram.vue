@@ -1,33 +1,56 @@
+<template lang="pug">
+  div.stats-wrapper
+    progress-overlay(:pending="pending")
+    stats-histogram-chart(:labels="labels", :datasets="datasets", :options="options")
+</template>
+
 <script>
-import { Bar } from 'vue-chartjs';
+import { get } from 'lodash';
+
+import { STATS_DEFAULT_COLOR } from '@/constants';
+
+import entitiesStatsMixin from '@/mixins/entities/stats';
+import widgetQueryMixin from '@/mixins/widget/query';
+import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
+
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
+import StatsHistogramChart from './stats-histogram-chart.vue';
 
 export default {
-  extends: Bar,
-  props: {
-    labels: {
-      type: Array,
-    },
-    datasets: {
-      type: Array,
-    },
+  components: {
+    ProgressOverlay,
+    StatsHistogramChart,
   },
+  mixins: [
+    entitiesStatsMixin,
+    widgetQueryMixin,
+    entitiesUserPreferenceMixin,
+    widgetStatsChartWrapperMixin,
+  ],
   computed: {
-    chartData() {
-      return {
-        labels: this.labels,
-        datasets: this.datasets,
-      };
-    },
-  },
-  watch: {
-    chartData(value, oldValue) {
-      if (value !== oldValue) {
-        this.renderChart(value);
+    datasets() {
+      if (this.stats) {
+        return Object.keys(this.stats).reduce((acc, stat) => {
+          acc.push({
+            label: stat,
+            data: this.stats[stat].sum.map(value => value.value),
+            backgroundColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
+          });
+
+          return acc;
+        }, []);
       }
+
+      return [];
     },
-  },
-  mounted() {
-    this.renderChart(this.chartData);
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .stats-wrapper {
+    position: relative;
+  }
+</style>

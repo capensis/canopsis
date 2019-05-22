@@ -2,11 +2,15 @@
 
 # Push docker images
 
+if [ -z "${push_go}" ] ; then
 echo -n "Push Go images [y/N]: "
 read push_go
+fi
 
+if [ -z "${push_pe}" ] ; then
 echo -n "Push PE images too [y/N]: "
 read push_pe
+fi
 
 if [ "${CANOPSIS_TAG}" = "" ]; then
     echo "No canopsis package tag specified ; using develop..."

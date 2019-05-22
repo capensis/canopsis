@@ -4,15 +4,26 @@
       v-flex
         alarm-list-search(:query.sync="query")
       v-flex
-        pagination(v-if="hasColumns", :meta="alarmsMeta", :query.sync="query", type="top")
+        pagination(
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="alarmsMeta.total",
+        type="top",
+        @input="updateQueryPage"
+        )
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
-        :items="viewFilters",
+        :filters="viewFilters",
+        :lockedFilters="widgetViewFilters"
         :value="mainFilter",
         :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
         @input="updateSelectedFilter",
-        @update:condition="updateSelectedCondition"
+        @update:condition="updateSelectedCondition",
+        @update:filters="updateFilters"
         )
       v-flex
         v-chip.primary.white--text(
@@ -24,7 +35,7 @@
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
-        mass-actions-panel(:itemsIds="selectedIds")
+        mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -48,7 +59,7 @@
         template(slot="items", slot-scope="props")
           tr
             td
-              v-checkbox(primary, hide-details, v-model="props.selected")
+              v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
             v-for="column in columns",
             @click="props.expanded = !props.expanded"
@@ -57,13 +68,18 @@
             td
               actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item")
+          time-line(:alarmProps="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="alarmsMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total",
+          @input="updateQueryPage"
+          )
         v-spacer
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
@@ -84,7 +100,9 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 
@@ -113,7 +131,9 @@ export default {
     modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
     widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
   ],
@@ -155,6 +175,10 @@ export default {
 
     hasAccessToEditFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
   methods: {

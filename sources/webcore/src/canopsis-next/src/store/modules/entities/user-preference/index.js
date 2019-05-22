@@ -18,7 +18,7 @@ export default {
   getters: {
     getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
       const currentUser = rootGetters['auth/currentUser'];
-      const id = `${widget._id}_${currentUser.crecord_name}`;
+      const id = `${widget._id}_${currentUser._id}`;
       const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, id);
 
       if (!userPreference) {
@@ -77,9 +77,9 @@ export default {
         params: {
           limit: 1,
           filter: {
-            crecord_name: currentUser.crecord_name,
+            crecord_name: currentUser._id,
             widget_id: widgetId,
-            _id: `${widgetId}_${currentUser.crecord_name}`,
+            _id: `${widgetId}_${currentUser._id}`,
           },
         },
       });
@@ -96,9 +96,9 @@ export default {
       const params = {
         limit: 1,
         filter: {
-          crecord_name: currentUser.crecord_name,
+          crecord_name: currentUser._id,
           widget_id: widgetId,
-          _id: `${widgetId}_${currentUser.crecord_name}`,
+          _id: `${widgetId}_${currentUser._id}`,
         },
       };
 

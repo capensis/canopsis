@@ -16,42 +16,72 @@
                 v-icon(small) {{ icon.icon }}
         v-card(color="white black--text")
           v-card-text
-            v-layout(row, align-center)
-              div {{ $t('common.actionsLabel') }}:
-              div(v-for="action in availableActions", :key="action.name")
-                v-btn(
-                @click.stop="action.action(action.name)",
-                :disabled="!isActionBtnEnable(action.name)",
-                depressed,
-                small,
-                light,
-                )
-                  v-icon {{ action.icon }}
-            div(v-html="compiledTemplate")
+            v-layout(justify-space-between)
+              v-flex(xs11)
+                v-layout(justify-space-between)
+                  v-layout(v-if="availableActions.length", row, align-center)
+                    div {{ $t('common.actionsLabel') }}:
+                    div(v-for="action in availableActions", :key="action.eventType")
+                      v-tooltip(top)
+                        v-btn(
+                        slot="activator",
+                        @click.stop="action.action",
+                        :disabled="!isActionBtnEnable(action.eventType)",
+                        depressed,
+                        small,
+                        light,
+                        )
+                          v-icon {{ action.icon }}
+                        span {{ $t(`common.actions.${action.eventType}`) }}
+              v-tooltip(v-if="hasActivePbehavior && hasAccessToManagePbehaviors", top)
+                v-btn(small, @click="showPbehaviorsListModal", slot="activator")
+                  v-icon(small) edit
+                span {{ $t('modals.watcher.editPbehaviors') }}
+            entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
-import { find } from 'lodash';
+import { find, isNull, pickBy } from 'lodash';
 
 import {
+  CRUD_ACTIONS,
   MODALS,
   WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
   WEATHER_ICONS,
-  WEATHER_ACK_EVENT_OUTPUT,
   EVENT_ENTITY_STYLE,
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
   PBEHAVIOR_TYPES,
+  WIDGETS_ACTIONS_TYPES,
+  USERS_RIGHTS,
+  ENTITIES_STATUSES,
 } from '@/constants';
-import { compile } from '@/helpers/handlebars';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
-import weatherEventsMixin from '@/mixins/weather-event-actions';
+import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
+
+import EntityTemplate from './entity-template.vue';
 
 export default {
-  mixins: [modalMixin, weatherEventsMixin],
+  components: {
+    EntityTemplate,
+  },
+  mixins: [
+    authMixin,
+    modalMixin,
+    widgetActionPanelWatcherEntityMixin,
+    entitiesPbehaviorCommentMixin,
+    entitiesWatcherEntityMixin,
+  ],
   props: {
+    watcherId: {
+      type: String,
+      required: true,
+    },
     entity: {
       type: Object,
       required: true,
@@ -63,48 +93,67 @@ export default {
     template: {
       type: String,
     },
+    isWatcherOnPbehavior: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
+    const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
     return {
+      menu: false,
       state: this.entity.state.val,
       actionsClicked: [],
-      actions: [
-        {
-          name: EVENT_ENTITY_TYPES.ack,
+      actionsMap: {
+        ack: {
+          type: weatherActionsTypes.entityAck,
+          eventType: EVENT_ENTITY_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           action: this.prepareAckAction,
         },
-        {
-          name: EVENT_ENTITY_TYPES.declareTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
-          action: this.prepareDeclareTicketAction,
+        assocTicket: {
+          type: weatherActionsTypes.entityAssocTicket,
+          eventType: EVENT_ENTITY_TYPES.assocTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          action: this.prepareAssocTicketAction,
         },
-        {
-          name: EVENT_ENTITY_TYPES.validate,
+        validate: {
+          type: weatherActionsTypes.entityValidate,
+          eventType: EVENT_ENTITY_TYPES.validate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.validate].icon,
           action: this.prepareValidateAction,
         },
-        {
-          name: EVENT_ENTITY_TYPES.invalidate,
+        invalidate: {
+          type: weatherActionsTypes.entityInvalidate,
+          eventType: EVENT_ENTITY_TYPES.invalidate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.invalidate].icon,
           action: this.prepareInvalidateAction,
         },
-        {
-          name: EVENT_ENTITY_TYPES.pause,
+        pause: {
+          type: weatherActionsTypes.entityPause,
+          eventType: EVENT_ENTITY_TYPES.pause,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pause].icon,
           action: this.preparePauseAction,
         },
-        {
-          name: EVENT_ENTITY_TYPES.play,
+        play: {
+          type: weatherActionsTypes.entityPlay,
+          eventType: EVENT_ENTITY_TYPES.play,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
           action: this.preparePlayAction,
         },
-      ],
+        cancel: {
+          type: weatherActionsTypes.entityCancel,
+          eventType: EVENT_ENTITY_TYPES.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          action: this.prepareCancelAction,
+        },
+      },
     };
   },
   computed: {
     color() {
-      if (this.hasActivePbehavior) {
+      if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
         return WATCHER_PBEHAVIOR_COLOR;
       }
 
@@ -153,6 +202,13 @@ export default {
         });
       }
 
+      if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
+        extraIcons.push({
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          color: 'grey darken-1',
+        });
+      }
+
       return extraIcons;
     },
 
@@ -164,97 +220,67 @@ export default {
       return this.entity.pbehavior.filter(value => value.isActive).length;
     },
 
-    compiledTemplate() {
-      return compile(this.template, { entity: this.entity });
-    },
-
     isPaused() {
       return this.entity.pbehavior.some(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
     },
 
+    filteredActionsMap() {
+      return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
+    },
+
     availableActions() {
-      return this.actions.filter((action) => {
-        if (
-          this.entity.state.val !== ENTITIES_STATES.major &&
-          (action.name === EVENT_ENTITY_TYPES.invalidate || action.name === EVENT_ENTITY_TYPES.validate)
-        ) {
-          return false;
-        }
+      const { filteredActionsMap } = this;
+      const actions = [];
 
-        if (
-          (this.entity.state === ENTITIES_STATES.ok || this.entity.ack !== null) &&
-          action.name === EVENT_ENTITY_TYPES.ack
-        ) {
-          return false;
-        }
+      if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
+        actions.push(filteredActionsMap.ack);
+      }
 
-        if (this.isPaused && action.name === EVENT_ENTITY_TYPES.pause) {
-          return false;
-        }
+      actions.push(filteredActionsMap.assocTicket);
 
-        if (!this.isPaused && action.name === EVENT_ENTITY_TYPES.play) {
-          return false;
-        }
+      if (this.entity.state.val === ENTITIES_STATES.major) {
+        actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
+      }
 
-        return true;
-      });
+      if (this.isPaused) {
+        actions.push(filteredActionsMap.play);
+      } else {
+        actions.push(filteredActionsMap.pause);
+      }
+
+      if (
+        this.entity.alarm_display_name &&
+        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
+      ) {
+        actions.push(filteredActionsMap.cancel);
+      }
+
+      return actions.filter(action => !!action);
     },
 
     isActionBtnEnable() {
       return action => !this.actionsClicked.includes(action);
     },
+
+    pausePbehaviors() {
+      return this.entity.pbehavior.filter(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
+    },
+
+    hasAccessToManagePbehaviors() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.entityManagePbehaviors);
+    },
   },
-
   methods: {
-    prepareAckAction() {
-      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-      this.actionsClicked.push(EVENT_ENTITY_TYPES.ack);
-    },
-
-    prepareDeclareTicketAction() {
+    showPbehaviorsListModal() {
       this.showModal({
-        name: MODALS.createWatcherDeclareTicketEvent,
+        name: MODALS.pbehaviorList,
         config: {
-          action: (ticket) => {
-            this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-            this.addDeclareTicketActionToQueue({ entity: this.entity, ticket });
-            this.actionsClicked.push(EVENT_ENTITY_TYPES.declareTicket);
-          },
+          pbehaviors: this.pausePbehaviors,
+          entityId: this.entity.entity_id,
+          onlyActive: true,
+          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
-    },
-
-    prepareValidateAction() {
-      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk });
-      this.addValidateActionToQueue({ entity: this.entity });
-      this.actionsClicked.push(EVENT_ENTITY_TYPES.validate);
-    },
-
-    prepareInvalidateAction() {
-      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-      this.addInvalidateActionToQueue({ entity: this.entity });
-      this.actionsClicked.push(EVENT_ENTITY_TYPES.invalidate);
-    },
-
-    preparePauseAction() {
-      this.showModal({
-        name: MODALS.createWatcherPauseEvent,
-        config: {
-          action: (pause) => {
-            this.addPauseActionToQueue({
-              entity: this.entity,
-              comment: pause.comment,
-              reason: pause.reason,
-            });
-            this.actionsClicked.push(EVENT_ENTITY_TYPES.pause);
-          },
-        },
-      });
-    },
-
-    preparePlayAction() {
-      this.addPlayActionToQueue({ entity: this.entity });
-      this.actionsClicked.push(EVENT_ENTITY_TYPES.play);
     },
   },
 };
@@ -276,5 +302,9 @@ export default {
 
   .entityName {
     line-height: 1.5em;
+  }
+
+  .pbehavior {
+    cursor: pointer;
   }
 </style>

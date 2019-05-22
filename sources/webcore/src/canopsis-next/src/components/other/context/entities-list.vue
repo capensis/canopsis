@@ -4,18 +4,29 @@
       v-flex
         context-search(:query.sync="query")
       v-flex
-        pagination(v-if="hasColumns", :meta="contextEntitiesMeta", :query.sync="query", type="top")
+        pagination(
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="contextEntitiesMeta.total",
+        type="top",
+        @input="updateQueryPage"
+        )
       v-flex(v-if="hasAccessToListFilters")
         filter-selector(
         :label="$t('settings.selectAFilter')",
-        :items="viewFilters",
+        :filters="viewFilters",
+        :lockedFilters="widgetViewFilters",
         :value="mainFilter",
         :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
         @input="updateSelectedFilter",
-        @update:condition="updateSelectedCondition"
+        @update:condition="updateSelectedCondition",
+        @update:filters="updateFilters"
         )
       v-flex.ml-4
-        mass-actions-panel(:itemsIds="selected")
+        mass-actions-panel(:itemsIds="selectedIds")
       v-flex
         context-fab(v-if="hasAccessToCreateEntity")
     no-columns-table(v-if="!hasColumns")
@@ -43,26 +54,36 @@
           v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
+            div(v-if="column.value === 'enabled'")
+              v-icon(
+              :color="props.item.enabled ? 'primary' : 'error'"
+              ) {{ props.item.enabled ? 'check' : 'clear' }}
             ellipsis(
+            v-else,
             :text="props.item | get(column.value, null, '')",
             :maxLetters="column.maxLetters"
             )
           td
             actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          more-infos(:item="props.item")
+          more-infos(:item="props.item", :tabId="tabId")
       v-layout.white(align-center)
         v-flex(xs10)
-          pagination(:meta="contextEntitiesMeta", :query.sync="query")
+          pagination(
+          :page="query.page",
+          :limit="query.limit",
+          :total="contextEntitiesMeta.total",
+          @input="updateQueryPage"
+          )
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
 import { omit, isString } from 'lodash';
 
 import { USERS_RIGHTS } from '@/constants';
-import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
+import prepareMainFilterToQueryFilter from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -73,7 +94,9 @@ import FilterSelector from '@/components/other/filter/selector/filter-selector.v
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
+import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import MoreInfos from './more-infos/more-infos.vue';
@@ -98,7 +121,6 @@ export default {
     RecordsPerPage,
     NoColumnsTable,
     FilterSelector,
-
     MoreInfos,
     ContextFab,
     ActionsPanel,
@@ -108,7 +130,9 @@ export default {
     authMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
+    widgetPaginationMixin,
     widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
   ],
   props: {
@@ -127,6 +151,10 @@ export default {
     };
   },
   computed: {
+    selectedIds() {
+      return this.selected.map(item => item._id);
+    },
+
     headers() {
       if (this.hasColumns) {
         return [...this.columns, { text: '', sortable: false }];
@@ -145,6 +173,10 @@ export default {
 
     hasAccessToEditFilter() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.context.actions.userFilter);
     },
   },
   methods: {

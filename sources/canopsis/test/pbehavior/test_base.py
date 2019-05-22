@@ -21,6 +21,8 @@
 
 import unittest
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.common.middleware import Middleware
 from canopsis.confng import Configuration, Ini
 from canopsis.pbehavior.manager import PBehaviorManager
@@ -35,9 +37,9 @@ class MockEngine():
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        pbehavior_storage = Middleware.get_middleware_by_uri(
-            'storage-default-testpbehavior://'
-        )
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection("default_testpbehavior")
+        pb_coll = MongoCollection(collection)
         entities_storage = Middleware.get_middleware_by_uri(
             'storage-default-testentities://'
         )
@@ -46,11 +48,11 @@ class BaseTest(unittest.TestCase):
         conf = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
         self.pbm = PBehaviorManager(config=conf,
                                     logger=logger,
-                                    pb_storage=pbehavior_storage)
+                                    pb_collection=pb_coll)
         self.context = ContextGraph(logger)
         self.context.ent_storage = entities_storage
         self.pbm.context = self.context
 
     def tearDown(self):
-        self.pbm.pb_storage.remove_elements()
+        self.pbm.delete(_filter={})
         self.context.ent_storage.remove_elements()

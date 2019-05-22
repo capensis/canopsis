@@ -3,13 +3,20 @@
 </template>
 
 <script>
-import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
+
+const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 /**
  * Panel regrouping mass actions icons
@@ -20,7 +27,14 @@ import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass
  */
 export default {
   components: { SharedMassActionsPanel },
-  mixins: [authMixin, modalMixin, entitiesWatcherMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    popupMixin,
+    entitiesWatcherMixin,
+    entitiesContextEntityMixin,
+    entitiesPbehaviorMixin,
+  ],
   props: {
     itemsIds: {
       type: Array,
@@ -48,12 +62,17 @@ export default {
       ],
     };
   },
+  computed: {
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
+  },
   methods: {
     showDeleteEntitiesModal() {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => Promise.all(this.itemsIds.map(item => this.removeContextEntity({ id: item._id }))),
+          action: () => Promise.all(this.itemsIds.map(id => this.removeContextEntity({ id }))),
         },
       });
     },
@@ -62,8 +81,16 @@ export default {
       this.showModal({
         name: MODALS.createPbehavior,
         config: {
-          itemsType: ENTITIES_TYPES.entity,
-          itemsIds: this.itemsIds,
+          pbehavior: {
+            filter: {
+              _id: { $in: this.itemsIds },
+            },
+          },
+          action: async (data) => {
+            await this.createPbehavior({ data });
+
+            this.addSuccessPopup({ text: this.$t('success.default') });
+          },
         },
       });
     },

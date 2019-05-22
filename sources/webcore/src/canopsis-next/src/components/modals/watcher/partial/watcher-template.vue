@@ -7,14 +7,11 @@
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { MODALS } from '@/constants';
-
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import WatcherEntity from './entity.vue';
 
 export default {
-  name: MODALS.watcher,
   components: {
     VRuntimeTemplate,
     WatcherEntity,
@@ -47,8 +44,10 @@ export default {
       const entityNameField = hash.name || 'entity.name';
 
       return new Handlebars.SafeString(`
-        <div class="mt-2" v-for="watcherEntity in watcherEntities">
+        <div class="mt-2" v-for="watcherEntity in watcherEntities" :key="watcherEntity._id">
           <watcher-entity
+          :watcherId="watcher.entity_id"
+          :isWatcherOnPbehavior="watcher.active_pb_watcher"
           :entity="watcherEntity"
           :template="entityTemplate"
           entityNameField="${entityNameField}"
