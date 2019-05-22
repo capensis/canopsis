@@ -46,6 +46,7 @@ import StatsHistogramWidget from '@/components/other/stats/histogram/stats-histo
 import StatsCurvesWidget from '@/components/other/stats/curves/stats-curves.vue';
 import StatsTableWidget from '@/components/other/stats/stats-table.vue';
 import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calendar.vue';
+import StatsWatcherStateCalendarWidget from '@/components/other/stats/calendar/stats-watcher-state-calendar.vue';
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import TextWidget from '@/components/other/text/text.vue';
 
@@ -62,6 +63,7 @@ export default {
     StatsCurvesWidget,
     StatsTableWidget,
     StatsCalendarWidget,
+    StatsWatcherStateCalendarWidget,
     StatsNumberWidget,
     TextWidget,
   },
@@ -98,6 +100,7 @@ export default {
         [WIDGET_TYPES.statsCurves]: 'stats-curves-widget',
         [WIDGET_TYPES.statsTable]: 'stats-table-widget',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
+        [WIDGET_TYPES.statsWatcherStateCalendar]: 'stats-watcher-state-calendar-widget',
         [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
         [WIDGET_TYPES.text]: 'text-widget',
       },

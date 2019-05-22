@@ -9,7 +9,7 @@
       @edit="editEvent"
       )
         v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
-          v-card-text
+          v-card-text(v-if="calendarEvent.data.meta")
             v-layout(
             v-for="(event, index) in calendarEvent.data.meta.events",
             :key="`popover-event-${index}`",

@@ -72,6 +72,7 @@ export const MODALS = {
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
+  contextEntitiesList: 'context-entities-list',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -206,6 +207,7 @@ export const WIDGET_TYPES = {
   statsCurves: 'StatsCurves',
   statsTable: 'StatsTable',
   statsCalendar: 'StatsCalendar',
+  statsWatcherStateCalendar: 'StatsWatcherStateCalendar',
   statsNumber: 'StatsNumber',
   text: 'Text',
 };
@@ -218,6 +220,7 @@ export const SIDE_BARS = {
   statsCurvesSettings: 'stats-curves-settings',
   statsTableSettings: 'stats-table-settings',
   statsCalendarSettings: 'stats-calendar-settings',
+  statsWatcherStateCalendarSettings: 'stats-watcher-state-calendar-settings',
   statsNumberSettings: 'stats-number-settings',
   textSettings: 'text-settings',
 };
@@ -228,6 +231,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.weather]: SIDE_BARS.weatherSettings,
   [WIDGET_TYPES.statsTable]: SIDE_BARS.statsTableSettings,
   [WIDGET_TYPES.statsCalendar]: SIDE_BARS.statsCalendarSettings,
+  [WIDGET_TYPES.statsWatcherStateCalendar]: SIDE_BARS.statsWatcherStateCalendarSettings,
   [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
@@ -906,3 +910,14 @@ export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
+
+export const STATS_LISTS_NAMES = {
+  stateIntervals: 'state_intervals',
+};
+
+export const CONTEXT_ENTITIES_TYPES = {
+  component: 'component',
+  connector: 'connector',
+  resource: 'resource',
+  watcher: 'watcher',
+};

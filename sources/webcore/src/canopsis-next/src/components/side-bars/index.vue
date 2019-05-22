@@ -15,6 +15,7 @@ import StatsHistogramSettings from './settings/widgets/stats-histogram.vue';
 import StatsCurvesSettings from './settings/widgets/stats-curves.vue';
 import StatsTableSettings from './settings/widgets/stats-table.vue';
 import StatsCalendarSettings from './settings/widgets/stats-calendar.vue';
+import StatsWatcherStateCalendarSettings from './settings/widgets/stats-watcher-state-calendar.vue';
 import StatsNumberSettings from './settings/widgets/stats-number.vue';
 import TextSettings from './settings/widgets/text.vue';
 
@@ -31,6 +32,7 @@ export default {
     StatsCurvesSettings,
     StatsTableSettings,
     StatsCalendarSettings,
+    StatsWatcherStateCalendarSettings,
     StatsNumberSettings,
     TextSettings,
   },

@@ -142,7 +142,11 @@ export default {
     },
     isEditingMode: {
       type: Boolean,
-      required: true,
+      default: false,
+    },
+    tabId: {
+      type: String,
+      default: '',
     },
   },
   data() {

@@ -69,6 +69,11 @@ export default {
           icon: 'calendar_today',
         },
         {
+          title: this.$t('modals.widgetCreation.types.statsWatcherStateCalendar.title'),
+          value: WIDGET_TYPES.statsWatcherStateCalendar,
+          icon: 'calendar_today',
+        },
+        {
           title: this.$t('modals.widgetCreation.types.statsCurves.title'),
           value: WIDGET_TYPES.statsCurves,
           icon: 'show_chart',

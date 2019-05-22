@@ -20,8 +20,8 @@
             v-icon arrow_drop_down
           v-list
             v-list-tile(
-            v-for="type in types"
-            :key="type.id"
+            v-for="type in types",
+            :key="type.id",
             @click="currentType = type"
             )
               v-list-tile-content
@@ -196,7 +196,7 @@ export default {
     },
 
     next() {
-      this.calendar.unselect().next();
+      this.calendar.unselect().next(5);
 
       this.triggerChange();
     },

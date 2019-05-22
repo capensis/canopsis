@@ -16,7 +16,7 @@
         filter-selector(
         :label="$t('settings.selectAFilter')",
         :filters="viewFilters",
-        :lockedFilters="widgetViewFilters"
+        :lockedFilters="widgetViewFilters",
         :value="mainFilter",
         :condition="mainFilterCondition",
         :hasAccessToEditFilter="hasAccessToEditFilter",

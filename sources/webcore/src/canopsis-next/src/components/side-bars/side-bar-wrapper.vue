@@ -49,7 +49,7 @@ export default {
         [SIDE_BARS.statsCurvesSettings]: this.$t('settings.titles.statsCurvesSettings'),
         [SIDE_BARS.statsTableSettings]: this.$t('settings.titles.statsTableSettings'),
         [SIDE_BARS.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
-        [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
+        [SIDE_BARS.statsWatcherStateCalendarSettings]: this.$t('settings.titles.statsWatcherStateCalendarSettings'),
         [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
         [SIDE_BARS.textSettings]: this.$t('settings.titles.textSettings'),
       };

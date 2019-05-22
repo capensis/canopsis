@@ -233,6 +233,7 @@ export default {
       statsCurvesSettings: 'Curve settings',
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
+      statsWatcherStateCalendarSettings: 'Stats watcher state calendar settings',
       statsNumberSettings: 'Stats number settings',
       textSettings: 'Text settings',
     },
@@ -625,6 +626,9 @@ export default {
         },
         statsCalendar: {
           title: 'Stats calendar',
+        },
+        statsWatcherStateCalendar: {
+          title: 'Stats watcher state calendar',
         },
         statsNumber: {
           title: 'Stats number',
