@@ -9,18 +9,18 @@
           v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
             type="number",
-            v-model="periodValue",
+            v-model="form.periodValue",
             :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
           v-select.pt-0(
-          v-model="periodUnit",
+          v-model="form.periodUnit",
           :items="periodUnits",
           :label="$t('modals.statsDateInterval.fields.periodUnit')"
           )
         v-alert.mb-2(
-        v-if="periodUnit === 'm'", type="info", value="true"
+        v-if="form.periodUnit === 'm'", type="info", value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
-        stats-date-selector.my-1(v-model="form", :periodUnit="periodUnit", @input="resetValidation")
+        stats-date-selector.my-1(v-model="form", :periodUnit="form.periodUnit", @input="resetValidation")
       v-alert(
       value="errors",
       type="error",
@@ -50,9 +50,9 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
-      periodValue: 1,
-      periodUnit: STATS_DURATION_UNITS.hour,
       form: {
+        periodValue: 1,
+        periodUnit: STATS_DURATION_UNITS.hour,
         tstart: 'now+1d',
         tstop: 'now+2d',
       },
@@ -91,9 +91,9 @@ export default {
         tstop,
       } = this.config.interval;
 
-      this.periodValue = periodValue;
-      this.periodUnit = periodUnit;
       this.form = {
+        periodValue,
+        periodUnit,
         tstart,
         tstop,
       };
@@ -127,8 +127,8 @@ export default {
       if (this.validate()) {
         if (this.config.action) {
           this.config.action({
-            periodValue: this.periodValue,
-            periodUnit: this.periodUnit,
+            periodValue: this.form.periodValue,
+            periodUnit: this.form.periodUnit,
             tstart: this.form.tstart,
             tstop: this.form.tstop,
           });

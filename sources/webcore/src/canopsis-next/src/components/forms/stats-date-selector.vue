@@ -60,10 +60,6 @@ export default {
   },
   mixins: [formMixin],
   props: {
-    periodUnit: {
-      type: String,
-      required: true,
-    },
     value: {
       type: Object,
       required: true,
@@ -93,11 +89,28 @@ export default {
           let tstop = range.stop;
 
           if (!tstop || !tstart) {
-            tstart = moment().startOf('h').format(DATETIME_FORMATS.dateTimePicker);
-            tstop = moment().add(1, 'h').startOf('h').format(DATETIME_FORMATS.dateTimePicker);
-          }
+            tstart = moment()
+              .subtract(1, STATS_DURATION_UNITS.hour)
+              .startOf(STATS_DURATION_UNITS.hour)
+              .format(DATETIME_FORMATS.dateTimePicker);
+            tstop = moment()
+              .startOf(STATS_DURATION_UNITS.hour)
+              .format(DATETIME_FORMATS.dateTimePicker);
 
-          this.$emit('input', { tstart, tstop });
+            this.$emit('input', {
+              ...this.value,
+              tstart,
+              tstop,
+              periodUnit: STATS_DURATION_UNITS.hour,
+              periodValue: 1,
+            });
+          } else {
+            this.$emit('input', {
+              ...this.value,
+              tstart,
+              tstop,
+            });
+          }
         }
       },
     },
