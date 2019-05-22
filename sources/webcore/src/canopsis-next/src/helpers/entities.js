@@ -149,8 +149,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: 'now/m',
+          tstop: 'now',
         },
         stats: {},
         statsColors: {},
@@ -162,8 +162,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: 'now/m',
+          tstop: 'now',
         },
         mfilter: {},
         stats: {},
@@ -190,8 +190,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: 'now/m',
+          tstop: 'now',
         },
         mfilter: {},
         stat: {
@@ -215,8 +215,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: 'now/m',
+          tstop: 'now',
         },
         mfilter: {},
         stats: {},

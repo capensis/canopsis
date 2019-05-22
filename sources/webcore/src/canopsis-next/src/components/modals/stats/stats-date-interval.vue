@@ -53,8 +53,8 @@ export default {
       periodValue: 1,
       periodUnit: STATS_DURATION_UNITS.hour,
       form: {
-        tstart: 'now+1d',
-        tstop: 'now+2d',
+        tstart: 'now/m',
+        tstop: 'now',
       },
       periodUnits: [
         {
