@@ -31,4 +31,6 @@ function run_catag() {
 }
 
 deploy_catag
-run_catag
+if [ "${run_catag}" -eq 1 ] ; then
+	run_catag
+fi

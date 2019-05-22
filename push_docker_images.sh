@@ -32,6 +32,8 @@ if [ "${push_pe}" = "Y" ]||[ "${push_pe}" = "y" ]; then
     docker push canopsis/init-pe:${CANOPSIS_TAG}
     docker push canopsis/canopsis-cat-pe:${CANOPSIS_TAG}
     docker push canopsis/canopsis-cat-pe:longoutput-${CANOPSIS_TAG}
-    docker push canopsis/canopsis-connector-email2canopsis-pe:${CANOPSIS_TAG}
+    docker push canopsis/canopsis-cat-connector-email2canopsis-pe:${CANOPSIS_TAG}
+    docker push canopsis/uiv3:${CANOPSIS_TAG}
+    #docker push canopsis/canopsis-pe-carto-sync:${CANOPSIS_TAG}
     #docker push canopsis/canopsis-connector-snmp2canopsis-pe:${CANOPSIS_TAG}
 fi
