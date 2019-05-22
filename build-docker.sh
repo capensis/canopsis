@@ -41,8 +41,11 @@ function build_for_distribution() {
     echo "BUILDING CORE ${distribution}"
     docker build ${docker_args} -f docker/Dockerfile -t canopsis/canopsis-core:${full_tag} .
 
-	echo "Building provisionning image"
-	docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
+    echo "Building provisionning image"
+    docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
+
+    echo "Building uiv3 image"
+    docker build ${docker_args} -f docker/Dockerfile.canopsis-next-develop  -t canopsis/uiv3:${full_tag} .
 
     if [ "${distribution}" = "debian-9" ]; then
         echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
