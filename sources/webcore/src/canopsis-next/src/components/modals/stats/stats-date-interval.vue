@@ -18,7 +18,7 @@
           :label="$t('modals.statsDateInterval.fields.periodUnit')"
           )
         v-alert.mb-2(
-        v-if="periodUnit === 'm'", type="info", value="true"
+        v-if="periodUnit === $constants.STATS_DURATION_UNITS.month", type="info", value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         stats-date-selector.my-1(v-model="form", :periodUnit="periodUnit", @input="resetValidation")
       v-alert(
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
+import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } from '@/constants';
 
 import { dateParse } from '@/helpers/date-intervals';
 
@@ -53,8 +53,8 @@ export default {
       periodValue: 1,
       periodUnit: STATS_DURATION_UNITS.hour,
       form: {
-        tstart: 'now/m',
-        tstop: 'now',
+        tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+        tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
       },
       periodUnits: [
         {
