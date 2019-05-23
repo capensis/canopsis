@@ -48,23 +48,25 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          td
-            v-checkbox(primary, hide-details, v-model="props.selected")
-          td(
-          v-for="column in columns",
-          @click="props.expanded = !props.expanded"
-          )
-            div(v-if="column.value === 'enabled'")
-              v-icon(
-              :color="props.item.enabled ? 'primary' : 'error'"
-              ) {{ props.item.enabled ? 'check' : 'clear' }}
-            ellipsis(
-            v-else,
-            :text="props.item | get(column.value, null, '')",
-            :maxLetters="column.maxLetters"
+          tr
+            td
+              slot(name="item-selector", :item="props.item")
+                v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+            v-for="column in columns",
+            @click="props.expanded = !props.expanded"
             )
-          td
-            actions-panel(:item="props.item", :isEditingMode="isEditingMode")
+              div(v-if="column.value === 'enabled'")
+                v-icon(
+                :color="props.item.enabled ? 'primary' : 'error'"
+                ) {{ props.item.enabled ? 'check' : 'clear' }}
+              ellipsis(
+              v-else,
+              :text="props.item | get(column.value, null, '')",
+              :maxLetters="column.maxLetters"
+              )
+            td
+              actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item", :tabId="tabId")
       v-layout.white(align-center)
@@ -152,6 +154,7 @@ export default {
   data() {
     return {
       selected: [],
+      selectedItem: null,
     };
   },
   computed: {

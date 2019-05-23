@@ -32,13 +32,19 @@ export default {
   methods: {
     showWatchersListModal() {
       const widget = generateWidgetByType(WIDGET_TYPES.context);
-      const filter = { title: 'Test', filter: { _id: 'watcher_9b55e9cb-e050-4c20-ac74-1df91c52e038' } };
+      const filter = { $and: [{ _id: 'watcher_a5ecaa17-833c-4617-bf49-09b04f347880' }] };
 
-      widget.parameters.mainFilter = filter;
-      widget.parameters.viewFilters = [filter];
+      const watcherFilter = {
+        title: 'watcher_a5ecaa17-833c-4617-bf49-09b04f347880',
+        filter,
+      };
+
+      widget.parameters.mainFilter = watcherFilter;
+      widget.parameters.viewFilters = [watcherFilter];
 
       const query = {
         typesFilter: { type: CONTEXT_ENTITIES_TYPES.watcher },
+        mainFilter: watcherFilter.filter,
       };
 
       this.showModal({
