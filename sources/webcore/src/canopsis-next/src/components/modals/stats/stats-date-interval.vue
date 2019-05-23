@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
 
 import { dateParse } from '@/helpers/date-intervals';
@@ -49,13 +51,16 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
+    const { interval } = this.modal.config;
+    const defaultInterval = {
+      periodValue: 1,
+      periodUnit: STATS_DURATION_UNITS.hour,
+      tstart: 'now+1d',
+      tstop: 'now+2d',
+    };
+
     return {
-      form: {
-        periodValue: 1,
-        periodUnit: STATS_DURATION_UNITS.hour,
-        tstart: 'now+1d',
-        tstop: 'now+2d',
-      },
+      form: cloneDeep(interval || defaultInterval),
       periodUnits: [
         {
           text: this.$tc('common.times.hour'),
@@ -81,23 +86,6 @@ export default {
     hiddenFields() {
       return this.modal.config.hiddenFields || [];
     },
-  },
-  mounted() {
-    if (this.config.interval) {
-      const {
-        periodValue,
-        periodUnit,
-        tstart,
-        tstop,
-      } = this.config.interval;
-
-      this.form = {
-        periodValue,
-        periodUnit,
-        tstart,
-        tstop,
-      };
-    }
   },
   methods: {
     resetValidation() {
@@ -126,12 +114,7 @@ export default {
     async submit() {
       if (this.validate()) {
         if (this.config.action) {
-          this.config.action({
-            periodValue: this.form.periodValue,
-            periodUnit: this.form.periodUnit,
-            tstart: this.form.tstart,
-            tstop: this.form.tstop,
-          });
+          this.config.action(this.form);
         }
 
         this.hideModal();

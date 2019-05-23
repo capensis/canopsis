@@ -85,32 +85,31 @@ export default {
       },
       set(range) {
         if (range.value !== this.range.value) {
-          let tstart = range.start;
-          let tstop = range.stop;
+          let newValue = {
+            tstart: range.start,
+            tstop: range.stop,
+          };
 
-          if (!tstop || !tstart) {
-            tstart = moment()
-              .subtract(1, STATS_DURATION_UNITS.hour)
-              .startOf(STATS_DURATION_UNITS.hour)
-              .format(DATETIME_FORMATS.dateTimePicker);
-            tstop = moment()
-              .startOf(STATS_DURATION_UNITS.hour)
-              .format(DATETIME_FORMATS.dateTimePicker);
-
-            this.$emit('input', {
-              ...this.value,
-              tstart,
-              tstop,
+          if (!newValue.tstop || !newValue.tstart) {
+            newValue = {
               periodUnit: STATS_DURATION_UNITS.hour,
               periodValue: 1,
-            });
-          } else {
-            this.$emit('input', {
-              ...this.value,
-              tstart,
-              tstop,
-            });
+
+              tstart: moment()
+                .subtract(1, STATS_DURATION_UNITS.hour)
+                .startOf(STATS_DURATION_UNITS.hour)
+                .format(DATETIME_FORMATS.dateTimePicker),
+
+              tstop: moment()
+                .startOf(STATS_DURATION_UNITS.hour)
+                .format(DATETIME_FORMATS.dateTimePicker),
+            };
           }
+
+          this.updateModel({
+            ...this.value,
+            ...newValue,
+          });
         }
       },
     },
