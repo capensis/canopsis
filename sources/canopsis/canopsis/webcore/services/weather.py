@@ -29,6 +29,8 @@ import json
 from operator import itemgetter
 from bottle import request
 
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.watcher.filtering import WatcherFilter
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -44,11 +46,15 @@ alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
+WATCHER_COLLECTION = "default_entities"
+mongo = MongoStore.get_default()
+collection = mongo.get_collection(WATCHER_COLLECTION)
+mongo_collection = MongoCollection(collection)
+
 DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
-
 
 def __format_pbehavior(pbehavior):
     """
@@ -320,17 +326,17 @@ def exports(ws):
         """
         limit = request.query.limit or DEFAULT_LIMIT
         start = request.query.start or DEFAULT_START
-        sort = request.query.sort or DEFAULT_SORT
+        orderby = request.query.orderby or None
+        direction = request.query.direction or None
+
 
         # FIXIT: service weather has no pagination capability at all.
         try:
-            #start = int(start)
-            start = 0
+            start = int(start)
         except ValueError:
             start = int(DEFAULT_START)
         try:
-            #limit = int(limit)
-            limit = None
+            limit = int(limit)
         except ValueError:
             limit = int(DEFAULT_LIMIT)
 
@@ -338,12 +344,61 @@ def exports(ws):
         watcher_filter['type'] = 'watcher'
         watcher_filter = wf.filter(watcher_filter)
 
-        watcher_list = context_manager.get_entities(
-            query=watcher_filter,
-            limit=limit,
-            start=start,
-            sort=sort
-        )
+        # select the watchers
+        select_watcher_stage = {"$match": watcher_filter}
+
+        # pagination
+        skip = {"$skip": start}
+        limit = {"$limit": limit}
+
+        # retreive opened alarm for the watchers
+        alarms = {"$graphLookup":
+                  {"from": "periodical_alarm",
+                   "startWith": "$_id",
+                   "connectFromField": "_id",
+                   "connectToField": "d",
+                   "restrictSearchWithMatch": {'v.resolved': None},
+                   "as": "alarm",
+                   "maxDepth": 0
+                  }
+        }
+
+        # retreive every pbehaviors on the watcher
+        pbehaviors = {"$lookup":
+                      {"from": "default_pbehavior",
+                       "localField": "_id",
+                       "foreignField": "eids",
+                       "as": "pbehavior"
+                      }
+        }
+
+        # retreive every pbehaviors on the watched entities
+        pbehaviors_watched_ent = {"$graphLookup":
+                                  {"from": "default_pbehavior",
+                                   "startWith": "$watched_entities._id",
+                                   "connectFromField": "watched_entities._id",
+                                   "connectToField": "eids",
+                                   "as": "plop",
+                                   "maxDepth": 0,
+                                   "as": "watched_entities_pbehavior",
+                                  }
+        }
+
+        pipeline = [select_watcher_stage,
+                    skip,
+                    limit,
+                    alarms,
+                    pbehaviors,
+                    pbehaviors_watched_ent]
+
+        # retreive
+        if orderby is not None:
+            # TODO if needed, set the correction direction value
+            pipeline.insert(1, {"$sort": {orderby: direction}})
+
+        watchers = mongo_collection.aggregate(pipeline)
+
+        watcher_list = []
 
         depends_merged = set([])
         active_pb_dict = {}
