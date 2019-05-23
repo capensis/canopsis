@@ -21,11 +21,14 @@
         item-text="name",
         hide-details,
         offset-y,
-        @input="updateField('mibName', $event)"
+        return-object,
+        @input="selectMib"
         )
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import formMixin from '@/mixins/form';
 import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
@@ -103,6 +106,10 @@ export default {
       this.$emit('update:moduleMibs', data);
 
       this.moduleMibsPending = false;
+    },
+
+    selectMib(mib) {
+      this.$emit('input', { ...cloneDeep(this.form), mibName: mib.name, oid: mib.oid });
     },
   },
 };
