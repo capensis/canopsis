@@ -8,6 +8,15 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.18.1 - Due date : 2019-05-22
+
+ - [Packaging] Various build automation fixes
+ - [Packaging] Fix missing SNMPRULE rights for admin user
+ - [Packaging] Fix missing default rights when calling canopsinit after a fresh install
+ - [Documentation] Delete an older version of linkbuilder documentation
+ - [UI - Rights] Fix JavaScript error while trying to apply linklist rights
+ - [UI - Webhooks] Fix validation of URLs using templates
+
 # Canopsis 3.18.0 - Due date : 2019-05-17
 
  - [Documentation] Improve the readability of the centreon connector reboot procedure

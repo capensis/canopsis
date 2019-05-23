@@ -66,13 +66,15 @@ export default {
     ** Check if user has access to a specific links category
     */
     hasAccessToCategory() {
-      if (this.hasAccessToLinks) {
-        return true;
-      }
+      return (category) => {
+        if (this.hasAccessToLinks) {
+          return true;
+        }
 
-      return category => this.checkAccess(`${
-        BUSINESS_USER_RIGHTS_ACTIONS_MAP
-          .alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]}_${category}`);
+        return this.checkAccess(`${
+          BUSINESS_USER_RIGHTS_ACTIONS_MAP
+            .alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]}_${category}`);
+      };
     },
   },
 };
