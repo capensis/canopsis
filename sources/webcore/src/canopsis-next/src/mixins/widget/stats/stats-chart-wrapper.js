@@ -34,12 +34,11 @@ export default {
       return [];
     },
 
-    options() {
+    annotationLine() {
       const { annotationLine } = this.widget.parameters;
-      const options = {};
 
       if (annotationLine && annotationLine.enabled) {
-        options.annotation = {
+        return {
           annotations: [{
             type: 'line',
             mode: 'horizontal',
@@ -59,6 +58,15 @@ export default {
           }],
         };
       }
+
+      return {};
+    },
+
+    options() {
+      const options = {
+        annotation: this.annotationLine,
+      };
+
       return options;
     },
   },

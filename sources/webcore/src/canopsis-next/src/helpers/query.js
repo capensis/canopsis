@@ -191,7 +191,18 @@ export function convertStatsNumberWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsParetoWidgetToQuery(widget) {
+  const { stat } = widget.parameters;
   const query = { ...widget.parameters };
+
+  if (stat) {
+    query.stats = {
+      [stat.title]: {
+        ...omit(stat, ['title']),
+        stat: stat.stat.value,
+        aggregate: ['sum'],
+      },
+    };
+  }
 
   return query;
 }

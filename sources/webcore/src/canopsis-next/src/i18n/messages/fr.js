@@ -156,8 +156,8 @@ export default {
     '</dl>',
   },
   entities: {
-    watcher: 'observateurs',
-    entities: 'entités',
+    watcher: 'Observateurs',
+    entities: 'Entités',
   },
   login: {
     standard: 'Standard',

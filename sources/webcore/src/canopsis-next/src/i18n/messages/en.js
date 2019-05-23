@@ -163,8 +163,8 @@ export default {
       '</dl>',
   },
   entities: {
-    watcher: 'watcher',
-    entities: 'entities',
+    watcher: 'Watcher',
+    entities: 'Entities',
   },
   login: {
     standard: 'Standard',
