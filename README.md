@@ -1,6 +1,6 @@
 # Go-revolution
 
-Nouveaux moteurs pour Canopsis
+Nouveaux moteurs pour Canopsis.
 
 Nécessite Go 1.11 ou supérieur.
 
