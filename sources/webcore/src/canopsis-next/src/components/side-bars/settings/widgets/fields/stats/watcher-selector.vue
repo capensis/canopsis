@@ -32,10 +32,10 @@ export default {
   methods: {
     showWatchersListModal() {
       const widget = generateWidgetByType(WIDGET_TYPES.context);
-      const filter = { $and: [{ _id: 'watcher_a5ecaa17-833c-4617-bf49-09b04f347880' }] };
+      const filter = { $and: [{ _id: 'watcher_9b55e9cb-e050-4c20-ac74-1df91c52e038' }] };
 
       const watcherFilter = {
-        title: 'watcher_a5ecaa17-833c-4617-bf49-09b04f347880',
+        title: 'watcher_9b55e9cb-e050-4c20-ac74-1df91c52e038',
         filter,
       };
 

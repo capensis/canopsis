@@ -196,7 +196,7 @@ export default {
     },
 
     next() {
-      this.calendar.unselect().next(5);
+      this.calendar.unselect().next();
 
       this.triggerChange();
     },

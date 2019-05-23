@@ -26,6 +26,7 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
+import DsDay from '@/components/other/stats/calendar/day-span/partial/day.vue';
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
@@ -82,9 +83,14 @@ Vue.use(DaySpanVuetify, {
         },
       },
     },
+    features: {
+      addDay: false,
+      drag: false,
+    },
   },
 });
 
+Vue.component('dsDay', DsDay);
 Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 

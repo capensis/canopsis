@@ -6,10 +6,7 @@
         v-btn(icon, dark, @click.native="hideModal")
           v-icon close
     v-card-text
-      entities-list-widget(:widget="config.widget")
-        template(slot="item-selector", slot-scope="{ item }")
-          v-radio-group(v-model="selected", hide-details)
-            v-radio(:value="item._id")
+      entities-list-widget(v-model="selectedItem", :widget="config.widget", selectingType="single")
     v-divider
     v-card-actions
       v-layout.py-1(justify-end)

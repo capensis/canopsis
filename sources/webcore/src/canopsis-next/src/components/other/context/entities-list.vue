@@ -38,8 +38,8 @@
       :loading="contextEntitiesPending",
       :total-items="contextEntitiesMeta.total",
       :pagination.sync="vDataTablePagination",
+      :select-all="isMultipleSelecting",
       item-key="_id",
-      select-all,
       hide-actions,
       )
         template(slot="progress")
@@ -50,8 +50,9 @@
         template(slot="items", slot-scope="props")
           tr
             td
-              slot(name="item-selector", :item="props.item")
-                v-checkbox(primary, hide-details, v-model="props.selected")
+              v-radio-group(v-if="isSingleSelecting", :value="selectedItem", hide-details)
+                v-radio(:value="props.item._id")
+              v-checkbox(v-if="isMultipleSelecting", v-model="props.selected", primary, hide-details)
             td(
             v-for="column in columns",
             @click="props.expanded = !props.expanded"
@@ -150,6 +151,11 @@ export default {
       type: String,
       default: '',
     },
+    selectingType: {
+      type: String,
+      default: 'multiple',
+      validate: value => ['single', 'multiple'].includes(value),
+    },
   },
   data() {
     return {
@@ -158,13 +164,27 @@ export default {
     };
   },
   computed: {
+    isMultipleSelecting() {
+      return this.selectingType === 'multiple';
+    },
+
+    isSingleSelecting() {
+      return this.selectingType === 'single';
+    },
+
     selectedIds() {
       return this.selected.map(item => item._id);
     },
 
     headers() {
       if (this.hasColumns) {
-        return [...this.columns, { text: '', sortable: false }];
+        const headers = [];
+
+        if (this.isSingleSelecting) {
+          headers.push({ text: '', sortable: false });
+        }
+
+        return headers.concat(this.columns, { text: '', sortable: false });
       }
 
       return [];
