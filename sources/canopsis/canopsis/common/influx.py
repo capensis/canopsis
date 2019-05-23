@@ -226,7 +226,7 @@ class InfluxDBClient(Client):
                 for key, value in tags.items():
                     tags[key] = value.replace('\n', '\\n')
 
-        self.write_points(points)
+        super(InfluxDBClient, self).write_points(points)
 
 
 # The two following functions are defined in the influx.line_protocol module of
