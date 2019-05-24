@@ -144,8 +144,7 @@ export default {
         name: 'filter',
         rules: 'required:true',
         getter: () => {
-          const firstRule = Object.values(this.filter.rules)[0];
-          const isFilterNotEmpty = firstRule && firstRule.field !== '' && firstRule.operator !== '';
+          const isFilterNotEmpty = !this.checkIfGroupIsEmpty(this.filter);
           const isRequestStringNotEmpty = this.isRequestStringChanged && this.requestString !== '';
 
           return isFilterNotEmpty || isRequestStringNotEmpty;
@@ -219,6 +218,22 @@ export default {
 
         throw err;
       }
+    },
+
+    checkIfGroupIsEmpty(group) {
+      const hasValidRule = Object.values(group.rules).some(rule => !this.checkIfRuleIsEmpty(rule));
+
+      if (hasValidRule) {
+        return false;
+      }
+
+      const hasValidSubGroup = Object.values(group.groups).some(subGroup => !this.checkIfGroupIsEmpty(subGroup));
+
+      return !hasValidSubGroup;
+    },
+
+    checkIfRuleIsEmpty(rule) {
+      return rule.field === '' || rule.operator === '';
     },
   },
 };
