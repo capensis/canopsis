@@ -25,10 +25,12 @@ from __future__ import unicode_literals
 
 import copy
 import json
+import time
 
 from operator import itemgetter
 from bottle import request
 
+from canopsis.common.enumerations import DefaultEnum
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.watcher.filtering import WatcherFilter
@@ -55,6 +57,57 @@ DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
+
+class ResultKey(DefaultEnum):
+    ID = "_id"
+    INFOS = "infos"
+    LINKS = "links"
+    NAME = "name"
+    STATE = "state"
+    ALARM = "alarm"
+    ALRM_VALUE = "v"
+    ALRM_STATUS = "status"
+    ALRM_STATE = "state"
+    ALRM_SNOOZE = "snooze"
+    ALRM_ACK = "ack"
+    ALRM_CONNECTOR = "connector"
+    ALRM_CONNECTOR_NAME = "connector_name"
+    ALRM_LAST_UPDATE = "last_update_date"
+    ALRM_COMPONENT = "component"
+    ALRM_RESOURCE = "resource"
+
+
+class __TileData:
+
+    def __init__(self, watcher):
+        self.entity_id = watcher[ResultKey.ID.value]
+        self.infos = watcher[ResultKey.INFOS.value]
+        self.sla_tex = ""
+        self.display_name = watcher[ResultKey.NAME.value]
+        self.linklist = []
+        for key, value in watcher[ResultKey.LINKS.value].items():
+            self.linklist.append({'cat_name': key, 'links': value})
+
+        state = watcher.get(ResultKey.STATE.value, 0)
+        if isinstance(state, int):
+            self.state = {'val': state}
+        else:
+            self.state = {'val': 0}
+
+        if not len(watcher[ResultKey.ALARM.value]) == 0:
+            alarm = watcher[ResultKey.ALARM.value][0]
+            alarm = alarm[ResultKey.ALRM_VALUE.value]
+            self.state = alarm[ResultKey.ALRM_STATE.value]
+            self.status = alarm[ResultKey.ALRM_STATUS.value]
+            self.snooze = alarm[ResultKey.ALRM_SNOOZE.value]
+            self.ack = alarm[ResultKey.ALRM_ACK.value]
+            self.connector = alarm[ResultKey.ALRM_CONNECTOR.value]
+            self.connector_name = alarm[ResultKey.ALRM_CONNECTOR_NAME.value]
+            self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE.value]
+            self.component = alarm[ResultKey.ALRM_COMPONENT.value]
+            self.resource = alarm[ResultKey.ALRM_RESOURCE.value]
+
+
 
 def __format_pbehavior(pbehavior):
     """
@@ -391,15 +444,25 @@ def exports(ws):
                     pbehaviors,
                     pbehaviors_watched_ent]
 
+        with open("/tmp/plop.txt", "a") as fd:
+            import pprint
+            fd.write("Pipeline {}\n\n".format(pprint.pformat(pipeline)))
+
         # retreive
         if orderby is not None:
             # TODO if needed, set the correction direction value
             pipeline.insert(1, {"$sort": {orderby: direction}})
 
-        watchers = mongo_collection.aggregate(pipeline)
+        pipeline_result = mongo_collection.aggregate(pipeline)
 
+        result = []
 
-        return gen_json(watchers)
+        for watcher in pipeline_result:
+
+            tileData = __TileData(watcher)
+            result.append(tileData.__dict__)
+
+        return gen_json(result)
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
     def weatherwatchers(watcher_id):
