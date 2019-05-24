@@ -77,6 +77,9 @@ class ResultKey(DefaultEnum):
     ALRM_LAST_UPDATE = "last_update_date"
     ALRM_COMPONENT = "component"
     ALRM_RESOURCE = "resource"
+    ENT = "watched_entities"
+    ENT_ID = "_id"
+    ENTPBH = "watched_entities_pbehaviors"
 
 
 class __TileData:
@@ -482,7 +485,24 @@ def exports(ws):
             watcher[ResultKey.WATCHED_ENT_PBH.value] = remove_inactive_pbh(pbhs)
 
             # assign entities pbehaviors to the correct entities
+            entities = {}
+            for entity in watcher[ResultKey.ENT.value]:
+                entity[ResultKey.PBEHAVIORS.value] = []
+                entities[entity[ResultKey.ENT_ID.value]] = entity
 
+            for pbh in watcher[ResultKey.ENTPBH.value]:
+                for ent_id in pbh["eids"]:
+                    try:
+                        entities[ent_id][ResultKey.PBEHAVIORS.value].append(pbh)
+                    except KeyError:
+                        ws.logger.error("Can not find entities {} in the"
+                                        "pipeline result".format(ent_id))
+
+            watcher[ResultKey.ENT.value] = entities.values()
+            del watcher[ResultKey.WATCHED_ENT_PBH.value]
+            with open("/tmp/plop.txt", "a") as fd:
+                import pprint
+                fd.write("Entities : \n{}\n\n".format(pprint.pformat(watcher)))
 
             tileData = __TileData(watcher)
             result.append(vars(tileData))
