@@ -7,6 +7,7 @@ import {
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
   STATS_DURATION_UNITS,
+  STATS_QUICK_RANGES,
   STATS_DISPLAY_MODE,
   STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
@@ -92,7 +93,7 @@ export function generateWidgetByType(type) {
           interval: 60,
         },
         sort: {
-          order: 'ASC',
+          order: SORT_ORDERS.asc,
         },
         alarmsStateFilter: {
           opened: true,
@@ -117,7 +118,7 @@ export function generateWidgetByType(type) {
         ],
         selectedTypes: [],
         sort: {
-          order: 'ASC',
+          order: SORT_ORDERS.asc,
         },
       };
       break;
@@ -149,8 +150,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
@@ -162,8 +163,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},
@@ -190,8 +191,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stat: {
@@ -215,8 +216,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},

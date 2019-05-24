@@ -18,18 +18,18 @@
     @input="updateField('output', $event)"
     )
     snmp-rule-form-module-mib-objects-form(
-    :form="form.resource",
-    :items="selectedModuleMibObjects",
-    :label="$t('modals.createSnmpRule.fields.resource.title')"
-    large,
-    @input="updateField('resource', $event)"
-    )
-    snmp-rule-form-module-mib-objects-form(
     :form="form.component",
     :items="selectedModuleMibObjects",
     :label="$t('modals.createSnmpRule.fields.component.title')"
     large,
     @input="updateField('component', $event)"
+    )
+    snmp-rule-form-module-mib-objects-form(
+    :form="form.resource",
+    :items="selectedModuleMibObjects",
+    :label="$t('modals.createSnmpRule.fields.resource.title')"
+    large,
+    @input="updateField('resource', $event)"
     )
     snmp-rule-form-module-mib-objects-form(
     :form="form.connector_name",
