@@ -436,6 +436,15 @@ def exports(ws):
                       }
         }
 
+        # retrieve watched entities
+        entities = {"$lookup": {
+            "from": "default_entities",
+            "localField": "depends",
+            "foreignField": "_id",
+            "as": "watched_entities",
+            }
+        }
+
         # retreive every pbehaviors on the watched entities
         pbehaviors_watched_ent = {"$graphLookup":
                                   {"from": "default_pbehavior",
@@ -452,6 +461,7 @@ def exports(ws):
                     limit,
                     alarms,
                     pbehaviors,
+                    entities,
                     pbehaviors_watched_ent]
 
         # retreive
