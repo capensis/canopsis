@@ -51,5 +51,15 @@ export default {
       },
     };
   },
+  methods: {
+    prepareWidgetQuery(newQuery, oldQuery) {
+      return {
+        tstop: oldQuery.tstop,
+        duration: oldQuery.duration,
+
+        ...newQuery,
+      };
+    },
+  },
 };
 </script>

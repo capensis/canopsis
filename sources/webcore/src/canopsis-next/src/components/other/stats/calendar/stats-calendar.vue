@@ -171,6 +171,7 @@ export default {
       this.calendar = calendar;
       this.query = {
         ...this.query,
+
         tstart: calendar.start.date.unix(),
         tstop: calendar.end.date.unix(),
       };

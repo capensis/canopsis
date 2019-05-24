@@ -3,6 +3,7 @@
     v-layout.white.calender-wrapper
       progress-overlay(:pending="pending")
       ds-calendar.single(
+      ref="calendar",
       :events="events",
       :calendar="calendar",
       @change="changeCalendar",
@@ -11,17 +12,30 @@
 </template>
 
 <script>
-import moment from 'moment';
-import { Calendar, Schedule, Day } from 'dayspan';
+import { Calendar, Units } from 'dayspan';
 
-import { WATCHER_STATES_COLORS } from '@/constants';
+import { STATS_DURATION_UNITS } from '@/constants';
 
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 
+import { convertWatcherValuesToEvents } from '@/helpers/dayspan';
+
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import DsCalendar from './day-span/calendar.vue';
+
+const CALENDAR_UNIT_TO_MOMENT_UNIT_MAP = {
+  [Units.DAY]: 'day',
+  [Units.WEEK]: 'week',
+  [Units.MONTH]: 'month',
+};
+
+const CALENDAR_UNIT_TO_STATS_DURATION_UNIT_MAP = {
+  [Units.DAY]: STATS_DURATION_UNITS.day,
+  [Units.WEEK]: STATS_DURATION_UNITS.week,
+  [Units.MONTH]: STATS_DURATION_UNITS.month,
+};
 
 export default {
   components: { ProgressOverlay, DsCalendar },
@@ -34,60 +48,58 @@ export default {
   },
   data() {
     return {
-      pending: true,
+      pending: false,
       values: [],
-      events: [],
-      alarmsCollections: [],
       calendar: Calendar.months(),
     };
   },
+  computed: {
+    events() {
+      const groupByValue = this.calendar.type === Units.MONTH ? 'day' : 'hour';
+
+      return convertWatcherValuesToEvents({
+        groupByValue,
+        values: this.values,
+      });
+    },
+  },
   methods: {
-    editEvent() {},
+    editEvent(event) {
+      this.$refs.calendar.viewDay(event.day);
+    },
 
     changeCalendar({ calendar }) {
+      const momentUnit = CALENDAR_UNIT_TO_MOMENT_UNIT_MAP[calendar.type] || 'month';
+      const durationUnit = CALENDAR_UNIT_TO_STATS_DURATION_UNIT_MAP[calendar.type] || STATS_DURATION_UNITS.month;
+
       this.calendar = calendar;
       this.query = {
         ...this.query,
-        tstart: calendar.start.date.unix(),
-        tstop: calendar.end.date.unix(),
+
+        duration: `2${durationUnit}`,
+        tstop: calendar.end.date.clone()
+          .add(1, momentUnit)
+          .utc()
+          .startOf(momentUnit)
+          .unix(),
       };
     },
 
     async fetchList() {
       this.pending = true;
 
-      const result = await this.fetchSpecialStatsListsWithoutStore({
+      const [watcherData = { values: [] }] = await this.fetchSpecialStatsListsWithoutStore({
         params: {
+          ...this.query,
+
           mfilter: {
             type: 'resource',
             _id: 'feeder2_9/feeder2_11',
           },
-          tstop: 1556668800,
-          duration: '10m',
         },
       });
 
-      this.events = result.reduce((acc, { values }) => {
-        const events = values.map(({ duration, start, state }) => {
-          const dateObject = moment.unix(start);
-          const startDay = new Day(dateObject);
-
-          return {
-            data: {
-              color: WATCHER_STATES_COLORS[state],
-            },
-            schedule: new Schedule({
-              duration,
-              on: startDay,
-              times: [startDay.asTime()],
-              durationUnit: 'seconds',
-            }),
-          };
-        });
-
-        return acc.concat(events);
-      }, []);
-
+      this.values = watcherData.values;
       this.pending = false;
     },
   },

@@ -1,6 +1,8 @@
 import moment from 'moment';
-import { groupBy } from 'lodash';
+import { groupBy, maxBy } from 'lodash';
 import { Day, Schedule } from 'dayspan';
+
+import { WATCHER_STATES_COLORS } from '@/constants';
 
 /**
  * Convert alarms to calendar events
@@ -12,11 +14,8 @@ import { Day, Schedule } from 'dayspan';
  * @returns []
  */
 export function convertAlarmsToEvents({
-  alarms,
-  groupByValue,
-  filter = {},
-  getColor = () => '#fff',
-}) {
+  alarms, groupByValue, filter = {}, getColor = () => '#fff',
+} = {}) {
   const groupedAlarms = groupBy(alarms, alarm => moment.unix(alarm.t).startOf(groupByValue).format());
 
   return Object.keys(groupedAlarms).map((dateString) => {
@@ -54,7 +53,9 @@ export function convertAlarmsToEvents({
  * @param {Function} [getColor=() => {}]
  * @returns []
  */
-export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', getColor = () => '#fff' }) {
+export function convertEventsToGroupedEvents({
+  events = [], groupByValue = 'hour', getColor = () => '#fff',
+} = {}) {
   const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf(groupByValue).format());
 
   return Object.keys(groupedEvents).map((dateString) => {
@@ -82,7 +83,37 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
   });
 }
 
+/**
+ * Convert watcher values to calendar events
+ *
+ * @param {Array} alarms
+ * @param {string} [groupByValue='hour']
+ * @returns []
+ */
+export function convertWatcherValuesToEvents({ values = [], groupByValue = 'day' } = {}) {
+  const groupedValues = groupBy(values, value => moment.unix(value.start).startOf(groupByValue).format());
+
+  return Object.entries(groupedValues).map(([dateString, groupValues]) => {
+    const dateObject = moment(dateString);
+    const startDay = new Day(dateObject);
+    const { duration, state } = maxBy(groupValues, value => value.state);
+
+    return {
+      data: {
+        color: WATCHER_STATES_COLORS[state],
+      },
+      schedule: new Schedule({
+        duration,
+        on: startDay,
+        times: [startDay.asTime()],
+        durationUnit: 'seconds',
+      }),
+    };
+  });
+}
+
 export default {
   convertAlarmsToEvents,
   convertEventsToGroupedEvents,
+  convertWatcherValuesToEvents,
 };
