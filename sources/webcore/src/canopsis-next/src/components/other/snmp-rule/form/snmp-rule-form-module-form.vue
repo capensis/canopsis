@@ -27,8 +27,6 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import formMixin from '@/mixins/form';
 import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
@@ -109,7 +107,7 @@ export default {
     },
 
     selectMib(mib) {
-      this.$emit('input', { ...cloneDeep(this.form), mibName: mib.name, oid: mib.oid });
+      this.$emit('input', { ...this.form, mibName: mib.name, oid: mib.oid });
     },
   },
 };

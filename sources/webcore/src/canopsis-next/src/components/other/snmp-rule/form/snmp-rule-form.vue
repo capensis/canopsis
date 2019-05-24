@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     snmp-rule-form-module-form(
-    v-model="form.oid",
+    :form="form.oid",
     :moduleMibs.sync="moduleMibs",
     @input="updateField('oid', $event)"
     )
