@@ -325,6 +325,15 @@ def is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_p
 
     return False
 
+def remove_inactive_pbh(pbehaviors):
+    now = time.time()
+
+    active_pbh = []
+    for pbh in pbehaviors:
+        if pbehavior_manager.check_active_pbehavior(now, pbh):
+            active_pbh.append(pbh)
+
+    return active_pbh
 
 def get_next_run_alert(watcher_depends, alert_next_run_dict):
     """
@@ -455,8 +464,18 @@ def exports(ws):
         result = []
 
         for watcher in pipeline_result:
+
+            # remove the inactive pbehaviors from the pipeline result
+            pbhs = watcher[ResultKey.PBEHAVIORS.value]
+            watcher[ResultKey.PBEHAVIORS.value] = remove_inactive_pbh(pbhs)
+            pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
+            watcher[ResultKey.WATCHED_ENT_PBH.value] = remove_inactive_pbh(pbhs)
+
+            # assign entities pbehaviors to the correct entities
+
+
             tileData = __TileData(watcher)
-            result.append(tileData.__dict__)
+            result.append(vars(tileData))
 
         return gen_json(result)
 
