@@ -224,7 +224,7 @@ class InfluxDBClient(Client):
             tags = point.get('tags')
             if tags:
                 for key, value in tags.items():
-                    tags[key] = value.replace('\n', '\\n')
+                    tags[key] = unicode(value).replace('\n', '\\n')
 
         super(InfluxDBClient, self).write_points(points)
 
