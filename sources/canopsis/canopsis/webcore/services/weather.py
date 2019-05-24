@@ -65,6 +65,8 @@ class ResultKey(DefaultEnum):
     NAME = "name"
     STATE = "state"
     ALARM = "alarm"
+    PBEHAVIORS = "pbehaviors"
+    WATCHED_ENT_PBH = "watched_entities_pbehaviors"
     ALRM_VALUE = "v"
     ALRM_STATUS = "status"
     ALRM_STATE = "state"
@@ -421,7 +423,7 @@ def exports(ws):
                       {"from": "default_pbehavior",
                        "localField": "_id",
                        "foreignField": "eids",
-                       "as": "pbehavior"
+                       "as": "pbehaviors"
                       }
         }
 
@@ -431,9 +433,8 @@ def exports(ws):
                                    "startWith": "$watched_entities._id",
                                    "connectFromField": "watched_entities._id",
                                    "connectToField": "eids",
-                                   "as": "plop",
                                    "maxDepth": 0,
-                                   "as": "watched_entities_pbehavior",
+                                   "as": "watched_entities_pbehaviors",
                                   }
         }
 
@@ -443,10 +444,6 @@ def exports(ws):
                     alarms,
                     pbehaviors,
                     pbehaviors_watched_ent]
-
-        with open("/tmp/plop.txt", "a") as fd:
-            import pprint
-            fd.write("Pipeline {}\n\n".format(pprint.pformat(pipeline)))
 
         # retreive
         if orderby is not None:
@@ -458,7 +455,6 @@ def exports(ws):
         result = []
 
         for watcher in pipeline_result:
-
             tileData = __TileData(watcher)
             result.append(tileData.__dict__)
 
