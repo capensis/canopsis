@@ -1222,12 +1222,15 @@ class Alerts(object):
                 continue
 
             # Continue only if the filter condition is valid
-            if not lifter.check_alarm(docalarm):
+            alarm = lifter.get_and_check_alarm(docalarm)
+            if not alarm:
                 self.logger.debug('AlarmFilter {}: Filter condition is invalid'
                                   .format(lifter._id))
                 continue
 
-            alarmfilter = value.get(AlarmField.alarmfilter.value, {})
+            new_value = alarm[storage.Key.VALUE]
+
+            alarmfilter = new_value.get(AlarmField.alarmfilter.value, {})
             # Only execute the filter once per reached limit
             if len(alarmfilter) > 0 and RUNS in alarmfilter \
                and lifter._id in alarmfilter[RUNS]:
@@ -1244,21 +1247,21 @@ class Alerts(object):
                                  .format(alarm_id, lifter.limit))
 
             # Getting most recent step message
-            steps = docalarm[storage.VALUE][AlarmField.steps.value]
+            steps = new_value[AlarmField.steps.value]
             message = sorted(steps, key=itemgetter('t'))[-1]['m']
 
             event = {
                 'timestamp': now_stamp,
-                'connector': value['connector'],
-                'connector_name': value['connector_name'],
+                'connector': new_value['connector'],
+                'connector_name': new_value['connector_name'],
                 'output': lifter.output(message),
                 'event_type': Check.EVENT_TYPE,
-                'component': value["component"]
+                'component': new_value["component"]
             }
 
-            if value["resource"] is not None:
+            if new_value["resource"] is not None:
                 event["source_type"] = "resource"
-                event["resource"] = value["resource"]
+                event["resource"] = new_value["resource"]
             else:
                 event["source_type"] = "component"
 
@@ -1266,7 +1269,6 @@ class Alerts(object):
 
             # Execute each defined action
             updated_once = False
-            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             for task in lifter.tasks:
 
                 if vstate in new_value:
@@ -1290,13 +1292,11 @@ class Alerts(object):
                 if updated_alarm_value is not None:
                     new_value = updated_alarm_value
                     updated_once = True
-                    self.update_current_alarm(docalarm, updated_alarm_value)
 
             if not updated_once:
                 continue
 
             # Mark the alarm that this filter has been applied
-            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
             alarmfilter = new_value.get(AlarmField.alarmfilter.value, {})
             if RUNS not in alarmfilter:
                 alarmfilter[RUNS] = {}
