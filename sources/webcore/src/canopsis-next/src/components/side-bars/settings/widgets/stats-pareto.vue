@@ -65,9 +65,7 @@ export default {
         Accumulation: {},
       };
 
-      stats[this.widget.parameters.stat.title] = {
-        ...omit(this.widget.parameters.stat, ['title']),
-      };
+      stats[this.widget.parameters.stat.title] = omit(this.widget.parameters.stat, ['title']);
 
       return stats;
     },

@@ -87,7 +87,7 @@ export default {
     },
 
     options() {
-      const options = {
+      return {
         scales: {
           xAxes: [{
             scaleLabel: {
@@ -123,8 +123,6 @@ export default {
           ],
         },
       };
-
-      return options;
     },
   },
   methods: {

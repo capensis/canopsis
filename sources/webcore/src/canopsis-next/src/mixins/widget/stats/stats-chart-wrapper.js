@@ -63,11 +63,9 @@ export default {
     },
 
     options() {
-      const options = {
+      return {
         annotation: this.annotationLine,
       };
-
-      return options;
     },
   },
   methods: {
