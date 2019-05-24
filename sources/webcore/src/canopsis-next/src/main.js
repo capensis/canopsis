@@ -95,6 +95,7 @@ Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
 
+VueClipboard.config.autoSetContainer = true;
 Vue.use(VueClipboard);
 
 Vue.use(VeeValidate, {

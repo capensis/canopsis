@@ -67,7 +67,16 @@
         v-layout(row, align-center, v-if="!isNew")
           div {{ $t('common.authKey') }}: {{ config.user.authkey }}
           v-tooltip(left)
-            v-btn(@click.stop="$copyText(user.authkey)", slot="activator", small, fab, icon, depressed)
+            v-btn(
+            v-clipboard:copy="config.user.authkey",
+            v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
+            v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+            slot="activator",
+            small,
+            fab,
+            icon,
+            depressed
+            )
               v-icon file_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
@@ -98,6 +107,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewMixin from '@/mixins/entities/view/index';
+import popupMixin from '@/mixins/popup';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
@@ -116,6 +126,7 @@ export default {
     entitiesRoleMixin,
     entitiesUserMixin,
     entitiesViewMixin,
+    popupMixin,
   ],
   data() {
     return {
