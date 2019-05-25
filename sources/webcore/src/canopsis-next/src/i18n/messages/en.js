@@ -163,8 +163,8 @@ export default {
       '</dl>',
   },
   entities: {
-    watcher: 'watcher',
-    entities: 'entities',
+    watcher: 'Watcher',
+    entities: 'Entities',
   },
   login: {
     standard: 'Standard',
@@ -234,6 +234,7 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
+      statsParetoSettings: 'Stats Pareto diagram settings',
       textSettings: 'Text settings',
     },
     advancedSettings: 'Advanced settings',
@@ -628,6 +629,9 @@ export default {
         },
         statsNumber: {
           title: 'Stats number',
+        },
+        statsPareto: {
+          title: 'Pareto diagram',
         },
         text: {
           title: 'Text',

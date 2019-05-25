@@ -185,6 +185,29 @@ export function convertStatsNumberWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts widget with type 'Stats Pareto diagram' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsParetoWidgetToQuery(widget) {
+  const { stat } = widget.parameters;
+  const query = { ...widget.parameters };
+
+  if (stat) {
+    query.stats = {
+      [stat.title]: {
+        ...omit(stat, ['title']),
+        stat: stat.stat.value,
+        aggregate: ['sum'],
+      },
+    };
+  }
+
+  return query;
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -287,6 +310,8 @@ export function convertWidgetToQuery(widget) {
       return convertWidgetStatsParameterToQuery(widget);
     case WIDGET_TYPES.statsNumber:
       return convertStatsNumberWidgetToQuery(widget);
+    case WIDGET_TYPES.statsPareto:
+      return convertStatsParetoWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
       return convertStatsCalendarWidgetToQuery(widget);
     default:

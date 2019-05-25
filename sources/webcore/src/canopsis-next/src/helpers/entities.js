@@ -211,6 +211,28 @@ export function generateWidgetByType(type) {
         },
       };
       break;
+
+    case WIDGET_TYPES.statsPareto:
+      specialParameters = {
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
+        mfilter: {},
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
+        },
+        statsColors: {},
+      };
+      break;
+
     case WIDGET_TYPES.text:
       specialParameters = {
         dateInterval: {
