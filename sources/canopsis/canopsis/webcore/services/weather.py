@@ -115,7 +115,8 @@ class __TileData:
             self.resource = alarm[ResultKey.ALRM_RESOURCE.value]
 
         # properties of the tile
-        self.action_required = self.__is_action_required(watcher)
+        self.isActionRequired = self.__is_action_required(watcher)
+        self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
 
     @classmethod
     def __is_action_required(cls, watcher):
@@ -136,6 +137,14 @@ class __TileData:
                     return True
 
         return False
+
+    @classmethod
+    def __is_all_entities_paused(cls, watcher):
+        for entity in watcher[ResultKey.ENT.value]:
+            if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
+                return False
+        return True
+
 
 
 def __format_pbehavior(pbehavior):
