@@ -6,7 +6,12 @@
         v-btn(icon, dark, @click.native="hideModal")
           v-icon close
     v-card-text
-      entities-list-widget(v-model="selectedItem", :widget="config.widget", selectingType="single")
+      context-general-list(
+      v-model="selectedItem",
+      :filterPreparer="filterPreparer",
+      initialSearchingText="watcher_9b55e9cb-e050-4c20-ac74-1df91c52e038",
+      single
+      )
     v-divider
     v-card-actions
       v-layout.py-1(justify-end)
@@ -15,16 +20,18 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, CONTEXT_ENTITIES_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import queryMixin from '@/mixins/query';
 
-import EntitiesListWidget from '@/components/other/context/entities-list.vue';
+import { getContextSearchByText } from '@/helpers/widget-search';
+
+import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 
 export default {
   name: MODALS.contextEntitiesList,
-  components: { EntitiesListWidget },
+  components: { ContextGeneralList },
   mixins: [modalInnerMixin, queryMixin],
   data() {
     return {
@@ -36,6 +43,19 @@ export default {
       id: this.config.widget._id,
       query: this.config.query,
     });
+  },
+  methods: {
+    filterPreparer(text) {
+      return {
+        $and: [
+          getContextSearchByText(text, ['_id']),
+
+          {
+            type: CONTEXT_ENTITIES_TYPES.watcher,
+          },
+        ],
+      };
+    },
   },
 };
 </script>

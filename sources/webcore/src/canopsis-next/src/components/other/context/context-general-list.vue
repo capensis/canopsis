@@ -1,35 +1,35 @@
 <template lang="pug">
-div
+  div
     v-toolbar.toolbar.white(dense, flat)
       v-text-field(
-      label="Search",
       v-model="searchingText",
+      :label="$t('common.search')",
       hide-details,
       single-line,
-      @keyup.enter="submit",
+      @keyup.enter="submit"
       )
       v-btn(icon, @click="submit")
         v-icon search
     v-btn.green.white--text(
-      v-show="selectedEntities.length",
-      @click="$emit('update:selectedIds',selectedEntities)"
+    v-show="selectedEntities.length",
+    @click="$emit('update:selectedIds', selectedEntities)"
     ) Add selection
     v-data-table(
-      :no-data-text="this.$t('tables.noData')",
-      :headers="headers",
-      :items="contextEntities",
-      :loading="pending",
-      v-model="selectedEntities",
-      select-all,
-      item-key="_id",
+    v-model="selectedEntities",
+    :no-data-text="$t('tables.noData')",
+    :headers="headers",
+    :items="contextEntities",
+    :loading="pending",
+    :select-all="!single",
+    item-key="_id"
     )
       template(slot="items", slot-scope="props")
         td
           v-checkbox(
-            v-model="props.selected",
-            :value="props._id",
-            primary,
-            hide-details,
+          v-model="props.selected",
+          :value="props._id",
+          primary,
+          hide-details
           )
         td.text-xs-left {{ props.item.name }}
         td.text-xs-left {{ props.item._id}}
@@ -46,11 +46,34 @@ import { getContextSearchByText } from '@/helpers/widget-search';
 const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 
 export default {
+  props: {
+    single: {
+      type: Boolean,
+      default: false,
+    },
+    filterPreparer: {
+      type: Function,
+      default: getContextSearchByText,
+    },
+    initialSearchingText: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
-      searchingText: '',
+      searchingText: this.initialSearchingText,
       selectedEntities: [],
-      headers: [
+    };
+  },
+  computed: {
+    ...mapGetters({
+      contextEntities: 'itemsGeneralList',
+      pending: 'pendingGeneralList',
+    }),
+
+    headers() {
+      const headers = [
         {
           text: this.$t('tables.contextList.name'),
           sortable: false,
@@ -59,23 +82,43 @@ export default {
           text: this.$t('tables.contextList.id'),
           sortable: false,
         },
-      ],
-    };
+      ];
+
+      if (!this.single) {
+        return [
+          ...headers,
+
+          {
+            text: this.$t('common.actionsLabel'),
+            sortable: false,
+          },
+        ];
+      }
+
+      return [
+        {
+          text: '',
+          sortable: false,
+        },
+
+        ...headers,
+      ];
+    },
   },
-  computed: {
-    ...mapGetters({
-      contextEntities: 'itemsGeneralList',
-      pending: 'pendingGeneralList',
-    }),
+  mounted() {
+    if (this.single) {
+      this.submit();
+    }
   },
   methods: {
     ...mapActions({
       fetchContextEntities: 'fetchGeneralList',
     }),
+
     submit() {
       this.fetchContextEntities({
         params: {
-          _filter: getContextSearchByText(this.searchingText),
+          _filter: this.filterPreparer(this.searchingText),
         },
       });
     },
