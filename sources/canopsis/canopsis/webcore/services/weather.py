@@ -66,6 +66,7 @@ class ResultKey(DefaultEnum):
     STATE = "state"
     ALARM = "alarm"
     PBEHAVIORS = "pbehaviors"
+    MFILTER = "mfilter"
     WATCHED_ENT_PBH = "watched_entities_pbehaviors"
     ALRM_VALUE = "v"
     ALRM_STATUS = "status"
@@ -90,6 +91,7 @@ class __TileData:
         self.sla_tex = ""
         self.display_name = watcher[ResultKey.NAME.value]
         self.linklist = []
+        self.mfilter = watcher[ResultKey.MFILTER.value]
         for key, value in watcher[ResultKey.LINKS.value].items():
             self.linklist.append({'cat_name': key, 'links': value})
 
@@ -111,7 +113,6 @@ class __TileData:
             self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE.value]
             self.component = alarm[ResultKey.ALRM_COMPONENT.value]
             self.resource = alarm[ResultKey.ALRM_RESOURCE.value]
-
 
 
 def __format_pbehavior(pbehavior):
@@ -459,13 +460,26 @@ def exports(ws):
                                   }
         }
 
+        # retreive every opened alarm on the watched entities
+        alarm_watched_ent = {"$graphLookup":
+                             {"from": "periodical_alarm",
+                              "startWith": "$watched_entities._id",
+                              "connectFromField": "_id",
+                              "connectToField": "d",
+                              "restrictSearchWithMatch": {'v.resolved': None},
+                              "as": "watched_entities_alarm",
+                              "maxDepth": 0
+                             }
+        }
+
         pipeline = [select_watcher_stage,
                     skip,
                     limit,
                     alarms,
                     pbehaviors,
                     entities,
-                    pbehaviors_watched_ent]
+                    pbehaviors_watched_ent,
+                    alarm_watched_ent]
 
         # retreive
         if orderby is not None:
@@ -499,9 +513,6 @@ def exports(ws):
 
             watcher[ResultKey.ENT.value] = entities.values()
             del watcher[ResultKey.WATCHED_ENT_PBH.value]
-            with open("/tmp/plop.txt", "a") as fd:
-                import pprint
-                fd.write("Entities : \n{}\n\n".format(pprint.pformat(watcher)))
 
             tileData = __TileData(watcher)
             result.append(vars(tileData))
