@@ -477,7 +477,6 @@ def exports(ws):
         result = []
 
         for watcher in pipeline_result:
-
             # remove the inactive pbehaviors from the pipeline result
             pbhs = watcher[ResultKey.PBEHAVIORS.value]
             watcher[ResultKey.PBEHAVIORS.value] = remove_inactive_pbh(pbhs)
