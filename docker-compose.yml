@@ -67,6 +67,9 @@ services:
       - 6379:6379
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
+    environment:
+      - CPS_EDITION=core
+      - CPS_STACK=python
     env_file:
       - compose.env
     depends_on:
