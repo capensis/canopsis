@@ -114,6 +114,29 @@ class __TileData:
             self.component = alarm[ResultKey.ALRM_COMPONENT.value]
             self.resource = alarm[ResultKey.ALRM_RESOURCE.value]
 
+        # properties of the tile
+        self.action_required = self.__is_action_required(watcher)
+
+    @classmethod
+    def __is_action_required(cls, watcher):
+
+        watcher_alarm = watcher.get(ResultKey.ALARM.value, None)
+        if watcher_alarm is None:
+            return False
+
+        if len(watcher[ResultKey.PBEHAVIORS.value]) != 0:
+            return False
+
+        for entity in watcher[ResultKey.ENT.value]:
+            if entity[ResultKey.ALARM.value] is None:
+                continue
+
+            if entity[ResultKey.ALARM.value]["v"].get("ack", None) is None:
+                if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
+                    return True
+
+        return False
+
 
 def __format_pbehavior(pbehavior):
     """
@@ -501,6 +524,7 @@ def exports(ws):
             entities = {}
             for entity in watcher[ResultKey.ENT.value]:
                 entity[ResultKey.PBEHAVIORS.value] = []
+                entity[ResultKey.ALARM.value] = None
                 entities[entity[ResultKey.ENT_ID.value]] = entity
 
             for pbh in watcher[ResultKey.WATCHED_ENT_PBH.value]:
