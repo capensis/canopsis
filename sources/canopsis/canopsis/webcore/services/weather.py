@@ -68,6 +68,7 @@ class ResultKey(DefaultEnum):
     PBEHAVIORS = "pbehaviors"
     MFILTER = "mfilter"
     WATCHED_ENT_PBH = "watched_entities_pbehaviors"
+    WATCHED_ENT_ALRM = "watched_entities_alarm"
     ALRM_VALUE = "v"
     ALRM_STATUS = "status"
     ALRM_STATE = "state"
@@ -80,7 +81,6 @@ class ResultKey(DefaultEnum):
     ALRM_RESOURCE = "resource"
     ENT = "watched_entities"
     ENT_ID = "_id"
-    ENTPBH = "watched_entities_pbehaviors"
 
 
 class __TileData:
@@ -503,7 +503,7 @@ def exports(ws):
                 entity[ResultKey.PBEHAVIORS.value] = []
                 entities[entity[ResultKey.ENT_ID.value]] = entity
 
-            for pbh in watcher[ResultKey.ENTPBH.value]:
+            for pbh in watcher[ResultKey.WATCHED_ENT_PBH.value]:
                 for ent_id in pbh["eids"]:
                     try:
                         entities[ent_id][ResultKey.PBEHAVIORS.value].append(pbh)
@@ -511,8 +511,16 @@ def exports(ws):
                         ws.logger.error("Can not find entities {} in the"
                                         "pipeline result".format(ent_id))
 
+            for alarm in watcher[ResultKey.WATCHED_ENT_ALRM.value]:
+                try:
+                    entities[alarm["d"]][ResultKey.ALARM.value] = alarm
+                except KeyError:
+                    ws.logger.error("Can not find entities {} in the"
+                                    "pipeline result".format(alarm["d"]))
+
             watcher[ResultKey.ENT.value] = entities.values()
             del watcher[ResultKey.WATCHED_ENT_PBH.value]
+            del watcher[ResultKey.WATCHED_ENT_ALRM.value]
 
             tileData = __TileData(watcher)
             result.append(vars(tileData))
