@@ -90,11 +90,7 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertWeatherWidgetToQuery(widget) {
-  const query = {
-    filter: widget.parameters.mfilter.filter,
-  };
-
-  return query;
+  return { ...convertSortToQuery(widget) };
 }
 
 /**

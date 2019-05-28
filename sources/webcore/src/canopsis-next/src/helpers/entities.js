@@ -126,6 +126,9 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.weather:
       specialParameters = {
         mfilter: {},
+        sort: {
+          order: SORT_ORDERS.asc,
+        },
         blockTemplate: '',
         modalTemplate: '',
         entityTemplate: '',

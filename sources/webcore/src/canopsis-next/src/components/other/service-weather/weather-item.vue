@@ -72,11 +72,11 @@ export default {
     },
 
     isPaused() {
-      return this.watcher.active_pb_all;
+      return this.watcher.isAllEntitiesPaused;
     },
 
     hasWatcherPbehavior() {
-      return this.watcher.active_pb_watcher;
+      return this.watcher.isWatcherPaused;
     },
 
     format() {
@@ -142,7 +142,7 @@ export default {
     },
 
     isBlinking() {
-      return this.watcher.action_required;
+      return this.watcher.isActionRequired;
     },
 
     isBothModalType() {

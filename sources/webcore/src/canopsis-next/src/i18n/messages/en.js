@@ -242,6 +242,7 @@ export default {
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
     columnNames: 'Column names',
+    orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
     elementsPerPage: 'Elements per page',

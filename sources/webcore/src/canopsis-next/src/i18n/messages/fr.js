@@ -230,6 +230,7 @@ export default {
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
     columnNames: 'Nom des colonnes',
+    orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
     defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
     elementsPerPage: 'Élements par page',

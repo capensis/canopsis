@@ -31,6 +31,12 @@
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
+          field-default-sort-column(
+          v-model="settings.widget.parameters.sort",
+          :columns="sortColumns",
+          :columnsLabel="$t('settings.orderBy')"
+          )
+          v-divider
           field-weather-template(
           v-model="settings.widget.parameters.blockTemplate",
           :title="$t('settings.weatherTemplate')"
@@ -106,6 +112,7 @@ import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
@@ -125,6 +132,7 @@ export default {
     FieldTitle,
     FieldPeriodicRefresh,
     FieldFilterEditor,
+    FieldDefaultSortColumn,
     FieldWeatherTemplate,
     FieldGridSize,
     FieldSlider,
@@ -143,6 +151,13 @@ export default {
         rowId,
         widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
       },
+      sortColumns: [
+        { label: 'display_name', value: 'display_name' },
+        { label: 'state', value: 'state' },
+        { label: 'status', value: 'status' },
+        { label: 'criticity', value: 'criticity' },
+        { label: 'org', value: 'org' },
+      ],
     };
   },
   methods: {
