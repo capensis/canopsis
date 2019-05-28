@@ -20,8 +20,8 @@
     :headers="headers",
     :items="contextEntities",
     :loading="pending",
-    :select-all="!single",
-    item-key="_id"
+    item-key="_id",
+    select-all
     )
       template(slot="items", slot-scope="props")
         td
@@ -46,20 +46,6 @@ import { getContextSearchByText } from '@/helpers/widget-search';
 const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 
 export default {
-  props: {
-    single: {
-      type: Boolean,
-      default: false,
-    },
-    filterPreparer: {
-      type: Function,
-      default: getContextSearchByText,
-    },
-    initialSearchingText: {
-      type: String,
-      default: '',
-    },
-  },
   data() {
     return {
       searchingText: this.initialSearchingText,
@@ -73,7 +59,7 @@ export default {
     }),
 
     headers() {
-      const headers = [
+      return [
         {
           text: this.$t('tables.contextList.name'),
           sortable: false,
@@ -82,33 +68,12 @@ export default {
           text: this.$t('tables.contextList.id'),
           sortable: false,
         },
-      ];
-
-      if (!this.single) {
-        return [
-          ...headers,
-
-          {
-            text: this.$t('common.actionsLabel'),
-            sortable: false,
-          },
-        ];
-      }
-
-      return [
         {
-          text: '',
+          text: this.$t('common.actionsLabel'),
           sortable: false,
         },
-
-        ...headers,
       ];
     },
-  },
-  mounted() {
-    if (this.single) {
-      this.submit();
-    }
   },
   methods: {
     ...mapActions({
@@ -118,7 +83,7 @@ export default {
     submit() {
       this.fetchContextEntities({
         params: {
-          _filter: this.filterPreparer(this.searchingText),
+          _filter: getContextSearchByText(this.searchingText),
         },
       });
     },

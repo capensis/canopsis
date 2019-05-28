@@ -817,6 +817,9 @@ export default {
         },
       },
     },
+    contextEntitySelector: {
+      title: 'Context entity selector',
+    },
   },
   tables: {
     noData: 'No data',
