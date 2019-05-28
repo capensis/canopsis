@@ -70,7 +70,7 @@ def __format_pbehavior(pbehavior):
     rrule = {}
     rrule["rrule"] = pbehavior["rrule"]
 
-    if pbehavior["rrule"] is not None:
+    if pbehavior["rrule"] not in [None, ""]:
 
         rrule_str = pbehavior["rrule"]
         if rrule_str[0:6] == "RRULE:":
