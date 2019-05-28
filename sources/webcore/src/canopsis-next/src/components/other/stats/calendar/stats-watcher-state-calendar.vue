@@ -88,7 +88,7 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      if (this.widget.parameters.entityId) {
+      if (this.query.mfilter) {
         const [watcherData = { values: [] }] = await this.fetchSpecialStatsListsWithoutStore({
           params: this.query,
         });

@@ -159,12 +159,16 @@ export function convertStatsCalendarWidgetToQuery(widget) {
 export function convertStatsWatcherStateCalendarWidgetToQuery(widget) {
   const { entityId } = widget.parameters;
 
-  return {
-    mfilter: {
-      type: CONTEXT_ENTITIES_TYPES.watcher,
-      _id: entityId,
-    },
-  };
+  if (entityId) {
+    return {
+      mfilter: {
+        type: CONTEXT_ENTITIES_TYPES.watcher,
+        _id: entityId,
+      },
+    };
+  }
+
+  return {};
 }
 
 /**

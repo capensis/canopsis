@@ -380,6 +380,10 @@ export default {
     columns: {
       isHtml: 'Is it HTML?',
     },
+    statsWatcherSelector: {
+      title: 'Select watcher',
+      required: 'You should select watcher',
+    },
   },
   modals: {
     contextInfos: {

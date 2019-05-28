@@ -2,8 +2,8 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.statsWatcherSelector.title') }}
     v-container(fluid)
-      v-alert(:value="errors.has('entityId')", type="error") Watcher is required
-      v-btn.primary(@click="showContextEntitySelectorModal") Select watcher
+      v-alert(:value="errors.has('entityId')", type="error") {{ $t('settings.statsWatcherSelector.required') }}
+      v-btn.primary(@click="showContextEntitySelectorModal") {{ $t('common.select') }}
 </template>
 
 <script>
