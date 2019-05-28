@@ -120,3 +120,4 @@ export function dateParse(date, type, format) {
 
   return momentDate;
 }
+
