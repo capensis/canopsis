@@ -160,7 +160,13 @@ class __TileData:
 
     @classmethod
     def __get_tile_color(cls, watcher):
-        if len(watcher[ResultKey.PBEHAVIORS.value]) != 0:
+        watched_ent_paused = 0
+        for ent in watcher[ResultKey.ENT.value]:
+            if len(ent[ResultKey.PBEHAVIORS.value]) != 0:
+                watched_ent_paused += 1
+
+        if watched_ent_paused == len(watcher[ResultKey.ENT.value]) or \
+           len(watcher[ResultKey.PBEHAVIORS.value]) != 0:
             return TILE_COLOR_PAUSE
 
         return TILE_COLOR_SELECTOR[watcher[ResultKey.STATE.value]]
