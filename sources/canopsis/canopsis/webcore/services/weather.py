@@ -58,6 +58,16 @@ DEFAULT_START = '0'
 DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
 
+TILE_COLOR_PAUSE = "pause"
+TILE_COLOR_OK = "ok"
+TILE_COLOR_MINOR = "minor"
+TILE_COLOR_MAJOR = "major"
+TILE_COLOR_CRITICAL = "critical"
+TILE_COLOR_SELECTOR = [TILE_COLOR_OK,
+                       TILE_COLOR_MINOR,
+                       TILE_COLOR_MAJOR,
+                       TILE_COLOR_CRITICAL]
+
 class ResultKey(DefaultEnum):
     ID = "_id"
     INFOS = "infos"
@@ -117,6 +127,8 @@ class __TileData:
         # properties of the tile
         self.isActionRequired = self.__is_action_required(watcher)
         self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
+        self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS.value]) != 0
+        self.tileColor = self.__get_tile_color(watcher)
 
     @classmethod
     def __is_action_required(cls, watcher):
@@ -144,6 +156,13 @@ class __TileData:
             if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
                 return False
         return True
+
+    @classmethod
+    def __get_tile_color(cls, watcher):
+        if len(watcher[ResultKey.PBEHAVIORS.value]) != 0:
+            return TILE_COLOR_PAUSE
+
+        return TILE_COLOR_SELECTOR[watcher[ResultKey.STATE.value]]
 
 
 
