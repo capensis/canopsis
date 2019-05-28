@@ -40,8 +40,8 @@ Vue.use(filters);
 Vue.use(Vuetify, {
   iconfont: 'md',
   theme: {
-    primary: '#2fab63',
-    secondary: '#2b3e4f',
+    primary: config.COLORS.primary,
+    secondary: config.COLORS.secondary,
   },
   icons: {
     webhook: {

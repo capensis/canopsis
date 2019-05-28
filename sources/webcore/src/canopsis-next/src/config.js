@@ -78,3 +78,31 @@ export const API_ROUTES = {
     app: '/api/internal/app_info',
   },
 };
+
+export const COLORS = {
+  primary: '#2fab63',
+  secondary: '#2b3e4f',
+  state: {
+    ok: '#00a65a',
+    minor: '#fcdc00',
+    major: '#ff9900',
+    critical: '#f56954',
+    pause: '#808080',
+  },
+  status: {
+    off: 'black',
+    ongoing: 'grey',
+    stealthy: 'gold',
+    flapping: 'orange',
+    cancelled: 'red',
+    unknown: 'black',
+  },
+  entitiesEvents: {
+    ack: '#9c27b0',
+    ackRemove: '#9c27b0',
+    declareTicket: '#2196f3',
+    snooze: '#e91e63',
+    done: '#00a65a',
+  },
+  statsDefault: '#dddddd',
+};

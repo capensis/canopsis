@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
   :class="itemClasses",
-  :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
+  :style="{ height: itemHeight + 'em', backgroundColor: color}",
   tile,
   @click.native="showAdditionalInfoModal"
   )
@@ -9,7 +9,7 @@
       v-icon help
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
-        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
+        v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
         v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
           v-icon(color="white") {{ secondaryIcon }}
@@ -21,14 +21,11 @@
 </template>
 
 <script>
-import { find } from 'lodash';
-
 import {
   MODALS,
   USERS_RIGHTS,
   WIDGET_TYPES,
   WATCHER_STATES_COLORS,
-  WATCHER_PBEHAVIOR_COLOR,
   PBEHAVIOR_TYPES,
   WEATHER_ICONS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
@@ -79,33 +76,12 @@ export default {
       return this.watcher.isWatcherPaused;
     },
 
-    format() {
-      if (!this.isPaused && !this.hasWatcherPbehavior) {
-        const state = this.watcher.state.val;
+    color() {
+      return WATCHER_STATES_COLORS[this.watcher.tileColor];
+    },
 
-        return {
-          icon: WEATHER_ICONS[state],
-          color: WATCHER_STATES_COLORS[state],
-        };
-      }
-
-      const pbehaviors = this.hasWatcherPbehavior ? this.watcher.watcher_pbehavior : this.watcher.pbehavior;
-
-      const maintenancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.maintenance });
-      const outOfSurveillancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
-
-      let icon = WEATHER_ICONS.pause;
-
-      if (maintenancePbehavior) {
-        icon = WEATHER_ICONS.maintenance;
-      } else if (outOfSurveillancePbehavior) {
-        icon = WEATHER_ICONS.outOfSurveillance;
-      }
-
-      return {
-        color: WATCHER_PBEHAVIOR_COLOR,
-        icon,
-      };
+    icon() {
+      return 'wb_sunny';
     },
 
     secondaryIcon() {

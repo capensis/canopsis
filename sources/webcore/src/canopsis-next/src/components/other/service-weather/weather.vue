@@ -54,9 +54,6 @@ export default {
       ];
     },
   },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
     getQuery() {
       const query = omit(this.query, [

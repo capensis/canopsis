@@ -152,7 +152,7 @@ export default {
         widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
       },
       sortColumns: [
-        { label: 'display_name', value: 'display_name' },
+        { label: 'name', value: 'name' },
         { label: 'state', value: 'state' },
         { label: 'status', value: 'status' },
         { label: 'criticity', value: 'criticity' },

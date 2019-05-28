@@ -46,12 +46,12 @@ import { find, isNull, pickBy } from 'lodash';
 import {
   CRUD_ACTIONS,
   MODALS,
-  WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
   WEATHER_ICONS,
   EVENT_ENTITY_STYLE,
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
+  ENTITIES_STATES_STYLES,
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
   USERS_RIGHTS,
@@ -154,10 +154,10 @@ export default {
   computed: {
     color() {
       if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
-        return WATCHER_PBEHAVIOR_COLOR;
+        return WATCHER_STATES_COLORS.pause;
       }
 
-      return WATCHER_STATES_COLORS[this.state];
+      return ENTITIES_STATES_STYLES[this.state].color;
     },
 
     mainIcons() {
