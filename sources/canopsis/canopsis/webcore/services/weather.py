@@ -57,7 +57,7 @@ DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
-DEFAULT_DIRECTION = 1
+DEFAULT_DIRECTION = "ASC"
 
 TILE_COLOR_PAUSE = "pause"
 TILE_COLOR_OK = "ok"
@@ -164,7 +164,6 @@ class __TileData:
             return TILE_COLOR_PAUSE
 
         return TILE_COLOR_SELECTOR[watcher[ResultKey.STATE.value]]
-
 
 
 def __format_pbehavior(pbehavior):
@@ -428,6 +427,16 @@ def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
     return False
 
 
+def _parse_direction(direction):
+    if direction == "ASC":
+        return 1
+    elif direction == "DESC":
+        return -1
+    else:
+        ValueError("Direction must be 'ASC' or 'DESC' not {}.".format(
+            direction))
+
+
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
@@ -459,11 +468,6 @@ def exports(ws):
             limit = int(limit)
         except ValueError:
             limit = int(DEFAULT_LIMIT)
-        if direction is not None:
-            try:
-                direction = int(direction)
-            except ValueError:
-                direction = int(DEFAULT_DIRECTION)
 
         wf = WatcherFilter()
         watcher_filter['type'] = 'watcher'
