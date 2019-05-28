@@ -50,7 +50,7 @@ export default {
   },
   data() {
     return {
-      searchingText: this.initialSearchingText,
+      searchingText: this.initialSearchingText || '',
       selectedEntity: [],
     };
   },

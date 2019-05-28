@@ -7,7 +7,7 @@
       :events="events",
       :calendar="calendar",
       @change="changeCalendar",
-      @edit="editEvent"
+      @edit="viewDay"
       )
 </template>
 
@@ -64,7 +64,7 @@ export default {
     },
   },
   methods: {
-    editEvent(event) {
+    viewDay(event) {
       this.$refs.calendar.viewDay(event.day);
     },
 
@@ -88,108 +88,18 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const [watcherData = { values: [] }] = await this.fetchSpecialStatsListsWithoutStore({
-        params: {
-          ...this.query,
+      if (this.widget.parameters.entityId) {
+        const [watcherData = { values: [] }] = await this.fetchSpecialStatsListsWithoutStore({
+          params: this.query,
+        });
 
-          mfilter: {
-            type: 'resource',
-            _id: 'feeder2_9/feeder2_11',
-          },
-        },
-      });
+        this.values = watcherData.values;
+      } else {
+        this.values = [];
+      }
 
-      this.values = watcherData.values;
       this.pending = false;
     },
   },
 };
 </script>
-
-
-<style lang="scss" scoped>
-  .calender-wrapper {
-    position: relative;
-
-    & /deep/ .ds-calendar-event {
-      font-size: 14px;
-    }
-
-    .single {
-      & /deep/ .ds-calendar-event-menu {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%!important;
-        padding: 4px;
-
-        .v-menu__activator {
-          width: 100%;
-          height: 100%;
-        }
-
-        .ds-calendar-event {
-          padding-left: 0;
-          display: flex;
-          height: 100%;
-          width: 100%;
-          & > span {
-            margin: auto;
-            text-align: center;
-          }
-          .ds-ev-description {
-            display: none;
-          }
-        }
-      }
-
-      & /deep/ .ds-week {
-        .ds-ev-description {
-          display: none;
-        }
-      }
-
-      & /deep/ .ds-month .ds-past {
-        background: #eee;
-      }
-    }
-
-    & /deep/ .ds-week-view {
-      .ds-ev-title {
-        display: block;
-      }
-    }
-
-    & /deep/ .ds-day {
-      position: relative;
-
-      .ds-dom {
-        border-radius: 12px;
-        background-color: white;
-        display: inline-block;
-        position: relative;
-        z-index: 1;
-
-        &.ds-today-dom {
-          background-color: #4285f4;
-        }
-      }
-
-      .ds-day-header {
-        z-index: 10;
-      }
-    }
-  }
-
-  .ds-calendar-event {
-    color: white;
-    margin: 1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-left: 0.5em;
-    cursor: pointer;
-    border-radius: 2px;
-  }
-</style>

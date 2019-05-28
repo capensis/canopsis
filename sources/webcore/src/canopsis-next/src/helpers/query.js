@@ -1,7 +1,7 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS, CONTEXT_ENTITIES_TYPES } from '@/constants';
 
 import prepareMainFilterToQueryFilter from './filter';
 
@@ -151,6 +151,23 @@ export function convertStatsCalendarWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts widget with type 'StatsWatcherStateCalendar' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsWatcherStateCalendarWidgetToQuery(widget) {
+  const { entityId } = widget.parameters;
+
+  return {
+    mfilter: {
+      type: CONTEXT_ENTITIES_TYPES.watcher,
+      _id: entityId,
+    },
+  };
+}
+
+/**
  * This function converts widget with type 'Stats number' to query Object
  *
  * @param {Object} widget
@@ -289,6 +306,8 @@ export function convertWidgetToQuery(widget) {
       return convertStatsNumberWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
       return convertStatsCalendarWidgetToQuery(widget);
+    case WIDGET_TYPES.statsWatcherStateCalendar:
+      return convertStatsWatcherStateCalendarWidgetToQuery(widget);
     default:
       return {};
   }

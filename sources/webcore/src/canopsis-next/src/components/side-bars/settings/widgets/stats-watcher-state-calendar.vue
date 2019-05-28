@@ -10,7 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-stats-watcher-selector(v-model="settings.widget.parameters.watcherId")
+      field-stats-watcher-selector(v-model="settings.widget.parameters.entityId")
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -31,7 +31,7 @@ import FieldStatsWatcherSelector from './fields/stats/watcher-selector.vue';
  * Component to regroup the entities list settings fields
  */
 export default {
-  name: SIDE_BARS.statsCalendarSettings,
+  name: SIDE_BARS.statsWatcherStateCalendarSettings,
   $_veeValidate: {
     validator: 'new',
   },

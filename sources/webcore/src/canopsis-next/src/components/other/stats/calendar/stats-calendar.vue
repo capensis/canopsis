@@ -6,7 +6,7 @@
       :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
       :events="events",
       @change="changeCalendar",
-      @edit="editEvent"
+      @edit="showAlarmsListModal"
       )
         v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
           v-card-text(v-if="calendarEvent.data.meta")
@@ -131,7 +131,7 @@ export default {
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    editEvent(event) {
+    showAlarmsListModal(event) {
       const { meta } = event.data;
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const widgetParameters = {
@@ -221,48 +221,6 @@ export default {
 
 <style lang="scss" scoped>
   .calender-wrapper {
-    position: relative;
-
-    & /deep/ .ds-calendar-event {
-      font-size: 14px;
-    }
-
-    .single {
-      & /deep/ .ds-calendar-event-menu {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%!important;
-        padding: 4px;
-
-        .v-menu__activator {
-          width: 100%;
-          height: 100%;
-        }
-
-        .ds-calendar-event {
-          padding-left: 0;
-          display: flex;
-          height: 100%;
-          width: 100%;
-          & > span {
-            margin: auto;
-            text-align: center;
-          }
-          .ds-ev-description {
-            display: none;
-          }
-        }
-      }
-
-      & /deep/ .ds-week {
-        .ds-ev-description {
-          display: none;
-        }
-      }
-    }
-
     .multiple {
       & /deep/ .ds-calendar-event-menu {
         position: relative;
@@ -271,32 +229,6 @@ export default {
         .ds-ev-title {
           margin-right: 10px;
         }
-      }
-    }
-
-    & /deep/ .ds-week-view {
-      .ds-ev-title {
-        display: block;
-      }
-    }
-
-    & /deep/ .ds-day {
-      position: relative;
-
-      .ds-dom {
-        border-radius: 12px;
-        background-color: white;
-        display: inline-block;
-        position: relative;
-        z-index: 1;
-
-        &.ds-today-dom {
-          background-color: #4285f4;
-        }
-      }
-
-      .ds-day-header {
-        z-index: 10;
       }
     }
   }
