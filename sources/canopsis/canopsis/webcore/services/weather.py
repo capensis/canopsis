@@ -57,6 +57,7 @@ DEFAULT_LIMIT = '120'
 DEFAULT_START = '0'
 DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
+DEFAULT_DIRECTION = 1
 
 TILE_COLOR_PAUSE = "pause"
 TILE_COLOR_OK = "ok"
@@ -458,6 +459,11 @@ def exports(ws):
             limit = int(limit)
         except ValueError:
             limit = int(DEFAULT_LIMIT)
+        if direction is not None:
+            try:
+                direction = int(direction)
+            except ValueError:
+                direction = int(DEFAULT_DIRECTION)
 
         wf = WatcherFilter()
         watcher_filter['type'] = 'watcher'
