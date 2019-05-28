@@ -10,7 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-stats-watcher-selector
+      field-stats-watcher-selector(v-model="settings.widget.parameters.watcherId")
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>

@@ -59,7 +59,7 @@ import EventFilterRuleExternalData from './event-filter/enrichment-options/event
 import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
-import ContextEntitiesList from './context/entities-list.vue';
+import ContextEntitySelector from './context/entity-selector.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -112,7 +112,7 @@ export default {
     FiltersList,
     CreateWebhook,
     CreateSnmpRule,
-    ContextEntitiesList,
+    ContextEntitySelector,
   },
   data() {
     return {
@@ -120,7 +120,6 @@ export default {
         [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
         [MODALS.createWidget]: { maxWidth: 500, lazy: true },
         [MODALS.alarmsList]: { fullscreen: true, lazy: true },
-        [MODALS.contextEntitiesList]: { fullscreen: true, lazy: true },
         [MODALS.createFilter]: { maxWidth: 920, lazy: true },
         [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },

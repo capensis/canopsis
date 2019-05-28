@@ -72,7 +72,7 @@ export const MODALS = {
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
-  contextEntitiesList: 'context-entities-list',
+  contextEntitySelector: 'context-entity-selector',
 };
 
 export const EVENT_ENTITY_TYPES = {

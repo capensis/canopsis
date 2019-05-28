@@ -223,6 +223,10 @@ export function generateWidgetByType(type) {
         template: '',
       };
       break;
+    case WIDGET_TYPES.statsWatcherStateCalendar:
+      specialParameters = {
+        entityId: null,
+      };
   }
 
   widget.parameters = { ...widget.parameters, ...specialParameters };
