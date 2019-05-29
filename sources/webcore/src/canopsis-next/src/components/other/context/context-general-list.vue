@@ -48,7 +48,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 export default {
   data() {
     return {
-      searchingText: this.initialSearchingText,
+      searchingText: '',
       selectedEntities: [],
     };
   },
