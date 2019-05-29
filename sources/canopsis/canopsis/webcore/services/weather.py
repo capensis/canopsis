@@ -145,7 +145,7 @@ class __TileData:
         self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS.value]) != 0
         self.tileColor = self.__get_tile_color(watcher)
         self.tileIcon = self.__get_tile_icon(watcher)
-        self.TileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
+        self.tileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
 
     @classmethod
     def __is_action_required(cls, watcher):
