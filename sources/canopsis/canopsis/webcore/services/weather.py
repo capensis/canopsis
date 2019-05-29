@@ -69,6 +69,18 @@ TILE_COLOR_SELECTOR = [TILE_COLOR_OK,
                        TILE_COLOR_MAJOR,
                        TILE_COLOR_CRITICAL]
 
+TILE_ICON_PAUSE = "pause"
+TILE_ICON_MAINTENANCE = "maintenance"
+TILE_ICON_OUT_SURVEILLANCE = "outOfSurveillance"
+TILE_ICON_OK = "ok"
+TILE_ICON_MINOR = "minor"
+TILE_ICON_MAJOR = "major"
+TILE_ICON_CRITICAL = "critical"
+TILE_ICON_SELECTOR = [TILE_ICON_OK,
+                      TILE_ICON_MINOR,
+                      TILE_ICON_MAJOR,
+                      TILE_ICON_CRITICAL]
+
 class ResultKey(DefaultEnum):
     ID = "_id"
     INFOS = "infos"
@@ -130,6 +142,8 @@ class __TileData:
         self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
         self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS.value]) != 0
         self.tileColor = self.__get_tile_color(watcher)
+        self.tileIcon = self.__get_tile_icon(watcher)
+        self.TileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
 
     @classmethod
     def __is_action_required(cls, watcher):
@@ -170,6 +184,51 @@ class __TileData:
             return TILE_COLOR_PAUSE
 
         return TILE_COLOR_SELECTOR[watcher[ResultKey.STATE.value]]
+
+    @classmethod
+    def __get_tile_icon(cls, watcher):
+        has_maintenance = False
+        has_out_of_surveillance = False
+        has_pause = False
+        for pbh in watcher[ResultKey.PBEHAVIORS.value]:
+            if pbh["type_"] == "Hors plage horaire de surveillance":
+                has_out_of_surveillance = True
+            elif pbh["type_"] == "Maintenance":
+                has_maintenance = True
+            elif pbh["type_"] in ["pause", "Pause"]:
+                has_maintenance = True
+
+        if has_maintenance:
+            return TILE_ICON_MAINTENANCE
+        if has_pause:
+            return TILE_ICON_PAUSE
+        if has_out_of_surveillance:
+            return TILE_ICON_OUT_SURVEILLANCE
+
+        return TILE_ICON_SELECTOR[watcher[ResultKey.STATE.value]]
+
+    @classmethod
+    def __get_tile_secondary_icon(cls, watcher):
+        has_maintenance = False
+        has_out_of_surveillance = False
+        has_pause = False
+        for ent in watcher[ResultKey.ENT.value]:
+            for pbh in ent[ResultKey.PBEHAVIORS.value]:
+                if pbh["type_"] == "Hors plage horaire de surveillance":
+                    has_out_of_surveillance = True
+                elif pbh["type_"] == "Maintenance":
+                    has_maintenance = True
+                elif pbh["type_"] in ["pause", "Pause"]:
+                    has_maintenance = True
+
+        if has_maintenance:
+            return TILE_ICON_MAINTENANCE
+        if has_pause:
+            return TILE_ICON_PAUSE
+        if has_out_of_surveillance:
+            return TILE_ICON_OUT_SURVEILLANCE
+
+        return None
 
 
 def __format_pbehavior(pbehavior):
