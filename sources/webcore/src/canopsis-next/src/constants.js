@@ -170,13 +170,13 @@ export const PAUSE_REASONS = {
 };
 
 export const WEATHER_ICONS = {
-  [ENTITIES_STATES.ok]: 'wb_sunny',
-  [ENTITIES_STATES.minor]: 'person',
-  [ENTITIES_STATES.major]: 'person',
-  [ENTITIES_STATES.critical]: 'wb_cloudy',
+  [WATCHER_STATES.ok]: 'wb_sunny',
+  [WATCHER_STATES.minor]: 'person',
+  [WATCHER_STATES.major]: 'person',
+  [WATCHER_STATES.critical]: 'wb_cloudy',
   maintenance: 'build',
   outOfSurveillance: 'brightness_3',
-  pause: 'pause',
+  [WATCHER_STATES.pause]: 'pause',
 };
 
 export const ENTITY_STATUS_STYLES = {

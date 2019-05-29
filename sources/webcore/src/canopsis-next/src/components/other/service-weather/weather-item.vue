@@ -81,7 +81,7 @@ export default {
     },
 
     icon() {
-      return 'wb_sunny';
+      return WEATHER_ICONS[this.watcher.tileIcon];
     },
 
     secondaryIcon() {
