@@ -610,6 +610,7 @@ def exports(ws):
         # retreive
         if orderby is not None:
             # TODO if needed, set the correction direction value
+            direction = _parse_direction(direction)
             pipeline.insert(1, {"$sort": {orderby: direction}})
 
         pipeline_result = mongo_collection.aggregate(pipeline)
