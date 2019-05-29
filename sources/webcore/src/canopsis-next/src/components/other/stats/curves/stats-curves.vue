@@ -49,3 +49,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .stats-wrapper {
+    position: relative;
+  }
+</style>

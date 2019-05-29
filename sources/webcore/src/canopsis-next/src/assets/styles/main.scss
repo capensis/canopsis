@@ -1,3 +1,7 @@
+.v-toolbar--fixed {
+  z-index: 7;
+}
+
 .v-list {
   .v-input {
     &, &__slot {
