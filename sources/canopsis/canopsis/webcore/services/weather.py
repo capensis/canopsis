@@ -118,6 +118,8 @@ class __TileData:
         for key, value in watcher[ResultKey.LINKS.value].items():
             self.linklist.append({'cat_name': key, 'links': value})
 
+        self.automatic_action_timer = self.__get_next_run(watcher)
+
         state = watcher.get(ResultKey.STATE.value, 0)
         if isinstance(state, int):
             self.state = {'val': state}
@@ -228,6 +230,26 @@ class __TileData:
         if has_out_of_surveillance:
             return TILE_ICON_OUT_SURVEILLANCE
 
+        return None
+
+    @classmethod
+    def __get_next_run(cls, watcher):
+        next_runs = []
+        for ent in watcher[ResultKey.ENT.value]:
+            if ent[ResultKey.ALARM.value] is not None:
+                alarm = ent[ResultKey.ALARM.value]
+
+                alarmfilter = None
+                try:
+                    alarmfilter = alarm["v"]["alarmfilter"]
+                except KeyError:
+                    continue
+
+                if isinstance(alarmfilter, dict) and "next_run" in alarmfilter:
+                    next_runs.append(alarmfilter["next_run"])
+
+        if len(next_runs) > 0:
+            return min(next_runs)
         return None
 
 
