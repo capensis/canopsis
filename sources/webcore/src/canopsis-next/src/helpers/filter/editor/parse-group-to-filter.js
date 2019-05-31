@@ -132,12 +132,9 @@ export default function parseGroupToFilter(group) {
     if (Array.isArray(Object.values(item)[0])) {
       parsedGroup.groups[uid('group')] = parseGroupToFilter(item);
     } else {
-      const rules = Object.entries(item).reduce((acc, [key, value]) => {
-        acc[uid('rules')] = parseRuleToFilter({ [key]: value });
-
-        return acc;
+      Object.entries(item).forEach(([key, value]) => {
+        parsedGroup.rules[uid('rules')] = parseRuleToFilter({ [key]: value });
       }, {});
-      parsedGroup.rules = { ...parsedGroup.rules, ...rules };
     }
   });
 
