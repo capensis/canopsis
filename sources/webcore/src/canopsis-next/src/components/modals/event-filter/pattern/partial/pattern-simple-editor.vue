@@ -63,7 +63,7 @@ export default {
           ruleValue: this.pattern[rule],
           isSimpleRule: this.isSimpleRule(this.pattern[rule]),
           operators: this.operators,
-          action: newRule => this.updateAndMoveField(rule, newRule.field, newRule.value),
+          action: newRule => this.updateAndMoveField([rule], [newRule.field], newRule.value),
         },
       });
     },
@@ -73,7 +73,7 @@ export default {
         name: MODALS.addEventFilterRuleToPattern,
         config: {
           operators: this.operators,
-          action: newRule => this.updateField(newRule.field, newRule.value),
+          action: newRule => this.updateField([newRule.field], newRule.value),
         },
       });
     },

@@ -11,7 +11,7 @@ export default {
     /**
      * Emit event to parent with new object and with updated field
      *
-     * @param {string} fieldName
+     * @param {string|Array} fieldName
      * @param {*} value
      */
     updateField(fieldName, value) {
@@ -22,8 +22,8 @@ export default {
      * Emit event to parent with new object
      * Rename a field in the object and update it
      *
-     * @param {string} fieldName
-     * @param {string} newFieldName
+     * @param {string|Array} fieldName
+     * @param {string|Array} newFieldName
      * @param {*} value
      */
     updateAndMoveField(fieldName, newFieldName, value) {
@@ -39,7 +39,7 @@ export default {
     /**
      * Emit event to parent with new object without field
      *
-     * @param {string} fieldName
+     * @param {string|Array} fieldName
      */
     removeField(fieldName) {
       this.updateModel(unsetIn(this[this[modelPropKeyComputed]], fieldName));
