@@ -8,8 +8,11 @@
     v-container(fluid)
       v-alert(:value="errors.has('entityId')", type="error") {{ $t('settings.statsWatcherSelector.required') }}
       div(v-if="watcher")
-        p {{ watcher._id }}
-        p {{ watcher.name }}
+        v-list(two-line)
+          v-list-tile(avatar, @click="")
+            v-list-tile-content
+              v-list-tile-title {{ watcher.name }}
+              v-list-tile-sub-title {{ watcher._id }}
       v-btn.primary(@click="showContextEntitySelectorModal") {{ $t('common.select') }}
 </template>
 
