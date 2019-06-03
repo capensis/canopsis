@@ -25,6 +25,7 @@ import router from '@/router';
 import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
+import featureRegister from '@/feature-register';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
@@ -124,6 +125,9 @@ if (process.env.NODE_ENV === 'development') {
 Vue.prototype.$constants = deepFreeze(constants);
 Vue.prototype.$config = deepFreeze(config);
 Vue.prototype.$sanitize = sanitizeHTML;
+
+featureRegister(Vue);
+console.log('AFTER required');
 
 new Vue({
   router,

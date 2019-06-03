@@ -668,6 +668,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     cancel: 'cancel',
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
+    declareSnow: 'declareSnow',
 
     links: 'links',
 

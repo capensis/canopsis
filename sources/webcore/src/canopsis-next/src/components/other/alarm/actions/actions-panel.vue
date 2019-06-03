@@ -49,81 +49,91 @@ export default {
   data() {
     const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-    return {
-      actionsMap: {
-        ack: {
-          type: alarmsListActionsTypes.ack,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
-          title: this.$t('alarmList.actions.titles.ack'),
-          method: this.showAckModal,
-        },
-        fastAck: {
-          type: alarmsListActionsTypes.fastAck,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
-          title: this.$t('alarmList.actions.titles.fastAck'),
-          method: this.createAckEvent,
-        },
-        ackRemove: {
-          type: alarmsListActionsTypes.ackRemove,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
-          title: this.$t('alarmList.actions.titles.ackRemove'),
-          method: this.showAckRemoveModal,
-        },
-        pbehaviorAdd: {
-          type: alarmsListActionsTypes.pbehaviorAdd,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
-          title: this.$t('alarmList.actions.titles.pbehavior'),
-          method: this.showAddPbehaviorModal,
-        },
-        snooze: {
-          type: alarmsListActionsTypes.snooze,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
-          title: this.$t('alarmList.actions.titles.snooze'),
-          method: this.showActionModal(MODALS.createSnoozeEvent),
-        },
-        pbehaviorList: {
-          type: alarmsListActionsTypes.pbehaviorList,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
-          title: this.$t('alarmList.actions.titles.pbehaviorList'),
-          method: this.showPbehaviorsListModal,
-        },
-        declareTicket: {
-          type: alarmsListActionsTypes.declareTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
-          title: this.$t('alarmList.actions.titles.declareTicket'),
-          method: this.showActionModal(MODALS.createDeclareTicketEvent),
-        },
-        associateTicket: {
-          type: alarmsListActionsTypes.associateTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
-          title: this.$t('alarmList.actions.titles.associateTicket'),
-          method: this.showActionModal(MODALS.createAssociateTicketEvent),
-        },
-        cancel: {
-          type: alarmsListActionsTypes.cancel,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
-          title: this.$t('alarmList.actions.titles.cancel'),
-          method: this.showActionModal(MODALS.createCancelEvent),
-        },
-        changeState: {
-          type: alarmsListActionsTypes.changeState,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
-          title: this.$t('alarmList.actions.titles.changeState'),
-          method: this.showActionModal(MODALS.createChangeStateEvent),
-        },
-        moreInfos: {
-          type: alarmsListActionsTypes.moreInfos,
-          icon: 'more_horiz',
-          title: this.$t('alarmList.actions.titles.moreInfos'),
-          method: this.showMoreInfosModal,
-        },
-        variablesHelp: {
+    const actionsMap = {
+      ack: {
+        type: alarmsListActionsTypes.ack,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
+        title: this.$t('alarmList.actions.titles.ack'),
+        method: this.showAckModal,
+      },
+      fastAck: {
+        type: alarmsListActionsTypes.fastAck,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+        title: this.$t('alarmList.actions.titles.fastAck'),
+        method: this.createAckEvent,
+      },
+      ackRemove: {
+        type: alarmsListActionsTypes.ackRemove,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
+        title: this.$t('alarmList.actions.titles.ackRemove'),
+        method: this.showAckRemoveModal,
+      },
+      pbehaviorAdd: {
+        type: alarmsListActionsTypes.pbehaviorAdd,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
+        title: this.$t('alarmList.actions.titles.pbehavior'),
+        method: this.showAddPbehaviorModal,
+      },
+      snooze: {
+        type: alarmsListActionsTypes.snooze,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
+        title: this.$t('alarmList.actions.titles.snooze'),
+        method: this.showActionModal(MODALS.createSnoozeEvent),
+      },
+      pbehaviorList: {
+        type: alarmsListActionsTypes.pbehaviorList,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
+        title: this.$t('alarmList.actions.titles.pbehaviorList'),
+        method: this.showPbehaviorsListModal,
+      },
+      declareTicket: {
+        type: alarmsListActionsTypes.declareTicket,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
+        title: this.$t('alarmList.actions.titles.declareTicket'),
+        method: this.showActionModal(MODALS.createDeclareTicketEvent),
+      },
+      associateTicket: {
+        type: alarmsListActionsTypes.associateTicket,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+        title: this.$t('alarmList.actions.titles.associateTicket'),
+        method: this.showActionModal(MODALS.createAssociateTicketEvent),
+      },
+      cancel: {
+        type: alarmsListActionsTypes.cancel,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+        title: this.$t('alarmList.actions.titles.cancel'),
+        method: this.showActionModal(MODALS.createCancelEvent),
+      },
+      changeState: {
+        type: alarmsListActionsTypes.changeState,
+        icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
+        title: this.$t('alarmList.actions.titles.changeState'),
+        method: this.showActionModal(MODALS.createChangeStateEvent),
+      },
+      moreInfos: {
+        type: alarmsListActionsTypes.moreInfos,
+        icon: 'more_horiz',
+        title: this.$t('alarmList.actions.titles.moreInfos'),
+        method: this.showMoreInfosModal,
+      },
+      variablesHelp: {
+        type: alarmsListActionsTypes.variablesHelp,
+        icon: 'help',
+        title: this.$t('alarmList.actions.titles.variablesHelp'),
+        method: this.showVariablesHelperModal,
+      },
+      ...process.env.VUE_APP_SHOW_ALARM_SNOW_FEATURE && ({
+        declareSnow: {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
-          title: this.$t('alarmList.actions.titles.variablesHelp'),
+          title: this.$t('alarmList.actions.titles.declareSnow'),
           method: this.showVariablesHelperModal,
         },
-      },
+      }),
+    };
+
+    return {
+      actionsMap,
     };
   },
   computed: {
