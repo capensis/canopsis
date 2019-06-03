@@ -40,3 +40,8 @@
 .v-window__container--is-active {
   height: 100% !important;
 }
+
+.validation-header.error--text {
+  animation: shake .6s cubic-bezier(.25,.8,.5,1);
+  transition: .3s cubic-bezier(.25,.8,.5,1);
+}

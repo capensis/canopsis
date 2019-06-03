@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{$t('settings.criticityLevels')}}
+    v-list-tile(slot="activator")
+      .validation-header(:class="{ 'error--text': hasAnyError }") {{ $t('settings.criticityLevels') }}
     v-container
       v-layout(wrap)
         v-flex(xs12)
@@ -43,10 +44,11 @@
 
 <script>
 import formMixin from '@/mixins/form';
+import formValidatorErrorMixin from '@/mixins/form/validator-error';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
+  mixins: [formMixin, formValidatorErrorMixin],
   model: {
     prop: 'levels',
     event: 'input',

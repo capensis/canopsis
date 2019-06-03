@@ -1,7 +1,8 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.statsSelect.title') }}
-      .font-italic.caption.ml-1 ({{ $t('settings.statsSelect.required') }})
+    v-list-tile(slot="activator")
+      .validation-header(:class="{ 'error--text': hasAnyError }") {{ $t('settings.statsSelect.title') }}
+        .font-italic.caption.ml-1 ({{ $t('settings.statsSelect.required') }})
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
@@ -31,10 +32,11 @@ import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
+import formValidatorErrorMixin from '@/mixins/form/validator-error';
 
 export default {
   inject: ['$validator'],
-  mixins: [modalMixin, formMixin],
+  mixins: [modalMixin, formMixin, formValidatorErrorMixin],
   model: {
     prop: 'stats',
     event: 'input',
@@ -63,6 +65,7 @@ export default {
         rules: 'required',
         getter: () => Object.values(this.stats),
         context: () => this,
+        vm: this,
       });
     }
   },
