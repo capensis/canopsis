@@ -11,7 +11,7 @@
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
         div.watcherName.pt-3(v-html="compiledTemplate")
-        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
+        v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
         v-if="isBothModalType && hasAlarmsListAccess",
@@ -26,7 +26,6 @@ import {
   USERS_RIGHTS,
   WIDGET_TYPES,
   WATCHER_STATES_COLORS,
-  PBEHAVIOR_TYPES,
   WEATHER_ICONS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
@@ -68,14 +67,6 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
     },
 
-    isPaused() {
-      return this.watcher.isAllEntitiesPaused;
-    },
-
-    hasWatcherPbehavior() {
-      return this.watcher.isWatcherPaused;
-    },
-
     color() {
       return WATCHER_STATES_COLORS[this.watcher.tileColor];
     },
@@ -85,13 +76,7 @@ export default {
     },
 
     secondaryIcon() {
-      if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
-        return WEATHER_ICONS.maintenance;
-      } else if (this.watcher.pbehavior.every(value => value.type_ === PBEHAVIOR_TYPES.outOfSurveillance)) {
-        return WEATHER_ICONS.outOfSurveillance;
-      }
-
-      return WEATHER_ICONS.pause;
+      return WEATHER_ICONS[this.watcher.tileSecondaryIcon];
     },
 
     compiledTemplate() {
