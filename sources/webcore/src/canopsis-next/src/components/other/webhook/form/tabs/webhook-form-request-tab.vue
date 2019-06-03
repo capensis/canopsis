@@ -66,13 +66,14 @@
 
 <script>
 import formMixin from '@/mixins/form';
+import formValidationErrorMixin from '@/mixins/form/validator-error';
 
 import TextPairs from '@/components/forms/fields/text-pairs.vue';
 
 export default {
   inject: ['$validator'],
   components: { TextPairs },
-  mixins: [formMixin],
+  mixins: [formMixin, formValidationErrorMixin],
   model: {
     prop: 'request',
     event: 'input',
