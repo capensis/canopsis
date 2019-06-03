@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
-      .subheading.validation-header(:class="{ 'error--text': hasAnyError }") {{ $t('settings.statsSelect.title') }}
+      .subheading(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
         .font-italic.caption.ml-1 ({{ $t('settings.statsNumbers.defaultStat') }})
       v-btn.primary(
       small,
@@ -13,11 +13,11 @@
 import { STATS_TYPES, MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
-import formValidatorErrorMixin from '@/mixins/form/validator-error';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
-  mixins: [modalMixin, formValidatorErrorMixin],
+  mixins: [modalMixin, formValidationHeaderMixin],
   model: {
     prop: 'stat',
     event: 'input',

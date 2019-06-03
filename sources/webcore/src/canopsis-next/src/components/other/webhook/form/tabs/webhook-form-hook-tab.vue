@@ -46,14 +46,14 @@
 import { WEBHOOK_TRIGGERS } from '@/constants';
 
 import formMixin from '@/mixins/form';
-import formValidationErrorMixin from '@/mixins/form/validator-error';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],
   components: { PatternsList },
-  mixins: [formMixin, formValidationErrorMixin],
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'hook',
     event: 'input',

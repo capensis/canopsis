@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator")
-      .validation-header(:class="{ 'error--text': hasAnyError }") {{ $t('settings.advancedSettings') }}
+      div(:class="validationHeaderClass") {{ $t('settings.advancedSettings') }}
     v-list.grey.lighten-4.px-2.py-0(expand)
       field-filters(
       :filters="value.filters",
@@ -35,7 +35,7 @@
 
 <script>
 import formMixin from '@/mixins/form';
-import formValidatorErrorMixin from '@/mixins/form/validator-error';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import FieldOpenedResolvedFilter from '../fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from '../fields/common/filters.vue';
@@ -55,7 +55,7 @@ export default {
     FieldCriticityLevels,
     FieldLevelsColorsSelector,
   },
-  mixins: [formMixin, formValidatorErrorMixin],
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',

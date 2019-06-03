@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator")
-      .validation-header(:class="{ 'error--text': hasAnyError }") {{ $t('settings.rowGridSize.title') }}
+      div(:class="validationHeaderClass") {{ $t('settings.rowGridSize.title') }}
     v-container
       v-combobox(
       ref="combobox",
@@ -41,11 +41,11 @@ import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
 
 import { generateViewRow } from '@/helpers/entities';
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
-import formValidatorErrorMixin from '@/mixins/form/validator-error';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
-  mixins: [vuetifyComboboxMixin, formValidatorErrorMixin],
+  mixins: [vuetifyComboboxMixin, formValidationHeaderMixin],
   props: {
     rowId: {
       type: String,

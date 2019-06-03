@@ -47,7 +47,7 @@ import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
-import StatsCalendarAdvancedForm from './groups/stats-calendar-advanced.vue';
+import StatsCalendarAdvancedForm from './forms/stats-calendar-advanced.vue';
 
 /**
  * Component to regroup the entities list settings fields

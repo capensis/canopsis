@@ -21,7 +21,6 @@ import { intersection } from 'lodash';
 import { WEBHOOK_TRIGGERS } from '@/constants';
 
 import formMixin from '@/mixins/form';
-import formValidationErrorMixin from '@/mixins/form/validator-error';
 
 import WebhookFormHookTab from './tabs/webhook-form-hook-tab.vue';
 import WebhookFormRequestTab from './tabs/webhook-form-request-tab.vue';
@@ -34,7 +33,7 @@ export default {
     WebhookFormRequestTab,
     WebhookFormDeclareTicketTab,
   },
-  mixins: [formMixin, formValidationErrorMixin],
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
