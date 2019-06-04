@@ -184,11 +184,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  // Keep widget settings + Row/Widget deletion buttons on top of progress-overlay
-  .editionBtn {
-    z-index: 5;
-  }
-
   .full-screen {
     .hide-on-full-screen {
       display: none;
