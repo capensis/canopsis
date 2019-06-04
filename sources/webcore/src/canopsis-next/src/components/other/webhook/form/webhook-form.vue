@@ -2,7 +2,7 @@
   v-tabs(:color="vTabsColor", :dark="dark", fixed-tabs)
     template(v-for="(tab, index) in tabs")
       v-tab(:key="`tab-${index}`")
-        .validation-header(:class="{ 'error--text': tab.hasAnyError }") {{ tab.title }}
+        .validation-header(:class="{ 'error--text': validationErrorsFlagsForTabs[index] }") {{ tab.title }}
       v-tab-item(:key="`tab-item-${index}`")
         div(:class="vTabItemInnerWrapperClass")
           div(:class="vTabItemInnerClass")
@@ -27,7 +27,6 @@ import WebhookFormRequestTab from './tabs/webhook-form-request-tab.vue';
 import WebhookFormDeclareTicketTab from './tabs/webhook-form-declare-ticket-tab.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     WebhookFormHookTab,
     WebhookFormRequestTab,
@@ -58,11 +57,15 @@ export default {
   },
   data() {
     return {
-      tabs: [
+      validationErrorsFlagsForTabs: [],
+    };
+  },
+  computed: {
+    tabs() {
+      return [
         {
           title: this.$t('webhook.tabs.hook.title'),
           component: 'webhook-form-hook-tab',
-          hasAnyError: false,
           bind: {
             hook: this.form.hook,
             hasBlockedTriggers: this.hasBlockedTriggers,
@@ -75,7 +78,6 @@ export default {
         {
           title: this.$t('webhook.tabs.request.title'),
           component: 'webhook-form-request-tab',
-          hasAnyError: false,
           bind: {
             request: this.form.request,
             disabled: this.disabled,
@@ -87,7 +89,6 @@ export default {
         {
           title: this.$t('webhook.tabs.declareTicket.title'),
           component: 'webhook-form-declare-ticket-tab',
-          hasAnyError: false,
           bind: {
             declareTicket: this.form.declare_ticket,
             disabled: this.disabled,
@@ -96,10 +97,9 @@ export default {
             input: event => this.updateField('declare_ticket', event),
           },
         },
-      ],
-    };
-  },
-  computed: {
+      ];
+    },
+
     hasBlockedTriggers() {
       return intersection(this.form.hook.triggers, [
         WEBHOOK_TRIGGERS.resolve,
@@ -131,8 +131,10 @@ export default {
   },
   mounted() {
     this.tabs.forEach((item, index) => {
+      this.$set(this.validationErrorsFlagsForTabs, index, false);
+
       this.$watch(() => this.$refs.forms[index].hasAnyError, (value) => {
-        this.$set(this.tabs[index], 'hasAnyError', value);
+        this.$set(this.validationErrorsFlagsForTabs, index, value);
       });
     });
   },
