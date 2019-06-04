@@ -1,6 +1,6 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
 
 import prepareMainFilterToQueryFilter from './filter';
@@ -90,7 +90,12 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertWeatherWidgetToQuery(widget) {
-  return { ...convertSortToQuery(widget) };
+  const { limit } = widget.parameters;
+
+  return {
+    ...convertSortToQuery(widget),
+    limit: limit || DEFAULT_WEATHER_LIMIT,
+  };
 }
 
 /**

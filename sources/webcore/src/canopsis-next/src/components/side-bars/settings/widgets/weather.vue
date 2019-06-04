@@ -28,6 +28,8 @@
           :title="$t('settings.moreInfosModal')"
           )
       v-divider
+      field-number(v-model="settings.widget.parameters.limit", :title="$t('settings.limit')")
+      v-divider
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
@@ -121,6 +123,7 @@ import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldNumber from './fields/common/number.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
@@ -141,6 +144,7 @@ export default {
     FieldDefaultElementsPerPage,
     FieldInfoPopup,
     FieldTextEditor,
+    FieldNumber,
   },
   mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
