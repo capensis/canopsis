@@ -114,8 +114,8 @@ class __TileData:
         self.sla_tex = ""
         self.display_name = watcher[ResultKey.NAME.value]
         self.linklist = []
-        self.mfilter = watcher[ResultKey.MFILTER.value]
-        for key, value in watcher[ResultKey.LINKS.value].items():
+        self.mfilter = watcher.get(ResultKey.MFILTER.value, "")
+        for key, value in watcher.get(ResultKey.LINKS.value, {}).items():
             self.linklist.append({'cat_name': key, 'links': value})
 
         self.automatic_action_timer = self.__get_next_run(watcher)
@@ -131,13 +131,13 @@ class __TileData:
             alarm = alarm[ResultKey.ALRM_VALUE.value]
             self.state = alarm[ResultKey.ALRM_STATE.value]
             self.status = alarm[ResultKey.ALRM_STATUS.value]
-            self.snooze = alarm[ResultKey.ALRM_SNOOZE.value]
-            self.ack = alarm[ResultKey.ALRM_ACK.value]
+            self.snooze = alarm.get(ResultKey.ALRM_SNOOZE.value, None)
+            self.ack = alarm.get(ResultKey.ALRM_ACK.value, None)
             self.connector = alarm[ResultKey.ALRM_CONNECTOR.value]
             self.connector_name = alarm[ResultKey.ALRM_CONNECTOR_NAME.value]
             self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE.value]
             self.component = alarm[ResultKey.ALRM_COMPONENT.value]
-            self.resource = alarm[ResultKey.ALRM_RESOURCE.value]
+            self.resource = alarm.get(ResultKey.ALRM_RESOURCE.value, None)
 
         # properties of the tile
         self.isActionRequired = self.__is_action_required(watcher)
@@ -177,6 +177,11 @@ class __TileData:
     @classmethod
     def __get_tile_color(cls, watcher):
         watched_ent_paused = 0
+        watcher_state = 0
+        if len(watcher[ResultKey.ALARM.value]) > 0:
+            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
+            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+
         for ent in watcher[ResultKey.ENT.value]:
             if len(ent[ResultKey.PBEHAVIORS.value]) != 0:
                 watched_ent_paused += 1
@@ -186,10 +191,15 @@ class __TileData:
            len(watcher[ResultKey.PBEHAVIORS.value]) != 0):
             return TILE_COLOR_PAUSE
 
-        return TILE_COLOR_SELECTOR[watcher[ResultKey.STATE.value]]
+        return TILE_COLOR_SELECTOR[watcher_state]
 
     @classmethod
     def __get_tile_icon(cls, watcher):
+        watcher_state = 0
+        if len(watcher[ResultKey.ALARM.value]) > 0:
+            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
+            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
@@ -208,7 +218,7 @@ class __TileData:
         if has_out_of_surveillance:
             return TILE_ICON_OUT_SURVEILLANCE
 
-        return TILE_ICON_SELECTOR[watcher[ResultKey.STATE.value]]
+        return TILE_ICON_SELECTOR[watcher_state]
 
     @classmethod
     def __get_tile_secondary_icon(cls, watcher):
@@ -632,7 +642,6 @@ def exports(ws):
 
         # retreive
         if orderby is not None:
-            # TODO if needed, set the correction direction value
             direction = _parse_direction(direction)
             pipeline.insert(1, {"$sort": {orderby: direction}})
 
