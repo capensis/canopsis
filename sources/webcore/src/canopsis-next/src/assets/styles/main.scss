@@ -1,17 +1,3 @@
-.v-toolbar--fixed {
-  z-index: 7;
-}
-
-.v-overlay {
-  z-index: 8;
-}
-
-.v-navigation-drawer--is-mobile,
-.v-navigation-drawer--temporary,
-.v-navigation-drawer--fixed {
-  z-index: 9;
-}
-
 .v-list {
   .v-input {
     &, &__slot {
