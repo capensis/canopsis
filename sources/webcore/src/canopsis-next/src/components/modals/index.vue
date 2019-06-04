@@ -15,6 +15,8 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
+import pluginsSercice from '@/services/plugins';
+
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
@@ -111,6 +113,8 @@ export default {
     FiltersList,
     CreateWebhook,
     CreateSnmpRule,
+
+    ...pluginsSercice.get('components.modals'),
   },
   data() {
     return {

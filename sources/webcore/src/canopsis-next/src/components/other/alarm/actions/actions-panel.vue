@@ -20,6 +20,8 @@ import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
 
 import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
 
+import pluginsService from '@/services/plugins';
+
 /**
  * Component to regroup actions (actions-panel-item) for each alarm on the alarms list
  *
@@ -31,7 +33,13 @@ import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-
  */
 export default {
   components: { SharedActionsPanel },
-  mixins: [authMixin, entitiesAlarmMixin, widgetActionsPanelAlarmMixin],
+  mixins: [
+    authMixin,
+    entitiesAlarmMixin,
+    widgetActionsPanelAlarmMixin,
+
+    ...pluginsService.get('alarmListActionPanel.mixins'),
+  ],
   props: {
     item: {
       type: Object,
@@ -177,10 +185,16 @@ export default {
       const inlineActions = actions.slice(0, 3);
       const dropDownActions = actions.slice(3);
 
-      return {
+      const result = {
         inline: inlineActions.filter(action => !!action),
         dropDown: dropDownActions.filter(action => !!action),
       };
+
+      if (pluginsService.has('alarmListActionPanel.computed.actions')) {
+        return pluginsService.call('alarmListActionPanel.computed.actions', this, result);
+      }
+
+      return result;
     },
   },
   methods: {

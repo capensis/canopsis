@@ -1,3 +1,5 @@
+import pluginsService from '@/services/plugins';
+
 export const CRUD_ACTIONS = {
   create: 'create',
   read: 'read',
@@ -72,6 +74,8 @@ export const MODALS = {
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
+
+  ...pluginsService.get('constants.MODALS'),
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -668,6 +672,9 @@ export const WIDGETS_ACTIONS_TYPES = {
     cancel: 'cancel',
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
+
+
+    ...pluginsService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
     links: 'links',
 
