@@ -22,6 +22,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [CAT] Fix "input field [...] is type float, already exists as type integer" errors in statsng
  - [UI] Fix - Filter validation with nested groups
  - [UI] Fix - Copy to clipboard functionnality
+ - [UI] Fix - Fix sidebars/topbar z-indexes
  - [UI - Stats] Change default value for "Duration" setting
  - [UI - Stats] Fix - Automatically select last full hour when changing to custom date interval on "Duration" setting
  - [UI - Stats] Add new "Pareto diagram" widget
