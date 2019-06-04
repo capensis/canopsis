@@ -15,6 +15,7 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 
 Liste des changements et procédures particulières à suivre pour la mise à jour vers une nouvelle branche de Canopsis.
 
+*  [3.19.0](notes-de-version/3.19.0.md)
 *  [3.18.0](notes-de-version/3.18.0.md), [3.18.1](notes-de-version/3.18.1.md)
 *  [3.17.0](notes-de-version/3.17.0.md)
 *  [3.16.0](notes-de-version/3.16.0.md)
