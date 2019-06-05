@@ -2,7 +2,7 @@
   div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        alarm-list-search(:query.sync="query")
+        alarm-list-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
         v-if="hasColumns",
