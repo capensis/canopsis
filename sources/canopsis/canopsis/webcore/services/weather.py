@@ -53,7 +53,7 @@ mongo = MongoStore.get_default()
 collection = mongo.get_collection(WATCHER_COLLECTION)
 mongo_collection = MongoCollection(collection)
 
-DEFAULT_LIMIT = '120'
+DEFAULT_LIMIT = 120
 DEFAULT_START = '0'
 DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
@@ -375,34 +375,34 @@ def get_ok_ko(influx_client, entity_id):
     return None
 
 
-def pbehavior_types(pbehaviors):
+def pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
-    :param pbehaviors
+    :param dict watcher: one element from the query
     """
     pb_types = set()
 
-    for pb in pbehaviors:
-        pb_type = pb.get('type_', None)
+    pbehaviors = watcher[ResultKey.PBEHAVIORS.value]
+    for ent in watcher[ResultKey.ENT.value]:
+        pbehaviors += ent[ResultKey.PBEHAVIORS.value]
+
+    for pbh in  pbehaviors:
+        pb_type = pbh.get('type_', None)
         if pb_type is not None:
             pb_types.add(pb_type)
 
     return pb_types
 
 
-def watcher_status(watcher, pbehavior_eids_merged):
-    """
-    watcher_status
+def watcher_status(watcher):
 
-    :param dict watcher: watcher entity document
-    :param set pbehavior_eids_merged: set with eids
-    :returns: has active pb status (or all), has all active pb status
-    :rtype: (bool, bool)
-    """
-    bool_set = set([e in pbehavior_eids_merged for e in watcher['depends']])
+    ent_with_active_pbh = set()
 
-    at_least_one = True in bool_set
-    if at_least_one and False in bool_set:
+    for ent in watcher[ResultKey.ENT.value]:
+        ent_with_active_pbh.add(len(ent[ResultKey.PBEHAVIORS.value]) > 0)
+
+    at_least_one = True in ent_with_active_pbh
+    if at_least_one and False in ent_with_active_pbh:
         # has_active_pbh
         return True, False
     elif at_least_one:
@@ -551,21 +551,20 @@ def exports(ws):
         :param dict watcher_filter: a mongo filter to find watchers
         :rtype: dict
         """
-        limit = request.query.limit or DEFAULT_LIMIT
+        limit = request.query.limit or None
         start = request.query.start or DEFAULT_START
         orderby = request.query.orderby or None
         direction = request.query.direction or None
 
-
-        # FIXIT: service weather has no pagination capability at all.
         try:
             start = int(start)
         except ValueError:
             start = int(DEFAULT_START)
-        try:
-            limit = int(limit)
-        except ValueError:
-            limit = int(DEFAULT_LIMIT)
+        if limit is not None:
+            try:
+                limit = int(limit)
+            except ValueError:
+                limit = DEFAULT_LIMIT
 
         wf = WatcherFilter()
         watcher_filter['type'] = 'watcher'
@@ -576,7 +575,6 @@ def exports(ws):
 
         # pagination
         skip = {"$skip": start}
-        limit = {"$limit": limit}
 
         # retreive opened alarm for the watchers
         alarms = {"$graphLookup":
@@ -625,20 +623,22 @@ def exports(ws):
                               "startWith": "$watched_entities._id",
                               "connectFromField": "_id",
                               "connectToField": "d",
-                              "restrictSearchWithMatch": {'v.resolved': None},
                               "as": "watched_entities_alarm",
+                              "restrictSearchWithMatch": {'v.resolved': None},
                               "maxDepth": 0
                              }
         }
 
         pipeline = [select_watcher_stage,
                     skip,
-                    limit,
                     alarms,
                     pbehaviors,
                     entities,
                     pbehaviors_watched_ent,
                     alarm_watched_ent]
+
+        if limit is not None:
+            pipeline.insert(2, {"$limit": limit})
 
         # retreive
         if orderby is not None:
@@ -682,8 +682,16 @@ def exports(ws):
             del watcher[ResultKey.WATCHED_ENT_PBH.value]
             del watcher[ResultKey.WATCHED_ENT_ALRM.value]
 
-            tileData = __TileData(watcher)
-            result.append(vars(tileData))
+            some_watched_ent_paused, all_watched_ent_paused = watcher_status(
+                watcher
+            )
+
+            if wf.match(all_watched_ent_paused,
+                        some_watched_ent_paused,
+                        len(watcher[ResultKey.PBEHAVIORS.value]) > 0,
+                        pbehavior_types(watcher)):
+                tileData = __TileData(watcher)
+                result.append(vars(tileData))
 
         return gen_json(result)
 
