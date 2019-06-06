@@ -16,13 +16,13 @@
               td(v-else)
                 v-layout(align-center)
                   div {{ getFormattedValue(item[key].value, property.stat.value) }}
-                  sub.ml-2(v-if="item[key].trend > 0")
-                    v-icon.caption(small, color="primary") trending_up
-                  sub.ml-2(v-else-if="item[key].trend < 0")
-                    v-icon.caption(small, color="error") trending_down
-                  sub.ml-2(v-else)
-                    v-icon.caption trending_flat
-                  sub {{ getFormattedValue(item[key].trend, property.stat.value) }}
+                  div(v-if="item[key].trend !== undefined && item[key].trend !== null")
+                    sub.ml-2
+                      v-icon.caption(
+                      small,
+                      :color="trendFormat(item[key].value).color"
+                      ) {{ trendFormat(item[key].value).icon }}
+                    sub {{ getFormattedValue(item[key].trend, property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}
 </template>
 
@@ -110,6 +110,25 @@ export default {
         }
 
         return value;
+      };
+    },
+    trendFormat() {
+      return (value) => {
+        if (value > 0) {
+          return {
+            icon: 'trending_up',
+            color: 'primary',
+          };
+        } else if (value < 0) {
+          return {
+            icon: 'trending_down',
+            color: 'error',
+          };
+        }
+
+        return {
+          icon: 'trending_flat',
+        };
       };
     },
   },

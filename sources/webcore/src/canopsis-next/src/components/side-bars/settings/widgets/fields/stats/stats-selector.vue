@@ -51,7 +51,7 @@ export default {
     },
     withTrend: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   watch: {
