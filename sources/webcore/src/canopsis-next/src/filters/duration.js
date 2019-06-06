@@ -9,5 +9,5 @@ import 'moment-duration-format';
  * @returns {String}
  */
 export default function (value, format = 'HH[h] mm[m] ss[s]') {
-  return moment.duration(value, 'seconds').format(format, { trim: 'both final' }) || 0;
+  return moment.duration(value, 'seconds').format(format, { trim: 'both final' }) || '0s';
 }
