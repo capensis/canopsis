@@ -245,6 +245,7 @@ export default {
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
     statName: 'Nom de la statistique',
+    stats: 'Statistiques',
     statsSelect: {
       title: 'Sélecteur de statistique',
       required: 'Veuillez sélectionner au moins une statistique',
