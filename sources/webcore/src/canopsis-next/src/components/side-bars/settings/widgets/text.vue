@@ -14,7 +14,7 @@
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
-      field-stats-selector(v-model="settings.widget.parameters.stats")
+      field-stats-selector(v-model="settings.widget.parameters.stats", :withTrend="false")
       v-divider
       field-text-editor(v-model="settings.widget.parameters.template", :title="$t('settings.templateEditor')")
       v-divider

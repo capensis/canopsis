@@ -12,7 +12,7 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
-      field-stats-selector(v-model="settings.widget.parameters.stats", required)
+      field-stats-selector(v-model="settings.widget.parameters.stats", required, :withTrend="false")
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider

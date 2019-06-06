@@ -14,8 +14,15 @@
               td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
                 alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
               td(v-else)
-                div {{ getFormattedValue(item[key].value, property.stat.value) }}
-                  sub {{ item[key].trend }}
+                v-layout(align-center)
+                  div {{ getFormattedValue(item[key].value, property.stat.value) }}
+                  sub.ml-2(v-if="item[key].trend > 0")
+                    v-icon(small, color="primary") trending_up
+                  sub.ml-2(v-else-if="item[key].trend < 0")
+                    v-icon(small, color="error") trending_down
+                  sub.ml-2(v-else)
+                    v-icon(small) trending_flat
+                  sub.caption.ml-1 {{ item[key].trend }}
             div(v-else) {{ $t('tables.noData') }}
 </template>
 
@@ -80,6 +87,7 @@ export default {
           text: this.$t('common.entity'),
           value: 'entity.name',
           sortable: false,
+          align: 'center',
         },
 
         ...Object.keys(this.widget.parameters.stats).map(item => ({
