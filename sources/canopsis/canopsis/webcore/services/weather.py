@@ -433,6 +433,112 @@ def _parse_direction(direction):
             direction))
 
 
+def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
+    # Select the watchers
+    select_watcher_stage = {"$match": watcher_filter}
+
+    # Pagination
+    skip = {"$skip": start}
+
+    # Retreive opened alarm for the watchers
+    alarms = {"$graphLookup":
+              {"from": "periodical_alarm",
+               "startWith": "$_id",
+               "connectFromField": "_id",
+               "connectToField": "d",
+               "restrictSearchWithMatch": {'v.resolved': None},
+               "as": "alarm",
+               "maxDepth": 0}}
+
+    # Retreive every pbehaviors on the watcher
+    pbehaviors = {"$lookup":
+                  {"from": "default_pbehavior",
+                   "localField": "_id",
+                   "foreignField": "eids",
+                   "as": "pbehaviors"}}
+
+    # Retrieve watched entities
+    entities = {"$lookup":
+                {"from": "default_entities",
+                 "localField": "depends",
+                 "foreignField": "_id",
+                 "as": "watched_entities"}}
+
+    # Retreive every pbehaviors on the watched entities
+    pbehaviors_watched_ent = {"$graphLookup":
+                              {"from": "default_pbehavior",
+                               "startWith": "$watched_entities._id",
+                               "connectFromField": "watched_entities._id",
+                               "connectToField": "eids",
+                               "maxDepth": 0,
+                               "as": "watched_entities_pbehaviors"}}
+
+    # Retreive every opened alarm on the watched entities
+    alarm_watched_ent = {"$graphLookup":
+                         {"from": "periodical_alarm",
+                          "startWith": "$watched_entities._id",
+                          "connectFromField": "_id",
+                          "connectToField": "d",
+                          "as": "watched_entities_alarm",
+                          "restrictSearchWithMatch": {'v.resolved': None},
+                          "maxDepth": 0}}
+
+    # Genenate the pipeline
+    pipeline = [select_watcher_stage,
+                skip,
+                alarms,
+                pbehaviors,
+                entities,
+                pbehaviors_watched_ent,
+                alarm_watched_ent]
+
+    # Insert optionnal stage limit
+    if limit is not None:
+        pipeline.insert(2, {"$limit": limit})
+
+    # Insert optionnal stage orderby
+    if orderby is not None:
+        direction = _parse_direction(direction)
+        pipeline.insert(1, {"$sort": {orderby: direction}})
+
+    return pipeline
+
+def _rework_watcher_pipeline_element(watcher, logger):
+    # remove the inactive pbehaviors from the ppieline result
+    pbhs = watcher[ResultKey.PBEHAVIORS.value]
+    watcher[ResultKey.PBEHAVIORS.value] = _remove_inactive_pbh(pbhs)
+    pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
+    watcher[ResultKey.WATCHED_ENT_PBH.value] = _remove_inactive_pbh(pbhs)
+
+    # assign entities pbehaviors to the correct entities
+    entities = {}
+    for entity in watcher[ResultKey.ENT.value]:
+        entity[ResultKey.PBEHAVIORS.value] = []
+        entity[ResultKey.ALARM.value] = None
+        entities[entity[ResultKey.ENT_ID.value]] = entity
+
+    for pbh in watcher[ResultKey.WATCHED_ENT_PBH.value]:
+        for ent_id in pbh["eids"]:
+            try:
+                entities[ent_id][ResultKey.PBEHAVIORS.value].append(pbh)
+            except KeyError:
+                logger.error("Can not find entities {} in the"
+                             "pipeline result".format(ent_id))
+
+    for alarm in watcher[ResultKey.WATCHED_ENT_ALRM.value]:
+        try:
+            entities[alarm["d"]][ResultKey.ALARM.value] = alarm
+        except KeyError:
+            logger.error("Can not find entities {} in the"
+                         "pipeline result".format(alarm["d"]))
+
+    watcher[ResultKey.ENT.value] = entities.values()
+    del watcher[ResultKey.WATCHED_ENT_PBH.value]
+    del watcher[ResultKey.WATCHED_ENT_ALRM.value]
+
+    return watcher
+
+
 def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
@@ -468,117 +574,18 @@ def exports(ws):
         watcher_filter['type'] = 'watcher'
         watcher_filter = wf.filter(watcher_filter)
 
-        # select the watchers
-        select_watcher_stage = {"$match": watcher_filter}
-
-        # pagination
-        skip = {"$skip": start}
-
-        # retreive opened alarm for the watchers
-        alarms = {"$graphLookup":
-                  {"from": "periodical_alarm",
-                   "startWith": "$_id",
-                   "connectFromField": "_id",
-                   "connectToField": "d",
-                   "restrictSearchWithMatch": {'v.resolved': None},
-                   "as": "alarm",
-                   "maxDepth": 0
-                  }
-        }
-
-        # retreive every pbehaviors on the watcher
-        pbehaviors = {"$lookup":
-                      {"from": "default_pbehavior",
-                       "localField": "_id",
-                       "foreignField": "eids",
-                       "as": "pbehaviors"
-                      }
-        }
-
-        # retrieve watched entities
-        entities = {"$lookup": {
-            "from": "default_entities",
-            "localField": "depends",
-            "foreignField": "_id",
-            "as": "watched_entities",
-            }
-        }
-
-        # retreive every pbehaviors on the watched entities
-        pbehaviors_watched_ent = {"$graphLookup":
-                                  {"from": "default_pbehavior",
-                                   "startWith": "$watched_entities._id",
-                                   "connectFromField": "watched_entities._id",
-                                   "connectToField": "eids",
-                                   "maxDepth": 0,
-                                   "as": "watched_entities_pbehaviors",
-                                  }
-        }
-
-        # retreive every opened alarm on the watched entities
-        alarm_watched_ent = {"$graphLookup":
-                             {"from": "periodical_alarm",
-                              "startWith": "$watched_entities._id",
-                              "connectFromField": "_id",
-                              "connectToField": "d",
-                              "as": "watched_entities_alarm",
-                              "restrictSearchWithMatch": {'v.resolved': None},
-                              "maxDepth": 0
-                             }
-        }
-
-        pipeline = [select_watcher_stage,
-                    skip,
-                    alarms,
-                    pbehaviors,
-                    entities,
-                    pbehaviors_watched_ent,
-                    alarm_watched_ent]
-
-        if limit is not None:
-            pipeline.insert(2, {"$limit": limit})
-
-        # retreive
-        if orderby is not None:
-            direction = _parse_direction(direction)
-            pipeline.insert(1, {"$sort": {orderby: direction}})
+        pipeline = _generate_tile_pipeline(watcher_filter,
+                                           limit,
+                                           start,
+                                           orderby,
+                                           direction)
 
         pipeline_result = mongo_collection.aggregate(pipeline)
 
         result = []
 
         for watcher in pipeline_result:
-            # remove the inactive pbehaviors from the ppieline result
-            pbhs = watcher[ResultKey.PBEHAVIORS.value]
-            watcher[ResultKey.PBEHAVIORS.value] = _remove_inactive_pbh(pbhs)
-            pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
-            watcher[ResultKey.WATCHED_ENT_PBH.value] = _remove_inactive_pbh(pbhs)
-
-            # assign entities pbehaviors to the correct entities
-            entities = {}
-            for entity in watcher[ResultKey.ENT.value]:
-                entity[ResultKey.PBEHAVIORS.value] = []
-                entity[ResultKey.ALARM.value] = None
-                entities[entity[ResultKey.ENT_ID.value]] = entity
-
-            for pbh in watcher[ResultKey.WATCHED_ENT_PBH.value]:
-                for ent_id in pbh["eids"]:
-                    try:
-                        entities[ent_id][ResultKey.PBEHAVIORS.value].append(pbh)
-                    except KeyError:
-                        ws.logger.error("Can not find entities {} in the"
-                                        "pipeline result".format(ent_id))
-
-            for alarm in watcher[ResultKey.WATCHED_ENT_ALRM.value]:
-                try:
-                    entities[alarm["d"]][ResultKey.ALARM.value] = alarm
-                except KeyError:
-                    ws.logger.error("Can not find entities {} in the"
-                                    "pipeline result".format(alarm["d"]))
-
-            watcher[ResultKey.ENT.value] = entities.values()
-            del watcher[ResultKey.WATCHED_ENT_PBH.value]
-            del watcher[ResultKey.WATCHED_ENT_ALRM.value]
+            watcher = _rework_watcher_pipeline_element(watcher, ws.logger)
 
             some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
                 watcher
