@@ -19,5 +19,5 @@ export default function ({
   format = 'D __ H _ m _ s _',
 }) {
   moment.locale(locale);
-  return moment.duration(value, 'seconds').format(format, { trim: 'both final' }) || 0;
+  return moment.duration(value, 'seconds').format(format, { trim: 'both final' }) || '0s';
 }

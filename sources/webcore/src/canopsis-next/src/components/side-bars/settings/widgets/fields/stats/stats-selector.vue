@@ -1,7 +1,8 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.statsSelect.title') }}
-      .font-italic.caption.ml-1 ({{ $t('settings.statsSelect.required') }})
+      div.font-italic.caption.ml-1(v-if="required") ({{ $t('settings.statsSelect.required') }})
+      div.font-italic.caption.ml-1(v-else) ({{ $t('common.optionnal') }})
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
@@ -48,6 +49,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withTrend: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     stats(value) {
@@ -72,6 +77,7 @@ export default {
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.add'),
+          withTrend: this.withTrend,
           action: (stat) => {
             const newStat = {
               ...omit(stat, ['title', 'parameters']),
@@ -94,6 +100,7 @@ export default {
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.edit'),
+          withTrend: this.withTrend,
           stat,
           statTitle,
           action: newStat => this.updateAndMoveField(statTitle, newStat.title, omit(newStat, ['title'])),

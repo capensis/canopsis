@@ -14,8 +14,15 @@
               td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
                 alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
               td(v-else)
-                div {{ getFormattedValue(item[key].value, property.stat.value) }}
-                  sub {{ item[key].trend }}
+                v-layout(align-center)
+                  div {{ getFormattedValue(item[key].value, property.stat.value) }}
+                  div(v-if="item[key].trend !== undefined && item[key].trend !== null")
+                    sub.ml-2
+                      v-icon.caption(
+                      small,
+                      :color="trendFormat(item[key].value).color"
+                      ) {{ trendFormat(item[key].value).icon }}
+                    sub {{ getFormattedValue(item[key].trend, property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}
 </template>
 
@@ -103,6 +110,25 @@ export default {
         }
 
         return value;
+      };
+    },
+    trendFormat() {
+      return (value) => {
+        if (value > 0) {
+          return {
+            icon: 'trending_up',
+            color: 'primary',
+          };
+        } else if (value < 0) {
+          return {
+            icon: 'trending_down',
+            color: 'error',
+          };
+        }
+
+        return {
+          icon: 'trending_flat',
+        };
       };
     },
   },
