@@ -64,7 +64,7 @@ db.periodical_alarm.createIndex({d:1})
 
 - créer l'utilisateur : `$ influx`
 
-```
+```sql
 CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
 ```
 
