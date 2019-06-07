@@ -1,5 +1,11 @@
+import i18n from '@/i18n';
 import moment from 'moment';
 import 'moment-duration-format';
+import momentDurationFrLocale from '@/i18n/moment-duration-fr';
+
+import { DEFAULT_LOCALE } from '@/config';
+
+moment.updateLocale('fr', momentDurationFrLocale);
 
 /**
  *
@@ -8,6 +14,11 @@ import 'moment-duration-format';
  *
  * @returns {String}
  */
-export default function (value, format = 'HH[h] mm[m] ss[s]') {
+export default function ({
+  value = 0,
+  locale = i18n.locale || DEFAULT_LOCALE,
+  format = 'D __ H _ m _ s _',
+}) {
+  moment.locale(locale);
   return moment.duration(value, 'seconds').format(format, { trim: 'both final' }) || '0s';
 }
