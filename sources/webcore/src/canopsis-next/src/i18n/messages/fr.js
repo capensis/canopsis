@@ -6,6 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
 } from '@/constants';
+import featureService from '@/services/features';
 
 export default {
   common: {
@@ -1039,4 +1040,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
   },
+
+  ...featureService.get('i18n.fr'),
 };

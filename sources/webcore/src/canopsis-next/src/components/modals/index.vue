@@ -15,7 +15,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import pluginsSercice from '@/services/plugins';
+import featuresService from '@/services/features';
 
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
@@ -114,7 +114,7 @@ export default {
     CreateWebhook,
     CreateSnmpRule,
 
-    ...pluginsSercice.get('components.modals'),
+    ...featuresService.get('components.modals.components'),
   },
   data() {
     return {

@@ -9,12 +9,15 @@
 </template>
 
 <script>
+
+import { MODALS } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 
 /**
  * Modal to create an ack event
  */
 export default {
+  name: MODALS.createDeclareSnowEvent,
   $_veeValidate: {
     validator: 'new',
   },

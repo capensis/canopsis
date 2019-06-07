@@ -37,35 +37,35 @@ export default {
     MODALS,
     WIDGETS_ACTIONS_TYPES,
   },
-
-  alarmListActionPanel: {
-    mixins: [alarmListActionPanelMixin],
-    computed: {
-      actions(actions) {
-        const { filteredActionsMap } = this;
-
-        if (filteredActionsMap.test) {
-          const actionsInline = [filteredActionsMap.test, ...actions.inline];
-          const actionsDropDown = [...actions.dropDown];
-
-          if (actionsInline.length > 3) {
-            actionsDropDown.unshift(actionsInline.pop());
-          }
-
-          return {
-            inline: actionsInline,
-            dropDown: actionsDropDown,
-          };
-        }
-
-        return actions;
-      },
-    },
-  },
-
   components: {
     modals: {
-      CreateTestEvent,
+      components: {
+        CreateTestEvent,
+      },
+    },
+    alarmListActionPanel: {
+      mixins: [alarmListActionPanelMixin],
+      computed: {
+        actions(actions) {
+          const { filteredActionsMap } = this;
+
+          if (filteredActionsMap.test) {
+            const actionsInline = [filteredActionsMap.test, ...actions.inline];
+            const actionsDropDown = [...actions.dropDown];
+
+            if (actionsInline.length > 3) {
+              actionsDropDown.unshift(actionsInline.pop());
+            }
+
+            return {
+              inline: actionsInline,
+              dropDown: actionsDropDown,
+            };
+          }
+
+          return actions;
+        },
+      },
     },
   },
 };
