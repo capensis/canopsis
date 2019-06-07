@@ -183,12 +183,11 @@ class __TileData:
             watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
 
         for ent in watcher[ResultKey.ENT.value]:
-            if len(ent[ResultKey.PBEHAVIORS.value]) != 0:
+            if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
                 watched_ent_paused += 1
 
-        if len(watcher[ResultKey.ENT.value]) != 0 and \
-           (watched_ent_paused == len(watcher[ResultKey.ENT.value]) or \
-           len(watcher[ResultKey.PBEHAVIORS.value]) != 0):
+        if len(watcher[ResultKey.PBEHAVIORS.value]) > 0 and \
+           len(watcher[ResultKey.ENT.value]) == watched_ent_paused:
             return TILE_COLOR_PAUSE
 
         return TILE_COLOR_SELECTOR[watcher_state]
@@ -583,7 +582,6 @@ def exports(ws):
         pipeline_result = mongo_collection.aggregate(pipeline)
 
         result = []
-
         for watcher in pipeline_result:
             watcher = _rework_watcher_pipeline_element(watcher, ws.logger)
 
