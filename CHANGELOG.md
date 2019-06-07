@@ -8,6 +8,15 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.20.0 - Due date : 2019-06-07
+
+ - [Python] Fix a race condition in the alarm filter
+ - [UI] Durations are now formatted with number of days
+ - [UI - List alarm] Fix - Advanced search column value computation
+ - [UI - Stats table] Add possibility to display the trend next to the stats values
+ - [UI - Stats table] Fix - Always display unit,  even with values equal to zero
+ - [UI - Text widget] Clarify the fact that selecting a stat is optionnal on this widget
+
 # Canopsis 3.19.0 - Due date : 2019-06-04
 
  - [Docker] Docker-Compose files now support CPS_EDITION and CPS_STACK variables
