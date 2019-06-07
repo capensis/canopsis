@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import moment from 'moment';
 import 'moment-duration-format';
 import momentDurationFrLocale from '@/i18n/moment-duration-fr';
@@ -15,7 +16,7 @@ moment.updateLocale('fr', momentDurationFrLocale);
  */
 export default function ({
   value = 0,
-  locale = DEFAULT_LOCALE,
+  locale = i18n.locale || DEFAULT_LOCALE,
   format = 'D __ H _ m _ s _',
 }) {
   moment.locale(locale);

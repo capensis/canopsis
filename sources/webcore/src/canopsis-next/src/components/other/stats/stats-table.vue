@@ -100,8 +100,8 @@ export default {
         state_rate: value => this.$options.filters.percentage(value),
         ack_time_sla: value => this.$options.filters.percentage(value),
         resolve_time_sla: value => this.$options.filters.percentage(value),
-        time_in_state: value => this.$options.filters.duration({ value, locale: this.$i18n.locale }),
-        mtbf: value => this.$options.filters.duration({ value, locale: this.$i18n.locale }),
+        time_in_state: value => this.$options.filters.duration({ value }),
+        mtbf: value => this.$options.filters.duration({ value }),
       };
 
       return (value, columnValue) => {
