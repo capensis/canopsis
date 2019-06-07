@@ -14,7 +14,7 @@
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
-      field-stats-selector(v-model="settings.widget.parameters.stats", required)
+      field-stats-selector(v-model="settings.widget.parameters.stats", required, withTrend)
       v-divider
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}

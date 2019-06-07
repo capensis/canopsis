@@ -49,6 +49,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withTrend: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     stats(value) {
@@ -73,6 +77,7 @@ export default {
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.add'),
+          withTrend: this.withTrend,
           action: (stat) => {
             const newStat = {
               ...omit(stat, ['title', 'parameters']),
@@ -95,6 +100,7 @@ export default {
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.edit'),
+          withTrend: this.withTrend,
           stat,
           statTitle,
           action: newStat => this.updateAndMoveField(statTitle, newStat.title, omit(newStat, ['title'])),
