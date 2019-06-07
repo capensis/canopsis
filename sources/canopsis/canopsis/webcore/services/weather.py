@@ -375,7 +375,7 @@ def get_ok_ko(influx_client, entity_id):
     return None
 
 
-def pbehavior_types(watcher):
+def _pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
     :param dict watcher: one element from the query
@@ -386,7 +386,7 @@ def pbehavior_types(watcher):
     for ent in watcher[ResultKey.ENT.value]:
         pbehaviors += ent[ResultKey.PBEHAVIORS.value]
 
-    for pbh in  pbehaviors:
+    for pbh in pbehaviors:
         pb_type = pbh.get('type_', None)
         if pb_type is not None:
             pb_types.add(pb_type)
@@ -394,7 +394,7 @@ def pbehavior_types(watcher):
     return pb_types
 
 
-def watcher_status(watcher):
+def _watcher_status(watcher):
 
     ent_with_active_pbh = set()
 
@@ -412,73 +412,7 @@ def watcher_status(watcher):
     return False, False
 
 
-def get_active_pbehaviors_on_watchers(watchers,
-                                      active_pb_dict,
-                                      active_pb_dict_full):
-    """
-    get_active_pbehaviors_on_watchers.
-
-    :param list watchers:
-    :param list active_pb_dict:
-    :param list active_pb_dict_full: list of pbehavior dict
-    :returns: dict of watcher with list of active pbehavior
-    """
-    active_pb_on_watchers = {}
-    active_watcher_pbehaviors = {}
-
-    for watcher in watchers:
-        tmp_pbh = []
-        tmp_wpbh = []
-        watcher_depends = set(watcher.get('depends', []))
-
-        for pb_id, eids in active_pb_dict.items():
-            # add pbehaviors linked to this watcher's entities
-            for eid in eids:
-                if eid in watcher_depends:
-                    tmp_pbh.append(active_pb_dict_full[pb_id])
-
-            # add pbehaviors linked to this watcher
-            if watcher['_id'] in active_pb_dict[pb_id]:
-                wpb = active_pb_dict_full[pb_id]
-                wpb['isActive'] = True
-                tmp_wpbh.append(wpb)
-
-        for pbh in tmp_pbh:
-            pbh['isActive'] = True
-
-        active_pb_on_watchers[watcher['_id']] = tmp_pbh
-        active_watcher_pbehaviors[watcher['_id']] = tmp_wpbh
-
-    return active_pb_on_watchers, active_watcher_pbehaviors
-
-
-def is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_pbehaviors):
-
-    watcher_alarm = alarm_dict.get(watcher["_id"], None)
-    if watcher_alarm is None:
-        return False
-
-    entities_alarm = {}
-    entities_pbh = {}
-    for key in watcher["depends"]:
-        entities_alarm[key] = alarm_dict.get(key, None)
-        entities_pbh[key] = active_pbehaviors.get(key, None)
-
-    w_pbh = active_watchers_pbehaviors[watcher["_id"]]
-    if len(w_pbh) != 0:
-        return False
-
-    for entity in entities_alarm:
-        if entities_alarm[entity] is None:
-            continue
-
-        if entities_alarm[entity].get("ack", None) is None:
-            if entities_pbh[entity] is None:
-                return True
-
-    return False
-
-def remove_inactive_pbh(pbehaviors):
+def _remove_inactive_pbh(pbehaviors):
     now = time.time()
 
     active_pbh = []
@@ -487,42 +421,6 @@ def remove_inactive_pbh(pbehaviors):
             active_pbh.append(pbh)
 
     return active_pbh
-
-def get_next_run_alert(watcher_depends, alert_next_run_dict):
-    """
-    get the next run of alarm filter
-
-    :param watcher_depends: list of eids
-    :param alert_next_run_dict: dict with next run infos for alarm filter
-    :returns: a timestamp with next alarm filter information or None
-    """
-    list_next_run = []
-    for depend in watcher_depends:
-        tmp_next_run = alert_next_run_dict.get(depend, None)
-        if tmp_next_run:
-            list_next_run.append(tmp_next_run)
-    if list_next_run:
-        return min(list_next_run)
-
-    return None
-
-
-def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
-    """
-    alert_not_ack_in_watcher check if an alert is not ack in watcher depends
-
-    :param watcher_depends: list of depends
-    :param alarm_dict: alarm dict
-    :rtype: bool
-    """
-    for depend in watcher_depends:
-        tmp_alarm = alarm_dict.get(depend, {})
-        if (tmp_alarm != {}
-                and tmp_alarm.get('ack', None) is None
-                and tmp_alarm.get('state', {}).get('val', 0) != 0):
-            return True
-
-    return False
 
 
 def _parse_direction(direction):
@@ -650,11 +548,11 @@ def exports(ws):
         result = []
 
         for watcher in pipeline_result:
-            # remove the inactive pbehaviors from the pipeline result
+            # remove the inactive pbehaviors from the ppieline result
             pbhs = watcher[ResultKey.PBEHAVIORS.value]
-            watcher[ResultKey.PBEHAVIORS.value] = remove_inactive_pbh(pbhs)
+            watcher[ResultKey.PBEHAVIORS.value] = _remove_inactive_pbh(pbhs)
             pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
-            watcher[ResultKey.WATCHED_ENT_PBH.value] = remove_inactive_pbh(pbhs)
+            watcher[ResultKey.WATCHED_ENT_PBH.value] = _remove_inactive_pbh(pbhs)
 
             # assign entities pbehaviors to the correct entities
             entities = {}
@@ -682,14 +580,14 @@ def exports(ws):
             del watcher[ResultKey.WATCHED_ENT_PBH.value]
             del watcher[ResultKey.WATCHED_ENT_ALRM.value]
 
-            some_watched_ent_paused, all_watched_ent_paused = watcher_status(
+            some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
                 watcher
             )
 
             if wf.match(all_watched_ent_paused,
                         some_watched_ent_paused,
                         len(watcher[ResultKey.PBEHAVIORS.value]) > 0,
-                        pbehavior_types(watcher)):
+                        _pbehavior_types(watcher)):
                 tileData = __TileData(watcher)
                 result.append(vars(tileData))
 
