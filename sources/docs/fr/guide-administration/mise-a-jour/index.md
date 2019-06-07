@@ -99,3 +99,4 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.17.0](../../notes-de-version/3.17.0.md)
 *  [3.18.0](../../notes-de-version/3.18.0.md), [3.18.1](../../notes-de-version/3.18.1.md)
 *  [3.19.0](../../notes-de-version/3.19.0.md)
+*  [3.20.0](../../notes-de-version/3.20.0.md)
