@@ -24,6 +24,11 @@
               color="error",
               ) {{ $t('view.deleteWidget') }}
               v-btn.ma-1.editionBtn(
+              @click="showCloneWidgetModal(widget)",
+              icon
+              )
+                v-icon file_copy
+              v-btn.ma-1.editionBtn(
               @click="showSettings(tab._id, row._id, widget)",
               icon
               )
@@ -126,6 +131,15 @@ export default {
         config: {
           tabId,
           rowId,
+          widget,
+        },
+      });
+    },
+
+    showCloneWidgetModal(widget) {
+      this.showModal({
+        name: MODALS.cloneWidget,
+        config: {
           widget,
         },
       });
