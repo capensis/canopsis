@@ -10,6 +10,7 @@ export default {
   },
   data() {
     return {
+      error: null,
       pending: true,
       stats: null,
     };
@@ -99,14 +100,21 @@ export default {
     },
 
     async fetchList() {
-      this.pending = true;
+      try {
+        this.error = null;
+        this.pending = true;
 
-      const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
-        params: this.getQuery(),
-      });
+        const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.stats = aggregations;
-      this.pending = false;
+        this.stats = aggregations;
+        this.pending = false;
+      } catch (err) {
+        this.error = this.$t('errors.default');
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

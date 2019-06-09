@@ -19,17 +19,8 @@ export default {
       }
     },
 
-    async fetchEvolutionWithoutStore({ dispatch }, { params }) {
-      try {
-        return request.post(`${API_ROUTES.stats}/evolution`, params);
-      } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
-
-        return {
-          aggregations: {},
-          values: [],
-        };
-      }
+    async fetchEvolutionWithoutStore(context, { params }) {
+      return request.post(`${API_ROUTES.stats}/evolution`, params);
     },
   },
 };
