@@ -56,10 +56,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-  .view-select .v-input__control {
-    width: 100%;
-  }
-</style>
-

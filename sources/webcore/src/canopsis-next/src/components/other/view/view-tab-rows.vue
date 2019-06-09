@@ -3,7 +3,7 @@
     v-layout(v-for="row in rows", :key="row._id" wrap)
       v-flex(xs12)
         v-layout.hide-on-full-screen(justify-end)
-          v-btn.ma-2.editionBtn(
+          v-btn.ma-2(
           v-if="isEditingMode && hasUpdateAccess",
           @click.stop="showDeleteRowModal(row)",
           small,
@@ -18,17 +18,17 @@
           h3.my-1.mx-2(v-show="widget.title") {{ widget.title }}
           v-layout(justify-end)
             template(v-if="isEditingMode && hasUpdateAccess")
-              v-btn.ma-1.editionBtn(
+              v-btn.ma-1(
               @click="showDeleteWidgetModal(row._id, widget)",
               small,
               color="error",
               ) {{ $t('view.deleteWidget') }}
-              v-btn.ma-1.editionBtn(
+              v-btn.ma-1(
               @click="showCloneWidgetModal(widget)",
               icon
               )
                 v-icon file_copy
-              v-btn.ma-1.editionBtn(
+              v-btn.ma-1(
               @click="showSettings(tab._id, row._id, widget)",
               icon
               )
