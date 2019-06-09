@@ -44,6 +44,8 @@
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
+import { generateWidgetByType } from '@/helpers/entities';
+
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
 import WeatherWidget from '@/components/other/service-weather/weather.vue';
@@ -136,11 +138,11 @@ export default {
       });
     },
 
-    showCloneWidgetModal(widget) {
+    showSelectViewTabModal(widget) {
       this.showModal({
-        name: MODALS.cloneWidget,
+        name: MODALS.selectViewTab,
         config: {
-          widget,
+          action: ({ tabId, viewId }) => this.cloneWidget({ widget, tabId, viewId }),
         },
       });
     },
@@ -191,6 +193,32 @@ export default {
             return this.updateTabMethod(newTab);
           },
         },
+      });
+    },
+
+    cloneWidget({ widget, tabId, viewId }) {
+      const { _id: newWidgetId } = generateWidgetByType(widget.type);
+      const newWidget = { ...widget, _id: newWidgetId };
+
+      this.$router.push({
+        name: 'view',
+        params: {
+          id: viewId,
+        },
+        query: {
+          tabId,
+        },
+      }, () => {
+        this.showSideBar({
+          name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
+          config: {
+            tabId,
+            viewId,
+            widget: newWidget,
+          },
+        });
+
+        this.hideModal();
       });
     },
   },

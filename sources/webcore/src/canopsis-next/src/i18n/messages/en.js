@@ -818,6 +818,9 @@ export default {
         },
       },
     },
+    selectViewTab: {
+      title: 'Select tab',
+    },
   },
   tables: {
     noData: 'No data',

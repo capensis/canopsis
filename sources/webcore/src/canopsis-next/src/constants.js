@@ -72,7 +72,7 @@ export const MODALS = {
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
-  cloneWidget: 'clone-widget',
+  selectViewTab: 'select-view-tab',
 };
 
 export const EVENT_ENTITY_TYPES = {

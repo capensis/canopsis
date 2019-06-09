@@ -59,7 +59,7 @@ import EventFilterRuleExternalData from './event-filter/enrichment-options/event
 import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
-import CloneWidget from './view/clone-widget.vue';
+import SelectViewTab from './view/select-view-tab.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
@@ -112,7 +112,7 @@ export default {
     FiltersList,
     CreateWebhook,
     CreateSnmpRule,
-    CloneWidget,
+    SelectViewTab,
   },
   data() {
     return {
