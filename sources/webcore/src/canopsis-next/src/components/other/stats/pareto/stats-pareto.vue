@@ -1,6 +1,8 @@
 <template lang="pug">
-  div.stats-wrapper
+  div.position-relative
     progress-overlay(:pending="pending")
+    alert-overlay(:value="hasError")
+      v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
     stats-pareto-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
@@ -12,12 +14,14 @@ import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrap
 import { SORT_ORDERS } from '@/constants';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 import StatsParetoChart from './stats-pareto-chart.vue';
 
 export default {
   components: {
     ProgressOverlay,
+    AlertOverlay,
     StatsParetoChart,
   },
   mixins: [
@@ -149,23 +153,22 @@ export default {
     },
 
     async fetchList() {
-      this.pending = true;
+      try {
+        this.pending = true;
+        this.hasError = false;
 
-      const { values, aggregations } = await this.fetchStatsListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { values, aggregations } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.total = aggregations[this.statTitle].sum;
-      this.stats = values.filter(stat => stat[this.statTitle].value);
-      this.pending = false;
+        this.total = aggregations[this.statTitle].sum;
+        this.stats = values.filter(stat => stat[this.statTitle].value);
+      } catch (err) {
+        this.hasError = true;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .stats-wrapper {
-    position: relative;
-  }
-</style>
-

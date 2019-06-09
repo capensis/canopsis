@@ -1,6 +1,8 @@
 <template lang="pug">
-  div
+  div.position-relative
     progress-overlay(:pending="pending")
+    alert-overlay(:value="hasError")
+      v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
     v-runtime-template(:template="compiledTemplate")
 </template>
 
@@ -16,11 +18,17 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 import TextStatTemplate from './text-stat-template.vue';
 
 export default {
-  components: { VRuntimeTemplate, ProgressOverlay, TextStatTemplate },
+  components: {
+    VRuntimeTemplate,
+    ProgressOverlay,
+    AlertOverlay,
+    TextStatTemplate,
+  },
   mixins: [
     widgetQueryMixin,
     entitiesStatsMixin,
@@ -35,6 +43,7 @@ export default {
   data() {
     return {
       pending: true,
+      hasError: false,
       stats: {},
     };
   },
@@ -81,17 +90,22 @@ export default {
     },
 
     async fetchList() {
-      this.pending = true;
+      try {
+        this.pending = true;
+        this.hasError = false;
 
-      if (!isEmpty(this.widget.parameters.stats)) {
-        const { aggregations } = await this.fetchStatsListWithoutStore({
-          params: this.getQuery(),
-        });
+        if (!isEmpty(this.widget.parameters.stats)) {
+          const { aggregations } = await this.fetchStatsListWithoutStore({
+            params: this.getQuery(),
+          });
 
-        this.stats = aggregations;
+          this.stats = aggregations;
+        }
+      } catch (err) {
+        this.hasError = true;
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = false;
     },
   },
 };

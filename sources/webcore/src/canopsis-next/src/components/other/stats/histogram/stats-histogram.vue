@@ -1,7 +1,8 @@
 <template lang="pug">
-  div.stats-wrapper
-    alert-overlay(:value="Boolean(error)")
+  div.position-relative
     progress-overlay(:pending="pending")
+    alert-overlay(:value="hasError")
+      v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
     stats-histogram-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
@@ -51,9 +52,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .stats-wrapper {
-    position: relative;
-  }
-</style>

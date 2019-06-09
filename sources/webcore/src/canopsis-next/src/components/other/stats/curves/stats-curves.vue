@@ -1,6 +1,8 @@
 <template lang="pug">
-  div.stats-wrapper
+  div.position-relative
     progress-overlay(:pending="pending")
+    alert-overlay(:value="hasError")
+      v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
     stats-curves-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
@@ -15,12 +17,14 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 import StatsCurvesChart from './stats-curves-chart.vue';
 
 export default {
   components: {
     ProgressOverlay,
+    AlertOverlay,
     StatsCurvesChart,
   },
   mixins: [
@@ -86,9 +90,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .stats-wrapper {
-    position: relative;
-  }
-</style>

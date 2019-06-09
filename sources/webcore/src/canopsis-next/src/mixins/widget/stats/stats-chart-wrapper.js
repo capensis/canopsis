@@ -10,7 +10,7 @@ export default {
   },
   data() {
     return {
-      error: null,
+      hasError: false,
       pending: true,
       stats: null,
     };
@@ -101,7 +101,7 @@ export default {
 
     async fetchList() {
       try {
-        this.error = null;
+        this.hasError = false;
         this.pending = true;
 
         const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
@@ -111,7 +111,7 @@ export default {
         this.stats = aggregations;
         this.pending = false;
       } catch (err) {
-        this.error = this.$t('errors.default');
+        this.hasError = true;
       } finally {
         this.pending = false;
       }

@@ -2,8 +2,9 @@
   v-fade-transition
     v-layout.alert(v-show="props.value")
       div.overlay(:class="props.backgroundColor", :style="{ opacity: props.opacity }")
-      slot
-        v-alert(type="error", :value="true") {{ parent.$t('errors.default') }}
+      div.content
+        slot
+          v-alert(type="error", :value="true") {{ parent.$t('errors.default') }}
 </template>
 
 <script>
@@ -37,11 +38,11 @@ export default {
       right: 0;
     }
 
-    & /deep/ .v-progress-circular {
-      top: 50%;
-      left: 50%;
-      margin-top: -16px;
-      margin-left: -16px;
+    .content {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 </style>

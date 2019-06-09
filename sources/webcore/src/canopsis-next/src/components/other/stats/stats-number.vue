@@ -1,7 +1,9 @@
 <template lang="pug">
   div
-    v-card
+    v-card.position-relative
       progress-overlay(:pending="pending")
+      alert-overlay(:value="hasError")
+        v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
       v-data-table(
       :items="stats",
       :headers="tableHeaders",
@@ -33,12 +35,14 @@ import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
     ProgressOverlay,
+    AlertOverlay,
   },
   mixins: [
     entitiesStatsMixin,
@@ -54,7 +58,8 @@ export default {
   },
   data() {
     return {
-      pending: false,
+      pending: true,
+      hasError: false,
       stats: [],
       pagination: {
         page: 1,
@@ -147,24 +152,29 @@ export default {
     },
 
     async fetchList() {
-      const { limit, sortOrder } = this.query;
+      try {
+        const { limit, sortOrder } = this.query;
 
-      this.pending = true;
+        this.pending = true;
+        this.hasError = false;
 
-      const { values } = await this.fetchStatsListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { values } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.stats = values;
-      this.pagination = {
-        page: 1,
-        sortBy: this.statColumn,
-        totalItems: values.length,
-        rowsPerPage: limit || PAGINATION_LIMIT,
-        descending: sortOrder === SORT_ORDERS.desc,
-      };
-
-      this.pending = false;
+        this.stats = values;
+        this.pagination = {
+          page: 1,
+          sortBy: this.statColumn,
+          totalItems: values.length,
+          rowsPerPage: limit || PAGINATION_LIMIT,
+          descending: sortOrder === SORT_ORDERS.desc,
+        };
+      } catch (err) {
+        this.hasError = true;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

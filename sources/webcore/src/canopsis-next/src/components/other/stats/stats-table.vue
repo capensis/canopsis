@@ -1,7 +1,9 @@
 <template lang="pug">
   div
-    v-card
+    v-card.position-relative
       progress-overlay(:pending="pending")
+      alert-overlay(:value="hasError")
+        v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
       v-data-table(
       :items="stats",
       :headers="columns",
@@ -38,11 +40,13 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 export default {
   components: {
     ProgressOverlay,
+    AlertOverlay,
     AlarmChips,
   },
   filters: {
@@ -65,6 +69,7 @@ export default {
   data() {
     return {
       pending: true,
+      hasError: false,
       stats: [],
       page: 1,
       pagination: {
@@ -154,25 +159,30 @@ export default {
     },
 
     async fetchList() {
-      const { sort = {} } = this.widget.parameters;
+      try {
+        const { sort = {} } = this.widget.parameters;
 
-      this.pending = true;
+        this.pending = true;
+        this.hasError = false;
 
-      const { values } = await this.fetchStatsListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { values } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.stats = values;
+        this.stats = values;
 
-      this.pagination = {
-        page: 1,
-        sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
-        totalItems: values.length,
-        rowsPerPage: PAGINATION_LIMIT,
-        descending: sort.order === SORT_ORDERS.desc,
-      };
-
-      this.pending = false;
+        this.pagination = {
+          page: 1,
+          sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
+          totalItems: values.length,
+          rowsPerPage: PAGINATION_LIMIT,
+          descending: sort.order === SORT_ORDERS.desc,
+        };
+      } catch (err) {
+        this.hasError = true;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };
