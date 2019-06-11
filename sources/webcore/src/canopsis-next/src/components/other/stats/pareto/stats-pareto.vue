@@ -10,7 +10,6 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
 import { SORT_ORDERS } from '@/constants';
-import { STATS_CURVES_LINE_TENSION } from '@/config';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
@@ -74,7 +73,7 @@ export default {
             yAxisID: 'y-axis-2',
             backgroundColor: 'transparent',
             borderColor: this.widget.parameters.statsColors.Accumulation || 'rgba(0, 0, 0, 0.1)',
-            lineTension: STATS_CURVES_LINE_TENSION,
+            cubicInterpolationMode: 'monotone',
           },
           {
             label: this.statTitle,

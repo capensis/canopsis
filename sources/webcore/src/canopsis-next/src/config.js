@@ -18,8 +18,6 @@ export const SIDE_BAR_WIDTH = 250;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
 
-export const STATS_CURVES_LINE_TENSION = 0.1;
-
 export const SCHEMA_EMBEDDED_KEY = '_embedded';
 
 export const MEDIA_QUERIES_BREAKPOINTS = {

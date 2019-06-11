@@ -8,7 +8,6 @@
 import { get } from 'lodash';
 
 import { STATS_DEFAULT_COLOR, STATS_TYPES } from '@/constants';
-import { STATS_CURVES_LINE_TENSION } from '@/config';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -39,7 +38,7 @@ export default {
             data: this.stats[stat].sum.map(value => value.value),
             borderColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
             backgroundColor: 'transparent',
-            lineTension: STATS_CURVES_LINE_TENSION,
+            cubicInterpolationMode: 'monotone',
           });
 
           return acc;
