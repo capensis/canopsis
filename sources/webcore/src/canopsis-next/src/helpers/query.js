@@ -106,7 +106,7 @@ export function convertWeatherWidgetToQuery(widget) {
 export function convertWidgetStatsParameterToQuery(widget) {
   const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
     acc[stat] = {
-      ...widget.parameters.stats[stat],
+      ...omit(widget.parameters.stats[stat], ['position']),
       stat: widget.parameters.stats[stat].stat.value,
     };
     return acc;
