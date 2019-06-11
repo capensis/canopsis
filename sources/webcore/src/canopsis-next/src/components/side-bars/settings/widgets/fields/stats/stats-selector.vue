@@ -2,7 +2,7 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.statsSelect.title') }}
       div.font-italic.caption.ml-1(v-if="required") ({{ $t('settings.statsSelect.required') }})
-      div.font-italic.caption.ml-1(v-else) ({{ $t('common.optionnal') }})
+      div.font-italic.caption.ml-1(v-else) ({{ $t('common.optional') }})
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}

@@ -54,7 +54,7 @@ export default {
     password: 'Mot de passe',
     authKey: 'Auth. key',
     connect: 'Connexion',
-    optionnal: 'Optionnel',
+    optional: 'Optionnel',
     logout: 'Se déconnecter',
     title: 'Titre',
     save: 'Sauvegarder',

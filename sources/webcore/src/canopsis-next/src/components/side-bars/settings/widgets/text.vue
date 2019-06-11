@@ -16,7 +16,7 @@
       v-divider
       v-list-group
         v-list-tile(slot="activator") {{ $t('settings.stats') }}
-          .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
+          .font-italic.caption.ml-1 ({{ $t('common.optional') }})
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-stats-selector(v-model="settings.widget.parameters.stats")
           v-divider
