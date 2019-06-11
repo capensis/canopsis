@@ -38,6 +38,7 @@ export default {
             data: this.stats[stat].sum.map(value => value.value),
             borderColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
             backgroundColor: 'transparent',
+            cubicInterpolationMode: 'monotone',
           });
 
           return acc;
