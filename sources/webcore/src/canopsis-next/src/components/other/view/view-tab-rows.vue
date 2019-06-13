@@ -29,7 +29,7 @@
               )
                 v-icon file_copy
               v-btn.ma-1(
-              @click="showSettings(tab._id, row._id, widget)",
+              @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
               icon
               )
                 v-icon settings
@@ -127,10 +127,16 @@ export default {
     },
   },
   methods: {
-    showSettings(tabId, rowId, widget) {
+    showSettings({
+      viewId,
+      tabId,
+      rowId,
+      widget,
+    }) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
+          viewId,
           tabId,
           rowId,
           widget,
@@ -196,29 +202,30 @@ export default {
       });
     },
 
-    cloneWidget({ widget, tabId, viewId }) {
+    async cloneWidget({ widget, tabId, viewId }) {
       const { _id: newWidgetId } = generateWidgetByType(widget.type);
       const newWidget = { ...widget, _id: newWidgetId };
 
-      this.$router.push({
-        name: 'view',
-        params: {
-          id: viewId,
-        },
-        query: {
-          tabId,
-        },
-      }, () => {
-        this.showSideBar({
-          name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
-          config: {
-            tabId,
-            viewId,
-            widget: newWidget,
-          },
-        });
+      await new Promise((resolve, reject) => {
+        if (this.tab._id === tabId) {
+          resolve();
+        } else {
+          this.$router.push({
+            name: 'view',
+            params: {
+              id: viewId,
+            },
+            query: {
+              tabId,
+            },
+          }, resolve, reject);
+        }
+      });
 
-        this.hideModal();
+      this.showSettings({
+        viewId,
+        tabId,
+        widget: newWidget,
       });
     },
   },
