@@ -1221,92 +1221,105 @@ class Alerts(object):
                                   .format(lifter._id))
                 continue
 
-            # Continue only if the filter condition is valid
-            if not lifter.check_alarm(docalarm):
-                self.logger.debug('AlarmFilter {}: Filter condition is invalid'
-                                  .format(lifter._id))
-                continue
+            # Aquire a lock on alarm_id (which is actually the id of the
+            # alarm's entity).
+            # This prevents the archive method from modifying this alarm
+            # between the time we get the alarm from the database and the time
+            # we update it in the database.
+            lock_id = self.lock_manager.lock(alarm_id)
 
-            alarmfilter = value.get(AlarmField.alarmfilter.value, {})
-            # Only execute the filter once per reached limit
-            if len(alarmfilter) > 0 and RUNS in alarmfilter \
-               and lifter._id in alarmfilter[RUNS]:
-                executions = alarmfilter[RUNS][lifter._id]
-                if len(executions) >= lifter.repeat:
-                    # Already repeated enough times
+            try:
+                # Get the alarm's value (which may have been modified by an
+                # event while the other alarm filters were executed), and check
+                # that the alarm filter should be still be executed.
+                alarm = lifter.get_and_check_alarm(docalarm)
+                if not alarm:
+                    self.logger.debug('AlarmFilter {}: Filter condition is invalid'
+                                    .format(lifter._id))
                     continue
 
-                last = datetime.fromtimestamp(max(executions))
-                if last + lifter.limit > now:
-                    # Too soon to execute one more time all tasks
+                new_value = alarm[storage.Key.VALUE]
+
+                # Check that the number of executions of the alarm filter has
+                # not been reached by the alarm.
+                alarmfilter = new_value.get(AlarmField.alarmfilter.value, {})
+                if len(alarmfilter) > 0 and RUNS in alarmfilter \
+                   and lifter._id in alarmfilter[RUNS]:
+                    executions = alarmfilter[RUNS][lifter._id]
+                    if len(executions) >= lifter.repeat:
+                        # Already repeated enough times
+                        continue
+
+                    last = datetime.fromtimestamp(max(executions))
+                    if last + lifter.limit > now:
+                        # Too soon to execute one more time all tasks
+                        continue
+                    self.logger.info('Rerunning tasks on {} after {} hours'
+                                    .format(alarm_id, lifter.limit))
+
+                # Getting most recent step message
+                steps = new_value[AlarmField.steps.value]
+                message = sorted(steps, key=itemgetter('t'))[-1]['m']
+
+                event = {
+                    'timestamp': now_stamp,
+                    'connector': new_value['connector'],
+                    'connector_name': new_value['connector_name'],
+                    'output': lifter.output(message),
+                    'event_type': Check.EVENT_TYPE,
+                    'component': new_value["component"]
+                }
+
+                if new_value["resource"] is not None:
+                    event["source_type"] = "resource"
+                    event["resource"] = new_value["resource"]
+                else:
+                    event["source_type"] = "component"
+
+                vstate = AlarmField.state.value
+
+                # Execute each defined action
+                updated_once = False
+                for task in lifter.tasks:
+
+                    if vstate in new_value:
+                        event[vstate] = new_value[vstate]['val']  # for changestate
+
+                    if 'systemaction.state_increase' in task:
+                        event[vstate] = event[vstate] + 1
+                    elif 'systemaction.state_decrease' in task:
+                        event[vstate] = event[vstate] - 1
+
+                    self.logger.info('Automatically execute {} on {}'
+                                    .format(task, alarm_id))
+
+                    updated_alarm_value = self.execute_task(
+                        name=task,
+                        event=event,
+                        entity_id=alarm_id,
+                        author=self.filter_author,
+                        new_state=event[vstate]
+                    )
+                    if updated_alarm_value is not None:
+                        new_value = updated_alarm_value
+                        updated_once = True
+
+                if not updated_once:
                     continue
-                self.logger.info('Rerunning tasks on {} after {} hours'
-                                 .format(alarm_id, lifter.limit))
 
-            # Getting most recent step message
-            steps = docalarm[storage.VALUE][AlarmField.steps.value]
-            message = sorted(steps, key=itemgetter('t'))[-1]['m']
+                # Mark the alarm that this filter has been applied
+                alarmfilter = new_value.get(AlarmField.alarmfilter.value, {})
+                if RUNS not in alarmfilter:
+                    alarmfilter[RUNS] = {}
+                if lifter._id not in alarmfilter[RUNS]:
+                    alarmfilter[RUNS][lifter._id] = []
 
-            event = {
-                'timestamp': now_stamp,
-                'connector': value['connector'],
-                'connector_name': value['connector_name'],
-                'output': lifter.output(message),
-                'event_type': Check.EVENT_TYPE,
-                'component': value["component"]
-            }
+                alarmfilter[RUNS][lifter._id].append(now_stamp)
+                new_value[AlarmField.alarmfilter.value] = alarmfilter
 
-            if value["resource"] is not None:
-                event["source_type"] = "resource"
-                event["resource"] = value["resource"]
-            else:
-                event["source_type"] = "component"
-
-            vstate = AlarmField.state.value
-
-            # Execute each defined action
-            updated_once = False
-            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
-            for task in lifter.tasks:
-
-                if vstate in new_value:
-                    event[vstate] = new_value[vstate]['val']  # for changestate
-
-                if 'systemaction.state_increase' in task:
-                    event[vstate] = event[vstate] + 1
-                elif 'systemaction.state_decrease' in task:
-                    event[vstate] = event[vstate] - 1
-
-                self.logger.info('Automatically execute {} on {}'
-                                 .format(task, alarm_id))
-
-                updated_alarm_value = self.execute_task(
-                    name=task,
-                    event=event,
-                    entity_id=alarm_id,
-                    author=self.filter_author,
-                    new_state=event[vstate]
-                )
-                if updated_alarm_value is not None:
-                    new_value = updated_alarm_value
-                    updated_once = True
-                    self.update_current_alarm(docalarm, updated_alarm_value)
-
-            if not updated_once:
-                continue
-
-            # Mark the alarm that this filter has been applied
-            new_value = self.get_current_alarm(alarm_id)[storage.VALUE]
-            alarmfilter = new_value.get(AlarmField.alarmfilter.value, {})
-            if RUNS not in alarmfilter:
-                alarmfilter[RUNS] = {}
-            if lifter._id not in alarmfilter[RUNS]:
-                alarmfilter[RUNS][lifter._id] = []
-
-            alarmfilter[RUNS][lifter._id].append(now_stamp)
-            new_value[AlarmField.alarmfilter.value] = alarmfilter
-
-            self.update_current_alarm(docalarm, new_value)
+                self.update_current_alarm(docalarm, new_value)
+            finally:
+                self.lock_manager.unlock(lock_id)
 
     def publish_new_alarm_stats(self, alarm, author):
         """

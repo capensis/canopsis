@@ -2,33 +2,43 @@
   v-list-group
     v-list-tile(slot="activator")
       div(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
-        .font-italic.caption.ml-1 ({{ $t('settings.statsSelect.required') }})
+        .font-italic.caption.ml-1(v-if="required") ({{ $t('settings.statsSelect.required') }})
+        .font-italic.caption.ml-1(v-else) ({{ $t('common.optional') }})
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
       v-list.secondary(dark)
-        v-list-group(v-for="(stat, key) in stats", :key="key")
-          v-list-tile(slot="activator")
-            v-list-tile-content
-              v-list-tile-title {{ key }}
-            v-list-tile-action
-              v-layout
-                v-btn.primary.mx-1(@click.stop="showEditStatModal(key, stat)", fab, small, depressed)
-                  v-icon edit
-                v-btn.error(@click.stop="showDeleteStatModal(key)", fab, small, depressed)
-                  v-icon delete
-          v-list-tile
-            v-list-tile-title {{ $t('common.stat') }}: {{ stat.stat }}
-          v-list-tile
-            v-list-tile-title {{ $t('common.trend') }}: {{ stat.trend }}
-          v-list-tile
-            v-list-tile-title {{ $t('common.parameters') }}: {{ stat.parameters }}
+        draggable(
+        :value="orderedStats",
+        :options="draggableOptions",
+        @input="updateStatsPositions"
+        )
+          v-list-group(v-for="stat in orderedStats", :key="stat.title")
+            v-list-tile(slot="activator")
+              v-list-tile-content
+                v-list-tile-title {{ stat.title }}
+              v-list-tile-action
+                v-layout
+                  v-btn.primary.mx-1(@click.stop="showEditStatModal(stat.title, stat)", fab, small, depressed)
+                    v-icon edit
+                  v-btn.error(@click.stop="showDeleteStatModal(stat.title)", fab, small, depressed)
+                    v-icon delete
+            v-list-tile
+              v-list-tile-title {{ $t('common.stat') }}: {{ stat.stat }}
+            v-list-tile
+              v-list-tile-title {{ $t('common.trend') }}: {{ stat.trend }}
+            v-list-tile
+              v-list-tile-title {{ $t('common.parameters') }}: {{ stat.parameters }}
 </template>
 
 <script>
 import { omit } from 'lodash';
+import Draggable from 'vuedraggable';
 
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
+
+import { setInSeveral } from '@/helpers/immutable';
 
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
@@ -36,6 +46,7 @@ import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
+  components: { Draggable },
   mixins: [modalMixin, formMixin, formValidationHeaderMixin],
   model: {
     prop: 'stats',
@@ -49,6 +60,28 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+    withTrend: {
+      type: Boolean,
+      default: false,
+    },
+    withSorting: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    draggableOptions() {
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+        disabled: !this.withSorting,
+      };
+    },
+
+    orderedStats() {
+      return Object.entries(this.stats)
+        .map(([key, value]) => ({ ...value, title: key }))
+        .sort((a, b) => a.position - b.position);
     },
   },
   watch: {
@@ -75,6 +108,7 @@ export default {
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.add'),
+          withTrend: this.withTrend,
           action: (stat) => {
             const newStat = {
               ...omit(stat, ['title', 'parameters']),
@@ -92,12 +126,13 @@ export default {
       });
     },
 
-    showEditStatModal(statTitle, stat) {
+    showEditStatModal(statTitle) {
       this.showModal({
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.edit'),
-          stat,
+          withTrend: this.withTrend,
+          stat: this.stats[statTitle],
           statTitle,
           action: newStat => this.updateAndMoveField(statTitle, newStat.title, omit(newStat, ['title'])),
         },
@@ -111,6 +146,18 @@ export default {
           action: () => this.removeField(statTitle),
         },
       });
+    },
+
+    updateStatsPositions(newOrderedStats) {
+      const modifiers = newOrderedStats.reduce((acc, orderedStat, index) => {
+        acc[orderedStat.title] = stat => ({ ...stat, position: index });
+
+        return acc;
+      }, {});
+
+      const newStats = setInSeveral(this.stats, modifiers);
+
+      this.updateModel(newStats);
     },
   },
 };

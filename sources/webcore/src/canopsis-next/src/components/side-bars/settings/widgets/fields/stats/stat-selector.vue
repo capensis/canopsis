@@ -51,7 +51,7 @@ export default {
       this.showModal({
         name: MODALS.addStat,
         config: {
-          title: 'modals.addStat.title.add',
+          title: this.$t('modals.addStat.title.add'),
           stat: this.stat,
           statTitle: this.stat.title,
           action: stat => this.$emit('input', stat),

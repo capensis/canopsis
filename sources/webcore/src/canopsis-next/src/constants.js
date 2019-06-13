@@ -544,6 +544,19 @@ export const STATS_DISPLAY_MODE_PARAMETERS = {
   },
 };
 
+export const STATS_CURVES_POINTS_STYLES = {
+  circle: 'circle',
+  cross: 'cross',
+  crossRot: 'crossRot',
+  dash: 'dash',
+  line: 'line',
+  rect: 'rect',
+  rectRounded: 'rectRounded',
+  rectRot: 'rectRot',
+  star: 'star',
+  triangle: 'triangle',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;

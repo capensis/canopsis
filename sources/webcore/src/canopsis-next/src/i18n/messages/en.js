@@ -55,7 +55,7 @@ export default {
     password: 'Password',
     authKey: 'Auth. key',
     connect: 'Connect',
-    optionnal: 'optionnal',
+    optional: 'optional',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
@@ -257,6 +257,7 @@ export default {
     tstop: 'End date',
     periodsNumber: 'Number of steps',
     statName: 'Stat name',
+    stats: 'Stats',
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
