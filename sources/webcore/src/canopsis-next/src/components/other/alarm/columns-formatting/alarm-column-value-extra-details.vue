@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout
+  v-layout(wrap)
     div(v-if="alarm.v.ack")
       v-tooltip(top)
         v-icon.badge.purple.white--text(

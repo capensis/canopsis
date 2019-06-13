@@ -36,6 +36,7 @@ export default {
 </script>
 <style scoped>
   .badge {
+    margin: 0 5px;
     padding: 3px 7px;
     font-size: 14px;
     color: #fff;
