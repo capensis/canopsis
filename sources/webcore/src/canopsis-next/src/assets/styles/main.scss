@@ -2,6 +2,15 @@
   z-index: 3;
 }
 
+table.v-table tbody td, table.v-table thead th {
+  border: none!important;
+  padding: 0 0.5% !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  white-space: pre-wrap;
+}
+
 .v-list {
   .v-input {
     &, &__slot {
