@@ -87,6 +87,14 @@ export default {
     },
 
     columns() {
+      const { stats: widgetStats } = this.widget.parameters;
+      const statsOrderedColumns = Object.keys(widgetStats)
+        .sort((a, b) => widgetStats[a].position - widgetStats[b].position)
+        .map(item => ({
+          text: item,
+          value: this.$options.filters.statValue(item),
+        }));
+
       return [
         {
           text: this.$t('common.entity'),
@@ -94,10 +102,7 @@ export default {
           sortable: false,
         },
 
-        ...Object.keys(this.widget.parameters.stats).map(item => ({
-          text: item,
-          value: this.$options.filters.statValue(item),
-        })),
+        ...statsOrderedColumns,
       ];
     },
     getFormattedValue() {

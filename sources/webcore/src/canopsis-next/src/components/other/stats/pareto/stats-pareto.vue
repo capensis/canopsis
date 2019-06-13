@@ -77,6 +77,7 @@ export default {
             yAxisID: 'y-axis-2',
             backgroundColor: 'transparent',
             borderColor: this.widget.parameters.statsColors.Accumulation || 'rgba(0, 0, 0, 0.1)',
+            cubicInterpolationMode: 'monotone',
           },
           {
             label: this.statTitle,
