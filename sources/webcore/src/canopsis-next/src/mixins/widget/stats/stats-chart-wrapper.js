@@ -10,8 +10,9 @@ export default {
   },
   data() {
     return {
-      hasError: false,
       pending: true,
+      hasError: false,
+      serverErrorMessage: null,
       stats: null,
     };
   },
@@ -101,8 +102,8 @@ export default {
 
     async fetchList() {
       try {
-        this.hasError = false;
         this.pending = true;
+        this.hasError = false;
 
         const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
           params: this.getQuery(),
@@ -112,6 +113,7 @@ export default {
         this.pending = false;
       } catch (err) {
         this.hasError = true;
+        this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;
       }

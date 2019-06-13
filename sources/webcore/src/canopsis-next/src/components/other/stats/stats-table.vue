@@ -2,16 +2,7 @@
   div
     v-card.position-relative
       progress-overlay(:pending="pending")
-      alert-overlay(:value="hasError")
-        v-alert(type="error", :value="true")
-          v-layout(align-center)
-            v-flex
-              span {{ $t('errors.statsRequestProblem') }}
-            v-flex(v-show="serverError")
-              v-tooltip.alert-tooltip(top)
-                v-btn.ml-2.mr-0(slot="activator", icon, small)
-                  v-icon.alert-tooltip-icon help
-                span {{ serverError }}
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       v-data-table(
       :items="stats",
       :headers="columns",
@@ -48,14 +39,15 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+
+import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
 
 export default {
   components: {
     ProgressOverlay,
-    AlertOverlay,
     AlarmChips,
+    StatsAlertOverlay,
   },
   filters: {
     statValue(name) {
@@ -78,7 +70,7 @@ export default {
     return {
       pending: true,
       hasError: false,
-      serverError: null,
+      serverErrorMessage: null,
       stats: [],
       page: 1,
       pagination: {
@@ -178,7 +170,7 @@ export default {
 
         this.pending = true;
         this.hasError = false;
-        this.serverError = null;
+        this.serverErrorMessage = null;
 
         const { values } = await this.fetchStatsListWithoutStore({
           params: this.getQuery(),
@@ -195,7 +187,7 @@ export default {
         };
       } catch (err) {
         this.hasError = true;
-        this.serverError = err.description || null;
+        this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;
       }
@@ -203,11 +195,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .alert-tooltip {
-    &-icon {
-      color: rgba(0,0,0,.3) !important;
-    }
-  }
-</style>

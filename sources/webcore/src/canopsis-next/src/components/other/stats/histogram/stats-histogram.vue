@@ -1,8 +1,7 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    alert-overlay(:value="hasError")
-      v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
+    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
     stats-histogram-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
@@ -17,14 +16,14 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
+import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 import StatsHistogramChart from './stats-histogram-chart.vue';
 
 export default {
   components: {
     ProgressOverlay,
-    AlertOverlay,
+    StatsAlertOverlay,
     StatsHistogramChart,
   },
   mixins: [

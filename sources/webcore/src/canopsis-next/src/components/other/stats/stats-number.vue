@@ -2,8 +2,7 @@
   div
     v-card.position-relative
       progress-overlay(:pending="pending")
-      alert-overlay(:value="hasError")
-        v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       v-data-table(
       :items="stats",
       :headers="tableHeaders",
@@ -35,14 +34,15 @@ import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
+
+import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
     ProgressOverlay,
-    AlertOverlay,
+    StatsAlertOverlay,
   },
   mixins: [
     entitiesStatsMixin,
@@ -60,6 +60,7 @@ export default {
     return {
       pending: true,
       hasError: false,
+      serverErrorMessage: null,
       stats: [],
       pagination: {
         page: 1,
@@ -172,6 +173,7 @@ export default {
         };
       } catch (err) {
         this.hasError = true;
+        this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;
       }

@@ -2,8 +2,7 @@
   div
     v-layout.white.calender-wrapper
       progress-overlay(:pending="pending")
-      alert-overlay(:value="hasError")
-        v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       ds-calendar(
       :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
       :events="events",
@@ -41,14 +40,14 @@ import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 import DsCalendar from './day-span/calendar.vue';
+import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { ProgressOverlay, AlertOverlay, DsCalendar },
+  components: { ProgressOverlay, DsCalendar, StatsAlertOverlay },
   mixins: [modalMixin, widgetQueryMixin],
   props: {
     widget: {
@@ -60,6 +59,7 @@ export default {
     return {
       pending: true,
       hasError: false,
+      serverErrorMessage: null,
       alarms: [],
       alarmsCollections: [],
       calendar: Calendar.months(),
@@ -184,8 +184,9 @@ export default {
       try {
         const query = omit(this.query, ['filters', 'considerPbehaviors']);
 
-        this.hasError = false;
         this.pending = true;
+        this.hasError = false;
+        this.serverErrorMessage = null;
 
         if (isEmpty(this.query.filters)) {
           let { alarms } = await this.fetchAlarmsListWithoutStore({
@@ -221,6 +222,7 @@ export default {
         }
       } catch (err) {
         this.hasError = true;
+        this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;
       }

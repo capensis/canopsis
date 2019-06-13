@@ -1,8 +1,7 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    alert-overlay(:value="hasError")
-      v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
+    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
     v-runtime-template(:template="compiledTemplate")
 </template>
 
@@ -18,15 +17,15 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
+import StatsAlertOverlay from '../stats/partials/stats-alert-overlay.vue';
 import TextStatTemplate from './text-stat-template.vue';
 
 export default {
   components: {
     VRuntimeTemplate,
     ProgressOverlay,
-    AlertOverlay,
+    StatsAlertOverlay,
     TextStatTemplate,
   },
   mixins: [
@@ -44,6 +43,7 @@ export default {
     return {
       pending: true,
       hasError: false,
+      serverErrorMessage: null,
       stats: {},
     };
   },
@@ -93,6 +93,7 @@ export default {
       try {
         this.pending = true;
         this.hasError = false;
+        this.serverErrorMessage = null;
 
         if (!isEmpty(this.widget.parameters.stats)) {
           const { aggregations } = await this.fetchStatsListWithoutStore({
@@ -103,6 +104,7 @@ export default {
         }
       } catch (err) {
         this.hasError = true;
+        this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;
       }

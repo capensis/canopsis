@@ -1,8 +1,7 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    alert-overlay(:value="hasError")
-      v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
+    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
     stats-pareto-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
@@ -14,14 +13,14 @@ import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrap
 import { SORT_ORDERS } from '@/constants';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
+import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 import StatsParetoChart from './stats-pareto-chart.vue';
 
 export default {
   components: {
     ProgressOverlay,
-    AlertOverlay,
+    StatsAlertOverlay,
     StatsParetoChart,
   },
   mixins: [
@@ -157,6 +156,7 @@ export default {
       try {
         this.pending = true;
         this.hasError = false;
+        this.serverErrorMessage = null;
 
         const { values, aggregations } = await this.fetchStatsListWithoutStore({
           params: this.getQuery(),
@@ -166,6 +166,7 @@ export default {
         this.stats = values.filter(stat => stat[this.statTitle].value);
       } catch (err) {
         this.hasError = true;
+        this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;
       }
