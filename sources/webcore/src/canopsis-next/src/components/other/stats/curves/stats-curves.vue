@@ -7,7 +7,7 @@
 <script>
 import { get } from 'lodash';
 
-import { STATS_DEFAULT_COLOR, STATS_TYPES } from '@/constants';
+import { STATS_DEFAULT_COLOR, STATS_TYPES, STATS_CURVES_POINTS_STYLES } from '@/constants';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -39,6 +39,7 @@ export default {
             borderColor: get(this.widget.parameters, `statsColors.${stat}`, STATS_DEFAULT_COLOR),
             backgroundColor: 'transparent',
             cubicInterpolationMode: 'monotone',
+            pointStyle: get(this.widget.parameters, `statsPointsStyles.${stat}`, STATS_CURVES_POINTS_STYLES.rect),
           });
 
           return acc;
