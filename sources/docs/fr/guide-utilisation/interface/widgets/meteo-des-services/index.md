@@ -31,7 +31,7 @@ La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir d
 
 La couleur de la tuile correspond à l'état de l'observateur. Cet état est calculé en prenant en compte le pire état parmi les entités surveillées par cet observateur.
 
-Exemple : 
+Exemple :
 Un observateur surveille deux entités, A et B. A a un état de 1. B a un état de 3. L'état de l'observateur sera alors égal à 3.
 
 - Vert: Etat = 0 => Ok
@@ -59,7 +59,7 @@ Au clic sur une tuile de la météo de services, une fenêtre s'ouvre.
 
 Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
-Celle-ci contient, au choix : 
+Celle-ci contient, au choix :
 
 - "Plus d'infos": Cette fenêtre présente des informations supplémentaires concernant l'observateur sur lequel vous avez cliqué. Celle-ci peut, notamment, contenir la liste des entités concernées par l'observateur. Le template de cette fenêtre est configurable depuis les paramètres du widget.
 
@@ -168,10 +168,18 @@ Il vous est possible ici d'afficher, à n'importe quel endroit de la modale, la 
 Cela aura pour effet d'insérer dans la modale la liste des entités. Par défaut, le nom de l'entité sera affiché pour chacune d'entre elles. Il vous est possible de modifier la valeur affichée ici. Tous les champs de l'entité sont disponibles. Pour ce faire, ajoutez un argument ```name``` à la balise précédemment ajoutée. Il vous est donc possible d'écrire, par exemple :
 
 ```
-{{ entities name="_id" }}
+{{ entities name="entity.entity_id" }}
 ```
 
 Pour chaque entité de la liste, l'id de l'entité sera affiché, à la place de son nom.
+
+On peut également entrer :
+
+```
+{{ entities name="entity.infos.customer.value" }}
+```
+
+Pour chaque entité de la liste, la valeur de leur champ enrichi customer sera affiché, à la place du nom.
 
 Celui-ci fonctionne de la même manière que le paramètre Template - Tuile présenté ci-dessus. Cliquez [ici](#template-tuile) pour vous rendre à cette partie.
 
@@ -229,7 +237,7 @@ Par défaut, ce paramètre est réglé sur une valeur de 1.
 
 Ce paramètre vous permet de sélectionner le type de modale que vous souhaitez ouvrir au clic sur une tuile de la Météo de services.
 
-Les types de modale disponibles sont : 
+Les types de modale disponibles sont :
 
 - "Plus d'infos": Cette modale vous permet d'afficher (grâce à un template configurable) des détails supplémentaires sur l'observateur sur lequel vous cliquez.
 - "Bac à alarmes": Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à l'observateur. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
