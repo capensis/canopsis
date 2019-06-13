@@ -158,6 +158,7 @@ export default {
 
         this.pending = true;
         this.hasError = false;
+        this.serverErrorMessage = null;
 
         const { values } = await this.fetchStatsListWithoutStore({
           params: this.getQuery(),
