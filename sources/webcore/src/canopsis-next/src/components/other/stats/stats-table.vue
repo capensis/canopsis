@@ -3,7 +3,15 @@
     v-card.position-relative
       progress-overlay(:pending="pending")
       alert-overlay(:value="hasError")
-        v-alert(type="error", :value="true") {{ $t('errors.statsRequestProblem') }}
+        v-alert(type="error", :value="true")
+          v-layout(align-center)
+            v-flex
+              span {{ $t('errors.statsRequestProblem') }}
+            v-flex(v-show="serverError")
+              v-tooltip.alert-tooltip(top)
+                v-btn.ml-2.mr-0(slot="activator", icon, small)
+                  v-icon.alert-tooltip-icon help
+                span {{ serverError }}
       v-data-table(
       :items="stats",
       :headers="columns",
@@ -70,6 +78,7 @@ export default {
     return {
       pending: true,
       hasError: false,
+      serverError: null,
       stats: [],
       page: 1,
       pagination: {
@@ -169,6 +178,7 @@ export default {
 
         this.pending = true;
         this.hasError = false;
+        this.serverError = null;
 
         const { values } = await this.fetchStatsListWithoutStore({
           params: this.getQuery(),
@@ -185,6 +195,7 @@ export default {
         };
       } catch (err) {
         this.hasError = true;
+        this.serverError = err.description || null;
       } finally {
         this.pending = false;
       }
@@ -192,3 +203,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .alert-tooltip {
+    &-icon {
+      color: rgba(0,0,0,.3) !important;
+    }
+  }
+</style>
