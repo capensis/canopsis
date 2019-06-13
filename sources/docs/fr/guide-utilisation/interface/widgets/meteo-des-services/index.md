@@ -237,7 +237,7 @@ Par défaut, ce paramètre est réglé sur une valeur de 1.
 
 Ce paramètre vous permet de sélectionner le type de modale que vous souhaitez ouvrir au clic sur une tuile de la Météo de services.
 
-Les types de modale disponibles sont :
+Les types de modales disponibles sont :
 
 - "Plus d'infos": Cette modale vous permet d'afficher (grâce à un template configurable) des détails supplémentaires sur l'observateur sur lequel vous cliquez.
 - "Bac à alarmes": Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes liées à l'observateur. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
