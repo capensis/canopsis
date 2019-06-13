@@ -24,7 +24,7 @@
               color="error",
               ) {{ $t('view.deleteWidget') }}
               v-btn.ma-1(
-              @click="showCloneWidgetModal(widget)",
+              @click="showSelectViewTabModal(widget)",
               icon
               )
                 v-icon file_copy

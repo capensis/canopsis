@@ -19,7 +19,7 @@
                 ripple,
                 @click="selectTab(tab._id, view._id)"
                 )
-                  v-list-tile-title.pl-4 {{ tab.title }}
+                  v-list-tile-title.body-1.pl-4 {{ tab.title }}
 </template>
 
 <script>

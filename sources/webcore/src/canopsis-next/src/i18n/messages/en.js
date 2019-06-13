@@ -55,7 +55,7 @@ export default {
     password: 'Password',
     authKey: 'Auth. key',
     connect: 'Connect',
-    optionnal: 'optionnal',
+    optional: 'optional',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
