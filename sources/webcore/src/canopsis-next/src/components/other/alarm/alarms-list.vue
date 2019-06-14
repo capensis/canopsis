@@ -12,15 +12,17 @@
         type="top",
         @input="updateQueryPage"
         )
-      v-flex(v-if="hasAccessToListFilters")
+      v-flex
         filter-selector(
         :label="$t('settings.selectAFilter')",
         :filters="viewFilters",
-        :lockedFilters="widgetViewFilters"
+        :lockedFilters="widgetViewFilters",
         :value="mainFilter",
+        :widgetDefaultValue="widget.parameters.mainFilter",
         :condition="mainFilterCondition",
         :hasAccessToEditFilter="hasAccessToEditFilter",
         :hasAccessToUserFilter="hasAccessToUserFilter",
+        :hasAccessToListFilter="hasAccessToListFilter",
         @input="updateSelectedFilter",
         @update:condition="updateSelectedCondition",
         @update:filters="updateFilters"
@@ -169,7 +171,7 @@ export default {
       return [];
     },
 
-    hasAccessToListFilters() {
+    hasAccessToListFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 

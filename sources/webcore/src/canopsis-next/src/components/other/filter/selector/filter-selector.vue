@@ -4,13 +4,13 @@
       v-switch(
       :label="$t('filterSelector.fields.mixFilters')",
       :input-value="isMultiple",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateIsMultipleFlag"
       )
     v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
       v-radio-group(
       :value="condition",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateCondition"
       )
         v-radio(label="AND", value="$and")
@@ -23,7 +23,7 @@
       :itemText="itemText",
       :itemValue="itemValue",
       :multiple="isMultiple",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       return-object,
       clearable,
       @input="updateSelectedFilter"
@@ -91,6 +91,9 @@ export default {
       type: String,
       default: 'filter',
     },
+    widgetDefaultValue: {
+      type: Object,
+    },
     condition: {
       type: String,
       default: FILTER_DEFAULT_VALUES.condition,
@@ -100,6 +103,10 @@ export default {
       default: false,
     },
     hideSelectIcon: {
+      type: Boolean,
+      default: false,
+    },
+    hasAccessToListFilter: {
       type: Boolean,
       default: false,
     },
@@ -137,7 +144,9 @@ export default {
 
     preparedFilters() {
       const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
-      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
+      const preparedLockedFilters = this.hasAccessToListFilter ?
+        this.lockedFilters.map(filter => ({ ...filter, locked: true })) :
+        [{ ...this.widgetDefaultValue, locked: true }];
 
       if (preparedFilters.length && preparedLockedFilters.length) {
         return preparedFilters.concat({ divider: true }, preparedLockedFilters);
@@ -220,8 +229,8 @@ export default {
         name: MODALS.filtersList,
         config: {
           filters: this.filters,
-          hasAccessToAddFilter: this.hasAccessToAddFilter,
-          hasAccessToEditFilter: this.hasAccessToEditFilter,
+          hasAccessToAddFilter: this.hasAccessToUserFilter,
+          hasAccessToEditFilter: this.hasAccessToUserFilter,
           actions: {
             create: this.createFilter,
             update: this.updateFilter,

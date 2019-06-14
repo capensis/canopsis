@@ -32,9 +32,9 @@ export default {
   },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
-      const hasAccessToEditFilter = this.hasAccessToEditFilter || !isBoolean(this.hasAccessToEditFilter);
+      const hasAccessToUserFilter = this.hasAccessToUserFilter || !isBoolean(this.hasAccessToUserFilter);
 
-      if (hasAccessToEditFilter) {
+      if (hasAccessToUserFilter) {
         return this.updateWidgetPreferencesInUserPreference({
           ...this.userPreference.widget_preferences,
           ...fields,
