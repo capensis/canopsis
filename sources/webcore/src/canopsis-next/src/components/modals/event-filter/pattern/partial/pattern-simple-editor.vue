@@ -1,39 +1,31 @@
 <template lang="pug">
   div
     v-layout(justify-end)
-      v-tooltip(top)
-        v-btn(slot="activator", icon, @click="showAddRuleFieldModal()")
-          v-icon.primary--text add
-        span Add field with value
-      v-tooltip(top)
-        v-btn(slot="activator", icon, @click="showAddObjectFieldModal()")
-          v-icon.primary--text library_add
-        span Add object field
+      v-tooltip(v-for="(action, index) in mainActions", :key="`action-${index}`", top)
+        v-btn(slot="activator", icon, @click="action.action()")
+          v-icon(:class="action.iconClass") {{ action.icon }}
+        span {{ action.tooltip }}
     v-layout(row)
       v-flex(xs12)
-        v-treeview.position-relative(:items="treeviewItems", :open.sync="opened")
+        v-treeview(:items="treeviewItems", :open.sync="opened")
           template(slot="label", slot-scope="{ item }")
-            v-flex.field-treeview__label(xs12)
+            v-flex(xs12)
               v-layout(row)
                 v-flex(xs6) {{ item.name }}
-                v-flex(v-if="item.simple", xs6)
-                  span(v-if="isValueObject(item.value)")
-                    div(v-for="(rule, ruleKey) in item.value", :key="ruleKey")
-                      span {{ ruleKey }}: {{ rule }}
-                  span(v-else) {{ item.value }}
+                  span(v-show="item.value") :
+                template(v-if="item.value")
+                  v-flex(v-if="isSimpleRule(item.value)")
+                    span.body-1.font-italic {{ item.value }}
+                  v-flex(v-else)
+                    v-layout(column)
+                      v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
+                        p.body-1.font-italic {{ fieldKey }} {{ field }}
           template(slot="append", slot-scope="{ item }")
-            .field-treeview__actions
-              template(v-if="!item.simple")
-                v-btn(icon, small, @click="showAddRuleFieldModal(item)")
-                  v-icon.primary--text add
-                v-btn(icon, small, @click="showAddObjectFieldModal(item)")
-                  v-icon.primary--text library_add
-              v-btn(v-if="item.simple", icon, small, @click="showEditRuleModal(item)")
-                v-icon edit
-              v-btn(v-else, icon, small, @click="showEditObjectFieldModal(item)")
-                v-icon edit
-              v-btn(icon, small, @click="deleteRule(item)")
-                v-icon.error--text remove
+            div
+              v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
+                v-btn(slot="activator", icon, @click="action.action(item)")
+                  v-icon(:class="action.iconClass") {{ action.icon }}
+                span {{ action.tooltip }}
 </template>
 
 <script>
@@ -63,19 +55,78 @@ export default {
   data() {
     return {
       opened: [],
+      actionsMap: {
+        addRuleField: {
+          tooltip: 'Add rule field',
+          icon: 'add',
+          iconClass: 'primary--text',
+          action: this.showAddRuleFieldModal,
+        },
+        editRuleField: {
+          tooltip: 'Edit rule field',
+          icon: 'edit',
+          action: this.showEditRuleModal,
+        },
+        addObjectRuleField: {
+          tooltip: 'Add object rule field',
+          icon: 'library_add',
+          iconClass: 'primary--text',
+          action: this.showAddObjectFieldModal,
+        },
+        editObjectRuleField: {
+          tooltip: 'Edit object rule field',
+          icon: 'edit',
+          action: this.showEditObjectFieldModal,
+        },
+        removeRuleField: {
+          tooltip: 'Remove rule field',
+          icon: 'remove',
+          iconClass: 'error--text',
+          action: this.deleteRule,
+        },
+      },
     };
   },
   computed: {
+    mainActions() {
+      const { actionsMap } = this;
+
+      return [
+        actionsMap.addRuleField,
+        actionsMap.addObjectRuleField,
+      ];
+    },
+
+    getActionsForItem() {
+      const { actionsMap } = this;
+
+      return (item) => {
+        if (item.value) {
+          return [
+            actionsMap.editRuleField,
+            actionsMap.removeRuleField,
+          ];
+        }
+
+        return [
+          actionsMap.addRuleField,
+          actionsMap.addObjectRuleField,
+          actionsMap.editObjectRuleField,
+          actionsMap.removeRuleField,
+        ];
+      };
+    },
+
     treeviewItems() {
       return this.parseObjectToTreeview(this.pattern);
     },
 
-    isValueObject() {
-      return value => isObject(value);
+    isSimpleRule() {
+      return rule => !isObject(rule);
     },
   },
   methods: {
-    isSimpleRule(rule) {
+    isValueRule(rule) {
       if (isObject(rule)) {
         const items = Object.entries(rule);
 
@@ -92,13 +143,12 @@ export default {
           path,
           name: key,
           id: path.join('.'),
-          simple: this.isSimpleRule(value),
         };
 
-        if (!item.simple) {
-          item.children = this.parseObjectToTreeview(value, path);
-        } else {
+        if (this.isValueRule(value)) {
           item.value = value;
+        } else {
+          item.children = this.parseObjectToTreeview(value, path);
         }
 
         return item;
@@ -129,7 +179,11 @@ export default {
         name: MODALS.textFieldEditor,
         config: {
           title: 'Add object field',
-          validationRules: 'required',
+          field: {
+            label: 'Field',
+            validationRules: 'required',
+            name: 'field',
+          },
           action: (field) => {
             this.updateField([...parentPath, field], {});
 
@@ -144,7 +198,12 @@ export default {
         name: MODALS.textFieldEditor,
         config: {
           title: 'Add object field',
-          validationRules: 'required',
+          field: {
+            label: 'Field',
+            value: item.name,
+            validationRules: 'required',
+            name: 'field',
+          },
           action: field => this.moveField([...item.path], [field]),
         },
       });
