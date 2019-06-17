@@ -1,25 +1,39 @@
 <template lang="pug">
   div
     v-layout(justify-end)
-      v-btn(@click="showAddRuleFieldModal", small) {{ $t('modals.eventFilterRule.addAField') }}
-    div(v-for="(rule, ruleKey) in pattern", :key="ruleKey")
-      v-card.my-1(flat, dark, tile)
-        v-card-text
-          v-layout
-            v-flex
-              p {{ $t('modals.eventFilterRule.field') }} : {{ ruleKey }}
-            v-flex(v-if="isSimpleRule(rule)")
-              p {{ $t('modals.eventFilterRule.value') }} : {{ rule }}
-            v-flex(v-else)
-              v-layout(column)
-                v-flex(v-for="(field, fieldKey) in rule", :key="fieldKey")
-                  p {{ fieldKey }} {{ field }}
-            v-flex
-              v-layout(justify-end)
-                v-btn(@click="editRule(ruleKey)", icon, small)
-                  v-icon edit
-                v-btn(@click="deleteRule(ruleKey)", icon, small)
-                  v-icon(color="error") delete
+      v-tooltip(top)
+        v-btn(slot="activator", icon, @click="showAddRuleFieldModal()")
+          v-icon.primary--text add
+        span Add field with value
+      v-tooltip(top)
+        v-btn(slot="activator", icon, @click="showAddObjectFieldModal()")
+          v-icon.primary--text library_add
+        span Add object field
+    v-layout(row)
+      v-flex(xs12)
+        v-treeview.position-relative(:items="treeviewItems", :open.sync="opened")
+          template(slot="label", slot-scope="{ item }")
+            v-flex.field-treeview__label(xs12)
+              v-layout(row)
+                v-flex(xs6) {{ item.name }}
+                v-flex(v-if="item.simple", xs6)
+                  span(v-if="isValueObject(item.value)")
+                    div(v-for="(rule, ruleKey) in item.value", :key="ruleKey")
+                      span {{ ruleKey }}: {{ rule }}
+                  span(v-else) {{ item.value }}
+          template(slot="append", slot-scope="{ item }")
+            .field-treeview__actions
+              template(v-if="!item.simple")
+                v-btn(icon, small, @click="showAddRuleFieldModal(item)")
+                  v-icon.primary--text add
+                v-btn(icon, small, @click="showAddObjectFieldModal(item)")
+                  v-icon.primary--text library_add
+              v-btn(v-if="item.simple", icon, small, @click="showEditRuleModal(item)")
+                v-icon edit
+              v-btn(v-else, icon, small, @click="showEditObjectFieldModal(item)")
+                v-icon edit
+              v-btn(icon, small, @click="deleteRule(item)")
+                v-icon.error--text remove
 </template>
 
 <script>
@@ -46,24 +60,92 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      opened: [],
+    };
+  },
+  computed: {
+    treeviewItems() {
+      return this.parseObjectToTreeview(this.pattern);
+    },
+
+    isValueObject() {
+      return value => isObject(value);
+    },
+  },
   methods: {
     isSimpleRule(rule) {
-      return !isObject(rule);
+      if (isObject(rule)) {
+        const items = Object.entries(rule);
+
+        return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
+      }
+
+      return true;
     },
 
-    deleteRule(rule) {
-      this.removeField(rule);
+    parseObjectToTreeview(object, prevPath = []) {
+      return Object.entries(object).map(([key, value]) => {
+        const path = [...prevPath, key];
+        const item = {
+          path,
+          name: key,
+          id: path.join('.'),
+          simple: this.isSimpleRule(value),
+        };
+
+        if (!item.simple) {
+          item.children = this.parseObjectToTreeview(value, path);
+        } else {
+          item.value = value;
+        }
+
+        return item;
+      }, []);
     },
 
-    editRule(rule) {
+    deleteRule(item) {
+      this.removeField(item.path);
+    },
+
+    showEditRuleModal(item) {
       this.showModal({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
-          ruleKey: rule,
-          ruleValue: this.pattern[rule],
-          isSimpleRule: this.isSimpleRule(this.pattern[rule]),
+          ruleKey: item.name,
+          ruleValue: item.value,
+          isSimpleRule: !isObject(item.value),
           operators: this.operators,
-          action: newRule => this.updateAndMoveField([rule], [newRule.field], newRule.value),
+          action: newRule => this.updateAndMoveField([item.name], [newRule.field], newRule.value),
+        },
+      });
+    },
+
+    showAddObjectFieldModal(parent) {
+      const parentPath = parent ? parent.path : [];
+
+      this.showModal({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: 'Add object field',
+          validationRules: 'required',
+          action: (field) => {
+            this.updateField([...parentPath, field], {});
+
+            this.$nextTick(() => this.openTreeviewItem(parent));
+          },
+        },
+      });
+    },
+
+    showEditObjectFieldModal(item) {
+      this.showModal({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: 'Add object field',
+          validationRules: 'required',
+          action: field => this.moveField([...item.path], [field]),
         },
       });
     },
@@ -76,6 +158,12 @@ export default {
           action: newRule => this.updateField([newRule.field], newRule.value),
         },
       });
+    },
+
+    openTreeviewItem(item) {
+      if (item && this.opened.indexOf(item.id) === -1) {
+        this.opened.push(item.id);
+      }
     },
   },
 };

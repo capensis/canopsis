@@ -35,6 +35,20 @@ export default {
         this.updateModel(setIn(result, newFieldName, value));
       }
     },
+    /**
+     * Emit event to parent with new object
+     * Rename a field in the object
+     *
+     * @param {string|Array} fieldName
+     * @param {string|Array} newFieldName
+     */
+    moveField(fieldName, newFieldName) {
+      if (fieldName !== newFieldName) {
+        const result = unsetIn(this[this[modelPropKeyComputed]], fieldName);
+
+        this.updateModel(setIn(result, newFieldName, value => value));
+      }
+    },
 
     /**
      * Emit event to parent with new object without field
