@@ -1051,7 +1051,10 @@ class PBehaviorManager(object):
 
     def _get_last_tstop(self, pbh, now):
         """
-        Returns last pbehavior stop timestamp before now
+        Returns last pbehavior stop timestamp before now.
+
+        Warning : this method might return a timestamp greater than the now
+                  timestamp, which means the pbehavior is currently running
 
 
         :param Dict[str, Any] pbh: a pbehavior
@@ -1071,7 +1074,7 @@ class PBehaviorManager(object):
 
             duration = stop - start  # pbehavior duration
             rec_set = self._get_recurring_pbehavior_rruleset(pbh)
-            pbh_last_tstop = rec_set.before(now) + duration
+            pbh_last_tstop = rec_set.before(now) + int(duration.total_seconds())
         return pbh_last_tstop
 
     def get_ok_ko_timestamp(self, entity_id):
