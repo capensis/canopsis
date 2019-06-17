@@ -733,6 +733,13 @@ export default {
       externalData: 'External data',
       onSuccess: 'On success',
       onFailure: 'On failure',
+      tooltips: {
+        addValueRuleField: 'Add value rule field',
+        editValueRuleField: 'Edit value rule field',
+        addObjectRuleField: 'Add object rule field',
+        editObjectRuleField: 'Edit object rule field',
+        removeRuleField: 'Remove rule field',
+      },
     },
     viewTab: {
       create: {

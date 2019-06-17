@@ -7,14 +7,14 @@
         span {{ action.tooltip }}
     v-layout(row)
       v-flex(xs12)
-        v-treeview(:items="treeviewItems", :open.sync="opened")
+        v-treeview(:items="treeViewItems", :open.sync="opened", open-all)
           template(slot="label", slot-scope="{ item }")
             v-flex(xs12)
               v-layout(row)
                 v-flex(xs6) {{ item.name }}
                   span(v-show="item.value") :
                 template(v-if="item.value")
-                  v-flex(v-if="isSimpleRule(item.value)")
+                  v-flex(v-if="isSimpleValueRule(item.value)")
                     span.body-1.font-italic {{ item.value }}
                   v-flex(v-else)
                     v-layout(column)
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { isObject } from 'lodash';
+import { isObject, dropRight } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -55,44 +55,47 @@ export default {
   data() {
     return {
       opened: [],
-      actionsMap: {
-        addRuleField: {
-          tooltip: 'Add rule field',
+    };
+  },
+  computed: {
+    actionsMap() {
+      return {
+        addValueRuleField: {
+          tooltip: this.$t('modals.eventFilterRule.tooltips.addValueRuleField'),
           icon: 'add',
           iconClass: 'primary--text',
-          action: this.showAddRuleFieldModal,
+          action: this.showAddValueRuleFieldModal,
         },
-        editRuleField: {
-          tooltip: 'Edit rule field',
+        editValueRuleField: {
+          tooltip: this.$t('modals.eventFilterRule.tooltips.editValueRuleField'),
           icon: 'edit',
-          action: this.showEditRuleModal,
+          action: this.showEditValueRuleFieldModal,
         },
         addObjectRuleField: {
-          tooltip: 'Add object rule field',
+          tooltip: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
           icon: 'library_add',
           iconClass: 'primary--text',
-          action: this.showAddObjectFieldModal,
+          action: this.showAddObjectRuleFieldModal,
         },
         editObjectRuleField: {
-          tooltip: 'Edit object rule field',
+          tooltip: this.$t('modals.eventFilterRule.tooltips.editObjectRuleField'),
           icon: 'edit',
-          action: this.showEditObjectFieldModal,
+          action: this.showEditObjectRuleFieldModal,
         },
         removeRuleField: {
-          tooltip: 'Remove rule field',
+          tooltip: this.$t('modals.eventFilterRule.tooltips.removeRuleField'),
           icon: 'remove',
           iconClass: 'error--text',
           action: this.deleteRule,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
+
     mainActions() {
       const { actionsMap } = this;
 
       return [
-        actionsMap.addRuleField,
+        actionsMap.addValueRuleField,
         actionsMap.addObjectRuleField,
       ];
     },
@@ -100,16 +103,16 @@ export default {
     getActionsForItem() {
       const { actionsMap } = this;
 
-      return (item) => {
-        if (item.value) {
+      return (treeViewItem) => {
+        if (treeViewItem.value) {
           return [
-            actionsMap.editRuleField,
+            actionsMap.editValueRuleField,
             actionsMap.removeRuleField,
           ];
         }
 
         return [
-          actionsMap.addRuleField,
+          actionsMap.addValueRuleField,
           actionsMap.addObjectRuleField,
           actionsMap.editObjectRuleField,
           actionsMap.removeRuleField,
@@ -117,27 +120,35 @@ export default {
       };
     },
 
-    treeviewItems() {
-      return this.parseObjectToTreeview(this.pattern);
+    treeViewItems() {
+      return this.parsePatternToTreeview(this.pattern);
     },
 
-    isSimpleRule() {
+    isSimpleValueRule() {
       return rule => !isObject(rule);
+    },
+
+    isValueRule() {
+      return (rule) => {
+        if (isObject(rule)) {
+          const items = Object.entries(rule);
+
+          return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
+        }
+
+        return true;
+      };
     },
   },
   methods: {
-    isValueRule(rule) {
-      if (isObject(rule)) {
-        const items = Object.entries(rule);
-
-        return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
-      }
-
-      return true;
-    },
-
-    parseObjectToTreeview(object, prevPath = []) {
-      return Object.entries(object).map(([key, value]) => {
+    /**
+     * Parse pattern object to treeview items
+     *
+     * @param {Object} source
+     * @param {Array} prevPath
+     */
+    parsePatternToTreeview(source, prevPath = []) {
+      return Object.entries(source).map(([key, value]) => {
         const path = [...prevPath, key];
         const item = {
           path,
@@ -148,81 +159,122 @@ export default {
         if (this.isValueRule(value)) {
           item.value = value;
         } else {
-          item.children = this.parseObjectToTreeview(value, path);
+          item.children = this.parsePatternToTreeview(value, path);
         }
 
         return item;
       }, []);
     },
 
-    deleteRule(item) {
-      this.removeField(item.path);
+    /**
+     * Open treeview item
+     *
+     * @param {Object} treeViewItem
+     */
+    openTreeviewItem(treeViewItem) {
+      if (treeViewItem && this.opened.indexOf(treeViewItem.id) === -1) {
+        this.opened.push(treeViewItem.id);
+      }
     },
 
-    showEditRuleModal(item) {
+    /**
+     * Show modal window for adding of usually rule value field
+     *
+     * @param {Object} treeViewParent - parent of rule value which we will add
+     */
+    showAddValueRuleFieldModal(treeViewParent) {
+      const parentPath = treeViewParent ? treeViewParent.path : [];
+
       this.showModal({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
-          ruleKey: item.name,
-          ruleValue: item.value,
-          isSimpleRule: !isObject(item.value),
           operators: this.operators,
-          action: newRule => this.updateAndMoveField([item.name], [newRule.field], newRule.value),
+          action: (newRule) => {
+            this.updateField([...parentPath, newRule.field], newRule.value);
+
+            this.$nextTick(() => this.openTreeviewItem(treeViewParent));
+          },
         },
       });
     },
 
-    showAddObjectFieldModal(parent) {
-      const parentPath = parent ? parent.path : [];
+    /**
+     * Show modal window for editing of usually rule value field
+     *
+     * @param {Object} treeViewItem
+     */
+    showEditValueRuleFieldModal(treeViewItem) {
+      const { name, value, path } = treeViewItem;
+
+      this.showModal({
+        name: MODALS.addEventFilterRuleToPattern,
+        config: {
+          ruleKey: name,
+          ruleValue: value,
+          operators: this.operators,
+          action: (newRule) => {
+            const newPath = [...dropRight(path, 1), newRule.field];
+
+            this.updateAndMoveField(path, newPath, newRule.value);
+          },
+        },
+      });
+    },
+
+    /**
+     * Show modal window for adding of object wrapper rule field
+     *
+     * @param {Object} treeViewParent - parent of rule wrapper which we will add
+     */
+    showAddObjectRuleFieldModal(treeViewParent) {
+      const parentPath = treeViewParent ? treeViewParent.path : [];
 
       this.showModal({
         name: MODALS.textFieldEditor,
         config: {
-          title: 'Add object field',
+          title: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
           field: {
-            label: 'Field',
+            label: this.$t('modals.eventFilterRule.field'),
             validationRules: 'required',
             name: 'field',
           },
           action: (field) => {
             this.updateField([...parentPath, field], {});
 
-            this.$nextTick(() => this.openTreeviewItem(parent));
+            this.$nextTick(() => this.openTreeviewItem(treeViewParent));
           },
         },
       });
     },
 
-    showEditObjectFieldModal(item) {
+    /**
+     * Show modal window for editing of object wrapper rule field
+     *
+     * @param {Object} treeViewItem
+     */
+    showEditObjectRuleFieldModal(treeViewItem) {
       this.showModal({
         name: MODALS.textFieldEditor,
         config: {
-          title: 'Add object field',
+          title: this.$t('modals.eventFilterRule.tooltips.editObjectRuleField'),
           field: {
-            label: 'Field',
-            value: item.name,
+            value: treeViewItem.name,
+            label: this.$t('modals.eventFilterRule.field'),
             validationRules: 'required',
             name: 'field',
           },
-          action: field => this.moveField([...item.path], [field]),
+          action: field => this.moveField([...treeViewItem.path], [field]),
         },
       });
     },
 
-    showAddRuleFieldModal() {
-      this.showModal({
-        name: MODALS.addEventFilterRuleToPattern,
-        config: {
-          operators: this.operators,
-          action: newRule => this.updateField([newRule.field], newRule.value),
-        },
-      });
-    },
-
-    openTreeviewItem(item) {
-      if (item && this.opened.indexOf(item.id) === -1) {
-        this.opened.push(item.id);
-      }
+    /**
+     * Remove rule field
+     *
+     * @param {Object} treeViewItem
+     */
+    deleteRule(treeViewItem) {
+      this.removeField(treeViewItem.path);
     },
   },
 };
