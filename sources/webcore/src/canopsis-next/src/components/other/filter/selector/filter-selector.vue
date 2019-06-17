@@ -144,9 +144,13 @@ export default {
 
     preparedFilters() {
       const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
-      const preparedLockedFilters = this.hasAccessToListFilter ?
-        this.lockedFilters.map(filter => ({ ...filter, locked: true })) :
-        [{ ...this.widgetDefaultValue, locked: true }];
+      let preparedLockedFilters = [];
+
+      if (this.hasAccessToListFilter) {
+        preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
+      } else if (this.widgetDefaultValue) {
+        preparedLockedFilters = [{ ...this.widgetDefaultValue, locked: true }];
+      }
 
       if (preparedFilters.length && preparedLockedFilters.length) {
         return preparedFilters.concat({ divider: true }, preparedLockedFilters);
