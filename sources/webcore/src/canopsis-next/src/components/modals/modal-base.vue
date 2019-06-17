@@ -56,6 +56,7 @@ import EventFilterRuleExternalData from './event-filter/enrichment-options/event
 import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
+import SelectViewTab from './view/select-view-tab.vue';
 
 export default {
   name: 'modal-base',
@@ -104,6 +105,7 @@ export default {
     FiltersList,
     CreateWebhook,
     CreateSnmpRule,
+    SelectViewTab,
   },
   props: {
     modals: {
