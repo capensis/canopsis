@@ -82,7 +82,8 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "prepare-commit-msg": "ROOT_PATH=../../../.. ./tools/prepare-commit-msg.sh ${HUSKY_GIT_PARAMS}"
     }
   },
   "lint-staged": {
