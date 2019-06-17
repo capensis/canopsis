@@ -158,7 +158,6 @@ def exports(ws):
             alarm["v"]['duration'] = (
                 alarm_end - alarm.get('v', {}).get('creation_date', alarm_end))
 
-            alarm["v"]['duration'] = now - alarm.get('v', {}).get('creation_date', now)
             state_time = alarm.get('v', {}).get('state', {}).get('t', now)
             alarm["v"]['current_state_duration'] = now - state_time
             tmp_entity_id = alarm['d']
