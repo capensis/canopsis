@@ -141,7 +141,7 @@ class AlertsReader(object):
         # rather than in alarm.infos. 
         # Alarm.infos is a redundant json object that doesn't exists in mongo,
         # thus creating problems when searching or filtering on it in the front
-        # copied directly from alarm.entity.infos which doest exist in mongo
+        # copied directly from alarm.entity.infos which does exist in mongo
         if key.startswith("infos"):
             return "entity."+key
 
