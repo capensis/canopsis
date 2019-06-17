@@ -137,6 +137,14 @@ class AlertsReader(object):
         if key in self.alarm_fields['properties']:
             return self.alarm_fields['properties'][key]['stored_name']
 
+        # This translates the keys in filters to look in alarm.entity.infos
+        # rather than in alarm.infos. 
+        # Alarm.infos is a redundant json object that doesn't exists in mongo,
+        # thus creating problems when searching or filtering on it in the front
+        # copied directly from alarm.entity.infos which doest exist in mongo
+        if key.startswith("infos"):
+            return "entity."+key
+
         return key
 
     def _translate_filter(self, filter_):

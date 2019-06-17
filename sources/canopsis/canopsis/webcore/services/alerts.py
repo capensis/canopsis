@@ -151,13 +151,7 @@ def exports(ws):
         list_alarm = []
         for alarm in alarms['alarms']:
             now = int(time())
-
-            alarm_end = alarm.get('v', {}).get('resolved')
-            if not alarm_end:
-                alarm_end = now
-            alarm["v"]['duration'] = (
-                alarm_end - alarm.get('v', {}).get('creation_date', alarm_end))
-
+            alarm["v"]['duration'] = now - alarm.get('v', {}).get('creation_date', now)
             state_time = alarm.get('v', {}).get('state', {}).get('t', now)
             alarm["v"]['current_state_duration'] = now - state_time
             tmp_entity_id = alarm['d']
