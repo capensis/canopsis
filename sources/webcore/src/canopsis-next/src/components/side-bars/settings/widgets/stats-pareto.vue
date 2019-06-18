@@ -10,9 +10,9 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
-      v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
+      v-divider
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
       field-stat-selector(v-model="settings.widget.parameters.stat")
       v-divider

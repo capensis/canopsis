@@ -17,11 +17,11 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
-import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
+import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
 export default {
   name: MODALS.selectView,
-  mixins: [modalInnerMixin, entitiesViewsGroupsMixin, layoutNavigationGroupMenuMixin],
+  mixins: [modalInnerMixin, entitiesViewsGroupsMixin, rightsEntitiesGroupMixin],
   methods: {
     async selectView(viewId) {
       if (this.config.action) {

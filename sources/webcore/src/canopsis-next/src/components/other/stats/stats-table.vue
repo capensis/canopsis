@@ -1,21 +1,29 @@
 <template lang="pug">
   div
-    progress-overlay(:pending="pending")
-    v-data-table(
-    :items="stats",
-    :headers="columns",
-    :pagination.sync="pagination"
-    )
-      template(slot="items", slot-scope="{ item }")
-        td {{ item.entity.name }}
-        td(v-for="(property, key) in widget.parameters.stats")
-          template(v-if="isStatNotEmpty(item[key])")
-            td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
-              alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
-            td(v-else)
-              div {{ getFormattedValue(item[key].value, property.stat.value) }}
-                sub {{ item[key].trend }}
-          div(v-else) {{ $t('tables.noData') }}
+    v-card
+      progress-overlay(:pending="pending")
+      v-data-table(
+      :items="stats",
+      :headers="columns",
+      :pagination.sync="pagination"
+      )
+        template(slot="items", slot-scope="{ item }")
+          td {{ item.entity.name }}
+          td(v-for="(property, key) in widget.parameters.stats")
+            template(v-if="isStatNotEmpty(item[key])")
+              td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
+                alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
+              td(v-else)
+                v-layout(align-center)
+                  div {{ getFormattedValue(item[key].value, property.stat.value) }}
+                  div(v-if="item[key].trend !== undefined && item[key].trend !== null")
+                    sub.ml-2
+                      v-icon.caption(
+                      small,
+                      :color="trendFormat(item[key].value).color"
+                      ) {{ trendFormat(item[key].value).icon }}
+                    sub {{ getFormattedValue(item[key].trend, property.stat.value) }}
+            div(v-else) {{ $t('tables.noData') }}
 </template>
 
 <script>
@@ -74,6 +82,14 @@ export default {
     },
 
     columns() {
+      const { stats: widgetStats } = this.widget.parameters;
+      const statsOrderedColumns = Object.keys(widgetStats)
+        .sort((a, b) => widgetStats[a].position - widgetStats[b].position)
+        .map(item => ({
+          text: item,
+          value: this.$options.filters.statValue(item),
+        }));
+
       return [
         {
           text: this.$t('common.entity'),
@@ -81,10 +97,7 @@ export default {
           sortable: false,
         },
 
-        ...Object.keys(this.widget.parameters.stats).map(item => ({
-          text: item,
-          value: this.$options.filters.statValue(item),
-        })),
+        ...statsOrderedColumns,
       ];
     },
     getFormattedValue() {
@@ -92,8 +105,8 @@ export default {
         state_rate: value => this.$options.filters.percentage(value),
         ack_time_sla: value => this.$options.filters.percentage(value),
         resolve_time_sla: value => this.$options.filters.percentage(value),
-        time_in_state: value => this.$options.filters.duration(value),
-        mtbf: value => this.$options.filters.duration(value),
+        time_in_state: value => this.$options.filters.duration({ value }),
+        mtbf: value => this.$options.filters.duration({ value }),
       };
 
       return (value, columnValue) => {
@@ -102,6 +115,25 @@ export default {
         }
 
         return value;
+      };
+    },
+    trendFormat() {
+      return (value) => {
+        if (value > 0) {
+          return {
+            icon: 'trending_up',
+            color: 'primary',
+          };
+        } else if (value < 0) {
+          return {
+            icon: 'trending_down',
+            color: 'error',
+          };
+        }
+
+        return {
+          icon: 'trending_flat',
+        };
       };
     },
   },

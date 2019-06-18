@@ -11,7 +11,7 @@ export default {
       viewId: 'itemId',
       viewPending: 'pending',
       view: 'item',
-      getItemById: 'getItemById',
+      getViewById: 'getItemById',
     }),
   },
   methods: {
@@ -21,9 +21,5 @@ export default {
       updateView: 'update',
       removeView: 'remove',
     }),
-
-    getViewById(id) {
-      return this.getItemById(id);
-    },
   },
 };

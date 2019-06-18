@@ -2,10 +2,11 @@
 import { merge } from 'lodash';
 import { Bar } from 'vue-chartjs';
 
-import ChartAnnotationPlugin from 'chartjs-plugin-annotation';
+import chartAnnotationMixin from '@/mixins/chart/annotation';
 
 export default {
   extends: Bar,
+  mixins: [chartAnnotationMixin],
   props: {
     ...Bar.props,
 
@@ -53,9 +54,6 @@ export default {
         this.renderChart(value, this.mergedOptions);
       }
     },
-  },
-  created() {
-    this.addPlugin(ChartAnnotationPlugin);
   },
   mounted() {
     this.renderChart(this.chartData, this.mergedOptions);

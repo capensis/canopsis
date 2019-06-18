@@ -69,11 +69,9 @@ Pour cela, nous devons :
 *  Créer une règle de transformation
 *  Constater les résultats
 
-**Envoi des MIB**
+### Envoi des MIB
 
-Le paquet snmp-mibs-downloader peut être nécessaire. Il embarque lui-même une bibliothèque de MIB et permet, au besoin, d'en télécharger automatiquement des complémentaires sur le net.
-
-Ici par exemple, le paquet `snmp-mibs-downloader` a été installé sur la machine.
+Le paquet `snmp-mibs-downloader` peut être nécessaire. Il embarque lui-même une bibliothèque de MIB et permet, au besoin, d'en télécharger automatiquement des complémentaires depuis le web.
 
 Lors de l'upload des MIB, Canopsis concatène les fichiers uploadés par ordre
 alphabétique. On fera donc particulièrement attention à renommer les fichiers
@@ -93,7 +91,7 @@ On vérifie que le traducteur a bien trouvé des objets de type `notification`
 
 ![img5](img/scenario_e4.png)
 
-**Vérification**
+### Vérification
 
 On exécute à nouveau l'émisson du trap SNMP :
 

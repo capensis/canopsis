@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.columnNames') }}
+    v-list-tile(slot="activator")
+      div(:class="validationHeaderClass") {{ $t('settings.columnNames') }}
     v-container
       v-card.my-2(v-for="(column, index) in columns", :key="`settings-column-${index}`")
         v-layout.pt-2(justify-space-between)
@@ -46,11 +47,13 @@
 
 <script>
 import formArrayMixin from '@/mixins/form/array';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
   mixins: [
     formArrayMixin,
+    formValidationHeaderMixin,
   ],
   model: {
     prop: 'columns',
