@@ -11,6 +11,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import featuresService from '@/services/features';
+
 import appModule from './modules/app';
 import authModule from './modules/auth';
 import i18nModule from './modules/i18n';
@@ -47,6 +49,7 @@ export default new Vuex.Store({
     sideBar: sideBarModule,
 
     ...entitiesModules,
+    ...featuresService.get('store.modules'),
   },
   plugins: [entitiesPlugin],
 });
