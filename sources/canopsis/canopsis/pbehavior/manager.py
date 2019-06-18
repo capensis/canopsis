@@ -1075,7 +1075,7 @@ class PBehaviorManager(object):
             duration = stop - start  # pbehavior duration
             rec_set = self._get_recurring_pbehavior_rruleset(pbh)
             last_tstop_dt = rec_set.before(now) + duration
-            pbh_last_tstop = (last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz_name)).total_seconds()
+            pbh_last_tstop = (last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds()
         return pbh_last_tstop
 
     def get_ok_ko_timestamp(self, entity_id):
