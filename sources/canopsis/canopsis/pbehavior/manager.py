@@ -1058,7 +1058,7 @@ class PBehaviorManager(object):
 
 
         :param Dict[str, Any] pbh: a pbehavior
-        :param int now: a UTC timestamp
+        :param datetime now: datetime corresponding to now
         :rtype: int
         """
         if PBehavior.RRULE not in pbh or\
@@ -1074,7 +1074,8 @@ class PBehaviorManager(object):
 
             duration = stop - start  # pbehavior duration
             rec_set = self._get_recurring_pbehavior_rruleset(pbh)
-            pbh_last_tstop = rec_set.before(now) + int(duration.total_seconds())
+            last_tstop_dt = rec_set.before(now) + duration
+            pbh_last_tstop = (last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz_name)).total_seconds()
         return pbh_last_tstop
 
     def get_ok_ko_timestamp(self, entity_id):
@@ -1094,12 +1095,14 @@ class PBehaviorManager(object):
         now = int(time())
 
         for pbh in self.get_pbehaviors(entity_id):
+            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+            now_dt = self.__convert_timestamp(now, tz_name)
             if self.check_active_pbehavior(now, pbh):
                 #if a pbh is active, then the ok ko counter 
                 #is supposed to be inactive
                 return now
             
-            pbh_last_tstop = self._get_last_tstop(pbh, now)
+            pbh_last_tstop = self._get_last_tstop(pbh, now_dt)
             if now > pbh_last_tstop > ret_timestamp:
                 #keeping the most recent timestamp that still is in the past
                 ret_timestamp = pbh_last_tstop
