@@ -1,9 +1,13 @@
 # Authentification
 
 - [LDAP](#ldap)
-    - [Activation du support LDAP](#activation)  
-    - [Configuration](#configuration)  
-    - [Utilisation](#utilisation)  
+    - [Activation du support LDAP](#activation-ldap)  
+    - [Configuration](#configuration-ldap)  
+    - [Utilisation](#utilisation-ldap)  
+- [CAS](#cas)
+    - [Activation du support LDAP](#activation-cas)  
+    - [Configuration](#configuration-cas)  
+    - [Utilisation](#utilisation-cas)  
 - [SAML2](#saml2)  
 	- [Paramétrage ldP](#paramétrage-idp)  
 	- [Création du paramètrage côté Canopsis](#création-du-paramétrage-côté-canopsis)  
@@ -24,7 +28,7 @@ Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
-### Activation
+### Activation LDAP
 
 Pour activer l'authentification *ldap*, le service doit être activé dans la configuration du serveur web.  
 Le fichier à modifier est "etc/webserver.conf".  
@@ -37,7 +41,7 @@ providers = canopsis.auth.authkey,canopsis.auth.ldap
 
 Un redémarrage du serveur web est nécessaire.
 
-### Configuration
+### Configuration LDAP
 
 La configuration de l'authentification se fait au moyen d'un requête sur l'API.  
 Vous devez rédiger un fichier de configuration et le poster sur l'API.  
@@ -45,16 +49,16 @@ Vous devez rédiger un fichier de configuration et le poster sur l'API.
 Voici un listing de paramètres nécessaires à la configuration LDAP :  
 
 
-| Attribut     | Description                                                  | Exemple  |
-| ------------ | ------------------------------------------------------------ | -------- |
-| ldap_uri     | Chaine de connexion LDAP                                     | ldaps://ldap.local |
-| host         | Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations* | srv-ldap |
-| port         | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations* | 389 |
-| admin_dn     | DN de l'utilisateur permettant l'authentification sur l'annuaire | uid=mon_user,ou=mon_org,dc=dom,dc=com |
-| admin_passwd | Mot de passe de l'utilisateur DN                             |          |
-| ufilter      | Filtre utilisateur. La valeur de l'utilisateur est présentée dans une variable notée **%s** | uid=%s |
-| default_role | Rôle par défaut au moment de la première connexion           | visualisation |
-| attrs        | Translation d'attributs. Un utilisateur Canopsis dispose des attributs firstname, lastname, mail | "mail": "mail", "firstname": "givenName", "lastname" : "sn" |
+|   Attribut   |                                                  Description                                                   |                           Exemple                           |
+| ------------ | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+|   ldap_uri   |                                            Chaine de connexion LDAP                                            |                     ldaps://ldap.local                      |
+|     host     |    Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations*    |                          srv-ldap                           |
+|     port     | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations* |                             389                             |
+|   admin_dn   |                        DN de l'utilisateur permettant l'authentification sur l'annuaire                        |            uid=mon_user,ou=mon_org,dc=dom,dc=com            |
+| admin_passwd |                                        Mot de passe de l'utilisateur DN                                        |                                                             |
+|   ufilter    |          Filtre utilisateur. La valeur de l'utilisateur est présentée dans une variable notée **%s**           |                           uid=%s                            |
+| default_role |                               Rôle par défaut au moment de la première connexion                               |                        Visualisation                        |
+|    attrs     |        Translation d'attributs. Un utilisateur Canopsis dispose des attributs firstname, lastname, mail        | "mail": "mail", "firstname": "givenName", "lastname" : "sn" |
 
 La configuration se fait dans un fichier *json* : **ldapconfig.json**
 
@@ -64,7 +68,7 @@ La configuration se fait dans un fichier *json* : **ldapconfig.json**
 "crecord_name":"ldapconfig",
 "admin_dn":"uid=mon_user,ou=mon_org,dc=dom,dc=com",
 "ufilter":"uid=%s",
-"default_role":"visualisation",
+"default_role":"Visualisation",
 "user_dn":"ou=mon_org,dc=dom,dc=com",
 "admin_passwd":"***",
 "host":"x.x.x.x",
@@ -87,13 +91,82 @@ La requête suivante permet de poster cette configuration.
 curl -X POST -H "Content-type: application/json" -d @ldapconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/ldapconfig/cservice.ldapconfig'
 ````
 
-Le résultat renvoyé doit être de type : 
+Le résultat renvoyé doit être de type :
 
 ````
 {"total": 1, "data": [{"..."}], "success": true}
 ````
 
-### Utilisation
+### Utilisation LDAP
+
+A ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis.  
+Le profil d'affectation sera celui spécifié dans la configuration.
+
+## CAS
+
+L'authentification CAS est actuellement fonctionnelle.
+
+Sa configuration par l'interface web n'est pas prise en charge pour le moment.
+
+Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs via WebSSO.
+
+### Activation CAS
+
+Pour activer l'authentification *cas*, le service doit être activé dans la configuration du serveur web.  
+Le fichier à modifier est "etc/webserver.conf".  
+Le service **canopsis.auth.cas** est à ajouter aux providers d'authentification.
+
+````
+[auth]
+providers = canopsis.auth.authkey,canopsis.auth.cas
+````
+
+Un redémarrage du serveur web est nécessaire.
+
+### Configuration CAS
+
+La configuration de l'authentification se fait au moyen d'un requête sur l'API.  
+Vous devez rédiger un fichier de configuration et le poster sur l'API.  
+
+Voici un listing de paramètres nécessaires à la configuration CAS :  
+
+
+|   Attribut   |                    Description                     |            Exemple             |
+| ------------ | -------------------------------------------------- | ------------------------------ |
+|   service    |         URL de connexion pour le Canopsis          |   http://canopsis.info.local   |
+| default_role | Rôle par défaut au moment de la première connexion |         Visualisation          |
+|    title     |        Label sur le formulaire de connexion        |           Connexion            |
+|    server    |            serveur de connexion WebSSO             | https://cas.info.local/websso/ |
+
+La configuration se fait dans un fichier *json* : **casconfig.json**
+
+````
+{
+  "crecord_type": "cservice",
+  "crecord_name": "casconfig"
+  "_id": "cservice.casconfig",
+  "enable": true,
+  "service": "http://canopsis.info.local",
+  "default_role": "Visualisation",
+  "title": "Connexion",
+  "server": "https://cas.info.local/websso/",
+}
+````
+
+
+La requête suivante permet de poster cette configuration.  
+
+````
+curl -X POST -H "Content-type: application/json" -d @casconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/casconfig/cservice.casconfig'
+````
+
+Le résultat renvoyé doit être de type :
+
+````
+{"total": 1, "data": [{"..."}], "success": true}
+````
+
+### Utilisation CAS
 
 A ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis.  
 Le profil d'affectation sera celui spécifié dans la configuration.
