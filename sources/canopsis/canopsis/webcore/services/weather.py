@@ -111,8 +111,8 @@ def get_ok_ko(influx_client, entity_id, timestamp):
 
     :param InfluxDBClient influx_client:
     :param str entity_id: the id of the entity
-    :return: a dict with two key ok and ko or none if no data are found for
-    the given entity.
+    :return: a dict with two key ok and ko, and with last_event and last_ko 
+             if found for given event
     """
     query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
                 "event_state_history WHERE \"eid\"='{}' AND time >= {}s"
@@ -131,6 +131,8 @@ def get_ok_ko(influx_client, entity_id, timestamp):
     result = influx_client.query(query_sum.format(entity_id, timestamp))
 
     stats = {}
+    stats["ok"] = 0
+    stats["ko"] = 0
     data = list(result.get_points())
     if len(data) > 0:
         data = data[0]
@@ -155,10 +157,7 @@ def get_ok_ko(influx_client, entity_id, timestamp):
         time = time.replace("Z", "")
         stats["last_ko"] = time
 
-    if len(stats) > 0:
-        return stats
-
-    return None
+    return stats
 
 
 def pbehavior_types(pbehaviors):
