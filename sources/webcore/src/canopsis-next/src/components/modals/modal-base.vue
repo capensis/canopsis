@@ -12,6 +12,8 @@
 <script>
 import { MODALS } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
@@ -106,6 +108,8 @@ export default {
     CreateWebhook,
     CreateSnmpRule,
     SelectViewTab,
+
+    ...featuresService.get('components.modals.components'),
   },
   props: {
     modals: {

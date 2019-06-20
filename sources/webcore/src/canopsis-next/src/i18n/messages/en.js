@@ -7,6 +7,8 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
+import featureService from '@/services/features';
+
 export default {
   common: {
     ok: 'Ok',
@@ -1140,4 +1142,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
+
+  ...featureService.get('i18n.en'),
 };
