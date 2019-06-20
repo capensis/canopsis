@@ -33,7 +33,7 @@ Temps moyen entre les pannes sur une entité (hors alarmes pendant plage de main
 Affiche l'état actuel d’une entité (comme dans la météo de service).
 
 ## Nombre d’alarmes en cours pendant la période
-Il s'agit du nombre d’alarmes qui étaient actives pendant une période données (hors alarmes pendant plage de maintenance).
+Il s'agit du nombre d’alarmes qui étaient actives pendant une période donnée (hors alarmes pendant plage de maintenance).
 
 ## Nombre d’alarmes actuellement en cours
 Retourne le nombre d’alarmes qui sont actives à un instant donné.
