@@ -91,9 +91,6 @@ export default {
       type: String,
       default: 'filter',
     },
-    widgetDefaultValue: {
-      type: Object,
-    },
     condition: {
       type: String,
       default: FILTER_DEFAULT_VALUES.condition,
@@ -144,13 +141,7 @@ export default {
 
     preparedFilters() {
       const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
-      let preparedLockedFilters = [];
-
-      if (this.hasAccessToListFilter) {
-        preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
-      } else if (this.widgetDefaultValue) {
-        preparedLockedFilters = [{ ...this.widgetDefaultValue, locked: true }];
-      }
+      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
 
       if (preparedFilters.length && preparedLockedFilters.length) {
         return preparedFilters.concat({ divider: true }, preparedLockedFilters);

@@ -27,7 +27,13 @@ export default {
     },
 
     widgetViewFilters() {
-      return this.widget.parameters.viewFilters || [];
+      const { mainFilter, viewFilters } = this.widget.parameters;
+
+      if (!this.hasAccessToListFilter) {
+        return mainFilter ? [mainFilter] : [];
+      }
+
+      return viewFilters || [];
     },
   },
   methods: {
