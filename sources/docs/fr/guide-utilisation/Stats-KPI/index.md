@@ -1,9 +1,9 @@
 # Indicateurs statistiques et KPI
 
-Canopsis fournit un certain nombre d'indicateurs statistiques et de KPI.
+Canopsis fournit des indicateurs statistiques et des indicateurs de performance (KPI).
 
 ## Alarmes Créées
-C'est le nombre d’alarmes créés pendant une période donnée (hors alarmes pendant plage de maintenance).
+C'est le nombre d’alarmes créées pendant une période donnée (hors alarmes pendant plage de maintenance).
 
 ## Alarmes Résolues
 Il s'agit du nombre d’alarmes résolues (y compris les alarmes annulées) pendant une période donnée (hors alarmes pendant plage de maintenance).
@@ -26,11 +26,11 @@ Retourne le pourcentage de temps passé par une entité dans un ou plusieurs ét
 ## Temps passé dans un état
 C'est le temps passé par une entité dans un ou plusieurs états (relatif à une configuration par widget et hors alarmes pendant plage de maintenance).
 
-## Temps moyen entre les pannes
+## Temps moyen entre les pannes (ou MTBF : Mean Time Between Failures)
 Temps moyen entre les pannes sur une entité (hors alarmes pendant plage de maintenance).
 
 ## État courant
-Affiche l'état actuel d’une entité (comme dans la météo de service).
+Affiche l'état actuel d’une entité : 0 pour OK, 1 pour Mineur, 2 pour Majeur et 3 pour Critique (comme dans la météo de service).
 
 ## Nombre d’alarmes en cours pendant la période
 Il s'agit du nombre d’alarmes qui étaient actives pendant une période donnée (hors alarmes pendant plage de maintenance).
