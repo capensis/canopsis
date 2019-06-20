@@ -1,4 +1,4 @@
-# Sauvegarde et restoration
+# Sauvegarde et restauration
 
 ## MongoDB
 
@@ -6,8 +6,11 @@
 
 Utilisez la commande `mongodump` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichier externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongodump-operation).
 
+!!! note
+    Le mot de passe par défaut est "canopsis" mais il peut être nécessaire d'adapter la commande selon votre contexte.
+
 ```bash
-mongodump --username cpsmongo --password canopsis --db canopsis --out /path/to/backup
+mongodump --username cpsmongo --password votre_password --db canopsis --out /path/to/backup
 ```
 
 ### Restauration
@@ -22,8 +25,11 @@ Avant de procéder à la restauration, arrêtez l'hyperviseur.
 
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichier externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
 
+!!! note
+    Le mot de passe par défaut est "canopsis" mais il peut être nécessaire d'adapter la commande selon votre contexte.
+
 ```shell
-mongorestore --username cpsmongo --password canopsis --db canopsis /path/to/backup
+mongorestore --username cpsmongo --password votre_password --db canopsis /path/to/backup
 ```
 
 !!! note
@@ -71,6 +77,7 @@ influxd restore -portable /path/to/backup
     Il s'agit uniquement des metadatas qui sont déjà présentes dans Influx et n'ont pas changé. Le contenu de la table canopsis a bien été restauré.
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
+
 ```shell
 /opt/canopsis/bin/canopsis-systemd start
 ```
