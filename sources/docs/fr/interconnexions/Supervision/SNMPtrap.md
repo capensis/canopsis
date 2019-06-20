@@ -172,6 +172,9 @@ yum install net-snmp-utils
 Pour le test, nous allons nous appuyer sur la MIB Nagios
 [NAGIOS-NOTIFY-MIB][notify_mib] et sa dépendance [nagios-root][root_mib].
 
+[notify_mib]: https://github.com/monitoring-plugins/nagios-mib/blob/master/MIB/NAGIOS-NOTIFY-MIB
+[root_mib]: https://github.com/nagios-plugins/nagios-mib/blob/master/src-mib/nagios-root.mib
+
 Les deux fichiers récupérés doivent être placés dans le répertoire des MIB
 SNMP : `/usr/share/snmp/mibs`.
 
