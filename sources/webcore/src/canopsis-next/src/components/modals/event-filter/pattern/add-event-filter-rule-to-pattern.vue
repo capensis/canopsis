@@ -18,7 +18,7 @@
         v-model="form.value",
         name="value",
         v-validate="'required'",
-        :error-messages="errors.collect('value')"
+        :error-messages="errors.collect('value')",
         :label="$t('modals.eventFilterRule.value')"
         )
         template(v-else)
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { isObject } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -99,8 +101,9 @@ export default {
         operators,
         ruleKey = '',
         ruleValue = '',
-        isSimpleRule = true,
-      } = { ...this.config };
+      } = this.config;
+
+      const isSimpleRule = !isObject(ruleValue);
 
       this.operators = operators;
       this.form.advancedMode = !isSimpleRule;
