@@ -22,10 +22,11 @@ class Features {
    * Get features value by key
    *
    * @param {string} key
+   * @param {*} [defaultValue] - default value. We must put it for arrays
    * @returns {*}
    */
-  get(key) {
-    return get(this.features, key);
+  get(key, defaultValue) {
+    return get(this.features, key, defaultValue);
   }
 
   /**

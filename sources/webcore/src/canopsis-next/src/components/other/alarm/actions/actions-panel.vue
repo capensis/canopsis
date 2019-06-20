@@ -38,7 +38,7 @@ export default {
     entitiesAlarmMixin,
     widgetActionsPanelAlarmMixin,
 
-    ...featuresService.get('components.alarmListActionPanel.mixins'),
+    ...featuresService.get('components.alarmListActionPanel.mixins', []),
   ],
   props: {
     item: {
