@@ -8,6 +8,33 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.21.0 - Due date : 2019-06-21
+
+ - [email2canopsis] Add leavemails option
+ - [Python] Fix ack_time_sla and resolve_time_sla stats to make them take into account the alarms that have not been acknowledged or resolved
+ - [Go] Fix profiling options
+ - [Go] Optimize GetLastAlarms to fix a performance issue in axe
+ - [Go] Ignore changestate events with info state
+ - [API] Add recursive option for the MTBF statistic
+ - [API] Count ok and ko statistics for the current service period (since the end of the last pbehavior, or since midnight)
+ - [API] Fix advanced search in get-alarms
+ - [UI] Harmonize settings order for stats widgets
+ - [UI - Stats] Fix annotation line's label position
+ - [UI - Pareto] Fix - Stat select's modal's title
+ - [UI - Stats curves] Fix - Line tension
+ - [UI - Stats table] Reorder columns
+ - [UI - Stats curves] Point style setting
+ - [UI] Fix - Error in console when multiple modals open
+ - [UI - Stats] Fix - Confusing end date displayed on histogram and curves
+ - [UI - Stats curves] Format durations on tooltip
+ - [UI] Clone widget
+ - [UI] Improve validations feedback (settings panel + forms on multiple tabs)
+ - [UI] Refactor pattern simple editor
+ - [UI] Fix list filter rights
+ - [Documentation] Add informations about KPIs and their use
+ - [Documentation] Add a process describing Canopsis database backup and restoration
+ - [Build] Fix Go engines files in Debian and CentOS packages
+
 # Canopsis 3.20.0 - Due date : 2019-06-07
 
  - [Python] Fix a race condition in the alarm filter
