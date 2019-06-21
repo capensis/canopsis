@@ -1,6 +1,10 @@
-# Sauvegarde et restauration
+# Actions sur la base de données
 
 ## MongoDB
+
+### Purge
+
+TO DO
 
 ### Sauvegarde
 
