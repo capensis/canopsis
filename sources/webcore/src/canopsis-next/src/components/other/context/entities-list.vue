@@ -18,7 +18,6 @@
         :filters="viewFilters",
         :lockedFilters="widgetViewFilters",
         :value="mainFilter",
-        :widgetDefaultValue="widget.parameters.mainFilter",
         :condition="mainFilterCondition",
         :hasAccessToEditFilter="hasAccessToEditFilter",
         :hasAccessToUserFilter="hasAccessToUserFilter",
