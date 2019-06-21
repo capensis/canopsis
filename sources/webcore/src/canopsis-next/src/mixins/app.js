@@ -15,7 +15,7 @@ export default {
      */
     isShownGroupsSideBar() {
       const isSelectedSideBar = this.groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
-      const isMobileOrTablet = this.$options.filters.mq(this.$mq, { m: true, l: false });
+      const isMobileOrTablet = this.$options.filters.mq(this.$mq, { m: true, sl: false });
 
       return isSelectedSideBar || isMobileOrTablet;
     },
@@ -27,7 +27,7 @@ export default {
      */
     isShownGroupsTopBar() {
       const isSelectedTopBar = this.groupsNavigationType === GROUPS_NAVIGATION_TYPES.topBar;
-      const isLaptop = this.$options.filters.mq(this.$mq, { l: true });
+      const isLaptop = this.$options.filters.mq(this.$mq, { sl: true });
 
       return isSelectedTopBar && isLaptop;
     },
