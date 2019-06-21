@@ -391,7 +391,7 @@ export const STATS_TYPES = {
   },
   mtbf: {
     value: 'mtbf',
-    options: [],
+    options: [STATS_OPTIONS.recursive],
   },
   currentState: {
     value: 'current_state',
