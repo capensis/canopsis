@@ -192,7 +192,7 @@ export default {
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['interval', 'tstart', 'tstop']),
-          action: params => this.query = { ...this.query, ...params },
+          action: params => this.query = { ...omit(this.query, ['tstart', 'tstop']), ...params },
         },
       });
     },

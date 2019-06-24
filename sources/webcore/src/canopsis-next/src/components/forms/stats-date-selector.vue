@@ -3,44 +3,21 @@
     v-layout
       v-flex(xs6)
         v-layout(align-center)
-          v-text-field(v-model="tstartDateString", :label="$t('common.startDate')")
-          v-menu(
-          ref="menu",
-          v-model="isTstartDateMenuOpen",
-          content-class="date-time-picker",
-          transition="slide-y-transition",
-          max-width="290px",
-          :close-on-content-click="false",
-          right,
-          lazy,
+          date-time-picker-text-field(
+          v-model="tstartDateString",
+          :label="$t('common.startDate')",
+          :dateObjectPreparer="getDateObjectPreparer('start')",
+          name="tstart",
+          roundHours
           )
-            v-btn(slot="activator", icon, fab, small, color="secondary")
-              v-icon calendar_today
-            date-time-picker(
-            :value="toDateObject(value.tstart)",
-            :opened="isTstartDateMenuOpen",
-            roundHours,
-            @input="updateTstartField"
-            )
         v-layout(align-center)
-          v-text-field(v-model="tstopDateString", :label="$t('common.endDate')")
-          v-menu(
-          v-model="isTstopDateMenuOpen",
-          content-class="date-time-picker",
-          transition="slide-y-transition",
-          max-width="290px",
-          :close-on-content-click="false",
-          right,
-          lazy,
+          date-time-picker-text-field(
+          v-model="tstopDateString",
+          :label="$t('common.endDate')",
+          :dateObjectPreparer="getDateObjectPreparer('stop')",
+          name="tstop",
+          roundHours
           )
-            v-btn(slot="activator", icon, fab, small, color="secondary")
-              v-icon calendar_today
-            date-time-picker(
-            :value="toDateObject(value.tstop)",
-            :opened="isTstopDateMenuOpen",
-            @input="updateTstopField",
-            roundHours
-            )
       v-flex.px-1(xs6)
         v-select(v-model="range", :items="quickRanges", label="Quick ranges", return-object)
 </template>
@@ -50,13 +27,15 @@ import moment from 'moment';
 
 import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
+import { dateParse } from '@/helpers/date-intervals';
+
 import formMixin from '@/mixins/form';
 
-import DateTimePicker from '@/components/forms/fields/date-time-picker/date-time-picker.vue';
+import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
   components: {
-    DateTimePicker,
+    DateTimePickerTextField,
   },
   mixins: [formMixin],
   props: {
@@ -64,12 +43,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      isTstartDateMenuOpen: false,
-      isTstopDateMenuOpen: false,
-    };
   },
   computed: {
     range: {
@@ -113,6 +86,7 @@ export default {
         }
       },
     },
+
     quickRanges() {
       return Object.values(STATS_QUICK_RANGES).map(range => ({
         ...range,
@@ -120,6 +94,7 @@ export default {
         text: this.$t(`settings.statsDateInterval.quickRanges.${range.value}`),
       }));
     },
+
     tstartDateString: {
       get() {
         return this.value.tstart;
@@ -141,27 +116,20 @@ export default {
         }
       },
     },
-
-    toDateObject() {
-      return (date) => {
-        const unit = this.periodUnit === STATS_DURATION_UNITS.month ? 'month' : 'hour';
-        const momentDate = moment(date, DATETIME_FORMATS.dateTimePicker);
-
-        if (momentDate.isValid()) {
-          return momentDate.startOf(unit).toDate();
-        }
-
-        return moment().startOf(unit).toDate();
-      };
-    },
   },
   methods: {
-    updateTstartField(tstart) {
-      this.updateField('tstart', moment(tstart).format(DATETIME_FORMATS.dateTimePicker));
-    },
+    toDateObject(date, type) {
+      const unit = this.periodUnit === STATS_DURATION_UNITS.month ? 'month' : 'hour';
+      const momentDate = dateParse(date, type, DATETIME_FORMATS.dateTimePicker);
 
-    updateTstopField(tstop) {
-      this.updateField('tstop', moment(tstop).format(DATETIME_FORMATS.dateTimePicker));
+      if (momentDate.isValid()) {
+        return momentDate.startOf(unit).toDate();
+      }
+
+      return moment().startOf(unit).toDate();
+    },
+    getDateObjectPreparer(type) {
+      return value => this.toDateObject(value, type);
     },
   },
 };

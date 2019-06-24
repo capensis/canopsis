@@ -24,13 +24,13 @@
       v-alert(
       value="errors",
       type="error",
-      v-for="error in errors",
+      v-for="error in localErrors",
       :key="error",
       ) {{ error }}
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click="submit", :disabled="errors.length !== 0") {{ $t('common.submit') }}
+        v-btn.primary(@click="submit", :disabled="localErrors.length !== 0") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -46,6 +46,9 @@ import StatsDateSelector from '@/components/forms/stats-date-selector.vue';
 
 export default {
   name: MODALS.statsDateInterval,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     StatsDateSelector,
   },
@@ -79,7 +82,7 @@ export default {
           value: STATS_DURATION_UNITS.month,
         },
       ],
-      errors: [],
+      localErrors: [],
     };
   },
   computed: {
@@ -89,7 +92,7 @@ export default {
   },
   methods: {
     resetValidation() {
-      this.errors = [];
+      this.localErrors = [];
     },
 
     validate() {
@@ -100,11 +103,11 @@ export default {
         const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
 
         if (convertedTstop.isSameOrBefore(convertedTstart)) {
-          this.errors.push(this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'));
+          this.localErrors.push(this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'));
           return false;
         }
       } catch (err) {
-        this.errors.push(err.message);
+        this.localErrors.push(err.message);
         return false;
       }
 
@@ -112,7 +115,9 @@ export default {
     },
 
     async submit() {
-      if (this.validate()) {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid && this.validate()) {
         if (this.config.action) {
           this.config.action(this.form);
         }

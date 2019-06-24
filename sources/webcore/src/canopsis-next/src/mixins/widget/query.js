@@ -1,10 +1,10 @@
 import { omit, isEqual, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { SORT_ORDERS } from '@/constants';
+import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import dateIntervals from '@/helpers/date-intervals';
+import dateIntervals, { dateParse } from '@/helpers/date-intervals';
 import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
 
 /**
@@ -85,6 +85,8 @@ export default {
         'interval',
         'sortKey',
         'sortDir',
+        'tstart',
+        'tstop',
       ]);
 
       const { page, interval, limit = PAGINATION_LIMIT } = this.query;
@@ -98,6 +100,14 @@ export default {
         } catch (err) {
           console.warn(err);
         }
+      } else if (interval === 'custom') {
+        const { tstart, tstop } = this.query;
+
+        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
+        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
+
+        query.tstart = convertedTstart.unix();
+        query.tstop = convertedTstop.unix();
       }
 
       if (this.query.sortKey) {
