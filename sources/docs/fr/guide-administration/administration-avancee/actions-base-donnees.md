@@ -38,7 +38,7 @@ Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochco
 
 Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des alarmes, `periodical_alarm`.
 
-| Type d'alarmes                                                            | Requête                                                                                 |
+| Type d'alarme                                                             | Requête                                                                                 |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
 | Alarmes résolues                                                          | `db.periodical_alarm.find(`**`{"v.resolved":{$ne:null}}`**`)`                           |
 | Alarmes non résolues                                                      | `db.periodical_alarm.find(`**`{"v.resolved":null}`**`)`                                 |
@@ -48,6 +48,28 @@ Voici une liste non exhaustive des requêtes portant sur différentes propriét�
 ##### Entités
 
 Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des entités, `default_entities`.
+
+| Type d'entité                                                             | Requête                                                                                 |
+|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
+| Entités désactivées                                                       | `db.default_entities.find(`**`{"enabled":false}`**`)`                                   |
+| Expression régulière sur l'attribut `client` dans l'entité                | `db.default_entities.find(`**`{"infos.client.value":{$regex:'.*SSBU.*',$options:'i'}}`**`)`|
+
+##### Pbehavior
+
+Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des pbehaviors, `default_pbehavior`.
+
+| Type de pbehavior                                                         | Requête                                                                                 |
+|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
+| Pbehaviors désactivés                                                     | `db.default_pbehavior.find(`**`{"enabled":false}`**`)`                                  |
+| Pbehaviors créés par `emile-zola`                                         | `db.default_pbehavior.find(`**`{"author":"emile-zola"}`**`)`                            |
+
+##### Vues
+
+Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des vues, `default_pbehavior`.
+
+| Type de vue                                                               | Requête                                                                                 |
+|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
+| Vues désactivées                                                          | `db.views.find(`**`{"enabled":false}`**`)`                                              |
 
 ### Sauvegarde
 
