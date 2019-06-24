@@ -4,7 +4,31 @@
 
 ### Purge
 
-TO DO
+!!! attention
+    Cette manipulation à un impact métier important et ne doit être réalisée que par une personne compétente.
+
+Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et la purge peuvent se faire via la ligne de commande (`mongo canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
+
+#### Purge simple d'une collection
+
+Pour vider simplement les documents d'une collection, vous pouvez utiliser la commande `db.<nom de la collection>.remove({})`. La fonction `remove` en paramètre une requête, qui est ici la requête `{}` qui va matcher tous les documents de la collection.
+
+Au moment de la purge, un message va indiquer le nombre d'éléments supprimés. Vous pouvez ensuite vérifier que `db.<nom de la collection>.find({})` ne retourne aucun résultat.
+
+```bash
+> db.periodical_alarm.remove({})
+WriteResult({ "nRemoved" : 235 })
+> db.entities.remove({})
+WriteResult({ "nRemoved" : 17 })
+> db.default_pbehavior.remove({})
+WriteResult({ "nRemoved" : 6 })
+> db.periodical_alarm.find({})
+>
+```
+
+#### Purge d'une collection avec filtre
+
+La fonction `remove` sur une collection prend en paramètre une requête. On peut donc filtrer sur les éléments que l'on souhaite supprimer.
 
 ### Sauvegarde
 
