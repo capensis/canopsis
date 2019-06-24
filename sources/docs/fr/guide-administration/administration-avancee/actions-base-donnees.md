@@ -28,7 +28,26 @@ WriteResult({ "nRemoved" : 6 })
 
 #### Purge d'une collection avec filtre
 
-La fonction `remove` sur une collection prend en paramètre une requête. On peut donc filtrer sur les éléments que l'on souhaite supprimer.
+La fonction `remove` sur une collection prend en paramètre une requête. On peut donc filtrer sur les documents des collections.
+
+Avant de supprimer ces documents, vous pouvez toujours vérifier la liste des documents concernés avec `find(<requête>)` et voir leur nombre `count(<requête>)`.
+
+Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
+
+##### Alarmes
+
+Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des alarmes, `periodical_alarm`.
+
+| Type d'alarmes                                                            | Requête                                                                                 |
+|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
+| Alarmes résolues                                                          | `db.periodical_alarm.find(`**`{"v.resolved":{$ne:null}}`**`)`                           |
+| Alarmes non résolues                                                      | `db.periodical_alarm.find(`**`{"v.resolved":null}`**`)`                                 |
+| Alarmes associées à l'entité `XXX/ZZZ`                                    | `db.periodical_alarm.find(`**`{"v.component" : "ZZZ", "v.resource" : "XXX"}`**`)`       |
+| Alarmes non mises à jour depuis le 1er janvier 2019 00:00:00 GMT          | `db.periodical_alarm.find(`**`{"v.last_update_date":{$lte:1546300800}}`**`)`            |
+
+##### Entités
+
+Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des entités, `default_entities`.
 
 ### Sauvegarde
 
