@@ -2,7 +2,7 @@
   v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
       div.subheading {{ $t('settings.filterEditor') }}
-        .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optionnal') }})
+        .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optional') }})
       div
         v-btn.primary(
         small,

@@ -1,4 +1,5 @@
 import { COLORS } from '@/config';
+import featuresService from '@/services/features';
 
 export const CRUD_ACTIONS = {
   create: 'create',
@@ -74,6 +75,7 @@ export const MODALS = {
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
+  selectViewTab: 'select-view-tab',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -397,7 +399,7 @@ export const STATS_TYPES = {
   },
   mtbf: {
     value: 'mtbf',
-    options: [],
+    options: [STATS_OPTIONS.recursive],
   },
   currentState: {
     value: 'current_state',
@@ -553,6 +555,19 @@ export const STATS_DISPLAY_MODE_PARAMETERS = {
   },
 };
 
+export const STATS_CURVES_POINTS_STYLES = {
+  circle: 'circle',
+  cross: 'cross',
+  crossRot: 'crossRot',
+  dash: 'dash',
+  line: 'line',
+  rect: 'rect',
+  rectRounded: 'rectRounded',
+  rectRot: 'rectRot',
+  star: 'star',
+  triangle: 'triangle',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
@@ -620,6 +635,8 @@ export const USERS_RIGHTS = {
         userFilter: 'listalarm_userFilter',
 
         links: 'listalarm_links',
+
+        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
       },
     },
     context: {
@@ -678,6 +695,9 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
 
+
+    ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
+
     links: 'links',
 
     listFilters: 'listFilters',
@@ -732,6 +752,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+
+    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {

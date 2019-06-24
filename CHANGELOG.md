@@ -8,6 +8,68 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 
 - [Alarms list]: Alarms on resources can be hidden when their parent component is down.
 
+# Canopsis 3.21.0 - Due date : 2019-06-21
+
+ - [email2canopsis] Add leavemails option
+ - [Python] Fix ack_time_sla and resolve_time_sla stats to make them take into account the alarms that have not been acknowledged or resolved
+ - [Go] Fix profiling options
+ - [Go] Optimize GetLastAlarms to fix a performance issue in axe
+ - [Go] Ignore changestate events with info state
+ - [API] Add recursive option for the MTBF statistic
+ - [API] Count ok and ko statistics for the current service period (since the end of the last pbehavior, or since midnight)
+ - [API] Fix advanced search in get-alarms
+ - [UI] Harmonize settings order for stats widgets
+ - [UI - Stats] Fix annotation line's label position
+ - [UI - Pareto] Fix - Stat select's modal's title
+ - [UI - Stats curves] Fix - Line tension
+ - [UI - Stats table] Reorder columns
+ - [UI - Stats curves] Point style setting
+ - [UI] Fix - Error in console when multiple modals open
+ - [UI - Stats] Fix - Confusing end date displayed on histogram and curves
+ - [UI - Stats curves] Format durations on tooltip
+ - [UI] Clone widget
+ - [UI] Improve validations feedback (settings panel + forms on multiple tabs)
+ - [UI] Refactor pattern simple editor
+ - [UI] Fix list filter rights
+ - [Documentation] Add informations about KPIs and their use
+ - [Documentation] Add a process describing Canopsis database backup and restoration
+ - [Build] Fix Go engines files in Debian and CentOS packages
+
+# Canopsis 3.20.0 - Due date : 2019-06-07
+
+ - [Python] Fix a race condition in the alarm filter
+ - [UI] Durations are now formatted with number of days
+ - [UI - List alarm] Fix - Advanced search column value computation
+ - [UI - Stats table] Add possibility to display the trend next to the stats values
+ - [UI - Stats table] Fix - Always display unit,  even with values equal to zero
+ - [UI - Text widget] Clarify the fact that selecting a stat is optionnal on this widget
+
+# Canopsis 3.19.0 - Due date : 2019-06-04
+
+ - [Docker] Docker-Compose files now support CPS_EDITION and CPS_STACK variables
+ - [API] Fix resolved alarm duration in get-alarms
+ - [Go] Add role in alarm steps
+ - [CAT] Fix error in statsng with entities containing a newline character
+ - [CAT] Fix "Exceeded memory limit" error in statsng
+ - [CAT] Fix missing events in statsng
+ - [CAT] The MTBF statistic now takes the dependencies' alarms into account
+ - [CAT] The "recursive" statistics now only take into account the entity's dependencies
+ - [CAT] Fix invalid statistics when the beat has not been executed
+ - [CAT] Fix "input field [...] is type float, already exists as type integer" errors in statsng
+ - [UI] Fix - Filter validation with nested groups
+ - [UI] Fix - Copy to clipboard functionnality
+ - [UI] Fix - Fix sidebars/topbar z-indexes
+ - [UI - Stats] Change default value for "Duration" setting
+ - [UI - Stats] Fix - Automatically select last full hour when changing to custom date interval on "Duration" setting
+ - [UI - Stats] Add new "Pareto diagram" widget
+ - [UI - Stats] Fix - Loading overlay container
+ - [UI - Stats curves] Add format on tooltips for rate stats
+ - [UI - CRUD Pbehaviors] Fix - Pbehavior's invalid date formatting when editting a pbehavior containing timestamps with milliseconds
+ - [UI - CRUD Pbehaviors] Fix - Complex filter edition
+ - [UI - CRUD SNMP] Fix - Rule's "oid" computation
+ - [UI - CRUD Event-filter] Fix - Rule's id autocompletion when duplicating a rule
+ - [UI - CRUD Webhooks] Fix - Patterns edition on fields containing a dot
+
 # Canopsis 3.18.1 - Due date : 2019-05-22
 
  - [Packaging] Various build automation fixes

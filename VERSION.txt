@@ -1,1 +1,1 @@
-Canopsis version 3.18.1
+Canopsis version 3.21.0

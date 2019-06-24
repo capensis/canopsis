@@ -1,7 +1,7 @@
 <template lang="pug">
   div
-    progress-overlay(:pending="pending")
     v-card
+      progress-overlay(:pending="pending")
       v-data-table(
       :items="stats",
       :headers="tableHeaders",

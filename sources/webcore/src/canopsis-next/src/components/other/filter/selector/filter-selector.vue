@@ -4,13 +4,13 @@
       v-switch(
       :label="$t('filterSelector.fields.mixFilters')",
       :input-value="isMultiple",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateIsMultipleFlag"
       )
     v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
       v-radio-group(
       :value="condition",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateCondition"
       )
         v-radio(label="AND", value="$and")
@@ -23,7 +23,7 @@
       :itemText="itemText",
       :itemValue="itemValue",
       :multiple="isMultiple",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       return-object,
       clearable,
       @input="updateSelectedFilter"
@@ -100,6 +100,10 @@ export default {
       default: false,
     },
     hideSelectIcon: {
+      type: Boolean,
+      default: false,
+    },
+    hasAccessToListFilter: {
       type: Boolean,
       default: false,
     },
@@ -220,8 +224,8 @@ export default {
         name: MODALS.filtersList,
         config: {
           filters: this.filters,
-          hasAccessToAddFilter: this.hasAccessToAddFilter,
-          hasAccessToEditFilter: this.hasAccessToEditFilter,
+          hasAccessToAddFilter: this.hasAccessToUserFilter,
+          hasAccessToEditFilter: this.hasAccessToUserFilter,
           actions: {
             create: this.createFilter,
             update: this.updateFilter,

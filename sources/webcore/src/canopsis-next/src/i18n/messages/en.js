@@ -7,6 +7,8 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
+import featureService from '@/services/features';
+
 export default {
   common: {
     ok: 'Ok',
@@ -55,7 +57,7 @@ export default {
     password: 'Password',
     authKey: 'Auth. key',
     connect: 'Connect',
-    optionnal: 'optionnal',
+    optional: 'optional',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
@@ -258,6 +260,7 @@ export default {
     tstop: 'End date',
     periodsNumber: 'Number of steps',
     statName: 'Stat name',
+    stats: 'Stats',
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
@@ -734,6 +737,13 @@ export default {
       externalData: 'External data',
       onSuccess: 'On success',
       onFailure: 'On failure',
+      tooltips: {
+        addValueRuleField: 'Add value rule field',
+        editValueRuleField: 'Edit value rule field',
+        addObjectRuleField: 'Add object rule field',
+        editObjectRuleField: 'Edit object rule field',
+        removeRuleField: 'Remove rule field',
+      },
     },
     viewTab: {
       create: {
@@ -818,6 +828,9 @@ export default {
           formatter: 'Format (capture group with \\x)',
         },
       },
+    },
+    selectViewTab: {
+      title: 'Select tab',
     },
   },
   tables: {
@@ -1131,4 +1144,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
+
+  ...featureService.get('i18n.en'),
 };

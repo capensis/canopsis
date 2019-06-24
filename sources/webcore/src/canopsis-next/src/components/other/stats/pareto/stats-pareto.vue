@@ -73,6 +73,7 @@ export default {
             yAxisID: 'y-axis-2',
             backgroundColor: 'transparent',
             borderColor: this.widget.parameters.statsColors.Accumulation || 'rgba(0, 0, 0, 0.1)',
+            cubicInterpolationMode: 'monotone',
           },
           {
             label: this.statTitle,
@@ -162,4 +163,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .stats-wrapper {
+    position: relative;
+  }
+</style>
 

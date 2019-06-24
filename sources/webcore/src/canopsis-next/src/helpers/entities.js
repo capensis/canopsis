@@ -149,6 +149,19 @@ export function generateWidgetByType(type) {
       break;
 
     case WIDGET_TYPES.statsHistogram:
+      specialParameters = {
+        mfilter: {},
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+        },
+        stats: {},
+        statsColors: {},
+        annotationLine: {},
+      };
+      break;
     case WIDGET_TYPES.statsCurves:
       specialParameters = {
         mfilter: {},
@@ -160,6 +173,7 @@ export function generateWidgetByType(type) {
         },
         stats: {},
         statsColors: {},
+        statsPointsStyles: {},
         annotationLine: {},
       };
       break;
