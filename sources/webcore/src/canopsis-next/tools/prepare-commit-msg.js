@@ -14,23 +14,43 @@ if (process.env.PREPARE_COMMIT_MSG_HOOK !== 'enabled') {
   process.exit();
 }
 
-const getPathToGitHead = folder => path.resolve(folder, '.git', 'HEAD');
-const getPathToParentFolder = folder => path.resolve(folder, '..');
-const isRepositoryRoot = folder => fs.existsSync(getPathToGitHead(folder));
-
-let repositoryRoot = __dirname;
-
-while (!isRepositoryRoot(repositoryRoot) && fs.existsSync(repositoryRoot)) {
-  repositoryRoot = getPathToParentFolder(repositoryRoot);
+function getPathToGitHead(folder) {
+  return path.resolve(folder, '.git', 'HEAD');
 }
+
+function getPathToParentFolder(folder) {
+  return path.resolve(folder, '..');
+}
+
+function isRepositoryRoot(folder) {
+  return fs.existsSync(getPathToGitHead(folder));
+}
+
+function findRepositoryRoot() {
+  let repositoryRoot = __dirname;
+
+  while (!isRepositoryRoot(repositoryRoot) && fs.existsSync(repositoryRoot)) {
+    repositoryRoot = getPathToParentFolder(repositoryRoot);
+  }
+
+  return repositoryRoot;
+}
+
+function getBranchName(repositoryRoot) {
+  const head = fs.readFileSync(getPathToGitHead(repositoryRoot)).toString();
+  const [, branchName] = head.match(/^ref: refs\/heads\/(.*)/) || [];
+
+  return branchName;
+}
+
+const repositoryRoot = findRepositoryRoot();
 
 if (!fs.existsSync(repositoryRoot)) {
   console.error('The script was unable to find the root of the Git repository.');
   process.exit(1);
 }
 
-const head = fs.readFileSync(getPathToGitHead(repositoryRoot)).toString();
-const [, branchName] = head.match(/^ref: refs\/heads\/(.*)/) || [];
+const branchName = getBranchName(repositoryRoot);
 
 if (!branchName) {
   process.exit();
@@ -57,9 +77,10 @@ if (!commitMessageFile) {
   process.exit(1);
 }
 
+const commitPrefix = `${branchPrefix}(${branchSuffix}): `;
+
 const pathToCommitMessageFile = path.resolve(repositoryRoot, commitMessageFile);
 const content = fs.readFileSync(pathToCommitMessageFile);
-const commitPrefix = `${branchPrefix}(${branchSuffix}): `;
 
 if (content.indexOf(commitPrefix) === -1) {
   fs.writeFileSync(pathToCommitMessageFile, commitPrefix + content);
