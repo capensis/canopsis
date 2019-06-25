@@ -4,37 +4,30 @@
 
 ### Purge
 
-!!! attention
-    Cette manipulation à un impact métier important et ne doit être réalisée que par une personne compétente.
-
 Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et la purge peuvent se faire via la ligne de commande (`mongo canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
 
-#### Purge simple d'une collection
+!!! attention
+    Cette manipulation à un impact métier important et ne doit être réalisée que par une personne compétente. **Avant toute purge, il est vivement conseillé de faire une [sauvegarde de la base Mongo](#Sauvegarde)** en utilisant `mongorestore`.
 
-Pour vider simplement les documents d'une collection, vous pouvez utiliser la commande `db.<nom de la collection>.remove({})`. La fonction `remove` en paramètre une requête, qui est ici la requête `{}` qui va matcher tous les documents de la collection.
 
-Au moment de la purge, un message va indiquer le nombre d'éléments supprimés. Vous pouvez ensuite vérifier que `db.<nom de la collection>.find({})` ne retourne aucun résultat.
+Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.count(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
+
+Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimez, vous pouvez `db.<nom de la collection>.remove(<requête>)`. Au moment de la purge, un message va indiquer le nombre d'éléments supprimés.
 
 ```bash
-> db.periodical_alarm.remove({})
-WriteResult({ "nRemoved" : 235 })
-> db.entities.remove({})
+> db.periodical_alarm.remove({"t" : 1537894605})
+WriteResult({ "nRemoved" : 3 })
+> db.entities.remove({"name": "foldable"})
 WriteResult({ "nRemoved" : 17 })
-> db.default_pbehavior.remove({})
-WriteResult({ "nRemoved" : 6 })
-> db.periodical_alarm.find({})
->
 ```
 
-#### Purge d'une collection avec filtre
+!!! attention
+    La requête vide `{}` va matcher tous les documents de la collection. Par conséquent, **`db.<nom de la collection>.remove({})` va vider complètement la collection**. Pensez donc à ne jamais avoir `{}` comme paramètre, sauf si vous voulez vider complètement la collection.
 
-La fonction `remove` sur une collection prend en paramètre une requête. On peut donc filtrer sur les documents des collections.
 
-Avant de supprimer ces documents, vous pouvez toujours vérifier la liste des documents concernés avec `find(<requête>)` et voir leur nombre `count(<requête>)`.
+Les sous-sections suivantes vont montrer plusieurs examples de requêtes sur les collections d'objets Canopsis. Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
 
-Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
-
-##### Alarmes
+#### Alarmes
 
 Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des alarmes, `periodical_alarm`.
 
@@ -45,25 +38,23 @@ Voici une liste non exhaustive des requêtes portant sur différentes propriét�
 | Alarmes associées à l'entité `XXX/ZZZ`                                    | `db.periodical_alarm.find(`**`{"v.component" : "ZZZ", "v.resource" : "XXX"}`**`)`       |
 | Alarmes non mises à jour depuis le 1er janvier 2019 00:00:00 GMT          | `db.periodical_alarm.find(`**`{"v.last_update_date":{$lte:1546300800}}`**`)`            |
 
-##### Entités
+#### Entités
 
 Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des entités, `default_entities`.
 
 | Type d'entité                                                             | Requête                                                                                 |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| Entités désactivées                                                       | `db.default_entities.find(`**`{"enabled":false}`**`)`                                   |
 | Expression régulière sur l'attribut `client` dans l'entité                | `db.default_entities.find(`**`{"infos.client.value":{$regex:'.*SSBU.*',$options:'i'}}`**`)`|
 
-##### Pbehavior
+#### Pbehavior
 
 Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des pbehaviors, `default_pbehavior`.
 
 | Type de pbehavior                                                         | Requête                                                                                 |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| Pbehaviors désactivés                                                     | `db.default_pbehavior.find(`**`{"enabled":false}`**`)`                                  |
 | Pbehaviors créés par `emile-zola`                                         | `db.default_pbehavior.find(`**`{"author":"emile-zola"}`**`)`                            |
 
-##### Vues
+#### Vues
 
 Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des vues, `default_pbehavior`.
 
