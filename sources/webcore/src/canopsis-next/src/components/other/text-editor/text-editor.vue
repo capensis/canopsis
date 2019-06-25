@@ -5,7 +5,6 @@
 <script>
 import { Jodit } from 'jodit';
 
-import { OPTIONS_SANITIZE_TEXT_EDITOR } from '@/constants';
 import 'jodit/build/jodit.min.css';
 
 export default {
@@ -75,7 +74,7 @@ export default {
   },
   methods: {
     onChange(value) {
-      this.$emit('input', this.$sanitize(value, OPTIONS_SANITIZE_TEXT_EDITOR));
+      this.$emit('input', value);
     },
   },
 };

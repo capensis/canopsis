@@ -38,7 +38,7 @@ export default {
   methods: {
     async submit() {
       if (this.config.action) {
-        await this.config.action(this.text);
+        await this.config.action(this.sanitizedValue(this.text));
       }
 
       this.hideModal();
