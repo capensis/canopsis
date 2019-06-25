@@ -932,3 +932,15 @@ export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
+
+export const OPTIONS_SANITIZE_TEXT_EDITOR = {
+  allowedTags: ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+    'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+    'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'span', 'font', 'u'],
+  allowedAttributes: {
+    '*': ['style'],
+    a: ['href', 'name', 'target'],
+    img: ['src', 'alt'],
+    font: ['color', 'size', 'face'],
+  },
+};
