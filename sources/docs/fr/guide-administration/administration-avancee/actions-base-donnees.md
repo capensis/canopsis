@@ -9,7 +9,6 @@ Cette section va lister différentes commandes pour purger des collections de la
 !!! attention
     Cette manipulation à un impact métier important et ne doit être réalisée que par une personne compétente. **Avant toute purge, il est vivement conseillé de faire une [sauvegarde de la base Mongo](#Sauvegarde)** en utilisant `mongorestore`.
 
-
 Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.count(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
 
 Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimez, vous pouvez `db.<nom de la collection>.remove(<requête>)`. Au moment de la purge, un message va indiquer le nombre d'éléments supprimés.
@@ -24,43 +23,21 @@ WriteResult({ "nRemoved" : 17 })
 !!! attention
     La requête vide `{}` va matcher tous les documents de la collection. Par conséquent, **`db.<nom de la collection>.remove({})` va vider complètement la collection**. Pensez donc à ne jamais avoir `{}` comme paramètre, sauf si vous voulez vider complètement la collection.
 
+Le tableau suivant montre plusieurs examples de requêtes sur les collections d'objets Canopsis, avec la collection Mongo en _italique_ et le filtre en **gras**. Pour rappel, les entités sont stockées dans la collection `default_entities` tandis que les alarmes sont stockées dans `periodical_alarm`.
 
-Les sous-sections suivantes vont montrer plusieurs examples de requêtes sur les collections d'objets Canopsis. Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX.
+Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX. Le timestamp correspondant au temps courant est `Math.floor(Date.now() / 1000)`.
 
-#### Alarmes
 
-Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des alarmes, `periodical_alarm`.
-
-| Type d'alarme                                                             | Requête                                                                                 |
-|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| Alarmes résolues                                                          | `db.periodical_alarm.find(`**`{"v.resolved":{$ne:null}}`**`)`                           |
-| Alarmes non résolues                                                      | `db.periodical_alarm.find(`**`{"v.resolved":null}`**`)`                                 |
-| Alarmes associées à l'entité `XXX/ZZZ`                                    | `db.periodical_alarm.find(`**`{"v.component" : "ZZZ", "v.resource" : "XXX"}`**`)`       |
-| Alarmes non mises à jour depuis le 1er janvier 2019 00:00:00 GMT          | `db.periodical_alarm.find(`**`{"v.last_update_date":{$lte:1546300800}}`**`)`            |
-
-#### Entités
-
-Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des entités, `default_entities`.
-
-| Type d'entité                                                             | Requête                                                                                 |
-|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| Expression régulière sur l'attribut `client` dans l'entité                | `db.default_entities.find(`**`{"infos.client.value":{$regex:'.*SSBU.*',$options:'i'}}`**`)`|
-
-#### Pbehavior
-
-Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des pbehaviors, `default_pbehavior`.
-
-| Type de pbehavior                                                         | Requête                                                                                 |
-|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| Pbehaviors créés par `emile-zola`                                         | `db.default_pbehavior.find(`**`{"author":"emile-zola"}`**`)`                            |
-
-#### Vues
-
-Voici une liste non exhaustive des requêtes portant sur différentes propriétés de la collection des vues, `default_pbehavior`.
-
-| Type de vue                                                               | Requête                                                                                 |
-|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| Vues désactivées                                                          | `db.views.find(`**`{"enabled":false}`**`)`                                              |
+| Type d'objets                                                             | Requête Mongo                                                                                 |
+|:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------|
+| Action de type `snooze`                                                   | `db.`_`default_action`_`.find(`**`{"type":"snooze"}`**`)`                                     |
+| Alarmes résolues                                                          | `db.`_`periodical_alarm`_`.find(`**`{"v.resolved":{$ne:null}}`**`)`                           |
+| Alarmes non résolues                                                      | `db.`_`periodical_alarm`_`.find(`**`{"v.resolved":null}`**`)`                                 |
+| Alarmes associées à l'entité `XXX/ZZZ`                                    | `db.`_`periodical_alarm`_`.find(`**`{"v.component" : "ZZZ", "v.resource" : "XXX"}`**`)`       |
+| Alarmes non mises à jour depuis le 1er janvier 2019 00:00:00 GMT          | `db.`_`periodical_alarm`_`.find(`**`{"v.last_update_date":{$lte:1546300800}}`**`)`            |
+| Expression régulière sur l'attribut `client` dans l'entité                | `db.`_`default_entities`_`.find(`**`{"infos.client.value":{$regex:'.*SSBU.*',$options:'i'}}`**`)`|
+| Pbehaviors créés par `emile-zola`                                         | `db.`_`default_pbehavior`_`.find(`**`{"author":"emile-zola"}`**`)`                            |
+| Vues désactivées                                                          | `db.`_`views`_`.find(`**`{"enabled":false}`**`)`                                              |
 
 ### Sauvegarde
 
