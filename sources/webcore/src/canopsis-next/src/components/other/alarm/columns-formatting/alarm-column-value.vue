@@ -21,6 +21,7 @@
 <script>
 import { get } from 'lodash';
 
+import { OPTIONS_SANITIZE_TEXT_EDITOR } from '@/constants';
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
@@ -77,17 +78,7 @@ export default {
 
     sanitizedValue() {
       try {
-        return this.$sanitize(this.value, {
-          allowedTags: ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-            'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
-            'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'span', 'font', 'u'],
-          allowedAttributes: {
-            '*': ['style'],
-            a: ['href', 'name', 'target'],
-            img: ['src', 'alt'],
-            font: ['color', 'size', 'face'],
-          },
-        });
+        return this.$sanitize(this.value, OPTIONS_SANITIZE_TEXT_EDITOR);
       } catch (err) {
         console.warn(err);
 
