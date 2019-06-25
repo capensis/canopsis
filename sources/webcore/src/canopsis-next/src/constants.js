@@ -1,3 +1,5 @@
+import featuresService from '@/services/features';
+
 export const CRUD_ACTIONS = {
   create: 'create',
   read: 'read',
@@ -389,7 +391,7 @@ export const STATS_TYPES = {
   },
   mtbf: {
     value: 'mtbf',
-    options: [],
+    options: [STATS_OPTIONS.recursive],
   },
   currentState: {
     value: 'current_state',
@@ -625,6 +627,8 @@ export const USERS_RIGHTS = {
         userFilter: 'listalarm_userFilter',
 
         links: 'listalarm_links',
+
+        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
       },
     },
     context: {
@@ -683,6 +687,9 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
 
+
+    ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
+
     links: 'links',
 
     listFilters: 'listFilters',
@@ -737,6 +744,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+
+    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {

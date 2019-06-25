@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash';
+
 import { setIn, unsetIn } from '@/helpers/immutable';
 
 import baseFormMixin, { modelPropKeyComputed } from './base';
@@ -27,12 +29,26 @@ export default {
      * @param {*} value
      */
     updateAndMoveField(fieldName, newFieldName, value) {
-      if (fieldName === newFieldName) {
+      if (isEqual(fieldName, newFieldName)) {
         this.updateField(fieldName, value);
       } else {
         const result = unsetIn(this[this[modelPropKeyComputed]], fieldName);
 
         this.updateModel(setIn(result, newFieldName, value));
+      }
+    },
+    /**
+     * Emit event to parent with new object
+     * Rename a field in the object
+     *
+     * @param {string|Array} fieldName
+     * @param {string|Array} newFieldName
+     */
+    moveField(fieldName, newFieldName) {
+      if (!isEqual(fieldName, newFieldName)) {
+        const result = unsetIn(this[this[modelPropKeyComputed]], fieldName);
+
+        this.updateModel(setIn(result, newFieldName, value => value));
       }
     },
 
