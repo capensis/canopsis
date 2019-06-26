@@ -252,10 +252,11 @@ class ContextGraphImport(ContextGraph):
     A_DELETE = "delete"
     A_CREATE = "create"
     A_UPDATE = "update"
+    A_UPSERT = "upsert"
     A_DISABLE = "disable"
     A_ENABLE = "enable"
 
-    __A_PATTERN = "^delete$|^create$|^update$|^disable$|^enable$"
+    __A_PATTERN = "^delete$|^create$|^update$|^upsert$|^disable$|^enable$"
     __T_PATTERN = "^resource$|^component$|^connector$|^watcher$"
     __CI_REQUIRED = [K_ID,
                      K_ACTION,
@@ -511,6 +512,38 @@ class ContextGraphImport(ContextGraph):
             entity[key] = ci[key]
 
         self.update[ci[self.K_ID]] = entity
+
+
+    def __a_upsert_entity(self, ci):
+        """Upsert the entity with the information stored into the ci and store
+        the result into self.update.
+
+        If the entity to be updated is not initially store in the context,
+        entity will be created.
+
+        :param ci: the ci (see the JSON specification).
+        """
+
+        if ci[self.K_ID] not in self.entities_to_update:
+            desc = "The ci of id {0} does not match any existing"\
+                   " entity. Creating it".format(ci[self.K_ID])
+            self.__a_create_entity(ci)
+        else:
+            entity = self.entities_to_update[ci[self.K_ID]]
+
+            for key in [self.K_ACTION, self.K_PROPERTIES]:
+                try:
+                    del ci[key]
+                except KeyError:
+                    msg = "No key {0} in ci of id {1}."
+                    self.logger.debug(msg.format(key, ci[self.K_ID]))
+
+            for key in ci:
+                entity[key] = ci[key]
+
+            self.update[ci[self.K_ID]] = entity
+
+
 
     def __a_create_entity(self, ci):
         """Create an entity with a ci and store it into self.update
@@ -769,6 +802,8 @@ class ContextGraphImport(ContextGraph):
                 self.__a_create_entity(ci)
             elif ci[self.K_ACTION] == self.A_UPDATE:
                 self.__a_update_entity(ci)
+            elif ci[self.K_ACTION] == self.A_UPSERT:
+                self.__a_upsert_entity(ci)
             elif ci[self.K_ACTION] == self.A_DISABLE:
                 self.__a_disable_entity(ci)
             elif ci[self.K_ACTION] == self.A_ENABLE:
