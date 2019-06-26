@@ -149,7 +149,7 @@ class Amqp(Thread):
                 while self.RUN:
                     try:
                         if not self.paused:
-                            self.conn.drain_events(timeout=10)
+                            self.conn.drain_events(timeout=0.5)
                         else:
                             sleep(0.5)
 
