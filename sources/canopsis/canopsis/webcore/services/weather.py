@@ -178,7 +178,7 @@ class __TileData:
             if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
                 watched_ent_paused += 1
 
-        if len(watcher[ResultKey.PBEHAVIORS.value]) > 0 and \
+        if len(watcher[ResultKey.PBEHAVIORS.value]) > 0 or \
            len(watcher[ResultKey.ENT.value]) == watched_ent_paused:
             return TILE_COLOR_PAUSE
 
