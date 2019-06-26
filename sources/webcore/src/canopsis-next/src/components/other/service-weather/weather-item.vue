@@ -154,11 +154,13 @@ export default {
     },
   },
   methods: {
-    showAdditionalInfoModal() {
-      if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
-        this.showAlarmListModal();
-      } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
-        this.showMainInfoModal();
+    showAdditionalInfoModal(e) {
+      if (e.target.tagName !== 'A' || !e.target.href) {
+        if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
+          this.showAlarmListModal();
+        } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
+          this.showMainInfoModal();
+        }
       }
     },
 
