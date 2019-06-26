@@ -9,7 +9,8 @@
         )
         p {{ stepTitle }}
       .content
-        p {{ step.m }}
+        p(v-if="isHTMLEnabled", v-html="step.m")
+        p(v-else) {{ step.m }}
     template(v-else)
       .header
         p {{ $t('alarmList.timeLine.stateCounter.header') }}
@@ -37,6 +38,10 @@ export default {
     step: {
       type: Object,
       required: true,
+    },
+    isHTMLEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

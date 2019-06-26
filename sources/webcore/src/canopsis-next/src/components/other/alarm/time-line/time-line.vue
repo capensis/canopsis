@@ -7,7 +7,7 @@
         .timeline-item
           .time {{ step.t | date('H:mm:SS', true) }}
           time-line-flag.flag(:step="step")
-          time-line-card(:step="step")
+          time-line-card(:step="step", :isHTMLEnabled="isHTMLEnabled")
 </template>
 
 <script>
@@ -19,25 +19,22 @@ import TimeLineCard from '@/components/other/alarm/time-line/time-line-card.vue'
 
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 
-/**
-   * Component for the timeline of an alarm, on the alarmslist
-   *
-   * @module alarm
-   *
-   * @prop {alarmProp} [alarmProps] - Properties of an alarm
-   */
 export default {
   components: { TimeLineFlag, TimeLineCard },
   mixins: [entitiesAlarmMixin],
   props: {
-    alarmProps: {
+    alarm: {
       type: Object,
       required: true,
+    },
+    isHTMLEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
     groupedSteps() {
-      const alarm = this.getAlarmItem(this.alarmProps._id);
+      const alarm = this.getAlarmItem(this.alarm._id);
 
       if (alarm && alarm.v.steps) {
         const orderedSteps = orderBy(alarm.v.steps, ['t'], 'desc');
@@ -50,7 +47,7 @@ export default {
   },
   mounted() {
     this.fetchAlarmItem({
-      id: this.alarmProps.d,
+      id: this.alarm._id,
       params: {
         sort_key: 't',
         sort_dir: 'DESC',
