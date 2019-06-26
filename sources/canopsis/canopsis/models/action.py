@@ -17,11 +17,12 @@ class Action(object):
     # Keys as seen in db
     _ID = '_id'
     TYPE = 'type'
+    HOOK = 'hook'
     FIELDS = 'fields'
     REGEX = 'regex'
     PARAMETERS = 'parameters'
 
-    def __init__(self, _id, type_, fields, regex, parameters=None,
+    def __init__(self, _id, type_, hook=None, fields=None, regex=None, parameters=None,
                  *args, **kwargs):
         """
         :param str _id: action id
@@ -34,9 +35,12 @@ class Action(object):
             fields = []
         if parameters is None or not isinstance(parameters, dict):
             parameters = {}
+        if not isinstance(hook, dict):
+            hook = None
 
         self._id = _id
         self.type_ = type_
+        self.hook = hook
         self.fields = fields
         self.regex = regex
         self.parameters = parameters
@@ -75,6 +79,7 @@ class Action(object):
         dictionnary = {
             self._ID: self._id,
             self.TYPE: self.type_,
+            self.HOOK: self.hook,
             self.FIELDS: self.fields,
             self.REGEX: self.regex,
             self.PARAMETERS: self.parameters,

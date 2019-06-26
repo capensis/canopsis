@@ -45,10 +45,23 @@ yum update
 !!! attention
     La procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée ([Bug #1431](https://git.canopsis.net/canopsis/canopsis/issues/1431)).
 
-Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour :
+Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour.
+
+Si vous utilisez la configuration « moteurs Python uniquement » et « édition Canopsis Core » (qui sont les réglages par défaut), lancer :
 ```sh
-su - canopsis
-(canopsis) canopsinit
+su - canopsis -c "canopsinit"
+```
+
+**En revanche**, si vous installez une version de Canopsis supérieure ou égale à 3.17.0, et que vous utilisez une configuration « moteurs Go » et « édition Canopsis CAT », lancer :
+```sh
+# Valeurs acceptées : --canopsis-edition core OU cat, --canopsis-stack python OU go.
+# "core" et "python" sont les valeurs par défaut.
+su - canopsis -c "canopsinit --canopsis-edition cat --canopsis-stack go"
+```
+
+S'assurer que toute modification des unités systemd soit bien prise en compte :
+```sh
+systemctl daemon-reload
 ```
 
 Puis, redémarrer l'ensemble des moteurs Canopsis :
@@ -78,3 +91,13 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.9.0](../../notes-de-version/3.9.0.md)
 *  [3.10.0](../../notes-de-version/3.10.0.md)
 *  [3.11.0](../../notes-de-version/3.11.0.md)
+*  [3.12.0](../../notes-de-version/3.12.0.md)
+*  [3.13.0](../../notes-de-version/3.13.0.md), [3.13.1](../../notes-de-version/3.13.1.md), [3.13.2](../../notes-de-version/3.13.2.md)
+*  [3.14.0](../../notes-de-version/3.14.0.md)
+*  [3.15.0](../../notes-de-version/3.15.0.md)
+*  [3.16.0](../../notes-de-version/3.16.0.md)
+*  [3.17.0](../../notes-de-version/3.17.0.md)
+*  [3.18.0](../../notes-de-version/3.18.0.md), [3.18.1](../../notes-de-version/3.18.1.md)
+*  [3.19.0](../../notes-de-version/3.19.0.md)
+*  [3.20.0](../../notes-de-version/3.20.0.md)
+*  [3.21.0](../../notes-de-version/3.21.0.md)

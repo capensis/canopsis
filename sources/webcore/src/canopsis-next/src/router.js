@@ -19,6 +19,7 @@ import AdminParameters from '@/views/admin/parameters.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
+import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 
 Vue.use(Router);
 
@@ -96,19 +97,45 @@ const routes = [
     path: '/exploitation/pbehaviors',
     name: 'exploitation-pbehaviors',
     component: ExploitationPbehaviors,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.pbehavior,
+      },
+    },
   },
   {
     path: '/exploitation/event-filter',
     name: 'exploitation-event-filter',
     component: ExploitationEventFilter,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.eventFilter,
+      },
+    },
   },
   {
     path: '/exploitation/webhooks',
     name: 'exploitation-webhooks',
     component: ExploitationWebhooks,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.webhook,
+      },
+    },
+  },
+  {
+    path: '/exploitation/snmp-rules',
+    name: 'exploitation-snmp-rules',
+    component: ExploitationSnmpRules,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.snmpRule,
+      },
+    },
   },
 ];
 
@@ -180,8 +207,10 @@ router.beforeResolve((to, from, next) => {
   }
 });
 
-router.afterEach(() => {
-  store.dispatch('entities/sweep');
+router.afterEach((to, from) => {
+  if (to.path !== from.path) {
+    store.dispatch('entities/sweep');
+  }
 });
 
 export default router;

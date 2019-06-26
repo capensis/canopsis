@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie';
+import qs from 'qs';
 
 import request from '@/services/request';
-import { API_ROUTES, COOKIE_SESSION_KEY } from '@/config';
+import { API_ROUTES, COOKIE_SESSION_KEY, DEFAULT_LOCALE } from '@/config';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -46,7 +47,10 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        await request.post(API_ROUTES.auth, { ...credentials, json_response: true });
+        await request.post(API_ROUTES.auth, qs.stringify({ ...credentials, json_response: true }), {
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        });
+
         commit(types.LOGIN_COMPLETED);
 
         return dispatch('fetchCurrentUser');
@@ -65,6 +69,12 @@ export default {
         commit(types.FETCH_USER);
 
         const { data: [currentUser] } = await request.get(API_ROUTES.currentUser);
+
+        if (currentUser.ui_language) {
+          dispatch('i18n/setLocale', currentUser.ui_language, { root: true });
+        } else {
+          dispatch('i18n/setLocale', DEFAULT_LOCALE, { root: true });
+        }
 
         return commit(types.FETCH_USER_COMPLETED, currentUser);
       } catch (err) {

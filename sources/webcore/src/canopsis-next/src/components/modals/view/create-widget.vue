@@ -38,14 +38,56 @@ export default {
   data() {
     return {
       widgetsTypes: [
-        { title: this.$t('modals.widgetCreation.types.alarmList.title'), value: WIDGET_TYPES.alarmList, icon: 'view_list' },
-        { title: this.$t('modals.widgetCreation.types.context.title'), value: WIDGET_TYPES.context, icon: 'view_list' },
-        { title: this.$t('modals.widgetCreation.types.weather.title'), value: WIDGET_TYPES.weather, icon: 'view_module' },
-        { title: this.$t('modals.widgetCreation.types.statsHistogram.title'), value: WIDGET_TYPES.statsHistogram, icon: 'bar_chart' },
-        { title: this.$t('modals.widgetCreation.types.statsTable.title'), value: WIDGET_TYPES.statsTable, icon: 'table_chart' },
-        { title: this.$t('modals.widgetCreation.types.statsCalendar.title'), value: WIDGET_TYPES.statsCalendar, icon: 'calendar_today' },
-        { title: this.$t('modals.widgetCreation.types.statsCurves.title'), value: WIDGET_TYPES.statsCurves, icon: 'show_chart' },
-        { title: this.$t('modals.widgetCreation.types.statsNumber.title'), value: WIDGET_TYPES.statsNumber, icon: 'table_chart' },
+        {
+          title: this.$t('modals.widgetCreation.types.alarmList.title'),
+          value: WIDGET_TYPES.alarmList,
+          icon: 'view_list',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.context.title'),
+          value: WIDGET_TYPES.context,
+          icon: 'view_list',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.weather.title'),
+          value: WIDGET_TYPES.weather,
+          icon: 'view_module',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.statsHistogram.title'),
+          value: WIDGET_TYPES.statsHistogram,
+          icon: 'bar_chart',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.statsTable.title'),
+          value: WIDGET_TYPES.statsTable,
+          icon: 'table_chart',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.statsCalendar.title'),
+          value: WIDGET_TYPES.statsCalendar,
+          icon: 'calendar_today',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.statsCurves.title'),
+          value: WIDGET_TYPES.statsCurves,
+          icon: 'show_chart',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.statsNumber.title'),
+          value: WIDGET_TYPES.statsNumber,
+          icon: 'table_chart',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.statsPareto.title'),
+          value: WIDGET_TYPES.statsPareto,
+          icon: 'multiline_chart',
+        },
+        {
+          title: this.$t('modals.widgetCreation.types.text.title'),
+          value: WIDGET_TYPES.text,
+          icon: 'view_headline',
+        },
       ],
     };
   },

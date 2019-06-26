@@ -1,54 +1,83 @@
-# Backup & Restore
+# Sauvegarde et restauration
 
-## Sauvegarde de la base MongoDB courante
+## MongoDB
 
-La commande suivante fait une sauvegarde de la base de données courante, et peut prendre quelques heures (penser à un `tmux` pour reprendre la main plus tard si nécessaire) :
-```
-[Vers un point de montage disposant de suffisamment d'espace pour une sauvegarde de la base]
-# MONGO_DATE=$(date '+%Y%m%d') ; mkdir -p /data/backup-mongo$MONGO_DATE
-# mongodump -u cpsmongo -p canopsis -d canopsis -o /data/backup-mongo$MONGO_DATE/
-```
+### Sauvegarde
 
-```js
-> db.stats()
-{
-        "db" : "canopsis",
-        "collections" : 35,
-        "objects" : 20 827 775,
-        "avgObjSize" : 1903.0303928288067,
-        "dataSize" : 39635888840,
-        "storageSize" : 47567834864,
-        "numExtents" : 153,
-        "indexes" : 125,
-        "indexSize" : 26848643136,
-        "fileSize" : 92230647808,
-        "nsSizeMB" : 16,
-        "dataFileVersion" : {
-                "major" : 4,
-                "minor" : 5
-        },
-        "extentFreeList" : {
-                "num" : 0,
-                "totalSize" : 0
-        },
-        "ok" : 1
-}
+Utilisez la commande `mongodump` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichier externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongodump-operation).
+
+!!! note
+    Le mot de passe par défaut est "canopsis" mais il peut être nécessaire d'adapter la commande selon votre contexte.
+
+```bash
+mongodump --username cpsmongo --password votre_password --db canopsis --out /path/to/backup
 ```
 
-## Restauration de la sauvegarde MongoDB
+### Restauration
 
-Après avoir vérifié que la commande `mongodump` précédente a fonctionné, on peut effacer puis réimporter la base, afin que MongoDB puisse purger l'espace de stockage qui était encore réservé par les données supprimées.
+!!! attention
+    Cette manipulation à un impact métier important et ne doit être réalisée que par une personne compétente. La restauration de la base de donnée ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
 
-Suppression de la base courante :
-```
-# mongo admin -u admin -p admin
-> use canopsis
-[s'assurer de bien avoir une sauvegarde OK avant d'exécuter la commande suivante !]
-> db.dropDatabase()
-> exit
+Avant de procéder à la restauration, arrêtez l'hyperviseur.
+```shell
+/opt/canopsis/bin/canopsis-systemd stop
 ```
 
-Restauration de la sauvegarde. Cette étape peut, à nouveau, prendre quelques heures :
+Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichier externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
+
+!!! note
+    Le mot de passe par défaut est "canopsis" mais il peut être nécessaire d'adapter la commande selon votre contexte.
+
+```shell
+mongorestore --username cpsmongo --password votre_password --db canopsis /path/to/backup
 ```
-# mongorestore -u admin -p admin /data/backup-mongo$MONGO_DATE/
+
+!!! note
+    Lors du dump de la base, la commande créé un sous dossier dans `/path/to/backup` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au `path` dans la commande `mongorestore`.
+
+Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
+```shell
+/opt/canopsis/bin/canopsis-systemd start
+```
+
+## InfluxDB
+
+### Sauvegarde
+
+Utilisez la commande `influxd backup` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichier externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#backup).
+
+```bash
+influxd backup -portable -database canopsis /path/to/backup
+```
+
+### Restauration
+
+!!! attention
+    Cette manipulation à un impact métier important et ne doit être réalisée que par une personne compétente. La restauration de la base de donnée ne doit être effectuée que si celle-ci est endommagée, pour de corriger l'incident.
+
+Avant de procéder à la restauration, arrêtez l'hyperviseur.
+```shell
+/opt/canopsis/bin/canopsis-systemd stop
+```
+
+Utilisez la commande `influxd restore`. De préférence, récupérez la sauvegarde depuis un système de fichier externe à la machine (NAS, SAN).Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#restore).
+
+```shell
+influxd restore -portable /path/to/backup
+```
+
+!!! note
+    Il est possible que la commande retourne un message d'erreur :
+
+    ```
+    error updating meta: DB metadata not changed. database may already exist
+    restore: DB metadata not changed. database may already exist
+    ```
+
+    Il s'agit uniquement des metadatas qui sont déjà présentes dans Influx et n'ont pas changé. Le contenu de la table canopsis a bien été restauré.
+
+Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
+
+```shell
+/opt/canopsis/bin/canopsis-systemd start
 ```

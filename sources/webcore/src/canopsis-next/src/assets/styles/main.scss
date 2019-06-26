@@ -1,3 +1,15 @@
+.v-toolbar--fixed {
+  z-index: 3;
+}
+
+.v-overlay {
+  z-index: 8;
+}
+
+.v-navigation-drawer--is-mobile, .v-navigation-drawer--temporary {
+  z-index: 9;
+}
+
 .v-list {
   .v-input {
     &, &__slot {
@@ -22,7 +34,7 @@
   position: fixed;
   bottom: 0;
   right: 0;
-  z-index: 2;
+  z-index: 5;
 }
 
 .wf-loading, .wf-inactive {
@@ -31,4 +43,13 @@
     max-height: 24px !important;
     overflow: hidden !important;
   }
+}
+
+.v-window__container--is-active {
+  height: 100% !important;
+}
+
+.validation-header.error--text {
+  animation: shake .6s cubic-bezier(.25,.8,.5,1);
+  transition: .3s cubic-bezier(.25,.8,.5,1);
 }

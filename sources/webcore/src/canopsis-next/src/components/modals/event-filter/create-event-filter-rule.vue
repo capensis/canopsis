@@ -5,7 +5,17 @@
         span.headline {{ config.title }}
     v-card-text
       v-form
+        v-layout(align-center)
+          v-text-field(
+          v-model="form._id",
+          :label="$t('eventFilter.id')",
+          :disabled="isEditing && !isDuplicating"
+          )
+            v-tooltip(v-if="!isEditing || isDuplicating", left, slot="append")
+              v-icon(slot="activator") help
+              span {{ $t('eventFilter.idHelp') }}
         v-select(:items="ruleTypes", v-model="form.type", :label="$t('common.type')")
+        v-textarea(v-model="form.description", :label="$t('common.description')")
         v-text-field(v-model.number="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
         v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
@@ -48,7 +58,9 @@ export default {
     return {
       ruleTypes: Object.values(EVENT_FILTER_RULE_TYPES),
       form: {
+        _id: '',
         type: EVENT_FILTER_RULE_TYPES.drop,
+        description: '',
         pattern: {},
         priority: 0,
         enabled: true,
@@ -61,13 +73,23 @@ export default {
       },
     };
   },
+  computed: {
+    isEditing() {
+      return !!this.config.rule;
+    },
+    isDuplicating() {
+      return this.config.isDuplicating;
+    },
+  },
   mounted() {
     if (this.config.rule) {
       const {
+        _id,
         type,
+        description,
         pattern,
         priority,
-        enabled,
+        enabled = true,
         actions,
         external_data: externalData,
         on_success: onSuccess,
@@ -76,10 +98,15 @@ export default {
 
       this.form = {
         type,
+        description,
         pattern,
         priority,
         enabled,
       };
+
+      if (!this.isDuplicating) {
+        this.form._id = _id;
+      }
 
       this.enrichmentOptions = {
         actions,

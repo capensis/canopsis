@@ -28,6 +28,10 @@
       type="info",
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-tooltip(top)
+        v-btn(@click="refresh", color="secondary", slot="activator")
+          v-icon refresh
+        span {{ $t('modals.watcher.refreshEntities') }}
       v-btn.primary(@click="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
@@ -84,6 +88,10 @@ export default {
   methods: {
     addEventToQueue(event) {
       this.eventsQueue.push(event);
+    },
+
+    refresh() {
+      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
     },
 
     async submit() {

@@ -8,11 +8,13 @@
     offset-y
     )
       div(slot="activator")
-        div(v-bind="component.bind", v-on="component.on")
+        div(v-if="column.isHtml", v-html="sanitizedValue")
+        div(v-else, v-bind="component.bind", v-on="component.on")
       v-card(dark)
         v-card-title.primary.pa-2.white--text
           h4 {{ $t('alarmList.infoPopup') }}
         v-card-text.pa-2(v-html="popupTextContent")
+    div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
@@ -22,9 +24,12 @@ import { get } from 'lodash';
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
-import State from '@/components/other/alarm/columns-formatting/alarm-column-value-state.vue';
-import ExtraDetails from '@/components/other/alarm/columns-formatting/alarm-column-value-extra-details.vue';
 import Ellipsis from '@/components/tables/ellipsis.vue';
+
+import AlarmColumnValueState from './alarm-column-value-state.vue';
+import AlarmColumnValueLinks from './alarm-column-value-links.vue';
+import AlarmColumnValueLink from './alarm-column-value-link.vue';
+import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 
 /**
  * Component to format alarms list columns
@@ -37,9 +42,11 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
  */
 export default {
   components: {
-    State,
-    ExtraDetails,
     Ellipsis,
+    AlarmColumnValueState,
+    AlarmColumnValueLinks,
+    AlarmColumnValueLink,
+    AlarmColumnValueExtraDetails,
   },
   mixins: [
     popupMixin,
@@ -64,17 +71,44 @@ export default {
     };
   },
   computed: {
+    value() {
+      return this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '');
+    },
+
+    sanitizedValue() {
+      try {
+        return this.$sanitize(this.value, {
+          allowedTags: ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+            'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+            'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'span', 'font', 'u'],
+          allowedAttributes: {
+            '*': ['style'],
+            a: ['href', 'name', 'target'],
+            img: ['src', 'alt'],
+            font: ['color', 'size', 'face'],
+          },
+        });
+      } catch (err) {
+        console.warn(err);
+
+        return '';
+      }
+    },
+
     popupData() {
       const popups = get(this.widget.parameters, 'infoPopups', []);
 
       return popups.find(popup => popup.column === this.column.value);
     },
+
     popupTextContent() {
       if (this.popupData) {
         return compile(this.popupData.template, { alarm: this.alarm, entity: this.alarm.entity || {} });
       }
+
       return '';
     },
+
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
         'v.status.val': value => this.$t(`tables.alarmStatus.${value}`),
@@ -84,22 +118,31 @@ export default {
         'v.state.t': value => this.$options.filters.date(value, 'long'),
         'v.status.t': value => this.$options.filters.date(value, 'long'),
         'v.resolved': value => this.$options.filters.date(value, 'long'),
+        'v.duration': value => this.$options.filters.duration({ value }),
+        'v.current_state_duration': value => this.$options.filters.duration({ value }),
         t: value => this.$options.filters.date(value, 'long'),
       };
 
       return PROPERTIES_FILTERS_MAP[this.column.value];
     },
+
     component() {
       const PROPERTIES_COMPONENTS_MAP = {
         'v.state.val': {
           bind: {
-            is: 'state',
+            is: 'alarm-column-value-state',
             alarm: this.alarm,
+          },
+        },
+        links: {
+          bind: {
+            is: 'alarm-column-value-links',
+            links: this.alarm.links,
           },
         },
         extra_details: {
           bind: {
-            is: 'extra-details',
+            is: 'alarm-column-value-extra-details',
             alarm: this.alarm,
           },
         },
@@ -109,10 +152,25 @@ export default {
         return PROPERTIES_COMPONENTS_MAP[this.column.value];
       }
 
+      if (this.column.value.startsWith('links.')) {
+        const category = this.column.value.slice(6);
+        const links = {
+          [category]: this.$options.filters.get(this.alarm, this.column.value, null, []),
+        };
+
+        return {
+          bind: {
+            links,
+
+            is: 'alarm-column-value-links',
+          },
+        };
+      }
+
       return {
         bind: {
           is: 'ellipsis',
-          text: this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, ''),
+          text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
         },
         on: {
           textClicked: this.showInfoPopup,

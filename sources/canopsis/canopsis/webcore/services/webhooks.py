@@ -106,7 +106,8 @@ def exports(ws):
             webhook['_id'] = str(uuid.uuid4())
 
         try:
-            return webhook_manager.create_webhook(webhook)
+            _id = webhook_manager.create_webhook(webhook)
+            return {'_id': _id}
         except CollectionError as ce:
             ws.logger.error('Webhook creation error : {}'.format(ce))
             return gen_json_error(

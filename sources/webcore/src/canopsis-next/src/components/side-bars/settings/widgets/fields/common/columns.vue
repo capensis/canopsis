@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.columnNames') }}
+    v-list-tile(slot="activator")
+      div(:class="validationHeaderClass") {{ $t('settings.columnNames') }}
     v-container
       v-card.my-2(v-for="(column, index) in columns", :key="`settings-column-${index}`")
         v-layout.pt-2(justify-space-between)
@@ -19,32 +20,40 @@
         v-layout(justify-center wrap)
           v-flex(xs11)
             v-text-field(
+            v-validate="'required'",
             :placeholder="$t('common.label')",
             :error-messages="errors.collect(`label[${index}]`)",
+            :name="`label[${index}]`",
+            :value="column.label",
             @input="updateFieldInArrayItem(index, 'label', $event)"
-            v-validate="'required'",
-            :data-vv-name="`label[${index}]`",
-            :value="column.label"
             )
           v-flex(xs11)
             v-text-field(
+            v-validate="'required'",
             :placeholder="$t('common.value')",
             :error-messages="errors.collect(`value[${index}]`)",
-            @input="updateFieldInArrayItem(index, 'value', $event)"
-            v-validate="'required'",
-            :data-vv-name="`value[${index}]`",
             :value="column.value"
+            :name="`value[${index}]`",
+            @input="updateFieldInArrayItem(index, 'value', $event)"
+            )
+          v-flex(v-if="withHtml", xs11)
+            v-switch(
+            :label="$t('settings.columns.isHtml')",
+            :input-value="column.isHtml",
+            @change="updateFieldInArrayItem(index, 'isHtml', $event)"
             )
       v-btn(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
+import formArrayMixin from '@/mixins/form/array';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
   mixins: [
-    formMixin,
+    formArrayMixin,
+    formValidationHeaderMixin,
   ],
   model: {
     prop: 'columns',
@@ -55,10 +64,20 @@ export default {
       type: [Array, Object],
       default: () => [],
     },
+    withHtml: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     add() {
-      this.addItemIntoArray({ label: '', value: '' });
+      const column = { label: '', value: '' };
+
+      if (this.withHtml) {
+        column.isHtml = false;
+      }
+
+      this.addItemIntoArray(column);
     },
     up(index) {
       if (index > 0) {

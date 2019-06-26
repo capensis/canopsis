@@ -34,7 +34,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
       "connector_name": "connector1"
   },
   "expected_interval": "10s"
-}' 'http://<Canopsis_URL>/api/v2/heartbeat'
+}' 'http://<Canopsis_URL>/api/v2/heartbeat/'
 ```
 
 #### Réponse en cas de réussite
@@ -113,7 +113,7 @@ Supprime un HeartBeat en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le heartbeat avec l'`id` `cd92421e77f48435d38b3682beb62f07` :
 
 ```sh
-curl -X DEL -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
+curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
 ```
 
 #### Réponse en cas de réussite

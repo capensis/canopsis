@@ -3,7 +3,7 @@ import { omit, isUndefined, isEmpty } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
 
-import { prepareMainFilterToQueryFilter } from './filter';
+import prepareMainFilterToQueryFilter from './filter';
 
 /**
  * WIDGET CONVERTERS
@@ -37,6 +37,7 @@ export function convertAlarmWidgetToQuery(widget) {
     widgetColumns,
     itemsPerPage,
     mainFilter,
+    mainFilterCondition,
   } = widget.parameters;
 
   const query = {
@@ -47,7 +48,7 @@ export function convertAlarmWidgetToQuery(widget) {
   };
 
   if (!isEmpty(mainFilter)) {
-    query.filter = mainFilter.filter;
+    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   if (query.resolved) {
@@ -82,6 +83,12 @@ export function convertContextWidgetToQuery(widget) {
   return { ...query, ...convertSortToQuery(widget) };
 }
 
+/**
+ * This function converts widget with type 'ServiceWeather' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
 export function convertWeatherWidgetToQuery(widget) {
   const query = {
     filter: widget.parameters.mfilter.filter,
@@ -90,22 +97,26 @@ export function convertWeatherWidgetToQuery(widget) {
   return query;
 }
 
-export function convertStatsHistogramToQuery(widget) {
-  return widget.parameters.groups.map(group =>
-    ({
-      ...omit(widget.parameters, ['groups', 'statsColors']),
-      mfilter: group.filter || {},
-    }));
-}
-
 /**
- * This function converts widget with type 'StatsTable' to query Object
+ * This function converts widget with type stats field to query Object
  *
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertStatsTableWidgetToQuery(widget) {
-  return { ...widget.parameters };
+export function convertWidgetStatsParameterToQuery(widget) {
+  const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
+    acc[stat] = {
+      ...omit(widget.parameters.stats[stat], ['position']),
+      stat: widget.parameters.stats[stat].stat.value,
+    };
+    return acc;
+  }, {});
+
+  return {
+    ...widget.parameters,
+
+    stats: statsList,
+  };
 }
 
 /**
@@ -146,8 +157,53 @@ export function convertStatsCalendarWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsNumberWidgetToQuery(widget) {
-  const query = omit(widget.parameters, ['statColors', 'criticityLevels', 'yesNoMode', 'statName']);
+  const { stat } = widget.parameters;
+  const query = {
+    ...omit(widget.parameters, [
+      'statColors',
+      'criticityLevels',
+      'yesNoMode',
+      'statName',
+    ]),
+
+    trend: true,
+  };
+
+  if (stat) {
+    query.stats = {
+      [stat.title]: {
+        parameters: stat.parameters,
+        stat: stat.stat.value,
+        trend: true,
+      },
+    };
+  }
+
   query.trend = true;
+
+  return query;
+}
+
+/**
+ * This function converts widget with type 'Stats Pareto diagram' to query Object
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertStatsParetoWidgetToQuery(widget) {
+  const { stat } = widget.parameters;
+  const query = { ...widget.parameters };
+
+  if (stat) {
+    query.stats = {
+      [stat.title]: {
+        ...omit(stat, ['title']),
+        stat: stat.stat.value,
+        aggregate: ['sum'],
+      },
+    };
+  }
+
   return query;
 }
 
@@ -247,14 +303,17 @@ export function convertWidgetToQuery(widget) {
       return convertContextWidgetToQuery(widget);
     case WIDGET_TYPES.weather:
       return convertWeatherWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCurves:
     case WIDGET_TYPES.statsHistogram:
-      return convertStatsHistogramToQuery(widget);
     case WIDGET_TYPES.statsTable:
-      return convertStatsTableWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
+    case WIDGET_TYPES.text:
+      return convertWidgetStatsParameterToQuery(widget);
     case WIDGET_TYPES.statsNumber:
       return convertStatsNumberWidgetToQuery(widget);
+    case WIDGET_TYPES.statsPareto:
+      return convertStatsParetoWidgetToQuery(widget);
+    case WIDGET_TYPES.statsCalendar:
+      return convertStatsCalendarWidgetToQuery(widget);
     default:
       return {};
   }

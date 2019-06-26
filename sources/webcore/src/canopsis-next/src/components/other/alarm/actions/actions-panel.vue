@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { pickBy } from 'lodash';
+import { pickBy, compact } from 'lodash';
 
 import {
   MODALS,
@@ -20,6 +20,8 @@ import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
 
 import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
 
+import featuresService from '@/services/features';
+
 /**
  * Component to regroup actions (actions-panel-item) for each alarm on the alarms list
  *
@@ -31,7 +33,13 @@ import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-
  */
 export default {
   components: { SharedActionsPanel },
-  mixins: [authMixin, entitiesAlarmMixin, widgetActionsPanelAlarmMixin],
+  mixins: [
+    authMixin,
+    entitiesAlarmMixin,
+    widgetActionsPanelAlarmMixin,
+
+    ...featuresService.get('components.alarmListActionPanel.mixins', []),
+  ],
   props: {
     item: {
       type: Object,
@@ -55,7 +63,7 @@ export default {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
-          method: this.showActionModal(MODALS.createAckEvent),
+          method: this.showAckModal,
         },
         fastAck: {
           type: alarmsListActionsTypes.fastAck,
@@ -73,7 +81,7 @@ export default {
           type: alarmsListActionsTypes.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
-          method: this.showActionModal(MODALS.createPbehavior),
+          method: this.showAddPbehaviorModal,
         },
         snooze: {
           type: alarmsListActionsTypes.snooze,
@@ -85,7 +93,7 @@ export default {
           type: alarmsListActionsTypes.pbehaviorList,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
           title: this.$t('alarmList.actions.titles.pbehaviorList'),
-          method: this.showActionModal(MODALS.pbehaviorList),
+          method: this.showPbehaviorsListModal,
         },
         declareTicket: {
           type: alarmsListActionsTypes.declareTicket,
@@ -115,13 +123,13 @@ export default {
           type: alarmsListActionsTypes.moreInfos,
           icon: 'more_horiz',
           title: this.$t('alarmList.actions.titles.moreInfos'),
-          method: this.showMoreInfosModal(),
+          method: this.showMoreInfosModal,
         },
         variablesHelp: {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
           title: this.$t('alarmList.actions.titles.variablesHelp'),
-          method: this.showVariablesHelperModal(),
+          method: this.showVariablesHelperModal,
         },
       },
     };
@@ -140,50 +148,76 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
-      let inlineActions = [filteredActionsMap.pbehaviorList];
-      let dropDownActions = [];
+      let actions = [];
+
+      if (this.isEditingMode) {
+        actions.push(filteredActionsMap.variablesHelp);
+      }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
-          inlineActions = [
+          if (this.widget.parameters.isMultiAckEnabled) {
+            actions.push(filteredActionsMap.ack);
+          }
+
+          actions.push(
             filteredActionsMap.declareTicket,
             filteredActionsMap.associateTicket,
             filteredActionsMap.cancel,
-          ];
-
-          dropDownActions = [
             filteredActionsMap.ackRemove,
             filteredActionsMap.snooze,
             filteredActionsMap.changeState,
             filteredActionsMap.pbehaviorAdd,
             filteredActionsMap.pbehaviorList,
             filteredActionsMap.moreInfos,
-          ];
+          );
         } else {
-          inlineActions = [
+          actions.push(
             filteredActionsMap.ack,
             filteredActionsMap.fastAck,
-          ];
-
-          dropDownActions = [
             filteredActionsMap.moreInfos,
-          ];
-        }
-
-        if (this.isEditingMode) {
-          inlineActions.push(filteredActionsMap.variablesHelp);
+          );
         }
       }
 
-      return {
+      actions = compact(actions);
+
+      const inlineActions = actions.slice(0, 3);
+      const dropDownActions = actions.slice(3);
+
+      const result = {
         inline: inlineActions.filter(action => !!action),
         dropDown: dropDownActions.filter(action => !!action),
       };
+
+      if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
+        return featuresService.call('components.alarmListActionPanel.computed.actions', this, result);
+      }
+
+      return result;
     },
   },
   methods: {
     createAckEvent() {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
+    },
+
+    showAddPbehaviorModal() {
+      this.showModal({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior: {
+            filter: {
+              _id: { $in: [this.item.d] },
+            },
+          },
+          action: data => this.createPbehavior({
+            data,
+            parents: [this.item],
+            parentsType: ENTITIES_TYPES.alarm,
+          }),
+        },
+      });
     },
   },
 };

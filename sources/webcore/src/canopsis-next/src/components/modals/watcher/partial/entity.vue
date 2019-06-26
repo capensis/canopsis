@@ -16,27 +16,36 @@
                 v-icon(small) {{ icon.icon }}
         v-card(color="white black--text")
           v-card-text
-            v-layout(v-if="availableActions.length", row, align-center)
-              div {{ $t('common.actionsLabel') }}:
-              div(v-for="action in availableActions", :key="action.eventType")
-                v-tooltip(top)
-                  v-btn(
-                  slot="activator",
-                  @click.stop="action.action",
-                  :disabled="!isActionBtnEnable(action.eventType)",
-                  depressed,
-                  small,
-                  light,
-                  )
-                    v-icon {{ action.icon }}
-                  span {{ $t(`common.actions.${action.eventType}`) }}
-            div(v-html="compiledTemplate")
+            v-layout(justify-space-between)
+              v-flex(xs11)
+                v-layout(justify-space-between)
+                  v-layout(v-if="availableActions.length", row, align-center)
+                    div {{ $t('common.actionsLabel') }}:
+                    div(v-for="action in availableActions", :key="action.eventType")
+                      v-tooltip(top)
+                        v-btn(
+                        slot="activator",
+                        @click.stop="action.action",
+                        :disabled="!isActionBtnEnable(action.eventType)",
+                        depressed,
+                        small,
+                        light,
+                        )
+                          v-icon {{ action.icon }}
+                        span {{ $t(`common.actions.${action.eventType}`) }}
+              v-tooltip(v-if="hasActivePbehavior && hasAccessToManagePbehaviors", top)
+                v-btn(small, @click="showPbehaviorsListModal", slot="activator")
+                  v-icon(small) edit
+                span {{ $t('modals.watcher.editPbehaviors') }}
+            entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
 import { find, isNull, pickBy } from 'lodash';
 
 import {
+  CRUD_ACTIONS,
+  MODALS,
   WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
   WEATHER_ICONS,
@@ -45,20 +54,34 @@ import {
   ENTITIES_STATES,
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
+  USERS_RIGHTS,
+  ENTITIES_STATUSES,
 } from '@/constants';
-import { compile } from '@/helpers/handlebars';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
+
+import EntityTemplate from './entity-template.vue';
 
 export default {
+  components: {
+    EntityTemplate,
+  },
   mixins: [
     authMixin,
     modalMixin,
     widgetActionPanelWatcherEntityMixin,
+    entitiesPbehaviorCommentMixin,
+    entitiesWatcherEntityMixin,
   ],
   props: {
+    watcherId: {
+      type: String,
+      required: true,
+    },
     entity: {
       type: Object,
       required: true,
@@ -70,11 +93,16 @@ export default {
     template: {
       type: String,
     },
+    isWatcherOnPbehavior: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
     return {
+      menu: false,
       state: this.entity.state.val,
       actionsClicked: [],
       actionsMap: {
@@ -84,11 +112,11 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           action: this.prepareAckAction,
         },
-        declareTicket: {
-          type: weatherActionsTypes.entityDeclareTicket,
-          eventType: EVENT_ENTITY_TYPES.declareTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
-          action: this.prepareDeclareTicketAction,
+        assocTicket: {
+          type: weatherActionsTypes.entityAssocTicket,
+          eventType: EVENT_ENTITY_TYPES.assocTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          action: this.prepareAssocTicketAction,
         },
         validate: {
           type: weatherActionsTypes.entityValidate,
@@ -114,12 +142,18 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
           action: this.preparePlayAction,
         },
+        cancel: {
+          type: weatherActionsTypes.entityCancel,
+          eventType: EVENT_ENTITY_TYPES.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          action: this.prepareCancelAction,
+        },
       },
     };
   },
   computed: {
     color() {
-      if (this.hasActivePbehavior) {
+      if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
         return WATCHER_PBEHAVIOR_COLOR;
       }
 
@@ -168,6 +202,13 @@ export default {
         });
       }
 
+      if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
+        extraIcons.push({
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          color: 'grey darken-1',
+        });
+      }
+
       return extraIcons;
     },
 
@@ -177,10 +218,6 @@ export default {
       }
 
       return this.entity.pbehavior.filter(value => value.isActive).length;
-    },
-
-    compiledTemplate() {
-      return compile(this.template, { entity: this.entity });
     },
 
     isPaused() {
@@ -193,14 +230,16 @@ export default {
 
     availableActions() {
       const { filteredActionsMap } = this;
-      const actions = [filteredActionsMap.declareTicket];
-
-      if (this.entity.state.val === ENTITIES_STATES.major) {
-        actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
-      }
+      const actions = [];
 
       if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);
+      }
+
+      actions.push(filteredActionsMap.assocTicket);
+
+      if (this.entity.state.val === ENTITIES_STATES.major) {
+        actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
       }
 
       if (this.isPaused) {
@@ -209,11 +248,39 @@ export default {
         actions.push(filteredActionsMap.pause);
       }
 
+      if (
+        this.entity.alarm_display_name &&
+        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
+      ) {
+        actions.push(filteredActionsMap.cancel);
+      }
+
       return actions.filter(action => !!action);
     },
 
     isActionBtnEnable() {
       return action => !this.actionsClicked.includes(action);
+    },
+
+    pausePbehaviors() {
+      return this.entity.pbehavior.filter(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
+    },
+
+    hasAccessToManagePbehaviors() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.entityManagePbehaviors);
+    },
+  },
+  methods: {
+    showPbehaviorsListModal() {
+      this.showModal({
+        name: MODALS.pbehaviorList,
+        config: {
+          pbehaviors: this.pausePbehaviors,
+          entityId: this.entity.entity_id,
+          onlyActive: true,
+          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+        },
+      });
     },
   },
 };
@@ -235,5 +302,9 @@ export default {
 
   .entityName {
     line-height: 1.5em;
+  }
+
+  .pbehavior {
+    cursor: pointer;
   }
 </style>

@@ -10,25 +10,23 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-stat-end-date-select(
-      :title="$t('settings.tstop')",
-      v-model="settings.widget.parameters.tstop",
-      :duration="settings.widget.parameters.duration"
+      field-date-interval(v-model="settings.widget.parameters.dateInterval")
+      v-divider
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
+      v-divider
+      field-stats-selector(v-model="settings.widget.parameters.stats", required)
+      v-divider
+      field-stats-colors(
+      :stats="settings.widget.parameters.stats",
+      v-model="settings.widget.parameters.statsColors"
       )
       v-divider
-      field-duration(v-model="settings.widget.parameters.duration", :title="$t('common.step')")
+      field-stats-points-styles(
+      :stats="settings.widget.parameters.stats",
+      v-model="settings.widget.parameters.statsPointsStyles"
+      )
       v-divider
-      field-periods-number(v-model="settings.widget.parameters.periods")
-      v-divider
-      field-stats-select(v-model="settings.widget.parameters.stats")
-      v-divider
-      v-list-group
-        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-stats-colors(
-          :stats="settings.widget.parameters.stats",
-          v-model="settings.widget.parameters.statsColors"
-          )
+      field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -36,17 +34,18 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import entitiesStatsMixin from '@/mixins/entities/stats';
-import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
+
+import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/stats/duration.vue';
-import FieldStatEndDateSelect from './fields/stats/stat-end-date-select.vue';
-import FieldPeriodsNumber from './fields/stats/periods-number.vue';
-import FieldStatsSelect from './fields/stats/stats-select.vue';
+import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldDateInterval from './fields/stats/date-interval.vue';
+import FieldStatsSelector from './fields/stats/stats-selector.vue';
 import FieldStatsColors from './fields/stats/stats-colors.vue';
+import FieldStatsPointsStyles from './fields/stats/stats-points-style.vue';
+import FieldStatsAnnotationLine from './fields/stats/annotation-line.vue';
 
 export default {
   name: SIDE_BARS.statsCurvesSettings,
@@ -56,13 +55,14 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
-    FieldDuration,
-    FieldStatEndDateSelect,
-    FieldPeriodsNumber,
-    FieldStatsSelect,
+    FieldFilterEditor,
+    FieldDateInterval,
+    FieldStatsSelector,
     FieldStatsColors,
+    FieldStatsPointsStyles,
+    FieldStatsAnnotationLine,
   },
-  mixins: [entitiesStatsMixin, widgetSettingsMixin],
+  mixins: [widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 

@@ -24,7 +24,12 @@
               color="error",
               ) {{ $t('view.deleteWidget') }}
               v-btn.ma-1(
-              @click="showSettings(tab._id, row._id, widget)",
+              @click="showSelectViewTabModal(widget)",
+              icon
+              )
+                v-icon file_copy
+              v-btn.ma-1(
+              @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
               icon
               )
                 v-icon settings
@@ -39,14 +44,18 @@
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import AlarmsList from '@/components/other/alarm/alarms-list.vue';
-import EntitiesList from '@/components/other/context/entities-list.vue';
-import Weather from '@/components/other/service-weather/weather.vue';
-import StatsHistogram from '@/components/other/stats/histogram/stats-histogram-wrapper.vue';
-import StatsCurves from '@/components/other/stats/curves/stats-curves-wrapper.vue';
-import StatsTable from '@/components/other/stats/stats-table.vue';
-import StatsCalendar from '@/components/other/stats/stats-calendar.vue';
-import StatsNumber from '@/components/other/stats/stats-number.vue';
+import { generateWidgetByType } from '@/helpers/entities';
+
+import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
+import EntitiesListWidget from '@/components/other/context/entities-list.vue';
+import WeatherWidget from '@/components/other/service-weather/weather.vue';
+import StatsHistogramWidget from '@/components/other/stats/histogram/stats-histogram.vue';
+import StatsCurvesWidget from '@/components/other/stats/curves/stats-curves.vue';
+import StatsTableWidget from '@/components/other/stats/stats-table.vue';
+import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calendar.vue';
+import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
+import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
+import TextWidget from '@/components/other/text/text.vue';
 
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
@@ -54,14 +63,16 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
   components: {
-    AlarmsList,
-    EntitiesList,
-    Weather,
-    StatsHistogram,
-    StatsCurves,
-    StatsTable,
-    StatsCalendar,
-    StatsNumber,
+    AlarmsListWidget,
+    EntitiesListWidget,
+    WeatherWidget,
+    StatsHistogramWidget,
+    StatsCurvesWidget,
+    StatsTableWidget,
+    StatsCalendarWidget,
+    StatsNumberWidget,
+    StatsParetoWidget,
+    TextWidget,
   },
   mixins: [
     popupMixin,
@@ -89,14 +100,16 @@ export default {
   data() {
     return {
       widgetsComponentsMap: {
-        [WIDGET_TYPES.alarmList]: 'alarms-list',
-        [WIDGET_TYPES.context]: 'entities-list',
-        [WIDGET_TYPES.weather]: 'weather',
-        [WIDGET_TYPES.statsHistogram]: 'stats-histogram',
-        [WIDGET_TYPES.statsCurves]: 'stats-curves',
-        [WIDGET_TYPES.statsTable]: 'stats-table',
-        [WIDGET_TYPES.statsCalendar]: 'stats-calendar',
-        [WIDGET_TYPES.statsNumber]: 'stats-number',
+        [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
+        [WIDGET_TYPES.context]: 'entities-list-widget',
+        [WIDGET_TYPES.weather]: 'weather-widget',
+        [WIDGET_TYPES.statsHistogram]: 'stats-histogram-widget',
+        [WIDGET_TYPES.statsCurves]: 'stats-curves-widget',
+        [WIDGET_TYPES.statsTable]: 'stats-table-widget',
+        [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
+        [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
+        [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
+        [WIDGET_TYPES.text]: 'text-widget',
       },
     };
   },
@@ -114,13 +127,28 @@ export default {
     },
   },
   methods: {
-    showSettings(tabId, rowId, widget) {
+    showSettings({
+      viewId,
+      tabId,
+      rowId,
+      widget,
+    }) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
+          viewId,
           tabId,
           rowId,
           widget,
+        },
+      });
+    },
+
+    showSelectViewTabModal(widget) {
+      this.showModal({
+        name: MODALS.selectViewTab,
+        config: {
+          action: ({ tabId, viewId }) => this.cloneWidget({ widget, tabId, viewId }),
         },
       });
     },
@@ -171,6 +199,33 @@ export default {
             return this.updateTabMethod(newTab);
           },
         },
+      });
+    },
+
+    async cloneWidget({ widget, tabId, viewId }) {
+      const { _id: newWidgetId } = generateWidgetByType(widget.type);
+      const newWidget = { ...widget, _id: newWidgetId };
+
+      await new Promise((resolve, reject) => {
+        if (this.tab._id === tabId) {
+          resolve();
+        } else {
+          this.$router.push({
+            name: 'view',
+            params: {
+              id: viewId,
+            },
+            query: {
+              tabId,
+            },
+          }, resolve, reject);
+        }
+      });
+
+      this.showSettings({
+        viewId,
+        tabId,
+        widget: newWidget,
       });
     },
   },

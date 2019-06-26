@@ -42,6 +42,10 @@ Crée un nouveau Webhook à partir du corps de la requête.
     },
     "request" : {
         "method" : "PUT",
+        "auth" : {
+            "username" : "ABC",
+            "password" : "a!(b)-c_"
+        },
         "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
         "headers" : {
             "Content-type" : "application/json"
@@ -82,6 +86,10 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     },
     "request" : {
         "method" : "PUT",
+        "auth" : {
+            "username" : "ABC",
+            "password" : "a!(b)-c_"
+        },
         "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
         "headers" : {
             "Content-type" : "application/json"
@@ -105,7 +113,9 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 **Exemple du corps de la réponse** :
 
 ```json
-"declare_external_ticket"
+{
+    "_id": "declare_external_ticket"
+}
 ```
 
 #### Réponse en cas d'erreur

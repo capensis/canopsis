@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE } from '@/constants';
+import { ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE, ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR } from '@/constants';
 
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
@@ -75,7 +75,7 @@ export default {
     },
 
     stepTitle() {
-      const { _t: type, a: author } = this.step;
+      const { _t: type, a: author, role } = this.step;
 
       let formattedStepTitle = '';
 
@@ -87,10 +87,14 @@ export default {
 
       formattedStepTitle += ` ${this.$t('alarmList.timeLine.titlePaths.by')} `;
 
-      if (author === 'canopsis.engine') {
+      if (author === ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR) {
         formattedStepTitle += 'system';
       } else {
         formattedStepTitle += author;
+      }
+
+      if (role) {
+        formattedStepTitle += ` (${role})`;
       }
 
       return formattedStepTitle;
@@ -106,7 +110,10 @@ export default {
     padding-left: 20px;
     padding-top: 20px;
     overflow-wrap: break-word;
+    word-break: break-all;
     width: 90%;
+    max-height: 600px;
+    overflow-y: auto;
   }
 
   .header {

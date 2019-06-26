@@ -1,21 +1,29 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{$t('settings.statsSelect.title')}}
-    v-container
-      v-btn(@click="openAddStatModal") Stat selector modal
-      v-card(v-if="value.stat")
-        v-card-title.primary.darken-1.white--text {{ value.title }}
-        v-card-text {{ value.stat.value }}
+  v-container.pa-3(fluid)
+    v-layout(align-center, justify-space-between)
+      .subheading(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
+        .font-italic.caption.ml-1 ({{ $t('settings.statsNumbers.defaultStat') }})
+      v-btn.primary(
+      small,
+      @click="openAddStatModal"
+      ) {{ $t('common.select') }}
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal';
 import { STATS_TYPES, MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
+
 export default {
-  mixins: [modalMixin],
+  inject: ['$validator'],
+  mixins: [modalMixin, formValidationHeaderMixin],
+  model: {
+    prop: 'stat',
+    event: 'input',
+  },
   props: {
-    value: {
+    stat: {
       type: Object,
       required: true,
     },
@@ -29,11 +37,23 @@ export default {
         .map(item => ({ value: item.value, text: this.$t(`stats.types.${item.value}`), options: item.options }));
     },
   },
+  created() {
+    this.$validator.attach({
+      name: 'stat',
+      rules: 'required:true',
+      getter: () => this.stat,
+      context: () => this,
+      vm: this,
+    });
+  },
   methods: {
     openAddStatModal() {
       this.showModal({
         name: MODALS.addStat,
         config: {
+          title: this.$t('modals.addStat.title.add'),
+          stat: this.stat,
+          statTitle: this.stat.title,
           action: stat => this.$emit('input', stat),
         },
       });

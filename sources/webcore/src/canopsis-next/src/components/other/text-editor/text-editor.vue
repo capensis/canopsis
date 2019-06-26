@@ -34,6 +34,9 @@ export default {
     editorConfig() {
       const config = {
         language: this.$i18n.locale,
+        uploader: {
+          insertImageAsBase64URI: true,
+        },
 
         ...this.config,
       };

@@ -2,7 +2,7 @@
   div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        alarm-list-search(:query.sync="query")
+        alarm-list-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
         v-if="hasColumns",
@@ -12,14 +12,19 @@
         type="top",
         @input="updateQueryPage"
         )
-      v-flex(v-if="hasAccessToListFilters")
+      v-flex
         filter-selector(
         :label="$t('settings.selectAFilter')",
-        :items="viewFilters",
+        :filters="viewFilters",
+        :lockedFilters="widgetViewFilters",
         :value="mainFilter",
         :condition="mainFilterCondition",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        :hasAccessToUserFilter="hasAccessToUserFilter",
+        :hasAccessToListFilter="hasAccessToListFilter",
         @input="updateSelectedFilter",
-        @update:condition="updateSelectedCondition"
+        @update:condition="updateSelectedCondition",
+        @update:filters="updateFilters"
         )
       v-flex
         v-chip.primary.white--text(
@@ -31,7 +36,7 @@
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="query.interval ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
-        mass-actions-panel(:itemsIds="selectedIds")
+        mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -64,7 +69,7 @@
             td
               actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item")
+          time-line(:alarmProps="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
@@ -75,7 +80,7 @@
           )
         v-spacer
         v-flex(xs2)
-          records-per-page(:query.sync="query")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
@@ -98,6 +103,7 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 
@@ -128,6 +134,7 @@ export default {
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
+    widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
   ],
@@ -163,12 +170,16 @@ export default {
       return [];
     },
 
-    hasAccessToListFilters() {
+    hasAccessToListFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 
     hasAccessToEditFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
+    },
+
+    hasAccessToUserFilter() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
   methods: {

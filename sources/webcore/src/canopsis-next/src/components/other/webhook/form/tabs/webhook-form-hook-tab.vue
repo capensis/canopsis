@@ -21,21 +21,24 @@
           v-tab {{ $t('webhook.tabs.hook.fields.entityPatterns') }}
           v-tab-item(:disabled="hasBlockedTriggers")
             patterns-list(
-            :patterns="hook.event_pattern",
+            :patterns="hook.event_patterns",
             :disabled="disabled",
-            @input="updateField('event_pattern', $event)"
+            :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+            @input="updateField('event_patterns', $event)"
             )
           v-tab-item
             patterns-list(
-            :patterns="hook.alarm_pattern",
+            :patterns="hook.alarm_patterns",
             :disabled="disabled",
-            @input="updateField('alarm_pattern', $event)"
+            :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+            @input="updateField('alarm_patterns', $event)"
             )
           v-tab-item
             patterns-list(
-            :patterns="hook.entity_pattern",
+            :patterns="hook.entity_patterns",
             :disabled="disabled",
-            @input="updateField('entity_pattern', $event)"
+            :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+            @input="updateField('entity_patterns', $event)"
             )
 </template>
 
@@ -43,13 +46,14 @@
 import { WEBHOOK_TRIGGERS } from '@/constants';
 
 import formMixin from '@/mixins/form';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],
   components: { PatternsList },
-  mixins: [formMixin],
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'hook',
     event: 'input',

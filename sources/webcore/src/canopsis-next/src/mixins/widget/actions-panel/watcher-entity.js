@@ -3,14 +3,23 @@ import {
   EVENT_ENTITY_TYPES,
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_RIGHTS_ACTIONS_MAP,
+  WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import eventActionsWatcherEntityMixin from '@/mixins/event-actions/watcher-entity';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
-  mixins: [authMixin, modalMixin, eventActionsWatcherEntityMixin],
+  mixins: [
+    authMixin,
+    modalMixin,
+    eventActionsWatcherEntityMixin,
+    entitiesPbehaviorMixin,
+    entitiesPbehaviorCommentMixin,
+  ],
   methods: {
     /**
      * Filter for available entity actions
@@ -33,14 +42,14 @@ export default {
       this.actionsClicked.push(EVENT_ENTITY_TYPES.ack);
     },
 
-    prepareDeclareTicketAction() {
+    prepareAssocTicketAction() {
       this.showModal({
-        name: MODALS.createWatcherDeclareTicketEvent,
+        name: MODALS.createWatcherAssocTicketEvent,
         config: {
           action: (ticket) => {
             this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-            this.addDeclareTicketActionToQueue({ entity: this.entity, ticket });
-            this.actionsClicked.push(EVENT_ENTITY_TYPES.declareTicket);
+            this.addAssocTicketActionToQueue({ entity: this.entity, ticket });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.assocTicket);
           },
         },
       });
@@ -68,6 +77,11 @@ export default {
               comment: pause.comment,
               reason: pause.reason,
             });
+            this.addCancelActionToQueue({
+              entity: this.entity,
+              output: WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT,
+              fromSystem: true,
+            });
             this.actionsClicked.push(EVENT_ENTITY_TYPES.pause);
           },
         },
@@ -77,6 +91,19 @@ export default {
     preparePlayAction() {
       this.addPlayActionToQueue({ entity: this.entity });
       this.actionsClicked.push(EVENT_ENTITY_TYPES.play);
+    },
+
+    prepareCancelAction() {
+      this.showModal({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.createCancelEvent.fields.output'),
+          action: (output) => {
+            this.addCancelActionToQueue({ entity: this.entity, output });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.cancel);
+          },
+        },
+      });
     },
   },
 };

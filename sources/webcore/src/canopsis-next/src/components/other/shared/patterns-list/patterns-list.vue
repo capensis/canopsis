@@ -1,20 +1,20 @@
 <template lang="pug">
   div
-    slot(v-if="!patterns.length", name="no-data")
+    slot(v-if="isPatternsEmpty", name="no-data")
       v-alert.ma-2(
       :value="true",
       type="info"
       ) {{ disabled ? $t('patternsList.noDataDisabled') : $t('patternsList.noData') }}
     v-layout(
     v-for="(pattern, index) in patterns",
-    :key="`${getPatternString(pattern)}${index}`",
+    :key="`${$options.filters.json(pattern)}${index}`",
     row,
     wrap,
     align-center
     )
       v-flex(:class="disabled ? 'xs12' : 'xs11'")
         v-textarea(
-        :value="getPatternString(pattern)",
+        :value="pattern | json",
         rows="7",
         no-resize,
         readonly,
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import formArrayMixin from '@/mixins/form/array';
@@ -47,20 +47,18 @@ export default {
       type: Array,
       default: () => [],
     },
+    operators: {
+      type: Array,
+      default: () => EVENT_FILTER_RULE_OPERATORS,
+    },
     disabled: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
-    getPatternString() {
-      return (pattern) => {
-        if (pattern) {
-          return JSON.stringify(pattern, null, 4);
-        }
-
-        return '{}';
-      };
+    isPatternsEmpty() {
+      return !this.patterns || !this.patterns.length;
     },
   },
   methods: {
@@ -68,6 +66,7 @@ export default {
       this.showModal({
         name: MODALS.createEventFilterRulePattern,
         config: {
+          operators: this.operators,
           action: pattern => this.addItemIntoArray(pattern),
         },
       });
@@ -78,6 +77,7 @@ export default {
         name: MODALS.createEventFilterRulePattern,
         config: {
           pattern: this.patterns[index],
+          operators: this.operators,
           action: pattern => this.updateItemInArray(index, pattern),
         },
       });

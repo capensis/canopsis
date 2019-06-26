@@ -1,38 +1,81 @@
 <template lang="pug">
-  v-layout
-    v-flex
+  v-layout(align-center, row, wrap)
+    v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
       v-switch(
       :label="$t('filterSelector.fields.mixFilters')",
       :input-value="isMultiple",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateIsMultipleFlag"
       )
-    v-flex(v-show="isMultiple")
+    v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
       v-radio-group(
       :value="condition",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateCondition"
       )
         v-radio(label="AND", value="$and")
         v-radio(label="OR", value="$or")
-    v-flex
+    v-flex(v-show="!hideSelect", v-bind="flexProps.select")
       v-select(
-      v-bind="$props",
+      :value="value",
+      :items="preparedFilters",
+      :label="label",
+      :itemText="itemText",
+      :itemValue="itemValue",
       :multiple="isMultiple",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       return-object,
       clearable,
-      @input="updateFilter"
+      @input="updateSelectedFilter"
+      )
+        template(slot="item", slot-scope="{ parent, item, tile }")
+          v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
+            v-checkbox(:inputValue="tile.props.value", :color="parent.color")
+          v-list-tile-content
+            v-list-tile-title
+              span {{ item[itemText] }}
+              v-icon.ml-2(
+              v-show="!hideSelectIcon",
+              :color="tile.props.value ? parent.color : ''",
+              small
+              ) {{ item.locked ? 'lock' : 'person' }}
+    v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
+      v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
+        v-icon filter_list
+      filters-list(
+      v-else,
+      :filters="filters",
+      :entitiesType="entitiesType",
+      @create:filter="createFilter",
+      @update:filter="updateFilter",
+      @delete:filter="deleteFilter"
       )
 </template>
 
 <script>
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+
+import modalMixin from '@/mixins/modal';
+
+import FiltersList from '@/components/other/filter/list/filters-list.vue';
 
 export default {
+  components: { FiltersList },
+  mixins: [modalMixin],
   props: {
+    long: {
+      type: Boolean,
+      default: false,
+    },
     value: {
       type: [Object, Array],
       default: () => null,
     },
-    items: {
+    filters: {
+      type: Array,
+      default: () => [],
+    },
+    lockedFilters: {
       type: Array,
       default: () => [],
     },
@@ -52,27 +95,144 @@ export default {
       type: String,
       default: FILTER_DEFAULT_VALUES.condition,
     },
+    hideSelect: {
+      type: Boolean,
+      default: false,
+    },
+    hideSelectIcon: {
+      type: Boolean,
+      default: false,
+    },
+    hasAccessToListFilter: {
+      type: Boolean,
+      default: false,
+    },
+    hasAccessToAddFilter: {
+      type: Boolean,
+      default: true,
+    },
+    hasAccessToEditFilter: {
+      type: Boolean,
+      default: true,
+    },
+    hasAccessToUserFilter: {
+      type: Boolean,
+      default: true,
+    },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+    },
   },
   computed: {
+    flexProps() {
+      return {
+        switch: this.long ? { xs6: true } : {},
+        radio: this.long ? { xs6: true } : {},
+        select: this.long ? { xs12: true } : {},
+        list: this.long ? { xs12: true } : {},
+      };
+    },
+
     isMultiple() {
       return Array.isArray(this.value);
+    },
+
+    preparedFilters() {
+      const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
+      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
+
+      if (preparedFilters.length && preparedLockedFilters.length) {
+        return preparedFilters.concat({ divider: true }, preparedLockedFilters);
+      } else if (preparedFilters.length) {
+        return preparedFilters;
+      }
+
+      return preparedLockedFilters;
     },
   },
   methods: {
     updateIsMultipleFlag(value) {
       if (value && !Array.isArray(this.value)) {
-        this.updateFilter(this.value ? [this.value] : []);
+        this.updateSelectedFilter(this.value ? [this.value] : []);
       } else if (!value && Array.isArray(this.value)) {
-        this.updateFilter(this.value[0] || null);
+        this.updateSelectedFilter(this.value[0] || null);
       }
     },
 
-    updateFilter(value) {
+    updateSelectedFilter(value) {
       this.$emit('input', value);
     },
 
-    updateCondition(value) {
-      this.$emit('update:condition', value);
+    updateCondition(condition) {
+      this.$emit('update:condition', condition);
+    },
+
+    updateFilters(filters, value) {
+      this.$emit('update:filters', filters, value);
+    },
+
+    createFilter(filter) {
+      this.updateFilters([...this.filters, filter]);
+    },
+
+    updateFilter(filter, index) {
+      const oldFilter = this.filters[index];
+      let newValue = this.value;
+
+      if (this.isMultiple) {
+        newValue = this.value.map((selectedFilter) => {
+          if (selectedFilter.filter === oldFilter.filter) {
+            return filter;
+          }
+
+          return selectedFilter;
+        });
+      } else if (this.value && this.value.filter === oldFilter.filter) {
+        newValue = filter;
+      }
+
+      const newFilters = this.filters.map((selectedFilter, i) => {
+        if (i === index) {
+          return filter;
+        }
+
+        return selectedFilter;
+      });
+
+      this.updateFilters(newFilters, newValue);
+    },
+
+    deleteFilter(index) {
+      const oldFilter = this.filters[index];
+      let newValue = this.value;
+
+      if (this.isMultiple) {
+        newValue = this.value.filter(selectedFilter => selectedFilter.filter !== oldFilter.filter);
+      } else if (this.value && this.value.filter === oldFilter.filter) {
+        newValue = null;
+      }
+
+      const newFilters = this.filters.filter((filter, i) => i !== index);
+
+      this.updateFilters(newFilters, newValue);
+    },
+
+    showFiltersListModal() {
+      this.showModal({
+        name: MODALS.filtersList,
+        config: {
+          filters: this.filters,
+          hasAccessToAddFilter: this.hasAccessToUserFilter,
+          hasAccessToEditFilter: this.hasAccessToUserFilter,
+          actions: {
+            create: this.createFilter,
+            update: this.updateFilter,
+            delete: this.deleteFilter,
+          },
+        },
+      });
     },
   },
 };

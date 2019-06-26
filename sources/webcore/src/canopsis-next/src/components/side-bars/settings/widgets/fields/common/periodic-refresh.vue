@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{$t('settings.periodicRefresh')}}
-      .font-italic.caption.ml-1 ({{ $t('common.optionnal') }})
+      .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
       v-layout
         v-flex
@@ -29,7 +29,7 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => ({ enabled: false, interval: '10' }),
+      default: () => ({ enabled: false, interval: '60' }),
     },
   },
   data() {

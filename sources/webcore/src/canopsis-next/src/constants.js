@@ -1,3 +1,12 @@
+import featuresService from '@/services/features';
+
+export const CRUD_ACTIONS = {
+  create: 'create',
+  read: 'read',
+  update: 'update',
+  delete: 'delete',
+};
+
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
@@ -17,6 +26,7 @@ export const ENTITIES_TYPES = {
   role: 'role',
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
+  snmpRule: 'snmpRule',
 };
 
 export const MODALS = {
@@ -32,7 +42,7 @@ export const MODALS = {
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',
   watcher: 'watcher',
-  createWatcherDeclareTicketEvent: 'create-watcher-declare-ticket-event',
+  createWatcherAssocTicketEvent: 'create-watcher-assoc-ticket-event',
   createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
@@ -42,9 +52,10 @@ export const MODALS = {
   confirmation: 'confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
-  manageHistogramGroups: 'manage-histogram-groups',
   alarmsList: 'alarms-list',
   addStat: 'add-stat',
+  statsDateInterval: 'stats-date-interval',
+  statsDisplayMode: 'stats-display-mode',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
   textFieldEditor: 'text-field-editor',
@@ -60,7 +71,10 @@ export const MODALS = {
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
+  filtersList: 'filters-list',
   createWebhook: 'create-webhook',
+  createSnmpRule: 'create-snmp-rule',
+  selectViewTab: 'select-view-tab',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -110,7 +124,7 @@ export const ENTITIES_STATES_STYLES = {
     icon: 'assistant_photo',
   },
   [ENTITIES_STATES.minor]: {
-    color: 'gold',
+    color: '#FCDC00',
     text: 'minor',
     icon: 'assistant_photo',
   },
@@ -128,7 +142,7 @@ export const ENTITIES_STATES_STYLES = {
 
 export const WATCHER_STATES_COLORS = {
   [ENTITIES_STATES.ok]: '#00a65a',
-  [ENTITIES_STATES.minor]: '#ff9900',
+  [ENTITIES_STATES.minor]: '#fcdc00',
   [ENTITIES_STATES.major]: '#ff9900',
   [ENTITIES_STATES.critical]: '#f56954',
 };
@@ -196,6 +210,8 @@ export const WIDGET_TYPES = {
   statsTable: 'StatsTable',
   statsCalendar: 'StatsCalendar',
   statsNumber: 'StatsNumber',
+  statsPareto: 'StatsPareto',
+  text: 'Text',
 };
 
 export const SIDE_BARS = {
@@ -207,6 +223,8 @@ export const SIDE_BARS = {
   statsTableSettings: 'stats-table-settings',
   statsCalendarSettings: 'stats-calendar-settings',
   statsNumberSettings: 'stats-number-settings',
+  statsParetoSettings: 'stats-pareto-settings',
+  textSettings: 'text-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -218,6 +236,8 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
+  [WIDGET_TYPES.statsPareto]: SIDE_BARS.statsParetoSettings,
+  [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
@@ -321,40 +341,57 @@ export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
+  dateTimePicker: 'DD/MM/YYYY HH:mm',
+  dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
+  datePicker: 'DD/MM/YYYY',
+  timePicker: 'HH:mm',
+  timePickerWithSeconds: 'HH:mm:ss',
+  veeValidateDateTimeFormat: 'dd/MM/yyyy HH:mm',
+};
+
+export const STATS_OPTIONS = {
+  recursive: 'recursive',
+  states: 'states',
+  authors: 'authors',
+  sla: 'sla',
 };
 
 export const STATS_TYPES = {
   alarmsCreated: {
     value: 'alarms_created',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   alarmsResolved: {
     value: 'alarms_resolved',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   alarmsCanceled: {
     value: 'alarms_canceled',
-    options: ['recursive', 'states', 'authors'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
+  },
+  alarmsAcknowledged: {
+    value: 'alarms_acknowledged',
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
   ackTimeSla: {
     value: 'ack_time_sla',
-    options: ['recursive', 'states', 'authors', 'sla'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],
   },
   resolveTimeSla: {
     value: 'resolve_time_sla',
-    options: ['recursive', 'states', 'authors', 'sla'],
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],
   },
   timeInState: {
     value: 'time_in_state',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   stateRate: {
     value: 'state_rate',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   mtbf: {
     value: 'mtbf',
-    options: [],
+    options: [STATS_OPTIONS.recursive],
   },
   currentState: {
     value: 'current_state',
@@ -362,11 +399,19 @@ export const STATS_TYPES = {
   },
   ongoingAlarms: {
     value: 'ongoing_alarms',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
   },
   currentOngoingAlarms: {
     value: 'current_ongoing_alarms',
-    options: ['states'],
+    options: [STATS_OPTIONS.states],
+  },
+  currentOngoingAlarmsWithAck: {
+    value: 'current_ongoing_alarms_with_ack',
+    options: [STATS_OPTIONS.states],
+  },
+  currentOngoingAlarmsWithoutAck: {
+    value: 'current_ongoing_alarms_without_ack',
+    options: [STATS_OPTIONS.states],
   },
 };
 
@@ -384,6 +429,137 @@ export const STATS_CRITICITY = {
   critical: 'critical',
 };
 
+export const STATS_QUICK_RANGES = {
+  custom: {
+    value: 'custom',
+  },
+  last2Days: {
+    value: 'last2Days',
+    start: 'now-2d',
+    stop: 'now',
+  },
+  last7Days: {
+    value: 'last7Days',
+    start: 'now-7d',
+    stop: 'now',
+  },
+  last30Days: {
+    value: 'last30Days',
+    start: 'now-30d',
+    stop: 'now',
+  },
+  last1Year: {
+    value: 'last1Year',
+    start: 'now-1y',
+    stop: 'now',
+  },
+  yesterday: {
+    value: 'yesterday',
+    start: 'now-1d/d',
+    stop: 'now-1d/d',
+  },
+  previousWeek: {
+    value: 'previousWeek',
+    start: 'now-1w/w',
+    stop: 'now-1w/w',
+  },
+  previousMonth: {
+    value: 'previousMonth',
+    start: 'now-1m/m',
+    stop: 'now-1m/m',
+  },
+  today: {
+    value: 'today',
+    start: 'now/d',
+    stop: 'now/d',
+  },
+  todaySoFar: {
+    value: 'todaySoFar',
+    start: 'now/d',
+    stop: 'now',
+  },
+  thisWeek: {
+    value: 'thisWeek',
+    start: 'now/w',
+    stop: 'now/w',
+  },
+  thisWeekSoFar: {
+    value: 'thisWeekSoFar',
+    start: 'now/w',
+    stop: 'now',
+  },
+  thisMonth: {
+    value: 'thisMonth',
+    start: 'now/m',
+    stop: 'now/m',
+  },
+  thisMonthSoFar: {
+    value: 'thisMonthSoFar',
+    start: 'now/m',
+    stop: 'now',
+  },
+  last1Hour: {
+    value: 'last1Hour',
+    start: 'now-1h',
+    stop: 'now',
+  },
+  last3Hour: {
+    value: 'last3Hour',
+    start: 'now-3h',
+    stop: 'now',
+  },
+  last6Hour: {
+    value: 'last6Hour',
+    start: 'now-6h',
+    stop: 'now',
+  },
+  last12Hour: {
+    value: 'last12Hour',
+    start: 'now-12h',
+    stop: 'now',
+  },
+  last24Hour: {
+    value: 'last24Hour',
+    start: 'now-24h',
+    stop: 'now',
+  },
+};
+
+export const STATS_DEFAULT_COLOR = '#DDDDDD';
+
+export const STATS_DISPLAY_MODE = {
+  value: 'value',
+  criticity: 'criticity',
+};
+
+export const STATS_DISPLAY_MODE_PARAMETERS = {
+  criticityLevels: {
+    ok: 0,
+    minor: 10,
+    major: 20,
+    critical: 30,
+  },
+  colors: {
+    ok: '#66BB6A',
+    minor: '#FCDC00',
+    major: '#FFA726',
+    critical: '#FF7043',
+  },
+};
+
+export const STATS_CURVES_POINTS_STYLES = {
+  circle: 'circle',
+  cross: 'cross',
+  crossRot: 'crossRot',
+  dash: 'dash',
+  line: 'line',
+  rect: 'rect',
+  rectRounded: 'rectRounded',
+  rectRot: 'rectRot',
+  star: 'star',
+  triangle: 'triangle',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
@@ -391,7 +567,7 @@ export const WIDGET_MIN_SIZE = 3;
 export const STATS_CALENDAR_COLORS = {
   alarm: {
     ok: '#66BB6A',
-    minor: '#FFEE58',
+    minor: '#FCDC00',
     major: '#FFA726',
     critical: '#FF7043',
   },
@@ -422,27 +598,15 @@ export const USERS_RIGHTS_TYPES = {
 export const USERS_RIGHTS = {
   technical: {
     view: 'models_userview',
-    selector: 'models_selector',
     role: 'models_role',
     action: 'models_action',
-    filter: 'models_filter',
-    curve: 'models_curve',
-    account: 'models_account',
     user: 'models_user',
-    serie: 'models_serie',
-    topology: 'models_topology',
-    profile: 'models_profile',
-    derogation: 'models_derogation',
-    event: 'models_event',
-    eventlog: 'models_eventlog',
-    job: 'models_job',
-    taskmail: 'models_taskmail',
-    taskdataclean: 'models_taskdataclean',
-    tasklinklist: 'models_tasklinklist',
-    taskfile: 'models_taskfile',
-    taskshell: 'models_taskshell',
-    taskackcentreon: 'models_taskackcentreon',
-    taskreporting: 'models_taskreporting',
+    exploitation: {
+      eventFilter: 'models_exploitation_eventFilter',
+      pbehavior: 'models_exploitation_pbehavior',
+      webhook: 'models_exploitation_webhook',
+      snmpRule: 'models_exploitation_snmpRule',
+    },
   },
   business: {
     alarmsList: {
@@ -460,6 +624,11 @@ export const USERS_RIGHTS = {
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
+        userFilter: 'listalarm_userFilter',
+
+        links: 'listalarm_links',
+
+        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
       },
     },
     context: {
@@ -470,20 +639,26 @@ export const USERS_RIGHTS = {
         deleteEntity: 'crudcontext_delete',
         pbehaviorAdd: 'crudcontext_pbehavior',
         pbehaviorList: 'crudcontext_listPbehavior',
+        pbehaviorDelete: 'crudcontext_deletePbehavior',
 
         listFilters: 'crudcontext_listFilters',
         editFilter: 'crudcontext_editFilter',
         addFilter: 'crudcontext_addFilter',
+        userFilter: 'crudcontext_userFilter',
       },
     },
     weather: {
       actions: {
         entityAck: 'serviceweather_entityAck',
-        entityDeclareTicket: 'serviceweather_entityDeclareTicket',
+        entityAssocTicket: 'serviceweather_entityAssocTicket',
         entityValidate: 'serviceweather_entityValidate',
         entityInvalidate: 'serviceweather_entityInvalidate',
         entityPause: 'serviceweather_entityPause',
         entityPlay: 'serviceweather_entityPlay',
+        entityCancel: 'serviceweather_entityCancel',
+        entityManagePbehaviors: 'serviceweather_entityManagePbehaviors',
+
+        entityLinks: 'serviceweather_entityLinks',
 
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
@@ -491,6 +666,11 @@ export const USERS_RIGHTS = {
     },
   },
 };
+
+export const NOT_COMPLETED_USER_RIGHTS_KEYS = [
+  'business.alarmsList.actions.links',
+  'business.weather.actions.entityLinks',
+];
 
 export const WIDGETS_ACTIONS_TYPES = {
   alarmsList: {
@@ -507,6 +687,11 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
 
+
+    ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
+
+    links: 'links',
+
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
@@ -518,6 +703,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     deleteEntity: 'deleteEntity',
     pbehaviorAdd: 'pbehaviorAdd',
     pbehaviorList: 'pbehaviorList',
+    pbehaviorDelete: 'pbehaviorDelete',
     variablesHelp: 'variablesHelp',
 
     listFilters: 'listFilters',
@@ -526,11 +712,14 @@ export const WIDGETS_ACTIONS_TYPES = {
   },
   weather: {
     entityAck: 'entityAck',
-    entityDeclareTicket: 'entityDeclareTicket',
+    entityAssocTicket: 'entityAssocTicket',
     entityValidate: 'entityValidate',
     entityInvalidate: 'entityInvalidate',
     entityPause: 'entityPause',
     entityPlay: 'entityPlay',
+    entityCancel: 'entityCancel',
+
+    entityLinks: 'entityLinks',
 
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
@@ -550,9 +739,13 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
 
+    [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
+
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+
+    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {
@@ -562,6 +755,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.context.deleteEntity]: USERS_RIGHTS.business.context.actions.deleteEntity,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorAdd]: USERS_RIGHTS.business.context.actions.pbehaviorAdd,
     [WIDGETS_ACTIONS_TYPES.context.pbehaviorList]: USERS_RIGHTS.business.context.actions.pbehaviorList,
+    [WIDGETS_ACTIONS_TYPES.context.pbehaviorDelete]: USERS_RIGHTS.business.context.actions.pbehaviorDelete,
 
     [WIDGETS_ACTIONS_TYPES.context.listFilters]: USERS_RIGHTS.business.context.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.context.editFilter]: USERS_RIGHTS.business.context.actions.editFilter,
@@ -570,11 +764,16 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
 
   weather: {
     [WIDGETS_ACTIONS_TYPES.weather.entityAck]: USERS_RIGHTS.business.weather.actions.entityAck,
-    [WIDGETS_ACTIONS_TYPES.weather.entityDeclareTicket]: USERS_RIGHTS.business.weather.actions.entityDeclareTicket,
+    [WIDGETS_ACTIONS_TYPES.weather.entityAssocTicket]: USERS_RIGHTS.business.weather.actions.entityAssocTicket,
     [WIDGETS_ACTIONS_TYPES.weather.entityValidate]: USERS_RIGHTS.business.weather.actions.entityValidate,
     [WIDGETS_ACTIONS_TYPES.weather.entityInvalidate]: USERS_RIGHTS.business.weather.actions.entityInvalidate,
     [WIDGETS_ACTIONS_TYPES.weather.entityPause]: USERS_RIGHTS.business.weather.actions.entityPause,
     [WIDGETS_ACTIONS_TYPES.weather.entityPlay]: USERS_RIGHTS.business.weather.actions.entityPlay,
+    [WIDGETS_ACTIONS_TYPES.weather.entityCancel]: USERS_RIGHTS.business.weather.actions.entityCancel,
+    [WIDGETS_ACTIONS_TYPES.weather.entityManagePbehaviors]:
+      USERS_RIGHTS.business.weather.actions.entityManagePbehaviors,
+
+    [WIDGETS_ACTIONS_TYPES.weather.entityLinks]: USERS_RIGHTS.business.weather.actions.entityLinks,
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
@@ -669,9 +868,12 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   moreInfo: 'more-info',
   alarmList: 'alarm-list',
+  both: 'both',
 };
 
 export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
+
+export const WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT = 'MDS_AUTOREMOVE_BYPAUSE';
 
 export const WEATHER_ACK_EVENT_OUTPUT = {
   ack: 'MDS_ACKNOWLEDGE',
@@ -681,12 +883,18 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
 
 export const EVENT_DEFAULT_ORIGIN = 'canopsis';
 
+export const SORT_ORDERS = {
+  asc: 'ASC',
+  desc: 'DESC',
+};
+
 export const WEBHOOK_TRIGGERS = {
   create: 'create',
   stateinc: 'stateinc',
   statedec: 'statedec',
   statusinc: 'statusinc',
   statusdec: 'statusdec',
+  changestate: 'changestate',
   ack: 'ack',
   ackremove: 'ackremove',
   cancel: 'cancel',
@@ -699,3 +907,30 @@ export const WEBHOOK_TRIGGERS = {
   unsnooze: 'unsnooze',
   resolve: 'resolve',
 };
+
+export const EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
+
+export const WEBHOOK_EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
+
+export const SNMP_STATE_TYPES = {
+  simple: 'simple',
+  template: 'template',
+};
+
+export const CANOPSIS_STACK = {
+  go: 'go',
+  python: 'python',
+};
+
+export const CANOPSIS_EDITION = {
+  core: 'core',
+  cat: 'cat',
+};
+
+export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
+
+export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
+
+export const CANOPSIS_FORUM = 'https://community.capensis.org/';
+
+export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
