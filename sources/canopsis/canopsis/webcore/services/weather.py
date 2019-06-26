@@ -368,21 +368,25 @@ def get_ok_ko(influx_client, entity_id):
 
 def _pbehavior_types(watcher):
     """
-    Return a set containing all type_ found in pbehaviors.
+    Return a set containing the types of the active pbehaviors that impact the
+    watcher or its dependencies.
+
     :param dict watcher: one element from the query
     """
-    pb_types = set()
+    pbehavior_types = set()
 
-    pbehaviors = watcher[ResultKey.PBEHAVIORS.value]
-    for ent in watcher[ResultKey.ENT.value]:
-        pbehaviors += ent[ResultKey.PBEHAVIORS.value]
+    for pbehavior in watcher[ResultKey.PBEHAVIORS.value]:
+        pbehavior_type = pbehavior.get('type_', None)
+        if pbehavior_type:
+            pbehavior_types.add(pbehavior_type)
 
-    for pbh in pbehaviors:
-        pb_type = pbh.get('type_', None)
-        if pb_type is not None:
-            pb_types.add(pb_type)
+    for entity in watcher[ResultKey.ENT.value]:
+        for pbehavior in entity[ResultKey.PBEHAVIORS.value]:
+            pbehavior_type = pbehavior.get('type_', None)
+            if pbehavior_type:
+                pbehavior_types.add(pbehavior_type)
 
-    return pb_types
+    return pbehavior_types
 
 
 def _watcher_status(watcher):
