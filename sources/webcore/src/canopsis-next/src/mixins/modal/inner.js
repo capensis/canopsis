@@ -1,5 +1,4 @@
 import { createNamespacedHelpers } from 'vuex';
-import { OPTIONS_SANITIZE_TEXT_EDITOR } from '@/constants';
 
 const { mapActions: modalMapActions } = createNamespacedHelpers('modal');
 
@@ -26,15 +25,6 @@ export default {
 
     hideModal() {
       this.hideModalAction({ id: this.modal.id });
-    },
-    sanitizedValue(value) {
-      try {
-        return this.$sanitize(value, OPTIONS_SANITIZE_TEXT_EDITOR);
-      } catch (err) {
-        console.warn(err);
-
-        return '';
-      }
     },
   },
 };

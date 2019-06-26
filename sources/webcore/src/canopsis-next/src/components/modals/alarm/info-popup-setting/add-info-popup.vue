@@ -71,7 +71,7 @@ export default {
         if (this.config.action) {
           await this.config.action({
             column: this.form.selectedColumn.value,
-            template: this.sanitizedValue(this.form.template),
+            template: this.$sanitize(this.form.template),
           });
         }
         this.hideModal();

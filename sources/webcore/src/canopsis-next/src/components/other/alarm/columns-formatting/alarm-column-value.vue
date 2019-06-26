@@ -21,7 +21,6 @@
 <script>
 import { get } from 'lodash';
 
-import { OPTIONS_SANITIZE_TEXT_EDITOR } from '@/constants';
 import { compile } from '@/helpers/handlebars';
 import popupMixin from '@/mixins/popup';
 
@@ -78,7 +77,7 @@ export default {
 
     sanitizedValue() {
       try {
-        return this.$sanitize(this.value, OPTIONS_SANITIZE_TEXT_EDITOR);
+        return this.$sanitize(this.value);
       } catch (err) {
         console.warn(err);
 

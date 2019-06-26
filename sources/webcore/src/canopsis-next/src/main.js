@@ -13,7 +13,7 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
-import sanitizeHTML from 'sanitize-html';
+import Sanitize from '@/plugins/sanitize';
 
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
@@ -109,6 +109,8 @@ Vue.use(VeeValidate, {
   },
 });
 
+Vue.use(Sanitize);
+
 Vue.config.productionTip = false;
 
 /**
@@ -125,7 +127,6 @@ if (process.env.NODE_ENV === 'development') {
 
 Vue.prototype.$constants = deepFreeze(constants);
 Vue.prototype.$config = deepFreeze(config);
-Vue.prototype.$sanitize = sanitizeHTML;
 
 new Vue({
   router,
