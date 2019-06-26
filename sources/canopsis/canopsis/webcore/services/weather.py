@@ -161,6 +161,12 @@ class __TileData:
 
     @classmethod
     def __is_all_entities_paused(cls, watcher):
+        if not watcher[ResultKey.ENT.value]:
+            # When the watcher does not have any dependencies, it makes more
+            # sense for the tile to be green instead of grey (and it is
+            # backward compatible).
+            return False
+
         for entity in watcher[ResultKey.ENT.value]:
             if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
                 return False
@@ -168,19 +174,15 @@ class __TileData:
 
     @classmethod
     def __get_tile_color(cls, watcher):
-        watched_ent_paused = 0
+        if len(watcher[ResultKey.PBEHAVIORS.value]) != 0 or \
+           cls.__is_all_entities_paused(watcher):
+            return TILE_COLOR_PAUSE
+
+        # FIXME: this code is duplicated three times.
         watcher_state = 0
         if len(watcher[ResultKey.ALARM.value]) > 0:
             alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
             watcher_state = alarm[AlarmField.state.value]["val"]
-
-        for ent in watcher[ResultKey.ENT.value]:
-            if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
-                watched_ent_paused += 1
-
-        if len(watcher[ResultKey.PBEHAVIORS.value]) > 0 or \
-           len(watcher[ResultKey.ENT.value]) == watched_ent_paused:
-            return TILE_COLOR_PAUSE
 
         return TILE_COLOR_SELECTOR[watcher_state]
 
