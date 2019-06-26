@@ -82,7 +82,8 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "prepare-commit-msg": "./tools/prepare-commit-msg.js"
     }
   },
   "lint-staged": {
