@@ -188,28 +188,34 @@ class __TileData:
 
     @classmethod
     def __get_tile_icon(cls, watcher):
-        watcher_state = 0
-        if len(watcher[ResultKey.ALARM.value]) > 0:
-            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
-            watcher_state = alarm[AlarmField.state.value]["val"]
+        pbehaviors = []
+        if watcher[ResultKey.PBEHAVIORS.value]:
+            pbehaviors = watcher[ResultKey.PBEHAVIORS.value]
+        elif cls.__is_all_entities_paused(watcher):
+            pbehaviors = watcher[ResultKey.WATCHED_ENT_PBH.value]
 
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
-        for pbh in watcher[ResultKey.PBEHAVIORS.value]:
-            if pbh["type_"] == "Hors plage horaire de surveillance":
+        for pbehavior in pbehaviors:
+            if pbehavior["type_"] == "Hors plage horaire de surveillance":
                 has_out_of_surveillance = True
-            elif pbh["type_"] == "Maintenance":
+            elif pbehavior["type_"] == "Maintenance":
                 has_maintenance = True
-            elif pbh["type_"] in ["pause", "Pause"]:
-                has_maintenance = True
+            elif pbehavior["type_"] in ["pause", "Pause"]:
+                has_pause = True
 
         if has_maintenance:
             return TILE_ICON_MAINTENANCE
-        if has_pause:
-            return TILE_ICON_PAUSE
         if has_out_of_surveillance:
             return TILE_ICON_OUT_SURVEILLANCE
+        if has_pause:
+            return TILE_ICON_PAUSE
+
+        watcher_state = 0
+        if len(watcher[ResultKey.ALARM.value]) > 0:
+            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
+            watcher_state = alarm[AlarmField.state.value]["val"]
 
         return TILE_ICON_SELECTOR[watcher_state]
 
@@ -225,7 +231,7 @@ class __TileData:
                 elif pbh["type_"] == "Maintenance":
                     has_maintenance = True
                 elif pbh["type_"] in ["pause", "Pause"]:
-                    has_maintenance = True
+                    has_pause = True
 
         if has_maintenance:
             return TILE_ICON_MAINTENANCE
@@ -530,7 +536,6 @@ def _rework_watcher_pipeline_element(watcher, logger):
                          "pipeline result".format(alarm["d"]))
 
     watcher[ResultKey.ENT.value] = entities.values()
-    del watcher[ResultKey.WATCHED_ENT_PBH.value]
     del watcher[ResultKey.WATCHED_ENT_ALRM.value]
 
     return watcher
