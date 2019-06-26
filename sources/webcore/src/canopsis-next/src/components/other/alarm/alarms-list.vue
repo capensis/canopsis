@@ -39,7 +39,8 @@
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
-      v-data-table(
+      v-data-table.alarms-list-table(
+      :class="vDataTableClass",
       v-model="selected",
       :items="alarms",
       :headers="headers",
@@ -170,6 +171,22 @@ export default {
       return [];
     },
 
+    vDataTableClass() {
+      const columnsLength = this.headers.length;
+      const COLUMNS_SIZES_VALUES = {
+        sm: { min: 0, max: 10, label: 'sm' },
+        md: { min: 11, max: 12, label: 'md' },
+        lg: { min: 13, max: Number.MAX_VALUE, label: 'lg' },
+      };
+
+      const { label = COLUMNS_SIZES_VALUES.sm.label } = Object.values(COLUMNS_SIZES_VALUES)
+        .find(({ min, max }) => columnsLength >= min && columnsLength <= max);
+
+      return {
+        [`columns-${label}`]: true,
+      };
+    },
+
     hasAccessToListFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
@@ -214,3 +231,62 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .alarms-list-table {
+    &.columns-lg {
+      table.v-table {
+        tbody, thead {
+          td, th {
+            padding: 0 8px;
+          }
+
+          @media screen and (max-width: 1600px) {
+            td, th {
+              padding: 0 4px;
+            }
+          }
+
+          @media screen and (max-width: 1450px) {
+            td, th {
+              font-size: 0.85em;
+            }
+
+            .badge {
+              font-size: inherit;
+            }
+          }
+        }
+      }
+    }
+
+    &.columns-md {
+      table.v-table {
+        tbody, thead {
+          @media screen and (max-width: 1700px) {
+            td, th {
+              padding: 0 12px;
+            }
+          }
+
+          @media screen and (max-width: 1250px) {
+            td, th {
+              padding: 0 8px;
+            }
+          }
+
+          @media screen and (max-width: 1150px) {
+            td, th {
+              font-size: 0.85em;
+              padding: 0 4px;
+            }
+
+            .badge {
+              font-size: inherit;
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
