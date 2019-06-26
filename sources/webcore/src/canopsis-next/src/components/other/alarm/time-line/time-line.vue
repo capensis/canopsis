@@ -33,11 +33,13 @@ export default {
     },
   },
   computed: {
-    groupedSteps() {
-      const alarm = this.getAlarmItem(this.alarm._id);
+    steps() {
+      return this.alarm.v.steps || [];
+    },
 
-      if (alarm && alarm.v.steps) {
-        const orderedSteps = orderBy(alarm.v.steps, ['t'], 'desc');
+    groupedSteps() {
+      if (this.alarm && this.alarm.v.steps) {
+        const orderedSteps = orderBy(this.alarm.v.steps, ['t'], 'desc');
 
         return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
       }
@@ -46,15 +48,26 @@ export default {
     },
   },
   mounted() {
-    this.fetchAlarmItem({
-      id: this.alarm._id,
-      params: {
+    this.fetchItem();
+  },
+  methods: {
+    fetchItem() {
+      const params = {
         sort_key: 't',
         sort_dir: 'DESC',
         limit: 1,
         with_steps: true,
-      },
-    });
+      };
+
+      if (this.alarm.v.resolved) {
+        params.resolved = true;
+      }
+
+      this.fetchAlarmItem({
+        id: this.alarm._id,
+        params,
+      });
+    },
   },
 };
 </script>
