@@ -55,6 +55,10 @@ class AlarmField(DefaultEnum):
     long_output = "long_output"
     output = "output"
     long_output_history = "long_out_history"
+    connector = "connector"
+    connector_name = "connector_name"
+    component = "component"
+    resource = "resource"
 
 
 class States(DefaultEnum):

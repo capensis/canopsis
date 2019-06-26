@@ -93,15 +93,6 @@ class ResultKey(DefaultEnum):
     WATCHED_ENT_PBH = "watched_entities_pbehaviors"
     WATCHED_ENT_ALRM = "watched_entities_alarm"
     ALRM_VALUE = "v"
-    ALRM_STATUS = "status"
-    ALRM_STATE = "state"
-    ALRM_SNOOZE = "snooze"
-    ALRM_ACK = "ack"
-    ALRM_CONNECTOR = "connector"
-    ALRM_CONNECTOR_NAME = "connector_name"
-    ALRM_LAST_UPDATE = "last_update_date"
-    ALRM_COMPONENT = "component"
-    ALRM_RESOURCE = "resource"
     ENT = "watched_entities"
     ENT_ID = "_id"
 
@@ -129,15 +120,15 @@ class __TileData:
         if not len(watcher[ResultKey.ALARM.value]) == 0:
             alarm = watcher[ResultKey.ALARM.value][0]
             alarm = alarm[ResultKey.ALRM_VALUE.value]
-            self.state = alarm[ResultKey.ALRM_STATE.value]
-            self.status = alarm[ResultKey.ALRM_STATUS.value]
-            self.snooze = alarm.get(ResultKey.ALRM_SNOOZE.value, None)
-            self.ack = alarm.get(ResultKey.ALRM_ACK.value, None)
-            self.connector = alarm[ResultKey.ALRM_CONNECTOR.value]
-            self.connector_name = alarm[ResultKey.ALRM_CONNECTOR_NAME.value]
-            self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE.value]
-            self.component = alarm[ResultKey.ALRM_COMPONENT.value]
-            self.resource = alarm.get(ResultKey.ALRM_RESOURCE.value, None)
+            self.state = alarm[AlarmField.state.value]
+            self.status = alarm[AlarmField.status.value]
+            self.snooze = alarm.get(AlarmField.snooze.value, None)
+            self.ack = alarm.get(AlarmField.ack.value, None)
+            self.connector = alarm[AlarmField.connector.value]
+            self.connector_name = alarm[AlarmField.connector_name.value]
+            self.last_update_date = alarm[AlarmField.last_update_date.value]
+            self.component = alarm[AlarmField.component.value]
+            self.resource = alarm.get(AlarmField.resource.value, None)
 
         # properties of the tile
         self.isActionRequired = self.__is_action_required(watcher)
@@ -180,7 +171,7 @@ class __TileData:
         watcher_state = 0
         if len(watcher[ResultKey.ALARM.value]) > 0:
             alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
-            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+            watcher_state = alarm[AlarmField.state.value]["val"]
 
         for ent in watcher[ResultKey.ENT.value]:
             if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
@@ -197,7 +188,7 @@ class __TileData:
         watcher_state = 0
         if len(watcher[ResultKey.ALARM.value]) > 0:
             alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
-            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+            watcher_state = alarm[AlarmField.state.value]["val"]
 
         has_maintenance = False
         has_out_of_surveillance = False
