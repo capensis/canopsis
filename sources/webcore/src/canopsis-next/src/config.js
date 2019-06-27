@@ -23,7 +23,8 @@ export const SCHEMA_EMBEDDED_KEY = '_embedded';
 export const MEDIA_QUERIES_BREAKPOINTS = {
   m: 450,
   t: 900,
-  l: 'Infinity',
+  l: 1400,
+  xl: 'Infinity',
 };
 
 export const API_ROUTES = {

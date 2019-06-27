@@ -9786,9 +9786,10 @@ vue-loader@^15.4.2:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
-vue-mq@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/vue-mq/-/vue-mq-0.2.1.tgz#2f4413684e7c0f4fa3ffc1d8a35cae72cc7c77f6"
+vue-mq@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue-mq/-/vue-mq-1.0.1.tgz#ee7dec5a0f50b4e2edbacd8ed43c57e15a072989"
+  integrity sha512-FceZ1tFE0MZ8GroRBKPQWBRy4ZEAa7p5R7cGAzJpGuKPU2AI4ClmE+S6O/yV4jO5271o9tgaUFt7fzUAIf9xOQ==
   dependencies:
     json2mq "^0.2.0"
 
