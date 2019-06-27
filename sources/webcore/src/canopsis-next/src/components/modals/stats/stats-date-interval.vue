@@ -18,19 +18,19 @@
           :label="$t('modals.statsDateInterval.fields.periodUnit')"
           )
         v-alert.mb-2(
-        v-if="form.periodUnit === $constants.STATS_DURATION_UNITS.month", type="info", value="true"
+        v-if="isPeriodMonth",
+        type="info",
+        value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
-        stats-date-selector.my-1(v-model="form", :periodUnit="form.periodUnit", @input="resetValidation")
-      v-alert(
-      value="errors",
-      type="error",
-      v-for="error in localErrors",
-      :key="error",
-      ) {{ error }}
+        stats-date-selector.my-1(
+        v-model="form",
+        :periodUnit="form.periodUnit",
+        @input="resetValidation"
+        )
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click="submit", :disabled="localErrors.length !== 0") {{ $t('common.submit') }}
+        v-btn.primary(@click="submit", :disabled="errors.any()") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -64,7 +64,11 @@ export default {
 
     return {
       form: cloneDeep(interval || defaultInterval),
-      periodUnits: [
+    };
+  },
+  computed: {
+    periodUnits() {
+      return [
         {
           text: this.$tc('common.times.hour'),
           value: STATS_DURATION_UNITS.hour,
@@ -81,13 +85,15 @@ export default {
           text: this.$tc('common.times.month'),
           value: STATS_DURATION_UNITS.month,
         },
-      ],
-      localErrors: [],
-    };
-  },
-  computed: {
+      ];
+    },
+
     hiddenFields() {
       return this.modal.config.hiddenFields || [];
+    },
+
+    isPeriodMonth() {
+      return this.form.periodUnit === STATS_DURATION_UNITS.month;
     },
   },
   created() {

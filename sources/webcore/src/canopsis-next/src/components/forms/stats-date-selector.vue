@@ -121,18 +121,17 @@ export default {
     },
   },
   methods: {
-    toDateObject(date, type) {
-      const unit = this.periodUnit === STATS_DURATION_UNITS.month ? 'month' : 'hour';
-      const momentDate = dateParse(date, type, DATETIME_FORMATS.dateTimePicker);
-
-      if (momentDate.isValid()) {
-        return momentDate.startOf(unit).toDate();
-      }
-
-      return moment().startOf(unit).toDate();
-    },
     getDateObjectPreparer(type) {
-      return value => this.toDateObject(value, type);
+      return (date) => {
+        const unit = this.periodUnit === STATS_DURATION_UNITS.month ? 'month' : 'hour';
+        const momentDate = dateParse(date, type, DATETIME_FORMATS.dateTimePicker);
+
+        if (momentDate.isValid()) {
+          return momentDate.startOf(unit).toDate();
+        }
+
+        return moment().startOf(unit).toDate();
+      };
     },
   },
 };

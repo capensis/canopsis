@@ -1,7 +1,7 @@
 import { omit, isEqual, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
+import { SORT_ORDERS, DATETIME_FORMATS, LIVE_REPORTING_INTERVALS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import dateIntervals, { dateParse } from '@/helpers/date-intervals';
@@ -100,7 +100,7 @@ export default {
         } catch (err) {
           console.warn(err);
         }
-      } else if (interval === 'custom') {
+      } else if (interval === LIVE_REPORTING_INTERVALS.custom) {
         const { tstart, tstop } = this.query;
 
         const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
