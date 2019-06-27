@@ -10,7 +10,7 @@
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
-        div.watcherName.pt-3(v-html="compiledTemplate")
+        v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
         v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
@@ -22,6 +22,7 @@
 
 <script>
 import { find } from 'lodash';
+import VRuntimeTemplate from 'v-runtime-template';
 
 import {
   MODALS,
@@ -45,6 +46,9 @@ import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 export default {
+  components: {
+    VRuntimeTemplate,
+  },
   mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
