@@ -2,8 +2,7 @@ import Handlebars from 'handlebars';
 
 import dateFilter from '@/filters/date';
 
-const attributes = ({ hash }, locked = []) => Object.entries(hash)
-  .filter(([key]) => !locked.includes(key))
+const prepareAttributes = attributes => Object.entries(attributes)
   .map(([key, value]) =>
     `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
   .join(' ');
@@ -30,17 +29,15 @@ registerHelper('timestamp', (date) => {
   return '';
 });
 
-const lockedAttrs = ['text', 'href'];
-
 registerHelper('external-link', (options) => {
-  const { href, text } = options.hash;
-  const link = `<a href="${href}" ${attributes(options, lockedAttrs)}>${text}</a>`;
+  const { href, text, ...attributes } = options.hash;
+  const link = `<a href="${href}" ${prepareAttributes(attributes)}>${text}</a>`;
   return new Handlebars.SafeString(link);
 });
 
 registerHelper('internal-link', (options) => {
-  const { href, text } = options.hash;
-  const link = `<router-link to="${href}" ${attributes(options, lockedAttrs)}>${text}</router-link>`;
+  const { href, text, ...attributes } = options.hash;
+  const link = `<router-link to="${href}" ${prepareAttributes(attributes)}>${text}</router-link>`;
   return new Handlebars.SafeString(link);
 });
 
