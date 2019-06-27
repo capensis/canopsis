@@ -20,6 +20,9 @@ function successResponseHandler(response) {
  * @returns {Object}
  */
 function errorResponseHandler(responseWithError) {
+  if (responseWithError.response && responseWithError.response.status === 401) {
+    window.location.reload();
+  }
   if (responseWithError.response && responseWithError.response.data) {
     if (responseWithError.response.data.errors) {
       return Promise.reject(responseWithError.response.data.errors);
