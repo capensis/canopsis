@@ -29,15 +29,11 @@ registerHelper('timestamp', (date) => {
   return '';
 });
 
-registerHelper('external-link', (options) => {
-  const { href, text, ...attributes } = options.hash;
-  const link = `<a href="${href}" ${prepareAttributes(attributes)}>${text}</a>`;
-  return new Handlebars.SafeString(link);
-});
-
 registerHelper('internal-link', (options) => {
   const { href, text, ...attributes } = options.hash;
-  const link = `<router-link to="${href}" ${prepareAttributes(attributes)}>${text}</router-link>`;
+  const path = href.replace(window.location.origin, '');
+
+  const link = `<router-link to="${path}" ${prepareAttributes(attributes)}>${text}</router-link>`;
   return new Handlebars.SafeString(link);
 });
 
