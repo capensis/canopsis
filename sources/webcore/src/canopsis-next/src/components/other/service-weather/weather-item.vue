@@ -262,7 +262,6 @@ export default {
   }
 
   .watcherName {
-    color: white;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -287,5 +286,13 @@ export default {
     right: 0.2em;
     top: 0;
     z-index: 1;
+  }
+</style>
+
+<style lang="scss">
+  .watcherName {
+    &, & a {
+      color: white;
+    }
   }
 </style>

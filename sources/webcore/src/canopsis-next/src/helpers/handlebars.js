@@ -2,19 +2,11 @@ import Handlebars from 'handlebars';
 
 import dateFilter from '@/filters/date';
 
-const attributes = ({ hash }) => {
-  const attrs = [];
-  Object.keys(hash).forEach((prop) => {
-    if (prop !== 'text' && prop !== 'href') {
-      attrs.push(`${
-        Handlebars.escapeExpression(prop)
-      }="${
-        Handlebars.escapeExpression(hash[prop])
-      }"`);
-    }
-  });
-  return attrs.join(' ');
-};
+const attributes = ({ hash }, locked = []) => Object.entries(hash)
+  .filter(([key]) => !locked.includes(key))
+  .map(([key, value]) =>
+    `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
+  .join(' ');
 
 export function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template);
@@ -38,14 +30,18 @@ registerHelper('timestamp', (date) => {
   return '';
 });
 
+const lockedAttrs = ['text', 'href'];
+
 registerHelper('external-link', (options) => {
   const { href, text } = options.hash;
-  return new Handlebars.SafeString(`<a href="${href}" ${attributes(options)}>${text}</a>`);
+  const link = `<a href="${href}" ${attributes(options, lockedAttrs)}>${text}</a>`;
+  return new Handlebars.SafeString(link);
 });
 
 registerHelper('internal-link', (options) => {
   const { href, text } = options.hash;
-  return new Handlebars.SafeString(`<router-link to="${href}" ${attributes(options)}>${text}</router-link>`);
+  const link = `<router-link to="${href}" ${attributes(options, lockedAttrs)}>${text}</router-link>`;
+  return new Handlebars.SafeString(link);
 });
 
 export default {
