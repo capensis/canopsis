@@ -933,6 +933,8 @@ export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
+export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
+
 export const OPTIONS_SANITIZE_TEXT_EDITOR = {
   allowedTags: ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
     'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
