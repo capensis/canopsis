@@ -266,6 +266,10 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
+
+    &, & /deep/ a {
+      color: white;
+    }
   }
 
   @keyframes blink {
@@ -286,13 +290,5 @@ export default {
     right: 0.2em;
     top: 0;
     z-index: 1;
-  }
-</style>
-
-<style lang="scss">
-  .watcherName {
-    &, & a {
-      color: white;
-    }
   }
 </style>
