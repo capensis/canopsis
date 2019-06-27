@@ -22,7 +22,7 @@ export default {
     },
   },
   actions: {
-    add({ commit }, {
+    async add({ dispatch, commit }, {
       id = uid('popup'), type, text, autoClose,
     } = {}) {
       commit(types.ADD, {
@@ -30,6 +30,9 @@ export default {
           id, type, text, autoClose,
         },
       });
+      if (type === 'error') {
+        await dispatch('auth/fetchCurrentUser', {}, { root: true });
+      }
     },
     remove({ commit }, { id }) {
       commit(types.REMOVE, { id });
