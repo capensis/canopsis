@@ -90,34 +90,32 @@ export default {
       return this.modal.config.hiddenFields || [];
     },
   },
+  created() {
+    this.$validator.extend('after_custom', {
+      getMessage: () => this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'),
+      validate: (value, [otherValue]) => {
+        try {
+          const convertedStop = dateParse(value, 'stop', DATETIME_FORMATS.dateTimePicker);
+          const convertedStart = dateParse(otherValue, 'start', DATETIME_FORMATS.dateTimePicker);
+
+          return !convertedStop.isSameOrBefore(convertedStart);
+        } catch (err) {
+          return true; // TODO: problem with i18n: https://github.com/baianat/vee-validate/issues/2025
+        }
+      },
+    }, {
+      hasTarget: true,
+    });
+  },
   methods: {
     resetValidation() {
       this.localErrors = [];
     },
 
-    validate() {
-      const { tstart, tstop } = this.form;
-
-      try {
-        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
-        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
-
-        if (convertedTstop.isSameOrBefore(convertedTstart)) {
-          this.localErrors.push(this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'));
-          return false;
-        }
-      } catch (err) {
-        this.localErrors.push(err.message);
-        return false;
-      }
-
-      return true;
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid && this.validate()) {
+      if (isFormValid) {
         if (this.config.action) {
           this.config.action(this.form);
         }

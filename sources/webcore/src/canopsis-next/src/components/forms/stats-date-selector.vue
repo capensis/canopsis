@@ -4,6 +4,7 @@
       v-flex(xs6)
         v-layout(align-center)
           date-time-picker-text-field(
+          ref="tstart",
           v-model="tstartDateString",
           :label="$t('common.startDate')",
           :dateObjectPreparer="getDateObjectPreparer('start')",
@@ -13,6 +14,7 @@
         v-layout(align-center)
           date-time-picker-text-field(
           v-model="tstopDateString",
+          v-validate="'after_custom:tstart'",
           :label="$t('common.endDate')",
           :dateObjectPreparer="getDateObjectPreparer('stop')",
           name="tstop",
@@ -34,6 +36,7 @@ import formMixin from '@/mixins/form';
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     DateTimePickerTextField,
   },

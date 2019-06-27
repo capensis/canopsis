@@ -132,7 +132,7 @@ export default {
         if (this.$validator && this.errors && this.name) {
           this.errors.add({
             field: this.name,
-            msg: 'Incorrect date', // TODO: change message
+            msg: err.message,
             id: this.commonErrorId,
           });
         }
