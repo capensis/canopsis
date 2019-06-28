@@ -17,6 +17,8 @@
 
 Le widget tableau de statistiques se présente sous la forme d'un tableau. Chaque ligne de ce tableau correspond à une entité, et aux statistiques associées à cette entité. La première colonne est non configurable. Celle-ci présente, pour chaque ligne, le nom de l'entité. Chacune des colonnes qui suit correpond à une statistique.
 
+Il est possible, pour chaque valeur de statistique, d'afficher une tendance par rapport à la période précédente.
+
 Le tableau présente entre 1 et n statistiques. Les statistiques affichées sont configurées depuis le panneau de paramètres du widget (voir [paramètres du widget](#parametres-du-widget)).
 
 ## Guide exploitant
@@ -28,6 +30,9 @@ Le tableau présente entre 1 et n statistiques. Les statistiques affichées sont
 3. Interval de date (*requis*)
 4. Filtre (*optionnel*)
 5. Sélecteur de statistique (*requis*)
+6. Paramètres avancés
+    
+    1. Colonne de tri par défaut (*optionnel*)
 
 #### Taille du widget (*requis*)
 
@@ -50,20 +55,22 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir l'interval de dates pour lequel les statistiques doivent être affichées.
 
-Par défaut l'interval correspond aux statistiques du jour.
+Par défaut l'interval correspond aux statistiques des 7 derniers jours.
 
 ##### Période
 
-Les deux champs de période correspondent à l'interval entre deux valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement des statistiques.
+Le champ de période correspond à l'interval entre deux valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement des statistiques.
 
 Exemple: 
 
-- Si l'interval sélectionné est 'Dernière année', une période raisonnable serait de '1 mois'. 
-- Si l'interval sélectionné est 'Aujourd'hui jusqu'à maintenant', une période raisonnable serait de '1 heure'.
+- Si l'interval sélectionné est 'Dernière année', une période raisonnable serait: 'mois'. 
+- Si l'interval sélectionné est 'Aujourd'hui jusqu'à maintenant', une période raisonnable serait: 'heure'.
+
+**Attention**: Si la période sélectionnée est le mois, les dates de début et de fin de calcul des statistiques seront arrondis au premier jour du mois sélectionnée, à 00:00 UTC.
 
 ##### Interval
 
-Deux permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
+Deux sélecteurs permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
 
 A l'intérieur des champs de sélection de date (gauche), il est possible :
 
@@ -79,7 +86,7 @@ A l'intérieur des champs de sélection de date (gauche), il est possible :
     * Valeur: Nombre d'unités à ajouter/soustraire
     * Unité: 'h' pour 'heures, 'd' pour 'jours', 'm' pour 'mois' et 'y' pour 'année
 
-- A la suite du modificateur peut s'ajouter un opérateur permettant d'arrondir la valeur au début/à la fin de l'unité voulu. Cet opérateur se présente sous la forme: '/unité'. Cet arrondis se fera à la valeur inférieur pour la date de début, à la valeur supérieur pour la date de fin.
+- A la suite du modificateur peut s'ajouter un opérateur permettant d'arrondir la valeur au début/à la fin de l'unité voulue. Cet opérateur se présente sous la forme: '/unité'. Cet arrondi se fera à la valeur inférieure pour la date de début, à la valeur supérieure pour la date de fin.
 
 Exemples: 
 
@@ -123,7 +130,8 @@ Cette fenêtre vous permet de définir la statistique souhaitée.
 - Statistique à afficher (voir [liste des statstiques disponibles](../index.md#les-statistiques-disponibles)).
 - Titre associé à cette statistique.
 - Options: Liste d'options concernant la statistique sélectionnée. Les options varient selon la type de statistique voulue :
-    - ```Recursif```: Si l'option est activée, permet de calculer la statistique sur l'entité, ainsi que sur ses dépendances, et les dépendances de ses dépendances, etc...
+    - ```Tendance```: Si l'option est activée, permet d'afficher, à côté des valeurs des statistiques, une tendance par rapport à la période précédente, accompagnée d'un icône afin d'identifier rapidement si la valeur a augmentée/diminuée/stagnée. 
+    - ```Récursif```: Si l'option est activée, permet de calculer la statistique sur l'entité, ainsi que sur ses dépendances, et les dépendances de ses dépendances, etc...
     - ```Etats```: Permet de ne prendre en compte que les alarmes avec le/les état(s) (ok, mineure, majeure ou critique) sélectionné(s).
     - ```Auteurs```: Permet de ne prendre en compte que les alarmes dont le/les auteur(s) fait parti de la liste précisée ici. Pour ajouter un auteur à la liste, entrez son nom, puis appuyer sur la touche "Entrée".
     - ```Sla```: Permet de préciser le temps définit dans le SLA. **Attention: Ce paramètre est requis pour le calcul des statistiques "Taux d'Ack conforme SLA" et "Taux de résolution conforme Sla"**.
@@ -134,4 +142,12 @@ La liste des statistiques ajoutées au widget est visible depuis le panneau de p
 
 ![Liste de statistiques](../img/stats-list.png "Liste de statistiques")
 
+#### Paramètres avancés
 
+##### Colonne de tri par défaut
+
+Ce paramètre permet de définir la colonne selon laquelle les valeurs seront triées par défaut.
+
+Deux sélecteurs sont disponibles ici.
+Le premier sélecteur vous permet de choisir la colonne selon laquelle le tri sera effectué. L'ensemble des statistiques sélectionnées sont disponibles.
+Le deuxième sélecteur permet de choisir le sens de tri. "ASC" pour un tri ascendant, "DESC" pour un tri descendant.
