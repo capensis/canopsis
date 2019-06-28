@@ -42,6 +42,7 @@ from canopsis.common.utils import get_rrule_freq
 from canopsis.models.entity import Entity
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
+from canopsis.watcher.enums import WatcherField
 from canopsis.watcher.filtering import WatcherFilter
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
@@ -120,10 +121,8 @@ class TileIcon(FastEnum):
 
 
 class ResultKey(DefaultEnum):
-    STATE = "state"
     ALARM = "alarm"
     PBEHAVIORS = "pbehaviors"
-    MFILTER = "mfilter"
     WATCHED_ENT_PBH = "watched_entities_pbehaviors"
     WATCHED_ENT_ALRM = "watched_entities_alarm"
     ALRM_VALUE = "v"
@@ -137,12 +136,12 @@ class __TileData:
         self.infos = watcher[Entity.INFOS]
         self.sla_tex = ""
         self.display_name = watcher[Entity.NAME]
-        self.mfilter = watcher.get(ResultKey.MFILTER.value, "")
+        self.mfilter = watcher.get(WatcherField.MFILTER, "")
 
         self.watcher_pbehavior = watcher.get(ResultKey.PBEHAVIORS.value, [])
         self.automatic_action_timer = self.__get_next_run(watcher)
 
-        state = watcher.get(ResultKey.STATE.value, 0)
+        state = watcher.get(WatcherField.STATE, 0)
         if isinstance(state, int):
             self.state = {'val': state}
         else:
