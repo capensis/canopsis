@@ -274,6 +274,7 @@ export default {
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
+      draggable: 'Try dragging an item',
     },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
@@ -378,6 +379,9 @@ export default {
       label: 'Label',
       pickLineColor: 'Pick line color',
       pickLabelColor: 'Pick label color',
+      errors: {
+        value: 'Only INT type',
+      },
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
