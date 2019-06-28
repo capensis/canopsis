@@ -9,11 +9,11 @@ L'authentification LDAP est actuellement fonctionnelle et est basée sur [python
 
 Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
-Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
+Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
 ### Activation de LDAP
 
-Pour activer l'authentification *ldap*, le service doit être activé dans la configuration du serveur web.
+Pour activer l'authentification LDAP, le service doit être activé dans la configuration du serveur web.
 
 Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`, où `canopsis.auth.ldap` doit être ajouté aux mécanismes d'authentification.
 
