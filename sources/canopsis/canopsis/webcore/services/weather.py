@@ -60,15 +60,33 @@ DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
 DEFAULT_DIRECTION = "ASC"
 
-TILE_COLOR_PAUSE = "pause"
-TILE_COLOR_OK = "ok"
-TILE_COLOR_MINOR = "minor"
-TILE_COLOR_MAJOR = "major"
-TILE_COLOR_CRITICAL = "critical"
-TILE_COLOR_SELECTOR = [TILE_COLOR_OK,
-                       TILE_COLOR_MINOR,
-                       TILE_COLOR_MAJOR,
-                       TILE_COLOR_CRITICAL]
+
+class TileColor(FastEnum):
+    """TileColor is an enumeration that defines the names of the colors that
+    can be displayed in the service weather."""
+    PAUSE = "pause"
+    OK = "ok"
+    MINOR = "minor"
+    MAJOR = "major"
+    CRITICAL = "critical"
+
+    @classmethod
+    def from_state(cls, state):
+        """Return the color corresponding to an alarm's state, assuming that
+        there are no active pbehaviors.
+
+        :param int state:
+        :rtype: TileColor
+        :raises: ValueError if the state is not an integer between 0 and 3
+        """
+        selector = [cls.OK,
+                    cls.MINOR,
+                    cls.MAJOR,
+                    cls.CRITICAL]
+        try:
+            return selector[state]
+        except TypeError, IndexError:
+            raise ValueError("Unable to get color from state {}".format(state))
 
 
 class TileIcon(FastEnum):
@@ -192,7 +210,7 @@ class __TileData:
     def __get_tile_color(cls, watcher):
         if len(watcher[ResultKey.PBEHAVIORS.value]) != 0 or \
            cls.__is_all_entities_paused(watcher):
-            return TILE_COLOR_PAUSE
+            return TileColor.PAUSE
 
         # FIXME: this code is duplicated three times.
         watcher_state = 0
@@ -200,7 +218,7 @@ class __TileData:
             alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
             watcher_state = alarm[AlarmField.state.value]["val"]
 
-        return TILE_COLOR_SELECTOR[watcher_state]
+        return TileColor.from_state(watcher_state)
 
     @classmethod
     def __get_tile_icon(cls, watcher):
