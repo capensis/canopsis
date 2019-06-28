@@ -31,7 +31,7 @@ Le helper ```internal-link``` permet d'inclure, dans un template, un lien vers u
 L'option ```href``` peut contenir:
 
 - Une addresse complète. Exemple: ```http://10.127.186.12/en/static/canopsis-next/dist/index.html/views/123456```
-- Un chemin vers un champ de l'entité. Par exemple: ```entity.infos.weather-link.val```. Cette valeur sera remplacée par la valeur trouvée dans l'entitée. Exemple: ```{{ internal-link href=entity.infos.weather-link text="Link" }}```. **Attention**: Pour insérer une variable, il ne faut pas entourer la valeur de guillemets 
+- Un chemin vers un champ de l'entité. Par exemple: ```entity.infos.weather-link.val```. Cette valeur sera remplacée par la valeur trouvée dans l'entité. Exemple: ```{{ internal-link href=entity.infos.weather-link text="Link" }}```. **Attention**: Pour insérer une variable, il ne faut pas entourer la valeur de guillemets 
 
 En dehors des options ```href``` et ```text```, obligatoires pour un fonctionnement normal, il est possible d'ajouter tous les attributs souhaités.
 
