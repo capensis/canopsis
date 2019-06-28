@@ -131,6 +131,12 @@ export default {
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
         },
+        signal: {
+          type: alarmsListActionsTypes.signal,
+          icon: 'add_alert',
+          title: 'Signaler l\'alarme',
+          method: this.showActionModal(MODALS.signalAlarm),
+        },
       },
     };
   },
@@ -146,7 +152,7 @@ export default {
       };
     },
     actions() {
-      const { filteredActionsMap } = this;
+      const { filteredActionsMap, actionsMap } = this;
 
       let actions = [];
 
@@ -169,6 +175,7 @@ export default {
             filteredActionsMap.changeState,
             filteredActionsMap.pbehaviorAdd,
             filteredActionsMap.pbehaviorList,
+            actionsMap.signal,
             filteredActionsMap.moreInfos,
           );
         } else {

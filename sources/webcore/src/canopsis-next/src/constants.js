@@ -47,6 +47,7 @@ export const MODALS = {
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   moreInfos: 'more-infos',
+  signalAlarm: 'signal-alarm',
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',

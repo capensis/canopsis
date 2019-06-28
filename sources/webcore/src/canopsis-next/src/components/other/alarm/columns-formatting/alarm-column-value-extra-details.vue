@@ -45,7 +45,7 @@
           strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
           div {{ $t('common.date') }} : {{ alarm.v.snooze.t | date('long') }}
-          div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}
+          div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}z
     div(v-if="pbehaviors.length")
       v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(

@@ -23,6 +23,7 @@ import CreateDeclareTicketEvent from './alarm/create-declare-ticket-event.vue';
 import CreateSnoozeEvent from './alarm/create-snooze-event.vue';
 import VariablesHelp from './common/variables-help.vue';
 import MoreInfos from './alarm/more-infos.vue';
+import SignalAlarm from './alarm/signal-alarm.vue';
 import InfoPopupSetting from './alarm/info-popup-setting/info-popup-setting.vue';
 import AddInfoPopup from './alarm/info-popup-setting/add-info-popup.vue';
 import CreatePbehavior from './pbehavior/create-pbehavior.vue';
@@ -75,6 +76,7 @@ export default {
     PbehaviorList,
     EditLiveReporting,
     MoreInfos,
+    SignalAlarm,
     InfoPopupSetting,
     AddInfoPopup,
     Confirmation,
@@ -131,6 +133,7 @@ export default {
         [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.watcher]: { maxWidth: 920, lazy: true },
+        [MODALS.signalAlarm]: { maxWidth: 1280, lazy: true },
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
