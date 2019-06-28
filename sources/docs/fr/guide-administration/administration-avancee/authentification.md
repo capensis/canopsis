@@ -1,53 +1,34 @@
 # Authentification
 
-- [LDAP](#ldap)
-    - [Activation du support LDAP](#activation-ldap)  
-    - [Configuration](#configuration-ldap)  
-    - [Utilisation](#utilisation-ldap)  
-- [CAS](#cas)
-    - [Activation du support LDAP](#activation-cas)  
-    - [Configuration](#configuration-cas)  
-    - [Utilisation](#utilisation-cas)  
-- [SAML2](#saml2)  
-	- [Paramétrage ldP](#paramétrage-idp)  
-	- [Création du paramètrage côté Canopsis](#création-du-paramétrage-côté-canopsis)  
-    - [Intégration des paramètres en base](#intégration-des-paramètres-en-base)  
-    - [Activation de l'authentification SAML2](#activation-de-lauthentification-saml2)  
-    - [Test et logs](#tests-et-log)  
-    - [Troubleshooting](#troubleshooting)  
-
-## LDAP
+## Authentification LDAP
 
 !!! attention
-		Les fonctionnalités liées à LDAP sont en cours de développement. Toutes les fonctionnalités d'LDAP ne sont pas encore implémentées.
+    Les fonctionnalités liées à LDAP sont en cours de développement. Toutes les fonctionnalités de LDAP ne sont pas encore implémentées.
 
-L'authentification LDAP est actuellement fonctionnelle et est basée sur [python-ldap](https://python-ldap.readthedocs.io) qui utilise la *libldap* du projet [OpenLDAP](http://www.openldap.org/).
-Canopsis utilise la version 3 du protocole LDAP.
+L'authentification LDAP est actuellement fonctionnelle et est basée sur [python-ldap](https://python-ldap.readthedocs.io) qui utilise la *libldap* du projet [OpenLDAP](https://www.openldap.org/). Canopsis utilise la version 3 du protocole LDAP.
 
 Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
-### Activation LDAP
+### Activation de LDAP
 
-Pour activer l'authentification *ldap*, le service doit être activé dans la configuration du serveur web.  
-Le fichier à modifier est "etc/webserver.conf".  
+Pour activer l'authentification *ldap*, le service doit être activé dans la configuration du serveur web.
+Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`.
 Le service **canopsis.auth.ldap** est à ajouter aux providers d'authentification.
 
-````
+```ini
 [auth]
 providers = canopsis.auth.authkey,canopsis.auth.ldap
-````
+```
 
 Un redémarrage du serveur web est nécessaire.
 
-### Configuration LDAP
+### Configuration de LDAP
 
-La configuration de l'authentification se fait au moyen d'un requête sur l'API.  
-Vous devez rédiger un fichier de configuration et le poster sur l'API.  
+La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez rédiger un fichier de configuration et l'envoyer sur l'API.
 
-Voici un listing de paramètres nécessaires à la configuration LDAP :  
-
+Voici un listing de paramètres nécessaires à la configuration LDAP :
 
 |   Attribut   |                                                  Description                                                   |                           Exemple                           |
 | ------------ | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -60,49 +41,48 @@ Voici un listing de paramètres nécessaires à la configuration LDAP :
 | default_role |                               Rôle par défaut au moment de la première connexion                               |                        Visualisation                        |
 |    attrs     |        Translation d'attributs. Un utilisateur Canopsis dispose des attributs firstname, lastname, mail        | "mail": "mail", "firstname": "givenName", "lastname" : "sn" |
 
-La configuration se fait dans un fichier *json* : **ldapconfig.json**
+La configuration se fait dans un fichier JSON : **ldapconfig.json**
 
-````
+```json
 {
-"crecord_type":"ldapconfig",
-"crecord_name":"ldapconfig",
-"admin_dn":"uid=mon_user,ou=mon_org,dc=dom,dc=com",
-"ufilter":"uid=%s",
-"default_role":"Visualisation",
-"user_dn":"ou=mon_org,dc=dom,dc=com",
-"admin_passwd":"***",
-"host":"x.x.x.x",
-"attrs":{
-  "mail":"mail",
-  "firstname":"givenName",
-  "lastname":"sn"
-},
-"port":389,
-"id":"cservice.ldapconfig"
+    "crecord_type": "ldapconfig",
+    "crecord_name": "ldapconfig",
+    "admin_dn": "uid=mon_user,ou=mon_org,dc=dom,dc=com",
+    "ufilter": "uid=%s",
+    "default_role": "Visualisation",
+    "user_dn": "ou=mon_org,dc=dom,dc=com",
+    "admin_passwd": "***",
+    "host": "x.x.x.x",
+    "attrs": {
+        "mail": "mail",
+        "firstname": "givenName",
+        "lastname": "sn"
+    },
+    "port": 389,
+    "id": "cservice.ldapconfig"
 }
-````
+```
 
 !!! Note
-    Vous pouvez remplacez les attributs **host** ET **port** par **ldap_uri**
+    Vous pouvez remplacer les attributs `host` et `port` par `ldap_uri`.
 
-La requête suivante permet de poster cette configuration.  
+La requête suivante permet de poster cette configuration.
 
-````
+```sh
 curl -X POST -H "Content-type: application/json" -d @ldapconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/ldapconfig/cservice.ldapconfig'
-````
+```
 
 Le résultat renvoyé doit être de type :
 
-````
+```json
 {"total": 1, "data": [{"..."}], "success": true}
-````
+```
 
-### Utilisation LDAP
+### Utilisation de LDAP
 
-A ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis.  
-Le profil d'affectation sera celui spécifié dans la configuration.
+À ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis. Le profil d'affectation sera celui spécifié dans la configuration.
 
-## CAS
+## Authentification CAS
 
 L'authentification CAS est actuellement fonctionnelle.
 
@@ -110,26 +90,24 @@ Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs via WebSSO.
 
-### Activation CAS
+### Activation de CAS
 
-Pour activer l'authentification *cas*, le service doit être activé dans la configuration du serveur web.  
-Le fichier à modifier est "etc/webserver.conf".  
+Pour activer l'authentification CAS, le service doit être activé dans la configuration du serveur web.
+Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`.
 Le service **canopsis.auth.cas** est à ajouter aux providers d'authentification.
 
-````
+```ini
 [auth]
 providers = canopsis.auth.authkey,canopsis.auth.cas
-````
+```
 
 Un redémarrage du serveur web est nécessaire.
 
-### Configuration CAS
+### Configuration de CAS
 
-La configuration de l'authentification se fait au moyen d'un requête sur l'API.  
-Vous devez rédiger un fichier de configuration et le poster sur l'API.  
+La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez rédiger un fichier de configuration et l'envoyer sur l'API.
 
-Voici un listing de paramètres nécessaires à la configuration CAS :  
-
+Voici un listing de paramètres nécessaires à la configuration CAS :
 
 |   Attribut   |                    Description                     |            Exemple             |
 | ------------ | -------------------------------------------------- | ------------------------------ |
@@ -138,44 +116,43 @@ Voici un listing de paramètres nécessaires à la configuration CAS :
 |    title     |        Label sur le formulaire de connexion        |           Connexion            |
 |    server    |            serveur de connexion WebSSO             | https://cas.info.local/websso/ |
 
-La configuration se fait dans un fichier *json* : **casconfig.json**
+La configuration se fait dans un fichier JSON : **casconfig.json**
 
-````
+```json
 {
-  "crecord_type": "cservice",
-  "crecord_name": "casconfig"
-  "_id": "cservice.casconfig",
-  "enable": true,
-  "service": "http://canopsis.info.local",
-  "default_role": "Visualisation",
-  "title": "Connexion",
-  "server": "https://cas.info.local/websso/",
+    "crecord_type": "cservice",
+    "crecord_name": "casconfig"
+    "_id": "cservice.casconfig",
+    "enable": true,
+    "service": "http://canopsis.info.local",
+    "default_role": "Visualisation",
+    "title": "Connexion",
+    "server": "https://cas.info.local/websso/",
 }
-````
+```
 
+La requête suivante permet de poster cette configuration.
 
-La requête suivante permet de poster cette configuration.  
-
-````
+```sh
 curl -X POST -H "Content-type: application/json" -d @casconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/casconfig/cservice.casconfig'
-````
+```
 
 Le résultat renvoyé doit être de type :
 
-````
+```json
 {"total": 1, "data": [{"..."}], "success": true}
-````
+```
 
-### Utilisation CAS
+### Utilisation de CAS
 
-A ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis.  
+À ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis.
 Le profil d'affectation sera celui spécifié dans la configuration.
 
-## SAML2
+## Authentification SAML2
 
 Intégration de l’authentification avec SAML2
 
-Nécessite l’installation de la brique `CAT`.
+Nécessite l’installation de la brique CAT.
 
 ### Paramétrage IdP
 
@@ -368,12 +345,12 @@ canopsis_cat.webcore.services.saml2 = 1
 Puis exécutez :
 
 ```sh
-su - canopsis -c "service webserver restart"
+systemctl restart canopsis-webserver
 ```
 
 ### Tests et log
 
-Le fichier de log `var/log/saml2.log` contiendra les erreurs SAML2, s’il y en a.
+Le fichier de log `/opt/canopsis/var/log/saml2.log` contiendra les erreurs SAML2, s’il y en a.
 
 Pour tester l’authentification :
 
@@ -384,7 +361,7 @@ Pour tester l’authentification :
 
 ### Troubleshooting
 
-Observer les logs `var/log/saml2.log` et `var/log/webserver.log`.
+Observer les logs `/opt/canopsis/var/log/saml2.log` et `/opt/canopsis/var/log/webserver.log`.
 
 #### FQDN
 
