@@ -90,7 +90,7 @@ Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs via WebSSO.
 
-### Activation de CAS
+### Activation de CAS
 
 Pour activer l'authentification CAS, le service doit être activé dans la configuration du serveur web.
 
