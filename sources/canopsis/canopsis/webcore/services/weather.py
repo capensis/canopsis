@@ -35,7 +35,7 @@ from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
 from canopsis.common.collection import MongoCollection
 from canopsis.common.converters import mongo_filter, id_filter
-from canopsis.common.enumerations import DefaultEnum
+from canopsis.common.enumerations import DefaultEnum, FastEnum
 from canopsis.common.influx import InfluxDBClient
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import get_rrule_freq
@@ -70,17 +70,36 @@ TILE_COLOR_SELECTOR = [TILE_COLOR_OK,
                        TILE_COLOR_MAJOR,
                        TILE_COLOR_CRITICAL]
 
-TILE_ICON_PAUSE = "pause"
-TILE_ICON_MAINTENANCE = "maintenance"
-TILE_ICON_OUT_SURVEILLANCE = "outOfSurveillance"
-TILE_ICON_OK = "ok"
-TILE_ICON_MINOR = "minor"
-TILE_ICON_MAJOR = "major"
-TILE_ICON_CRITICAL = "critical"
-TILE_ICON_SELECTOR = [TILE_ICON_OK,
-                      TILE_ICON_MINOR,
-                      TILE_ICON_MAJOR,
-                      TILE_ICON_CRITICAL]
+
+class TileIcon(FastEnum):
+    """TileIcon is an enumeration that defines the names of the icons that can
+    be displayed in the service weather."""
+    PAUSE = "pause"
+    MAINTENANCE = "maintenance"
+    OUT_SURVEILLANCE = "outOfSurveillance"
+    OK = "ok"
+    MINOR = "minor"
+    MAJOR = "major"
+    CRITICAL = "critical"
+
+    @classmethod
+    def from_state(cls, state):
+        """Return the icon corresponding to an alarm's state, assuming that
+        there are no active pbehaviors.
+
+        :param int state:
+        :rtype: TileIcon
+        :raises: ValueError if the state is not an integer between 0 and 3
+        """
+        selector = [cls.OK,
+                    cls.MINOR,
+                    cls.MAJOR,
+                    cls.CRITICAL]
+        try:
+            return selector[state]
+        except TypeError, IndexError:
+            raise ValueError("Unable to get icon from state {}".format(state))
+
 
 class ResultKey(DefaultEnum):
     LINKS = "links"
@@ -203,18 +222,18 @@ class __TileData:
                 has_pause = True
 
         if has_maintenance:
-            return TILE_ICON_MAINTENANCE
+            return TileIcon.MAINTENANCE
         if has_out_of_surveillance:
-            return TILE_ICON_OUT_SURVEILLANCE
+            return TileIcon.OUT_SURVEILLANCE
         if has_pause:
-            return TILE_ICON_PAUSE
+            return TileIcon.PAUSE
 
         watcher_state = 0
         if len(watcher[ResultKey.ALARM.value]) > 0:
             alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
             watcher_state = alarm[AlarmField.state.value]["val"]
 
-        return TILE_ICON_SELECTOR[watcher_state]
+        return TileIcon.from_state(watcher_state)
 
     @classmethod
     def __get_tile_secondary_icon(cls, watcher):
@@ -234,11 +253,11 @@ class __TileData:
                     has_pause = True
 
         if has_maintenance:
-            return TILE_ICON_MAINTENANCE
+            return TileIcon.MAINTENANCE
         if has_pause:
-            return TILE_ICON_PAUSE
+            return TileIcon.PAUSE
         if has_out_of_surveillance:
-            return TILE_ICON_OUT_SURVEILLANCE
+            return TileIcon.OUT_SURVEILLANCE
 
         return None
 
