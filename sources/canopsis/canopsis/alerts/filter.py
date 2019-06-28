@@ -217,24 +217,39 @@ class AlarmFilter(object):
         if hasattr(self, key):
             return getattr(self, key)
 
-    def check_alarm(self, alarm):
+    def get_and_check_alarm(self, alarm):
         """
-        Check if a filter is valid for a specified alarm.
+        Get an up to date alarm from the database, and check that the alarm
+        filter should still be applied to it.
+
+        If the alarm filter should not be applied to the alarm, None is
+        returned.
 
         The alarm document MUST contain _id key.
 
         :param alarm: An alarm
         :type alarm: dict
-        :rtype: bool
+        :rtype: Union[dict, None]
         """
         and_ = [{'_id': alarm['_id']}]
         if self[self.CONDITION] is not None:
             and_.append(self[self.CONDITION])
 
-        query = {'$and': and_}
-        result = self.alarm_storage._backend.find(query).count()
+        mfilter = self[self.FILTER]
+        if isinstance(mfilter, string_types) and mfilter != '':
+            try:
+                and_.append(json.loads(mfilter))
+            except ValueError as exc:
+                self.logger.warning('Cannot parse mfilter "{}": {}'
+                                    .format(mfilter, exc))
+                return None
 
-        return result > 0
+        query = {'$and': and_}
+        alarms = list(self.alarm_storage._backend.find(query))
+
+        if not alarms:
+            return None
+        return alarms[0]
 
     def next_run(self, alarm):
         """
@@ -249,7 +264,7 @@ class AlarmFilter(object):
         runs = alarmfilter.get(AlarmFilterField.runs.value, {})
         executions = runs.get(alarm[AlarmField._id.value], [])
 
-        if self.check_alarm(alarm) and len(executions) < self.repeat:
+        if self.get_and_check_alarm(alarm) and len(executions) < self.repeat:
             limit = self.element[self.LIMIT]
             if len(executions) > 0:
 

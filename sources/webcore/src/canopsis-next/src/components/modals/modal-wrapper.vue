@@ -11,7 +11,6 @@ import modalMixin from '@/mixins/modal';
  * Wrapper for each modal window
  *
  * @prop {Object} modal - The current modal object
- * @prop {number} index - The current modal index in the store
  * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
  */
 export default {
@@ -19,10 +18,6 @@ export default {
   props: {
     modal: {
       type: Object,
-      required: true,
-    },
-    index: {
-      type: Number,
       required: true,
     },
     dialogProps: {

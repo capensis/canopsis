@@ -2,6 +2,11 @@ import Handlebars from 'handlebars';
 
 import dateFilter from '@/filters/date';
 
+const prepareAttributes = attributes => Object.entries(attributes)
+  .map(([key, value]) =>
+    `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
+  .join(' ');
+
 export function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template);
 
@@ -22,6 +27,14 @@ registerHelper('timestamp', (date) => {
   }
 
   return '';
+});
+
+registerHelper('internal-link', (options) => {
+  const { href, text, ...attributes } = options.hash;
+  const path = href.replace(window.location.origin, '');
+
+  const link = `<router-link to="${path}" ${prepareAttributes(attributes)}>${text}</router-link>`;
+  return new Handlebars.SafeString(link);
 });
 
 export default {

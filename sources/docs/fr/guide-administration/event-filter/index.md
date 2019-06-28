@@ -13,6 +13,10 @@ partie [Exemples](#exemples).
 
 Une règle est un document JSON contenant les paramètres suivants :
 
+ - `_id` (optionnel) : un identifiant unique (généré automatiquement s'il n'est
+   pas défini par l'utilisateur).
+ - `description` (optionnel) : une description de la règle de la règle, donnée
+   par l'utilisateur.
  - `type` (requis) : le type de la règle (voir [Types de
    règles](#types-de-règles) pour plus de détails).
  - `pattern` (optionnel) : un pattern permettant de sélectionner les évènements
@@ -114,6 +118,13 @@ expression régulière :
 Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évènement est
 supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est
 ignoré par Canopsis.
+
+Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur
+`che` l'affiche sur sa sortie de log :
+
+```
+2019/05/02 12:45:19 event dropped by event filter: {"hostgroups":["HG_FOOBAR"],"event_type":"check","execution_time":2.139087200164795,"timestamp":1556793914,"component":"foobar","state_type":0,"source_type":"resource","resource":"PING","current_attempt":1,"connector":"foobar","long_output":"","state":2,"connector_name":"foobar","output":"foo","command_name":"foo","perf_data":"","max_attempts":2}
+```
 
 #### Break
 
@@ -414,6 +425,7 @@ les évènements.
 
 ```javascript
 {
+    "description": "Conversion de 192.168.0.1 en example.com",
     "type": "enrichment",
     "pattern": {
         "component": "192.168.0.1"
@@ -441,6 +453,7 @@ de l'event-filter dès que son output a été traduit.
 
 ```json
 {
+    "description": "Traduction du message de CPU critique",
     "type": "enrichment",
     "pattern": {
         "output": {"regex_match": "Warning: CPU Load is critical \\((?P<load>.*)%\\)"}
@@ -460,6 +473,7 @@ de l'event-filter dès que son output a été traduit.
 
 ```json
 {
+    "description": "Traduction du message de disque presque plein",
     "type": "enrichment",
     "pattern": {
         "output": {"regex_match": "Warning: The disk (?P<disk>.*) is almost full \\((?P<load>[\\.0-9]*)% used\\)"}

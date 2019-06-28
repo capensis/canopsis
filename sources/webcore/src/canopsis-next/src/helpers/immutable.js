@@ -54,7 +54,38 @@ export function setInSeveral(obj, pathsValuesMap) {
  * @return {Object|Array}
  */
 export function unsetIn(obj, path) {
-  return unset(setIn(obj, path, get(obj, path)), path);
+  const newObj = setIn(obj, path, get(obj, path));
+
+  unset(newObj, path);
+
+  return newObj;
+}
+
+/**
+ * Immutable method for deep removing object fields by conditions
+ *
+ * @param {Object|Array} obj - Object will be copied and copy will be updated
+ * @param {Object} pathsConditionsMap - Map for paths and conditions ex: { 'a.b.c': v => v < 5, 'a.y': v => !v.length }
+ * @return {Object|Array}
+ */
+export function unsetInSeveralWithConditions(obj, pathsConditionsMap) {
+  const pathsValuesMap = Object.keys(pathsConditionsMap).reduce((acc, key) => {
+    acc[key] = v => v;
+
+    return acc;
+  }, {});
+
+  const newObj = setInSeveral(obj, pathsValuesMap);
+
+  Object.entries(pathsConditionsMap).forEach(([path, condition]) => {
+    const value = get(obj, path);
+
+    if (condition(value)) {
+      unset(newObj, path);
+    }
+  });
+
+  return newObj;
 }
 
 /**

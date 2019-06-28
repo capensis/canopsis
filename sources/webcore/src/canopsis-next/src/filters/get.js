@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, isUndefined } from 'lodash';
 
 /**
  *
@@ -16,5 +16,5 @@ export default function (object, property, filter, defaultValue) {
     value = filter(value);
   }
 
-  return value || defaultValue;
+  return !isUndefined(value) ? value : defaultValue;
 }

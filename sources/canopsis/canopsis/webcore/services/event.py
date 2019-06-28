@@ -32,6 +32,81 @@ from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
 
 
+def is_valid(ws, event):
+    """
+    Check event validity.
+
+    :returns: True if the event is valid, False otherwise.
+    """
+    event_type = event.get("event_type")
+    if event_type in ['changestate', 'keepstate'] and event.get('state', None) == 0:
+        ws.logger.error("cannot set state to info with changestate/keepstate")
+        return False
+
+    return True
+
+
+def transform_event(ws, event):
+    """
+    Transform an event according its properties.
+
+    :returns: an event with transformations. the event given in paramter is not modified.
+    :raises Exception: any exception that can occured during one of the transformations.
+    """
+    new_event = event.copy()
+
+    # Add role in event
+    event_type = new_event.get("event_type")
+    if event_type in ['ack', 'ackremove', 'cancel', 'comment', 'uncancel', 'declareticket',
+                      'done', 'assocticket', 'changestate', 'keepstate', 'snooze',
+                      'statusinc', 'statusdec', 'stateinc', 'statedec']:
+        role = get_role(ws)
+        new_event['role'] = role
+        ws.logger.info(
+            u'Role added to the event. event_type = {}, role = {}'.format(event_type, role))
+
+    return new_event
+
+
+def get_role(ws):
+    """
+    Find role of the current user
+
+    :returns: the user role in a string, None if the role can't be found.
+    """
+    try:
+        session = request.environ.get('beaker.session', None)
+        if session is None:
+            ws.logger.warning(u'get_role(): Cannot retrieve beaker.session')
+            return None
+    except AttributeError as ae:
+        ws.logger.error(
+            u'get_role(): Error while getting beaker.session')
+        return None
+
+    try:
+        user = session.get('user', None)
+        if user is None:
+            ws.logger.warning(
+                u'get_role(): Cannot retrieve user field from beaker.session')
+            return None
+    except AttributeError as ae:
+        ws.logger.error(
+            u'get_role(): Error while getting user from beaker.session')
+        return None
+
+    try:
+        role = user.get('role', None)
+        if role is None:
+            ws.logger.warning(u'get_role(): Cannot retrieve role from user')
+    except AttributeError as ae:
+        ws.logger.error(
+            u'get_role(): Error while getting role from user')
+        return None
+
+    return role
+
+
 def send_events(ws, events, exchange='canopsis.events'):
     events = ensure_iterable(events)
 
@@ -40,17 +115,30 @@ def send_events(ws, events, exchange='canopsis.events'):
     retry_events = []
 
     for event in events:
+        if not is_valid(ws, event):
+            ws.logger.error(
+                "event {}/{} is invalid".format(event.get("resource"), event.get("component")))
+            failed_events.append(event)
+            continue
+
         try:
-            ws.amqp_pub.canopsis_event(event, exchange)
-            sent_events.append(event)
+            transformed_event = transform_event(ws, event)
+        except Exception as e:
+            ws.logger.error('Failed to transform event : {}'.format(e))
+            failed_events.append(event)
+            continue
+
+        try:
+            ws.amqp_pub.canopsis_event(transformed_event, exchange)
+            sent_events.append(transformed_event)
 
         except KeyError as exc:
             ws.logger.error('bad event: {}'.format(exc))
-            failed_events.append(event)
+            failed_events.append(transformed_event)
 
         except AmqpPublishError as exc:
             ws.logger.error('publish error: {}'.format(exc))
-            retry_events.append(event)
+            retry_events.append(transformed_event)
 
     return {
         'sent_events': sent_events,

@@ -20,7 +20,7 @@ export function textPairsToObject(textPairs) {
  *
  * @param {Object} object
  */
-export function objectToTextPairs(object) {
+export function objectToTextPairs(object = {}) {
   return Object.keys(object).map(text => ({ key: uid(), text, value: object[text] }));
 }
 

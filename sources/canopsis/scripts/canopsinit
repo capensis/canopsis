@@ -28,7 +28,8 @@ import time
 from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
 from canopsis.common import root_path
-from canopsis.version import (get_version_file_path, CANOPSIS_VERSION_ARG,
+from canopsis.version import (get_version_file_path, CANOPSIS_EDITION_ARG,
+                              CANOPSIS_STACK_ARG, CANOPSIS_VERSION_ARG,
                               read_version_file)
 
 COMMANDS = [root_path + "/bin/schema2db",
@@ -47,6 +48,10 @@ AUTH_REINIT = '--authorize-reinit'
 if __name__ == "__main__":
     parser = ArgumentParser(description='Canopsinit')
     parser.add_argument(AUTH_REINIT, dest='reinit', action='store_true')
+    parser.add_argument(CANOPSIS_EDITION_ARG, required=False,
+                        default="core", dest='canopsis_edition', choices=['cat', 'core'])
+    parser.add_argument(CANOPSIS_STACK_ARG, required=False,
+                        default="python", dest='canopsis_stack', choices=['go', 'python'])
     args = parser.parse_args()
 
     if args.reinit is True:
@@ -88,6 +93,12 @@ if __name__ == "__main__":
 
     COMMANDS[1].append(CANOPSIS_VERSION_ARG)
     COMMANDS[1].append(canopsis_version)
+
+    COMMANDS[1].append(CANOPSIS_EDITION_ARG)
+    COMMANDS[1].append(args.canopsis_edition)
+
+    COMMANDS[1].append(CANOPSIS_STACK_ARG)
+    COMMANDS[1].append(args.canopsis_stack)
 
     if started is True:
         for cmd in COMMANDS:

@@ -1,61 +1,80 @@
 <template lang="pug">
-  v-container.secondary(
-  fill-height,
-  fluid,
-  d-flex,
-  align-center
-  )
-    v-layout(justify-center, align-center, row)
-      v-flex(xs11, md6, lg4)
-        v-card
-          v-layout(row, wrap)
-            v-flex(xs12)
-              v-toolbar.primary.white--text
-                v-toolbar-title {{ $t('common.login') }}
-            v-flex(xs12)
-              v-layout(justify-center)
-                img.my-4(src="@/assets/canopsis-green.png")
-            v-flex(xs12)
-              v-form.py-2(@submit.prevent="submit")
-                v-flex(px-3)
-                  v-text-field(
-                  :label="$t('common.username')",
-                  :error-messages="errors.collect('username')",
-                  v-model="form.username",
-                  v-validate="'required'",
-                  color="primary",
-                  name="username",
-                  autofocus,
-                  clearable,
-                  outline
-                  )
-                v-flex(px-3)
-                  v-text-field(
-                  :label="$t('common.password')",
-                  :error-messages="errors.collect('password')",
-                  v-model="form.password",
-                  v-validate="'required'",
-                  color="primary",
-                  name="password",
-                  type="password",
-                  clearable,
-                  outline
-                  )
-                v-flex.px-3.py-2
-                  v-alert(:value="hasServerError", type="error")
+  div.mainContainer.secondary
+    div.description
+      div(v-html="description")
+    div.loginContainer
+      v-card
+        v-card-title.primary.white--text
+          v-layout(justify-space-between, align-center)
+            h3 {{ $t('common.login') }}
+            img.secondaryLogo(src="@/assets/canopsis.png")
+        v-card-text
+          v-form.pa-2(@submit.prevent="submit")
+            v-tooltip.ma-1(right, v-if="isLDAPAuthEnabled")
+              v-icon(slot="activator") help
+              v-layout(wrap)
+                v-flex(xs12) {{ $t('login.connectionProtocols') }}
+                ul
+                  li {{ $t('login.standard') }}
+                  li(v-if="isLDAPAuthEnabled") {{ $t('login.LDAP') }}
+            v-flex.mt-1
+              v-text-field(
+              :label="$t('common.username')",
+              :error-messages="errors.collect('username')",
+              v-model="form.username",
+              v-validate="'required'",
+              color="primary",
+              name="username",
+              autofocus,
+              clearable,
+              outline
+              )
+            v-flex
+              v-text-field(
+              :label="$t('common.password')",
+              :error-messages="errors.collect('password')",
+              v-model="form.password",
+              v-validate="'required'",
+              color="primary",
+              name="password",
+              type="password",
+              clearable,
+              outline
+              )
+            v-flex
+              v-layout.mb-1(justify-space-between, align-center)
+                v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
+                v-flex(v-if="hasServerError", xs9)
+                  v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
-                v-flex(xs2 px-2)
-                  v-btn.primary(type="submit") {{ $t('common.connect') }}
+              v-divider
+              v-layout(v-if="footer", v-html="footer")
+      v-card.mt-2(v-show="isCASAuthEnabled")
+        v-card-text
+          div.pa-3
+            div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
+            v-btn.my-4(
+            :href="casHref",
+            color="primary",
+            ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
+    div.secondary.darken-1.footer
+      a(:href="$constants.CANOPSIS_DOCUMENTATION", target="_blank") {{ $t('login.documentation') }}
+      a(:href="$constants.CANOPSIS_WEBSITE", target="_blank") Canopsis.com
+      a(:href="$constants.CANOPSIS_FORUM", target="_blank") {{ $t('login.forum') }}
+      a.version(:href="changeLogHref", target="_blank") {{ version }}
 </template>
 
 <script>
+import { CANOPSIS_DOCUMENTATION } from '@/constants';
+
 import authMixin from '@/mixins/auth';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [authMixin],
+  mixins: [authMixin, entitiesInfoMixin],
   data() {
     return {
       hasServerError: false,
@@ -64,6 +83,25 @@ export default {
         password: '',
       },
     };
+  },
+  computed: {
+    casHref() {
+      if (this.casConfig) {
+        return `${this.casConfig.server}/login?service=${this.casConfig.service}/logged_in`;
+      }
+
+      return null;
+    },
+    changeLogHref() {
+      if (this.version) {
+        return `${CANOPSIS_DOCUMENTATION}/notes-de-version/${this.version}/`;
+      }
+
+      return CANOPSIS_DOCUMENTATION;
+    },
+  },
+  async mounted() {
+    this.fetchLoginInfos();
   },
   methods: {
     async submit() {
@@ -93,3 +131,98 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .mainContainer {
+    min-width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: grid;
+    align-items: center;
+
+    grid-template-columns: 1fr 8fr 1fr;
+    grid-template-rows: 5% auto auto 15% auto;
+
+    grid-template-areas:
+      ". . ."
+      ". description ."
+      ". form ."
+      ". . ."
+      "footer footer footer";
+
+    @media (min-width: 900px) {
+      grid-template-columns: auto 40% 1% 40% auto;
+      grid-template-rows: auto auto auto auto;
+
+      grid-template-areas:
+        ". . . . ."
+        ". description . form ."
+        ". . . . ."
+        "footer footer footer footer footer";
+    }
+
+    @media (min-width: 1200px) {
+      grid-template-columns: auto 30% 3% 30% auto;
+    }
+  }
+
+  .description {
+    grid-area: description;
+    align-content: center;
+    min-height: 500px;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: white;
+  }
+
+  .loginContainer {
+    grid-area: form;
+    width: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+  }
+
+  .mainLogo {
+    max-width: 80%;
+    max-height: 5em;
+    object-fit: scale-down;
+  }
+
+  .secondaryLogo {
+    max-width: 35%;
+    max-height: 4em;
+    object-fit: scale-down;
+  }
+
+  .footer {
+    grid-area: footer;
+    position: relative;
+    color: white;
+    min-height: 5em;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      padding: 0 2em;
+    }
+
+    .version {
+      line-height: 5em;
+      position: absolute;
+      right: 0.5em;
+      bottom: 0;
+      text-decoration: underline;
+      font-weight: bold;
+
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+</style>

@@ -11,6 +11,10 @@
         :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList",
         :label="$t('settings.serviceWeatherModalTypes.fields.alarmList')"
         )
+        v-radio(
+        :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.both",
+        :label="$t('settings.serviceWeatherModalTypes.fields.both')"
+        )
 </template>
 
 <script>

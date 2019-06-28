@@ -14,14 +14,21 @@
       v-tab-item
         v-textarea(
         v-model="requestString",
+        v-validate="'json'",
         :label="$t('filterEditor.tabs.advancedEditor')",
+        :error-messages="errors.collect('requestString')"
+        data-vv-validate-on="none",
+        name="requestString",
         rows="10",
         @input="updateRequestString"
         )
         v-layout(justify-center)
           v-flex(xs10 md-6)
             v-alert(:value="parseError", type="error") {{ parseError }}
-        v-btn(@click="parse", :disabled="!isRequestStringChanged") {{ $t('common.parse') }}
+        v-btn(
+        :disabled="!isRequestStringChanged || errors.has('requestString')",
+        @click="parseRequestStringToFilter"
+        ) {{ $t('common.parse') }}
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>
 
@@ -33,6 +40,7 @@ import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
+import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
 import FilterGroup from './partial/filter-group.vue';
 import FilterResultsAlarm from './partial/results/alarm.vue';
@@ -60,7 +68,7 @@ export default {
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
     required: {
       type: Boolean,
@@ -88,7 +96,7 @@ export default {
       data.activeTab = 1;
       data.requestString = isString(this.value) ? this.value : JSON.stringify(this.value);
       data.isRequestStringChanged = true;
-      data.parseError = this.$t('filterEditor.errors.invalidJSON');
+      data.parseError = this.$t('filterEditor.errors.cantParseToVisualEditor');
     }
 
     return data;
@@ -112,19 +120,32 @@ export default {
         case ENTITIES_TYPES.entity:
           return ['name', 'type'];
 
+        case ENTITIES_TYPES.pbehavior:
+          return ['name', 'type', 'impact', 'depends'];
+
         default:
           return [];
       }
     },
   },
   created() {
-    if (this.required && this.$validator) {
+    if (this.required) {
+      this.$validator.extend('json', {
+        getMessage: () => this.$t('filterEditor.errors.invalidJSON'),
+        validate: (value) => {
+          try {
+            return !!JSON.parse(value);
+          } catch (err) {
+            return false;
+          }
+        },
+      });
+
       this.$validator.attach({
         name: 'filter',
         rules: 'required:true',
         getter: () => {
-          const firstRule = Object.values(this.filter.rules)[0];
-          const isFilterNotEmpty = firstRule && firstRule.field !== '' && firstRule.operator !== '';
+          const isFilterNotEmpty = !checkIfGroupIsEmpty(this.filter);
           const isRequestStringNotEmpty = this.isRequestStringChanged && this.requestString !== '';
 
           return isFilterNotEmpty || isRequestStringNotEmpty;
@@ -138,41 +159,65 @@ export default {
       const preparedFilter = parseFilterToRequest(value);
 
       this.filter = value;
+      this.requestString = this.$options.filters.json(preparedFilter);
 
-      this.$emit('input', isString(this.value) ? JSON.stringify(preparedFilter) : preparedFilter);
+      this.$emit('input', isString(this.value) ? this.requestString : preparedFilter);
 
-      if (this.required && this.$validator && this.errors.has('filter')) {
+      if (this.required && this.errors.has('filter')) {
         this.$validator.validate('filter');
       }
     },
 
     updateRequestString(requestString) {
-      if (!this.isRequestStringChanged) {
-        this.isRequestStringChanged = true;
-      }
+      try {
+        this.errors.remove('requestString');
 
-      this.$emit('input', requestString);
+        if (!this.isRequestStringChanged) {
+          this.isRequestStringChanged = true;
+        }
+
+        this.$emit('input', isString(this.value) ? requestString : JSON.parse(requestString));
+      } catch (err) {
+        console.warn(err);
+      }
     },
 
     openAdvancedTab() {
       if (!this.isRequestStringChanged) {
-        this.requestString = JSON.stringify(this.request, undefined, 4);
+        this.requestString = this.$options.filters.json(this.request);
       }
     },
 
-    parse() {
-      this.parseError = '';
-
+    parseRequestStringToFilter() {
       try {
+        this.parseError = '';
+        this.errors.remove('requestString');
+
         if (this.requestString !== '') {
-          this.updateFilter(parseGroupToFilter(JSON.parse(this.requestString)));
+          this.updateFilter(parseGroupToFilter(this.parseRequestStringToObject()));
         } else {
-          this.requestString = JSON.stringify(this.request, undefined, 4);
+          this.requestString = this.$options.filters.json(this.request);
         }
 
         this.isRequestStringChanged = false;
       } catch (err) {
-        this.parseError = this.$t('filterEditor.errors.invalidJSON');
+        if (!this.errors.has('requestString')) {
+          this.parseError = this.$t('filterEditor.errors.cantParseToVisualEditor');
+        }
+      }
+    },
+
+    parseRequestStringToObject() {
+      try {
+        return JSON.parse(this.requestString);
+      } catch (err) {
+        this.errors.add({
+          field: 'requestString',
+          msg: this.$t('filterEditor.errors.invalidJSON'),
+          rule: 'json',
+        });
+
+        throw err;
       }
     },
   },

@@ -40,7 +40,8 @@ def acknowledge(manager, alarm, author, message, event):
         '_t': 'ack',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     first_ack = not alarm.get(AlarmField.ack.value)
@@ -61,7 +62,8 @@ def acknowledge(manager, alarm, author, message, event):
             creation_date = alarm[AlarmField.creation_date.value]
             ack_time = event['timestamp'] - creation_date
         except KeyError:
-            manager.logger.exception("The alarm does not have a creation date.")
+            manager.logger.exception(
+                "The alarm does not have a creation date.")
         else:
             manager.event_publisher.publish_statduration_event(
                 creation_date,
@@ -84,7 +86,8 @@ def unacknowledge(manager, alarm, author, message, event):
         '_t': 'ackremove',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.ack.value] = None
@@ -103,7 +106,8 @@ def cancel(manager, alarm, author, message, event):
         '_t': 'cancel',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.canceled.value] = step
@@ -122,7 +126,8 @@ def comment(manager, alarm, author, message, event):
         '_t': 'comment',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.comment.value] = step
@@ -141,7 +146,8 @@ def restore(manager, alarm, author, message, event):
         '_t': 'uncancel',
         't': event['timestamp'],
         'a': author,
-        'm': message
+        'm': message,
+        'role': event.get('role', None)
     }
 
     canceled = alarm[AlarmField.canceled.value]
@@ -181,7 +187,8 @@ def declare_ticket(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': event.get('ticket', None),
-        'val': event.get('ticket', None)
+        'val': event.get('ticket', None),
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.ticket.value] = step
@@ -201,6 +208,7 @@ def done(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.done.value] = step
@@ -220,7 +228,8 @@ def associate_ticket(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': event.get('ticket', None),
-        'val': event['ticket']
+        'val': event['ticket'],
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.ticket.value] = step
@@ -241,7 +250,8 @@ def change_state(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
-        'val': event['state']
+        'val': event['state'],
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.state.value] = step
@@ -263,7 +273,8 @@ def snooze(manager, alarm, author, message, event):
         't': event['timestamp'],
         'a': author,
         'm': message,
-        'val': until
+        'val': until,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.snooze.value] = step
@@ -283,7 +294,8 @@ def state_increase(manager, alarm, state, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': state
+        'val': state,
+        'role': event.get('role', None)
     }
 
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
@@ -306,7 +318,8 @@ def state_decrease(manager, alarm, state, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': state
+        'val': state,
+        'role': event.get('role', None)
     }
 
     if alarm[AlarmField.state.value] is None or not is_keeped_state(alarm):
@@ -329,7 +342,8 @@ def status_increase(manager, alarm, status, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': status
+        'val': status,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.status.value] = step
@@ -348,7 +362,8 @@ def status_decrease(manager, alarm, status, event):
         't': event['timestamp'],
         'a': event.get("author", DEFAULT_AUTHOR),
         'm': event['output'],
-        'val': status
+        'val': status,
+        'role': event.get('role', None)
     }
 
     alarm[AlarmField.status.value] = step
@@ -370,7 +385,8 @@ def update_state_counter(alarm, diff_counter):
     :rtype: dict
     """
 
-    counter_i = alarm[AlarmField.steps.value].index(alarm[AlarmField.status.value]) + 1
+    counter_i = alarm[AlarmField.steps.value].index(
+        alarm[AlarmField.status.value]) + 1
 
     if len(alarm[AlarmField.steps.value]) == counter_i:
         # The last step is the last change of status

@@ -3,9 +3,9 @@
     v-card
       v-card-title.primary.white--text
         v-layout(justify-space-between, align-center)
-          span.headline {{ $t('modals.createPbehavior.title') }}
+          span.headline {{ $t('alarmList.actions.titles.pbehaviorList') }}
       v-card-text
-        v-data-table(:headers="headers", :items="firstItem.pbehaviors", disable-initial-sort, hide-actions)
+        v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
           template(slot="items", slot-scope="props")
             td(v-for="key in fields")
               span(
@@ -14,20 +14,25 @@
               ) {{ props.item[key] | date('long') }}
               span(v-else) {{ props.item[key] }}
             td
-              v-btn.mx-0(@click="showRemovePbehaviorModal(props.item._id)", icon)
-                v-icon delete
+              v-btn.mx-0(
+              v-for="action in availableActions",
+              :key="action.name",
+              @click="() => action.action(props.item)",
+              icon,
+              )
+                v-icon {{ action.icon }}
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(@click="hideModal") {{ $t('common.ok') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import { MODALS } from '@/constants';
+import { MODALS, CRUD_ACTIONS } from '@/constants';
 
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
+import modalInnerMixin from '@/mixins/modal/inner';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 /**
  * Modal showing a list of an alarm's pbehaviors
@@ -35,7 +40,7 @@ const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior')
 export default {
   name: MODALS.pbehaviorList,
 
-  mixins: [modalInnerItemsMixin],
+  mixins: [modalInnerMixin, entitiesPbehaviorMixin, entitiesPbehaviorCommentMixin],
   data() {
     const fields = [
       'name',
@@ -45,7 +50,6 @@ export default {
       'tstop',
       'type_',
       'reason',
-      'rrule',
     ];
 
     const headers = fields.map(v => ({ sortable: false, text: this.$t(`tables.pbehaviorList.${v}`) }));
@@ -57,16 +61,65 @@ export default {
       headers,
     };
   },
-  methods: {
-    ...pbehaviorMapActions({
-      removePbehavior: 'remove',
-    }),
+  computed: {
+    availableActions() {
+      const availableActions = this.modal.config.availableActions || [];
 
+      return availableActions.reduce((acc, action) => {
+        if (action === CRUD_ACTIONS.delete) {
+          acc.push({
+            name: CRUD_ACTIONS.delete,
+            icon: 'delete',
+            action: pbehavior => this.showRemovePbehaviorModal(pbehavior._id),
+          });
+        }
+
+        if (action === CRUD_ACTIONS.update) {
+          acc.push({
+            name: CRUD_ACTIONS.update,
+            icon: 'edit',
+            action: pbehavior => this.showEditPbehaviorModal(pbehavior),
+          });
+        }
+
+        return acc;
+      }, []);
+    },
+    filteredPbehaviors() {
+      if (this.modal.config.onlyActive) {
+        return this.pbehaviors.filter(value => value.isActive);
+      }
+
+      return this.pbehaviors;
+    },
+  },
+  mounted() {
+    this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId });
+  },
+  methods: {
     showRemovePbehaviorModal(pbehaviorId) {
       this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => this.removePbehavior({ id: pbehaviorId }),
+        },
+      });
+    },
+
+    showEditPbehaviorModal(pbehavior) {
+      this.showModal({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior,
+
+          action: async (data) => {
+            const { comments, ...preparedData } = data;
+
+            await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
+            await this.updateSeveralPbehaviorComments({ pbehavior, comments });
+
+            await this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId });
+          },
         },
       });
     },

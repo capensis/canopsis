@@ -104,18 +104,22 @@ def __format_pbehavior(pbehavior):
     return pbehavior
 
 
-def get_ok_ko(influx_client, entity_id):
+def get_ok_ko(influx_client, entity_id, timestamp):
     """
     For an entity defined by its id, return the number of OK check and KO
     check.
 
     :param InfluxDBClient influx_client:
     :param str entity_id: the id of the entity
-    :return: a dict with two key ok and ko or none if no data are found for
-    the given entity.
+    :return: a dict with two key ok and ko, and with last_event and last_ko 
+             if found for given event
     """
-    query = "SELECT  SUM(ok) as ok, SUM(ko) as ko FROM " \
-            "event_state_history WHERE \"eid\"='{}'"
+    query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
+                "event_state_history WHERE \"eid\"='{}' AND time >= {}s"
+    query_last_event = "SELECT LAST(\"ko\") FROM event_state_history WHERE " \
+                       "\"eid\"='{}'"
+    query_last_ko = query_last_event + " and \"ko\"=1"
+
 
     # Why did I use a double '\' ? It's simple, for some mystical reason,
     # somewhere between the call of influxdbstg.raw_query and the HTTP
@@ -124,15 +128,36 @@ def get_ok_ko(influx_client, entity_id):
     entity_id = entity_id.replace("'", "\\'")
     entity_id = entity_id.replace('"', '\\"')
 
-    result = influx_client.query(query.format(entity_id))
+    result = influx_client.query(query_sum.format(entity_id, timestamp))
 
+    stats = {}
+    stats["ok"] = 0
+    stats["ko"] = 0
     data = list(result.get_points())
     if len(data) > 0:
         data = data[0]
-        data.pop("time")
-        return data
+        stats["ok"] = data["ok"]
+        stats["ko"] = data["ko"]
 
-    return None
+    result = influx_client.query(query_last_event.format(entity_id))
+    data = list(result.get_points())
+    if len(data) > 0:
+        data = data[0]
+        time = data["time"]
+        time = time.replace("T", " ")
+        time = time.replace("Z", "")
+        stats["last_event"] = time
+
+    result = influx_client.query(query_last_ko.format(entity_id))
+    data = list(result.get_points())
+    if len(data) > 0:
+        data = data[0]
+        time = data["time"]
+        time = time.replace("T", " ")
+        time = time.replace("Z", "")
+        stats["last_ko"] = time
+
+    return stats
 
 
 def pbehavior_types(pbehaviors):
@@ -232,7 +257,7 @@ def is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_p
         if entities_alarm[entity] is None:
             continue
 
-        if entities_alarm[entity]["ack"] is None:
+        if entities_alarm[entity].get("ack", None) is None:
             if entities_pbh[entity] is None:
                 return True
 
@@ -521,6 +546,8 @@ def exports(ws):
             for k, val in raw_entity['links'].items():
                 tmp_links.append({'cat_name': k, 'links': val})
 
+            last_pbh_timestamp = pbehavior_manager.get_ok_ko_timestamp(entity_id)
+
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
             enriched_entity['linklist'] = tmp_links
@@ -530,8 +557,10 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id)
+            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id, last_pbh_timestamp)
             if current_alarm is not None:
+                enriched_entity['alarm_creation_date'] = current_alarm.get("creation_date")
+                enriched_entity['alarm_display_name'] = current_alarm.get("display_name")
                 enriched_entity['ticket'] = current_alarm.get('ticket')
                 enriched_entity['state'] = current_alarm['state']
                 enriched_entity['status'] = current_alarm['status']

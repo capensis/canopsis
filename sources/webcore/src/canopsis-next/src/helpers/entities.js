@@ -7,6 +7,7 @@ import {
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
   STATS_DURATION_UNITS,
+  STATS_QUICK_RANGES,
   STATS_DISPLAY_MODE,
   STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
@@ -38,6 +39,9 @@ export function generateWidgetByType(type) {
     itemsPerPage: PAGINATION_LIMIT,
     infoPopups: [],
     moreInfoTemplate: '',
+    isAckNoteRequired: false,
+    isMultiAckEnabled: false,
+    isHtmlEnabledOnTimeLine: false,
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),
@@ -82,13 +86,14 @@ export function generateWidgetByType(type) {
         ...alarmsListDefaultParameters,
 
         viewFilters: [],
+        mainFilter: null,
         infoPopups: [],
         periodicRefresh: {
           enabled: false,
           interval: 60,
         },
         sort: {
-          order: 'ASC',
+          order: SORT_ORDERS.asc,
         },
         alarmsStateFilter: {
           opened: true,
@@ -100,6 +105,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
+        mainFilter: null,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),
@@ -112,7 +118,7 @@ export function generateWidgetByType(type) {
         ],
         selectedTypes: [],
         sort: {
-          order: 'ASC',
+          order: SORT_ORDERS.asc,
         },
       };
       break;
@@ -138,17 +144,32 @@ export function generateWidgetByType(type) {
       };
       break;
     case WIDGET_TYPES.statsHistogram:
+      specialParameters = {
+        mfilter: {},
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+        },
+        stats: {},
+        statsColors: {},
+        annotationLine: {},
+      };
+      break;
     case WIDGET_TYPES.statsCurves:
       specialParameters = {
         mfilter: {},
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
+        statsPointsStyles: {},
+        annotationLine: {},
       };
       break;
     case WIDGET_TYPES.statsTable:
@@ -156,11 +177,12 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},
+        sort: {},
       };
       break;
     case WIDGET_TYPES.statsCalendar:
@@ -183,8 +205,8 @@ export function generateWidgetByType(type) {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
-          tstart: 'now/d',
-          tstop: 'now/d',
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stat: {
@@ -203,13 +225,35 @@ export function generateWidgetByType(type) {
         },
       };
       break;
-    case WIDGET_TYPES.text:
+
+    case WIDGET_TYPES.statsPareto:
       specialParameters = {
         dateInterval: {
           periodValue: 1,
           periodUnit: STATS_DURATION_UNITS.day,
           tstart: 'now/d',
           tstop: 'now/d',
+        },
+        mfilter: {},
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
+        },
+        statsColors: {},
+      };
+      break;
+
+    case WIDGET_TYPES.text:
+      specialParameters = {
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},
@@ -277,9 +321,9 @@ export function generateView() {
  */
 export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
-    _id: `${widget._id}_${user.crecord_name}`,
+    _id: `${widget._id}_${user._id}`,
     widget_preferences: {},
-    crecord_name: user.crecord_name,
+    crecord_name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
     crecord_type: 'userpreferences',

@@ -39,6 +39,7 @@ class InvalidRuleError(Exception):
     """
     An InvalidRuleError is an exception that is raised when a rule is invalid.
     """
+
     def __init__(self, message):
         super(InvalidRuleError, self).__init__(message)
         self.message = message
@@ -48,6 +49,7 @@ class RuleManager(object):
     """
     Manager for event filter rules.
     """
+
     def __init__(self, logger):
         self.logger = logger
         self.rule_collection = MongoCollection(
@@ -73,13 +75,17 @@ class RuleManager(object):
         :raises: InvalidRuleError if the rule is invalid. CollectionError if
         the creation fails.
         """
-        rule_id = str(uuid4())
+        # Here we test, respectively, that id is not none, nor empty,
+        # nor has spaces in it
+        if rule.get(RuleField.id) is None or \
+                not rule.get(RuleField.id) or \
+                rule.get(RuleField.id).find(" ") != -1:
+            rule[RuleField.id] = str(uuid4())
 
-        rule[RuleField.id] = rule_id
-        self.validate(rule_id, rule)
+        self.validate(rule[RuleField.id], rule)
 
         self.rule_collection.insert(rule)
-        return rule_id
+        return rule[RuleField.id]
 
     def remove_with_id(self, rule_id):
         """
@@ -125,6 +131,11 @@ class RuleManager(object):
         :raises: InvalidRuleError if it is invalid.
         """
         # Validate id field
+        if not isinstance(rule.get(RuleField.id, rule_id), basestring):
+            raise InvalidRuleError(
+                'The {0} field should be a string.'.format(
+                    RuleField.id))
+
         if rule.get(RuleField.id, rule_id) != rule_id:
             raise InvalidRuleError(
                 'The {0} field should not be modified.'.format(RuleField.id))
@@ -134,6 +145,12 @@ class RuleManager(object):
         if unexpected_fields:
             raise InvalidRuleError(
                 'Unexpected fields: {0}.'.format(', '.join(unexpected_fields)))
+
+        # Validate the description field
+        if not isinstance(rule.get(RuleField.description, ""), basestring):
+            raise InvalidRuleError(
+                'The {0} field should be a string.'.format(
+                    RuleField.description))
 
         # Validate the type field
         if RuleField.type not in rule:

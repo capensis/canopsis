@@ -13,9 +13,12 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
+import sanitizeHTML from 'sanitize-html';
 
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
+
+import '@/services/features';
 
 import * as config from '@/config';
 import * as constants from '@/constants';
@@ -94,6 +97,7 @@ Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
 
+VueClipboard.config.autoSetContainer = true;
 Vue.use(VueClipboard);
 
 Vue.use(VeeValidate, {
@@ -121,6 +125,7 @@ if (process.env.NODE_ENV === 'development') {
 
 Vue.prototype.$constants = deepFreeze(constants);
 Vue.prototype.$config = deepFreeze(config);
+Vue.prototype.$sanitize = sanitizeHTML;
 
 new Vue({
   router,

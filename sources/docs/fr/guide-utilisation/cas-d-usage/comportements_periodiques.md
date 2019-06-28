@@ -84,8 +84,7 @@ Dans le cas où toutes les entités d'une application ne sont pas en maintenance
 Jusqu'ici nous nous sommes concentrés sur la météo de service.
 Le but de ce paragraphe est de montrer les impacts des comportements périodiques sur le bac à alarmes.  
 
-Pour le moment il n'existe pas de *renderer* sur l'interface graphique pour montrer un picto des alarmes dont l'entité est en maintenance.  
-Cependant, il est possible d'appliquer des filtres sur les comportements périodiques actifs ou non.  
+Il est possible d'appliquer des filtres sur les comportements périodiques, actifs ou non.  
 
 Sur un bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) : 
 
@@ -99,3 +98,6 @@ Puis au niveau exploitation, sélectionnez le filtre nouvellement créé :
 
 ![Filtre comportement actif](./img/pbh_filtre_actif_baa.png "Filtre comportement actif")  
 
+Par ailleurs, la colonne *extra_details* embarque un picto de représentation d'un comportement périodique.  
+
+![Extra_details picto](./img/pbh_picto_extra_details.png "Picto extra details")  

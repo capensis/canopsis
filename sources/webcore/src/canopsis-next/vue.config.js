@@ -16,6 +16,12 @@ module.exports = {
         secure: false,
         cookieDomainRewrite: '',
       },
+      '/auth/external': {
+        target: process.env.VUE_APP_API_HOST,
+        changeOrigin: true,
+        secure: false,
+        cookieDomainRewrite: '',
+      },
     },
     disableHostCheck: true,
   },

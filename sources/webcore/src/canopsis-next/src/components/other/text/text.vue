@@ -5,16 +5,17 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { compile, registerHelper, unregisterHelper } from '../../../helpers/handlebars';
+import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
-import widgetQueryMixin from '../../../mixins/widget/query';
-import entitiesStatsMixin from '../../../mixins/entities/stats';
-import widgetStatsQueryMixin from '../../../mixins/widget/stats/stats-query';
+import widgetQueryMixin from '@/mixins/widget/query';
+import entitiesStatsMixin from '@/mixins/entities/stats';
+import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
-import ProgressOverlay from '../../layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import TextStatTemplate from './text-stat-template.vue';
 
@@ -59,7 +60,7 @@ export default {
       const {
         mfilter,
         tstop,
-        stats,
+        stats = {},
         duration,
       } = this.getStatsQuery();
 
@@ -82,11 +83,14 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const { aggregations } = await this.fetchStatsListWithoutStore({
-        params: this.getQuery(),
-      });
+      if (!isEmpty(this.widget.parameters.stats)) {
+        const { aggregations } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.stats = aggregations;
+        this.stats = aggregations;
+      }
+
       this.pending = false;
     },
   },

@@ -65,13 +65,13 @@ class TestProcess(BaseTest):
         }
 
         event_processing(MockEngine(), event, pbm=self.pbm, logger=Mock())
-        pbehavior = list(self.pbm.pb_storage.get_elements(query=query))
+        pbehavior = list(self.pbm.collection.find(query))
         self.assertEqual(len(pbehavior), 1)
         self.assertDictContainsSubset(query, pbehavior[0])
 
         event.update({'action': PBEHAVIOR_DELETE})
         event_processing(MockEngine(), event, pbm=self.pbm, logger=Mock())
-        pbehavior = list(self.pbm.pb_storage.get_elements(query=query))
+        pbehavior = list(self.pbm.collection.find(query))
         self.assertEqual(len(pbehavior), 0)
 
     @patch('canopsis.pbehavior.manager.PBehaviorManager.compute_pbehaviors_filters')

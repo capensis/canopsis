@@ -204,6 +204,30 @@ class InfluxDBClient(Client):
             database=quote_ident(self.database))
         return self.query(query)
 
+    def write_points(self, points):
+        """Write points into measurements.
+
+        The original InfluxDBClient.write_points method fails to write points
+        with tags that contain a newline character (\n) [1]. This is a wrapper
+        arround the InfluxDBClient.write_points that escapes newline characters
+        from the tags of the point to prevent this error from happening.
+
+        WARNING: when this issue is fixed upstream (with this PR [2] for
+        example), this wrapper should be remove before upgrading
+        influxdb-python. If not, this will prevent the stats of entities with a
+        newline from being computed.
+
+        [1]: https://github.com/influxdata/influxdb-python/issues/632
+        [2]: https://github.com/influxdata/influxdb-python/pull/716
+        """
+        for point in points:
+            tags = point.get('tags')
+            if tags:
+                for key, value in tags.items():
+                    tags[key] = unicode(value).replace('\n', '\\n')
+
+        super(InfluxDBClient, self).write_points(points)
+
 
 # The two following functions are defined in the influx.line_protocol module of
 # influxdb-python>=4.0.0

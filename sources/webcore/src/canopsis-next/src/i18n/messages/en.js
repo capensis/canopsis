@@ -7,6 +7,8 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
+import featureService from '@/services/features';
+
 export default {
   common: {
     ok: 'Ok',
@@ -38,11 +40,12 @@ export default {
     parameters: 'Parameters',
     by: 'By',
     date: 'Date',
-    comment: 'Comment',
+    comment: 'Comment | Comments',
     end: 'End',
     recursive: 'Recursive',
     select: 'Select',
     states: 'States',
+    state: 'State',
     sla: 'Sla',
     authors: 'Authors',
     stat: 'Stat',
@@ -50,10 +53,12 @@ export default {
     users: 'Users',
     roles: 'Roles',
     rights: 'Rights',
+    profile: 'Profile',
     username: 'Username',
     password: 'Password',
+    authKey: 'Auth. key',
     connect: 'Connect',
-    optionnal: 'optionnal',
+    optional: 'optional',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
@@ -81,10 +86,13 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
+    filters: 'Filters',
     webhooks: 'Webhooks',
+    emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
+    filter: 'Filter',
     actions: {
       close: 'Close',
       acknowledgeAndReport: 'Acknowledge and report an incident',
@@ -96,6 +104,8 @@ export default {
       [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
       [EVENT_ENTITY_TYPES.pause]: 'Pause',
       [EVENT_ENTITY_TYPES.play]: 'Play',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
     },
     times: {
       second: 'second | seconds',
@@ -110,6 +120,8 @@ export default {
   user: {
     role: 'Role',
     defaultView: 'Default view',
+    seeProfile: 'See profile',
+    selectDefaultView: 'Select default view',
   },
   context: {
     impacts: 'Impacts',
@@ -154,10 +166,16 @@ export default {
       '</dl>',
   },
   entities: {
-    watcher: 'watcher',
-    entities: 'entities',
+    watcher: 'Watcher',
+    entities: 'Entities',
   },
   login: {
+    standard: 'Standard',
+    LDAP: 'LDAP',
+    loginWithCAS: 'Login with CAS',
+    documentation: 'Documentation',
+    forum: 'Forum',
+    connectionProtocols: 'Connection protocols',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
     },
@@ -189,7 +207,20 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
+    timeLine: {
+      titlePaths: {
+        by: 'by',
+      },
+      stateCounter: {
+        header: 'Cropped State (since last change of status)',
+        stateIncreased: 'State increased',
+        stateDecreased: 'State decreases',
+      },
+    },
     infoPopup: 'Info popup',
+  },
+  weather: {
+    moreInfos: 'More info',
   },
   pbehaviors: {
     connector: 'Connector',
@@ -216,6 +247,7 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
+      statsParetoSettings: 'Stats Pareto diagram settings',
       textSettings: 'Text settings',
     },
     advancedSettings: 'Advanced settings',
@@ -231,10 +263,14 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
+    isAckNoteRequired: 'Note field required when ack ?',
+    isMultiAckEnabled: 'Multiple ack',
+    isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
     statName: 'Stat name',
+    stats: 'Stats',
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
@@ -335,6 +371,14 @@ export default {
       title: 'Stats color',
       pickColor: 'Pick a color',
     },
+    statsAnnotationLine: {
+      title: 'Annotation line',
+      enabled: 'Is enabled?',
+      value: 'Value',
+      label: 'Label',
+      pickLineColor: 'Pick line color',
+      pickLabelColor: 'Pick label color',
+    },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
     },
@@ -343,9 +387,13 @@ export default {
       fields: {
         moreInfo: 'More info',
         alarmList: 'Alarm list',
+        both: 'Both',
       },
     },
     templateEditor: 'Template',
+    columns: {
+      isHtml: 'Is it HTML?',
+    },
   },
   modals: {
     contextInfos: {
@@ -470,8 +518,16 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
-        comment: 'Comment',
+        message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+        exdate: 'Exdates',
+      },
+      buttons: {
+        addComment: 'Add comment',
+        addExdate: 'Add exdate',
+      },
+      success: {
+        create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
     },
     createPause: {
@@ -533,7 +589,7 @@ export default {
       ticketing: 'Ticketing',
       application_crit_label: 'Criticality',
       product_line: 'Product line',
-      service_period: 'Plage surveillanc',
+      service_period: 'Monitoring timespan',
       isInCarat: 'Cartographic repository',
       application_label: 'Description',
       target_platform: 'Environment',
@@ -541,6 +597,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
       actionPending: 'action(s) pending',
+      refreshEntities: 'Refresh entities list',
+      editPbehaviors: 'Edit pbehaviors',
     },
     filter: {
       create: {
@@ -585,6 +643,9 @@ export default {
         },
         statsNumber: {
           title: 'Stats number',
+        },
+        statsPareto: {
+          title: 'Pareto diagram',
         },
         text: {
           title: 'Text',
@@ -685,6 +746,13 @@ export default {
       externalData: 'External data',
       onSuccess: 'On success',
       onFailure: 'On failure',
+      tooltips: {
+        addValueRuleField: 'Add value rule field',
+        editValueRuleField: 'Edit value rule field',
+        addObjectRuleField: 'Add object rule field',
+        editObjectRuleField: 'Edit object rule field',
+        removeRuleField: 'Remove rule field',
+      },
     },
     viewTab: {
       create: {
@@ -724,14 +792,54 @@ export default {
       fields: {
         periodValue: 'Period value',
         periodUnit: 'Period unit',
-        id: 'ID',
       },
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
-      tooltips: {
-        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
+    },
+    createSnmpRule: {
+      create: {
+        title: 'Create SNMP rule',
       },
+      edit: {
+        title: 'Edit SNMP rule',
+      },
+      fields: {
+        oid: {
+          title: 'oid',
+          labels: {
+            module: 'Select a mib module',
+          },
+        },
+        output: {
+          title: 'output',
+        },
+        resource: {
+          title: 'resource',
+        },
+        component: {
+          title: 'component',
+        },
+        connectorName: {
+          title: 'connector_name',
+        },
+        state: {
+          title: 'state',
+          labels: {
+            toCustom: 'To custom',
+            defineVar: 'Define matching snmp var',
+            writeTemplate: 'Write template',
+          },
+        },
+        moduleMibObjects: {
+          vars: 'Snmp vars match field',
+          regex: 'Regex',
+          formatter: 'Format (capture group with \\x)',
+        },
+      },
+    },
+    selectViewTab: {
+      title: 'Select tab',
     },
   },
   tables: {
@@ -780,7 +888,7 @@ export default {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
       [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
       [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {
@@ -811,14 +919,14 @@ export default {
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Rrule',
-    stringLabel: 'Summary',
+    textLabel: 'Summary',
+    stringLabel: 'Rrule',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
+      main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',
@@ -902,7 +1010,8 @@ export default {
       },
     },
     errors: {
-      invalidJSON: 'We can\'t parse this filter to Visual Editor',
+      cantParseToVisualEditor: 'We can\'t parse this filter to Visual Editor',
+      invalidJSON: 'Invalid JSON',
       required: 'You need to add at least one valid rule',
     },
   },
@@ -919,6 +1028,7 @@ export default {
       [STATS_TYPES.alarmsCreated.value]: 'Alarms created',
       [STATS_TYPES.alarmsResolved.value]: 'Alarms resolved',
       [STATS_TYPES.alarmsCanceled.value]: 'Alarms canceled',
+      [STATS_TYPES.alarmsAcknowledged.value]: 'Alarms acknowledged',
       [STATS_TYPES.ackTimeSla.value]: 'Ack time Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Resolve time Sla',
       [STATS_TYPES.timeInState.value]: 'Time in state',
@@ -927,6 +1037,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Current state',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Current ongoing alarms with ack',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Current ongoing alarms without ack',
     },
   },
   eventFilter: {
@@ -940,6 +1052,11 @@ export default {
     actionsRequired: 'Please add at least one action',
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+  },
+  snmpRules: {
+    title: 'SNMP rules',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
   },
   layout: {
     sideBar: {
@@ -975,6 +1092,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
+    disableIfActivePbehavior: 'Disable if a pbehavior is active',
     table: {
       headers: {
         id: 'ID',
@@ -997,6 +1115,10 @@ export default {
         fields: {
           method: 'Method',
           url: 'URL',
+          authSwitch: 'Do you need auth fields?',
+          auth: 'Auth',
+          username: 'Username',
+          password: 'Password',
           headers: 'Headers',
           headerKey: 'Header key',
           headerValue: 'Header value',
@@ -1012,4 +1134,25 @@ export default {
       },
     },
   },
+  validation: {
+    custom: {
+      tstop: {
+        after: 'The {0} should be after than {1}',
+      },
+    },
+  },
+  home: {
+    popups: {
+      info: {
+        noAccessToDefaultView: 'Access to default view forbidden. Redirecting to role default view.',
+        notSelectedRoleDefaultView: 'No role default view selected.',
+        noAccessToRoleDefaultView: 'Access to role default view forbidden.',
+      },
+    },
+  },
+  serviceWeather: {
+    seeAlarms: 'See alarms',
+  },
+
+  ...featureService.get('i18n.en'),
 };

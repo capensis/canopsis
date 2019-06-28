@@ -47,12 +47,14 @@ export function prepareEntitiesToDelete({ type, data }) {
   };
 
   Object.keys(schema.schema).forEach((key) => {
-    if (Array.isArray(schema.schema[key])) {
-      const childrenSchema = schema.schema[key][0];
+    if (data[key]) {
+      if (Array.isArray(schema.schema[key])) {
+        const childrenSchema = schema.schema[key][0];
 
-      data[key].forEach(entity => prepareChild(entity, childrenSchema));
-    } else {
-      prepareChild(data[key], schema.schema[key]);
+        data[key].forEach(entity => prepareChild(entity, childrenSchema));
+      } else {
+        prepareChild(data[key], schema.schema[key]);
+      }
     }
   });
 
