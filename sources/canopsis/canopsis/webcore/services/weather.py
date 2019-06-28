@@ -39,6 +39,7 @@ from canopsis.common.enumerations import DefaultEnum
 from canopsis.common.influx import InfluxDBClient
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import get_rrule_freq
+from canopsis.models.entity import Entity
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 from canopsis.watcher.filtering import WatcherFilter
@@ -82,10 +83,7 @@ TILE_ICON_SELECTOR = [TILE_ICON_OK,
                       TILE_ICON_CRITICAL]
 
 class ResultKey(DefaultEnum):
-    ID = "_id"
-    INFOS = "infos"
     LINKS = "links"
-    NAME = "name"
     STATE = "state"
     ALARM = "alarm"
     PBEHAVIORS = "pbehaviors"
@@ -94,16 +92,15 @@ class ResultKey(DefaultEnum):
     WATCHED_ENT_ALRM = "watched_entities_alarm"
     ALRM_VALUE = "v"
     ENT = "watched_entities"
-    ENT_ID = "_id"
 
 
 class __TileData:
 
     def __init__(self, watcher):
-        self.entity_id = watcher[ResultKey.ID.value]
-        self.infos = watcher[ResultKey.INFOS.value]
+        self.entity_id = watcher[Entity._ID]
+        self.infos = watcher[Entity.INFOS]
         self.sla_tex = ""
-        self.display_name = watcher[ResultKey.NAME.value]
+        self.display_name = watcher[Entity.NAME]
         self.linklist = []
         self.mfilter = watcher.get(ResultKey.MFILTER.value, "")
         for key, value in watcher.get(ResultKey.LINKS.value, {}).items():
@@ -521,7 +518,7 @@ def _rework_watcher_pipeline_element(watcher, logger):
     for entity in watcher[ResultKey.ENT.value]:
         entity[ResultKey.PBEHAVIORS.value] = []
         entity[ResultKey.ALARM.value] = None
-        entities[entity[ResultKey.ENT_ID.value]] = entity
+        entities[entity[Entity._ID]] = entity
 
     for pbh in watcher[ResultKey.WATCHED_ENT_PBH.value]:
         for ent_id in pbh["eids"]:
