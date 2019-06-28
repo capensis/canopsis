@@ -120,7 +120,7 @@ class TileIcon(FastEnum):
             raise ValueError("Unable to get icon from state {}".format(state))
 
 
-class ResultKey(DefaultEnum):
+class ResultKey(FastEnum):
     ALARM = "alarm"
     PBEHAVIORS = "pbehaviors"
     WATCHED_ENT_PBH = "watched_entities_pbehaviors"
@@ -138,7 +138,7 @@ class __TileData:
         self.display_name = watcher[Entity.NAME]
         self.mfilter = watcher.get(WatcherField.MFILTER, "")
 
-        self.watcher_pbehavior = watcher.get(ResultKey.PBEHAVIORS.value, [])
+        self.watcher_pbehavior = watcher.get(ResultKey.PBEHAVIORS, [])
         self.automatic_action_timer = self.__get_next_run(watcher)
 
         state = watcher.get(WatcherField.STATE, 0)
@@ -147,9 +147,9 @@ class __TileData:
         else:
             self.state = {'val': 0}
 
-        if not len(watcher[ResultKey.ALARM.value]) == 0:
-            alarm = watcher[ResultKey.ALARM.value][0]
-            alarm = alarm[ResultKey.ALRM_VALUE.value]
+        if not len(watcher[ResultKey.ALARM]) == 0:
+            alarm = watcher[ResultKey.ALARM][0]
+            alarm = alarm[ResultKey.ALRM_VALUE]
             self.state = alarm[AlarmField.state.value]
             self.status = alarm[AlarmField.status.value]
             self.snooze = alarm.get(AlarmField.snooze.value, None)
@@ -163,7 +163,7 @@ class __TileData:
         # properties of the tile
         self.isActionRequired = self.__is_action_required(watcher)
         self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
-        self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS.value]) != 0
+        self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS]) != 0
         self.tileColor = self.__get_tile_color(watcher)
         self.tileIcon = self.__get_tile_icon(watcher)
         self.tileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
@@ -171,46 +171,46 @@ class __TileData:
     @classmethod
     def __is_action_required(cls, watcher):
 
-        watcher_alarm = watcher.get(ResultKey.ALARM.value, None)
+        watcher_alarm = watcher.get(ResultKey.ALARM, None)
         if watcher_alarm is None:
             return False
 
-        if len(watcher[ResultKey.PBEHAVIORS.value]) != 0:
+        if len(watcher[ResultKey.PBEHAVIORS]) != 0:
             return False
 
-        for entity in watcher[ResultKey.ENT.value]:
-            if entity[ResultKey.ALARM.value] is None:
+        for entity in watcher[ResultKey.ENT]:
+            if entity[ResultKey.ALARM] is None:
                 continue
 
-            if entity[ResultKey.ALARM.value]["v"].get("ack", None) is None:
-                if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
+            if entity[ResultKey.ALARM]["v"].get("ack", None) is None:
+                if len(entity[ResultKey.PBEHAVIORS]) == 0:
                     return True
 
         return False
 
     @classmethod
     def __is_all_entities_paused(cls, watcher):
-        if not watcher[ResultKey.ENT.value]:
+        if not watcher[ResultKey.ENT]:
             # When the watcher does not have any dependencies, it makes more
             # sense for the tile to be green instead of grey (and it is
             # backward compatible).
             return False
 
-        for entity in watcher[ResultKey.ENT.value]:
-            if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
+        for entity in watcher[ResultKey.ENT]:
+            if len(entity[ResultKey.PBEHAVIORS]) == 0:
                 return False
         return True
 
     @classmethod
     def __get_tile_color(cls, watcher):
-        if len(watcher[ResultKey.PBEHAVIORS.value]) != 0 or \
+        if len(watcher[ResultKey.PBEHAVIORS]) != 0 or \
            cls.__is_all_entities_paused(watcher):
             return TileColor.PAUSE
 
         # FIXME: this code is duplicated three times.
         watcher_state = 0
-        if len(watcher[ResultKey.ALARM.value]) > 0:
-            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
+        if len(watcher[ResultKey.ALARM]) > 0:
+            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
             watcher_state = alarm[AlarmField.state.value]["val"]
 
         return TileColor.from_state(watcher_state)
@@ -218,10 +218,10 @@ class __TileData:
     @classmethod
     def __get_tile_icon(cls, watcher):
         pbehaviors = []
-        if watcher[ResultKey.PBEHAVIORS.value]:
-            pbehaviors = watcher[ResultKey.PBEHAVIORS.value]
+        if watcher[ResultKey.PBEHAVIORS]:
+            pbehaviors = watcher[ResultKey.PBEHAVIORS]
         elif cls.__is_all_entities_paused(watcher):
-            pbehaviors = watcher[ResultKey.WATCHED_ENT_PBH.value]
+            pbehaviors = watcher[ResultKey.WATCHED_ENT_PBH]
 
         has_maintenance = False
         has_out_of_surveillance = False
@@ -242,8 +242,8 @@ class __TileData:
             return TileIcon.PAUSE
 
         watcher_state = 0
-        if len(watcher[ResultKey.ALARM.value]) > 0:
-            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
+        if len(watcher[ResultKey.ALARM]) > 0:
+            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
             watcher_state = alarm[AlarmField.state.value]["val"]
 
         return TileIcon.from_state(watcher_state)
@@ -256,8 +256,8 @@ class __TileData:
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
-        for ent in watcher[ResultKey.ENT.value]:
-            for pbh in ent[ResultKey.PBEHAVIORS.value]:
+        for ent in watcher[ResultKey.ENT]:
+            for pbh in ent[ResultKey.PBEHAVIORS]:
                 if pbh["type_"] == "Hors plage horaire de surveillance":
                     has_out_of_surveillance = True
                 elif pbh["type_"] == "Maintenance":
@@ -277,9 +277,9 @@ class __TileData:
     @classmethod
     def __get_next_run(cls, watcher):
         next_runs = []
-        for ent in watcher[ResultKey.ENT.value]:
-            if ent[ResultKey.ALARM.value] is not None:
-                alarm = ent[ResultKey.ALARM.value]
+        for ent in watcher[ResultKey.ENT]:
+            if ent[ResultKey.ALARM] is not None:
+                alarm = ent[ResultKey.ALARM]
 
                 alarmfilter = None
                 try:
@@ -415,13 +415,13 @@ def _pbehavior_types(watcher):
     """
     pbehavior_types = set()
 
-    for pbehavior in watcher[ResultKey.PBEHAVIORS.value]:
+    for pbehavior in watcher[ResultKey.PBEHAVIORS]:
         pbehavior_type = pbehavior.get('type_', None)
         if pbehavior_type:
             pbehavior_types.add(pbehavior_type)
 
-    for entity in watcher[ResultKey.ENT.value]:
-        for pbehavior in entity[ResultKey.PBEHAVIORS.value]:
+    for entity in watcher[ResultKey.ENT]:
+        for pbehavior in entity[ResultKey.PBEHAVIORS]:
             pbehavior_type = pbehavior.get('type_', None)
             if pbehavior_type:
                 pbehavior_types.add(pbehavior_type)
@@ -433,8 +433,8 @@ def _watcher_status(watcher):
 
     ent_with_active_pbh = set()
 
-    for ent in watcher[ResultKey.ENT.value]:
-        ent_with_active_pbh.add(len(ent[ResultKey.PBEHAVIORS.value]) > 0)
+    for ent in watcher[ResultKey.ENT]:
+        ent_with_active_pbh.add(len(ent[ResultKey.PBEHAVIORS]) > 0)
 
     at_least_one = True in ent_with_active_pbh
     if at_least_one and False in ent_with_active_pbh:
@@ -540,35 +540,35 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
 
 def _rework_watcher_pipeline_element(watcher, logger):
     # remove the inactive pbehaviors from the ppieline result
-    pbhs = watcher[ResultKey.PBEHAVIORS.value]
-    watcher[ResultKey.PBEHAVIORS.value] = _remove_inactive_pbh(pbhs)
-    pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
-    watcher[ResultKey.WATCHED_ENT_PBH.value] = _remove_inactive_pbh(pbhs)
+    pbhs = watcher[ResultKey.PBEHAVIORS]
+    watcher[ResultKey.PBEHAVIORS] = _remove_inactive_pbh(pbhs)
+    pbhs = watcher[ResultKey.WATCHED_ENT_PBH]
+    watcher[ResultKey.WATCHED_ENT_PBH] = _remove_inactive_pbh(pbhs)
 
     # assign entities pbehaviors to the correct entities
     entities = {}
-    for entity in watcher[ResultKey.ENT.value]:
-        entity[ResultKey.PBEHAVIORS.value] = []
-        entity[ResultKey.ALARM.value] = None
+    for entity in watcher[ResultKey.ENT]:
+        entity[ResultKey.PBEHAVIORS] = []
+        entity[ResultKey.ALARM] = None
         entities[entity[Entity._ID]] = entity
 
-    for pbh in watcher[ResultKey.WATCHED_ENT_PBH.value]:
+    for pbh in watcher[ResultKey.WATCHED_ENT_PBH]:
         for ent_id in pbh["eids"]:
             try:
-                entities[ent_id][ResultKey.PBEHAVIORS.value].append(pbh)
+                entities[ent_id][ResultKey.PBEHAVIORS].append(pbh)
             except KeyError:
                 logger.error("Can not find entities {} in the"
                              "pipeline result".format(ent_id))
 
-    for alarm in watcher[ResultKey.WATCHED_ENT_ALRM.value]:
+    for alarm in watcher[ResultKey.WATCHED_ENT_ALRM]:
         try:
-            entities[alarm["d"]][ResultKey.ALARM.value] = alarm
+            entities[alarm["d"]][ResultKey.ALARM] = alarm
         except KeyError:
             logger.error("Can not find entities {} in the"
                          "pipeline result".format(alarm["d"]))
 
-    watcher[ResultKey.ENT.value] = entities.values()
-    del watcher[ResultKey.WATCHED_ENT_ALRM.value]
+    watcher[ResultKey.ENT] = entities.values()
+    del watcher[ResultKey.WATCHED_ENT_ALRM]
 
     return watcher
 
@@ -626,7 +626,7 @@ def exports(ws):
 
             if wf.match(all_watched_ent_paused,
                         some_watched_ent_paused,
-                        len(watcher[ResultKey.PBEHAVIORS.value]) > 0,
+                        len(watcher[ResultKey.PBEHAVIORS]) > 0,
                         _pbehavior_types(watcher)):
                 tileData = __TileData(watcher)
                 result.append(vars(tileData))
