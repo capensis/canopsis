@@ -221,6 +221,9 @@ class __TileData:
 
     @classmethod
     def __get_tile_secondary_icon(cls, watcher):
+        if cls.__is_all_entities_paused(watcher):
+            return None
+
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
