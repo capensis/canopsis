@@ -14,8 +14,8 @@ Les fonctionnalités actuellement implémentées permettent l'authentification d
 ### Activation de LDAP
 
 Pour activer l'authentification *ldap*, le service doit être activé dans la configuration du serveur web.
-Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`.
-Le service **canopsis.auth.ldap** est à ajouter aux providers d'authentification.
+
+Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`, où `canopsis.auth.ldap` doit être ajouté aux mécanismes d'authentification.
 
 ```ini
 [auth]
@@ -66,7 +66,7 @@ La configuration se fait dans un fichier JSON : **ldapconfig.json**
 !!! Note
     Vous pouvez remplacer les attributs `host` et `port` par `ldap_uri`.
 
-La requête suivante permet de poster cette configuration.
+La requête suivante permet d'envoyer cette configuration.
 
 ```sh
 curl -X POST -H "Content-type: application/json" -d @ldapconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/ldapconfig/cservice.ldapconfig'
@@ -93,8 +93,8 @@ Les fonctionnalités actuellement implémentées permettent l'authentification d
 ### Activation de CAS
 
 Pour activer l'authentification CAS, le service doit être activé dans la configuration du serveur web.
-Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`.
-Le service **canopsis.auth.cas** est à ajouter aux providers d'authentification.
+
+Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`, où `canopsis.auth.cas` doit être ajouté aux mécanismes d'authentification.
 
 ```ini
 [auth]
@@ -111,10 +111,10 @@ Voici un listing de paramètres nécessaires à la configuration CAS :
 
 |   Attribut   |                    Description                     |            Exemple             |
 | ------------ | -------------------------------------------------- | ------------------------------ |
-|   service    |         URL de connexion pour le Canopsis          |   http://canopsis.info.local/  |
-| default_role | Rôle par défaut au moment de la première connexion |         Visualisation          |
-|    title     |        Label sur le formulaire de connexion        |           Connexion            |
-|    server    |            serveur de connexion WebSSO             | https://cas.info.local/websso/ |
+|  `service`   |         URL de connexion pour le Canopsis          |   http://canopsis.info.local/  |
+| `default_role` | Rôle par défaut au moment de la première connexion |         Visualisation          |
+|   `title`    |        Label sur le formulaire de connexion        |           Connexion            |
+|   `server`   |            Serveur de connexion WebSSO             | https://cas.info.local/websso/ |
 
 La configuration se fait dans un fichier JSON : **casconfig.json**
 
@@ -131,7 +131,7 @@ La configuration se fait dans un fichier JSON : **casconfig.json**
 }
 ```
 
-La requête suivante permet de poster cette configuration.
+La requête suivante permet d'envoyer cette configuration.
 
 ```sh
 curl -X POST -H "Content-type: application/json" -d @casconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/casconfig/cservice.casconfig'
