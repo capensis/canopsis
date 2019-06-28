@@ -61,6 +61,8 @@ DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
 DEFAULT_DIRECTION = "ASC"
 
+ALARM_VALUE = 'v'
+
 
 class TileColor(FastEnum):
     """TileColor is an enumeration that defines the names of the colors that
@@ -121,11 +123,12 @@ class TileIcon(FastEnum):
 
 
 class ResultKey(FastEnum):
+    """ResultKey is an enumeration that defines the fields used in the MongoDB
+    aggregate that returns the data for the service weather."""
     ALARM = "alarm"
     PBEHAVIORS = "pbehaviors"
     WATCHED_ENT_PBH = "watched_entities_pbehaviors"
     WATCHED_ENT_ALRM = "watched_entities_alarm"
-    ALRM_VALUE = "v"
     ENT = "watched_entities"
 
 
@@ -149,7 +152,7 @@ class __TileData:
 
         if not len(watcher[ResultKey.ALARM]) == 0:
             alarm = watcher[ResultKey.ALARM][0]
-            alarm = alarm[ResultKey.ALRM_VALUE]
+            alarm = alarm[ALARM_VALUE]
             self.state = alarm[AlarmField.state.value]
             self.status = alarm[AlarmField.status.value]
             self.snooze = alarm.get(AlarmField.snooze.value, None)
@@ -210,7 +213,7 @@ class __TileData:
         # FIXME: this code is duplicated three times.
         watcher_state = 0
         if len(watcher[ResultKey.ALARM]) > 0:
-            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
+            alarm = watcher[ResultKey.ALARM][0][ALARM_VALUE]
             watcher_state = alarm[AlarmField.state.value]["val"]
 
         return TileColor.from_state(watcher_state)
@@ -243,7 +246,7 @@ class __TileData:
 
         watcher_state = 0
         if len(watcher[ResultKey.ALARM]) > 0:
-            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
+            alarm = watcher[ResultKey.ALARM][0][ALARM_VALUE]
             watcher_state = alarm[AlarmField.state.value]["val"]
 
         return TileIcon.from_state(watcher_state)
