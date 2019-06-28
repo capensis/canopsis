@@ -26,15 +26,15 @@ Un redémarrage du serveur web est nécessaire.
 
 ### Configuration de LDAP
 
-La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez rédiger un fichier de configuration et l'envoyer sur l'API.
+La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez préparer un fichier de configuration et l'envoyer sur l'API.
 
 Voici un listing de paramètres nécessaires à la configuration LDAP :
 
 |   Attribut   |                                                  Description                                                   |                           Exemple                           |
 | ------------ | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
 |   ldap_uri   |                                            Chaine de connexion LDAP                                            |                     ldaps://ldap.local                      |
-|     host     |    Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations*    |                          srv-ldap                           |
-|     port     | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétropcompatibilité des configurations* |                             389                             |
+|     host     |    Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*    |                          srv-ldap                           |
+|     port     | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations* |                             389                             |
 |   admin_dn   |                        DN de l'utilisateur permettant l'authentification sur l'annuaire                        |            uid=mon_user,ou=mon_org,dc=dom,dc=com            |
 | admin_passwd |                                        Mot de passe de l'utilisateur DN                                        |                                                             |
 |   ufilter    |          Filtre utilisateur. La valeur de l'utilisateur est présentée dans une variable notée **%s**           |                           uid=%s                            |
@@ -105,7 +105,7 @@ Un redémarrage du serveur web est nécessaire.
 
 ### Configuration de CAS
 
-La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez rédiger un fichier de configuration et l'envoyer sur l'API.
+La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez préparer un fichier de configuration et l'envoyer sur l'API.
 
 Voici un listing de paramètres nécessaires à la configuration CAS :
 
@@ -289,7 +289,7 @@ Créer le fichier de configuration de la correspondance Utilisateur Canopsis <->
 
 Dans le cas où toutes les valeurs sont à `null`, des paramètres par défaut seront appliqués.
 
-Si vous voulez paramétrer vous même la correspondance, mettez simplement une chaîne de caractères contenant le nom de l’attribut fourni par l’IdP. Exemple avec OneLogin :
+Si vous voulez paramétrer vous-même la correspondance, mettez simplement une chaîne de caractères contenant le nom de l’attribut fourni par l’IdP. Exemple avec OneLogin :
 
 ```json
 {
@@ -332,7 +332,7 @@ Donc si vous voulez apporter une modification de la configuration, pas besoin de
 
 ### Activation de l’authentification SAML2
 
-Éditer le fichier de configuration Canopsis `etc/webserver.conf` :
+Éditer le fichier de configuration Canopsis `/opt/canopsis/etc/webserver.conf` :
 
 ```ini
 [webservices]
