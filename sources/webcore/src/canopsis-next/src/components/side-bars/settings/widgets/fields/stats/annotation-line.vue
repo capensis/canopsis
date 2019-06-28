@@ -15,7 +15,8 @@
           :label="$t('settings.statsAnnotationLine.value')",
           :disabled="!annotationLine.enabled",
           type="number",
-          @input="updateField('value', $event)"
+          :rules="errorsNumberInt",
+          @input="validateValue($event)"
           )
         v-flex(xs12)
           v-text-field(
@@ -55,6 +56,11 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      errorsNumberInt: [],
+    };
+  },
   methods: {
     showColorPickerModal(key) {
       this.showModal({
@@ -65,6 +71,15 @@ export default {
           action: color => this.updateField(key, color),
         },
       });
+    },
+    validateValue(event) {
+      const value = parseFloat(event);
+      if (Number.isInteger(value)) {
+        this.errorsNumberInt = [];
+        this.updateField('value', value);
+      } else {
+        this.errorsNumberInt.push(() => this.$t('settings.statsAnnotationLine.errors.value'));
+      }
     },
   },
 };
