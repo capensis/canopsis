@@ -84,7 +84,7 @@ Le résultat renvoyé doit être de type :
 
 ## Authentification CAS
 
-L'authentification CAS est actuellement fonctionnelle.
+L'authentification CAS est fonctionnelle en UIv3 (uniquement) depuis **Canopsis 3.21.1**. Les versions antérieures de Canopsis ne disposaient d'une authentification CAS qu'en UIv2.
 
 Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
@@ -111,7 +111,7 @@ Voici un listing de paramètres nécessaires à la configuration CAS :
 
 |   Attribut   |                    Description                     |            Exemple             |
 | ------------ | -------------------------------------------------- | ------------------------------ |
-|   service    |         URL de connexion pour le Canopsis          |   http://canopsis.info.local   |
+|   service    |         URL de connexion pour le Canopsis          |   http://canopsis.info.local/  |
 | default_role | Rôle par défaut au moment de la première connexion |         Visualisation          |
 |    title     |        Label sur le formulaire de connexion        |           Connexion            |
 |    server    |            serveur de connexion WebSSO             | https://cas.info.local/websso/ |
@@ -124,7 +124,7 @@ La configuration se fait dans un fichier JSON : **casconfig.json**
     "crecord_name": "casconfig"
     "_id": "cservice.casconfig",
     "enable": true,
-    "service": "http://canopsis.info.local",
+    "service": "http://canopsis.info.local/",
     "default_role": "Visualisation",
     "title": "Connexion",
     "server": "https://cas.info.local/websso/",
