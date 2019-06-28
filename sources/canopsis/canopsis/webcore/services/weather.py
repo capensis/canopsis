@@ -120,7 +120,6 @@ class TileIcon(FastEnum):
 
 
 class ResultKey(DefaultEnum):
-    LINKS = "links"
     STATE = "state"
     ALARM = "alarm"
     PBEHAVIORS = "pbehaviors"
@@ -138,10 +137,7 @@ class __TileData:
         self.infos = watcher[Entity.INFOS]
         self.sla_tex = ""
         self.display_name = watcher[Entity.NAME]
-        self.linklist = []
         self.mfilter = watcher.get(ResultKey.MFILTER.value, "")
-        for key, value in watcher.get(ResultKey.LINKS.value, {}).items():
-            self.linklist.append({'cat_name': key, 'links': value})
 
         self.watcher_pbehavior = watcher.get(ResultKey.PBEHAVIORS.value, [])
         self.automatic_action_timer = self.__get_next_run(watcher)
