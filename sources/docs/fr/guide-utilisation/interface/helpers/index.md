@@ -8,9 +8,9 @@ Par example, il est possible de personnaliser le texte affiché pour les tuiles 
 
 La configuration de ces affichages se fait, dans les options des widgets, grâce à des templates utilisants le langage **Handlebars** ([documentation du langage Handlebars](https://handlebarsjs.com/)).
 
-Les helpers permettent d'ajouter de la logique dans les templates Handlebars. Le langage en inclut certains par défaut. Par exemple, le helper ```{{#if condition}}{{/if}}``` permet de n'afficher le texte contenu à l'intérieur de ce bloque seulement si la condition est respectée. Pour plus de détails, ainsi que la liste des helpers incluts par défaut, cliquez [ici](https://handlebarsjs.com/builtin_helpers.html).
+Les helpers permettent d'ajouter de la logique dans les templates Handlebars. Le langage en inclut certains par défaut. Par exemple, le helper ```{{#if condition}}{{/if}}``` permet de n'afficher le texte contenu à l'intérieur de ce bloc seulement si la condition est respectée. Pour plus de détails, ainsi que la liste des helpers incluts par défaut, cliquez [ici](https://handlebarsjs.com/builtin_helpers.html).
 
-En plus des helpers inclut par défaut, Handlebars permet d'ajouter des helpers spécifiques. L'interface de Canopsis met à disposition certains helpers supplémentaires.
+En plus des helpers incluts par défaut, Handlebars permet d'ajouter des helpers spécifiques. L'interface de Canopsis met à disposition certains helpers supplémentaires.
 
 ## Liste des helpers
 
@@ -25,22 +25,13 @@ Le helper ```internal-link``` permet d'inclure, dans un template, un lien vers u
 - Utilisation:
 
 ```
-{{ internal-link href="addresse complète de la page de Canopsis souhaitée" text="texte affiché pour le lien" }}
+{{ internal-link href="adresse complète de la page de Canopsis souhaitée" text="texte affiché pour le lien" }}
 ```
 
 L'option ```href``` peut contenir:
 
 - Une addresse complète. Exemple: ```http://10.127.186.12/en/static/canopsis-next/dist/index.html/views/123456```
-- Un chemin vers un champs de l'entité. Par exemple: ```entity.infos.weather-link.val```. Cette valeur sera remplacée par la valeur trouvée dans l'entitée.
-
-Il est ensuite possible d'ajouter tout les attributs souhaités. Par exemple, un attribut ```style```, permettant de personnaliser l'apparence du lien.
-
-Exemple: 
-
-```
-{{ internal-link href="addresse complète de la page de Canopsis souhaitée" text="texte affiché pour le lien" style="{ color: 'blue' }" }}
-```
+- Un chemin vers un champ de l'entité. Par exemple: ```entity.infos.weather-link.val```. Cette valeur sera remplacée par la valeur trouvée dans l'entitée.
 
 ### Par widget
 
-#### Météo des services
