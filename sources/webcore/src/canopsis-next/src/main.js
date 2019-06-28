@@ -35,6 +35,7 @@ import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
+import ToggleOnIcon from '@/components/icons/toggle-on.vue';
 /* eslint-enable import/first */
 
 Vue.use(VueResizeText);
@@ -48,6 +49,9 @@ Vue.use(Vuetify, {
   icons: {
     webhook: {
       component: WebhookIcon,
+    },
+    toggle_on: {
+      component: ToggleOnIcon,
     },
   },
 });

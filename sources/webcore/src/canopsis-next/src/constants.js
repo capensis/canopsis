@@ -320,6 +320,7 @@ export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
+  null: 'null',
 };
 
 export const FILTER_DEFAULT_VALUES = {
