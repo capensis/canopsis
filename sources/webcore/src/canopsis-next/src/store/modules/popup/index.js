@@ -22,7 +22,7 @@ export default {
     },
   },
   actions: {
-    async add({ commit }, {
+    add({ commit }, {
       id = uid('popup'), type, text, autoClose,
     } = {}) {
       commit(types.ADD, {
