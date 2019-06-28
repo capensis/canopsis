@@ -4,11 +4,12 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
 
 ## Canopsis 3.22.0 - Due date : 2019-06-28
 
+ - [Documentation] Add documentation about the new `{{ internal-link }}` handlebar helper
  - [Documentation] Fix some `{{ entities name="" }}` cases in Service weather widget configuration
  - [Authentication] CAS authentication fixed to be compatible with current UIv3 instead of old UIv2
  - [UI - ListAlarm] Responsiveness fixes
  - [UI - ListAlarm] Timeline refactoring and bugfixes
- - [UI - Weather] Add a new `{{ internal-link }}` helper
+ - [UI - Weather] Add a new `{{ internal-link }}` handlebar helper
 
 ## Canopsis 3.21.0 - Due date : 2019-06-21
 
