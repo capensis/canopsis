@@ -30,18 +30,18 @@ import time
 from operator import itemgetter
 from bottle import request
 
-from canopsis.common.enumerations import DefaultEnum
-from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection
-from canopsis.watcher.filtering import WatcherFilter
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
 from canopsis.alerts.reader import AlertsReader
+from canopsis.common.collection import MongoCollection
 from canopsis.common.converters import mongo_filter, id_filter
+from canopsis.common.enumerations import DefaultEnum
+from canopsis.common.influx import InfluxDBClient
+from canopsis.common.mongo_store import MongoStore
 from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
-from canopsis.common.influx import InfluxDBClient
+from canopsis.watcher.filtering import WatcherFilter
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
