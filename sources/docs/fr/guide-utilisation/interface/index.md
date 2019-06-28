@@ -28,4 +28,4 @@ A différents endroits de l'interface de Canopsis, le texte affiché est personn
 
 Différents helpers sont disponibles pour ajouter un peu de logique dans ces templates.
 
-Pour plus de détails, rendez-vous [ici](./helpers)
+Pour plus de détails, rendez-vous [ici](./helpers/index.md)
