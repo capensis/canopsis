@@ -15,7 +15,7 @@
           :label="$t('settings.statsAnnotationLine.value')",
           :disabled="!annotationLine.enabled",
           type="number",
-          :rules="errorsNumberInt",
+          :error-messages="errorsNumberInt",
           @input="validateValue($event)"
           )
         v-flex(xs12)
@@ -78,7 +78,7 @@ export default {
         this.errorsNumberInt = [];
         this.updateField('value', value);
       } else {
-        this.errorsNumberInt.push(() => this.$t('settings.statsAnnotationLine.errors.value'));
+        this.errorsNumberInt.push(this.$t('settings.statsAnnotationLine.errors.value'));
       }
     },
   },
