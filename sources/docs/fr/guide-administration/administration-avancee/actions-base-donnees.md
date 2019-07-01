@@ -7,11 +7,11 @@
 Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et la purge peuvent se faire via la ligne de commande (`mongo canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
 
 !!! attention
-    Cette manipulation à un impact métier important et ne doit être réalisée que par une personne compétente. **Avant toute purge, il est vivement conseillé de faire une [sauvegarde de la base Mongo](#Sauvegarde)** en utilisant `mongorestore`.
+    Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. **Avant toute purge, il est vivement conseillé de faire une [sauvegarde de la base Mongo](#Sauvegarde)** en utilisant `mongorestore` **ainsi que d'arrêter redis** (`systemctl stop redis`) **et le moteur che.**
 
 Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.count(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
 
-Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimez, vous pouvez `db.<nom de la collection>.remove(<requête>)`. Au moment de la purge, un message va indiquer le nombre d'éléments supprimés.
+Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimez, vous pouvez utiliser la commande `db.<nom de la collection>.remove(<requête>)`. Au moment de la purge, un message va indiquer le nombre d'éléments supprimés.
 
 ```bash
 > db.periodical_alarm.remove({"t" : 1537894605})
@@ -23,7 +23,7 @@ WriteResult({ "nRemoved" : 17 })
 !!! attention
     La requête vide `{}` va matcher tous les documents de la collection. Par conséquent, **`db.<nom de la collection>.remove({})` va vider complètement la collection**. Pensez donc à ne jamais avoir `{}` comme paramètre, sauf si vous voulez vider complètement la collection.
 
-Le tableau suivant montre plusieurs examples de requêtes sur les collections d'objets Canopsis, avec la collection Mongo en _italique_ et le filtre en **gras**. Pour rappel, les entités sont stockées dans la collection `default_entities` tandis que les alarmes sont stockées dans `periodical_alarm`.
+Le tableau suivant montre plusieurs examples de requêtes sur les collections d'objets Canopsis, avec la collection Mongo en _italique_ et le filtre en **gras**. Pour rappel, les entités sont stockées dans la collection `default_entities` tandis que les alarmes sont stockées dans `periodical_alarm`, les pbehaviors dans `default_pbehavior` et les vues dans `views`.
 
 Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX. Le timestamp correspondant au temps courant est `Math.floor(Date.now() / 1000)`.
 
