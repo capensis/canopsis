@@ -13,6 +13,7 @@ Plusieurs types de widgets sont disponibles dans Canopsis :
     - Histogramme
     - Courbes
     - Calendrier
+* Texte
 
 ### Bac à alarmes
 
@@ -33,7 +34,7 @@ Le widget **Explorateur de contexte** permet de lister les entités (composants,
 Il permet de visualiser les informations concernant chaque entité, de créer de nouvelles entités, d'en supprimer, ainsi que de les éditer.
 Il permet également d'accéder à la liste des comportements périodiques de chaque entité, d'en ajouter, et d'en supprimer.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./contexte)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./contexte/index.md)
 
 ### Météo de services
 
@@ -41,34 +42,44 @@ Le widget **Météo de services** permet de visualiser rapidement l'état des se
 
 Celui-ci présente sous forme de grille un ensemble de services, avec un jeu de couleurs et d'icones permettant de rapidement visualiser une éventuelle source de problème.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services/index.md)
 
-### Tableau de statistiques
+### Statistiques
+
+#### Tableau de statistiques
 
 Le widget **Tableau de statistiques** permet de visualiser sous forme de tableau un ensemble de statistiques du SI, ou d'un sous-ensemble du SI.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du tableau de statistiques](./stats/table)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du tableau de statistiques](./stats/table/index.md)
 
-### Compteur de statistique
+#### Compteur de statistique
 
 Le widget **Compteur de statistique** permet de visualiser la valeur d'une statistique, avec un jeu de couleur permettant de caractérisé la criticité de chacune des valeurs.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./stats/count)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./stats/count/index.md)
 
-### Histogramme de statistiques
+#### Histogramme de statistiques
 
 Le widget **Histogramme** permet de visualiser un ensemble de statistiques sous forme d'histogramme.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'histogramme](./stats/histogram)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'histogramme](./stats/histogram/index.md)
 
-### Courbe de statistiques
+#### Courbe de statistiques
 
 Le widget **Courbe** permet de visualiser un ensemble de statistiques sous forme de courbes.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la courbe](./stats/curves)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la courbe](./stats/curves/index.md)
 
-### Calendrier de statistique
+#### Calendrier de statistique
 
 Le widget **Calendrier** permet de visualiser le nombre d'alarmes par période de temps (par heure, par jour, par mois), dans une vue calendrier.
 
-Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./stats/calendar)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./stats/calendar/index.md)
+
+### Texte
+
+Le widget **Texte** permet d'afficher n'importe quel texte, grâce à un template entièrement personnalisable.
+
+Il permet également d'insérer une/des valeurs de statistiques.
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du widget de texte](./text/index.md)

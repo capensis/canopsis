@@ -1,6 +1,6 @@
-# Courbes de statistiques
+# Diagramme de Pareto
 
-![Courbes de statistiques](./img/curves.png "Courbes de statistiques")
+![Diagramme de Pareto](./img/pareto.png "Diagramme de Pareto")
 
 ## Sommaire
 ### Guide utilisateur
@@ -15,9 +15,14 @@
 
 ### Présentation du widget
 
-Le widget Courbes de statistiques vous permet de représenter un ensemble de statistiques, sous forme de courbes.
+Le diagramme de Pareto permet de mettre en évidence les entités à l'origine du plus grand nombre d'événements,
+par rapport au nombre total.
 
-Il vous permet d'afficher l'évolution, sur une période déterminée, des statistiques souhaitées.
+Ce diagramme se présente sous la forme d'un histogramme listant les entités, avec le nombre d'événements de ces entités. 
+Une courbe est présente par dessus cet histogramme, indiquant le cumul, en pourcentage par rapport au nombre total d'événements.
+
+Dans le contexte de Canopsis, cela permet, par exemple, de visualiser les entités à l'origine du plus grand 
+nombre d'alarmes crées, ainsi que le cumul du pourcentage par rapport au nombre total d'alarmes crées.
 
 ## Guide exploitant
 
@@ -105,13 +110,11 @@ Au clic sur le bouton ```Créer/Editer```, une fenêtre d'édition de filtre s'o
 
 Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](../../../filtres).
 
-#### Sélecteur de statistiques (*requis*)
+#### Sélecteur de statistique (*requis*)
 
-Ce paramètre permet de définir les statistiques à afficher.
+Ce paramètre permet de définir la statistique à afficher.
 
-**Il est obligatoire d'ajouter au moins une statistique**
-
-Pour ajouter une statistique, cliquez sur le bouton ```Ajouter une statistique```.
+Pour modifier la statistique sélectionnée, cliquez sur le bouton ```Sélectionner```.
 
 Une fenêtre s'ouvre.
 
@@ -128,32 +131,14 @@ Cette fenêtre vous permet de définir la statistique souhaitée.
     - ```Auteurs```: Permet de ne prendre en compte que les alarmes dont le/les auteur(s) fait parti de la liste précisée ici. Pour ajouter un auteur à la liste, entrez son nom, puis appuyer sur la touche "Entrée".
     - ```Sla```: Permet de préciser le temps définit dans le SLA. **Attention: Ce paramètre est requis pour le calcul des statistiques "Taux d'Ack conforme SLA" et "Taux de résolution conforme Sla"**.
 
-Cliquez sur le bouton ```Envoyer``` pour ajouter cette statistique.
-
-La liste des statistiques ajoutées au widget est visible depuis le panneau de paramètres du widget. Un bouton vous permet ici d'éditer la statistique, ou de la supprimer de la liste.
-
-![Liste de statistiques](../img/stats-list.png "Liste de statistiques")
+Cliquez sur le bouton ```Soumettre``` pour ajouter cette statistique.
 
 #### Couleurs des statistiques (*optionnel*)
 
-Ce paramètre vous permet de définir la couleur que vous souhaitée afficher pour chacune des statistiques sélectionnées.
+Ce paramètre vous permet de définir la couleur que vous souhaitée afficher pour la statistique sélectionnée, ainsi que pour la courbe d'accumulation.
 
-La liste des statistiques est affichée, avec un bouton ```Sélectionner une couleur```, ainsi que la couleur déjà selectionnée (s'il y en a une).
+La statistique sélectionnée est affichée avec un bouton ```Sélectionner une couleur```, ainsi que la couleur déjà selectionnée (s'il y en a une).
 
 Pour sélectionner une couleur, cliquez sur le bouton ```Sélectionner une couleur```. Une fenêtre s'affiche. Plusieurs modes de sélection de couleur sont accessibles.
 
 Sélectionnez la couleur souhaitée, puis cliquez sur le boutton ```Envoyer```. La couleur a été sauvegardée.
-
-#### Styles des points (*optionnel*)
-
-Ce paramètre permet de définir, pour chaque statistique, le style de point qui sera utilisé pour représenter les valeur de la/des différente(s) courbe(s)
-
-#### Annotation line (*optionnel*)
-
-Ce paramètre permet d'ajouter une ligne horizontale au widget. Cette ligne peut servir de point de repère, afin de souligner une valeur importante.
-
-- ```Is enabled```: Ce sélecteur permet d'activer/désactiver rapidement l'affichage de la ligne
-- ```Value```: Ce champ permet de définir la valeur au niveau de laquelle la ligne doit apparaître. Cette valeur doit être un nombre.
-- ```Label```: Ce champ permet d'ajouter un label au niveau de la ligne horizontale.
-- ```Pick line color```: Au clic sur ce bouton, une modale de sélection de couleur apparaît. Ce paramètre permet de définir la couleur de la ligne.
-- ```Pick label color```: Au clic sur ce bouton, une modale de sélection de couleur apparaît. Ce paramètre permet de définir la couleur de fond du label de la ligne.

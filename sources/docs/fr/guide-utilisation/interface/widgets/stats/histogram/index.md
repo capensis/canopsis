@@ -17,7 +17,7 @@
 
 Le widget Histogramme de statistiques vous permet de représenter un ensemble de statistiques, sous forme d'histogramme.
 
-Il vous permet d'afficher les statistiques souhaitées pour une ou plusieurs statistiques, sur une période définie.
+Il vous permet d'afficher l'évolution, sur une période déterminée, des statistiques souhaitées.
 
 ## Guide exploitant
 
@@ -51,7 +51,7 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir l'interval de dates pour lequel les statistiques doivent être affichées.
 
-Par défaut l'interval correspond aux statistiques du jour.
+Par défaut l'interval correspond à "ce mois jusqu'à maintenant".
 
 ##### Période
 
@@ -63,7 +63,7 @@ Exemple: Pour une interval correspondant à une année entière, le temps d'affi
 
 ##### Interval
 
-Deux permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
+Deux sélecteurs permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
 
 A l'intérieur des champs de sélection de date (gauche), il est possible :
 
@@ -136,10 +136,20 @@ Pour plus de détails sur les filtres, et l'édition de filtres, cliquez [ici](.
 
 #### Couleurs des statistiques (*optionnel*)
 
-Ce paramètre vous permet de définir la couleur que vous souhaitée affiché pour chacune des statistiques sélectionnées.
+Ce paramètre vous permet de définir la couleur que vous souhaitée afficher pour chacune des statistiques sélectionnées.
 
-La liste des statistique est affichée, avec un bouton ```Sélectionner une couleur```, ainsi que la couleur déjà selectionnée (s'il y en a une).
+La liste des statistiques est affichée, avec un bouton ```Sélectionner une couleur```, ainsi que la couleur déjà selectionnée (s'il y en a une).
 
 Pour sélectionner une couleur, cliquez sur le bouton ```Sélectionner une couleur```. Une fenêtre s'affiche. Plusieurs modes de sélection de couleur sont accessibles.
 
 Sélectionnez la couleur souhaitée, puis cliquez sur le boutton ```Envoyer```. La couleur a été sauvegardée.
+
+#### Annotation line (*optionnel*)
+
+Ce paramètre permet d'ajouter une ligne horizontale au widget. Cette ligne peut servir de point de repère, afin de souligner une valeur importante.
+
+- ```Is enabled```: Ce sélecteur permet d'activer/désactiver rapidement l'affichage de la ligne
+- ```Value```: Ce champ permet de définir la valeur au niveau de laquelle la ligne doit apparaître. Cette valeur doit être un nombre.
+- ```Label```: Ce champ permet d'ajouter un label au niveau de la ligne horizontale.
+- ```Pick line color```: Au clic sur ce bouton, une modale de sélection de couleur apparaît. Ce paramètre permet de définir la couleur de la ligne.
+- ```Pick label color```: Au clic sur ce bouton, une modale de sélection de couleur apparaît. Ce paramètre permet de définir la couleur de fond du label de la ligne.

@@ -55,7 +55,7 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir l'interval de dates pour lequel les statistiques doivent être affichées.
 
-Par défaut l'interval correspond aux statistiques des 7 derniers jours.
+Par défaut l'interval correspond à "ce mois jusqu'à maintenant".
 
 ##### Période
 

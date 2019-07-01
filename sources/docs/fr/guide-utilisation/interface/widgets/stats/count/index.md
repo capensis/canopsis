@@ -52,20 +52,22 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir l'interval de dates pour lequel les statistiques doivent être affichées.
 
-Par défaut l'interval correspond aux statistiques du jour.
+Par défaut l'interval correspond à "ce mois jusqu'à maintenant".
 
 ##### Période
 
-Les deux champs de période correspondent à l'interval entre deux valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement des statistiques.
+Le champ de période correspond à l'interval entre deux valeurs des statistiques. Il convient ici de choisir la plus grande période possible, en fonction de l'interval sélectionné en dessous, afin de réduire le temps de chargement des statistiques.
 
 Exemple: 
 
-- Si l'interval sélectionné est 'Dernière année', une période raisonnable serait de '1 mois'. 
-- Si l'interval sélectionné est 'Aujourd'hui jusqu'à maintenant', une période raisonnable serait de '1 heure'.
+- Si l'interval sélectionné est 'Dernière année', une période raisonnable serait: 'mois'. 
+- Si l'interval sélectionné est 'Aujourd'hui jusqu'à maintenant', une période raisonnable serait: 'heure'.
+
+**Attention**: Si la période sélectionnée est le mois, les dates de début et de fin de calcul des statistiques seront arrondis au premier jour du mois sélectionnée, à 00:00 UTC.
 
 ##### Interval
 
-Deux permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
+Deux sélecteurs permettent ici de sélectionner une date de début, ainsi qu'une date de fin de calcul des statistiques. Le troisième champ (à droite) permet, lui, de sélectionner un interval parmis ceux prédéfinis.
 
 A l'intérieur des champs de sélection de date (gauche), il est possible :
 
@@ -81,7 +83,7 @@ A l'intérieur des champs de sélection de date (gauche), il est possible :
     * Valeur: Nombre d'unités à ajouter/soustraire
     * Unité: 'h' pour 'heures, 'd' pour 'jours', 'm' pour 'mois' et 'y' pour 'année
 
-- A la suite du modificateur peut s'ajouter un opérateur permettant d'arrondir la valeur au début/à la fin de l'unité voulu. Cet opérateur se présente sous la forme: '/unité'. Cet arrondis se fera à la valeur inférieur pour la date de début, à la valeur supérieur pour la date de fin.
+- A la suite du modificateur peut s'ajouter un opérateur permettant d'arrondir la valeur au début/à la fin de l'unité voulue. Cet opérateur se présente sous la forme: '/unité'. Cet arrondi se fera à la valeur inférieure pour la date de début, à la valeur supérieure pour la date de fin.
 
 Exemples: 
 
