@@ -16,10 +16,11 @@
           v-list-group(v-for="stat in orderedStats", :key="stat.title")
             v-list-tile(slot="activator")
               v-list-tile-content
-                v-list-tile-title.draggable
-                  v-tooltip(top)
+                v-list-tile-title(:class="{ draggable: !draggableOptions.disabled }")
+                  v-tooltip(v-if="!draggableOptions.disabled" top)
                     span(slot="activator") {{ stat.title }}
                     span {{ $t('settings.statsSelect.draggable') }}
+                  span(v-else) {{ stat.title }}
               v-list-tile-action
                 v-layout
                   v-btn.primary.mx-1(@click.stop="showEditStatModal(stat.title, stat)", fab, small, depressed)
