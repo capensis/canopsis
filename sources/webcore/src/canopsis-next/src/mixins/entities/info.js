@@ -24,6 +24,7 @@ export default {
     ...mapActions({
       fetchLoginInfos: 'fetchLoginInfos',
       fetchAppInfos: 'fetchAppInfos',
+      updateUserInterface: 'updateUserInterface',
     }),
   },
 };

@@ -77,5 +77,6 @@ export const API_ROUTES = {
   infos: {
     login: '/api/internal/login/login_info',
     app: '/api/internal/app_info',
+    userInterface: '/api/internal/user_interface',
   },
 };
