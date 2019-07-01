@@ -209,7 +209,7 @@ class AmqpPublisher(object):
                 pika.exceptions.ConnectionClosed,
                 pika.exceptions.ChannelClosed
             ):
-                self.logger.error(
+                self.logger.warning(
                     "Failed to publish the following event ({}/{} retries)\n"
                     "{}".format(retry, retries, jdoc))
                 try:
