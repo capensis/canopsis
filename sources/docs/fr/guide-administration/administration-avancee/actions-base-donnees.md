@@ -7,7 +7,7 @@
 Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et le nettoyage peuvent se faire via la ligne de commande (`mongo canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
 
 !!! attention
-    Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. **Avant toute opération, il est vivement conseillé de faire une [sauvegarde de la base Mongo](#Sauvegarde)** en utilisant `mongorestore` **ainsi que d'arrêter redis** (`systemctl stop redis`) **et le moteur che.**
+    Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. **Avant toute opération, il est vivement conseillé de faire une [sauvegarde de la base Mongo](#sauvegarde)** en utilisant `mongorestore` **ainsi que d'arrêter redis** (`systemctl stop redis`) **et le moteur che.**
 
 Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.count(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
 
