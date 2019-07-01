@@ -5,24 +5,26 @@
         span.headline {{ $t('modals.statsDateInterval.title') }}
     v-card-text
       v-container
-        v-layout.pr-1
-          v-tooltip(top)
+        v-layout
+          v-flex(xs6)
             v-text-field.pt-0(
             v-if="!hiddenFields.includes('periodValue')"
-            slot="activator",
             type="number",
             v-model="form.periodValue",
             :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
-            span {{ $t('settings.statsDateInterval.tooltips.periodValue') }}
-          v-tooltip.flex-grow-1(top)
+              v-tooltip(slot="prepend", right)
+                v-icon(slot="activator") help_outline
+                span {{ $t('settings.statsDateInterval.tooltips.periodValue') }}
+          v-flex(xs6)
             v-select.pt-0(
-            slot="activator",
             v-model="form.periodUnit",
             :items="periodUnits",
             :label="$t('modals.statsDateInterval.fields.periodUnit')"
             )
-            span {{ $t('settings.statsDateInterval.tooltips.periodUnit') }}
+              v-tooltip(slot="prepend", right)
+                v-icon(slot="activator") help_outline
+                span {{ $t('settings.statsDateInterval.tooltips.periodUnit') }}
         v-alert.mb-2(
         v-if="form.periodUnit === $constants.STATS_DURATION_UNITS.month", type="info", value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
