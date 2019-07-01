@@ -70,7 +70,7 @@ CREATE USER cplsinflux WITH PASSWORD 'canopsis' WITH ALL PRIVILEGES
 
 - redémarrer influx
 
-```bash
+```sh
 systemctl restart influxdb
 ```
 
@@ -78,7 +78,7 @@ systemctl restart influxdb
 
 - installer redis
 
-```bash
+```sh
 apt-get install redis-server
 ```
 
@@ -86,7 +86,7 @@ apt-get install redis-server
 
 Installer la dernière version de go : https://golang.org/dl/
 
-```bash
+```sh
 wget https://dl.google.com/go/go1.9.4.linux-amd64.tar.gz
 rm -rf /usr/local/go && tar xf go1.9.4.linux-amd64.tar.gz -C /usr/local/
 export PATH=$PATH:/usr/local/go/bin
@@ -94,7 +94,7 @@ export PATH=$PATH:/usr/local/go/bin
 
 Définir l'environnement go :
 
-```bash
+```sh
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
@@ -104,7 +104,7 @@ mkdir -p $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 
 Cloner le projet :
 
-```bash
+```sh
 git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/go-revolution
 ```
 
@@ -112,21 +112,21 @@ Installer Glide: https://glide.sh/
 
 Initialiser le projet :
 
-```bash
+```sh
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make init
 ```
 
 Lancer le build :
 
-```bash
+```sh
 cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
 make
 ```
 
 Lors du développement, il peut être utile de *builder* les binaires rapidement et des les récupérer dans un dossier partagé avec une autre machine par exemple :
 
-```
+```sh
 make init
 
 # réutiliser cette commande par la suite
@@ -135,7 +135,7 @@ make build BUILD_OUTPUT_DIR=/vmshare/gobin SKIP_DEPENDENCIES=true
 
 ### Paramétrage des moteurs
 
-```bash
+```sh
 export CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost/canopsis"
 export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
@@ -145,7 +145,7 @@ export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/defa
 
 #### Paramètres spécifiques au développement
 
-```bash
+```sh
 export CPS_TEST_SKIP_LONG=1
 export CPS_DEBUG_PPROF_ENABLE=0
 export CPS_DEBUG_PPROF_CPU=cpu.out
@@ -183,7 +183,7 @@ canopsis.
 
 Dans le cas d’une installation en `build-install` :
 
-```bash
+```sh
 su - canopsis -c "supervisorctl update"
 su - canopsis -c "hypcontrol start"
 ```
@@ -192,7 +192,7 @@ su - canopsis -c "hypcontrol start"
 
 Pour pouvoir utiliser docker compose, il faut préalablement construire l'image docker de compatibilité, ainsi que les images Docker des engines en Go.
 
-```bash
+```sh
 # archive de tous les binaires construits dans Docker
 make docker_images
 
@@ -201,19 +201,19 @@ make docker_images TAG=develop
 ```
 
 Pour que le provisionning soit complet (reinit), il faut supprimer le volume mongo et perdre toutes les données:
-```bash
+```sh
 docker volume rm go-revolution_mongodbdata
 ```
 
 Pour ne construire qu’un seul projet :
 
-```bash
+```sh
 make -C cmd/<project> -f ../../Makefile.cmd docker_image
 ```
 
 Pour faire une release (archive tar):
 
-```bash
+```sh
 make docker_release
 ```
 
@@ -235,12 +235,12 @@ Créer et binder les queues suivantes :
 Après activation de rabbitmqadmin:
 
 Stopper canopsis puis les engines go
-```bash
+```sh
 /opt/canopsis/bin/canopsis-systemd stop
 ```
 
 Disable les units des engines python:
-```bash
+```sh
 systemctl disable canopsis-engine@cleaner-cleaner_alerts.service
 systemctl disable canopsis-engine@dynamic-alerts.service
 systemctl disable canopsis-engine@cleaner-cleaner_events.service
@@ -248,7 +248,7 @@ systemctl disable canopsis-engine@cleaner-cleaner_events.service
 
 Faire les modifications sur les queues:
 
-```bash
+```sh
 rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_alerts
 rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_cleaner_alerts
 rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis delete queue name=Engine_cleaner_events
@@ -265,7 +265,7 @@ rabbitmqadmin -u cpsrabbit -p canopsis --vhost canopsis declare binding source=c
 ```
 
 Relancer canopsis puis les engines go
-```bash
+```sh
 /opt/canopsis/bin/canopsis-systemd restart
 ```
 
@@ -288,7 +288,7 @@ Les binaires suivants permettent de lancer un *profiling* Go :
 
 Pour l’activer/désactiver globalement :
 
-```bash
+```sh
 # Activation
 export CPS_DEBUG_PPROF_ENABLE=1
 
@@ -298,13 +298,13 @@ export CPS_DEBUG_PPROF_ENABLE=autrechose
 
 Pour activer le profiling CPU :
 
-```bash
+```sh
 export CPS_DEBUG_PPROF_CPU=/chemin/vers/trace.cpu.out
 ```
 
 Pour activer le profiling Mémoire :
 
-```bash
+```sh
 export CPS_DEBUG_PPROF_MEMORY=/chemin/vers/trace.mem.out
 ```
 
@@ -325,7 +325,7 @@ Redémarrer Redis ou purger ses bases lorsque ces collections sont modifiées / 
 
 [GoConvey](http://goconvey.co/) et `docker-compose` sont utilisés pour lancer les tests :
 
-```bash
+```sh
 go get -u github.com/smartystreets/goconvey
 make test
 ```
@@ -340,7 +340,7 @@ import "git.canopsis.net/canopsis/go-revolution/canopsis"
 
 ## Builder les images
 
-```bash
+```sh
 make docker_images TAG+[TAG]
 ```
 
@@ -348,6 +348,6 @@ make docker_images TAG+[TAG]
 
 A la racine du projet, exécuter :
 
-```bash
+```sh
 docker-compose up
 ```
