@@ -41,7 +41,9 @@
               ) {{ item.locked ? 'lock' : 'person' }}
     v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
-        v-icon filter_list
+        v-tooltip(bottom)
+          v-icon(slot="activator") filter_list
+          span {{ $t('common.filrersOn') }}
       filters-list(
       v-else,
       :filters="filters",

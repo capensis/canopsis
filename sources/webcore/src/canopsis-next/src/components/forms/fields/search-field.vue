@@ -8,10 +8,14 @@
       @keyup.enter="submit",
       @input="$emit('input', $event)"
     )
-    v-btn(icon @click="submit")
-      v-icon search
-    v-btn(icon @click="clear")
-      v-icon clear
+    v-tooltip(bottom)
+      v-btn(slot="activator", icon, @click="submit")
+        v-icon search
+      span {{ $t('common.searchSubmit') }}
+    v-tooltip(bottom)
+      v-btn(slot="activator", icon, @click="clear")
+        v-icon clear
+      span {{ $t('common.searchClear') }}
     slot
 </template>
 
