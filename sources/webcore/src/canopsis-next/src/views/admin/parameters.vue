@@ -7,44 +7,16 @@
           v-list-tile
             v-list-tile-title {{ $t('parameters.groupsNavigationType.title') }}
             v-list-tile-content
-              v-select(
+              v-select.mt-0(
               :items="groupsNavigationOptions",
               :value="groupsNavigationType",
               @change="setGroupsNavigationType"
               )
-    v-card.ma-2
-      v-card-text
-        v-form(@submit="submit")
-          v-list
-            v-list-tile
-              v-list-tile-title App title
-              v-list-tile-content
-                v-text-field(
-                v-model="userInterfaceForm.appTitle",
-                label="App title"
-                )
-            v-list-tile
-              v-list-tile-title Login page footer
-              v-list-tile-content
-                v-text-field(
-                v-model="userInterfaceForm.footer",
-                label="App title"
-                )
-            v-list-tile
-              v-list-tile-title Logo
-              v-list-tile-content
-                file-select(
-                ref="fileSelect",
-                :btnProps="btnProps",
-                tooltip="Select logo file",
-                @change="changeLogo"
-                )
-                v-text-field(
-                v-model="userInterfaceForm.logo",
-                label="Logo"
-                )
-          v-divider
-          v-btn.mt-3.primary(type="submit") Submit
+    v-layout(row, wrap)
+      v-flex(xs6, offset-xs3)
+        v-card.ma-2
+          v-card-text
+            user-interface-form
 </template>
 
 <script>
@@ -55,12 +27,12 @@ import { getFileDataUrlContent } from '@/helpers/file-select';
 import appMixin from '@/mixins/app';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import FileSelect from '@/components/forms/fields/file-select.vue';
+import UserInterfaceForm from '@/components/forms/user-interface.vue';
 
 const MAX_LOGO_SIZE = 16777216;
 
 export default {
-  components: { FileSelect },
+  components: { UserInterfaceForm },
   mixins: [appMixin, entitiesInfoMixin],
   data() {
     return {

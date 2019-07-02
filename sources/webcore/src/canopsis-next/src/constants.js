@@ -934,5 +934,3 @@ export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
-
-export const MAX_LOGO_SIZE = 16777216;
