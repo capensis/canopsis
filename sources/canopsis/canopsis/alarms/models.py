@@ -360,6 +360,8 @@ class Alarm(object):
         if self.snooze.value < now:
             self.snooze = None
             self.last_update_date = now
+            if self.activation_date is None:
+                self.activation_date = now
             return True
 
         return False
