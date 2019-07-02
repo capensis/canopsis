@@ -15,8 +15,10 @@
           :label="$t('settings.statsAnnotationLine.value')",
           :disabled="!annotationLine.enabled",
           type="number",
-          :error-messages="errorsNumberInt",
-          @input="validateValue($event)"
+          :name="nameField"
+          :error-messages="getCollectedErrorMessages(nameField)",
+          v-validate="'numeric'"
+          @input="updateField('value', $event)"
           )
         v-flex(xs12)
           v-text-field(
@@ -50,6 +52,7 @@ export default {
     prop: 'annotationLine',
     event: 'input',
   },
+  inject: ['$validator'],
   props: {
     annotationLine: {
       type: Object,
@@ -58,8 +61,19 @@ export default {
   },
   data() {
     return {
-      errorsNumberInt: [],
+      nameField: 'Annotation_Line_Value',
     };
+  },
+  computed: {
+    getCollectedErrorMessages() {
+      return (name) => {
+        if (this.errors) {
+          return this.errors.collect(name);
+        }
+
+        return [];
+      };
+    },
   },
   methods: {
     showColorPickerModal(key) {
@@ -71,15 +85,6 @@ export default {
           action: color => this.updateField(key, color),
         },
       });
-    },
-    validateValue(event) {
-      const value = parseFloat(event);
-      if (Number.isInteger(value)) {
-        this.errorsNumberInt = [];
-        this.updateField('value', value);
-      } else {
-        this.errorsNumberInt.push(this.$t('settings.statsAnnotationLine.errors.value'));
-      }
     },
   },
 };
