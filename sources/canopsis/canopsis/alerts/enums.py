@@ -55,6 +55,7 @@ class AlarmField(DefaultEnum):
     long_output = "long_output"
     output = "output"
     long_output_history = "long_out_history"
+    activation_date = "activation_date"
 
 
 class States(DefaultEnum):

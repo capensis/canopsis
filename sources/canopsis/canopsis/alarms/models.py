@@ -144,6 +144,7 @@ class Alarm(object):
             steps,
             tags,
             ticket,
+            activation_date=None,
             alarm_filter=None,
             done=None,
             extra={}
@@ -182,6 +183,7 @@ class Alarm(object):
         self.hard_limit = hard_limit
         self.initial_output = initial_output
         self.last_update_date = last_update_date
+        self.activation_date = activation_date
         self.resolved = resolved
         self.snooze = snooze
         self.state = state
@@ -207,6 +209,7 @@ class Alarm(object):
             'display_name': self.display_name,
             'initial_output': self.initial_output,
             'last_update_date': self.last_update_date,
+            'activation_date': self.activation_date,
             'hard_limit': self.hard_limit,
             'done': None,
             'status': None,
