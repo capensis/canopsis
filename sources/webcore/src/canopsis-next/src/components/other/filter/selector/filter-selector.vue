@@ -34,16 +34,19 @@
           v-list-tile-content
             v-list-tile-title
               span {{ item[itemText] }}
-              v-icon.ml-2(
-              v-show="!hideSelectIcon",
-              :color="tile.props.value ? parent.color : ''",
-              small
-              ) {{ item.locked ? 'lock' : 'person' }}
+              v-tooltip(bottom)
+                v-icon.ml-2(
+                slot="activator"
+                v-show="!hideSelectIcon",
+                :color="tile.props.value ? parent.color : ''",
+                small
+                ) {{ item.locked ? 'lock' : 'person' }}
+                span {{ item.locked ? $t('filterSelector.lock') : $t('filterSelector.open') }}
     v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
         v-tooltip(bottom)
           v-icon(slot="activator") filter_list
-          span {{ $t('common.filrersOn') }}
+          span {{ $t('filterSelector.edit') }}
       filters-list(
       v-else,
       :filters="filters",

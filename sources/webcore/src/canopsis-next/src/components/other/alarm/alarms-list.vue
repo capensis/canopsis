@@ -36,7 +36,7 @@
         v-tooltip(bottom)
           v-btn(slot="activator", @click="showEditLiveReportModal", icon, small)
             v-icon(:color="query.interval ? 'primary' : 'black'") schedule
-          span {{ $t('common.liveReporting') }}
+          span {{ $t('alarmList.liveReporting') }}
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")

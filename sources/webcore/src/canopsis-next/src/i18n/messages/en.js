@@ -86,10 +86,6 @@ export default {
     administration: 'Administration',
     forbidden: 'Forbidden',
     search: 'Search',
-    searchSubmit: 'Submit',
-    searchClear: 'Clear',
-    filrersOn: 'Edit filters',
-    liveReporting: 'Live reporting',
     filters: 'Filters',
     webhooks: 'Webhooks',
     emptyObject: 'Empty object',
@@ -120,6 +116,10 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+  },
+  searchField: {
+    submit: 'Submit',
+    clear: 'Clear',
   },
   user: {
     role: 'Role',
@@ -185,6 +185,7 @@ export default {
     },
   },
   alarmList: {
+    liveReporting: 'Live reporting',
     actions: {
       titles: {
         ack: 'Ack',
@@ -1020,6 +1021,9 @@ export default {
     },
   },
   filterSelector: {
+    edit: 'Edit filters',
+    lock: 'Lock',
+    open: 'Open',
     fields: {
       mixFilters: 'Mix filters',
     },
