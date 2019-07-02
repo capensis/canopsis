@@ -6,28 +6,25 @@
     v-card-text
       v-container
         v-layout
-          v-flex(xs6)
+          v-flex(xs4)
             v-text-field.pt-0(
             v-if="!hiddenFields.includes('periodValue')"
             type="number",
             v-model="form.periodValue",
             :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
-              v-tooltip(slot="prepend", right)
-                v-icon(slot="activator") help_outline
-                span {{ $t('settings.statsDateInterval.tooltips.periodValue') }}
-          v-flex(xs6)
+          v-flex(xs8)
             v-select.pt-0(
             v-model="form.periodUnit",
             :items="periodUnits",
             :label="$t('modals.statsDateInterval.fields.periodUnit')"
             )
-              v-tooltip(slot="prepend", right)
-                v-icon(slot="activator") help_outline
-                span {{ $t('settings.statsDateInterval.tooltips.periodUnit') }}
         v-alert.mb-2(
         v-if="form.periodUnit === $constants.STATS_DURATION_UNITS.month", type="info", value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
+        v-alert.mb-2(
+        v-if="form.periodUnit === $constants.STATS_DURATION_UNITS.month", type="info", value="true"
+        ) {{ getAlertMessage }}
         stats-date-selector.my-1(v-model="form", :periodUnit="form.periodUnit", @input="resetValidation")
       v-alert(
       value="errors",
@@ -46,7 +43,7 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } from '@/constants';
 
-import { dateParse } from '@/helpers/date-intervals';
+import { dateParse, thisMonthString, nextMonthString } from '@/helpers/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -93,6 +90,31 @@ export default {
   computed: {
     hiddenFields() {
       return this.modal.config.hiddenFields || [];
+    },
+    startDate() {
+      return thisMonthString(
+        dateParse(
+          this.form.tstart,
+          'start',
+          DATETIME_FORMATS.dateTimePicker,
+        ),
+        DATETIME_FORMATS.dateTimePicker,
+      );
+    },
+    endDate() {
+      return nextMonthString(
+        dateParse(
+          this.form.tstop,
+          'start',
+          DATETIME_FORMATS.dateTimePicker,
+        ),
+        DATETIME_FORMATS.dateTimePicker,
+      );
+    },
+    getAlertMessage() {
+      return this.$t('settings.statsDateInterval.alert')
+        .replace('$1', this.startDate)
+        .replace('$2', this.endDate);
     },
   },
   methods: {

@@ -288,13 +288,7 @@ export default {
       },
     },
     statsDateInterval: {
-      tooltips: {
-        periodValue: 'settings.statsDateInterval.tooltips.periodValue',
-        periodUnit: 'settings.statsDateInterval.tooltips.periodUnit',
-        startDate: 'settings.statsDateInterval.tooltips.startDate',
-        endDate: 'settings.statsDateInterval.tooltips.endDate',
-        quickRanges: 'settings.statsDateInterval.tooltips.quickRanges',
-      },
+      alert: 'Between start date: $1 and end date: $2',
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
       quickRanges: {
         [STATS_QUICK_RANGES.custom.value]: 'Custom',

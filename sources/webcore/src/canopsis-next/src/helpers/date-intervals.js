@@ -121,3 +121,11 @@ export function dateParse(date, type, format) {
   return momentDate;
 }
 
+export function thisMonthString(date, format) {
+  return moment(date).startOf('month').format(format);
+}
+
+export function nextMonthString(date, format) {
+  return moment(date).endOf('month').format(format);
+}
+

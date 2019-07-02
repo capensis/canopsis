@@ -4,9 +4,6 @@
       v-flex(xs6)
         v-layout(align-center)
           v-text-field(v-model="tstartDateString", :label="$t('common.startDate')")
-            v-tooltip(slot="prepend", right)
-              v-icon(slot="activator") help_outline
-              span {{ $t('settings.statsDateInterval.tooltips.startDate') }}
           v-menu(
           ref="menu",
           v-model="isTstartDateMenuOpen",
@@ -27,9 +24,6 @@
             )
         v-layout(align-center)
           v-text-field(slot="activator" v-model="tstopDateString", :label="$t('common.endDate')")
-            v-tooltip(slot="prepend", right)
-              v-icon(slot="activator") help_outline
-              span {{ $t('settings.statsDateInterval.tooltips.endDate') }}
           v-menu(
           v-model="isTstopDateMenuOpen",
           content-class="date-time-picker",
@@ -48,10 +42,7 @@
             roundHours
             )
       v-flex.px-1(xs6)
-        v-select(slot="activator" v-model="range", :items="quickRanges", label="Quick ranges", return-object)
-          v-tooltip(slot="prepend", right)
-            v-icon(slot="activator") help_outline
-            span {{ $t('settings.statsDateInterval.tooltips.quickRanges') }}
+        v-select(v-model="range", :items="quickRanges", label="Quick ranges", return-object)
 </template>
 
 <script>
