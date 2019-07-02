@@ -15,8 +15,8 @@
           :label="$t('settings.statsAnnotationLine.value')",
           :disabled="!annotationLine.enabled",
           type="number",
-          :name="nameField"
-          :error-messages="getCollectedErrorMessages(nameField)",
+          :name="inputName"
+          :error-messages="errors ? errors.collect(inputName) : []",
           v-validate="'numeric'"
           @input="updateField('value', $event)"
           )
@@ -58,21 +58,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-  },
-  data() {
-    return {
-      nameField: 'Annotation_Line_Value',
-    };
-  },
-  computed: {
-    getCollectedErrorMessages() {
-      return (name) => {
-        if (this.errors) {
-          return this.errors.collect(name);
-        }
-
-        return [];
-      };
+    inputName: {
+      type: String,
+      default: 'annotation.line.value',
     },
   },
   methods: {

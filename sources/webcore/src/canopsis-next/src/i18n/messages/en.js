@@ -379,9 +379,6 @@ export default {
       label: 'Label',
       pickLineColor: 'Pick line color',
       pickLabelColor: 'Pick label color',
-      errors: {
-        value: 'Only INT type',
-      },
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
