@@ -29,6 +29,8 @@ Il vous permet d'afficher l'évolution, sur une période déterminée, des stati
 4. Filtre (*optionnel*)
 5. Sélecteur de statistique (*requis*)
 6. Couleurs des statistiques (*optionnel*)
+7. Style des points (*optionnel*)
+8. Annotation line (*optionnel*)
 
 #### Taille du widget (*requis*)
 

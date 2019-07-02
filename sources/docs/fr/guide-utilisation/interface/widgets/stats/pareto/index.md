@@ -3,7 +3,7 @@
 ![Diagramme de Pareto](./img/pareto.png "Diagramme de Pareto")
 
 ## Sommaire
-### Guide utilisateur
+### Guide utilisateur 
 
 1. [Présentation du widget](#presentation-du-widget)
 
