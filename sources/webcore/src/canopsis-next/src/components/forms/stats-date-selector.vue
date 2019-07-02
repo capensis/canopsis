@@ -23,7 +23,7 @@
             @input="updateTstartField"
             )
         v-layout(align-center)
-          v-text-field(slot="activator" v-model="tstopDateString", :label="$t('common.endDate')")
+          v-text-field(v-model="tstopDateString", :label="$t('common.endDate')")
           v-menu(
           v-model="isTstopDateMenuOpen",
           content-class="date-time-picker",

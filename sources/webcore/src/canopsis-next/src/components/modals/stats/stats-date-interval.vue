@@ -6,14 +6,13 @@
     v-card-text
       v-container
         v-layout
-          v-flex(xs4)
+          v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
-            v-if="!hiddenFields.includes('periodValue')"
             type="number",
             v-model="form.periodValue",
             :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
-          v-flex(xs8)
+          v-flex.pr-1
             v-select.pt-0(
             v-model="form.periodUnit",
             :items="periodUnits",
@@ -112,9 +111,10 @@ export default {
       );
     },
     getAlertMessage() {
-      return this.$t('settings.statsDateInterval.alert')
-        .replace('$1', this.startDate)
-        .replace('$2', this.endDate);
+      return this.$t('settings.statsDateInterval.alert', {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      });
     },
   },
   methods: {

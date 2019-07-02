@@ -288,7 +288,7 @@ export default {
       },
     },
     statsDateInterval: {
-      alert: 'Between start date: $1 and end date: $2',
+      alert: 'Between start date: {startDate} and end date: {endDate}',
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
       quickRanges: {
         [STATS_QUICK_RANGES.custom.value]: 'Custom',
