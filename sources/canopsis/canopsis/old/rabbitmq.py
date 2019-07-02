@@ -129,7 +129,6 @@ class Amqp(Thread):
         self.logger.debug("Object canamqp initialized")
 
     def run(self):
-
         """
         main thread loop
         - connects to rabbit
