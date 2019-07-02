@@ -13,7 +13,7 @@
               @change="setGroupsNavigationType"
               )
     v-layout(row, wrap)
-      v-flex(xs6, offset-xs3)
+      v-flex(xs8, offset-xs2)
         v-card.ma-2
           v-card-text
             user-interface-form
@@ -22,29 +22,13 @@
 <script>
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
-import { getFileDataUrlContent } from '@/helpers/file-select';
-
 import appMixin from '@/mixins/app';
-import entitiesInfoMixin from '@/mixins/entities/info';
 
 import UserInterfaceForm from '@/components/forms/user-interface.vue';
 
-const MAX_LOGO_SIZE = 16777216;
-
 export default {
   components: { UserInterfaceForm },
-  mixins: [appMixin, entitiesInfoMixin],
-  data() {
-    return {
-      userInterfaceForm: {
-        appTitle: 'Canopsis',
-        footer: '',
-        logo: '',
-      },
-      selectedLogoFileName: '',
-      pendingLogo: false,
-    };
-  },
+  mixins: [appMixin],
   computed: {
     groupsNavigationOptions() {
       return [
@@ -57,36 +41,6 @@ export default {
           value: GROUPS_NAVIGATION_TYPES.topBar,
         },
       ];
-    },
-    btnProps() {
-      return {
-        loading: this.pendingLogo,
-      };
-    },
-  },
-  mounted() {
-    this.userInterfaceForm = {
-      appTitle: this.appTitle || 'Canopsis',
-      footer: this.footer,
-      logo: this.logo,
-    };
-  },
-  methods: {
-    async changeLogo(e) {
-      const { files } = e.target;
-      const [file] = files;
-
-      if (file) {
-        if (file.size <= MAX_LOGO_SIZE) {
-          this.pendingLogo = true;
-          this.userInterfaceForm.logo = await getFileDataUrlContent(file);
-          this.selectedLogoFileName = file.name;
-          this.pendingLogo = false;
-        }
-      }
-    },
-    submit() {
-
     },
   },
 };
