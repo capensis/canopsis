@@ -137,7 +137,7 @@ export default {
       const TYPES_ICONS_MAP = {
         [FILTER_INPUT_TYPES.string]: 'title',
         [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
-        [FILTER_INPUT_TYPES.boolean]: '$vuetify.icons.toggle_on',
+        [FILTER_INPUT_TYPES.boolean]: 'toggle_on',
         [FILTER_INPUT_TYPES.null]: 'space_bar',
       };
 
