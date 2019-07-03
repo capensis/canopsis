@@ -34,10 +34,12 @@
           v-list-tile-content
             v-list-tile-title
               span {{ item[itemText] }}
-              v-tooltip(bottom)
+              v-tooltip(
+              v-if="!hideSelectIcon",
+              bottom
+              )
                 v-icon.ml-2(
                 slot="activator"
-                v-show="!hideSelectIcon",
                 :color="tile.props.value ? parent.color : ''",
                 small
                 ) {{ item.locked ? 'lock' : 'person' }}
