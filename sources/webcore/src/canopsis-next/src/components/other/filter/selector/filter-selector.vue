@@ -39,7 +39,7 @@
               bottom
               )
                 v-icon.ml-2(
-                slot="activator"
+                slot="activator",
                 :color="tile.props.value ? parent.color : ''",
                 small
                 ) {{ item.locked ? 'lock' : 'person' }}
