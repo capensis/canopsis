@@ -178,16 +178,20 @@ class __TileData:
     def __get_tile_color(cls, watcher):
         watched_ent_paused = 0
         watcher_state = 0
-        if len(watcher[ResultKey.ALARM.value]) > 0:
-            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
-            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
 
         for ent in watcher[ResultKey.ENT.value]:
             if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
                 watched_ent_paused += 1
 
-        if len(watcher[ResultKey.PBEHAVIORS.value]) > 0 and \
+        if len(watcher[ResultKey.ALARM.value]) > 0:
+            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
+            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+
+        if len(watcher[ResultKey.ENT.value]) > 0 and \
            len(watcher[ResultKey.ENT.value]) == watched_ent_paused:
+            return TILE_COLOR_PAUSE
+
+        if len(watcher[ResultKey.PBEHAVIORS.value]) > 0:
             return TILE_COLOR_PAUSE
 
         return TILE_COLOR_SELECTOR[watcher_state]
@@ -202,13 +206,14 @@ class __TileData:
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
+
         for pbh in watcher[ResultKey.PBEHAVIORS.value]:
             if pbh["type_"] == "Hors plage horaire de surveillance":
                 has_out_of_surveillance = True
             elif pbh["type_"] == "Maintenance":
                 has_maintenance = True
             elif pbh["type_"] in ["pause", "Pause"]:
-                has_maintenance = True
+                has_pause = True
 
         if has_maintenance:
             return TILE_ICON_MAINTENANCE
@@ -381,7 +386,7 @@ def _pbehavior_types(watcher):
     """
     pb_types = set()
 
-    pbehaviors = watcher[ResultKey.PBEHAVIORS.value]
+    pbehaviors = watcher[ResultKey.PBEHAVIORS.value][:] # create a new list
     for ent in watcher[ResultKey.ENT.value]:
         pbehaviors += ent[ResultKey.PBEHAVIORS.value]
 
@@ -502,8 +507,9 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
 
     return pipeline
 
+
 def _rework_watcher_pipeline_element(watcher, logger):
-    # remove the inactive pbehaviors from the ppieline result
+    # remove the inactive pbehaviors from the pipeline result
     pbhs = watcher[ResultKey.PBEHAVIORS.value]
     watcher[ResultKey.PBEHAVIORS.value] = _remove_inactive_pbh(pbhs)
     pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
@@ -583,6 +589,10 @@ def exports(ws):
 
         result = []
         for watcher in pipeline_result:
+            debug = False
+            if watcher["name"] == "AIDA2":
+                debug = True
+
             watcher = _rework_watcher_pipeline_element(watcher, ws.logger)
 
             some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
@@ -593,6 +603,13 @@ def exports(ws):
                         some_watched_ent_paused,
                         len(watcher[ResultKey.PBEHAVIORS.value]) > 0,
                         _pbehavior_types(watcher)):
+                if debug:
+                    with open("/tmp/plop.txt", "a") as fd:
+                        from pprint import pformat
+                        fd.write("\n=============================\n")
+                        fd.write("watcher name : {}\n".format(watcher["name"]))
+                        fd.write("Watcher pbehaviors {}\n".format(pformat(watcher["pbehaviors"])))
+
                 tileData = __TileData(watcher)
                 result.append(vars(tileData))
 
