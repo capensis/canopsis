@@ -271,6 +271,7 @@ def make_alarm_from_mongo(alarm_dict):
         hard_limit=ald.get('hard_limit'),
         initial_output=ald.get('initial_output'),
         last_update_date=ald.get('last_update_date'),
+        activation_date=ald.get('activation_date'),
         resolved=ald.get('resolved'),
         snooze=snooze,
         state=state,
