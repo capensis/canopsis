@@ -3,24 +3,28 @@
     v-layout
       v-flex(xs6)
         v-layout(align-center)
-          date-time-picker-text-field(
-          ref="tstart",
-          v-model="tstartDateString",
-          :label="$t('common.startDate')",
-          :dateObjectPreparer="getDateObjectPreparer('start')",
-          name="tstart",
-          roundHours
-          )
+          v-flex
+            date-time-picker-text-field(
+            ref="tstart",
+            v-model="tstartDateString",
+            :label="$t('common.startDate')",
+            :dateObjectPreparer="getDateObjectPreparer('start')",
+            name="tstart",
+            roundHours,
+            @update:objectValue="$emit('update:tstartObjectValue', $event)"
+            )
         v-layout(align-center)
-          date-time-picker-text-field(
-          v-model="tstopDateString",
-          v-validate="'after_custom:tstart'",
-          :label="$t('common.endDate')",
-          :dateObjectPreparer="getDateObjectPreparer('stop')",
-          name="tstop",
-          roundHours
-          )
-      v-flex.px-1(xs6)
+          v-flex
+            date-time-picker-text-field(
+            v-model="tstopDateString",
+            v-validate="'after_custom:tstart'",
+            :label="$t('common.endDate')",
+            :dateObjectPreparer="getDateObjectPreparer('stop')",
+            name="tstop",
+            roundHours,
+            @update:objectValue="$emit('update:tstopObjectValue', $event)"
+            )
+      v-flex.pl-1(xs6)
         v-select(v-model="range", :items="quickRanges", label="Quick ranges", return-object)
 </template>
 
@@ -29,7 +33,7 @@ import moment from 'moment';
 
 import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
-import { dateParse } from '@/helpers/date-intervals';
+import { prepareDateToObject } from '@/helpers/date-intervals';
 
 import formMixin from '@/mixins/form';
 
@@ -122,16 +126,7 @@ export default {
   },
   methods: {
     getDateObjectPreparer(type) {
-      return (date) => {
-        const unit = this.periodUnit === STATS_DURATION_UNITS.month ? 'month' : 'hour';
-        const momentDate = dateParse(date, type, DATETIME_FORMATS.dateTimePicker);
-
-        if (momentDate.isValid()) {
-          return momentDate.startOf(unit).toDate();
-        }
-
-        return moment().startOf(unit).toDate();
-      };
+      return date => prepareDateToObject(date, type, this.periodUnit === STATS_DURATION_UNITS.month ? 'month' : 'hour');
     },
   },
 };

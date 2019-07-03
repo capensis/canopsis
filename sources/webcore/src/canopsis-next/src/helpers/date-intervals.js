@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { STATS_DURATION_UNITS } from '@/constants';
+import { STATS_DURATION_UNITS, DATETIME_FORMATS } from '@/constants';
 
 /**
  * Helper to calculate time intervals
@@ -111,6 +111,14 @@ export function parseStringToDateInterval(dateString, type) {
   throw new Error('Date string pattern not recognized');
 }
 
+/**
+ * Parse date in every formats to moment object
+ *
+ * @param date
+ * @param type
+ * @param format
+ * @return {*}
+ */
 export function dateParse(date, type, format) {
   const momentDate = moment(date, format, true);
 
@@ -121,3 +129,12 @@ export function dateParse(date, type, format) {
   return momentDate;
 }
 
+export function prepareDateToObject(date, type, unit = 'hour', format = DATETIME_FORMATS.dateTimePicker) {
+  const momentDate = dateParse(date, type, format);
+
+  if (momentDate.isValid()) {
+    return momentDate.startOf(unit).toDate();
+  }
+
+  return moment().startOf(unit).toDate();
+}

@@ -12,21 +12,26 @@
             v-model="form.periodValue",
             :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
-          v-select.pt-0(
-          v-model="form.periodUnit",
-          :items="periodUnits",
-          :label="$t('modals.statsDateInterval.fields.periodUnit')"
-          )
+          v-flex
+            v-select.pt-0(
+            v-model="form.periodUnit",
+            :items="periodUnits",
+            :label="$t('modals.statsDateInterval.fields.periodUnit')"
+            )
         v-alert.mb-2(
-        v-if="isPeriodMonth",
+        :value="isPeriodMonth",
         type="info",
-        value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         stats-date-selector.my-1(
         v-model="form",
         :periodUnit="form.periodUnit",
-        @input="resetValidation"
+        @update:tstartObjectValue="objectValues.tstart = $event",
+        @update:tstopObjectValue="objectValues.tstop = $event"
         )
+        v-alert.mb-2(
+        :value="isPeriodMonth"
+        type="info",
+        ) {{ objectValues.tstart | date('long', true) }} - {{ objectValues.tstop | date('long', true) }}
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -63,6 +68,10 @@ export default {
     };
 
     return {
+      objectValues: {
+        tstart: null,
+        tstop: null,
+      },
       form: cloneDeep(interval || defaultInterval),
     };
   },
@@ -114,10 +123,6 @@ export default {
     });
   },
   methods: {
-    resetValidation() {
-      this.localErrors = [];
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

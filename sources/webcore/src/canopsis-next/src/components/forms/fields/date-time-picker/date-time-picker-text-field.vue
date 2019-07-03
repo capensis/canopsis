@@ -137,6 +137,8 @@ export default {
           });
         }
       }
+
+      this.$emit('update:objectValue', this.objectValue);
     },
   },
 };
