@@ -134,6 +134,9 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 ### Utilisation de engine-watcher
 
+!!! info
+    Disponible à partir de Canopsis 3.23.0.
+
 ```
   -autoRecomputeWatchers
         Recalcule automatiquement l'état des watchers chaque minute.
