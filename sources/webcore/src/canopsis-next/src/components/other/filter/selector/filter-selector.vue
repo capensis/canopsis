@@ -32,18 +32,18 @@
           v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
             v-checkbox(:inputValue="tile.props.value", :color="parent.color")
           v-list-tile-content
-            v-list-tile-title
-              span {{ item[itemText] }}
-              v-tooltip(
-              v-if="!hideSelectIcon",
-              bottom
-              )
-                v-icon.ml-2(
-                slot="activator",
+            v-list-tile-title {{ item[itemText] }}
+          v-list-tile-action
+            v-tooltip(
+            v-if="!hideSelectIcon",
+            bottom
+            )
+              v-btn(slot="activator", icon)
+                v-icon(
                 :color="tile.props.value ? parent.color : ''",
                 small
                 ) {{ item.locked ? 'lock' : 'person' }}
-                span {{ item.locked ? $t('filterSelector.lock') : $t('filterSelector.open') }}
+              span {{ item.locked ? $t('filterSelector.lock') : $t('filterSelector.open') }}
     v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
         v-tooltip(bottom)
