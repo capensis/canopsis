@@ -51,13 +51,13 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 ## [Mise en place de l'environnement de développement](./front-end/dev_environnement.md)
 ## [Technologies utilisées](./front-end/technologies.md)
 ## [Structure du projet](./front-end/project_structure.md)
-## Règles de style
+## [Règles du projet](./front-end/project_rules.md)
 ## Les mixins, helpers et filters
 ## Le store Vuex
 ## Guides de création nouvelle fonctionnalité
 ### Modal
 ### Vue
-### Widget (+ Paramètres du widget)
+### [Widget](./front-end/widget_creation.md)
 
 # API
 
