@@ -3,7 +3,7 @@
     v-layout(v-for="row in rows", :key="row._id" wrap)
       v-flex(xs12)
         v-layout.hide-on-full-screen(justify-end)
-          v-btn.ma-2.editionBtn(
+          v-btn.ma-2(
           v-if="isEditingMode && hasUpdateAccess",
           @click.stop="showDeleteRowModal(row)",
           small,
@@ -18,13 +18,18 @@
           h3.my-1.mx-2(v-show="widget.title") {{ widget.title }}
           v-layout(justify-end)
             template(v-if="isEditingMode && hasUpdateAccess")
-              v-btn.ma-1.editionBtn(
+              v-btn.ma-1(
               @click="showDeleteWidgetModal(row._id, widget)",
               small,
               color="error",
               ) {{ $t('view.deleteWidget') }}
-              v-btn.ma-1.editionBtn(
-              @click="showSettings(tab._id, row._id, widget)",
+              v-btn.ma-1(
+              @click="showSelectViewTabModal(widget)",
+              icon
+              )
+                v-icon file_copy
+              v-btn.ma-1(
+              @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
               icon
               )
                 v-icon settings
@@ -38,6 +43,8 @@
 
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+
+import { generateWidgetByType } from '@/helpers/entities';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
@@ -120,13 +127,28 @@ export default {
     },
   },
   methods: {
-    showSettings(tabId, rowId, widget) {
+    showSettings({
+      viewId,
+      tabId,
+      rowId,
+      widget,
+    }) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
+          viewId,
           tabId,
           rowId,
           widget,
+        },
+      });
+    },
+
+    showSelectViewTabModal(widget) {
+      this.showModal({
+        name: MODALS.selectViewTab,
+        config: {
+          action: ({ tabId, viewId }) => this.cloneWidget({ widget, tabId, viewId }),
         },
       });
     },
@@ -177,6 +199,33 @@ export default {
             return this.updateTabMethod(newTab);
           },
         },
+      });
+    },
+
+    async cloneWidget({ widget, tabId, viewId }) {
+      const { _id: newWidgetId } = generateWidgetByType(widget.type);
+      const newWidget = { ...widget, _id: newWidgetId };
+
+      await new Promise((resolve, reject) => {
+        if (this.tab._id === tabId) {
+          resolve();
+        } else {
+          this.$router.push({
+            name: 'view',
+            params: {
+              id: viewId,
+            },
+            query: {
+              tabId,
+            },
+          }, resolve, reject);
+        }
+      });
+
+      this.showSettings({
+        viewId,
+        tabId,
+        widget: newWidget,
       });
     },
   },

@@ -7,6 +7,8 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
+import featureService from '@/services/features';
+
 export default {
   common: {
     ok: 'Ok',
@@ -43,6 +45,7 @@ export default {
     recursive: 'Recursive',
     select: 'Select',
     states: 'States',
+    state: 'State',
     sla: 'Sla',
     authors: 'Authors',
     stat: 'Stat',
@@ -202,6 +205,16 @@ export default {
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
+      },
+    },
+    timeLine: {
+      titlePaths: {
+        by: 'by',
+      },
+      stateCounter: {
+        header: 'Cropped State (since last change of status)',
+        stateIncreased: 'State increased',
+        stateDecreased: 'State decreases',
       },
     },
     infoPopup: 'Info popup',
@@ -733,6 +746,13 @@ export default {
       externalData: 'External data',
       onSuccess: 'On success',
       onFailure: 'On failure',
+      tooltips: {
+        addValueRuleField: 'Add value rule field',
+        editValueRuleField: 'Edit value rule field',
+        addObjectRuleField: 'Add object rule field',
+        editObjectRuleField: 'Edit object rule field',
+        removeRuleField: 'Remove rule field',
+      },
     },
     viewTab: {
       create: {
@@ -817,6 +837,9 @@ export default {
           formatter: 'Format (capture group with \\x)',
         },
       },
+    },
+    selectViewTab: {
+      title: 'Select tab',
     },
   },
   tables: {
@@ -1131,4 +1154,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
+
+  ...featureService.get('i18n.en'),
 };

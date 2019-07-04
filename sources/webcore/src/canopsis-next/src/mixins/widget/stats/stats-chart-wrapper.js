@@ -26,7 +26,12 @@ export default {
          It's the same for all stats, that's why we can just take the first.
          We then give it to the date filter, to display it with a date format
          */
-        return this.stats[stats[0]].sum.map(value => this.$options.filters.date(value.end, 'long', true));
+        return this.stats[stats[0]].sum.map((value) => {
+          const start = this.$options.filters.date(value.start, 'long', true);
+          const end = this.$options.filters.date(value.end, 'long', true);
+
+          return [`${start} -`, end];
+        });
       }
 
       return [];

@@ -107,7 +107,7 @@ export default {
 
     async fetchItem({ dispatch }, { id, params }) {
       try {
-        const paramsWithItemId = merge(params, { filter: { d: id } });
+        const paramsWithItemId = merge(params, { filter: { _id: id } });
 
         await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,

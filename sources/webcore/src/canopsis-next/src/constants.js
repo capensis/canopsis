@@ -1,3 +1,5 @@
+import featuresService from '@/services/features';
+
 export const CRUD_ACTIONS = {
   create: 'create',
   read: 'read',
@@ -72,6 +74,7 @@ export const MODALS = {
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
+  selectViewTab: 'select-view-tab',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -317,6 +320,7 @@ export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
+  null: 'null',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -388,7 +392,7 @@ export const STATS_TYPES = {
   },
   mtbf: {
     value: 'mtbf',
-    options: [],
+    options: [STATS_OPTIONS.recursive],
   },
   currentState: {
     value: 'current_state',
@@ -624,6 +628,8 @@ export const USERS_RIGHTS = {
         userFilter: 'listalarm_userFilter',
 
         links: 'listalarm_links',
+
+        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
       },
     },
     context: {
@@ -682,6 +688,9 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
 
+
+    ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
+
     links: 'links',
 
     listFilters: 'listFilters',
@@ -736,6 +745,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+
+    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {
@@ -922,3 +933,5 @@ export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
+
+export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';

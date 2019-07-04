@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
-      div.subheading {{ $t('settings.statsSelect.title') }}
+      .subheading(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
         .font-italic.caption.ml-1 ({{ $t('settings.statsNumbers.defaultStat') }})
       v-btn.primary(
       small,
@@ -9,14 +9,15 @@
       ) {{ $t('common.select') }}
 </template>
 
-
 <script>
-import modalMixin from '@/mixins/modal';
 import { STATS_TYPES, MODALS } from '@/constants';
+
+import modalMixin from '@/mixins/modal';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
-  mixins: [modalMixin],
+  mixins: [modalMixin, formValidationHeaderMixin],
   model: {
     prop: 'stat',
     event: 'input',
@@ -42,6 +43,7 @@ export default {
       rules: 'required:true',
       getter: () => this.stat,
       context: () => this,
+      vm: this,
     });
   },
   methods: {

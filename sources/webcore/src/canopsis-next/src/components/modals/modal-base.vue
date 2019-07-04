@@ -12,6 +12,8 @@
 <script>
 import { MODALS } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
@@ -56,6 +58,7 @@ import EventFilterRuleExternalData from './event-filter/enrichment-options/event
 import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
+import SelectViewTab from './view/select-view-tab.vue';
 
 export default {
   name: 'modal-base',
@@ -104,6 +107,9 @@ export default {
     FiltersList,
     CreateWebhook,
     CreateSnmpRule,
+    SelectViewTab,
+
+    ...featuresService.get('components.modals.components'),
   },
   props: {
     modals: {

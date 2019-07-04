@@ -1,11 +1,13 @@
 <template lang="pug">
   v-tabs(:color="vTabsColor", :dark="dark", fixed-tabs)
     template(v-for="(tab, index) in tabs")
-      v-tab(:key="`tab-${index}`") {{ tab.title }}
+      v-tab(:key="`tab-${index}`")
+        .validation-header(:class="{ 'error--text': validationErrorsFlagsForTabs[index] }") {{ tab.title }}
       v-tab-item(:key="`tab-item-${index}`")
         div(:class="vTabItemInnerWrapperClass")
           div(:class="vTabItemInnerClass")
             component(
+            ref="forms",
             :is="tab.component",
             :class="webhookTabClass",
             v-bind="tab.bind",
@@ -52,6 +54,11 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      validationErrorsFlagsForTabs: [],
+    };
   },
   computed: {
     tabs() {
@@ -121,6 +128,15 @@ export default {
         'white pa-3': this.dark,
       };
     },
+  },
+  mounted() {
+    this.tabs.forEach((item, index) => {
+      this.$set(this.validationErrorsFlagsForTabs, index, false);
+
+      this.$watch(() => this.$refs.forms[index].hasAnyError, (value) => {
+        this.$set(this.validationErrorsFlagsForTabs, index, value);
+      });
+    });
   },
 };
 </script>

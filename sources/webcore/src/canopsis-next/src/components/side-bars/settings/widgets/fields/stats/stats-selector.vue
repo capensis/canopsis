@@ -1,8 +1,9 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.statsSelect.title') }}
-      div.font-italic.caption.ml-1(v-if="required") ({{ $t('settings.statsSelect.required') }})
-      div.font-italic.caption.ml-1(v-else) ({{ $t('common.optional') }})
+    v-list-tile(slot="activator")
+      div(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
+        .font-italic.caption.ml-1(v-if="required") ({{ $t('settings.statsSelect.required') }})
+        .font-italic.caption.ml-1(v-else) ({{ $t('common.optional') }})
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
@@ -41,11 +42,12 @@ import { setInSeveral } from '@/helpers/immutable';
 
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
   components: { Draggable },
-  mixins: [modalMixin, formMixin],
+  mixins: [modalMixin, formMixin, formValidationHeaderMixin],
   model: {
     prop: 'stats',
     event: 'input',
@@ -96,6 +98,7 @@ export default {
         rules: 'required',
         getter: () => Object.values(this.stats),
         context: () => this,
+        vm: this,
       });
     }
   },

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    div(v-if="$options.filters.mq($mq, { l: true })")
+    mq-layout(mq="xl")
       v-layout
         actions-panel-item(
         v-for="(action, index) in actions",
@@ -17,7 +17,7 @@
             isDropDown,
             :key="`drop-down-${index}`"
             )
-    div(v-if="$options.filters.mq($mq, { m: true, l: false })")
+    mq-layout(mq="l")
       v-layout
         v-menu(
         v-show="actions.length + Object.keys(actions).length > 0",

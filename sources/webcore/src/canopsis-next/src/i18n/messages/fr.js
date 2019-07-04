@@ -6,6 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
 } from '@/constants';
+import featureService from '@/services/features';
 
 export default {
   common: {
@@ -942,7 +943,7 @@ export default {
   },
   snmpRules: {
     title: 'Règles SNMP',
-    uploadMib: 'Télécharger un fichier MIB',
+    uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
   },
   layout: {
@@ -1040,4 +1041,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
   },
+
+  ...featureService.get('i18n.fr'),
 };
