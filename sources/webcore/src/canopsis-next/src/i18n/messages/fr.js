@@ -943,7 +943,7 @@ export default {
   },
   snmpRules: {
     title: 'Règles SNMP',
-    uploadMib: 'Télécharger un fichier MIB',
+    uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
   },
   layout: {

@@ -16,9 +16,6 @@
         mixed-field(
         v-if="!form.advancedMode",
         v-model="form.value",
-        name="value",
-        v-validate="'required'",
-        :error-messages="errors.collect('value')",
         :label="$t('modals.eventFilterRule.value')"
         )
         template(v-else)
@@ -42,10 +39,7 @@
               )
             v-flex.pl-1(xs9)
               mixed-field(
-              v-model="field.value",
-              name="fieldValue",
-              :error-messages="errors.collect('fieldValue')",
-              v-validate="'required'"
+              v-model="field.value"
               )
             v-flex
               v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
