@@ -148,12 +148,24 @@ export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/defa
 ```sh
 export CPS_TEST_SKIP_LONG=1
 export CPS_DEBUG_PPROF_ENABLE=0
-export CPS_DEBUG_PPROF_CPU=trace.cpu.out
-export CPS_DEBUG_PPROF_MEMORY=trace.mem.out
+export CPS_DEBUG_PPROF_CPU=cpu.out
+export CPS_DEBUG_PPROF_MEMORY=mem.out
+export CPS_DEBUG_TRACE=trace.out
 ```
 
 `CPS_TEST_SKIP_LONG` permet de passer les tests marqués comme long à s'exécuter.
-Les variables `CPS_DEBUG_PPROF_X` permettent de activer/désactiver et gérer le profiler de code (sur les engines qui implémentent la fonctionnalité), pour voir notamment le gain de perf associé à un développement.
+
+Les variables d'environnement `CPS_DEBUG_PPROF_*` permettent d'activer le
+profiling, pour voir notamment le gain de performances associé à un
+développement. Les profils générés avec ces options peuvent être consultés avec
+la commande `go tool pprof` (par exemple : `go tool pprof -http=":8081"
+engine-axe cpu.out`).
+
+La variable d'environnement `CPS_DEBUG_TRACE` permet de générer des traces
+d'exécutions. La trace générée par cette option peut être consultée avec la
+commande `go tool trace` (par exemple : `go tool trace trace.out`). L'interface
+lancée par `go tool trace` n'est pour l'instant compatible qu'avec le
+navigateur Chromium et ses variantes.
 
 
 ## Compat - Python + Go Engines
