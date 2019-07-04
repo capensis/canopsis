@@ -69,18 +69,23 @@ export function dateParse(date, type, format) {
  *
  * @param {number} date
  * @param {string} type
- * @param {string} [unit]
- * @param {string} [format]
+ * @param {string} [unit = 'hour']
+ * @param {string} [format = DATETIME_FORMATS.dateTimePicker]
  * @returns {Date}
  */
-export function prepareDateToObject(date, type, unit = 'hour', format = DATETIME_FORMATS.dateTimePicker) {
+export function prepareDateToObject(
+  date,
+  type,
+  unit = 'hour',
+  format = DATETIME_FORMATS.dateTimePicker,
+) {
   const momentDate = dateParse(date, type, format);
 
   if (momentDate.isValid()) {
     return momentDate.startOf(unit).toDate();
   }
 
-  return moment().startOf(unit).toDate();
+  return null;
 }
 
 /**

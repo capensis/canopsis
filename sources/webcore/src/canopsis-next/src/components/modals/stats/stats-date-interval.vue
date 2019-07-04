@@ -22,10 +22,9 @@
         :value="isPeriodMonth",
         type="info",
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
-        stats-date-selector.my-1(
+        date-interval-selector.my-1(
         v-model="dateSelectorForm",
         tstopRules="after_custom:tstart",
-        :getDateObjectPreparer="getDateObjectPreparer",
         @update:startObjectValue="updateStartObjectValue",
         @update:stopObjectValue="updateStopObjectValue"
         )
@@ -46,14 +45,13 @@ import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } fr
 
 import {
   dateParse,
-  prepareDateToObject,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
 } from '@/helpers/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import StatsDateSelector from '@/components/forms/stats-date-selector.vue';
+import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
 export default {
   name: MODALS.statsDateInterval,
@@ -61,7 +59,7 @@ export default {
     validator: 'new',
   },
   components: {
-    StatsDateSelector,
+    DateIntervalSelector,
   },
   mixins: [modalInnerMixin],
   data() {
@@ -152,10 +150,6 @@ export default {
     });
   },
   methods: {
-    getDateObjectPreparer(type) {
-      return date => prepareDateToObject(date, type, 'hour');
-    },
-
     updateStartObjectValue(value) {
       this.dateObjectValues.start = value && prepareStatsStartForMonthPeriod(value);
     },

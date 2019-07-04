@@ -30,7 +30,7 @@ import { get, omit, pick, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { MODALS, WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { MODALS, WIDGET_TYPES } from '@/constants';
 
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
@@ -145,10 +145,6 @@ export default {
       if (!isEmpty(event.data.meta.filter)) {
         widgetParameters.viewFilters = [meta.filter];
         widgetParameters.mainFilter = meta.filter;
-      }
-
-      if (query.tstart || query.tstop) {
-        query.interval = LIVE_REPORTING_INTERVALS.custom;
       }
 
       this.showModal({

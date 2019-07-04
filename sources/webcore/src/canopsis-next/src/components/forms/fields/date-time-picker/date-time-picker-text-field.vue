@@ -22,6 +22,7 @@
 
 <script>
 import moment from 'moment';
+import { isEmpty } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
@@ -121,10 +122,12 @@ export default {
 
     setObjectValue(value) {
       try {
-        this.objectValue = this.dateObjectPreparer(value);
+        if (!isEmpty(value)) {
+          this.objectValue = this.dateObjectPreparer(value);
 
-        if (this.$validator && this.errors && this.name) {
-          this.errors.removeById(this.commonErrorId);
+          if (this.$validator && this.errors && this.name) {
+            this.errors.removeById(this.commonErrorId);
+          }
         }
       } catch (err) {
         this.objectValue = null;

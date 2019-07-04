@@ -29,7 +29,7 @@
         v-select(
         v-model="range",
         :items="quickRanges",
-        label="Quick ranges",
+        :label="$t('settings.statsDateInterval.fields.quickRanges')",
         return-object
         )
 </template>
@@ -39,7 +39,7 @@ import moment from 'moment';
 
 import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
-import { findRange } from '@/helpers/date-intervals';
+import { prepareDateToObject, findRange } from '@/helpers/date-intervals';
 
 import formMixin from '@/mixins/form';
 
@@ -66,16 +66,16 @@ export default {
     },
     getDateObjectPreparer: {
       type: Function,
-      default: () => undefined,
+      default: type => date => prepareDateToObject(date, type),
     },
   },
   computed: {
     range: {
       get() {
         const { tstart, tstop } = this.value;
-        const activeRange = findRange(tstart, tstop);
+        const range = findRange(tstart, tstop);
 
-        return this.quickRanges.find(({ value }) => value === activeRange.value);
+        return this.quickRanges.find(({ value }) => value === range.value);
       },
       set(range) {
         if (range.value !== this.range.value) {
