@@ -104,7 +104,7 @@ Par ailleurs, la colonne *extra_details* embarque un picto de représentation d'
 
 ## Quelques filtres courants
 
-Voici une liste de filtres utiles dans des situations de pilotage au quotidien.
+Voici une liste de filtres utiles dans des situations de pilotage au quotidien compatibles avec les comportements périodiques.
 
 **Une ressource**
 
@@ -192,7 +192,7 @@ Voici une liste de filtres utiles dans des situations de pilotage au quotidien.
                     "type": "component"
                 },
                 {
-                    "name": "html"
+                    "name": "un_composant"
                 }
             ]
         },
@@ -204,7 +204,7 @@ Voici une liste de filtres utiles dans des situations de pilotage au quotidien.
                 {
                     "impact": {
                         "$in": [
-                            "html"
+                            "un_composant"
                         ]
                     }
                 }
@@ -217,7 +217,7 @@ Voici une liste de filtres utiles dans des situations de pilotage au quotidien.
 **Une application**
 
 ```json
-
+{
     "$and": [
         {
             "impact": {
