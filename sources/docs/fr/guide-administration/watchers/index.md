@@ -1,6 +1,10 @@
 # Watcher
 
-Les watchers nouvelle génération sont une fonctionnalité du moteur `axe` permettant de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
+!!! note
+    Cette page concerne les watchers nouvelle génération, disponibles uniquement
+    avec le moteur go `engine-watcher`.
+
+Les watchers sont une fonctionnalité permettant de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
 
 Les watchers sont définis dans la collection MongoDB `default_entities`, et
 peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/watcherng/api_v2_watcherng.md).
@@ -9,8 +13,8 @@ Des exemples pratiques d'utilisation des watchers sont disponibles dans la parti
 
 ## Concept d'un watcher
 
-Un watcher, ancienne comme nouvelle génération, représente un groupe de surveillance.  
-C'est à dire que l'état d'une entité de type watcher dépendra de l'état des entités surveillées, et des alarmes ouvertes sur ces entités.  
+Un watcher, ancienne comme nouvelle génération, représente un groupe de surveillance.
+C'est à dire que l'état d'une entité de type watcher dépendra de l'état des entités surveillées, et des alarmes ouvertes sur ces entités.
 
 Le but d'un watcher est de donner une visibilité accrue et claire sur l'état d'un groupe d'entités, afin de détecter un changement d'état positif ou négatif sur les alarmes liées aux entités du groupe surveillé.
 
@@ -35,8 +39,33 @@ Actuellement, seule la méthode `worst` est implémentée.
 
 ### Templates
 
-L'`output_template` est une chaîne de caractère contenant, entre autres, un accès à un compte des alarmes selon leur état. Les comptes sont accessibles dans la variable `{{.State}}`, et les différents comptes d'états sont `.Info`, `.Minor`, `.Major`, et `.Critical`.  
-Un exemple de sortie avec un compte des alarmes dans l'état `Minor` serait donc : `Alarmes mineures : {{.State.Minor}}`.  
+L'`output_template` est un [template](https://golang.org/pkg/text/template/)
+permettant d'afficher diverses informations dans l'output de l'alarme
+correspondant au watchers.
+
+Les informations disponibles sont :
+
+ - `{{.Alarms}}` : le nombre d'alarmes en cours sur les entités observées par le watchers.
+ - `{{.State.Info}}` : le nombre d'entités observées n'ayant pas d'alarmes, ou une alarme en état `Info`.
+ - `{{.State.Minor}}` : le nombre d'alarmes mineures sur les entités observées.
+ - `{{.State.Major}}` : le nombre d'alarmes majeures sur les entités observées.
+ - `{{.State.Critical}}` : le nombre d'alarmes critiques sur les entités observées.
+ - `{{.Acknowledged}}` : le nombre d'alarmes acquittées sur les entités observées.
+ - `{{.NotAcknowledged}}` : le nombre d'alarmes non-acquittées sur les entités observées.
+
+Par exemple, l'output d'un watcher avec l'`output_template` suivant :
+
+```
+Crit : {{.State.Critical}} / Total : {{.Alarms}}
+```
+
+sera
+
+```
+Crit : 12 / Total : 60
+```
+
+s'il y a 60 alarmes en cours dont 12 critiques sur les entités observées.
 
 ### Exemples
 
@@ -56,6 +85,6 @@ Un exemple de sortie avec un compte des alarmes dans l'état `Minor` serait donc
     "state": {
         "method": "worst",
     },
-    "output_template": "Alarmes critiques : {{.State.Critical}}"
+    "output_template": "Alarmes critiques : {{.State.Critical}}, Alarmes acquittées : {{.Acknowledged}}"
 }
 ```

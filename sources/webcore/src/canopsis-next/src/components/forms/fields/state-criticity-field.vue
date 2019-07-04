@@ -28,7 +28,7 @@ export default {
       default: false,
     },
     stateValues: {
-      type: Array,
+      type: Object,
       default: () => ENTITIES_STATES,
     },
   },

@@ -28,6 +28,9 @@
         "models_exploitation_webhook": {
             "checksum": 15
         },
+        "models_exploitation_snmpRule": {
+            "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
@@ -207,6 +210,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_links": {
+            "checksum": 1,
+            "desc": ""
+        },
         "listalarm_done": {
             "checksum": 1,
             "desc": ""
@@ -248,6 +255,10 @@
             "desc": ""
         },
         "serviceweather_entityManagePbehaviors": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityLinks": {
             "checksum": 1,
             "desc": ""
         },

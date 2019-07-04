@@ -68,10 +68,12 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
             needle = '_'.join(needles)  # used as a parameter name in format !
             value = ''
             if alarm is not None and needles[0] == 'alarm':
-                needle = '_'.join(needles[1:])
                 value = get_sub_key(alarm, '.'.join(needles[1:]))
             else:
                 value = get_sub_key(entity, '.'.join(needles))
+
+            if value is None:
+                raise ValueError("Value {} is missing or None".format('.'.join(needles)))
 
             phrase = phrase[:m.start()] + '{' + needle + '}' + phrase[m.end():]
             hay[needle] = value
@@ -81,11 +83,33 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
     def build(self, entity, options={}):
         opt = merge_two_dicts(self.options, options)
         alarm = self.alerts_collection.find_one({'d': entity['_id']})
+        links = {}
 
         if 'base_url' in opt:
-            link = self.custom_format(opt['base_url'], entity, alarm)
+            try:
+                link = self.custom_format(opt['base_url'], entity, alarm)
+                self.logger.debug(link)
 
-            self.logger.debug(link)
-            return {self.category: [link]}
+                category = 'Liens'
+                label = 'URL'
+                
+                if 'category' in opt:
+                    category = opt['category']
+
+                if 'label' in opt:
+                    label = opt['label']
+
+                links[category] = [{'label' : label,
+                                'link' : link}]
+
+                return links
+
+            except ValueError:
+                return {}
+
+            except Exception as err:
+                self.logger.exception('Unhandled error {} : {}'.format(type(err), err))
+                return {}
 
         return {}
+

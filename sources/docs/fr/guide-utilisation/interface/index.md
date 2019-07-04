@@ -1,5 +1,9 @@
 # Présentation de l'interface web de Canopsis
 
+L'interface web de Canopsis est basée sur [VueJS](https://vuejs.org) et [Material Design](https://material.io).
+
+Cette interface est compatible avec les navigateurs tels que Mozilla Firefox et Google Chrome. Elle n'est en revanche pas compatible avec Internet Explorer, qui n'est plus maintenu depuis 2013.
+
 ## Les vues
 
 Canopsis fonctionne avec un système de vues, personnalisables, regroupées dans des groupes de vues.
@@ -17,3 +21,11 @@ Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonct
 Plusieurs options sont disponibles pour personnaliser l'interface de Canopsis.
 
 Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
+
+## Les helpers Handlebars
+
+A différents endroits de l'interface de Canopsis, le texte affiché est personnalisable grâce au langage Handlebars.
+
+Différents helpers sont disponibles pour ajouter un peu de logique dans ces templates.
+
+Pour plus de détails, rendez-vous [ici](./helpers/index.md)
