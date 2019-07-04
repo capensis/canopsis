@@ -46,6 +46,13 @@ Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochco
 > db.periodical_alarm.find({"v.last_update_date":{$lte:oneMonthAgo}})
 ```
 
+Il est également possible de filtrer grâce aux expressions régulières en utilisant l'opérateur `$regex` (voir la [documentation officielle de Mongo sur `$regex`](https://docs.mongodb.com/manual/reference/operator/query/regex/index.html)). Les deux lignes ci-dessous sont équivalentes, elles vont afficher les alarmes dont la ressource correspond à la regex .`[0-9a-fA-F]+`.
+
+```js
+> db.periodical_alarm.find({"v.resource":{$regex:'[0-9a-f]+',$options:'i'}}) // L'option i rend la regex insensible à la casse
+> db.periodical_alarm.find({"v.resource":{$regex:/[0-9a-f]+/i}})             // On retrouve ici également l'option i
+```
+
 ### Sauvegarde
 
 Utilisez la commande `mongodump` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichier externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongodump-operation).
