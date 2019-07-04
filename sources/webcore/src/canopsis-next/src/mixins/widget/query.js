@@ -1,10 +1,10 @@
 import { omit, isEqual, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { SORT_ORDERS, DATETIME_FORMATS, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import dateIntervals, { dateParse } from '@/helpers/date-intervals';
+import { dateParse } from '@/helpers/date-intervals';
 import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
 
 /**
@@ -89,24 +89,22 @@ export default {
         'tstop',
       ]);
 
-      const { page, interval, limit = PAGINATION_LIMIT } = this.query;
+      const {
+        page,
+        tstart,
+        tstop,
+        limit = PAGINATION_LIMIT,
+      } = this.query;
 
-      if (interval && interval !== 'custom') {
-        try {
-          const { tstart, tstop } = dateIntervals[interval]();
-
-          query.tstart = tstart;
-          query.tstop = tstop;
-        } catch (err) {
-          console.warn(err);
-        }
-      } else if (interval === LIVE_REPORTING_INTERVALS.custom) {
-        const { tstart, tstop } = this.query;
-
+      if (tstart) {
         const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
-        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
 
         query.tstart = convertedTstart.unix();
+      }
+
+      if (tstop) {
+        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
+
         query.tstop = convertedTstop.unix();
       }
 

@@ -1,71 +1,6 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
-import { STATS_DURATION_UNITS, DATETIME_FORMATS } from '@/constants';
-
-/**
- * Helper to calculate time intervals
- */
-export default {
-  today() {
-    return ({
-      tstart: moment()
-        .startOf('day')
-        .unix(),
-      tstop: moment()
-        .unix(),
-    });
-  },
-  yesterday() {
-    return ({
-      tstart: moment()
-        .subtract(1, 'day')
-        .startOf('day')
-        .unix(),
-      tstop: moment()
-        .subtract(1, 'day')
-        .endOf('day')
-        .unix(),
-    });
-  },
-  last7Days() {
-    return ({
-      tstart: moment()
-        .subtract(7, 'day')
-        .unix(),
-      tstop: moment()
-        .unix(),
-    });
-  },
-  last30Days() {
-    return ({
-      tstart: moment()
-        .subtract(30, 'day')
-        .unix(),
-      tstop: moment()
-        .unix(),
-    });
-  },
-  thisMonth() {
-    return ({
-      tstart: moment()
-        .startOf('month')
-        .unix(),
-      tstop: moment()
-        .unix(),
-    });
-  },
-  lastMonth() {
-    return ({
-      tstart: moment()
-        .subtract(1, 'month')
-        .startOf('month')
-        .unix(),
-      tstop: moment()
-        .startOf('month')
-        .unix(),
-    });
-  },
-};
+import { STATS_DURATION_UNITS, DATETIME_FORMATS, STATS_QUICK_RANGES } from '@/constants';
 
 /**
  * Convert a date interval string to moment date object
@@ -129,6 +64,15 @@ export function dateParse(date, type, format) {
   return momentDate;
 }
 
+/**
+ * Prepare date to date object
+ *
+ * @param {number} date
+ * @param {string} type
+ * @param {string} [unit]
+ * @param {string} [format]
+ * @returns {Date}
+ */
 export function prepareDateToObject(date, type, unit = 'hour', format = DATETIME_FORMATS.dateTimePicker) {
   const momentDate = dateParse(date, type, format);
 
@@ -138,3 +82,53 @@ export function prepareDateToObject(date, type, unit = 'hour', format = DATETIME
 
   return moment().startOf(unit).toDate();
 }
+
+/**
+ * Prepare start of stats interval for month period unit
+ *
+ * @param {Date|Moment|number} start
+ * @returns Moment
+ */
+export function prepareStatsStartForMonthPeriod(start) {
+  return moment.utc(start).startOf('month').tz(moment.tz.guess());
+}
+
+/**
+ * Prepare stop of stats interval for month period unit
+ *
+ * @param {Date|Moment|number} stop
+ * @returns Moment
+ */
+export function prepareStatsStopForMonthPeriod(stop) {
+  const startOfStopMonthUtc = moment.utc(stop).startOf('month');
+  const startOfCurrentMonthUtc = moment.utc().startOf('month');
+
+  if (startOfStopMonthUtc.isSame(startOfCurrentMonthUtc)) {
+    return startOfStopMonthUtc.add(1, 'month').tz(moment.tz.guess());
+  }
+
+  return startOfStopMonthUtc.tz(moment.tz.guess());
+}
+
+/**
+ * Find range object
+ *
+ * @param {string} start
+ * @param {string} stop
+ * @param {Object} ranges
+ * @param {Object} defaultValue
+ * @returns {Object}
+ */
+export function findRange(start, stop, ranges = STATS_QUICK_RANGES, defaultValue = STATS_QUICK_RANGES.custom) {
+  return Object.values(ranges)
+    .find(range => start === range.start && stop === range.stop) || defaultValue;
+}
+
+export default {
+  parseStringToDateInterval,
+  dateParse,
+  prepareDateToObject,
+  prepareStatsStartForMonthPeriod,
+  prepareStatsStopForMonthPeriod,
+  findRange,
+};

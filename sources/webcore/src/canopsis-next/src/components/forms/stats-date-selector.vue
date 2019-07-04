@@ -7,25 +7,31 @@
             date-time-picker-text-field(
             ref="tstart",
             v-model="tstartDateString",
+            v-validate="tstartRules",
             :label="$t('common.startDate')",
             :dateObjectPreparer="getDateObjectPreparer('start')",
             name="tstart",
             roundHours,
-            @update:objectValue="$emit('update:tstartObjectValue', $event)"
+            @update:objectValue="$emit('update:startObjectValue', $event)"
             )
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
             v-model="tstopDateString",
-            v-validate="'after_custom:tstart'",
+            v-validate="tstopRules",
             :label="$t('common.endDate')",
             :dateObjectPreparer="getDateObjectPreparer('stop')",
             name="tstop",
             roundHours,
-            @update:objectValue="$emit('update:tstopObjectValue', $event)"
+            @update:objectValue="$emit('update:stopObjectValue', $event)"
             )
       v-flex.pl-1(xs6)
-        v-select(v-model="range", :items="quickRanges", label="Quick ranges", return-object)
+        v-select(
+        v-model="range",
+        :items="quickRanges",
+        label="Quick ranges",
+        return-object
+        )
 </template>
 
 <script>
@@ -33,7 +39,7 @@ import moment from 'moment';
 
 import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
-import { prepareDateToObject } from '@/helpers/date-intervals';
+import { findRange } from '@/helpers/date-intervals';
 
 import formMixin from '@/mixins/form';
 
@@ -50,18 +56,26 @@ export default {
       type: Object,
       required: true,
     },
+    tstopRules: {
+      type: [String, Array],
+      default: null,
+    },
+    tstartRules: {
+      type: [String, Array],
+      default: null,
+    },
+    getDateObjectPreparer: {
+      type: Function,
+      default: () => undefined,
+    },
   },
   computed: {
     range: {
       get() {
-        const activeRange = this.quickRanges
-          .find(range => this.value.tstart === range.start && this.value.tstop === range.stop);
+        const { tstart, tstop } = this.value;
+        const activeRange = findRange(tstart, tstop);
 
-        if (!activeRange) {
-          return this.quickRanges.find(range => range.value === STATS_QUICK_RANGES.custom.value);
-        }
-
-        return activeRange;
+        return this.quickRanges.find(({ value }) => value === activeRange.value);
       },
       set(range) {
         if (range.value !== this.range.value) {
@@ -122,11 +136,6 @@ export default {
           this.updateField('tstop', value);
         }
       },
-    },
-  },
-  methods: {
-    getDateObjectPreparer(type) {
-      return date => prepareDateToObject(date, type, this.periodUnit === STATS_DURATION_UNITS.month ? 'month' : 'hour');
     },
   },
 };

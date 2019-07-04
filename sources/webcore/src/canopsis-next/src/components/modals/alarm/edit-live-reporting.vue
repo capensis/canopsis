@@ -5,30 +5,10 @@
         span.headline {{ $t('modals.liveReporting.editLiveReporting') }}
     v-card-text
       h3 {{ $t('modals.liveReporting.dateInterval') }}
-      v-layout(wrap)
-        v-radio-group(v-model="form.interval")
-          v-radio(
-          v-for="interval in dateIntervals",
-          :label="interval.text",
-          :value="interval.value",
-          :key="interval.value"
-          )
-      v-layout(wrap, v-if="isCustomRangeEnabled")
-        v-flex(xs6)
-          v-layout(align-center)
-            date-time-picker-text-field(
-            v-model="form.tstart",
-            :label="$t('common.startDate')",
-            :dateObjectPreparer="getDateObjectPreparer('start')",
-            name="tstart"
-            )
-          v-layout(align-center)
-            date-time-picker-text-field(
-            v-model="form.tstop",
-            :label="$t('common.endDate')",
-            :dateObjectPreparer="getDateObjectPreparer('stop')",
-            name="tstop"
-            )
+      stats-date-selector(
+      v-model="form",
+      :getDateObjectPreparer="getDateObjectPreparer"
+      )
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -38,13 +18,14 @@
 <script>
 import moment from 'moment';
 
-import { MODALS, LIVE_REPORTING_INTERVALS, DATETIME_FORMATS } from '@/constants';
+import { MODALS, DATETIME_FORMATS } from '@/constants';
 
 import { dateParse } from '@/helpers/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
+import StatsDateSelector from '@/components/forms/stats-date-selector.vue';
 
 /**
    * Modal to add a time filter on alarm-list
@@ -56,6 +37,7 @@ export default {
   },
   components: {
     DateTimePickerTextField,
+    StatsDateSelector,
   },
   mixins: [modalInnerMixin],
   data() {
@@ -63,24 +45,12 @@ export default {
 
     return {
       form: {
-        interval: config.interval || '',
         tstart: config.tstart || '',
         tstop: config.tstop || '',
       },
     };
   },
   computed: {
-    dateIntervals() {
-      return Object.values(LIVE_REPORTING_INTERVALS).map(value => ({
-        value,
-        text: this.$t(`modals.liveReporting.${value}`),
-      }));
-    },
-
-    isCustomRangeEnabled() {
-      return this.form.interval === LIVE_REPORTING_INTERVALS.custom;
-    },
-
     tstartRules() {
       return {
         required: true,
@@ -106,7 +76,7 @@ export default {
           const momentDate = dateParse(date, type, DATETIME_FORMATS.dateTimePicker);
 
           if (momentDate.isValid()) {
-            return momentDate.startOf('hour').toDate();
+            return momentDate.toDate();
           }
         }
 
@@ -119,11 +89,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const data = this.isCustomRangeEnabled ? this.form : {
-            interval: this.form.interval,
-          };
-
-          await this.config.action(data);
+          await this.config.action(this.form);
         }
 
         this.hideModal();

@@ -9,12 +9,12 @@
           v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
             type="number",
-            v-model="form.periodValue",
+            v-model="periodForm.periodValue",
             :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
           v-flex
             v-select.pt-0(
-            v-model="form.periodUnit",
+            v-model="periodForm.periodUnit",
             :items="periodUnits",
             :label="$t('modals.statsDateInterval.fields.periodUnit')"
             )
@@ -23,15 +23,16 @@
         type="info",
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         stats-date-selector.my-1(
-        v-model="form",
-        :periodUnit="form.periodUnit",
-        @update:tstartObjectValue="objectValues.tstart = $event",
-        @update:tstopObjectValue="objectValues.tstop = $event"
+        v-model="dateSelectorForm",
+        tstopRules="after_custom:tstart",
+        :getDateObjectPreparer="getDateObjectPreparer",
+        @update:startObjectValue="updateStartObjectValue",
+        @update:stopObjectValue="updateStopObjectValue"
         )
         v-alert.mb-2(
         :value="isPeriodMonth"
         type="info",
-        ) {{ objectValues.tstart | date('long', true) }} - {{ objectValues.tstop | date('long', true) }}
+        ) {{ monthIntervalMessage }}
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -39,11 +40,16 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { pick } from 'lodash';
 
 import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } from '@/constants';
 
-import { dateParse } from '@/helpers/date-intervals';
+import {
+  dateParse,
+  prepareDateToObject,
+  prepareStatsStopForMonthPeriod,
+  prepareStatsStartForMonthPeriod,
+} from '@/helpers/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -60,19 +66,35 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     const { interval } = this.modal.config;
-    const defaultInterval = {
+    const defaultPeriodForm = {
       periodValue: 1,
       periodUnit: STATS_DURATION_UNITS.hour,
+    };
+
+    const defaultDateSelectorForm = {
       tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
       tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
     };
 
+    let periodForm;
+    let dateSelectorForm;
+
+    if (interval) {
+      periodForm = pick(interval, Object.keys(defaultPeriodForm));
+      dateSelectorForm = pick(interval, Object.keys(defaultDateSelectorForm));
+    } else {
+      periodForm = defaultPeriodForm;
+      dateSelectorForm = defaultDateSelectorForm;
+    }
+
     return {
-      objectValues: {
-        tstart: null,
-        tstop: null,
+      periodForm,
+      dateSelectorForm,
+
+      dateObjectValues: {
+        start: null,
+        stop: null,
       },
-      form: cloneDeep(interval || defaultInterval),
     };
   },
   computed: {
@@ -102,7 +124,14 @@ export default {
     },
 
     isPeriodMonth() {
-      return this.form.periodUnit === STATS_DURATION_UNITS.month;
+      return this.periodForm.periodUnit === STATS_DURATION_UNITS.month;
+    },
+
+    monthIntervalMessage() {
+      return this.$t('modals.statsDateInterval.info.monthPeriodUnit', {
+        start: this.$options.filters.date(this.dateObjectValues.start, 'long', false),
+        stop: this.$options.filters.date(this.dateObjectValues.stop, 'long', false),
+      });
     },
   },
   created() {
@@ -123,12 +152,24 @@ export default {
     });
   },
   methods: {
+    getDateObjectPreparer(type) {
+      return date => prepareDateToObject(date, type, 'hour');
+    },
+
+    updateStartObjectValue(value) {
+      this.dateObjectValues.start = value && prepareStatsStartForMonthPeriod(value);
+    },
+
+    updateStopObjectValue(value) {
+      this.dateObjectValues.stop = value && prepareStatsStopForMonthPeriod(value);
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         if (this.config.action) {
-          this.config.action(this.form);
+          this.config.action({ ...this.periodForm, ...this.dateSelectorForm });
         }
 
         this.hideModal();

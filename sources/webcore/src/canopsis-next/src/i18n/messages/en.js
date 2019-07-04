@@ -796,6 +796,9 @@ export default {
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
+      info: {
+        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
+      },
     },
     createSnmpRule: {
       create: {

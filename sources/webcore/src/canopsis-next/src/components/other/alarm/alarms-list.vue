@@ -28,13 +28,13 @@
         )
       v-flex
         v-chip.primary.white--text(
-        v-if="query.interval",
-        @input="removeHistoryFilter",
+        v-if="activeRange",
         close,
         label,
-        ) {{ $t(`modals.liveReporting.${query.interval}`) }}
+        @input="removeHistoryFilter"
+        ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
-          v-icon(:color="query.interval ? 'primary' : 'black'") schedule
+          v-icon(:color="activeRange ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
@@ -88,6 +88,8 @@
 import { omit, pick, isEmpty } from 'lodash';
 
 import { MODALS, USERS_RIGHTS } from '@/constants';
+
+import { findRange } from '@/helpers/date-intervals';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
@@ -159,6 +161,16 @@ export default {
     };
   },
   computed: {
+    activeRange() {
+      const { tstart, tstop } = this.query;
+
+      if (tstart || tstop) {
+        return findRange(tstart, tstop);
+      }
+
+      return null;
+    },
+
     selectedIds() {
       return this.selected.map(item => item._id);
     },
