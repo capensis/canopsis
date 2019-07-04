@@ -11,6 +11,7 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
+import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
@@ -31,6 +32,7 @@ export default {
     modalMixin,
     popupMixin,
     entitiesWatcherMixin,
+    entitiesContextEntityMixin,
     entitiesPbehaviorMixin,
   ],
   props: {

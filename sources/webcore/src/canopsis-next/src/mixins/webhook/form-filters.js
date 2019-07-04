@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 
-import { setInSeveral } from '@/helpers/immutable';
+import { setInSeveral, unsetInSeveralWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 
 export default {
@@ -17,14 +17,12 @@ export default {
       });
     },
     formToWebhook(form) {
-      const patternsCustomizer = value => (value && value.length ? value : null);
+      const patternsCondition = value => !value || !value.length;
       const hasAuth = get(form, 'request.auth');
+
       const pathValuesMap = {
         declare_ticket: textPairsToObject,
         'request.headers': textPairsToObject,
-        'hook.event_patterns': patternsCustomizer,
-        'hook.alarm_patterns': patternsCustomizer,
-        'hook.entity_patterns': patternsCustomizer,
       };
 
       if (hasAuth) {
@@ -34,7 +32,13 @@ export default {
         });
       }
 
-      return setInSeveral(form, pathValuesMap);
+      const webhook = setInSeveral(form, pathValuesMap);
+
+      return unsetInSeveralWithConditions(webhook, {
+        'hook.event_patterns': patternsCondition,
+        'hook.alarm_patterns': patternsCondition,
+        'hook.entity_patterns': patternsCondition,
+      });
     },
   },
 };

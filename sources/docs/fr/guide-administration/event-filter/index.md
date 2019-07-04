@@ -119,6 +119,13 @@ Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évèneme
 supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est
 ignoré par Canopsis.
 
+Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur
+`che` l'affiche sur sa sortie de log :
+
+```
+2019/05/02 12:45:19 event dropped by event filter: {"hostgroups":["HG_FOOBAR"],"event_type":"check","execution_time":2.139087200164795,"timestamp":1556793914,"component":"foobar","state_type":0,"source_type":"resource","resource":"PING","current_attempt":1,"connector":"foobar","long_output":"","state":2,"connector_name":"foobar","output":"foo","command_name":"foo","perf_data":"","max_attempts":2}
+```
+
 #### Break
 
 Lorsqu'une règle de type `break` est appliquée à un évènement, cet évènement

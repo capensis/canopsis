@@ -9,17 +9,18 @@ Le connecteur `connector-centreon-engine` est un module Broker permettant l'envo
 
 Ce module vient s'ajouter dans une instance Centreon existante, et doit ensuite être configuré depuis l'interface web de Centreon afin de rediriger le trafic vers Canopsis.
 
-!!! attention
-    **Pré-requis réseau :** la transmission de flux réseau doit être permise entre Centreon et l'instance RabbitMQ de Canopsis (port TCP `5672` par défaut).
-
 ## Installation
 
 !!! note
     Toutes les manipulations suivantes doivent être réalisées sur le nœud Centreon que vous souhaitez relier à Canopsis.
 
+### Prérequis
+
+La transmission de flux réseau doit être permise entre Centreon et l'instance RabbitMQ de Canopsis (port TCP `5672` par défaut).
+
 ### Récupération du connecteur
 
-Vous devez récupérer la dernière version du connecteur, disponible à l'adresse suivante : https://git.canopsis.net/canopsis-connectors/connector-centreon-engine.
+Vous devez récupérer la dernière version du connecteur, disponible à l'adresse suivante : <https://git.canopsis.net/canopsis-connectors/connector-centreon-engine>.
 
 Vous pouvez pour cela cloner le dépôt Git, ou lancer la commande suivante pour récupérer une archive :
 
@@ -75,8 +76,6 @@ Le module est maintenant installé, mais vous devez obligatoirement le configure
 
 ## Configuration du module
 
-### Configuration
-
 Aller dans Configuration > Pollers > Broker Configuration > central-broker-master.
 
 ![Configuration du module AMQP Canopsis : étape 1](img/module_parameters.png)
@@ -85,25 +84,34 @@ Puis, dans la nouvelle page qui apparaît, aller dans l'onglet Output, choisir l
 
 ![Configuration du module AMQP Canopsis : étape 2](img/module_parameters2.png)
 
-Des options de configuration « Canopsis AMQP bus » apparaissent alors en bas de page. Il faut alors renseigner les informations de connexion à l'instance RabbitMQ de Canopsis (adresse, port, identifiants, nom de l'Exchange et du Virtual Host...). Valider ces changements avec le bouton « Save ».
+Des options de configuration « Canopsis AMQP bus » apparaissent alors en bas de page. Il faut alors renseigner les informations de connexion à l'instance RabbitMQ de Canopsis (adresse, port, identifiants, nom de l'Exchange et du Virtual Host…). Valider ces changements avec le bouton « Save ».
 
 ![Configuration du module AMQP Canopsis : étape 3](img/module_parameters3.png)
 
-### Redémarrage obligatoire pour charger la configuration
+## Application des modifications
 
 !!! attention
-    **Attention :** les redémarrages suivants occasionnent une interruption de service le temps du redémarrage du Broker et des Engines Centron.
+    Les manipulations suivantes occasionnent une **interruption de service**. Cette étape est **obligatoire** : le connecteur Centreon ne fonctionnera pas tant que vous n'aurez pas effectué les manipulations suivantes, exactement comme elles sont décrites.
 
-On redémarre ensuite le service pour s'assurer du bon chargement de la nouvelle configuration.
+Deux redémarrages doivent obligatoirement être réalisés pour que les modifications soient effectives :
 
-Cette étape est **OBLIGATOIRE**, votre connecteur Centreon ne fonctionnera **PAS** dans Canopsis tant que vous n'effectuerez pas cette procédure de redémarrage.
+1.  Redémarrage du Broker Centreon
+2.  Redémarrage des Engines Centreon sous-jacents
+
+Ces redémarrages doivent être réalisés dans cet ordre particulier.
+
+### Redémarrage du Broker
+
+Retourner dans Configuration > Pollers > Broker Configuration > central-broker-master (cf. capture précédente).
+
+Puis, forcer un redémarrage du Broker.
+
+### Redémarrage des Engines
 
 Pour cela, aller dans Configuration > Pollers > cocher les éléments concernés > cliquer sur « Export configuration ».
 
 ![Redémarrage du service : étape 1](img/module_restart1.png)
 
-Sur la nouvelle page qui s'affiche, il faut ensuite cocher les cases « Move Export Files » et « Restart Monitoring Engine », puis choisir la méthode « Restart » dans le menu déroulant, et enfin cliquer sur le bouton « Export ».
+Sur la nouvelle page qui s'affiche, il faut ensuite cocher les cases « Move Export Files » et « Restart Monitoring Engine », puis choisir la méthode « Restart » dans le menu déroulant (un « Reload » n’est **pas** suffisant), et enfin cliquer sur le bouton « Export ».
 
 ![Redémarrage du service : étape 2](img/module_restart2.png)
-
-**ATTENTION :** Il faut bien faire un `restart` et non pas un simple `reload` ! Sans quoi vous risquez des problèmes de cohérence sur les évènements échangés avec Canopsis.

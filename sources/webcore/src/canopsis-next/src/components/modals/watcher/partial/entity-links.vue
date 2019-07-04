@@ -1,14 +1,22 @@
 <template lang="pug">
   div.mt-1
-    span.category.mr-2 {{ category || $t('common.links') }}
-    v-divider(light)
-    div(v-for="(link, index) in linkList", :key="`links-${index}`")
-      div.pa-2.text-xs-right
-        a(:href="link.link", target="_blank") {{ link.label }}
+    div(v-for="category in linkList", :key="category.cat_name")
+      template(v-if="category.links.length && hasAccessToCategory(category.cat_name)")
+        span.category.mr-2 {{ category.cat_name }}
+        v-divider(light)
+        div(v-for="(link, index) in category.links", :key="`links-${index}`")
+          div.pa-2.text-xs-right
+            a(:href="link.link", target="_blank") {{ link.label }}
 </template>
 
 <script>
+import { BUSINESS_USER_RIGHTS_ACTIONS_MAP, WIDGETS_ACTIONS_TYPES } from '@/constants';
+
+import linksMixin from '@/mixins/links';
+import authMixin from '@/mixins/auth';
+
 export default {
+  mixins: [linksMixin, authMixin],
   props: {
     links: {
       type: Array,
@@ -20,32 +28,41 @@ export default {
     },
   },
   computed: {
-    /*
-    * The linkbuilders used to return the links directly as
-    * strings. They can now also return objects with the
-    * properties 'label' and 'link', allowing to change the link's
-    * label.
-    * The following code converts the "legacy" representation
-    * (strings) into the "new" representation, so they can be
-    * displayed in the same manner by the template.
-    */
-    linkList() {
-      const filteredLinks = this.category ?
+    filteredLinks() {
+      return this.category ?
         this.links.filter(({ cat_name: catName }) => catName === this.category) :
         this.links;
+    },
 
-      return filteredLinks[0].links.reduce((acc, link, index) => {
-        if (typeof link === 'object' && link.link && link.label) {
-          acc.push(link);
-        } else {
-          acc.push({
-            label: `${this.category} - ${index}`,
-            link,
-          });
-        }
+    linkList() {
+      return this.filteredLinks.map((category) => {
+        const categoryLinks = this.harmonizeLinks(category.links, category.cat_name);
 
-        return acc;
-      }, []);
+        return {
+          cat_name: category.cat_name,
+          links: categoryLinks,
+        };
+      });
+    },
+
+    /*
+    ** Check if user has access to all links/categories
+    */
+    hasAccessToLinks() {
+      return this.checkAccess(BUSINESS_USER_RIGHTS_ACTIONS_MAP.weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks]);
+    },
+
+    /*
+    ** Check if user has access to a specific links category
+    */
+    hasAccessToCategory() {
+      if (this.hasAccessToLinks) {
+        return true;
+      }
+
+      return category => this.checkAccess(`${
+        BUSINESS_USER_RIGHTS_ACTIONS_MAP
+          .weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks]}_${category}`);
     },
   },
 };

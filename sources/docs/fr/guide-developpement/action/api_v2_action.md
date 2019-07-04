@@ -2,6 +2,56 @@
 
 ## Action
 
+### Récupérer la liste des actions
+
+```
+GET /api/v2/actions
+```
+
+Renvoie la liste des actions.
+
+```json
+[
+    {
+        "_id": "action_id",
+        "type": "pbehavior",
+        "fields": ["Resource", "Component"],
+        "regex": ".*",
+        "parameters": {
+            "name": "pbehavior_name",
+            "author": "System",
+            "type": "Pause",
+            "rrule": "",
+            "reason": "",
+            "tstart": 0,
+            "tstop": 253402297199
+        }
+    },
+    {
+    "_id": "action_2_id",
+    "type": "snooze",
+    "hook": {
+        "event_patterns": [
+            {
+                "resource": "CPU"
+            },
+            {
+                "resource": "HDD"
+            }
+        ],
+        "triggers": [
+            "create"
+        ]
+    },
+    "parameters": {
+            "duration": 10,
+            "message": "Temporisation de l'alarme pendant 10 secondes",
+            "author": "action"
+        }
+    }
+]
+```
+
 ### Récupérer une action
 
 ```

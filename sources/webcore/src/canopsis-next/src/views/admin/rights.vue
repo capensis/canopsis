@@ -59,7 +59,7 @@
 import { get, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
-import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } from '@/constants';
+import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES, NOT_COMPLETED_USER_RIGHTS_KEYS } from '@/constants';
 import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
@@ -304,6 +304,7 @@ export default {
       ]);
 
       const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
+      const allRightsIds = flatten(USERS_RIGHTS);
       const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
       const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
 
@@ -319,7 +320,10 @@ export default {
           });
         } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
           acc.technical.push(right);
-        } else if (Object.values(allBusinessRightsIds).indexOf(rightId) !== -1) {
+        } else if (
+          Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
+          NOT_COMPLETED_USER_RIGHTS_KEYS.some(userRightKey => rightId.startsWith(allRightsIds[userRightKey]))
+        ) {
           acc.business.push(right);
         }
 

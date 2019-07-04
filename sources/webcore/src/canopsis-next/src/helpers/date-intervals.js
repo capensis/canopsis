@@ -82,13 +82,17 @@ export function parseStringToDateInterval(dateString, type) {
     const result = moment().utc();
     const operator = matches[2];
     const deltaValue = matches[3];
-    const roundUnit = matches[6];
+    let roundUnit = matches[6];
     let deltaUnit = matches[4];
 
     const roundMethod = type === 'start' ? 'startOf' : 'endOf';
     const deltaMethod = operator === '+' ? 'add' : 'subtract';
 
     if (roundUnit) {
+      if (roundUnit === STATS_DURATION_UNITS.month) {
+        roundUnit = roundUnit.toUpperCase();
+      }
+
       result[roundMethod](roundUnit);
     }
 
@@ -116,3 +120,4 @@ export function dateParse(date, type, format) {
 
   return momentDate;
 }
+

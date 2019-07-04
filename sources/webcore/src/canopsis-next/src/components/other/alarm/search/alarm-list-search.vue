@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { replaceTextNotInQuotes } from '@/helpers/searching';
+
 import searchMixin from '@/mixins/search';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
@@ -19,6 +21,12 @@ import SearchField from '@/components/forms/fields/search-field.vue';
 export default {
   components: { SearchField },
   mixins: [searchMixin],
+  props: {
+    columns: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       searchingText: '',
@@ -27,6 +35,11 @@ export default {
   },
   computed: {
     requestData() {
+      if (this.searchingText.startsWith('-')) {
+        return this.columns.reduce((acc, { text, value }) =>
+          replaceTextNotInQuotes(acc, text, value), this.searchingText.replace(/^-(\s*)/, ''));
+      }
+
       return this.searchingText;
     },
   },

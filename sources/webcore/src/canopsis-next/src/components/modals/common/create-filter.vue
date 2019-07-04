@@ -17,6 +17,7 @@
       filter-editor(
       v-if="!hiddenFields.includes('filter')",
       v-model="form.filter",
+      :entitiesType="entitiesType",
       required
       )
     v-divider
@@ -28,7 +29,7 @@
 <script>
 import { pick } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -46,10 +47,11 @@ export default {
     modalInnerMixin,
   ],
   data() {
-    const { hiddenFields = [], filter = {} } = this.modal.config;
+    const { hiddenFields = [], filter = {}, entitiesType = ENTITIES_TYPES.alarm } = this.modal.config;
 
     return {
       hiddenFields,
+      entitiesType,
 
       form: pick(filter, ['title', 'filter']),
     };

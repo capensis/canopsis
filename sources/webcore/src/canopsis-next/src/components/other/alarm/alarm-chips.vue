@@ -1,9 +1,11 @@
 <template lang="pug">
   div
-    span.badge(:style="{backgroundColor : style.color}") {{ style.text }}
+    span.badge(:style="{ backgroundColor: style.color }") {{ style.text }}
 </template>
 
 <script>
+import { ENTITY_INFOS_TYPE } from '@/constants';
+
 import { formatState, formatStatus } from '@/helpers/state-and-status-formatting';
 
 /**
@@ -22,13 +24,15 @@ export default {
     },
     type: {
       type: String,
+      default: null,
     },
   },
   computed: {
     style() {
-      if (this.type === this.$constants.ENTITY_INFOS_TYPE.status) {
+      if (this.type === ENTITY_INFOS_TYPE.status) {
         return formatStatus(this.value);
       }
+
       return formatState(this.value);
     },
   },
@@ -42,5 +46,4 @@ export default {
     white-space: nowrap;
     border-radius: 10px;
   }
-
 </style>

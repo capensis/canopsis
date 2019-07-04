@@ -13,7 +13,7 @@ L'utilisateur peut créer un filtre et déclarer des actions à appliquer à tou
 Les actions suivantes sont disponibles pour l'utilisateur :
 
 *  `pass` (passer)
-*  `drop` (laissez tomber)
+*  `drop` (laisser tomber)
 *  `override` (passer outre)
 *  `route` (router)
 *  `remove` (retirer)

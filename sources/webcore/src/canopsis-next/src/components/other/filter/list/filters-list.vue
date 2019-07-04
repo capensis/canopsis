@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 
@@ -38,6 +38,11 @@ export default {
       type: Boolean,
       default: true,
     },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+    },
   },
   methods: {
     showCreateFilterModal() {
@@ -45,6 +50,7 @@ export default {
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.create.title'),
+          entitiesType: this.entitiesType,
           action: (newFilter) => {
             this.$emit('create:filter', newFilter);
             this.$emit('update:filters', [...this.filters, newFilter]);
@@ -61,6 +67,7 @@ export default {
         config: {
           title: this.$t('modals.filter.edit.title'),
           filter,
+          entitiesType: this.entitiesType,
           action: (newFilter) => {
             this.$emit('update:filter', newFilter, index);
             this.$emit('update:filters', this.filters.map((v, i) => (index === i ? newFilter : v)));

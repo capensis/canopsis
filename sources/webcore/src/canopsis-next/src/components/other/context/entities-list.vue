@@ -12,15 +12,16 @@
         type="top",
         @input="updateQueryPage"
         )
-      v-flex(v-if="hasAccessToListFilters")
+      v-flex
         filter-selector(
         :label="$t('settings.selectAFilter')",
         :filters="viewFilters",
-        :lockedFilters="widgetViewFilters"
+        :lockedFilters="widgetViewFilters",
         :value="mainFilter",
         :condition="mainFilterCondition",
         :hasAccessToEditFilter="hasAccessToEditFilter",
         :hasAccessToUserFilter="hasAccessToUserFilter",
+        :hasAccessToListFilter="hasAccessToListFilter",
         @input="updateSelectedFilter",
         @update:condition="updateSelectedCondition",
         @update:filters="updateFilters"
@@ -54,14 +55,19 @@
           v-for="column in columns",
           @click="props.expanded = !props.expanded"
           )
+            div(v-if="column.value === 'enabled'")
+              v-icon(
+              :color="props.item.enabled ? 'primary' : 'error'"
+              ) {{ props.item.enabled ? 'check' : 'clear' }}
             ellipsis(
+            v-else,
             :text="props.item | get(column.value, null, '')",
             :maxLetters="column.maxLetters"
             )
           td
             actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          more-infos(:item="props.item")
+          more-infos(:item="props.item", :tabId="tabId")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
@@ -78,7 +84,7 @@
 import { omit, isString } from 'lodash';
 
 import { USERS_RIGHTS } from '@/constants';
-import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
+import prepareMainFilterToQueryFilter from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -162,7 +168,7 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.createEntity);
     },
 
-    hasAccessToListFilters() {
+    hasAccessToListFilter() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.listFilters);
     },
 

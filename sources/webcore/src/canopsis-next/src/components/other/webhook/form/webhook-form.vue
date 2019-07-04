@@ -1,11 +1,13 @@
 <template lang="pug">
   v-tabs(:color="vTabsColor", :dark="dark", fixed-tabs)
     template(v-for="(tab, index) in tabs")
-      v-tab(:key="`tab-${index}`") {{ tab.title }}
+      v-tab(:key="`tab-${index}`")
+        .validation-header(:class="{ 'error--text': validationErrorsFlagsForTabs[index] }") {{ tab.title }}
       v-tab-item(:key="`tab-item-${index}`")
         div(:class="vTabItemInnerWrapperClass")
           div(:class="vTabItemInnerClass")
             component(
+            ref="forms",
             :is="tab.component",
             :class="webhookTabClass",
             v-bind="tab.bind",
@@ -53,6 +55,11 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      validationErrorsFlagsForTabs: [],
+    };
+  },
   computed: {
     tabs() {
       return [
@@ -96,7 +103,6 @@ export default {
     hasBlockedTriggers() {
       return intersection(this.form.hook.triggers, [
         WEBHOOK_TRIGGERS.resolve,
-        WEBHOOK_TRIGGERS.cancel,
         WEBHOOK_TRIGGERS.unsnooze,
       ]).length > 0;
     },
@@ -122,6 +128,15 @@ export default {
         'white pa-3': this.dark,
       };
     },
+  },
+  mounted() {
+    this.tabs.forEach((item, index) => {
+      this.$set(this.validationErrorsFlagsForTabs, index, false);
+
+      this.$watch(() => this.$refs.forms[index].hasAnyError, (value) => {
+        this.$set(this.validationErrorsFlagsForTabs, index, value);
+      });
+    });
   },
 };
 </script>

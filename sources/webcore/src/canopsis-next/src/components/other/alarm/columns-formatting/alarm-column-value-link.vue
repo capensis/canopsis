@@ -1,20 +1,18 @@
 <template lang="pug" functional>
   div
     a(
-    v-for="(linkUrl, index) in props.link",
-    :key="`link-${index}`",
-    :href="linkUrl",
+    :href="props.link.link",
     target="_blank",
     @click.stop=""
-    ) {{ linkUrl }}
+    ) {{ props.link.label }}
 </template>
 
 <script>
 export default {
   props: {
     link: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
   },
 };

@@ -4,13 +4,13 @@
       v-switch(
       :label="$t('filterSelector.fields.mixFilters')",
       :input-value="isMultiple",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateIsMultipleFlag"
       )
     v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
       v-radio-group(
       :value="condition",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateCondition"
       )
         v-radio(label="AND", value="$and")
@@ -23,7 +23,7 @@
       :itemText="itemText",
       :itemValue="itemValue",
       :multiple="isMultiple",
-      :disabled="!hasAccessToEditFilter",
+      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       return-object,
       clearable,
       @input="updateSelectedFilter"
@@ -45,6 +45,7 @@
       filters-list(
       v-else,
       :filters="filters",
+      :entitiesType="entitiesType",
       @create:filter="createFilter",
       @update:filter="updateFilter",
       @delete:filter="deleteFilter"
@@ -52,7 +53,7 @@
 </template>
 
 <script>
-import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 
@@ -102,6 +103,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hasAccessToListFilter: {
+      type: Boolean,
+      default: false,
+    },
     hasAccessToAddFilter: {
       type: Boolean,
       default: true,
@@ -113,6 +118,11 @@ export default {
     hasAccessToUserFilter: {
       type: Boolean,
       default: true,
+    },
+    entitiesType: {
+      type: String,
+      default: ENTITIES_TYPES.alarm,
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
   },
   computed: {
@@ -214,8 +224,8 @@ export default {
         name: MODALS.filtersList,
         config: {
           filters: this.filters,
-          hasAccessToAddFilter: this.hasAccessToAddFilter,
-          hasAccessToEditFilter: this.hasAccessToEditFilter,
+          hasAccessToAddFilter: this.hasAccessToUserFilter,
+          hasAccessToEditFilter: this.hasAccessToUserFilter,
           actions: {
             create: this.createFilter,
             update: this.updateFilter,

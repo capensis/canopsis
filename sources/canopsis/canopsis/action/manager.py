@@ -60,6 +60,14 @@ class ActionManager(object):
 
         return (logger, mongo_collection)
 
+    def get_action_list(self):
+        """
+        Return a list of all the actions.
+
+        :rtype: List[Dict[str, Any]]
+        """
+        return list(self.collection.find({}))
+
     def get_id(self, id_):
         """
         Helper to find just an object from his _id.

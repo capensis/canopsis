@@ -79,6 +79,11 @@ export default {
           icon: 'table_chart',
         },
         {
+          title: this.$t('modals.widgetCreation.types.statsPareto.title'),
+          value: WIDGET_TYPES.statsPareto,
+          icon: 'multiline_chart',
+        },
+        {
           title: this.$t('modals.widgetCreation.types.text.title'),
           value: WIDGET_TYPES.text,
           icon: 'view_headline',

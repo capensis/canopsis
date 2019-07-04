@@ -22,7 +22,7 @@ class Action(object):
     REGEX = 'regex'
     PARAMETERS = 'parameters'
 
-    def __init__(self, _id, type_, hook, fields, regex, parameters=None,
+    def __init__(self, _id, type_, hook=None, fields=None, regex=None, parameters=None,
                  *args, **kwargs):
         """
         :param str _id: action id

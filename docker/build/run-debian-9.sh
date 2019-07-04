@@ -51,6 +51,7 @@ apt-get -y --no-install-recommends install \
     libldap-2.4-2 \
     python \
     python2.7 \
+    procps \
     rsync \
     snmp \
     snmp-mibs-downloader \

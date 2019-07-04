@@ -40,6 +40,7 @@ import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
+import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
 import FilterGroup from './partial/filter-group.vue';
 import FilterResultsAlarm from './partial/results/alarm.vue';
@@ -67,7 +68,7 @@ export default {
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
     required: {
       type: Boolean,
@@ -119,6 +120,9 @@ export default {
         case ENTITIES_TYPES.entity:
           return ['name', 'type'];
 
+        case ENTITIES_TYPES.pbehavior:
+          return ['name', 'type', 'impact', 'depends'];
+
         default:
           return [];
       }
@@ -141,8 +145,7 @@ export default {
         name: 'filter',
         rules: 'required:true',
         getter: () => {
-          const firstRule = Object.values(this.filter.rules)[0];
-          const isFilterNotEmpty = firstRule && firstRule.field !== '' && firstRule.operator !== '';
+          const isFilterNotEmpty = !checkIfGroupIsEmpty(this.filter);
           const isRequestStringNotEmpty = this.isRequestStringChanged && this.requestString !== '';
 
           return isFilterNotEmpty || isRequestStringNotEmpty;

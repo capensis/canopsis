@@ -28,6 +28,8 @@ class CanopsisVersionManager(object):
     """
 
     COLLECTION = "configuration"
+    EDITION_FIELD = "edition"
+    STACK_FIELD = "stack"
     VERSION_FIELD = "version"
     __DOCUMENT_ID = "canopsis_version"
 
@@ -38,7 +40,7 @@ class CanopsisVersionManager(object):
         """
         self.__collection = MongoCollection(collection)
 
-    def find_canopsis_version_document(self):
+    def find_canopsis_document(self):
         """
         Find Canopsis version document.
 
@@ -50,7 +52,7 @@ class CanopsisVersionManager(object):
             '_id': self.__DOCUMENT_ID
         })
 
-    def put_canopsis_version_document(self, version):
+    def put_canopsis_document(self, edition, stack, version):
         """
         Put Canopsis version document (upsert).
 
@@ -58,13 +60,27 @@ class CanopsisVersionManager(object):
 
         :raises: (`canopsis.common.collection.CollectionError`, ).
         """
-        self.__collection.update(
-            {
-                '_id': self.__DOCUMENT_ID
-            },
-            {
-                '_id': self.__DOCUMENT_ID,
-                self.VERSION_FIELD: version
-            },
-            upsert=True
-        )
+        document = {}
+
+        if edition is not None:
+            document[self.EDITION_FIELD] = edition
+
+        if stack is not None:
+            document[self.STACK_FIELD] = stack
+
+        if version is not None:
+            document[self.VERSION_FIELD] = version
+
+        if len(document) > 0:
+            resp = self.__collection.update(
+                {
+                    '_id': self.__DOCUMENT_ID
+                },
+                {
+                    '$set': document
+                },
+                upsert=True
+            )
+            return self.__collection.is_successfull(resp)
+
+        return True

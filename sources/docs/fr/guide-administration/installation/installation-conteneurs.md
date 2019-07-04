@@ -2,6 +2,19 @@
 
 ## Pré-requis
 
+### Version minimum du noyau Linux
+
+Votre système hôte pour Docker doit disposer d'un noyau Linux suffisamment récent. Canopsis nécessite l'utilisation **d'un noyau Linux 4.4 minimum**.
+
+Les noyaux installés par défaut sur Debian 8 ou CentOS 7 ne sont donc **pas suffisants** pour héberger un environnement Docker Canopsis.
+
+Vérifier votre version du noyau à l'aide de la commande suivante :
+```sh
+uname -r
+```
+
+Si vous obtenez une version inférieure à 4.4, veuillez utiliser un noyau plus récent : soit avec une distribution plus à jour, ou bien à l'aide d'[ELRepo](https://elrepo.org/tiki/kernel-lt) pour CentOS, par exemple.
+
 ### Version de Docker
 
 Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 18.06 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux proposés par votre distribution.

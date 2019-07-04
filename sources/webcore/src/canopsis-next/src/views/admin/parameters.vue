@@ -3,10 +3,6 @@
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.parameters') }}
     v-list
       v-list-tile
-        v-list-tile-title {{ $t('parameters.interfaceLanguage') }}
-        v-list-tile-content
-          v-select(:items="languageOptions", :value="$i18n.locale", @input="setLocale")
-      v-list-tile
         v-list-tile-title {{ $t('parameters.groupsNavigationType.title') }}
         v-list-tile-content
           v-select(
@@ -20,22 +16,11 @@
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import appMixin from '@/mixins/app';
-import i18nMixin from '@/mixins/i18n';
 
 export default {
-  mixins: [appMixin, i18nMixin],
+  mixins: [appMixin],
   data() {
     return {
-      languageOptions: [
-        {
-          text: 'Français',
-          value: 'fr',
-        },
-        {
-          text: 'English',
-          value: 'en',
-        },
-      ],
       groupsNavigationOptions: [
         {
           text: this.$t('parameters.groupsNavigationType.items.sideBar'),

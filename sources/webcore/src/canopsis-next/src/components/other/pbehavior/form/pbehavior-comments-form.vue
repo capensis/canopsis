@@ -14,7 +14,7 @@
         v-btn(color="error", icon, @click="removeItemFromArray(index)")
           v-icon delete
     v-layout(row)
-      v-btn.primary(type="button", @click="addComment") {{ $t('modals.createPbehavior.buttons.addComment') }}
+      v-btn.ml-0.primary(type="button", @click="addComment") {{ $t('modals.createPbehavior.buttons.addComment') }}
 </template>
 
 <script>

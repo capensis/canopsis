@@ -51,6 +51,7 @@ export default {
         [SIDE_BARS.statsCalendarSettings]: this.$t('settings.titles.statsCalendarSettings'),
         [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
         [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
+        [SIDE_BARS.statsParetoSettings]: this.$t('settings.titles.statsParetoSettings'),
         [SIDE_BARS.textSettings]: this.$t('settings.titles.textSettings'),
       };
 

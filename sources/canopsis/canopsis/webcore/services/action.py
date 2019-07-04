@@ -21,6 +21,8 @@ from __future__ import unicode_literals
 
 from bottle import request
 
+from pymongo.errors import PyMongoError
+
 from canopsis.action.manager import ActionManager
 from canopsis.common.collection import CollectionError
 from canopsis.common.converters import id_filter
@@ -33,6 +35,26 @@ def exports(ws):
     ws.application.router.add_filter('id_filter', id_filter)
 
     action_manager = ActionManager(*ActionManager.provide_default_basics())
+
+    @ws.application.get(
+        '/api/v2/actions'
+    )
+    def get_action_list():
+        """
+        Return the list of all actions.
+
+        :returns: <Action>
+        :rtype: list
+        """
+        try:
+            actions = action_manager.get_action_list()
+        except PyMongoError:
+            return gen_json_error(
+                {"description": "Can not retrieve the actions list from "
+                                "database, contact your administrator."},
+                HTTP_ERROR)
+
+        return gen_json(actions)
 
     @ws.application.get(
         '/api/v2/actions/<action_id:id_filter>'
@@ -73,6 +95,14 @@ def exports(ws):
         if element is None or not isinstance(element, dict):
             return gen_json_error(
                 {'description': 'nothing to insert'}, HTTP_ERROR)
+
+        # If element.get(...) fails, it returns None, which is evaluated as False
+        # Empty elements such as {}, [] and "" are also evaluated to False
+        # So element.get() will check if each value exists AND if the value isn't empty
+        if element.get("hook") and (element.get("fields") or element.get("regex")):
+            return gen_json_error(
+                {'description': 'Sent data has a hook and fields/regex defined at the same time'}, HTTP_ERROR)
+
         try:
             Action(**Action.convert_keys(element))
         except TypeError:

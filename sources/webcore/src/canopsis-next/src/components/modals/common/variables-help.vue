@@ -18,7 +18,14 @@
               .pl-1.d-inline-block.grey--text.text--darken-1.body-1.font-italic {{ $t('common.emptyObject') }}
         template(slot="append", slot-scope="props", v-if="props.leaf")
           v-tooltip(left)
-            v-btn(@click="copyPathToClipBoard(props.item.path)", slot="activator", small, icon)
+            v-btn(
+              v-clipboard:copy="props.item.path",
+              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
+              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+              slot="activator",
+              small,
+              icon
+              )
               v-icon file_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
 </template>
@@ -34,15 +41,5 @@ export default {
   name: MODALS.variablesHelp,
   components: { Ellipsis },
   mixins: [modalInnerMixin, popupMixin],
-  methods: {
-    async copyPathToClipBoard(itemPath) {
-      try {
-        await this.$copyText(itemPath);
-        this.addSuccessPopup({ text: this.$t('success.pathCopied') });
-      } catch (err) {
-        this.addErrorPopup({ text: this.$t('errors.default') });
-      }
-    },
-  },
 };
 </script>

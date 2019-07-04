@@ -6,21 +6,21 @@
     v-card-text
       v-container
         v-layout
-          v-flex(xs3)
+          v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
             type="number",
-            v-model="periodValue",
+            v-model="form.periodValue",
             :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
           v-select.pt-0(
-          v-model="periodUnit",
+          v-model="form.periodUnit",
           :items="periodUnits",
           :label="$t('modals.statsDateInterval.fields.periodUnit')"
           )
         v-alert.mb-2(
-        v-if="periodUnit === 'm'", type="info", value="true"
+        v-if="form.periodUnit === $constants.STATS_DURATION_UNITS.month", type="info", value="true"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
-        stats-date-selector.my-1(v-model="form", :periodUnit="periodUnit", @input="resetValidation")
+        stats-date-selector.my-1(v-model="form", :periodUnit="form.periodUnit", @input="resetValidation")
       v-alert(
       value="errors",
       type="error",
@@ -34,7 +34,9 @@
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
+import { cloneDeep } from 'lodash';
+
+import { MODALS, DATETIME_FORMATS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } from '@/constants';
 
 import { dateParse } from '@/helpers/date-intervals';
 
@@ -49,13 +51,16 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
-    return {
+    const { interval } = this.modal.config;
+    const defaultInterval = {
       periodValue: 1,
       periodUnit: STATS_DURATION_UNITS.hour,
-      form: {
-        tstart: 'now+1d',
-        tstop: 'now+2d',
-      },
+      tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+      tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+    };
+
+    return {
+      form: cloneDeep(interval || defaultInterval),
       periodUnits: [
         {
           text: this.$tc('common.times.hour'),
@@ -77,22 +82,10 @@ export default {
       errors: [],
     };
   },
-  mounted() {
-    if (this.config.interval) {
-      const {
-        periodValue,
-        periodUnit,
-        tstart,
-        tstop,
-      } = this.config.interval;
-
-      this.periodValue = periodValue;
-      this.periodUnit = periodUnit;
-      this.form = {
-        tstart,
-        tstop,
-      };
-    }
+  computed: {
+    hiddenFields() {
+      return this.modal.config.hiddenFields || [];
+    },
   },
   methods: {
     resetValidation() {
@@ -121,12 +114,7 @@ export default {
     async submit() {
       if (this.validate()) {
         if (this.config.action) {
-          this.config.action({
-            periodValue: this.periodValue,
-            periodUnit: this.periodUnit,
-            tstart: this.form.tstart,
-            tstop: this.form.tstop,
-          });
+          this.config.action(this.form);
         }
 
         this.hideModal();

@@ -24,7 +24,12 @@
               color="error",
               ) {{ $t('view.deleteWidget') }}
               v-btn.ma-1(
-              @click="showSettings(tab._id, row._id, widget)",
+              @click="showSelectViewTabModal(widget)",
+              icon
+              )
+                v-icon file_copy
+              v-btn.ma-1(
+              @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
               icon
               )
                 v-icon settings
@@ -39,6 +44,8 @@
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
+import { generateWidgetByType } from '@/helpers/entities';
+
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
 import WeatherWidget from '@/components/other/service-weather/weather.vue';
@@ -47,6 +54,7 @@ import StatsCurvesWidget from '@/components/other/stats/curves/stats-curves.vue'
 import StatsTableWidget from '@/components/other/stats/stats-table.vue';
 import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calendar.vue';
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
+import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
 
 import popupMixin from '@/mixins/popup';
@@ -63,6 +71,7 @@ export default {
     StatsTableWidget,
     StatsCalendarWidget,
     StatsNumberWidget,
+    StatsParetoWidget,
     TextWidget,
   },
   mixins: [
@@ -99,6 +108,7 @@ export default {
         [WIDGET_TYPES.statsTable]: 'stats-table-widget',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
         [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
+        [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
         [WIDGET_TYPES.text]: 'text-widget',
       },
     };
@@ -117,13 +127,28 @@ export default {
     },
   },
   methods: {
-    showSettings(tabId, rowId, widget) {
+    showSettings({
+      viewId,
+      tabId,
+      rowId,
+      widget,
+    }) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
+          viewId,
           tabId,
           rowId,
           widget,
+        },
+      });
+    },
+
+    showSelectViewTabModal(widget) {
+      this.showModal({
+        name: MODALS.selectViewTab,
+        config: {
+          action: ({ tabId, viewId }) => this.cloneWidget({ widget, tabId, viewId }),
         },
       });
     },
@@ -174,6 +199,33 @@ export default {
             return this.updateTabMethod(newTab);
           },
         },
+      });
+    },
+
+    async cloneWidget({ widget, tabId, viewId }) {
+      const { _id: newWidgetId } = generateWidgetByType(widget.type);
+      const newWidget = { ...widget, _id: newWidgetId };
+
+      await new Promise((resolve, reject) => {
+        if (this.tab._id === tabId) {
+          resolve();
+        } else {
+          this.$router.push({
+            name: 'view',
+            params: {
+              id: viewId,
+            },
+            query: {
+              tabId,
+            },
+          }, resolve, reject);
+        }
+      });
+
+      this.showSettings({
+        viewId,
+        tabId,
+        widget: newWidget,
       });
     },
   },
