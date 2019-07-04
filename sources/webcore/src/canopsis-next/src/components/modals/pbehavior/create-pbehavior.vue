@@ -20,6 +20,7 @@ import { cloneDeep, omit, isObject } from 'lodash';
 import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
+import convertTimestampToMoment from '@/helpers/date';
 
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -44,8 +45,8 @@ export default {
       return {
         author: pbehavior.author || '',
         name: pbehavior.name || '',
-        tstart: pbehavior.tstart ? new Date(pbehavior.tstart * 1000) : new Date(),
-        tstop: pbehavior.tstop ? new Date(pbehavior.tstop * 1000) : new Date(),
+        tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
+        tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
         filter: cloneDeep(pbehavior.filter || {}),
         type_: pbehavior.type_ || '',
         reason: pbehavior.reason || '',

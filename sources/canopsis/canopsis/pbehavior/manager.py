@@ -23,7 +23,7 @@ Managing PBehavior.
 """
 
 from calendar import timegm
-from datetime import datetime
+from datetime import datetime, date
 from dateutil import tz, rrule
 from json import loads, dumps
 from time import time
@@ -614,7 +614,30 @@ class PBehaviorManager(object):
 
         return datetime.fromtimestamp(timestamp, tz.gettz(timezone))
 
-    def _check_active_reccuring_pbehavior(self, timestamp, pbehavior):
+    def _get_recurring_pbehavior_rruleset(self, pbehavior):
+        """ Gets the rec_set for a recurring pbehavior
+
+        :param Dict[str, Any] pbehavior: the recurring pbehavior
+        :rtype: rruleset
+        """
+        tz_name = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
+
+        rec_set = rrule.rruleset()
+
+        start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
+
+        if PBehavior.EXDATE in pbehavior and\
+           isinstance(pbehavior[PBehavior.EXDATE], list):
+            for date in pbehavior[PBehavior.EXDATE]:
+                exdate = self.__convert_timestamp(date, tz_name)
+                rec_set.exdate(exdate)
+
+
+        rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
+                                     dtstart=start))
+        return rec_set
+
+    def _check_active_recurring_pbehavior(self, timestamp, pbehavior):
         """ Check if a pbehavior with a rrule is active at the given time.
 
         :param int timestamp: the number a second this 1970/01/01 00:00:00
@@ -626,24 +649,15 @@ class PBehaviorManager(object):
 
         tz_name = pbehavior.get(PBehavior.TIMEZONE, self.default_tz)
 
-        rec_set = rrule.rruleset()
+        rec_set = self._get_recurring_pbehavior_rruleset(pbehavior)
 
         # convert the timestamp to a datetime in the pbehavior's timezone
         now = self.__convert_timestamp(timestamp, tz_name)
 
         start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
         stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
-
-        if PBehavior.EXDATE in pbehavior and\
-           isinstance(pbehavior[PBehavior.EXDATE], list):
-            for date in pbehavior[PBehavior.EXDATE]:
-                exdate = self.__convert_timestamp(date, tz_name)
-                rec_set.exdate(exdate)
-
         duration = stop - start  # pbehavior duration
 
-        rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
-                                     dtstart=start))
 
         rec_start = rec_set.before(now)
 
@@ -676,7 +690,7 @@ class PBehaviorManager(object):
         else:
             if PBehavior.EXDATE not in pbehavior:
                 pbehavior[PBehavior.EXDATE] = []
-            return self._check_active_reccuring_pbehavior(timestamp, pbehavior)
+            return self._check_active_recurring_pbehavior(timestamp, pbehavior)
 
     def check_pbehaviors(self, entity_id, list_in, list_out):
         """
@@ -1034,3 +1048,62 @@ class PBehaviorManager(object):
         :rtype: Iterator[Dict[str, Any]]
         """
         return self.collection.find({PBehavior.ENABLED: True})
+
+    def _get_last_tstop(self, pbh, now):
+        """
+        Returns last pbehavior stop timestamp before now.
+
+        Warning : this method might return a timestamp greater than the now
+                  timestamp, which means the pbehavior is currently running
+
+
+        :param Dict[str, Any] pbh: a pbehavior
+        :param datetime now: datetime corresponding to now
+        :rtype: int
+        """
+        if PBehavior.RRULE not in pbh or\
+            pbh[PBehavior.RRULE] is None or\
+            pbh[PBehavior.RRULE] == "":
+            #pbh is simple
+            pbh_last_tstop = pbh[PBehavior.TSTOP]
+        else:
+            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+            # convert the timestamp to a datetime in the pbehavior's timezone
+            start = self.__convert_timestamp(pbh[PBehavior.TSTART], tz_name)
+            stop = self.__convert_timestamp(pbh[PBehavior.TSTOP], tz_name)
+
+            duration = stop - start  # pbehavior duration
+            rec_set = self._get_recurring_pbehavior_rruleset(pbh)
+            last_tstop_dt = rec_set.before(now) + duration
+            pbh_last_tstop = int((last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
+        return pbh_last_tstop
+
+    def get_ok_ko_timestamp(self, entity_id):
+        """
+        Get the timestamp corresponding either to current day at midnight,
+        or to the last pbehavior stop for that entity_id
+
+        :param str entity_id: the entity id needing the ok ko timestamp
+        :rtype: int
+        """
+        #get today at midnight timestamp as base return timestamp
+        #because each alarm ok ko counter is soft-reseted at midnight
+        #midnight at local timezone
+        today_at_midnight = date.today()
+        ret_timestamp = int(today_at_midnight.strftime("%s"))
+
+        now = int(time())
+
+        for pbh in self.get_pbehaviors(entity_id):
+            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+            now_dt = self.__convert_timestamp(now, tz_name)
+            if self.check_active_pbehavior(now, pbh):
+                #if a pbh is active, then the ok ko counter 
+                #is supposed to be inactive
+                return now
+            
+            pbh_last_tstop = self._get_last_tstop(pbh, now_dt)
+            if now > pbh_last_tstop > ret_timestamp:
+                #keeping the most recent timestamp that still is in the past
+                ret_timestamp = pbh_last_tstop
+        return ret_timestamp

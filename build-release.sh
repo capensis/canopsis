@@ -8,7 +8,7 @@ set -o pipefail
 # * import canopsis-next (pull, rsync, add, commit, push)
 # * run catag again to sync with any added files
 
-workdir=$(dirname $(readlink -e $0))
+workdir=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)
 cd ${workdir}
 
 source ${workdir}/build-env.sh
@@ -31,4 +31,6 @@ function run_catag() {
 }
 
 deploy_catag
-run_catag
+if [ "${run_catag}" -eq 1 ] ; then
+	run_catag
+fi

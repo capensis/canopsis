@@ -18,6 +18,8 @@ import sanitizeHTML from 'sanitize-html';
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
+import '@/services/features';
+
 import * as config from '@/config';
 import * as constants from '@/constants';
 import App from '@/app.vue';
@@ -95,6 +97,7 @@ Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
 
+VueClipboard.config.autoSetContainer = true;
 Vue.use(VueClipboard);
 
 Vue.use(VeeValidate, {

@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { isEmpty } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import uid from '@/helpers/uid';
@@ -13,29 +12,34 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    modals: {},
+    allIds: [],
+    byId: {},
   },
   getters: {
-    modals: state => state.modals,
-    hasModals: state => !isEmpty(state.modals),
+    modals: state => state.allIds.map(id => state.byId[id]),
+    hasModals: state => Boolean(state.allIds.length),
   },
   mutations: {
     [types.SHOW](state, { id, name, config = {} }) {
-      Vue.set(state.modals, id, {
+      Vue.set(state.byId, id, {
         id,
         name,
         config,
         hidden: false,
       });
+
+      state.allIds.push(id);
     },
     [types.HIDE](state, { id }) {
-      Vue.set(state.modals, id, {
-        ...state.modals[id],
+      Vue.set(state.byId, id, {
+        ...state.byId[id],
         hidden: true,
       });
     },
     [types.HIDE_COMPLETED](state, { id }) {
-      Vue.delete(state.modals, id);
+      state.allIds = state.allIds.filter(value => value !== id);
+
+      Vue.delete(state.byId, id);
     },
   },
   actions: {
@@ -64,7 +68,7 @@ export default {
        * This function added for vuetify animation waiting
        */
       setTimeout(() => {
-        if (state.modals[id]) {
+        if (state.byId[id]) {
           commit(types.HIDE_COMPLETED, { id });
         }
       }, VUETIFY_ANIMATION_DELAY);

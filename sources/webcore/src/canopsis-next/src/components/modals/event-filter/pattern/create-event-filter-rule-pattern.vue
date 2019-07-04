@@ -49,8 +49,11 @@ export default {
     };
   },
   methods: {
-    submit() {
-      this.config.action(this.pattern);
+    async submit() {
+      if (this.config.action) {
+        await this.config.action(this.pattern);
+      }
+
       this.hideModal();
     },
   },

@@ -1,8 +1,12 @@
 <script>
+import { merge } from 'lodash';
 import { Bar } from 'vue-chartjs';
+
+import chartAnnotationMixin from '@/mixins/chart/annotation';
 
 export default {
   extends: Bar,
+  mixins: [chartAnnotationMixin],
   props: {
     ...Bar.props,
 
@@ -12,10 +16,14 @@ export default {
     datasets: {
       type: Array,
     },
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
-    options() {
-      return {
+    mergedOptions() {
+      return merge({
         responsive: true,
         maintainAspectRatio: false,
         tooltips: {
@@ -30,7 +38,7 @@ export default {
             stacked: true,
           }],
         },
-      };
+      }, this.options);
     },
 
     chartData() {
@@ -43,12 +51,12 @@ export default {
   watch: {
     chartData(value, oldValue) {
       if (value !== oldValue) {
-        this.renderChart(value, this.options);
+        this.renderChart(value, this.mergedOptions);
       }
     },
   },
   mounted() {
-    this.renderChart(this.chartData, this.options);
+    this.renderChart(this.chartData, this.mergedOptions);
   },
 };
 </script>

@@ -370,6 +370,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_exploitation_snmpRule",
+        "loader_id": "models_exploitation_snmpRule",
+        "crecord_name": "models_exploitation_snmpRule",
+        "crecord_type": "action",
+        "desc": "Exploitation: Snmp rule",
+        "type": "CRUD"
+    },
+    {
         "_id" : "listalarm_ack",
         "loader_id" : "listalarm_ack",
         "crecord_name" : "listalarm_ack",
@@ -489,6 +497,13 @@
         "desc": "Rights on listalarm: User filter"
     },
     {
+        "_id": "listalarm_links",
+        "loader_id": "listalarm_links",
+        "crecord_name": "listalarm_links",
+        "crecord_type": "action",
+        "desc": "Rights on listalarm: Access to Links"
+    },
+    {
         "_id": "serviceweather_moreInfos",
         "loader_id": "serviceweather_moreInfos",
         "crecord_name": "serviceweather_moreInfos",
@@ -557,6 +572,13 @@
         "crecord_name": "serviceweather_entityManagePbehaviors",
         "crecord_type": "action",
         "desc": "Service weather: Access to pbehaviors management"
+    },
+    {
+        "_id": "serviceweather_entityLinks",
+        "loader_id": "serviceweather_entityLinks",
+        "crecord_name": "serviceweather_entityLinks",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to Links"
     },
     {
         "_id": "crudcontext_createEntity",

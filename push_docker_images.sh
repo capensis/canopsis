@@ -2,11 +2,15 @@
 
 # Push docker images
 
+if [ -z "${push_go}" ] ; then
 echo -n "Push Go images [y/N]: "
 read push_go
+fi
 
+if [ -z "${push_pe}" ] ; then
 echo -n "Push PE images too [y/N]: "
 read push_pe
+fi
 
 if [ "${CANOPSIS_TAG}" = "" ]; then
     echo "No canopsis package tag specified ; using develop..."
@@ -28,6 +32,8 @@ if [ "${push_pe}" = "Y" ]||[ "${push_pe}" = "y" ]; then
     docker push canopsis/init-pe:${CANOPSIS_TAG}
     docker push canopsis/canopsis-cat-pe:${CANOPSIS_TAG}
     docker push canopsis/canopsis-cat-pe:longoutput-${CANOPSIS_TAG}
-    docker push canopsis/canopsis-connector-email2canopsis-pe:${CANOPSIS_TAG}
+    docker push canopsis/canopsis-cat-connector-email2canopsis-pe:${CANOPSIS_TAG}
+    docker push canopsis/uiv3:${CANOPSIS_TAG}
+    #docker push canopsis/canopsis-pe-carto-sync:${CANOPSIS_TAG}
     #docker push canopsis/canopsis-connector-snmp2canopsis-pe:${CANOPSIS_TAG}
 fi

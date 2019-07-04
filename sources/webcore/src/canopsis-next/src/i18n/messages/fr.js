@@ -6,6 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
 } from '@/constants';
+import featureService from '@/services/features';
 
 export default {
   common: {
@@ -54,7 +55,7 @@ export default {
     password: 'Mot de passe',
     authKey: 'Auth. key',
     connect: 'Connexion',
-    optionnal: 'Optionnel',
+    optional: 'Optionnel',
     logout: 'Se déconnecter',
     title: 'Titre',
     save: 'Sauvegarder',
@@ -156,8 +157,8 @@ export default {
     '</dl>',
   },
   entities: {
-    watcher: 'observateurs',
-    entities: 'entités',
+    watcher: 'Observateurs',
+    entities: 'Entités',
   },
   login: {
     standard: 'Standard',
@@ -222,6 +223,7 @@ export default {
       statsTableSettings: 'Paramètres du tableau de stats',
       statsCalendarSettings: 'Paramètres du calendrier',
       statsNumberSettings: 'Paramètres du compteur de stat',
+      statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
     },
     advancedSettings: 'Paramètres avancés',
@@ -244,6 +246,7 @@ export default {
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
     statName: 'Nom de la statistique',
+    stats: 'Statistiques',
     statsSelect: {
       title: 'Sélecteur de statistique',
       required: 'Veuillez sélectionner au moins une statistique',
@@ -597,6 +600,12 @@ export default {
         statsNumber: {
           title: 'Compteur de statistiques',
         },
+        statsPareto: {
+          title: 'Diagramme de Pareto',
+        },
+        text: {
+          title: 'Texte',
+        },
       },
     },
     manageHistogramGroups: {
@@ -907,6 +916,7 @@ export default {
       [STATS_TYPES.alarmsCreated.value]: 'Alarmes créées',
       [STATS_TYPES.alarmsResolved.value]: 'Alarmes résolues',
       [STATS_TYPES.alarmsCanceled.value]: 'Alarmes annulées',
+      [STATS_TYPES.alarmsAcknowledged.value]: 'Alarmes acquittées',
       [STATS_TYPES.ackTimeSla.value]: 'Taux d\'Ack conforme Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Taux de résolution conforme Sla',
       [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
@@ -915,6 +925,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Etat courant',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Nombre d\'alarmes non acquittées actuellement en cours',
     },
   },
   eventFilter: {
@@ -931,7 +943,7 @@ export default {
   },
   snmpRules: {
     title: 'Règles SNMP',
-    uploadMib: 'Télécharger un fichier MIB',
+    uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
   },
   layout: {
@@ -1029,4 +1041,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
   },
+
+  ...featureService.get('i18n.fr'),
 };

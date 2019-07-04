@@ -24,7 +24,12 @@ export default {
          It's the same for all stats, that's why we can just take the first.
          We then give it to the date filter, to display it with a date format
          */
-        return this.stats[stats[0]].sum.map(value => this.$options.filters.date(value.end, 'long', true));
+        return this.stats[stats[0]].sum.map((value) => {
+          const start = this.$options.filters.date(value.start, 'long', true);
+          const end = this.$options.filters.date(value.end, 'long', true);
+
+          return [`${start} -`, end];
+        });
       }
 
       return [];
@@ -32,6 +37,40 @@ export default {
 
     datasets() {
       return [];
+    },
+
+    annotationLine() {
+      const { annotationLine } = this.widget.parameters;
+
+      if (annotationLine && annotationLine.enabled) {
+        return {
+          annotations: [{
+            type: 'line',
+            mode: 'horizontal',
+            scaleID: 'y-axis-0',
+            value: annotationLine.value,
+            borderColor: annotationLine.lineColor,
+            borderWidth: 2,
+            label: {
+              enabled: true,
+              position: 'left',
+              fontSize: 10,
+              xPadding: 5,
+              yPadding: 5,
+              content: annotationLine.label,
+              backgroundColor: annotationLine.labelColor,
+            },
+          }],
+        };
+      }
+
+      return {};
+    },
+
+    options() {
+      return {
+        annotation: this.annotationLine,
+      };
     },
   },
   methods: {

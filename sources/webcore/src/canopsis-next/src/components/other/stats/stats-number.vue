@@ -1,12 +1,11 @@
 <template lang="pug">
   div
-    progress-overlay(:pending="pending")
     v-card
+      progress-overlay(:pending="pending")
       v-data-table(
       :items="stats",
       :headers="tableHeaders",
-      :pagination.sync="pagination",
-      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
+      :pagination.sync="pagination"
       )
         template(
           slot="items",
@@ -132,14 +131,17 @@ export default {
         stats,
         mfilter,
         tstop,
-        duration,
+        periodUnit,
+        tstart,
       } = this.getStatsQuery();
 
+      const durationValue = tstop.diff(tstart, periodUnit);
+
       return {
-        duration,
         stats,
         mfilter,
 
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
         tstop: tstop.startOf('h').unix(),
       };
     },

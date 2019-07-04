@@ -11,7 +11,9 @@ export default {
     },
 
     mainFilter() {
-      const mainFilter = this.userPreference.widget_preferences.mainFilter || this.widget.parameters.mainFilter;
+      const mainFilter = !isEmpty(this.userPreference.widget_preferences.mainFilter) ?
+        this.userPreference.widget_preferences.mainFilter :
+        this.widget.parameters.mainFilter;
 
       if (Array.isArray(mainFilter)) {
         return mainFilter;
@@ -25,14 +27,20 @@ export default {
     },
 
     widgetViewFilters() {
-      return this.widget.parameters.viewFilters || [];
+      const { mainFilter, viewFilters } = this.widget.parameters;
+
+      if (!this.hasAccessToListFilter) {
+        return mainFilter ? [mainFilter] : [];
+      }
+
+      return viewFilters || [];
     },
   },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
-      const hasAccessToEditFilter = this.hasAccessToEditFilter || !isBoolean(this.hasAccessToEditFilter);
+      const hasAccessToUserFilter = this.hasAccessToUserFilter || !isBoolean(this.hasAccessToUserFilter);
 
-      if (hasAccessToEditFilter) {
+      if (hasAccessToUserFilter) {
         return this.updateWidgetPreferencesInUserPreference({
           ...this.userPreference.widget_preferences,
           ...fields,

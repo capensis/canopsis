@@ -34,7 +34,15 @@ export default {
          * And add the difference between the local date, and the UTC one.
          */
         tstart = moment.utc(tstart).startOf('month').tz(moment.tz.guess());
-        tstop = moment.utc(tstop).startOf('month').tz(moment.tz.guess());
+
+        const startOfTstopMonthUtc = moment.utc(tstop).startOf('month');
+        const startOfCurrentMonthUtc = moment.utc().startOf('month');
+
+        if (startOfTstopMonthUtc.isSame(startOfCurrentMonthUtc)) {
+          tstop = startOfTstopMonthUtc.add(1, 'month').tz(moment.tz.guess());
+        } else {
+          tstop = startOfTstopMonthUtc.tz(moment.tz.guess());
+        }
       }
 
       return {
