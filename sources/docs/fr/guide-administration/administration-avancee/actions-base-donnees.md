@@ -11,7 +11,7 @@ Cette section va lister différentes commandes pour purger des collections de la
 
 Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.count(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
 
-Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimez, vous pouvez utiliser la commande `db.<nom de la collection>.remove(<requête>)`. Au moment de la suppression, un message va indiquer le nombre d'éléments supprimés.
+Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimer, vous pouvez utiliser la commande `db.<nom de la collection>.remove(<requête>)`. Au moment de la suppression, un message va indiquer le nombre d'éléments supprimés.
 
 ```bash
 > db.periodical_alarm.remove({"t" : 1537894605})
@@ -37,6 +37,7 @@ Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochco
 | Alarmes non mises à jour depuis le 1er janvier 2019 00:00:00 GMT          | `db.`_`periodical_alarm`_`.find(`**`{"v.last_update_date":{$lte:1546300800}}`**`)`            |
 | Expression régulière sur l'attribut `client` dans l'entité                | `db.`_`default_entities`_`.find(`**`{"infos.client.value":{$regex:'.*SSBU.*',$options:'i'}}`**`)`|
 | Pbehaviors créés par `emile-zola`                                         | `db.`_`default_pbehavior`_`.find(`**`{"author":"emile-zola"}`**`)`                            |
+| Pbehaviors avec un `tstart` placé dans le futur                           | `db.`_`default_pbehavior`_`.find(`**`{"tstart" : {$gt : Math.floor(Date.now() / 1000)}})`**`)`|
 | Vues désactivées                                                          | `db.`_`views`_`.find(`**`{"enabled":false}`**`)`                                              |
 
 ### Sauvegarde
