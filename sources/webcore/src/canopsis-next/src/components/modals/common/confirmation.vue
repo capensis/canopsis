@@ -1,11 +1,16 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createConfirmModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('common.confirmation') }}
     v-card-text
       v-layout(wrap, justify-center)
-        v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.yes') }}
+        v-btn.primary(
+        @click.prevent="submit",
+        data-test="confirmButton",
+        :loading="submitting",
+        :disabled="submitting"
+        ) {{ $t('common.yes') }}
         v-btn.error(@click="hideModal") {{ $t('common.no') }}
 </template>
 

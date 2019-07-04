@@ -1,9 +1,13 @@
 // http://nightwatchjs.org/guide#usage
+const { login, users } = require('../../constants');
+
 
 module.exports = {
   async before(browser, done) {
+    const { username, password } = login;
+
     await browser.maximizeWindow()
-      .completed.login('root', 'root'); // TODO: use from some constants file
+      .completed.login(username, password);
 
     done();
   },
@@ -13,23 +17,50 @@ module.exports = {
   },
 
   'Create new user with some name': (browser) => {
-    const value = 'asd'; // TODO: use from some constants file
+    const {
+      username, firstname, lastname, email, password,
+    } = users.create;
 
     browser.page.admin.users()
       .navigate()
       .verifyPageElementsBefore()
       .clickAddButton()
       .verifyCreateUserModal()
-      .setUsername(value)
-      .setFirstName(value)
-      .setLastName(value)
-      .setEmail(`${value}@${value}.com`)
-      .setPassword(value)
+      .setUsername(username)
+      .setFirstName(firstname)
+      .setLastName(lastname)
+      .setEmail(email)
+      .setPassword(password)
       .selectRole()
       .clickSubmitButton();
   },
 
-  // 'Edit user with some username': (browser) => {},
-  //
-  // 'Remove user with some username': (browser) => {},
+  'Edit user with some username': (browser) => {
+    const {
+      username, firstname, lastname, email, password,
+    } = users.edit;
+
+    browser.page.admin.users()
+      .navigate()
+      .verifyPageElementsBefore()
+      .clickEditButton()
+      .verifyCreateUserModal()
+      .clearUsername()
+      .setUsername(username)
+      .setFirstName(firstname)
+      .setLastName(lastname)
+      .setEmail(email)
+      .setPassword(password)
+      .selectRole()
+      .clickSubmitButton();
+  },
+
+  'Remove user with some username': (browser) => {
+    browser.page.admin.users()
+      .navigate()
+      .verifyPageElementsBefore()
+      .clickDeleteButton()
+      .verifyCreateConfirmModal()
+      .clickConfirmButton();
+  },
 };

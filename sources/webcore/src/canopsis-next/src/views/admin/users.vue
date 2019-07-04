@@ -26,9 +26,19 @@
               v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
             td
               div
-                v-btn(v-if="hasUpdateAnyUserAccess", @click="showEditUserModal(props.item)", icon)
+                v-btn(
+                v-if="hasUpdateAnyUserAccess",
+                data-test="editButton",
+                @click="showEditUserModal(props.item)",
+                icon
+                )
                   v-icon edit
-                v-btn(v-if="hasDeleteAnyUserAccess", @click="showRemoveUserModal(props.item._id)", icon)
+                v-btn(
+                v-if="hasDeleteAnyUserAccess",
+                data-test="deleteButton",
+                @click="showRemoveUserModal(props.item._id)",
+                icon
+                )
                   v-icon(color="error") delete
     .fab(v-if="hasCreateAnyUserAccess")
       v-layout(column)

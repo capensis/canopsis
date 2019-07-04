@@ -10,8 +10,28 @@ const usersPageCommands = {
     return this.waitForElementVisible('@createUserModal');
   },
 
+  verifyCreateConfirmModal() {
+    return this.waitForElementVisible('@createConfirmModal');
+  },
+
   clickAddButton() {
     return this.customClick('@addButton');
+  },
+
+  clickEditButton() {
+    return this.customClick('@editButton');
+  },
+
+  clickDeleteButton() {
+    return this.customClick('@deleteButton');
+  },
+
+  clickConfirmButton() {
+    return this.customClick('@confirmButton');
+  },
+
+  clearUsername() {
+    return this.customClearValue('@usernameField');
   },
 
   setUsername(value) {
@@ -52,6 +72,10 @@ module.exports = {
   elements: {
     dataTable: '.v-datatable',
     addButton: sel('addButton'),
+    editButton: `.v-datatable tbody tr:last-child ${sel('editButton')}`,
+    deleteButton: `.v-datatable tbody tr:last-child ${sel('deleteButton')}`,
+    confirmButton: sel('confirmButton'),
+    createConfirmModal: sel('createConfirmModal'),
     createUserModal: sel('createUserModal'),
     usernameField: sel('username'),
     firstNameField: sel('firstName'),
