@@ -28,7 +28,7 @@ module.exports = {
       username: 'TestEditUserName',
       firstname: 'TestEditFirstName',
       lastname: 'TestEditLastName',
-      email: 'test.Edit@example.com',
+      email: 'test.edit@example.com',
       password: 'TestEditPassword',
     },
   },
