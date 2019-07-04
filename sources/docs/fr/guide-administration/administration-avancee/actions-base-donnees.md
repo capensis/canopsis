@@ -25,9 +25,6 @@ WriteResult({ "nRemoved" : 17 })
 
 Le tableau suivant montre plusieurs examples de requêtes sur les collections d'objets Canopsis, avec la collection Mongo en _italique_ et le filtre en **gras**. Pour rappel, les entités sont stockées dans la collection `default_entities` tandis que les alarmes sont stockées dans `periodical_alarm`, les pbehaviors dans `default_pbehavior` et les vues dans `views`.
 
-Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX. Le timestamp correspondant au temps courant est `Math.floor(Date.now() / 1000)`.
-
-
 | Type d'objets                                                             | Requête Mongo                                                                                 |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------|
 | Action de type `snooze`                                                   | `db.`_`default_action`_`.find(`**`{"type":"snooze"}`**`)`                                     |
@@ -39,6 +36,15 @@ Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochco
 | Pbehaviors créés par `emile-zola`                                         | `db.`_`default_pbehavior`_`.find(`**`{"author":"emile-zola"}`**`)`                            |
 | Pbehaviors avec un `tstart` placé dans le futur                           | `db.`_`default_pbehavior`_`.find(`**`{"tstart" : {$gt : Math.floor(Date.now() / 1000)}})`**`)`|
 | Vues désactivées                                                          | `db.`_`views`_`.find(`**`{"enabled":false}`**`)`                                              |
+
+Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX. Le timestamp correspondant au temps courant est `Math.floor(Date.now() / 1000)`. Vous pouvez également vous servir des objets `Date()` pour les requêtes temporelles (voir la [documentation officielle de Mongo sur `Date()`](https://docs.mongodb.com/manual/reference/method/Date/index.html)) qu'il faudra convertir en timestamp pour le filtrage. L'exemple suivant montre l'affichage des alarmes non mises à jour depuis un mois.
+
+```js
+> var d = new Date();
+> d.setMonth(d.getMonth() - 1);
+> oneMonthAgo = Math.floor(d / 1000);
+> db.periodical_alarm.find({"v.last_update_date":{$lte:oneMonthAgo}})
+```
 
 ### Sauvegarde
 
