@@ -136,17 +136,17 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 ```
   -autoRecomputeWatchers
-        Automatically recompute watchers each minute.
+        Recalcule automatiquement l'état des watchers chaque minute.
   -d    debug
   -printEventOnError
-        Print event on processing error
+        Afficher les évènements sur les erreurs de traitement.
   -publishQueue string
-        Publish event to this queue. (default "Engine_action")
+        Publie les événements sur cette queue. (par défaut "Engine_action")
   -version
         version infos
 ```
 
-Le flag `autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur watcher.
+Le flag `-autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur watcher.
 
 ## Changer le niveau de log d'un moteur
 
