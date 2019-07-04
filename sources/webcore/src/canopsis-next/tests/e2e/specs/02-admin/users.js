@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 const { login, users } = require('../../constants');
 
+const WAIT_PAUSE = 500;
 
 module.exports = {
   async before(browser, done) {
@@ -12,8 +13,9 @@ module.exports = {
     done();
   },
 
-  after(browser, done) {
-    browser.end(done);
+  async after(browser, done) {
+    await browser.completed.logout()
+      .end(done);
   },
 
   'Create new user with some name': (browser) => {
@@ -32,7 +34,8 @@ module.exports = {
       .setEmail(email)
       .setPassword(password)
       .selectRole()
-      .clickSubmitButton();
+      .clickSubmitButton()
+      .api.pause(WAIT_PAUSE);
   },
 
   'Edit user with some username': (browser) => {
@@ -41,26 +44,27 @@ module.exports = {
     } = users.edit;
 
     browser.page.admin.users()
-      .navigate()
-      .verifyPageElementsBefore()
       .clickEditButton()
       .verifyCreateUserModal()
       .clearUsername()
       .setUsername(username)
+      .clearFirstName()
       .setFirstName(firstname)
+      .clearLastName()
       .setLastName(lastname)
+      .clearEmail()
       .setEmail(email)
       .setPassword(password)
-      .selectRole()
-      .clickSubmitButton();
+      .selectRole(4)
+      .clickSubmitButton()
+      .api.pause(WAIT_PAUSE);
   },
 
   'Remove user with some username': (browser) => {
     browser.page.admin.users()
-      .navigate()
-      .verifyPageElementsBefore()
       .clickDeleteButton()
       .verifyCreateConfirmModal()
-      .clickConfirmButton();
+      .clickConfirmButton()
+      .api.pause(WAIT_PAUSE);
   },
 };

@@ -11,7 +11,8 @@ const usersPageCommands = {
   },
 
   verifyCreateConfirmModal() {
-    return this.waitForElementVisible('@createConfirmModal');
+    return this.waitForElementVisible('@createConfirmModal')
+      .assert.visible('@confirmButton');
   },
 
   clickAddButton() {
@@ -34,6 +35,18 @@ const usersPageCommands = {
     return this.customClearValue('@usernameField');
   },
 
+  clearFirstName() {
+    return this.customClearValue('@firstNameField');
+  },
+
+  clearLastName() {
+    return this.customClearValue('@lastNameField');
+  },
+
+  clearEmail() {
+    return this.customClearValue('@emailField');
+  },
+
   setUsername(value) {
     return this.customSetValue('@usernameField', value);
   },
@@ -54,10 +67,11 @@ const usersPageCommands = {
     return this.customSetValue('@passwordField', value);
   },
 
-  selectRole() {
+  selectRole(idx = 1) {
+    const roleItemOption = `.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(${idx})`;
     return this.customClick('@roleField')
-      .waitForElementVisible('@roleItemOption')
-      .customClick('@roleItemOption');
+      .waitForElementVisible(roleItemOption)
+      .customClick(roleItemOption);
   },
 
   clickSubmitButton() {
@@ -84,7 +98,6 @@ module.exports = {
     passwordField: sel('password'),
     languageField: sel('language'),
     roleField: `${sel('roleLayout')} .v-input__slot`,
-    roleItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(1) .v-list__tile',
     submitButton: sel('submitButton'),
   },
   commands: [usersPageCommands],
