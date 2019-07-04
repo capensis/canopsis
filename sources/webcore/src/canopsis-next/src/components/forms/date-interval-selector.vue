@@ -5,7 +5,6 @@
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
-            ref="tstart",
             v-model="tstartDateString",
             v-validate="tstartRules",
             :label="$t('common.startDate')",

@@ -213,15 +213,15 @@ export default {
   },
   methods: {
     removeHistoryFilter() {
-      this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
+      this.query = omit(this.query, ['tstart', 'tstop']);
     },
 
     showEditLiveReportModal() {
       this.showModal({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['interval', 'tstart', 'tstop']),
-          action: params => this.query = { ...omit(this.query, ['tstart', 'tstop']), ...params },
+          ...pick(this.query, ['tstart', 'tstop']),
+          action: params => this.query = { ...this.query, ...params },
         },
       });
     },
