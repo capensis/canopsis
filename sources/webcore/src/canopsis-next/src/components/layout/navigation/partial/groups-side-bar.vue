@@ -9,14 +9,65 @@
     div.brand.ma-0.secondary.lighten-1
       img.logo(:src="appLogo")
       div.version {{ version }}
-    v-expansion-panel.panel(
+    v-list.mx-1(dark)
+      v-list-group.mt-2.mb-4.primary.elevation-3(
+      no-action,
+      prepend-icon="star",
+      active-class="white--text"
+      )
+        template(slot="activator")
+          v-list-tile
+            v-list-tile-content
+              v-list-tile-title Favoris
+      v-list-group(
+        v-for="group in availableGroups",
+        :key="group._id",
+        no-action,
+        prepend-icon="folder",
+      )
+        template(slot="activator")
+          v-list-tile
+            v-list-tile-content
+              v-list-tile-title {{ group.name }}
+        v-list-tile
+          v-list-tile-content
+            v-list-tile-title
+              router-link.panel-item-content-link(
+              v-for="view in group.views",
+              :key="view._id",
+              :title="view.title",
+              :to="getViewLink(view)"
+              )
+                v-layout.secondary(align-center, justify-space-between)
+                  v-flex
+                    v-layout(align-center)
+                      span.pl-2 {{ view.title }}
+                  v-flex
+                    v-layout(justify-end)
+                      v-btn.ma-0(
+                      v-show="checkViewEditButtonAccessById(view._id)",
+                      depressed,
+                      small,
+                      icon,
+                      @click.prevent="showEditViewModal(view)"
+                      )
+                        v-icon(small) edit
+                      v-btn.ma-0(
+                      v-show="isEditingMode",
+                      depressed,
+                      small,
+                      icon,
+                      @click.prevent="showDuplicateViewModal(view)"
+                      )
+                        v-icon(small) file_copy
+
+
+  //v-expansion-panel.panel(
     v-if="hasReadAnyViewAccess",
-    expand,
-    focusable,
     dark
     )
-      v-expansion-panel-content.secondary.white--text(v-for="group in availableGroups", :key="group._id")
-        div.panel-header(slot="header")
+      v-expansion-panel-content.primary.white--text(v-for="group in availableGroups", :key="group._id")
+        div(slot="header")
           span(:title="group.name") {{ group.name }}
           v-btn(
           v-show="isEditingMode",
@@ -26,36 +77,35 @@
           @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
-        v-card(
+        router-link.panel-item-content-link(
         v-for="view in group.views",
         :key="view._id",
-        :color="getColor(view._id)",
+        :title="view.title",
+        :to="getViewLink(view)"
         )
-          router-link.panel-item-content-link(:title="view.title", :to="getViewLink(view)")
-            v-card-text.panel-item-content
-              v-layout(align-center, justify-space-between)
-                v-flex
-                  v-layout(align-center)
-                    span.pl-2 {{ view.title }}
-                v-flex
-                  v-layout(justify-end)
-                    v-btn.ma-0(
-                    v-show="checkViewEditButtonAccessById(view._id)",
-                    depressed,
-                    small,
-                    icon,
-                    @click.prevent="showEditViewModal(view)"
-                    )
-                      v-icon(small) edit
-                    v-btn.ma-0(
-                    v-show="isEditingMode",
-                    depressed,
-                    small,
-                    icon,
-                    @click.prevent="showDuplicateViewModal(view)"
-                    )
-                      v-icon(small) file_copy
-          v-divider
+          v-layout.secondary(align-center, justify-space-between)
+            v-flex
+              v-layout(align-center)
+                span.pl-2 {{ view.title }}
+            v-flex
+              v-layout(justify-end)
+                v-btn.ma-0(
+                v-show="checkViewEditButtonAccessById(view._id)",
+                depressed,
+                small,
+                icon,
+                @click.prevent="showEditViewModal(view)"
+                )
+                  v-icon(small) edit
+                v-btn.ma-0(
+                v-show="isEditingMode",
+                depressed,
+                small,
+                icon,
+                @click.prevent="showDuplicateViewModal(view)"
+                )
+                  v-icon(small) file_copy
+        v-divider
     v-divider
     groups-settings-button(
     :isEditingMode="isEditingMode",
@@ -94,6 +144,11 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      mini: true,
+    };
   },
   computed: {
     isOpen: {
@@ -161,6 +216,10 @@ export default {
     padding-right: 0.5em;
     color: white;
     font-size: 0.8em;
+  }
+
+  .v-expansion-panel__header {
+    width: 70%;
   }
 
   .panel-header {
