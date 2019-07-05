@@ -198,22 +198,36 @@ class __TileData:
 
     @classmethod
     def __get_tile_icon(cls, watcher):
-        watcher_state = 0
-        if len(watcher[ResultKey.ALARM.value]) > 0:
-            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
-            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
-
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
 
-        for pbh in watcher[ResultKey.PBEHAVIORS.value]:
-            if pbh["type_"] == "Hors plage horaire de surveillance":
-                has_out_of_surveillance = True
-            elif pbh["type_"] == "Maintenance":
-                has_maintenance = True
-            elif pbh["type_"] in ["pause", "Pause"]:
-                has_pause = True
+        watched_ent_paused = 0
+
+        for ent in watcher[ResultKey.ENT.value]:
+            if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
+                watched_ent_paused += 1
+
+        if watched_ent_paused == len(watcher[ResultKey.ENT.value]) and\
+           len(watcher[ResultKey.PBEHAVIORS.value]) == 0:
+
+            for ent in watcher[ResultKey.ENT.value]:
+                for pbh in ent[ResultKey.PBEHAVIORS.value]:
+                    if pbh["type_"] == "Hors plage horaire de surveillance":
+                        has_out_of_surveillance = True
+                    elif pbh["type_"] == "Maintenance":
+                        has_maintenance = True
+                    elif pbh["type_"] in ["pause", "Pause"]:
+                        has_pause = True
+
+        else:
+            for pbh in watcher[ResultKey.PBEHAVIORS.value]:
+                if pbh["type_"] == "Hors plage horaire de surveillance":
+                    has_out_of_surveillance = True
+                elif pbh["type_"] == "Maintenance":
+                    has_maintenance = True
+                elif pbh["type_"] in ["pause", "Pause"]:
+                    has_pause = True
 
         if has_maintenance:
             return TILE_ICON_MAINTENANCE
@@ -222,21 +236,34 @@ class __TileData:
         if has_out_of_surveillance:
             return TILE_ICON_OUT_SURVEILLANCE
 
+        watcher_state = 0
+        if len(watcher[ResultKey.ALARM.value]) > 0:
+            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
+            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+
         return TILE_ICON_SELECTOR[watcher_state]
+
 
     @classmethod
     def __get_tile_secondary_icon(cls, watcher):
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
+        paused_watched_ent = 0
+
         for ent in watcher[ResultKey.ENT.value]:
+            if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
+                paused_watched_ent += 1
             for pbh in ent[ResultKey.PBEHAVIORS.value]:
                 if pbh["type_"] == "Hors plage horaire de surveillance":
                     has_out_of_surveillance = True
                 elif pbh["type_"] == "Maintenance":
                     has_maintenance = True
                 elif pbh["type_"] in ["pause", "Pause"]:
-                    has_maintenance = True
+                    has_pause = True
+
+        if paused_watched_ent == len(watcher[ResultKey.ENT.value]):
+            return None
 
         if has_maintenance:
             return TILE_ICON_MAINTENANCE
