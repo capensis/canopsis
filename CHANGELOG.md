@@ -4,7 +4,7 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
 
 ## Canopsis 3.23.0 - Due date : 2019-07-05
 
- - [Documentation] Add entitiy filters examples in Pbehavior use case documentation
+ - [Documentation] Add entity filters examples in Pbehavior use case documentation
  - [Documentation] Add documentation on database cleanup queries
  - [Documentation] Document the new watcher engine
  - [Build] Fix canoctl compatibility problems on some Debian configurations
@@ -17,9 +17,9 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
  - [Go] Move watcher functionality from axe to a dedicated new watcher engine 
  - [Go] Add runtime warnings about TicketService being deprecated and now replaced by Webhooks
  - [Go] Added missing declareticket trigger to action and webhooks
- - [Python] Remove tracebacks on AMQP connexion errors due to loss of heartbeat
+ - [Python] Remove tracebacks on AMQP connection errors due to loss of heartbeat
  - [UI] Automatically redirect to Login page when "401 - Forbidden" error is returned by a Canopsis API
- - [UI] Add "Delete" mass action on Webhooks et Event filter CRUD
+ - [UI] Add "Delete" mass action on Webhooks and Event filter CRUD
  - [UI] Pattern editors now handle null and empty string values
  - [UI - Stats] When selecting month period, stats widget now take current month into account
  - [UI - Stats] Improve error hangling on stats widgets
@@ -451,7 +451,7 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
 - [Go]: Introducing new Observer API driver for ticket creation
 - [Go]: New actions for event-filter engine (copy and set_entity_info_from_template)
 - [Python]: Fix /get-alarms route which was limited to 50 elements, and returned an overestimation of total
-- [Python]: New Healthcheck API to check Canopsis status (service connexions, engine statues...)
+- [Python]: New Healthcheck API to check Canopsis status (service connections, engine status...)
 - [Python]: Update Heartbeat engine docstring
 - [ServiceWeather]: Fix paused pbehavior icon not always correctly display
 
