@@ -2,6 +2,28 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.23.0 - Due date : 2019-07-05
+
+ - [Documentation] Add entitiy filters examples in Pbehavior use case documentation
+ - [Documentation] Add documentation on database cleanup queries
+ - [Documentation] Document the new watcher engine
+ - [Build] Fix canoctl compatibility problems on some Debian configurations
+ - [Build] Fix a syntax compatibility problem with Docker-Compose >= 1.14.0 versions
+ - [Build] Make it possible to build most Canopsis Docker images from a macOS host system
+ - [Build] Freeze amqp version to 2.4.2 (CentOS 7 compatibility)
+ - [Build] Remove -s -w ldflags to keep debugging symbols in Go engines
+ - [Build] Fix missing package dependencies for SNMP on Debian and CentOS
+ - [Go] Add CPS_DEBUG_TRACE option to axe and watcher engines
+ - [Go] Move watcher functionality from axe to a dedicated new watcher engine 
+ - [Go] Add runtime warnings about TicketService being deprecated and now replaced by Webhooks
+ - [Go] Added missing declareticket trigger to action and webhooks
+ - [Python] Remove tracebacks on AMQP connexion errors due to loss of heartbeat
+ - [UI] Automatically redirect to Login page when "401 - Forbidden" error is returned by a Canopsis API
+ - [UI] Add "Delete" mass action on Webhooks et Event filter CRUD
+ - [UI] Pattern editors now handle null and empty string values
+ - [UI - Stats] When selecting month period, stats widget now take current month into account
+ - [UI - Stats] Improve error hangling on stats widgets
+
 ## Canopsis 3.22.0 - Due date : 2019-06-28
 
  - [Documentation] Add documentation about the new `{{ internal-link }}` handlebar helper
