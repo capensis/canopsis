@@ -971,6 +971,7 @@ export default {
     lineNotEmpty: 'This line is not empty',
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
+    statsRequestProblem: 'An error occurred while retrieving stats data',
   },
   calendar: {
     today: 'Today',
