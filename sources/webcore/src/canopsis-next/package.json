@@ -13,7 +13,6 @@
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
     "chartjs-plugin-annotation": "^0.5.7",
-    "chromedriver": "73.0.0",
     "dayspan": "^0.12.4",
     "dayspan-vuetify": "^0.2.6",
     "deep-freeze": "^0.0.1",
@@ -54,6 +53,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@babel/register": "^7.4.4",
     "@vue/cli-plugin-babel": "^3.0.0-beta.6",
     "@vue/cli-plugin-e2e-nightwatch": "^3.0.0-beta.6",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.6",

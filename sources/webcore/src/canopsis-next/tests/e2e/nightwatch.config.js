@@ -1,5 +1,13 @@
 // http://nightwatchjs.org/gettingstarted#settings-file
 
+/**
+ * The following code helps us for requiring es6 modules
+ */
+process.env.VUE_CLI_BABEL_TARGET_NODE = true;
+process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
+
+require('@babel/register');
+
 const parh = require('path');
 const deepmerge = require('deepmerge');
 
