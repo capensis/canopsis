@@ -1,40 +1,15 @@
 module.exports = {
-
-  // ////////////////////
-  // Start login data //
-  // ////////////////////
-
   login: {
     username: 'root',
     password: 'root',
   },
-  // //////////////////
-  // End login data //
-  // //////////////////
-
-  // ////////////////////
-  // Start users data //
-  // ////////////////////
-
   users: {
+    text: 'testuser',
     create: {
-      username: 'TestCreateUserName',
-      firstname: 'TestCreateFirstName',
-      lastname: 'TestCreateLastName',
-      email: 'test.create@example.com',
-      password: 'TestCreatePassword',
+      prefix: 'create',
     },
     edit: {
-      username: 'TestEditUserName',
-      firstname: 'TestEditFirstName',
-      lastname: 'TestEditLastName',
-      email: 'test.edit@example.com',
-      password: 'TestEditPassword',
+      prefix: 'edit',
     },
   },
-
-  // //////////////////
-  // End users data //
-  // //////////////////
-
 };

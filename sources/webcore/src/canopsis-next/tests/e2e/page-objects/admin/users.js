@@ -1,5 +1,8 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
+const el = require('../../helpers/el');
+const sel = require('../../helpers/sel');
+
 const usersPageCommands = {
   verifyPageElementsBefore() {
     return this.waitForElementVisible('@dataTable')
@@ -8,6 +11,11 @@ const usersPageCommands = {
 
   verifyCreateUserModal() {
     return this.waitForElementVisible('@createUserModal');
+  },
+
+  verifyPageUserBefore(user) {
+    return this.waitForElementVisible('@dataTable')
+      .assert.visible(this.sel(user));
   },
 
   verifyCreateConfirmModal() {
@@ -19,12 +27,12 @@ const usersPageCommands = {
     return this.customClick('@addButton');
   },
 
-  clickEditButton() {
-    return this.customClick('@editButton');
+  clickEditButton(user) {
+    return this.customClick(this.el('@editButton', this.sel(user)));
   },
 
-  clickDeleteButton() {
-    return this.customClick('@deleteButton');
+  clickDeleteButton(user) {
+    return this.customClick(this.el('@deleteButton', this.sel(user)));
   },
 
   clickConfirmButton() {
@@ -68,15 +76,23 @@ const usersPageCommands = {
   },
 
   selectRole(idx = 1) {
-    const roleItemOption = `.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(${idx})`;
     return this.customClick('@roleField')
-      .waitForElementVisible(roleItemOption)
-      .customClick(roleItemOption);
+      .waitForElementVisible(this.el('@roleItemOption', idx))
+      .customClick(this.el('@roleItemOption', idx));
+  },
+
+  selectLanguage(idx = 1) {
+    return this.customClick('@languageField')
+      .waitForElementVisible(this.el('@languageItemOption', idx))
+      .customClick(this.el('@languageItemOption', idx));
   },
 
   clickSubmitButton() {
     return this.customClick('@submitButton');
   },
+
+  el,
+  sel,
 };
 
 module.exports = {
@@ -86,8 +102,8 @@ module.exports = {
   elements: {
     dataTable: '.v-datatable',
     addButton: sel('addButton'),
-    editButton: `.v-datatable tbody tr:last-child ${sel('editButton')}`,
-    deleteButton: `.v-datatable tbody tr:last-child ${sel('deleteButton')}`,
+    editButton: `%s ${sel('editButton')}`,
+    deleteButton: `%s ${sel('deleteButton')}`,
     confirmButton: sel('confirmButton'),
     createConfirmModal: sel('createConfirmModal'),
     createUserModal: sel('createUserModal'),
@@ -96,8 +112,10 @@ module.exports = {
     lastNameField: sel('lastName'),
     emailField: sel('email'),
     passwordField: sel('password'),
-    languageField: sel('language'),
     roleField: `${sel('roleLayout')} .v-input__slot`,
+    roleItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    languageField: `${sel('roleLanguage')} .v-input__slot`,
+    languageItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     submitButton: sel('submitButton'),
   },
   commands: [usersPageCommands],
