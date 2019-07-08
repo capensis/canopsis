@@ -1,5 +1,6 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 const el = require('../helpers/el');
+const { VUETIFY_ANIMATION_DELAY } = require('../../../src/config');
 
 const logoutPageCommands = {
   verifyPageElementsBefore() {
@@ -14,6 +15,14 @@ const logoutPageCommands = {
     });
 
     return this;
+  },
+
+  clickOnEveryPopupsCloseIcons() {
+    const { activePopupCloseIcon } = this.elements;
+
+    return this.api.elements(activePopupCloseIcon.locateStrategy, activePopupCloseIcon.selector, ({ value = [] }) => {
+      value.forEach(item => this.api.elementIdClick(item.ELEMENT).pause(VUETIFY_ANIMATION_DELAY));
+    });
   },
 
   browseGroupByName(name) {
@@ -39,6 +48,7 @@ const groupSideBar = sel('groupsSideBar');
 
 module.exports = {
   elements: {
+    activePopupCloseIcon: `${sel('popupsWrapper')} .v-alert .v-alert__dismissible .v-icon`,
     userTopBarDropdownButton: sel('userTopBarDropdownButton'),
     groupsSideBarButton: sel('groupsSideBarButton'),
     groupsSideBar: groupSideBar,
@@ -49,7 +59,6 @@ module.exports = {
     viewSideBarSelectorById: `${groupSideBar} .v-expansion-panel__body a[href^="/view/%s"]`,
     logoutButton: sel('logoutButton'),
     loginForm: sel('loginForm'),
-    activePopup: `${sel('popupsWrapper')} .v-alert`,
   },
   commands: [logoutPageCommands],
 };

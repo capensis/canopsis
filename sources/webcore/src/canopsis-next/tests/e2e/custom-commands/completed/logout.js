@@ -2,7 +2,12 @@
 
 module.exports.command = function logout() {
   this.page.auth.logout()
-    .verifyPageElementsBefore()
+    .verifyPageElementsBefore();
+
+  this.page.layout()
+    .clickOnEveryPopupsCloseIcons();
+
+  this.page.auth.logout()
     .clickUserNavigationTopBarButton()
     .clickLogoutButton();
 

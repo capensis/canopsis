@@ -20,8 +20,7 @@ const logoutPageCommands = {
   },
 
   clickLogoutButton() {
-    this.waitForElementNotPresent('@activePopup', 15000)
-      .waitForElementVisible('@logoutButton')
+    this.waitForElementVisible('@logoutButton')
       .click('@logoutButton')
       .api.pause(WAIT_PAUSE);
 
