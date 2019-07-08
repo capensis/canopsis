@@ -26,6 +26,7 @@
     "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
     "moment-timezone": "^0.5.21",
+    "nightwatch-xhr": "^0.4.6",
     "normalizr": "^3.2.4",
     "pug-plain-loader": "^1.0.0",
     "qs": "^6.5.2",
@@ -53,6 +54,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@babel/register": "^7.4.4",
     "@vue/cli-plugin-babel": "^3.0.0-beta.6",
     "@vue/cli-plugin-e2e-nightwatch": "^3.0.0-beta.6",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.6",
@@ -64,6 +66,7 @@
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.0.4",
     "babel-plugin-lodash": "^3.3.4",
+    "chromedriver": "^75.0.1",
     "deepmerge": "^3.2.0",
     "husky": "^1.3.1",
     "jest-localstorage-mock": "^2.2.0",

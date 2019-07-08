@@ -1,5 +1,13 @@
 // http://nightwatchjs.org/gettingstarted#settings-file
 
+/**
+ * The following code helps us for requiring es6 modules
+ */
+process.env.VUE_CLI_BABEL_TARGET_NODE = true;
+process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
+
+require('@babel/register');
+
 const parh = require('path');
 const deepmerge = require('deepmerge');
 
@@ -30,8 +38,14 @@ global.sel = sel;
 module.exports = deepmerge({
   src_folders: [parh.resolve('tests', 'e2e', 'specs')],
   output_folder: parh.resolve('tests', 'e2e', 'reports'),
-  custom_assertions_path: [parh.resolve('tests', 'e2e', 'custom-assertions')],
-  custom_commands_path: [parh.resolve('tests', 'e2e', 'custom-commands')],
+  custom_assertions_path: [
+    parh.resolve('node_modules', 'nightwatch-xhr', 'es5', 'assertions'),
+    parh.resolve('tests', 'e2e', 'custom-assertions'),
+  ],
+  custom_commands_path: [
+    parh.resolve('node_modules', 'nightwatch-xhr', 'es5', 'commands'),
+    parh.resolve('tests', 'e2e', 'custom-commands'),
+  ],
   page_objects_path: [parh.resolve('tests', 'e2e', 'page-objects')],
   globals_path: parh.resolve('tests', 'e2e', 'globals.js'),
 
