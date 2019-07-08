@@ -6,61 +6,47 @@
   disable-resize-watcher,
   app,
   )
-    div.brand.ma-0.secondary.lighten-1
-      img.logo(:src="appLogo")
-      div.version {{ version }}
-    v-list.mx-1(dark)
-      v-list-group.mt-2.mb-4.primary.elevation-3(
-      no-action,
-      prepend-icon="star",
-      active-class="white--text"
-      )
-        template(slot="activator")
-          v-list-tile
-            v-list-tile-content
+    v-layout(column)
+      div.brand.ma-0.secondary.lighten-1
+        img.logo(:src="appLogo")
+        div.version {{ version }}
+      v-list(dark)
+        v-list-group.mb-3(
+        prepend-icon="star",
+        )
+          template(slot="activator")
+            v-list-tile
               v-list-tile-title Favoris
-      v-list-group(
-        v-for="group in availableGroups",
-        :key="group._id",
-        no-action,
+        v-divider.white
+        v-list-group(
         prepend-icon="folder",
-      )
-        template(slot="activator")
-          v-list-tile
-            v-list-tile-content
-              v-list-tile-title {{ group.name }}
-        v-list-tile
-          v-list-tile-content
-            v-list-tile-title
-              router-link.panel-item-content-link(
-              v-for="view in group.views",
-              :key="view._id",
-              :title="view.title",
-              :to="getViewLink(view)"
-              )
-                v-layout.secondary(align-center, justify-space-between)
-                  v-flex
-                    v-layout(align-center)
-                      span.pl-2 {{ view.title }}
-                  v-flex
-                    v-layout(justify-end)
-                      v-btn.ma-0(
-                      v-show="checkViewEditButtonAccessById(view._id)",
-                      depressed,
-                      small,
-                      icon,
-                      @click.prevent="showEditViewModal(view)"
-                      )
-                        v-icon(small) edit
-                      v-btn.ma-0(
-                      v-show="isEditingMode",
-                      depressed,
-                      small,
-                      icon,
-                      @click.prevent="showDuplicateViewModal(view)"
-                      )
-                        v-icon(small) file_copy
-
+        )
+          template(slot="activator")
+            v-list-tile
+              v-list-tile-title Vues
+        v-list-group(
+        prepend-icon="dashboard",
+        )
+          template(slot="activator")
+            v-list-tile
+              v-list-tile-title Administration
+        v-list-group(
+        prepend-icon="dns",
+        )
+          template(slot="activator")
+            v-list-tile
+              v-list-tile-title Exploitation
+      div.actionPanel
+        v-layout
+          v-flex.text-xs-center(xs4)
+            v-btn(icon)
+              v-icon.white--text menu
+          v-flex.text-xs-center(xs4)
+            v-btn(icon)
+              v-icon.white--text settings
+          v-flex.text-xs-center(xs4)
+            v-btn(icon)
+              v-icon.error--text power_settings_new
 
   //v-expansion-panel.panel(
     v-if="hasReadAnyViewAccess",
@@ -273,5 +259,12 @@ export default {
     max-width: 100%;
     max-height: 100%;
     object-fit: scale-down;
+  }
+
+  .actionPanel {
+    position: absolute;
+    bottom: 1em;
+    left: 0;
+    width: 100%;
   }
 </style>
