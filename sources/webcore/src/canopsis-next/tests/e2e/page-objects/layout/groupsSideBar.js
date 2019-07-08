@@ -1,6 +1,6 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
-const el = require('../helpers/el');
-const { VUETIFY_ANIMATION_DELAY } = require('../../../src/config');
+const el = require('../../helpers/el');
+const { VUETIFY_ANIMATION_DELAY } = require('../../../../src/config');
 
 const logoutPageCommands = {
   verifyPageElementsBefore() {

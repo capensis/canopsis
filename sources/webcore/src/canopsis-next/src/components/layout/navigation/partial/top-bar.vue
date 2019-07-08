@@ -17,11 +17,11 @@
     v-spacer
     v-toolbar-items
       v-menu(v-show="exploitationLinks.length", bottom, offset-y)
-        v-btn.white--text(slot="activator", flat) {{ $t('common.exploitation') }}
+        v-btn.white--text(slot="activator", data-test="exploitation-menu", flat) {{ $t('common.exploitation') }}
         v-list.pb-0
           v-list-tile(v-for="(link, index) in exploitationLinks", :key="`exploitation-${index}`")
             v-list-tile-title
-              router-link(:to="link.route")
+              router-link(:to="link.route", :data-test="link.route.name")
                 v-layout(justify-space-between)
                   span.black--text {{ link.text }}
                   v-icon.ml-2 {{ link.icon }}
@@ -39,7 +39,7 @@
         v-list.pb-0
           v-list-tile
             v-list-tile-content
-              v-btn.ma-0.pa-1(flat, @click.prevent="showEditUserModal")
+              v-btn.ma-0.pa-1(data-test="userProfileButton", flat, @click.prevent="showEditUserModal")
                 v-layout(align-center)
                   v-icon person
                   div.ml-2 {{ $t('user.seeProfile') }}
