@@ -17,7 +17,7 @@
       select-all,
       )
         template(slot="items", slot-scope="props")
-          tr
+          tr(:data-test="props.item.id")
             td
               v-checkbox(v-model="props.selected", primary, hide-details)
             td {{ props.item.id }}
