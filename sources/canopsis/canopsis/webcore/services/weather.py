@@ -630,13 +630,6 @@ def exports(ws):
                         some_watched_ent_paused,
                         len(watcher[ResultKey.PBEHAVIORS.value]) > 0,
                         _pbehavior_types(watcher)):
-                if debug:
-                    with open("/tmp/plop.txt", "a") as fd:
-                        from pprint import pformat
-                        fd.write("\n=============================\n")
-                        fd.write("watcher name : {}\n".format(watcher["name"]))
-                        fd.write("Watcher pbehaviors {}\n".format(pformat(watcher["pbehaviors"])))
-
                 tileData = __TileData(watcher)
                 result.append(vars(tileData))
 
