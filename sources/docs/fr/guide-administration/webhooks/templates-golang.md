@@ -99,6 +99,23 @@ Si par exemple l'output d'un événement vaut `"SERVER#69420#DOWN"`, `{{ .Event.
 
 La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de caractères. Les blancs pris en compte sont ceux définis par Unicode et ils comprennent l'espace, la tabulation, l'espace insécable ainsi que les caractères de fin de ligne.
 
+##### `replace`
+
+`replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurences de la regex par la chaîne.
+
+Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va remplacer dans l'output de l'événement tous les caractères de fin de ligne par le caractère vide.
+
+##### `formattedDate`
+
+`formattedDate` est la fonction qui va transformer les dates en chaînes de caractères, suivant la syntaxe Golang. Elle ne fonctionne que sur les champs qui sont des `CpsTime`, comme par exemple `.Alarm.Value.CreationDate` ou `.Event.Timestamp`.
+
+Cette fonction prend en paramètre une chaîne qui est le format attendu de la date.
+
+| Directive | Correspondance UNIX | Définition | Exemples |
+|:-----------|:-------|:-----------|:-------|
+| `2006` | `%Y` | Année | 1970, 2019... |
+
+
 ## Exemples
 
 Cette section présente différents exemples de templates pour les liens et pour les payloads, accompagnés d'explications.
