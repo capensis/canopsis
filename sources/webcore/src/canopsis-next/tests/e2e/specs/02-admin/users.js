@@ -1,9 +1,24 @@
 // http://nightwatchjs.org/guide#usage
-const { login, users } = require('../../constants');
-
-const WAIT_PAUSE = 500;
+const { login, users, pause } = require('../../constants');
 
 const TEMPORARY_DATA = {};
+
+const onCreateUser = (browser, {
+  username, firstname, lastname, email, password,
+}) => {
+  browser.page.admin.users()
+    .clickAddButton()
+    .verifyCreateUserModal()
+    .setUsername(username)
+    .setFirstName(firstname)
+    .setLastName(lastname)
+    .setEmail(email)
+    .setPassword(password)
+    .selectRole()
+    .selectLanguage()
+    .clickSubmitButton()
+    .api.pause(pause);
+};
 
 module.exports = {
   async before(browser, done) {
@@ -31,24 +46,11 @@ module.exports = {
       password: `${prefix}-${text}-password`,
     };
 
-    const {
-      username, firstname, lastname, email, password,
-    } = TEMPORARY_DATA[prefix];
-
     browser.page.admin.users()
       .navigate()
-      .verifyPageElementsBefore()
-      .clickAddButton()
-      .verifyCreateUserModal()
-      .setUsername(username)
-      .setFirstName(firstname)
-      .setLastName(lastname)
-      .setEmail(email)
-      .setPassword(password)
-      .selectRole()
-      .selectLanguage()
-      .clickSubmitButton()
-      .api.pause(WAIT_PAUSE);
+      .verifyPageElementsBefore();
+
+    onCreateUser(browser, TEMPORARY_DATA[prefix]);
   },
 
   'Login new user with some name': async (browser) => {
@@ -102,7 +104,7 @@ module.exports = {
       .selectRole(4)
       .selectLanguage(2)
       .clickSubmitButton()
-      .api.pause(WAIT_PAUSE);
+      .api.pause(pause);
   },
 
   'Remove user with some username': (browser) => {
@@ -111,15 +113,65 @@ module.exports = {
     const editUser = TEMPORARY_DATA[edit.prefix].username;
 
     browser.page.admin.users()
-      .verifyPageUserBefore(editUser)
-      .clickDeleteButton(editUser)
-      .verifyCreateConfirmModal()
-      .clickConfirmButton()
-      .api.pause(WAIT_PAUSE)
       .verifyPageUserBefore(createUser)
       .clickDeleteButton(createUser)
       .verifyCreateConfirmModal()
       .clickConfirmButton()
-      .api.pause(WAIT_PAUSE);
+      .api.pause(pause);
+
+    browser.page.admin.users()
+      .verifyPageUserBefore(editUser)
+      .clickDeleteButton(editUser)
+      .verifyCreateConfirmModal()
+      .clickConfirmButton()
+      .api.pause(pause);
+  },
+
+  'Create mass users with some name': (browser) => {
+    const { text, counts, mass: { prefix } } = users;
+
+    TEMPORARY_DATA[prefix] = [];
+
+    for (let i = 0; i < counts; i += 1) {
+      TEMPORARY_DATA[prefix].push({
+        username: `${prefix}-${text}-name-${i}`,
+        firstname: `${prefix}-${text}-firstname-${i}`,
+        lastname: `${prefix}-${text}-lastname-${i}`,
+        email: `${prefix}-${text}-${i}-email@example.com`,
+        password: `${prefix}-${text}-password-${i}`,
+      });
+    }
+
+    TEMPORARY_DATA[prefix].map(user => onCreateUser(browser, user));
+  },
+
+  'Check pagination users table': (browser) => {
+    browser.page.admin.users()
+      .clickPrevButton()
+      .api.pause(pause);
+
+    browser.page.admin.users()
+      .clickNextButton()
+      .api.pause(pause);
+  },
+
+  'Delete mass users with some name': (browser) => {
+    const { mass: { prefix } } = users;
+
+    browser.page.admin.users()
+      .selectRange()
+      .api.pause(pause);
+
+    TEMPORARY_DATA[prefix].map(user => browser.page.admin.users()
+      .verifyPageUserBefore(user.username)
+      .clickOptionCheckbox(user.username)
+      .api.pause(pause));
+
+    browser.page.admin.users()
+      .verifyMassDeleteButton()
+      .clickMassDeleteButton()
+      .verifyCreateConfirmModal()
+      .clickConfirmButton()
+      .api.pause(pause);
   },
 };
