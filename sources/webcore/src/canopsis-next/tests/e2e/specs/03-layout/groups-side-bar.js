@@ -12,13 +12,6 @@ module.exports = {
     browser.end(done);
   },
 
-  'Browse view by name': (browser) => {
-    browser.page.layout.groupsSideBar()
-      .clickGroupsSideBarButton()
-      .browseGroupByName('Stats')
-      .browseViewByName('Histogram'); // TODO: put verification
-  },
-
   'Browse view by id': (browser) => {
     browser.page.layout.groupsSideBar()
       .clickGroupsSideBarButton()

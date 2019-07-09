@@ -1,9 +1,11 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
-const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
+const { modalCreator } = require('../../../helpers/page-object-creators');
 const el = require('../../../helpers/el');
 
 const commands = {
+  el,
+
   browseGroupById(id) {
     return this.customClick(this.el('@groupById', id));
   },
@@ -11,18 +13,14 @@ const commands = {
   browseViewById(id) {
     return this.customClick(this.el('@viewById', id));
   },
-
-  el,
 };
 
 const modalSelector = sel('selectViewModal');
 
 module.exports = modalCreator(modalSelector, {
   elements: {
-    ...elementsWrapperCreator(modalSelector, {
-      groupById: sel('group-%s'),
-      viewById: sel('view-%s'),
-    }),
+    groupById: sel('selectView-group-%s'),
+    viewById: sel('selectView-view-%s'),
   },
   commands: [commands],
 });
