@@ -6,24 +6,36 @@
   disable-resize-watcher,
   app,
   )
-    v-layout(column)
+    v-layout(column, fill-height)
       div.brand.ma-0.secondary.lighten-1
         img.logo(:src="appLogo")
         div.version {{ version }}
       v-list(dark)
-        v-list-group.mb-3(
+        v-list-group.mb-3.primary.elevation-3(
         prepend-icon="star",
         )
           template(slot="activator")
             v-list-tile
               v-list-tile-title Favoris
-        v-divider.white
         v-list-group(
         prepend-icon="folder",
+        no-action
         )
           template(slot="activator")
             v-list-tile
               v-list-tile-title Vues
+          v-list-group.secondary.lighten-1(subGroup, v-for="group in availableGroups", :key="group._id", no-action)
+            template(slot="activator")
+              v-list-tile
+                v-list-tile-title {{ group.name }}
+            v-list-tile(v-for="view in group.views", :key="view._id")
+              v-list-tile-title
+                router-link.panel-item-content-link(
+                :title="view.title",
+                :to="getViewLink(view)"
+                ) {{ view.title }}
+      v-spacer
+      v-list(dark)
         v-list-group(
         prepend-icon="dashboard",
         )
@@ -36,7 +48,7 @@
           template(slot="activator")
             v-list-tile
               v-list-tile-title Exploitation
-      div.actionPanel
+      div.secondary.lighten-2
         v-layout
           v-flex.text-xs-center(xs4)
             v-btn(icon)
