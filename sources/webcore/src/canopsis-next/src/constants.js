@@ -1,3 +1,5 @@
+import featuresService from '@/services/features';
+
 export const CRUD_ACTIONS = {
   create: 'create',
   read: 'read',
@@ -72,6 +74,7 @@ export const MODALS = {
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
+  selectViewTab: 'select-view-tab',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -207,6 +210,7 @@ export const WIDGET_TYPES = {
   statsTable: 'StatsTable',
   statsCalendar: 'StatsCalendar',
   statsNumber: 'StatsNumber',
+  statsPareto: 'StatsPareto',
   text: 'Text',
 };
 
@@ -219,6 +223,7 @@ export const SIDE_BARS = {
   statsTableSettings: 'stats-table-settings',
   statsCalendarSettings: 'stats-calendar-settings',
   statsNumberSettings: 'stats-number-settings',
+  statsParetoSettings: 'stats-pareto-settings',
   textSettings: 'text-settings',
 };
 
@@ -231,6 +236,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsNumber]: SIDE_BARS.statsNumberSettings,
   [WIDGET_TYPES.statsHistogram]: SIDE_BARS.statsHistogramSettings,
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
+  [WIDGET_TYPES.statsPareto]: SIDE_BARS.statsParetoSettings,
   [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
 };
 
@@ -314,6 +320,7 @@ export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
+  null: 'null',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -363,6 +370,10 @@ export const STATS_TYPES = {
     value: 'alarms_canceled',
     options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
   },
+  alarmsAcknowledged: {
+    value: 'alarms_acknowledged',
+    options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors],
+  },
   ackTimeSla: {
     value: 'ack_time_sla',
     options: [STATS_OPTIONS.recursive, STATS_OPTIONS.states, STATS_OPTIONS.authors, STATS_OPTIONS.sla],
@@ -381,7 +392,7 @@ export const STATS_TYPES = {
   },
   mtbf: {
     value: 'mtbf',
-    options: [],
+    options: [STATS_OPTIONS.recursive],
   },
   currentState: {
     value: 'current_state',
@@ -393,6 +404,14 @@ export const STATS_TYPES = {
   },
   currentOngoingAlarms: {
     value: 'current_ongoing_alarms',
+    options: [STATS_OPTIONS.states],
+  },
+  currentOngoingAlarmsWithAck: {
+    value: 'current_ongoing_alarms_with_ack',
+    options: [STATS_OPTIONS.states],
+  },
+  currentOngoingAlarmsWithoutAck: {
+    value: 'current_ongoing_alarms_without_ack',
     options: [STATS_OPTIONS.states],
   },
 };
@@ -529,6 +548,19 @@ export const STATS_DISPLAY_MODE_PARAMETERS = {
   },
 };
 
+export const STATS_CURVES_POINTS_STYLES = {
+  circle: 'circle',
+  cross: 'cross',
+  crossRot: 'crossRot',
+  dash: 'dash',
+  line: 'line',
+  rect: 'rect',
+  rectRounded: 'rectRounded',
+  rectRot: 'rectRot',
+  star: 'star',
+  triangle: 'triangle',
+};
+
 export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
@@ -540,16 +572,6 @@ export const STATS_CALENDAR_COLORS = {
     major: '#FFA726',
     critical: '#FF7043',
   },
-};
-
-export const LIVE_REPORTING_INTERVALS = {
-  today: 'today',
-  yesterday: 'yesterday',
-  last7Days: 'last7Days',
-  last30Days: 'last30Days',
-  thisMonth: 'thisMonth',
-  lastMonth: 'lastMonth',
-  custom: 'custom',
 };
 
 export const USERS_RIGHTS_MASKS = {
@@ -594,6 +616,10 @@ export const USERS_RIGHTS = {
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
         userFilter: 'listalarm_userFilter',
+
+        links: 'listalarm_links',
+
+        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
       },
     },
     context: {
@@ -623,12 +649,19 @@ export const USERS_RIGHTS = {
         entityCancel: 'serviceweather_entityCancel',
         entityManagePbehaviors: 'serviceweather_entityManagePbehaviors',
 
+        entityLinks: 'serviceweather_entityLinks',
+
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
       },
     },
   },
 };
+
+export const NOT_COMPLETED_USER_RIGHTS_KEYS = [
+  'business.alarmsList.actions.links',
+  'business.weather.actions.entityLinks',
+];
 
 export const WIDGETS_ACTIONS_TYPES = {
   alarmsList: {
@@ -644,6 +677,11 @@ export const WIDGETS_ACTIONS_TYPES = {
     cancel: 'cancel',
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
+
+
+    ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
+
+    links: 'links',
 
     listFilters: 'listFilters',
     editFilter: 'editFilter',
@@ -672,6 +710,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityPlay: 'entityPlay',
     entityCancel: 'entityCancel',
 
+    entityLinks: 'entityLinks',
+
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
   },
@@ -690,9 +730,13 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
 
+    [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
+
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+
+    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {
@@ -719,6 +763,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.entityCancel]: USERS_RIGHTS.business.weather.actions.entityCancel,
     [WIDGETS_ACTIONS_TYPES.weather.entityManagePbehaviors]:
       USERS_RIGHTS.business.weather.actions.entityManagePbehaviors,
+
+    [WIDGETS_ACTIONS_TYPES.weather.entityLinks]: USERS_RIGHTS.business.weather.actions.entityLinks,
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
@@ -877,3 +923,5 @@ export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
+
+export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';

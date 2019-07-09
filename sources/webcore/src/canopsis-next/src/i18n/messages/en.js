@@ -7,6 +7,8 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
+import featureService from '@/services/features';
+
 export default {
   common: {
     ok: 'Ok',
@@ -43,6 +45,7 @@ export default {
     recursive: 'Recursive',
     select: 'Select',
     states: 'States',
+    state: 'State',
     sla: 'Sla',
     authors: 'Authors',
     stat: 'Stat',
@@ -55,7 +58,7 @@ export default {
     password: 'Password',
     authKey: 'Auth. key',
     connect: 'Connect',
-    optionnal: 'optionnal',
+    optional: 'optional',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
@@ -163,8 +166,8 @@ export default {
       '</dl>',
   },
   entities: {
-    watcher: 'watcher',
-    entities: 'entities',
+    watcher: 'Watcher',
+    entities: 'Entities',
   },
   login: {
     standard: 'Standard',
@@ -204,6 +207,16 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
+    timeLine: {
+      titlePaths: {
+        by: 'by',
+      },
+      stateCounter: {
+        header: 'Cropped State (since last change of status)',
+        stateIncreased: 'State increased',
+        stateDecreased: 'State decreases',
+      },
+    },
     infoPopup: 'Info popup',
   },
   weather: {
@@ -234,6 +247,7 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
+      statsParetoSettings: 'Stats Pareto diagram settings',
       textSettings: 'Text settings',
     },
     advancedSettings: 'Advanced settings',
@@ -256,6 +270,7 @@ export default {
     tstop: 'End date',
     periodsNumber: 'Number of steps',
     statName: 'Stat name',
+    stats: 'Stats',
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
@@ -274,6 +289,9 @@ export default {
     },
     statsDateInterval: {
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
+      fields: {
+        quickRanges: 'Quick ranges',
+      },
       quickRanges: {
         [STATS_QUICK_RANGES.custom.value]: 'Custom',
         [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
@@ -355,6 +373,14 @@ export default {
     statsColor: {
       title: 'Stats color',
       pickColor: 'Pick a color',
+    },
+    statsAnnotationLine: {
+      title: 'Annotation line',
+      enabled: 'Is enabled?',
+      value: 'Value',
+      label: 'Label',
+      pickLineColor: 'Pick line color',
+      pickLabelColor: 'Pick label color',
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
@@ -621,6 +647,9 @@ export default {
         statsNumber: {
           title: 'Stats number',
         },
+        statsPareto: {
+          title: 'Pareto diagram',
+        },
         text: {
           title: 'Text',
         },
@@ -720,6 +749,13 @@ export default {
       externalData: 'External data',
       onSuccess: 'On success',
       onFailure: 'On failure',
+      tooltips: {
+        addValueRuleField: 'Add value rule field',
+        editValueRuleField: 'Edit value rule field',
+        addObjectRuleField: 'Add object rule field',
+        editObjectRuleField: 'Edit object rule field',
+        removeRuleField: 'Remove rule field',
+      },
     },
     viewTab: {
       create: {
@@ -763,6 +799,9 @@ export default {
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
+      info: {
+        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
+      },
     },
     createSnmpRule: {
       create: {
@@ -804,6 +843,9 @@ export default {
           formatter: 'Format (capture group with \\x)',
         },
       },
+    },
+    selectViewTab: {
+      title: 'Select tab',
     },
   },
   tables: {
@@ -935,6 +977,7 @@ export default {
     lineNotEmpty: 'This line is not empty',
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
+    statsRequestProblem: 'An error occurred while retrieving stats data',
   },
   calendar: {
     today: 'Today',
@@ -992,6 +1035,7 @@ export default {
       [STATS_TYPES.alarmsCreated.value]: 'Alarms created',
       [STATS_TYPES.alarmsResolved.value]: 'Alarms resolved',
       [STATS_TYPES.alarmsCanceled.value]: 'Alarms canceled',
+      [STATS_TYPES.alarmsAcknowledged.value]: 'Alarms acknowledged',
       [STATS_TYPES.ackTimeSla.value]: 'Ack time Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Resolve time Sla',
       [STATS_TYPES.timeInState.value]: 'Time in state',
@@ -1000,6 +1044,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Current state',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Current ongoing alarms with ack',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Current ongoing alarms without ack',
     },
   },
   eventFilter: {
@@ -1114,4 +1160,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
+
+  ...featureService.get('i18n.en'),
 };

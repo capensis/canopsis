@@ -5,6 +5,6 @@ Cette section vous accompagne dans l'administration avancée de Canopsis. Elle v
 **Sommaire**
 
 - [Authentification avancée](authentification.md)
-- [Sauvegarde et restauration de BDD](sauvegarde-et-restauration.md)
+- [Actions sur la BDD (nettoyage, sauvegarde et restauration)](actions-base-donnees.md)
 - [Sécurité avancée](configuration-parefeu-et-selinux.md)
 - [Reverse proxy](reverse-proxy.md)

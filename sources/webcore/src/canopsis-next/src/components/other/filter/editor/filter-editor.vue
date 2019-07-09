@@ -40,6 +40,7 @@ import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
+import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
 import FilterGroup from './partial/filter-group.vue';
 import FilterResultsAlarm from './partial/results/alarm.vue';
@@ -144,8 +145,7 @@ export default {
         name: 'filter',
         rules: 'required:true',
         getter: () => {
-          const firstRule = Object.values(this.filter.rules)[0];
-          const isFilterNotEmpty = firstRule && firstRule.field !== '' && firstRule.operator !== '';
+          const isFilterNotEmpty = !checkIfGroupIsEmpty(this.filter);
           const isRequestStringNotEmpty = this.isRequestStringChanged && this.requestString !== '';
 
           return isFilterNotEmpty || isRequestStringNotEmpty;

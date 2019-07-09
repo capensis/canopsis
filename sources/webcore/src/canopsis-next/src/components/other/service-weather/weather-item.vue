@@ -10,7 +10,7 @@
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
-        div.watcherName.pt-3(v-html="compiledTemplate")
+        v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
         v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
@@ -22,6 +22,7 @@
 
 <script>
 import { find } from 'lodash';
+import VRuntimeTemplate from 'v-runtime-template';
 
 import {
   MODALS,
@@ -45,6 +46,9 @@ import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 export default {
+  components: {
+    VRuntimeTemplate,
+  },
   mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
@@ -154,11 +158,13 @@ export default {
     },
   },
   methods: {
-    showAdditionalInfoModal() {
-      if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
-        this.showAlarmListModal();
-      } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
-        this.showMainInfoModal();
+    showAdditionalInfoModal(e) {
+      if (e.target.tagName !== 'A' || !e.target.href) {
+        if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
+          this.showAlarmListModal();
+        } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
+          this.showMainInfoModal();
+        }
       }
     },
 
@@ -166,6 +172,7 @@ export default {
       this.showModal({
         name: MODALS.watcher,
         config: {
+          color: this.format.color,
           watcher: this.watcher,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
@@ -256,11 +263,14 @@ export default {
   }
 
   .watcherName {
-    color: white;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
+
+    &, & /deep/ a {
+      color: white;
+    }
   }
 
   @keyframes blink {

@@ -10,7 +10,7 @@ Par défaut, l'interface web de Canopsis est disponible sur : [http://localhost
 
 Si elle n'est pas activée par défaut, la nouvelle interface « UIv3 » peut être chargée explicitement à l'adresse [http://localhost:8082/en/static/canopsis-next/dist/index.html#](http://localhost:8082/en/static/canopsis-next/dist/index.html#).
 
-Identifiants par défaut : `root` / `root`.
+Identifiants par défaut : `root` / `root`. Veuillez noter que cette interface n'est pas compatible avec Internet Explorer, qui n'est plus maintenu depuis 2013.
 
 Parcourez ensuite [le guide d'utilisation](../../../guide-utilisation/) pour en apprendre davantage sur l'interface web de Canopsis.
 

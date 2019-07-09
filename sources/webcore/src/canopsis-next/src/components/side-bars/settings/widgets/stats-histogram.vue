@@ -12,14 +12,17 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
-      field-stats-selector(v-model="settings.widget.parameters.stats", required)
-      v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
+      v-divider
+      field-stats-selector(v-model="settings.widget.parameters.stats", required)
       v-divider
       field-stats-colors(
       :stats="settings.widget.parameters.stats",
       v-model="settings.widget.parameters.statsColors"
       )
+      v-divider
+      field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
+      v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
@@ -35,6 +38,7 @@ import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatsSelector from './fields/stats/stats-selector.vue';
 import FieldStatsColors from './fields/stats/stats-colors.vue';
+import FieldStatsAnnotationLine from './fields/stats/annotation-line.vue';
 
 export default {
   name: SIDE_BARS.statsHistogramSettings,
@@ -48,6 +52,7 @@ export default {
     FieldDateInterval,
     FieldStatsSelector,
     FieldStatsColors,
+    FieldStatsAnnotationLine,
   },
   mixins: [widgetSettingsMixin],
   data() {

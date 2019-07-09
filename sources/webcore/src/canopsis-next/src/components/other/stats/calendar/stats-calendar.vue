@@ -2,6 +2,7 @@
   div
     v-layout.white.calender-wrapper
       progress-overlay(:pending="pending")
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       ds-calendar(
       :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
       :events="events",
@@ -30,7 +31,7 @@ import { get, omit, pick, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { MODALS, WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { MODALS, WIDGET_TYPES } from '@/constants';
 
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
@@ -41,11 +42,12 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import DsCalendar from './day-span/calendar.vue';
+import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { ProgressOverlay, DsCalendar },
+  components: { ProgressOverlay, DsCalendar, StatsAlertOverlay },
   mixins: [modalMixin, widgetQueryMixin],
   props: {
     widget: {
@@ -56,6 +58,8 @@ export default {
   data() {
     return {
       pending: true,
+      hasError: false,
+      serverErrorMessage: null,
       alarms: [],
       alarmsCollections: [],
       calendar: Calendar.months(),
@@ -147,10 +151,6 @@ export default {
         widgetParameters.mainFilter = meta.filter;
       }
 
-      if (query.tstart || query.tstop) {
-        query.interval = LIVE_REPORTING_INTERVALS.custom;
-      }
-
       this.showModal({
         name: MODALS.alarmsList,
         config: {
@@ -177,42 +177,51 @@ export default {
     },
 
     async fetchList() {
-      const query = omit(this.query, ['filters', 'considerPbehaviors']);
+      try {
+        const query = omit(this.query, ['filters', 'considerPbehaviors']);
 
-      this.pending = true;
+        this.pending = true;
+        this.hasError = false;
+        this.serverErrorMessage = null;
 
-      if (isEmpty(this.query.filters)) {
-        let { alarms } = await this.fetchAlarmsListWithoutStore({
-          params: query,
-        });
+        if (isEmpty(this.query.filters)) {
+          let { alarms } = await this.fetchAlarmsListWithoutStore({
+            withoutCatch: true,
+            params: query,
+          });
 
-        if (this.query.considerPbehaviors) {
-          alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
-        }
-
-        this.alarms = alarms;
-        this.alarmsCollections = [];
-      } else {
-        const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
-          params: {
-            ...query,
-            filter,
-          },
-        })));
-
-
-        this.alarmsCollections = results.map(({ alarms }) => {
           if (this.query.considerPbehaviors) {
-            return alarms.filter(alarm => isEmpty(alarm.pbehaviors));
+            alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
           }
 
-          return alarms;
-        });
+          this.alarms = alarms;
+          this.alarmsCollections = [];
+        } else {
+          const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
+            withoutCatch: true,
+            params: {
+              ...query,
+              filter,
+            },
+          })));
 
-        this.alarms = [];
+
+          this.alarmsCollections = results.map(({ alarms }) => {
+            if (this.query.considerPbehaviors) {
+              return alarms.filter(alarm => isEmpty(alarm.pbehaviors));
+            }
+
+            return alarms;
+          });
+
+          this.alarms = [];
+        }
+      } catch (err) {
+        this.hasError = true;
+        this.serverErrorMessage = err.description || null;
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = false;
     },
   },
 };
@@ -264,6 +273,7 @@ export default {
 
     .multiple {
       & /deep/ .ds-calendar-event-menu {
+        position: relative;
         height: 20px;
 
         .ds-ev-title {

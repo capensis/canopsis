@@ -2,7 +2,7 @@
   div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        alarm-list-search(:query.sync="query")
+        alarm-list-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
         v-if="hasColumns",
@@ -12,33 +12,35 @@
         type="top",
         @input="updateQueryPage"
         )
-      v-flex(v-if="hasAccessToListFilters")
+      v-flex
         filter-selector(
         :label="$t('settings.selectAFilter')",
         :filters="viewFilters",
-        :lockedFilters="widgetViewFilters"
+        :lockedFilters="widgetViewFilters",
         :value="mainFilter",
         :condition="mainFilterCondition",
         :hasAccessToEditFilter="hasAccessToEditFilter",
         :hasAccessToUserFilter="hasAccessToUserFilter",
+        :hasAccessToListFilter="hasAccessToListFilter",
         @input="updateSelectedFilter",
         @update:condition="updateSelectedCondition",
         @update:filters="updateFilters"
         )
       v-flex
         v-chip.primary.white--text(
-        v-if="query.interval",
-        @input="removeHistoryFilter",
+        v-if="activeRange",
         close,
         label,
-        ) {{ $t(`modals.liveReporting.${query.interval}`) }}
+        @input="removeHistoryFilter"
+        ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
-          v-icon(:color="query.interval ? 'primary' : 'black'") schedule
+          v-icon(:color="activeRange ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
-      v-data-table(
+      v-data-table.alarms-list-table(
+      :class="vDataTableClass",
       v-model="selected",
       :items="alarms",
       :headers="headers",
@@ -68,7 +70,7 @@
             td
               actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
-          time-line(:alarmProps="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
+          time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
@@ -87,9 +89,11 @@ import { omit, pick, isEmpty } from 'lodash';
 
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
+import { findRange } from '@/helpers/date-intervals';
+
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import TimeLine from '@/components/other/alarm/timeline/time-line.vue';
+import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
@@ -157,6 +161,16 @@ export default {
     };
   },
   computed: {
+    activeRange() {
+      const { tstart, tstop } = this.query;
+
+      if (tstart || tstop) {
+        return findRange(tstart, tstop);
+      }
+
+      return null;
+    },
+
     selectedIds() {
       return this.selected.map(item => item._id);
     },
@@ -169,7 +183,23 @@ export default {
       return [];
     },
 
-    hasAccessToListFilters() {
+    vDataTableClass() {
+      const columnsLength = this.headers.length;
+      const COLUMNS_SIZES_VALUES = {
+        sm: { min: 0, max: 10, label: 'sm' },
+        md: { min: 11, max: 12, label: 'md' },
+        lg: { min: 13, max: Number.MAX_VALUE, label: 'lg' },
+      };
+
+      const { label = COLUMNS_SIZES_VALUES.sm.label } = Object.values(COLUMNS_SIZES_VALUES)
+        .find(({ min, max }) => columnsLength >= min && columnsLength <= max);
+
+      return {
+        [`columns-${label}`]: true,
+      };
+    },
+
+    hasAccessToListFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 
@@ -183,14 +213,14 @@ export default {
   },
   methods: {
     removeHistoryFilter() {
-      this.query = omit(this.query, ['interval', 'tstart', 'tstop']);
+      this.query = omit(this.query, ['tstart', 'tstop']);
     },
 
     showEditLiveReportModal() {
       this.showModal({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['interval', 'tstart', 'tstop']),
+          ...pick(this.query, ['tstart', 'tstop']),
           action: params => this.query = { ...this.query, ...params },
         },
       });
@@ -213,3 +243,62 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .alarms-list-table {
+    &.columns-lg {
+      table.v-table {
+        tbody, thead {
+          td, th {
+            padding: 0 8px;
+          }
+
+          @media screen and (max-width: 1600px) {
+            td, th {
+              padding: 0 4px;
+            }
+          }
+
+          @media screen and (max-width: 1450px) {
+            td, th {
+              font-size: 0.85em;
+            }
+
+            .badge {
+              font-size: inherit;
+            }
+          }
+        }
+      }
+    }
+
+    &.columns-md {
+      table.v-table {
+        tbody, thead {
+          @media screen and (max-width: 1700px) {
+            td, th {
+              padding: 0 12px;
+            }
+          }
+
+          @media screen and (max-width: 1250px) {
+            td, th {
+              padding: 0 8px;
+            }
+          }
+
+          @media screen and (max-width: 1150px) {
+            td, th {
+              font-size: 0.85em;
+              padding: 0 4px;
+            }
+
+            .badge {
+              font-size: inherit;
+            }
+          }
+        }
+      }
+    }
+  }
+</style>

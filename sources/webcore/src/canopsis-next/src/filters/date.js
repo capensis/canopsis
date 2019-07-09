@@ -1,10 +1,9 @@
-import moment from 'moment';
+import convertTimestampToMoment from '@/helpers/date';
 
 import { DATETIME_FORMATS } from '@/constants';
 
 export default function (date, format, ignoreTodayChecker, defaultValue) {
   let momentFormat = format;
-  let dateObject;
 
   if (DATETIME_FORMATS[format]) {
     momentFormat = DATETIME_FORMATS[format];
@@ -14,12 +13,7 @@ export default function (date, format, ignoreTodayChecker, defaultValue) {
     return defaultValue || date;
   }
 
-  // If it's unix timestamp in seconds
-  if (typeof date === 'number' && date < 100000000000) {
-    dateObject = moment.unix(date);
-  } else {
-    dateObject = moment(date);
-  }
+  const dateObject = convertTimestampToMoment(date);
 
   if (!date || !dateObject || !dateObject.isValid()) {
     console.warn('Could not build a valid `moment` object from input.');
@@ -32,3 +26,4 @@ export default function (date, format, ignoreTodayChecker, defaultValue) {
 
   return dateObject.format(momentFormat);
 }
+

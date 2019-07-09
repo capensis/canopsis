@@ -1,7 +1,8 @@
 <template lang="pug">
-  div.stats-wrapper
+  div.position-relative
     progress-overlay(:pending="pending")
-    stats-histogram-chart(:labels="labels", :datasets="datasets")
+    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+    stats-histogram-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
 <script>
@@ -16,11 +17,13 @@ import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrap
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
+import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 import StatsHistogramChart from './stats-histogram-chart.vue';
 
 export default {
   components: {
     ProgressOverlay,
+    StatsAlertOverlay,
     StatsHistogramChart,
   },
   mixins: [
@@ -48,9 +51,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .stats-wrapper {
-    position: relative;
-  }
-</style>

@@ -19,15 +19,16 @@
           v-validate="'required'",
           data-vv-name="title",
           )
-          v-switch(
-          v-if="config.withTrend",
-          :label="$t('common.trend')",
-          v-model="form.trend",
-          hide-details
-          )
-          v-card(v-if="form.stat.options.length", color="secondary white--text", dark)
+          v-card(v-if="form.stat.options.length || config.withTrend", color="secondary white--text", dark)
             v-card-title {{ $t('common.parameters') }}
             v-card-text
+              v-switch(
+              v-if="config.withTrend",
+              :label="$t('common.trend')",
+              v-model="form.trend",
+              hide-details,
+              color="primary"
+              )
               template(v-for="option in form.stat.options")
                 v-switch(
                 v-if="option === $constants.STATS_OPTIONS.recursive"
