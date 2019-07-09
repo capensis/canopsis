@@ -12,13 +12,37 @@ module.exports = {
     browser.end(done);
   },
 
-  'Browse exploitation event-filter': (browser) => {
-    browser.page.layout.topBar()
-      .clickUserProfileButton()
-      .api.pause(5000);
+  'Open current user modal': (browser) => {
+    const topBar = browser.page.layout.topBar();
+    const popup = browser.page.layout.popup();
+    const createUserModal = browser.page.modals.admin.createUser();
+
+    popup.clickOnEveryPopupsCloseIcons();
+
+    topBar.clickUserDropdown()
+      .clickUserProfileButton();
+
+    createUserModal.verifyModalOpened();
   },
 
-  // 'Edit user with some username': (browser) => {},
-  //
-  // 'Remove user with some username': (browser) => {},
+  'Select current user default view': (browser) => {
+    const createUserModal = browser.page.modals.admin.createUser();
+    const selectViewModal = browser.page.modals.view.selectView();
+
+    createUserModal.clickSelectDefaultViewButton();
+
+    selectViewModal.verifyModalOpened()
+      .browseGroupById('05b2e049-b3c4-4c5b-94a5-6e7ff142b28c') // TODO: use from some constants file
+      .browseViewById('875df4c2-027b-4549-8add-e20ed7ff7d4f') // TODO: use from some constants file
+      .verifyModalClosed();
+
+    createUserModal.clickSubmitButton()
+      .verifyModalClosed();
+  },
+
+  'Check default view': (browser) => {
+    browser.url(process.env.VUE_DEV_SERVER_URL)
+      .page.view()
+      .verifyPageElementsBeforeById('875df4c2-027b-4549-8add-e20ed7ff7d4f'); // TODO: use from some constants file
+  },
 };

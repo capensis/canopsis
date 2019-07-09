@@ -1,8 +1,10 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
-const el = require('../../helpers/el');
-const { VUETIFY_ANIMATION_DELAY } = require('../../../../src/config');
 
-const logoutPageCommands = {
+const el = require('../../helpers/el');
+const { elementsWrapperCreator } = require('../../helpers/page-object-creators');
+
+
+const commands = {
   verifyPageElementsBefore() {
     return this.waitForElementVisible('@groupsSideBarButton');
   },
@@ -15,14 +17,6 @@ const logoutPageCommands = {
     });
 
     return this;
-  },
-
-  clickOnEveryPopupsCloseIcons() {
-    const { activePopupCloseIcon } = this.elements;
-
-    return this.api.elements(activePopupCloseIcon.locateStrategy, activePopupCloseIcon.selector, ({ value = [] }) => {
-      value.forEach(item => this.api.elementIdClick(item.ELEMENT).pause(VUETIFY_ANIMATION_DELAY));
-    });
   },
 
   browseGroupByName(name) {
@@ -44,21 +38,20 @@ const logoutPageCommands = {
   el,
 };
 
-const groupSideBar = sel('groupsSideBar');
+const groupsSideBar = sel('groupsSideBar');
 
 module.exports = {
   elements: {
-    activePopupCloseIcon: `${sel('popupsWrapper')} .v-alert .v-alert__dismissible .v-icon`,
-    userTopBarDropdownButton: sel('userTopBarDropdownButton'),
     groupsSideBarButton: sel('groupsSideBarButton'),
-    groupsSideBar: groupSideBar,
-    groupsSideBarClosed: `${groupSideBar}.v-navigation-drawer--close`,
-    groupSideBarSelectorByName: `${groupSideBar} .v-expansion-panel__header span[title="%s"]`,
-    groupSideBarSelectorById: `${groupSideBar} .v-expansion-panel__header [data-test="group-%s"]`,
-    viewSideBarSelectorByName: `${groupSideBar} .v-expansion-panel__body a[title="%s"]`,
-    viewSideBarSelectorById: `${groupSideBar} .v-expansion-panel__body a[href^="/view/%s"]`,
-    logoutButton: sel('logoutButton'),
-    loginForm: sel('loginForm'),
+    groupsSideBar,
+    groupsSideBarClosed: `${groupsSideBar}.v-navigation-drawer--close`,
+
+    ...elementsWrapperCreator(groupsSideBar, {
+      groupSideBarSelectorByName: '.v-expansion-panel__header span[title="%s"]',
+      groupSideBarSelectorById: `.v-expansion-panel__header ${sel('group-%s')}`,
+      viewSideBarSelectorByName: '.v-expansion-panel__body a[title="%s"]',
+      viewSideBarSelectorById: '.v-expansion-panel__body a[href^="/view/%s"]',
+    }),
   },
-  commands: [logoutPageCommands],
+  commands: [commands],
 };
