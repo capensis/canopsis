@@ -11,5 +11,8 @@ module.exports = {
     edit: {
       prefix: 'edit',
     },
+    mass: {
+      prefix: 'mass',
+    },
   },
 };
