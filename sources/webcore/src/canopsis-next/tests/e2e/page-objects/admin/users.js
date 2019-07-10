@@ -3,7 +3,7 @@
 const el = require('../../helpers/el');
 const sel = require('../../helpers/sel');
 
-const usersPageCommands = {
+const commands = {
   verifyPageElementsBefore() {
     return this.waitForElementVisible('@dataTable')
       .assert.visible('@addButton');
@@ -150,5 +150,5 @@ module.exports = {
     languageItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     submitButton: sel('submitButton'),
   },
-  commands: [usersPageCommands],
+  commands: [commands],
 };
