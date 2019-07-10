@@ -7,7 +7,7 @@ module.exports = {
   ],
   transform: {
     '^.+\\.vue$': 'vue-jest',
-    '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
@@ -16,4 +16,5 @@ module.exports = {
     'jest-serializer-vue',
   ],
   setupFiles: ['jest-localstorage-mock'],
+  setupTestFrameworkScriptFile: '<rootDir>/tests/unit/jest.setup-test-framework',
 };

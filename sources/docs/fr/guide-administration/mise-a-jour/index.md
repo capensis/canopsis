@@ -102,3 +102,4 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.20.0](../../notes-de-version/3.20.0.md)
 *  [3.21.0](../../notes-de-version/3.21.0.md)
 *  [3.22.0](../../notes-de-version/3.22.0.md)
+*  [3.23.0](../../notes-de-version/3.23.0.md)

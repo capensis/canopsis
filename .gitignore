@@ -10,6 +10,7 @@ build_messages.txt
 *~
 .\#*
 \#*\#
+*.*.swp
 Vagrantfile
 *.vagrant
 requirements_control
@@ -21,7 +22,6 @@ tools/catag/vendor
 .Spotlight-V100
 .Trashes
 .vscode
-
 # python wheels
 *.whl
 # python bytecode

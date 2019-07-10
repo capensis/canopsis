@@ -574,16 +574,6 @@ export const STATS_CALENDAR_COLORS = {
   },
 };
 
-export const LIVE_REPORTING_INTERVALS = {
-  today: 'today',
-  yesterday: 'yesterday',
-  last7Days: 'last7Days',
-  last30Days: 'last30Days',
-  thisMonth: 'thisMonth',
-  lastMonth: 'lastMonth',
-  custom: 'custom',
-};
-
 export const USERS_RIGHTS_MASKS = {
   create: 8,
   read: 4,

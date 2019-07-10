@@ -28,6 +28,6 @@ describe('Entities plugin', () => {
 
     const alarm = store.getters['entities/getItem'](ENTITIES_TYPES.alarm, alarms[0]._id);
 
-    expect(alarm).toBe(null);
+    expect(alarm).toEqual(alarms[0]);
   });
 });
