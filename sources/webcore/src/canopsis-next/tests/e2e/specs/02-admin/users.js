@@ -1,5 +1,6 @@
 // http://nightwatchjs.org/guide#usage
-const { login, users, pause } = require('../../constants');
+
+const { USERS, CONFIGS } = require('../../constants');
 
 const TEMPORARY_DATA = {};
 
@@ -7,25 +8,24 @@ const onCreateUser = (browser, {
   username, firstname, lastname, email, password,
 }) => {
   browser.page.admin.users()
-    .clickAddButton()
-    .verifyCreateUserModal()
+    .clickAddButton();
+
+  browser.page.modals.admin.createUser()
+    .verifyModalOpened()
     .setUsername(username)
     .setFirstName(firstname)
     .setLastName(lastname)
     .setEmail(email)
     .setPassword(password)
     .selectRole()
-    .selectLanguage()
     .clickSubmitButton()
-    .api.pause(pause);
+    .verifyModalClosed();
 };
 
 module.exports = {
   async before(browser, done) {
-    const { username, password } = login;
-
     await browser.maximizeWindow()
-      .completed.login(username, password);
+      .completed.loginAsAdmin();
 
     done();
   },
@@ -36,7 +36,7 @@ module.exports = {
   },
 
   'Create new user with some name': (browser) => {
-    const { text, create: { prefix } } = users;
+    const { text, create: { prefix } } = USERS;
 
     TEMPORARY_DATA[prefix] = {
       username: `${prefix}-${text}-name`,
@@ -54,7 +54,7 @@ module.exports = {
   },
 
   'Login new user with some name': async (browser) => {
-    const { create: { prefix } } = users;
+    const { create: { prefix } } = USERS;
     const { username, password } = TEMPORARY_DATA[prefix];
 
     await browser.completed.logout()
@@ -63,15 +63,13 @@ module.exports = {
   },
 
   'Login root': async (browser) => {
-    const { username, password } = login;
-
     await browser.completed.logout()
       .maximizeWindow()
-      .completed.login(username, password);
+      .completed.loginAsAdmin();
   },
 
   'Edit user with some username': (browser) => {
-    const { text, create, edit: { prefix } } = users;
+    const { text, create, edit: { prefix } } = USERS;
 
     TEMPORARY_DATA[prefix] = {
       username: `${prefix}-${text}-name`,
@@ -104,11 +102,11 @@ module.exports = {
       .selectRole(4)
       .selectLanguage(2)
       .clickSubmitButton()
-      .api.pause(pause);
+      .api.pause(CONFIGS.pause);
   },
 
   'Remove user with some username': (browser) => {
-    const { create, edit } = users;
+    const { create, edit } = USERS;
     const createUser = TEMPORARY_DATA[create.prefix].username;
     const editUser = TEMPORARY_DATA[edit.prefix].username;
 
@@ -117,18 +115,18 @@ module.exports = {
       .clickDeleteButton(createUser)
       .verifyCreateConfirmModal()
       .clickConfirmButton()
-      .api.pause(pause);
+      .api.pause(CONFIGS.pause);
 
     browser.page.admin.users()
       .verifyPageUserBefore(editUser)
       .clickDeleteButton(editUser)
       .verifyCreateConfirmModal()
       .clickConfirmButton()
-      .api.pause(pause);
+      .api.pause(CONFIGS.pause);
   },
 
   'Create mass users with some name': (browser) => {
-    const { text, counts, mass: { prefix } } = users;
+    const { text, counts, mass: { prefix } } = USERS;
 
     TEMPORARY_DATA[prefix] = [];
 
@@ -148,30 +146,30 @@ module.exports = {
   'Check pagination users table': (browser) => {
     browser.page.admin.users()
       .clickPrevButton()
-      .api.pause(pause);
+      .api.pause(CONFIGS.pause);
 
     browser.page.admin.users()
       .clickNextButton()
-      .api.pause(pause);
+      .api.pause(CONFIGS.pause);
   },
 
   'Delete mass users with some name': (browser) => {
-    const { mass: { prefix } } = users;
+    const { mass: { prefix } } = USERS;
 
     browser.page.admin.users()
       .selectRange()
-      .api.pause(pause);
+      .api.pause(CONFIGS.pause);
 
     TEMPORARY_DATA[prefix].map(user => browser.page.admin.users()
       .verifyPageUserBefore(user.username)
       .clickOptionCheckbox(user.username)
-      .api.pause(pause));
+      .api.pause(CONFIGS.pause));
 
     browser.page.admin.users()
       .verifyMassDeleteButton()
       .clickMassDeleteButton()
       .verifyCreateConfirmModal()
       .clickConfirmButton()
-      .api.pause(pause);
+      .api.pause(CONFIGS.pause);
   },
 };

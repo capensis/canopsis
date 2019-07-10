@@ -61,7 +61,7 @@ module.exports = deepmerge({
         fileName: 'test-result', // Required field
         nameAfterTest: true,
         format: 'mp4',
-        enabled: true,
+        enabled: false,
         deleteOnSuccess: true,
         path: parh.resolve('tests', 'e2e', 'records'),
         resolution: '1440x900',
