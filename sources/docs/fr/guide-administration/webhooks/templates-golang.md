@@ -109,10 +109,12 @@ Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour para
 
 `formattedDate` est la fonction qui va transformer les dates en chaînes de caractères, suivant la syntaxe Golang. Elle ne fonctionne que sur les champs qui sont des `CpsTime`, comme par exemple `.Alarm.Value.CreationDate` ou `.Event.Timestamp`.
 
-Cette fonction prend en paramètre une chaîne qui est le format attendu de la date.
+Cette fonction prend en paramètre une chaîne qui est le format attendu de la date. La chaîne doit correspondre à la syntaxe des dates en Go. Le tableau ci-dessous montre quelques directives qui sont reconnues, ainsi que leur correspondance avec la fonction `date`.
 
-| Directive | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition | Exemples |
+| Directive pour les templates | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition | Exemples |
 |:-----------|:-------|:-----------|:-------|
+| `Mon` | `%a` | Abréviation locale du jour de la semaine | Mon..Sun |
+| `Monday` | `%A` | Nom local du jour de la semaine  | Monday..Sunday |
 | `Jan` | `%b` | Abréviation locale du nom du mois | Jan..Dec |
 | `January` | `%B` | Nom local du mois  | January..December |
 | `01` | `%d` | Jour du mois | 01..31 |
@@ -121,7 +123,9 @@ Cette fonction prend en paramètre une chaîne qui est le format attendu de la d
 | `04` | `%M` | Minute | 01..59 |
 | `05` | `%S` | Seconde | 01..61 |
 | `2006` | `%Y` | Année | 1970, 1984, 2019... |
+| `MST` | `%Z` | Fuseau horaire | CEST, EDT, JST... |
 
+Ainsi, pour afficher transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `formattedDate \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
 
 ## Exemples
 
@@ -235,9 +239,43 @@ Ici, le type vaut tout le temps `"JSON"` et la présence des guillemets est obli
 }
 ```
 
+#### Formattage de la date
+
+Cette section illustre l'utilisation de la fonction `formattedDate` pour le format des dates. Ici, l'évenèment a pour timestamp `2009-11-10 23:00:00 UTC`.
+
+La fonction utilise la syntaxe Go pour le formattage des dates. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
+
+```json
+{
+    "payload" : "{\"moment\": {{ .Event.Timestamp | formattedDate \"%Y-%m-%d %H:%M:%S\" | json }} }"
+}
+```
+
+Là, le formattage UNIX a été utilisé et il n'a pas été reconnu par le moteur Go. Par conséquent, la chaîne a été renvoyée à l'identique.
+
+```json
+{
+    "moment": "%Y-%m-%d %H:%M:%S"
+}
+```
+
+Voici l'équivalent avec la syntaxe Go, qui va générer le résultat attendu.
+
+```json
+{
+    "payload" : "{\"moment\": {{ .Event.Timestamp | formattedDate \"2006-02-01 15:04:05\" | json }} }"
+}
+```
+
+```json
+{
+    "moment": "2009-10-11 23:00:00"
+}
+```
+
 #### Fonctions en série
 
-Enfin, on peut enchaîner plusieurs fonctions afin de transformer des variables. Dans le cas cas suivant, on va transformer la variable `.Event.Output` qui vaut `c0ffee - beef- facade      -a5a5a5`.
+Enfin, on peut enchaîner plusieurs fonctions afin de transformer des variables. Dans le cas suivant, on va transformer la variable `.Event.Output` qui vaut `c0ffee - beef- facade      -a5a5a5`.
 
 ```json
 {
@@ -250,5 +288,19 @@ On découpe l'output avec `split` qui nous retourne ` facade      `, puis trim e
 ```json
 {
     "message": "facade"
+}
+```
+
+Voici un deuxième exemple qui combine `formattedDate` puis `json_unquote` pour générer un message concernant la date de l'événement.
+
+```json
+{
+    "payload" : "{\"note\": \"The event happened on a {{ .Event.Timestamp | formattedDate \"Monday\" | json_unquote }}.\" }"
+}
+```
+
+```json
+{
+    "note": "The event happened on a Tuesday."
 }
 ```
