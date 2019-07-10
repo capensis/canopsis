@@ -49,6 +49,10 @@
   height: 100% !important;
 }
 
+.position-relative {
+  position: relative;
+}
+
 .validation-header.error--text {
   animation: shake .6s cubic-bezier(.25,.8,.5,1);
   transition: .3s cubic-bezier(.25,.8,.5,1);

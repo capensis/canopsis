@@ -1,7 +1,8 @@
 <template lang="pug">
   div
-    v-card
+    v-card.position-relative
       progress-overlay(:pending="pending")
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       v-data-table(
       :items="stats",
       :headers="tableHeaders",
@@ -34,11 +35,14 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
+import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
+
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
     ProgressOverlay,
+    StatsAlertOverlay,
   },
   mixins: [
     entitiesStatsMixin,
@@ -54,7 +58,9 @@ export default {
   },
   data() {
     return {
-      pending: false,
+      pending: true,
+      hasError: false,
+      serverErrorMessage: null,
       stats: [],
       pagination: {
         page: 1,
@@ -147,24 +153,31 @@ export default {
     },
 
     async fetchList() {
-      const { limit, sortOrder } = this.query;
+      try {
+        const { limit, sortOrder } = this.query;
 
-      this.pending = true;
+        this.pending = true;
+        this.hasError = false;
+        this.serverErrorMessage = null;
 
-      const { values } = await this.fetchStatsListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { values } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.stats = values;
-      this.pagination = {
-        page: 1,
-        sortBy: this.statColumn,
-        totalItems: values.length,
-        rowsPerPage: limit || PAGINATION_LIMIT,
-        descending: sortOrder === SORT_ORDERS.desc,
-      };
-
-      this.pending = false;
+        this.stats = values;
+        this.pagination = {
+          page: 1,
+          sortBy: this.statColumn,
+          totalItems: values.length,
+          rowsPerPage: limit || PAGINATION_LIMIT,
+          descending: sortOrder === SORT_ORDERS.desc,
+        };
+      } catch (err) {
+        this.hasError = true;
+        this.serverErrorMessage = err.description || null;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };
