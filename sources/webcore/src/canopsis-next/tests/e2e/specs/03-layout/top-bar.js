@@ -3,7 +3,7 @@
 module.exports = {
   async before(browser, done) {
     await browser.maximizeWindow()
-      .completed.login('root', 'root'); // TODO: use from some constants file
+      .completed.loginAsAdmin();
 
     done();
   },
@@ -32,8 +32,8 @@ module.exports = {
     createUserModal.clickSelectDefaultViewButton();
 
     selectViewModal.verifyModalOpened()
-      .browseGroupById('05b2e049-b3c4-4c5b-94a5-6e7ff142b28c') // TODO: use from some constants file
-      .browseViewById('875df4c2-027b-4549-8add-e20ed7ff7d4f') // TODO: use from some constants file
+      .browseGroupById('05b2e049-b3c4-4c5b-94a5-6e7ff142b28c') // TODO: use from some constants file when we will use fixtures
+      .browseViewById('875df4c2-027b-4549-8add-e20ed7ff7d4f')
       .verifyModalClosed();
 
     createUserModal.clickSubmitButton()
@@ -43,6 +43,6 @@ module.exports = {
   'Check default view': (browser) => {
     browser.url(process.env.VUE_DEV_SERVER_URL)
       .page.view()
-      .verifyPageElementsBeforeById('875df4c2-027b-4549-8add-e20ed7ff7d4f'); // TODO: use from some constants file
+      .verifyPageElementsBeforeById('875df4c2-027b-4549-8add-e20ed7ff7d4f'); // TODO: use from some constants file when we will use fixtures
   },
 };

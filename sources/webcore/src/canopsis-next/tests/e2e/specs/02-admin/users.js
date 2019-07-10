@@ -13,7 +13,7 @@ module.exports = {
   },
 
   'Create new user with some name': (browser) => {
-    const value = 'asd'; // TODO: use from some constants file
+    const value = 'asd'; // TODO: use from some constants file when we will use fixtures
 
     browser.page.admin.users()
       .navigate()

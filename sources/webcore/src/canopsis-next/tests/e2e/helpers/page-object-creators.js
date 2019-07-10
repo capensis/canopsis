@@ -1,6 +1,6 @@
 const { isString } = require('lodash');
 
-exports.elementsWrapperCreator = function elementsWrapperCreator(selector, elements) {
+module.exports.elementsWrapperCreator = function elementsWrapperCreator(selector, elements) {
   return Object.entries(elements).reduce((acc, [key, value]) => {
     if (isString(value) && !value.startsWith(selector)) {
       acc[key] = `${selector} ${value}`;
@@ -12,7 +12,7 @@ exports.elementsWrapperCreator = function elementsWrapperCreator(selector, eleme
   }, {});
 };
 
-exports.modalCreator = function modalCreator(selector, pageObject) {
+module.exports.modalCreator = function modalCreator(selector, pageObject) {
   return {
     ...pageObject,
 
