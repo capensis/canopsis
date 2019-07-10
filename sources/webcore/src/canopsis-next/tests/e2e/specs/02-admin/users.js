@@ -18,6 +18,7 @@ const onCreateUser = (browser, {
     .setEmail(email)
     .setPassword(password)
     .selectRole()
+    .selectLanguage()
     .clickSubmitButton()
     .verifyModalClosed();
 };
@@ -88,8 +89,10 @@ module.exports = {
     browser.page.admin.users()
       .navigate()
       .verifyPageUserBefore(user)
-      .clickEditButton(user)
-      .verifyCreateUserModal()
+      .clickEditButton(user);
+
+    browser.page.modals.admin.editUser()
+      .verifyModalOpened()
       .clearUsername()
       .setUsername(username)
       .clearFirstName()
@@ -102,7 +105,7 @@ module.exports = {
       .selectRole(4)
       .selectLanguage(2)
       .clickSubmitButton()
-      .api.pause(CONFIGS.pause);
+      .verifyModalClosed();
   },
 
   'Remove user with some username': (browser) => {

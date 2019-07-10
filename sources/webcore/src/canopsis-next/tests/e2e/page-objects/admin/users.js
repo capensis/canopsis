@@ -9,10 +9,6 @@ const commands = {
       .assert.visible('@addButton');
   },
 
-  verifyCreateUserModal() {
-    return this.waitForElementVisible('@createUserModal');
-  },
-
   verifyPageUserBefore(user) {
     return this.waitForElementVisible('@dataTable')
       .assert.visible(this.sel(user));
@@ -59,62 +55,10 @@ const commands = {
     return this.customClick('@nextButton');
   },
 
-  clearUsername() {
-    return this.customClearValue('@usernameField');
-  },
-
-  clearFirstName() {
-    return this.customClearValue('@firstNameField');
-  },
-
-  clearLastName() {
-    return this.customClearValue('@lastNameField');
-  },
-
-  clearEmail() {
-    return this.customClearValue('@emailField');
-  },
-
-  setUsername(value) {
-    return this.customSetValue('@usernameField', value);
-  },
-
-  setFirstName(value) {
-    return this.customSetValue('@firstNameField', value);
-  },
-
-  setLastName(value) {
-    return this.customSetValue('@lastNameField', value);
-  },
-
-  setEmail(value) {
-    return this.customSetValue('@emailField', value);
-  },
-
-  setPassword(value) {
-    return this.customSetValue('@passwordField', value);
-  },
-
   selectRange(idx = 5) {
     return this.customClick('@selectRangeField')
       .waitForElementVisible(this.el('@selectRangeItemOption', idx))
       .customClick(this.el('@selectRangeItemOption', idx));
-  },
-
-  selectRole(idx = 1) {
-    return this.customClick('@roleField')
-      .waitForElementVisible(this.el('@roleItemOption', idx))
-      .customClick(this.el('@roleItemOption', idx));
-  },
-
-  selectLanguage(idx = 1) {
-    return this.customClick('@languageField')
-      .waitForElementVisible(this.el('@languageItemOption', idx))
-      .customClick(this.el('@languageItemOption', idx));
-  },
-
-  clickSubmitButton() {
-    return this.customClick('@submitButton');
   },
 
   el,
@@ -139,16 +83,6 @@ module.exports = {
     optionCheckbox: `%s .v-input${sel('optionCheckbox')} .v-input--selection-controls__ripple`,
     createConfirmModal: sel('createConfirmModal'),
     createUserModal: sel('createUserModal'),
-    usernameField: sel('username'),
-    firstNameField: sel('firstName'),
-    lastNameField: sel('lastName'),
-    emailField: sel('email'),
-    passwordField: sel('password'),
-    roleField: `${sel('roleLayout')} .v-input__slot`,
-    roleItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    languageField: `${sel('roleLanguage')} .v-input__slot`,
-    languageItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    submitButton: sel('submitButton'),
   },
   commands: [commands],
 };
