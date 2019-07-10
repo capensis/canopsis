@@ -75,7 +75,7 @@ export default {
           value: 'enable',
         },
         {
-          text: '',
+          text: this.$t('common.actionsLabel'),
           sortable: false,
         },
       ],
