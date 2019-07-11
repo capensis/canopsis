@@ -64,7 +64,7 @@
           :error-messages="errors.collect('role')",
           data-test="role"
           )
-        v-layout(data-test="roleLanguage", row)
+        v-layout(data-test="languageLayout", row)
           v-select(
           data-test="language",
           :label="$t('modals.createUser.fields.language')",

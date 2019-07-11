@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card(data-test="createConfirmModal")
+  v-card(data-test="confirmationModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('common.confirmation') }}
