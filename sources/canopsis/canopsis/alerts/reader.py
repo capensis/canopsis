@@ -448,6 +448,9 @@ class AlertsReader(object):
             escaped_search = re.escape(str(search))
             column_filter = {'$or': []}
             for column in active_columns:
+                # filter is used in mongo
+                # as such we need to use entity.infos.
+                # and not just infos.
                 if column.startswith("infos."):
                     column = "entity."+column
                 column_filter['$or'].append(
