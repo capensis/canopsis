@@ -51,6 +51,7 @@ pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 WATCHER_COLLECTION = "default_entities"
 mongo = MongoStore.get_default()
 collection = mongo.get_collection(WATCHER_COLLECTION)
+
 mongo_collection = MongoCollection(collection)
 
 DEFAULT_LIMIT = 120
@@ -81,7 +82,12 @@ TILE_ICON_SELECTOR = [TILE_ICON_OK,
                       TILE_ICON_MAJOR,
                       TILE_ICON_CRITICAL]
 
+
 class ResultKey(DefaultEnum):
+    """
+    Contains the key use to handle the watcher retreive from the
+    watcher pipeline and the rearrange watcher.
+    """
     ID = "_id"
     INFOS = "infos"
     LINKS = "links"
@@ -107,8 +113,21 @@ class ResultKey(DefaultEnum):
 
 
 class __TileData:
+    """
+    This object represents one element (a tile) of the array return by the
+    weather API. Every __TileData attribute represent a field of the returned
+    elements.
+
+    Be careful, this object is used with the vars built-in method. Any new
+    instance attribute will be returned by the API.
+    """
 
     def __init__(self, watcher):
+        """
+        Create a new instance.
+
+        :param dict: a watcher dict from the watcher pipeline.
+        """
         self.entity_id = watcher[ResultKey.ID.value]
         self.infos = watcher[ResultKey.INFOS.value]
         self.sla_tex = ""
@@ -149,6 +168,16 @@ class __TileData:
 
     @classmethod
     def __is_action_required(cls, watcher):
+        """
+        Return if an action is required on the watcher.
+
+        An action is required if a watched entity have an opened alarm without
+        any `ack`.
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return boolean: True if an action is required, False otherwise.
+        """
 
         watcher_alarm = watcher.get(ResultKey.ALARM.value, None)
         if watcher_alarm is None:
@@ -169,6 +198,16 @@ class __TileData:
 
     @classmethod
     def __is_all_entities_paused(cls, watcher):
+        """
+        Return if every watched entities of a watcher have at least
+        one active pbehavior.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return boolean: True if all watched entities have an active
+        pbehavior, False otherwise.
+        """
         for entity in watcher[ResultKey.ENT.value]:
             if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
                 return False
@@ -176,6 +215,21 @@ class __TileData:
 
     @classmethod
     def __get_tile_color(cls, watcher):
+        """
+        Return a string that indicate the color to use to render the watcher
+        tile.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return str: 'TILE_COLOR_PAUSE' if they are at least one active
+        pbehavior on the watcher or an active pbehavior on every watched
+        entities.
+        'TILE_COLOR_PAUSE_OK' if the watcher state is 0.
+        'TILE_COLOR_PAUSE_MINOR' if the watcher state is 1.
+        'TILE_COLOR_PAUSE_MAJOR' if the watcher state is 2.
+        'TILE_COLOR_PAUSE_CRITICAL' if the watcher state is 3.
+        """
         watched_ent_paused = 0
         watcher_state = 0
 
@@ -198,6 +252,26 @@ class __TileData:
 
     @classmethod
     def __get_tile_icon(cls, watcher):
+        """
+        Return a string that indicate the primary tile icon to used to render
+        the watcher tile.
+
+        'TILE_ICON_OK', 'TILE_ICON_MINOR', 'TILE_ICON_MAJOR',
+        'TILE_ICON_CRITICAL' are return if they are no active pbehavior on the
+        watcher or if not every watched entities have an active pbehavior.
+
+        'TILE_ICON_PAUSE', 'TILE_ICON_MAINTENANCE',
+        'TILE_ICON_OUT_SURVEILLANCE' are display if the given watcher is under
+        an active pbehavior or if every watched entities have at least one
+        active pbehavior. The icon string returned depends on the 'type_' of
+        active pbehaviors on the watcher and on the watched entities. If
+        at least one 'maintenance' pbehavior is present,
+        'TILE_ICON_MAINTENANCE' will be returned. Then if at least one
+        'Hors plage horaire de surveillance' pbehavior is present,
+        'TILE_ICON_OUT_SURVEILLANCE' will be returned. Finally, if no
+        'maintenance' pbehavior or 'Hors plage horaire de surveillance'
+        pbehavior are present, return 'TILE_ICON_PAUSE'.
+        """
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
@@ -246,6 +320,31 @@ class __TileData:
 
     @classmethod
     def __get_tile_secondary_icon(cls, watcher):
+        """
+        Return a string that indicate the secondary tile icon to used to render
+        the watcher tile or None
+
+        'TILE_ICON_PAUSE', 'TILE_ICON_MAINTENANCE',
+        'TILE_ICON_OUT_SURVEILLANCE' are returned if they are some (not all)
+        watched entities with an active pbehavior.
+
+        The icon string returned depends on the 'type_' of active pbehaviors on
+        the watche watched entities. If at least one 'maintenance' pbehavior is
+        present, 'TILE_ICON_MAINTENANCE' will be returned. Then if at least one
+        'Hors plage horaire de surveillance' pbehavior is present,
+        'TILE_ICON_OUT_SURVEILLANCE' will be returned. Finally, if no
+        'maintenance' pbehavior or 'Hors plage horaire de surveillance'
+        pbehavior are present, return 'TILE_ICON_PAUSE'.
+
+        If every watched entities are under an active pbehavior, they are
+        no secondary icon displayed on the tile, so None are returned.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return str: 'TILE_ICON_PAUSE' or 'TILE_ICON_MAINTENANCE' or
+        'TILE_ICON_OUT_SURVEILLANCE' or None
+        """
         has_maintenance = False
         has_out_of_surveillance = False
         has_pause = False
@@ -276,6 +375,15 @@ class __TileData:
 
     @classmethod
     def __get_next_run(cls, watcher):
+        """
+        Return the smallest next_run field value from all the watched entities
+        alarms.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return int: the smallest next_run.
+        """
         next_runs = []
         for ent in watcher[ResultKey.ENT.value]:
             if ent[ResultKey.ALARM.value] is not None:
@@ -365,7 +473,6 @@ def get_ok_ko(influx_client, entity_id):
                        "\"eid\"='{}'"
     query_last_ko = query_last_event + " and \"ko\"=1"
 
-
     # Why did I use a double '\' ? It's simple, for some mystical reason,
     # somewhere between the call of influxdbstg.raw_query and the HTTP
     # request is sent, the escaped simple quote are deescaped. So like the
@@ -409,7 +516,9 @@ def get_ok_ko(influx_client, entity_id):
 def _pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
+
     :param dict watcher: one element from the query
+    :return set: a set of string.
     """
     pb_types = set()
 
@@ -444,6 +553,12 @@ def _watcher_status(watcher):
 
 
 def _remove_inactive_pbh(pbehaviors):
+    """
+    Return a list without the inactive pbehavior of at the time of call.
+
+    :param pbehavior: a list of pbehavior.
+    :return list: a list without any inactive pbehavior
+    """
     now = time.time()
 
     active_pbh = []
@@ -455,6 +570,15 @@ def _remove_inactive_pbh(pbehaviors):
 
 
 def _parse_direction(direction):
+    """
+    Parse the sort direction retreived from the request.
+
+    If direction is `ASC`, retrun 1. If direction is `DESC` return -1.
+    If the value does not match `ASC` or `DESC` raise a ValueError exception.
+
+    :param int direction: 1 or -1
+    :return str: `ASC` or `DESC`
+    """
     if direction == "ASC":
         return 1
     elif direction == "DESC":
@@ -465,6 +589,18 @@ def _parse_direction(direction):
 
 
 def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
+    """
+    Return the aggregation pipeline use to retreive every watcher, their
+    alarm and pbehavior and their
+    watched entities and their respective alarm and pbehavior.
+
+    :param watcher_filter:
+    :param limit: the number of watcher (tile) to return
+    :param start: the number of watcher to skip
+    :param orderby: the watcher field use the sort the result
+    :param direction: the direction of the sort 'ASC' or 'DESC'
+    :return list: return a list of mongodb aggregation stage
+    """
     # Select the watchers
     select_watcher_stage = {"$match": watcher_filter}
 
@@ -472,6 +608,8 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
     skip = {"$skip": start}
 
     # Retreive opened alarm for the watchers
+    # I use the `$graphLookup` stage in order to retreive only the opened alarms
+    # with the `restrictSearchWithMatch` option.
     alarms = {"$graphLookup":
               {"from": "periodical_alarm",
                "startWith": "$_id",
@@ -505,6 +643,8 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
                                "as": "watched_entities_pbehaviors"}}
 
     # Retreive every opened alarm on the watched entities
+    # I use the `$graphLookup` stage in order to retreive only the opened
+    # alarms with the `restrictSearchWithMatch` option.
     alarm_watched_ent = {"$graphLookup":
                          {"from": "periodical_alarm",
                           "startWith": "$watched_entities._id",
@@ -536,13 +676,43 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
 
 
 def _rework_watcher_pipeline_element(watcher, logger):
+    """Return a rearrange element from the watcher pipeline.
+
+    This function will remove every inactive pbehaviors from the fields
+    `ResultKey.PBEHAVIORS.value` and `ResultKey.WATCHED_ENT_PBH.value`.
+
+    Then create a dict with every watched entities with the respective alarm
+    and pbehaviors. It will be store under the ResultKey.ENT.value field.
+
+    :param dict watcher: an element from the watcher pipeline
+    :return dict: a rearrange watcher that respect the following pattern
+
+    {
+        "ResultKey.ID.value": str,
+        "ResultKey.ALARM.value": list of alarm,
+        "depends": list of str,
+        "enabled_history": list of int,
+        "enabled": boolean,
+        "impact": list of str,
+        "ResultKey.INFOS.value": dict,
+        "ResultKey.LINKS.value": dict,
+        "measurements": dict,
+        "ResultKey.MFILTER.value": str,
+        "ResultKey.NAME.value": str,
+        "ResultKey.PBEHAVIORS.value": list of pbehavior,
+        "ResultKey.STATE.value": int,
+        "type": str,
+        "ResultKey.ENT.value": list of entities, their respective pbehaviors
+            and alarms
+    }
+    """
     # remove the inactive pbehaviors from the pipeline result
     pbhs = watcher[ResultKey.PBEHAVIORS.value]
     watcher[ResultKey.PBEHAVIORS.value] = _remove_inactive_pbh(pbhs)
     pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
     watcher[ResultKey.WATCHED_ENT_PBH.value] = _remove_inactive_pbh(pbhs)
 
-    # assign entities pbehaviors to the correct entities
+    # assign watched entities pbehaviors to the correct entities
     entities = {}
     for entity in watcher[ResultKey.ENT.value]:
         entity[ResultKey.PBEHAVIORS.value] = []
@@ -557,6 +727,7 @@ def _rework_watcher_pipeline_element(watcher, logger):
                 logger.error("Can not find entities {} in the"
                              "pipeline result".format(ent_id))
 
+    # assign watched entities alarms to the correct entities
     for alarm in watcher[ResultKey.WATCHED_ENT_ALRM.value]:
         try:
             entities[alarm["d"]][ResultKey.ALARM.value] = alarm
@@ -582,10 +753,12 @@ def exports(ws):
     )
     def get_watcher(watcher_filter):
         """
-        Get a list of watchers from a mongo filter.
+        Return a list of tile ready to be displayed by the front-end.
+
+        For more informations, see the __TileData object.
 
         :param dict watcher_filter: a mongo filter to find watchers
-        :rtype: dict
+        :rtype: list of __TileData as a JSON
         """
         limit = request.query.limit or None
         start = request.query.start or DEFAULT_START
@@ -616,11 +789,12 @@ def exports(ws):
 
         result = []
         for watcher in pipeline_result:
-            debug = False
-            if watcher["name"] == "AIDA2":
-                debug = True
-
             watcher = _rework_watcher_pipeline_element(watcher, ws.logger)
+
+            # This part should not exist and must be considered deprecated.
+            # This filter has to be done inside the aggregation pipeline but
+            # currently it is impossible as there is no way to check if a
+            # pbehavior is active directly inside the database.
 
             some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
                 watcher
