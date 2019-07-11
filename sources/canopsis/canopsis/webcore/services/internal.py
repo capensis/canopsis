@@ -30,7 +30,7 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
-    'app_title', 'footer',  'login_page_description', 'logo'
+    'app_title', 'footer',  'login_page_description', 'logo', 'language'
 ]
 
 VALID_CANOPSIS_EDITIONS = [
@@ -39,6 +39,10 @@ VALID_CANOPSIS_EDITIONS = [
 
 VALID_CANOPSIS_STACKS = [
     'go', 'python'
+]
+
+VALID_CANOPSIS_LANGUAGES = [
+    'en', 'fr'
 ]
 
 
@@ -111,13 +115,17 @@ def get_login_config(ws):
     return {"login_config": login_config}
 
 
-def check_edition_and_stack(ws, edition, stack):
+def check_values(ws, edition, stack, language):
     if edition is not None and edition not in VALID_CANOPSIS_EDITIONS:
         ws.logger.error("edition is an invalid value : {}".format(edition))
         return False
 
     if stack is not None and stack not in VALID_CANOPSIS_STACKS:
         ws.logger.error("stack is an invalid value : {}".format(stack))
+        return False
+
+    if language is not None and language not in VALID_CANOPSIS_LANGUAGES:
+        ws.logger.error("language is an invalid value : {}".format(language))
         return False
 
     return True
@@ -150,8 +158,8 @@ def exports(ws):
             name=CanopsisVersionManager.COLLECTION)
 
         try:
-            ok = check_edition_and_stack(
-                ws, doc.get("edition"), doc.get("stack"))
+            ok = check_values(
+                ws, doc.get("edition"), doc.get("stack"), doc.get("language"))
             if ok:
                 success = CanopsisVersionManager(version_collection).\
                     put_canopsis_document(doc.get("edition"),
