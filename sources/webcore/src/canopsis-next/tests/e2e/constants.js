@@ -18,7 +18,3 @@ module.exports.USERS = {
     prefix: 'mass',
   },
 };
-
-module.exports.CONFIGS = {
-  pause: 500,
-};
