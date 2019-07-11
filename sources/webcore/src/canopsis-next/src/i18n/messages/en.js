@@ -1081,6 +1081,7 @@ export default {
       fields: {
         appTitle: 'App title',
         footer: 'Login footer',
+        description: 'Login page description',
         logo: 'Logo',
       },
     },

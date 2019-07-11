@@ -11,11 +11,13 @@
         )
     v-layout(row)
       v-flex
-        v-text-field(
-        v-model="form.footer",
-        :label="$t('parameters.userInterfaceForm.fields.footer')"
-        )
-    v-layout(row)
+        span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.footer') }}
+        text-editor(v-model="form.footer")
+    v-layout.mt-3(row)
+      v-flex
+        span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.description') }}
+        text-editor(v-model="form.description")
+    v-layout.mt-3(row)
       v-flex
         span.theme--light.v-label.file-selector__label {{ $t('parameters.userInterfaceForm.fields.logo') }}
         v-layout(row)
@@ -47,14 +49,14 @@ import { DEFAULT_APP_TITLE } from '@/config';
 import { getFileDataUrlContent } from '@/helpers/file-select';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
-
+import TextEditor from '@/components/other/text-editor/text-editor.vue';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { FileSelector },
+  components: { FileSelector, TextEditor },
   mixins: [entitiesInfoMixin],
   data() {
     return {
@@ -63,6 +65,7 @@ export default {
       form: {
         appTitle: DEFAULT_APP_TITLE,
         footer: '',
+        description: '',
       },
     };
   },
@@ -75,7 +78,8 @@ export default {
     initForm() {
       this.form = {
         appTitle: this.appTitle || DEFAULT_APP_TITLE,
-        footer: this.footer,
+        footer: this.footer || '',
+        description: this.description || '',
       };
     },
 
@@ -95,6 +99,7 @@ export default {
           const data = {
             app_title: this.form.appTitle,
             footer: this.form.footer,
+            login_page_description: this.form.description,
           };
 
           if (this.logoFile) {
@@ -133,6 +138,7 @@ export default {
   .file-selector {
     &__label {
       font-size: .85em;
+      display: block;
     }
   }
 </style>
