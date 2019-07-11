@@ -12,7 +12,6 @@
   "dependencies": {
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
-    "chromedriver": "^75.0.1",
     "chartjs-plugin-annotation": "^0.5.7",
     "dayspan": "^0.12.4",
     "dayspan-vuetify": "^0.2.6",
@@ -67,6 +66,7 @@
     "babel-jest": "^22.0.4",
     "babel-plugin-lodash": "^3.3.4",
     "babel-plugin-require-context-hook": "^1.0.0",
+    "chromedriver": "^75.0.1",
     "deepmerge": "^3.2.0",
     "husky": "^1.3.1",
     "jest-localstorage-mock": "^2.2.0",
