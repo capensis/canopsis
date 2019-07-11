@@ -448,6 +448,8 @@ class AlertsReader(object):
             escaped_search = re.escape(str(search))
             column_filter = {'$or': []}
             for column in active_columns:
+                if column.startswith("infos."):
+                    column = "entity."+column
                 column_filter['$or'].append(
                     {
                         column: {
