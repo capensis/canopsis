@@ -10,11 +10,12 @@ require('@babel/register');
 
 const path = require('path');
 const deepmerge = require('deepmerge');
-const loadEnv = require('@vue/cli-service/lib/util/loadEnv'); // eslint-disable-line import/no-extraneous-dependencies
 
 /* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
 /* eslint-enable import/no-extraneous-dependencies */
+
+const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
 
 const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
 const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
