@@ -148,7 +148,11 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
-      let actions = [];
+      let actions = [
+        filteredActionsMap.snooze,
+        filteredActionsMap.pbehaviorAdd,
+        filteredActionsMap.pbehaviorList,
+      ];
 
       if (this.isEditingMode) {
         actions.push(filteredActionsMap.variablesHelp);
@@ -157,26 +161,24 @@ export default {
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           if (this.widget.parameters.isMultiAckEnabled) {
-            actions.push(filteredActionsMap.ack);
+            actions.unshift(filteredActionsMap.ack);
           }
 
-          actions.push(
+          actions.unshift(
             filteredActionsMap.declareTicket,
             filteredActionsMap.associateTicket,
             filteredActionsMap.cancel,
             filteredActionsMap.ackRemove,
-            filteredActionsMap.snooze,
             filteredActionsMap.changeState,
-            filteredActionsMap.pbehaviorAdd,
-            filteredActionsMap.pbehaviorList,
             filteredActionsMap.moreInfos,
           );
         } else {
-          actions.push(
+          actions.unshift(
             filteredActionsMap.ack,
             filteredActionsMap.fastAck,
-            filteredActionsMap.moreInfos,
           );
+
+          actions.push(filteredActionsMap.moreInfos);
         }
       }
 
