@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card
+v-card(data-test="createRoleModal")
   v-card-title.primary.white--text
     v-layout(justify-space-between, align-center)
       h2 {{ title }}
