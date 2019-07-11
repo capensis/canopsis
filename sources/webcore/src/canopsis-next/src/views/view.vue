@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(:data-test="`view-page-${id}`")
     v-fade-transition
       view-tabs-wrapper(
       v-if="isViewTabsReady",

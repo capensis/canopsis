@@ -52,8 +52,8 @@
     groups-settings-button(
     :isEditingMode="isEditingMode",
     :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
-    :buttonProps="{ fab: true, dark: true, small: true }"
-    @toggleEditingMode="toggleEditingMode",
+    :buttonProps="{ fab: true, dark: true, small: true }",
+    @toggleEditingMode="toggleEditingMode"
     )
 </template>
 
