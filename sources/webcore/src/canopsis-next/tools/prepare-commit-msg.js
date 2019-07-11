@@ -2,7 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const loadEnv = require('@vue/cli-service/lib/util/loadEnv'); // eslint-disable-line import/no-extraneous-dependencies
+
+const loadEnv = require('./load-env'); // eslint-disable-line import/no-extraneous-dependencies
 
 const localEnvPath = path.resolve(process.cwd(), '.env.local');
 const baseEnvPath = path.resolve(process.cwd(), '.env');

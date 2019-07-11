@@ -4,7 +4,11 @@
     fixed,
     app,
   )
-    v-toolbar-side-icon.ml-2.white--text(v-if="isShownGroupsSideBar", @click="$emit('toggleSideBar')")
+    v-toolbar-side-icon.ml-2.white--text(
+    v-if="isShownGroupsSideBar",
+    data-test="groupsSideBarButton",
+    @click="$emit('toggleSideBar')"
+    )
     v-layout.topBarBrand(v-else, fill-height, align-center)
       img.canopsisLogo(src="@/assets/canopsis.png")
       v-layout.version.ml-1(fill-height, align-end)
@@ -31,17 +35,17 @@
                   span.black--text {{ link.text }}
                   v-icon.ml-2 {{ link.icon }}
       v-menu(bottom, offset-y, offset-x)
-        v-btn.white--text(slot="activator", flat) {{ currentUser._id }}
+        v-btn.white--text(slot="activator", data-test="userTopBarDropdownButton", flat) {{ currentUser._id }}
         v-list.pb-0
           v-list-tile
             v-list-tile-content
-              v-btn.ma-0.pa-1(flat, @click.prevent="showEditUserModal")
+              v-btn.ma-0.pa-1(data-test="userProfileButton", flat, @click.prevent="showEditUserModal")
                 v-layout(align-center)
                   v-icon person
                   div.ml-2 {{ $t('user.seeProfile') }}
           v-list-tile
             v-list-tile-content
-              v-btn.ma-0.pa-1.error--text(flat, @click.prevent="logout")
+              v-btn.ma-0.pa-1.error--text(data-test="logoutButton", flat, @click.prevent="logout")
                 v-layout(align-center)
                   v-icon exit_to_app
                   div.ml-2 {{ $t('common.logout') }}

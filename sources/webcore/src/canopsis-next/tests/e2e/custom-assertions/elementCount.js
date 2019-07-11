@@ -7,7 +7,7 @@
 // For more information on custom assertions see:
 // http://nightwatchjs.org/guide#writing-custom-assertions
 
-exports.assertion = function elementCount(selector, count) {
+module.exports.assertion = function elementCount(selector, count) {
   this.message = `Testing if element <${selector}> has count: ${count}`;
   this.expected = count;
   this.pass = val => val === count;
