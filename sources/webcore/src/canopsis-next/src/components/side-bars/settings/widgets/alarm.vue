@@ -47,19 +47,26 @@
           )
           v-divider
           field-switcher(
-          v-model="settings.widget.parameters.isAckNoteRequired",
-          :title="$t('settings.isAckNoteRequired')",
-          )
-          v-divider
-          field-switcher(
-          v-model="settings.widget.parameters.isMultiAckEnabled",
-          :title="$t('settings.isMultiAckEnabled')",
-          )
-          v-divider
-          field-switcher(
           v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
           :title="$t('settings.isHtmlEnabledOnTimeLine')",
           )
+          v-divider
+          v-list-group
+            v-list-tile(slot="activator") Ack
+            v-list.grey.lighten-4.px-2.py-0(expand)
+            field-switcher(
+            v-model="settings.widget.parameters.isAckNoteRequired",
+            :title="$t('settings.isAckNoteRequired')",
+            )
+            v-divider
+            field-switcher(
+            v-model="settings.widget.parameters.isMultiAckEnabled",
+            :title="$t('settings.isMultiAckEnabled')",
+            )
+            v-divider
+            field-fast-ack-output(
+            v-model="settings.widget.parameters.fastAckOutput",
+            )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
@@ -85,6 +92,7 @@ import FieldFilters from './fields/common/filters.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
+import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -106,6 +114,7 @@ export default {
     FieldInfoPopup,
     FieldTextEditor,
     FieldSwitcher,
+    FieldFastAckOutput,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
