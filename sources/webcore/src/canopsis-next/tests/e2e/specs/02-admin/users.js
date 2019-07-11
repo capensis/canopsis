@@ -13,20 +13,23 @@ module.exports = {
   },
 
   'Create new user with some name': (browser) => {
-    const value = 'asd'; // TODO: use from some constants file
+    const value = 'asd'; // TODO: use from some constants file when we will use fixtures
 
     browser.page.admin.users()
       .navigate()
       .verifyPageElementsBefore()
-      .clickAddButton()
-      .verifyCreateUserModal()
+      .clickAddButton();
+
+    browser.page.modals.admin.createUser()
+      .verifyModalOpened()
       .setUsername(value)
       .setFirstName(value)
       .setLastName(value)
       .setEmail(`${value}@${value}.com`)
       .setPassword(value)
       .selectRole()
-      .clickSubmitButton();
+      .clickSubmitButton()
+      .verifyModalClosed();
   },
 
   // 'Edit user with some username': (browser) => {},

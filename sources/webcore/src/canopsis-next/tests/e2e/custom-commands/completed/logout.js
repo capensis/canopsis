@@ -2,9 +2,17 @@
 
 module.exports.command = function logout() {
   this.page.auth.logout()
-    .verifyPageElementsBefore()
-    .clickUserNavigationTopBarButton()
+    .verifyPageElementsBefore();
+
+  this.page.layout.popup()
+    .clickOnEveryPopupsCloseIcons();
+
+  this.page.layout.topBar()
+    .clickUserDropdown()
     .clickLogoutButton();
+
+  this.page.auth.logout()
+    .verifyPageElementsAfter();
 
   return this;
 };
