@@ -112,7 +112,7 @@ class ResultKey(DefaultEnum):
     ENT_ID = "_id"
 
 
-class __TileData:
+class __TileData(object):
     """
     This object represents one element (a tile) of the array return by the
     weather API. Every __TileData attribute represent a field of the returned
