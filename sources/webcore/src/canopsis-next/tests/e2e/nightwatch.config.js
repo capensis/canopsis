@@ -16,8 +16,8 @@ const loadEnv = require('@vue/cli-service/lib/util/loadEnv'); // eslint-disable-
 const seleniumServer = require('selenium-server');
 /* eslint-enable import/no-extraneous-dependencies */
 
-const localEnvPath = path.resolve(process.cwd(), '.env.local');
-const baseEnvPath = path.resolve(process.cwd(), '.env');
+const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
+const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
 
 loadEnv(localEnvPath);
 loadEnv(baseEnvPath);
