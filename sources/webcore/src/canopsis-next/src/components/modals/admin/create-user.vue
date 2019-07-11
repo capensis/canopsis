@@ -64,7 +64,7 @@
           :error-messages="errors.collect('role')",
           data-test="role"
           )
-        v-layout(row)
+        v-layout(data-test="languageLayout", row)
           v-select(
           data-test="language",
           :label="$t('modals.createUser.fields.language')",
@@ -94,7 +94,12 @@
           v-model="form.enable",
           )
         v-layout(align-center)
-          v-btn(small, color="secondary", @click="openViewSelectModal") {{ $t('user.selectDefaultView') }}
+          v-btn(
+          color="secondary",
+          data-test="selectDefaultViewButton"
+          small,
+          @click="openViewSelectModal"
+          ) {{ $t('user.selectDefaultView') }}
           div {{ defaultViewTitle }}
           v-btn(v-if="form.defaultview", icon, @click="clearDefaultView")
             v-icon(color="error") clear

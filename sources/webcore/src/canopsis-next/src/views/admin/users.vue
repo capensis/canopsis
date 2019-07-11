@@ -3,7 +3,7 @@
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.users') }}
     div
       div(v-show="hasDeleteAnyUserAccess && selected.length")
-        v-btn(@click="showRemoveSelectedUsersModal", icon)
+        v-btn(@click="showRemoveSelectedUsersModal", icon, data-test="massDeleteButton")
           v-icon delete
       v-data-table(
       v-model="selected",
@@ -17,18 +17,28 @@
       select-all,
       )
         template(slot="items", slot-scope="props")
-          tr
+          tr(:data-test="props.item.id")
             td
-              v-checkbox(v-model="props.selected", primary, hide-details)
+              v-checkbox(v-model="props.selected", data-test="optionCheckbox" primary, hide-details)
             td {{ props.item.id }}
             td {{ props.item.role }}
             td
               v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
             td
               div
-                v-btn(v-if="hasUpdateAnyUserAccess", @click="showEditUserModal(props.item)", icon)
+                v-btn(
+                v-if="hasUpdateAnyUserAccess",
+                data-test="editButton",
+                @click="showEditUserModal(props.item)",
+                icon
+                )
                   v-icon edit
-                v-btn(v-if="hasDeleteAnyUserAccess", @click="showRemoveUserModal(props.item._id)", icon)
+                v-btn(
+                v-if="hasDeleteAnyUserAccess",
+                data-test="deleteButton",
+                @click="showRemoveUserModal(props.item._id)",
+                icon
+                )
                   v-icon(color="error") delete
     .fab(v-if="hasCreateAnyUserAccess")
       v-layout(column)

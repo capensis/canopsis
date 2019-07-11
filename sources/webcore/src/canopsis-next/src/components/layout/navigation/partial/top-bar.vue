@@ -39,7 +39,7 @@
         v-list.pb-0
           v-list-tile
             v-list-tile-content
-              v-btn.ma-0.pa-1(flat, @click.prevent="showEditUserModal")
+              v-btn.ma-0.pa-1(data-test="userProfileButton", flat, @click.prevent="showEditUserModal")
                 v-layout(align-center)
                   v-icon person
                   div.ml-2 {{ $t('user.seeProfile') }}

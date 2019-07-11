@@ -1,6 +1,6 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
-const loginPageCommands = {
+const commands = {
   verifyPageElementsBefore() {
     return this.waitForElementVisible('@loginForm')
       .assert.visible('@usernameField');
@@ -34,5 +34,5 @@ module.exports = {
     submitButton: sel('submitButton'),
     userTopBarDropdownButton: sel('userTopBarDropdownButton'),
   },
-  commands: [loginPageCommands],
+  commands: [commands],
 };
