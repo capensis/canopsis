@@ -53,7 +53,7 @@ class CanopsisVersionManager(object):
             '_id': self.__DOCUMENT_ID
         })
 
-    def put_canopsis_document(self, edition, stack, language, version):
+    def put_canopsis_document(self, edition, stack, version, language):
         """
         Put Canopsis version document (upsert).
 

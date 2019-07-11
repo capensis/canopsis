@@ -30,7 +30,7 @@ from pymongo.errors import ConnectionFailure
 from canopsis.common import root_path
 from canopsis.version import (get_version_file_path, CANOPSIS_EDITION_ARG,
                               CANOPSIS_STACK_ARG, CANOPSIS_VERSION_ARG,
-                              read_version_file)
+                              CANOPSIS_LANGUAGE_ARG, read_version_file)
 
 COMMANDS = [root_path + "/bin/schema2db",
             [root_path + "/bin/canopsis-filldb", "--yes"]]
@@ -52,6 +52,8 @@ if __name__ == "__main__":
                         default="core", dest='canopsis_edition', choices=['cat', 'core'])
     parser.add_argument(CANOPSIS_STACK_ARG, required=False,
                         default="python", dest='canopsis_stack', choices=['go', 'python'])
+    parser.add_argument(CANOPSIS_LANGUAGE_ARG, required=False,
+                        default="fr", dest='canopsis_language', choices=['en', 'fr'])
     args = parser.parse_args()
 
     if args.reinit is True:
@@ -99,6 +101,9 @@ if __name__ == "__main__":
 
     COMMANDS[1].append(CANOPSIS_STACK_ARG)
     COMMANDS[1].append(args.canopsis_stack)
+
+    COMMANDS[1].append(CANOPSIS_LANGUAGE_ARG)
+    COMMANDS[1].append(args.canopsis_language)
 
     if started is True:
         for cmd in COMMANDS:

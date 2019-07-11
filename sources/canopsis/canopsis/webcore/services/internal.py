@@ -70,13 +70,15 @@ def get_version():
             CanopsisVersionManager.EDITION_FIELD: document.get(CanopsisVersionManager.EDITION_FIELD, ""),
             CanopsisVersionManager.STACK_FIELD: document.get(CanopsisVersionManager.STACK_FIELD, ""),
             CanopsisVersionManager.VERSION_FIELD: document.get(
-                CanopsisVersionManager.VERSION_FIELD, "")
+                CanopsisVersionManager.VERSION_FIELD, ""),
+            CanopsisVersionManager.LANGUAGE_FIELD: document.get(CanopsisVersionManager.LANGUAGE_FIELD, ""),
         }
 
     return {
         CanopsisVersionManager.EDITION_FIELD: "",
         CanopsisVersionManager.STACK_FIELD: "",
-        CanopsisVersionManager.VERSION_FIELD: ""
+        CanopsisVersionManager.VERSION_FIELD: "",
+        CanopsisVersionManager.LANGUAGE_FIELD: ""
     }
 
 
@@ -163,7 +165,7 @@ def exports(ws):
             if ok:
                 success = CanopsisVersionManager(version_collection).\
                     put_canopsis_document(doc.get("edition"),
-                                          doc.get("stack"), None)
+                                          doc.get("stack"), None, doc.get("language"))
 
                 if not success:
                     return gen_json_error({'description': 'failed to update edition/stack'},
