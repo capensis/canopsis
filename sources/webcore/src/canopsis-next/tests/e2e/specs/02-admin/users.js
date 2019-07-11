@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
-const { USERS, CONFIGS } = require('../../constants');
+const { isNaN } = require('lodash');
+const { USERS } = require('../../constants');
 
 const TEMPORARY_DATA = {};
 
@@ -23,6 +24,17 @@ const onCreateUser = (browser, {
     .verifyModalClosed();
 };
 
+const onCreateTemporaryObject = ({ prefix, text, i }) => {
+  const index = isNaN(i) ? '' : `-${i}`;
+  return {
+    username: `${prefix}-${text}${index}-name`,
+    firstname: `${prefix}-${text}${index}-firstname`,
+    lastname: `${prefix}-${text}${index}-lastname`,
+    email: `${prefix}-${text}${index}-email@example.com`,
+    password: `${prefix}-${text}${index}-password`,
+  };
+};
+
 module.exports = {
   async before(browser, done) {
     await browser.maximizeWindow()
@@ -39,13 +51,7 @@ module.exports = {
   'Create new user with some name': (browser) => {
     const { text, create: { prefix } } = USERS;
 
-    TEMPORARY_DATA[prefix] = {
-      username: `${prefix}-${text}-name`,
-      firstname: `${prefix}-${text}-firstname`,
-      lastname: `${prefix}-${text}-lastname`,
-      email: `${prefix}-${text}-email@example.com`,
-      password: `${prefix}-${text}-password`,
-    };
+    TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
 
     browser.page.admin.users()
       .navigate()
@@ -72,15 +78,9 @@ module.exports = {
   'Edit user with some username': (browser) => {
     const { text, create, edit: { prefix } } = USERS;
 
-    TEMPORARY_DATA[prefix] = {
-      username: `${prefix}-${text}-name`,
-      firstname: `${prefix}-${text}-firstname`,
-      lastname: `${prefix}-${text}-lastname`,
-      email: `${prefix}-${text}-email@example.com`,
-      password: `${prefix}-${text}-password`,
-    };
+    TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
 
-    const user = TEMPORARY_DATA[create.prefix].username;
+    const userSelector = TEMPORARY_DATA[create.prefix].username;
 
     const {
       username, firstname, lastname, email, password,
@@ -88,8 +88,8 @@ module.exports = {
 
     browser.page.admin.users()
       .navigate()
-      .verifyPageUserBefore(user)
-      .clickEditButton(user);
+      .verifyPageUserBefore(userSelector)
+      .clickEditButton(userSelector);
 
     browser.page.modals.admin.editUser()
       .verifyModalOpened()
@@ -118,14 +118,14 @@ module.exports = {
       .clickDeleteButton(createUser)
       .verifyCreateConfirmModal()
       .clickConfirmButton()
-      .api.pause(CONFIGS.pause);
+      .defaultPause();
 
     browser.page.admin.users()
       .verifyPageUserBefore(editUser)
       .clickDeleteButton(editUser)
       .verifyCreateConfirmModal()
       .clickConfirmButton()
-      .api.pause(CONFIGS.pause);
+      .defaultPause();
   },
 
   'Create mass users with some name': (browser) => {
@@ -134,13 +134,7 @@ module.exports = {
     TEMPORARY_DATA[prefix] = [];
 
     for (let i = 0; i < counts; i += 1) {
-      TEMPORARY_DATA[prefix].push({
-        username: `${prefix}-${text}-name-${i}`,
-        firstname: `${prefix}-${text}-firstname-${i}`,
-        lastname: `${prefix}-${text}-lastname-${i}`,
-        email: `${prefix}-${text}-${i}-email@example.com`,
-        password: `${prefix}-${text}-password-${i}`,
-      });
+      TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, i }));
     }
 
     TEMPORARY_DATA[prefix].map(user => onCreateUser(browser, user));
@@ -149,11 +143,11 @@ module.exports = {
   'Check pagination users table': (browser) => {
     browser.page.admin.users()
       .clickPrevButton()
-      .api.pause(CONFIGS.pause);
+      .defaultPause();
 
     browser.page.admin.users()
       .clickNextButton()
-      .api.pause(CONFIGS.pause);
+      .defaultPause();
   },
 
   'Delete mass users with some name': (browser) => {
@@ -161,18 +155,18 @@ module.exports = {
 
     browser.page.admin.users()
       .selectRange()
-      .api.pause(CONFIGS.pause);
+      .defaultPause();
 
     TEMPORARY_DATA[prefix].map(user => browser.page.admin.users()
       .verifyPageUserBefore(user.username)
       .clickOptionCheckbox(user.username)
-      .api.pause(CONFIGS.pause));
+      .defaultPause());
 
     browser.page.admin.users()
       .verifyMassDeleteButton()
       .clickMassDeleteButton()
       .verifyCreateConfirmModal()
       .clickConfirmButton()
-      .api.pause(CONFIGS.pause);
+      .defaultPause();
   },
 };

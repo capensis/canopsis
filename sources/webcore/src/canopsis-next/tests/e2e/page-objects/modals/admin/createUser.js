@@ -58,7 +58,7 @@ module.exports = modalCreator(modalSelector, {
       emailField: sel('email'),
       passwordField: sel('password'),
       roleField: `${sel('roleLayout')} .v-input__slot`,
-      languageField: `${sel('roleLanguage')} .v-input__slot`,
+      languageField: `${sel('languageLayout')} .v-input__slot`,
       selectDefaultViewButton: sel('selectDefaultViewButton'),
       submitButton: sel('submitButton'),
     }),

@@ -9,13 +9,13 @@ const commands = {
       .assert.visible('@addButton');
   },
 
-  verifyPageUserBefore(user) {
+  verifyPageUserBefore(userSelector) {
     return this.waitForElementVisible('@dataTable')
-      .assert.visible(this.sel(user));
+      .assert.visible(this.sel(userSelector));
   },
 
   verifyCreateConfirmModal() {
-    return this.waitForElementVisible('@createConfirmModal')
+    return this.waitForElementVisible('@confirmationModal')
       .assert.visible('@confirmButton');
   },
 
@@ -27,16 +27,16 @@ const commands = {
     return this.customClick('@addButton');
   },
 
-  clickOptionCheckbox(user) {
-    return this.customClick(this.el('@optionCheckbox', this.sel(user)));
+  clickOptionCheckbox(userSelector) {
+    return this.customClick(this.el('@optionCheckbox', this.sel(userSelector)));
   },
 
-  clickEditButton(user) {
-    return this.customClick(this.el('@editButton', this.sel(user)));
+  clickEditButton(userSelector) {
+    return this.customClick(this.el('@editButton', this.sel(userSelector)));
   },
 
-  clickDeleteButton(user) {
-    return this.customClick(this.el('@deleteButton', this.sel(user)));
+  clickDeleteButton(userSelector) {
+    return this.customClick(this.el('@deleteButton', this.sel(userSelector)));
   },
 
   clickConfirmButton() {
@@ -81,8 +81,7 @@ module.exports = {
     prevButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Previous page"]',
     nextButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Next page"]',
     optionCheckbox: `%s .v-input${sel('optionCheckbox')} .v-input--selection-controls__ripple`,
-    createConfirmModal: sel('createConfirmModal'),
-    createUserModal: sel('createUserModal'),
+    confirmationModal: sel('confirmationModal'),
   },
   commands: [commands],
 };
