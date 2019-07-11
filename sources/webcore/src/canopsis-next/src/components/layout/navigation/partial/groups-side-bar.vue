@@ -18,7 +18,7 @@
     )
       v-expansion-panel-content.secondary.white--text(v-for="group in availableGroups", :key="group._id")
         div.panel-header(slot="header")
-          span(:title="group.name", :data-test="`group-${group._id}`") {{ group.name }}
+          span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
           v-show="isEditingMode",
           depressed,
