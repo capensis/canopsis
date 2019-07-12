@@ -20,6 +20,18 @@ const commands = {
     return this;
   },
 
+  clickEditGroupButton(id) {
+    return this.customClick(this.el('@editGroupButton', id));
+  },
+
+  clickEditViewButton(id) {
+    return this.customClick(this.el('@editViewButton', id));
+  },
+
+  clickCopyViewButton(id) {
+    return this.customClick(this.el('@copyViewButton', id));
+  },
+
   browseGroupById(id) {
     return this.customClick(this.el('@groupSideBarSelectorById', id));
   },
@@ -38,6 +50,9 @@ module.exports = {
     groupsSideBarButton: sel('groupsSideBarButton'),
     groupsSideBarClosed: `${groupsSideBar}.v-navigation-drawer--close`,
     groupSideBarSelectorById: `.v-expansion-panel__header ${sel('groupsSideBar-group-%s')}`,
+    editGroupButton: `.v-expansion-panel__header ${sel('groupsSideBar-editGroupButton-group-%s')}`,
+    editViewButton: `.v-expansion-panel__header ${sel('groupsSideBar-editViewButton-group-%s')}`,
+    copyViewButton: `.v-expansion-panel__header ${sel('groupsSideBar-copyViewButton-group-%s')}`,
     viewSideBarSelectorById: '.v-expansion-panel__body a[href^="/view/%s"]',
   },
   commands: [commands],
