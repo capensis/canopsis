@@ -10,6 +10,7 @@
         v-layout(wrap, justify-center)
           v-flex(xs11)
             v-text-field(
+            data-test="viewFieldName",
             :label="$t('common.name')",
             v-model="form.name",
             data-vv-name="name",
@@ -17,6 +18,7 @@
             :error-messages="errors.collect('name')",
             )
             v-text-field(
+            data-test="viewFieldTitle",
             :label="$t('common.title')",
             v-model="form.title",
             data-vv-name="title",
@@ -24,6 +26,7 @@
             :error-messages="errors.collect('title')",
             )
             v-text-field(
+            data-test="viewFieldDescription",
             :label="$t('common.description')",
             v-model="form.description",
             data-vv-name="description",
