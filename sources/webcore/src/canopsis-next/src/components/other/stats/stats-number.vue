@@ -19,7 +19,13 @@
               v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
                 div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
               div.caption
-                template(v-if="item[query.stat.title].trend >= 0") + {{ item[query.stat.title].trend }}
+                div(v-if="item[query.stat.title].trend !== undefined && item[query.stat.title].trend !== null")
+                  sub.ml-2
+                    v-icon.caption(
+                    small,
+                    :color="trendFormat(item[query.stat.title].trend).color"
+                    ) {{ trendFormat(item[query.stat.title].trend).icon }}
+                  sub {{ getFormattedValue(item[query.stat.title].trend, widget.parameters.stat.stat.value) }}
 </template>
 
 <script>
@@ -30,6 +36,7 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -49,6 +56,7 @@ export default {
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
+    widgetStatsTableWrapperMixin,
   ],
   props: {
     widget: {

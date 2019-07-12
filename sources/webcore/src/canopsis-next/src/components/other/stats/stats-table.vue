@@ -21,8 +21,8 @@
                     sub.ml-2
                       v-icon.caption(
                       small,
-                      :color="trendFormat(item[key].value).color"
-                      ) {{ trendFormat(item[key].value).icon }}
+                      :color="trendFormat(item[key].trend).color"
+                      ) {{ trendFormat(item[key].trend).icon }}
                     sub {{ getFormattedValue(item[key].trend, property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}
 </template>
@@ -37,6 +37,7 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
@@ -59,6 +60,7 @@ export default {
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
+    widgetStatsTableWrapperMixin,
   ],
   props: {
     widget: {
@@ -105,42 +107,6 @@ export default {
 
         ...statsOrderedColumns,
       ];
-    },
-    getFormattedValue() {
-      const PROPERTIES_FILTERS_MAP = {
-        state_rate: value => this.$options.filters.percentage(value),
-        ack_time_sla: value => this.$options.filters.percentage(value),
-        resolve_time_sla: value => this.$options.filters.percentage(value),
-        time_in_state: value => this.$options.filters.duration({ value }),
-        mtbf: value => this.$options.filters.duration({ value }),
-      };
-
-      return (value, columnValue) => {
-        if (PROPERTIES_FILTERS_MAP[columnValue]) {
-          return PROPERTIES_FILTERS_MAP[columnValue](value);
-        }
-
-        return value;
-      };
-    },
-    trendFormat() {
-      return (value) => {
-        if (value > 0) {
-          return {
-            icon: 'trending_up',
-            color: 'primary',
-          };
-        } else if (value < 0) {
-          return {
-            icon: 'trending_down',
-            color: 'error',
-          };
-        }
-
-        return {
-          icon: 'trending_flat',
-        };
-      };
     },
   },
   methods: {
