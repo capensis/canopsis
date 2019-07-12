@@ -192,7 +192,7 @@ def exports(ws):
         user_interface = get_user_interface().get("user_interface", None)
         if user_interface is not None:
             for key in user_interface.keys():
-                if key not in ['app_title', 'logo']:
+                if key not in ['app_title', 'logo', 'language']:
                     user_interface.pop(key)
             cservices.update(user_interface)
         cservices.update(get_version())
