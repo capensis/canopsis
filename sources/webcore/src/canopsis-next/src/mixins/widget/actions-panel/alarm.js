@@ -15,15 +15,13 @@ export default {
   mixins: [modalMixin, eventActionsAlarmMixin, entitiesPbehaviorMixin],
   methods: {
     createFastAckEvent() {
+      let eventData = {};
+
       if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        return this.createEvent(
-          EVENT_ENTITY_TYPES.ack,
-          this.item,
-          { output: this.widget.parameters.fastAckOutput.value },
-        );
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
       }
 
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
     },
 
     async createMassFastAckEvent() {
