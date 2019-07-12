@@ -1,6 +1,5 @@
 // http://nightwatchjs.org/guide#usage
 
-const { isNaN } = require('lodash');
 const { USERS } = require('../../constants');
 
 const TEMPORARY_DATA = {};
@@ -24,14 +23,14 @@ const onCreateUser = (browser, {
     .verifyModalClosed();
 };
 
-const onCreateTemporaryObject = ({ prefix, text, i }) => {
-  const index = isNaN(i) ? '' : `-${i}`;
+const onCreateTemporaryObject = ({ prefix, text, index }) => {
+  const i = typeof index === 'undefined' ? '' : `-${index}`;
   return {
-    username: `${prefix}-${text}${index}-name`,
-    firstname: `${prefix}-${text}${index}-firstname`,
-    lastname: `${prefix}-${text}${index}-lastname`,
-    email: `${prefix}-${text}${index}-email@example.com`,
-    password: `${prefix}-${text}${index}-password`,
+    username: `${prefix}-${text}${i}-name`,
+    firstname: `${prefix}-${text}${i}-firstname`,
+    lastname: `${prefix}-${text}${i}-lastname`,
+    email: `${prefix}-${text}${i}-email@example.com`,
+    password: `${prefix}-${text}${i}-password`,
   };
 };
 
@@ -91,7 +90,7 @@ module.exports = {
       .verifyPageUserBefore(userSelector)
       .clickEditButton(userSelector);
 
-    browser.page.modals.admin.editUser()
+    browser.page.modals.admin.createUser()
       .verifyModalOpened()
       .clearUsername()
       .setUsername(username)
@@ -115,17 +114,19 @@ module.exports = {
 
     browser.page.admin.users()
       .verifyPageUserBefore(createUser)
-      .clickDeleteButton(createUser)
-      .verifyCreateConfirmModal()
+      .clickDeleteButton(createUser);
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
       .clickConfirmButton()
-      .defaultPause();
+      .verifyModalClosed();
 
     browser.page.admin.users()
       .verifyPageUserBefore(editUser)
-      .clickDeleteButton(editUser)
-      .verifyCreateConfirmModal()
+      .clickDeleteButton(editUser);
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
       .clickConfirmButton()
-      .defaultPause();
+      .verifyModalClosed();
   },
 
   'Create mass users with some name': (browser) => {
@@ -133,8 +134,8 @@ module.exports = {
 
     TEMPORARY_DATA[prefix] = [];
 
-    for (let i = 0; i < counts; i += 1) {
-      TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, i }));
+    for (let index = 0; index < counts; index += 1) {
+      TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, index }));
     }
 
     TEMPORARY_DATA[prefix].map(user => onCreateUser(browser, user));
@@ -164,9 +165,10 @@ module.exports = {
 
     browser.page.admin.users()
       .verifyMassDeleteButton()
-      .clickMassDeleteButton()
-      .verifyCreateConfirmModal()
+      .clickMassDeleteButton();
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
       .clickConfirmButton()
-      .defaultPause();
+      .verifyModalClosed();
   },
 };

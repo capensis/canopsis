@@ -24,16 +24,32 @@ const commands = {
     return this.customSetValue('@passwordField', value);
   },
 
-  selectRole(idx = 1) {
-    return this.customClick('@roleField')
-      .waitForElementVisible(this.el('@roleItemOption', idx))
-      .customClick(this.el('@roleItemOption', idx));
+  clearUsername() {
+    return this.customClearValue('@usernameField');
   },
 
-  selectLanguage(idx = 1) {
+  clearFirstName() {
+    return this.customClearValue('@firstNameField');
+  },
+
+  clearLastName() {
+    return this.customClearValue('@lastNameField');
+  },
+
+  clearEmail() {
+    return this.customClearValue('@emailField');
+  },
+
+  selectRole(index = 1) {
+    return this.customClick('@roleField')
+      .waitForElementVisible(this.el('@roleItemOption', index))
+      .customClick(this.el('@roleItemOption', index));
+  },
+
+  selectLanguage(index = 1) {
     return this.customClick('@languageField')
-      .waitForElementVisible(this.el('@languageItemOption', idx))
-      .customClick(this.el('@languageItemOption', idx));
+      .waitForElementVisible(this.el('@languageItemOption', index))
+      .customClick(this.el('@languageItemOption', index));
   },
 
   clickSelectDefaultViewButton() {

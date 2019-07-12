@@ -11,12 +11,7 @@ const commands = {
 
   verifyPageUserBefore(userSelector) {
     return this.waitForElementVisible('@dataTable')
-      .assert.visible(this.sel(userSelector));
-  },
-
-  verifyCreateConfirmModal() {
-    return this.waitForElementVisible('@confirmationModal')
-      .assert.visible('@confirmButton');
+      .assert.visible(this.sel(`user-${userSelector}`));
   },
 
   verifyMassDeleteButton() {
@@ -28,19 +23,15 @@ const commands = {
   },
 
   clickOptionCheckbox(userSelector) {
-    return this.customClick(this.el('@optionCheckbox', this.sel(userSelector)));
+    return this.customClick(this.el('@optionCheckbox', this.sel(`user-${userSelector}`)));
   },
 
   clickEditButton(userSelector) {
-    return this.customClick(this.el('@editButton', this.sel(userSelector)));
+    return this.customClick(this.el('@editButton', this.sel(`user-${userSelector}`)));
   },
 
   clickDeleteButton(userSelector) {
-    return this.customClick(this.el('@deleteButton', this.sel(userSelector)));
-  },
-
-  clickConfirmButton() {
-    return this.customClick('@confirmButton');
+    return this.customClick(this.el('@deleteButton', this.sel(`user-${userSelector}`)));
   },
 
   clickMassDeleteButton() {
@@ -74,14 +65,12 @@ module.exports = {
     addButton: sel('addButton'),
     editButton: `%s ${sel('editButton')}`,
     deleteButton: `%s ${sel('deleteButton')}`,
-    confirmButton: sel('confirmButton'),
     massDeleteButton: sel('massDeleteButton'),
     selectRangeField: '.v-datatable .v-datatable__actions__select .v-input__control',
     selectRangeItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     prevButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Previous page"]',
     nextButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Next page"]',
     optionCheckbox: `%s .v-input${sel('optionCheckbox')} .v-input--selection-controls__ripple`,
-    confirmationModal: sel('confirmationModal'),
   },
   commands: [commands],
 };
