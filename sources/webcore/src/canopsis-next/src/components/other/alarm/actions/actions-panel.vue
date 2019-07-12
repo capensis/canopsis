@@ -69,7 +69,7 @@ export default {
           type: alarmsListActionsTypes.fastAck,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
-          method: this.createAckEvent,
+          method: this.createFastAckEvent,
         },
         ackRemove: {
           type: alarmsListActionsTypes.ackRemove,
@@ -197,29 +197,6 @@ export default {
       }
 
       return result;
-    },
-  },
-  methods: {
-    createAckEvent() {
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
-    },
-
-    showAddPbehaviorModal() {
-      this.showModal({
-        name: MODALS.createPbehavior,
-        config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: [this.item.d] },
-            },
-          },
-          action: data => this.createPbehavior({
-            data,
-            parents: [this.item],
-            parentsType: ENTITIES_TYPES.alarm,
-          }),
-        },
-      });
     },
   },
 };
