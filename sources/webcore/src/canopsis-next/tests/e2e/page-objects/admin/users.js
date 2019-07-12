@@ -14,11 +14,6 @@ const commands = {
       .assert.visible(this.sel(userSelector));
   },
 
-  verifyCreateConfirmModal() {
-    return this.waitForElementVisible('@confirmationModal')
-      .assert.visible('@confirmButton');
-  },
-
   verifyMassDeleteButton() {
     return this.waitForElementVisible('@massDeleteButton');
   },
@@ -37,10 +32,6 @@ const commands = {
 
   clickDeleteButton(userSelector) {
     return this.customClick(this.el('@deleteButton', this.sel(userSelector)));
-  },
-
-  clickConfirmButton() {
-    return this.customClick('@confirmButton');
   },
 
   clickMassDeleteButton() {
@@ -74,14 +65,12 @@ module.exports = {
     addButton: sel('addButton'),
     editButton: `%s ${sel('editButton')}`,
     deleteButton: `%s ${sel('deleteButton')}`,
-    confirmButton: sel('confirmButton'),
     massDeleteButton: sel('massDeleteButton'),
     selectRangeField: '.v-datatable .v-datatable__actions__select .v-input__control',
     selectRangeItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     prevButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Previous page"]',
     nextButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Next page"]',
     optionCheckbox: `%s .v-input${sel('optionCheckbox')} .v-input--selection-controls__ripple`,
-    confirmationModal: sel('confirmationModal'),
   },
   commands: [commands],
 };

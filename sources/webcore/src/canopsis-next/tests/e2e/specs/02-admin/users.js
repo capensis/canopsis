@@ -1,6 +1,5 @@
 // http://nightwatchjs.org/guide#usage
 
-const { isNaN } = require('lodash');
 const { USERS } = require('../../constants');
 
 const TEMPORARY_DATA = {};
@@ -25,7 +24,7 @@ const onCreateUser = (browser, {
 };
 
 const onCreateTemporaryObject = ({ prefix, text, i }) => {
-  const index = isNaN(i) ? '' : `-${i}`;
+  const index = typeof i === 'undefined' ? '' : `-${i}`;
   return {
     username: `${prefix}-${text}${index}-name`,
     firstname: `${prefix}-${text}${index}-firstname`,
@@ -91,7 +90,7 @@ module.exports = {
       .verifyPageUserBefore(userSelector)
       .clickEditButton(userSelector);
 
-    browser.page.modals.admin.editUser()
+    browser.page.modals.admin.createUser()
       .verifyModalOpened()
       .clearUsername()
       .setUsername(username)
@@ -115,17 +114,19 @@ module.exports = {
 
     browser.page.admin.users()
       .verifyPageUserBefore(createUser)
-      .clickDeleteButton(createUser)
-      .verifyCreateConfirmModal()
+      .clickDeleteButton(createUser);
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
       .clickConfirmButton()
-      .defaultPause();
+      .verifyModalClosed();
 
     browser.page.admin.users()
       .verifyPageUserBefore(editUser)
-      .clickDeleteButton(editUser)
-      .verifyCreateConfirmModal()
+      .clickDeleteButton(editUser);
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
       .clickConfirmButton()
-      .defaultPause();
+      .verifyModalClosed();
   },
 
   'Create mass users with some name': (browser) => {
@@ -164,9 +165,10 @@ module.exports = {
 
     browser.page.admin.users()
       .verifyMassDeleteButton()
-      .clickMassDeleteButton()
-      .verifyCreateConfirmModal()
+      .clickMassDeleteButton();
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
       .clickConfirmButton()
-      .defaultPause();
+      .verifyModalClosed();
   },
 };

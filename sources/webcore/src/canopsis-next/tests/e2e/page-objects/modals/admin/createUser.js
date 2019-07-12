@@ -24,6 +24,22 @@ const commands = {
     return this.customSetValue('@passwordField', value);
   },
 
+  clearUsername() {
+    return this.customClearValue('@usernameField');
+  },
+
+  clearFirstName() {
+    return this.customClearValue('@firstNameField');
+  },
+
+  clearLastName() {
+    return this.customClearValue('@lastNameField');
+  },
+
+  clearEmail() {
+    return this.customClearValue('@emailField');
+  },
+
   selectRole(idx = 1) {
     return this.customClick('@roleField')
       .waitForElementVisible(this.el('@roleItemOption', idx))
