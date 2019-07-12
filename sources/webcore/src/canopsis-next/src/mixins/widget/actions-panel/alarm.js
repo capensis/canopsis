@@ -27,15 +27,12 @@ export default {
     },
 
     async createMassFastAckEvent() {
-      let ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items);
+      let eventData = {};
 
       if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        ackEventData = this.prepareData(
-          EVENT_ENTITY_TYPES.ack,
-          this.items,
-          { output: this.widget.parameters.fastAckOutput.value },
-        );
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
       }
+      const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, eventData);
 
       await this.createEventAction({
         data: ackEventData,
