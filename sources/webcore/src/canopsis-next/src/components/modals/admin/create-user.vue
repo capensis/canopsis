@@ -88,6 +88,7 @@
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
           v-switch(
+          data-test="enabled"
           color="primary",
           :label="$t('modals.createUser.fields.enabled')",
           :disabled="onlyUserPrefs",

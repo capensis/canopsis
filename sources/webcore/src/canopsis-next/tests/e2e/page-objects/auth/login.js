@@ -6,8 +6,23 @@ const commands = {
       .assert.visible('@usernameField');
   },
 
-  verifyPageElementsAfter() {
-    return this.waitForElementVisible('@userTopBarDropdownButton');
+  clearUsername() {
+    return this.customClearValue('@usernameField');
+  },
+
+  clearPassword() {
+    return this.customClearValue('@passwordField');
+  },
+
+  verifyPageElementsAfter(checkLogin = true) {
+    return this.waitForElementVisible('@userTopBarDropdownButton', 5000, checkLogin, (result) => {
+      if (!checkLogin) {
+        if (result.value) {
+          this.end();
+        }
+      }
+      return this;
+    });
   },
 
   setUsername(username) {

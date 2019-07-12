@@ -24,7 +24,7 @@ const onCreateUser = (browser, {
 };
 
 const onCreateTemporaryObject = ({ prefix, text, index }) => {
-  const i = typeof index === 'undefined' ? '' : `-${index}`;
+  const i = typeof index === 'number' ? `-${index}` : '';
   return {
     username: `${prefix}-${text}${i}-name`,
     firstname: `${prefix}-${text}${i}-firstname`,
@@ -103,8 +103,22 @@ module.exports = {
       .setPassword(password)
       .selectRole(4)
       .selectLanguage(2)
+      .clickEnabled()
       .clickSubmitButton()
       .verifyModalClosed();
+  },
+
+  'Login edit user with some name': async (browser) => {
+    const { edit: { prefix } } = USERS;
+    const { username, password } = TEMPORARY_DATA[prefix];
+
+    await browser.completed.logout()
+      .maximizeWindow()
+      .completed.login(username, password, false);
+  },
+
+  'Login adminroot': async (browser) => {
+    await browser.completed.loginAsAdmin();
   },
 
   'Remove user with some username': (browser) => {
@@ -113,6 +127,7 @@ module.exports = {
     const editUser = TEMPORARY_DATA[edit.prefix].username;
 
     browser.page.admin.users()
+      .navigate()
       .verifyPageUserBefore(createUser)
       .clickDeleteButton(createUser);
     browser.page.modals.confirmation()

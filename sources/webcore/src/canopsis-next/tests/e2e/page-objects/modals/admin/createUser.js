@@ -56,6 +56,10 @@ const commands = {
     return this.customClick('@selectDefaultViewButton');
   },
 
+  clickEnabled() {
+    return this.customClick('@enabled');
+  },
+
   clickSubmitButton() {
     return this.customClick('@submitButton');
   },
@@ -76,6 +80,7 @@ module.exports = modalCreator(modalSelector, {
       roleField: `${sel('roleLayout')} .v-input__slot`,
       languageField: `${sel('languageLayout')} .v-input__slot`,
       selectDefaultViewButton: sel('selectDefaultViewButton'),
+      enabled: `.v-input${sel('enabled')} .v-input--selection-controls__ripple`,
       submitButton: sel('submitButton'),
     }),
 
