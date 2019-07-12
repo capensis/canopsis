@@ -9,7 +9,7 @@
             h3 {{ $t('common.login') }}
             img.secondaryLogo(src="@/assets/canopsis.png")
         v-card-text
-          v-form.pa-2(@submit.prevent="submit")
+          v-form.pa-2(data-test="loginForm", @submit.prevent="submit")
             v-tooltip.ma-1(right, v-if="isLDAPAuthEnabled")
               v-icon(slot="activator") help
               v-layout(wrap)
@@ -25,6 +25,7 @@
               v-validate="'required'",
               color="primary",
               name="username",
+              data-test="username",
               autofocus,
               clearable,
               outline
@@ -38,12 +39,17 @@
               color="primary",
               name="password",
               type="password",
+              data-test="password",
               clearable,
               outline
               )
             v-flex
               v-layout.mb-1(justify-space-between, align-center)
-                v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
+                v-btn.ma-0(
+                type="submit",
+                color="primary",
+                data-test="submitButton"
+                ) {{ $t('common.connect') }}
                 v-flex(v-if="hasServerError", xs9)
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}

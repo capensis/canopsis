@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.popups(v-if="popups.length")
+  div.popups(v-if="popups.length", data-test="popupsWrapper")
     popup(v-for="popup in popups", v-bind="popup", :key="popup.id")
 </template>
 
