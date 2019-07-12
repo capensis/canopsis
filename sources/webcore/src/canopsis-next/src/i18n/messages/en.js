@@ -274,6 +274,7 @@ export default {
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
+      draggable: 'Try dragging an item',
     },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',

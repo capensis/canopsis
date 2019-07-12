@@ -8,13 +8,20 @@ process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
 
 require('@babel/register');
 
-const parh = require('path');
+const path = require('path');
 const deepmerge = require('deepmerge');
 
 /* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
-const chromeDriver = require('chromedriver');
 /* eslint-enable import/no-extraneous-dependencies */
+
+const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
+
+const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
+const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
+
+loadEnv(localEnvPath);
+loadEnv(baseEnvPath);
 
 const sel = require('./helpers/sel');
 
@@ -26,7 +33,7 @@ const seleniumConfig = {
   host: '127.0.0.1',
   port: 4444,
   cli_args: {
-    'webdriver.chrome.driver': chromeDriver.path,
+    'webdriver.chrome.driver': process.env.CHROME_DRIVER_PATH,
   },
 };
 
@@ -36,18 +43,18 @@ const seleniumConfig = {
 global.sel = sel;
 
 module.exports = deepmerge({
-  src_folders: [parh.resolve('tests', 'e2e', 'specs')],
-  output_folder: parh.resolve('tests', 'e2e', 'reports'),
+  src_folders: [path.resolve('tests', 'e2e', 'specs')],
+  output_folder: path.resolve('tests', 'e2e', 'reports'),
   custom_assertions_path: [
-    parh.resolve('node_modules', 'nightwatch-xhr', 'es5', 'assertions'),
-    parh.resolve('tests', 'e2e', 'custom-assertions'),
+    path.resolve('node_modules', 'nightwatch-xhr', 'es5', 'assertions'),
+    path.resolve('tests', 'e2e', 'custom-assertions'),
   ],
   custom_commands_path: [
-    parh.resolve('node_modules', 'nightwatch-xhr', 'es5', 'commands'),
-    parh.resolve('tests', 'e2e', 'custom-commands'),
+    path.resolve('node_modules', 'nightwatch-xhr', 'es5', 'commands'),
+    path.resolve('tests', 'e2e', 'custom-commands'),
   ],
-  page_objects_path: [parh.resolve('tests', 'e2e', 'page-objects')],
-  globals_path: parh.resolve('tests', 'e2e', 'globals.js'),
+  page_objects_path: [path.resolve('tests', 'e2e', 'page-objects')],
+  globals_path: path.resolve('tests', 'e2e', 'globals.js'),
 
   selenium: seleniumConfig,
 
@@ -63,7 +70,7 @@ module.exports = deepmerge({
         format: 'mp4',
         enabled: false,
         deleteOnSuccess: true,
-        path: parh.resolve('tests', 'e2e', 'records'),
+        path: path.resolve('tests', 'e2e', 'records'),
         resolution: '1440x900',
         fps: 15,
         input: '',
