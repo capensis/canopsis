@@ -23,14 +23,14 @@ const onCreateUser = (browser, {
     .verifyModalClosed();
 };
 
-const onCreateTemporaryObject = ({ prefix, text, i }) => {
-  const index = typeof i === 'undefined' ? '' : `-${i}`;
+const onCreateTemporaryObject = ({ prefix, text, index }) => {
+  const i = typeof index === 'undefined' ? '' : `-${index}`;
   return {
-    username: `${prefix}-${text}${index}-name`,
-    firstname: `${prefix}-${text}${index}-firstname`,
-    lastname: `${prefix}-${text}${index}-lastname`,
-    email: `${prefix}-${text}${index}-email@example.com`,
-    password: `${prefix}-${text}${index}-password`,
+    username: `${prefix}-${text}${i}-name`,
+    firstname: `${prefix}-${text}${i}-firstname`,
+    lastname: `${prefix}-${text}${i}-lastname`,
+    email: `${prefix}-${text}${i}-email@example.com`,
+    password: `${prefix}-${text}${i}-password`,
   };
 };
 
@@ -134,8 +134,8 @@ module.exports = {
 
     TEMPORARY_DATA[prefix] = [];
 
-    for (let i = 0; i < counts; i += 1) {
-      TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, i }));
+    for (let index = 0; index < counts; index += 1) {
+      TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, index }));
     }
 
     TEMPORARY_DATA[prefix].map(user => onCreateUser(browser, user));

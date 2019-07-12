@@ -40,16 +40,16 @@ const commands = {
     return this.customClearValue('@emailField');
   },
 
-  selectRole(idx = 1) {
+  selectRole(index = 1) {
     return this.customClick('@roleField')
-      .waitForElementVisible(this.el('@roleItemOption', idx))
-      .customClick(this.el('@roleItemOption', idx));
+      .waitForElementVisible(this.el('@roleItemOption', index))
+      .customClick(this.el('@roleItemOption', index));
   },
 
-  selectLanguage(idx = 1) {
+  selectLanguage(index = 1) {
     return this.customClick('@languageField')
-      .waitForElementVisible(this.el('@languageItemOption', idx))
-      .customClick(this.el('@languageItemOption', idx));
+      .waitForElementVisible(this.el('@languageItemOption', index))
+      .customClick(this.el('@languageItemOption', index));
   },
 
   clickSelectDefaultViewButton() {

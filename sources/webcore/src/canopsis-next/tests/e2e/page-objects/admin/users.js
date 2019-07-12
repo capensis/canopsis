@@ -11,7 +11,7 @@ const commands = {
 
   verifyPageUserBefore(userSelector) {
     return this.waitForElementVisible('@dataTable')
-      .assert.visible(this.sel(userSelector));
+      .assert.visible(this.sel(`user-${userSelector}`));
   },
 
   verifyMassDeleteButton() {
@@ -23,15 +23,15 @@ const commands = {
   },
 
   clickOptionCheckbox(userSelector) {
-    return this.customClick(this.el('@optionCheckbox', this.sel(userSelector)));
+    return this.customClick(this.el('@optionCheckbox', this.sel(`user-${userSelector}`)));
   },
 
   clickEditButton(userSelector) {
-    return this.customClick(this.el('@editButton', this.sel(userSelector)));
+    return this.customClick(this.el('@editButton', this.sel(`user-${userSelector}`)));
   },
 
   clickDeleteButton(userSelector) {
-    return this.customClick(this.el('@deleteButton', this.sel(userSelector)));
+    return this.customClick(this.el('@deleteButton', this.sel(`user-${userSelector}`)));
   },
 
   clickMassDeleteButton() {
