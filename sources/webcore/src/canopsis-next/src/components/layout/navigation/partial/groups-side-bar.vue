@@ -20,6 +20,7 @@
         div.panel-header(slot="header")
           span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
+          :data-test="`groupsSideBar-editGroupButton-group-${group._id}`",
           v-show="isEditingMode",
           depressed,
           small,
@@ -41,6 +42,7 @@
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
+                    :data-test="`groupsSideBar-editViewButton-group-${group._id}`",
                     v-show="checkViewEditButtonAccessById(view._id)",
                     depressed,
                     small,
@@ -49,6 +51,7 @@
                     )
                       v-icon(small) edit
                     v-btn.ma-0(
+                    :data-test="`groupsSideBar-copyViewButton-group-${group._id}`",
                     v-show="isEditingMode",
                     depressed,
                     small,

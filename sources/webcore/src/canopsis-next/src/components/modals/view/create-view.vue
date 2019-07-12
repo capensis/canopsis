@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createViewModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
@@ -31,10 +31,15 @@
             v-model="form.description",
             data-vv-name="description",
             )
-            v-switch(v-model="form.enabled", :label="$t('common.enabled')")
+            v-switch(
+            data-test="viewFieldEnabled",
+            v-model="form.enabled",
+            :label="$t('common.enabled')"
+            )
         v-layout(wrap, justify-center)
           v-flex(xs11)
             v-combobox(
+            data-test="viewFieldGroupTags",
             v-model="form.tags",
             :label="$t('modals.view.fields.groupTags')",
             tags,
@@ -45,6 +50,7 @@
             deletable-chips,
             )
             v-combobox(
+            data-test="viewFieldGroupIds",
             ref="combobox",
             v-model="groupName",
             :items="groupNames",
@@ -64,7 +70,7 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
+      v-btn.primary(data-test="viewSubmitButton", v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
       v-btn.error(
       v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
       @click="remove"
