@@ -60,27 +60,35 @@ DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
 DEFAULT_DIRECTION = "ASC"
 
-TILE_COLOR_PAUSE = "pause"
-TILE_COLOR_OK = "ok"
-TILE_COLOR_MINOR = "minor"
-TILE_COLOR_MAJOR = "major"
-TILE_COLOR_CRITICAL = "critical"
-TILE_COLOR_SELECTOR = [TILE_COLOR_OK,
-                       TILE_COLOR_MINOR,
-                       TILE_COLOR_MAJOR,
-                       TILE_COLOR_CRITICAL]
 
-TILE_ICON_PAUSE = "pause"
-TILE_ICON_MAINTENANCE = "maintenance"
-TILE_ICON_UNMONITORED = "unmonitored"
-TILE_ICON_OK = "ok"
-TILE_ICON_MINOR = "minor"
-TILE_ICON_MAJOR = "major"
-TILE_ICON_CRITICAL = "critical"
-TILE_ICON_SELECTOR = [TILE_ICON_OK,
-                      TILE_ICON_MINOR,
-                      TILE_ICON_MAJOR,
-                      TILE_ICON_CRITICAL]
+class TileColor(FastEnum):
+    PAUSE = "pause"
+    OK = "ok"
+    MINOR = "minor"
+    MAJOR = "major"
+    CRITICAL = "critical"
+
+
+TILE_COLOR_SELECTOR = [TileColor.OK,
+                       TileColor.MINOR,
+                       TileColor.MAJOR,
+                       TileColor.CRITICAL]
+
+
+class TileIcon(FastEnum):
+    PAUSE = "pause"
+    MAINTENANCE = "maintenance"
+    UNMONITORED = "unmonitored"
+    OK = "ok"
+    MINOR = "minor"
+    MAJOR = "major"
+    CRITICAL = "critical"
+
+
+TILE_ICON_SELECTOR = [TileIcon.OK,
+                      TileIcon.MINOR,
+                      TileIcon.MAJOR,
+                      TileIcon.CRITICAL]
 
 
 class ResultKey(FastEnum):
@@ -222,13 +230,13 @@ class __TileData(object):
         :param dict watcher: a watcher with his pbehaviors, watched entities
         and their active pbehaviors(see _rework_watcher_pipeline_element
         function).
-        :return str: 'TILE_COLOR_PAUSE' if they are at least one active
+        :return str: 'TileColor.PAUSE' if they are at least one active
         pbehavior on the watcher or an active pbehavior on every watched
         entities.
-        'TILE_COLOR_PAUSE_OK' if the watcher state is 0.
-        'TILE_COLOR_PAUSE_MINOR' if the watcher state is 1.
-        'TILE_COLOR_PAUSE_MAJOR' if the watcher state is 2.
-        'TILE_COLOR_PAUSE_CRITICAL' if the watcher state is 3.
+        'TileColor.OK' if the watcher state is 0.
+        'TileColor.MINOR' if the watcher state is 1.
+        'TileColor.MAJOR' if the watcher state is 2.
+        'TileColor.CRITICAL' if the watcher state is 3.
         """
         watched_ent_paused = 0
         watcher_state = 0
@@ -243,10 +251,10 @@ class __TileData(object):
 
         if len(watcher[ResultKey.ENT]) > 0 and \
            len(watcher[ResultKey.ENT]) == watched_ent_paused:
-            return TILE_COLOR_PAUSE
+            return TileColor.PAUSE
 
         if len(watcher[ResultKey.PBEHAVIORS]) > 0:
-            return TILE_COLOR_PAUSE
+            return TileColor.PAUSE
 
         return TILE_COLOR_SELECTOR[watcher_state]
 
@@ -256,21 +264,21 @@ class __TileData(object):
         Return a string that indicate the primary tile icon to used to render
         the watcher tile.
 
-        'TILE_ICON_OK', 'TILE_ICON_MINOR', 'TILE_ICON_MAJOR',
-        'TILE_ICON_CRITICAL' are return if they are no active pbehavior on the
+        'TileIcon.OK', 'TileIcon.MINOR', 'TileIcon.MAJOR',
+        'TileIcon.CRITICAL' are return if they are no active pbehavior on the
         watcher or if not every watched entities have an active pbehavior.
 
-        'TILE_ICON_PAUSE', 'TILE_ICON_MAINTENANCE',
-        'TILE_ICON_UNMONITORED' are display if the given watcher is under
+        'TileIcon.PAUSE', 'TileIcon.MAINTENANCE',
+        'TileIcon.UNMONITORED' are display if the given watcher is under
         an active pbehavior or if every watched entities have at least one
         active pbehavior. The icon string returned depends on the 'type_' of
         active pbehaviors on the watcher and on the watched entities. If
         at least one 'maintenance' pbehavior is present,
-        'TILE_ICON_MAINTENANCE' will be returned. Then if at least one
+        'TileIcon.MAINTENANCE' will be returned. Then if at least one
         'Hors plage horaire de surveillance' pbehavior is present,
-        'TILE_ICON_UNMONITORED' will be returned. Finally, if no
+        'TileIcon.UNMONITORED' will be returned. Finally, if no
         'maintenance' pbehavior or 'Hors plage horaire de surveillance'
-        pbehavior are present, return 'TILE_ICON_PAUSE'.
+        pbehavior are present, return 'TileIcon.PAUSE'.
         """
         has_maintenance = False
         has_out_of_surveillance = False
@@ -304,11 +312,11 @@ class __TileData(object):
                     has_pause = True
 
         if has_maintenance:
-            return TILE_ICON_MAINTENANCE
+            return TileIcon.MAINTENANCE
         if has_pause:
-            return TILE_ICON_PAUSE
+            return TileIcon.PAUSE
         if has_out_of_surveillance:
-            return TILE_ICON_UNMONITORED
+            return TileIcon.UNMONITORED
 
         watcher_state = 0
         if len(watcher[ResultKey.ALARM]) > 0:
@@ -324,17 +332,17 @@ class __TileData(object):
         Return a string that indicate the secondary tile icon to used to render
         the watcher tile or None
 
-        'TILE_ICON_PAUSE', 'TILE_ICON_MAINTENANCE',
-        'TILE_ICON_UNMONITORED' are returned if they are some (not all)
+        'TileIcon.PAUSE', 'TileIcon.MAINTENANCE',
+        'TileIcon.UNMONITORED' are returned if they are some (not all)
         watched entities with an active pbehavior.
 
         The icon string returned depends on the 'type_' of active pbehaviors on
         the watche watched entities. If at least one 'maintenance' pbehavior is
-        present, 'TILE_ICON_MAINTENANCE' will be returned. Then if at least one
+        present, 'TileIcon.MAINTENANCE' will be returned. Then if at least one
         'Hors plage horaire de surveillance' pbehavior is present,
-        'TILE_ICON_UNMONITORED' will be returned. Finally, if no
+        'TileIcon.UNMONITORED' will be returned. Finally, if no
         'maintenance' pbehavior or 'Hors plage horaire de surveillance'
-        pbehavior are present, return 'TILE_ICON_PAUSE'.
+        pbehavior are present, return 'TileIcon.PAUSE'.
 
         If every watched entities are under an active pbehavior, they are
         no secondary icon displayed on the tile, so None are returned.
@@ -342,8 +350,8 @@ class __TileData(object):
         :param dict watcher: a watcher with his pbehaviors, watched entities
         and their active pbehaviors(see _rework_watcher_pipeline_element
         function).
-        :return str: 'TILE_ICON_PAUSE' or 'TILE_ICON_MAINTENANCE' or
-        'TILE_ICON_UNMONITORED' or None
+        :return str: 'TileIcon.PAUSE' or 'TileIcon.MAINTENANCE' or
+        'TileIcon.UNMONITORED' or None
         """
         has_maintenance = False
         has_out_of_surveillance = False
@@ -365,11 +373,11 @@ class __TileData(object):
             return None
 
         if has_maintenance:
-            return TILE_ICON_MAINTENANCE
+            return TileIcon.MAINTENANCE
         if has_pause:
-            return TILE_ICON_PAUSE
+            return TileIcon.PAUSE
         if has_out_of_surveillance:
-            return TILE_ICON_UNMONITORED
+            return TileIcon.UNMONITORED
 
         return None
 
