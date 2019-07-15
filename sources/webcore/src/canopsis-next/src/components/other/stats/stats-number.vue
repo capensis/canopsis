@@ -23,9 +23,9 @@
                   sub.ml-2
                     v-icon.caption(
                     small,
-                    :color="item[query.stat.title].trend | statsTrendColor"
-                    ) {{ item[query.stat.title].trend | statsTrendIcon }}
-                  sub {{ item[query.stat.title].trend | statsFormatValue(widget.parameters.stat.stat.value) }}
+                    :color="item[query.stat.title].trend | trendColor"
+                    ) {{ item[query.stat.title].trend | trendIcon }}
+                  sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
 </template>
 
 <script>

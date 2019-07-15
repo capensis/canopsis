@@ -16,14 +16,14 @@
                 alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
               td(v-else)
                 v-layout(align-center)
-                  div {{ item[key].value | statsFormatValue(property.stat.value) }}
+                  div {{ item[key].value | formatValue(property.stat.value) }}
                   div(v-if="hasTrend(item[key])")
                     sub.ml-2
                       v-icon.caption(
                       small,
-                      :color="item[key].trend | statsTrendColor"
-                      ) {{ item[key].trend | statsTrendIcon }}
-                    sub {{ item[key].trend | statsFormatValue(property.stat.value) }}
+                      :color="item[key].trend | trendColor"
+                      ) {{ item[key].trend | trendIcon }}
+                    sub {{ item[key].trend | formatValue(property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}
 </template>
 
