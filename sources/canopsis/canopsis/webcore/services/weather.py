@@ -112,6 +112,7 @@ class ResultKey(FastEnum):
     ALRM_STATE = AlarmField.state.value
     ALRM_SNOOZE = AlarmField.snooze.value
     ALRM_ACK = AlarmField.ack.value
+    ALARM_FILTER = AlarmField.alarmfilter.value
     ALRM_CONNECTOR = "connector"
     ALRM_CONNECTOR_NAME = "connector_name"
     ALRM_LAST_UPDATE = AlarmField.last_update_date.value
@@ -201,7 +202,8 @@ class __TileData(object):
             if entity[ResultKey.ALARM] is None:
                 continue
 
-            if entity[ResultKey.ALARM]["v"].get("ack", None) is None:
+            alarm_value = entity[ResultKey.ALARM][ResultKey.ALRM_VALUE]
+            if alarm_value.get(ResultKey.ALRM_ACK, None) is None:
                 if len(entity[ResultKey.PBEHAVIORS]) == 0:
                     return True
 
@@ -402,12 +404,14 @@ class __TileData(object):
 
                 alarmfilter = None
                 try:
-                    alarmfilter = alarm["v"]["alarmfilter"]
+                    alarmfilter = alarm[ResultKey.ALRM_VALUE]
+                    alarmfilter = alarmfilter[ResultKey.ALARM_FILTER]
                 except KeyError:
                     continue
 
-                if isinstance(alarmfilter, dict) and "next_run" in alarmfilter:
-                    next_runs.append(alarmfilter["next_run"])
+                if isinstance(alarmfilter, dict) \
+                   and AlarmFilterField.next_run.value in alarmfilter:
+                    next_runs.append(alarmfilter[AlarmFilterField.next_run.value])
 
         if len(next_runs) > 0:
             return min(next_runs)
