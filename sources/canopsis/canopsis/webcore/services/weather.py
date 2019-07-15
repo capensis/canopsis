@@ -85,7 +85,7 @@ TILE_ICON_SELECTOR = [TILE_ICON_OK,
 
 class ResultKey(FastEnum):
     """
-    Contains the key use to handle the watcher retreive from the
+    Contains the key use to handle the watcher retrieve from the
     watcher pipeline and the rearrange watcher.
     """
     ID = "_id"
@@ -571,7 +571,7 @@ def _remove_inactive_pbh(pbehaviors):
 
 def _parse_direction(direction):
     """
-    Parse the sort direction retreived from the request.
+    Parse the sort direction retrieved from the request.
 
     If direction is `ASC`, retrun 1. If direction is `DESC` return -1.
     If the value does not match `ASC` or `DESC` raise a ValueError exception.
@@ -590,7 +590,7 @@ def _parse_direction(direction):
 
 def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
     """
-    Return the aggregation pipeline use to retreive every watcher, their
+    Return the aggregation pipeline use to retrieve every watcher, their
     alarm and pbehavior and their
     watched entities and their respective alarm and pbehavior.
 
@@ -607,8 +607,8 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
     # Pagination
     skip = {"$skip": start}
 
-    # Retreive opened alarm for the watchers
-    # I use the `$graphLookup` stage in order to retreive only the opened alarms
+    # Retrieve opened alarm for the watchers
+    # I use the `$graphLookup` stage in order to retrieve only the opened alarms
     # with the `restrictSearchWithMatch` option.
     alarms = {"$graphLookup":
               {"from": "periodical_alarm",
@@ -619,7 +619,7 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
                "as": "alarm",
                "maxDepth": 0}}
 
-    # Retreive every pbehaviors on the watcher
+    # Retrieve every pbehaviors on the watcher
     pbehaviors = {"$lookup":
                   {"from": "default_pbehavior",
                    "localField": "_id",
@@ -633,7 +633,7 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
                  "foreignField": "_id",
                  "as": "watched_entities"}}
 
-    # Retreive every pbehaviors on the watched entities
+    # Retrieve every pbehaviors on the watched entities
     pbehaviors_watched_ent = {"$graphLookup":
                               {"from": "default_pbehavior",
                                "startWith": "$watched_entities._id",
@@ -642,8 +642,8 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
                                "maxDepth": 0,
                                "as": "watched_entities_pbehaviors"}}
 
-    # Retreive every opened alarm on the watched entities
-    # I use the `$graphLookup` stage in order to retreive only the opened
+    # Retrieve every opened alarm on the watched entities
+    # I use the `$graphLookup` stage in order to retrieve only the opened
     # alarms with the `restrictSearchWithMatch` option.
     alarm_watched_ent = {"$graphLookup":
                          {"from": "periodical_alarm",
