@@ -584,7 +584,7 @@ def _parse_direction(direction):
     elif direction == "DESC":
         return -1
     else:
-        ValueError("Direction must be 'ASC' or 'DESC' not {}.".format(
+        raise ValueError("Direction must be 'ASC' or 'DESC' not {}.".format(
             direction))
 
 
@@ -779,11 +779,15 @@ def exports(ws):
         watcher_filter['type'] = 'watcher'
         watcher_filter = wf.filter(watcher_filter)
 
-        pipeline = _generate_tile_pipeline(watcher_filter,
-                                           limit,
-                                           start,
-                                           orderby,
-                                           direction)
+        try:
+            pipeline = _generate_tile_pipeline(watcher_filter,
+                                               limit,
+                                               start,
+                                               orderby,
+                                               direction)
+        except ValueError as error:
+            return gen_json_error({"name": "Can not parse sort direction.",
+                                   "description": str(error)}, 400)
 
         pipeline_result = mongo_collection.aggregate(pipeline)
 
