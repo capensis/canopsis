@@ -14,15 +14,12 @@ const commands = {
     return this.customClearValue('@passwordField');
   },
 
-  verifyPageElementsAfter(checkLogin = true) {
-    return this.waitForElementVisible('@userTopBarDropdownButton', 5000, checkLogin, (result) => {
-      if (!checkLogin) {
-        if (result.value) {
-          this.end();
-        }
-      }
-      return this;
-    });
+  verifyPageElementsAfter() {
+    return this.waitForElementVisible('@userTopBarDropdownButton');
+  },
+
+  verifyErrorDisabledUser() {
+    return this.waitForElementVisible('@errorLogin');
   },
 
   setUsername(username) {
@@ -48,6 +45,7 @@ module.exports = {
     passwordField: sel('password'),
     submitButton: sel('submitButton'),
     userTopBarDropdownButton: sel('userTopBarDropdownButton'),
+    errorLogin: sel('errorLogin'),
   },
   commands: [commands],
 };

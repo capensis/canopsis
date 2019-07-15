@@ -50,7 +50,7 @@
                 color="primary",
                 data-test="submitButton"
                 ) {{ $t('common.connect') }}
-                v-flex(v-if="hasServerError", xs9)
+                v-flex(v-if="hasServerError", xs9, data-test="errorLogin")
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
               v-divider

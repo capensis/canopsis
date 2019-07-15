@@ -59,22 +59,20 @@ module.exports = {
     onCreateUser(browser, TEMPORARY_DATA[prefix]);
   },
 
-  'Login new user with some name': async (browser) => {
+  'Login by created user credentials': (browser) => {
     const { create: { prefix } } = USERS;
     const { username, password } = TEMPORARY_DATA[prefix];
 
-    await browser.completed.logout()
+    browser.completed.logout()
       .maximizeWindow()
       .completed.login(username, password);
   },
 
-  'Login root': async (browser) => {
-    await browser.completed.logout()
+  'Edit special user with username from constants': (browser) => {
+    browser.completed.logout()
       .maximizeWindow()
       .completed.loginAsAdmin();
-  },
 
-  'Edit user with some username': (browser) => {
     const { text, create, edit: { prefix } } = USERS;
 
     TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
@@ -108,20 +106,18 @@ module.exports = {
       .verifyModalClosed();
   },
 
-  'Login edit user with some name': async (browser) => {
+  'Login by disabled user credentials': (browser) => {
     const { edit: { prefix } } = USERS;
     const { username, password } = TEMPORARY_DATA[prefix];
 
-    await browser.completed.logout()
+    browser.completed.logout()
       .maximizeWindow()
-      .completed.login(username, password, false);
-  },
-
-  'Login adminroot': async (browser) => {
-    await browser.completed.loginAsAdmin();
+      .completed.loginDisabledUser(username, password);
   },
 
   'Remove user with some username': (browser) => {
+    browser.completed.loginAsAdmin();
+
     const { create, edit } = USERS;
     const createUser = TEMPORARY_DATA[create.prefix].username;
     const editUser = TEMPORARY_DATA[edit.prefix].username;
