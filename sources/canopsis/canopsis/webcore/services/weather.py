@@ -30,7 +30,7 @@ import time
 from operator import itemgetter
 from bottle import request
 
-from canopsis.common.enumerations import DefaultEnum
+from canopsis.common.enumerations import FastEnum
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.watcher.filtering import WatcherFilter
@@ -83,7 +83,7 @@ TILE_ICON_SELECTOR = [TILE_ICON_OK,
                       TILE_ICON_CRITICAL]
 
 
-class ResultKey(DefaultEnum):
+class ResultKey(FastEnum):
     """
     Contains the key use to handle the watcher retreive from the
     watcher pipeline and the rearrange watcher.
@@ -128,40 +128,40 @@ class __TileData(object):
 
         :param dict: a watcher dict from the watcher pipeline.
         """
-        self.entity_id = watcher[ResultKey.ID.value]
-        self.infos = watcher[ResultKey.INFOS.value]
+        self.entity_id = watcher[ResultKey.ID]
+        self.infos = watcher[ResultKey.INFOS]
         self.sla_tex = ""
-        self.display_name = watcher[ResultKey.NAME.value]
+        self.display_name = watcher[ResultKey.NAME]
         self.linklist = []
-        self.mfilter = watcher.get(ResultKey.MFILTER.value, "")
-        for key, value in watcher.get(ResultKey.LINKS.value, {}).items():
+        self.mfilter = watcher.get(ResultKey.MFILTER, "")
+        for key, value in watcher.get(ResultKey.LINKS, {}).items():
             self.linklist.append({'cat_name': key, 'links': value})
 
         self.automatic_action_timer = self.__get_next_run(watcher)
 
-        state = watcher.get(ResultKey.STATE.value, 0)
+        state = watcher.get(ResultKey.STATE, 0)
         if isinstance(state, int):
             self.state = {'val': state}
         else:
             self.state = {'val': 0}
 
-        if not len(watcher[ResultKey.ALARM.value]) == 0:
-            alarm = watcher[ResultKey.ALARM.value][0]
-            alarm = alarm[ResultKey.ALRM_VALUE.value]
-            self.state = alarm[ResultKey.ALRM_STATE.value]
-            self.status = alarm[ResultKey.ALRM_STATUS.value]
-            self.snooze = alarm.get(ResultKey.ALRM_SNOOZE.value, None)
-            self.ack = alarm.get(ResultKey.ALRM_ACK.value, None)
-            self.connector = alarm[ResultKey.ALRM_CONNECTOR.value]
-            self.connector_name = alarm[ResultKey.ALRM_CONNECTOR_NAME.value]
-            self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE.value]
-            self.component = alarm[ResultKey.ALRM_COMPONENT.value]
-            self.resource = alarm.get(ResultKey.ALRM_RESOURCE.value, None)
+        if not len(watcher[ResultKey.ALARM]) == 0:
+            alarm = watcher[ResultKey.ALARM][0]
+            alarm = alarm[ResultKey.ALRM_VALUE]
+            self.state = alarm[ResultKey.ALRM_STATE]
+            self.status = alarm[ResultKey.ALRM_STATUS]
+            self.snooze = alarm.get(ResultKey.ALRM_SNOOZE, None)
+            self.ack = alarm.get(ResultKey.ALRM_ACK, None)
+            self.connector = alarm[ResultKey.ALRM_CONNECTOR]
+            self.connector_name = alarm[ResultKey.ALRM_CONNECTOR_NAME]
+            self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE]
+            self.component = alarm[ResultKey.ALRM_COMPONENT]
+            self.resource = alarm.get(ResultKey.ALRM_RESOURCE, None)
 
         # properties of the tile
         self.isActionRequired = self.__is_action_required(watcher)
         self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
-        self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS.value]) != 0
+        self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS]) != 0
         self.tileColor = self.__get_tile_color(watcher)
         self.tileIcon = self.__get_tile_icon(watcher)
         self.tileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
@@ -179,19 +179,19 @@ class __TileData(object):
         :return boolean: True if an action is required, False otherwise.
         """
 
-        watcher_alarm = watcher.get(ResultKey.ALARM.value, None)
+        watcher_alarm = watcher.get(ResultKey.ALARM, None)
         if watcher_alarm is None:
             return False
 
-        if len(watcher[ResultKey.PBEHAVIORS.value]) != 0:
+        if len(watcher[ResultKey.PBEHAVIORS]) != 0:
             return False
 
-        for entity in watcher[ResultKey.ENT.value]:
-            if entity[ResultKey.ALARM.value] is None:
+        for entity in watcher[ResultKey.ENT]:
+            if entity[ResultKey.ALARM] is None:
                 continue
 
-            if entity[ResultKey.ALARM.value]["v"].get("ack", None) is None:
-                if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
+            if entity[ResultKey.ALARM]["v"].get("ack", None) is None:
+                if len(entity[ResultKey.PBEHAVIORS]) == 0:
                     return True
 
         return False
@@ -208,8 +208,8 @@ class __TileData(object):
         :return boolean: True if all watched entities have an active
         pbehavior, False otherwise.
         """
-        for entity in watcher[ResultKey.ENT.value]:
-            if len(entity[ResultKey.PBEHAVIORS.value]) == 0:
+        for entity in watcher[ResultKey.ENT]:
+            if len(entity[ResultKey.PBEHAVIORS]) == 0:
                 return False
         return True
 
@@ -233,19 +233,19 @@ class __TileData(object):
         watched_ent_paused = 0
         watcher_state = 0
 
-        for ent in watcher[ResultKey.ENT.value]:
-            if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
+        for ent in watcher[ResultKey.ENT]:
+            if len(ent[ResultKey.PBEHAVIORS]) > 0:
                 watched_ent_paused += 1
 
-        if len(watcher[ResultKey.ALARM.value]) > 0:
-            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
-            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+        if len(watcher[ResultKey.ALARM]) > 0:
+            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
+            watcher_state = alarm[ResultKey.ALRM_STATE]["val"]
 
-        if len(watcher[ResultKey.ENT.value]) > 0 and \
-           len(watcher[ResultKey.ENT.value]) == watched_ent_paused:
+        if len(watcher[ResultKey.ENT]) > 0 and \
+           len(watcher[ResultKey.ENT]) == watched_ent_paused:
             return TILE_COLOR_PAUSE
 
-        if len(watcher[ResultKey.PBEHAVIORS.value]) > 0:
+        if len(watcher[ResultKey.PBEHAVIORS]) > 0:
             return TILE_COLOR_PAUSE
 
         return TILE_COLOR_SELECTOR[watcher_state]
@@ -278,15 +278,15 @@ class __TileData(object):
 
         watched_ent_paused = 0
 
-        for ent in watcher[ResultKey.ENT.value]:
-            if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
+        for ent in watcher[ResultKey.ENT]:
+            if len(ent[ResultKey.PBEHAVIORS]) > 0:
                 watched_ent_paused += 1
 
-        if watched_ent_paused == len(watcher[ResultKey.ENT.value]) and\
-           len(watcher[ResultKey.PBEHAVIORS.value]) == 0:
+        if watched_ent_paused == len(watcher[ResultKey.ENT]) and\
+           len(watcher[ResultKey.PBEHAVIORS]) == 0:
 
-            for ent in watcher[ResultKey.ENT.value]:
-                for pbh in ent[ResultKey.PBEHAVIORS.value]:
+            for ent in watcher[ResultKey.ENT]:
+                for pbh in ent[ResultKey.PBEHAVIORS]:
                     if pbh["type_"] == "Hors plage horaire de surveillance":
                         has_out_of_surveillance = True
                     elif pbh["type_"] == "Maintenance":
@@ -295,7 +295,7 @@ class __TileData(object):
                         has_pause = True
 
         else:
-            for pbh in watcher[ResultKey.PBEHAVIORS.value]:
+            for pbh in watcher[ResultKey.PBEHAVIORS]:
                 if pbh["type_"] == "Hors plage horaire de surveillance":
                     has_out_of_surveillance = True
                 elif pbh["type_"] == "Maintenance":
@@ -311,9 +311,9 @@ class __TileData(object):
             return TILE_ICON_UNMONITORED
 
         watcher_state = 0
-        if len(watcher[ResultKey.ALARM.value]) > 0:
-            alarm = watcher[ResultKey.ALARM.value][0][ResultKey.ALRM_VALUE.value]
-            watcher_state = alarm[ResultKey.ALRM_STATE.value]["val"]
+        if len(watcher[ResultKey.ALARM]) > 0:
+            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
+            watcher_state = alarm[ResultKey.ALRM_STATE]["val"]
 
         return TILE_ICON_SELECTOR[watcher_state]
 
@@ -350,10 +350,10 @@ class __TileData(object):
         has_pause = False
         paused_watched_ent = 0
 
-        for ent in watcher[ResultKey.ENT.value]:
-            if len(ent[ResultKey.PBEHAVIORS.value]) > 0:
+        for ent in watcher[ResultKey.ENT]:
+            if len(ent[ResultKey.PBEHAVIORS]) > 0:
                 paused_watched_ent += 1
-            for pbh in ent[ResultKey.PBEHAVIORS.value]:
+            for pbh in ent[ResultKey.PBEHAVIORS]:
                 if pbh["type_"] == "Hors plage horaire de surveillance":
                     has_out_of_surveillance = True
                 elif pbh["type_"] == "Maintenance":
@@ -361,7 +361,7 @@ class __TileData(object):
                 elif pbh["type_"] in ["pause", "Pause"]:
                     has_pause = True
 
-        if paused_watched_ent == len(watcher[ResultKey.ENT.value]):
+        if paused_watched_ent == len(watcher[ResultKey.ENT]):
             return None
 
         if has_maintenance:
@@ -385,9 +385,9 @@ class __TileData(object):
         :return int: the smallest next_run.
         """
         next_runs = []
-        for ent in watcher[ResultKey.ENT.value]:
-            if ent[ResultKey.ALARM.value] is not None:
-                alarm = ent[ResultKey.ALARM.value]
+        for ent in watcher[ResultKey.ENT]:
+            if ent[ResultKey.ALARM] is not None:
+                alarm = ent[ResultKey.ALARM]
 
                 alarmfilter = None
                 try:
@@ -522,9 +522,9 @@ def _pbehavior_types(watcher):
     """
     pb_types = set()
 
-    pbehaviors = watcher[ResultKey.PBEHAVIORS.value][:] # create a new list
-    for ent in watcher[ResultKey.ENT.value]:
-        pbehaviors += ent[ResultKey.PBEHAVIORS.value]
+    pbehaviors = watcher[ResultKey.PBEHAVIORS][:]  # create a new list
+    for ent in watcher[ResultKey.ENT]:
+        pbehaviors += ent[ResultKey.PBEHAVIORS]
 
     for pbh in pbehaviors:
         pb_type = pbh.get('type_', None)
@@ -538,8 +538,8 @@ def _watcher_status(watcher):
 
     ent_with_active_pbh = set()
 
-    for ent in watcher[ResultKey.ENT.value]:
-        ent_with_active_pbh.add(len(ent[ResultKey.PBEHAVIORS.value]) > 0)
+    for ent in watcher[ResultKey.ENT]:
+        ent_with_active_pbh.add(len(ent[ResultKey.PBEHAVIORS]) > 0)
 
     at_least_one = True in ent_with_active_pbh
     if at_least_one and False in ent_with_active_pbh:
@@ -679,65 +679,65 @@ def _rework_watcher_pipeline_element(watcher, logger):
     """Return a rearrange element from the watcher pipeline.
 
     This function will remove every inactive pbehaviors from the fields
-    `ResultKey.PBEHAVIORS.value` and `ResultKey.WATCHED_ENT_PBH.value`.
+    `ResultKey.PBEHAVIORS` and `ResultKey.WATCHED_ENT_PBH`.
 
     Then create a dict with every watched entities with the respective alarm
-    and pbehaviors. It will be store under the ResultKey.ENT.value field.
+    and pbehaviors. It will be store under the ResultKey.ENT field.
 
     :param dict watcher: an element from the watcher pipeline
     :return dict: a rearrange watcher that respect the following pattern
 
     {
-        "ResultKey.ID.value": str,
-        "ResultKey.ALARM.value": list of alarm,
+        "ResultKey.ID": str,
+        "ResultKey.ALARM": list of alarm,
         "depends": list of str,
         "enabled_history": list of int,
         "enabled": boolean,
         "impact": list of str,
-        "ResultKey.INFOS.value": dict,
-        "ResultKey.LINKS.value": dict,
+        "ResultKey.INFOS": dict,
+        "ResultKey.LINKS": dict,
         "measurements": dict,
-        "ResultKey.MFILTER.value": str,
-        "ResultKey.NAME.value": str,
-        "ResultKey.PBEHAVIORS.value": list of pbehavior,
-        "ResultKey.STATE.value": int,
+        "ResultKey.MFILTER": str,
+        "ResultKey.NAME": str,
+        "ResultKey.PBEHAVIORS": list of pbehavior,
+        "ResultKey.STATE": int,
         "type": str,
-        "ResultKey.ENT.value": list of entities, their respective pbehaviors
+        "ResultKey.ENT": list of entities, their respective pbehaviors
             and alarms
     }
     """
     # remove the inactive pbehaviors from the pipeline result
-    pbhs = watcher[ResultKey.PBEHAVIORS.value]
-    watcher[ResultKey.PBEHAVIORS.value] = _remove_inactive_pbh(pbhs)
-    pbhs = watcher[ResultKey.WATCHED_ENT_PBH.value]
-    watcher[ResultKey.WATCHED_ENT_PBH.value] = _remove_inactive_pbh(pbhs)
+    pbhs = watcher[ResultKey.PBEHAVIORS]
+    watcher[ResultKey.PBEHAVIORS] = _remove_inactive_pbh(pbhs)
+    pbhs = watcher[ResultKey.WATCHED_ENT_PBH]
+    watcher[ResultKey.WATCHED_ENT_PBH] = _remove_inactive_pbh(pbhs)
 
     # assign watched entities pbehaviors to the correct entities
     entities = {}
-    for entity in watcher[ResultKey.ENT.value]:
-        entity[ResultKey.PBEHAVIORS.value] = []
-        entity[ResultKey.ALARM.value] = None
-        entities[entity[ResultKey.ENT_ID.value]] = entity
+    for entity in watcher[ResultKey.ENT]:
+        entity[ResultKey.PBEHAVIORS] = []
+        entity[ResultKey.ALARM] = None
+        entities[entity[ResultKey.ENT_ID]] = entity
 
-    for pbh in watcher[ResultKey.WATCHED_ENT_PBH.value]:
+    for pbh in watcher[ResultKey.WATCHED_ENT_PBH]:
         for ent_id in pbh["eids"]:
             try:
-                entities[ent_id][ResultKey.PBEHAVIORS.value].append(pbh)
+                entities[ent_id][ResultKey.PBEHAVIORS].append(pbh)
             except KeyError:
                 logger.error("Can not find entities {} in the"
                              "pipeline result".format(ent_id))
 
     # assign watched entities alarms to the correct entities
-    for alarm in watcher[ResultKey.WATCHED_ENT_ALRM.value]:
+    for alarm in watcher[ResultKey.WATCHED_ENT_ALRM]:
         try:
-            entities[alarm["d"]][ResultKey.ALARM.value] = alarm
+            entities[alarm["d"]][ResultKey.ALARM] = alarm
         except KeyError:
             logger.error("Can not find entities {} in the"
                          "pipeline result".format(alarm["d"]))
 
-    watcher[ResultKey.ENT.value] = entities.values()
-    del watcher[ResultKey.WATCHED_ENT_PBH.value]
-    del watcher[ResultKey.WATCHED_ENT_ALRM.value]
+    watcher[ResultKey.ENT] = entities.values()
+    del watcher[ResultKey.WATCHED_ENT_PBH]
+    del watcher[ResultKey.WATCHED_ENT_ALRM]
 
     return watcher
 
@@ -802,7 +802,7 @@ def exports(ws):
 
             if wf.match(all_watched_ent_paused,
                         some_watched_ent_paused,
-                        len(watcher[ResultKey.PBEHAVIORS.value]) > 0,
+                        len(watcher[ResultKey.PBEHAVIORS]) > 0,
                         _pbehavior_types(watcher)):
                 tileData = __TileData(watcher)
                 result.append(vars(tileData))
