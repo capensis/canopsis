@@ -6,8 +6,20 @@ const commands = {
       .assert.visible('@usernameField');
   },
 
+  clearUsername() {
+    return this.customClearValue('@usernameField');
+  },
+
+  clearPassword() {
+    return this.customClearValue('@passwordField');
+  },
+
   verifyPageElementsAfter() {
     return this.waitForElementVisible('@userTopBarDropdownButton');
+  },
+
+  verifyErrorDisabledUser() {
+    return this.waitForElementVisible('@errorLogin');
   },
 
   setUsername(username) {
@@ -33,6 +45,7 @@ module.exports = {
     passwordField: sel('password'),
     submitButton: sel('submitButton'),
     userTopBarDropdownButton: sel('userTopBarDropdownButton'),
+    errorLogin: sel('errorLogin'),
   },
   commands: [commands],
 };

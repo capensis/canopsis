@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 
-module.exports.command = function login(username, password) {
+module.exports.command = function loginDisabledUser(username, password) {
   this.page.auth.login()
     .navigate()
     .verifyPageElementsBefore()
@@ -9,7 +9,7 @@ module.exports.command = function login(username, password) {
     .clearPassword()
     .setPassword(password)
     .clickSubmitButton()
-    .verifyPageElementsAfter();
+    .verifyErrorDisabledUser();
 
   return this;
 };

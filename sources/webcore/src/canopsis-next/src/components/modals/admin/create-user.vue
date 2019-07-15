@@ -88,21 +88,14 @@
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
           v-switch(
+          data-test="enabled"
           color="primary",
           :label="$t('modals.createUser.fields.enabled')",
           :disabled="onlyUserPrefs",
           v-model="form.enable",
           )
-        v-layout(align-center)
-          v-btn(
-          color="secondary",
-          data-test="selectDefaultViewButton"
-          small,
-          @click="openViewSelectModal"
-          ) {{ $t('user.selectDefaultView') }}
-          div {{ defaultViewTitle }}
-          v-btn(v-if="form.defaultview", icon, @click="clearDefaultView")
-            v-icon(color="error") clear
+        v-layout
+          view-selector(v-model="form.defaultview")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -123,6 +116,8 @@ import popupMixin from '@/mixins/popup';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
+import ViewSelector from './partial/view-selector.vue';
+
 /**
  * Modal to create an entity (watcher, resource, component, connector)
  */
@@ -131,7 +126,10 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ProgressOverlay },
+  components: {
+    ProgressOverlay,
+    ViewSelector,
+  },
   mixins: [
     authMixin,
     modalInnerMixin,
@@ -173,11 +171,6 @@ export default {
       return !this.config.user;
     },
 
-    defaultViewTitle() {
-      const userDefaultView = this.getViewById(this.form.defaultview);
-      return userDefaultView ? userDefaultView.title : null;
-    },
-
     onlyUserPrefs() {
       return this.config.onlyUserPrefs;
     },
@@ -202,21 +195,6 @@ export default {
     this.pending = false;
   },
   methods: {
-    openViewSelectModal() {
-      this.showModal({
-        name: MODALS.selectView,
-        config: {
-          action: (viewId) => {
-            this.$set(this.form, 'defaultview', viewId);
-          },
-        },
-      });
-    },
-
-    clearDefaultView() {
-      this.$set(this.form, 'defaultview', '');
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
