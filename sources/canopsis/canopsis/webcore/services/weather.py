@@ -31,6 +31,7 @@ from operator import itemgetter
 from bottle import request
 
 from canopsis.common.enumerations import FastEnum
+from canopsis.models.entity import Entity
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 from canopsis.watcher.filtering import WatcherFilter
@@ -96,10 +97,10 @@ class ResultKey(FastEnum):
     Contains the key use to handle the watcher retrieve from the
     watcher pipeline and the rearrange watcher.
     """
-    ID = "_id"
-    INFOS = "infos"
+    ID = AlarmField._id.value
+    INFOS = Entity.INFOS
     LINKS = "links"
-    NAME = "name"
+    NAME = Entity.NAME
     STATE = "state"
     ALARM = "alarm"
     PBEHAVIORS = "pbehaviors"
@@ -107,17 +108,17 @@ class ResultKey(FastEnum):
     WATCHED_ENT_PBH = "watched_entities_pbehaviors"
     WATCHED_ENT_ALRM = "watched_entities_alarm"
     ALRM_VALUE = "v"
-    ALRM_STATUS = "status"
-    ALRM_STATE = "state"
-    ALRM_SNOOZE = "snooze"
-    ALRM_ACK = "ack"
+    ALRM_STATUS = AlarmField.status.value
+    ALRM_STATE = AlarmField.state.value
+    ALRM_SNOOZE = AlarmField.snooze.value
+    ALRM_ACK = AlarmField.ack.value
     ALRM_CONNECTOR = "connector"
     ALRM_CONNECTOR_NAME = "connector_name"
-    ALRM_LAST_UPDATE = "last_update_date"
+    ALRM_LAST_UPDATE = AlarmField.last_update_date.value
     ALRM_COMPONENT = "component"
     ALRM_RESOURCE = "resource"
     ENT = "watched_entities"
-    ENT_ID = "_id"
+    ENT_ID = Entity._ID
 
 
 class __TileData(object):
