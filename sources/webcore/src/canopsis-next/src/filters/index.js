@@ -4,6 +4,10 @@ import duration from './duration';
 import json from './json';
 import percentage from './percentage';
 
+// Stats filters
+import statsTrend from './stats/trend';
+import statsFormatValue from './stats/formatted-value';
+
 export default {
   install(Vue) {
     Vue.filter('get', get);
@@ -11,5 +15,8 @@ export default {
     Vue.filter('duration', duration);
     Vue.filter('json', json);
     Vue.filter('percentage', percentage);
+    // Stats filters
+    Vue.filter('statsTrend', statsTrend);
+    Vue.filter('statsFormatValue', statsFormatValue);
   },
 };

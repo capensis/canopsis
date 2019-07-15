@@ -19,13 +19,13 @@
               v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
                 div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
               div.caption
-                div(v-if="item[query.stat.title].trend !== undefined && item[query.stat.title].trend !== null")
+                div(v-if="hasTrend(item[query.stat.title])")
                   sub.ml-2
                     v-icon.caption(
                     small,
-                    :color="trendFormat(item[query.stat.title].trend).color"
-                    ) {{ trendFormat(item[query.stat.title].trend).icon }}
-                  sub {{ getFormattedValue(item[query.stat.title].trend, widget.parameters.stat.stat.value) }}
+                    :color="$options.filters.statsTrend(item[query.stat.title].trend).color"
+                    ) {{ $options.filters.statsTrend(item[query.stat.title].trend).icon }}
+                  sub {{ item[query.stat.title].trend | statsFormatValue(widget.parameters.stat.stat.value) }}
 </template>
 
 <script>
