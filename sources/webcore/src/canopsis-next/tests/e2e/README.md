@@ -1,3 +1,14 @@
+Environment setup
+============================
+If you need change environment for nightwatch you can do it in the `tests/e2e/.env.local`
+
+For example: If you are receiving the problem with `chromedriver` version, you can set `CHROME_DRIVER_PATH`.
+```
+# Example for yarn global package
+CHROME_DRIVER_PATH=/usr/local/share/.config/yarn/global/node_modules/chromedriver/lib/chromedriver/chromedriver
+```
+
+
 Folder structure conventions
 ============================
 We have the following project structure:

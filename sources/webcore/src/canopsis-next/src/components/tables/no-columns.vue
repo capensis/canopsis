@@ -3,5 +3,5 @@
     table.v-datatable.v-table.theme--light
       tbody
         tr
-          td.text-xs-center {{ $t('tables.noColumns.message') }}
+          td.text-xs-center {{ parent.$t('tables.noColumns.message') }}
 </template>

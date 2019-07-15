@@ -265,6 +265,7 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
+    fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
@@ -274,6 +275,7 @@ export default {
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
+      draggable: 'Try dragging an item',
     },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
