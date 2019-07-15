@@ -159,7 +159,7 @@ export const WATCHER_STATES_COLORS = {
 
 export const PBEHAVIOR_TYPES = {
   maintenance: 'Maintenance',
-  outOfSurveillance: 'Hors plage horaire de surveillance',
+  unmonitored: 'Hors plage horaire de surveillance',
   pause: 'pause',
 };
 
@@ -177,7 +177,7 @@ export const WEATHER_ICONS = {
   [WATCHER_STATES.major]: 'person',
   [WATCHER_STATES.critical]: 'wb_cloudy',
   maintenance: 'build',
-  outOfSurveillance: 'brightness_3',
+  unmonitored: 'brightness_3',
   [WATCHER_STATES.pause]: 'pause',
 };
 

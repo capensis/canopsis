@@ -168,14 +168,14 @@ export default {
 
       const pausePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.pause });
       const maintenancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.maintenance });
-      const outOfSurveillancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
+      const outOfSurveillancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.unmonitored });
 
       if (maintenancePbehavior) {
         mainIcons.push(WEATHER_ICONS.maintenance);
       }
 
       if (outOfSurveillancePbehavior) {
-        mainIcons.push(WEATHER_ICONS.outOfSurveillance);
+        mainIcons.push(WEATHER_ICONS.unmonitored);
       }
 
       if (pausePbehavior) {
