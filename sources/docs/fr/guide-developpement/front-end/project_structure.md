@@ -44,11 +44,41 @@ Ce dossier contient les tests unitaires ainsi que les tests fonctionnels.
 
 #### Générale
 
+##### Configuration de Vue
+
+Le fichier ```vue.config.js``` contient des éléments de configuration de VueJS. Par exemple, de la configuration de Webpack, ou encore du serveur de développement.
+
+Pour plus d'informations concernant ce fichier, rendez-vous dans la [documentation officielle](https://cli.vuejs.org/config/#vue-config-js)
+
+##### Configuration des tests unitaires
+
+Le fichier ```jest.config.js``` contient des éléments de configuration de Jest. Jest étant une librairie utilisée dans la réalisation des tests unitaires de l'interface.
+
+Pour plus d'informations concernant ce fichier, rendez-vous dans la [documentation officielle](https://jestjs.io/docs/en/configuration.html)
+
+##### Divers
+
+- Le fichier ```.eslintrc``` contient des éléments de configuration pour la librairie ESLint. Pour plus d'informations concernant ce fichier, rendez-vous dans la [documentation officielle](https://eslint.org/docs/user-guide/configuring)
+- Le fichier ```.babelrc``` contient des éléments de configuration pour la librairie Babel. Pour plus d'informations concernant ce fichier, rendez-vous dans la [documentation officielle](https://babeljs.io/docs/en/config-files)
+- Le fichier ```.editorconfig``` contient des éléments de configuration utiles à l'éditeur de code. Pour plus d'informations concernant ce fichier, rendez-vous dans la [documentation officielle](https://editorconfig.org/)
+
 #### Environnement
+
+Un fichier ```.env``` est présent dans le dossier ```src``` de canopsis-next.
+
+Ce fichier contient des exemples des variables d'environnement nécessaires à l'application.
+
+Afin de surchargé une ou plusieurs de ces variables, une bonne pratique consiste à créer un fichier ```.env.local``` dans le même dossier. Les variables présentes dans ce fichiers surchargeront celles présentes dans le fichier ```.env```.
 
 #### Gestion des dépendances
 
+Un fichier ```package.json``` est présent dans le dossier ```src``` de canopsis-next.
+
+Celui-ci liste les dépendances du projet, ainsi que quelques éléments de configuration.
+
 #### Docker-compose
+
+Le fichier ```docker-compose.yml``` présent dans le dossier de canopsis-next permet de lancer un conteneur basé sur l'image docker ```uiv3```.
 
 ## Le dossier 'src'
 
@@ -131,6 +161,14 @@ Les mixins permettent de réutiliser des fonctionnalités dans plusieurs composa
 
 ### /services
 
+Ce dossier contient des fonctions utilitaires, utilisées à différents endroits du code.
+
+Par exemple, le fichier ```request.js``` contient l'instance d'axios (librairie utilisée pour les requêtes HTTP), avec sa configuration.
+
 ### /store
 
+Ce dossier contient l'ensemble du store Vuex de l'application.
+
 ### /views
+
+Ce dossier contient les différentes vues de l'application.
