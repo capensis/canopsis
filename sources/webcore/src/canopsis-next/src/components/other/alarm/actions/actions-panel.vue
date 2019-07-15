@@ -69,7 +69,7 @@ export default {
           type: alarmsListActionsTypes.fastAck,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
-          method: this.createAckEvent,
+          method: this.createFastAckEvent,
         },
         ackRemove: {
           type: alarmsListActionsTypes.ackRemove,
@@ -121,7 +121,7 @@ export default {
         },
         moreInfos: {
           type: alarmsListActionsTypes.moreInfos,
-          icon: 'more_horiz',
+          icon: 'info',
           title: this.$t('alarmList.actions.titles.moreInfos'),
           method: this.showMoreInfosModal,
         },
@@ -158,6 +158,10 @@ export default {
         actions.push(filteredActionsMap.variablesHelp);
       }
 
+      if (this.widget.parameters.moreInfoTemplate !== '') {
+        actions.push(filteredActionsMap.moreInfos);
+      }
+
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
           if (this.widget.parameters.isMultiAckEnabled) {
@@ -170,15 +174,12 @@ export default {
             filteredActionsMap.cancel,
             filteredActionsMap.ackRemove,
             filteredActionsMap.changeState,
-            filteredActionsMap.moreInfos,
           );
         } else {
           actions.unshift(
             filteredActionsMap.ack,
             filteredActionsMap.fastAck,
           );
-
-          actions.push(filteredActionsMap.moreInfos);
         }
       }
 
@@ -197,29 +198,6 @@ export default {
       }
 
       return result;
-    },
-  },
-  methods: {
-    createAckEvent() {
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item);
-    },
-
-    showAddPbehaviorModal() {
-      this.showModal({
-        name: MODALS.createPbehavior,
-        config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: [this.item.d] },
-            },
-          },
-          action: data => this.createPbehavior({
-            data,
-            parents: [this.item],
-            parentsType: ENTITIES_TYPES.alarm,
-          }),
-        },
-      });
     },
   },
 };

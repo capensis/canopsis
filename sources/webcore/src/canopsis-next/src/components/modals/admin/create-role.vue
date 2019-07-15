@@ -6,32 +6,18 @@ v-card(data-test="createRoleModal")
   v-card-text.py-0
     v-container
       v-form
-        v-text-field(
-        v-model="form._id",
-        :label="$t('common.name')",
-        name="name",
-        v-validate="'required'",
-        :error-messages="errors.collect('name')"
-        )
-        v-text-field(v-model="form.description", :label="$t('common.description')")
-        v-layout(align-center)
-          div Default view:
-          div.pl-2 {{ getViewTitle(this.form.defaultview) }}
-          v-menu(
-          offset-y,
-          :close-on-content-click="false",
-          v-model="defaultViewMenu"
+        v-layout
+          v-text-field(
+          v-model="form._id",
+          :label="$t('common.name')",
+          name="name",
+          v-validate="'required'",
+          :error-messages="errors.collect('name')"
           )
-            v-btn(slot="activator", fab, small, depressed)
-              v-icon edit
-            v-list.py-0
-              v-list-group(v-for="group in groups", :key="group._id")
-                v-list-tile(slot="activator")
-                  v-list-tile-content
-                    v-list-tile-title {{ group.name }}
-                v-list-tile(v-for="view in group.views", :key="view._id", @click="updateDefaultView(view)")
-                  v-list-tile-content
-                    v-list-tile-title {{ view.name }}
+        v-layout
+          v-text-field(v-model="form.description", :label="$t('common.description')")
+        v-layout
+          view-selector(v-model="form.defaultview")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -51,10 +37,15 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
+import ViewSelector from './partial/view-selector.vue';
+
 export default {
   name: MODALS.createRole,
   $_veeValidate: {
     validator: 'new',
+  },
+  components: {
+    ViewSelector,
   },
   mixins: [
     popupMixin,
@@ -111,19 +102,6 @@ export default {
       } catch (err) {
         this.addErrorPopup({ text: this.$t('errors.default') });
       }
-    },
-
-    updateDefaultView(view) {
-      this.form.defaultview = view._id;
-      this.defaultViewMenu = false;
-    },
-
-    getViewTitle(viewId) {
-      const view = this.getViewById(viewId);
-      if (view) {
-        return view.title;
-      }
-      return null;
     },
   },
 };

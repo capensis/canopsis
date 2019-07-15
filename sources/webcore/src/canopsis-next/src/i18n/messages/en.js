@@ -265,6 +265,7 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
+    fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
