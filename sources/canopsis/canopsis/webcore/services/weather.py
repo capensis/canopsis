@@ -145,6 +145,8 @@ class __TileData(object):
         for key, value in watcher.get(ResultKey.LINKS, {}).items():
             self.linklist.append({'cat_name': key, 'links': value})
 
+        self.watcher_pbehavior = watcher[ResultKey.PBEHAVIORS]
+
         self.automatic_action_timer = self.__get_next_run(watcher)
 
         state = watcher.get(ResultKey.STATE, 0)
