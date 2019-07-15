@@ -23,8 +23,8 @@
                   sub.ml-2
                     v-icon.caption(
                     small,
-                    :color="$options.filters.statsTrend(item[query.stat.title].trend).color"
-                    ) {{ $options.filters.statsTrend(item[query.stat.title].trend).icon }}
+                    :color="item[query.stat.title].trend | statsTrendColor"
+                    ) {{ item[query.stat.title].trend | statsTrendIcon }}
                   sub {{ item[query.stat.title].trend | statsFormatValue(widget.parameters.stat.stat.value) }}
 </template>
 

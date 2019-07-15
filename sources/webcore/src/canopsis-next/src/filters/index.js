@@ -5,7 +5,7 @@ import json from './json';
 import percentage from './percentage';
 
 // Stats filters
-import statsTrend from './stats/trend';
+import { trendColor as statsTrendColor, trendIcon as statsTrendIcon } from './stats/trend';
 import statsFormatValue from './stats/formatted-value';
 
 export default {
@@ -16,7 +16,8 @@ export default {
     Vue.filter('json', json);
     Vue.filter('percentage', percentage);
     // Stats filters
-    Vue.filter('statsTrend', statsTrend);
+    Vue.filter('statsTrendColor', statsTrendColor);
+    Vue.filter('statsTrendIcon', statsTrendIcon);
     Vue.filter('statsFormatValue', statsFormatValue);
   },
 };

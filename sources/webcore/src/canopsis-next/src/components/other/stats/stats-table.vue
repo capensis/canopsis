@@ -21,8 +21,8 @@
                     sub.ml-2
                       v-icon.caption(
                       small,
-                      :color="$options.filters.statsTrend(item[key].trend).color"
-                      ) {{ $options.filters.statsTrend(item[key].trend).icon }}
+                      :color="item[key].trend | statsTrendColor"
+                      ) {{ item[key].trend | statsTrendIcon }}
                     sub {{ item[key].trend | statsFormatValue(property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}
 </template>

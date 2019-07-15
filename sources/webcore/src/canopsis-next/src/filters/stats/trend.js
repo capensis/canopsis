@@ -1,17 +1,20 @@
-export default function (trendValue) {
+export function trendColor(trendValue) {
   if (trendValue > 0) {
-    return {
-      icon: 'trending_up',
-      color: 'primary',
-    };
+    return 'primary';
   } else if (trendValue < 0) {
-    return {
-      icon: 'trending_down',
-      color: 'error',
-    };
+    return 'error';
   }
 
-  return {
-    icon: 'trending_flat',
-  };
+  return 'black';
 }
+
+export function trendIcon(trendValue) {
+  if (trendValue > 0) {
+    return 'trending_up';
+  } else if (trendValue < 0) {
+    return 'trending_down';
+  }
+
+  return 'trending_flat';
+}
+
