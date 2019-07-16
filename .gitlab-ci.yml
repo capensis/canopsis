@@ -1,5 +1,5 @@
 stages:
-  - CI-uiv3
+  - test
 
 before_script:
   - uname -a
@@ -19,7 +19,7 @@ variables:
   CANOPSIS_BUILD_NEXT: "0"
 
 stage_test:
-  stage: CI-uiv3
+  stage: test
   tags: ["canopsis"]
   script:
     - ./ci-gitlab.sh
