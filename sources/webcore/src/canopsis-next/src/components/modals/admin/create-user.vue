@@ -71,6 +71,12 @@
           v-model="form.ui_language",
           :items="languages",
           )
+        v-layout(row)
+          v-select.mt-0(
+          v-model="form.groupsNavigationType",
+          :label="$t('parameters.groupsNavigationType.title')",
+          :items="groupsNavigationItems",
+          )
         v-layout(row, align-center, v-if="!isNew")
           div {{ $t('common.authKey') }}: {{ config.user.authkey }}
           v-tooltip(left)
@@ -105,9 +111,10 @@
 <script>
 import { pick } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
+import appMixin from '@/mixins/app';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -132,6 +139,7 @@ export default {
   },
   mixins: [
     authMixin,
+    appMixin,
     modalInnerMixin,
     entitiesRoleMixin,
     entitiesUserMixin,
@@ -152,6 +160,7 @@ export default {
         ui_language: 'fr',
         enable: true,
         defaultview: '',
+        groupsNavigationType: GROUPS_NAVIGATION_TYPES.sideBar,
       },
     };
   },
@@ -174,6 +183,19 @@ export default {
     onlyUserPrefs() {
       return this.config.onlyUserPrefs;
     },
+
+    groupsNavigationItems() {
+      return [
+        {
+          text: this.$t('parameters.groupsNavigationType.items.sideBar'),
+          value: GROUPS_NAVIGATION_TYPES.sideBar,
+        },
+        {
+          text: this.$t('parameters.groupsNavigationType.items.topBar'),
+          value: GROUPS_NAVIGATION_TYPES.topBar,
+        },
+      ];
+    },
   },
   async mounted() {
     await this.fetchRolesList({ params: { limit: 0 } });
@@ -189,7 +211,12 @@ export default {
         'ui_language',
         'enable',
         'defaultview',
+        'groupsNavigationType',
       ]);
+
+      if (!this.form.groupsNavigationType) {
+        this.form.groupsNavigationType = GROUPS_NAVIGATION_TYPES.sideBar;
+      }
     }
 
     this.pending = false;

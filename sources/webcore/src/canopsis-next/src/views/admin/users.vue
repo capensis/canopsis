@@ -144,7 +144,11 @@ export default {
 
             await this.createUser({ data: { ...editedUser, ...omit(data, ['password']) } });
 
-            await this.fetchUsersListWithPreviousParams();
+            const requests = [this.fetchUsersListWithPreviousParams()];
+
+            if (user._id === this.currentUser._id) {
+              requests.push(this.fetchCurrentUser());
+            }
           },
         },
       });
@@ -163,13 +167,7 @@ export default {
 
             await this.createUser({ data: { ...user, ...omit(data, ['password']) } });
 
-            const requests = [this.fetchUsersListWithPreviousParams()];
-
-            if (user._id === this.currentUser._id) {
-              requests.push(this.fetchCurrentUser());
-            }
-
-            await Promise.all(requests);
+            await this.fetchUsersListWithPreviousParams();
           },
         },
       });

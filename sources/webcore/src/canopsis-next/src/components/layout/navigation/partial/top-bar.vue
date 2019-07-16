@@ -59,7 +59,6 @@ import { omit, cloneDeep } from 'lodash';
 
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
-import appMixin from '@/mixins/app';
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -75,7 +74,6 @@ import GroupsTopBar from './groups-top-bar.vue';
 export default {
   components: { GroupsTopBar },
   mixins: [
-    appMixin,
     authMixin,
     modalMixin,
     entitiesUserMixin,
@@ -137,6 +135,7 @@ export default {
           route: { name: 'admin-parameters' },
           text: this.$t('common.parameters'),
           icon: 'settings',
+          right: USERS_RIGHTS.technical.parameters,
         },
       ];
 
