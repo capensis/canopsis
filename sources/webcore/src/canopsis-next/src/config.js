@@ -27,6 +27,10 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
   xl: 'Infinity',
 };
 
+export const MAX_LOGO_SIZE_IN_KB = 16384;
+
+export const DEFAULT_APP_TITLE = 'Canopsis';
+
 export const API_ROUTES = {
   auth: '/auth',
   currentUser: '/account/me',
@@ -77,5 +81,6 @@ export const API_ROUTES = {
   infos: {
     login: '/api/internal/login/login_info',
     app: '/api/internal/app_info',
+    userInterface: '/api/internal/user_interface',
   },
 };
