@@ -17,7 +17,7 @@
       select-all,
       )
         template(slot="items", slot-scope="props")
-          tr
+          tr(:data-test="`role-${props.item._id}`")
             td
               v-checkbox(v-model="props.selected", primary, hide-details)
             td {{ props.item._id }}
@@ -30,7 +30,13 @@
       v-layout(column)
         refresh-btn(@click="fetchList")
         v-tooltip(left)
-          v-btn(slot="activator", fab, color="primary", @click.stop="showCreateRoleModal")
+          v-btn(
+          slot="activator",
+          color="primary",
+          data-test="addButton"
+          fab,
+          @click.stop="showCreateRoleModal"
+          )
             v-icon add
           span {{ $t('modals.createRole.title') }}
 </template>

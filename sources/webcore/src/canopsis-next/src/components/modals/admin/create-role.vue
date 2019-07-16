@@ -12,16 +12,21 @@ v-card(data-test="createRoleModal")
           :label="$t('common.name')",
           name="name",
           v-validate="'required'",
-          :error-messages="errors.collect('name')"
+          :error-messages="errors.collect('name')",
+          data-test="name"
           )
         v-layout
-          v-text-field(v-model="form.description", :label="$t('common.description')")
+          v-text-field(
+          v-model="form.description",
+          :label="$t('common.description')",
+          data-test="description"
+          )
         v-layout
           view-selector(v-model="form.defaultview")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary.white--text(@click="submit") {{ $t('common.submit') }}
+      v-btn.primary.white--text(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

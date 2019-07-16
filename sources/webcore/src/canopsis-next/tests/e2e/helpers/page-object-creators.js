@@ -13,21 +13,39 @@ module.exports.elementsWrapperCreator = function elementsWrapperCreator(selector
 };
 
 module.exports.modalCreator = function modalCreator(selector, pageObject) {
+  const { submitButton, cancelButton } = pageObject.elements;
+
   return {
     ...pageObject,
 
     commands: [
-      ...pageObject.commands.map(commandsItem => ({
-        verifyModalOpened() {
-          return this.waitForElementVisible(selector);
-        },
+      ...pageObject.commands.map((commandsItem) => {
+        const commands = {
+          verifyModalOpened() {
+            return this.waitForElementVisible(selector);
+          },
 
-        verifyModalClosed() {
-          return this.waitForElementNotPresent(selector);
-        },
+          verifyModalClosed() {
+            return this.waitForElementNotPresent(selector);
+          },
 
-        ...commandsItem,
-      })),
+          ...commandsItem,
+        };
+
+        if (submitButton) {
+          commands.clickSubmitButton = function clickSubmitButton() {
+            return this.customClick(submitButton);
+          };
+        }
+
+        if (cancelButton) {
+          commands.clickCancelButton = function clickCancelButton() {
+            return this.customClick(cancelButton);
+          };
+        }
+
+        return commands;
+      }),
     ],
   };
 };
