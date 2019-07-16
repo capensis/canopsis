@@ -27,7 +27,7 @@ stage_test:
     - ./ci-gitlab.sh
     - Xvfb :1 -screen 0 1024x768x16 &
     - x11vnc -display :1 -bg -nopw -xkb
-    - echo "CHROME_DRIVER_PATH=/opt/chromedriver" > sources/webcore/src/canopsis-next/tests/e2e/.env.local
+    - echo "CHROME_DRIVER_PATH=/opt/chrome/bin/chromedriver" > sources/webcore/src/canopsis-next/tests/e2e/.env.local
     - cd sources/webcore/src/canopsis-next && yarn && yarn e2e
   only:
     changes:
