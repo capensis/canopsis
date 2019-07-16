@@ -239,11 +239,11 @@ Ici, le type vaut tout le temps `"JSON"` et la présence des guillemets est obli
 }
 ```
 
-#### Formattage de la date
+#### Formatage de la date
 
 Cette section illustre l'utilisation de la fonction `formattedDate` pour le format des dates. Ici, l'évenèment a pour timestamp `2009-11-10 23:00:00 UTC`.
 
-La fonction utilise la syntaxe Go pour le formattage des dates. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
+La fonction utilise la syntaxe Go pour le formatage des dates. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
 
 ```json
 {
@@ -251,7 +251,7 @@ La fonction utilise la syntaxe Go pour le formattage des dates. Quand la chaîne
 }
 ```
 
-Là, le formattage UNIX a été utilisé et il n'a pas été reconnu par le moteur Go. Par conséquent, la chaîne a été renvoyée à l'identique.
+Là, le formatage UNIX a été utilisé et il n'a pas été reconnu par le moteur Go. Par conséquent, la chaîne a été renvoyée à l'identique.
 
 ```json
 {
