@@ -26,5 +26,11 @@ module.exports.NAVIGATION = {
     create: {
       prefix: 'create',
     },
+    copy: {
+      prefix: 'copy',
+    },
+    edit: {
+      prefix: 'edit',
+    },
   },
 };
