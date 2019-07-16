@@ -25,7 +25,7 @@ stage_test:
     - ./ci-gitlab.sh
     - which yarn
     - which npm
-   only:
+  only:
     changes:
       - sources/webcore/src/canopsis-next/**/*
     refs:
