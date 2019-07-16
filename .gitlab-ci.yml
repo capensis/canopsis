@@ -35,6 +35,9 @@ stage_test:
     refs:
       - gitlab-ci/uiv3
   artifacts:
+    reports:
+      junit:
+        - sources/webcore/src/canopsis-next/tests/e2e/reports/**/*.xml
     paths:
       - tests_report
 
