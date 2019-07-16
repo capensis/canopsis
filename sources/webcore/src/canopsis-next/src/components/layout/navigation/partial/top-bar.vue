@@ -108,7 +108,7 @@ export default {
         },
       ];
 
-      return links.filter(({ right }) => !right || this.checkReadAccess(right));
+      return links.filter(({ right }) => this.checkReadAccess(right));
     },
 
     administrationLinks() {
@@ -139,7 +139,7 @@ export default {
         },
       ];
 
-      return links.filter(({ right }) => !right || this.checkReadAccess(right));
+      return links.filter(({ right }) => this.checkReadAccess(right));
     },
   },
   methods: {

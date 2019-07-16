@@ -13,7 +13,6 @@ import Vuex from 'vuex';
 
 import featuresService from '@/services/features';
 
-import appModule from './modules/app';
 import authModule from './modules/auth';
 import i18nModule from './modules/i18n';
 import modalModule from './modules/modal';
@@ -39,7 +38,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    app: appModule,
     auth: authModule,
     i18n: i18nModule,
     modal: modalModule,

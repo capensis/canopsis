@@ -114,7 +114,6 @@ import { pick } from 'lodash';
 import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import appMixin from '@/mixins/app';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -139,7 +138,6 @@ export default {
   },
   mixins: [
     authMixin,
-    appMixin,
     modalInnerMixin,
     entitiesRoleMixin,
     entitiesUserMixin,

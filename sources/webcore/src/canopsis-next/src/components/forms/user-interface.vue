@@ -7,16 +7,23 @@
       v-flex
         v-text-field(
         v-model="form.appTitle",
+        :disabled="disabled",
         :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
     v-layout(row)
       v-flex
         span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.footer') }}
-        text-editor(v-model="form.footer")
+        text-editor(
+        v-model="form.footer",
+        :config="textEditorConfig"
+        )
     v-layout.mt-3(row)
       v-flex
         span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.description') }}
-        text-editor(v-model="form.description")
+        text-editor(
+        v-model="form.description",
+        :config="textEditorConfig"
+        )
     v-layout.mt-3(row)
       v-flex
         span.theme--light.v-label.file-selector__label {{ $t('parameters.userInterfaceForm.fields.logo') }}
@@ -25,22 +32,24 @@
           ref="fileSelector",
           v-validate="`image|size:${$config.MAX_LOGO_SIZE_IN_KB}`",
           :error-messages="errors.collect('logo')",
+          :disabled="disabled",
           accept="image/*",
           name="logo",
           withFilesList,
           @change="changeLogoFile"
           )
-    v-divider.mt-3
-    v-layout.mt-3(row, justify-end)
-      v-btn(
-      flat,
-      @click="reset"
-      ) {{ $t('common.cancel') }}
-      v-btn.primary(
-      type="submit",
-      :loading="submitting",
-      :disabled="submitting"
-      ) {{ $t('common.submit') }}
+    template(v-if="!disabled")
+      v-divider.mt-3
+      v-layout.mt-3(row, justify-end)
+        v-btn(
+        flat,
+        @click="reset"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+        :disabled="submitting",
+        :loading="submitting",
+        type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -48,16 +57,24 @@ import { DEFAULT_APP_TITLE } from '@/config';
 
 import { getFileDataUrlContent } from '@/helpers/file-select';
 
+import popupMixin from '@/mixins/popup';
+import entitiesInfoMixin from '@/mixins/entities/info';
+
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
-import entitiesInfoMixin from '@/mixins/entities/info';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
   components: { FileSelector, TextEditor },
-  mixins: [entitiesInfoMixin],
+  mixins: [popupMixin, entitiesInfoMixin],
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       submitting: false,
@@ -68,6 +85,11 @@ export default {
         description: '',
       },
     };
+  },
+  computed: {
+    textEditorConfig() {
+      return { disabled: this.disabled };
+    },
   },
   async mounted() {
     await this.fetchAllInfos();
@@ -109,6 +131,7 @@ export default {
           await this.updateUserInterface({ data });
           await this.fetchAllInfos();
 
+          this.addSuccessPopup({ text: this.$t('success.default') });
           this.reset();
         }
       } catch (err) {

@@ -5,13 +5,16 @@
       v-flex(xs12)
         v-card.ma-2
           v-card-text
-            user-interface-form
+            user-interface-form(:disabled="!hasUpdateParametersAccess")
 </template>
 
 <script>
+import rightsTechnicalParametersMixin from '@/mixins/rights/technical/parameters';
+
 import UserInterfaceForm from '@/components/forms/user-interface.vue';
 
 export default {
   components: { UserInterfaceForm },
+  mixins: [rightsTechnicalParametersMixin],
 };
 </script>
