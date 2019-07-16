@@ -241,6 +241,7 @@ export default {
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
     isMultiAckEnabled: 'Ack multiple',
+    fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la time line ?',
     duration: 'Durée',
     tstop: 'Date de fin',
@@ -943,7 +944,7 @@ export default {
   },
   snmpRules: {
     title: 'Règles SNMP',
-    uploadMib: 'Télécharger un fichier MIB',
+    uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
   },
   layout: {

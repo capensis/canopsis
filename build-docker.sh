@@ -4,7 +4,7 @@ set -o pipefail
 
 opt_squash=""
 
-workdir=$(dirname $(readlink -e $0))
+workdir=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)
 cd $workdir
 
 source ${workdir}/build-env.sh

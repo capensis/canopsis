@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createUserModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
@@ -14,18 +14,21 @@
           v-validate="'required'",
           :disabled="onlyUserPrefs",
           :error-messages="errors.collect('username')",
+          data-test="username"
           )
         v-layout(row)
           v-text-field(
           :label="$t('modals.createUser.fields.firstName')",
           v-model="form.firstname",
           :disabled="onlyUserPrefs",
+          data-test="firstName"
           )
         v-layout(row)
           v-text-field(
           :label="$t('modals.createUser.fields.lastName')",
           v-model="form.lastname",
           :disabled="onlyUserPrefs",
+          data-test="lastName"
           )
         v-layout(row)
           v-text-field(
@@ -35,6 +38,7 @@
           v-validate="'required|email'",
           :error-messages="errors.collect('email')",
           :disabled="onlyUserPrefs",
+          data-test="email"
           )
         v-layout(row)
           v-text-field(
@@ -45,8 +49,9 @@
           v-validate="passwordRules",
           :error-messages="errors.collect('password')",
           :disabled="onlyUserPrefs",
+          data-test="password"
           )
-        v-layout(row)
+        v-layout(data-test="roleLayout", row)
           v-select(
           :label="$t('modals.createUser.fields.role')",
           v-model="form.role",
@@ -57,12 +62,14 @@
           v-validate="'required'",
           :disabled="onlyUserPrefs",
           :error-messages="errors.collect('role')",
+          data-test="role"
           )
-        v-layout(row)
+        v-layout(data-test="languageLayout", row)
           v-select(
+          data-test="language",
           :label="$t('modals.createUser.fields.language')",
           v-model="form.ui_language",
-          :items="languages"
+          :items="languages",
           )
         v-layout(row, align-center, v-if="!isNew")
           div {{ $t('common.authKey') }}: {{ config.user.authkey }}
@@ -81,20 +88,18 @@
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
           v-switch(
+          data-test="enabled"
           color="primary",
           :label="$t('modals.createUser.fields.enabled')",
           :disabled="onlyUserPrefs",
           v-model="form.enable",
           )
-        v-layout(align-center)
-          v-btn(small, color="secondary", @click="openViewSelectModal") {{ $t('user.selectDefaultView') }}
-          div {{ defaultViewTitle }}
-          v-btn(v-if="form.defaultview", icon, @click="clearDefaultView")
-            v-icon(color="error") clear
+        v-layout
+          view-selector(v-model="form.defaultview")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+      v-btn.primary(data-test="submitButton", @click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -111,6 +116,8 @@ import popupMixin from '@/mixins/popup';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
+import ViewSelector from './partial/view-selector.vue';
+
 /**
  * Modal to create an entity (watcher, resource, component, connector)
  */
@@ -119,7 +126,10 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ProgressOverlay },
+  components: {
+    ProgressOverlay,
+    ViewSelector,
+  },
   mixins: [
     authMixin,
     modalInnerMixin,
@@ -161,11 +171,6 @@ export default {
       return !this.config.user;
     },
 
-    defaultViewTitle() {
-      const userDefaultView = this.getViewById(this.form.defaultview);
-      return userDefaultView ? userDefaultView.title : null;
-    },
-
     onlyUserPrefs() {
       return this.config.onlyUserPrefs;
     },
@@ -190,21 +195,6 @@ export default {
     this.pending = false;
   },
   methods: {
-    openViewSelectModal() {
-      this.showModal({
-        name: MODALS.selectView,
-        config: {
-          action: (viewId) => {
-            this.$set(this.form, 'defaultview', viewId);
-          },
-        },
-      });
-    },
-
-    clearDefaultView() {
-      this.$set(this.form, 'defaultview', '');
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

@@ -265,6 +265,7 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
+    fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
@@ -274,6 +275,7 @@ export default {
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
+      draggable: 'Try dragging an item',
     },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
@@ -289,6 +291,9 @@ export default {
     },
     statsDateInterval: {
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
+      fields: {
+        quickRanges: 'Quick ranges',
+      },
       quickRanges: {
         [STATS_QUICK_RANGES.custom.value]: 'Custom',
         [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
@@ -796,6 +801,9 @@ export default {
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
+      info: {
+        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
+      },
     },
     createSnmpRule: {
       create: {
@@ -971,6 +979,7 @@ export default {
     lineNotEmpty: 'This line is not empty',
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
+    statsRequestProblem: 'An error occurred while retrieving stats data',
   },
   calendar: {
     today: 'Today',

@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { MODALS, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP, CRUD_ACTIONS } from '@/constants';
+import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP, CRUD_ACTIONS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
@@ -14,6 +14,29 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 export default {
   mixins: [modalMixin, eventActionsAlarmMixin, entitiesPbehaviorMixin],
   methods: {
+    createFastAckEvent() {
+      let eventData = {};
+
+      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
+      }
+
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
+    },
+
+    async createMassFastAckEvent() {
+      let eventData = {};
+
+      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
+      }
+      const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, eventData);
+
+      await this.createEventAction({
+        data: ackEventData,
+      });
+    },
+
     showActionModal(name) {
       return () => this.showModal({
         name,
@@ -82,6 +105,24 @@ export default {
           ...this.modalConfig,
 
           variables,
+        },
+      });
+    },
+
+    showAddPbehaviorModal() {
+      this.showModal({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior: {
+            filter: {
+              _id: { $in: [this.item.d] },
+            },
+          },
+          action: data => this.createPbehavior({
+            data,
+            parents: [this.item],
+            parentsType: ENTITIES_TYPES.alarm,
+          }),
         },
       });
     },

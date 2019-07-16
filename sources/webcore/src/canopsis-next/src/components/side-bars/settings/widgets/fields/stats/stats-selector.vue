@@ -6,7 +6,12 @@
         .font-italic.caption.ml-1(v-else) ({{ $t('common.optional') }})
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
-      v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
+      v-layout(justify-space-between)
+        v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
+        v-tooltip(v-if="!draggableOptions.disabled", left)
+          v-btn(slot="activator", icon)
+            v-icon help_outline
+          span {{ $t('settings.statsSelect.draggable') }}
       v-list.secondary(dark)
         draggable(
         :value="orderedStats",
@@ -16,7 +21,7 @@
           v-list-group(v-for="stat in orderedStats", :key="stat.title")
             v-list-tile(slot="activator")
               v-list-tile-content
-                v-list-tile-title {{ stat.title }}
+                v-list-tile-title(:class="{ draggable: !draggableOptions.disabled }") {{ stat.title }}
               v-list-tile-action
                 v-layout
                   v-btn.primary.mx-1(@click.stop="showEditStatModal(stat.title, stat)", fab, small, depressed)

@@ -320,6 +320,7 @@ export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
+  null: 'null',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -571,16 +572,6 @@ export const STATS_CALENDAR_COLORS = {
     major: '#FFA726',
     critical: '#FF7043',
   },
-};
-
-export const LIVE_REPORTING_INTERVALS = {
-  today: 'today',
-  yesterday: 'yesterday',
-  last7Days: 'last7Days',
-  last30Days: 'last30Days',
-  thisMonth: 'thisMonth',
-  lastMonth: 'lastMonth',
-  custom: 'custom',
 };
 
 export const USERS_RIGHTS_MASKS = {
