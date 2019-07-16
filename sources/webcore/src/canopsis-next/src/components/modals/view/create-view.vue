@@ -72,6 +72,7 @@
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(data-test="viewSubmitButton", v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
       v-btn.error(
+      data-test="viewDeleteButton",
       v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
       @click="remove"
       ) {{ $t('common.delete') }}
