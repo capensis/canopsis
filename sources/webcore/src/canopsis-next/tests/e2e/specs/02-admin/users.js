@@ -126,17 +126,17 @@ module.exports = {
       .navigate()
       .verifyPageUserBefore(createUser)
       .clickDeleteButton(createUser);
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.admin.users()
       .verifyPageUserBefore(editUser)
       .clickDeleteButton(editUser);
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 
@@ -177,9 +177,9 @@ module.exports = {
     browser.page.admin.users()
       .verifyMassDeleteButton()
       .clickMassDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 };

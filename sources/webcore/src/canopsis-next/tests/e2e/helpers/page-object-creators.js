@@ -14,12 +14,13 @@ module.exports.elementsWrapperCreator = function elementsWrapperCreator(selector
 
 module.exports.modalCreator = function modalCreator(selector, pageObject) {
   const { submitButton, cancelButton } = pageObject.elements;
+  const preparedPageObjectCommands = pageObject.commands && pageObject.commands.length ? pageObject.commands : [{}];
 
   return {
     ...pageObject,
 
     commands: [
-      ...pageObject.commands.map((commandsItem) => {
+      ...preparedPageObjectCommands.map((commandsItem) => {
         const commands = {
           verifyModalOpened() {
             return this.waitForElementVisible(selector);

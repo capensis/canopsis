@@ -21,16 +21,16 @@ const commands = {
     return this.customClick('@addButton');
   },
 
-  clickOptionCheckbox(userSelector) {
-    return this.customClick(this.el('@optionCheckbox', sel(`user-${userSelector}`)));
+  clickOptionCheckbox(id) {
+    return this.customClick(this.el('@optionCheckbox', sel(`role-${id}`)));
   },
 
-  clickEditButton(userSelector) {
-    return this.customClick(this.el('@editButton', sel(`user-${userSelector}`)));
+  clickEditButton(id) {
+    return this.customClick(this.el('@editButton', sel(`role-${id}`)));
   },
 
-  clickDeleteButton(userSelector) {
-    return this.customClick(this.el('@deleteButton', sel(`user-${userSelector}`)));
+  clickDeleteButton(id) {
+    return this.customClick(this.el('@deleteButton', sel(`role-${id}`)));
   },
 
   clickMassDeleteButton() {

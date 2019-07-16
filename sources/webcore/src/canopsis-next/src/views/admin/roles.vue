@@ -22,9 +22,19 @@
               v-checkbox(v-model="props.selected", primary, hide-details)
             td {{ props.item._id }}
             td
-              v-btn.ma-0(v-if="hasUpdateAnyRoleAccess", @click="showEditRoleModal(props.item._id)", icon)
+              v-btn.ma-0(
+              v-if="hasUpdateAnyRoleAccess",
+              data-test="editButton",
+              icon,
+              @click="showEditRoleModal(props.item._id)"
+              )
                 v-icon edit
-              v-btn.ma-0(v-if="hasDeleteAnyRoleAccess", @click="showRemoveRoleModal(props.item._id)", icon)
+              v-btn.ma-0(
+              v-if="hasDeleteAnyRoleAccess",
+              data-test="deleteButton",
+              icon,
+              @click="showRemoveRoleModal(props.item._id)"
+              )
                 v-icon(color="error") delete
     .fab(v-if="hasCreateAnyRoleAccess")
       v-layout(column)

@@ -1,3 +1,7 @@
+const { get } = require('lodash');
+
+let roleId;
+
 const createRole = (browser, {
   name, description, groupId, viewId,
 }) => {
@@ -17,8 +21,15 @@ const createRole = (browser, {
     .browseViewById(viewId)
     .verifyModalClosed();
 
-  createRoleModal.clickSubmitButton()
-    .verifyModalClosed();
+  browser.waitForFirstXHR('account/role', 1000, () => createRoleModal.clickSubmitButton(), ({ responseData }) => {
+    const response = JSON.parse(responseData);
+
+    browser.assert.equal(response.total, 1);
+
+    roleId = get(response.data, [0, '_id']);
+
+    createRoleModal.verifyModalClosed();
+  });
 };
 
 module.exports = {
@@ -46,5 +57,68 @@ module.exports = {
       .verifyPageElementsBefore();
 
     createRole(browser, role);
+  },
+
+  'Edit created role by data from constants': (browser) => {
+    const rolesPage = browser.page.admin.roles();
+    const createRoleModal = browser.page.modals.admin.createRole();
+
+    rolesPage.verifyPageRoleBefore(roleId)
+      .clickEditButton(roleId);
+
+    createRoleModal.verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+  },
+
+  'Delete created role': (browser) => {
+    const rolesPage = browser.page.admin.roles();
+    const confirmationModal = browser.page.modals.common.confirmation();
+
+    rolesPage.verifyPageRoleBefore(roleId)
+      .clickDeleteButton(roleId);
+
+    confirmationModal.verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+  },
+
+  'Mass delete created roles': (browser) => {
+    const rolesPage = browser.page.admin.roles();
+    const confirmationModal = browser.page.modals.common.confirmation();
+
+    rolesPage.verifyPageRoleBefore(roleId)
+      .clickDeleteButton(roleId);
+
+    confirmationModal.verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+  },
+
+  'Pagination on data-table': (browser) => {
+    const rolesPage = browser.page.admin.roles();
+    const confirmationModal = browser.page.modals.common.confirmation();
+
+    rolesPage.verifyPageRoleBefore(roleId)
+      .clickDeleteButton(roleId);
+
+    confirmationModal.verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+  },
+
+  'Refresh button': (browser) => {
+    const rolesPage = browser.page.admin.roles();
+
+    rolesPage.navigate()
+      .waitForFirstXHR('rest/default_rights/role', 5000, null, ({ responseData }) => {
+        const response = JSON.parse(responseData);
+
+        browser.assert.equal(response.total, 1);
+
+        roleId = get(response.data, [0, '_id']);
+
+        // createRoleModal.verifyModalClosed();
+      });
   },
 };
