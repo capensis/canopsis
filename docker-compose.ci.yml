@@ -191,6 +191,8 @@ services:
       - compose.env
     environment:
       - CPS_WEBSERVER=1
+    ports:
+      - 28082:8082
     depends_on:
       - "mongodb"
     volumes:
