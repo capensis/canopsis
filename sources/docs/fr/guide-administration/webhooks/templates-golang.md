@@ -103,20 +103,22 @@ La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de
 
 `replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurences de la regex par la chaîne.
 
-Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va remplacer dans l'output de l'événement tous les caractères de fin de ligne par le caractère vide.
+Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va supprimer tous les caractères de fin de ligne de l'output de l'événement.
 
 ##### `formattedDate`
 
 `formattedDate` est la fonction qui va transformer les dates en chaînes de caractères, suivant la syntaxe Golang. Elle ne fonctionne que sur les champs qui sont des `CpsTime`, comme par exemple `.Alarm.Value.CreationDate` ou `.Event.Timestamp`.
 
-Cette fonction prend en paramètre une chaîne qui est le format attendu de la date. La chaîne doit correspondre à la syntaxe des dates en Go. Le tableau ci-dessous montre quelques directives qui sont reconnues, ainsi que leur correspondance avec la fonction `date`.
+Cette fonction prend en paramètre une chaîne qui est le format attendu de la date. La chaîne doit correspondre à la syntaxe des dates en Go. Cette syntaxe se base sur une date de référence, le `01/02 03:04:05PM '06 -0700` qui correspond au lundi 2 janvier 2006 à 22:04:05 UTC. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
+
+ Le tableau ci-dessous montre quelques directives qui sont reconnues, ainsi que leur correspondance avec la fonction `date` dans les systèmes UNIX.
 
 | Directive pour les templates | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition | Exemples |
 |:-----------|:-------|:-----------|:-------|
-| `Mon` | `%a` | Abréviation locale du jour de la semaine | Mon..Sun |
-| `Monday` | `%A` | Nom local du jour de la semaine  | Monday..Sunday |
-| `Jan` | `%b` | Abréviation locale du nom du mois | Jan..Dec |
-| `January` | `%B` | Nom local du mois  | January..December |
+| `Mon` | `%a` | Abréviation du jour de la semaine | Mon..Sun |
+| `Monday` | `%A` | Nom du jour de la semaine  | Monday..Sunday |
+| `Jan` | `%b` | Abréviation du nom du mois | Jan..Dec |
+| `January` | `%B` | Nom du mois  | January..December |
 | `01` | `%d` | Jour du mois | 01..31 |
 | `15` | `%k` | Heure (sur 24 heures) | 0..23 |
 | `02` | `%m` | Mois | 01..12 |
@@ -126,6 +128,8 @@ Cette fonction prend en paramètre une chaîne qui est le format attendu de la d
 | `MST` | `%Z` | Fuseau horaire | CEST, EDT, JST... |
 
 Ainsi, pour afficher transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `formattedDate \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
+
+La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) fournit par ailleurs les valeurs à utiliser pour des formats de dates standards. Pour obtenir une date suivant le RFC3339, il faudra utiliser `formattedDate \"2006-01-02T15:04:05Z07:00\"`. De même, `formattedDate \"02 Jan 06 15:04 MST\"` sera appelé pour générer une date au format RFC822.
 
 ## Exemples
 
@@ -245,21 +249,7 @@ Cette section illustre l'utilisation de la fonction `formattedDate` pour le form
 
 La fonction utilise la syntaxe Go pour le formatage des dates. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
 
-```json
-{
-    "payload" : "{\"moment\": {{ .Event.Timestamp | formattedDate \"%Y-%m-%d %H:%M:%S\" | json }} }"
-}
-```
-
-Là, le formatage UNIX a été utilisé et il n'a pas été reconnu par le moteur Go. Par conséquent, la chaîne a été renvoyée à l'identique.
-
-```json
-{
-    "moment": "%Y-%m-%d %H:%M:%S"
-}
-```
-
-Voici l'équivalent avec la syntaxe Go, qui va générer le résultat attendu.
+Voici un exemple avec la syntaxe Go qui va générer le résultat attendu.
 
 ```json
 {
@@ -272,6 +262,9 @@ Voici l'équivalent avec la syntaxe Go, qui va générer le résultat attendu.
     "moment": "2009-10-11 23:00:00"
 }
 ```
+
+!!! attention
+    Le formatage UNIX ne fonctionne **pas** avec cette fonction. L'appel `formattedDate \"%Y-%m-%d %H:%M:%S\"` ne sera pas reconnu par Go. Par conséquent, la chaîne sera renvoyée à l'identique et produira ce JSON incorrect : `{"moment": "%Y-%m-%d %H:%M:%S"}`
 
 #### Fonctions en série
 
