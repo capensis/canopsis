@@ -1,10 +1,11 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createGroupViewModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
     v-card-text
       v-text-field(
+      data-test="modalGroupNameField",
       :label="$t('modals.group.fields.name')",
       :error-messages="errors.collect('name')"
       v-model="form.name",
@@ -14,8 +15,15 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
-      v-btn.error(v-if="config.group && hasDeleteAnyViewAccess", @click="remove") {{ $t('common.delete') }}
+      v-btn.primary(
+      @click="submit",
+      data-test="createGroupSubmitButton"
+      ) {{ $t('common.submit') }}
+      v-btn.error(
+      v-if="config.group && hasDeleteAnyViewAccess",
+      @click="remove",
+      data-test="createGroupDeleteButton"
+      ) {{ $t('common.delete') }}
 </template>
 
 <script>
