@@ -19,12 +19,12 @@
       v-expansion-panel-content(
       v-for="group in availableGroups",
       :key="group._id",
-      :data-test="`groupsSideBar-header-group-${group.name}`"
+      :data-test="`panel-groupName-${group.name}`"
       ).secondary.white--text
         div.panel-header(slot="header")
           span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
-          :data-test="`groupsSideBar-editGroupButton-group-${group.name}`",
+          :data-test="`editGroupButton-groupName-${group.name}`",
           v-show="isEditingMode",
           depressed,
           small,
@@ -46,7 +46,7 @@
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
-                    :data-test="`groupsSideBar-editViewButton-group-${view.title}`",
+                    :data-test="`editViewButton-viewTitle-${view.title}`",
                     v-show="checkViewEditButtonAccessById(view._id)",
                     depressed,
                     small,
@@ -55,7 +55,7 @@
                     )
                       v-icon(small) edit
                     v-btn.ma-0(
-                    :data-test="`groupsSideBar-copyViewButton-group-${view.title}`",
+                    :data-test="`copyViewButton-viewTitle-${view.title}`",
                     v-show="isEditingMode",
                     depressed,
                     small,

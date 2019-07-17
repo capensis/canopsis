@@ -10,12 +10,12 @@ const commands = {
     return this.waitForElementVisible('@groupsSideBarButton');
   },
 
-  clickPanelHeader(id) {
-    return this.customClick(this.el('@groupsSideBarHeader', id));
+  clickPanelHeader(tags) {
+    return this.customClick(this.el('@groupsSideBarHeader', tags));
   },
 
-  verifyPanelBody(id) {
-    return this.waitForElementVisible(this.el('@groupsSideBarBody', id));
+  verifyPanelBody(tags) {
+    return this.waitForElementVisible(this.el('@groupsSideBarBody', tags));
   },
 
   clickGroupsSideBarButton() {
@@ -28,19 +28,19 @@ const commands = {
     return this;
   },
 
-  clickEditGroupButton(id) {
-    return this.waitForElementVisible(this.el('@editGroupButton', id))
-      .customClick(this.el('@editGroupButton', id));
+  clickEditGroupButton(tags) {
+    return this.waitForElementVisible(this.el('@editGroupButton', tags))
+      .customClick(this.el('@editGroupButton', tags));
   },
 
-  clickEditViewButton(id) {
-    return this.waitForElementVisible(this.el('@editViewButton', id))
-      .customClick(this.el('@editViewButton', id));
+  clickEditViewButton(title) {
+    return this.waitForElementVisible(this.el('@editViewButton', title))
+      .customClick(this.el('@editViewButton', title));
   },
 
-  clickCopyViewButton(id) {
-    return this.waitForElementVisible(this.el('@copyViewButton', id))
-      .customClick(this.el('@copyViewButton', id));
+  clickCopyViewButton(title) {
+    return this.waitForElementVisible(this.el('@copyViewButton', title))
+      .customClick(this.el('@copyViewButton', title));
   },
 
   browseGroupById(id) {
@@ -57,14 +57,14 @@ const groupsSideBar = sel('groupsSideBar');
 module.exports = {
   elements: {
     groupsSideBar,
-    groupsSideBarHeader: `${sel('groupsSideBar-header-group-%s')} .v-expansion-panel__header`,
-    groupsSideBarBody: `${sel('groupsSideBar-header-group-%s')} .v-expansion-panel__body`,
+    groupsSideBarHeader: `${sel('panel-groupName-%s')} .v-expansion-panel__header`,
+    groupsSideBarBody: `${sel('panel-groupName-%s')} .v-expansion-panel__body`,
     groupsSideBarButton: sel('groupsSideBarButton'),
     groupsSideBarClosed: `${groupsSideBar}.v-navigation-drawer--close`,
     groupSideBarSelectorById: `.v-expansion-panel__header ${sel('groupsSideBar-group-%s')}`,
-    editGroupButton: `.v-expansion-panel__header .v-btn${sel('groupsSideBar-editGroupButton-group-%s')}`,
-    editViewButton: `.v-expansion-panel__body .v-btn${sel('groupsSideBar-editViewButton-group-%s')}`,
-    copyViewButton: `.v-expansion-panel__body .v-btn${sel('groupsSideBar-copyViewButton-group-%s')}`,
+    editGroupButton: `.v-expansion-panel__header .v-btn${sel('editGroupButton-groupName-%s')}`,
+    editViewButton: `.v-expansion-panel__body .v-btn${sel('editViewButton-viewTitle-%s')}`,
+    copyViewButton: `.v-expansion-panel__body .v-btn${sel('copyViewButton-viewTitle-%s')}`,
     viewSideBarSelectorById: '.v-expansion-panel__body a[href^="/view/%s"]',
   },
   commands: [commands],

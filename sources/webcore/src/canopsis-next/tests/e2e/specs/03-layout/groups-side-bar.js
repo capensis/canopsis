@@ -35,7 +35,7 @@ module.exports = {
       .defaultPause(); // TODO: put verification
   },
 
-  'Add view with some name': (browser) => {
+  'Add view with some name from constants': (browser) => {
     const { text, create: { prefix } } = LEFT_SIDEBAR;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
@@ -63,7 +63,7 @@ module.exports = {
       .verifyModalClosed();
   },
 
-  'Copy view with some name': (browser) => {
+  'Checking view copy with name from constants': (browser) => {
     const { text, copy: { prefix }, create } = LEFT_SIDEBAR;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
@@ -93,7 +93,7 @@ module.exports = {
       .verifyModalClosed();
   },
 
-  'Edit view with some name': (browser) => {
+  'Editing test view with name from constants': (browser) => {
     const { text, edit: { prefix }, create } = LEFT_SIDEBAR;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
@@ -138,7 +138,7 @@ module.exports = {
       .verifyModalClosed();
   },
 
-  'Delete all items view with some name': (browser) => {
+  'Deleting all test items view with name from constants': (browser) => {
     const { edit, copy } = LEFT_SIDEBAR;
 
     browser.page.layout.groupsSideBar()
