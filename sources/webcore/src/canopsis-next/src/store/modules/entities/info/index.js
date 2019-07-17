@@ -78,11 +78,12 @@ export default {
       }
     },
 
-    async fetchAppInfos({ commit }) {
+    async fetchAppInfos({ commit, dispatch }) {
       try {
         const {
           version,
           logo,
+          language,
           app_title: appTitle,
           edition,
           stack,
@@ -98,6 +99,8 @@ export default {
             stack,
           },
         );
+
+        dispatch('i18n/setGlobalLocale', language, { root: true });
       } catch (err) {
         console.error(err);
       }
