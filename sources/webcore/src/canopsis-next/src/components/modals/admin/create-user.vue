@@ -225,8 +225,6 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          this.form.groupsNavigationType = null;
-
           await this.config.action(this.form);
         }
 
