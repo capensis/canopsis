@@ -38,7 +38,8 @@ export default {
      * @returns {boolean|*}
      */
     isShownGroupsSideBar() {
-      const isSelectedSideBar = this.currentUser.groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
+      const { groupsNavigationType } = this.currentUser;
+      const isSelectedSideBar = !groupsNavigationType || groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
       const isMobileOrTablet = this.$options.filters.mq(this.$mq, { m: true, l: false });
 
       return isSelectedSideBar || isMobileOrTablet;
@@ -50,7 +51,8 @@ export default {
      * @returns {boolean|*}
      */
     isShownGroupsTopBar() {
-      const isSelectedTopBar = this.currentUser.groupsNavigationType === GROUPS_NAVIGATION_TYPES.topBar;
+      const { groupsNavigationType } = this.currentUser;
+      const isSelectedTopBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.topBar;
       const isLaptop = this.$options.filters.mq(this.$mq, { l: true });
 
       return isSelectedTopBar && isLaptop;
