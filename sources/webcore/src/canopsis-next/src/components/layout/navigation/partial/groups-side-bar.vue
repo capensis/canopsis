@@ -16,11 +16,11 @@
     focusable,
     dark
     )
-      v-expansion-panel-content(
+      v-expansion-panel-content.secondary.white--text(
       v-for="group in availableGroups",
       :key="group._id",
       :data-test="`panel-groupName-${group.name}`"
-      ).secondary.white--text
+      )
         div.panel-header(slot="header")
           span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
