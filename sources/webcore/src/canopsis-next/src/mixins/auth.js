@@ -39,10 +39,10 @@ export default {
      */
     isShownGroupsSideBar() {
       const { groupsNavigationType } = this.currentUser;
-      const isSelectedSideBar = !groupsNavigationType || groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
+      const isSelectedSideBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
       const isMobileOrTablet = this.$options.filters.mq(this.$mq, { m: true, l: false });
 
-      return isSelectedSideBar || isMobileOrTablet;
+      return isSelectedSideBar || isMobileOrTablet || !this.isShownGroupsTopBar;
     },
 
     /**
