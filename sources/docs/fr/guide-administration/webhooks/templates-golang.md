@@ -4,9 +4,9 @@ Dans les [webhooks](index.md), les champs `payload` et `url` sont personnalisabl
 
 Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même.
 
-La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourés de doubles accolades.
+La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourées de doubles accolades.
 
-Pour plus d'informations, vous pouvez consulter la [documentaion officielle de Go sur les templates](https://golang.org/pkg/text/template).
+Pour plus d'informations, vous pouvez consulter la [documentation officielle de Go sur les templates](https://golang.org/pkg/text/template).
 
 ## Déclaration de variables
 
@@ -62,15 +62,15 @@ Ici, nous avons utilisé le `or` et le `eq`, mais il est possible de tester les 
 
 ### Transformation des variables
 
-En plus des fontions de base pour tester la valeur des variables, il existe plusieurs fonctions pour transformer le contenu de la variable.
+En plus des fonctions de base pour tester la valeur des variables, il existe plusieurs fonctions pour transformer le contenu de la variable.
 
 Pour les utiliser, il faut appeler la fonction après la variable comme ceci : `{{ .LaVariable | fonction }}` ou `{{ .LaVariable | fonction param }}` si la fonction a besoin d'autres paramètres.
 
-On peut aussi enchaîner différentes fonctions à la suite si on veut transformer plusieurs fois les variables `{{ .LaVariable | fontion1 | fonction2 paramA paramB | fonction3 paramC }}`.
+On peut aussi enchaîner différentes fonctions à la suite si on veut transformer plusieurs fois les variables `{{ .LaVariable | fonction1 | fonction2 paramA paramB | fonction3 paramC }}`.
 
 #### `urlquery`
 
-`urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
+`urlquery` va transformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
 
 #### Fonctionnalités spécifiques à Canopsis
 
@@ -91,7 +91,7 @@ Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by s
 
 ##### `split`
 
-`split` va diviser une chaîne de caractères en plusieurs sous-chaînes selon un séparateur et retourner une des ces sous-chaînes à partir d'un indice.
+`split` va diviser une chaîne de caractères en plusieurs sous-chaînes selon un séparateur et retourner une de ces sous-chaînes à partir d'un indice.
 
 Si par exemple l'output d'un événement vaut `"SERVER#69420#DOWN"`, `{{ .Event.Output | split \"#\" 2 }}` va renvoyer la chaîne `DOWN`. Comme les indices commencent à 0, `SERVER` a pour indice 0, `69420` a pour indice 1 et `DOWN` a pour indice 2.
 
@@ -101,7 +101,7 @@ La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de
 
 ##### `replace`
 
-`replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurences de la regex par la chaîne.
+`replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurrences de la regex par la chaîne.
 
 Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va supprimer tous les caractères de fin de ligne de l'output de l'événement.
 
@@ -155,7 +155,7 @@ Pas de variables, l'adresse du service externe sera toujours la même : `http://
 }
 ```
 
-Ici l'adresse sera généré en fonction de la variable, ici le numéro de ticket.
+Ici l'adresse sera générée en fonction de la variable, ici le numéro de ticket.
 
 ```json
 {
@@ -245,7 +245,7 @@ Ici, le type vaut tout le temps `"JSON"` et la présence des guillemets est obli
 
 #### Formatage de la date
 
-Cette section illustre l'utilisation de la fonction `formattedDate` pour le format des dates. Ici, l'évenèment a pour timestamp `2009-11-10 23:00:00 UTC`.
+Cette section illustre l'utilisation de la fonction `formattedDate` pour le format des dates. Ici, l'évènement a pour timestamp `2009-11-10 23:00:00 UTC`.
 
 La fonction utilise la syntaxe Go pour le formatage des dates. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
 
