@@ -147,7 +147,6 @@ export default {
   data() {
     return {
       pending: true,
-      languages: ['fr', 'en'],
       form: {
         _id: '',
         firstname: '',
@@ -193,6 +192,10 @@ export default {
           value: GROUPS_NAVIGATION_TYPES.topBar,
         },
       ];
+    },
+
+    languages() {
+      return Object.keys(this.$i18n.messages);
     },
   },
   async mounted() {
