@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 
-const { NAVIGATION: { LEFT_SIDEBAR } } = require('../../constants');
+const { NAVIGATION: { SIDEBAR } } = require('../../constants');
 
 const TEMPORARY_DATA = {};
 
@@ -36,7 +36,7 @@ module.exports = {
   },
 
   'Add view with some name from constants': (browser) => {
-    const { text, create: { prefix } } = LEFT_SIDEBAR;
+    const { text, create: { prefix } } = SIDEBAR;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
@@ -64,7 +64,7 @@ module.exports = {
   },
 
   'Checking view copy with name from constants': (browser) => {
-    const { text, copy: { prefix }, create } = LEFT_SIDEBAR;
+    const { text, copy: { prefix }, create } = SIDEBAR;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
@@ -94,7 +94,7 @@ module.exports = {
   },
 
   'Editing test view with name from constants': (browser) => {
-    const { text, edit: { prefix }, create } = LEFT_SIDEBAR;
+    const { text, edit: { prefix }, create } = SIDEBAR;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
@@ -108,16 +108,18 @@ module.exports = {
       .clickEditGroupButton(TEMPORARY_DATA[create.prefix].tags)
       .defaultPause();
 
+    TEMPORARY_DATA[create.prefix].tags = `${create.prefix}-${text}-tags-${r}`;
+
     browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clearGroupName()
-      .setGroupName(`${create.prefix}-${text}-tags-${r}`)
+      .setGroupName(TEMPORARY_DATA[create.prefix].tags)
       .clickSubmitButton()
       .verifyModalClosed();
 
 
     browser.page.layout.groupsSideBar()
-      .verifyPanelBody(`${create.prefix}-${text}-tags-${r}`)
+      .verifyPanelBody(TEMPORARY_DATA[create.prefix].tags)
       .clickEditViewButton(TEMPORARY_DATA[create.prefix].title)
       .defaultPause();
 
@@ -139,7 +141,7 @@ module.exports = {
   },
 
   'Deleting all test items view with name from constants': (browser) => {
-    const { edit, copy } = LEFT_SIDEBAR;
+    const { edit, copy } = SIDEBAR;
 
     browser.page.layout.groupsSideBar()
       .clickEditViewButton(TEMPORARY_DATA[copy.prefix].title)
