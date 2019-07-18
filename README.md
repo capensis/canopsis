@@ -33,7 +33,7 @@ canopsis.events | Engine_stat      | #
 - [installer mongodb 3.4](https://docs.mongodb.com/v3.4/administration/install-on-linux/)
 - Configurer la base :
 
-```
+```js
 use canopsis
 db.createUser({user:"cpsmongo",pwd:"canopsis",roles:["dbOwner"]})
 db.periodical_alarm.createIndex({t:1, d:1})
