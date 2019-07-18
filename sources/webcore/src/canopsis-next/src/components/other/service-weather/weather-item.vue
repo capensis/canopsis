@@ -123,7 +123,7 @@ export default {
     },
 
     compiledTemplate() {
-      return compile(this.template, { entity: this.watcher });
+      return `<div>${compile(this.template, { entity: this.watcher })}</div>`;
     },
 
     itemClasses() {

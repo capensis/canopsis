@@ -6,7 +6,7 @@ module.exports.CREDENTIALS = {
 };
 
 module.exports.USERS = {
-  text: 'testuser',
+  text: 'user',
   counts: 5,
   create: {
     prefix: 'create',
@@ -16,5 +16,21 @@ module.exports.USERS = {
   },
   mass: {
     prefix: 'mass',
+  },
+};
+
+module.exports.NAVIGATION = {
+  LEFT_SIDEBAR: {
+    text: 'view',
+    counts: 2,
+    create: {
+      prefix: 'create',
+    },
+    copy: {
+      prefix: 'copy',
+    },
+    edit: {
+      prefix: 'edit',
+    },
   },
 };
