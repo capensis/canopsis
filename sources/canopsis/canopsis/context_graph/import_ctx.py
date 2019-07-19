@@ -526,7 +526,9 @@ class ContextGraphImport(ContextGraph):
             desc = ("The ci of id {} match an existing entity. Updating it."
                     .format(ci["_id"]))
             self.logger.info(desc)
-            dict_merge(ci, self.entities_to_update[ci[self.K_ID]])
+            entity_to_update = self.entities_to_update[ci[self.K_ID]].copy()
+            dict_merge(entity_to_update, ci)
+            ci = entity_to_update
 
         # set default value for required fields
         if self.K_NAME not in ci:
@@ -741,7 +743,7 @@ class ContextGraphImport(ContextGraph):
         fd = open(file_, 'r')
 
         # In case the previous import failed and/or raise an exception, we\
-            # clean now
+        # clean now
         self.clean_attributes()
 
         start = time.time()
