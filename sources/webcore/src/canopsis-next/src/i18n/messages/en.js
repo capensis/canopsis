@@ -1085,6 +1085,15 @@ export default {
         topBar: 'Top bar',
       },
     },
+    userInterfaceForm: {
+      title: 'User interface',
+      fields: {
+        appTitle: 'App title',
+        footer: 'Login footer',
+        description: 'Login page description',
+        logo: 'Logo',
+      },
+    },
   },
   view: {
     errors: {
@@ -1147,6 +1156,9 @@ export default {
     custom: {
       tstop: {
         after: 'The {0} should be after than {1}',
+      },
+      logo: {
+        size: 'The {0} size must be less than {1} KB.',
       },
     },
   },

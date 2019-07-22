@@ -260,6 +260,14 @@
         "type": "CRUD"
     },
     {
+        "_id" : "models_parameters",
+        "loader_id" : "models_parameters",
+        "crecord_name": "models_parameters",
+        "crecord_type" : "action",
+        "desc": "Parameters",
+        "type": "RW"
+    },
+    {
         "_id" : "models_serie",
         "loader_id" : "models_serie",
         "crecord_name": "models_serie",

@@ -91,7 +91,12 @@ const routes = [
     path: '/admin/parameters',
     name: 'admin-parameters',
     component: AdminParameters,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.parameters,
+      },
+    },
   },
   {
     path: '/exploitation/pbehaviors',

@@ -4,9 +4,9 @@ Dans les [webhooks](index.md), les champs `payload` et `url` sont personnalisabl
 
 Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même.
 
-La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourés de doubles accolades.
+La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourées de doubles accolades.
 
-Pour plus d'informations, vous pouvez consulter la [documentaion officielle de Go sur les templates](https://golang.org/pkg/text/template).
+Pour plus d'informations, vous pouvez consulter la [documentation officielle de Go sur les templates](https://golang.org/pkg/text/template).
 
 ## Déclaration de variables
 
@@ -62,15 +62,15 @@ Ici, nous avons utilisé le `or` et le `eq`, mais il est possible de tester les 
 
 ### Transformation des variables
 
-En plus des fontions de base pour tester la valeur des variables, il existe plusieurs fonctions pour transformer le contenu de la variable.
+En plus des fonctions de base pour tester la valeur des variables, il existe plusieurs fonctions pour transformer le contenu de la variable.
 
 Pour les utiliser, il faut appeler la fonction après la variable comme ceci : `{{ .LaVariable | fonction }}` ou `{{ .LaVariable | fonction param }}` si la fonction a besoin d'autres paramètres.
 
-On peut aussi enchaîner différentes fonctions à la suite si on veut transformer plusieurs fois les variables `{{ .LaVariable | fontion1 | fonction2 paramA paramB | fonction3 paramC }}`.
+On peut aussi enchaîner différentes fonctions à la suite si on veut transformer plusieurs fois les variables `{{ .LaVariable | fonction1 | fonction2 paramA paramB | fonction3 paramC }}`.
 
 #### `urlquery`
 
-`urlquery` va tarnsformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
+`urlquery` va transformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
 
 #### Fonctionnalités spécifiques à Canopsis
 
@@ -91,13 +91,45 @@ Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by s
 
 ##### `split`
 
-`split` va diviser une chaîne de caractères en plusieurs sous-chaînes selon un séparateur et retourner une des ces sous-chaînes à partir d'un indice.
+`split` va diviser une chaîne de caractères en plusieurs sous-chaînes selon un séparateur et retourner une de ces sous-chaînes à partir d'un indice.
 
 Si par exemple l'output d'un événement vaut `"SERVER#69420#DOWN"`, `{{ .Event.Output | split \"#\" 2 }}` va renvoyer la chaîne `DOWN`. Comme les indices commencent à 0, `SERVER` a pour indice 0, `69420` a pour indice 1 et `DOWN` a pour indice 2.
 
 ##### `trim`
 
 La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de caractères. Les blancs pris en compte sont ceux définis par Unicode et ils comprennent l'espace, la tabulation, l'espace insécable ainsi que les caractères de fin de ligne.
+
+##### `replace`
+
+`replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurrences de la regex par la chaîne.
+
+Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va supprimer tous les caractères de fin de ligne de l'output de l'événement.
+
+##### `formattedDate`
+
+`formattedDate` est la fonction qui va transformer les dates en chaînes de caractères, suivant la syntaxe Golang. Elle ne fonctionne que sur les champs qui sont des `CpsTime`, comme par exemple `.Alarm.Value.CreationDate` ou `.Event.Timestamp`.
+
+Cette fonction prend en paramètre une chaîne qui est le format attendu de la date. La chaîne doit correspondre à la syntaxe des dates en Go. Cette syntaxe se base sur une date de référence, le `01/02 03:04:05PM '06 -0700` qui correspond au lundi 2 janvier 2006 à 22:04:05 UTC. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
+
+ Le tableau ci-dessous montre quelques directives qui sont reconnues, ainsi que leur correspondance avec la fonction `date` dans les systèmes UNIX.
+
+| Directive pour les templates | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition | Exemples |
+|:-----------|:-------|:-----------|:-------|
+| `Mon` | `%a` | Abréviation du jour de la semaine | Mon..Sun |
+| `Monday` | `%A` | Nom du jour de la semaine  | Monday..Sunday |
+| `Jan` | `%b` | Abréviation du nom du mois | Jan..Dec |
+| `January` | `%B` | Nom du mois  | January..December |
+| `01` | `%d` | Jour du mois | 01..31 |
+| `15` | `%k` | Heure (sur 24 heures) | 0..23 |
+| `02` | `%m` | Mois | 01..12 |
+| `04` | `%M` | Minute | 01..59 |
+| `05` | `%S` | Seconde | 01..61 |
+| `2006` | `%Y` | Année | 1970, 1984, 2019... |
+| `MST` | `%Z` | Fuseau horaire | CEST, EDT, JST... |
+
+Ainsi, pour afficher transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `formattedDate \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
+
+La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) fournit par ailleurs les valeurs à utiliser pour des formats de dates standards. Pour obtenir une date suivant le RFC3339, il faudra utiliser `formattedDate \"2006-01-02T15:04:05Z07:00\"`. De même, `formattedDate \"02 Jan 06 15:04 MST\"` sera appelé pour générer une date au format RFC822.
 
 ## Exemples
 
@@ -123,7 +155,7 @@ Pas de variables, l'adresse du service externe sera toujours la même : `http://
 }
 ```
 
-Ici l'adresse sera généré en fonction de la variable, ici le numéro de ticket.
+Ici l'adresse sera générée en fonction de la variable, ici le numéro de ticket.
 
 ```json
 {
@@ -211,9 +243,32 @@ Ici, le type vaut tout le temps `"JSON"` et la présence des guillemets est obli
 }
 ```
 
+#### Formatage de la date
+
+Cette section illustre l'utilisation de la fonction `formattedDate` pour le format des dates. Ici, l'évènement a pour timestamp `2009-11-10 23:00:00 UTC`.
+
+La fonction utilise la syntaxe Go pour le formatage des dates. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
+
+Voici un exemple avec la syntaxe Go qui va générer le résultat attendu.
+
+```json
+{
+    "payload" : "{\"moment\": {{ .Event.Timestamp | formattedDate \"2006-02-01 15:04:05\" | json }} }"
+}
+```
+
+```json
+{
+    "moment": "2009-10-11 23:00:00"
+}
+```
+
+!!! attention
+    Le formatage UNIX ne fonctionne **pas** avec cette fonction. L'appel `formattedDate \"%Y-%m-%d %H:%M:%S\"` ne sera pas reconnu par Go. Par conséquent, la chaîne sera renvoyée à l'identique et produira ce JSON incorrect : `{"moment": "%Y-%m-%d %H:%M:%S"}`
+
 #### Fonctions en série
 
-Enfin, on peut enchaîner plusieurs fonctions afin de transformer des variables. Dans le cas cas suivant, on va transformer la variable `.Event.Output` qui vaut `c0ffee - beef- facade      -a5a5a5`.
+Enfin, on peut enchaîner plusieurs fonctions afin de transformer des variables. Dans le cas suivant, on va transformer la variable `.Event.Output` qui vaut `c0ffee - beef- facade      -a5a5a5`.
 
 ```json
 {
@@ -226,5 +281,19 @@ On découpe l'output avec `split` qui nous retourne ` facade      `, puis trim e
 ```json
 {
     "message": "facade"
+}
+```
+
+Voici un deuxième exemple qui combine `formattedDate` puis `json_unquote` pour générer un message concernant la date de l'événement.
+
+```json
+{
+    "payload" : "{\"note\": \"The event happened on a {{ .Event.Timestamp | formattedDate \"Monday\" | json_unquote }}.\" }"
+}
+```
+
+```json
+{
+    "note": "The event happened on a Tuesday."
 }
 ```

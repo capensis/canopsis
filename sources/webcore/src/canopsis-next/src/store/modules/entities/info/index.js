@@ -102,5 +102,9 @@ export default {
         console.error(err);
       }
     },
+
+    updateUserInterface(context, { data } = {}) {
+      return request.post(API_ROUTES.infos.userInterface, data);
+    },
   },
 };
