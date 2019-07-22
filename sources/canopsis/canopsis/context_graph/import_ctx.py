@@ -523,12 +523,9 @@ class ContextGraphImport(ContextGraph):
         # TODO handle the creation of the name if needed and if the id
         # match the id scheme used in canopsis
         if ci[self.K_ID] in self.entities_to_update:
-            desc = ("The ci of id {} match an existing entity. Updating it."
+            desc = ("The ci of id {} match an existing entity. Overriding it."
                     .format(ci["_id"]))
             self.logger.info(desc)
-            entity_to_update = self.entities_to_update[ci[self.K_ID]].copy()
-            dict_merge(entity_to_update, ci)
-            ci = entity_to_update
 
         # set default value for required fields
         if self.K_NAME not in ci:
