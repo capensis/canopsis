@@ -45,10 +45,14 @@ const commands = {
     return this.customClick('@nextButton');
   },
 
-  selectRange(idx = 5) {
+  clickRefreshButton() {
+    return this.customClick('@refreshButton');
+  },
+
+  selectRange(index = 5) {
     return this.customClick('@selectRangeField')
-      .waitForElementVisible(this.el('@selectRangeItemOption', idx))
-      .customClick(this.el('@selectRangeItemOption', idx));
+      .waitForElementVisible(this.el('@selectRangeItemOption', index))
+      .customClick(this.el('@selectRangeItemOption', index));
   },
 
   el,
@@ -64,6 +68,7 @@ module.exports = {
     editButton: `%s ${sel('editButton')}`,
     deleteButton: `%s ${sel('deleteButton')}`,
     massDeleteButton: sel('massDeleteButton'),
+    refreshButton: sel('refreshButton'),
     selectRangeField: '.v-datatable .v-datatable__actions__select .v-input__control',
     selectRangeItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     prevButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Previous page"]',

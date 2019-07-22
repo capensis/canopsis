@@ -19,6 +19,11 @@ module.exports.USERS = {
   },
 };
 
+module.exports.ROLES = {
+  text: 'role',
+  counts: 3,
+};
+
 module.exports.NAVIGATION = {
   LEFT_SIDEBAR: {
     text: 'view',
