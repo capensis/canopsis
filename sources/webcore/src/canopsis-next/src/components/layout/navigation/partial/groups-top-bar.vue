@@ -13,7 +13,7 @@
         dark
         )
           div.v-btn.v-btn--flat.theme--dark(
-          :data-test="`dropButton-groupName-${group.name}`",
+          :data-test="`dropDownButton-groupName-${group.name}`",
           slot="activator"
           )
             span {{ group.name }}
@@ -27,7 +27,7 @@
             )
               v-icon(small) edit
             v-icon(dark) arrow_drop_down
-          v-list(:data-test="`dropZone-groupName-${group.name}`")
+          v-list(:data-test="`dropDownZone-groupName-${group.name}`")
             v-list-tile(
             v-for="view in group.views",
             :key="view._id",

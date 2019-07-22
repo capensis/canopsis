@@ -27,25 +27,7 @@ module.exports = {
     browser.end(done);
   },
 
-  'Browse view by id': (browser) => {
-    browser.page.layout.topBar()
-      .clickUserDropdown()
-      .clickUserProfileButton();
-
-    browser.page.modals.admin.createUser()
-      .verifyModalOpened()
-      .selectNavigationType(1)
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.layout.groupsSideBar()
-      .clickGroupsSideBarButton()
-      .browseGroupById('05b2e049-b3c4-4c5b-94a5-6e7ff142b28c') // TODO: use from some constants file when we will use fixtures
-      .browseViewById('da7ac9b9-db1c-4435-a1f2-edb4d6be4db8')
-      .defaultPause(); // TODO: put verification
-  },
-
-  'Add view with some name from constants': (browser) => {
+  'Add view with name from constants': (browser) => {
     const { text, create: { prefix } } = groups;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
@@ -53,6 +35,17 @@ module.exports = {
     const {
       name, title, description, tags,
     } = TEMPORARY_DATA[prefix];
+
+    browser.page.layout.topBar()
+      .clickUserDropdown()
+      .clickUserProfileButton();
+
+    browser.page.modals.admin.createUser()
+      .verifyModalOpened()
+      .selectNavigationType(2)
+      .clickSubmitButton()
+      .verifyModalClosed()
+      .api.pause(5000);
 
     browser.page.layout.leftSideBar()
       .verifySettingsWrapperBefore()
@@ -87,9 +80,9 @@ module.exports = {
       .clickEditViewButton()
       .defaultPause();
 
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(TEMPORARY_DATA[create.prefix].tags)
-      .verifyPanelBody(TEMPORARY_DATA[create.prefix].tags)
+    browser.page.layout.topBar()
+      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
+      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
       .clickCopyViewButton(TEMPORARY_DATA[create.prefix].title)
       .defaultPause();
 
@@ -114,7 +107,7 @@ module.exports = {
 
     const r = Math.random().toString(36).substring(7);
 
-    browser.page.layout.groupsSideBar()
+    browser.page.layout.topBar()
       .clickEditGroupButton(TEMPORARY_DATA[create.prefix].tags)
       .defaultPause();
 
@@ -128,8 +121,9 @@ module.exports = {
       .verifyModalClosed();
 
 
-    browser.page.layout.groupsSideBar()
-      .verifyPanelBody(TEMPORARY_DATA[create.prefix].tags)
+    browser.page.layout.topBar()
+      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
+      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
       .clickEditViewButton(TEMPORARY_DATA[create.prefix].title)
       .defaultPause();
 
@@ -151,9 +145,11 @@ module.exports = {
   },
 
   'Deleting all test items view with name from constants': (browser) => {
-    const { edit, copy } = groups;
+    const { create, edit, copy } = groups;
 
-    browser.page.layout.groupsSideBar()
+    browser.page.layout.topBar()
+      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
+      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
       .clickEditViewButton(TEMPORARY_DATA[copy.prefix].title)
       .defaultPause();
 
@@ -165,9 +161,9 @@ module.exports = {
       .clickConfirmButton()
       .verifyModalClosed();
 
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(TEMPORARY_DATA[edit.prefix].tags)
-      .verifyPanelBody(TEMPORARY_DATA[edit.prefix].tags)
+    browser.page.layout.topBar()
+      .clickDropdownButton(TEMPORARY_DATA[edit.prefix].tags)
+      .verifyDropdownZone(TEMPORARY_DATA[edit.prefix].tags)
       .clickEditViewButton(TEMPORARY_DATA[edit.prefix].title)
       .defaultPause();
 
