@@ -124,8 +124,8 @@ export default {
         config: {
           action: async () => {
             try {
-              await Promise.all(this.selected.map(id => this.removeRole({ id })));
-
+              await Promise.all(this.selected.map(({ _id }) => this.removeRole({ id: _id })));
+              await this.fetchRolesListWithPreviousParams();
               this.selected = [];
 
               this.addSuccessPopup({ text: this.$t('success.default') });
