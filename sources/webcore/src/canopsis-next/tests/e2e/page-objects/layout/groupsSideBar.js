@@ -38,6 +38,11 @@ const commands = {
       .customClick(this.el('@editViewButton', title));
   },
 
+  clickLinkView(title) {
+    return this.waitForElementVisible(this.el('@linkView', title))
+      .customClick(this.el('@linkView', title));
+  },
+
   clickCopyViewButton(title) {
     return this.waitForElementVisible(this.el('@copyViewButton', title))
       .customClick(this.el('@copyViewButton', title));
@@ -64,6 +69,7 @@ module.exports = {
     groupSideBarSelectorById: `.v-expansion-panel__header ${sel('groupsSideBar-group-%s')}`,
     editGroupButton: `.v-expansion-panel__header .v-btn${sel('editGroupButton-groupName-%s')}`,
     editViewButton: `.v-expansion-panel__body .v-btn${sel('editViewButton-viewTitle-%s')}`,
+    linkView: `.v-expansion-panel__body a.panel-item-content-link${sel('linkView-viewTitle-%s')}`,
     copyViewButton: `.v-expansion-panel__body .v-btn${sel('copyViewButton-viewTitle-%s')}`,
     viewSideBarSelectorById: '.v-expansion-panel__body a[href^="/view/%s"]',
   },

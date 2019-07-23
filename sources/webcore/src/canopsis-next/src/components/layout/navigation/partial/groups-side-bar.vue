@@ -37,7 +37,11 @@
         :key="view._id",
         :color="getColor(view._id)",
         )
-          router-link.panel-item-content-link(:title="view.title", :to="getViewLink(view)")
+          router-link.panel-item-content-link(
+          :data-test="`linkView-viewTitle-${view.title}`"
+          :title="view.title",
+          :to="getViewLink(view)",
+          )
             v-card-text.panel-item-content
               v-layout(align-center, justify-space-between)
                 v-flex
