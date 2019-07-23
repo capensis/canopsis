@@ -20,7 +20,7 @@ module.exports.USERS = {
 };
 
 module.exports.NAVIGATION = {
-  LEFT_SIDEBAR: {
+  groups: {
     text: 'view',
     counts: 2,
     create: {
