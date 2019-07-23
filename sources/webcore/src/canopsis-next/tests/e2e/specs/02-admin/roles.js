@@ -1,6 +1,9 @@
 const { get } = require('lodash');
 const uid = require('uid');
 
+const { API_ROUTES } = require('../../../../src/config');
+
+
 const createRole = (browser, {
   name, description, groupId, viewId,
 }) => {
@@ -20,15 +23,20 @@ const createRole = (browser, {
     .browseViewById(viewId)
     .verifyModalClosed();
 
-  browser.waitForFirstXHR('account/role', 1000, () => createRoleModal.clickSubmitButton(), ({ responseData }) => {
-    const response = JSON.parse(responseData);
+  browser.waitForFirstXHR(
+    API_ROUTES.role.create,
+    1000,
+    () => createRoleModal.clickSubmitButton(),
+    ({ responseData }) => {
+      const response = JSON.parse(responseData);
 
-    browser.assert.equal(response.total, 1);
+      browser.assert.equal(response.total, 1);
 
-    browser.globals.rolesIds.push(get(response.data, [0, '_id']));
+      browser.globals.rolesIds.push(get(response.data, [0, '_id']));
 
-    createRoleModal.verifyModalClosed();
-  });
+      createRoleModal.verifyModalClosed();
+    },
+  );
 };
 
 module.exports = {
@@ -156,15 +164,6 @@ module.exports = {
   'Refresh button': (browser) => {
     const rolesPage = browser.page.admin.roles();
 
-    rolesPage.waitForFirstXHR(
-      'rest/default_rights/role',
-      5000,
-      () => rolesPage.clickRefreshButton(),
-      ({ status, method, httpResponseCode }) => {
-        browser.assert.equal(status, 'success');
-        browser.assert.equal(method, 'GET');
-        browser.assert.equal(httpResponseCode, '200');
-      },
-    );
+    browser.comploted.refreshPage(API_ROUTES.role.list, () => rolesPage.clickRefreshButton());
   },
 };
