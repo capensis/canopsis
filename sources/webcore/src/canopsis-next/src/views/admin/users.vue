@@ -2,9 +2,16 @@
   v-container
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.users') }}
     div
-      div(v-show="hasDeleteAnyUserAccess && selected.length")
-        v-btn(@click="showRemoveSelectedUsersModal", icon, data-test="massDeleteButton")
-          v-icon delete
+      v-layout(row, wrap)
+        v-flex(xs4)
+          search-field(
+          v-model="searchingText",
+          @submit="fetchList",
+          @clear="fetchList",
+          )
+        v-flex(v-show="hasDeleteAnyUserAccess && selected.length", xs4)
+          v-btn(@click="showRemoveSelectedUsersModal", icon, data-test="massDeleteButton")
+            v-icon delete
       v-data-table(
       v-model="selected",
       :headers="headers",
@@ -60,18 +67,27 @@ import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 import { generateUser } from '@/helpers/entities';
+import { getUsersSearchByText } from '@/helpers/entities-search';
 
 import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import SearchField from '@/components/forms/fields/search-field.vue';
 
 export default {
   components: {
     RefreshBtn,
+    SearchField,
   },
   mixins: [modalMixin, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {
     return {
+      searchingText: '',
       pagination: null,
-      headers: [
+      selected: [],
+    };
+  },
+  computed: {
+    headers() {
+      return [
         {
           text: this.$t('tables.admin.users.columns.username'),
           value: '_id',
@@ -88,9 +104,8 @@ export default {
           text: this.$t('common.actionsLabel'),
           sortable: false,
         },
-      ],
-      selected: [],
-    };
+      ];
+    },
   },
   watch: {
     pagination(value, oldValue) {
@@ -175,19 +190,26 @@ export default {
 
     fetchList() {
       const {
-        rowsPerPage, page, sortBy, descending,
+        rowsPerPage,
+        page,
+        sortBy,
+        descending,
       } = this.pagination;
 
-      this.fetchUsersList({
-        params: {
-          limit: rowsPerPage,
-          start: (page - 1) * rowsPerPage,
-          sort: [{
-            property: sortBy,
-            direction: descending ? 'DESC' : 'ASC',
-          }],
-        },
-      });
+      const params = {
+        limit: rowsPerPage,
+        start: (page - 1) * rowsPerPage,
+        sort: [{
+          property: sortBy,
+          direction: descending ? 'DESC' : 'ASC',
+        }],
+      };
+
+      if (this.searchingText) {
+        params.filter = { $and: [getUsersSearchByText(this.searchingText)] };
+      }
+
+      this.fetchUsersList({ params });
     },
   },
 };
