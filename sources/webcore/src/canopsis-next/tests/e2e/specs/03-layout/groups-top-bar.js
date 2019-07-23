@@ -24,6 +24,16 @@ module.exports = {
   },
 
   after(browser, done) {
+    browser.page.layout.topBar()
+      .clickUserDropdown()
+      .clickUserProfileButton();
+
+    browser.page.modals.admin.createUser()
+      .verifyModalOpened()
+      .selectNavigationType(1)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
     browser.end(done);
   },
 
@@ -173,6 +183,7 @@ module.exports = {
     browser.page.modals.confirmation()
       .verifyModalOpened()
       .clickConfirmButton()
-      .verifyModalClosed();
+      .verifyModalClosed()
+      .api.pause(5000);
   },
 };
