@@ -25,7 +25,19 @@ export function getUsersSearchByText(text) {
   };
 }
 
+export function getRolesSearchByText(text) {
+  return {
+    $or: [
+      { _id: getRule(text) },
+      { role: getRule(text) },
+      { enable: getRule(text) },
+      { description: getRule(text) },
+    ],
+  };
+}
+
 export default {
   getContextWidgetSearchByText,
   getUsersSearchByText,
+  getRolesSearchByText,
 };
