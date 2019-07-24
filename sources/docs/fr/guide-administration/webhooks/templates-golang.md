@@ -105,6 +105,12 @@ La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de
 
 Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va supprimer tous les caractères de fin de ligne de l'output de l'événement.
 
+##### `toUnixTimestamp`
+
+`toUnixTimestamp` convertit une date en un timestamp Unix, un nombre entier représentant le nombre de secondes écoulées depuis le 1er janvier 1970 à minuit UTC. Elle ne fonctionne que sur les champs qui sont des `CpsTime`, comme par exemple `.Alarm.Value.CreationDate` ou `.Event.Timestamp`.
+
+`{{ .Event.Timestamp | toUnixTimestamp }}` va ainsi être transformé en un entier, par exemple `1531673640`.
+
 ##### `formattedDate`
 
 `formattedDate` est la fonction qui va transformer les dates en chaînes de caractères, suivant la syntaxe Golang. Elle ne fonctionne que sur les champs qui sont des `CpsTime`, comme par exemple `.Alarm.Value.CreationDate` ou `.Event.Timestamp`.
