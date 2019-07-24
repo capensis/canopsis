@@ -719,7 +719,7 @@ export default {
       },
       edit: {
         title: 'Éditer un webhook',
-        success: 'Webhook edité avec succès !',
+        success: 'Webhook édité avec succès !',
       },
       remove: {
         success: 'Webhook supprimé avec succès !',
