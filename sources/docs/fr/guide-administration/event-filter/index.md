@@ -354,6 +354,7 @@ une collection de la base MongoDB de Canopsis. Ce type de source de données
 n'est disponible que dans Canopsis CAT.
 
 Les paramètres de cette source de données sont :
+
  - `collection` (requis) : le nom de la collection MongoDB.
  - `select` (requis) : un objet JSON utilisé pour sélectionner un document de
    la collection. Cet objet contient des couples `<champ>: <template>`, où
