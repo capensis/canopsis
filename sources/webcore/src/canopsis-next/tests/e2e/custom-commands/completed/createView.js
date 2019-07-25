@@ -57,8 +57,8 @@ module.exports.command = function createView(
       modalViewCreate.clickViewSubmitButton();
     },
     (xhr) => {
-      const userResponseData = JSON.parse(xhr.responseData);
-      callback({ userResponseData, view });
+      const viewResponseData = JSON.parse(xhr.responseData);
+      callback({ viewResponseData, view });
     },
   );
 
