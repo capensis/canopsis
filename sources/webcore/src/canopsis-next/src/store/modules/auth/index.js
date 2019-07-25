@@ -66,7 +66,7 @@ export default {
         dispatch('logout');
       }
     },
-    async logout() {
+    logout() {
       window.location = `${BASE_URL}${API_ROUTES.logout}`;
     },
   },
