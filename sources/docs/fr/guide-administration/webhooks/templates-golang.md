@@ -31,6 +31,17 @@ Voici une liste des principales données et la manière de la récupérer.
 | Message de l'ACK    | `{{ .Alarm.Value.ACK.Message }}`    |
 | `abc` dans l'entité | `{{ .Entity.Infos.abc.Value }}`     |
 
+Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est possible de récupérer l'information de différents manières.
+
+| Champ                             | Résultat                                                                  |
+|:----------------------------------|:--------------------------------------------------------------------------|
+| `{{ .Event.Timestamp.Day }}`      | Jour (sous forme d'entier)                                                |
+| `{{ .Event.Timestamp.Minute }}`   | Minutes (sous forme d'entier)                                             |
+| `{{ .Event.Timestamp.Second }}`   | Secondes (sous forme d'entier)                                            |
+| `{{ .Event.Timestamp.String }}`   | Chaîne de caractères représentant la date suivant un formatage par défaut |
+| `{{ .Event.Timestamp.Unix }}`     | Timestamp UNIX                                                            |
+| `{{ .Event.Timestamp.UnixNano }}` | Timestamp UNIX en nanosecondes                                            |
+
 !!! attention
     Les champs enrichis depuis un événement ou via l'event filter se retrouvent au niveau de l'entité et sont sensibles à la casse. Par exemple un champ enrichi intitulé `switch` dans l'entité sera traduit en `{{ .Entity.Infos.switch.Value }}`.
 
@@ -104,12 +115,6 @@ La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de
 `replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurrences de la regex par la chaîne.
 
 Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va supprimer tous les caractères de fin de ligne de l'output de l'événement.
-
-##### `toUnixTimestamp`
-
-`toUnixTimestamp` convertit une date en un timestamp Unix, un nombre entier représentant le nombre de secondes écoulées depuis le 1er janvier 1970 à minuit UTC. Elle ne fonctionne que sur les champs qui sont des `CpsTime`, comme par exemple `.Alarm.Value.CreationDate` ou `.Event.Timestamp`.
-
-`{{ .Event.Timestamp | toUnixTimestamp }}` va ainsi être transformé en un entier, par exemple `1531673640`.
 
 ##### `formattedDate`
 
