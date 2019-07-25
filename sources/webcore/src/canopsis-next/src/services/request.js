@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { BASE_URL } from '@/config';
+
 /**
  * Check error field inside successful response and reject them
  *
@@ -35,7 +37,7 @@ function errorResponseHandler(responseWithError) {
 }
 
 const request = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? '' : '/api',
+  baseURL: BASE_URL,
   withCredentials: true,
 });
 

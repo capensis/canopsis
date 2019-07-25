@@ -1,3 +1,5 @@
+export const BASE_URL = process.env.NODE_ENV === 'production' ? '' : '/api';
+
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
@@ -33,6 +35,7 @@ export const DEFAULT_APP_TITLE = 'Canopsis';
 
 export const API_ROUTES = {
   auth: '/auth',
+  logout: '/logout',
   currentUser: '/account/me',
   version: '/api/v2/version',
   alarmList: '/alerts/get-alarms',
