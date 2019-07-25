@@ -31,7 +31,7 @@ Voici une liste des principales données et la manière de la récupérer.
 | Message de l'ACK    | `{{ .Alarm.Value.ACK.Message }}`    |
 | `abc` dans l'entité | `{{ .Entity.Infos.abc.Value }}`     |
 
-Pour le champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est possible de récupérer l'information de différents manières.
+Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est possible de récupérer l'information de différents manières.
 
 | Champ                             | Résultat                                                                  |
 |:----------------------------------|:--------------------------------------------------------------------------|
