@@ -50,27 +50,12 @@ module.exports = {
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
-    const {
-      name, title, description, tags,
-    } = TEMPORARY_DATA[prefix];
-
-    browser.page.layout.leftSideBar()
-      .verifySettingsWrapperBefore()
-      .clickSettingsViewButton()
-      .verifyControlsWrapperBefore()
-      .clickAddViewButton()
-      .defaultPause();
-
-    browser.page.modals.view.create()
-      .verifyModalOpened()
-      .setViewName(name)
-      .setViewTitle(title)
-      .setViewDescription(description)
-      .clickViewEnabled()
-      .setViewGroupTags(tags)
-      .setViewGroupIds(tags)
-      .clickViewSubmitButton()
-      .verifyModalClosed();
+    browser.completed.createView(TEMPORARY_DATA[prefix], ({ viewResponseData }) => {
+      TEMPORARY_DATA[prefix] = {
+        ...TEMPORARY_DATA[prefix],
+        viewResponseData,
+      };
+    });
   },
 
   'Checking view copy with name from constants': (browser) => {
@@ -151,32 +136,16 @@ module.exports = {
   },
 
   'Deleting all test items view with name from constants': (browser) => {
-    const { edit, copy } = groups;
+    const { create, edit, copy } = groups;
 
-    browser.page.layout.groupsSideBar()
-      .clickEditViewButton(TEMPORARY_DATA[copy.prefix].title)
-      .defaultPause();
+    browser.completed.deleteView({
+      tags: TEMPORARY_DATA[create.prefix].tags,
+      title: TEMPORARY_DATA[copy.prefix].title,
+    });
 
-    browser.page.modals.view.create()
-      .verifyModalOpened()
-      .clickViewDeleteButton();
-    browser.page.modals.confirmation()
-      .verifyModalOpened()
-      .clickConfirmButton()
-      .verifyModalClosed();
-
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(TEMPORARY_DATA[edit.prefix].tags)
-      .verifyPanelBody(TEMPORARY_DATA[edit.prefix].tags)
-      .clickEditViewButton(TEMPORARY_DATA[edit.prefix].title)
-      .defaultPause();
-
-    browser.page.modals.view.create()
-      .verifyModalOpened()
-      .clickViewDeleteButton();
-    browser.page.modals.confirmation()
-      .verifyModalOpened()
-      .clickConfirmButton()
-      .verifyModalClosed();
+    browser.completed.deleteView({
+      tags: TEMPORARY_DATA[edit.prefix].tags,
+      title: TEMPORARY_DATA[edit.prefix].title,
+    });
   },
 };

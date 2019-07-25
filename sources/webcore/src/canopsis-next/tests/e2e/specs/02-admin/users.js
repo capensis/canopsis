@@ -4,25 +4,6 @@ const { USERS } = require('../../constants');
 
 const TEMPORARY_DATA = {};
 
-const onCreateUser = (browser, {
-  username, firstname, lastname, email, password,
-}) => {
-  browser.page.admin.users()
-    .clickAddButton();
-
-  browser.page.modals.admin.createUser()
-    .verifyModalOpened()
-    .setUsername(username)
-    .setFirstName(firstname)
-    .setLastName(lastname)
-    .setEmail(email)
-    .setPassword(password)
-    .selectRole()
-    .selectLanguage()
-    .clickSubmitButton()
-    .verifyModalClosed();
-};
-
 const onCreateTemporaryObject = ({ prefix, text, index }) => {
   const i = typeof index === 'number' ? `-${index}` : '';
   return {
@@ -52,11 +33,12 @@ module.exports = {
 
     TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
 
-    browser.page.admin.users()
-      .navigate()
-      .verifyPageElementsBefore();
-
-    onCreateUser(browser, TEMPORARY_DATA[prefix]);
+    browser.completed.createUser(TEMPORARY_DATA[prefix], ({ userResponseData }) => {
+      TEMPORARY_DATA[prefix] = {
+        ...TEMPORARY_DATA[prefix],
+        userResponseData,
+      };
+    });
   },
 
   'Login by created user credentials': (browser) => {
@@ -122,22 +104,23 @@ module.exports = {
     const createUser = TEMPORARY_DATA[create.prefix].username;
     const editUser = TEMPORARY_DATA[edit.prefix].username;
 
-    browser.page.admin.users()
-      .navigate()
-      .verifyPageUserBefore(createUser)
-      .clickDeleteButton(createUser);
-    browser.page.modals.confirmation()
-      .verifyModalOpened()
-      .clickConfirmButton()
-      .verifyModalClosed();
+    browser.completed.deleteUser({
+      username: createUser,
+    }, ({ responseData }) => {
+      TEMPORARY_DATA[create.prefix] = {
+        ...TEMPORARY_DATA[create.prefix],
+        deleteData: responseData,
+      };
+    });
 
-    browser.page.admin.users()
-      .verifyPageUserBefore(editUser)
-      .clickDeleteButton(editUser);
-    browser.page.modals.confirmation()
-      .verifyModalOpened()
-      .clickConfirmButton()
-      .verifyModalClosed();
+    browser.completed.deleteUser({
+      username: editUser,
+    }, ({ responseData }) => {
+      TEMPORARY_DATA[edit.prefix] = {
+        ...TEMPORARY_DATA[edit.prefix],
+        deleteData: responseData,
+      };
+    });
   },
 
   'Create mass users with some name': (browser) => {
@@ -149,7 +132,12 @@ module.exports = {
       TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, index }));
     }
 
-    TEMPORARY_DATA[prefix].map(user => onCreateUser(browser, user));
+    TEMPORARY_DATA[prefix].map((user, index) => browser.completed.createUser(user, ({ userResponseData }) => {
+      TEMPORARY_DATA[prefix][index] = {
+        ...TEMPORARY_DATA[prefix][index],
+        userResponseData,
+      };
+    }));
   },
 
   'Check pagination users table': (browser) => {
