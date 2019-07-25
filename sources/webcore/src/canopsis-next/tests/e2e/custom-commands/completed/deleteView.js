@@ -12,12 +12,30 @@ module.exports.command = function deleteView(
     tags = 'test-tags',
   } = view;
 
+  const viewPath = `${process.env.VUE_DEV_SERVER_URL}view/`;
+
+  const topBar = this.page.layout.topBar();
   const confirmation = this.page.modals.confirmation();
   const leftSideBar = this.page.layout.leftSideBar();
+  const createUser = this.page.modals.admin.createUser();
   const groupsSideBar = this.page.layout.groupsSideBar();
   const modalViewCreate = this.page.modals.view.create();
 
-  leftSideBar.verifyControlsWrapperBefore()
+  this.url(viewPath);
+
+  topBar.clickUserDropdown()
+    .clickUserProfileButton();
+
+  createUser.verifyModalOpened()
+    .selectNavigationType(1)
+    .clickSubmitButton()
+    .verifyModalClosed();
+
+  groupsSideBar.clickGroupsSideBarButton();
+
+  leftSideBar.verifySettingsWrapperBefore()
+    .clickSettingsViewButton()
+    .verifyControlsWrapperBefore()
     .clickEditViewButton()
     .defaultPause();
 
