@@ -1,7 +1,6 @@
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT } from '@/config';
 import {
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
@@ -36,7 +35,6 @@ export function generateWidgetByType(type) {
   };
 
   const alarmsListDefaultParameters = {
-    itemsPerPage: PAGINATION_LIMIT,
     infoPopups: [],
     moreInfoTemplate: '',
     isAckNoteRequired: false,
@@ -107,7 +105,6 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.context:
       specialParameters = {
-        itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
         mainFilter: null,
         widgetColumns: [
@@ -221,7 +218,6 @@ export function generateWidgetByType(type) {
           title: 'Alarmes créées',
           trend: false,
         },
-        limit: 10,
         sortOrder: SORT_ORDERS.desc,
         displayMode: {
           mode: STATS_DISPLAY_MODE.criticity,

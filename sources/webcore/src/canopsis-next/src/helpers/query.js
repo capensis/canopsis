@@ -1,6 +1,5 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
 import prepareMainFilterToQueryFilter from './filter';
@@ -44,8 +43,11 @@ export function convertAlarmWidgetToQuery(widget) {
     page: 1,
     opened: alarmsStateFilter.opened || false,
     resolved: alarmsStateFilter.resolved || false,
-    limit: itemsPerPage || PAGINATION_LIMIT,
   };
+
+  if (itemsPerPage) {
+    query.limit = itemsPerPage;
+  }
 
   if (!isEmpty(mainFilter)) {
     query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
@@ -77,9 +79,12 @@ export function convertContextWidgetToQuery(widget) {
 
   const query = {
     page: 1,
-    limit: itemsPerPage || PAGINATION_LIMIT,
     selectedTypes,
   };
+
+  if (itemsPerPage) {
+    query.limit = itemsPerPage;
+  }
 
   return { ...query, ...convertSortToQuery(widget) };
 }

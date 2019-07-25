@@ -1,5 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
+import { PAGINATION_LIMIT } from '@/config';
 import { USERS_RIGHTS_MASKS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 import { checkUserAccess } from '@/helpers/right';
 
@@ -56,6 +57,10 @@ export default {
       const isLaptop = this.$options.filters.mq(this.$mq, { l: true });
 
       return isSelectedTopBar && isLaptop;
+    },
+
+    defaultItemsPerPage() {
+      return this.currentUser.itemsPerPage || PAGINATION_LIMIT;
     },
   },
   methods: {

@@ -210,6 +210,12 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+
+    defaultQuery() {
+      return {
+        limit: this.defaultItemsPerPage,
+      };
+    },
   },
   methods: {
     removeHistoryFilter() {

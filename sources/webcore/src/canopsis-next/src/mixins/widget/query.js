@@ -51,6 +51,10 @@ export default {
     tabQueryNonce() {
       return this.getQueryNonceById(this.tabId);
     },
+
+    defaultQuery() {
+      return {};
+    },
   },
   watch: {
     query(value, oldValue) {
@@ -68,6 +72,7 @@ export default {
     await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
 
     this.query = {
+      ...this.defaultQuery,
       ...this.query,
       ...convertWidgetToQuery(this.widget),
       ...convertUserPreferenceToQuery(this.userPreference),

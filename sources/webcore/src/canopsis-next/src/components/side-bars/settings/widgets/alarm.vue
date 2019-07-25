@@ -147,7 +147,7 @@ export default {
     const { widget_preferences: widgetPreference } = this.userPreference;
 
     this.settings.widget_preferences = {
-      itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
+      itemsPerPage: get(widgetPreference, 'itemsPerPage', this.defaultItemsPerPage),
     };
   },
   methods: {
