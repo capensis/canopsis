@@ -100,6 +100,7 @@ export default {
   },
   created() {
     const { widget_preferences: widgetPreference } = this.userPreference;
+
     this.settings.widget_preferences = {
       selectedTypes: get(widgetPreference, 'selectedTypes', []),
       viewFilters: get(widgetPreference, 'viewFilters', []),
@@ -111,6 +112,7 @@ export default {
     prepareWidgetQuery(newQuery, oldQuery) {
       return {
         searchFilter: oldQuery.searchFilter,
+        limit: oldQuery.limit || this.defaultItemsPerPage,
 
         ...newQuery,
       };

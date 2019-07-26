@@ -32,6 +32,7 @@
 import { PAGINATION_LIMIT } from '@/config';
 import { STATS_DISPLAY_MODE, STATS_CRITICITY, SORT_ORDERS } from '@/constants';
 
+import authMixin from '@/mixins/auth';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -52,6 +53,7 @@ export default {
     StatsAlertOverlay,
   },
   mixins: [
+    authMixin,
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
@@ -136,6 +138,12 @@ export default {
         }
 
         return value;
+      };
+    },
+
+    defaultQuery() {
+      return {
+        limit: this.defaultItemsPerPage,
       };
     },
   },

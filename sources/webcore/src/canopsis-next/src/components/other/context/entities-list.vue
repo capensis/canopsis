@@ -179,6 +179,12 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.userFilter);
     },
+
+    defaultQuery() {
+      return {
+        limit: this.defaultItemsPerPage,
+      };
+    },
   },
   methods: {
     getQuery() {

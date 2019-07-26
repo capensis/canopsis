@@ -6,7 +6,8 @@
       v-data-table(
       :items="stats",
       :headers="columns",
-      :pagination.sync="pagination"
+      :pagination.sync="pagination",
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
       )
         template(slot="items", slot-scope="{ item }")
           td {{ item.entity.name }}
@@ -33,6 +34,7 @@ import { isUndefined, isNull } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
 
+import authMixin from '@/mixins/auth';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
@@ -56,6 +58,7 @@ export default {
     },
   },
   mixins: [
+    authMixin,
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
@@ -148,7 +151,7 @@ export default {
           page: 1,
           sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
           totalItems: values.length,
-          rowsPerPage: PAGINATION_LIMIT,
+          rowsPerPage: this.defaultItemsPerPage,
           descending: sort.order === SORT_ORDERS.desc,
         };
       } catch (err) {

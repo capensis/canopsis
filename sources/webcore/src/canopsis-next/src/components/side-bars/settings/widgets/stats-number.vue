@@ -31,8 +31,10 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
+import widgetSettingsMixin from '@/mixins/widget/settings';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -58,7 +60,7 @@ export default {
     FieldDefaultElementsPerPage,
     FieldSortOrder,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [authMixin, widgetSettingsMixin],
   data() {
     const { widget, rowId } = this.config;
 
@@ -68,6 +70,11 @@ export default {
         widget: cloneDeep(widget),
       },
     };
+  },
+  mounted() {
+    if (!this.settings.widget.parameters.limit) {
+      this.settings.widget.parameters.limit = this.defaultItemsPerPage;
+    }
   },
 };
 </script>
