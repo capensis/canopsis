@@ -161,9 +161,10 @@ export default {
     },
 
     mainIcons() {
+      const state = ENTITIES_STATES_STYLES[this.entity.state.val].text;
       const mainIcons = [];
       if (!this.isPaused && !this.hasActivePbehavior) {
-        mainIcons.push(WEATHER_ICONS[this.entity.state.val]);
+        mainIcons.push(WEATHER_ICONS[state]);
       }
 
       const pausePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.pause });
