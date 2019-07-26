@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
 const { USERS } = require('../../constants');
+const { API_ROUTES } = require('../../../../src/config');
 
 const TEMPORARY_DATA = {};
 
@@ -57,6 +58,24 @@ module.exports = {
       .verifyPageElementsBefore();
 
     onCreateUser(browser, TEMPORARY_DATA[prefix]);
+  },
+
+  'Check searching': (browser) => {
+    const { create: { prefix } } = USERS;
+    const usersPage = browser.page.admin.users();
+    const { username } = TEMPORARY_DATA[prefix];
+
+    usersPage.setSearchingText(TEMPORARY_DATA[prefix].username)
+      .waitForFirstXHR(API_ROUTES.user.list, 5000, () => usersPage.clickSubmitSearchButton(), ({ responseData }) => {
+        const { data } = JSON.parse(responseData);
+
+        browser.assert.ok(data.every(item => item._id === username));
+      })
+      .waitForFirstXHR(API_ROUTES.user.list, 5000, () => usersPage.clickClearSearchButton(), ({ responseData }) => {
+        const { data } = JSON.parse(responseData);
+
+        browser.assert.ok(data.some(item => item._id !== username));
+      });
   },
 
   'Login by created user credentials': (browser) => {

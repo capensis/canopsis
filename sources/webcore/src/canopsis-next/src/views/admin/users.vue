@@ -1,10 +1,17 @@
 <template lang="pug">
   v-container
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.users') }}
-    div
-      div(v-show="hasDeleteAnyUserAccess && selected.length")
-        v-btn(@click="showRemoveSelectedUsersModal", icon, data-test="massDeleteButton")
-          v-icon delete
+    div.white
+      v-layout(row, wrap)
+        v-flex(xs4)
+          search-field(
+          v-model="searchingText",
+          @submit="applySearchFilter",
+          @clear="applySearchFilter",
+          )
+        v-flex(v-show="hasDeleteAnyUserAccess && selected.length", xs4)
+          v-btn(@click="showRemoveSelectedUsersModal", icon, data-test="massDeleteButton")
+            v-icon delete
       v-data-table(
       v-model="selected",
       :headers="headers",
@@ -13,8 +20,8 @@
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
       :total-items="usersMeta.total",
       :loading="usersPending",
-      item-key="_id"
-      select-all,
+      item-key="_id",
+      select-all
       )
         template(slot="items", slot-scope="props")
           tr(:data-test="`user-${props.item._id}`")
@@ -51,27 +58,36 @@
 
 <script>
 import sha1 from 'sha1';
-import { isEmpty, omit, cloneDeep } from 'lodash';
+import { omit, cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { generateUser } from '@/helpers/entities';
+import { getUsersSearchByText } from '@/helpers/entities-search';
+
 import modalMixin from '@/mixins/modal';
+import viewQuery from '@/mixins/view/query';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
-import { generateUser } from '@/helpers/entities';
-
 import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import SearchField from '@/components/forms/fields/search-field.vue';
 
 export default {
   components: {
     RefreshBtn,
+    SearchField,
   },
-  mixins: [modalMixin, entitiesUserMixin, rightsTechnicalUserMixin],
+  mixins: [modalMixin, viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {
     return {
-      pagination: null,
-      headers: [
+      searchingText: '',
+      selected: [],
+    };
+  },
+  computed: {
+    headers() {
+      return [
         {
           text: this.$t('tables.admin.users.columns.username'),
           value: '_id',
@@ -88,19 +104,8 @@ export default {
           text: this.$t('common.actionsLabel'),
           sortable: false,
         },
-      ],
-      selected: [],
-    };
-  },
-  watch: {
-    pagination(value, oldValue) {
-      if (!isEmpty(oldValue) && value !== oldValue) {
-        this.fetchList();
-      }
+      ];
     },
-  },
-  mounted() {
-    this.fetchList();
   },
   methods: {
     showRemoveUserModal(id) {
@@ -173,21 +178,27 @@ export default {
       });
     },
 
-    fetchList() {
-      const {
-        rowsPerPage, page, sortBy, descending,
-      } = this.pagination;
+    applySearchFilter() {
+      this.query = {
+        ...this.query,
 
-      this.fetchUsersList({
-        params: {
-          limit: rowsPerPage,
-          start: (page - 1) * rowsPerPage,
-          sort: [{
-            property: sortBy,
-            direction: descending ? 'DESC' : 'ASC',
-          }],
-        },
-      });
+        search: this.searchingText,
+      };
+    },
+
+    getQuery() {
+      const { search } = this.query;
+      const query = this.getBaseQuery();
+
+      if (search) {
+        query.filter = { $and: [getUsersSearchByText(search)] };
+      }
+
+      return query;
+    },
+
+    fetchList() {
+      this.fetchUsersList({ params: this.getQuery() });
     },
   },
 };
