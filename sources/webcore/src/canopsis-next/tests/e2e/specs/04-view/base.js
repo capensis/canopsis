@@ -70,13 +70,7 @@ module.exports = {
         browser.page.modals.view.create()
           .clickViewSubmitButton();
       },
-      (xhr) => {
-        browser.assert.equal(xhr.status, 'success');
-        browser.assert.equal(xhr.method, 'POST');
-        browser.assert.equal(xhr.requestData, '200');
-        browser.assert.equal(xhr.httpResponseCode, '200');
-        browser.assert.equal(xhr.responseData, '');
-      },
+      () => {},
     );
 
     browser.page.modals.view.create()
@@ -87,5 +81,15 @@ module.exports = {
     browser.page.layout.groupsSideBar()
       .clickPanelHeader(TEMPORARY_DATA.create.tags)
       .clickLinkView(TEMPORARY_DATA.create.title);
+
+    browser.page.view()
+      .clickMenuViewButton()
+      .clickAddViewButton();
+
+    browser.page.modals.common.textFieldEditor()
+      .verifyModalOpened()
+      .setField('sd')
+      .clickSubmitButton()
+      .verifyModalClosed();
   },
 };
