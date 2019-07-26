@@ -1,27 +1,21 @@
 // http://nightwatchjs.org/guide#usage
+const { USER } = require('../../constants');
+const { API_ROUTES: { user: { list } } } = require('../../../../src/config');
+const fs = require('fs');
 
 module.exports.command = function createUser(
-  user = {
-    username: 'test-name',
-    firstname: 'test-firstname',
-    lastname: 'test-lastname',
-    email: 'test-email@example.com',
-    password: 'test-password',
-    role: 1,
-    language: 2,
-    navigationType: 1,
-  },
-  callback = result => result,
+  user = USER,
+  callback = result => fs.writeFile('user.json', JSON.stringify(result), 'utf8', () => {}),
 ) {
   const {
-    username = 'test-name',
-    firstname = 'test-firstname',
-    lastname = 'test-lastname',
-    email = 'test-email@example.com',
-    password = 'test-password',
-    role = 1,
-    language = 2,
-    navigationType = 1,
+    username = USER.username,
+    firstname = USER.firstname,
+    lastname = USER.lastname,
+    email = USER.email,
+    password = USER.password,
+    role = USER.role,
+    language = USER.language,
+    navigationType = USER.navigationType,
   } = user;
 
   const adminUsersPage = this.page.admin.users();
@@ -42,18 +36,13 @@ module.exports.command = function createUser(
     .selectNavigationType(navigationType);
 
   this.waitForFirstXHR(
-    '/rest/default_rights/user',
+    list,
     1000,
-    () => {
-      adminCreateUser.clickSubmitButton();
-    },
-    (xhr) => {
-      const userResponseData = JSON.parse(xhr.responseData)
+    () => adminCreateUser.clickSubmitButton(),
+    ({ responseData }) => {
+      const userResponseData = JSON.parse(responseData)
         .data.filter(item => item.id === username)[0];
-      callback({
-        userResponseData,
-        user,
-      });
+      callback(userResponseData);
     },
   );
   adminCreateUser.verifyModalClosed();

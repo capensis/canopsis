@@ -11,7 +11,7 @@ const createTemporaryObject = ({ prefix, text, index }) => {
     name: `${prefix}-${text}-name${i}-${r}`,
     title: `${prefix}-${text}-title${i}-${r}`,
     description: `${prefix}-${text}-description${i}-${r}`,
-    tags: `${prefix}-${text}-tags${i}-${r}`,
+    group: `${prefix}-${text}-group${i}-${r}`,
   };
 };
 
@@ -43,7 +43,7 @@ module.exports = {
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
     const {
-      name, title, description, tags,
+      name, title, description, group,
     } = TEMPORARY_DATA[prefix];
 
     browser.page.layout.topBar()
@@ -57,7 +57,7 @@ module.exports = {
       .verifyModalClosed()
       .api.pause(5000);
 
-    browser.page.layout.leftSideBar()
+    browser.page.layout.navigation()
       .verifySettingsWrapperBefore()
       .clickSettingsViewButton()
       .verifyControlsWrapperBefore()
@@ -70,8 +70,8 @@ module.exports = {
       .setViewTitle(title)
       .setViewDescription(description)
       .clickViewEnabled()
-      .setViewGroupTags(tags)
-      .setViewGroupIds(tags)
+      .setViewGroupTags(group)
+      .setViewGroupIds(group)
       .clickViewSubmitButton()
       .verifyModalClosed();
   },
@@ -85,14 +85,14 @@ module.exports = {
       name, title, description,
     } = TEMPORARY_DATA[prefix];
 
-    browser.page.layout.leftSideBar()
+    browser.page.layout.navigation()
       .verifyControlsWrapperBefore()
       .clickEditViewButton()
       .defaultPause();
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
+      .clickDropdownButton(TEMPORARY_DATA[create.prefix].group)
+      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].group)
       .clickCopyViewButton(TEMPORARY_DATA[create.prefix].title)
       .defaultPause();
 
@@ -112,28 +112,28 @@ module.exports = {
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
     const {
-      name, title, description, tags,
+      name, title, description, group,
     } = TEMPORARY_DATA[prefix];
 
     const r = Math.random().toString(36).substring(7);
 
     browser.page.layout.topBar()
-      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].tags)
+      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].group)
       .defaultPause();
 
-    TEMPORARY_DATA[create.prefix].tags = `${create.prefix}-${text}-tags-${r}`;
+    TEMPORARY_DATA[create.prefix].group = `${create.prefix}-${text}-group-${r}`;
 
     browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clearGroupName()
-      .setGroupName(TEMPORARY_DATA[create.prefix].tags)
+      .setGroupName(TEMPORARY_DATA[create.prefix].group)
       .clickSubmitButton()
       .verifyModalClosed();
 
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
+      .clickDropdownButton(TEMPORARY_DATA[create.prefix].group)
+      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].group)
       .clickEditViewButton(TEMPORARY_DATA[create.prefix].title)
       .defaultPause();
 
@@ -147,9 +147,9 @@ module.exports = {
       .setViewDescription(description)
       .clickViewEnabled()
       .clearViewGroupTags()
-      .setViewGroupTags(tags)
+      .setViewGroupTags(group)
       .clearViewGroupIds()
-      .setViewGroupIds(tags)
+      .setViewGroupIds(group)
       .clickViewSubmitButton()
       .verifyModalClosed();
   },
@@ -158,8 +158,8 @@ module.exports = {
     const { create, edit, copy } = groups;
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
+      .clickDropdownButton(TEMPORARY_DATA[create.prefix].group)
+      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].group)
       .clickEditViewButton(TEMPORARY_DATA[copy.prefix].title)
       .defaultPause();
 
@@ -172,8 +172,8 @@ module.exports = {
       .verifyModalClosed();
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[edit.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[edit.prefix].tags)
+      .clickDropdownButton(TEMPORARY_DATA[edit.prefix].group)
+      .verifyDropdownZone(TEMPORARY_DATA[edit.prefix].group)
       .clickEditViewButton(TEMPORARY_DATA[edit.prefix].title)
       .defaultPause();
 

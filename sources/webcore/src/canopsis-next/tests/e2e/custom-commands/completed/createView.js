@@ -1,30 +1,26 @@
 // http://nightwatchjs.org/guide#usage
+const { VIEW } = require('../../constants');
+const { API_ROUTES } = require('../../../../src/config');
+const fs = require('fs');
 
 module.exports.command = function createView(
-  view = {
-    name: 'test-name',
-    title: 'test-title',
-    description: 'test-description',
-    tags: 'test-tags',
-  },
-  callback = result => result,
+  view = VIEW,
+  callback = result => fs.writeFile('view.json', JSON.stringify(result), 'utf8', () => {}),
 ) {
   const {
-    name = 'test-name',
-    title = 'test-title',
-    description = 'test-description',
-    tags = 'test-tags',
+    name = VIEW.name,
+    title = VIEW.title,
+    description = VIEW.description,
+    group = VIEW.group,
   } = view;
-
-  const viewPath = `${process.env.VUE_DEV_SERVER_URL}view/`;
 
   const topBar = this.page.layout.topBar();
   const createUser = this.page.modals.admin.createUser();
   const groupsSideBar = this.page.layout.groupsSideBar();
-  const leftSideBar = this.page.layout.leftSideBar();
+  const navigation = this.page.layout.navigation();
   const modalViewCreate = this.page.modals.view.create();
 
-  this.url(viewPath);
+  this.refresh();
 
   topBar.clickUserDropdown()
     .clickUserProfileButton();
@@ -36,7 +32,7 @@ module.exports.command = function createView(
 
   groupsSideBar.clickGroupsSideBarButton();
 
-  leftSideBar.verifySettingsWrapperBefore()
+  navigation.verifySettingsWrapperBefore()
     .clickSettingsViewButton()
     .verifyControlsWrapperBefore()
     .clickAddViewButton()
@@ -47,18 +43,24 @@ module.exports.command = function createView(
     .setViewTitle(title)
     .setViewDescription(description)
     .clickViewEnabled()
-    .setViewGroupTags(tags)
-    .setViewGroupIds(tags);
+    .setViewGroupTags(group)
+    .setViewGroupIds(group);
 
-  this.waitForFirstXHR(
-    '/api/v2/views',
-    1000,
-    () => {
-      modalViewCreate.clickViewSubmitButton();
-    },
+  this.waitForXHR(
+    API_ROUTES.view,
+    10000,
+    () => modalViewCreate.clickViewSubmitButton(),
     (xhr) => {
-      const viewResponseData = JSON.parse(xhr.responseData);
-      callback({ viewResponseData, view });
+      const responseGroupId = JSON.parse(xhr[0].responseData)._id;
+      const responseViewID = JSON.parse(xhr[1].responseData)._id;
+      const responseViewTabId = JSON.parse(xhr[2].responseData).groups[responseGroupId].views
+        .filter(item => item._id === responseViewID)[0].tabs[0].tabs._id;
+      const responseData = {
+        responseGroupId,
+        responseViewID,
+        responseViewTabId,
+      };
+      callback(responseData);
     },
   );
 

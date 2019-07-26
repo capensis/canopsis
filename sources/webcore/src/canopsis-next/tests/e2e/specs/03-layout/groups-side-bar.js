@@ -11,7 +11,7 @@ const createTemporaryObject = ({ prefix, text, index }) => {
     name: `${prefix}-${text}-name${i}-${r}`,
     title: `${prefix}-${text}-title${i}-${r}`,
     description: `${prefix}-${text}-description${i}-${r}`,
-    tags: `${prefix}-${text}-tags${i}-${r}`,
+    group: `${prefix}-${text}-group${i}-${r}`,
   };
 };
 
@@ -67,14 +67,14 @@ module.exports = {
       name, title, description,
     } = TEMPORARY_DATA[prefix];
 
-    browser.page.layout.leftSideBar()
+    browser.page.layout.navigation()
       .verifyControlsWrapperBefore()
       .clickEditViewButton()
       .defaultPause();
 
     browser.page.layout.groupsSideBar()
-      .clickPanelHeader(TEMPORARY_DATA[create.prefix].tags)
-      .verifyPanelBody(TEMPORARY_DATA[create.prefix].tags)
+      .clickPanelHeader(TEMPORARY_DATA[create.prefix].group)
+      .verifyPanelBody(TEMPORARY_DATA[create.prefix].group)
       .clickCopyViewButton(TEMPORARY_DATA[create.prefix].title)
       .defaultPause();
 
@@ -94,27 +94,27 @@ module.exports = {
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
     const {
-      name, title, description, tags,
+      name, title, description, group,
     } = TEMPORARY_DATA[prefix];
 
     const r = Math.random().toString(36).substring(7);
 
     browser.page.layout.groupsSideBar()
-      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].tags)
+      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].group)
       .defaultPause();
 
-    TEMPORARY_DATA[create.prefix].tags = `${create.prefix}-${text}-tags-${r}`;
+    TEMPORARY_DATA[create.prefix].group = `${create.prefix}-${text}-group-${r}`;
 
     browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clearGroupName()
-      .setGroupName(TEMPORARY_DATA[create.prefix].tags)
+      .setGroupName(TEMPORARY_DATA[create.prefix].group)
       .clickSubmitButton()
       .verifyModalClosed();
 
 
     browser.page.layout.groupsSideBar()
-      .verifyPanelBody(TEMPORARY_DATA[create.prefix].tags)
+      .verifyPanelBody(TEMPORARY_DATA[create.prefix].group)
       .clickEditViewButton(TEMPORARY_DATA[create.prefix].title)
       .defaultPause();
 
@@ -128,9 +128,9 @@ module.exports = {
       .setViewDescription(description)
       .clickViewEnabled()
       .clearViewGroupTags()
-      .setViewGroupTags(tags)
+      .setViewGroupTags(group)
       .clearViewGroupIds()
-      .setViewGroupIds(tags)
+      .setViewGroupIds(group)
       .clickViewSubmitButton()
       .verifyModalClosed();
   },
@@ -139,12 +139,12 @@ module.exports = {
     const { create, edit, copy } = groups;
 
     browser.completed.deleteView({
-      tags: TEMPORARY_DATA[create.prefix].tags,
+      tags: TEMPORARY_DATA[create.prefix].group,
       title: TEMPORARY_DATA[copy.prefix].title,
     });
 
     browser.completed.deleteView({
-      tags: TEMPORARY_DATA[edit.prefix].tags,
+      tags: TEMPORARY_DATA[edit.prefix].group,
       title: TEMPORARY_DATA[edit.prefix].title,
     });
   },

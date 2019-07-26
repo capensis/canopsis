@@ -1,27 +1,24 @@
 // http://nightwatchjs.org/guide#usage
+const { VIEW } = require('../../constants');
+const { API_ROUTES } = require('../../../../src/config');
 
 module.exports.command = function deleteView(
-  view = {
-    title: 'test-title',
-    tags: 'test-tags',
-  },
+  view = VIEW,
   callback = result => result,
 ) {
   const {
-    title = 'test-title',
-    tags = 'test-tags',
+    title = VIEW.title,
+    group = VIEW.group,
   } = view;
-
-  const viewPath = `${process.env.VUE_DEV_SERVER_URL}view/`;
 
   const topBar = this.page.layout.topBar();
   const confirmation = this.page.modals.confirmation();
-  const leftSideBar = this.page.layout.leftSideBar();
+  const navigation = this.page.layout.navigation();
   const createUser = this.page.modals.admin.createUser();
   const groupsSideBar = this.page.layout.groupsSideBar();
   const modalViewCreate = this.page.modals.view.create();
 
-  this.url(viewPath);
+  this.refresh();
 
   topBar.clickUserDropdown()
     .clickUserProfileButton();
@@ -33,14 +30,14 @@ module.exports.command = function deleteView(
 
   groupsSideBar.clickGroupsSideBarButton();
 
-  leftSideBar.verifySettingsWrapperBefore()
+  navigation.verifySettingsWrapperBefore()
     .clickSettingsViewButton()
     .verifyControlsWrapperBefore()
     .clickEditViewButton()
     .defaultPause();
 
-  groupsSideBar.clickPanelHeader(tags)
-    .verifyPanelBody(tags)
+  groupsSideBar.clickPanelHeader(group)
+    .verifyPanelBody(group)
     .clickEditViewButton(title)
     .defaultPause();
 
@@ -50,13 +47,11 @@ module.exports.command = function deleteView(
   confirmation.verifyModalOpened();
 
   this.waitForFirstXHR(
-    '/api/v2/views/',
+    API_ROUTES.view,
     1000,
-    () => {
-      confirmation.clickConfirmButton();
-    },
-    (xhr) => {
-      callback({ xhr });
+    () => confirmation.clickConfirmButton(),
+    ({ responseData }) => {
+      callback(JSON.parse(responseData));
     },
   );
 
