@@ -1,22 +1,10 @@
 // http://nightwatchjs.org/guide#usage
-
-const { USERS } = require('../../constants');
-
-const TEMPORARY_DATA = {};
-
-const onCreateTemporaryObject = ({ prefix, text, index }) => {
-  const i = typeof index === 'number' ? `-${index}` : '';
-  return {
-    username: `${prefix}-${text}${i}-name`,
-    firstname: `${prefix}-${text}${i}-firstname`,
-    lastname: `${prefix}-${text}${i}-lastname`,
-    email: `${prefix}-${text}${i}-email@example.com`,
-    password: `${prefix}-${text}${i}-password`,
-  };
-};
+const { generateTemporaryUser } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
+    browser.globals.users = {};
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
@@ -24,26 +12,27 @@ module.exports = {
   },
 
   async after(browser, done) {
+    delete browser.globals.users;
+
     await browser.completed.logout()
       .end(done);
   },
 
   'Create new user with some name': (browser) => {
-    const { text, create: { prefix } } = USERS;
+    const { users } = browser.globals;
 
-    TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
+    users.create = generateTemporaryUser('create');
 
-    browser.completed.createUser(TEMPORARY_DATA[prefix], ({ userResponseData }) => {
-      TEMPORARY_DATA[prefix] = {
-        ...TEMPORARY_DATA[prefix],
+    browser.completed.createUser(users.create, ({ userResponseData }) => {
+      users.create = {
+        ...users.create,
         userResponseData,
       };
     });
   },
 
   'Login by created user credentials': (browser) => {
-    const { create: { prefix } } = USERS;
-    const { username, password } = TEMPORARY_DATA[prefix];
+    const { username, password } = browser.globals.users.create;
 
     browser.completed.logout()
       .maximizeWindow()
@@ -55,15 +44,15 @@ module.exports = {
       .maximizeWindow()
       .completed.loginAsAdmin();
 
-    const { text, create, edit: { prefix } } = USERS;
+    const { users } = browser.globals;
 
-    TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
+    users.edit = generateTemporaryUser('edit');
 
-    const userSelector = TEMPORARY_DATA[create.prefix].username;
+    const userSelector = users.create.username;
 
     const {
       username, firstname, lastname, email, password,
-    } = TEMPORARY_DATA[prefix];
+    } = users.edit;
 
     browser.page.admin.users()
       .navigate()
@@ -89,8 +78,7 @@ module.exports = {
   },
 
   'Login by disabled user credentials': (browser) => {
-    const { edit: { prefix } } = USERS;
-    const { username, password } = TEMPORARY_DATA[prefix];
+    const { username, password } = browser.globals.users.edit;
 
     browser.completed.logout()
       .maximizeWindow()
@@ -98,43 +86,40 @@ module.exports = {
   },
 
   'Remove user with some username': (browser) => {
+    const { users } = browser.globals;
+
     browser.completed.loginAsAdmin();
 
-    const { create, edit } = USERS;
-    const createUser = TEMPORARY_DATA[create.prefix].username;
-    const editUser = TEMPORARY_DATA[edit.prefix].username;
+    const createUser = users.create.username;
+    const editUser = users.edit.username;
 
-    browser.completed.deleteUser({
-      username: createUser,
-    }, ({ responseData }) => {
-      TEMPORARY_DATA[create.prefix] = {
-        ...TEMPORARY_DATA[create.prefix],
+    browser.completed.deleteUser(createUser, ({ responseData }) => {
+      users.create = {
+        ...users.create,
         deleteData: responseData,
       };
     });
 
-    browser.completed.deleteUser({
-      username: editUser,
-    }, ({ responseData }) => {
-      TEMPORARY_DATA[edit.prefix] = {
-        ...TEMPORARY_DATA[edit.prefix],
+    browser.completed.deleteUser(editUser, ({ responseData }) => {
+      users.edit = {
+        ...users.edit,
         deleteData: responseData,
       };
     });
   },
 
   'Create mass users with some name': (browser) => {
-    const { text, counts, mass: { prefix } } = USERS;
+    const { users } = browser.globals;
 
-    TEMPORARY_DATA[prefix] = [];
+    users.mass = [];
 
-    for (let index = 0; index < counts; index += 1) {
-      TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, index }));
+    for (let index = 0; index < 5; index += 1) {
+      users.mass.push(generateTemporaryUser('mass'));
     }
 
-    TEMPORARY_DATA[prefix].map((user, index) => browser.completed.createUser(user, ({ userResponseData }) => {
-      TEMPORARY_DATA[prefix][index] = {
-        ...TEMPORARY_DATA[prefix][index],
+    users.mass.map((user, index) => browser.completed.createUser(user, ({ userResponseData }) => {
+      users.mass[index] = {
+        ...users.mass[index],
         userResponseData,
       };
     }));
@@ -151,13 +136,13 @@ module.exports = {
   },
 
   'Delete mass users with some name': (browser) => {
-    const { mass: { prefix } } = USERS;
+    const { users } = browser.globals;
 
     browser.page.admin.users()
       .selectRange()
       .defaultPause();
 
-    TEMPORARY_DATA[prefix].map(user => browser.page.admin.users()
+    users.mass.map(user => browser.page.admin.users()
       .verifyPageUserBefore(user.username)
       .clickOptionCheckbox(user.username)
       .defaultPause());
