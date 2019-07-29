@@ -1,21 +1,17 @@
 // http://nightwatchjs.org/guide#usage
 const { USER } = require('../../constants');
-const { API_ROUTES: { user: { list } } } = require('../../../../src/config');
-const fs = require('fs');
+const { API_ROUTES } = require('../../../../src/config');
 
-module.exports.command = function createUser(
-  user = USER,
-  callback = result => fs.writeFile('user.json', JSON.stringify(result), 'utf8', () => {}),
-) {
+module.exports.command = function createUser(user = { ...USER }, callback = () => {}) {
   const {
-    username = USER.username,
-    firstname = USER.firstname,
-    lastname = USER.lastname,
-    email = USER.email,
-    password = USER.password,
-    role = USER.role,
-    language = USER.language,
-    navigationType = USER.navigationType,
+    username,
+    firstname,
+    lastname,
+    email,
+    password,
+    role,
+    language,
+    navigationType,
   } = user;
 
   const adminUsersPage = this.page.admin.users();
@@ -36,7 +32,7 @@ module.exports.command = function createUser(
     .selectNavigationType(navigationType);
 
   this.waitForFirstXHR(
-    list,
+    API_ROUTES.user.list,
     1000,
     () => adminCreateUser.clickSubmitButton(),
     ({ responseData }) => {

@@ -1,32 +1,22 @@
 // http://nightwatchjs.org/guide#usage
-const { USER } = require('../../constants');
-const { API_ROUTES: { user: { remove } } } = require('../../../../src/config');
+const { API_ROUTES } = require('../../../../src/config');
 
-module.exports.command = function deleteUser(
-  user = USER,
-  callback = result => result,
-) {
-  const {
-    username = USER.username,
-  } = user;
-
+module.exports.command = function deleteUser(id, callback = () => {}) {
   const adminUsersPage = this.page.admin.users();
   const confirmation = this.page.modals.confirmation();
 
   adminUsersPage.navigate()
     .selectRange()
-    .verifyPageUserBefore(username)
-    .clickDeleteButton(username);
+    .verifyPageUserBefore(id)
+    .clickDeleteButton(id);
 
   confirmation.verifyModalOpened();
 
   this.waitForFirstXHR(
-    `${remove}/${username}`,
-    1000,
+    `${API_ROUTES.user.remove}/${id}`,
+    5000,
     () => confirmation.clickConfirmButton(),
-    ({ responseData }) => {
-      callback(JSON.parse(responseData));
-    },
+    ({ responseData }) => callback(JSON.parse(responseData)),
   );
 
   confirmation.verifyModalClosed();

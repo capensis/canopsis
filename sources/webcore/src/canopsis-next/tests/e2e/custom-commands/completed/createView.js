@@ -1,17 +1,13 @@
 // http://nightwatchjs.org/guide#usage
 const { VIEW } = require('../../constants');
 const { API_ROUTES } = require('../../../../src/config');
-const fs = require('fs');
 
-module.exports.command = function createView(
-  view = VIEW,
-  callback = result => fs.writeFile('view.json', JSON.stringify(result), 'utf8', () => {}),
-) {
+module.exports.command = function createView(view = { ...VIEW }, callback = () => {}) {
   const {
-    name = VIEW.name,
-    title = VIEW.title,
-    description = VIEW.description,
-    group = VIEW.group,
+    name,
+    title,
+    description,
+    group,
   } = view;
 
   const topBar = this.page.layout.topBar();
@@ -20,17 +16,19 @@ module.exports.command = function createView(
   const navigation = this.page.layout.navigation();
   const modalViewCreate = this.page.modals.view.create();
 
-  this.refresh();
+  groupsSideBar.groupsSideBarButtonElement(({ status }) => {
+    if (status === -1) {
+      topBar.clickUserDropdown()
+        .clickUserProfileButton();
 
-  topBar.clickUserDropdown()
-    .clickUserProfileButton();
+      createUser.verifyModalOpened()
+        .selectNavigationType(1)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    }
 
-  createUser.verifyModalOpened()
-    .selectNavigationType(1)
-    .clickSubmitButton()
-    .verifyModalClosed();
-
-  groupsSideBar.clickGroupsSideBarButton();
+    groupsSideBar.clickGroupsSideBarButton();
+  });
 
   navigation.verifySettingsWrapperBefore()
     .clickSettingsViewButton()
@@ -46,25 +44,16 @@ module.exports.command = function createView(
     .setViewGroupTags(group)
     .setViewGroupIds(group);
 
-  this.waitForXHR(
-    API_ROUTES.view,
-    10000,
+  this.waitForFirstXHR(
+    new RegExp(`${API_ROUTES.view}$`),
+    5000,
     () => modalViewCreate.clickViewSubmitButton(),
-    (xhr) => {
-      const responseGroupId = JSON.parse(xhr[0].responseData)._id;
-      const responseViewID = JSON.parse(xhr[1].responseData)._id;
-      const responseViewTabId = JSON.parse(xhr[2].responseData).groups[responseGroupId].views
-        .filter(item => item._id === responseViewID)[0].tabs[0].tabs._id;
-      const responseData = {
-        responseGroupId,
-        responseViewID,
-        responseViewTabId,
-      };
-      callback(responseData);
-    },
+    ({ responseData, requestData }) => callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) }),
   );
 
   modalViewCreate.verifyModalClosed();
+
+  navigation.clickSettingsViewButton();
 
   return this;
 };

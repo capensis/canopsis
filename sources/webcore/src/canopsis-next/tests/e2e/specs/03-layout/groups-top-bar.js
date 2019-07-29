@@ -87,7 +87,7 @@ module.exports = {
 
     browser.page.layout.navigation()
       .verifyControlsWrapperBefore()
-      .clickEditViewButton()
+      .clickEditModeButton()
       .defaultPause();
 
     browser.page.layout.topBar()

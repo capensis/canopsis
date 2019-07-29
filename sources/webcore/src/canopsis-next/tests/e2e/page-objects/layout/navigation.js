@@ -20,8 +20,8 @@ const commands = {
     return this.customClick('@addViewButton');
   },
 
-  clickEditViewButton() {
-    return this.customClick('@editViewButton');
+  clickEditModeButton() {
+    return this.customClick('@editModeButton');
   },
 
   clickSettingsViewButton() {
@@ -33,7 +33,7 @@ const commands = {
 module.exports = {
   elements: {
     addViewButton: sel('addViewButton'),
-    editViewButton: sel('editViewButton'),
+    editModeButton: sel('editModeButton'),
     settingsViewButton: sel('settingsViewButton'),
     settingsWrapper: '.v-speed-dial',
     controlsWrapper: '.v-speed-dial .v-speed-dial__list',

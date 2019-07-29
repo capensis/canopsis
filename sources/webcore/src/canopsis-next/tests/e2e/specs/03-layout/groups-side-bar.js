@@ -27,34 +27,13 @@ module.exports = {
     browser.end(done);
   },
 
-  'Browse view by id': (browser) => {
-    browser.page.layout.topBar()
-      .clickUserDropdown()
-      .clickUserProfileButton();
-
-    browser.page.modals.admin.createUser()
-      .verifyModalOpened()
-      .selectNavigationType(1)
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.layout.groupsSideBar()
-      .clickGroupsSideBarButton()
-      .browseGroupById('05b2e049-b3c4-4c5b-94a5-6e7ff142b28c') // TODO: use from some constants file when we will use fixtures
-      .browseViewById('da7ac9b9-db1c-4435-a1f2-edb4d6be4db8')
-      .defaultPause(); // TODO: put verification
-  },
-
   'Add view with some name from constants': (browser) => {
     const { text, create: { prefix } } = groups;
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
-    browser.completed.createView(TEMPORARY_DATA[prefix], ({ viewResponseData }) => {
-      TEMPORARY_DATA[prefix] = {
-        ...TEMPORARY_DATA[prefix],
-        viewResponseData,
-      };
+    browser.completed.createView(TEMPORARY_DATA[prefix], (view) => {
+      TEMPORARY_DATA[prefix] = view;
     });
   },
 
@@ -63,29 +42,14 @@ module.exports = {
 
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
-    const {
-      name, title, description,
-    } = TEMPORARY_DATA[prefix];
-
-    browser.page.layout.navigation()
-      .verifyControlsWrapperBefore()
-      .clickEditViewButton()
-      .defaultPause();
-
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(TEMPORARY_DATA[create.prefix].group)
-      .verifyPanelBody(TEMPORARY_DATA[create.prefix].group)
-      .clickCopyViewButton(TEMPORARY_DATA[create.prefix].title)
-      .defaultPause();
-
-    browser.page.modals.view.create()
-      .verifyModalOpened()
-      .setViewName(name)
-      .setViewTitle(title)
-      .clearViewDescription()
-      .setViewDescription(description)
-      .clickViewSubmitButton()
-      .verifyModalClosed();
+    browser.completed.copyView(
+      TEMPORARY_DATA[create.prefix].group_id,
+      TEMPORARY_DATA[create.prefix]._id,
+      TEMPORARY_DATA[prefix],
+      (view) => {
+        TEMPORARY_DATA[prefix] = view;
+      },
+    );
   },
 
   'Editing test view with name from constants': (browser) => {
@@ -94,13 +58,23 @@ module.exports = {
     TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
 
     const {
-      name, title, description, group,
+      name,
+      title,
+      description,
+      group,
     } = TEMPORARY_DATA[prefix];
 
     const r = Math.random().toString(36).substring(7);
 
+    browser.page.layout.navigation()
+      .verifySettingsWrapperBefore()
+      .clickSettingsViewButton()
+      .verifyControlsWrapperBefore()
+      .clickEditModeButton()
+      .defaultPause();
+
     browser.page.layout.groupsSideBar()
-      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].group)
+      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].group_id)
       .defaultPause();
 
     TEMPORARY_DATA[create.prefix].group = `${create.prefix}-${text}-group-${r}`;
@@ -108,14 +82,14 @@ module.exports = {
     browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clearGroupName()
-      .setGroupName(TEMPORARY_DATA[create.prefix].group)
+      .setGroupName(`${create.prefix}-${text}-group-${r}`)
       .clickSubmitButton()
       .verifyModalClosed();
 
 
     browser.page.layout.groupsSideBar()
-      .verifyPanelBody(TEMPORARY_DATA[create.prefix].group)
-      .clickEditViewButton(TEMPORARY_DATA[create.prefix].title)
+      .verifyPanelBody(TEMPORARY_DATA[create.prefix].group_id)
+      .clickEditViewButton(TEMPORARY_DATA[create.prefix]._id)
       .defaultPause();
 
     browser.page.modals.view.create()
@@ -133,19 +107,16 @@ module.exports = {
       .setViewGroupIds(group)
       .clickViewSubmitButton()
       .verifyModalClosed();
+
+    browser.page.layout.navigation()
+      .clickEditModeButton()
+      .clickSettingsViewButton();
   },
 
   'Deleting all test items view with name from constants': (browser) => {
-    const { create, edit, copy } = groups;
+    const { create, copy } = groups;
 
-    browser.completed.deleteView({
-      tags: TEMPORARY_DATA[create.prefix].group,
-      title: TEMPORARY_DATA[copy.prefix].title,
-    });
-
-    browser.completed.deleteView({
-      tags: TEMPORARY_DATA[edit.prefix].group,
-      title: TEMPORARY_DATA[edit.prefix].title,
-    });
+    browser.completed.deleteView(TEMPORARY_DATA[create.prefix].group_id, TEMPORARY_DATA[create.prefix]._id);
+    browser.completed.deleteView(TEMPORARY_DATA[copy.prefix].group_id, TEMPORARY_DATA[copy.prefix]._id);
   },
 };

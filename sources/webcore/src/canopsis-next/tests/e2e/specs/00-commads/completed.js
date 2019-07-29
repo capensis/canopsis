@@ -14,25 +14,25 @@ module.exports = {
   },
 
   'Test create user completed': (browser) => {
-    browser.completed.createUser();
+    browser.completed.createUser(undefined, user => browser.globals.user = user);
     browser.page.layout.popup()
       .clickOnEveryPopupsCloseIcons();
   },
 
   'Test delete user completed': (browser) => {
-    browser.completed.deleteUser();
+    browser.completed.deleteUser(browser.globals.user._id);
     browser.page.layout.popup()
       .clickOnEveryPopupsCloseIcons();
   },
 
   'Test create view completed': (browser) => {
-    browser.completed.createView();
+    browser.completed.createView(undefined, view => browser.globals.view = view);
     browser.page.layout.popup()
       .clickOnEveryPopupsCloseIcons();
   },
 
   'Test delete view completed': (browser) => {
-    browser.completed.deleteView();
+    browser.completed.deleteView(browser.globals.view.group_id, browser.globals.view._id);
     browser.page.layout.popup()
       .clickOnEveryPopupsCloseIcons();
   },

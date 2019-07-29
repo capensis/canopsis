@@ -1,9 +1,16 @@
 // http://nightwatchjs.org/guide#usage
+const { VIEW } = require('../../constants');
 const { API_ROUTES } = require('../../../../src/config');
 
-module.exports.command = function deleteView(groupId, viewId, callback = () => {}) {
+module.exports.command = function copyView(groupId, viewId, view = { ...VIEW }, callback = () => {}) {
+  const {
+    name,
+    title,
+    description,
+    group,
+  } = view;
+
   const topBar = this.page.layout.topBar();
-  const confirmation = this.page.modals.confirmation();
   const navigation = this.page.layout.navigation();
   const createUser = this.page.modals.admin.createUser();
   const groupsSideBar = this.page.layout.groupsSideBar();
@@ -31,22 +38,25 @@ module.exports.command = function deleteView(groupId, viewId, callback = () => {
 
   groupsSideBar.clickPanelHeader(groupId)
     .verifyPanelBody(groupId)
-    .clickEditViewButton(viewId)
+    .clickCopyViewButton(viewId)
     .defaultPause();
 
   modalViewCreate.verifyModalOpened()
-    .clickViewDeleteButton();
-
-  confirmation.verifyModalOpened();
+    .setViewName(name)
+    .setViewTitle(title)
+    .setViewDescription(description)
+    .clickViewEnabled()
+    .setViewGroupTags(group)
+    .setViewGroupIds(group);
 
   this.waitForFirstXHR(
     new RegExp(`${API_ROUTES.view}$`),
     5000,
-    () => confirmation.clickConfirmButton(),
-    ({ responseData }) => callback(JSON.parse(responseData)),
+    () => modalViewCreate.clickViewSubmitButton(),
+    ({ responseData, requestData }) => callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) }),
   );
 
-  confirmation.verifyModalClosed();
+  modalViewCreate.verifyModalClosed();
 
   navigation.clickEditModeButton()
     .clickSettingsViewButton();
