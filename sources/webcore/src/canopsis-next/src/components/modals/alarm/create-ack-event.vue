@@ -13,17 +13,14 @@
         v-layout(row)
           v-text-field(
           :label="$t('modals.createAckEvent.fields.ticket')",
-          :error-messages="errors.collect('ticket')",
           v-model="form.ticket",
-          v-validate="'required'",
-          data-vv-name="ticket"
           )
         v-layout(row)
           v-textarea(
           :label="$t('modals.createAckEvent.fields.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
-          v-validate="'required'",
+          v-validate="isNoteRequired ? 'required' : ''",
           data-vv-name="output",
           )
         v-layout(row)
@@ -38,13 +35,12 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
-      v-btn.warning(
-      @click.prevent="submitWithDeclare",
-      ) {{ $t('common.actions.acknowledgeAndReport') }}
+      v-btn.primary(@click.prevent="submit(false)") {{ $t('common.actions.ack') }}
+      v-btn.warning(@click.prevent="submit(true)") {{ $t('common.actions.acknowledgeAndReport') }}
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
@@ -73,49 +69,49 @@ export default {
       },
     };
   },
+  computed: {
+    isNoteRequired() {
+      return this.config && this.config.isNoteRequired;
+    },
+  },
   methods: {
-    async create(withDeclare) {
+    async createAckEvent() {
       const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
 
-      await this.createEventAction({
-        data: ackEventData,
-      });
-
-      if (withDeclare) {
-        const declareTicketEventData =
-          this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
-
-        await this.createEventAction({
-          data: declareTicketEventData,
-        });
-      }
-
-      if (this.config && this.config.afterSubmit) {
-        await this.config.afterSubmit();
-      }
-
-      this.hideModal();
+      await this.createEventAction({ data: ackEventData });
     },
 
-    async submitWithDeclare() {
+    async createDeclareTicketEvent() {
+      const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, omit(this.form, ['ticket']));
+
+      await this.createEventAction({ data: declareTicketEventData });
+    },
+
+    async createAssocTicketEvent() {
+      const assocTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
+
+      await this.createEventAction({ data: assocTicketEventData });
+    },
+
+    async submit(withTicket) {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
-        await this.create(true);
-      }
-    },
+        this.createAckEvent();
 
-    async submit() {
-      this.errors.clear();
-
-      if (this.config && this.config.isNoteRequired) {
-        const formIsValid = await this.$validator.validate('output');
-
-        if (formIsValid) {
-          await this.create();
+        if (withTicket) {
+          if (this.form.ticket) {
+            this.createAssocTicketEvent();
+          } else {
+            this.createDeclareTicketEvent();
+          }
         }
-      } else {
-        await this.create();
+
+        if (this.config && this.config.afterSubmit) {
+          await this.config.afterSubmit();
+        }
+
+        this.hideModal();
       }
     },
   },
