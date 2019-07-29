@@ -47,7 +47,13 @@ const commands = {
   },
 
   browseGroupById(id) {
-    return this.customClick(this.el('@groupSideBarSelectorById', id));
+    this.api.element('css selector', this.el('@activeGroupSideBarSelectorById', id), ({ status }) => {
+      if (status === -1) {
+        this.customClick(this.el('@groupSideBarSelectorById', id));
+      }
+    });
+
+    return this;
   },
 
   browseViewById(id) {
@@ -65,6 +71,7 @@ module.exports = {
     groupsSideBarButton: sel('groupsSideBarButton'),
     groupsSideBarClosed: `${groupsSideBar}.v-navigation-drawer--close`,
     groupSideBarSelectorById: `.v-expansion-panel__header ${sel('groupsSideBar-group-%s')}`,
+    activeGroupSideBarSelectorById: `.v-expansion-panel__container--active .v-expansion-panel__header ${sel('groupsSideBar-group-%s')}`,
     editGroupButton: `.v-expansion-panel__header .v-btn${sel('editGroupButton-group-%s')}`,
     editViewButton: `.v-expansion-panel__body .v-btn${sel('editViewButton-view-%s')}`,
     copyViewButton: `.v-expansion-panel__body .v-btn${sel('copyViewButton-view-%s')}`,

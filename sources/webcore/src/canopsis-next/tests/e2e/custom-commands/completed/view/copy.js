@@ -1,12 +1,13 @@
 // http://nightwatchjs.org/guide#usage
-const { VIEW } = require('../../constants');
-const { API_ROUTES } = require('../../../../src/config');
+const { API_ROUTES } = require('../../../../../src/config');
 
-module.exports.command = function copyView(groupId, viewId, view = { ...VIEW }, callback = () => {}) {
+module.exports.command = function copyView(groupId, viewId, view, callback = () => {}) {
   const {
     name,
     title,
     description,
+    enabled,
+    tags,
     group,
   } = view;
 
@@ -36,18 +37,39 @@ module.exports.command = function copyView(groupId, viewId, view = { ...VIEW }, 
     .clickEditModeButton()
     .defaultPause();
 
-  groupsSideBar.clickPanelHeader(groupId)
+  groupsSideBar.browseGroupById(groupId)
     .verifyPanelBody(groupId)
     .clickCopyViewButton(viewId)
     .defaultPause();
 
-  modalViewCreate.verifyModalOpened()
-    .setViewName(name)
-    .setViewTitle(title)
-    .setViewDescription(description)
-    .clickViewEnabled()
-    .setViewGroupTags(group)
-    .setViewGroupIds(group);
+  modalViewCreate.verifyModalOpened();
+
+  if (name) {
+    modalViewCreate.clearViewName()
+      .setViewName(name);
+  }
+
+  if (title) {
+    modalViewCreate.clearViewTitle()
+      .setViewTitle(title);
+  }
+
+  if (description) {
+    modalViewCreate.clearViewDescription()
+      .setViewDescription(description);
+  }
+
+  if (tags) {
+    modalViewCreate.clearViewGroupTags()
+      .setViewGroupTags(description);
+  }
+
+  if (group) {
+    modalViewCreate.clearViewGroupId()
+      .setViewGroupId(group);
+  }
+
+  modalViewCreate.setViewEnabled(enabled);
 
   this.waitForFirstXHR(
     new RegExp(`${API_ROUTES.view}$`),
@@ -57,9 +79,6 @@ module.exports.command = function copyView(groupId, viewId, view = { ...VIEW }, 
   );
 
   modalViewCreate.verifyModalClosed();
-
-  navigation.clickEditModeButton()
-    .clickSettingsViewButton();
 
   return this;
 };

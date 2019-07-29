@@ -1,19 +1,20 @@
 // http://nightwatchjs.org/guide#usage
-const { VIEW } = require('../../constants');
-const { API_ROUTES } = require('../../../../src/config');
+const { API_ROUTES } = require('../../../../../src/config');
 
-module.exports.command = function createView(view = { ...VIEW }, callback = () => {}) {
+module.exports.command = function editView(groupId, viewId, view, callback = () => {}) {
   const {
     name,
     title,
     description,
+    enabled,
+    tags,
     group,
   } = view;
 
   const topBar = this.page.layout.topBar();
+  const navigation = this.page.layout.navigation();
   const createUser = this.page.modals.admin.createUser();
   const groupsSideBar = this.page.layout.groupsSideBar();
-  const navigation = this.page.layout.navigation();
   const modalViewCreate = this.page.modals.view.create();
 
   groupsSideBar.groupsSideBarButtonElement(({ status }) => {
@@ -33,27 +34,51 @@ module.exports.command = function createView(view = { ...VIEW }, callback = () =
   navigation.verifySettingsWrapperBefore()
     .clickSettingsViewButton()
     .verifyControlsWrapperBefore()
-    .clickAddViewButton()
+    .clickEditModeButton()
     .defaultPause();
 
-  modalViewCreate.verifyModalOpened()
-    .setViewName(name)
-    .setViewTitle(title)
-    .setViewDescription(description)
-    .clickViewEnabled()
-    .setViewGroupTags(group)
-    .setViewGroupIds(group);
+  groupsSideBar.browseGroupById(groupId)
+    .verifyPanelBody(groupId)
+    .clickEditViewButton(viewId)
+    .defaultPause();
+
+  modalViewCreate.verifyModalOpened();
+
+  if (name) {
+    modalViewCreate.clearViewName()
+      .setViewName(name);
+  }
+
+  if (title) {
+    modalViewCreate.clearViewTitle()
+      .setViewTitle(title);
+  }
+
+  if (description) {
+    modalViewCreate.clearViewDescription()
+      .setViewDescription(description);
+  }
+
+  if (tags) {
+    modalViewCreate.clearViewGroupTags()
+      .setViewGroupTags(tags);
+  }
+
+  if (group) {
+    modalViewCreate.clearViewGroupId()
+      .setViewGroupId(group);
+  }
+
+  modalViewCreate.setViewEnabled(enabled);
 
   this.waitForFirstXHR(
-    new RegExp(`${API_ROUTES.view}$`),
+    `${API_ROUTES.view}/${viewId}`,
     5000,
     () => modalViewCreate.clickViewSubmitButton(),
     ({ responseData, requestData }) => callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) }),
   );
 
   modalViewCreate.verifyModalClosed();
-
-  navigation.clickSettingsViewButton();
 
   return this;
 };

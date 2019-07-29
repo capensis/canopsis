@@ -1,22 +1,12 @@
 // http://nightwatchjs.org/guide#usage
+const uid = require('uid');
 
-const { NAVIGATION: { groups } } = require('../../constants');
-
-const TEMPORARY_DATA = {};
-
-const createTemporaryObject = ({ prefix, text, index }) => {
-  const i = typeof index === 'number' ? `-${index}` : '';
-  const r = Math.random().toString(36).substring(7);
-  return {
-    name: `${prefix}-${text}-name${i}-${r}`,
-    title: `${prefix}-${text}-title${i}-${r}`,
-    description: `${prefix}-${text}-description${i}-${r}`,
-    group: `${prefix}-${text}-group${i}-${r}`,
-  };
-};
+const { generateTemporaryView } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
+    browser.globals.views = [];
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
@@ -25,98 +15,61 @@ module.exports = {
 
   after(browser, done) {
     browser.end(done);
+
+    delete browser.globals.views;
   },
 
   'Add view with some name from constants': (browser) => {
-    const { text, create: { prefix } } = groups;
-
-    TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
-
-    browser.completed.createView(TEMPORARY_DATA[prefix], (view) => {
-      TEMPORARY_DATA[prefix] = view;
+    browser.completed.view.create(generateTemporaryView(), (view) => {
+      browser.globals.views.push(view);
     });
   },
 
   'Checking view copy with name from constants': (browser) => {
-    const { text, copy: { prefix }, create } = groups;
+    const [createdView] = browser.globals.views;
 
-    TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
+    const { title, name, enabled } = generateTemporaryView();
 
-    browser.completed.copyView(
-      TEMPORARY_DATA[create.prefix].group_id,
-      TEMPORARY_DATA[create.prefix]._id,
-      TEMPORARY_DATA[prefix],
-      (view) => {
-        TEMPORARY_DATA[prefix] = view;
-      },
-    );
+    browser.completed.view.copy(createdView.group_id, createdView._id, { title, name, enabled }, (view) => {
+      browser.globals.views.push(view);
+    });
   },
 
   'Editing test view with name from constants': (browser) => {
-    const { text, edit: { prefix }, create } = groups;
+    const navigation = browser.page.layout.navigation();
+    const groupsSideBar = browser.page.layout.groupsSideBar();
+    const modalCreateGroup = browser.page.modals.view.createGroup();
 
-    TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
+    const [createdView] = browser.globals.views;
+    const groupName = `group-${uid()}`;
 
-    const {
-      name,
-      title,
-      description,
-      group,
-    } = TEMPORARY_DATA[prefix];
-
-    const r = Math.random().toString(36).substring(7);
-
-    browser.page.layout.navigation()
-      .verifySettingsWrapperBefore()
+    navigation.verifySettingsWrapperBefore()
       .clickSettingsViewButton()
       .verifyControlsWrapperBefore()
       .clickEditModeButton()
       .defaultPause();
 
-    browser.page.layout.groupsSideBar()
-      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].group_id)
+    groupsSideBar.clickEditGroupButton(createdView.group_id)
       .defaultPause();
 
-    TEMPORARY_DATA[create.prefix].group = `${create.prefix}-${text}-group-${r}`;
-
-    browser.page.modals.view.createGroup()
-      .verifyModalOpened()
+    modalCreateGroup.verifyModalOpened()
       .clearGroupName()
-      .setGroupName(`${create.prefix}-${text}-group-${r}`)
+      .setGroupName(groupName)
       .clickSubmitButton()
       .verifyModalClosed();
 
-
-    browser.page.layout.groupsSideBar()
-      .verifyPanelBody(TEMPORARY_DATA[create.prefix].group_id)
-      .clickEditViewButton(TEMPORARY_DATA[create.prefix]._id)
-      .defaultPause();
-
-    browser.page.modals.view.create()
-      .verifyModalOpened()
-      .clearViewName()
-      .setViewName(name)
-      .clearViewTitle()
-      .setViewTitle(title)
-      .clearViewDescription()
-      .setViewDescription(description)
-      .clickViewEnabled()
-      .clearViewGroupTags()
-      .setViewGroupTags(group)
-      .clearViewGroupIds()
-      .setViewGroupIds(group)
-      .clickViewSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.layout.navigation()
-      .clickEditModeButton()
+    navigation.clickEditModeButton()
       .clickSettingsViewButton();
+
+    browser.completed.view.edit(createdView.group_id, createdView._id, generateTemporaryView(), (view) => {
+      /**
+       * TODO: put group removing when it will be ready
+       */
+      browser.globals.views[0] = view;
+    });
   },
 
   'Deleting all test items view with name from constants': (browser) => {
-    const { create, copy } = groups;
-
-    browser.completed.deleteView(TEMPORARY_DATA[create.prefix].group_id, TEMPORARY_DATA[create.prefix]._id);
-    browser.completed.deleteView(TEMPORARY_DATA[copy.prefix].group_id, TEMPORARY_DATA[copy.prefix]._id);
+    browser.globals.views.forEach(view => browser.completed.view.delete(view.group_id, view._id));
   },
 };

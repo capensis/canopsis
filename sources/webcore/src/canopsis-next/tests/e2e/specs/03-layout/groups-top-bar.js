@@ -71,7 +71,7 @@ module.exports = {
       .setViewDescription(description)
       .clickViewEnabled()
       .setViewGroupTags(group)
-      .setViewGroupIds(group)
+      .setViewGroupId(group)
       .clickViewSubmitButton()
       .verifyModalClosed();
   },
@@ -148,8 +148,8 @@ module.exports = {
       .clickViewEnabled()
       .clearViewGroupTags()
       .setViewGroupTags(group)
-      .clearViewGroupIds()
-      .setViewGroupIds(group)
+      .clearViewGroupId()
+      .setViewGroupId(group)
       .clickViewSubmitButton()
       .verifyModalClosed();
   },

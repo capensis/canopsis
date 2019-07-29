@@ -1,12 +1,20 @@
 // http://nightwatchjs.org/guide#usage
-const { API_ROUTES } = require('../../../../src/config');
+const { API_ROUTES } = require('../../../../../src/config');
 
-module.exports.command = function deleteView(groupId, viewId, callback = () => {}) {
+module.exports.command = function createView(view, callback = () => {}) {
+  const {
+    name,
+    title,
+    description,
+    enabled,
+    tags,
+    group,
+  } = view;
+
   const topBar = this.page.layout.topBar();
-  const confirmation = this.page.modals.confirmation();
-  const navigation = this.page.layout.navigation();
   const createUser = this.page.modals.admin.createUser();
   const groupsSideBar = this.page.layout.groupsSideBar();
+  const navigation = this.page.layout.navigation();
   const modalViewCreate = this.page.modals.view.create();
 
   groupsSideBar.groupsSideBarButtonElement(({ status }) => {
@@ -26,30 +34,25 @@ module.exports.command = function deleteView(groupId, viewId, callback = () => {
   navigation.verifySettingsWrapperBefore()
     .clickSettingsViewButton()
     .verifyControlsWrapperBefore()
-    .clickEditModeButton()
-    .defaultPause();
-
-  groupsSideBar.clickPanelHeader(groupId)
-    .verifyPanelBody(groupId)
-    .clickEditViewButton(viewId)
+    .clickAddViewButton()
     .defaultPause();
 
   modalViewCreate.verifyModalOpened()
-    .clickViewDeleteButton();
-
-  confirmation.verifyModalOpened();
+    .setViewName(name)
+    .setViewTitle(title)
+    .setViewDescription(description)
+    .setViewEnabled(enabled)
+    .setViewGroupTags(tags)
+    .setViewGroupId(group);
 
   this.waitForFirstXHR(
     new RegExp(`${API_ROUTES.view}$`),
     5000,
-    () => confirmation.clickConfirmButton(),
-    ({ responseData }) => callback(JSON.parse(responseData)),
+    () => modalViewCreate.clickViewSubmitButton(),
+    ({ responseData, requestData }) => callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) }),
   );
 
-  confirmation.verifyModalClosed();
-
-  navigation.clickEditModeButton()
-    .clickSettingsViewButton();
+  modalViewCreate.verifyModalClosed();
 
   return this;
 };
