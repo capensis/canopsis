@@ -132,7 +132,7 @@ export default {
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.watcher]: { maxWidth: 920, lazy: true },
 
-        ...featuresService.get('components.modals.dialogProps'),
+        ...featuresService.get('components.modals.dialogPropsMap'),
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };
