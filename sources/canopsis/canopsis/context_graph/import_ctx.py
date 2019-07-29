@@ -564,7 +564,7 @@ class ContextGraphImport(ContextGraph):
 
         self.update[ci[self.K_ID]] = entity
 
-        def __a_create_entity(self, ci):
+    def __a_create_entity(self, ci):
         """Create an entity with a ci and store it into self.update
 
         If the new entity is initially store in the context, a ValueError will
