@@ -1,10 +1,17 @@
 <template lang="pug">
   v-container
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.roles') }}
-    div
-      div(v-show="hasDeleteAnyRoleAccess && selected.length")
-        v-btn(@click="showRemoveSelectedRolesModal", data-test="massDeleteButton", icon)
-          v-icon delete
+    div.white
+      v-layout(row, wrap)
+        v-flex(xs4)
+          search-field(
+          v-model="searchingText",
+          @submit="applySearchFilter",
+          @clear="applySearchFilter",
+          )
+        v-flex(v-show="hasDeleteAnyRoleAccess && selected.length", xs4)
+          v-btn(@click="showRemoveSelectedRolesModal", data-test="massDeleteButton", icon)
+            v-icon delete
       v-data-table(
       v-model="selected",
       :headers="headers",
@@ -52,31 +59,40 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
-
 import { MODALS } from '@/constants';
+
+import { getRolesSearchByText } from '@/helpers/entities-search';
 
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
+import viewQuery from '@/mixins/view/query';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
 import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import SearchField from '@/components/forms/fields/search-field.vue';
 
 export default {
   components: {
     RefreshBtn,
+    SearchField,
   },
   mixins: [
     popupMixin,
     modalMixin,
+    viewQuery,
     entitiesRoleMixins,
     rightsTechnicalRoleMixin,
   ],
   data() {
     return {
-      pagination: null,
-      headers: [
+      searchingText: '',
+      selected: [],
+    };
+  },
+  computed: {
+    headers() {
+      return [
         {
           text: this.$t('tables.rolesList.name'),
           value: '_id',
@@ -85,19 +101,8 @@ export default {
           text: this.$t('tables.rolesList.actions'),
           value: 'actions',
         },
-      ],
-      selected: [],
-    };
-  },
-  watch: {
-    pagination(value, oldValue) {
-      if (!isEmpty(oldValue) && value !== oldValue) {
-        this.fetchList();
-      }
+      ];
     },
-  },
-  mounted() {
-    this.fetchList();
   },
   methods: {
     showRemoveRoleModal(id) {
@@ -153,18 +158,28 @@ export default {
       });
     },
 
-    fetchList() {
-      const {
-        rowsPerPage, page, sortBy, descending,
-      } = this.pagination;
 
-      this.fetchRolesList({
-        params: {
-          limit: rowsPerPage,
-          start: (page - 1) * rowsPerPage,
-          sort: [{ property: sortBy, direction: descending ? 'DESC' : 'ASC' }],
-        },
-      });
+    applySearchFilter() {
+      this.query = {
+        ...this.query,
+
+        search: this.searchingText,
+      };
+    },
+
+    getQuery() {
+      const { search } = this.query;
+      const query = this.getBaseQuery();
+
+      if (search) {
+        query.filter = { $and: [getRolesSearchByText(search)] };
+      }
+
+      return query;
+    },
+
+    fetchList() {
+      this.fetchRolesList({ params: this.getQuery() });
     },
   },
 };

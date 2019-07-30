@@ -71,8 +71,9 @@
           v-model="form.ui_language",
           :items="languages",
           )
-        v-layout(row)
+        v-layout(data-test="navigationTypeLayout", row)
           v-select.mt-0(
+          data-test="navigationType",
           v-model="form.groupsNavigationType",
           :label="$t('parameters.groupsNavigationType.title')",
           :items="groupsNavigationItems",

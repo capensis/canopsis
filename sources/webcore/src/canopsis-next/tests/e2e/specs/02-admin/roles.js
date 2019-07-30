@@ -164,6 +164,6 @@ module.exports = {
   'Refresh button': (browser) => {
     const rolesPage = browser.page.admin.roles();
 
-    browser.comploted.refreshPage(API_ROUTES.role.list, () => rolesPage.clickRefreshButton());
+    browser.completed.refreshPage(API_ROUTES.role.list, () => rolesPage.clickRefreshButton());
   },
 };

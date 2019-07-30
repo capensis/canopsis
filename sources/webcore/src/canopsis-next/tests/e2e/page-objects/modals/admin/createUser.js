@@ -52,6 +52,12 @@ const commands = {
       .customClick(this.el('@languageItemOption', index));
   },
 
+  selectNavigationType(index = 1) {
+    return this.customClick('@navigationTypeField')
+      .waitForElementVisible(this.el('@navigationTypeOption', index))
+      .customClick(this.el('@navigationTypeOption', index));
+  },
+
   clickSelectDefaultViewButton() {
     return this.customClick('@selectDefaultViewButton');
   },
@@ -75,6 +81,7 @@ module.exports = modalCreator(modalSelector, {
       passwordField: sel('password'),
       roleField: `${sel('roleLayout')} .v-input__slot`,
       languageField: `${sel('languageLayout')} .v-input__slot`,
+      navigationTypeField: `${sel('navigationTypeLayout')} .v-input__slot`,
       selectDefaultViewButton: sel('selectDefaultViewButton'),
       enabled: `.v-input${sel('enabled')} .v-input--selection-controls__ripple`,
       submitButton: sel('submitButton'),
@@ -82,6 +89,7 @@ module.exports = modalCreator(modalSelector, {
 
     roleItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     languageItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    navigationTypeOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
   },
   commands: [commands],
 });
