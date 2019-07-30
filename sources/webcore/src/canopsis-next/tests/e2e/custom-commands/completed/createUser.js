@@ -1,4 +1,5 @@
 // http://nightwatchjs.org/guide#usage
+const qs = require('qs');
 const { USER } = require('../../constants');
 const { API_ROUTES } = require('../../../../src/config');
 
@@ -32,13 +33,12 @@ module.exports.command = function createUser(user = { ...USER }, callback = () =
     .selectNavigationType(navigationType);
 
   this.waitForFirstXHR(
-    API_ROUTES.user.list,
+    API_ROUTES.user.create,
     1000,
     () => adminCreateUser.clickSubmitButton(),
-    ({ responseData }) => {
-      const userResponseData = JSON.parse(responseData)
-        .data.filter(item => item.id === username)[0];
-      callback(userResponseData);
+    ({ responseData, requestData }) => {
+      const requestParsedData = qs.parse(requestData);
+      return callback({ ...JSON.parse(requestParsedData.user), ...JSON.parse(responseData) });
     },
   );
   adminCreateUser.verifyModalClosed();
