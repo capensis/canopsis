@@ -142,6 +142,10 @@ const routes = [
       },
     },
   },
+  {
+    path: '/logged_in',
+    redirect: `${process.env.VUE_APP_API_HOST}/logged_in`,
+  },
 ];
 
 const router = new Router({
