@@ -66,6 +66,7 @@
           v-divider
     v-divider
     groups-settings-button(
+    tooltipPosition="right",
     :isEditingMode="isEditingMode",
     @toggleEditingMode="toggleEditingMode"
     )
