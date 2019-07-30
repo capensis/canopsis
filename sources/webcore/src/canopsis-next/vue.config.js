@@ -24,6 +24,12 @@ module.exports = {
         secure: false,
         cookieDomainRewrite: '',
       },
+      '/logged_in': {
+        target: process.env.VUE_APP_API_HOST,
+        changeOrigin: true,
+        secure: false,
+        cookieDomainRewrite: '',
+      },
     },
     disableHostCheck: true,
   },

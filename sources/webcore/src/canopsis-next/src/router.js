@@ -8,6 +8,7 @@ import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
 import store from '@/store';
 import i18n from '@/i18n';
 import { checkUserAccess } from '@/helpers/right';
+import request from '@/services/request';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -144,7 +145,14 @@ const routes = [
   },
   {
     path: '/logged_in',
-    redirect: `${process.env.VUE_APP_API_HOST}/logged_in`,
+    redirect: async (to) => {
+      try {
+        return await request.get(`${process.env.VUE_APP_API_HOST}/logged_in`, { params: { ticket: to.query.ticket } });
+      } catch (err) {
+        console.error(err);
+        return { name: 'login' };
+      }
+    },
   },
 ];
 
