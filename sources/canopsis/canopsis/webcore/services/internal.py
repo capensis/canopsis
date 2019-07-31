@@ -70,15 +70,13 @@ def get_version():
             CanopsisVersionManager.EDITION_FIELD: document.get(CanopsisVersionManager.EDITION_FIELD, ""),
             CanopsisVersionManager.STACK_FIELD: document.get(CanopsisVersionManager.STACK_FIELD, ""),
             CanopsisVersionManager.VERSION_FIELD: document.get(
-                CanopsisVersionManager.VERSION_FIELD, ""),
-            CanopsisVersionManager.LANGUAGE_FIELD: document.get(CanopsisVersionManager.LANGUAGE_FIELD, ""),
+                CanopsisVersionManager.VERSION_FIELD, "")
         }
 
     return {
         CanopsisVersionManager.EDITION_FIELD: "",
         CanopsisVersionManager.STACK_FIELD: "",
-        CanopsisVersionManager.VERSION_FIELD: "",
-        CanopsisVersionManager.LANGUAGE_FIELD: ""
+        CanopsisVersionManager.VERSION_FIELD: ""
     }
 
 
@@ -117,17 +115,13 @@ def get_login_config(ws):
     return {"login_config": login_config}
 
 
-def check_values(ws, edition, stack, language):
+def check_values(ws, edition, stack):
     if edition is not None and edition not in VALID_CANOPSIS_EDITIONS:
         ws.logger.error("edition is an invalid value : {}".format(edition))
         return False
 
     if stack is not None and stack not in VALID_CANOPSIS_STACKS:
         ws.logger.error("stack is an invalid value : {}".format(stack))
-        return False
-
-    if language is not None and language not in VALID_CANOPSIS_LANGUAGES:
-        ws.logger.error("language is an invalid value : {}".format(language))
         return False
 
     return True
@@ -161,11 +155,11 @@ def exports(ws):
 
         try:
             ok = check_values(
-                ws, doc.get("edition"), doc.get("stack"), doc.get("language"))
+                ws, doc.get("edition"), doc.get("stack"))
             if ok:
                 success = CanopsisVersionManager(version_collection).\
-                    put_canopsis_document(doc.get("edition"),
-                                          doc.get("stack"), None, doc.get("language"))
+                    put_canopsis_document(
+                        doc.get("edition"), doc.get("stack"), None)
 
                 if not success:
                     return gen_json_error({'description': 'failed to update edition/stack'},
@@ -195,7 +189,9 @@ def exports(ws):
                 if key not in ['app_title', 'logo', 'language']:
                     user_interface.pop(key)
             cservices.update(user_interface)
+        ws.logger.error(get_version())
         cservices.update(get_version())
+        ws.logger.warning(cservices)
 
         return gen_json(cservices)
 
@@ -219,6 +215,16 @@ def exports(ws):
         for key in interface.keys():
             if key not in VALID_USER_INTERFACE_PARAMS:
                 interface.pop(key)
+
+        language = interface.get('language', None)
+        if language is not None and language not in VALID_CANOPSIS_LANGUAGES:
+            ws.logger.error(
+                "language is an invalid value : {}".format(language))
+            return gen_json_error(
+                {'description': "language is an invalid value : {}".format(
+                    language)},
+                HTTP_ERROR
+            )
 
         user_interface_manager = UserInterfaceManager(
             *UserInterfaceManager.provide_default_basics())

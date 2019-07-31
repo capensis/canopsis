@@ -21,7 +21,7 @@
 from argparse import ArgumentParser
 
 from canopsis.migration.manager import MigrationTool
-from canopsis.version import CANOPSIS_VERSION_ARG, CANOPSIS_STACK_ARG, CANOPSIS_EDITION_ARG, CANOPSIS_LANGUAGE_ARG
+from canopsis.version import CANOPSIS_VERSION_ARG, CANOPSIS_STACK_ARG, CANOPSIS_EDITION_ARG
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Canopsis Migration Tool')
@@ -34,12 +34,9 @@ if __name__ == '__main__':
                         default="core", dest='canopsis_edition', choices=['cat', 'core'])
     parser.add_argument(CANOPSIS_STACK_ARG, required=False,
                         default="python", dest='canopsis_stack', choices=['go', 'python'])
-    parser.add_argument(CANOPSIS_LANGUAGE_ARG, required=False,
-                        default="fr", dest='canopsis_language', choices=['en', 'fr'])
     args = parser.parse_args()
 
     mgr = MigrationTool(canopsis_version=args.canopsis_version,
                         canopsis_stack=args.canopsis_stack,
-                        canopsis_edition=args.canopsis_edition,
-                        canopsis_language=args.canopsis_language)
+                        canopsis_edition=args.canopsis_edition)
     mgr.fill(yes=args.yes, reinit_auth=args.reinit)

@@ -31,7 +31,6 @@ class CanopsisVersionManager(object):
     EDITION_FIELD = "edition"
     STACK_FIELD = "stack"
     VERSION_FIELD = "version"
-    LANGUAGE_FIELD = "language"
     __DOCUMENT_ID = "canopsis_version"
 
     def __init__(self, collection):
@@ -53,7 +52,7 @@ class CanopsisVersionManager(object):
             '_id': self.__DOCUMENT_ID
         })
 
-    def put_canopsis_document(self, edition, stack, version, language):
+    def put_canopsis_document(self, edition, stack, version):
         """
         Put Canopsis version document (upsert).
 
@@ -68,9 +67,6 @@ class CanopsisVersionManager(object):
 
         if stack is not None:
             document[self.STACK_FIELD] = stack
-
-        if language is not None:
-            document[self.LANGUAGE_FIELD] = language
 
         if version is not None:
             document[self.VERSION_FIELD] = version

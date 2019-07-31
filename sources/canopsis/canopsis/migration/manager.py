@@ -66,7 +66,6 @@ class MigrationTool(object):
         self.__canopsis_edition = canopsis_edition
         self.__canopsis_stack = canopsis_stack
         self.__canopsis_version = canopsis_version
-        self.__canopsis_language = canopsis_language
 
     def __put_canopsis_document(self):
         """
@@ -78,7 +77,7 @@ class MigrationTool(object):
             collection = \
                 store.get_collection(CanopsisVersionManager.COLLECTION)
             CanopsisVersionManager(collection)\
-                .put_canopsis_document(self.__canopsis_edition, self.__canopsis_stack, self.__canopsis_version, self.__canopsis_language)
+                .put_canopsis_document(self.__canopsis_edition, self.__canopsis_stack, self.__canopsis_version)
 
     def fill(self, init=None, yes=False, reinit_auth=False):
         self.__put_canopsis_document()
