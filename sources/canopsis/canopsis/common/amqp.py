@@ -199,26 +199,21 @@ class AmqpPublisher(object):
 
         retry = 0
         while retry <= retries:
-
-            try:
-                return self.connection.channel.basic_publish(
-                    exchange_name, routing_key, jdoc, self._json_props
-                )
-
-            except (
-                pika.exceptions.ConnectionClosed,
-                pika.exceptions.ChannelClosed
-            ):
-                self.logger.warning(
-                    "Failed to publish the following event ({}/{} retries)\n"
-                    "{}".format(retry, retries, jdoc))
+            with self.connection as conn:
                 try:
-                    self.connection.connect()
-                except pika.exceptions.ConnectionClosed:
-                    if retry < retries:
-                        time.sleep(wait)
+                    return conn.channel.basic_publish(
+                        exchange_name, routing_key, jdoc, self._json_props
+                    )
+                except (
+                    pika.exceptions.ConnectionClosed,
+                    pika.exceptions.ChannelClosed
+                ):
+                    self.logger.warning(
+                        "Failed to publish the following event ({}/{} retries)\n"
+                        "{}".format(retry, retries, jdoc))
+                    time.sleep(wait)
 
-            retry += 1
+                retry += 1
 
         raise AmqpPublishError(
             'cannot publish ({} times): cannot connect'.format(retry))
