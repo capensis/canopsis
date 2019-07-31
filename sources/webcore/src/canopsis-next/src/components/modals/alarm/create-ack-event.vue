@@ -75,35 +75,35 @@ export default {
     },
   },
   methods: {
-    async createAckEvent() {
+    createAckEvent() {
       const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
 
-      await this.createEventAction({ data: ackEventData });
+      return this.createEventAction({ data: ackEventData });
     },
 
-    async createDeclareTicketEvent() {
+    createDeclareTicketEvent() {
       const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, omit(this.form, ['ticket']));
 
-      await this.createEventAction({ data: declareTicketEventData });
+      return this.createEventAction({ data: declareTicketEventData });
     },
 
-    async createAssocTicketEvent() {
+    createAssocTicketEvent() {
       const assocTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
 
-      await this.createEventAction({ data: assocTicketEventData });
+      return this.createEventAction({ data: assocTicketEventData });
     },
 
     async submit(withTicket) {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
-        this.createAckEvent();
+        await this.createAckEvent();
 
         if (withTicket) {
           if (this.form.ticket) {
-            this.createAssocTicketEvent();
+            await this.createAssocTicketEvent();
           } else {
-            this.createDeclareTicketEvent();
+            await this.createDeclareTicketEvent();
           }
         }
 
