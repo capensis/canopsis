@@ -51,9 +51,9 @@
 		- [ ] Move tab by drag'n'drop
 5. Widget
 	* Base functions
-		- [ ] Delete row
 		- [ ] Copy widget
 		- [ ] Delete widget
+		- [ ] Delete row
 	* Alarm list
 		* Base functions
 			- [ ] Create widget
@@ -86,10 +86,30 @@
 		* Base functions
 			- [ ] Create widget
 			- [ ] Edit widget
+		* Header
+			- [ ] Search
+			- [ ] Pagination
+			- [ ] Filters
+			- [ ] Entities
+			- [ ] Watcher
+		* Hide menu
+			- [ ] Delete entities
+			- [ ] Periodical behavior
+		* Body
+			- [ ] Edit entities
+			- [ ] Duplicate entities
+			- [ ] Delete entities
+			- [ ] Periodical behavior
+		* Footer
+			- [ ] Pagination
+			- [ ] Pages
 	* Service weather
 		* Base functions
 			- [ ] Create widget
 			- [ ] Edit widget
+		* Widget
+			- [ ] Help
+			- [ ] Info
 	* Stats histogram
 		* Base functions
 			- [ ] Create widget
@@ -110,6 +130,8 @@
 		* Base functions
 			- [ ] Create widget
 			- [ ] Edit widget
+		* Footer
+			- [ ] Pages
 	* Pareto diagram
 		* Base functions
 			- [ ] Create widget
@@ -118,4 +140,27 @@
 		* Base functions
 			- [ ] Create widget
 			- [ ] Edit widget
-
+6. Exploitation
+	* Event filter
+		- [ ] Create event filter rule
+		- [ ] Edit event filter rule
+		- [ ] Copy event filter rule
+		- [ ] Delete event filter rule
+		- [ ] Create mass event filter rule
+		- [ ] Check pagination roles table
+		- [ ] Delete mass event filter rule
+	* PBehaviors
+		- [ ] Create periodical behavior
+		- [ ] Edit periodical behavior
+		- [ ] Delete periodical behavior
+		- [ ] Create mass periodical behavior
+		- [ ] Search periodical behavior
+		- [ ] Check pagination periodical behavior
+		- [ ] Delete mass periodical behavior
+	* Webhooks
+		- [ ] Create webhook
+		- [ ] Edit webhook
+		- [ ] Delete webhook
+		- [ ] Create mass webhook
+		- [ ] Check pagination webhook
+		- [ ] Delete mass webhook
