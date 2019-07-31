@@ -134,7 +134,7 @@ export default {
       this.showModal({
         name: MODALS.watcher,
         config: {
-          color: this.format.color,
+          color: this.color,
           watcher: this.watcher,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
