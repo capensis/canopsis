@@ -5,27 +5,24 @@ const el = require('../../helpers/el');
 const commands = {
   el,
 
-  clickDropdownButton(tags) {
-    return this.customClick(this.el('@dropdownButton', tags));
+  clickDropdownButton(id) {
+    return this.customClick(this.el('@dropdownButton', id));
   },
 
-  verifyDropdownZone(tags) {
-    return this.waitForElementVisible(this.el('@dropdownZone', tags));
+  verifyDropdownZone(id) {
+    return this.waitForElementVisible(this.el('@dropdownZone', id));
   },
 
-  clickEditGroupButton(tags) {
-    return this.waitForElementVisible(this.el('@editGroupButton', tags))
-      .customClick(this.el('@editGroupButton', tags));
+  clickEditGroupButton(id) {
+    return this.customClick(this.el('@editGroupButton', id));
   },
 
-  clickEditViewButton(title) {
-    return this.waitForElementVisible(this.el('@editViewButton', title))
-      .customClick(this.el('@editViewButton', title));
+  clickEditViewButton(id) {
+    return this.customClick(this.el('@editViewButton', id));
   },
 
-  clickCopyViewButton(title) {
-    return this.waitForElementVisible(this.el('@copyViewButton', title))
-      .customClick(this.el('@copyViewButton', title));
+  clickCopyViewButton(id) {
+    return this.customClick(this.el('@copyViewButton', id));
   },
 
   clickUserDropdown() {
@@ -46,11 +43,11 @@ module.exports = {
     userTopBarDropdownButton: sel('userTopBarDropdownButton'),
     userProfileButton: sel('userProfileButton'),
     logoutButton: sel('logoutButton'),
-    dropdownButton: sel('dropDownButton-groupName-%s'),
-    dropdownZone: `.v-menu__content ${sel('dropDownZone-groupName-%s')}`,
-    editGroupButton: `${sel('dropDownButton-groupName-%s')} .v-btn${sel('editGroupButton')}`,
-    editViewButton: `.v-btn${sel('editViewButton-viewTitle-%s')}`,
-    copyViewButton: `.v-btn${sel('copyViewButton-viewTitle-%s')}`,
+    dropdownButton: sel('dropDownButton-group-%s'),
+    dropdownZone: `.v-menu__content ${sel('dropDownZone-group-%s')}`,
+    editGroupButton: `${sel('dropDownButton-group-%s')} .v-btn${sel('editGroupButton')}`,
+    editViewButton: `.v-btn${sel('editViewButton-view-%s')}`,
+    copyViewButton: `.v-btn${sel('copyViewButton-view-%s')}`,
   },
   commands: [commands],
 };

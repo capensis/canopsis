@@ -17,7 +17,7 @@
       span {{ $t('layout.sideBar.buttons.settings') }}
     v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", right)
       v-btn(
-      data-test="editViewButton",
+      data-test="editModeButton",
       slot="activator",
       :input-value="isEditingMode",
       color="blue darken-4",

@@ -1,22 +1,11 @@
 // http://nightwatchjs.org/guide#usage
-
-const { NAVIGATION: { groups } } = require('../../constants');
-
-const TEMPORARY_DATA = {};
-
-const createTemporaryObject = ({ prefix, text, index }) => {
-  const i = typeof index === 'number' ? `-${index}` : '';
-  const r = Math.random().toString(36).substring(7);
-  return {
-    name: `${prefix}-${text}-name${i}-${r}`,
-    title: `${prefix}-${text}-title${i}-${r}`,
-    description: `${prefix}-${text}-description${i}-${r}`,
-    tags: `${prefix}-${text}-tags${i}-${r}`,
-  };
-};
+const { API_ROUTES } = require('../../../../src/config');
+const { generateTemporaryView } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
+    browser.globals.views = {};
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
@@ -34,17 +23,19 @@ module.exports = {
       .clickSubmitButton()
       .verifyModalClosed();
 
+    delete browser.globals.views;
+
     browser.end(done);
   },
 
   'Add view with name from constants': (browser) => {
-    const { text, create: { prefix } } = groups;
+    const { views } = browser.globals;
 
-    TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
+    views.create = generateTemporaryView('create');
 
     const {
-      name, title, description, tags,
-    } = TEMPORARY_DATA[prefix];
+      name, title, description, group,
+    } = views.create;
 
     browser.page.layout.topBar()
       .clickUserDropdown()
@@ -54,10 +45,12 @@ module.exports = {
       .verifyModalOpened()
       .selectNavigationType(2)
       .clickSubmitButton()
-      .verifyModalClosed()
-      .api.pause(5000);
+      .verifyModalClosed();
 
-    browser.page.layout.leftSideBar()
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
+
+    browser.page.layout.navigation()
       .verifySettingsWrapperBefore()
       .clickSettingsViewButton()
       .verifyControlsWrapperBefore()
@@ -70,30 +63,44 @@ module.exports = {
       .setViewTitle(title)
       .setViewDescription(description)
       .clickViewEnabled()
-      .setViewGroupTags(tags)
-      .setViewGroupIds(tags)
-      .clickViewSubmitButton()
+      .setViewGroupTags(group)
+      .setViewGroupId(group);
+
+    browser.waitForFirstXHR(
+      new RegExp(`${API_ROUTES.view}$`),
+      5000,
+      () => browser.page.modals.view.create()
+        .clickViewSubmitButton(),
+      ({ responseData, requestData }) => views.create = {
+        ...views.create,
+        ...JSON.parse(requestData),
+        ...JSON.parse(responseData),
+      },
+    );
+
+
+    browser.page.modals.view.create()
       .verifyModalClosed();
   },
 
   'Checking view copy with name from constants': (browser) => {
-    const { text, copy: { prefix }, create } = groups;
+    const { views } = browser.globals;
 
-    TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
+    views.copy = generateTemporaryView('copy');
 
     const {
       name, title, description,
-    } = TEMPORARY_DATA[prefix];
+    } = views.copy;
 
-    browser.page.layout.leftSideBar()
+    browser.page.layout.navigation()
       .verifyControlsWrapperBefore()
-      .clickEditViewButton()
+      .clickEditModeButton()
       .defaultPause();
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
-      .clickCopyViewButton(TEMPORARY_DATA[create.prefix].title)
+      .clickDropdownButton(views.create.group_id)
+      .verifyDropdownZone(views.create.group_id)
+      .clickCopyViewButton(views.create._id)
       .defaultPause();
 
     browser.page.modals.view.create()
@@ -101,40 +108,51 @@ module.exports = {
       .setViewName(name)
       .setViewTitle(title)
       .clearViewDescription()
-      .setViewDescription(description)
-      .clickViewSubmitButton()
+      .setViewDescription(description);
+
+    browser.waitForFirstXHR(
+      new RegExp(`${API_ROUTES.view}$`),
+      5000,
+      () => browser.page.modals.view.create()
+        .clickViewSubmitButton(),
+      ({ responseData, requestData }) => views.copy = {
+        ...views.copy,
+        ...JSON.parse(requestData),
+        ...JSON.parse(responseData),
+      },
+    );
+
+    browser.page.modals.view.create()
       .verifyModalClosed();
   },
 
   'Editing test view with name from constants': (browser) => {
-    const { text, edit: { prefix }, create } = groups;
+    const { views } = browser.globals;
 
-    TEMPORARY_DATA[prefix] = createTemporaryObject({ prefix, text });
+    views.edit = generateTemporaryView('edit');
 
     const {
-      name, title, description, tags,
-    } = TEMPORARY_DATA[prefix];
-
-    const r = Math.random().toString(36).substring(7);
+      name, title, description, group,
+    } = views.edit;
 
     browser.page.layout.topBar()
-      .clickEditGroupButton(TEMPORARY_DATA[create.prefix].tags)
+      .clickEditGroupButton(views.create.group_id)
       .defaultPause();
 
-    TEMPORARY_DATA[create.prefix].tags = `${create.prefix}-${text}-tags-${r}`;
+    views.create.group = generateTemporaryView('create').group;
 
     browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clearGroupName()
-      .setGroupName(TEMPORARY_DATA[create.prefix].tags)
+      .setGroupName(views.create.group)
       .clickSubmitButton()
       .verifyModalClosed();
 
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
-      .clickEditViewButton(TEMPORARY_DATA[create.prefix].title)
+      .clickDropdownButton(views.create.group_id)
+      .verifyDropdownZone(views.create.group_id)
+      .clickEditViewButton(views.create._id)
       .defaultPause();
 
     browser.page.modals.view.create()
@@ -147,20 +165,34 @@ module.exports = {
       .setViewDescription(description)
       .clickViewEnabled()
       .clearViewGroupTags()
-      .setViewGroupTags(tags)
-      .clearViewGroupIds()
-      .setViewGroupIds(tags)
-      .clickViewSubmitButton()
+      .setViewGroupTags(group)
+      .clearViewGroupId()
+      .setViewGroupId(group);
+
+
+    browser.waitForFirstXHR(
+      `${API_ROUTES.view}/${views.create._id}`,
+      5000,
+      () => browser.page.modals.view.create()
+        .clickViewSubmitButton(),
+      ({ responseData, requestData }) => views.edit = {
+        ...views.edit,
+        ...JSON.parse(requestData),
+        ...JSON.parse(responseData),
+      },
+    );
+
+    browser.page.modals.view.create()
       .verifyModalClosed();
   },
 
   'Deleting all test items view with name from constants': (browser) => {
-    const { create, edit, copy } = groups;
+    const { views } = browser.globals;
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[create.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[create.prefix].tags)
-      .clickEditViewButton(TEMPORARY_DATA[copy.prefix].title)
+      .clickDropdownButton(views.create.group_id)
+      .verifyDropdownZone(views.create.group_id)
+      .clickEditViewButton(views.copy._id)
       .defaultPause();
 
     browser.page.modals.view.create()
@@ -172,9 +204,9 @@ module.exports = {
       .verifyModalClosed();
 
     browser.page.layout.topBar()
-      .clickDropdownButton(TEMPORARY_DATA[edit.prefix].tags)
-      .verifyDropdownZone(TEMPORARY_DATA[edit.prefix].tags)
-      .clickEditViewButton(TEMPORARY_DATA[edit.prefix].title)
+      .clickDropdownButton(views.edit.group_id)
+      .verifyDropdownZone(views.edit.group_id)
+      .clickEditViewButton(views.edit._id)
       .defaultPause();
 
     browser.page.modals.view.create()
@@ -183,7 +215,9 @@ module.exports = {
     browser.page.modals.confirmation()
       .verifyModalOpened()
       .clickConfirmButton()
-      .verifyModalClosed()
-      .api.pause(5000);
+      .verifyModalClosed();
+
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
   },
 };
