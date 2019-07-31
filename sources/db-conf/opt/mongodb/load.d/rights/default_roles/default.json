@@ -19,6 +19,9 @@
         "models_user" : {
             "checksum" : 15
         },
+        "models_parameters" : {
+            "checksum" : 7
+        },
         "models_exploitation_eventFilter": {
             "checksum": 15
         },

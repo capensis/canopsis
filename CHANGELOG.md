@@ -1,14 +1,65 @@
 # Canopsis - Changelog
 
-This document references all changes made to Canopsis since 2017/08/21. Ticket titles are kept in their original language.
+This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
-## Unreleased
+## Canopsis 3.24.0 - Due date : 2019-07-18
 
-### Experimental features
+ - [Build] Build Docker images with "yarn" instead of "npm"
+ - [Build] Fix missing initialisation.toml file in Go engine packages
+ - [Build] Don't strip Go binaries in CentOS packages, to keep debug information
+ - [Build] Fix RabbitMQ download link when running "canoctl deploy"
+ - [API] Fix search on entities informations in get-alarms
+ - [Go] Add formattedDate and replace functions to webhooks templates
+ - [Go] Fix missing last_update_date computation
+ - [UI] Add a label to « Actions » columns, on all tables
+ - [UI] Add "description", "logo", and "login page footer" parameters on parameters view + Add a right to access this view
+ - [UI] Harmonize default view selector modal
+ - [UI] Fix – Close all modals on page change
+ - [UI – Listalarm] Add dynamic date selector for live reporting functionnality
+ - [UI – Listalarm] Add a setting to send (or not) a message with fast-ack events
+ - [UI – Listalarm] Fix – Available actions on alarms that are not ack
+ - [UI – Listalarm] Fix "More infos" action’s icon
+ - [UI – Service Weather] Fix issue with templates not being displayed in the tiles
+ - [UI – Stats] Add helpers on stats settings
+ - [UI - Stats] Fix – Trend icon
+ - [UI – Tests] Add fundations for e2e tests
+ - [UI – Tests] Add e2e tests – Topbar
+ - [UI – Tests] Add e2e tests – Users administration’s panel
+ - [UI – Tests] Add e2e tests – Left sidebar
+ - [UI – Weather] Change « More infos » modal header’s color according to watcher’s state
 
-- [Alarms list]: Alarms on resources can be hidden when their parent component is down.
+## Canopsis 3.23.0 - Due date : 2019-07-05
 
-# Canopsis 3.21.0 - Due date : 2019-06-21
+ - [Documentation] Add entity filters examples in Pbehavior use case documentation
+ - [Documentation] Add documentation on database cleanup queries
+ - [Documentation] Document the new watcher engine
+ - [Build] Fix canoctl compatibility problems on some Debian configurations
+ - [Build] Fix a syntax compatibility problem with Docker-Compose >= 1.14.0 versions
+ - [Build] Make it possible to build most Canopsis Docker images from a macOS host system
+ - [Build] Freeze amqp version to 2.4.2 (CentOS 7 compatibility)
+ - [Build] Remove -s -w ldflags to keep debugging symbols in Go engines
+ - [Build] Fix missing package dependencies for SNMP on Debian and CentOS
+ - [Go] Add CPS_DEBUG_TRACE option to axe and watcher engines
+ - [Go] Move watcher functionality from axe to a dedicated new watcher engine 
+ - [Go] Add runtime warnings about TicketService being deprecated and now replaced by Webhooks
+ - [Go] Added missing declareticket trigger to action and webhooks
+ - [Python] Remove tracebacks on AMQP connection errors due to loss of heartbeat
+ - [UI] Automatically redirect to Login page when "401 - Forbidden" error is returned by a Canopsis API
+ - [UI] Add "Delete" mass action on Webhooks and Event filter CRUD
+ - [UI] Pattern editors now handle null and empty string values
+ - [UI - Stats] When selecting month period, stats widget now take current month into account
+ - [UI - Stats] Improve error hangling on stats widgets
+
+## Canopsis 3.22.0 - Due date : 2019-06-28
+
+ - [Documentation] Add documentation about the new `{{ internal-link }}` handlebar helper
+ - [Documentation] Fix some `{{ entities name="" }}` cases in Service weather widget configuration
+ - [Authentication] CAS authentication fixed to be compatible with current UIv3 instead of old UIv2
+ - [UI - ListAlarm] Responsiveness fixes
+ - [UI - ListAlarm] Timeline refactoring and bugfixes
+ - [UI - Weather] Add a new `{{ internal-link }}` handlebar helper
+
+## Canopsis 3.21.0 - Due date : 2019-06-21
 
  - [email2canopsis] Add leavemails option
  - [Python] Fix ack_time_sla and resolve_time_sla stats to make them take into account the alarms that have not been acknowledged or resolved
@@ -35,7 +86,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [Documentation] Add a process describing Canopsis database backup and restoration
  - [Build] Fix Go engines files in Debian and CentOS packages
 
-# Canopsis 3.20.0 - Due date : 2019-06-07
+## Canopsis 3.20.0 - Due date : 2019-06-07
 
  - [Python] Fix a race condition in the alarm filter
  - [UI] Durations are now formatted with number of days
@@ -44,7 +95,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - Stats table] Fix - Always display unit,  even with values equal to zero
  - [UI - Text widget] Clarify the fact that selecting a stat is optionnal on this widget
 
-# Canopsis 3.19.0 - Due date : 2019-06-04
+## Canopsis 3.19.0 - Due date : 2019-06-04
 
  - [Docker] Docker-Compose files now support CPS_EDITION and CPS_STACK variables
  - [API] Fix resolved alarm duration in get-alarms
@@ -70,7 +121,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - CRUD Event-filter] Fix - Rule's id autocompletion when duplicating a rule
  - [UI - CRUD Webhooks] Fix - Patterns edition on fields containing a dot
 
-# Canopsis 3.18.1 - Due date : 2019-05-22
+## Canopsis 3.18.1 - Due date : 2019-05-22
 
  - [Packaging] Various build automation fixes
  - [Packaging] Fix missing SNMPRULE rights for admin user
@@ -79,7 +130,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - Rights] Fix JavaScript error while trying to apply linklist rights
  - [UI - Webhooks] Fix validation of URLs using templates
 
-# Canopsis 3.18.0 - Due date : 2019-05-17
+## Canopsis 3.18.0 - Due date : 2019-05-17
 
  - [Documentation] Improve the readability of the centreon connector reboot procedure
  - [Documentation] Improve linkbuilder documentation
@@ -116,7 +167,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - Webhooks] Add 'Disable if active pbehavior' option to webhook creation/edition form
  - [UI - EventFilter] Fix - Event filter rules are enable by default (even when there's no `enabled` field)
 
-# Canopsis 3.17.0 - Due date : 2019-05-07
+## Canopsis 3.17.0 - Due date : 2019-05-07
 
  - [API] Prevent from sending a changestate or keepstate event with an info state
  - [API] Add informations to the app_info route
@@ -151,7 +202,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - Webhooks] Enable 'event_pattern' with 'cancel' trigger
  - [UI - Webhooks] Add field to specify if webhooks need to be disabled when there's an active pbehavior
 
-# Canopsis 3.16.0 - Due date : 2019-04-19
+## Canopsis 3.16.0 - Due date : 2019-04-19
 
  - [Documentation] Add documentation for LDAP authentication
  - [Documentation] Add required kernel version for docker installation
@@ -189,7 +240,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - List alarm] Fix - Links not clickable
  - [UI - CRUD Pbehaviors] Add pbehaviors edition
 
-# Canopsis 3.14.0 - Due date : 2019-03-28
+## Canopsis 3.14.0 - Due date : 2019-03-28
 
  - [Python] Fix service weather 500 error when using Go watchers
  - [UI] Display user auth key in top bar
@@ -200,17 +251,17 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - Text widget] Don't force a stat to be selected, so that this widget can be used as a simple text widget too
  - [UIv2 - Service Weather] Fixed links renderer function
 
-# Canopsis 3.13.2 - Due date : 2019-03-26
+## Canopsis 3.13.2 - Due date : 2019-03-26
 
  - [Go] Adding a description field in event filter rules
  - [Python] Adding a description field in event filter rules
  - [UI - CRUD Webhooks] Added authentification fields
 
-# Canopsis 3.13.1 - Due date : 2019-03-26
+## Canopsis 3.13.1 - Due date : 2019-03-26
 
  - VERSION.txt and CHANGELOG.md had not been updated for 3.13.0
 
-# Canopsis 3.13.0 - Due date : 2019-03-25
+## Canopsis 3.13.0 - Due date : 2019-03-25
 
  - [Documentation] Fixed documentation for go watchers
  - [Documentation] Revised documentation for webhooks
@@ -246,7 +297,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - CRUD Event filter] Add 'id' and 'description' fields
  - [Packaging] Fix webserver compatibility with CentOS 7
 
-# Canopsis 3.12.0 - Due date : 2019-03-11
+## Canopsis 3.12.0 - Due date : 2019-03-11
 
  - [Documentation] Added documentation for common use cases
  - [Documentation] Added documentation for go watchers
@@ -268,7 +319,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
  - [UI - Service Weather] Changed tile blinking condition
  - [UI - Service Weather] Added rights
 
-# Canopsis 3.11.0 - Due date : 2019-02-22
+## Canopsis 3.11.0 - Due date : 2019-02-22
 
  - [Documentation] Add webhook documentation
  - [Docmentation] Add libreNMS documentation
@@ -426,7 +477,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [Go]: Introducing new Observer API driver for ticket creation
 - [Go]: New actions for event-filter engine (copy and set_entity_info_from_template)
 - [Python]: Fix /get-alarms route which was limited to 50 elements, and returned an overestimation of total
-- [Python]: New Healthcheck API to check Canopsis status (service connexions, engine statues...)
+- [Python]: New Healthcheck API to check Canopsis status (service connections, engine status...)
 - [Python]: Update Heartbeat engine docstring
 - [ServiceWeather]: Fix paused pbehavior icon not always correctly display
 
@@ -504,6 +555,7 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [UI]: hide "Restore alarm" button on open alarm list
 
 ## Canopsis 3.1 - Due date : 2018-08-17
+
 - [Python]: add a feature that track the change of the longoutput field and alter the behavior of the output field of an alarm.
 - [Python]: fix a bug that duplicate an alarm.
 - [Build]: fix an error during the compilation of canopsis-next.
@@ -565,17 +617,17 @@ This document references all changes made to Canopsis since 2017/08/21. Ticket t
 - [UI]: fix snmp view that can be broken
 - [Webserver]: authentification trough WebSSO
 
-## Canopsis 2.6.8 - Maintenance release - Due date : 2018-06-20
+## Canopsis 2.6.8 - Due date : 2018-06-20
 
 - [Service weather]: fixed an issue where the popup overlay could stay when the popup was closed, freezing the view
 - [CAT]: ported the email2canopsis connector to python3 and fixed an issue with pattern matching caused by the new python version.
 - [pbehaviors]: refactored the pbheaviors internal API to unify processing and avoid inconsistencies
 
-## Canopsis 2.6.7 - Maintenance release - not released
+## Canopsis 2.6.7 - not released
 
 This release was replaced by the 2.6.8 version to integrate an urgent fix on the pbehaviors.
 
-## Canopsis 2.6.6 - Maintenance release -  Due date : 2018-06-08
+## Canopsis 2.6.6 - Due date : 2018-06-08
 
 - [Connector]: email2canopsis now with python3
 - [Docker]: add some usefull tools in debian-9 docker image
@@ -597,8 +649,7 @@ This release was replaced by the 2.6.8 version to integrate an urgent fix on the
 - [UI]: fix sort on current_state_duration
 - [Service Weather]: add new rights for actions in service weather
 
-
-## Canopsis 2.6.5 - Maintenance release -  Due date : 2018-05-18
+## Canopsis 2.6.5 - Due date : 2018-05-18
 
 - [Go]: Porting steps cropping from python
 - [Go]: Huge refactoring on error handling
@@ -611,8 +662,7 @@ This release was replaced by the 2.6.8 version to integrate an urgent fix on the
 - [Service Weather]: fix possibility to ack twice, change invalidate to cancel on thumb down button
 - [Alarms list]: creation date is now presented in full format, even if its the present day
 
-
-## Canopsis 2.6.4 - Maintenance release -  Due date : 2018-05-03
+## Canopsis 2.6.4 - Due date : 2018-05-03
 
 - [Setup] A version of the amqp2engines.conf file is provided for the High performance engines
 - [Go]: fix error code when an engine crashes
@@ -635,8 +685,7 @@ This release was replaced by the 2.6.8 version to integrate an urgent fix on the
 - [Service weather]: Resources are now greyed out when a Component has a pbehavior
 - [Context Graph]: Fixed an issue that prevented the expansion of an item of the Context Graph explorer
 
-
-## Canopsis 2.6.3 - Maintenance release -  Due date : 2018-04-26
+## Canopsis 2.6.3 - Due date : 2018-04-26
 
 - [Engines] : Added UNACK, Uncancel, keep state actions to the High performance engines
 - [Engines] : Added a default author in all alarms steps in the High performance engines
@@ -646,8 +695,7 @@ This release was replaced by the 2.6.8 version to integrate an urgent fix on the
 - [UI]: update rights on default view
 - Multiple fixes on Pbheavior and Event_filter
 
-
-## Canopsis 2.6.2 - Maintenance release -  Due date : 2018-04-23
+## Canopsis 2.6.2 - Due date : 2018-04-23
 
 ### Fixes
 
@@ -660,10 +708,9 @@ This release was replaced by the 2.6.8 version to integrate an urgent fix on the
 - [Rights management] : fixed a rights issue with the massive actions on a limited account
 - [Service weather] : fixed the components display to put long names on 2 lines instead of truncating it
 
-
 ## Canopsis 2.6.1 - Due date: 2018-04-20
-**Not released due to regression**
 
+**Not released due to regression**
 
 ## Canopsis 2.6.0 - Due date: 2018-04-18
 
@@ -693,7 +740,6 @@ This release introduced the new High performance engines and allowed the renamin
 - [Alarms list] : fixed an issue that prevented pbehaviors to be saved properly on the High performance engines
 - [Alarms list] : fixed an issue that could record a ticket number with the `0` value with the High performance engines
 - [Engines] fixed an issue where the cancel Action did not close the alarm with the High performance engines
-
 
 ## Canopsis 2.5.12 (Sprint 03.16) - Due date : 2018-03-16
 
@@ -732,31 +778,31 @@ This release introduced the new High performance engines and allowed the renamin
  - [#528](https://git.canopsis.net/canopsis/canopsis/issues/528) - Disposer d'une information sur la date de l'alarme
 
 ### Functional and other changes
+
  - [#599](https://git.canopsis.net/canopsis/canopsis/issues/599) - Nettoyage des engines
  - [#566](https://git.canopsis.net/canopsis/canopsis/issues/566) - Remapper l'output "Lost 100%" en "Equipement injoignable"
  - [#594](https://git.canopsis.net/canopsis/canopsis/issues/594) - Validation des actions dans le popup MDS
 
-
-
 ## Canopsis 2.5.5 (sprint 01.19) - Due date : 2018-01-19
 
 ### Bug fixes
+
  - [#579](https://git.canopsis.net/canopsis/canopsis/issues/579) - Impossible de créer un pbehavior dans l'explorateur de context
  - [#564](https://git.canopsis.net/canopsis/canopsis/issues/564) - [API] get-alarms ne remonte pas tous les résultats
  - [#563](https://git.canopsis.net/canopsis/canopsis/issues/563) - [HardLimit] la hardlimit empêche toutes les actions sur une alarme
  - [#485](https://git.canopsis.net/canopsis/canopsis/issues/485) - bac a alarme création de pbhavior pop up calendrier qui ne s'affiche pas
 
 ### Functional and other changes
+
  - [#573](https://git.canopsis.net/canopsis/canopsis/issues/573) - Bac à alarme - recherche insensible à la casse
  - [#526](https://git.canopsis.net/canopsis/canopsis/issues/526) - Pouvoir trier les tuiles du widget service weather
  - [#525](https://git.canopsis.net/canopsis/canopsis/issues/525) - [Météo] Remonter les statistiques d'un scénario
  - [#524](https://git.canopsis.net/canopsis/canopsis/issues/524) - [Météo de service]Disposer d'une information sur la date de l'alarme
 
-
-
 ## 2.5.4 (Sprint 01.6) - Due date : 2018-01-06
 
 ### Bug fixes
+
  - [#543](https://git.canopsis.net/canopsis/canopsis/issues/543) - [Engine Alerts] Lorsqu'une alerte a atteint sa hard limit, le beat processing plante dans check_alarm_filters
  - [#540](https://git.canopsis.net/canopsis/canopsis/issues/540) - [doc] lancer un filldb update à chaque mise à jour de Canopsis
  - [#538](https://git.canopsis.net/canopsis/canopsis/issues/538) - [docker/CAT] La brique SNMP n'est pas installée
@@ -773,22 +819,19 @@ This release introduced the new High performance engines and allowed the renamin
  - [#531](https://git.canopsis.net/canopsis/canopsis/issues/531) - Problème avec la recherche naturelle
  - [#513](https://git.canopsis.net/canopsis/canopsis/issues/513) - le formulaire de login  doit catch le 401
 
-
 ### Functional and other changes
+
  - [#516](https://git.canopsis.net/canopsis/canopsis/issues/516) - Dummy authentication
  - [#536](https://git.canopsis.net/canopsis/canopsis/issues/536) - Ajouter le résutlat des tests dans le template
  - [#535](https://git.canopsis.net/canopsis/canopsis/issues/535) - Ajouter prérequis dans le template
  - [#533](https://git.canopsis.net/canopsis/canopsis/issues/533) - Retirer le bouton PAUSE sur les alarmes CLOSED
  - [#541](https://git.canopsis.net/canopsis/canopsis/issues/541) - Nettoyage des test
 
-
-
 ## Canopsis 2.5.3 (Sprint 12.15) Due date : 2017-12-15
 
-**Not released due to blocking issue. This release was tagged on gitlab but not distrubuted. All issues were reported in the 2.5.4 release**
+**Not released due to blocking issue. This release was tagged on Gitlab but not distrubuted. All issues were reported in the 2.5.4 release**
 
-
-## Canopsis 2.5.2(11.30) - Due date : 2017-12-05
+## Canopsis 2.5.2 (11.30) - Due date : 2017-12-05
 
 ### Bug fixes
 
@@ -800,19 +843,14 @@ opsis/canopsis/issues/499) - [PE] la météo ne s'affiche pas pour les applicati
  - [#497](https://git.canopsis.net/canopsis/canopsis/issues/497) - attribut creation_date  en avance par rapport aux dates des évènements sur certaines alarmes.
  - [#450](https://git.canopsis.net/canopsis/canopsis/issues/450) - Probleme de fonctionnement sur la recherche dans la bac à alarmes
 
-
 ### Functional and other changes
 
   - [#510](https://git.canopsis.net/canopsis/canopsis/issues/510) - Ajouter une date de dernier événement reçu à chaque alarme.
   - [#466](https://git.canopsis.net/canopsis/canopsis/issues/466) - Pouvoir disposer d'id d'alarmes exploitable dans le bac à alarmes
 
-
-
 ## Canopsis 2.5.1 (11.03) - Due date : 2017-11-03
 
-
 ### Bug fixes
-
 
  - [#446](https://git.canopsis.net/canopsis/canopsis/issues/446) - Le paquet dm.xmlsec.binding-1.3.3.tar.gz ne s'installe pas sur CentOS 7
  - [#427](https://git.canopsis.net/canopsis/canopsis/issues/427) - watcher ne se recalcule pas a la fin d'un pbehavior => desync
@@ -828,7 +866,6 @@ opsis/canopsis/issues/499) - [PE] la météo ne s'affiche pas pour les applicati
 
  - [#401](https://git.canopsis.net/canopsis/canopsis/issues/401) - [Bac à alarmes] Lorsqu'un filtre est présent, le premier chargement de la vue échoue.
 
-
 ### Functional and other changes
 
  - [#472](https://git.canopsis.net/canopsis/canopsis/issues/472) - MAJ Image Docker MongoDB
@@ -842,19 +879,14 @@ opsis/canopsis/issues/499) - [PE] la météo ne s'affiche pas pour les applicati
 
 ## Canopsis 2.4.6 and CAT 2.5.0 (25/09/2017)
 
-
-Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
-
-
+Canopsis 2.4.6 is a maintenance release for the 2.4 branch of Canopsis.
 
 ### Functional changes - CAT
-
 
 - [#393](https://git.canopsis.net/canopsis/canopsis/issues/393) Feat(Auth) : Compatibilité SAMLV2
 - [#375](https://git.canopsis.net/canopsis/canopsis/issues/375) Feat(SNMP) : Les traps SNMP anomalies ne remontent pas
 
-
-###Bug fixes - CAT
+### Bug fixes - CAT
 
 - [#375](https://git.canopsis.net/canopsis/canopsis/issues/375) Fix(SNMP): Les traps SNMP anomalies ne remontent pas
 
@@ -863,7 +895,7 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 - [#394](https://git.canopsis.net/canopsis/canopsis/issues/394) feat(UI) : permettre l'ajout d'onglets dropdown dans la vue Header
 - [#392](https://git.canopsis.net/canopsis/canopsis/issues/392) feat(Context-graph) : création d'une route ws  pour update du  context
 
-###Bug fixes and other non-functional changes
+### Bug fixes and other non-functional changes
 
 - [#391](https://git.canopsis.net/canopsis/canopsis/issues/391) fix(Context-Graph) : La route post retourne parfois des doublons
 - [#378](https://git.canopsis.net/canopsis/canopsis/issues/378) fix(web): Blocage appli
@@ -881,12 +913,9 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 - [#318](https://git.canopsis.net/canopsis/canopsis/issues/318) fix(pbehavior) : Il est possible de créer un pbehavior avec une rrule invalide
 - [#317](https://git.canopsis.net/canopsis/canopsis/issues/317) fix(pbehavior) : check des rrules avant insertion
 
-
 ## Canopsis 2.4.5 (25/08/2017)
 
-
 ### Functional changes
-
 
 - feat(Météo de service): amélioration serviceweather hauteur des tuiles
 - [#345](https://git.canopsis.net/canopsis/canopsis/issues/345) trad(Météo de service) : Traduction française de la météo de Service
@@ -897,9 +926,7 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 - [#305](https://git.canopsis.net/canopsis/canopsis/issues/305) feat(baselines) : Intégration des baselines avec le service weather
 - [#295](https://git.canopsis.net/canopsis/canopsis/issues/295) feat(alarmes) :  ajout de dates de création et de date de dernier changement dans une alarme
 
-
 ### Bug fixes and other non-functional changes:
-
 
 - [#344](https://git.canopsis.net/canopsis/canopsis/issues/344) fix(engines) : Lors de la création d'un pbehavior avec le widget service weather, le cleaner event crash.
 - [#339](https://git.canopsis.net/canopsis/canopsis/issues/339) fix(Mété de service) :  Erreur 404 sur api/v2/weather/watcher
@@ -910,7 +937,7 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 - [#324](https://git.canopsis.net/canopsis/canopsis/issues/324) fix(Bac à alarmes) : probleme de Timestamp
 - [#310](https://git.canopsis.net/canopsis/canopsis/issues/310) fix(metrics) :  changer les adapters pour récupérer les métriques
 - [#298](https://git.canopsis.net/canopsis/canopsis/issues/298) fix(pbehaviors): crash de l'engine pbehaviors lors de la creation de pbehavior |
-- [#296](https://git.canopsis.net/canopsis/canopsis/issues/296) fix(runtime): amqp2engines* dans hypcontrol si on se trouve dans un dossier avec un amqp2engines.conf qui existe
+- [#296](https://git.canopsis.net/canopsis/canopsis/issues/296) fix(runtime): amqp2engines\* dans hypcontrol si on se trouve dans un dossier avec un amqp2engines.conf qui existe
 - [#294](https://git.canopsis.net/canopsis/canopsis/issues/294) fix(global) : Internationalisation non fonctionnelle
 - [#293](https://git.canopsis.net/canopsis/canopsis/issues/293) fix(Bac à alarmes) : La recherche ne fonctionne pas sur la 2.4.4
 - [#291](https://git.canopsis.net/canopsis/canopsis/issues/291) fix(Bac à alarmes) : Le tri automatique sur les dates ne fonctionne pas
@@ -918,9 +945,9 @@ Canopsis 2.4.6 is a maintenance release for the 2.4 branch of canopsis.
 - [#289](https://git.canopsis.net/canopsis/canopsis/issues/299) fix(snooze) : fonctionnalité inopérante
 - [#287](https://git.canopsis.net/canopsis/canopsis/issues/287) refact(configuration): [interne] remplacer Configurable
 
-## Canopsis 2.4.0 :
+## Canopsis 2.4.0
 
-- feat(content-graph) : new database structure that stores the real-world topology of a supervised system as an object graph, allowing us to identify all entities impacted by an alarm
+- feat(context-graph) : new database structure that stores the real-world topology of a supervised system as an object graph, allowing us to identify all entities impacted by an alarm
 - feat (backend) : Canopsis now generates alarmes based on the status of events. This new object keep tracks of the full history of a real-world alarm
 - feat(UI) : new "Service weather" UI brick that can display the status of up to 120 entities on a single window
 - feat (UI): new "Alarms list" UI brick as a replacement of the old events list.

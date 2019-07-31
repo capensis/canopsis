@@ -2,7 +2,7 @@
 
 mongodb_package: mongodb-org
 mongodb_version: "3.6"
-mongodb_apt_keyserver: keyserver.ubuntu.com
+mongodb_apt_keyserver: hkp://keyserver.ubuntu.com:80
 mongodb_apt_key_id:
   "3.2": "EA312927"
   "3.4": "0C49F3730359A14518585931BC711F9BA15703C6"
