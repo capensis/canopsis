@@ -49,6 +49,19 @@ const commands = {
     return this.customClick('@refreshButton');
   },
 
+
+  setSearchingText(value) {
+    return this.customSetValue('@searchingTextField', value);
+  },
+
+  clickSubmitSearchButton() {
+    return this.customClick('@submitSearchButton');
+  },
+
+  clickClearSearchButton() {
+    return this.customClick('@clearSearchButton');
+  },
+
   selectRange(index = 5) {
     return this.customClick('@selectRangeField')
       .waitForElementVisible(this.el('@selectRangeItemOption', index))
@@ -64,6 +77,10 @@ module.exports = {
   },
   elements: {
     dataTable: '.v-datatable',
+    dataTableUserItem: '.v-datatable tbody tr',
+    searchingTextField: sel('searchingTextField'),
+    submitSearchButton: sel('submitSearchButton'),
+    clearSearchButton: sel('clearSearchButton'),
     addButton: sel('addButton'),
     editButton: `%s ${sel('editButton')}`,
     deleteButton: `%s ${sel('deleteButton')}`,

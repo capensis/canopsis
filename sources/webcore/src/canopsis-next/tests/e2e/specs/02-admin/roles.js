@@ -1,11 +1,11 @@
-const { get } = require('lodash');
-const uid = require('uid');
-
 const { API_ROUTES } = require('../../../../src/config');
-
+const { generateTemporaryView, generateTemporaryRole } = require('../../helpers/entities');
 
 const createRole = (browser, {
-  name, description, groupId, viewId,
+  name,
+  description,
+  groupId,
+  viewId,
 }) => {
   const rolesPage = browser.page.admin.roles();
   const createRoleModal = browser.page.modals.admin.createRole();
@@ -32,7 +32,7 @@ const createRole = (browser, {
 
       browser.assert.equal(response.total, 1);
 
-      browser.globals.rolesIds.push(get(response.data, [0, '_id']));
+      browser.globals.roles.push(response.data[0]);
 
       createRoleModal.verifyModalClosed();
     },
@@ -40,36 +40,70 @@ const createRole = (browser, {
 };
 
 module.exports = {
+  asyncHookTimeout: 30000,
+
   async before(browser, done) {
+    browser.globals.roles = [];
+    browser.globals.defaultViewData = {};
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
-    browser.globals.rolesIds = [];
+    await browser.completed.view.create(generateTemporaryView(), (view) => {
+      browser.globals.defaultViewData = {
+        viewId: view._id,
+        groupId: view.group_id,
+      };
 
-    done();
+      done();
+    });
   },
 
   after(browser, done) {
-    delete browser.globals.rolesIds;
+    const { groupId, viewId } = browser.globals.defaultViewData;
+
+    delete browser.globals.roles;
+
+    browser.completed.view.delete(groupId, viewId, () => {
+      delete browser.globals.defaultViewData;
+    });
 
     browser.end(done);
   },
 
   'Create new role with data from constants': (browser) => {
-    const role = {
-      name: 'Test role',
-      description: 'Test role description',
-      groupId: '05b2e049-b3c4-4c5b-94a5-6e7ff142b28c',
-      viewId: '875df4c2-027b-4549-8add-e20ed7ff7d4f',
+    const generatedRole = {
+      ...generateTemporaryRole(),
+      ...browser.globals.defaultViewData,
     };
 
     browser.page.admin.roles()
       .navigate()
       .verifyPageElementsBefore();
 
-    createRole(browser, role);
+    createRole(browser, generatedRole);
   },
 
+
+  'Check searching': (browser) => {
+    const [role] = browser.globals.roles;
+    const rolesPage = browser.page.admin.roles();
+
+    rolesPage.setSearchingText(role._id)
+      .waitForFirstXHR(API_ROUTES.role.list, 5000, () => rolesPage.clickSubmitSearchButton(), ({ responseData }) => {
+        const { data } = JSON.parse(responseData);
+
+        browser.assert.ok(data.every(item => item._id === role._id));
+        browser.assert.elementsCount(rolesPage.elements.dataTableUserItem.selector, 1);
+
+        rolesPage.verifyPageRoleBefore(role._id);
+      })
+      .waitForFirstXHR(API_ROUTES.role.list, 5000, () => rolesPage.clickClearSearchButton(), ({ responseData }) => {
+        const { data } = JSON.parse(responseData);
+
+        browser.assert.ok(data.some(item => item._id !== role._id));
+      });
+  },
 
   'Pagination on data-table': (browser) => {
     const rolesPage = browser.page.admin.roles();
@@ -87,7 +121,7 @@ module.exports = {
   'Edit created role by data from constants': (browser) => {
     const rolesPage = browser.page.admin.roles();
     const createRoleModal = browser.page.modals.admin.createRole();
-    const roleId = browser.globals.rolesIds[0];
+    const { _id: roleId } = browser.globals.roles[0];
 
     rolesPage.verifyPageRoleBefore(roleId)
       .clickEditButton(roleId);
@@ -100,7 +134,7 @@ module.exports = {
   'Delete created role': (browser) => {
     const rolesPage = browser.page.admin.roles();
     const confirmationModal = browser.page.modals.common.confirmation();
-    const roleId = browser.globals.rolesIds.shift();
+    const { _id: roleId } = browser.globals.roles.shift();
 
     rolesPage.verifyPageRoleBefore(roleId)
       .clickDeleteButton(roleId);
@@ -111,30 +145,20 @@ module.exports = {
   },
 
   'Create several new roles with data from constants': (browser) => {
-    const rolesData = [
-      {
-        name: `Test role ${uid()}`,
-        description: 'Test role description',
-        groupId: '05b2e049-b3c4-4c5b-94a5-6e7ff142b28c',
-        viewId: '875df4c2-027b-4549-8add-e20ed7ff7d4f',
-      }, {
-        name: `Test role ${uid()}`,
-        description: 'Test role description',
-        groupId: '05b2e049-b3c4-4c5b-94a5-6e7ff142b28c',
-        viewId: '875df4c2-027b-4549-8add-e20ed7ff7d4f',
-      }, {
-        name: `Test role ${uid()}`,
-        description: 'Test role description',
-        groupId: '05b2e049-b3c4-4c5b-94a5-6e7ff142b28c',
-        viewId: '875df4c2-027b-4549-8add-e20ed7ff7d4f',
-      },
-    ];
+    const roles = [];
+
+    for (let index = 0; index < 3; index += 1) {
+      roles.push({
+        ...generateTemporaryRole(),
+        ...browser.globals.defaultViewData,
+      });
+    }
 
     browser.page.admin.roles()
       .navigate()
       .verifyPageElementsBefore();
 
-    rolesData.forEach((role) => {
+    roles.forEach((role) => {
       createRole(browser, role);
     });
   },
@@ -142,14 +166,14 @@ module.exports = {
   'Mass delete created roles': (browser) => {
     const rolesPage = browser.page.admin.roles();
     const confirmationModal = browser.page.modals.common.confirmation();
-    const { rolesIds } = browser.globals;
+    const { roles } = browser.globals;
 
     rolesPage.selectRange(5)
       .defaultPause();
 
-    rolesIds.forEach((roleId) => {
-      rolesPage.verifyPageRoleBefore(roleId)
-        .clickOptionCheckbox(roleId)
+    roles.forEach((role) => {
+      rolesPage.verifyPageRoleBefore(role._id)
+        .clickOptionCheckbox(role._id)
         .defaultPause();
     });
 

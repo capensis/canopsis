@@ -15,7 +15,7 @@ We have the following project structure:
 ```
 e2e
 ├── custom-assertions        # Folder with assertions
-│   └── elementCount.js      # Special global assertion
+│   └── elementsCount.js     # Special global assertion
 ├── custom-commands          # Folder with commands
 │   ├── completed            # Folder with completed commands. Completed ui action. For example: login, logout and etc.
 │   │   └── login.js         # Completed ui command

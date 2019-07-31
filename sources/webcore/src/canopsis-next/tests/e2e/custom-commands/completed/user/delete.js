@@ -1,5 +1,5 @@
 // http://nightwatchjs.org/guide#usage
-const { API_ROUTES } = require('../../../../src/config');
+const { API_ROUTES } = require('../../../../../src/config');
 
 module.exports.command = function deleteUser(id, callback = () => {}) {
   const adminUsersPage = this.page.admin.users();
