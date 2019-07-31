@@ -1074,7 +1074,13 @@ class PBehaviorManager(object):
 
             duration = stop - start  # pbehavior duration
             rec_set = self._get_recurring_pbehavior_rruleset(pbh)
-            last_tstop_dt = rec_set.before(now) + duration
+            last_tstart = rec_set.before(now)
+            # when the pbh is recurrent but hasn't started running yet
+            # we return now, which ensures this pbh isn't used in
+            # ok ko timestamp computing
+            if last_tstart is None:
+                return int(now.total_seconds())
+            last_tstop_dt = last_tstart + duration
             pbh_last_tstop = int((last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
         return pbh_last_tstop
 
