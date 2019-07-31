@@ -3,6 +3,7 @@
   v-model="isOpen",
   :width="$config.SIDE_BAR_WIDTH",
   :class="{ editing: isEditingMode }"
+  data-test="groupsSideBar"
   disable-resize-watcher,
   app,
   )
@@ -15,10 +16,15 @@
     focusable,
     dark
     )
-      v-expansion-panel-content.secondary.white--text(v-for="group in availableGroups", :key="group._id")
+      v-expansion-panel-content.secondary.white--text(
+      v-for="group in availableGroups",
+      :key="group._id",
+      :data-test="`panel-group-${group._id}`"
+      )
         div.panel-header(slot="header")
-          span(:title="group.name") {{ group.name }}
+          span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
+          :data-test="`editGroupButton-group-${group._id}`",
           v-show="isEditingMode",
           depressed,
           small,
@@ -40,6 +46,7 @@
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
+                    :data-test="`editViewButton-view-${view._id}`",
                     v-show="checkViewEditButtonAccessById(view._id)",
                     depressed,
                     small,
@@ -48,6 +55,7 @@
                     )
                       v-icon(small) edit
                     v-btn.ma-0(
+                    :data-test="`copyViewButton-view-${view._id}`",
                     v-show="isEditingMode",
                     depressed,
                     small,

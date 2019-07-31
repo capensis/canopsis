@@ -328,6 +328,7 @@ export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
+  null: 'null',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -581,16 +582,6 @@ export const STATS_CALENDAR_COLORS = {
   },
 };
 
-export const LIVE_REPORTING_INTERVALS = {
-  today: 'today',
-  yesterday: 'yesterday',
-  last7Days: 'last7Days',
-  last30Days: 'last30Days',
-  thisMonth: 'thisMonth',
-  lastMonth: 'lastMonth',
-  custom: 'custom',
-};
-
 export const USERS_RIGHTS_MASKS = {
   create: 8,
   read: 4,
@@ -609,6 +600,7 @@ export const USERS_RIGHTS = {
     role: 'models_role',
     action: 'models_action',
     user: 'models_user',
+    parameters: 'models_parameters',
     exploitation: {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
@@ -940,3 +932,5 @@ export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
+
+export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';

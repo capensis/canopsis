@@ -10,7 +10,7 @@
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
-        div.watcherName.pt-3(v-html="compiledTemplate")
+        v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
         v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import VRuntimeTemplate from 'v-runtime-template';
+
 import {
   MODALS,
   USERS_RIGHTS,
@@ -41,6 +43,9 @@ import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 export default {
+  components: {
+    VRuntimeTemplate,
+  },
   mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
@@ -80,7 +85,7 @@ export default {
     },
 
     compiledTemplate() {
-      return compile(this.template, { entity: this.watcher });
+      return `<div>${compile(this.template, { entity: this.watcher })}</div>`;
     },
 
     itemClasses() {
@@ -115,11 +120,13 @@ export default {
     },
   },
   methods: {
-    showAdditionalInfoModal() {
-      if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
-        this.showAlarmListModal();
-      } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
-        this.showMainInfoModal();
+    showAdditionalInfoModal(e) {
+      if (e.target.tagName !== 'A' || !e.target.href) {
+        if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
+          this.showAlarmListModal();
+        } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
+          this.showMainInfoModal();
+        }
       }
     },
 
@@ -127,6 +134,7 @@ export default {
       this.showModal({
         name: MODALS.watcher,
         config: {
+          color: this.format.color,
           watcher: this.watcher,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
@@ -217,11 +225,14 @@ export default {
   }
 
   .watcherName {
-    color: white;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
+
+    &, & /deep/ a {
+      color: white;
+    }
   }
 
   @keyframes blink {

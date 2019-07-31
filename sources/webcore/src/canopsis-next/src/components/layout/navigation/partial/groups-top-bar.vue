@@ -12,9 +12,13 @@
         bottom,
         dark
         )
-          div.v-btn.v-btn--flat.theme--dark(slot="activator")
+          div.v-btn.v-btn--flat.theme--dark(
+          :data-test="`dropDownButton-group-${group._id}`",
+          slot="activator"
+          )
             span {{ group.name }}
             v-btn(
+            data-test="editGroupButton",
             v-show="isEditingMode",
             depressed,
             small,
@@ -23,7 +27,7 @@
             )
               v-icon(small) edit
             v-icon(dark) arrow_drop_down
-          v-list
+          v-list(:data-test="`dropDownZone-group-${group._id}`")
             v-list-tile(
             v-for="view in group.views",
             :key="view._id",
@@ -32,6 +36,7 @@
               v-list-tile-title
                 span {{ view.title }}
                 v-btn.edit-view-button(
+                :data-test="`editViewButton-view-${view._id}`",
                 v-show="checkViewEditButtonAccessById(view._id)",
                 color="grey darken-2",
                 depressed,
@@ -41,6 +46,7 @@
                 )
                   v-icon(small) edit
                 v-btn.duplicate-view-button(
+                :data-test="`copyViewButton-view-${view._id}`",
                 v-show="isEditingMode",
                 depressed,
                 small,
@@ -52,8 +58,8 @@
     groups-settings-button(
     :isEditingMode="isEditingMode",
     :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
-    :buttonProps="{ fab: true, dark: true, small: true }"
-    @toggleEditingMode="toggleEditingMode",
+    :buttonProps="{ fab: true, dark: true, small: true }",
+    @toggleEditingMode="toggleEditingMode"
     )
 </template>
 

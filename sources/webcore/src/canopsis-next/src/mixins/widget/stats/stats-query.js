@@ -1,9 +1,12 @@
-import moment from 'moment-timezone';
 import { get, isString } from 'lodash';
 
 import { DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
 
-import { dateParse } from '@/helpers/date-intervals';
+import {
+  dateParse,
+  prepareStatsStopForMonthPeriod,
+  prepareStatsStartForMonthPeriod,
+} from '@/helpers/date-intervals';
 
 export default {
   methods: {
@@ -33,8 +36,9 @@ export default {
          * If period unit is 'month', we need to put the dates at the first day of the month, at 00:00 UTC
          * And add the difference between the local date, and the UTC one.
          */
-        tstart = moment.utc(tstart).startOf('month').tz(moment.tz.guess());
-        tstop = moment.utc(tstop).startOf('month').tz(moment.tz.guess());
+
+        tstart = prepareStatsStartForMonthPeriod(tstart);
+        tstop = prepareStatsStopForMonthPeriod(tstop);
       }
 
       return {

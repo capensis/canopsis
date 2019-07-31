@@ -42,6 +42,10 @@ export function generateWidgetByType(type) {
     isAckNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
+    fastAckOutput: {
+      enabled: false,
+      value: 'auto ack',
+    },
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),

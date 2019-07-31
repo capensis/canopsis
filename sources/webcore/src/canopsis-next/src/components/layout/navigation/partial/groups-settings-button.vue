@@ -6,12 +6,18 @@
   v-bind="wrapperProps"
   )
     v-tooltip(slot="activator", right)
-      v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", v-bind="buttonProps")
+      v-btn.primary(
+      data-test="settingsViewButton",
+      slot="activator",
+      :input-value="isVSpeedDialOpen",
+      v-bind="buttonProps"
+      )
         v-icon settings
         v-icon close
       span {{ $t('layout.sideBar.buttons.settings') }}
     v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", right)
       v-btn(
+      data-test="editModeButton",
       slot="activator",
       :input-value="isEditingMode",
       color="blue darken-4",
@@ -25,6 +31,7 @@
       span {{ $t('layout.sideBar.buttons.edit') }}
     v-tooltip(v-if="hasCreateAnyViewAccess", right)
       v-btn(
+      data-test="addViewButton",
       slot="activator",
       color="green darken-4",
       small,

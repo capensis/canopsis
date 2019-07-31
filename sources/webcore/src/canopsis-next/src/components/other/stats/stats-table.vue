@@ -1,7 +1,8 @@
 <template lang="pug">
   div
-    v-card
+    v-card.position-relative
       progress-overlay(:pending="pending")
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       v-data-table(
       :items="stats",
       :headers="columns",
@@ -15,14 +16,14 @@
                 alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
               td(v-else)
                 v-layout(align-center)
-                  div {{ getFormattedValue(item[key].value, property.stat.value) }}
-                  div(v-if="item[key].trend !== undefined && item[key].trend !== null")
+                  div {{ item[key].value | formatValue(property.stat.value) }}
+                  div(v-if="hasTrend(item[key])")
                     sub.ml-2
                       v-icon.caption(
                       small,
-                      :color="trendFormat(item[key].value).color"
-                      ) {{ trendFormat(item[key].value).icon }}
-                    sub {{ getFormattedValue(item[key].trend, property.stat.value) }}
+                      :color="item[key].trend | trendColor"
+                      ) {{ item[key].trend | trendIcon }}
+                    sub {{ item[key].trend | formatValue(property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}
 </template>
 
@@ -36,14 +37,18 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+
+import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
 
 export default {
   components: {
     ProgressOverlay,
     AlarmChips,
+    StatsAlertOverlay,
   },
   filters: {
     statValue(name) {
@@ -55,6 +60,7 @@ export default {
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
+    widgetStatsTableWrapperMixin,
   ],
   props: {
     widget: {
@@ -65,6 +71,8 @@ export default {
   data() {
     return {
       pending: true,
+      hasError: false,
+      serverErrorMessage: null,
       stats: [],
       page: 1,
       pagination: {
@@ -100,42 +108,6 @@ export default {
         ...statsOrderedColumns,
       ];
     },
-    getFormattedValue() {
-      const PROPERTIES_FILTERS_MAP = {
-        state_rate: value => this.$options.filters.percentage(value),
-        ack_time_sla: value => this.$options.filters.percentage(value),
-        resolve_time_sla: value => this.$options.filters.percentage(value),
-        time_in_state: value => this.$options.filters.duration({ value }),
-        mtbf: value => this.$options.filters.duration({ value }),
-      };
-
-      return (value, columnValue) => {
-        if (PROPERTIES_FILTERS_MAP[columnValue]) {
-          return PROPERTIES_FILTERS_MAP[columnValue](value);
-        }
-
-        return value;
-      };
-    },
-    trendFormat() {
-      return (value) => {
-        if (value > 0) {
-          return {
-            icon: 'trending_up',
-            color: 'primary',
-          };
-        } else if (value < 0) {
-          return {
-            icon: 'trending_down',
-            color: 'error',
-          };
-        }
-
-        return {
-          icon: 'trending_flat',
-        };
-      };
-    },
   },
   methods: {
     getQuery() {
@@ -159,25 +131,32 @@ export default {
     },
 
     async fetchList() {
-      const { sort = {} } = this.widget.parameters;
+      try {
+        const { sort = {} } = this.widget.parameters;
 
-      this.pending = true;
+        this.pending = true;
+        this.hasError = false;
+        this.serverErrorMessage = null;
 
-      const { values } = await this.fetchStatsListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { values } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.stats = values;
+        this.stats = values;
 
-      this.pagination = {
-        page: 1,
-        sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
-        totalItems: values.length,
-        rowsPerPage: PAGINATION_LIMIT,
-        descending: sort.order === SORT_ORDERS.desc,
-      };
-
-      this.pending = false;
+        this.pagination = {
+          page: 1,
+          sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
+          totalItems: values.length,
+          rowsPerPage: PAGINATION_LIMIT,
+          descending: sort.order === SORT_ORDERS.desc,
+        };
+      } catch (err) {
+        this.hasError = true;
+        this.serverErrorMessage = err.description || null;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

@@ -5,31 +5,7 @@
         span.headline {{ $t('modals.liveReporting.editLiveReporting') }}
     v-card-text
       h3 {{ $t('modals.liveReporting.dateInterval') }}
-      v-layout(wrap)
-        v-radio-group(v-model="selectedInterval")
-          v-radio(
-          v-for="interval in dateIntervals",
-          :label="interval.text",
-          :value="interval.value",
-          :key="interval.value"
-          )
-      v-layout(wrap, v-if="isCustomRangeEnabled")
-        v-flex(xs12)
-          date-time-picker-field(
-          v-model="tstart",
-          v-validate="tstartRules",
-          :label="$t('modals.liveReporting.tstart')",
-          name="tstart",
-          clearable
-          )
-        v-flex(xs12)
-          date-time-picker-field(
-          v-model="tstop",
-          v-validate="tstopRules",
-          :label="$t('modals.liveReporting.tstop')",
-          name="tstop",
-          clearable
-          )
+      date-interval-selector(v-model="form")
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -39,11 +15,11 @@
 <script>
 import moment from 'moment';
 
-import { MODALS, LIVE_REPORTING_INTERVALS, DATETIME_FORMATS } from '@/constants';
+import { MODALS, DATETIME_FORMATS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
 /**
    * Modal to add a time filter on alarm-list
@@ -54,27 +30,20 @@ export default {
     validator: 'new',
   },
   components: {
-    DateTimePickerField,
+    DateIntervalSelector,
   },
   mixins: [modalInnerMixin],
   data() {
     const { config } = this.modal;
 
     return {
-      selectedInterval: config.interval || '',
-      dateIntervals: Object.values(LIVE_REPORTING_INTERVALS).map(value => ({
-        value,
-        text: this.$t(`modals.liveReporting.${value}`),
-      })),
-      tstart: config.tstart ? moment.unix(config.tstart).toDate() : new Date(),
-      tstop: config.tstop ? moment.unix(config.tstop).toDate() : new Date(),
+      form: {
+        tstart: config.tstart || '',
+        tstop: config.tstop || '',
+      },
     };
   },
   computed: {
-    isCustomRangeEnabled() {
-      return this.selectedInterval === LIVE_REPORTING_INTERVALS.custom;
-    },
-
     tstartRules() {
       return {
         required: true,
@@ -99,16 +68,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const params = {
-            interval: this.selectedInterval,
-          };
-
-          if (this.isCustomRangeEnabled) {
-            params.tstart = this.tstart.getTime() / 1000;
-            params.tstop = this.tstop.getTime() / 1000;
-          }
-
-          await this.config.action(params);
+          await this.config.action(this.form);
         }
 
         this.hideModal();

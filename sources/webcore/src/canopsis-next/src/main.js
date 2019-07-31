@@ -103,6 +103,7 @@ Vue.use(VueClipboard);
 Vue.use(VeeValidate, {
   i18n,
   inject: false,
+  silentTranslationWarn: false,
   dictionary: {
     en: enValidationMessages,
     fr: frValidationMessages,

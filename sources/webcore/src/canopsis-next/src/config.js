@@ -25,8 +25,13 @@ export const SCHEMA_EMBEDDED_KEY = '_embedded';
 export const MEDIA_QUERIES_BREAKPOINTS = {
   m: 450,
   t: 900,
-  l: 'Infinity',
+  l: 1400,
+  xl: 'Infinity',
 };
+
+export const MAX_LOGO_SIZE_IN_KB = 16384;
+
+export const DEFAULT_APP_TITLE = 'Canopsis';
 
 export const API_ROUTES = {
   auth: '/auth',
@@ -78,6 +83,7 @@ export const API_ROUTES = {
   infos: {
     login: '/api/internal/login/login_info',
     app: '/api/internal/app_info',
+    userInterface: '/api/internal/user_interface',
   },
 };
 
