@@ -52,7 +52,7 @@ class MigrationTool(object):
     CATEGORY = 'MIGRATION'
     FLAG_COLLECTION = "initialized"
 
-    def __init__(self, modules=None, canopsis_edition=None, canopsis_stack=None, canopsis_version=None, canopsis_language=None):
+    def __init__(self, modules=None, canopsis_edition=None, canopsis_stack=None, canopsis_version=None):
 
         self.logger = Logger.get('migrationtool', self.LOG_PATH)
         self.config = Configuration.load(MigrationTool.CONF_PATH, Json)
