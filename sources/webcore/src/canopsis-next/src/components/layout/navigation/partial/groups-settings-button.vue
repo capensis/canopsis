@@ -7,8 +7,8 @@
   )
     v-tooltip(
     slot="activator",
-    :right="tooltipPosition === 'right'",
-    :left="tooltipPosition === 'left'",
+    :right="tooltipRight",
+    :left="tooltipLeft",
     )
       v-btn.primary(
       data-test="settingsViewButton",
@@ -21,8 +21,8 @@
       span {{ $t('layout.sideBar.buttons.settings') }}
     v-tooltip(
     v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
-    :right="tooltipPosition === 'right'",
-    :left="tooltipPosition === 'left'",
+    :right="tooltipRight",
+    :left="tooltipLeft",
     )
       v-btn(
       data-test="editModeButton",
@@ -39,8 +39,8 @@
       span {{ $t('layout.sideBar.buttons.edit') }}
     v-tooltip(
     v-if="hasCreateAnyViewAccess",
-    :right="tooltipPosition === 'right'",
-    :left="tooltipPosition === 'left'",
+    :right="tooltipRight",
+    :left="tooltipLeft",
     )
       v-btn(
       data-test="addViewButton",
@@ -68,9 +68,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    tooltipPosition: {
-      type: String,
-      default: 'right',
+    tooltipRight: {
+      type: Boolean,
+      default: false,
+    },
+    tooltipLeft: {
+      type: Boolean,
+      default: false,
     },
     wrapperProps: {
       type: Object,
