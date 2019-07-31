@@ -364,6 +364,8 @@ class __TileData(object):
         paused_watched_ent = 0
 
         for ent in watcher[ResultKey.ENT]:
+            if not ent["enabled"]:
+                continue
             if len(ent[ResultKey.PBEHAVIORS]) > 0:
                 paused_watched_ent += 1
             for pbh in ent[ResultKey.PBEHAVIORS]:
