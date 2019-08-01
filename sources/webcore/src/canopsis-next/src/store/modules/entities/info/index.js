@@ -16,6 +16,7 @@ export default {
     edition: '',
     stack: '',
     description: '',
+    language: '',
     isLDAPAuthEnabled: false,
     isCASAuthEnabled: false,
     casConfig: {},
@@ -104,6 +105,7 @@ export default {
             logo,
             appTitle,
             edition,
+            language,
             stack,
           },
         );
