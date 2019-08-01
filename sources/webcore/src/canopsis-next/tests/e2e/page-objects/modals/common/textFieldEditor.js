@@ -3,6 +3,9 @@
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
 const commands = {
+  clearField() {
+    return this.customClearValue('@textField');
+  },
   setField(value) {
     return this.customSetValue('@textField', value);
   },

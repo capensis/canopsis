@@ -76,7 +76,7 @@ module.exports = {
     groupsSideBarButton: sel('groupsSideBarButton'),
     groupsSideBarClosed: `${groupsSideBar}.v-navigation-drawer--close`,
     groupSideBarSelectorById: `.v-expansion-panel__header ${sel('groupsSideBar-group-%s')}`,
-    linkView: `.v-expansion-panel__body a.panel-item-content-link${sel('linkView-viewTitle-%s')}`,
+    linkView: `.v-expansion-panel__body a.panel-item-content-link${sel('linkView-view-%s')}`,
     activeGroupSideBarSelectorById: `.v-expansion-panel__container--active .v-expansion-panel__header ${sel('groupsSideBar-group-%s')}`,
     editGroupButton: `.v-expansion-panel__header .v-btn${sel('editGroupButton-group-%s')}`,
     editViewButton: `.v-expansion-panel__body .v-btn${sel('editViewButton-view-%s')}`,
